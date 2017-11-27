@@ -1,133 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 12 Nov 2017 09:26:58 +0000
-Subject: [PATCH] ALSA: ad1889: Use common error handling code in snd_ad1889_create()
-Message-Id: <252c71ed-af89-ed5f-d75f-c09292e68bd5@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 21:26:08 +0000
+Subject: [PATCH 3/5] radeon_backlight: Delete an unnecessary return statement in radeonfb_bl_init()
+Message-Id: <e1e33551-53de-7ad2-d5de-6e5c2135ecbc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
+In-Reply-To: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, linux-parisc@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Thibaut Varene <T-Bone@parisc-linux.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 12 Nov 2017 10:10:53 +0100
+Date: Mon, 27 Nov 2017 21:37:52 +0100
 
-* Adjust jump targets so that a bit of exception handling can be better
-  reused at the end of this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
 
-* The script "checkpatch.pl" pointed information out like the following.
-
-  ERROR: do not use assignment in if condition
-
-  Thus fix five affected source code places.
+Thus remove such a statement in the affected function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/ad1889.c | 45 +++++++++++++++++++++++++--------------------
- 1 file changed, 25 insertions(+), 20 deletions(-)
+ drivers/video/fbdev/aty/radeon_backlight.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/pci/ad1889.c b/sound/pci/ad1889.c
-index 0bf2c04eeada..9f00e63937a5 100644
---- a/sound/pci/ad1889.c
-+++ b/sound/pci/ad1889.c
-@@ -894,21 +894,23 @@ snd_ad1889_create(struct snd_card *card,
+diff --git a/drivers/video/fbdev/aty/radeon_backlight.c b/drivers/video/fbdev/aty/radeon_backlight.c
+index 78c36c8d5e57..c5e0e3557cc2 100644
+--- a/drivers/video/fbdev/aty/radeon_backlight.c
++++ b/drivers/video/fbdev/aty/radeon_backlight.c
+@@ -193,7 +193,6 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
  
- 	*rchip = NULL;
- 
--	if ((err = pci_enable_device(pci)) < 0)
-+	err = pci_enable_device(pci);
-+	if (err < 0)
- 		return err;
- 
- 	/* check PCI availability (32bit DMA) */
- 	if (dma_set_mask(&pci->dev, DMA_BIT_MASK(32)) < 0 ||
- 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(32)) < 0) {
- 		dev_err(card->dev, "error setting 32-bit DMA mask.\n");
--		pci_disable_device(pci);
--		return -ENXIO;
-+		err = -ENXIO;
-+		goto disable_device;
- 	}
- 
- 	/* allocate chip specific data with zero-filled memory */
--	if ((chip = kzalloc(sizeof(*chip), GFP_KERNEL)) = NULL) {
--		pci_disable_device(pci);
--		return -ENOMEM;
-+	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
-+	if (!chip) {
-+		err = -ENOMEM;
-+		goto disable_device;
- 	}
- 
- 	chip->card = card;
-@@ -917,15 +919,16 @@ snd_ad1889_create(struct snd_card *card,
- 	chip->irq = -1;
- 
- 	/* (1) PCI resource allocation */
--	if ((err = pci_request_regions(pci, card->driver)) < 0)
--		goto free_and_ret;
-+	err = pci_request_regions(pci, card->driver);
-+	if (err < 0)
-+		goto free_data;
- 
- 	chip->bar = pci_resource_start(pci, 0);
- 	chip->iobase = pci_ioremap_bar(pci, 0);
- 	if (chip->iobase = NULL) {
- 		dev_err(card->dev, "unable to reserve region.\n");
- 		err = -EBUSY;
--		goto free_and_ret;
-+		goto free_data;
- 	}
- 	
- 	pci_set_master(pci);
-@@ -935,32 +938,34 @@ snd_ad1889_create(struct snd_card *card,
- 	if (request_irq(pci->irq, snd_ad1889_interrupt,
- 			IRQF_SHARED, KBUILD_MODNAME, chip)) {
- 		dev_err(card->dev, "cannot obtain IRQ %d\n", pci->irq);
--		snd_ad1889_free(chip);
--		return -EBUSY;
-+		err = -EBUSY;
-+		goto free_sound_chip;
- 	}
- 
- 	chip->irq = pci->irq;
- 	synchronize_irq(chip->irq);
- 
- 	/* (2) initialization of the chip hardware */
--	if ((err = snd_ad1889_init(chip)) < 0) {
--		snd_ad1889_free(chip);
--		return err;
--	}
-+	err = snd_ad1889_init(chip);
-+	if (err < 0)
-+		goto free_sound_chip;
- 
--	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
--		snd_ad1889_free(chip);
--		return err;
--	}
-+	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
-+	if (err < 0)
-+		goto free_sound_chip;
- 
- 	*rchip = chip;
- 
- 	return 0;
- 
--free_and_ret:
-+free_data:
- 	kfree(chip);
-+disable_device:
- 	pci_disable_device(pci);
-+	return err;
- 
-+free_sound_chip:
-+	snd_ad1889_free(chip);
- 	return err;
+ error:
+ 	kfree(pdata);
+-	return;
  }
  
+ void radeonfb_bl_exit(struct radeonfb_info *rinfo)
 -- 
 2.15.0
 
