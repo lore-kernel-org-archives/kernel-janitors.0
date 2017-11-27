@@ -1,37 +1,49 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 27 Nov 2017 17:44:02 +0000
+From: Joe Perches <joe@perches.com>
+Date: Mon, 27 Nov 2017 18:57:07 +0000
 Subject: Re: [PATCH v2] checkpatch: Add a warning for log messages that don't end in a new line
-Message-Id: <f2f5622f-5c5f-3dbf-1d7e-bc49e9c57dae@deltatee.com>
+Message-Id: <1511809027.32426.62.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171126054037.9743-1-logang@deltatee.com>
- <alpine.DEB.2.20.1711260648130.2387@hadrien>
- <1511676085.20482.18.camel@perches.com>
- <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
- <1511735382.20482.27.camel@perches.com>
- <355029d1-48f5-095e-0d99-bb726d2d56e5@deltatee.com>
- <alpine.DEB.2.20.1711270709390.2369@hadrien>
- <ec39f4f5-cfab-a184-0f27-7f0172e2984f@deltatee.com>
- <alpine.DEB.2.20.1711270732550.2369@hadrien>
- <86f3f594-79f7-c2ce-2cc6-f641bd6f55ae@deltatee.com>
- <1511771322.32426.1.camel@perches.com>
- <a0c147a5-a727-0ce8-a0c3-200fe3b17e4a@deltatee.com>
- <1511803686.32426.54.camel@perches.com>
- <322acd87-7708-cc90-c3d1-caad7bd023e5@deltatee.com>
- <1511804568.32426.56.camel@perches.com>
-In-Reply-To: <1511804568.32426.56.camel@perches.com>
+         <alpine.DEB.2.20.1711260648130.2387@hadrien>
+         <1511676085.20482.18.camel@perches.com>
+         <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
+         <1511735382.20482.27.camel@perches.com>
+         <355029d1-48f5-095e-0d99-bb726d2d56e5@deltatee.com>
+         <alpine.DEB.2.20.1711270709390.2369@hadrien>
+         <ec39f4f5-cfab-a184-0f27-7f0172e2984f@deltatee.com>
+         <alpine.DEB.2.20.1711270732550.2369@hadrien>
+         <86f3f594-79f7-c2ce-2cc6-f641bd6f55ae@deltatee.com>
+         <1511771322.32426.1.camel@perches.com>
+         <a0c147a5-a727-0ce8-a0c3-200fe3b17e4a@deltatee.com>
+         <1511803686.32426.54.camel@perches.com>
+         <322acd87-7708-cc90-c3d1-caad7bd023e5@deltatee.com>
+         <1511804568.32426.56.camel@perches.com>
+         <f2f5622f-5c5f-3dbf-1d7e-bc49e9c57dae@deltatee.com>
+In-Reply-To: <f2f5622f-5c5f-3dbf-1d7e-bc49e9c57dae@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Julia Lawall <julia.lawall@lip6.fr>
+To: Logan Gunthorpe <logang@deltatee.com>, Julia Lawall <julia.lawall@lip6.fr>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
 
+On Mon, 2017-11-27 at 10:44 -0700, Logan Gunthorpe wrote:
+> 
+> On 27/11/17 10:42 AM, Joe Perches wrote:
+> > No double stardard.  One correctly informs that a bare
+> > printk is not acceptable.
+> 
+> The other correctly informs that a printk that isn't followed by a 
+> pr_cont or KERN_CONT is not correct.
 
+It may or not be correct.
 
-On 27/11/17 10:42 AM, Joe Perches wrote:
-> No double stardard.  One correctly informs that a bare
-> printk is not acceptable.
+Without inter-function call code flow analysis,
+it's not possible to be correct.
 
-The other correctly informs that a printk that isn't followed by a 
-pr_cont or KERN_CONT is not correct.
+If you can get the false positive & false negative
+rate higher, I'll listen.
 
-Logan
+I think the Coccinelle script has a better chance
+to be more correct.
+
+cheers, Joe
