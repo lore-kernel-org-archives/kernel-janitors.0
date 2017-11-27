@@ -1,64 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Nov 2017 21:34:16 +0000
-Subject: [PATCH 1/2] tipc: Use common error handling code in tipc_server_start()
-Message-Id: <30323180-d194-1af1-892f-58fef0a7b6db@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:53:11 +0000
+Subject: Applied "ASoC: cs42l73: Delete an error message for a failed memory allocation in cs42l73_i2c_probe(
+Message-Id: <E1eJOWl-0007CT-Qd@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <25790616-164d-fe3e-bda4-3155299a8171@users.sourceforge.net>
-In-Reply-To: <25790616-164d-fe3e-bda4-3155299a8171@users.sourceforge.net>
+References: <ac3d081a-377d-f016-bdb1-63dceb951281@users.sourceforge.net>
+In-Reply-To: <ac3d081a-377d-f016-bdb1-63dceb951281@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: cs42l73: Delete an error message for a failed memory allocation in cs42l73_i2c_probe()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From ddedd797943df21a2464420744d117e930a43af8 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Nov 2017 22:18:35 +0100
+Date: Wed, 22 Nov 2017 15:50:46 +0100
+Subject: [PATCH] ASoC: cs42l73: Delete an error message for a failed memory
+ allocation in cs42l73_i2c_probe()
 
-* Improve jump targets so that a bit of exception handling can be better
-  reused at the end of this function.
-
-* Adjust two condition checks.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- net/tipc/server.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ sound/soc/codecs/cs42l73.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/net/tipc/server.c b/net/tipc/server.c
-index acaef80fb88c..7359d37e39cd 100644
---- a/net/tipc/server.c
-+++ b/net/tipc/server.c
-@@ -670,16 +670,19 @@ int tipc_server_start(struct tipc_server *s)
- 		return -ENOMEM;
- 
- 	ret = tipc_work_start(s);
--	if (ret < 0) {
--		kmem_cache_destroy(s->rcvbuf_cache);
--		return ret;
--	}
-+	if (ret)
-+		goto destroy_cache;
+diff --git a/sound/soc/codecs/cs42l73.c b/sound/soc/codecs/cs42l73.c
+index 3df2c473ab88..978cfbbad408 100644
+--- a/sound/soc/codecs/cs42l73.c
++++ b/sound/soc/codecs/cs42l73.c
+@@ -1307,10 +1307,9 @@ static int cs42l73_i2c_probe(struct i2c_client *i2c_client,
+ 		pdata = devm_kzalloc(&i2c_client->dev,
+ 				     sizeof(struct cs42l73_platform_data),
+ 				GFP_KERNEL);
+-		if (!pdata) {
+-			dev_err(&i2c_client->dev, "could not allocate pdata\n");
++		if (!pdata)
+ 			return -ENOMEM;
+-		}
 +
- 	ret = tipc_open_listening_sock(s);
--	if (ret < 0) {
--		tipc_work_stop(s);
--		kmem_cache_destroy(s->rcvbuf_cache);
--		return ret;
--	}
-+	if (ret)
-+		goto stop_work;
-+
-+	return 0;
-+
-+stop_work:
-+	tipc_work_stop(s);
-+destroy_cache:
-+	kmem_cache_destroy(s->rcvbuf_cache);
- 	return ret;
- }
- 
+ 		if (i2c_client->dev.of_node) {
+ 			if (of_property_read_u32(i2c_client->dev.of_node,
+ 				"chgfreq", &val32) >= 0)
 -- 
 2.15.0
 
