@@ -1,70 +1,88 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 09:16:39 +0000
-Subject: [PATCH] rtc-da9063: Use common error handling code in da9063_rtc_probe()
-Message-Id: <8733cf61-1c1a-cc3b-a6e9-37b9a5f8cc70@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:54:13 +0000
+Subject: Applied "ASoC: wm8903: Improve two size determinations in wm8903_i2c_probe()" to the asoc tree
+Message-Id: <E1eJOXl-0007VV-Aq@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <013d9ad7-a8ff-6fad-ba82-40e68cf0a601@users.sourceforge.net>
+In-Reply-To: <013d9ad7-a8ff-6fad-ba82-40e68cf0a601@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rtc@vger.kernel.org, support.opensource@diasemi.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: wm8903: Improve two size determinations in wm8903_i2c_probe()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 017b9b35cb107c0aeaad2ad770460c49e3f71395 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 2 Nov 2017 09:45:46 +0100
+Date: Fri, 24 Nov 2017 10:40:43 +0100
+Subject: [PATCH] ASoC: wm8903: Improve two size determinations in
+ wm8903_i2c_probe()
 
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
-
-* Replace two calls of the function "dev_err" by goto statements.
-
-* Adjust two condition checks.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/rtc/rtc-da9063.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/codecs/wm8903.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/rtc/rtc-da9063.c b/drivers/rtc/rtc-da9063.c
-index f85cae240f12..c5cbd40666aa 100644
---- a/drivers/rtc/rtc-da9063.c
-+++ b/drivers/rtc/rtc-da9063.c
-@@ -436,19 +436,15 @@ static int da9063_rtc_probe(struct platform_device *pdev)
- 				 config->rtc_alarm_secs_reg,
- 				 config->rtc_alarm_status_mask,
- 				 0);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to access RTC alarm register\n");
--		return ret;
--	}
-+	if (ret)
-+		goto report_access_failure;
+diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
+index 51eb7d61d446..cba90f21161f 100644
+--- a/sound/soc/codecs/wm8903.c
++++ b/sound/soc/codecs/wm8903.c
+@@ -1995,8 +1995,7 @@ static int wm8903_i2c_probe(struct i2c_client *i2c,
+ 	unsigned int val, irq_pol;
+ 	int ret, i;
  
- 	ret = regmap_update_bits(rtc->regmap,
- 				 config->rtc_alarm_secs_reg,
- 				 DA9063_ALARM_STATUS_ALARM,
- 				 DA9063_ALARM_STATUS_ALARM);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to access RTC alarm register\n");
--		return ret;
--	}
-+	if (ret)
-+		goto report_access_failure;
+-	wm8903 = devm_kzalloc(&i2c->dev,  sizeof(struct wm8903_priv),
+-			      GFP_KERNEL);
++	wm8903 = devm_kzalloc(&i2c->dev, sizeof(*wm8903), GFP_KERNEL);
+ 	if (wm8903 = NULL)
+ 		return -ENOMEM;
  
- 	ret = regmap_update_bits(rtc->regmap,
- 				 config->rtc_alarm_year_reg,
-@@ -490,6 +486,10 @@ static int da9063_rtc_probe(struct platform_device *pdev)
- 			irq_alarm, ret);
+@@ -2017,9 +2016,8 @@ static int wm8903_i2c_probe(struct i2c_client *i2c,
+ 	if (pdata) {
+ 		wm8903->pdata = pdata;
+ 	} else {
+-		wm8903->pdata = devm_kzalloc(&i2c->dev,
+-					sizeof(struct wm8903_platform_data),
+-					GFP_KERNEL);
++		wm8903->pdata = devm_kzalloc(&i2c->dev, sizeof(*wm8903->pdata),
++					     GFP_KERNEL);
+ 		if (!wm8903->pdata)
+ 			return -ENOMEM;
  
- 	return ret;
-+
-+report_access_failure:
-+	dev_err(&pdev->dev, "Failed to access RTC alarm register\n");
-+	return ret;
- }
- 
- static struct platform_driver da9063_rtc_driver = {
 -- 
-2.14.3
+2.15.0
 
