@@ -1,160 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Nov 2017 12:50:31 +0000
-Subject: [PATCH 4/4] ASN.1: Use common error handling code in main()
-Message-Id: <2dc2d07b-b816-c8fa-9e18-a9b2f0c33d61@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 21:27:32 +0000
+Subject: [PATCH 4/5] radeon_backlight: Return directly after a failed kmalloc() in radeonfb_bl_init()
+Message-Id: <3c7e74d9-0be1-cbfd-4070-d60904c55696@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
-In-Reply-To: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
+References: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
+In-Reply-To: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Nov 2017 13:31:22 +0100
+Date: Mon, 27 Nov 2017 21:50:28 +0100
 
-* Add jump targets so that a bit of exception handling can be better reused
-  in this function implementation.
-
-* Replace ten calls of the function "exit" by goto statements.
-
-* Replace two function calls by return statements.
-
-This issue was detected by using the Coccinelle software.
+Return directly after a call of the function "kmalloc" failed
+at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- scripts/asn1_compiler.c | 66 ++++++++++++++++++++++++-------------------------
- 1 file changed, 32 insertions(+), 34 deletions(-)
+ drivers/video/fbdev/aty/radeon_backlight.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
-index 06dc5397d8c8..4df8d0b85d3c 100644
---- a/scripts/asn1_compiler.c
-+++ b/scripts/asn1_compiler.c
-@@ -568,6 +568,7 @@ int main(int argc, char **argv)
- 	FILE *out, *hdr;
- 	char *buffer, *p;
- 	char *kbuild_verbose;
-+	char const *hint;
- 	int fd;
+diff --git a/drivers/video/fbdev/aty/radeon_backlight.c b/drivers/video/fbdev/aty/radeon_backlight.c
+index c5e0e3557cc2..7f7ed6f72ddb 100644
+--- a/drivers/video/fbdev/aty/radeon_backlight.c
++++ b/drivers/video/fbdev/aty/radeon_backlight.c
+@@ -145,7 +145,7 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
  
- 	kbuild_verbose = getenv("KBUILD_VERBOSE");
-@@ -588,7 +589,7 @@ int main(int argc, char **argv)
- 	if (argc != 4) {
- 		fprintf(stderr, "Format: %s [-v] [-d] <grammar-file> <c-file> <hdr-file>\n",
- 			argv[0]);
--		exit(2);
-+		return 2;
- 	}
+ 	pdata = kmalloc(sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+-		goto error;
++		return;
  
- 	filename = argv[1];
-@@ -596,44 +597,39 @@ int main(int argc, char **argv)
- 	headername = argv[3];
+ 	snprintf(name, sizeof(name), "radeonbl%d", rinfo->info->node);
  
- 	fd = open(filename, O_RDONLY);
--	if (fd < 0) {
--		perror(filename);
--		exit(1);
--	}
-+	if (fd < 0)
-+		goto report_file_failure;
- 
--	if (fstat(fd, &st) < 0) {
--		perror(filename);
--		exit(1);
--	}
-+	if (fstat(fd, &st) < 0)
-+		goto report_file_failure;
- 
- 	buffer = malloc(st.st_size + 1);
- 	if (!buffer) {
--		perror(NULL);
--		exit(1);
-+		hint = NULL;
-+		goto report_failure;
- 	}
- 
- 	readlen = read(fd, buffer, st.st_size);
--	if (readlen < 0) {
--		perror(filename);
--		exit(1);
--	}
-+	if (readlen < 0)
-+		goto report_file_failure;
- 
- 	if (close(fd) < 0) {
--		perror(filename);
--		exit(1);
-+report_file_failure:
-+		hint = filename;
-+		goto report_failure;
- 	}
- 
- 	if (readlen != st.st_size) {
- 		fprintf(stderr, "%s: Short read\n", filename);
--		exit(1);
-+		return 1;
- 	}
- 
- 	p = strrchr(argv[1], '/');
- 	p = p ? p + 1 : argv[1];
- 	grammar_name = strdup(p);
- 	if (!p) {
--		perror(NULL);
--		exit(1);
-+		hint = NULL;
-+		goto report_failure;
- 	}
- 	p = strchr(grammar_name, '.');
- 	if (p)
-@@ -646,30 +642,32 @@ int main(int argc, char **argv)
- 	dump_elements();
- 
- 	out = fopen(outputname, "w");
--	if (!out) {
--		perror(outputname);
--		exit(1);
--	}
-+	if (!out)
-+		goto report_output_failure;
- 
- 	hdr = fopen(headername, "w");
--	if (!hdr) {
--		perror(headername);
--		exit(1);
--	}
-+	if (!hdr)
-+		goto report_header_failure;
- 
- 	render(out, hdr);
- 
--	if (fclose(out) < 0) {
--		perror(outputname);
--		exit(1);
-+	if (fclose(hdr) < 0) {
-+report_header_failure:
-+		hint = headername;
-+		goto report_failure;
- 	}
- 
--	if (fclose(hdr) < 0) {
--		perror(headername);
--		exit(1);
-+	if (fclose(out) < 0) {
-+report_output_failure:
-+		hint = outputname;
-+		goto report_failure;
- 	}
- 
- 	return 0;
-+
-+report_failure:
-+	perror(hint);
-+	return 1;
- }
- 
- enum compound {
 -- 
 2.15.0
 
