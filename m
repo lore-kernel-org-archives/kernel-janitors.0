@@ -1,37 +1,89 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Nov 2017 11:46:21 +0000
-Subject: [bug report] perf report: Add dump_read function
-Message-Id: <20171113114621.zpjw4tj5iewxv4mi@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:52:56 +0000
+Subject: Applied "ASoC: cs35l34: Delete two error messages for a failed memory allocation in cs35l34_i2c_prob
+Message-Id: <E1eJOWW-00076Y-R2@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7e0b578a-e342-7c54-5eeb-f8dd427e59b5@users.sourceforge.net>
+In-Reply-To: <7e0b578a-e342-7c54-5eeb-f8dd427e59b5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>
 
-Hello Jiri Olsa,
+The patch
 
-This is a semi-automatic email about new static checker warnings.
+   ASoC: cs35l34: Delete two error messages for a failed memory allocation in cs35l34_i2c_probe()
 
-The patch dac7f6b7ed1c: "perf report: Add dump_read function" from 
-Aug 24, 2017, leads to the following Smatch complaint:
+has been applied to the asoc tree at
 
-    ./tools/perf/util/session.c:1148 dump_read()
-     error: we previously assumed 'evsel' could be null (see line 1145)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-./tools/perf/util/session.c
-  1144		printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
-  1145		       evsel ? perf_evsel__name(evsel) : "FAIL",
-                       ^^^^^
-The patch adds a check for NULL
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-  1146		       event->read.value);
-  1147	
-  1148		read_format = evsel->attr.read_format;
-                              ^^^^^^^
-followed by an unchecked dereference.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-  1149	
-  1150		if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-regards,
-dan carpenter
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 4dbd91549200574c71e10176d0ca37beca6703ec Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 21:13:29 +0100
+Subject: [PATCH] ASoC: cs35l34: Delete two error messages for a failed memory
+ allocation in cs35l34_i2c_probe()
+
+Omit extra messages for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs35l34.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/codecs/cs35l34.c b/sound/soc/codecs/cs35l34.c
+index 1e05026bedca..6cbdbbe53940 100644
+--- a/sound/soc/codecs/cs35l34.c
++++ b/sound/soc/codecs/cs35l34.c
+@@ -1007,10 +1007,8 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
+ 	cs35l34 = devm_kzalloc(&i2c_client->dev,
+ 			       sizeof(struct cs35l34_private),
+ 			       GFP_KERNEL);
+-	if (!cs35l34) {
+-		dev_err(&i2c_client->dev, "could not allocate codec\n");
++	if (!cs35l34)
+ 		return -ENOMEM;
+-	}
+ 
+ 	i2c_set_clientdata(i2c_client, cs35l34);
+ 	cs35l34->regmap = devm_regmap_init_i2c(i2c_client, &cs35l34_regmap);
+@@ -1047,11 +1045,9 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
+ 		pdata = devm_kzalloc(&i2c_client->dev,
+ 				sizeof(struct cs35l34_platform_data),
+ 				GFP_KERNEL);
+-		if (!pdata) {
+-			dev_err(&i2c_client->dev,
+-				"could not allocate pdata\n");
++		if (!pdata)
+ 			return -ENOMEM;
+-		}
++
+ 		if (i2c_client->dev.of_node) {
+ 			ret = cs35l34_handle_of_data(i2c_client, pdata);
+ 			if (ret != 0)
+-- 
+2.15.0
+
