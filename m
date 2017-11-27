@@ -1,37 +1,88 @@
-From: "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>
-Date: Wed, 08 Nov 2017 22:41:07 +0000
-Subject: Re: [PATCH] tcmu: Oops in unmap_thread_fn()
-Message-Id: <d4d2840b-d453-e67a-01b2-662a29bc134c@linux.vnet.ibm.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:52:59 +0000
+Subject: Applied "ASoC: cs35l32: Improve two size determinations in cs35l32_i2c_probe()" to the asoc tree
+Message-Id: <E1eJOWZ-00077Z-Qt@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170801200917.brigs5x47eujfx7a@mwanda>
- <1502062073.22966.45.camel@haakon3.daterainc.com>
-In-Reply-To: <1502062073.22966.45.camel@haakon3.daterainc.com>
+References: <521550ca-c13e-e647-5bbe-d8b172a6445b@users.sourceforge.net>
+In-Reply-To: <521550ca-c13e-e647-5bbe-d8b172a6445b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Xiubo Li <lixiubo@cmss.chinamobile.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
 
+   ASoC: cs35l32: Improve two size determinations in cs35l32_i2c_probe()
 
-On 8/6/17 6:27 PM, Nicholas A. Bellinger wrote:
-> On Tue, 2017-08-01 at 23:09 +0300, Dan Carpenter wrote:
->> Calling list_del() on the iterator pointer in list_for_each_entry() will
->> cause an oops.  We need to user the _safe() version for that.
->>
->> Fixes: c73d02f63c16 ("tcmu: Add fifo type waiter list support to avoid starvation")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
-> Applied to target-pending/for-next.
->
-> Thanks DanC.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe target-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-Also missing.
+has been applied to the asoc tree at
 
--Bryant
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b28ad41ec831b099dccac1f84a9cfb40b0650724 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 20:40:47 +0100
+Subject: [PATCH] ASoC: cs35l32: Improve two size determinations in
+ cs35l32_i2c_probe()
+
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs35l32.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/cs35l32.c b/sound/soc/codecs/cs35l32.c
+index e41d8ebe6eea..bc3a72e4c4ed 100644
+--- a/sound/soc/codecs/cs35l32.c
++++ b/sound/soc/codecs/cs35l32.c
+@@ -355,9 +355,7 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
+ 	unsigned int devid = 0;
+ 	unsigned int reg;
+ 
+-
+-	cs35l32 = devm_kzalloc(&i2c_client->dev, sizeof(struct cs35l32_private),
+-			       GFP_KERNEL);
++	cs35l32 = devm_kzalloc(&i2c_client->dev, sizeof(*cs35l32), GFP_KERNEL);
+ 	if (!cs35l32)
+ 		return -ENOMEM;
+ 
+@@ -373,9 +371,8 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
+ 	if (pdata) {
+ 		cs35l32->pdata = *pdata;
+ 	} else {
+-		pdata = devm_kzalloc(&i2c_client->dev,
+-				     sizeof(struct cs35l32_platform_data),
+-				GFP_KERNEL);
++		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
++				     GFP_KERNEL);
+ 		if (!pdata)
+ 			return -ENOMEM;
+ 
+-- 
+2.15.0
 
