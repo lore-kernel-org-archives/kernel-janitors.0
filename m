@@ -1,115 +1,86 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Nov 2017 12:48:10 +0000
-Subject: [PATCH 2/4] ASN.1: Improve exiting from parse_type()
-Message-Id: <6fd7f347-cdbb-9a0e-9817-8a35b262d8a6@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:53:34 +0000
+Subject: Applied "ASoC: cs42l52: Improve two size determinations in cs42l52_i2c_probe()" to the asoc tree
+Message-Id: <E1eJOX8-0007LK-PK@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
-In-Reply-To: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
+References: <d02ceefc-8918-f24d-6de7-8c6f348d5ed9@users.sourceforge.net>
+In-Reply-To: <d02ceefc-8918-f24d-6de7-8c6f348d5ed9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: cs42l52: Improve two size determinations in cs42l52_i2c_probe()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From cd9e0b8282653d8bdc2c8b799eeb26ee034cdd06 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Nov 2017 11:21:13 +0100
+Date: Wed, 22 Nov 2017 22:11:30 +0100
+Subject: [PATCH] ASoC: cs42l52: Improve two size determinations in
+ cs42l52_i2c_probe()
 
-* Add a jump target so that a call of the function "exit" is stored
-  only once at the end of this function.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-* Replace nine calls by goto statements.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- scripts/asn1_compiler.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ sound/soc/codecs/cs42l52.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
-index e37e5ef3fabb..0eea270fcaef 100644
---- a/scripts/asn1_compiler.c
-+++ b/scripts/asn1_compiler.c
-@@ -896,7 +896,7 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- 		default:
- 			fprintf(stderr, "%s:%d: Unrecognised tag class token '%s'\n",
- 				filename, cursor->line, cursor->content);
--			exit(1);
-+			goto exit;
- 		}
+diff --git a/sound/soc/codecs/cs42l52.c b/sound/soc/codecs/cs42l52.c
+index e8645f2ac0d9..9731e5dff291 100644
+--- a/sound/soc/codecs/cs42l52.c
++++ b/sound/soc/codecs/cs42l52.c
+@@ -1100,8 +1100,7 @@ static int cs42l52_i2c_probe(struct i2c_client *i2c_client,
+ 	unsigned int reg;
+ 	u32 val32;
  
- 		if (cursor >= end)
-@@ -904,7 +904,7 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- 		if (cursor->token_type != TOKEN_NUMBER) {
- 			fprintf(stderr, "%s:%d: Missing tag number '%s'\n",
- 				filename, cursor->line, cursor->content);
--			exit(1);
-+			goto exit;
- 		}
- 
- 		element->tag &= ~0x1f;
-@@ -919,7 +919,7 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- 		if (cursor->token_type != TOKEN_CLOSE_SQUARE) {
- 			fprintf(stderr, "%s:%d: Missing closing square bracket '%s'\n",
- 				filename, cursor->line, cursor->content);
--			exit(1);
-+			goto exit;
- 		}
- 		cursor++;
- 		if (cursor >= end)
-@@ -1020,7 +1020,7 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- 		if (!ref) {
- 			fprintf(stderr, "%s:%d: Type '%s' undefined\n",
- 				filename, cursor->line, cursor->content);
--			exit(1);
-+			goto exit;
- 		}
- 		cursor->type = *ref;
- 		(*ref)->ref_count++;
-@@ -1070,7 +1070,7 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- 	default:
- 		fprintf(stderr, "%s:%d: Token '%s' does not introduce a type\n",
- 			filename, cursor->line, cursor->content);
--		exit(1);
-+		goto exit;
- 	}
- 
- 	/* Handle elements that are optional */
-@@ -1088,13 +1088,13 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- 		if (cursor->token_type != TOKEN_ELEMENT_NAME) {
- 			fprintf(stderr, "%s:%d: Token '%s' is not an action function name\n",
- 				filename, cursor->line, cursor->content);
--			exit(1);
-+			goto exit;
- 		}
- 
- 		action = malloc(sizeof(struct action));
- 		if (!action) {
- 			perror(NULL);
--			exit(1);
-+			goto exit;
- 		}
- 		action->index = 0;
- 		action->name = cursor->content;
-@@ -1129,7 +1129,7 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- 		if (cursor->token_type != TOKEN_CLOSE_ACTION) {
- 			fprintf(stderr, "%s:%d: Missing close action, got '%s'\n",
- 				filename, cursor->line, cursor->content);
--			exit(1);
-+			goto exit;
- 		}
- 		cursor++;
- 	}
-@@ -1140,10 +1140,11 @@ static struct element *parse_type(struct token **_cursor, struct token *end,
- parse_error:
- 	fprintf(stderr, "%s:%d: Unexpected token '%s'\n",
- 		filename, cursor->line, cursor->content);
--	exit(1);
-+	goto exit;
- 
- overrun_error:
- 	fprintf(stderr, "%s: Unexpectedly hit EOF\n", filename);
-+exit:
- 	exit(1);
- }
+-	cs42l52 = devm_kzalloc(&i2c_client->dev, sizeof(struct cs42l52_private),
+-			       GFP_KERNEL);
++	cs42l52 = devm_kzalloc(&i2c_client->dev, sizeof(*cs42l52), GFP_KERNEL);
+ 	if (cs42l52 = NULL)
+ 		return -ENOMEM;
+ 	cs42l52->dev = &i2c_client->dev;
+@@ -1115,9 +1114,8 @@ static int cs42l52_i2c_probe(struct i2c_client *i2c_client,
+ 	if (pdata) {
+ 		cs42l52->pdata = *pdata;
+ 	} else {
+-		pdata = devm_kzalloc(&i2c_client->dev,
+-				     sizeof(struct cs42l52_platform_data),
+-				GFP_KERNEL);
++		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
++				     GFP_KERNEL);
+ 		if (!pdata)
+ 			return -ENOMEM;
  
 -- 
 2.15.0
