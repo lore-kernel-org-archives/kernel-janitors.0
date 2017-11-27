@@ -1,43 +1,125 @@
 From: Joe Perches <joe@perches.com>
-Date: Mon, 27 Nov 2017 09:06:44 +0000
+Date: Mon, 27 Nov 2017 09:25:37 +0000
 Subject: Re: [PATCH v2] checkpatch: Add a warning for log messages that don't end in a new line
-Message-Id: <1511773604.32426.24.camel@perches.com>
+Message-Id: <1511774737.32426.29.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171126054037.9743-1-logang@deltatee.com>
-          <alpine.DEB.2.20.1711260648130.2387@hadrien>
-          <1511676085.20482.18.camel@perches.com>
-          <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
-          <1511735382.20482.27.camel@perches.com>
-          <355029d1-48f5-095e-0d99-bb726d2d56e5@deltatee.com>
-          <alpine.DEB.2.20.1711270709390.2369@hadrien>
-          <ec39f4f5-cfab-a184-0f27-7f0172e2984f@deltatee.com>
-          <alpine.DEB.2.20.1711270732550.2369@hadrien>
-          <86f3f594-79f7-c2ce-2cc6-f641bd6f55ae@deltatee.com>
-         <1511771322.32426.1.camel@perches.com>
-         <alpine.DEB.2.20.1711270951450.3445@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1711270951450.3445@hadrien>
+                 <alpine.DEB.2.20.1711260648130.2387@hadrien>
+                 <1511676085.20482.18.camel@perches.com>
+                 <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
+                 <1511735382.20482.27.camel@perches.com>
+         <alpine.DEB.2.20.1711262334370.2111@hadrien>
+         <1511745165.20482.34.camel@perches.com>
+         <alpine.DEB.2.20.1711270704420.2369@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1711270704420.2369@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia.lawall@lip6.fr>
 Cc: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
 
-On Mon, 2017-11-27 at 09:52 +0100, Julia Lawall wrote:
-> On Mon, 27 Nov 2017, Joe Perches wrote:
-> > On Sun, 2017-11-26 at 23:40 -0700, Logan Gunthorpe wrote:
-> > > On 26/11/17 11:34 PM, Julia Lawall wrote:
-> > > > It would probably be better not to mention the KERN_CONT possibility at
-> > > > all.
-> > > 
-> > > Oh? I don't disagree... but what are we supposed to do in these cases?
-> > > The way v2 of my patch works it just says that there is a missing new
-> > > line. But Joe calls that a false positive. So if we can't report that
-> > > it's missing a new line and we can't say it looks like it needs a
-> > > KERN_CONT, then what can we do? The case is obviously wrong in some way
-> > > or another so we probably shouldn't just ignore it.
+On Mon, 2017-11-27 at 07:08 +0100, Julia Lawall wrote:
 > 
-> I meant why not only suggest pr_cont?
+> On Sun, 26 Nov 2017, Joe Perches wrote:
+> 
+> > On Sun, 2017-11-26 at 23:44 +0100, Julia Lawall wrote:
+> > > My semantic patch and results are below.  The semantic patch has some
+> > > features that may or may not be desired:
+> > > 
+> > > 1.  It goes beyond printk, pr_xxx, dev_xxx, and netdev_xxx, by finding
+> > > functions that are sometimes used with a format string ending with a
+> > > newline.  To reduce false positives, such a function is ignored if it is
+> > > sometimes used with a string that ends in a space.  This could lead to
+> > > false positives where actually one of the calls has a \n that it should
+> > > not have.
+> > > 
+> > > 2.  Coccinelle puts multipart strings on a single line.  So the rule goes
+> > > a little further and eliminates the multipartness.  Basically "xxx " "yyy"
+> > > becomes "xxx yyy" regardless of the length of the result.
+> > 
+> > What about the semi-common string concatenation "foo" #var "bar" ?
+> 
+> I don't think this is an issue.  There is no " " pattern in this.  It's
+> true that if the pieces were on separate lines, Coccinelle will now put
+> them on a single line.  I'm not sure I want to bother with this.
+> 
+> > > 3.  Some prints appear not to end with a newline because they end with \n.
+> > > where .\n was likely intended.  Instead of creating \n.\n, the semantic
+> > > patch just moves the .to the left of the . And if there was .\n. it just
+> > > drops the final period.
+> > 
+> > That may be a problem if the sentence is "something...\n"
+> 
+> I think I was not clear.  The sentence ends in ".\n.".
+> 
+> > There seem to be many false positives in here too.
+> 
+> Could you point to something specifically?  I saw a lot of cases with
+> prints followed by returns and gotos.  I guess those are not likely false
+> positives.
 
-Because checkpatch cannot know if the printk is missing a
-KERN_CONT or another different KERN_<LEVEL>.
+random entries, as your original post is 2.6M (and didn't get to lkml)
+and I only sampled it at a few places.
+
+[]
+diff -u -p a/lib/locking-selftest.c b/lib/locking-selftest.c
+--- a/lib/locking-selftest.c
++++ b/lib/locking-selftest.c
+@@ -1186,7 +1186,7 @@ static void dotest(void (*testcase_fn)(v
+
+ static inline void print_testname(const char *testname)
+ {
+-	printk("%33s:", testname);
++	printk("%33s:\n", testname);
+ }
+
+[]
+
+diff -u -p a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -562,7 +562,8 @@ void __dynamic_pr_debug(struct _ddebug *
+ 	vaf.fmt = fmt;
+ 	vaf.va = &args;
+
+-	printk(KERN_DEBUG "%s%pV", dynamic_emit_prefix(descriptor, buf), &vaf);
++	printk(KERN_DEBUG "%s%pV\n", dynamic_emit_prefix(descriptor, buf),
++	       &vaf);
+
+ 	va_end(args);
+ }
+
+[]
+
+diff -u -p a/drivers/tty/serial/ioc4_serial.c b/drivers/tty/serial/ioc4_serial.c
+--- a/drivers/tty/serial/ioc4_serial.c
++++ b/drivers/tty/serial/ioc4_serial.c
+@@ -2858,8 +2858,7 @@ ioc4_serial_attach_one(struct ioc4_drive
+ 				"sgi-ioc4serial", soft)) {
+ 		control->ic_irq = idd->idd_pdev->irq;
+ 	} else {
+-		printk(KERN_WARNING
+-		    "%s : request_irq fails for IRQ 0x%x\n ",
++		printk(KERN_WARNING "%s : request_irq fails for IRQ 0x%x\n \n",
+ 			__func__, idd->idd_pdev->irq);
+ 	}
+ 	ret = ioc4_attach_local(idd);
+
+[]
+
+below: the gig_dbg macro and _many_ other append a newline to a format
+
+diff -u -p a/drivers/isdn/gigaset/ev-layer.c b/drivers/isdn/gigaset/ev-layer.c
+--- a/drivers/isdn/gigaset/ev-layer.c
++++ b/drivers/isdn/gigaset/ev-layer.c
+@@ -411,7 +411,7 @@ static void add_cid_event(struct cardsta
+ 	unsigned next, tail;
+ 	struct event_t *event;
+
+-	gig_dbg(DEBUG_EVENT, "queueing event %d for cid %d", type, cid);
++	gig_dbg(DEBUG_EVENT, "queueing event %d for cid %d\n", type, cid);
+
+ 	spin_lock_irqsave(&cs->ev_lock, flags);
+
+etc...
 
