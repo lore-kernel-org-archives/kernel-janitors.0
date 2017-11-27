@@ -1,57 +1,72 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 18:48:12 +0000
-Subject: [PATCH] drm/nouveau/bios: make const arrays hwsq_signature and edid_sig static
-Message-Id: <20171102184812.15263-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:54:39 +0000
+Subject: Applied "ASoC: wm2000: Delete an error message for a failed memory allocation in wm2000_i2c_probe()"
+Message-Id: <E1eJOYB-0007Zw-Op@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <87078639-7ec0-c3cc-5399-5607f2329c63@users.sourceforge.net>
+In-Reply-To: <87078639-7ec0-c3cc-5399-5607f2329c63@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Don't populate arrays hwsq_signature and edid_sig on the stack but
-instead make them static. Makes the object code smaller by over 190
-bytes:
+   ASoC: wm2000: Delete an error message for a failed memory allocation in wm2000_i2c_probe()
 
-Before:
-   text    data     bss     dec     hex filename
-  35676    3312      64   39052    988c nouveau_bios.o
+has been applied to the asoc tree at
 
-After:
-   text    data     bss     dec     hex filename
-  35319    3472      64   38855    97c7 nouveau_bios.o
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-(gcc version 7.2.0 x86_64)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From e866d87a7de38672f52c6e7567e88c3f82f937dc Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 22:28:00 +0100
+Subject: [PATCH] ASoC: wm2000: Delete an error message for a failed memory
+ allocation in wm2000_i2c_probe()
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_bios.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wm2000.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nouveau/nouveau_bios.c
-index dd6fba55ad5d..18c5f5874239 100644
---- a/drivers/gpu/drm/nouveau/nouveau_bios.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
-@@ -1964,7 +1964,7 @@ static int load_nv17_hw_sequencer_ucode(struct drm_device *dev,
- 	 * The microcode entries are found by the "HWSQ" signature.
- 	 */
- 
--	const uint8_t hwsq_signature[] = { 'H', 'W', 'S', 'Q' };
-+	static const uint8_t hwsq_signature[] = { 'H', 'W', 'S', 'Q' };
- 	const int sz = sizeof(hwsq_signature);
- 	int hwsq_offset;
- 
-@@ -1980,7 +1980,7 @@ uint8_t *nouveau_bios_embedded_edid(struct drm_device *dev)
- {
- 	struct nouveau_drm *drm = nouveau_drm(dev);
- 	struct nvbios *bios = &drm->vbios;
--	const uint8_t edid_sig[] = {
-+	static const uint8_t edid_sig[] = {
- 			0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
- 	uint16_t offset = 0;
- 	uint16_t newoffset;
+diff --git a/sound/soc/codecs/wm2000.c b/sound/soc/codecs/wm2000.c
+index 23cde3a0dc11..ce936deed7e3 100644
+--- a/sound/soc/codecs/wm2000.c
++++ b/sound/soc/codecs/wm2000.c
+@@ -902,7 +902,6 @@ static int wm2000_i2c_probe(struct i2c_client *i2c,
+ 					    wm2000->anc_download_size,
+ 					    GFP_KERNEL);
+ 	if (wm2000->anc_download = NULL) {
+-		dev_err(&i2c->dev, "Out of memory\n");
+ 		ret = -ENOMEM;
+ 		goto err_supplies;
+ 	}
 -- 
-2.14.1
+2.15.0
 
