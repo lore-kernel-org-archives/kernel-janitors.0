@@ -1,34 +1,28 @@
-From: Brian Austin <brian.austin@cirrus.com>
-Date: Mon, 27 Nov 2017 14:47:26 +0000
-Subject: Re: [EXTERNAL] [PATCH 0/2] ASoC: cs35l32: Adjustments for cs35l32_i2c_probe()
-Message-Id: <d04fe61d-f56d-4faf-a337-aa131b7513a2@EX3.ad.cirrus.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 17:56:58 +0000
+Subject: [PATCH 0/3] video/fbdev/au1100fb: Adjustments for au1100fb_drv_probe()
+Message-Id: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <caf22f25-6c27-b869-89e8-ef2904a2baf2@users.sourceforge.net>
-In-Reply-To: <caf22f25-6c27-b869-89e8-ef2904a2baf2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 22 Nov 2017, SF Markus Elfring wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 18:53:21 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 22 Nov 2017 20:49:45 +0100
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (2):
->   Delete two error messages for a failed memory allocation
->   Improve two size determinations
-> 
->  sound/soc/codecs/cs35l32.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.15.0
-> 
-> 
-For the series, Thanks
-Acked-by: Brian Austin <brian.austin@cirrus.com>
+Three update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
+  Delete an unnecessary variable initialisation
+
+ drivers/video/fbdev/au1100fb.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+-- 
+2.15.0
+
