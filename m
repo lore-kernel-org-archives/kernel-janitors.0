@@ -1,36 +1,55 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 27 Nov 2017 04:00:36 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Mon, 27 Nov 2017 06:08:28 +0000
 Subject: Re: [PATCH v2] checkpatch: Add a warning for log messages that don't end in a new line
-Message-Id: <355029d1-48f5-095e-0d99-bb726d2d56e5@deltatee.com>
+Message-Id: <alpine.DEB.2.20.1711270704420.2369@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171126054037.9743-1-logang@deltatee.com>
- <alpine.DEB.2.20.1711260648130.2387@hadrien>
- <1511676085.20482.18.camel@perches.com>
- <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
- <1511735382.20482.27.camel@perches.com>
-In-Reply-To: <1511735382.20482.27.camel@perches.com>
+References: <20171126054037.9743-1-logang@deltatee.com>         <alpine.DEB.2.20.1711260648130.2387@hadrien>         <1511676085.20482.18.camel@perches.com>         <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>         <1511735382.20482.27.camel@perches.com>
+         <alpine.DEB.2.20.1711262334370.2111@hadrien> <1511745165.20482.34.camel@perches.com>
+In-Reply-To: <1511745165.20482.34.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
+To: Joe Perches <joe@perches.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
 
 
 
-On 26/11/17 03:29 PM, Joe Perches wrote:
-> This proposal has a very high false positive rate.
+On Sun, 26 Nov 2017, Joe Perches wrote:
 
-The only actual false positive you've pointed out is the one that is
-just incorrect in the wrong way (the author should have used a KERN_CONT
-but did not). I could easily do something similar to what Julia proposes
-and produce a different warning if the string ends in a space. But I
-don't see any bullet proof way for any script to deduce what the author
-actually meant.
+> On Sun, 2017-11-26 at 23:44 +0100, Julia Lawall wrote:
+> > My semantic patch and results are below.  The semantic patch has some
+> > features that may or may not be desired:
+> >
+> > 1.  It goes beyond printk, pr_xxx, dev_xxx, and netdev_xxx, by finding
+> > functions that are sometimes used with a format string ending with a
+> > newline.  To reduce false positives, such a function is ignored if it is
+> > sometimes used with a string that ends in a space.  This could lead to
+> > false positives where actually one of the calls has a \n that it should
+> > not have.
+> >
+> > 2.  Coccinelle puts multipart strings on a single line.  So the rule goes
+> > a little further and eliminates the multipartness.  Basically "xxx " "yyy"
+> > becomes "xxx yyy" regardless of the length of the result.
+>
+> What about the semi-common string concatenation "foo" #var "bar" ?
 
-> Keep at it though.
-> Maybe something useful will be produced with more effort.
+I don't think this is an issue.  There is no " " pattern in this.  It's
+true that if the pieces were on separate lines, Coccinelle will now put
+them on a single line.  I'm not sure I want to bother with this.
 
-Unless there's more actually constructive criticism I don't think I'll
-be getting any further with this.
+> > 3.  Some prints appear not to end with a newline because they end with \n.
+> > where .\n was likely intended.  Instead of creating \n.\n, the semantic
+> > patch just moves the .to the left of the . And if there was .\n. it just
+> > drops the final period.
+>
+> That may be a problem if the sentence is "something...\n"
 
-Logan
+I think I was not clear.  The sentence ends in ".\n.".
+
+> There seem to be many false positives in here too.
+
+Could you point to something specifically?  I saw a lot of cases with
+prints followed by returns and gotos.  I guess those are not likely false
+positives.
+
+julia
