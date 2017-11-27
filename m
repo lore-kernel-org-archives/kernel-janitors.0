@@ -1,37 +1,88 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 29 Nov 2017 14:04:31 +0000
-Subject: Re: [3/3] pinctrl: mcp23s08: Combine two function calls in mcp23s08_dbg_show()
-Message-Id: <2132d281-c4da-81b0-6dc7-4b42807cebf0@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:52:53 +0000
+Subject: Applied "ASoC: cs35l34: Improve two size determinations in cs35l34_i2c_probe()" to the asoc tree
+Message-Id: <E1eJOWT-00075X-RW@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
- <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
- <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
-In-Reply-To: <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
+References: <044cfc92-158f-3bff-a2e6-4993a9070e13@users.sourceforge.net>
+In-Reply-To: <044cfc92-158f-3bff-a2e6-4993a9070e13@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
->> * Print a line break together with other data in a single function call.
->>
->> * Adjust indentation.
-…
-> 
-> This does not apply.
-> Possibly depends on 2/3.
+The patch
 
-Partly, yes.
+   ASoC: cs35l34: Improve two size determinations in cs35l34_i2c_probe()
 
+has been applied to the asoc tree at
 
-How do you think about the following possibilities?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-* Omit two context lines at the end from this update step.
-  or
-* Refer to the jump label “done” (instead of renaming it to “unlock” before).
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Would you try once more to integrate the shown small change?
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Regards,
-Markus
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7f9f3abd285433e224faaf854b165b189270c923 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 21:17:42 +0100
+Subject: [PATCH] ASoC: cs35l34: Improve two size determinations in
+ cs35l34_i2c_probe()
+
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs35l34.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/cs35l34.c b/sound/soc/codecs/cs35l34.c
+index 6cbdbbe53940..0600d5264c4c 100644
+--- a/sound/soc/codecs/cs35l34.c
++++ b/sound/soc/codecs/cs35l34.c
+@@ -1004,9 +1004,7 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
+ 	unsigned int devid = 0;
+ 	unsigned int reg;
+ 
+-	cs35l34 = devm_kzalloc(&i2c_client->dev,
+-			       sizeof(struct cs35l34_private),
+-			       GFP_KERNEL);
++	cs35l34 = devm_kzalloc(&i2c_client->dev, sizeof(*cs35l34), GFP_KERNEL);
+ 	if (!cs35l34)
+ 		return -ENOMEM;
+ 
+@@ -1042,9 +1040,8 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
+ 	if (pdata) {
+ 		cs35l34->pdata = *pdata;
+ 	} else {
+-		pdata = devm_kzalloc(&i2c_client->dev,
+-				sizeof(struct cs35l34_platform_data),
+-				GFP_KERNEL);
++		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
++				     GFP_KERNEL);
+ 		if (!pdata)
+ 			return -ENOMEM;
+ 
+-- 
+2.15.0
+
