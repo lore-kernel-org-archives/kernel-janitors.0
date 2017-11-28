@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Nov 2017 15:01:47 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 28 Nov 2017 15:21:20 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <a1cd0902-c8bb-9813-8d0c-d394975ef745@users.sourceforge.net>
+Message-Id: <s5h4lpeqvin.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <dfa99045-f213-3dad-b1f4-2e90eb38ddbd@users.sourceforge.net>
@@ -24,39 +24,51 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5h8teqqxhx.wl-tiwai@suse.de>
  <f7189a7c-3b07-e976-ac18-6143365bbd21@users.sourceforge.net>
  <s5h7euaqwtp.wl-tiwai@suse.de>
-In-Reply-To: <s5h7euaqwtp.wl-tiwai@suse.de>
+ <a1cd0902-c8bb-9813-8d0c-d394975ef745@users.sourceforge.net>
+In-Reply-To: <a1cd0902-c8bb-9813-8d0c-d394975ef745@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
 
->>> Give the test result before speaking too much.
->>
->> Which concrete data do you expect here?
+On Tue, 28 Nov 2017 16:01:47 +0100,
+SF Markus Elfring wrote:
 > 
-> Depends on the result.
+> >>> Give the test result before speaking too much.
+> >>
+> >> Which concrete data do you expect here?
+> > 
+> > Depends on the result.
+> 
+> How can this vary?
 
-How can this vary?
+How?  Because I didn't see any test result from you, so I can't trust
+you.
+
+> > The bottom line is that you run your patched kernel on the real hardware
+> 
+> Which test configurations would you trust finally?
+
+Do test whatever like the users do.
+
+> > or equivalent (VM or emulation) for the device you touched.
+> 
+> Can all the devices for which I dared to adjust their source code a bit
+> tested in desired ways within virtual machines?
+
+No, you need to run the kernel exactly to be used by the user of the
+target hardware.
+
+> > Run your patched kernel and the driver code on the real machine with
+> > the corresponding device.  Show the device is running.  That's the
+> > very first step.  Then follow the more detailed tests, but it depends
+> > on the subsystem.
+> 
+> How can such descriptions improve the trust situation?
+
+It's the first step.  At least then I can see you did some test.
+Currently nothing.  zero.  nada.  How can I trust it?
 
 
-> The bottom line is that you run your patched kernel on the real hardware
-
-Which test configurations would you trust finally?
-
-
-> or equivalent (VM or emulation) for the device you touched.
-
-Can all the devices for which I dared to adjust their source code a bit
-tested in desired ways within virtual machines?
-
-
-> Run your patched kernel and the driver code on the real machine with
-> the corresponding device.  Show the device is running.  That's the
-> very first step.  Then follow the more detailed tests, but it depends
-> on the subsystem.
-
-How can such descriptions improve the trust situation?
-
-Regards,
-Markus
+Takashi
