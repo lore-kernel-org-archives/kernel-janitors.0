@@ -1,60 +1,68 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 27 Nov 2017 19:51:20 +0000
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Date: Tue, 28 Nov 2017 10:39:24 +0000
 Subject: Re: [PATCH] ALSA: drivers: make array 'names' const, reduces object code size
-Message-Id: <s5h7eubmrev.wl-tiwai@suse.de>
+Message-Id: <7ac4b078-5c9a-5285-1bc1-8c02adfd56c0@sakamocchi.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171127125851.10076-1-colin.king@canonical.com>
-        <11bbcc13-2ff9-68ed-6331-f65c2247b4db@sakamocchi.jp>
-In-Reply-To: <11bbcc13-2ff9-68ed-6331-f65c2247b4db@sakamocchi.jp>
+ <11bbcc13-2ff9-68ed-6331-f65c2247b4db@sakamocchi.jp>
+ <s5h7eubmrev.wl-tiwai@suse.de>
+In-Reply-To: <s5h7eubmrev.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: alsa-devel@alsa-project.org, Colin King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, wharms@bfs.de, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Colin King <colin.king@canonical.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, wharms@bfs.de
 
-On Mon, 27 Nov 2017 18:34:17 +0100,
-Takashi Sakamoto wrote:
+On Nov 28 2017 04:51, Takashi Iwai wrote:
+> On Mon, 27 Nov 2017 18:34:17 +0100,
+> Takashi Sakamoto wrote:
+>>
+>> Hi,
+>>
+>> On Nov 27 2017 21:58, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> Don't populate array 'names' on the stack but instead make them static.
+>>> Makes the object code smaller by 50 bytes:
+>>>
+>>> Before:
+>>>      text	   data	    bss	    dec	    hex	filename
+>>>     21237	   9192	   1120	  31549	   7b3d	linux/sound/drivers/dummy.o
+>>>
+>>> After:
+>>>      text	   data	    bss	    dec	    hex	filename
+>>>     21095	   9280	   1120	  31495	   7b07	linux/sound/drivers/dummy.o
+>>>
+>>> (gcc version 7.2.0 x86_64)
+>>>
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>> ---
+>>>    sound/drivers/dummy.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
+>>> index 7b2b1f766b00..69db45bc0197 100644
+>>> --- a/sound/drivers/dummy.c
+>>> +++ b/sound/drivers/dummy.c
+>>> @@ -830,7 +830,7 @@ static int snd_dummy_capsrc_put(struct snd_kcontrol *kcontrol, struct snd_ctl_el
+>>>    static int snd_dummy_iobox_info(struct snd_kcontrol *kcontrol,
+>>>    				struct snd_ctl_elem_info *info)
+>>>    {
+>>> -	const char *const names[] = { "None", "CD Player" };
+>>> +	static const char *const names[] = { "None", "CD Player" };
+>>>      	return snd_ctl_enum_info(info, 1, 2, names);
+>>>    }
+>>
+>> Total size of snd-dummy.ko increases but this patch has an advantage
+>> to have the symbol in read-only section.
 > 
-> Hi,
-> 
-> On Nov 27 2017 21:58, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Don't populate array 'names' on the stack but instead make them static.
-> > Makes the object code smaller by 50 bytes:
-> >
-> > Before:
-> >     text	   data	    bss	    dec	    hex	filename
-> >    21237	   9192	   1120	  31549	   7b3d	linux/sound/drivers/dummy.o
-> >
-> > After:
-> >     text	   data	    bss	    dec	    hex	filename
-> >    21095	   9280	   1120	  31495	   7b07	linux/sound/drivers/dummy.o
-> >
-> > (gcc version 7.2.0 x86_64)
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   sound/drivers/dummy.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
-> > index 7b2b1f766b00..69db45bc0197 100644
-> > --- a/sound/drivers/dummy.c
-> > +++ b/sound/drivers/dummy.c
-> > @@ -830,7 +830,7 @@ static int snd_dummy_capsrc_put(struct snd_kcontrol *kcontrol, struct snd_ctl_el
-> >   static int snd_dummy_iobox_info(struct snd_kcontrol *kcontrol,
-> >   				struct snd_ctl_elem_info *info)
-> >   {
-> > -	const char *const names[] = { "None", "CD Player" };
-> > +	static const char *const names[] = { "None", "CD Player" };
-> >     	return snd_ctl_enum_info(info, 1, 2, names);
-> >   }
-> 
-> Total size of snd-dummy.ko increases but this patch has an advantage
-> to have the symbol in read-only section.
+> The total size decreases :)
 
-The total size decreases :)
+Ah, yes. The state of my local build tree is not good to calculate it... 
+In fact, the relocatable object decreases its size when built with a 
+header package from Ubuntu repository.
 
 
-Takashi
+Thanks
+
+Takashi Sakamoto
