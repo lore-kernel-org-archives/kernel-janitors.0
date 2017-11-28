@@ -1,11 +1,9 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 19:43:45 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 28 Nov 2017 19:48:52 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5hk1yajij2.wl-tiwai@suse.de>
+Message-Id: <727d5044-bad0-5170-83c0-dfddcc919588@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
- <c2b7543c-cd2c-f7f6-98f3-23e2ca6f8b90@users.sourceforge.net>
- <s5hshcyr2on.wl-tiwai@suse.de>
  <539adde3-a713-721f-2a0d-1d1ef925fb86@users.sourceforge.net>
  <s5hpo82r1s5.wl-tiwai@suse.de>
  <9a9348f4-d059-de28-1445-0189b7fb0ba3@users.sourceforge.net>
@@ -25,32 +23,17 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <99282c06-bfad-d7cf-16d8-eb1e015ebdbd@users.sourceforge.net>
  <s5hr2sijlp7.wl-tiwai@suse.de>
  <19724fa4-47eb-827c-cb17-126440500179@users.sourceforge.net>
-In-Reply-To: <19724fa4-47eb-827c-cb17-126440500179@users.sourceforge.net>
+ <s5hk1yajij2.wl-tiwai@suse.de>
+In-Reply-To: <s5hk1yajij2.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 28 Nov 2017 20:08:13 +0100,
-SF Markus Elfring wrote:
-> 
-> >> Examples:
-> >> * ALSA: cs5530: Use common error handling code in snd_cs5530_probe()
-> >>   https://lkml.org/lkml/2017/11/18/266
-> >>   https://patchwork.kernel.org/patch/10064945/
-> >>   https://lkml.kernel.org/r/<a2cb6494-a01c-668a-cd9b-1a8428a0d4c9@users.sourceforge.net>
-> > 
-> > This is no trivial patch.
-> 
-> Why do you find this one more challenging now than a similar one?
-> 
-> ALSA: maestro3: Use common error handling code in two functions
-> https://lkml.org/lkml/2017/9/6/39
-> https://patchwork.kernel.org/patch/9939985/
-> https://lkml.kernel.org/r/<83b1ba49-253d-72ed-b3b0-ec7d5e72a12c@users.sourceforge.net>
+> Because it turned out that your patch can be wrong and broken.
 
-Because it turned out that your patch can be wrong and broken.
+At which point did you change you mind for any of my (higher level) patches?
 
-
-Takashi
+Regards,
+Markus
