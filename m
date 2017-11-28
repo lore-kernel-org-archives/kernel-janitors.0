@@ -1,91 +1,70 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 17 Nov 2017 11:11:12 +0000
-Subject: Re: [PATCH] ALSA: synth: emux: remove redundant test for r <= 13
-Message-Id: <5A0EC3D0.6020101@bfs.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Nov 2017 18:23:39 +0000
+Subject: [PATCH] gpio: gpio-stmpe: make various char arrays static const, shrinks object size
+Message-Id: <20171128182339.24579-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171114172653.6690-1-colin.king@canonical.com> <s5hwp2pyxj7.wl-tiwai@suse.de> <8de4b3a4-9ab4-3d23-6664-afffb28d864e@canonical.com>
-In-Reply-To: <8de4b3a4-9ab4-3d23-6664-afffb28d864e@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Don't populate the read-only arrays edge_det_values, rise_values and
+fall_values on the stack but instead make them static and constify them.
+Makes the object code smaller by over 240 bytes:
 
-Am 17.11.2017 12:07, schrieb Colin Ian King:
-> On 17/11/17 11:06, Takashi Iwai wrote:
->> On Tue, 14 Nov 2017 18:26:53 +0100,
->> Colin King wrote:
->>>
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The calculation r = (3 - ((rate >> 6) & 3)) * 3 results in r being
->>> 0, 3, 6 or 9 and so the check (13 > r) is always true and hence we
->>> can remove the redundant check and the else path.
->>>
->>> Detected by CoverityScan, CID#744415 ("Logically dead code")
->>>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>
->> The calculation of t itself can be generic in case we may add a
->> support greater than the current r, so I don't think it's so much
->> beneficial with this code reduction.  Better to keep the code as
->> reference.
-> 
-> OK, that's a good decision.
-> 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   9525	   2520	    192	  12237	   2fcd	drivers/gpio/gpio-stmpe.o
 
-NTL is should be documented that this is intentional before the next
-scanner finds it.
+After:
+   text	   data	    bss	    dec	    hex	filename
+   9025	   2776	    192	  11993	   2ed9	drivers/gpio/gpio-stmpe.o
 
-just my 2 cents,
+(gcc version 7.2.0 x86_64)
 
-re,
- wh
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-stmpe.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index e6e5cca624a7..e3d048e65339 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -273,15 +273,21 @@ static void stmpe_dbg_show_one(struct seq_file *s,
+ 		u8 fall_reg;
+ 		u8 irqen_reg;
+ 
+-		char *edge_det_values[] = {"edge-inactive",
+-					   "edge-asserted",
+-					   "not-supported"};
+-		char *rise_values[] = {"no-rising-edge-detection",
+-				       "rising-edge-detection",
+-				       "not-supported"};
+-		char *fall_values[] = {"no-falling-edge-detection",
+-				       "falling-edge-detection",
+-				       "not-supported"};
++		static const char * const edge_det_values[] = {
++			"edge-inactive",
++			"edge-asserted",
++			"not-supported"
++		};
++		static const char * const rise_values[] = {
++			"no-rising-edge-detection",
++			"rising-edge-detection",
++			"not-supported"
++		};
++		static const char * const fall_values[] = {
++			"no-falling-edge-detection",
++			"falling-edge-detection",
++			"not-supported"
++		};
+ 		#define NOT_SUPPORTED_IDX 2
+ 		u8 edge_det = NOT_SUPPORTED_IDX;
+ 		u8 rise = NOT_SUPPORTED_IDX;
+-- 
+2.14.1
 
-
-
-> Colin
->>
->>
->> thanks,
->>
->> Takashi
->>
->>> ---
->>>  sound/synth/emux/soundfont.c | 5 +----
->>>  1 file changed, 1 insertion(+), 4 deletions(-)
->>>
->>> diff --git a/sound/synth/emux/soundfont.c b/sound/synth/emux/soundfont.c
->>> index 31a4ea94830e..0beb5a737c8b 100644
->>> --- a/sound/synth/emux/soundfont.c
->>> +++ b/sound/synth/emux/soundfont.c
->>> @@ -858,10 +858,7 @@ calc_gus_envelope_time(int rate, int start, int end)
->>>  	p = rate & 0x3f;
->>>  	t = end - start;
->>>  	if (t < 0) t = -t;
->>> -	if (13 > r)
->>> -		t = t << (13 - r);
->>> -	else
->>> -		t = t >> (r - 13);
->>> +	t = t << (13 - r);
->>>  	return (t * 10) / (p * 441);
->>>  }
->>>  
->>> -- 
->>> 2.14.1
->>>
->>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
