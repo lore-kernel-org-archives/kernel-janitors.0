@@ -1,119 +1,48 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 11:37:46 +0000
-Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5hy3mqr5v9.wl-tiwai@suse.de>
+From: Ondrej Zary <linux@rainbow-software.org>
+Date: Tue, 28 Nov 2017 12:33:14 +0000
+Subject: Re: [alsa-devel] ALSA: nm256: Fine-tuning for three function implementations
+Message-Id: <201711281333.15131.linux@rainbow-software.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
-        <s5hefoy16xg.wl-tiwai@suse.de>
-        <dfa99045-f213-3dad-b1f4-2e90eb38ddbd@users.sourceforge.net>
-        <s5h7euq9hqt.wl-tiwai@suse.de>
-        <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
-        <s5hbmjmluba.wl-tiwai@suse.de>
-        <2cbef557-5f89-c630-e108-14ef2ce6b41a@users.sourceforge.net>
-        <s5h4lpelqfm.wl-tiwai@suse.de>
-        <1547a4c2-5b70-e3a3-b482-d28c538e615c@users.sourceforge.net>
-In-Reply-To: <1547a4c2-5b70-e3a3-b482-d28c538e615c@users.sourceforge.net>
+References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net> <s5hbmjmluba.wl-tiwai@suse.de> <2cbef557-5f89-c630-e108-14ef2ce6b41a@users.sourceforge.net>
+In-Reply-To: <2cbef557-5f89-c630-e108-14ef2ce6b41a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: alsa-devel@alsa-project.org
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Takashi Iwai <tiwai@suse.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 28 Nov 2017 10:50:21 +0100,
-SF Markus Elfring wrote:
-> 
-> >> There can be additional means be used to reduce the probability
-> >> of undesired side effects.
-> > 
-> > Irrelevant,
-> 
-> I got an other opinion here.
-
-Not from me.
-
-> > it doesn't fix a bug,
-> 
-> Did I suggest to correct a coding style “bug”?
-
-No.  A coding style issue is never a bug.
-
-> > nor dramatic improvement.
-> 
-> I agree that the change could be small only for this software module alone.
-> I guess that we discuss not only change patterns for this one
-> but also other affected modules here (besides a concrete example).
-> The result summary might be more significant overall.
-
-No.
-
-> >>> It must be "almost perfect" for such a code refactoring.
+On Tuesday 28 November 2017, SF Markus Elfring wrote:
+> >>>> There is a general source code transformation pattern involved.
+> >>>> So I find that it is systematic.
+> >>>>
+> >>>> But I did not dare to develop a script variant for the semantic patch
+> >>>> language (Coccinelle software) which can handle all special use cases
+> >>>> as a few of them are already demonstrated in this tiny patch series.
+> >>>
+> >>> Then you're doing everything by hands,
 > >>
-> >> Can you get the impression that the shown transformation patterns were correctly
-> >> applied for the source file “sound/pci/nm256/nm256.c”?
-> > 
-> > Impression doesn't matter.
-> 
-> It seems then that you can not get the kind of information you might be looking for
-> at the moment from me (alone).
+> >> I am navigating through possible changes around the pattern
+> >> “Use common error handling code” mostly manually so far.
+> >>
+> >>> and can be wrong
+> >>
+> >> Such a possibility remains as usual.
+> >
+> > "As usual" doesn't suffice.
+>
+> There can be additional means be used to reduce the probability
+> of undesired side effects.
+>
+> > It must be "almost perfect" for such a code refactoring.
+>
+> Can you get the impression that the shown transformation patterns were
+> correctly applied for the source file “sound/pci/nm256/nm256.c”?
 
-No, the patch itself speaks.
+Have you tested the driver? Probably not. Please don't "improve" working 
+drivers unless you have the hardware to test your changes. Patches like this 
+are known to cause regressions. If the hardware is rare (like the NM256), the 
+regression can hit years later when someone with such HW upgrades distro 
+(e.g. Debian stable).
 
-> > The question is whether it's 100% correct or not in such a case.
-> 
-> Would any other source code reviewers like to provide a corresponding acknowledgement
-> for concrete changes?
-
-If you get more reviewed-by from others, it means already it's safer
-to apply.  Then I can take it.  But without that, it's obviously no
-material to take.
-
-> >> Are there any more software developers and code reviewers available
-> >> who would like to point another programming mistake out for this Linux module?
-> > 
-> > If you have find such, then it's fine, you can get your patches
-> > reviewed and more assured.
-> 
-> I hope that mailing list readers could offer something.
-
-Let's hope.
-
-> > But in the current situation, no one else is interested in it,
-> > and that's going to nowhere.
-> 
-> Did this software module become “too old”?
-
-Mostly the hardware is too old, or the change itself isn't interesting
-enough.
-
-> > The *really* trivial ones were applied.  The rest are not.
-> 
-> Can higher level transformation patterns become easier to accept
-> by any other means?
-
-Only if it's assured to work and not to break anything else.
-
-> >> Do you need any more information to see and eventually accept the sense again?
-> > 
-> > No.  This kind of code refactoring has no more information.
-> > It's a "trivial" change, after all.
-> 
-> Would you like to distinguish the possible update steps better to avoid
-> further confusion around “triviality”?
-
-Learn from the past.
-
-> >> Are you using a continuous integration system?
-> > 
-> > Not really in my side.  But there are others doing that.
-> 
-> How much does the omission of such an useful development tool
-> influence your concerns?
-
-Can't judge unless I really see / use it.
-
-> Would you like to improve the software situation in any ways there?
-
-I *hope*, but only when it's not too annoying.
-
-
-Takashi
+-- 
+Ondrej Zary
