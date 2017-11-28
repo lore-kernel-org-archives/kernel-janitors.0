@@ -1,82 +1,94 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 12:43:26 +0000
-Subject: [PATCH 1/2] ASoC: rockchip: Use common error handling code in rk_aif1_hw_params()
-Message-Id: <72605b8c-a5dc-3cc6-8e9f-940c8e72581d@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Nov 2017 19:16:04 +0000
+Subject: [PATCH] block: DAC960: make various char arrays static const, shrinks object size
+Message-Id: <20171128191604.25435-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <255fa488-a5f1-2ea3-dd48-b10ad8b2c18c@users.sourceforge.net>
-In-Reply-To: <255fa488-a5f1-2ea3-dd48-b10ad8b2c18c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 13:23:35 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better reused
-in an if branch of these functions.
+Don't populate the read-only arrays ReadCacheStatus, WriteCacheStatus and
+SenseErrors on the stack but instead make them static and constify them.
+Makes the object code smaller by over 540 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 151673	  32984	    960	 185617	  2d511	drivers/block/DAC960.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 150869	  33240	    960	 185069	  2d2ed	drivers/block/DAC960.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/rockchip/rockchip_max98090.c | 11 ++++-------
- sound/soc/rockchip/rockchip_rt5645.c   | 11 ++++-------
- 2 files changed, 8 insertions(+), 14 deletions(-)
+ drivers/block/DAC960.c | 42 ++++++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
-index 789d6f1e2b5f..419fa6ef14bb 100644
---- a/sound/soc/rockchip/rockchip_max98090.c
-+++ b/sound/soc/rockchip/rockchip_max98090.c
-@@ -104,17 +104,14 @@ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
- 
- 	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, mclk,
- 				     SND_SOC_CLOCK_OUT);
--	if (ret < 0) {
--		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_failure;
- 
- 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
- 				     SND_SOC_CLOCK_IN);
--	if (ret < 0) {
-+	if (ret < 0)
-+report_failure:
- 		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
--		return ret;
--	}
- 
- 	return ret;
- }
-diff --git a/sound/soc/rockchip/rockchip_rt5645.c b/sound/soc/rockchip/rockchip_rt5645.c
-index 9e0c17805807..7f763d0963d3 100644
---- a/sound/soc/rockchip/rockchip_rt5645.c
-+++ b/sound/soc/rockchip/rockchip_rt5645.c
-@@ -98,17 +98,14 @@ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
- 
- 	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, mclk,
- 				     SND_SOC_CLOCK_OUT);
--	if (ret < 0) {
--		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_failure;
- 
- 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
- 				     SND_SOC_CLOCK_IN);
--	if (ret < 0) {
-+	if (ret < 0)
-+report_failure:
- 		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
--		return ret;
--	}
- 
- 	return ret;
- }
+diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
+index 442e777bdfb2..f9fdcdd8c61f 100644
+--- a/drivers/block/DAC960.c
++++ b/drivers/block/DAC960.c
+@@ -2433,16 +2433,20 @@ static bool DAC960_V2_ReportDeviceConfiguration(DAC960_Controller_T
+     {
+       DAC960_V2_LogicalDeviceInfo_T *LogicalDeviceInfo  	Controller->V2.LogicalDeviceInformation[LogicalDriveNumber];
+-      unsigned char *ReadCacheStatus[] = { "Read Cache Disabled",
+-					   "Read Cache Enabled",
+-					   "Read Ahead Enabled",
+-					   "Intelligent Read Ahead Enabled",
+-					   "-", "-", "-", "-" };
+-      unsigned char *WriteCacheStatus[] = { "Write Cache Disabled",
+-					    "Logical Device Read Only",
+-					    "Write Cache Enabled",
+-					    "Intelligent Write Cache Enabled",
+-					    "-", "-", "-", "-" };
++      static const unsigned char * const ReadCacheStatus[] = {
++	"Read Cache Disabled",
++	"Read Cache Enabled",
++	"Read Ahead Enabled",
++	"Intelligent Read Ahead Enabled",
++	"-", "-", "-", "-"
++      };
++      unsigned char *WriteCacheStatus[] = {
++	"Write Cache Disabled",
++	"Logical Device Read Only",
++	"Write Cache Enabled",
++	"Intelligent Write Cache Enabled",
++	"-", "-", "-", "-"
++      };
+       unsigned char *GeometryTranslation;
+       if (LogicalDeviceInfo = NULL) continue;
+       switch (LogicalDeviceInfo->DriveGeometry)
+@@ -4345,14 +4349,16 @@ static void DAC960_V1_ProcessCompletedCommand(DAC960_Command_T *Command)
+ static void DAC960_V2_ReadWriteError(DAC960_Command_T *Command)
+ {
+   DAC960_Controller_T *Controller = Command->Controller;
+-  unsigned char *SenseErrors[] = { "NO SENSE", "RECOVERED ERROR",
+-				   "NOT READY", "MEDIUM ERROR",
+-				   "HARDWARE ERROR", "ILLEGAL REQUEST",
+-				   "UNIT ATTENTION", "DATA PROTECT",
+-				   "BLANK CHECK", "VENDOR-SPECIFIC",
+-				   "COPY ABORTED", "ABORTED COMMAND",
+-				   "EQUAL", "VOLUME OVERFLOW",
+-				   "MISCOMPARE", "RESERVED" };
++  static const unsigned char * const SenseErrors[] = {
++    "NO SENSE", "RECOVERED ERROR",
++    "NOT READY", "MEDIUM ERROR",
++    "HARDWARE ERROR", "ILLEGAL REQUEST",
++    "UNIT ATTENTION", "DATA PROTECT",
++    "BLANK CHECK", "VENDOR-SPECIFIC",
++    "COPY ABORTED", "ABORTED COMMAND",
++    "EQUAL", "VOLUME OVERFLOW",
++    "MISCOMPARE", "RESERVED"
++  };
+   unsigned char *CommandName = "UNKNOWN";
+   switch (Command->CommandType)
+     {
 -- 
-2.15.0
+2.14.1
 
