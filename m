@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Nov 2017 19:57:17 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 28 Nov 2017 20:00:34 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <68fd71f5-a3e5-dbb7-d0d9-f9844fabe6c8@users.sourceforge.net>
+Message-Id: <s5hbmjmjhr1.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <9a9348f4-d059-de28-1445-0189b7fb0ba3@users.sourceforge.net>
@@ -24,19 +24,29 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5hk1yajij2.wl-tiwai@suse.de>
  <727d5044-bad0-5170-83c0-dfddcc919588@users.sourceforge.net>
  <s5hh8teji1s.wl-tiwai@suse.de>
-In-Reply-To: <s5hh8teji1s.wl-tiwai@suse.de>
+ <68fd71f5-a3e5-dbb7-d0d9-f9844fabe6c8@users.sourceforge.net>
+In-Reply-To: <68fd71f5-a3e5-dbb7-d0d9-f9844fabe6c8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
 
->> At which point did you change you mind for any of my (higher level) patches?
+On Tue, 28 Nov 2017 20:57:17 +0100,
+SF Markus Elfring wrote:
 > 
-> Since your patch brought a regression in the past.
+> >> At which point did you change you mind for any of my (higher level) patches?
+> > 
+> > Since your patch brought a regression in the past.
+> 
+> Would you like to discuss the circumstances for the one glitch
+> to which you might refer to?
 
-Would you like to discuss the circumstances for the one glitch
-to which you might refer to?
+No need for discussion.  It's difficult to recover a lost trust.
 
-Regards,
-Markus
+The best way is to show how you don't fall into the same issue any
+longer, and it essentially means the actual testing of the patches.
+Now it's clear why the testing is demanded?  There is no other way.
+
+
+Takashi
