@@ -1,79 +1,63 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 19:30:24 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 28 Nov 2017 07:46:17 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
+Message-Id: <s5hbmjmluba.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
- <s5hefoy16xg.wl-tiwai@suse.de>
- <dfa99045-f213-3dad-b1f4-2e90eb38ddbd@users.sourceforge.net>
- <s5h7euq9hqt.wl-tiwai@suse.de>
-In-Reply-To: <s5h7euq9hqt.wl-tiwai@suse.de>
+        <s5hefoy16xg.wl-tiwai@suse.de>
+        <dfa99045-f213-3dad-b1f4-2e90eb38ddbd@users.sourceforge.net>
+        <s5h7euq9hqt.wl-tiwai@suse.de>
+        <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
+In-Reply-To: <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> There is a general source code transformation pattern involved.
->> So I find that it is systematic.
->>
->> But I did not dare to develop a script variant for the semantic patch
->> language (Coccinelle software) which can handle all special use cases
->> as a few of them are already demonstrated in this tiny patch series.
+On Thu, 16 Nov 2017 20:30:24 +0100,
+SF Markus Elfring wrote:
 > 
-> Then you're doing everything by hands,
+> >> There is a general source code transformation pattern involved.
+> >> So I find that it is systematic.
+> >>
+> >> But I did not dare to develop a script variant for the semantic patch
+> >> language (Coccinelle software) which can handle all special use cases
+> >> as a few of them are already demonstrated in this tiny patch series.
+> > 
+> > Then you're doing everything by hands,
+> 
+> I am navigating through possible changes around the pattern
+> “Use common error handling code” mostly manually so far.
+> 
+> 
+> > and can be wrong
+> 
+> Such a possibility remains as usual.
 
-I am navigating through possible changes around the pattern
-“Use common error handling code” mostly manually so far.
+"As usual" doesn't suffice.  It must be "almost perfect" for such a
+code refactoring.  The damage by a overseen mistake is much higher
+than the merit by such a patch.
 
+If the patch is about fixing a bug, it's a different story.
+Or it's about a really trivial change (e.g. your sizeof() conversion
+patches), I can check and apply easily.  But for other changes with
+more lines, it makes little sense.  Again, the risk of breakage
+increases while the merit is negligible.
 
-> and can be wrong
+> > -- that's the heart of the problem.
+> 
+> There might be related opportunities for further improvements.
+> Do you trust adjustments from an evolving tool more than
+> my concrete contributions?
 
-Such a possibility remains as usual.
-
-
-> -- that's the heart of the problem.
-
-There might be related opportunities for further improvements.
-Do you trust adjustments from an evolving tool more than
-my concrete contributions?
-
-
-> The risk is bigger than the merit by applying the patch.
-
-I suggest to reconsider this view.
-
-Would you dare to follow any of the presented arguments?
-
-
-> So, just prove that your patch doesn't break anything.
-
-Which kind of information would you find sufficient for a “prove”?
-
-
-> Doesn't matter whether it's a test with real hardware
-> or with systematic checks.
-
-I assume that your development concerns matter more in this case.
-
-
-> Once when it's confirmed, we can apply it.
-
-I am curious if other contributors will become interested to confirm something.
+Yes, loudly.
 
 
-> A very simple rule,
+I stop at this point, as the rest is simply a repeat from the previous
+mail.
 
-It might occasionally look simpler than it is in “special cases”.
 
+thanks,
 
-> and this will be valid for most of other subsystems, too.
-
-The response is also varying there as usual.
-
-A few update suggestions from the discussed pattern were integrated
-(also by you) already.
-Would you like to continue with similar support in any ways?
-
-Regards,
-Markus
+Takashi
