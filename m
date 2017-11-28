@@ -1,11 +1,9 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 16:27:13 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 28 Nov 2017 16:40:18 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5hvahupdwe.wl-tiwai@suse.de>
+Message-Id: <fda75395-50ac-cd81-b483-6f03833472fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
- <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
- <s5hbmjmluba.wl-tiwai@suse.de>
  <2cbef557-5f89-c630-e108-14ef2ce6b41a@users.sourceforge.net>
  <s5h4lpelqfm.wl-tiwai@suse.de>
  <1547a4c2-5b70-e3a3-b482-d28c538e615c@users.sourceforge.net>
@@ -25,56 +23,37 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <a1cd0902-c8bb-9813-8d0c-d394975ef745@users.sourceforge.net>
  <s5h4lpeqvin.wl-tiwai@suse.de>
  <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
-In-Reply-To: <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
+ <s5hvahupdwe.wl-tiwai@suse.de>
+In-Reply-To: <s5hvahupdwe.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 28 Nov 2017 17:15:27 +0100,
-SF Markus Elfring wrote:
+> No-testing is the worst case.
+
+Free software development can occasionally mean that system tests
+can also be performed by a person who is different from the
+initial programmer.
+
+
+>> I am unsure if acceptable test results will ever be published for this
+>> software module.
 > 
-> > Because I didn't see any test result from you,
+> Then forget about your patches.
+
+I published some change possibilities. Now the chances are varying
+to receive constructive review comments for them as usual.
+
+
+>> * How do you think about to sort the remaining update candidates
+>>   by their change size (or software age)?
 > 
-> This is correct so far.
-> 
-> 
-> > so I can't trust you.
-> 
-> This view did not hinder you to integrate some of my update suggestions
-> which you found easier to handle.
+> Irrelevant.
 
-The really trivial things are different.  Don't mix up things.
+Do you want that I point any other patch out which you could find
+easier to handle again?
 
-> >> Which test configurations would you trust finally?
-> > 
-> > Do test whatever like the users do.
-> 
-> I find such an information too unsafe for an official acceptance test.
-
-No-testing is the worst case.
-
-> >> How can such descriptions improve the trust situation?
-> > 
-> > It's the first step.  At least then I can see you did some test.
-> > Currently nothing.  zero.  nada.
-> 
-> I am unsure if acceptable test results will ever be published for this
-> software module.
-
-Then forget about your patches.
-
-> > How can I trust it?
-> 
-> * Would you dare to inspect the shown source code adjustments again?
-
-Not unless you give some testing results.
-
-> * How do you think about to sort the remaining update candidates
->   by their change size (or software age)?
-
-Irrelevant.
-
-
-Takashi
+Regards,
+Markus
