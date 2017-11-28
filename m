@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 14:38:34 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 28 Nov 2017 14:44:07 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5h8teqqxhx.wl-tiwai@suse.de>
+Message-Id: <f7189a7c-3b07-e976-ac18-6143365bbd21@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5hefoy16xg.wl-tiwai@suse.de>
@@ -22,23 +22,31 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <3b7b24bd-4bdf-752e-1a62-cc71e9152acc@users.sourceforge.net>
  <s5hbmjmqxzs.wl-tiwai@suse.de>
  <bafa4437-2aaf-245d-da60-2353ca5debab@users.sourceforge.net>
-In-Reply-To: <bafa4437-2aaf-245d-da60-2353ca5debab@users.sourceforge.net>
+ <s5h8teqqxhx.wl-tiwai@suse.de>
+In-Reply-To: <s5h8teqqxhx.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 28 Nov 2017 15:33:45 +0100,
-SF Markus Elfring wrote:
+>> How would such a setting influence my trust level for your subsystem maintenance?
 > 
-> > If *you* do introduce automatic testing for *your* patches,
-> > then I appreciate it.
-> 
-> How would such a setting influence my trust level for your subsystem maintenance?
+> Give the test result before speaking too much.
 
-Give the test result before speaking too much.  It's already way too
-contra-productive, just chatting.  Show the result at first.
+Which concrete data do you expect here?
 
 
-Takashi
+> It's already way too contra-productive, just chatting.
+
+I got an other view.
+
+I hope that we can achieve a better common understanding also in this case.
+
+
+> Show the result at first.
+
+Which one would you like to compare exactly?
+
+Regards,
+Markus
