@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 09:10:05 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 28 Nov 2017 09:50:21 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5h4lpelqfm.wl-tiwai@suse.de>
+Message-Id: <1547a4c2-5b70-e3a3-b482-d28c538e615c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5hefoy16xg.wl-tiwai@suse.de>
@@ -10,103 +10,90 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
  <s5hbmjmluba.wl-tiwai@suse.de>
  <2cbef557-5f89-c630-e108-14ef2ce6b41a@users.sourceforge.net>
-In-Reply-To: <2cbef557-5f89-c630-e108-14ef2ce6b41a@users.sourceforge.net>
+ <s5h4lpelqfm.wl-tiwai@suse.de>
+In-Reply-To: <s5h4lpelqfm.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 28 Nov 2017 09:19:48 +0100,
-SF Markus Elfring wrote:
+>> There can be additional means be used to reduce the probability
+>> of undesired side effects.
 > 
-> >>>> There is a general source code transformation pattern involved.
-> >>>> So I find that it is systematic.
-> >>>>
-> >>>> But I did not dare to develop a script variant for the semantic patch
-> >>>> language (Coccinelle software) which can handle all special use cases
-> >>>> as a few of them are already demonstrated in this tiny patch series.
-> >>>
-> >>> Then you're doing everything by hands,
-> >>
-> >> I am navigating through possible changes around the pattern
-> >> “Use common error handling code” mostly manually so far.
-> >>
-> >>
-> >>> and can be wrong
-> >>
-> >> Such a possibility remains as usual.
-> > 
-> > "As usual" doesn't suffice.
+> Irrelevant,
+
+I got an other opinion here.
+
+
+> it doesn't fix a bug,
+
+Did I suggest to correct a coding style “bug”?
+
+
+> nor dramatic improvement.
+
+I agree that the change could be small only for this software module alone.
+I guess that we discuss not only change patterns for this one
+but also other affected modules here (besides a concrete example).
+The result summary might be more significant overall.
+
+
+>>> It must be "almost perfect" for such a code refactoring.
+>>
+>> Can you get the impression that the shown transformation patterns were correctly
+>> applied for the source file “sound/pci/nm256/nm256.c”?
 > 
-> There can be additional means be used to reduce the probability
-> of undesired side effects.
+> Impression doesn't matter.
 
-Irrelevant, it doesn't fix a bug, nor dramatic improvement.
+It seems then that you can not get the kind of information you might be looking for
+at the moment from me (alone).
 
-> > It must be "almost perfect" for such a code refactoring.
+
+> The question is whether it's 100% correct or not in such a case.
+
+Would any other source code reviewers like to provide a corresponding acknowledgement
+for concrete changes?
+
+
+>> Are there any more software developers and code reviewers available
+>> who would like to point another programming mistake out for this Linux module?
 > 
-> Can you get the impression that the shown transformation patterns were correctly
-> applied for the source file “sound/pci/nm256/nm256.c”?
+> If you have find such, then it's fine, you can get your patches
+> reviewed and more assured.
 
-Impression doesn't matter.  The question is whether it's 100% correct
-or not in such a case.
+I hope that mailing list readers could offer something.
 
-> > The damage by a overseen mistake is much higher than the merit by such a patch.
+
+> But in the current situation, no one else is interested in it,
+> and that's going to nowhere.
+
+Did this software module become “too old”?
+
+
+> The *really* trivial ones were applied.  The rest are not.
+
+Can higher level transformation patterns become easier to accept
+by any other means?
+
+
+>> Do you need any more information to see and eventually accept the sense again?
 > 
-> Are there any more software developers and code reviewers available
-> who would like to point another programming mistake out for this Linux module?
+> No.  This kind of code refactoring has no more information.
+> It's a "trivial" change, after all.
 
-If you have find such, then it's fine, you can get your patches
-reviewed and more assured.  But in the current situation, no one else
-is interested in it, and that's going to nowhere.
+Would you like to distinguish the possible update steps better to avoid
+further confusion around “triviality”?
 
-> > If the patch is about fixing a bug, it's a different story.
+
+>> Are you using a continuous integration system?
 > 
-> How do “deviations” from the coding style and the evolution of object code size
-> fit to this view here?
+> Not really in my side.  But there are others doing that.
 
-Again, it's no fix for a bug.
+How much does the omission of such an useful development tool
+influence your concerns?
 
-> > Or it's about a really trivial change (e.g. your sizeof() conversion
-> > patches), I can check and apply easily.
-> 
-> My update selection can contain also trivial adjustments.
+Would you like to improve the software situation in any ways there?
 
-The *really* trivial ones were applied.  The rest are not.
-
-> > But for other changes with more lines, it makes little sense.
-> 
-> Do you need any more information to see and eventually accept the sense again?
-
-No.  This kind of code refactoring has no more information.
-It's a "trivial" change, after all.
-
-> > Again, the risk of breakage increases while the merit is negligible.
-> 
-> We disagree about corresponding benefits at the moment.
-> Would any other contributors comment the situation a bit more?
-
-I hear openly.
-
-> >>> -- that's the heart of the problem.
-> >>
-> >> There might be related opportunities for further improvements.
-> >> Do you trust adjustments from an evolving tool more than
-> >> my concrete contributions?
-> > 
-> > Yes, loudly.
-> 
-> I noticed that the development status of tools which you might find nice
-> at the moment can be also questionable.
-
-It depends on the result.
-
-> > I stop at this point, as the rest is simply a repeat from the previous mail.
-> 
-> Are you using a continuous integration system?
-
-Not really in my side.  But there are others doing that.
-
-
-Takashi
+Regards,
+Markus
