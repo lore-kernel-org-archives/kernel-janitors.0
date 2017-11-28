@@ -1,11 +1,9 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 19:54:07 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 28 Nov 2017 19:57:17 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5hh8teji1s.wl-tiwai@suse.de>
+Message-Id: <68fd71f5-a3e5-dbb7-d0d9-f9844fabe6c8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
- <539adde3-a713-721f-2a0d-1d1ef925fb86@users.sourceforge.net>
- <s5hpo82r1s5.wl-tiwai@suse.de>
  <9a9348f4-d059-de28-1445-0189b7fb0ba3@users.sourceforge.net>
  <s5hlgiqr0ad.wl-tiwai@suse.de>
  <3b7b24bd-4bdf-752e-1a62-cc71e9152acc@users.sourceforge.net>
@@ -25,21 +23,20 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <19724fa4-47eb-827c-cb17-126440500179@users.sourceforge.net>
  <s5hk1yajij2.wl-tiwai@suse.de>
  <727d5044-bad0-5170-83c0-dfddcc919588@users.sourceforge.net>
-In-Reply-To: <727d5044-bad0-5170-83c0-dfddcc919588@users.sourceforge.net>
+ <s5hh8teji1s.wl-tiwai@suse.de>
+In-Reply-To: <s5hh8teji1s.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 28 Nov 2017 20:48:52 +0100,
-SF Markus Elfring wrote:
+>> At which point did you change you mind for any of my (higher level) patches?
 > 
-> > Because it turned out that your patch can be wrong and broken.
-> 
-> At which point did you change you mind for any of my (higher level) patches?
+> Since your patch brought a regression in the past.
 
-Since your patch brought a regression in the past.
+Would you like to discuss the circumstances for the one glitch
+to which you might refer to?
 
-
-Takashi
+Regards,
+Markus
