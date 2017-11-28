@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Nov 2017 16:15:27 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 28 Nov 2017 16:27:13 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
+Message-Id: <s5hvahupdwe.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
@@ -24,46 +24,57 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5h7euaqwtp.wl-tiwai@suse.de>
  <a1cd0902-c8bb-9813-8d0c-d394975ef745@users.sourceforge.net>
  <s5h4lpeqvin.wl-tiwai@suse.de>
-In-Reply-To: <s5h4lpeqvin.wl-tiwai@suse.de>
+ <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
+In-Reply-To: <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-> Because I didn't see any test result from you,
-
-This is correct so far.
-
-
-> so I can't trust you.
-
-This view did not hinder you to integrate some of my update suggestions
-which you found easier to handle.
-
-
->> Which test configurations would you trust finally?
+On Tue, 28 Nov 2017 17:15:27 +0100,
+SF Markus Elfring wrote:
 > 
-> Do test whatever like the users do.
-
-I find such an information too unsafe for an official acceptance test.
-
-
->> How can such descriptions improve the trust situation?
+> > Because I didn't see any test result from you,
 > 
-> It's the first step.  At least then I can see you did some test.
-> Currently nothing.  zero.  nada.
+> This is correct so far.
+> 
+> 
+> > so I can't trust you.
+> 
+> This view did not hinder you to integrate some of my update suggestions
+> which you found easier to handle.
 
-I am unsure if acceptable test results will ever be published for this
-software module.
+The really trivial things are different.  Don't mix up things.
+
+> >> Which test configurations would you trust finally?
+> > 
+> > Do test whatever like the users do.
+> 
+> I find such an information too unsafe for an official acceptance test.
+
+No-testing is the worst case.
+
+> >> How can such descriptions improve the trust situation?
+> > 
+> > It's the first step.  At least then I can see you did some test.
+> > Currently nothing.  zero.  nada.
+> 
+> I am unsure if acceptable test results will ever be published for this
+> software module.
+
+Then forget about your patches.
+
+> > How can I trust it?
+> 
+> * Would you dare to inspect the shown source code adjustments again?
+
+Not unless you give some testing results.
+
+> * How do you think about to sort the remaining update candidates
+>   by their change size (or software age)?
+
+Irrelevant.
 
 
-> How can I trust it?
-
-* Would you dare to inspect the shown source code adjustments again?
-
-* How do you think about to sort the remaining update candidates
-  by their change size (or software age)?
-
-Regards,
-Markus
+Takashi
