@@ -1,30 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Nov 2017 06:06:48 +0000
-Subject: [PATCH] ARM: OMAP2+: Missing error code in omap_device_build()
-Message-Id: <20171114060648.frwveus2pjpx5idw@mwanda>
+From: Tony Lindgren <tony@atomide.com>
+Date: Tue, 28 Nov 2017 14:55:21 +0000
+Subject: Re: [PATCH] ARM: OMAP2+: Missing error code in omap_device_build()
+Message-Id: <20171128145521.GX28152@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171114060648.frwveus2pjpx5idw@mwanda>
+In-Reply-To: <20171114060648.frwveus2pjpx5idw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-We need to set the error code if omap_device_alloc() fails.
+* Dan Carpenter <dan.carpenter@oracle.com> [171113 22:10]:
+> We need to set the error code if omap_device_alloc() fails.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+> index 184acd95c216..f0388058b7da 100644
+> --- a/arch/arm/mach-omap2/omap_device.c
+> +++ b/arch/arm/mach-omap2/omap_device.c
+> @@ -514,8 +514,10 @@ struct platform_device __init *omap_device_build(const char *pdev_name,
+>  		goto odbs_exit1;
+>  
+>  	od = omap_device_alloc(pdev, &oh, 1);
+> -	if (IS_ERR(od))
+> +	if (IS_ERR(od)) {
+> +		ret = PTR_ERR(od);
+>  		goto odbs_exit1;
+> +	}
+>  
+>  	ret = platform_device_add_data(pdev, pdata, pdata_len);
+>  	if (ret)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applying into omap-for-v4.15/fixes thanks.
 
-diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
-index 184acd95c216..f0388058b7da 100644
---- a/arch/arm/mach-omap2/omap_device.c
-+++ b/arch/arm/mach-omap2/omap_device.c
-@@ -514,8 +514,10 @@ struct platform_device __init *omap_device_build(const char *pdev_name,
- 		goto odbs_exit1;
- 
- 	od = omap_device_alloc(pdev, &oh, 1);
--	if (IS_ERR(od))
-+	if (IS_ERR(od)) {
-+		ret = PTR_ERR(od);
- 		goto odbs_exit1;
-+	}
- 
- 	ret = platform_device_add_data(pdev, pdata, pdata_len);
- 	if (ret)
+Tony
