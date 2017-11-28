@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Nov 2017 14:44:07 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 28 Nov 2017 14:53:06 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <f7189a7c-3b07-e976-ac18-6143365bbd21@users.sourceforge.net>
+Message-Id: <s5h7euaqwtp.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5hefoy16xg.wl-tiwai@suse.de>
@@ -23,30 +23,43 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5hbmjmqxzs.wl-tiwai@suse.de>
  <bafa4437-2aaf-245d-da60-2353ca5debab@users.sourceforge.net>
  <s5h8teqqxhx.wl-tiwai@suse.de>
-In-Reply-To: <s5h8teqqxhx.wl-tiwai@suse.de>
+ <f7189a7c-3b07-e976-ac18-6143365bbd21@users.sourceforge.net>
+In-Reply-To: <f7189a7c-3b07-e976-ac18-6143365bbd21@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
 
->> How would such a setting influence my trust level for your subsystem maintenance?
+On Tue, 28 Nov 2017 15:44:07 +0100,
+SF Markus Elfring wrote:
 > 
-> Give the test result before speaking too much.
+> >> How would such a setting influence my trust level for your subsystem maintenance?
+> > 
+> > Give the test result before speaking too much.
+> 
+> Which concrete data do you expect here?
 
-Which concrete data do you expect here?
+Depends on the result.  The bottom line is that you run your patched
+kernel on the real hardware or equivalent (VM or emulation) for the
+device you touched.
+
+> > It's already way too contra-productive, just chatting.
+> 
+> I got an other view.
+> 
+> I hope that we can achieve a better common understanding also in this case.
+
+Hopefully, if you stop asking another new question for each word.
+
+> > Show the result at first.
+> 
+> Which one would you like to compare exactly?
+
+Run your patched kernel and the driver code on the real machine with
+the corresponding device.  Show the device is running.  That's the
+very first step.  Then follow the more detailed tests, but it depends
+on the subsystem.
 
 
-> It's already way too contra-productive, just chatting.
-
-I got an other view.
-
-I hope that we can achieve a better common understanding also in this case.
-
-
-> Show the result at first.
-
-Which one would you like to compare exactly?
-
-Regards,
-Markus
+Takashi
