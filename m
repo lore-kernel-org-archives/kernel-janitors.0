@@ -1,59 +1,69 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Nov 2017 17:15:34 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 28 Nov 2017 18:35:16 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <99282c06-bfad-d7cf-16d8-eb1e015ebdbd@users.sourceforge.net>
+Message-Id: <s5hr2sijlp7.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
- <1547a4c2-5b70-e3a3-b482-d28c538e615c@users.sourceforge.net>
- <s5hy3mqr5v9.wl-tiwai@suse.de>
- <c2b7543c-cd2c-f7f6-98f3-23e2ca6f8b90@users.sourceforge.net>
- <s5hshcyr2on.wl-tiwai@suse.de>
- <539adde3-a713-721f-2a0d-1d1ef925fb86@users.sourceforge.net>
- <s5hpo82r1s5.wl-tiwai@suse.de>
- <9a9348f4-d059-de28-1445-0189b7fb0ba3@users.sourceforge.net>
- <s5hlgiqr0ad.wl-tiwai@suse.de>
- <3b7b24bd-4bdf-752e-1a62-cc71e9152acc@users.sourceforge.net>
- <s5hbmjmqxzs.wl-tiwai@suse.de>
- <bafa4437-2aaf-245d-da60-2353ca5debab@users.sourceforge.net>
- <s5h8teqqxhx.wl-tiwai@suse.de>
- <f7189a7c-3b07-e976-ac18-6143365bbd21@users.sourceforge.net>
- <s5h7euaqwtp.wl-tiwai@suse.de>
- <a1cd0902-c8bb-9813-8d0c-d394975ef745@users.sourceforge.net>
- <s5h4lpeqvin.wl-tiwai@suse.de>
- <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
- <s5hvahupdwe.wl-tiwai@suse.de>
- <fda75395-50ac-cd81-b483-6f03833472fb@users.sourceforge.net>
- <s5hr2sipd2z.wl-tiwai@suse.de>
-In-Reply-To: <s5hr2sipd2z.wl-tiwai@suse.de>
+        <1547a4c2-5b70-e3a3-b482-d28c538e615c@users.sourceforge.net>
+        <s5hy3mqr5v9.wl-tiwai@suse.de>
+        <c2b7543c-cd2c-f7f6-98f3-23e2ca6f8b90@users.sourceforge.net>
+        <s5hshcyr2on.wl-tiwai@suse.de>
+        <539adde3-a713-721f-2a0d-1d1ef925fb86@users.sourceforge.net>
+        <s5hpo82r1s5.wl-tiwai@suse.de>
+        <9a9348f4-d059-de28-1445-0189b7fb0ba3@users.sourceforge.net>
+        <s5hlgiqr0ad.wl-tiwai@suse.de>
+        <3b7b24bd-4bdf-752e-1a62-cc71e9152acc@users.sourceforge.net>
+        <s5hbmjmqxzs.wl-tiwai@suse.de>
+        <bafa4437-2aaf-245d-da60-2353ca5debab@users.sourceforge.net>
+        <s5h8teqqxhx.wl-tiwai@suse.de>
+        <f7189a7c-3b07-e976-ac18-6143365bbd21@users.sourceforge.net>
+        <s5h7euaqwtp.wl-tiwai@suse.de>
+        <a1cd0902-c8bb-9813-8d0c-d394975ef745@users.sourceforge.net>
+        <s5h4lpeqvin.wl-tiwai@suse.de>
+        <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
+        <s5hvahupdwe.wl-tiwai@suse.de>
+        <fda75395-50ac-cd81-b483-6f03833472fb@users.sourceforge.net>
+        <s5hr2sipd2z.wl-tiwai@suse.de>
+        <99282c06-bfad-d7cf-16d8-eb1e015ebdbd@users.sourceforge.net>
+In-Reply-To: <99282c06-bfad-d7cf-16d8-eb1e015ebdbd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> Do you want that I point any other patch out which you could find
->> easier to handle again?
+On Tue, 28 Nov 2017 18:15:34 +0100,
+SF Markus Elfring wrote:
 > 
-> Only if they got tested and/or got reviewed by others.
+> >> Do you want that I point any other patch out which you could find
+> >> easier to handle again?
+> > 
+> > Only if they got tested and/or got reviewed by others.
+> 
+> Would you find any of the following update suggestions trivial enough
+> to integrate them?
+> 
+> Examples:
+> * ALSA: cs5530: Use common error handling code in snd_cs5530_probe()
+>   https://lkml.org/lkml/2017/11/18/266
+>   https://patchwork.kernel.org/patch/10064945/
+>   https://lkml.kernel.org/r/<a2cb6494-a01c-668a-cd9b-1a8428a0d4c9@users.sourceforge.net>
 
-Would you find any of the following update suggestions trivial enough
-to integrate them?
+This is no trivial patch.
 
-Examples:
-* ALSA: cs5530: Use common error handling code in snd_cs5530_probe()
-  https://lkml.org/lkml/2017/11/18/266
-  https://patchwork.kernel.org/patch/10064945/
-  https://lkml.kernel.org/r/<a2cb6494-a01c-668a-cd9b-1a8428a0d4c9@users.sourceforge.net>
+> * ASoC: dapm: Use kcalloc() in snd_soc_dapm_new_widgets()
+>   https://lkml.org/lkml/2017/8/10/425
+>   https://patchwork.kernel.org/patch/9893713/
+>   https://lkml.kernel.org/r/<62be9e32-1b8d-3980-7998-72f82c62a6fe@users.sourceforge.net>
 
-* ASoC: dapm: Use kcalloc() in snd_soc_dapm_new_widgets()
-  https://lkml.org/lkml/2017/8/10/425
-  https://patchwork.kernel.org/patch/9893713/
-  https://lkml.kernel.org/r/<62be9e32-1b8d-3980-7998-72f82c62a6fe@users.sourceforge.net>
+This needs to go through Mark's ASoC tree.
 
-* ALSA: seq: Delete unnecessary checks in snd_seq_ioctl_query_subs()
-  https://lkml.org/lkml/2017/1/24/293
-  https://patchwork.kernel.org/patch/9534795/
-  https://lkml.kernel.org/r/<39bc00c0-ffe7-851c-f329-e7d499f561be@users.sourceforge.net>
+> * ALSA: seq: Delete unnecessary checks in snd_seq_ioctl_query_subs()
+>   https://lkml.org/lkml/2017/1/24/293
+>   https://patchwork.kernel.org/patch/9534795/
+>   https://lkml.kernel.org/r/<39bc00c0-ffe7-851c-f329-e7d499f561be@users.sourceforge.net>
 
-Regards,
-Markus
+This is no trivial patch, either.
+
+
+Takashi
