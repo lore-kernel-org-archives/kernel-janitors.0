@@ -1,11 +1,9 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 16:44:52 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 28 Nov 2017 17:15:34 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5hr2sipd2z.wl-tiwai@suse.de>
+Message-Id: <99282c06-bfad-d7cf-16d8-eb1e015ebdbd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
- <2cbef557-5f89-c630-e108-14ef2ce6b41a@users.sourceforge.net>
- <s5h4lpelqfm.wl-tiwai@suse.de>
  <1547a4c2-5b70-e3a3-b482-d28c538e615c@users.sourceforge.net>
  <s5hy3mqr5v9.wl-tiwai@suse.de>
  <c2b7543c-cd2c-f7f6-98f3-23e2ca6f8b90@users.sourceforge.net>
@@ -25,34 +23,37 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <6da7e6dc-b181-d26c-9f09-6592469193be@users.sourceforge.net>
  <s5hvahupdwe.wl-tiwai@suse.de>
  <fda75395-50ac-cd81-b483-6f03833472fb@users.sourceforge.net>
-In-Reply-To: <fda75395-50ac-cd81-b483-6f03833472fb@users.sourceforge.net>
+ <s5hr2sipd2z.wl-tiwai@suse.de>
+In-Reply-To: <s5hr2sipd2z.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 28 Nov 2017 17:40:18 +0100,
-SF Markus Elfring wrote:
+>> Do you want that I point any other patch out which you could find
+>> easier to handle again?
 > 
-> > No-testing is the worst case.
-> 
-> Free software development can occasionally mean that system tests
-> can also be performed by a person who is different from the
-> initial programmer.
+> Only if they got tested and/or got reviewed by others.
 
-So ask someone for testing.  If you can find them and confirm that the
-patch works, I'll happily apply.  If not, it goes nowhere.
+Would you find any of the following update suggestions trivial enough
+to integrate them?
 
-> >> * How do you think about to sort the remaining update candidates
-> >>   by their change size (or software age)?
-> > 
-> > Irrelevant.
-> 
-> Do you want that I point any other patch out which you could find
-> easier to handle again?
+Examples:
+* ALSA: cs5530: Use common error handling code in snd_cs5530_probe()
+  https://lkml.org/lkml/2017/11/18/266
+  https://patchwork.kernel.org/patch/10064945/
+  https://lkml.kernel.org/r/<a2cb6494-a01c-668a-cd9b-1a8428a0d4c9@users.sourceforge.net>
 
-Only if they got tested and/or got reviewed by others.
+* ASoC: dapm: Use kcalloc() in snd_soc_dapm_new_widgets()
+  https://lkml.org/lkml/2017/8/10/425
+  https://patchwork.kernel.org/patch/9893713/
+  https://lkml.kernel.org/r/<62be9e32-1b8d-3980-7998-72f82c62a6fe@users.sourceforge.net>
 
+* ALSA: seq: Delete unnecessary checks in snd_seq_ioctl_query_subs()
+  https://lkml.org/lkml/2017/1/24/293
+  https://patchwork.kernel.org/patch/9534795/
+  https://lkml.kernel.org/r/<39bc00c0-ffe7-851c-f329-e7d499f561be@users.sourceforge.net>
 
-Takashi
+Regards,
+Markus
