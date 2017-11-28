@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Nov 2017 19:48:52 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 28 Nov 2017 19:54:07 +0000
 Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <727d5044-bad0-5170-83c0-dfddcc919588@users.sourceforge.net>
+Message-Id: <s5hh8teji1s.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <539adde3-a713-721f-2a0d-1d1ef925fb86@users.sourceforge.net>
@@ -24,16 +24,22 @@ References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
  <s5hr2sijlp7.wl-tiwai@suse.de>
  <19724fa4-47eb-827c-cb17-126440500179@users.sourceforge.net>
  <s5hk1yajij2.wl-tiwai@suse.de>
-In-Reply-To: <s5hk1yajij2.wl-tiwai@suse.de>
+ <727d5044-bad0-5170-83c0-dfddcc919588@users.sourceforge.net>
+In-Reply-To: <727d5044-bad0-5170-83c0-dfddcc919588@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-> Because it turned out that your patch can be wrong and broken.
+On Tue, 28 Nov 2017 20:48:52 +0100,
+SF Markus Elfring wrote:
+> 
+> > Because it turned out that your patch can be wrong and broken.
+> 
+> At which point did you change you mind for any of my (higher level) patches?
 
-At which point did you change you mind for any of my (higher level) patches?
+Since your patch brought a regression in the past.
 
-Regards,
-Markus
+
+Takashi
