@@ -1,87 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:53:34 +0000
-Subject: Applied "ASoC: cs42l52: Improve two size determinations in cs42l52_i2c_probe()" to the asoc tree
-Message-Id: <E1eJOX8-0007LK-PK@debutante>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Nov 2017 19:30:21 +0000
+Subject: [PATCH] regulator: lp8788: make various char arrays static const, shrinks object size
+Message-Id: <20171128193021.25692-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d02ceefc-8918-f24d-6de7-8c6f348d5ed9@users.sourceforge.net>
-In-Reply-To: <d02ceefc-8918-f24d-6de7-8c6f348d5ed9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: Milo Kim <milo.kim@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: cs42l52: Improve two size determinations in cs42l52_i2c_probe()
+Don't populate the read-only arrays b1_name and b2_name on the stack
+but instead make them static and constify them.  Makes the object code
+smaller by over 260 bytes:
 
-has been applied to the asoc tree at
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   6961	   2256	      0	   9217	   2401	drivers/regulator/lp8788-buck.o
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+After:
+   text	   data	    bss	    dec	    hex	filename
+   6696	   2256	      0	   8952	   22f8	drivers/regulator/lp8788-buck.o
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+(gcc version 7.2.0 x86_64)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From cd9e0b8282653d8bdc2c8b799eeb26ee034cdd06 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 22:11:30 +0100
-Subject: [PATCH] ASoC: cs42l52: Improve two size determinations in
- cs42l52_i2c_probe()
-
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/cs42l52.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/regulator/lp8788-buck.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l52.c b/sound/soc/codecs/cs42l52.c
-index e8645f2ac0d9..9731e5dff291 100644
---- a/sound/soc/codecs/cs42l52.c
-+++ b/sound/soc/codecs/cs42l52.c
-@@ -1100,8 +1100,7 @@ static int cs42l52_i2c_probe(struct i2c_client *i2c_client,
- 	unsigned int reg;
- 	u32 val32;
+diff --git a/drivers/regulator/lp8788-buck.c b/drivers/regulator/lp8788-buck.c
+index ec46290b647e..ab3a2138fb91 100644
+--- a/drivers/regulator/lp8788-buck.c
++++ b/drivers/regulator/lp8788-buck.c
+@@ -426,8 +426,10 @@ static int lp8788_dvs_gpio_request(struct platform_device *pdev,
+ 				enum lp8788_buck_id id)
+ {
+ 	struct lp8788_platform_data *pdata = buck->lp->pdata;
+-	char *b1_name = "LP8788_B1_DVS";
+-	char *b2_name[] = { "LP8788_B2_DVS1", "LP8788_B2_DVS2" };
++	static const char * const b1_name = "LP8788_B1_DVS";
++	static const char * const b2_name[] = {
++		"LP8788_B2_DVS1", "LP8788_B2_DVS2"
++	};
+ 	int i, gpio, ret;
  
--	cs42l52 = devm_kzalloc(&i2c_client->dev, sizeof(struct cs42l52_private),
--			       GFP_KERNEL);
-+	cs42l52 = devm_kzalloc(&i2c_client->dev, sizeof(*cs42l52), GFP_KERNEL);
- 	if (cs42l52 = NULL)
- 		return -ENOMEM;
- 	cs42l52->dev = &i2c_client->dev;
-@@ -1115,9 +1114,8 @@ static int cs42l52_i2c_probe(struct i2c_client *i2c_client,
- 	if (pdata) {
- 		cs42l52->pdata = *pdata;
- 	} else {
--		pdata = devm_kzalloc(&i2c_client->dev,
--				     sizeof(struct cs42l52_platform_data),
--				GFP_KERNEL);
-+		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
-+				     GFP_KERNEL);
- 		if (!pdata)
- 			return -ENOMEM;
- 
+ 	switch (id) {
 -- 
-2.15.0
+2.14.1
 
