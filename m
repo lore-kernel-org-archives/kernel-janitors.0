@@ -1,7 +1,7 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 10 Nov 2017 08:08:47 +0000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 29 Nov 2017 06:31:30 +0000
 Subject: Re: [PATCH] crypto: s5p-sss - Remove a stray tab
-Message-Id: <CAJKOXPduq1n+iGEVLATa6e__SoUUFppA_-So1wrz-VaafhXdJA@mail.gmail.com>
+Message-Id: <20171129063130.GC21575@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171109212604.i3zbzlmfotz5b7rr@mwanda>
 In-Reply-To: <20171109212604.i3zbzlmfotz5b7rr@mwanda>
@@ -9,16 +9,15 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kamil Konieczny <k.konieczny@partner.samsung.com>, Vladimir Zapolskiy <vz@mleia.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 9, 2017 at 10:26 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Fri, Nov 10, 2017 at 12:26:04AM +0300, Dan Carpenter wrote:
 > This code seems correct, but the goto was indented too far.
->
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
