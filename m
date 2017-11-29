@@ -1,55 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 09 Nov 2017 08:54:13 +0000
-Subject: [PATCH] crypto: chelsio: remove redundant assignments to reqctx and dst_size
-Message-Id: <20171109085413.4336-1-colin.king@canonical.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 29 Nov 2017 06:31:09 +0000
+Subject: Re: [PATCH] crypto: chelsio: remove redundant assignments to reqctx and dst_size
+Message-Id: <20171129063109.GA21575@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171109085413.4336-1-colin.king@canonical.com>
+In-Reply-To: <20171109085413.4336-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Harsh Jain <harsh@chelsio.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Nov 09, 2017 at 08:54:13AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer reqctx is assigned the same value twice, once on initialization
+> and again a few statements later, remove the second redundant assignment.
+> Variable dst_size is assigned but it is never read, so the variable is
+> redundant and can be removed. Cleans up clang warnings:
+> 
+> drivers/crypto/chelsio/chcr_algo.c:156:29: warning: Value stored to
+> 'reqctx' during its initialization is never read
+> drivers/crypto/chelsio/chcr_algo.c:2020:2: warning: Value stored to
+> 'dst_size' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Pointer reqctx is assigned the same value twice, once on initialization
-and again a few statements later, remove the second redundant assignment.
-Variable dst_size is assigned but it is never read, so the variable is
-redundant and can be removed. Cleans up clang warnings:
-
-drivers/crypto/chelsio/chcr_algo.c:156:29: warning: Value stored to
-'reqctx' during its initialization is never read
-drivers/crypto/chelsio/chcr_algo.c:2020:2: warning: Value stored to
-'dst_size' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/chelsio/chcr_algo.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-index 4eed7171e2ae..300e66fe8a3c 100644
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -160,7 +160,6 @@ static inline void chcr_handle_ahash_resp(struct ahash_request *req,
- 
- 	if (input = NULL)
- 		goto out;
--	reqctx = ahash_request_ctx(req);
- 	digestsize = crypto_ahash_digestsize(crypto_ahash_reqtfm(req));
- 	if (reqctx->is_sg_map)
- 		chcr_hash_dma_unmap(&u_ctx->lldi.pdev->dev, req);
-@@ -2014,11 +2013,8 @@ static int chcr_aead_common_init(struct aead_request *req,
- 	struct chcr_aead_ctx *aeadctx = AEAD_CTX(a_ctx(tfm));
- 	struct chcr_aead_reqctx  *reqctx = aead_request_ctx(req);
- 	int error = -EINVAL;
--	unsigned int dst_size;
- 	unsigned int authsize = crypto_aead_authsize(tfm);
- 
--	dst_size = req->assoclen + req->cryptlen + (op_type ?
--					-authsize : authsize);
- 	/* validate key size */
- 	if (aeadctx->enckey_len = 0)
- 		goto err;
+Patch applied.  Thanks.
 -- 
-2.14.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
