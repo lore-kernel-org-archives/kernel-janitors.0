@@ -1,46 +1,42 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Fri, 10 Nov 2017 03:39:12 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] i40e: remove redundant initialization of read_size
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C6EB1A8@ORSMSX101.amr.corp.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Nov 2017 14:11:49 +0000
+Subject: [PATCH] net: via: via-rhine: use %p to format void * address instead of %x
+Message-Id: <20171129141149.21705-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171105130429.6399-1-colin.king@canonical.com> 
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> From: Brown, Aaron F
-> Sent: Thursday, November 9, 2017 7:16 PM
-> To: 'Colin King' <colin.king@canonical.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: RE: [Intel-wired-lan] [PATCH] i40e: remove redundant initialization
-> of read_size
-> 
-> > From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf
-> > Of Colin King
-> > Sent: Sunday, November 5, 2017 5:04 AM
-> > To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; intel-wired-
-> > lan@lists.osuosl.org; netdev@vger.kernel.org
-> > Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: [Intel-wired-lan] [PATCH] i40e: remove redundant initialization of
-> > read_size
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Variable read_size is initialized and this value is never read, it is
-> > instead set inside the do-loop, hence the intialization is redundant
-> > and can be removed. Cleans up clang warning:
-> >
-> > drivers/net/ethernet/intel/i40e/i40e_nvm.c:390:6: warning: Value stored
-> > to 'read_size' during its initialization is never read
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> s/intialization/initialization/g
+From: Colin Ian King <colin.king@canonical.com>
 
-Other than that typo, looks fine:
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Don't use %x and casting to print out an address, instead use %p
+and remove the casting.  Cleans up smatch warnings:
+
+drivers/net/ethernet/via/via-rhine.c:998 rhine_init_one_common()
+warn: argument 4 to %lx specifier is cast from pointer
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/via/via-rhine.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/via/via-rhine.c b/drivers/net/ethernet/via/via-rhine.c
+index 83e6f76eb965..33949248c829 100644
+--- a/drivers/net/ethernet/via/via-rhine.c
++++ b/drivers/net/ethernet/via/via-rhine.c
+@@ -995,8 +995,8 @@ static int rhine_init_one_common(struct device *hwdev, u32 quirks,
+ 	else
+ 		name = "Rhine III";
+ 
+-	netdev_info(dev, "VIA %s at 0x%lx, %pM, IRQ %d\n",
+-		    name, (long)ioaddr, dev->dev_addr, rp->irq);
++	netdev_info(dev, "VIA %s at %p, %pM, IRQ %d\n",
++		    name, ioaddr, dev->dev_addr, rp->irq);
+ 
+ 	dev_set_drvdata(hwdev, dev);
+ 
+-- 
+2.14.1
+
