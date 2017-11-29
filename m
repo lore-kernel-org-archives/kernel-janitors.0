@@ -1,64 +1,122 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 07 Nov 2017 16:45:59 +0000
-Subject: Re: [PATCH] USB: remove redundant assignment to temp
-Message-Id: <b1eaf826-e4cc-a8f5-432c-aace88a6a554@canonical.com>
+From: Travis Davies <travisdavies.linuxkernel@gmail.com>
+Date: Wed, 29 Nov 2017 04:32:07 +0000
+Subject: [PATCH] drivers/staging/rtl8188eu remove 5GHZ specific code
+Message-Id: <1511929927.23129.16.camel@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.44L0.1711071039210.1395-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1711071039210.1395-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/11/17 15:42, Alan Stern wrote:
-> On Tue, 7 Nov 2017, Colin King wrote:
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The variable temp is being set at the end of each loop iteration
->> but this value is never read, it is either being updated in just
->> the case 1 block or at the end of the loop.  Thus the assignment
->> is redundant and can be removed.  Cleans up clang warning:
->>
->> drivers/usb/host/ehci-dbg.c:840:4: warning: Value stored to 'temp'
->> is never read
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/usb/host/ehci-dbg.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/usb/host/ehci-dbg.c b/drivers/usb/host/ehci-dbg.c
->> index 7fb21d01b3d0..70d4768958be 100644
->> --- a/drivers/usb/host/ehci-dbg.c
->> +++ b/drivers/usb/host/ehci-dbg.c
->> @@ -838,7 +838,6 @@ static ssize_t fill_registers_buffer(struct debug_buffer *buf)
->>  			default:		/* unknown */
->>  				break;
->>  			}
->> -			temp = (cap >> 8) & 0xff;
->>  		}
->>  	}
->>  #endif
-> 
-> Good catch, but the solution is wrong.  The original code was mistaken;
-> it should have said:
-> 
-> 			offset = (cap >> 8) & 0xff;
-> 
-> You can see that something like this is necessary if you consider the 
-> code path for the case where (cap & 0xff) != 1 -- the loop would just 
-> read the same capability value over and over again.
+[PATCH] drivers/staging/rtl8188eu remove 5GHZ specific code
 
-Thanks for pointing that out, makes complete sense.
+My first patch.
+This based from linux-next tree.
+Removes code valid only for 5 HGz, as per the TODO, and also some formating issues.
+If this device is only supported for sub 5GHZ hardware than this
+change should not harm its intended audience. The caller 
+of Hal_GetChnlGroup88E() does not check for false.
 
-> 
-> Would you like to submit a revised patch?
+Signed-off-by: Travis Davies <travisdavies.linuxkernel@gmail.com>
 
-Resent as: "usb: host: fix incorrect updating of offset"
-> 
-> Alan Stern
-> 
-Colin
+
+diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
+index 3673f57..28c31e3 100644
+--- a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
++++ b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
+@@ -387,59 +387,22 @@ static void Hal_ReadPowerValueFromPROM_8188E(struct txpowerinfo24g *pwrInfo24G,
+        }
+ }
+ 
+-static u8 Hal_GetChnlGroup88E(u8 chnl, u8 *pGroup)
+-{
+-       u8 bIn24G = true;
+-
+-       if (chnl <= 14) {
+-               bIn24G = true;
+-
+-               if (chnl < 3)                   /*  Channel 1-2 */
+-                       *pGroup = 0;
+-               else if (chnl < 6)              /*  Channel 3-5 */
+-                       *pGroup = 1;
+-               else     if (chnl < 9)          /*  Channel 6-8 */
+-                       *pGroup = 2;
+-               else if (chnl < 12)             /*  Channel 9-11 */
+-                       *pGroup = 3;
+-               else if (chnl < 14)             /*  Channel 12-13 */
+-                       *pGroup = 4;
+-               else if (chnl = 14)            /*  Channel 14 */
+-                       *pGroup = 5;
+-       } else {
+-
+-               /* probably, this branch is suitable only for 5 GHz */
+-
+-               bIn24G = false;
+-
+-               if (chnl <= 40)
+-                       *pGroup = 0;
+-               else if (chnl <= 48)
+-                       *pGroup = 1;
+-               else     if (chnl <= 56)
+-                       *pGroup = 2;
+-               else if (chnl <= 64)
+-                       *pGroup = 3;
+-               else if (chnl <= 104)
+-                       *pGroup = 4;
+-               else if (chnl <= 112)
+-                       *pGroup = 5;
+-               else if (chnl <= 120)
+-                       *pGroup = 5;
+-               else if (chnl <= 128)
+-                       *pGroup = 6;
+-               else if (chnl <= 136)
+-                       *pGroup = 7;
+-               else if (chnl <= 144)
+-                       *pGroup = 8;
+-               else if (chnl <= 153)
+-                       *pGroup = 9;
+-               else if (chnl <= 161)
+-                       *pGroup = 10;
+-               else if (chnl <= 177)
+-                       *pGroup = 11;
+-       }
+-       return bIn24G;
++static u8 Hal_GetChnlGroup88E(u8 chnl, u8 *pGroup) {
++
++        if (chnl < 3)                  /*  Channel 1-2 */
++               *pGroup = 0;
++       else if (chnl < 6)              /*  Channel 3-5 */
++               *pGroup = 1;
++       else if (chnl < 9)              /*  Channel 6-8 */
++               *pGroup = 2;
++       else if (chnl < 12)             /*  Channel 9-11 */
++               *pGroup = 3;
++       else if (chnl < 14)             /*  Channel 12-13 */
++               *pGroup = 4;
++       else if (chnl = 14)            /*  Channel 14 */
++               *pGroup = 5;
++
++       return true;
+ }
+ 
+ void Hal_ReadPowerSavingMode88E(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail)
+@@ -486,13 +449,13 @@ void Hal_ReadTxPowerInfo88E(struct adapter *padapter, u8 *PROMContent, bool Auto
+                                pHalData->Index24G_BW40_Base[0][ch] = pwrInfo24G.IndexBW40_Base[0][4];
+                        else
+                                pHalData->Index24G_BW40_Base[0][ch] = pwrInfo24G.IndexBW40_Base[0][group];
+-               }
+-               if (bIn24G) {
++
+                        DBG_88E("==== Path %d, Channel %d ====\n", 0, ch);
+                        DBG_88E("Index24G_CCK_Base[%d][%d] = 0x%x\n", 0, ch, pHalData->Index24G_CCK_Base[0][ch]);
+                        DBG_88E("Index24G_BW40_Base[%d][%d] = 0x%x\n", 0, ch, pHalData->Index24G_BW40_Base[0][ch]);
+                }
+        }
++
+        for (TxCount = 0; TxCount < MAX_TX_COUNT; TxCount++) {
+                pHalData->CCK_24G_Diff[0][TxCount] = pwrInfo24G.CCK_Diff[0][TxCount];
+                pHalData->OFDM_24G_Diff[0][TxCount] = pwrInfo24G.OFDM_Diff[0][TxCount];
+
+
 
