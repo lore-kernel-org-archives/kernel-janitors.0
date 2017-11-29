@@ -1,31 +1,42 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Wed, 08 Nov 2017 21:22:55 +0000
-Subject: Re: [PATCH] xen/privcmd: remove unused variable pageidx
-Message-Id: <58d07187-cd88-b1da-d528-b8b58c2bd874@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Nov 2017 14:20:59 +0000
+Subject: [PATCH] ext4: fix incorrect indentation of if statement
+Message-Id: <20171129142059.21898-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171108130030.25394-1-colin.king@canonical.com>
- <5a4f3027-c6c9-d0eb-32a9-4eb6d1061fe5@suse.com>
-In-Reply-To: <5a4f3027-c6c9-d0eb-32a9-4eb6d1061fe5@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Juergen Gross <jgross@suse.com>, Colin King <colin.king@canonical.com>, xen-devel@lists.xenproject.org
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/08/2017 08:30 AM, Juergen Gross wrote:
-> On 08/11/17 14:00, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Variable pageidx is assigned a value but it is never read, hence it
->> is redundant and can be removed. Cleans up clang warning:
->>
->> drivers/xen/privcmd.c:199:2: warning: Value stored to 'pageidx'
->> is never read
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Juergen Gross <jgross@suse.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+The indentation is incorrect and spaces need replacing with a tab
+on the if statement.
 
-Applied to for-linus-4.15.
+Cleans up smatch warning:
+fs/ext4/namei.c:3220 ext4_link() warn: inconsistent indenting
 
--boris
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ext4/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 798b3ac680db..d3fabc553c65 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3217,8 +3217,8 @@ static int ext4_link(struct dentry *old_dentry,
+ 	if (err)
+ 		return err;
+ 
+-       if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
+-	   (!projid_eq(EXT4_I(dir)->i_projid,
++	if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
++	    (!projid_eq(EXT4_I(dir)->i_projid,
+ 		       EXT4_I(old_dentry->d_inode)->i_projid)))
+ 		return -EXDEV;
+ 
+-- 
+2.14.1
+
