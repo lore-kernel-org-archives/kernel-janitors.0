@@ -1,25 +1,32 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 29 Nov 2017 06:31:22 +0000
-Subject: Re: [PATCH] crypto: chelsio - Fix an error code in chcr_hash_dma_map()
-Message-Id: <20171129063122.GB21575@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 29 Nov 2017 18:19:05 +0000
+Subject: Re: jsm_tty: Fix a possible null pointer dereference in two functions
+Message-Id: <089a4b85-64e8-cb4a-c5f8-9abb2556e5e5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171109212543.6dpgzvtbhi4574wr@mwanda>
-In-Reply-To: <20171109212543.6dpgzvtbhi4574wr@mwanda>
+References: <5c78db97-88f5-8655-9a47-eeee0a043fba@users.sourceforge.net>
+ <1511976187.19952.65.camel@perches.com> <20171129173504.GA20581@kroah.com>
+ <1511977896.19952.69.camel@perches.com> <20171129180528.GA24705@kroah.com>
+In-Reply-To: <20171129180528.GA24705@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Harsh Jain <harsh@chelsio.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org
+Cc: Joe Perches <joe@perches.com>, "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>, Jiri Slaby <jslaby@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 10, 2017 at 12:25:43AM +0300, Dan Carpenter wrote:
-> The dma_map_sg() function returns zero on error and positive values on
-> success.  We want to return -ENOMEM on failure here and zero on success.
+>> It's pretty unlikely, but it is an actual defect.
 > 
-> Fixes: 2f47d5804311 ("crypto: chelsio - Move DMA un/mapping to chcr from lld cxgb4 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> No it is not, those variables will never be set to NULL,
+> so this can never be triggered.  Walk up the call chain.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+If the involved software developers are convinced about the validity
+of this pointer:
+
+How do you think about to delete the following condition check
+instead in the discussed function implementations?
+
+	if (!ch)
+		return;
+
+
+Regards,
+Markus
