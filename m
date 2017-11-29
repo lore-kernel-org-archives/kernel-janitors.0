@@ -1,34 +1,30 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 08 Nov 2017 12:54:30 +0000
-Subject: Re: zd1201: remove unused variable framelen
-Message-Id: <20171108125430.B983F60261@smtp.codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Nov 2017 12:56:27 +0000
+Subject: Re: [PATCH 3/3] pinctrl: mcp23s08: Combine two function calls in mcp23s08_dbg_show()
+Message-Id: <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107185630.7791-1-colin.king@canonical.com>
-In-Reply-To: <20171107185630.7791-1-colin.king@canonical.com>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net> <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
+In-Reply-To: <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+On Mon, Oct 30, 2017 at 4:49 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable framelen is assigned but never read, hence it is redundant
-> and can be removed. Cleans up clang warning:
-> 
-> drivers/net/wireless/zydas/zd1201.c:234:3: warning: Value stored
-> to 'framelen' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 30 Oct 2017 16:34:44 +0100
+>
+> * Print a line break together with other data in a single function call.
+>
+> * Adjust indentation.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Patch applied to wireless-drivers-next.git, thanks.
+This does not apply.
+Possibly depends on 2/3.
 
-03e40f1e7680 zd1201: remove unused variable framelen
-
--- 
-https://patchwork.kernel.org/patch/10047145/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Yours,
+Linus Walleij
