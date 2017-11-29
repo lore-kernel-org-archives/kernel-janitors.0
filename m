@@ -1,27 +1,39 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 29 Nov 2017 08:15:10 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 29 Nov 2017 09:42:01 +0000
 Subject: Re: [PATCH] drivers/staging/rtl8188eu remove 5GHZ specific code
-Message-Id: <5A1E6C8E.7040006@bfs.de>
+Message-Id: <20171129094201.GB7597@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1511929927.23129.16.camel@gmail.com>
 In-Reply-To: <1511929927.23129.16.camel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Travis Davies <travisdavies.linuxkernel@gmail.com>
+Cc: Larry.Finger@lwfinger.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-Am 29.11.2017 05:32, schrieb Travis Davies:
+On Tue, Nov 28, 2017 at 08:32:07PM -0800, Travis Davies wrote:
 > [PATCH] drivers/staging/rtl8188eu remove 5GHZ specific code
-> 
+
+That is up in the subject line, no need to put it in the body.
+
 > My first patch.
+
+No need for that in the changelog :)
+
 > This based from linux-next tree.
+
+Nor that :)
+
 > Removes code valid only for 5 HGz, as per the TODO, and also some formating issues.
+
+But this line isn't formatted properly :(
+
 > If this device is only supported for sub 5GHZ hardware than this
 > change should not harm its intended audience. The caller 
 > of Hal_GetChnlGroup88E() does not check for false.
-> 
+
+Were you able to test this?
+
 > Signed-off-by: Travis Davies <travisdavies.linuxkernel@gmail.com>
 > 
 > 
@@ -90,49 +102,11 @@ Am 29.11.2017 05:32, schrieb Travis Davies:
 > +
 > +        if (chnl < 3)                  /*  Channel 1-2 */
 > +               *pGroup = 0;
-> +       else if (chnl < 6)              /*  Channel 3-5 */
-> +               *pGroup = 1;
-> +       else if (chnl < 9)              /*  Channel 6-8 */
-> +               *pGroup = 2;
-> +       else if (chnl < 12)             /*  Channel 9-11 */
-> +               *pGroup = 3;
-> +       else if (chnl < 14)             /*  Channel 12-13 */
-> +               *pGroup = 4;
-> +       else if (chnl = 14)            /*  Channel 14 */
-> +               *pGroup = 5;
-> +
-> +       return true;
->  }
->  
 
-I suggest a *pGroup = 0 at the beginning. Otherwise *pGroup will return
-uninitilised memory and true.
-What means it should have an "else return false;" also. Or make the whole
-thing void.
+No tabs?
 
+Please always run scripts/checkpatch.pl on your patches.
 
->  void Hal_ReadPowerSavingMode88E(struct adapter *padapter, u8 *hwinfo, bool AutoLoadFail)
-> @@ -486,13 +449,13 @@ void Hal_ReadTxPowerInfo88E(struct adapter *padapter, u8 *PROMContent, bool Auto
->                                 pHalData->Index24G_BW40_Base[0][ch] = pwrInfo24G.IndexBW40_Base[0][4];
->                         else
->                                 pHalData->Index24G_BW40_Base[0][ch] = pwrInfo24G.IndexBW40_Base[0][group];
-> -               }
-> -               if (bIn24G) {
-> +
->                         DBG_88E("==== Path %d, Channel %d ====\n", 0, ch);
->                         DBG_88E("Index24G_CCK_Base[%d][%d] = 0x%x\n", 0, ch, pHalData->Index24G_CCK_Base[0][ch]);
->                         DBG_88E("Index24G_BW40_Base[%d][%d] = 0x%x\n", 0, ch, pHalData->Index24G_BW40_Base[0][ch]);
->                 }
->         }
-> +
->         for (TxCount = 0; TxCount < MAX_TX_COUNT; TxCount++) {
->                 pHalData->CCK_24G_Diff[0][TxCount] = pwrInfo24G.CCK_Diff[0][TxCount];
->                 pHalData->OFDM_24G_Diff[0][TxCount] = pwrInfo24G.OFDM_Diff[0][TxCount];
-> 
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+thanks,
+
+greg k-h
