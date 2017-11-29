@@ -1,34 +1,58 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 17 Nov 2017 16:03:36 +0000
-Subject: Re: [PATCH] video: fbdev: sm501fb: fix potential null pointer dereference on fbi
-Message-Id: <7500259.pPyNLB3SIs@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 29 Nov 2017 16:40:15 +0000
+Subject: [PATCH] jsm_tty: Fix a possible null pointer dereference in two functions
+Message-Id: <5c78db97-88f5-8655-9a47-eeee0a043fba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171110173236epcas4p2e31777c5a06270f2aed64110fedf0524@epcas4p2.samsung.com>
- <20171110173231.24598-1-colin.king@canonical.com>
-In-Reply-To: <20171110173231.24598-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>, Jiri Slaby <jslaby@suse.com>, Joe Perches <joe@perches.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Friday, November 10, 2017 05:32:31 PM Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer fbi is dereferenced with par = fbi->par before there is a
-> null check on fbi, hence there is a potential null pointer dereference
-> on a null par.  Fix this by moving the dereference after the null
-> pointer check.
-> 
-> Detected by CoverityScan, CID#1461301 ("Dereference before null check")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 29 Nov 2017 17:30:36 +0100
 
-Patch queued for 4.15, thanks.
+Move two debug messages so that a null pointer access can not happen
+for the variable "ch" in these functions.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This issue was detected by using the Coccinelle software.
+
+Fixes: 669fef464468d3f02d60a5cf725fc097e03c5cb8 ("serial: jsm: Convert jsm_printk to jsm_dbg")
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/serial/jsm/jsm_tty.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_tty.c
+index 469927d37b41..a34eed7344e5 100644
+--- a/drivers/tty/serial/jsm/jsm_tty.c
++++ b/drivers/tty/serial/jsm/jsm_tty.c
+@@ -521,11 +521,10 @@ void jsm_input(struct jsm_channel *ch)
+ 	int s = 0;
+ 	int i = 0;
+ 
+-	jsm_dbg(READ, &ch->ch_bd->pci_dev, "start\n");
+-
+ 	if (!ch)
+ 		return;
+ 
++	jsm_dbg(READ, &ch->ch_bd->pci_dev, "start\n");
+ 	port = &ch->uart_port.state->port;
+ 	tp = port->tty;
+ 
+@@ -647,10 +646,10 @@ static void jsm_carrier(struct jsm_channel *ch)
+ 	int virt_carrier = 0;
+ 	int phys_carrier = 0;
+ 
+-	jsm_dbg(CARR, &ch->ch_bd->pci_dev, "start\n");
+ 	if (!ch)
+ 		return;
+ 
++	jsm_dbg(CARR, &ch->ch_bd->pci_dev, "start\n");
+ 	bd = ch->ch_bd;
+ 
+ 	if (!bd)
+-- 
+2.15.0
 
