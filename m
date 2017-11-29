@@ -1,55 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Nov 2017 20:38:18 +0000
-Subject: [PATCH 2/2] net/sched/cls_tcindex: Improve a size determination in two functions
-Message-Id: <a039fc85-62a0-1da9-dc32-fe2294bf8991@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Nov 2017 12:55:06 +0000
+Subject: Re: [PATCH 2/3] pinctrl: mcp23s08: Use common error handling code in mcp23s08_dbg_show()
+Message-Id: <CACRpkdbhh9CcqMw1Wp0-JsMRGt=koZJ_FCi67gCyFHSxVf-sxQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7192a5ea-b712-6bec-5d9d-01906218d404@users.sourceforge.net>
-In-Reply-To: <7192a5ea-b712-6bec-5d9d-01906218d404@users.sourceforge.net>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net> <3e95d8b5-8306-ae4c-487b-44c6dc1811d6@users.sourceforge.net>
+In-Reply-To: <3e95d8b5-8306-ae4c-487b-44c6dc1811d6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Nov 2017 21:17:26 +0100
+On Mon, Oct 30, 2017 at 4:47 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> +       if (t)
+> +               goto report_failure;
+>
+>         for (t = 0, mask = BIT(0); t < chip->ngpio; t++, mask <<= 1) {
+>                 const char *label;
+> @@ -758,8 +753,13 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+>                 /* NOTE:  ignoring the irq-related registers */
+>                 seq_puts(s, "\n");
+>         }
+> -done:
+> +unlock:
+>         mutex_unlock(&mcp->lock);
+> +       return;
+> +
+> +report_failure:
+> +       seq_puts(s, " I/O Error\n");
+> +       goto unlock;
+>  }
 
-This issue was detected by using the Coccinelle software.
+This is spaghetti coding. Not applied.
+https://en.wikipedia.org/wiki/Spaghetti_code
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/sched/cls_tcindex.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/net/sched/cls_tcindex.c b/net/sched/cls_tcindex.c
-index 24f05bc09084..0f1909c6545d 100644
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-@@ -130,7 +130,7 @@ static int tcindex_init(struct tcf_proto *tp)
- 	struct tcindex_data *p;
- 
- 	pr_debug("tcindex_init(tp %p)\n", tp);
--	p = kzalloc(sizeof(struct tcindex_data), GFP_KERNEL);
-+	p = kzalloc(sizeof(*p), GFP_KERNEL);
- 	if (!p)
- 		return -ENOMEM;
- 
-@@ -413,10 +413,7 @@ tcindex_set_parms(struct net *net, struct tcf_proto *tp, unsigned long base,
- 		} else {
- 			struct tcindex_filter __rcu **hash;
- 
--			hash = kcalloc(cp->hash,
--				       sizeof(struct tcindex_filter *),
--				       GFP_KERNEL);
--
-+			hash = kcalloc(cp->hash, sizeof(*hash), GFP_KERNEL);
- 			if (!hash)
- 				goto errout_alloc;
- 
--- 
-2.15.0
-
+Yours,
+Linus Walleij
