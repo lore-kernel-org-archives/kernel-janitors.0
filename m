@@ -1,34 +1,43 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Tue, 07 Nov 2017 18:46:53 +0000
-Subject: Re: [PATCH][V2] usb: gadget: pxa27x: Remove redundant assignment to is_short and dev
-Message-Id: <87a7zy7wpu.fsf@belgarion.home>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Nov 2017 11:37:38 +0000
+Subject: [PATCH] mmc: block: make function mmc_cqe_issue_type static
+Message-Id: <20171130113738.3851-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107143914.5748-1-colin.king@canonical.com>
-In-Reply-To: <20171107143914.5748-1-colin.king@canonical.com> (Colin King's
- message of "Tue, 7 Nov 2017 14:39:14 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable is_short is set to zero but this value is never read as it is
-> overwritten with a new value later on, hence it is a redundant
-> assignment and can be removed.  Pointer dev is assigned a value that
-> is not read and it is updated a few statements later, this too is
-> redundant and can be removed. Cleans up clan warnings:
->
-> drivers/usb/gadget/udc/pxa27x_udc.c:986:3: warning: Value stored
-> to 'is_short' is never read
-> drivers/usb/gadget/udc/pxa27x_udc.c:1141:2: warning: Value stored
-> to 'dev' is never read
+The function mmc_cqe_issue_type is local to the source and does
+not need to be in global scope, so make it static.
 
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Cleans up sparse warning:
+drivers/mmc/core/queue.c:62:21: warning: symbol 'mmc_cqe_issue_type'
+was not declared. Should it be static?
 
-Cheers.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/core/queue.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---
-Robert
+diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+index d8394007bc99..5db388081789 100644
+--- a/drivers/mmc/core/queue.c
++++ b/drivers/mmc/core/queue.c
+@@ -59,8 +59,8 @@ static inline bool mmc_cqe_can_dcmd(struct mmc_host *host)
+ 	return host->caps2 & MMC_CAP2_CQE_DCMD;
+ }
+ 
+-enum mmc_issue_type mmc_cqe_issue_type(struct mmc_host *host,
+-				       struct request *req)
++static enum mmc_issue_type mmc_cqe_issue_type(struct mmc_host *host,
++					      struct request *req)
+ {
+ 	switch (req_op(req)) {
+ 	case REQ_OP_DRV_IN:
+-- 
+2.14.1
+
