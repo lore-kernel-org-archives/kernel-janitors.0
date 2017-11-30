@@ -1,35 +1,41 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:59:03 +0000
-Subject: Re: [PATCH 3/3] clk/mmp: Adjust 12 checks for null pointers
-Message-Id: <20171114015903.GL11955@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Nov 2017 11:26:14 +0000
+Subject: [PATCH] crypto: cryptd: make cryptd_max_cpu_qlen module parameter static
+Message-Id: <20171130112614.3090-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
- <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
-In-Reply-To: <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 09:00:21 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written !…
-> 
-> Thus fix the affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+The cryptd_max_cpu_qlen module parameter is local to the source and does
+not need to be in global scope, so make it static.
 
+Cleans up sparse warning:
+crypto/cryptd.c:35:14: warning: symbol 'cryptd_max_cpu_qlen' was not
+declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ crypto/cryptd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/crypto/cryptd.c b/crypto/cryptd.c
+index b1eb131c0f10..552e3a86e829 100644
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -32,7 +32,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ 
+-unsigned int cryptd_max_cpu_qlen = 1000;
++static unsigned int cryptd_max_cpu_qlen = 1000;
+ module_param(cryptd_max_cpu_qlen, uint, 0);
+ MODULE_PARM_DESC(cryptd_max_cpu_qlen, "Set cryptd Max queue depth");
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
+
