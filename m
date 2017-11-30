@@ -1,36 +1,24 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 28 Nov 2017 05:54:27 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 30 Nov 2017 14:27:25 +0000
 Subject: Re: [PATCH] atm: eni: fix several indentation issues
-Message-Id: <1511848467.32426.100.camel@perches.com>
+Message-Id: <20171130.092725.25142802586095194.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171127131510.10500-1-colin.king@canonical.com>
 In-Reply-To: <20171127131510.10500-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2017-11-27 at 13:15 +0000, Colin King wrote:
-> drivers/atm/eni.c
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 13:15:10 +0000
 
-Aren't all those ++ variables unused?
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are several statements that have incorrect indentation. Fix
+> these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-They seem to be emitted in an
-#if 0
-	printk(...)
-#endif
-
-Maybe these should be removed or changed
-to something like:
-
-#if 0
-#define DEBUG_INCR(var) do { (var)++ } while (0)
-#else
-#define DEBUG_INCR(var) do {} while (0)
-#endif
-
-...
-
-	DEBUG_INCR(rx_enqueued);
-
+Applied.
