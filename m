@@ -1,63 +1,42 @@
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Fri, 03 Nov 2017 07:37:09 +0000
-Subject: Re: [PATCH] media: v4l: async: fix return of unitialized variable ret
-Message-Id: <20171103073709.GD24132@bigcity.dyn.berto.se>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Nov 2017 12:14:47 +0000
+Subject: [PATCH] btrfs: make function update_share_count static
+Message-Id: <20171130121447.5118-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171103065827.25988-1-colin.king@canonical.com>
-In-Reply-To: <20171103065827.25988-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sebastian Reichel <sre@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your patch.
+The function update_share_count is local to the source and does
+not need to be in global scope, so make it static.
 
-On 2017-11-03 06:58:27 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> A shadow declaration of variable ret is being assigned a return error
-> status and this value is being lost when the error exit goto's jump
-> out of the local scope. This leads to an uninitalized error return value
-> in the outer scope being returned. Fix this by removing the inner scoped
-> declaration of variable ret.
->=20
-> Detected by CoverityScan, CID#1460380 ("Uninitialized scalar variable")
->=20
-> Fixes: fb45f436b818 ("media: v4l: async: Fix notifier complete callback e=
-rror handling")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cleans up sparse warning:
+fs/btrfs/backref.c:219:6: warning: symbol 'update_share_count' was not
+declared. Should it be static?
 
-Reviewed-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/backref.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/media/v4l2-core/v4l2-async.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-co=
-re/v4l2-async.c
-> index 49f7eccc76db..7020b2e6d158 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -550,7 +550,6 @@ int v4l2_async_register_subdev(struct v4l2_subdev *sd)
->  		struct v4l2_device *v4l2_dev >  			v4l2_async_notifier_find_v4l2_dev(n=
-otifier);
->  		struct v4l2_async_subdev *asd;
-> -		int ret;
-> =20
->  		if (!v4l2_dev)
->  			continue;
-> --=20
-> 2.14.1
->=20
+diff --git a/fs/btrfs/backref.c b/fs/btrfs/backref.c
+index 7d0dc100a09a..e4054e533f6d 100644
+--- a/fs/btrfs/backref.c
++++ b/fs/btrfs/backref.c
+@@ -216,7 +216,8 @@ static int prelim_ref_compare(struct prelim_ref *ref1,
+ 	return 0;
+ }
+ 
+-void update_share_count(struct share_check *sc, int oldcount, int newcount)
++static void update_share_count(struct share_check *sc, int oldcount,
++			       int newcount)
+ {
+ 	if ((!sc) || (oldcount = 0 && newcount < 1))
+ 		return;
+-- 
+2.14.1
 
---=20
-Regards,
-Niklas S=F6derlund
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
