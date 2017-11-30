@@ -1,34 +1,46 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 08 Nov 2017 12:52:49 +0000
-Subject: Re: orinoco_usb: remove redundant pointer dev
-Message-Id: <20171108125249.B823E607C7@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Nov 2017 12:57:06 +0000
+Subject: [PATCH][V2] of: overlay: fix memory leak of ovcs on error exit path
+Message-Id: <20171130125706.13790-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171103134528.8415-1-colin.king@canonical.com>
-In-Reply-To: <20171103134528.8415-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer dev is assigned but never read, hence it is redundant
-> and can be removed. Cleans up clang warning:
-> 
-> drivers/net/wireless/intersil/orinoco/orinoco_usb.c:1468:2: warning:
-> Value stored to 'dev' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Currently if the call to of_resolve_phandles fails then then ovcs
+is not kfree'd on the error exit path.  Rather than try and make
+the clean up exit path more convoluted, fix this by just kfree'ing
+ovcs at the point of error detection and exit via the same exit
+path.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Detected by CoverityScan, CID#1462296 ("Resource Leak")
 
-9b741b2a3148 orinoco_usb: remove redundant pointer dev
+Fixes: bd80e2555c5c ("of: overlay: Fix cleanup order in of_overlay_apply()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/of/overlay.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 53bc9e3f0b98..6c8efe7d8cbb 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -708,8 +708,10 @@ int of_overlay_apply(struct device_node *tree, int *ovcs_id)
+ 	of_overlay_mutex_lock();
+ 
+ 	ret = of_resolve_phandles(tree);
+-	if (ret)
++	if (ret) {
++		kfree(ovcs);
+ 		goto err_overlay_unlock;
++	}
+ 
+ 	mutex_lock(&of_mutex);
+ 
 -- 
-https://patchwork.kernel.org/patch/10040113/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
 
