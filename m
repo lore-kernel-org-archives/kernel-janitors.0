@@ -1,20 +1,22 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 30 Nov 2017 12:54:17 +0000
+From: Frank Rowand <frowand.list@gmail.com>
+Date: Thu, 30 Nov 2017 13:37:09 +0000
 Subject: Re: [PATCH] of: overlay: fix memory leak of ovcs on error exit path
-Message-Id: <06ef1a5a-5321-75ad-9610-e7f3692f48df@canonical.com>
+Message-Id: <75d7d1c8-8a19-1a4c-0796-7cf69fdebe6d@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171129191750.25254-1-colin.king@canonical.com>
  <dcb4e2a4-707b-0ccc-e12b-c6fa4ef251b7@gmail.com>
- <20171130125002.wlnnev5pjih6d5bz@mwanda>
-In-Reply-To: <20171130125002.wlnnev5pjih6d5bz@mwanda>
+ <806a0467-87c8-4100-c7f2-54cfa8732465@canonical.com>
+In-Reply-To: <806a0467-87c8-4100-c7f2-54cfa8732465-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Frank Rowand <frowand.list@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 30/11/17 12:50, Dan Carpenter wrote:
-> On Thu, Nov 30, 2017 at 07:14:45AM -0500, Frank Rowand wrote:
+Hi Colin, Rob,
+
+On 11/30/17 07:18, Colin Ian King wrote:
+> On 30/11/17 12:14, Frank Rowand wrote:
 >> On 11/29/17 14:17, Colin King wrote:
 >>> From: Colin Ian King <colin.king@canonical.com>
 >>>
@@ -27,16 +29,6 @@ On 30/11/17 12:50, Dan Carpenter wrote:
 >>> Detected by CoverityScan, CID#1462296 ("Resource Leak")
 >>>
 >>> Fixes: f948d6d8b792 ("of: overlay: avoid race condition between applying multiple overlays")
-> 
-> The Fixes tag is wrong.  It should be:
-> 
-> Fixes: bd80e2555c5c ("of: overlay: Fix cleanup order in of_overlay_apply()")
-
-Good catch. I'll send a V2.
-
-Colin
-
-> 
 >>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 >>> ---
 >>>  drivers/of/overlay.c | 4 +++-
@@ -61,11 +53,36 @@ Colin
 >>>
 >>
 >> False coverity warning.  ovcs is freed in free_overlay_changeset().
+>>
 > 
-> You're looking at an older version of the code and Colin is looking at
-> linux-next.
+> The error exit path is via err_overlay_unlock:
 > 
-> regards,
-> dan carpenter
+> err_overlay_unlock:
+>         of_overlay_mutex_unlock();
 > 
+> out:
+>         pr_debug("%s() err=%d\n", __func__, ret);
+> 
+>         return ret;
+> 
+> ..so there is no call to free_overlay_changeset there.
+> 
+> Colin
+> 
+
+OK, I was looking at 4.15-rc1.  You must be looking at a later version where
+"[PATCH 1/2] of: overlay: Fix cleanup order in of_overlay_apply()" has been
+applied.  Thanks for providing the extra details about the exit path so I
+could see that.
+
+Rob, I think that the fix for cleanup order was not the best way to fix that
+problem.  A better method would have been to move "mutex_lock(&of_mutex);"
+up 5 lines, to just before calling of_reserve_phandles().  The problem
+found by coverity was caused by the "Fix cleanup order" patch.
+
+I can create that alternate fix if you would like, but I am traveling
+right now and don't want to submit a patch without boot testing, so
+there will be a slight delay.
+
+-Frank
 
