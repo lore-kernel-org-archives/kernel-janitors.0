@@ -1,88 +1,54 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date: Fri, 01 Dec 2017 15:30:08 +0000
-Subject: Re: [PATCH 2/2] power: supply: ab8500_charger: Bail out in case of error in 'ab8500_charger_init_hw_
-Message-Id: <20171201153008.h7rqw3yvmdllgqgs@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="g7usawffij4bmtvc"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Dec 2017 10:02:58 +0000
+Subject: [PATCH][V2] wlcore, wl1251: fix spelling: "Couldnt" -> "Couldn't" and remove error on -ENOMEM
+Message-Id: <20171201100258.10029-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171122203120.13467-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171122203120.13467-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---g7usawffij4bmtvc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Trivial fix to spelling mistake in error message text.  Also remove the
+error message on an kzalloc failure as this is redundant.
 
-Hi,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ti/wl1251/init.c | 4 +---
+ drivers/net/wireless/ti/wlcore/acx.c  | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-On Wed, Nov 22, 2017 at 09:31:20PM +0100, Christophe JAILLET wrote:
-> If an error occurs when we enable the backup battery charging, we should
-> go through the error handling path directly.
->=20
-> Before commit db43e6c473b5 ("ab8500-bm: Add usb power path support") this
-> was the case, but this commit has added some code between the last test a=
-nd
-> the 'out' label.
-> So, in case of error, this added code is executed and the error may be
-> silently ignored.
->=20
-> Fix it by adding the missing 'goto out', as done in all other error
-> handling paths.
->=20
-> Fixes: db43e6c473b5 ("ab8500-bm: Add usb power path support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+diff --git a/drivers/net/wireless/ti/wl1251/init.c b/drivers/net/wireless/ti/wl1251/init.c
+index 1d799bffaa9f..e7d77acdf18c 100644
+--- a/drivers/net/wireless/ti/wl1251/init.c
++++ b/drivers/net/wireless/ti/wl1251/init.c
+@@ -310,10 +310,8 @@ static int wl1251_hw_init_data_path_config(struct wl1251 *wl)
+ 	/* asking for the data path parameters */
+ 	wl->data_path = kzalloc(sizeof(struct acx_data_path_params_resp),
+ 				GFP_KERNEL);
+-	if (!wl->data_path) {
+-		wl1251_error("Couldnt allocate data path parameters");
++	if (!wl->data_path)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ret = wl1251_acx_data_path_params(wl, wl->data_path);
+ 	if (ret < 0) {
+diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
+index a4859993db3c..3ca9167d6146 100644
+--- a/drivers/net/wireless/ti/wlcore/acx.c
++++ b/drivers/net/wireless/ti/wlcore/acx.c
+@@ -146,7 +146,7 @@ int wl1271_acx_feature_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+ 	ret = wl1271_cmd_configure(wl, ACX_FEATURE_CFG,
+ 				   feature, sizeof(*feature));
+ 	if (ret < 0) {
+-		wl1271_error("Couldnt set HW encryption");
++		wl1271_error("Couldn't set HW encryption");
+ 		goto out;
+ 	}
+ 
+-- 
+2.14.1
 
-Thanks, queued.
-
--- Sebastian
-
->  drivers/power/supply/ab8500_charger.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply=
-/ab8500_charger.c
-> index 1cdbe7a0738d..5a76c6d343de 100644
-> --- a/drivers/power/supply/ab8500_charger.c
-> +++ b/drivers/power/supply/ab8500_charger.c
-> @@ -3221,8 +3221,10 @@ static int ab8500_charger_init_hw_registers(struct=
- ab8500_charger *di)
->  	ret =3D abx500_mask_and_set_register_interruptible(di->dev,
->  		AB8500_RTC, AB8500_RTC_CTRL_REG,
->  		RTC_BUP_CH_ENA, RTC_BUP_CH_ENA);
-> -	if (ret < 0)
-> +	if (ret < 0) {
->  		dev_err(di->dev, "%s mask and set failed\n", __func__);
-> +		goto out;
-> +	}
-> =20
->  	if (is_ab8540(di->parent)) {
->  		ret =3D abx500_mask_and_set_register_interruptible(di->dev,
-> --=20
-> 2.14.1
->=20
-
---g7usawffij4bmtvc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlohdYAACgkQ2O7X88g7
-+povOQ//YoAApAYZV8Z+0g5fz4kUY01PvU42my4SOdkw5tsi7Kv6p3XVQ+sH61PA
-zBZkp9kfPfYPd4tQWmmJfVSHJi6VY18wFl3lqjfgajbiBbhX27wI/kMUy547f6bs
-IuFCX9A/baUFAaL7Ue8lowus55MtqQdfEpERn8ON7WNztQAQ/AG4oeNDtkw3cHEs
-9la1l1t6bhDOnBst3yevbW1FgJ+Da8Se0DqurEVwOrl8MaEe4h1eG0SFBMYiCf8P
-/OqEJ/pGe2ca/ZZZVhbW2lqpAo8F6K8hf1c589WRTBa7OM2aEoaO9fCnnHFHBeNy
-04oPiSpOP3rI/RoAymFmwQ2dpZ+iBtprc2JZaW8b8sYV3vt8GVVsIidsFSc7Pwv0
-D0WvClrnahV3tc1X8jyABEqHOeKn5SCRzbAE8F9vOtiCktChqFu6U7jjxhE6Z3dN
-sAbs0wGdkB4qtbss5Pfv14Llk26GmoddanFawVQHJeGhVFuXhkQ7HtWzGB1l/Zu8
-07ec2boJlcSjnZTYofKxP0k+RMWZnIKLb/KN1tcxwx0juHchBS3JqR0+4ygJUv0p
-NrfL30aXK/ggfo5oZo4IahSmwdNCk7F6ell9mSOvP5e8uj6ajHZ5QiNDlPgmTkwY
-/ExIKlAskVtCfjhnnWgr+4DI2jlrn+8xp00tJch8D0RXQM/aubo=
-=Ooel
------END PGP SIGNATURE-----
-
---g7usawffij4bmtvc--
