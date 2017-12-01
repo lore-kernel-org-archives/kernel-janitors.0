@@ -1,34 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 06 Dec 2017 19:25:42 +0000
-Subject: Re: [PATCH] bnxt_en: Uninitialized variable in bnxt_tc_parse_actions()
-Message-Id: <20171206.142542.491013112912141715.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Dec 2017 12:38:11 +0000
+Subject: [PATCH] liquidio: fix incorrect indentation of assignment statement
+Message-Id: <20171201123811.14882-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171205143752.cymsw7fzlqn6ejeq@mwanda>
-        <CACKFLinE9vWuooML4RhZHN0Xo2yr4cB90hEwizdEP3U6DLaoFA@mail.gmail.com>
-In-Reply-To: <CACKFLinE9vWuooML4RhZHN0Xo2yr4cB90hEwizdEP3U6DLaoFA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: michael.chan@broadcom.com
-Cc: dan.carpenter@oracle.com, sathya.perla@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Wed, 6 Dec 2017 11:16:55 -0800
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Tue, Dec 5, 2017 at 6:37 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> Smatch warns that:
->>
->>     drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c:160 bnxt_tc_parse_actions()
->>     error: uninitialized symbol 'rc'.
->>
->> "rc" is either uninitialized or set to zero here so we can just remove
->> the check.
->>
->> Fixes: 8c95f773b4a3 ("bnxt_en: add support for Flower based vxlan encap/decap offload")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Thanks.
-> 
-> Acked-by: Michael Chan <michael.chan@broadcom.com>
+Remove one extraneous level of indentation on assignment statement.
 
-Applied to net-next, thanks everyone.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cavium/liquidio/lio_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+index 6aa0eee88ea5..a5eecd895a82 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+@@ -1113,7 +1113,7 @@ static int liquidio_watchdog(void *param)
+ 				dev_err(&oct->pci_dev->dev,
+ 					"ERROR: Octeon core %d crashed or got stuck!  See oct-fwdump for details.\n",
+ 					core);
+-					err_msg_was_printed[core] = true;
++				err_msg_was_printed[core] = true;
+ 			}
+ 		}
+ 
+-- 
+2.14.1
+
