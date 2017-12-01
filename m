@@ -1,34 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 13:25:01 +0000
-Subject: Re: [PATCH] USB: emi26: Delete an error message for a failed memory allocation in emi26_writememory(
-Message-Id: <c873917f-0264-f4c5-3753-dc6a588cfb51@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Dec 2017 09:37:25 +0000
+Subject: [PATCH] scsi: bnx2fc: fix spelling mistake: "Couldnt" -> "Couldn't"
+Message-Id: <20171201093725.9274-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <244f8baf-0cd7-89f5-b210-7c321e180f11@users.sourceforge.net>
-In-Reply-To: <244f8baf-0cd7-89f5-b210-7c321e180f11@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>, linux-usb@vger.kernel.org
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> @@ -42,10 +42,9 @@ static int emi26_writememory (struct usb_device *dev, int address,
->>  	int result;
->>  	unsigned char *buffer =  kmemdup(data, length, GFP_KERNEL);
->>
->> -	if (!buffer) {
->> -		dev_err(&dev->dev, "kmalloc(%d) failed.\n", length);
-> 
-> I guess the length information would not be so easy to find in the backtrace.
+From: Colin Ian King <colin.king@canonical.com>
 
-Why do you “guess”?
+Trivial fix to spelling mistake in error message text.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->> +	if (!buffer)
->>  		return -ENOMEM;
->> -	}
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index e6b9de7d41ac..65de1d0578a1 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -1552,7 +1552,7 @@ static struct fc_lport *bnx2fc_if_create(struct bnx2fc_interface *interface,
+ 
+ 	rc = bnx2fc_shost_config(lport, parent);
+ 	if (rc) {
+-		printk(KERN_ERR PFX "Couldnt configure shost for %s\n",
++		printk(KERN_ERR PFX "Couldn't configure shost for %s\n",
+ 			interface->netdev->name);
+ 		goto lp_config_err;
+ 	}
+@@ -1560,7 +1560,7 @@ static struct fc_lport *bnx2fc_if_create(struct bnx2fc_interface *interface,
+ 	/* Initialize the libfc library */
+ 	rc = bnx2fc_libfc_config(lport);
+ 	if (rc) {
+-		printk(KERN_ERR PFX "Couldnt configure libfc\n");
++		printk(KERN_ERR PFX "Couldn't configure libfc\n");
+ 		goto shost_err;
+ 	}
+ 	fc_host_port_type(lport->host) = FC_PORTTYPE_UNKNOWN;
+-- 
+2.14.1
 
-Would we like to achieve another consensus on the data which are provided by
-a default Linux allocation failure report?
-
-Regards,
-Markus
