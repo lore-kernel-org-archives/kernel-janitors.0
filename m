@@ -1,46 +1,37 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Thu, 28 Dec 2017 05:39:03 +0000
-Subject: Re: [PATCH] pinctrl: spear: Delete an error message for a failed memory allocation in spear_pinctrl_
-Message-Id: <20171228052703.GD8652@vireshk-i7>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 02 Dec 2017 12:05:51 +0000
+Subject: Re: [PATCH] gpio: gpio-stmpe: make various char arrays static const, shrinks object size
+Message-Id: <CACRpkdbsvC0ziDN=L5PA0u3S2wVoOHkcuqYWAZknsAvOLyXs3g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3d936763-6a8a-edd3-3bcf-0075c9343e37@users.sourceforge.net>
-In-Reply-To: <3d936763-6a8a-edd3-3bcf-0075c9343e37@users.sourceforge.net>
+References: <20171128182339.24579-1-colin.king@canonical.com>
+In-Reply-To: <20171128182339.24579-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Colin King <colin.king@canonical.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 27-12-17, 22:48, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Dec 2017 22:44:04 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/pinctrl/spear/pinctrl-spear.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
-> index 4db52ba38d8d..efe79d3f7659 100644
-> --- a/drivers/pinctrl/spear/pinctrl-spear.c
-> +++ b/drivers/pinctrl/spear/pinctrl-spear.c
-> @@ -361,10 +361,8 @@ int spear_pinctrl_probe(struct platform_device *pdev,
->  		return -ENODEV;
->  
->  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
-> -	if (!pmx) {
-> -		dev_err(&pdev->dev, "Can't alloc spear_pmx\n");
-> +	if (!pmx)
->  		return -ENOMEM;
-> -	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	pmx->vbase = devm_ioremap_resource(&pdev->dev, res);
+On Tue, Nov 28, 2017 at 7:23 PM, Colin King <colin.king@canonical.com> wrote:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Don't populate the read-only arrays edge_det_values, rise_values and
+> fall_values on the stack but instead make them static and constify them.
+> Makes the object code smaller by over 240 bytes:
+>
+> Before:
+>    text    data     bss     dec     hex filename
+>    9525    2520     192   12237    2fcd drivers/gpio/gpio-stmpe.o
+>
+> After:
+>    text    data     bss     dec     hex filename
+>    9025    2776     192   11993    2ed9 drivers/gpio/gpio-stmpe.o
+>
+> (gcc version 7.2.0 x86_64)
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
--- 
-viresh
+Patch applied.
+
+Yours,
+Linus Walleij
