@@ -1,28 +1,68 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 05 Dec 2017 19:38:27 +0000
-Subject: Re: [PATCH][next] netdevsim: make functions nsim_bpf_create_prog and nsim_bpf_destroy_prog static
-Message-Id: <20171205.143827.1200817158476092630.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Dec 2017 18:20:47 +0000
+Subject: Re: omapfb/dss: Delete an error message for a failed memory allocation in three functions
+Message-Id: <21554e23-e714-3f6f-cd70-4c277823bab3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171204125609.5931-1-colin.king@canonical.com>
-In-Reply-To: <20171204125609.5931-1-colin.king@canonical.com>
+References: <c48a01db-c477-3bd3-5cb4-548e47810ccb@users.sourceforge.net>
+ <d29a0bae-7b6f-b8f6-6809-5a097cd5a26a@ti.com>
+ <1511809633.32426.70.camel@perches.com>
+ <d82fbab2-865f-3051-f487-d310ee819cf3@users.sourceforge.net>
+ <1511833514.32426.86.camel@perches.com>
+ <7e7e64cf-dbe5-614a-f1e5-29d7b6cf9297@users.sourceforge.net>
+ <1511856244.19952.14.camel@perches.com>
+In-Reply-To: <1511856244.19952.14.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jakub.kicinski@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Joe Perches <joe@perches.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org
+Cc: "Andrew F. Davis" <afd@ti.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon,  4 Dec 2017 12:56:09 +0000
+> How many times have I told you to include the reason for your patches
+> in your proposed commit message?
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Functions nsim_bpf_create_prog and nsim_bpf_destroy_prog are local to the
-> source and do not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> symbol 'nsim_bpf_create_prog' was not declared. Should it be static?
-> symbol 'nsim_bpf_destroy_prog' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Will it be useful to look again at the involved circumstances?
 
-Applied, thanks.
+
+> Too often.
+
+Did I answer any concerns partly?
+
+
+> Many people do not know that a generic kmalloc does a dump_stack() on OOM.
+
+Do you see a need to represent such information better?
+
+Is it expected that the function “devm_kzalloc” has got a similar property?
+
+
+> That information should be part of the commit message.
+
+How do you think about to share it also from any reference documentation
+in a clearer way?
+
+Do we stumble on a target conflict in this case?
+
+I am generally trying to improve the software situation to some degree.
+I prefer then to work with safe information sources.
+Unfortunately, I might have not reached a desired confidence level here
+for a more detailed commit message. I assume that software development
+efforts could increase in significant ways if something should be improved
+further in a direction I hope. But this could mean that time frames will
+grow for corresponding clarifications.
+
+* Does such a situation block progress on the deletion of other remaining
+  questionable error messages?
+
+* Would you like to increase the software development attention anyhow?
+
+
+
+By the way:
+It seems that my update suggestion for the directory “omapfb/dss”
+could be superseded by the patch “omapfb: dss: Do not duplicate features data”
+from Ladislav Michl.
+https://patchwork.kernel.org/patch/10082027/
+https://lkml.kernel.org/r/<20171129123308.GA26578@lenoch>
+
+Regards,
+Markus
