@@ -1,32 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Dec 2017 10:34:01 +0000
-Subject: Re: [PATCH 0/3] S390-DASD: Fine-tuning for some function implementations
-Message-Id: <d7e6649b-cdb4-e686-df0e-472958c94202@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 03 Dec 2017 16:53:16 +0000
+Subject: [PATCH][next] x86/mm: make function clear_non_loaded_ctxs static
+Message-Id: <20171203165316.28915-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
-In-Reply-To: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andy Lutomirski <luto@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Date: Wed, 10 May 2017 19:43:21 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (3):
->   Adjust buffer output in dasd_hosts_print()
->   Fix typos in two comment lines
->   Adjust six checks for null pointers
-> 
->  drivers/s390/block/dasd_eckd.c | 24 +++++++++++-------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
+The function clear_non_loaded_ctxs is local to the source and does
+not need to be in global scope, so make it static.
 
-Are there any chances that such change possibilities (and further adjustments)
-will be integrated in this software area?
+Cleans up sparse warning:
+arch/x86/mm/tlb.c:37:6: warning: symbol 'clear_non_loaded_ctxs' was
+not declared. Should it be static?
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/mm/tlb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index f75b6eb47a6d..6ecbd8fc292e 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -34,7 +34,7 @@
+  * necessary invalidation by clearing out the 'ctx_id' which
+  * forces a TLB flush when the context is loaded.
+  */
+-void clear_non_loaded_ctxs(void)
++static void clear_non_loaded_ctxs(void)
+ {
+ 	u16 asid;
+ 
+-- 
+2.14.1
+
