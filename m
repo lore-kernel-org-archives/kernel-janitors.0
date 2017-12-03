@@ -1,21 +1,46 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Tue, 19 Dec 2017 00:24:04 +0000
-Subject: Re: [PATCH][next] bpf: fix spelling mistake: "funcation"-> "function"
-Message-Id: <dfdfb8f1-7195-313b-1593-16e499542109@iogearbox.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Dec 2017 14:15:37 +0000
+Subject: Difficulties for compilation without extra optimisation
+Message-Id: <a2ac6d05-fdd6-82bb-075e-b7eb81b516fe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171218140312.6329-1-colin.king@canonical.com>
-In-Reply-To: <20171218140312.6329-1-colin.king@canonical.com>
+References: <7f072f78-eef4-6d87-d233-cee71dac5a32@users.sourceforge.net>
+In-Reply-To: <7f072f78-eef4-6d87-d233-cee71dac5a32@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On 12/18/2017 03:03 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in error message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-Applied to bpf-next, thanks Colin!
+I came along some software modules where I suggested source code adjustments.
+
+Example:
+nfs/write: Use common error handling code in nfs_lock_and_join_requests()
+
+https://lkml.org/lkml/2017/11/7/599
+https://patchwork.kernel.org/patch/10047013/
+https://lkml.kernel.org/r/<7f072f78-eef4-6d87-d233-cee71dac5a32@users.sourceforge.net>
+
+I would like to check corresponding build results then without extra
+optimisation applied by the compiler.
+But I got surprised by error messages for a command like the following.
+
+elfring@Sonne:~/Projekte/Linux/next-patched> my_cc=/usr/bin/gcc-7 && LANG=C make -j4 CC="${my_cc}" HOSTCC="${my_cc}" EXTRA_CFLAGS='-O0' allmodconfig fs/nfs/write.o
+…
+In file included from ./include/linux/compiler.h:58:0,
+                 from ./include/uapi/linux/stddef.h:1,
+                 from ./include/linux/stddef.h:4,
+                 from ./include/uapi/linux/posix_types.h:4,
+                 from ./include/uapi/linux/types.h:13,
+                 from ./include/linux/types.h:5,
+                 from fs/nfs/write.c:9:
+./arch/x86/include/asm/jump_label.h: In function ‘trace_nfs_writeback_page_enter’:
+./include/linux/compiler-gcc.h:275:38: warning: asm operand 0 probably doesn’t match constraints
+ #define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
+…
+
+
+How do you think about to improve this software situation anyhow?
+
+Regards,
+Markus
