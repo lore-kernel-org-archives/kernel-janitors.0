@@ -1,62 +1,50 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 18 Dec 2017 20:03:08 +0000
-Subject: Re: [PATCH 1/4 v3] mtd: onenand: samsung: use devm_ function to simplify code and fix some leaks
-Message-Id: <20171218210308.791fb0ae@bbrezillon>
+From: David Hildenbrand <david@redhat.com>
+Date: Mon, 04 Dec 2017 10:41:04 +0000
+Subject: Re: [PATCH] KVM: x86: MMU: make array audit_point_name static
+Message-Id: <45047bd6-4a27-2c16-b00b-bb7911792b8f@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
- <f223e9ea768198b70e37102fc369007d1482e802.1513230484.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f223e9ea768198b70e37102fc369007d1482e802.1513230484.git.christophe.jaillet@wanadoo.fr>
+References: <20171130120422.4783-1-colin.king@canonical.com>
+In-Reply-To: <20171130120422.4783-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 14 Dec 2017 07:03:49 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
-> Convert all error handling code in 's3c_onenand_probe()' to
-> resource-managed alternatives in order to simplify code.
+On 30.11.2017 13:04, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> This fixes a resource leak if 'platform_get_resource()' fails at line 872.
+> The array audit_point_name is local to the source and does not need to
+> be in global scope, so make it static.
 > 
-> The 'request_irq()' at line 971 was also un-balanced. It is now
-> resource-managed.
+> Cleans up sparse warning:
+> arch/x86/kvm/mmu_audit.c:22:12: warning: symbol 'audit_point_name' was
+> not declared. Should it be static?
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> Cross-compiled tested-only
+>  arch/x86/kvm/mmu_audit.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> v2: use devm_ioremap_resource()
-> v3: fix a bug introduced in v2
-> ---
->  drivers/mtd/onenand/samsung.c | 164 ++++++++----------------------------------
->  1 file changed, 29 insertions(+), 135 deletions(-)
+> diff --git a/arch/x86/kvm/mmu_audit.c b/arch/x86/kvm/mmu_audit.c
+> index d22ddbdf5e6e..1272861e77b9 100644
+> --- a/arch/x86/kvm/mmu_audit.c
+> +++ b/arch/x86/kvm/mmu_audit.c
+> @@ -19,7 +19,7 @@
+>  
+>  #include <linux/ratelimit.h>
+>  
+> -char const *audit_point_name[] = {
+> +static char const *audit_point_name[] = {
+>  	"pre page fault",
+>  	"post page fault",
+>  	"pre pte write",
 > 
-> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-> index af0ac1a7bf8f..b650290611d2 100644
-> --- a/drivers/mtd/onenand/samsung.c
-> +++ b/drivers/mtd/onenand/samsung.c
-> @@ -129,16 +129,13 @@ struct s3c_onenand {
->  	struct platform_device	*pdev;
->  	enum soc_type	type;
->  	void __iomem	*base;
-> -	struct resource *base_res;
->  	void __iomem	*ahb_addr;
-> -	struct resource *ahb_res;
->  	int		bootram_command;
->  	void __iomem	*page_buf;
->  	void __iomem	*oob_buf;
 
-Next thing to address: page_buf and oob_buf are not iomem regions (they
-are allocated with kmalloc) and should not have an __iomem specifier.
-You should also get rid of the various casts transforming those iomem
-pointers into regular ones.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
->  	unsigned int	(*mem_addr)(int fba, int fpa, int fsa);
->  	unsigned int	(*cmd_map)(unsigned int type, unsigned int val);
->  	void __iomem	*dma_addr;
-> -	struct resource *dma_res;
->  	unsigned long	phys_base;
->  	struct completion	complete;
->  };
+-- 
+
+Thanks,
+
+David / dhildenb
