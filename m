@@ -1,45 +1,58 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 18 Dec 2017 19:58:15 +0000
-Subject: Re: [PATCH 3/4 v3] mtd: onenand: samsung: Remove a useless include
-Message-Id: <20171218205815.38edd0d2@bbrezillon>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Dec 2017 12:04:06 +0000
+Subject: [PATCH][next] iio: light: make a couple of config structures static
+Message-Id: <20171204120406.4364-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
- <3841b40286522d07585e773fb62c4c737ebf757b.1513230484.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <3841b40286522d07585e773fb62c4c737ebf757b.1513230484.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Don't know how you generated the patch series, but this one should be
-4/4 and not 3/4.
+From: Colin Ian King <colin.king@canonical.com>
 
-On Thu, 14 Dec 2017 07:03:52 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Structures st_uvis25_i2c_regmap_config and st_uvis25_spi_regmap_config are
+local to the source and do not need to be in global scope, so make them
+both static.
 
-> This include is not needed, so remove it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Cross-compiled tested-only
-> 
-> v3: new patch in the serie
-> ---
->  drivers/mtd/onenand/samsung.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-> index 206aa90140c9..c21d025fee87 100644
-> --- a/drivers/mtd/onenand/samsung.c
-> +++ b/drivers/mtd/onenand/samsung.c
-> @@ -25,8 +25,6 @@
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  
-> -#include <asm/mach/flash.h>
-> -
->  #include "samsung.h"
->  
->  enum soc_type {
+Cleans up sparse warnings:
+warning: symbol 'st_uvis25_i2c_regmap_config' was not declared. Should
+it be static?
+warning: symbol 'st_uvis25_spi_regmap_config' was not declared. Should
+it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/light/st_uvis25_i2c.c | 2 +-
+ drivers/iio/light/st_uvis25_spi.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/light/st_uvis25_i2c.c b/drivers/iio/light/st_uvis25_i2c.c
+index c939c0b0ff10..afd6eb01a202 100644
+--- a/drivers/iio/light/st_uvis25_i2c.c
++++ b/drivers/iio/light/st_uvis25_i2c.c
+@@ -19,7 +19,7 @@
+ 
+ #define UVIS25_I2C_AUTO_INCREMENT	BIT(7)
+ 
+-const struct regmap_config st_uvis25_i2c_regmap_config = {
++static const struct regmap_config st_uvis25_i2c_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.write_flag_mask = UVIS25_I2C_AUTO_INCREMENT,
+diff --git a/drivers/iio/light/st_uvis25_spi.c b/drivers/iio/light/st_uvis25_spi.c
+index e697e14e7952..cdfee5e84d5e 100644
+--- a/drivers/iio/light/st_uvis25_spi.c
++++ b/drivers/iio/light/st_uvis25_spi.c
+@@ -19,7 +19,7 @@
+ #define UVIS25_SENSORS_SPI_READ		BIT(7)
+ #define UVIS25_SPI_AUTO_INCREMENT	BIT(6)
+ 
+-const struct regmap_config st_uvis25_spi_regmap_config = {
++static const struct regmap_config st_uvis25_spi_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.read_flag_mask = UVIS25_SENSORS_SPI_READ | UVIS25_SPI_AUTO_INCREMENT,
+-- 
+2.14.1
 
