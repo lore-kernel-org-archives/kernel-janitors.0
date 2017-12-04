@@ -1,80 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 11 Dec 2017 12:14:04 +0000
-Subject: Applied "ASoC: nuc900: Fix a loop timeout test" to the asoc tree
-Message-Id: <E1eOMyC-0004dm-GN@debutante>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Date: Mon, 04 Dec 2017 14:04:37 +0000
+Subject: Re: [PATCH 0/4] ALSA SoC TWL4030: Adjustments for two function implementations
+Message-Id: <1ddb595c-65c3-c4e0-a85e-ccffdfc9156a@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170717081605.a6merkvdy4ngdiqj@mwanda>
-In-Reply-To: <20170717081605.a6merkvdy4ngdiqj@mwanda>
+References: <d2edbce1-ffce-9c18-3f50-baa0cdfb0152@users.sourceforge.net>
+In-Reply-To: <d2edbce1-ffce-9c18-3f50-baa0cdfb0152@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Wan ZongShun <mcuos.com@gmail.com>, alsa-devel@alsa-project.orgMarkBrownbroonie@kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
 
-   ASoC: nuc900: Fix a loop timeout test
 
-has been applied to the asoc tree at
+On 2017-11-23 23:07, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 23 Nov 2017 22:02:44 +0100
+>=20
+> A few update suggestions were taken into account
+> from static source code analysis.
+>=20
+> Markus Elfring (4):
+>   Delete an error message for a failed memory allocation in twl4030_get_p=
+data()
+>   Use common error handling code in twl4030_get_pdata()
+>   Improve a size determination in two functions
+>   Delete an unnecessary variable initialisation in twl4030_get_pdata()
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+All:
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+>=20
+>  sound/soc/codecs/twl4030.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+>=20
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+- P=C3=A9ter
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 65a12b3aafed5fc59f4ce41b22b752b1729e6701 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 9 Dec 2017 14:52:28 +0300
-Subject: [PATCH] ASoC: nuc900: Fix a loop timeout test
-
-We should be finishing the loop with timeout set to zero but because
-this is a post-op we finish with timeout = -1.
-
-Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/nuc900/nuc900-ac97.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
-index 71fce7c85c93..81b09d740ed9 100644
---- a/sound/soc/nuc900/nuc900-ac97.c
-+++ b/sound/soc/nuc900/nuc900-ac97.c
-@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(struct snd_ac97 *ac97,
- 
- 	/* polling the AC_R_FINISH */
- 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
--								&& timeout--)
-+								&& --timeout)
- 		mdelay(1);
- 
- 	if (!timeout) {
-@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
- 
- 	/* polling the AC_W_FINISH */
- 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
--								&& timeout--)
-+								&& --timeout)
- 		mdelay(1);
- 
- 	if (!timeout)
--- 
-2.15.1
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
