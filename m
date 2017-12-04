@@ -1,82 +1,50 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 20 Dec 2017 12:36:33 +0000
-Subject: Re: [PATCH v1 05/10] staging: atomisp: Remove non-ACPI leftovers
-Message-Id: <alpine.DEB.2.20.1712201330320.13140@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Dec 2017 12:56:09 +0000
+Subject: [PATCH][next] netdevsim: make functions nsim_bpf_create_prog and nsim_bpf_destroy_prog static
+Message-Id: <20171204125609.5931-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171220053828.5wphhl6oc2sl3su5@mwanda>
-In-Reply-To: <20171220053828.5wphhl6oc2sl3su5@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Functions nsim_bpf_create_prog and nsim_bpf_destroy_prog are local to the
+source and do not need to be in global scope, so make them static.
 
-On Wed, 20 Dec 2017, walter harms wrote:
+Cleans up sparse warnings:
+symbol 'nsim_bpf_create_prog' was not declared. Should it be static?
+symbol 'nsim_bpf_destroy_prog' was not declared. Should it be static?
 
->
->
-> Am 20.12.2017 11:30, schrieb Julia Lawall:
-> >
-> >
-> > On Wed, 20 Dec 2017, Dan Carpenter wrote:
-> >
-> >> On Tue, Dec 19, 2017 at 10:59:52PM +0200, Andy Shevchenko wrote:
-> >>> @@ -914,9 +904,7 @@ static int lm3554_probe(struct i2c_client *client)
-> >>>  		dev_err(&client->dev, "gpio request/direction_output fail");
-> >>>  		goto fail2;
-> >>>  	}
-> >>> -	if (ACPI_HANDLE(&client->dev))
-> >>> -		err = atomisp_register_i2c_module(&flash->sd, NULL, LED_FLASH);
-> >>> -	return 0;
-> >>> +	return atomisp_register_i2c_module(&flash->sd, NULL, LED_FLASH);
-> >>>  fail2:
-> >>>  	media_entity_cleanup(&flash->sd.entity);
-> >>>  	v4l2_ctrl_handler_free(&flash->ctrl_handler);
-> >>
-> >> Actually every place where we directly return a function call is wrong
-> >> and needs error handling added.  I've been meaning to write a Smatch
-> >> check for this because it's a common anti-pattern we don't check the
-> >> last function call for errors.
-> >>
-> >> Someone could probably do the same in Coccinelle if they want.
-> >
-> > I'm not sure what you are suggesting.  Is every case of return f(...);
-> > for any f wrong?  Or is it a particular function that is of concern?  Or
-> > would it be that every function call that has error handling somewhere
-> > should have error handling everywhere?  Or is it related to what seems to
-> > be the problem in the above code that err is initialized but nothing
-> > happens to it?
-> >
->
-> I guess the idea is to check if a return value gets set and then discarded
-> because the function returns const.
->
-> IMHO this is a case of write-never read like that series what Colin King fixed lately.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/netdevsim/bpf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-OK, that makes sense.  I guess Colin's patches were in the case where the
-right hand side of the assignment is a constant, so non-side effecting.
-This case is a bit different.  In particular, one might want to skip cases
-where the return value is stored but not tested, because the developer
-knows that the value is not interesting.  But cases where the variable
-holding the result of a call is returned as the final result in some cases
-but not in the current case could be worth looking at.
+diff --git a/drivers/net/netdevsim/bpf.c b/drivers/net/netdevsim/bpf.c
+index 8e4398a50903..078d2c37a6c1 100644
+--- a/drivers/net/netdevsim/bpf.c
++++ b/drivers/net/netdevsim/bpf.c
+@@ -197,7 +197,7 @@ static int nsim_xdp_set_prog(struct netdevsim *ns, struct netdev_bpf *bpf)
+ 	return 0;
+ }
+ 
+-int nsim_bpf_create_prog(struct netdevsim *ns, struct bpf_prog *prog)
++static int nsim_bpf_create_prog(struct netdevsim *ns, struct bpf_prog *prog)
+ {
+ 	struct nsim_bpf_bound_prog *state;
+ 	char name[16];
+@@ -232,7 +232,7 @@ int nsim_bpf_create_prog(struct netdevsim *ns, struct bpf_prog *prog)
+ 	return 0;
+ }
+ 
+-void nsim_bpf_destroy_prog(struct bpf_prog *prog)
++static void nsim_bpf_destroy_prog(struct bpf_prog *prog)
+ {
+ 	struct nsim_bpf_bound_prog *state;
+ 
+-- 
+2.14.1
 
-At the other end, there are probably a lot of cases of, eg
-
-ty x = get_x(...);
-
-that have been reflexively put at the beginning of functions, because all
-other functions have it, but where in the current case x is not used.
-
-julia
-
-
->
-> re,
->  wh
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
