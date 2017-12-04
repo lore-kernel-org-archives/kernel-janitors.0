@@ -1,58 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 10:34:01 +0000
-Subject: [PATCH 5/7] rapidio: Delete an unnecessary variable initialisation in three functions
-Message-Id: <ed729e8c-815c-8b56-a48f-1be579d0cc2b@users.sourceforge.net>
+From: Hin-Tak Leung <htl10@users.sourceforge.net>
+Date: Mon, 04 Dec 2017 22:57:55 +0000
+Subject: Re: [PATCH] rtlwifi: rtl818x: remove redundant check for cck_power > 15
+Message-Id: <734417985.2789125.1512428275673@mail.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
-In-Reply-To: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
+References: <734417985.2789125.1512428275673.ref@mail.yahoo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Colin King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 10:21:15 +0100
 
-The local variable "rc" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+--------------------------------------------
+On Tue, 14/11/17, Colin King <colin.king@canonical.com> wrote:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/rapidio/rio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
-index 90534365e46c..4604410fb001 100644
---- a/drivers/rapidio/rio.c
-+++ b/drivers/rapidio/rio.c
-@@ -441,7 +441,7 @@ int rio_request_inb_dbell(struct rio_mport *mport,
- 			  void (*dinb) (struct rio_mport * mport, void *dev_id, u16 src,
- 					u16 dst, u16 info))
- {
--	int rc = 0;
-+	int rc;
- 	struct resource *res = kzalloc(sizeof(*res), GFP_KERNEL);
- 
- 	if (res) {
-@@ -693,7 +693,7 @@ EXPORT_SYMBOL_GPL(rio_pw_enable);
- int rio_map_inb_region(struct rio_mport *mport, dma_addr_t local,
- 			u64 rbase, u32 size, u32 rflags)
- {
--	int rc = 0;
-+	int rc;
- 	unsigned long flags;
- 
- 	if (!mport->ops->map_inb)
-@@ -737,7 +737,7 @@ EXPORT_SYMBOL_GPL(rio_unmap_inb_region);
- int rio_map_outb_region(struct rio_mport *mport, u16 destid, u64 rbase,
- 			u32 size, u32 rflags, dma_addr_t *local)
- {
--	int rc = 0;
-+	int rc;
- 	unsigned long flags;
- 
- 	if (!mport->ops->map_outb)
--- 
-2.15.1
-
+=20
+> From: Colin Ian King <colin.king@canonical.com>
+=20
+> cck_poweri cannot be greated than 15 as
+> is derived from the bottom 4 bits
+> from riv->channels[channel -
+> 1].hw_value & 0xf.=C2=A0 Hence the check for it
+> being greater than 15 is redundant and
+> can be removed.
+=20
+> Detected by CoverityScan, CID#744303
+> ("Logically dead code")
+=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+=20
+Acked-by: Hin-Tak Leung <htl10@users.sourceforge.net>
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
