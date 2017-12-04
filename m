@@ -1,27 +1,43 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Fri, 22 Dec 2017 07:20:27 +0000
-Subject: Re: [PATCH] scsi: lpfc: don't dereference localport before it has been null checked
-Message-Id: <20171222072027.4mfp45eeuj2ynu3q@linux-x5ow.site>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Dec 2017 17:08:15 +0000
+Subject: [PATCH][next] pinctrl: intel: ensure error return ret is initialized
+Message-Id: <20171204170815.14779-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171222002852.10892-1-colin.king@canonical.com>
-In-Reply-To: <20171222002852.10892-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=FCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+From: Colin Ian King <colin.king@canonical.com>
+
+In the (unlikely) event that community->ngpps is zero, or if every
+gpp->gpio_base is less than zero, then an ininitialized value in
+ret is returned by function intel_gpio_add_pin_ranges. Fix this by
+ensuring ret is initialized to zero.  It's a moot point, but I think
+it is worthwhile ensuring this corner case is fixed.
+
+Detected by CoverityScan, CID#1462415 ("Uninitialized scalar variable")
+
+Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 359800fcb951..96e73e30204e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1083,7 +1083,7 @@ static struct irq_chip intel_gpio_irqchip = {
+ static int intel_gpio_add_pin_ranges(struct intel_pinctrl *pctrl,
+ 				     const struct intel_community *community)
+ {
+-	int ret, i;
++	int ret = 0, i;
+ 
+ 	for (i = 0; i < community->ngpps; i++) {
+ 		const struct intel_padgroup *gpp = &community->gpps[i];
+-- 
+2.14.1
+
