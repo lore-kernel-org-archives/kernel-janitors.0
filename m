@@ -1,33 +1,84 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Dec 2017 17:32:31 +0000
-Subject: Re: tps65090-charger: Delete an error message for a failed memory allocation in two functions
-Message-Id: <3e6fa357-091c-32bd-7680-bb75084469f5@users.sourceforge.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 04 Dec 2017 15:15:40 +0000
+Subject: Re: [PATCH] of: overlay: fix memory leak of ovcs on error exit path
+Message-Id: <CAMuHMdX7-MyxysA4HQk1m=jL4ESnfnD_wxCPbv2_JrEc-w5LrQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <aa138aa9-d8c9-c6e3-7071-9fc642e7b248@users.sourceforge.net>
- <1513450432.4647.47.camel@perches.com>
- <4beb0d2e-adf6-5eeb-43c7-7829d54c6656@users.sourceforge.net>
- <alpine.DEB.2.20.1712162135140.17082@hadrien>
- <cf645236-d4da-a52c-216a-248d76a61025@users.sourceforge.net>
- <20171218172404.3nqyza4ml5oofykn@earth>
-In-Reply-To: <20171218172404.3nqyza4ml5oofykn@earth>
+References: <20171129191750.25254-1-colin.king@canonical.com>
+ <dcb4e2a4-707b-0ccc-e12b-c6fa4ef251b7@gmail.com> <20171130125002.wlnnev5pjih6d5bz@mwanda>
+In-Reply-To: <20171130125002.wlnnev5pjih6d5bz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
->> But it seems that we are stuck with specific software aspects.
->> How would you like to see remaining open issues to be resolved
->> there anyhow?
-> 
-> FYI: I will drop this and (without any further notice) all future
-> patches from you, that do no follow the documented process in
-> Documentation/process/.
+Hi Dan,
 
-Which details do you find that do not fit to this development specification
-so far?
+On Thu, Nov 30, 2017 at 1:50 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Thu, Nov 30, 2017 at 07:14:45AM -0500, Frank Rowand wrote:
+>> On 11/29/17 14:17, Colin King wrote:
+>> > From: Colin Ian King <colin.king@canonical.com>
+>> >
+>> > Currently if the call to of_resolve_phandles fails then then ovcs
+>> > is not kfree'd on the error exit path.  Rather than try and make
+>> > the clean up exit path more convoluted, fix this by just kfree'ing
+>> > ovcs at the point of error detection and exit via the same exit
+>> > path.
+>> >
+>> > Detected by CoverityScan, CID#1462296 ("Resource Leak")
+>> >
+>> > Fixes: f948d6d8b792 ("of: overlay: avoid race condition between applying multiple overlays")
+>
+> The Fixes tag is wrong.  It should be:
+>
+> Fixes: bd80e2555c5c ("of: overlay: Fix cleanup order in of_overlay_apply()")
+>
+>> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> > ---
+>> >  drivers/of/overlay.c | 4 +++-
+>> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+>> > index 53bc9e3f0b98..6c8efe7d8cbb 100644
+>> > --- a/drivers/of/overlay.c
+>> > +++ b/drivers/of/overlay.c
+>> > @@ -708,8 +708,10 @@ int of_overlay_apply(struct device_node *tree, int *ovcs_id)
+>> >     of_overlay_mutex_lock();
+>> >
+>> >     ret = of_resolve_phandles(tree);
+>> > -   if (ret)
+>> > +   if (ret) {
+>> > +           kfree(ovcs);
+>> >             goto err_overlay_unlock;
+>> > +   }
+>> >
+>> >     mutex_lock(&of_mutex);
+>> >
+>> >
+>>
+>> False coverity warning.  ovcs is freed in free_overlay_changeset().
+>
+> You're looking at an older version of the code and Colin is looking at
+> linux-next.
 
-Are there any update suggestions left over which you could eventually accept?
+Actually Colin was right: the bug was introduced in commit f948d6d8b792:
+While free_overlay_changeset() is called in the error path, that function
+returns early because of:
 
-Regards,
-Markus
+        if (!ovcs->cset.entries.next)
+                return;
+
+So it never gets to freeing the passed pointer.
+
+I'm fixing it for good (let's hope so ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
