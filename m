@@ -1,52 +1,28 @@
-From: Richard Weinberger <richard@nod.at>
-Date: Mon, 11 Dec 2017 09:33:37 +0000
-Subject: Re: [PATCH 1/2] um: vector_kern: Unlock on error in vector_net_open()
-Message-Id: <3254171.LO6pLlHuPk@blindfold>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:37:17 +0000
+Subject: [PATCH] staging: ccree: Uninitialized return in ssi_ahash_import()
+Message-Id: <20171205143717.gqhyethohcet3fz7@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171209114940.fsi7jbxd7zbhhu74@mwanda>
-In-Reply-To: <20171209114940.fsi7jbxd7zbhhu74@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Anton,
+The return value isn't initialized on some success paths.
 
-Am Samstag, 9. Dezember 2017, 18:09:17 CET schrieb Anton Ivanov:
-> Thanks,
-> 
-> I guess I missed that one.
-> 
-> A.
-> 
-> On 09/12/17 11:49, Dan Carpenter wrote:
-> > We need to unlock and restore IRQs on this error path.
-> > 
-> > Fixes: ad1f62ab2bd4 ("High Performance UML Vector Network Driver")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-> > index d1d53015d572..bb83a2d22ac2 100644
-> > --- a/arch/um/drivers/vector_kern.c
-> > +++ b/arch/um/drivers/vector_kern.c
-> > @@ -1156,8 +1156,10 @@ static int vector_net_open(struct net_device *dev)
-> > 
-> >  	struct vector_device *vdevice;
-> >  	
-> >  	spin_lock_irqsave(&vp->lock, flags);
-> > 
-> > -	if (vp->opened)
-> > +	if (vp->opened) {
-> > +		spin_unlock_irqrestore(&vp->lock, flags);
-> > 
-> >  		return -ENXIO;
-> > 
-> > +	}
-> > 
-> >  	vp->opened = true;
-> >  	spin_unlock_irqrestore(&vp->lock, flags);
+Fixes: c5f39d07860c ("staging: ccree: fix leak of import() after init()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Please review/ack these patches.
-
-Thanks,
-//richard
+diff --git a/drivers/staging/ccree/ssi_hash.c b/drivers/staging/ccree/ssi_hash.c
+index a2e8a9d32e00..3855c42e61af 100644
+--- a/drivers/staging/ccree/ssi_hash.c
++++ b/drivers/staging/ccree/ssi_hash.c
+@@ -1823,7 +1823,7 @@ static int ssi_ahash_import(struct ahash_request *req, const void *in)
+ 	struct device *dev = drvdata_to_dev(ctx->drvdata);
+ 	struct ahash_req_ctx *state = ahash_request_ctx(req);
+ 	u32 tmp;
+-	int rc;
++	int rc = 0;
+ 
+ 	memcpy(&tmp, in, sizeof(u32));
+ 	if (tmp != CC_EXPORT_MAGIC) {
