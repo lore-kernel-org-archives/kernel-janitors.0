@@ -1,83 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 06 Dec 2017 17:33:58 +0000
-Subject: [PATCH][REDO] arch: x86: trivial changes to make various functions static
-Message-Id: <20171206173358.24388-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 05 Dec 2017 20:29:13 +0000
+Subject: [PATCH 3/4] uwb/i1480/dfu/mac: Delete an error message for a failed memory allocation in fw_hdrs_loa
+Message-Id: <f1b2af49-d020-9eab-1e53-9880aefad8a9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <994a4a57-cfe6-91b5-5fc1-d4153cc5b0e6@users.sourceforge.net>
+In-Reply-To: <994a4a57-cfe6-91b5-5fc1-d4153cc5b0e6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Jiri Kosina <trivial@kernel.org>, Juergen Gross <jgross@suse.com>, Andy Lutomirski <luto@kernel.org>, Mike Travis <mike.travis@hpe.com>, Russ Anderson <russ.anderson@hpe.com>, "travis @ sgi . com" <travis@sgi.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-usb@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Dec 2017 21:00:03 +0100
 
-Functions x86_vector_debug_show, clear_non_loaded_ctxs, uv_handle_nmi
-and uv_nmi_setup_common are local to the source and do not need to be
-in global scope, so make them static. Fixes up various sparse warnings.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/uwb/i1480/dfu/mac.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-I've combined 3 earlier patches into 1. Apologies for the noise.
-
-v1: sent as separate patches
-v2: send as one combined patch as requested by Ingo
-
- arch/x86/kernel/apic/vector.c | 4 ++--
- arch/x86/mm/tlb.c             | 2 +-
- arch/x86/platform/uv/uv_nmi.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 6a823a25eaff..750449152b04 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -542,8 +542,8 @@ static int x86_vector_alloc_irqs(struct irq_domain *domain, unsigned int virq,
- }
- 
- #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
--void x86_vector_debug_show(struct seq_file *m, struct irq_domain *d,
--			   struct irq_data *irqd, int ind)
-+static void x86_vector_debug_show(struct seq_file *m, struct irq_domain *d,
-+				  struct irq_data *irqd, int ind)
- {
- 	unsigned int cpu, vector, prev_cpu, prev_vector;
- 	struct apic_chip_data *apicd;
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index f75b6eb47a6d..6ecbd8fc292e 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -34,7 +34,7 @@
-  * necessary invalidation by clearing out the 'ctx_id' which
-  * forces a TLB flush when the context is loaded.
-  */
--void clear_non_loaded_ctxs(void)
-+static void clear_non_loaded_ctxs(void)
- {
- 	u16 asid;
- 
-diff --git a/arch/x86/platform/uv/uv_nmi.c b/arch/x86/platform/uv/uv_nmi.c
-index c34bd8233f7c..5f64f30873e2 100644
---- a/arch/x86/platform/uv/uv_nmi.c
-+++ b/arch/x86/platform/uv/uv_nmi.c
-@@ -905,7 +905,7 @@ static inline void uv_call_kgdb_kdb(int cpu, struct pt_regs *regs, int master)
- /*
-  * UV NMI handler
-  */
--int uv_handle_nmi(unsigned int reason, struct pt_regs *regs)
-+static int uv_handle_nmi(unsigned int reason, struct pt_regs *regs)
- {
- 	struct uv_hub_nmi_s *hub_nmi = uv_hub_nmi;
- 	int cpu = smp_processor_id();
-@@ -1013,7 +1013,7 @@ void uv_nmi_init(void)
- }
- 
- /* Setup HUB NMI info */
--void __init uv_nmi_setup_common(bool hubbed)
-+static void __init uv_nmi_setup_common(bool hubbed)
- {
- 	int size = sizeof(void *) * (1 << NODES_SHIFT);
- 	int cpu;
+diff --git a/drivers/uwb/i1480/dfu/mac.c b/drivers/uwb/i1480/dfu/mac.c
+index 6ec14f5fcde4..ee71973f47ad 100644
+--- a/drivers/uwb/i1480/dfu/mac.c
++++ b/drivers/uwb/i1480/dfu/mac.c
+@@ -123,11 +123,9 @@ int fw_hdrs_load(struct i1480 *i1480, struct fw_hdr **phdr,
+ 	data_itr = data;
+ 	data_top = (u32 *) (_data + data_size);
+ 	while (data_itr < data_top) {
+-		result = -ENOMEM;
+ 		hdr = kmalloc(sizeof(*hdr), GFP_KERNEL);
+ 		if (hdr = NULL) {
+-			dev_err(i1480->dev, "Cannot allocate fw header "
+-			       "for chunk #%u\n", hdr_cnt);
++			result = -ENOMEM;
+ 			goto error_alloc;
+ 		}
+ 		result = fw_hdr_load(i1480, hdr, hdr_cnt,
 -- 
-2.14.1
+2.15.1
 
