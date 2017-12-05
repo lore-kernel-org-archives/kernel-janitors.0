@@ -1,7 +1,7 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Tue, 05 Dec 2017 16:24:23 +0000
+From: Stefano Stabellini <sstabellini@kernel.org>
+Date: Tue, 05 Dec 2017 18:26:45 +0000
 Subject: Re: [PATCH] xen/pvcalls: check for xenbus_read() errors
-Message-Id: <318939f7-1c28-c180-d9ee-8fe97ba0d2ed@suse.com>
+Message-Id: <alpine.DEB.2.10.1712051026390.3403@sstabellini-ThinkPad-X260>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171205143843.hj7b4ayvbgf5ftzl@mwanda>
 In-Reply-To: <20171205143843.hj7b4ayvbgf5ftzl@mwanda>
@@ -10,13 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 05/12/17 15:38, Dan Carpenter wrote:
+On Tue, 5 Dec 2017, Dan Carpenter wrote:
 > Smatch complains that "len" is uninitialized if xenbus_read() fails so
 > let's add some error handling.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 
 
-Juergen
+> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+> index 40caa92bff33..afa3f1b5d807 100644
+> --- a/drivers/xen/pvcalls-front.c
+> +++ b/drivers/xen/pvcalls-front.c
+> @@ -1128,6 +1128,8 @@ static int pvcalls_front_probe(struct xenbus_device *dev,
+>  	}
+>  
+>  	versions = xenbus_read(XBT_NIL, dev->otherend, "versions", &len);
+> +	if (IS_ERR(versions))
+> +		return PTR_ERR(versions);
+>  	if (!len)
+>  		return -EINVAL;
+>  	if (strcmp(versions, "1")) {
+> 
