@@ -1,44 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 13:06:13 +0000
-Subject: [PATCH 1/2] pinctrl: single: Delete an error message for a failed memory allocation in pcs_probe()
-Message-Id: <bc8e7af9-6dcb-6f08-388a-31fc1b88cd00@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:37:39 +0000
+Subject: [PATCH] media: imx274: Silence uninitialized variable warning
+Message-Id: <20171205143739.uoct55nitjrt4xun@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6bc679d1-c1ee-52fe-9ece-b28095f653ec@users.sourceforge.net>
-In-Reply-To: <6bc679d1-c1ee-52fe-9ece-b28095f653ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Leon Luo <leonl@leopardimaging.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 11:27:55 +0100
+Smatch complains that "err" can be uninitialized if we have a zero size
+write.  The flow analysis is a little complicated so I'm not sure if
+that's possible or not, but it's harmless to set this to zero and it
+makes the code easier to read.
 
-Omit an extra message for a memory allocation failure in this function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-single.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index e6cd8de793e2..f5ff2111481d 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1646,10 +1646,9 @@ static int pcs_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index 800b9bf9cdd3..e7c12933cfd2 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -634,7 +634,7 @@ static int imx274_regmap_util_write_table_8(struct regmap *regmap,
+ 					    const struct reg_8 table[],
+ 					    u16 wait_ms_addr, u16 end_addr)
+ {
+-	int err;
++	int err = 0;
+ 	const struct reg_8 *next;
+ 	u8 val;
  
- 	pcs = devm_kzalloc(&pdev->dev, sizeof(*pcs), GFP_KERNEL);
--	if (!pcs) {
--		dev_err(&pdev->dev, "could not allocate\n");
-+	if (!pcs)
- 		return -ENOMEM;
--	}
-+
- 	pcs->dev = &pdev->dev;
- 	pcs->np = np;
- 	raw_spin_lock_init(&pcs->lock);
--- 
-2.15.1
-
