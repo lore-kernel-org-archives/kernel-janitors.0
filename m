@@ -1,64 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Dec 2017 21:28:01 +0000
-Subject: [PATCH 1/2] platform/x86/thinkpad_acpi: Delete an error message for a failed memory allocation in th
-Message-Id: <d4096def-3e50-57df-2f3b-57f71d43371e@users.sourceforge.net>
+Date: Tue, 05 Dec 2017 17:13:33 +0000
+Subject: [PATCH 2/2] video: ARM CLCD: Improve a size determination in clcdfb_probe()
+Message-Id: <3656de6d-53cc-f6a4-1950-71fc989c79a4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
-In-Reply-To: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
+References: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
+In-Reply-To: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Russell King <linux@armlinux.org.uk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Dec 2017 22:08:49 +0100
+Date: Tue, 5 Dec 2017 17:53:19 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/platform/x86/thinkpad_acpi.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/video/fbdev/amba-clcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index 117be48ff4de..729144925880 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -816,10 +816,8 @@ static int __init register_tpacpi_subdriver(struct ibm_struct *ibm)
- 	BUG_ON(!ibm->acpi);
- 
- 	ibm->acpi->driver = kzalloc(sizeof(struct acpi_driver), GFP_KERNEL);
--	if (!ibm->acpi->driver) {
--		pr_err("failed to allocate memory for ibm->acpi->driver\n");
-+	if (!ibm->acpi->driver)
- 		return -ENOMEM;
--	}
- 
- 	sprintf(ibm->acpi->driver->name, "%s_%s", TPACPI_NAME, ibm->name);
- 	ibm->acpi->driver->ids = ibm->acpi->hid;
-@@ -3639,7 +3637,6 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
- 	hotkey_keycode_map = kmalloc(TPACPI_HOTKEY_MAP_SIZE,
- 					GFP_KERNEL);
- 	if (!hotkey_keycode_map) {
--		pr_err("failed to allocate memory for key map\n");
- 		res = -ENOMEM;
- 		goto err_exit;
+diff --git a/drivers/video/fbdev/amba-clcd.c b/drivers/video/fbdev/amba-clcd.c
+index 79f5ebf23fcd..38c1f324ce15 100644
+--- a/drivers/video/fbdev/amba-clcd.c
++++ b/drivers/video/fbdev/amba-clcd.c
+@@ -967,7 +967,7 @@ static int clcdfb_probe(struct amba_device *dev, const struct amba_id *id)
+ 		goto out;
  	}
-@@ -5996,10 +5993,8 @@ static int __init led_init(struct ibm_init_struct *iibm)
  
- 	tpacpi_leds = kzalloc(sizeof(*tpacpi_leds) * TPACPI_LED_NUMLEDS,
- 			      GFP_KERNEL);
--	if (!tpacpi_leds) {
--		pr_err("Out of memory for LED data\n");
-+	if (!tpacpi_leds)
- 		return -ENOMEM;
--	}
- 
- 	for (i = 0; i < TPACPI_LED_NUMLEDS; i++) {
- 		tpacpi_leds[i].led = -1;
+-	fb = kzalloc(sizeof(struct clcd_fb), GFP_KERNEL);
++	fb = kzalloc(sizeof(*fb), GFP_KERNEL);
+ 	if (!fb) {
+ 		ret = -ENOMEM;
+ 		goto free_region;
 -- 
 2.15.1
 
