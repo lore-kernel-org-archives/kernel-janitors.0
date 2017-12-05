@@ -1,65 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 21:51:15 +0000
-Subject: [PATCH 1/3] serial: ioc4: Delete error messages for a failed memory allocation in two functions
-Message-Id: <d3a28c8f-b997-6f5c-8a08-d02d7ef3648f@users.sourceforge.net>
+Date: Tue, 05 Dec 2017 20:25:13 +0000
+Subject: [PATCH 0/4] UWB: Adjustments for four function implementations
+Message-Id: <994a4a57-cfe6-91b5-5fc1-d4153cc5b0e6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
-In-Reply-To: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
+To: linux-usb@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 22:15:53 +0100
+Date: Tue, 5 Dec 2017 21:17:55 +0100
 
-Omit extra messages for a memory allocation failure in these functions.
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation in hwarc_probe()
+  Delete an error message for a failed memory allocation in whcrc_probe()
+  Delete an error message for a failed memory allocation in fw_hdrs_load()
+  Delete two error messages for a failed memory allocation in i1480_usb_probe()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/ioc4_serial.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/uwb/hwa-rc.c        | 5 ++---
+ drivers/uwb/i1480/dfu/mac.c | 4 +---
+ drivers/uwb/i1480/dfu/usb.c | 4 +---
+ drivers/uwb/whc-rc.c        | 5 ++---
+ 4 files changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/tty/serial/ioc4_serial.c b/drivers/tty/serial/ioc4_serial.c
-index db5b979e5a0c..9524a6d3e1d8 100644
---- a/drivers/tty/serial/ioc4_serial.c
-+++ b/drivers/tty/serial/ioc4_serial.c
-@@ -1076,11 +1076,9 @@ static inline int ioc4_attach_local(struct ioc4_driver_data *idd)
- 	for (port_number = 0; port_number < IOC4_NUM_SERIAL_PORTS;
- 							port_number++) {
- 		port = kzalloc(sizeof(struct ioc4_port), GFP_KERNEL);
--		if (!port) {
--			printk(KERN_WARNING
--				"IOC4 serial memory not available for port\n");
-+		if (!port)
- 			goto free;
--		}
-+
- 		spin_lock_init(&port->ip_lock);
- 
- 		/* we need to remember the previous ones, to point back to
-@@ -2815,8 +2813,6 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
- 	control = kzalloc(sizeof(struct ioc4_control), GFP_KERNEL);
- 
- 	if (!control) {
--		printk(KERN_WARNING "ioc4_attach_one"
--		       ": unable to get memory for the IOC4\n");
- 		ret = -ENOMEM;
- 		goto out2;
- 	}
-@@ -2825,9 +2821,6 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
- 	/* Allocate the soft structure */
- 	soft = kzalloc(sizeof(struct ioc4_soft), GFP_KERNEL);
- 	if (!soft) {
--		printk(KERN_WARNING
--		       "ioc4 (%p): unable to get memory for the soft struct\n",
--		       (void *)idd->idd_pdev);
- 		ret = -ENOMEM;
- 		goto out3;
- 	}
 -- 
 2.15.1
 
