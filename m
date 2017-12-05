@@ -1,44 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Dec 2017 21:11:35 +0000
-Subject: [PATCH] serial: bfin_uart: Delete an error message for a failed memory allocation in bfin_serial_pro
-Message-Id: <6d49e768-0b26-991c-ec4a-ed9226f4da05@users.sourceforge.net>
+Date: Tue, 05 Dec 2017 21:48:30 +0000
+Subject: [PATCH 0/2] usbip: Adjustments for two function implementations
+Message-Id: <6a84f1e4-a5c1-84da-bd14-de28e306991b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>, Valentina Manea <valentina.manea.m@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Dec 2017 22:05:54 +0100
+Date: Tue, 5 Dec 2017 22:44:55 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in two functions
+  Use common error handling code in stub_recv_cmd_submit()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/bfin_uart.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/usbip/stub_rx.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/tty/serial/bfin_uart.c b/drivers/tty/serial/bfin_uart.c
-index 4755fa696321..558f6ebc4f01 100644
---- a/drivers/tty/serial/bfin_uart.c
-+++ b/drivers/tty/serial/bfin_uart.c
-@@ -1221,11 +1221,9 @@ static int bfin_serial_probe(struct platform_device *pdev)
- 	if (bfin_serial_ports[pdev->id] = NULL) {
- 
- 		uart = kzalloc(sizeof(*uart), GFP_KERNEL);
--		if (!uart) {
--			dev_err(&pdev->dev,
--				"fail to malloc bfin_serial_port\n");
-+		if (!uart)
- 			return -ENOMEM;
--		}
-+
- 		bfin_serial_ports[pdev->id] = uart;
- 
- #ifdef CONFIG_EARLY_PRINTK
 -- 
 2.15.1
 
