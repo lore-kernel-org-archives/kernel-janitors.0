@@ -1,29 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 21 Dec 2017 09:19:55 +0000
-Subject: Re: [PATCH 1/2] pinctrl/nomadik/abx500: Delete an error message for a failed memory allocation in ab
-Message-Id: <CACRpkdbk5_NMRBD0DXOY1AF9tSVVqEySaendm4Q7X6UC2FUPQQ@mail.gmail.com>
+From: Stefano Stabellini <sstabellini@kernel.org>
+Date: Tue, 05 Dec 2017 18:29:47 +0000
+Subject: Re: [Xen-devel] [PATCH 2/2] xen/pvcalls: Fix a check in pvcalls_front_remove()
+Message-Id: <alpine.DEB.2.10.1712051029410.3403@sstabellini-ThinkPad-X260>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e5be1da7-460d-a47d-59b8-c1902907f5a4@users.sourceforge.net>
- <1fa81c02-0b51-16d1-b713-971f7f44eb31@users.sourceforge.net>
-In-Reply-To: <1fa81c02-0b51-16d1-b713-971f7f44eb31@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 20, 2017 at 10:51 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Tue, 5 Dec 2017, Dan Carpenter wrote:
+> bedata->ref can't be less than zero because it's unsigned.  This affects
+> certain error paths in probe.  We first set ->ref = -1 and then we set
+> it to a valid value later.
+> 
+> Fixes: 219681909913 ("xen/pvcalls: connect to the backend")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 20 Dec 2017 10:12:56 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 
-Patch applied.
 
-Yours,
-Linus Walleij
+> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+> index 40caa92bff33..d1e1d8d2b9d5 100644
+> --- a/drivers/xen/pvcalls-front.c
+> +++ b/drivers/xen/pvcalls-front.c
+> @@ -1103,7 +1103,7 @@ static int pvcalls_front_remove(struct xenbus_device *dev)
+>  			kfree(map);
+>  		}
+>  	}
+> -	if (bedata->ref >= 0)
+> +	if (bedata->ref != -1)
+>  		gnttab_end_foreign_access(bedata->ref, 0, 0);
+>  	kfree(bedata->ring.sring);
+>  	kfree(bedata);
+> 
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xenproject.org
+> https://lists.xenproject.org/mailman/listinfo/xen-devel
