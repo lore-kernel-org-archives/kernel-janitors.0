@@ -1,32 +1,95 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 18:10:00 +0000
-Subject: Re: [0/4] video-UDLFB: Adjustments for five function implementations
-Message-Id: <ea9813ee-a5a8-7e35-bac5-b2e0652f6602@users.sourceforge.net>
+From: Eduardo Valentin <edubezval@gmail.com>
+Date: Tue, 05 Dec 2017 01:49:20 +0000
+Subject: Re: [PATCH] thermal: tegra: delete unneeded of_node_put
+Message-Id: <20171205014918.GB3536@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
- <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
- <1768474.zA76iyE2Y1@amdc3058>
-In-Reply-To: <1768474.zA76iyE2Y1@amdc3058>
+References: <1500108152-1812-1-git-send-email-Julia.Lawall@lip6.fr>
+ <66e7906c-9472-4fcb-7c04-750bb27d3989@nvidia.com>
+ <alpine.DEB.2.20.1707171641190.2038@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1707171641190.2038@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, Bernie Thompson <bernie@plugable.com>, LKML <linux-kernel@vger.kernel.org>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Zhang Rui <rui.zhang@intel.com>, kernel-janitors@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
->>   Delete an error message for a failed memory allocation in two functions
+On Mon, Jul 17, 2017 at 04:42:38PM +0200, Julia Lawall wrote:
 > 
-> This patch removes the information about the device for which the allocation fails.
-
-* Do you find a Linux allocation failure report insufficient in this use case?
-
-* Are you looking for any more clarification?
-
-
->>   Improve a size determination in dlfb_alloc_urb_list()
 > 
-> Patch queued for 4.16, thanks.
+> On Mon, 17 Jul 2017, Jon Hunter wrote:
+> 
+> >
+> > On 15/07/17 09:42, Julia Lawall wrote:
+> > > Device node iterators perform an of_node_put on each iteration, so putting
+> > > an of_node_put before a continue results in a double put.
+> > >
+> > > The semantic match that finds this problem is as follows
+> > > (http://coccinelle.lip6.fr):
+> > >
+> > > // <smpl>
+> > > @@
+> > > expression e1;
+> > > local idexpression child;
+> > > iterator name for_each_child_of_node;
+> > > @@
+> > >
+> > >  for_each_child_of_node(e1,child) {
+> > >    ... when != of_node_get(child)
+> > > *  of_node_put(child);
+> > >    ...
+> > > *  continue;
+> > > }
+> > > // </smpl>
+> > >
+> > > Furthermore, the call to thermal_of_cooling_device_register immediately
+> > > calls __thermal_cooling_device_register with the same arguments.  The
+> > > latter function stores the device node argument, which is the second
+> > > argument of for_each_child_of_node, in the returned thermal_cooling_device
+> > > structure.  This returned structure is then stored in the cdev field of
+> > > stc.  Thus it seems that the second argument of for_each_child_of_node
+> > > escapes the scope of the for_each_child_of_node, so an explicit of_node_get
+> > > on success of thermal_of_cooling_device_register is also needed.
+> > >
+> > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> > >
+> > > ---
+> > >  drivers/thermal/tegra/soctherm.c |    2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+> > > index 7d2db23..10f4fdd 100644
+> > > --- a/drivers/thermal/tegra/soctherm.c
+> > > +++ b/drivers/thermal/tegra/soctherm.c
+> > > @@ -1014,7 +1014,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+> > >  		tcd = thermal_of_cooling_device_register(np_stcc,
+> > >  							 (char *)name, ts,
+> > >  							 &throt_cooling_ops);
+> > > -		of_node_put(np_stcc);
+> > >  		if (IS_ERR_OR_NULL(tcd)) {
+> > >  			dev_err(dev,
+> > >  				"throttle-cfg: %s: failed to register cooling device\n",
+> > > @@ -1022,6 +1021,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+> > >  			continue;
+> > >  		}
+> > >
+> > > +		of_node_get(np_stcc);
+> > >  		stc->cdev = tcd;
+> > >  		stc->init = true;
+> > >  	}
+> >
+> > Thanks for fixing this. However, I am wondering if it is better for the
+> > 'of_node_get' to be placed within the
+> > thermal_of_cooling_device_register() function as it seems a bit odd if
+> > the caller needs to know that this is being stored for later use.
+> >
+> > Also, taking a quick look, I see a couple other drivers calling
+> > thermal_of_cooling_device_register() and they are also not calling
+> > of_node_get on success. So it maybe easier to fix placing it in the
+> > thermal_of_cooling_device_register() function.
+> 
+> I'm not an expert, but I had the impression that from some call sites, the
+> get would have been done already, because the argument is already stored
+> in some structure.  I can check more exhaustively.
 
-Thanks for your acceptance of other change possibilities.
-
-Regards,
-Markus
+Julia, I agree with Jon here. Better if fixed in the API itself. Are you
+still planning on sending a fix for this?
