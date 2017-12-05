@@ -1,43 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Dec 2017 20:13:08 +0000
-Subject: [PATCH 2/3] pm2301-charger: Improve a size determination in pm2xxx_wall_charger_probe()
-Message-Id: <8b954bef-c66e-2ad9-233c-9cb05ee0871f@users.sourceforge.net>
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Date: Tue, 05 Dec 2017 22:34:15 +0000
+Subject: Re: [PATCH] w1: remove redundant assignments to search_bit and last_rn
+Message-Id: <803221512513255@web55j.yandex.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b11627bc-502d-b3af-ee96-ac2a693448a7@users.sourceforge.net>
-In-Reply-To: <b11627bc-502d-b3af-ee96-ac2a693448a7@users.sourceforge.net>
+References: <20171107184914.7561-1-colin.king@canonical.com>
+In-Reply-To: <20171107184914.7561-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin King <colin.king@canonical.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Dec 2017 20:33:37 +0100
+Hi
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+07.11.2017, 21:49, "Colin King" <colin.king@canonical.com>:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Variables search_bit and last_rn are assigned values before a while-loop
+> however these initial values are never read (as they are overwritten
+> inside the loop). Thus these initial assignments are redundant and can
+> be removed. Cleans up clang warnings:
+>
+> drivers/w1/w1.c:967:2: warning: Value stored to 'search_bit' is never
+> read
+> drivers/w1/w1.c:969:2: warning: Value stored to 'last_rn' is never read
 
-This issue was detected by using the Coccinelle software.
+This looks good, thank you.
+Please pull it into janitors tree if you haven't yet.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/power/supply/pm2301_charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/power/supply/pm2301_charger.c b/drivers/power/supply/pm2301_charger.c
-index 0a0c2da936cf..99a9892f0f68 100644
---- a/drivers/power/supply/pm2301_charger.c
-+++ b/drivers/power/supply/pm2301_charger.c
-@@ -990,7 +990,7 @@ static int pm2xxx_wall_charger_probe(struct i2c_client *i2c_client,
- 		return -EINVAL;
- 	}
- 
--	pm2 = kzalloc(sizeof(struct pm2xxx_charger), GFP_KERNEL);
-+	pm2 = kzalloc(sizeof(*pm2), GFP_KERNEL);
- 	if (!pm2)
- 		return -ENOMEM;
- 
--- 
-2.15.1
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
 
+> ---
+>  drivers/w1/w1.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+> index 0c2a5a8327bd..c29f6c5dda3c 100644
+> --- a/drivers/w1/w1.c
+> +++ b/drivers/w1/w1.c
+> @@ -964,9 +964,7 @@ void w1_search(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb
+>          int search_bit, desc_bit;
+>          u8 triplet_ret = 0;
+>
+> - search_bit = 0;
+>          rn = dev->search_id;
+> - last_rn = 0;
+>          last_device = 0;
+>          last_zero = -1;
+>
+> --
+> 2.14.1
