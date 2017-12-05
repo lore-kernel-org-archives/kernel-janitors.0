@@ -1,23 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 05 Dec 2017 03:30:36 +0000
-Subject: Re: [PATCH] scsi: ipr: fix incorrect indentation of assignment statement
-Message-Id: <yq18teh4zs3.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:38:43 +0000
+Subject: [PATCH] xen/pvcalls: check for xenbus_read() errors
+Message-Id: <20171205143843.hj7b4ayvbgf5ftzl@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171201133327.15515-1-colin.king@canonical.com>
-In-Reply-To: <20171201133327.15515-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 1 Dec 2017 13:33:27 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Brian King <brking@us.ibm.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org
 
+Smatch complains that "len" is uninitialized if xenbus_read() fails so
+let's add some error handling.
 
-Colin,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Remove one extraneous level of indentation on an assignment statement.
-
-Applied to 4.16/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index 40caa92bff33..afa3f1b5d807 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -1128,6 +1128,8 @@ static int pvcalls_front_probe(struct xenbus_device *dev,
+ 	}
+ 
+ 	versions = xenbus_read(XBT_NIL, dev->otherend, "versions", &len);
++	if (IS_ERR(versions))
++		return PTR_ERR(versions);
+ 	if (!len)
+ 		return -EINVAL;
+ 	if (strcmp(versions, "1")) {
