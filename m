@@ -1,89 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 04 Dec 2017 12:43:29 +0000
-Subject: [PATCH] misc: rtsx: make several functions static
-Message-Id: <20171204124329.5569-1-colin.king@canonical.com>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Tue, 05 Dec 2017 08:31:48 +0000
+Subject: Re: [PATCH] misc: rtsx: make several functions static
+Message-Id: <20171205083148.gtfc2ayn5kmmyok7@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171204124329.5569-1-colin.king@canonical.com>
+In-Reply-To: <20171204124329.5569-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>
+Cc: Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 04 Dec 2017, Colin King wrote:
 
-Several functions are local to the source and do not need to be in global
-scope, so make them static.
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Several functions are local to the source and do not need to be in global
+> scope, so make them static.
+>=20
+> Cleans up sparse warnings:
+> symbol 'rtsx_pm_power_saving' was not declared. Should it be static?
+> symbol 'rtsx_set_l1off_sub_cfg_d0' was not declared. Should it be static?
+> symbol 'rtsx_pm_full_on' was not declared. Should it be static?
+> symbol 'rtsx_comm_set_ltr_latency' was not declared. Should it be static?
+> symbol 'rtsx_pci_process_ocp' was not declared. Should it be static?
+> symbol 'rtsx_pci_process_ocp_interrupt' was not declared. Should it be
+> static?
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/misc/cardreader/rtsx_pcr.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
-Cleans up sparse warnings:
-symbol 'rtsx_pm_power_saving' was not declared. Should it be static?
-symbol 'rtsx_set_l1off_sub_cfg_d0' was not declared. Should it be static?
-symbol 'rtsx_pm_full_on' was not declared. Should it be static?
-symbol 'rtsx_comm_set_ltr_latency' was not declared. Should it be static?
-symbol 'rtsx_pci_process_ocp' was not declared. Should it be static?
-symbol 'rtsx_pci_process_ocp_interrupt' was not declared. Should it be
-static?
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/misc/cardreader/rtsx_pcr.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
-index 5345170fc57b..9d6bf39800f8 100644
---- a/drivers/misc/cardreader/rtsx_pcr.c
-+++ b/drivers/misc/cardreader/rtsx_pcr.c
-@@ -80,7 +80,7 @@ static inline void rtsx_pci_disable_aspm(struct rtsx_pcr *pcr)
- 		0xFC, 0);
- }
- 
--int rtsx_comm_set_ltr_latency(struct rtsx_pcr *pcr, u32 latency)
-+static int rtsx_comm_set_ltr_latency(struct rtsx_pcr *pcr, u32 latency)
- {
- 	rtsx_pci_write_register(pcr, MSGTXDATA0,
- 				MASK_8_BIT_DEF, (u8) (latency & 0xFF));
-@@ -143,7 +143,7 @@ int rtsx_set_l1off_sub(struct rtsx_pcr *pcr, u8 val)
- 	return 0;
- }
- 
--void rtsx_set_l1off_sub_cfg_d0(struct rtsx_pcr *pcr, int active)
-+static void rtsx_set_l1off_sub_cfg_d0(struct rtsx_pcr *pcr, int active)
- {
- 	if (pcr->ops->set_l1off_cfg_sub_d0)
- 		pcr->ops->set_l1off_cfg_sub_d0(pcr, active);
-@@ -162,7 +162,7 @@ static void rtsx_comm_pm_full_on(struct rtsx_pcr *pcr)
- 		rtsx_set_l1off_sub_cfg_d0(pcr, 1);
- }
- 
--void rtsx_pm_full_on(struct rtsx_pcr *pcr)
-+static void rtsx_pm_full_on(struct rtsx_pcr *pcr)
- {
- 	if (pcr->ops->full_on)
- 		pcr->ops->full_on(pcr);
-@@ -967,13 +967,13 @@ static void rtsx_pci_card_detect(struct work_struct *work)
- 				pcr->slots[RTSX_MS_CARD].p_dev);
- }
- 
--void rtsx_pci_process_ocp(struct rtsx_pcr *pcr)
-+static void rtsx_pci_process_ocp(struct rtsx_pcr *pcr)
- {
- 	if (pcr->ops->process_ocp)
- 		pcr->ops->process_ocp(pcr);
- }
- 
--int rtsx_pci_process_ocp_interrupt(struct rtsx_pcr *pcr)
-+static int rtsx_pci_process_ocp_interrupt(struct rtsx_pcr *pcr)
- {
- 	if (pcr->option.ocp_en)
- 		rtsx_pci_process_ocp(pcr);
-@@ -1094,7 +1094,7 @@ static void rtsx_comm_pm_power_saving(struct rtsx_pcr *pcr)
- 	rtsx_enable_aspm(pcr);
- }
- 
--void rtsx_pm_power_saving(struct rtsx_pcr *pcr)
-+static void rtsx_pm_power_saving(struct rtsx_pcr *pcr)
- {
- 	if (pcr->ops->power_saving)
- 		pcr->ops->power_saving(pcr);
--- 
-2.14.1
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
