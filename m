@@ -1,42 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 13:38:52 +0000
-Subject: Re: [PATCH] TC: Delete an error message for a failed memory allocation in tc_bus_add_devices()
-Message-Id: <b553c094-238a-663b-a374-a7075feb9f4b@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:37:52 +0000
+Subject: [PATCH] bnxt_en: Uninitialized variable in bnxt_tc_parse_actions()
+Message-Id: <20171205143752.cymsw7fzlqn6ejeq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bfb63956-346c-aa17-5b06-fbe19ff0a5e3@users.sourceforge.net>
- <alpine.LFD.2.21.1712102140570.4266@eddie.linux-mips.org>
- <1512957931.26342.31.camel@perches.com>
- <alpine.LFD.2.21.1712110244450.4266@eddie.linux-mips.org>
-In-Reply-To: <alpine.LFD.2.21.1712110244450.4266@eddie.linux-mips.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Maciej W. Rozycki" <macro@linux-mips.org>, linux-mips@linux-mips.org
-Cc: Joe Perches <joe@perches.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Chan <michael.chan@broadcom.com>, Sathya Perla <sathya.perla@broadcom.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->  However I would indeed prefer that a commit description is at least 
-> exhaustive enough for such a dumb reviewer as I am to understand what is 
-> going on right away.
+Smatch warns that:
 
-I can follow your desire in principle.
+    drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c:160 bnxt_tc_parse_actions()
+    error: uninitialized symbol 'rc'.
 
+"rc" is either uninitialized or set to zero here so we can just remove
+the check.
 
-> So please make it say at least:
-> 
-> "Remove an extraneous message that duplicates the diagnostic already 
-> provided by `kzalloc' for a memory allocation failure in this function."
+Fixes: 8c95f773b4a3 ("bnxt_en: add support for Flower based vxlan encap/decap offload")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-How much clarification can such a wording bring to the software situation
-if the desired data structures might be still unclear for “the diagnostic”?
-
-
-> or suchlike in v2 for me to apply a Reviewed-by: tag.
-
-Are you interested in a safe description for a default Linux allocation
-failure report?
-
-How do you think about corresponding reference documentation
-(besides source code)?
-
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+index d5031f436f83..125b146da031 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+@@ -157,9 +157,6 @@ static int bnxt_tc_parse_actions(struct bnxt *bp,
+ 		}
+ 	}
+ 
+-	if (rc)
+-		return rc;
+-
+ 	/* Tunnel encap/decap action must be accompanied by a redirect action */
+ 	if ((actions->flags & BNXT_TC_ACTION_FLAG_TUNNEL_ENCAP ||
+ 	     actions->flags & BNXT_TC_ACTION_FLAG_TUNNEL_DECAP) &&
+@@ -169,7 +166,7 @@ static int bnxt_tc_parse_actions(struct bnxt *bp,
+ 		return -EINVAL;
+ 	}
+ 
+-	return rc;
++	return 0;
+ }
+ 
+ #define GET_KEY(flow_cmd, key_type)					\
