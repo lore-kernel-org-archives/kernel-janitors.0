@@ -1,46 +1,55 @@
-From: Harry Wentland <harry.wentland@amd.com>
-Date: Fri, 15 Dec 2017 15:05:39 +0000
-Subject: Re: [PATCH] drm/amd/display: remove redundant null check of array 'data'
-Message-Id: <299963e5-5847-a2ca-0282-40ab3cd0f590@amd.com>
+From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
+Date: Tue, 05 Dec 2017 14:02:00 +0000
+Subject: [PATCH] Scheduler: Removed first parameter from prepare_lock_switch
+Message-Id: <20171205140200.4guikhmagltvoehm@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171215105343.11372-1-colin.king@canonical.com>
-In-Reply-To: <20171215105343.11372-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, "Koenig, Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: peterz@infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2017-12-15 05:53 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The null check on aconnector->base.edid_blob_ptr->data is redundant
-> since data is an array and can never be null.  Remove it.
-> 
-> Detected by CoverityScan, CID#1460369 ("Array compared against 0")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The first parameter of prepare_lock_switch (kernel/sched/sched.h) is not
+used anymore. Commit c55f5158f removed the code that use the first
+parameter and function prepare_lock_switch is only used in
+prepare_task_switch (kernel/sched/core.c)
 
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+I tested it in a virtual machine running Debian x86_64 with kvm. I
+also tested it in my computer which is a x86_64 machine running Arch Linux
+and everything is fine.
 
-Harry
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ kernel/sched/core.c  | 2 +-
+ kernel/sched/sched.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index ccbf10e3bbb6..c388778dbba3 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -2725,8 +2725,7 @@ static void create_eml_sink(struct amdgpu_dm_connector *aconnector)
->  	};
->  	struct edid *edid;
->  
-> -	if (!aconnector->base.edid_blob_ptr ||
-> -		!aconnector->base.edid_blob_ptr->data) {
-> +	if (!aconnector->base.edid_blob_ptr) {
->  		DRM_ERROR("No EDID firmware found on connector: %s ,forcing to OFF!\n",
->  				aconnector->base.name);
->  
-> 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c85dfb746f8c..0b1781cfa0ca 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2592,7 +2592,7 @@ prepare_task_switch(struct rq *rq, struct task_struct *prev,
+ 	sched_info_switch(rq, prev, next);
+ 	perf_event_task_sched_out(prev, next);
+ 	fire_sched_out_preempt_notifiers(prev, next);
+-	prepare_lock_switch(rq, next);
++	prepare_lock_switch(next);
+ 	prepare_arch_switch(next);
+ }
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b19552a212de..089953e4ec66 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1328,7 +1328,7 @@ static inline int task_on_rq_migrating(struct task_struct *p)
+ # define finish_arch_post_lock_switch()	do { } while (0)
+ #endif
+ 
+-static inline void prepare_lock_switch(struct rq *rq, struct task_struct *next)
++static inline void prepare_lock_switch(struct task_struct *next)
+ {
+ #ifdef CONFIG_SMP
+ 	/*
+-- 
+2.15.1
+
