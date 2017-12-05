@@ -1,68 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Dec 2017 18:20:47 +0000
-Subject: Re: omapfb/dss: Delete an error message for a failed memory allocation in three functions
-Message-Id: <21554e23-e714-3f6f-cd70-4c277823bab3@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:39:23 +0000
+Subject: [PATCH] IB/mlx4: Potential buffer overflow in _mlx4_set_path()
+Message-Id: <20171205143923.26dqc3ekhbmtmsgt@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c48a01db-c477-3bd3-5cb4-548e47810ccb@users.sourceforge.net>
- <d29a0bae-7b6f-b8f6-6809-5a097cd5a26a@ti.com>
- <1511809633.32426.70.camel@perches.com>
- <d82fbab2-865f-3051-f487-d310ee819cf3@users.sourceforge.net>
- <1511833514.32426.86.camel@perches.com>
- <7e7e64cf-dbe5-614a-f1e5-29d7b6cf9297@users.sourceforge.net>
- <1511856244.19952.14.camel@perches.com>
-In-Reply-To: <1511856244.19952.14.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org
-Cc: "Andrew F. Davis" <afd@ti.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-> How many times have I told you to include the reason for your patches
-> in your proposed commit message?
+Smatch complains about this code:
 
-Will it be useful to look again at the involved circumstances?
+    drivers/infiniband/hw/mlx4/qp.c:1827 _mlx4_set_path()
+    error: buffer overflow 'dev->dev->caps.gid_table_len' 3 <= 255
 
+The mlx4_ib_gid_index_to_real_index() does check that "port" is within
+bounds, but we don't check the return value for errors.  It seems simple
+enough to add a check for that.
 
-> Too often.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Not tested.
 
-Did I answer any concerns partly?
-
-
-> Many people do not know that a generic kmalloc does a dump_stack() on OOM.
-
-Do you see a need to represent such information better?
-
-Is it expected that the function “devm_kzalloc” has got a similar property?
-
-
-> That information should be part of the commit message.
-
-How do you think about to share it also from any reference documentation
-in a clearer way?
-
-Do we stumble on a target conflict in this case?
-
-I am generally trying to improve the software situation to some degree.
-I prefer then to work with safe information sources.
-Unfortunately, I might have not reached a desired confidence level here
-for a more detailed commit message. I assume that software development
-efforts could increase in significant ways if something should be improved
-further in a direction I hope. But this could mean that time frames will
-grow for corresponding clarifications.
-
-* Does such a situation block progress on the deletion of other remaining
-  questionable error messages?
-
-* Would you like to increase the software development attention anyhow?
-
-
-
-By the way:
-It seems that my update suggestion for the directory “omapfb/dss”
-could be superseded by the patch “omapfb: dss: Do not duplicate features data”
-from Ladislav Michl.
-https://patchwork.kernel.org/patch/10082027/
-https://lkml.kernel.org/r/<20171129123308.GA26578@lenoch>
-
-Regards,
-Markus
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index 013049bcdb53..817257f105aa 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -1824,6 +1824,8 @@ static int _mlx4_set_path(struct mlx4_ib_dev *dev,
+ 			mlx4_ib_gid_index_to_real_index(dev, port,
+ 							grh->sgid_index);
+ 
++		if (real_sgid_index < 0)
++			return real_sgid_index;
+ 		if (real_sgid_index >= dev->dev->caps.gid_table_len[port]) {
+ 			pr_err("sgid_index (%u) too large. max is %d\n",
+ 			       real_sgid_index, dev->dev->caps.gid_table_len[port] - 1);
