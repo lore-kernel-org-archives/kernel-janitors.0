@@ -1,24 +1,30 @@
-From: Geoff Levand <geoff@infradead.org>
-Date: Mon, 18 Dec 2017 18:32:27 +0000
-Subject: Re: [PATCH 0/2] PS3: Adjustments for six function implementations
-Message-Id: <419111a8-f1bd-94df-f264-725e2a0cc8dc@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:37:26 +0000
+Subject: [PATCH] hwmon: (w83773g) Fix a precedence bug in get_fault()
+Message-Id: <20171205143726.d3tziwhjboyfxmgi@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b6464bc-a408-de2a-1b54-cb7794b92506@users.sourceforge.net>
-In-Reply-To: <9b6464bc-a408-de2a-1b54-cb7794b92506@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>, Lei YU <mine260309@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+Shift has higher precedence than mask but presumably we wanted to set
+*val to 1 if BIT(2) was set or 0 if the bit was clear.
 
-On 12/16/2017 05:50 AM, SF Markus Elfring wrote:
-> Markus Elfring (2):
->   Delete an error message for a failed memory allocation in two functions
->   Improve a size determination in five functions
+Fixes: de0a524e3e09 ("hwmon: Add W83773G driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-As I mentioned before, please keep your commit message subjects to
-50 chars or less.
-
--Geoff
+diff --git a/drivers/hwmon/w83773g.c b/drivers/hwmon/w83773g.c
+index 0b97c285b049..e858093ac806 100644
+--- a/drivers/hwmon/w83773g.c
++++ b/drivers/hwmon/w83773g.c
+@@ -102,7 +102,7 @@ static int get_fault(struct regmap *regmap, int index, long *val)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	*val = (u8)regval & 0x04 >> 2;
++	*val = (regval & 0x04) >> 2;
+ 	return 0;
+ }
+ 
