@@ -1,52 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 14 Dec 2017 15:09:40 +0000
-Subject: Re: [PATCH 0/2] Fixed voltage regulator: Adjustments for two function implementations
-Message-Id: <20171214150940.GE9788@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ZRyEpB+iJ+qUx0kp"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 05 Dec 2017 21:52:03 +0000
+Subject: [PATCH 2/2] usbip: Use common error handling code in stub_recv_cmd_submit()
+Message-Id: <32b1d0d7-8a48-a960-c666-b0ea187ecdcc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <83b84f24-503b-4b45-3e4d-9c88c6b0252b@users.sourceforge.net>
- <4766f560-89bb-89a3-ed12-5780ce569434@users.sourceforge.net>
-In-Reply-To: <4766f560-89bb-89a3-ed12-5780ce569434@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <6a84f1e4-a5c1-84da-bd14-de28e306991b@users.sourceforge.net>
+In-Reply-To: <6a84f1e4-a5c1-84da-bd14-de28e306991b@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>, Valentina Manea <valentina.manea.m@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Dec 2017 22:40:30 +0100
 
---ZRyEpB+iJ+qUx0kp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-On Thu, Dec 14, 2017 at 02:21:55PM +0100, SF Markus Elfring wrote:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/usb/usbip/stub_rx.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-> How are the chances that such change possibilities will be integrated
-> in this software module?
+diff --git a/drivers/usb/usbip/stub_rx.c b/drivers/usb/usbip/stub_rx.c
+index a70eb81823a3..f46d71abd2f9 100644
+--- a/drivers/usb/usbip/stub_rx.c
++++ b/drivers/usb/usbip/stub_rx.c
+@@ -445,29 +445,23 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
+ 	else
+ 		priv->urb = usb_alloc_urb(0, GFP_KERNEL);
+ 
+-	if (!priv->urb) {
+-		usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
+-		return;
+-	}
++	if (!priv->urb)
++		goto add_event_malloc_failure;
+ 
+ 	/* allocate urb transfer buffer, if needed */
+ 	if (pdu->u.cmd_submit.transfer_buffer_length > 0) {
+ 		priv->urb->transfer_buffer  			kzalloc(pdu->u.cmd_submit.transfer_buffer_length,
+ 				GFP_KERNEL);
+-		if (!priv->urb->transfer_buffer) {
+-			usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
+-			return;
+-		}
++		if (!priv->urb->transfer_buffer)
++			goto add_event_malloc_failure;
+ 	}
+ 
+ 	/* copy urb setup packet */
+ 	priv->urb->setup_packet = kmemdup(&pdu->u.cmd_submit.setup, 8,
+ 					  GFP_KERNEL);
+-	if (!priv->urb->setup_packet) {
+-		usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
+-		return;
+-	}
++	if (!priv->urb->setup_packet)
++		goto add_event_malloc_failure;
+ 
+ 	/* set other members from the base header of pdu */
+ 	priv->urb->context                = (void *) priv;
+@@ -507,6 +501,10 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
+ 	}
+ 
+ 	usbip_dbg_stub_rx("Leave\n");
++	return;
++
++add_event_malloc_failure:
++	usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
+ }
+ 
+ /* recv a pdu */
+-- 
+2.15.1
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, though there are some other maintainers who like them - if in
-doubt look at how patches for the subsystem are normally handled.
-
---ZRyEpB+iJ+qUx0kp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloylDQACgkQJNaLcl1U
-h9A4+Af+Nsemo3AS33BO3Uw2VHWkiPC0V4YVd368IPMShyPN+gswSmeWfJ7Vao5b
-yGEioCaFK1jyC8D31dBorVrBqI4F1T2j7uXjYIXDmgkh2pzOk59vVdDhPxGECo/9
-CFjeJOI4M2z79aZyKViI65yBye0F26rK8Hztwf8ZgYhKQ795X1wo1YRgVsKHR1/B
-61+2+LNeGabu0Mt0iAgaK3A1VTmH9yBuBu+WT1+E6WLA/bLws5jWdM2iRpf3xEoQ
-M8qsWxzmqc1XCfWL9gVEF1wtdUrMalN27STUfZU+eF686RN2CbVPelmfl3HzCVed
-hHdJ6qXossBTs8KY7KBHmwTKl588IQ==
-=FVTS
------END PGP SIGNATURE-----
-
---ZRyEpB+iJ+qUx0kp--
