@@ -1,36 +1,36 @@
-From: JI-HUN KIM <jihuun.k@gmail.com>
-Date: Wed, 27 Dec 2017 05:55:16 +0000
-Subject: [PATCH 3/3] staging: irda: separate multiple assignments
-Message-Id: <20171227055512.GA32731@MacBook-Air>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:39:36 +0000
+Subject: [PATCH] afs: Potential uninitialized variable in afs_extract_data()
+Message-Id: <20171205143936.sniv5hwd7bbu2gfy@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: samuel@sortiz.org
-Cc: gregkh@linuxfoundation.org, davem@davemloft.net, shreeya.patel23498@gmail.com, netdev@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Clean up checkpatch warning:
-CHECK: multiple assignments should be avoided
+Smatch warns that:
 
-Signed-off-by: JI-HUN KIM <jihuun.k@gmail.com>
----
- drivers/staging/irda/drivers/esi-sir.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+    fs/afs/rxrpc.c:922 afs_extract_data()
+    error: uninitialized symbol 'remote_abort'.
 
-diff --git a/drivers/staging/irda/drivers/esi-sir.c b/drivers/staging/irda/drivers/esi-sir.c
-index 00866a3..01097f1 100644
---- a/drivers/staging/irda/drivers/esi-sir.c
-+++ b/drivers/staging/irda/drivers/esi-sir.c
-@@ -104,7 +104,8 @@ static int esi_change_speed(struct sir_dev *dev, unsigned int speed)
- 		rts = FALSE;
- 		break;
- 	case 115200:
--		dtr = rts = TRUE;
-+		dtr = TRUE;
-+		rts = TRUE;
- 		break;
- 	default:
- 		ret = -EINVAL;
--- 
-2.10.1 (Apple Git-78)
+Smatch is right that "remote_abort" might be uninitialized when we pass
+it to afs_set_call_complete().  I don't know if that function uses the
+uninitialized variable.  Anyway, the comment for rxrpc_kernel_recv_data(),
+says that "*_abort should also be initialised to 0." and this patch does
+that.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index ea1460b9b71a..e1126659f043 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -885,7 +885,7 @@ int afs_extract_data(struct afs_call *call, void *buf, size_t count,
+ {
+ 	struct afs_net *net = call->net;
+ 	enum afs_call_state state;
+-	u32 remote_abort;
++	u32 remote_abort = 0;
+ 	int ret;
+ 
+ 	_enter("{%s,%zu},,%zu,%d",
