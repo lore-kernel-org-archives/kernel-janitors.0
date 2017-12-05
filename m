@@ -1,34 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 07:12:21 +0000
-Subject: Re: platform/x86/thinkpad_acpi: Adjustments for four function implementations
-Message-Id: <80ae8328-5851-01b0-cb31-474f7baf1686@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Dec 2017 14:36:54 +0000
+Subject: [PATCH] RDMA/cxgb4: Add a sanity check in process_work()
+Message-Id: <20171205143654.n5ybdhj3ga2tp7t4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
- <CAHp75Vckgw1Eqao_vsq0n8RuYJRP2JZWJz6-MxZ6Wwb8eAEVgA@mail.gmail.com>
- <ea910da9-ca59-b895-b071-35d9c5cbd112@users.sourceforge.net>
- <20171223014033.jx7fzu7uzjfbzyca@khazad-dum.debian.net>
-In-Reply-To: <20171223014033.jx7fzu7uzjfbzyca@khazad-dum.debian.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
->> Do you find the Linux allocation failure report insufficient in this case?
-> 
-> Leave those pr_ messages alone, please,
+The story is that Smatch marks skb->data as untrusted so it generates
+a warning message here:
 
-Have you got special software development concerns?
+    drivers/infiniband/hw/cxgb4/cm.c:4100 process_work()
+    error: buffer overflow 'work_handlers' 241 <= 255
 
+In other places which handle this such as t4_uld_rx_handler() there is
+some checking to make sure that the function pointer is not NULL.  I
+have added bounds checking and a check for NULL here as well.
 
-> unless they are really causing some sort of issue (which?).
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Can the code be redundant here?
-
-
-> Doing it just for "compliance" with a doc isn't nearly good enough reason.
-
-Do you give only a low value to coding style guidelines in this use case?
-
-Regards,
-Markus
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index 21db3b48a617..844c9e78df8b 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -4097,9 +4097,15 @@ static void process_work(struct work_struct *work)
+ 		dev = *((struct c4iw_dev **) (skb->cb + sizeof(void *)));
+ 		opcode = rpl->ot.opcode;
+ 
+-		ret = work_handlers[opcode](dev, skb);
+-		if (!ret)
++		if (opcode >= ARRAY_SIZE(work_handlers) ||
++		    !work_handlers[opcode]) {
++			pr_err("No handler for opcode 0x%x.\n", opcode);
+ 			kfree_skb(skb);
++		} else {
++			ret = work_handlers[opcode](dev, skb);
++			if (!ret)
++				kfree_skb(skb);
++		}
+ 		process_timedout_eps();
+ 	}
+ }
