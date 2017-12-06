@@ -1,53 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 21:02:03 +0000
-Subject: [PATCH] pinctrl: xway: Delete two error messages for a failed memory allocation in pinmux_xway_probe
-Message-Id: <0a27abb0-c222-765b-3a96-7e02163a0858@users.sourceforge.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Wed, 06 Dec 2017 00:54:32 +0000
+Subject: Re: [PATCH] ACPI / APEI: remove redundant variables len and node_len
+Message-Id: <4133483.q48axFpL8f@aspire.rjw.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171015212454.16012-1-colin.king@canonical.com> <20171128105110.hrfe6nh7hzmo5p4f@pd.tnic>
+In-Reply-To: <20171128105110.hrfe6nh7hzmo5p4f@pd.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, John Crispin <john@phrozen.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Borislav Petkov <bp@alien8.de>, Colin King <colin.king@canonical.com>
+Cc: Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 21:51:26 +0100
+On Tuesday, November 28, 2017 11:51:10 AM CET Borislav Petkov wrote:
+> On Sun, Oct 15, 2017 at 10:24:54PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > Variables len and node_len are redundant and can be removed. Cleans
+> > up clang warning: node_len = GHES_ESTATUS_NODE_LEN(len);
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/acpi/apei/ghes.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> > index 3c3a37b8503b..f2e1049232c0 100644
+> > --- a/drivers/acpi/apei/ghes.c
+> > +++ b/drivers/acpi/apei/ghes.c
+> > @@ -923,7 +923,6 @@ static void ghes_print_queued_estatus(void)
+> >  	struct ghes_estatus_node *estatus_node;
+> >  	struct acpi_hest_generic *generic;
+> >  	struct acpi_hest_generic_status *estatus;
+> > -	u32 len, node_len;
+> >  
+> >  	llnode = llist_del_all(&ghes_estatus_llist);
+> >  	/*
+> > @@ -935,8 +934,6 @@ static void ghes_print_queued_estatus(void)
+> >  		estatus_node = llist_entry(llnode, struct ghes_estatus_node,
+> >  					   llnode);
+> >  		estatus = GHES_ESTATUS_FROM_NODE(estatus_node);
+> > -		len = cper_estatus_len(estatus);
+> > -		node_len = GHES_ESTATUS_NODE_LEN(len);
+> >  		generic = estatus_node->generic;
+> >  		ghes_print_estatus(NULL, generic, estatus);
+> >  		llnode = llnode->next;
+> 
+> Reviewed-by: Borislav Petkov <bp@suse.de>
 
-Omit extra messages for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-xway.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index f9e98a7d4f0c..cd0f402c1164 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1730,18 +1730,16 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	xway_info.pads = devm_kzalloc(&pdev->dev,
- 			sizeof(struct pinctrl_pin_desc) * xway_chip.ngpio,
- 			GFP_KERNEL);
--	if (!xway_info.pads) {
--		dev_err(&pdev->dev, "Failed to allocate pads\n");
-+	if (!xway_info.pads)
- 		return -ENOMEM;
--	}
-+
- 	for (i = 0; i < xway_chip.ngpio; i++) {
- 		/* strlen("ioXY") + 1 = 5 */
- 		char *name = devm_kzalloc(&pdev->dev, 5, GFP_KERNEL);
- 
--		if (!name) {
--			dev_err(&pdev->dev, "Failed to allocate pad name\n");
-+		if (!name)
- 			return -ENOMEM;
--		}
-+
- 		snprintf(name, 5, "io%d", i);
- 		xway_info.pads[i].number = GPIO0 + i;
- 		xway_info.pads[i].name = name;
--- 
-2.15.1
+Patch applied, thanks!
 
