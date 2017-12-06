@@ -1,18 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Dec 2017 14:43:10 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 06 Dec 2017 19:00:46 +0000
 Subject: Re: [PATCH] bnxt_en: Uninitialized variable in bnxt_tc_parse_actions()
-Message-Id: <20171205144310.zo7ucnpgdlu2vfc2@mwanda>
+Message-Id: <20171206.140046.1593939441488896213.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171205143752.cymsw7fzlqn6ejeq@mwanda>
 In-Reply-To: <20171205143752.cymsw7fzlqn6ejeq@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Chan <michael.chan@broadcom.com>, Sathya Perla <sathya.perla@broadcom.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: michael.chan@broadcom.com, sathya.perla@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I'm sorry, I left out that this applies to net-next.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 5 Dec 2017 17:37:52 +0300
 
-regards,
-dan carpenter
+> Smatch warns that:
+> 
+>     drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c:160 bnxt_tc_parse_actions()
+>     error: uninitialized symbol 'rc'.
+> 
+> "rc" is either uninitialized or set to zero here so we can just remove
+> the check.
+> 
+> Fixes: 8c95f773b4a3 ("bnxt_en: add support for Flower based vxlan encap/decap offload")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+Michael, please review.
+
+Thanks.
