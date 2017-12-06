@@ -1,79 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 11 Dec 2017 12:14:27 +0000
-Subject: Applied "ASoC: nuc900: Fix platform_get_irq() error checking some more" to the asoc tree
-Message-Id: <E1eOMyZ-0004f5-IZ@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 21:11:07 +0000
+Subject: [PATCH 1/3] tty/serial/ucc_uart: Delete an error message for a failed memory allocation in ucc_uart_
+Message-Id: <f67ae4e0-2f64-3b6d-bd87-3f249a0cca5e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
-In-Reply-To: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
+References: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
+In-Reply-To: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, alsa-devel@alsa-project.orgMarkBrownbroonie@kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>alsa-devel@alsa-project.org
+To: linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@tabi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Dec 2017 21:41:14 +0100
 
-   ASoC: nuc900: Fix platform_get_irq() error checking some more
+Omit an extra message for a memory allocation failure in this function.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From cd430a244cd5d3ca0f4053718eabdf42bc12c517 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 9 Dec 2017 14:52:03 +0300
-Subject: [PATCH] ASoC: nuc900: Fix platform_get_irq() error checking some more
-
-The error handling doesn't work here because "nuc900_audio->irq_num" is
-unsigned.  Also we should be checking for < 0 and not <= 0 but I believe
-that's harmless.  The platform_get_irq() comments don't talk about the
-return values...
-
-Fixes: fa8cc38165c2 ("ASoC: nuc900: Fix platform_get_irq's error checking")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/nuc900/nuc900-ac97.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/tty/serial/ucc_uart.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
-index 5e4fbd2d3479..71fce7c85c93 100644
---- a/sound/soc/nuc900/nuc900-ac97.c
-+++ b/sound/soc/nuc900/nuc900-ac97.c
-@@ -345,11 +345,10 @@ static int nuc900_ac97_drvprobe(struct platform_device *pdev)
- 		goto out;
+diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
+index 2b6376e6e5ad..48364f0eba72 100644
+--- a/drivers/tty/serial/ucc_uart.c
++++ b/drivers/tty/serial/ucc_uart.c
+@@ -1254,10 +1254,8 @@ static int ucc_uart_probe(struct platform_device *ofdev)
  	}
  
--	nuc900_audio->irq_num = platform_get_irq(pdev, 0);
--	if (nuc900_audio->irq_num <= 0) {
--		ret = nuc900_audio->irq_num < 0 ? nuc900_audio->irq_num : -EBUSY;
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0)
- 		goto out;
+ 	qe_port = kzalloc(sizeof(struct uart_qe_port), GFP_KERNEL);
+-	if (!qe_port) {
+-		dev_err(&ofdev->dev, "can't allocate QE port structure\n");
++	if (!qe_port)
+ 		return -ENOMEM;
 -	}
-+	nuc900_audio->irq_num = ret;
  
- 	nuc900_ac97_data = nuc900_audio;
- 
+ 	/* Search for IRQ and mapbase */
+ 	ret = of_address_to_resource(np, 0, &res);
 -- 
 2.15.1
 
