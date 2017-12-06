@@ -1,75 +1,38 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Fri, 01 Dec 2017 15:29:18 +0000
-Subject: Re: [PATCH] power: supply: charger-manager: Fix typo in condition
-Message-Id: <20171201152918.qjmo6i5bk3ij5myj@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lu7nzxjvfwnwza6j"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 19:12:34 +0000
+Subject: [PATCH] tty/vt/selection: Delete an error message for a failed memory allocation in set_selection()
+Message-Id: <353369d3-29c4-18c4-85d1-a51f173f663c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171121042712.3035-1-raitosyo@gmail.com>
-In-Reply-To: <20171121042712.3035-1-raitosyo@gmail.com>
-To: raitosyo@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>, Al Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Kate Stewart <kstewart@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Dec 2017 20:07:34 +0100
 
---lu7nzxjvfwnwza6j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Omit an extra message for a memory allocation failure in this function.
 
-Hi,
+This issue was detected by using the Coccinelle software.
 
-On Tue, Nov 21, 2017 at 01:27:12PM +0900, raitosyo@gmail.com wrote:
-> From: Ryosuke Saito <raitosyo@gmail.com>
->=20
-> Should be discharging_max_duration_ms, not charging_max_duration_ms.
->=20
-> Signed-off-by: Ryosuke Saito <raitosyo@gmail.com>
-> ---
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/vt/selection.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks, queued.
+diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
+index af4da9507180..d6087f2757ab 100644
+--- a/drivers/tty/vt/selection.c
++++ b/drivers/tty/vt/selection.c
+@@ -286,7 +286,6 @@ int set_selection(const struct tiocl_selection __user *sel, struct tty_struct *t
+ 	multiplier = use_unicode ? 3 : 1;  /* chars can take up to 3 bytes */
+ 	bp = kmalloc(((sel_end-sel_start)/2+1)*multiplier, GFP_KERNEL);
+ 	if (!bp) {
+-		printk(KERN_WARNING "selection: kmalloc() failed\n");
+ 		clear_selection();
+ 		return -ENOMEM;
+ 	}
+-- 
+2.15.1
 
--- Sebastian
-
->  drivers/power/supply/charger-manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/suppl=
-y/charger-manager.c
-> index 6502fa7..1de4b44 100644
-> --- a/drivers/power/supply/charger-manager.c
-> +++ b/drivers/power/supply/charger-manager.c
-> @@ -578,7 +578,7 @@ static int check_charging_duration(struct charger_man=
-ager *cm)
->  	} else if (is_ext_pwr_online(cm) && !cm->charger_enabled) {
->  		duration =3D curr - cm->charging_end_time;
-> =20
-> -		if (duration > desc->charging_max_duration_ms &&
-> +		if (duration > desc->discharging_max_duration_ms &&
->  				is_ext_pwr_online(cm)) {
->  			dev_info(cm->dev, "Discharging duration exceed %ums\n",
->  				 desc->discharging_max_duration_ms);
-> --=20
-> 2.9.5
->=20
-
---lu7nzxjvfwnwza6j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlohdU4ACgkQ2O7X88g7
-+po0vRAAqGBtE9EQOzJ+R2/s9Z7cWupJVQV1PIgf0xXdJC4ORCwVn1iVB5olywBJ
-CwLTBvUYT79wMaBL4f6tYB6wIFK+k2Z+nt0ntxl98ltEQCn/YMMwXBRL+6T00i2F
-/QyeOcghZ/4tSUdodLUc/FydOzbf1yVaeK0jjC4kP4CA8LVKOfCpqngD1i4Y8DPN
-X1KGJK3Uvr979nxVi7XUoUg3Fom3oRrUEYP2EG2nhDPKmaMxUqcfyeS2fl5PrzS0
-9ULpjFSGpYXI+ODtUQTd/2GlPJhtJgsQbzfx0SbAGKEQepNuU4cdZoJN4FSV/eKn
-IhZBHGmUCeUvs4QHSt7w8ze8XmidHesSGyNe/atLclQVL/RCiYwtOfwIUdPOsTwE
-mrl5QUF8zVpkvIfvUAhnrDMH43UMA4KHMcAQ4/vN30nIPji3DH8ysZ1OxtWf2Yy5
-c2pGdamoFtvQ1xQ4OySO2TQUXw6PSp9GQ6IrzhDsxHk5yfhzbp13+S7Xsrxpwnhl
-hUOtyMLX+ZHr/J9ACT86GRqzziyis+qRJpgGZRlRVHGR0TCw079baEIWq1Qqn26h
-TLPxwluPQrszqK8VbrXMRiF7+FDCKXubl9j3cqULURIvy/FvUJR/d5CX5hTnPPe5
-EknbGwtAQD2NaiKsjYd/1uwyFmzEDrYTHGDNhrJ2i9sACdRVeTU=
-=Pkmg
------END PGP SIGNATURE-----
-
---lu7nzxjvfwnwza6j--
