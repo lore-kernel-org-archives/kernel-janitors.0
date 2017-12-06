@@ -1,118 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 10:30:15 +0000
-Subject: [PATCH 2/7] rapidio: Adjust 12 checks for null pointers
-Message-Id: <739f9f1c-3ebe-c21b-c5e2-31976cfbc0ee@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 20:24:51 +0000
+Subject: [PATCH] tty: synclinkmp: Delete an error message for a failed memory allocation in startup()
+Message-Id: <8a63c9bc-77c3-5b7e-6911-86397e63abd7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
-In-Reply-To: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Dec 2017 15:27:07 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 6 Dec 2017 21:21:07 +0100
 
-The script “checkpatch.pl” pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-Comparison to NULL could be written …
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/rapidio/rio.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/tty/synclinkmp.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
-index 032ede23a8cb..f89085564c2c 100644
---- a/drivers/rapidio/rio.c
-+++ b/drivers/rapidio/rio.c
-@@ -243,7 +243,7 @@ int rio_request_inb_mbox(struct rio_mport *mport,
- 	int rc = -ENOSYS;
- 	struct resource *res;
+diff --git a/drivers/tty/synclinkmp.c b/drivers/tty/synclinkmp.c
+index d45f234e1914..e47d19bbe87a 100644
+--- a/drivers/tty/synclinkmp.c
++++ b/drivers/tty/synclinkmp.c
+@@ -2640,11 +2640,8 @@ static int startup(SLMP_INFO * info)
  
--	if (mport->ops->open_inb_mbox = NULL)
-+	if (!mport->ops->open_inb_mbox)
- 		goto out;
- 
- 	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
-@@ -326,7 +326,7 @@ int rio_request_outb_mbox(struct rio_mport *mport,
- 	int rc = -ENOSYS;
- 	struct resource *res;
- 
--	if (mport->ops->open_outb_mbox = NULL)
-+	if (!mport->ops->open_outb_mbox)
- 		goto out;
- 
- 	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
-@@ -632,7 +632,7 @@ int rio_request_inb_pwrite(struct rio_dev *rdev,
- 	int rc = 0;
- 
- 	spin_lock(&rio_global_list_lock);
--	if (rdev->pwcback != NULL)
-+	if (rdev->pwcback)
- 		rc = -ENOMEM;
- 	else
- 		rdev->pwcback = pwcback;
-@@ -975,7 +975,7 @@ rio_chk_dev_route(struct rio_dev *rdev, struct rio_dev **nrdev, int *npnum)
- 		rdev = rdev->prev;
+ 	if (!info->tx_buf) {
+ 		info->tx_buf = kmalloc(info->max_frame_size, GFP_KERNEL);
+-		if (!info->tx_buf) {
+-			printk(KERN_ERR"%s(%d):%s can't allocate transmit buffer\n",
+-				__FILE__,__LINE__,info->device_name);
++		if (!info->tx_buf)
+ 			return -ENOMEM;
+-		}
  	}
  
--	if (prev = NULL)
-+	if (!prev)
- 		goto err_out;
- 
- 	p_port = prev->rswitch->route_table[rdev->destid];
-@@ -1054,7 +1054,7 @@ rio_get_input_status(struct rio_dev *rdev, int pnum, u32 *lnkresp)
- 		RIO_MNT_REQ_CMD_IS);
- 
- 	/* Exit if the response is not expected */
--	if (lnkresp = NULL)
-+	if (!lnkresp)
- 		return 0;
- 
- 	checkcount = 3;
-@@ -1696,7 +1696,7 @@ int rio_route_add_entry(struct rio_dev *rdev,
- 
- 	spin_lock(&rdev->rswitch->lock);
- 
--	if (ops = NULL || ops->add_entry = NULL) {
-+	if (!ops || !ops->add_entry) {
- 		rc = rio_std_route_add_entry(rdev->net->hport, rdev->destid,
- 					     rdev->hopcount, table,
- 					     route_destid, route_port);
-@@ -1749,7 +1749,7 @@ int rio_route_get_entry(struct rio_dev *rdev, u16 table,
- 
- 	spin_lock(&rdev->rswitch->lock);
- 
--	if (ops = NULL || ops->get_entry = NULL) {
-+	if (!ops || !ops->get_entry) {
- 		rc = rio_std_route_get_entry(rdev->net->hport, rdev->destid,
- 					     rdev->hopcount, table,
- 					     route_destid, route_port);
-@@ -1797,7 +1797,7 @@ int rio_route_clr_table(struct rio_dev *rdev, u16 table, int lock)
- 
- 	spin_lock(&rdev->rswitch->lock);
- 
--	if (ops = NULL || ops->clr_table = NULL) {
-+	if (!ops || !ops->clr_table) {
- 		rc = rio_std_route_clr_table(rdev->net->hport, rdev->destid,
- 					     rdev->hopcount, table);
- 	} else if (try_module_get(ops->owner)) {
-@@ -1889,7 +1889,7 @@ struct dma_async_tx_descriptor *rio_dma_prep_xfer(struct dma_chan *dchan,
- {
- 	struct rio_dma_ext rio_ext;
- 
--	if (dchan->device->device_prep_slave_sg = NULL) {
-+	if (!dchan->device->device_prep_slave_sg) {
- 		pr_err("%s: prep_rio_sg = NULL\n", __func__);
- 		return NULL;
- 	}
+ 	info->pending_bh = 0;
 -- 
 2.15.1
 
