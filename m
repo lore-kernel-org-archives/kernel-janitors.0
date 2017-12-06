@@ -1,28 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 18:08:09 +0000
-Subject: [PATCH 0/4] tty/serial/pch_uart: Adjustments for four function implementations
-Message-Id: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 18:34:24 +0000
+Subject: [PATCH 0/3] UIO: Adjustments for two function implementations
+Message-Id: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 19:03:45 +0100
+Date: Wed, 6 Dec 2017 19:32:10 +0100
 
-A few update suggestions were taken into account
+Three update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation in dma_handle_tx()
-  Use kcalloc() in dma_handle_tx()
-  Delete an unnecessary return statement in two functions
-  Improve a size determination in pch_uart_init_port()
+Markus Elfring (3):
+  Delete two error messages for a failed memory allocation
+    in uio_dmem_genirq_probe()
+  Return directly after a failed kzalloc() in uio_dmem_genirq_probe()
+  Delete two error messages for a failed memory allocation
+    in uio_pdrv_genirq_probe()
 
- drivers/tty/serial/pch_uart.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/uio/uio_dmem_genirq.c | 11 ++++-------
+ drivers/uio/uio_pdrv_genirq.c |  9 +++------
+ 2 files changed, 7 insertions(+), 13 deletions(-)
 
 -- 
 2.15.1
