@@ -1,26 +1,28 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 16 Dec 2017 18:53:52 +0000
-Subject: Re: [PATCH] tps65090-charger: Delete an error message for a failed memory allocation in two function
-Message-Id: <1513450432.4647.47.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 21:10:06 +0000
+Subject: [PATCH 0/3] tty/serial/ucc_uart: Adjustments for two functions
+Message-Id: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <aa138aa9-d8c9-c6e3-7071-9fc642e7b248@users.sourceforge.net>
-In-Reply-To: <aa138aa9-d8c9-c6e3-7071-9fc642e7b248@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@tabi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2017-12-16 at 19:43 +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 16 Dec 2017 19:32:02 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Dec 2017 22:06:44 +0100
 
-Because???
+Three update suggestions were taken into account
+from static source code analysis.
 
-Fix your commit message.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in ucc_uart_probe()
+  Improve a size determination in ucc_uart_probe()
+  Fix a typo in a comment line
 
-Say _WHY_ should this be applied.
+ drivers/tty/serial/ucc_uart.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Otherwise, just stop sending these patches.
+-- 
+2.15.1
+
