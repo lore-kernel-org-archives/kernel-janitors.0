@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 21:48:17 +0000
-Subject: [PATCH 3/3] pcmcia/cis: Improve a size determination in pcmcia_loop_config()
-Message-Id: <5c488128-16ca-195c-f5fc-ab97938bd8e5@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 21:12:39 +0000
+Subject: [PATCH 2/3] tty/serial/ucc_uart: Improve a size determination in ucc_uart_probe()
+Message-Id: <38dd53cc-f7e8-57b9-bd0f-0946c787ac2e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
-In-Reply-To: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
+References: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
+In-Reply-To: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org, Bhumika Goyal <bhumirks@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@tabi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 22:30:42 +0100
+Date: Wed, 6 Dec 2017 21:45:32 +0100
 
 Replace the specification of a data structure by a pointer dereference
 as the parameter for the operator "sizeof" to make the corresponding size
@@ -22,20 +22,20 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pcmcia/pcmcia_cis.c | 2 +-
+ drivers/tty/serial/ucc_uart.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pcmcia/pcmcia_cis.c b/drivers/pcmcia/pcmcia_cis.c
-index ffcd014b7bc1..ecee94e8f30a 100644
---- a/drivers/pcmcia/pcmcia_cis.c
-+++ b/drivers/pcmcia/pcmcia_cis.c
-@@ -264,7 +264,7 @@ int pcmcia_loop_config(struct pcmcia_device *p_dev,
- 	struct pcmcia_cfg_mem *cfg_mem;
- 	int ret;
+diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
+index 48364f0eba72..a9ce652899aa 100644
+--- a/drivers/tty/serial/ucc_uart.c
++++ b/drivers/tty/serial/ucc_uart.c
+@@ -1253,7 +1253,7 @@ static int ucc_uart_probe(struct platform_device *ofdev)
+ 		}
+ 	}
  
--	cfg_mem = kzalloc(sizeof(struct pcmcia_cfg_mem), GFP_KERNEL);
-+	cfg_mem = kzalloc(sizeof(*cfg_mem), GFP_KERNEL);
- 	if (cfg_mem = NULL)
+-	qe_port = kzalloc(sizeof(struct uart_qe_port), GFP_KERNEL);
++	qe_port = kzalloc(sizeof(*qe_port), GFP_KERNEL);
+ 	if (!qe_port)
  		return -ENOMEM;
  
 -- 
