@@ -1,40 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:47:40 +0000
-Subject: [PATCH 5/8] target/iscsi: Delete an unnecessary variable initialisation in iscsi_copy_param_list()
-Message-Id: <1dc1578d-277b-ec04-6493-f243a3f568ce@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 18:35:53 +0000
+Subject: [PATCH 1/3] uio: Delete two error messages for a failed memory allocation in uio_dmem_genirq_probe()
+Message-Id: <3995c42d-3138-743e-d4a0-85380ed11261@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
-In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+References: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
+In-Reply-To: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:15:55 +0100
+Date: Wed, 6 Dec 2017 18:05:12 +0100
 
-The variable "param_list" will be reassigned by a following statement.
-Thus omit the explicit initialisation at the beginning.
+Omit extra messages for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/uio/uio_dmem_genirq.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-index 06310b2c4e26..25a3a9550488 100644
---- a/drivers/target/iscsi/iscsi_target_parameters.c
-+++ b/drivers/target/iscsi/iscsi_target_parameters.c
-@@ -566,7 +566,7 @@ int iscsi_copy_param_list(
- {
- 	struct iscsi_param *param = NULL;
- 	struct iscsi_param *new_param = NULL;
--	struct iscsi_param_list *param_list = NULL;
-+	struct iscsi_param_list *param_list;
+diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
+index e1134a4d97f3..b7b0acd1bf01 100644
+--- a/drivers/uio/uio_dmem_genirq.c
++++ b/drivers/uio/uio_dmem_genirq.c
+@@ -160,7 +160,6 @@ static int uio_dmem_genirq_probe(struct platform_device *pdev)
+ 		uioinfo = kzalloc(sizeof(*uioinfo), GFP_KERNEL);
+ 		if (!uioinfo) {
+ 			ret = -ENOMEM;
+-			dev_err(&pdev->dev, "unable to kmalloc\n");
+ 			goto bad2;
+ 		}
+ 		uioinfo->name = pdev->dev.of_node->name;
+@@ -188,7 +187,6 @@ static int uio_dmem_genirq_probe(struct platform_device *pdev)
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv) {
+ 		ret = -ENOMEM;
+-		dev_err(&pdev->dev, "unable to kmalloc\n");
+ 		goto bad0;
+ 	}
  
- 	param_list = kzalloc(sizeof(struct iscsi_param_list), GFP_KERNEL);
- 	if (!param_list)
 -- 
 2.15.1
 
