@@ -1,43 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Dec 2017 21:30:05 +0000
-Subject: [PATCH 2/2] platform/x86/thinkpad_acpi: Improve a size determination in tpacpi_new_rfkill()
-Message-Id: <36da9194-4254-91ef-5b82-ab150801b911@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 11:52:14 +0000
+Subject: [PATCH] USB: emi62: Delete an error message for a failed memory allocation in emi62_writememory()
+Message-Id: <127ca958-ef62-dbda-5329-02252c1a2763@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
-In-Reply-To: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
+To: linux-usb@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Dec 2017 22:13:53 +0100
+Date: Wed, 6 Dec 2017 12:42:20 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/platform/x86/thinkpad_acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/emi62.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index 729144925880..40b7a1b9a019 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -1258,7 +1258,7 @@ static int __init tpacpi_new_rfkill(const enum tpacpi_rfk_id id,
+diff --git a/drivers/usb/misc/emi62.c b/drivers/usb/misc/emi62.c
+index 3eea60437f56..f85946731aaa 100644
+--- a/drivers/usb/misc/emi62.c
++++ b/drivers/usb/misc/emi62.c
+@@ -51,10 +51,9 @@ static int emi62_writememory(struct usb_device *dev, int address,
+ 	int result;
+ 	unsigned char *buffer =  kmemdup(data, length, GFP_KERNEL);
  
- 	BUG_ON(id >= TPACPI_RFK_SW_MAX || tpacpi_rfkill_switches[id]);
- 
--	atp_rfk = kzalloc(sizeof(struct tpacpi_rfk), GFP_KERNEL);
-+	atp_rfk = kzalloc(sizeof(*atp_rfk), GFP_KERNEL);
- 	if (atp_rfk)
- 		atp_rfk->rfkill = rfkill_alloc(name,
- 						&tpacpi_pdev->dev,
+-	if (!buffer) {
+-		dev_err(&dev->dev, "kmalloc(%d) failed.\n", length);
++	if (!buffer)
+ 		return -ENOMEM;
+-	}
++
+ 	/* Note: usb_control_msg returns negative value on error or length of the
+ 	 * 		 data that was written! */
+ 	result = usb_control_msg (dev, usb_sndctrlpipe(dev, 0), request, 0x40, address, 0, buffer, length, 300);
 -- 
 2.15.1
 
