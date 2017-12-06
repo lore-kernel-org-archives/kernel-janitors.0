@@ -1,25 +1,38 @@
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Date: Thu, 07 Dec 2017 10:30:15 +0000
-Subject: Re: [PATCH] brcmsmac: use ARRAY_SIZE on rfseq_updategainu_events
-Message-Id: <5A291837.1020901@broadcom.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Dec 2017 16:13:25 +0000
+Subject: [PATCH] USB: hub: Delete an error message for a failed memory allocation in usb_hub_clear_tt_buffer(
+Message-Id: <659939f3-da51-0cfd-2eb2-8a726cb1a42f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171207102047.21635-1-colin.king@canonical.com>
-In-Reply-To: <20171207102047.21635-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Daniel Drake <drake@endlessm.com>, Dmitry Fleytman <dmitry@daynix.com>, Eugene Korenevsky <ekorenevsky@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Johan Hovold <johan@kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Peter Chen <peter.chen@nxp.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12/7/2017 11:20 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Use the ARRAY_SIZE macro on rfseq_updategainu_events to determine
-> size of the array. Improvement suggested by coccinelle.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Dec 2017 17:00:18 +0100
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/usb/core/hub.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 7ccdd3d4db84..9fbb908e9552 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -829,7 +829,6 @@ int usb_hub_clear_tt_buffer(struct urb *urb)
+ 	 */
+ 	clear = kmalloc(sizeof *clear, GFP_ATOMIC);
+ 	if (clear = NULL) {
+-		dev_err(&udev->dev, "can't save CLEAR_TT_BUFFER state\n");
+ 		/* FIXME recover somehow ... RESET_TT? */
+ 		return -ENOMEM;
+ 	}
+-- 
+2.15.1
 
