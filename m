@@ -1,43 +1,45 @@
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Date: Wed, 20 Dec 2017 17:30:08 +0000
-Subject: Re: [PATCH] lightnvm: pblk: remove some unnecessary NULL checks
-Message-Id: <da6f66b4-a9df-d032-4604-c8d621d57cd1@lightnvm.io>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 07 Dec 2017 21:19:14 +0000
+Subject: [PATCH 1/2] serial: sccnxp: Delete an error message for a failed memory allocation in sccnxp_probe()
+Message-Id: <0cc41c23-26f9-2102-7fe9-271271b0e8f5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171106114843.7rs6myhgxgij3jh7@mwanda>
-In-Reply-To: <20171106114843.7rs6myhgxgij3jh7@mwanda>
+References: <90e7fa7a-c0e6-4819-9fa6-fae1a71685eb@users.sourceforge.net>
+In-Reply-To: <90e7fa7a-c0e6-4819-9fa6-fae1a71685eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 11/06/2017 12:48 PM, Dan Carpenter wrote:
-> Smatch complains that flush_workqueue() dereferences the work queue
-> pointer but then we check if it's NULL on the next line when it's too
-> late.  These NULL checks can be removed because the module won't load if
-> we can't allocate the work queues.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-> index 00d5698d64a9..aaba2049a135 100644
-> --- a/drivers/lightnvm/pblk-gc.c
-> +++ b/drivers/lightnvm/pblk-gc.c
-> @@ -669,12 +669,10 @@ void pblk_gc_exit(struct pblk *pblk)
->   		kthread_stop(gc->gc_reader_ts);
->   
->   	flush_workqueue(gc->gc_reader_wq);
-> -	if (gc->gc_reader_wq)
-> -		destroy_workqueue(gc->gc_reader_wq);
-> +	destroy_workqueue(gc->gc_reader_wq);
->   
->   	flush_workqueue(gc->gc_line_reader_wq);
-> -	if (gc->gc_line_reader_wq)
-> -		destroy_workqueue(gc->gc_line_reader_wq);
-> +	destroy_workqueue(gc->gc_line_reader_wq);
->   
->   	if (gc->gc_writer_ts)
->   		kthread_stop(gc->gc_writer_ts);
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 7 Dec 2017 21:55:09 +0100
 
-Thanks Dan. I've applied it for 4.16.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/serial/sccnxp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
+index d6ae3086c2a2..ba1653ba5f37 100644
+--- a/drivers/tty/serial/sccnxp.c
++++ b/drivers/tty/serial/sccnxp.c
+@@ -857,10 +857,9 @@ static int sccnxp_probe(struct platform_device *pdev)
+ 		return PTR_ERR(membase);
+ 
+ 	s = devm_kzalloc(&pdev->dev, sizeof(struct sccnxp_port), GFP_KERNEL);
+-	if (!s) {
+-		dev_err(&pdev->dev, "Error allocating port structure\n");
++	if (!s)
+ 		return -ENOMEM;
+-	}
++
+ 	platform_set_drvdata(pdev, s);
+ 
+ 	spin_lock_init(&s->lock);
+-- 
+2.15.1
+
