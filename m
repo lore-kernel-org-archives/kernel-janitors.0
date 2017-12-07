@@ -1,42 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:46:51 +0000
-Subject: [PATCH 5/6] target: tcm_loop: Delete an unnecessary return statement in tcm_loop_submission_work()
-Message-Id: <9643f835-78e6-51cc-3d07-7a43a3c5eb07@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 07 Dec 2017 13:16:32 +0000
+Subject: Re: rtlwifi: rtl818x: remove redundant check for cck_power > 15
+Message-Id: <20171207131633.AC4D560913@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
-In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
+References: <20171114170145.3987-1-colin.king@canonical.com>
+In-Reply-To: <20171114170145.3987-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Hin-Tak Leung <htl10@users.sourceforge.net>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:58:33 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-The script "checkpatch.pl" pointed information out like the following.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> cck_poweri cannot be greated than 15 as is derived from the bottom 4 bits
+> from riv->channels[channel - 1].hw_value & 0xf.  Hence the check for it
+> being greater than 15 is redundant and can be removed.
+> 
+> Detected by CoverityScan, CID#744303 ("Logically dead code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-WARNING: void function return statements are not generally useful
+Patch applied to wireless-drivers-next.git, thanks.
 
-Thus remove such a statement in the affected function.
+45d9d1a12efa rtlwifi: rtl818x: remove redundant check for cck_power > 15
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/target/loopback/tcm_loop.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
-index 08dbf5b4ff15..ec01070bbb40 100644
---- a/drivers/target/loopback/tcm_loop.c
-+++ b/drivers/target/loopback/tcm_loop.c
-@@ -166,7 +166,6 @@ static void tcm_loop_submission_work(struct work_struct *work)
- out_done:
- 	kmem_cache_free(tcm_loop_cmd_cache, tl_cmd);
- 	sc->scsi_done(sc);
--	return;
- }
- 
- /*
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10057925/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
