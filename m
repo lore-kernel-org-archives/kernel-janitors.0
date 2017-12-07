@@ -1,38 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 14:51:42 +0000
-Subject: [PATCH 09/12] [media] pvrusb2: drop unneeded newline
-Message-Id: <1514386305-7402-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Dec 2017 13:30:09 +0000
+Subject: [PATCH] regulator: fix incorrect indentation of two assignment statements
+Message-Id: <20171207133009.24948-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Isely <isely@pobox.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-pvr2_trace prints a newline at the end of the message string, so the
-message string does not need to include a newline explicitly.  Done
-using Coccinelle.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Remove extraneous space to fix indentation on a couple of assignment
+statements.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/regulator/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index 09bd6c6..e035316 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -2351,7 +2351,8 @@ struct pvr2_hdw *pvr2_hdw_create(struct usb_interface *intf,
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index b64b7916507f..365b32e3f505 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2605,8 +2605,8 @@ int regulator_get_hardware_vsel_register(struct regulator *regulator,
+ 	if (ops->set_voltage_sel != regulator_set_voltage_sel_regmap)
+ 		return -EOPNOTSUPP;
  
- 	if (hdw_desc = NULL) {
- 		pvr2_trace(PVR2_TRACE_INIT, "pvr2_hdw_create: No device description pointer, unable to continue.");
--		pvr2_trace(PVR2_TRACE_INIT, "If you have a new device type, please contact Mike Isely <isely@pobox.com> to get it included in the driver\n");
-+		pvr2_trace(PVR2_TRACE_INIT,
-+			   "If you have a new device type, please contact Mike Isely <isely@pobox.com> to get it included in the driver");
- 		goto fail;
- 	}
+-	 *vsel_reg = rdev->desc->vsel_reg;
+-	 *vsel_mask = rdev->desc->vsel_mask;
++	*vsel_reg = rdev->desc->vsel_reg;
++	*vsel_mask = rdev->desc->vsel_mask;
  
+ 	 return 0;
+ }
+-- 
+2.14.1
 
