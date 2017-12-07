@@ -1,37 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 02 Dec 2017 12:05:51 +0000
-Subject: Re: [PATCH] gpio: gpio-stmpe: make various char arrays static const, shrinks object size
-Message-Id: <CACRpkdbsvC0ziDN=L5PA0u3S2wVoOHkcuqYWAZknsAvOLyXs3g@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Dec 2017 10:20:47 +0000
+Subject: [PATCH] brcmsmac: use ARRAY_SIZE on rfseq_updategainu_events
+Message-Id: <20171207102047.21635-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171128182339.24579-1-colin.king@canonical.com>
-In-Reply-To: <20171128182339.24579-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 28, 2017 at 7:23 PM, Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the read-only arrays edge_det_values, rise_values and
-> fall_values on the stack but instead make them static and constify them.
-> Makes the object code smaller by over 240 bytes:
->
-> Before:
->    text    data     bss     dec     hex filename
->    9525    2520     192   12237    2fcd drivers/gpio/gpio-stmpe.o
->
-> After:
->    text    data     bss     dec     hex filename
->    9025    2776     192   11993    2ed9 drivers/gpio/gpio-stmpe.o
->
-> (gcc version 7.2.0 x86_64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Use the ARRAY_SIZE macro on rfseq_updategainu_events to determine
+size of the array. Improvement suggested by coccinelle.
 
-Patch applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+index 763e8ba6b178..7e01981bc5c8 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+@@ -16049,8 +16049,7 @@ static void wlc_phy_workarounds_nphy_gainctrl(struct brcms_phy *pi)
+ 		wlc_phy_set_rfseq_nphy(pi, NPHY_RFSEQ_UPDATEGAINU,
+ 				       rfseq_updategainu_events,
+ 				       rfseq_updategainu_dlys,
+-				       sizeof(rfseq_updategainu_events) /
+-				       sizeof(rfseq_updategainu_events[0]));
++				       ARRAY_SIZE(rfseq_updategainu_events));
+ 
+ 		mod_phy_reg(pi, 0x153, (0xff << 8), (90 << 8));
+ 
+-- 
+2.14.1
+
