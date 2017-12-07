@@ -1,31 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:40:17 +0000
-Subject: [PATCH 0/6] target/loopback/tcm: Adjustments for some function implementations
-Message-Id: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 07 Dec 2017 13:24:57 +0000
+Subject: Re: [V2] wlcore, wl1251: fix spelling: "Couldnt" -> "Couldn't" and remove error on
+Message-Id: <20171207132457.EF324607E8@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171201100258.10029-1-colin.king@canonical.com>
+In-Reply-To: <20171201100258.10029-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 11:33:44 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Some update suggestions were taken into account
-from static source code analysis.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in error message text.  Also remove the
+> error message on an kzalloc failure as this is redundant.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Markus Elfring (6):
-  Delete an error message for a failed memory allocation in four functions
-  Improve a size determination in two functions
-  Combine substrings for 26 messages
-  Delete two unnecessary variable initialisations in tcm_loop_issue_tmr()
-  Delete an unnecessary return statement in tcm_loop_submission_work()
-  Use seq_puts() in tcm_loop_show_info()
+Patch applied to wireless-drivers-next.git, thanks.
 
- drivers/target/loopback/tcm_loop.c | 145 ++++++++++++++++---------------------
- 1 file changed, 61 insertions(+), 84 deletions(-)
+c4ee30a280b1 wlcore, wl1251: fix spelling: "Couldnt" -> "Couldn't" and remove error on -ENOMEM
 
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10086741/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
