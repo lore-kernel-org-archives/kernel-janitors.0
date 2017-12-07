@@ -1,28 +1,62 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 07 Dec 2017 16:20:52 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Dec 2017 20:51:56 +0000
 Subject: Re: USB: hub: Delete an error message for a failed memory allocation in usb_hub_clear_tt_buffer()
-Message-Id: <1512663652.960.41.camel@perches.com>
+Message-Id: <20171207204953.5gsk26pk4b5xaizq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <97b0eeb8-834e-61ca-01dd-afbbf18697db@users.sourceforge.net>
 In-Reply-To: <97b0eeb8-834e-61ca-01dd-afbbf18697db@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, USB list <linux-usb@vger.kernel.org>, Daniel Drake <drake@endlessm.com>, Dmitry Fleytman <dmitry@daynix.com>, Eugene Korenevsky <ekorenevsky@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?ISO-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>, Johan Hovold <johan@kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Peter Chen <peter.chen@nxp.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, SF Markus Elfring <elfring@users.sourceforge.net>, USB list <linux-usb@vger.kernel.org>, Joe Perches <joe@perches.com>, Daniel Drake <drake@endlessm.com>, Dmitry Fleytman <dmitry@daynix.com>, Eugene Korenevsky <ekorenevsky@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?iso-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>, Johan Hovold <johan@kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Peter Chen <peter.chen@nxp.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Thu, 2017-12-07 at 10:12 -0500, Alan Stern wrote:
+On Thu, Dec 07, 2017 at 10:12:27AM -0500, Alan Stern wrote:
 > The real problem is that the kernel development community doesn't have
-> a fixed policy on how to handle memory allocation errors.
-[]
-> If there was one agreed-upon policy, then we could definitively point 
-> to old code and say "That's wrong, and here is how it should be fixed."  
-> But currently this is not possible, and we end up with repetitive 
-> discussions like this one that aren't of general use.
+> a fixed policy on how to handle memory allocation errors.  There are
+> several possibilities:
+> 
+> 	Ignore them on the grounds that they will never happen.
+> 	(Really?  And what is the size limit above which they
+> 	might happen?)
+> 
 
-Well stated.
+It's pretty rare to ignore allocation failures these days.  It causes
+static checker warnings.
 
-My preferred policy would be to remove all the individual
-allocation failure messages and only use the generic
-warn_alloc()/dump_stack() mechanism.
+Sometimes it's accepted for people to ignore errors during boot but
+I hate that because how am I supposed to filter out those static checker
+warnings?  It's better to pretend that the kernel will still boot
+without essential hardware instead of wasting everyone's time who looks
+at checker output.
+
+> 	Ignore them on the grounds that the machine will hang or
+> 	crash in the near future.  (Is this guaranteed?)
+
+On boot sometimes yes.
+
+> 
+> 	Treat them like other errors: try to press forward (perhaps
+> 	in a degraded mode).
+> 
+> 	Treat them like other errors: log an error message and try
+> 	to press forward.
+> 
+
+The standard is to treat them like errors and try press forward in a
+degraded mode but don't print a message.  Checkpatch.pl complains if you
+print a warning for allocation failures.  A lot of low level functions
+handle their own messages pretty well but especially kmalloc() does.
+
+I also have a special static checker warning for when people do:
+
+	foo = alloc();
+	BUG_ON(!foo);
+
+People do that occasionally but fortunately it's pretty rare.  10 years
+ago that's how btrfs did error handling, but now there are only 4 of
+these still remaining in btrfs.
+
+regards,
+dan carpenter
 
