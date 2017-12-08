@@ -1,57 +1,45 @@
-From: Michal Hocko <mhocko@kernel.org>
-Date: Tue, 12 Dec 2017 07:50:14 +0000
-Subject: Re: [PATCH v2] mm: Release a semaphore in 'get_vaddr_frames()'
-Message-Id: <20171212075014.GH4779@dhcp22.suse.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Dec 2017 23:59:49 +0000
+Subject: [PATCH] ACPI / CPPC: remove initial assignment of pcc_ss_data
+Message-Id: <20171208235949.15713-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171211211009.4971-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171211211009.4971-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dan.j.williams@intel.com, akpm@linux-foundation.org, borntraeger@de.ibm.com, dsterba@suse.com, gregkh@linuxfoundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon 11-12-17 22:10:09, Christophe JAILLET wrote:
-> A semaphore is acquired before this check, so we must release it before
-> leaving.
-> 
-> Fixes: b7f0554a56f2 ("mm: fail get_vaddr_frames() for filesystem-dax mappings")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks good to me now.
-Acked-by: Michal Hocko <mhocko@suse.com>
+The initialization of pcc_ss_data from pcc_data[pcc_ss_id] before
+pcc_ss_id is being range checked could lead to an out-of-bounds array
+read.  This very same initialization is also being performed after
+the range check on pcc_ss_id, so we can just remove this problematic
+and also redundant assignment to fix the issue.
 
-Thanks
+Detected by cppcheck:
+warning: Value stored to 'pcc_ss_data' during its initialization is never
+read
 
-> ---
-> -- Untested --
-> 
-> v1 -> v2: 'goto out' instead of duplicating code
-> ---
->  mm/frame_vector.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/frame_vector.c b/mm/frame_vector.c
-> index 297c7238f7d4..c64dca6e27c2 100644
-> --- a/mm/frame_vector.c
-> +++ b/mm/frame_vector.c
-> @@ -62,8 +62,10 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
->  	 * get_user_pages_longterm() and disallow it for filesystem-dax
->  	 * mappings.
->  	 */
-> -	if (vma_is_fsdax(vma))
-> -		return -EOPNOTSUPP;
-> +	if (vma_is_fsdax(vma)) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out;
-> +	}
->  
->  	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
->  		vec->got_ref = true;
-> -- 
-> 2.14.1
-> 
+Fixes: commit 85b1407bf6d2 ("ACPI / CPPC: Make CPPC ACPI driver aware of PCC subspace IDs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/cppc_acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index 30e84cc600ae..06ea4749ebd9 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -1171,7 +1171,7 @@ int cppc_set_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls)
+ 	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
+ 	struct cpc_register_resource *desired_reg;
+ 	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
+-	struct cppc_pcc_data *pcc_ss_data = pcc_data[pcc_ss_id];
++	struct cppc_pcc_data *pcc_ss_data;
+ 	int ret = 0;
+ 
+ 	if (!cpc_desc || pcc_ss_id < 0) {
 -- 
-Michal Hocko
-SUSE Labs
+2.14.1
+
