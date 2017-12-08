@@ -1,41 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 17:10:45 +0000
-Subject: [PATCH 2/2] perf: arm_spe: Delete an unnecessary return statement in __arm_spe_pmu_dev_probe()
-Message-Id: <d1eceb38-27b9-40a9-d995-ca06e2d8e90a@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 20:11:43 +0000
+Subject: [PATCH 1/3] serial: max3100: Delete an error message for a failed memory allocation in max3100_probe
+Message-Id: <7a876c15-6fea-aa9f-451d-0856c913a59c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a92bb8f-4295-6912-19a4-9103226a3c62@users.sourceforge.net>
-In-Reply-To: <8a92bb8f-4295-6912-19a4-9103226a3c62@users.sourceforge.net>
+References: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
+In-Reply-To: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 17:34:54 +0100
+Date: Fri, 8 Dec 2017 20:20:58 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/perf/arm_spe_pmu.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/tty/serial/max3100.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-index 27fac8907d1d..b30654f75a8c 100644
---- a/drivers/perf/arm_spe_pmu.c
-+++ b/drivers/perf/arm_spe_pmu.c
-@@ -1033,7 +1033,6 @@ static void __arm_spe_pmu_dev_probe(void *info)
- 		 spe_pmu->max_record_sz, spe_pmu->align, spe_pmu->features);
+diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
+index 27d6049eb6a9..b7b7e6582f3f 100644
+--- a/drivers/tty/serial/max3100.c
++++ b/drivers/tty/serial/max3100.c
+@@ -763,8 +763,6 @@ static int max3100_probe(struct spi_device *spi)
  
- 	spe_pmu->features |= SPE_PMU_FEAT_DEV_PROBED;
--	return;
- }
- 
- static void __arm_spe_pmu_reset_local(void)
+ 	max3100s[i] = kzalloc(sizeof(struct max3100_port), GFP_KERNEL);
+ 	if (!max3100s[i]) {
+-		dev_warn(&spi->dev,
+-			 "kmalloc for max3100 structure %d failed!\n", i);
+ 		mutex_unlock(&max3100s_lock);
+ 		return -ENOMEM;
+ 	}
 -- 
 2.15.1
 
