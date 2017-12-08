@@ -1,36 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Dec 2017 14:39:36 +0000
-Subject: [PATCH] afs: Potential uninitialized variable in afs_extract_data()
-Message-Id: <20171205143936.sniv5hwd7bbu2gfy@mwanda>
+Date: Fri, 08 Dec 2017 11:56:39 +0000
+Subject: [PATCH] staging: ccree: cleanup a small white space issue
+Message-Id: <20171208115639.6gagcps2nazzkxaq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Smatch warns that:
-
-    fs/afs/rxrpc.c:922 afs_extract_data()
-    error: uninitialized symbol 'remote_abort'.
-
-Smatch is right that "remote_abort" might be uninitialized when we pass
-it to afs_set_call_complete().  I don't know if that function uses the
-uninitialized variable.  Anyway, the comment for rxrpc_kernel_recv_data(),
-says that "*_abort should also be initialised to 0." and this patch does
-that.
+The call to set_flow_mode() was supposed to be on the next line.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index ea1460b9b71a..e1126659f043 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -885,7 +885,7 @@ int afs_extract_data(struct afs_call *call, void *buf, size_t count,
- {
- 	struct afs_net *net = call->net;
- 	enum afs_call_state state;
--	u32 remote_abort;
-+	u32 remote_abort = 0;
- 	int ret;
- 
- 	_enter("{%s,%zu},,%zu,%d",
+diff --git a/drivers/staging/ccree/ssi_aead.c b/drivers/staging/ccree/ssi_aead.c
+index 5548c7b24fc9..24e56d69039e 100644
+--- a/drivers/staging/ccree/ssi_aead.c
++++ b/drivers/staging/ccree/ssi_aead.c
+@@ -747,8 +747,8 @@ static void cc_set_assoc_desc(struct aead_request *areq, unsigned int flow_mode,
+ 		dev_dbg(dev, "ASSOC buffer type DLLI\n");
+ 		hw_desc_init(&desc[idx]);
+ 		set_din_type(&desc[idx], DMA_DLLI, sg_dma_address(areq->src),
+-			     areq->assoclen, NS_BIT); set_flow_mode(&desc[idx],
+-			     flow_mode);
++			     areq->assoclen, NS_BIT);
++		set_flow_mode(&desc[idx], flow_mode);
+ 		if (ctx->auth_mode = DRV_HASH_XCBC_MAC &&
+ 		    areq_ctx->cryptlen > 0)
+ 			set_din_not_last_indication(&desc[idx]);
