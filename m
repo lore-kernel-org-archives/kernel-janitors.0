@@ -1,39 +1,24 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 07 Dec 2017 20:21:15 +0000
-Subject: [PATCH 2/2] serial: tegra: Fix a typo in a comment line
-Message-Id: <2b7ff65b-dcb8-996b-1f34-f1bff28bb515@users.sourceforge.net>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Date: Fri, 08 Dec 2017 09:49:41 +0000
+Subject: Re: [PATCH 2/2] serial: tegra: Fix a typo in a comment line
+Message-Id: <b7bcd402-1fc2-85aa-bbd6-89e2e465e855@nvidia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <605adc2b-3591-86fc-410a-370f48dfb14e@users.sourceforge.net>
-In-Reply-To: <605adc2b-3591-86fc-410a-370f48dfb14e@users.sourceforge.net>
+ <2b7ff65b-dcb8-996b-1f34-f1bff28bb515@users.sourceforge.net>
+In-Reply-To: <2b7ff65b-dcb8-996b-1f34-f1bff28bb515-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, trivial-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 7 Dec 2017 21:06:25 +0100
 
-Delete a duplicate character in a word of this description.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/serial-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Friday 08 December 2017 01:51 AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 7 Dec 2017 21:06:25 +0100
+>
+> Delete a duplicate character in a word of this description.
+>
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 46233c5974f1..a731b2d61d3e 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -888,7 +888,7 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
- 	 * EORD is different interrupt than RX_TIMEOUT - RX_TIMEOUT occurs when
- 	 * the DATA is sitting in the FIFO and couldn't be transferred to the
- 	 * DMA as the DMA size alignment(4 bytes) is not met. EORD will be
--	 * triggered when there is a pause of the incomming data stream for 4
-+	 * triggered when there is a pause of the incoming data stream for 4
- 	 * characters long.
- 	 *
- 	 * For pauses in the data which is not aligned to 4 bytes, we get
--- 
-2.15.1
-
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
