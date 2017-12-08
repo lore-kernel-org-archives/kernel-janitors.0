@@ -1,40 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 15:21:49 +0000
-Subject: [PATCH] USB: dwc2: Delete an error message for a failed memory allocation in dwc2_hsotg_handle_unali
-Message-Id: <00cd0611-0054-e5db-3fbb-1f7b6d0153fe@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 18:11:42 +0000
+Subject: [PATCH 3/4] serial: pch_uart: Delete an unnecessary return statement in two functions
+Message-Id: <c7f7776b-87cc-fcff-f404-2446ca4357e0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
+In-Reply-To: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Youn <johnyoun@synopsys.com>
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 16:16:00 +0100
+Date: Fri, 8 Dec 2017 18:48:10 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/dwc2/gadget.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/tty/serial/pch_uart.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index 88529d092503..3db80c0c4c74 100644
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -1223,9 +1223,6 @@ static int dwc2_hsotg_handle_unaligned_buf_start(struct dwc2_hsotg *hsotg,
- 	hs_req->req.buf = kmalloc(hs_req->req.length, GFP_ATOMIC);
- 	if (!hs_req->req.buf) {
- 		hs_req->req.buf = req_buf;
--		dev_err(hsotg->dev,
--			"%s: unable to allocate memory for bounce buffer\n",
--			__func__);
- 		return -ENOMEM;
+diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+index 53cdf23b83c6..790a7aae331f 100644
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -693,8 +693,6 @@ static void pch_free_dma(struct uart_port *port)
+ 		priv->rx_buf_virt = NULL;
+ 		priv->rx_buf_dma = 0;
  	}
+-
+-	return;
+ }
  
+ static bool filter(struct dma_chan *chan, void *slave)
+@@ -1861,8 +1859,8 @@ static void pch_uart_pci_remove(struct pci_dev *pdev)
+ 	pch_uart_exit_port(priv);
+ 	pci_disable_device(pdev);
+ 	kfree(priv);
+-	return;
+ }
++
+ #ifdef CONFIG_PM
+ static int pch_uart_pci_suspend(struct pci_dev *pdev, pm_message_t state)
+ {
 -- 
 2.15.1
 
