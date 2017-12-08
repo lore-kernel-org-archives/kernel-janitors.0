@@ -1,88 +1,264 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Tue, 05 Dec 2017 22:21:19 +0000
-Subject: Re: [PATCH 2/2] usbip: Use common error handling code in stub_recv_cmd_submit()
-Message-Id: <226643ef-2f5b-49db-cabe-97e2f727f9bc@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 08 Dec 2017 21:11:04 +0000
+Subject: [PATCH 1/2] mtd: onenand: samsung: use devm_ function to simplify code and fix some leaks
+Message-Id: <6cde66a56d0228d3933cf0d92fdc725ccb880b4a.1512765898.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6a84f1e4-a5c1-84da-bd14-de28e306991b@users.sourceforge.net>
- <32b1d0d7-8a48-a960-c666-b0ea187ecdcc@users.sourceforge.net>
-In-Reply-To: <32b1d0d7-8a48-a960-c666-b0ea187ecdcc@users.sourceforge.net>
+References: <cover.1512765898.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1512765898.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Valentina Manea <valentina.manea.m@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>
+To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 12/05/2017 02:52 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Dec 2017 22:40:30 +0100
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/usb/usbip/stub_rx.c | 22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/usb/usbip/stub_rx.c b/drivers/usb/usbip/stub_rx.c
-> index a70eb81823a3..f46d71abd2f9 100644
-> --- a/drivers/usb/usbip/stub_rx.c
-> +++ b/drivers/usb/usbip/stub_rx.c
-> @@ -445,29 +445,23 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
->  	else
->  		priv->urb = usb_alloc_urb(0, GFP_KERNEL);
->  
-> -	if (!priv->urb) {
-> -		usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
-> -		return;
-> -	}
-> +	if (!priv->urb)
-> +		goto add_event_malloc_failure;
->  
->  	/* allocate urb transfer buffer, if needed */
->  	if (pdu->u.cmd_submit.transfer_buffer_length > 0) {
->  		priv->urb->transfer_buffer >  			kzalloc(pdu->u.cmd_submit.transfer_buffer_length,
->  				GFP_KERNEL);
-> -		if (!priv->urb->transfer_buffer) {
-> -			usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
-> -			return;
-> -		}
-> +		if (!priv->urb->transfer_buffer)
-> +			goto add_event_malloc_failure;
->  	}
->  
->  	/* copy urb setup packet */
->  	priv->urb->setup_packet = kmemdup(&pdu->u.cmd_submit.setup, 8,
->  					  GFP_KERNEL);
-> -	if (!priv->urb->setup_packet) {
-> -		usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
+Convert all error handling code in 's3c_onenand_probe()' to
+resource-managed alternatives in order to simplify code.
 
-Please see comments on my comments on the previous patch in this series.
-This patch depends on the patch that is incorrect.
+This fixes a resource leak if 'platform_get_resource()' fails at line 872.
 
-> -		return;
-> -	}
-> +	if (!priv->urb->setup_packet)
-> +		goto add_event_malloc_failure;
->  
->  	/* set other members from the base header of pdu */
->  	priv->urb->context                = (void *) priv;
-> @@ -507,6 +501,10 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
->  	}
->  
->  	usbip_dbg_stub_rx("Leave\n");
-> +	return;
-> +
-> +add_event_malloc_failure:
-> +	usbip_event_add(ud, SDEV_EVENT_ERROR_MALLOC);
->  }
->  
->  /* recv a pdu */
-> 
+The 'request_irq()' at line 971 was also un-balanced. It is now
+resource-managed
 
-I am restructuring this routine to fix a bug and so it stands now,
-I don't see a value in taking this patch that doesn't really fix
-any specific bug.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/mtd/onenand/samsung.c | 141 +++++++++++++-----------------------------
+ 1 file changed, 43 insertions(+), 98 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+index af0ac1a7bf8f..04039b967d59 100644
+--- a/drivers/mtd/onenand/samsung.c
++++ b/drivers/mtd/onenand/samsung.c
+@@ -851,15 +851,14 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 	/* No need to check pdata. the platform data is optional */
+ 
+ 	size = sizeof(struct mtd_info) + sizeof(struct onenand_chip);
+-	mtd = kzalloc(size, GFP_KERNEL);
++	mtd = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
+ 	if (!mtd)
+ 		return -ENOMEM;
+ 
+-	onenand = kzalloc(sizeof(struct s3c_onenand), GFP_KERNEL);
+-	if (!onenand) {
+-		err = -ENOMEM;
+-		goto onenand_fail;
+-	}
++	onenand = devm_kzalloc(&pdev->dev, sizeof(struct s3c_onenand),
++			       GFP_KERNEL);
++	if (!onenand)
++		return -ENOMEM;
+ 
+ 	this = (struct onenand_chip *) &mtd[1];
+ 	mtd->priv = this;
+@@ -873,22 +872,20 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 	if (!r) {
+ 		dev_err(&pdev->dev, "no memory resource defined\n");
+ 		return -ENOENT;
+-		goto ahb_resource_failed;
+ 	}
+ 
+-	onenand->base_res = request_mem_region(r->start, resource_size(r),
+-					       pdev->name);
++	onenand->base_res = devm_request_mem_region(&pdev->dev, r->start,
++						    resource_size(r),
++						    pdev->name);
+ 	if (!onenand->base_res) {
+ 		dev_err(&pdev->dev, "failed to request memory resource\n");
+-		err = -EBUSY;
+-		goto resource_failed;
++		return -EBUSY;
+ 	}
+ 
+-	onenand->base = ioremap(r->start, resource_size(r));
++	onenand->base = devm_ioremap(&pdev->dev, r->start, resource_size(r));
+ 	if (!onenand->base) {
+ 		dev_err(&pdev->dev, "failed to map memory resource\n");
+-		err = -EFAULT;
+-		goto ioremap_failed;
++		return -EFAULT;
+ 	}
+ 	/* Set onenand_chip also */
+ 	this->base = onenand->base;
+@@ -900,38 +897,35 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 		r = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 		if (!r) {
+ 			dev_err(&pdev->dev, "no buffer memory resource defined\n");
+-			err = -ENOENT;
+-			goto ahb_resource_failed;
++			return -ENOENT;
+ 		}
+ 
+-		onenand->ahb_res = request_mem_region(r->start, resource_size(r),
+-						      pdev->name);
++		onenand->ahb_res = devm_request_mem_region(&pdev->dev,
++							   r->start,
++							   resource_size(r),
++							   pdev->name);
+ 		if (!onenand->ahb_res) {
+ 			dev_err(&pdev->dev, "failed to request buffer memory resource\n");
+-			err = -EBUSY;
+-			goto ahb_resource_failed;
++			return -EBUSY;
+ 		}
+ 
+-		onenand->ahb_addr = ioremap(r->start, resource_size(r));
++		onenand->ahb_addr = devm_ioremap(&pdev->dev, r->start,
++						 resource_size(r));
+ 		if (!onenand->ahb_addr) {
+ 			dev_err(&pdev->dev, "failed to map buffer memory resource\n");
+-			err = -EINVAL;
+-			goto ahb_ioremap_failed;
++			return -EINVAL;
+ 		}
+ 
+ 		/* Allocate 4KiB BufferRAM */
+-		onenand->page_buf = kzalloc(SZ_4K, GFP_KERNEL);
+-		if (!onenand->page_buf) {
+-			err = -ENOMEM;
+-			goto page_buf_fail;
+-		}
++		onenand->page_buf = devm_kzalloc(&pdev->dev, SZ_4K,
++						 GFP_KERNEL);
++		if (!onenand->page_buf)
++			return -ENOMEM;
+ 
+ 		/* Allocate 128 SpareRAM */
+-		onenand->oob_buf = kzalloc(128, GFP_KERNEL);
+-		if (!onenand->oob_buf) {
+-			err = -ENOMEM;
+-			goto oob_buf_fail;
+-		}
++		onenand->oob_buf = devm_kzalloc(&pdev->dev, 128, GFP_KERNEL);
++		if (!onenand->oob_buf)
++			return -ENOMEM;
+ 
+ 		/* S3C doesn't handle subpage write */
+ 		mtd->subpage_sft = 0;
+@@ -941,23 +935,23 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 		r = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 		if (!r) {
+ 			dev_err(&pdev->dev, "no dma memory resource defined\n");
+-			err = -ENOENT;
+-			goto dma_resource_failed;
++			return -ENOENT;
+ 		}
+ 
+-		onenand->dma_res = request_mem_region(r->start, resource_size(r),
+-						      pdev->name);
++		onenand->dma_res = devm_request_mem_region(&pdev->dev,
++							   r->start,
++							   resource_size(r),
++							   pdev->name);
+ 		if (!onenand->dma_res) {
+ 			dev_err(&pdev->dev, "failed to request dma memory resource\n");
+-			err = -EBUSY;
+-			goto dma_resource_failed;
++			return -EBUSY;
+ 		}
+ 
+-		onenand->dma_addr = ioremap(r->start, resource_size(r));
++		onenand->dma_addr = devm_ioremap(&pdev->dev, r->start,
++						 resource_size(r));
+ 		if (!onenand->dma_addr) {
+ 			dev_err(&pdev->dev, "failed to map dma memory resource\n");
+-			err = -EINVAL;
+-			goto dma_ioremap_failed;
++			return -EINVAL;
+ 		}
+ 
+ 		onenand->phys_base = onenand->base_res->start;
+@@ -968,19 +962,19 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 		if (r) {
+ 			init_completion(&onenand->complete);
+ 			s5pc110_dma_ops = s5pc110_dma_irq;
+-			err = request_irq(r->start, s5pc110_onenand_irq,
+-					IRQF_SHARED, "onenand", &onenand);
++			err = devm_request_irq(&pdev->dev, r->start,
++					       s5pc110_onenand_irq,
++					       IRQF_SHARED, "onenand",
++					       &onenand);
+ 			if (err) {
+ 				dev_err(&pdev->dev, "failed to get irq\n");
+-				goto scan_failed;
++				return err;
+ 			}
+ 		}
+ 	}
+ 
+-	if (onenand_scan(mtd, 1)) {
+-		err = -EFAULT;
+-		goto scan_failed;
+-	}
++	if (onenand_scan(mtd, 1))
++		return -EFAULT;
+ 
+ 	if (onenand->type != TYPE_S5PC110) {
+ 		/* S3C doesn't handle subpage write */
+@@ -998,36 +992,6 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, mtd);
+ 
+ 	return 0;
+-
+-scan_failed:
+-	if (onenand->dma_addr)
+-		iounmap(onenand->dma_addr);
+-dma_ioremap_failed:
+-	if (onenand->dma_res)
+-		release_mem_region(onenand->dma_res->start,
+-				   resource_size(onenand->dma_res));
+-	kfree(onenand->oob_buf);
+-oob_buf_fail:
+-	kfree(onenand->page_buf);
+-page_buf_fail:
+-	if (onenand->ahb_addr)
+-		iounmap(onenand->ahb_addr);
+-ahb_ioremap_failed:
+-	if (onenand->ahb_res)
+-		release_mem_region(onenand->ahb_res->start,
+-				   resource_size(onenand->ahb_res));
+-dma_resource_failed:
+-ahb_resource_failed:
+-	iounmap(onenand->base);
+-ioremap_failed:
+-	if (onenand->base_res)
+-		release_mem_region(onenand->base_res->start,
+-				   resource_size(onenand->base_res));
+-resource_failed:
+-	kfree(onenand);
+-onenand_fail:
+-	kfree(mtd);
+-	return err;
+ }
+ 
+ static int s3c_onenand_remove(struct platform_device *pdev)
+@@ -1035,25 +999,7 @@ static int s3c_onenand_remove(struct platform_device *pdev)
+ 	struct mtd_info *mtd = platform_get_drvdata(pdev);
+ 
+ 	onenand_release(mtd);
+-	if (onenand->ahb_addr)
+-		iounmap(onenand->ahb_addr);
+-	if (onenand->ahb_res)
+-		release_mem_region(onenand->ahb_res->start,
+-				   resource_size(onenand->ahb_res));
+-	if (onenand->dma_addr)
+-		iounmap(onenand->dma_addr);
+-	if (onenand->dma_res)
+-		release_mem_region(onenand->dma_res->start,
+-				   resource_size(onenand->dma_res));
+-
+-	iounmap(onenand->base);
+-	release_mem_region(onenand->base_res->start,
+-			   resource_size(onenand->base_res));
+-
+-	kfree(onenand->oob_buf);
+-	kfree(onenand->page_buf);
+-	kfree(onenand);
+-	kfree(mtd);
++
+ 	return 0;
+ }
+ 
+-- 
+2.14.1
+
