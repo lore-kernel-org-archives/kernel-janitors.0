@@ -1,42 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 19:07:21 +0000
-Subject: [PATCH 1/2] sn/ioc3: Delete an error message for a failed memory allocation in ioc3_probe()
-Message-Id: <9cfe5f4c-92cf-8f6b-c302-59d471c4a7c0@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 21:53:26 +0000
+Subject: [PATCH 3/3] serial: ioc4: Adjust three function calls together with a variable assignment
+Message-Id: <0256ab08-9330-26d6-19eb-e3c264c1ff1d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5248143d-b207-536a-16eb-ea899cd639b8@users.sourceforge.net>
-In-Reply-To: <5248143d-b207-536a-16eb-ea899cd639b8@users.sourceforge.net>
+References: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
+In-Reply-To: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 19:39:18 +0100
+Date: Fri, 8 Dec 2017 22:40:31 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/sn/ioc3.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/tty/serial/ioc4_serial.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/sn/ioc3.c b/drivers/sn/ioc3.c
-index fb7ea0d9a734..2e6e0514d8f7 100644
---- a/drivers/sn/ioc3.c
-+++ b/drivers/sn/ioc3.c
-@@ -631,9 +631,6 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
- 	/* Set up per-IOC3 data */
- 	idd = kzalloc(sizeof(struct ioc3_driver_data), GFP_KERNEL);
- 	if (!idd) {
--		printk(KERN_WARNING
--		       "%s: Failed to allocate IOC3 data for pci_dev %s.\n",
--		       __func__, pci_name(pdev));
- 		ret = -ENODEV;
- 		goto out_idd;
+diff --git a/drivers/tty/serial/ioc4_serial.c b/drivers/tty/serial/ioc4_serial.c
+index 6981ad2ca1b7..ba95a4cb8130 100644
+--- a/drivers/tty/serial/ioc4_serial.c
++++ b/drivers/tty/serial/ioc4_serial.c
+@@ -1945,7 +1945,8 @@ static void handle_intr(void *arg, uint32_t sio_ir)
+ 			 * hasn't been delivered to the cpu yet anyway, even
+ 			 * though we see it as asserted when we read the sio_ir.
+ 			 */
+-			if ((sio_ir = PENDING(port)) & hooks->intr_rx_high) {
++			sio_ir = PENDING(port);
++			if (sio_ir & hooks->intr_rx_high) {
+ 				if ((port->ip_flags & READ_ABORTED) = 0) {
+ 					port->ip_ienb &= ~hooks->intr_rx_high;
+ 					port->ip_flags |= INPUT_HIGH;
+@@ -2902,16 +2903,18 @@ static struct ioc4_submodule ioc4_serial_submodule = {
+  */
+ static int __init ioc4_serial_init(void)
+ {
+-	int ret;
+-
+ 	/* register with serial core */
+-	if ((ret = uart_register_driver(&ioc4_uart_rs232)) < 0) {
++	int ret = uart_register_driver(&ioc4_uart_rs232);
++
++	if (ret < 0) {
+ 		printk(KERN_WARNING
+ 			"%s: Couldn't register rs232 IOC4 serial driver\n",
+ 			__func__);
+ 		goto out;
  	}
+-	if ((ret = uart_register_driver(&ioc4_uart_rs422)) < 0) {
++
++	ret = uart_register_driver(&ioc4_uart_rs422);
++	if (ret < 0) {
+ 		printk(KERN_WARNING
+ 			"%s: Couldn't register rs422 IOC4 serial driver\n",
+ 			__func__);
 -- 
 2.15.1
 
