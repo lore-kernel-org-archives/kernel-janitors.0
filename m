@@ -1,47 +1,53 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Thu, 07 Dec 2017 16:55:52 +0000
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 08 Dec 2017 21:15:58 +0000
 Subject: Re: [PATCH] mtd: onenand: Fix an error handling path in 's3c_onenand_probe(()'
-Message-Id: <20171207175552.4825e642@bbrezillon>
+Message-Id: <50688cb3-ae7a-5a15-4989-9933593ff11d@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171118132723.24785-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171118132723.24785-1-christophe.jaillet@wanadoo.fr>
+ <20171207175552.4825e642@bbrezillon>
+In-Reply-To: <20171207175552.4825e642@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
 Cc: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 18 Nov 2017 14:27:23 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Le 07/12/2017 à 17:55, Boris Brezillon a écrit :
+> On Sat, 18 Nov 2017 14:27:23 +0100
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+>
+>> If 'platform_get_resource()' fails, we have to go through the error
+>> handling path to release some resources.
+>>
+>> The unreachable 'goto ahb_resource_failed' is also wrong here and we should
+>> go to 'resource_failed' instead.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/mtd/onenand/samsung.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+>> index af0ac1a7bf8f..164ebe2b1137 100644
+>> --- a/drivers/mtd/onenand/samsung.c
+>> +++ b/drivers/mtd/onenand/samsung.c
+>> @@ -872,8 +872,8 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+>>   	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>   	if (!r) {
+>>   		dev_err(&pdev->dev, "no memory resource defined\n");
+>> -		return -ENOENT;
+>> -		goto ahb_resource_failed;
+>> +		err = -ENOENT;
+>> +		goto resource_failed;
+>>   	}
+>>   
+> Sorry but I'd really prefer to convert the driver to use devm_
+> functions instead of fixing a single error path.
 
-> If 'platform_get_resource()' fails, we have to go through the error
-> handling path to release some resources.
-> 
-> The unreachable 'goto ahb_resource_failed' is also wrong here and we should
-> go to 'resource_failed' instead.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/mtd/onenand/samsung.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-> index af0ac1a7bf8f..164ebe2b1137 100644
-> --- a/drivers/mtd/onenand/samsung.c
-> +++ b/drivers/mtd/onenand/samsung.c
-> @@ -872,8 +872,8 @@ static int s3c_onenand_probe(struct platform_device *pdev)
->  	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (!r) {
->  		dev_err(&pdev->dev, "no memory resource defined\n");
-> -		return -ENOENT;
-> -		goto ahb_resource_failed;
-> +		err = -ENOENT;
-> +		goto resource_failed;
->  	}
->  
+Thanks for your comment. devm_ functions greatly simplify the code.
+I've proposed an update for that.
 
-Sorry but I'd really prefer to convert the driver to use devm_
-functions instead of fixing a single error path.
+If I'm correct, this also helped to find two other bugs (un-balanced 
+request_irq() and un-handled error code)
 
->  	onenand->base_res = request_mem_region(r->start, resource_size(r),
-
+CJ
