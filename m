@@ -1,44 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 13:14:26 +0000
-Subject: [PATCH 4/4] staging/wlan-ng/prism2fw: Use common error handling code in writeimage()
-Message-Id: <73da6cfc-5534-556d-3d3c-542cc31e8eef@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 20:12:50 +0000
+Subject: [PATCH 2/3] serial: max3100: Improve a size determination in max3100_probe()
+Message-Id: <8eca9ac5-96c3-8825-5c2b-a74b3dafcf9c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
-In-Reply-To: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
+References: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
+In-Reply-To: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciek Borzecki <maciek.borzecki@gmail.com>, Simo Koskinen <koskisoft@gmail.com>, Thibaut Sautereau <thibaut.sautereau@telecom-sudparis.eu>
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 13:41:41 +0100
+Date: Fri, 8 Dec 2017 20:32:09 +0100
 
-Replace two calls of the function "kfree" by a jump to the same statements
-at the end of this function so that the generated object code could become
-a bit smaller.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/wlan-ng/prism2fw.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/tty/serial/max3100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index e6f7ed17106a..42ad5ff7772e 100644
---- a/drivers/staging/wlan-ng/prism2fw.c
-+++ b/drivers/staging/wlan-ng/prism2fw.c
-@@ -1012,9 +1012,8 @@ static int writeimage(struct wlandevice *wlandev, struct imgchunk *fchunk,
- 	rstmsg = kzalloc(sizeof(*rstmsg), GFP_KERNEL);
- 	rwrmsg = kzalloc(sizeof(*rwrmsg), GFP_KERNEL);
- 	if (!rstmsg || !rwrmsg) {
--		kfree(rstmsg);
--		kfree(rwrmsg);
--		return -ENOMEM;
-+		result = -ENOMEM;
-+		goto free_result;
+diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
+index b7b7e6582f3f..00c0e650537d 100644
+--- a/drivers/tty/serial/max3100.c
++++ b/drivers/tty/serial/max3100.c
+@@ -761,7 +761,7 @@ static int max3100_probe(struct spi_device *spi)
+ 		return -ENOMEM;
  	}
  
- 	/* Initialize the messages */
+-	max3100s[i] = kzalloc(sizeof(struct max3100_port), GFP_KERNEL);
++	max3100s[i] = kzalloc(sizeof(*max3100s[i]), GFP_KERNEL);
+ 	if (!max3100s[i]) {
+ 		mutex_unlock(&max3100s_lock);
+ 		return -ENOMEM;
 -- 
 2.15.1
 
