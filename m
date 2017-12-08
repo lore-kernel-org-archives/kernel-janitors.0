@@ -1,53 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 18:11:42 +0000
-Subject: [PATCH 3/4] serial: pch_uart: Delete an unnecessary return statement in two functions
-Message-Id: <c7f7776b-87cc-fcff-f404-2446ca4357e0@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 21:52:12 +0000
+Subject: [PATCH 2/3] serial: ioc4: Improve four size determinations
+Message-Id: <daff34f5-741d-d54c-81ce-aebd962d25c9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
-In-Reply-To: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
+References: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
+In-Reply-To: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 18:48:10 +0100
+Date: Fri, 8 Dec 2017 22:22:25 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected functions.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/pch_uart.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/tty/serial/ioc4_serial.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index 53cdf23b83c6..790a7aae331f 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -693,8 +693,6 @@ static void pch_free_dma(struct uart_port *port)
- 		priv->rx_buf_virt = NULL;
- 		priv->rx_buf_dma = 0;
- 	}
--
--	return;
- }
+diff --git a/drivers/tty/serial/ioc4_serial.c b/drivers/tty/serial/ioc4_serial.c
+index 9524a6d3e1d8..6981ad2ca1b7 100644
+--- a/drivers/tty/serial/ioc4_serial.c
++++ b/drivers/tty/serial/ioc4_serial.c
+@@ -1075,7 +1075,7 @@ static inline int ioc4_attach_local(struct ioc4_driver_data *idd)
+ 	/* Create port structures for each port */
+ 	for (port_number = 0; port_number < IOC4_NUM_SERIAL_PORTS;
+ 							port_number++) {
+-		port = kzalloc(sizeof(struct ioc4_port), GFP_KERNEL);
++		port = kzalloc(sizeof(*port), GFP_KERNEL);
+ 		if (!port)
+ 			goto free;
  
- static bool filter(struct dma_chan *chan, void *slave)
-@@ -1861,8 +1859,8 @@ static void pch_uart_pci_remove(struct pci_dev *pdev)
- 	pch_uart_exit_port(priv);
- 	pci_disable_device(pdev);
- 	kfree(priv);
--	return;
- }
-+
- #ifdef CONFIG_PM
- static int pch_uart_pci_suspend(struct pci_dev *pdev, pm_message_t state)
- {
+@@ -2797,7 +2797,7 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
+ 		ret = -ENODEV;
+ 		goto out1;
+ 	}
+-	serial = ioremap(tmp_addr1, sizeof(struct ioc4_serial));
++	serial = ioremap(tmp_addr1, sizeof(*serial));
+ 	if (!serial) {
+ 		printk(KERN_WARNING
+ 			 "ioc4 (%p) : unable to remap ioc4 serial register\n",
+@@ -2810,8 +2810,7 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
+ 				(void *)serial));
+ 
+ 	/* Get memory for the new card */
+-	control = kzalloc(sizeof(struct ioc4_control), GFP_KERNEL);
+-
++	control = kzalloc(sizeof(*control), GFP_KERNEL);
+ 	if (!control) {
+ 		ret = -ENOMEM;
+ 		goto out2;
+@@ -2819,7 +2818,7 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
+ 	idd->idd_serial_data = control;
+ 
+ 	/* Allocate the soft structure */
+-	soft = kzalloc(sizeof(struct ioc4_soft), GFP_KERNEL);
++	soft = kzalloc(sizeof(*soft), GFP_KERNEL);
+ 	if (!soft) {
+ 		ret = -ENOMEM;
+ 		goto out3;
 -- 
 2.15.1
 
