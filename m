@@ -1,52 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:43:24 +0000
-Subject: [PATCH 2/6] target: tcm_loop: Improve a size determination in two functions
-Message-Id: <c159ede6-193a-cb5a-8e63-b53cdf54db19@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 08 Dec 2017 21:11:03 +0000
+Subject: [PATCH 0/2] mtd: onenand: samsung: Simplify code and fix leaks in error handling paths
+Message-Id: <cover.1512765898.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
-In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 21:23:43 +0100
+The first patch converts 's3c_onenand_probe()' to devm_ functions.
+This fixes a leak in one path (line 872).
+This also free_irq which was not handled at all. (I hope I'm correct :) )
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The 2nd patch is about an un-handled error code which looks spurious.
+Not sure if I'm right.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/target/loopback/tcm_loop.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+While compile-testing it, I had to tweak the code because I don't have any
+cross-compiler.
+I commented the line "#include <asm/mach/flash.h>" and the compilation
+succeeded. So maybe, this include is also useless.
+I've left it as-is, though.
 
-diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
-index 6bd58a064924..60e4185e7508 100644
---- a/drivers/target/loopback/tcm_loop.c
-+++ b/drivers/target/loopback/tcm_loop.c
-@@ -769,7 +769,7 @@ static int tcm_loop_make_nexus(
- 		return -EEXIST;
- 	}
- 
--	tl_nexus = kzalloc(sizeof(struct tcm_loop_nexus), GFP_KERNEL);
-+	tl_nexus = kzalloc(sizeof(*tl_nexus), GFP_KERNEL);
- 	if (!tl_nexus)
- 		return -ENOMEM;
- 
-@@ -1076,7 +1076,7 @@ static struct se_wwn *tcm_loop_make_scsi_hba(
- 	char *ptr;
- 	int ret, off = 0;
- 
--	tl_hba = kzalloc(sizeof(struct tcm_loop_hba), GFP_KERNEL);
-+	tl_hba = kzalloc(sizeof(*tl_hba), GFP_KERNEL);
- 	if (!tl_hba)
- 		return ERR_PTR(-ENOMEM);
- 
+
+Theses patches have been compile-tested-only.
+
+
+Christophe JAILLET (2):
+  mtd: onenand: samsung: use devm_ function to simplify code and fix
+    some leaks
+  mtd: onenand: samsung: return an error if
+    'mtd_device_parse_register()' fails
+
+ drivers/mtd/onenand/samsung.c | 145 ++++++++++++++----------------------------
+ 1 file changed, 47 insertions(+), 98 deletions(-)
+
 -- 
-2.15.1
+2.14.1
 
