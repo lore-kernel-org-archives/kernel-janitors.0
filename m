@@ -1,61 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 Dec 2017 11:01:34 +0000
-Subject: [PATCH] powerpc/xmon: use ARRAY_SIZE on various array sizing calculations
-Message-Id: <20171207110134.22566-1-colin.king@canonical.com>
+From: Balbir Singh <bsingharora@gmail.com>
+Date: Fri, 08 Dec 2017 03:37:35 +0000
+Subject: Re: [PATCH] powerpc/xmon: use ARRAY_SIZE on various array sizing calculations
+Message-Id: <CAKTCnzmNKtg1morOPS7D3iGHFxZxd1uioex1eGtChBVppcctKA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171207110134.22566-1-colin.king@canonical.com>
+In-Reply-To: <20171207110134.22566-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Balbir Singh <bsingharora@gmail.com>, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Dec 7, 2017 at 10:01 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Use the ARRAY_SIZE macro on several arrays to determine their size.
+> Improvement suggested by coccinelle.
+>
 
-Use the ARRAY_SIZE macro on several arrays to determine their size.
-Improvement suggested by coccinelle.
+This file is taken from binutils and re-licensed. Keeping the file
+as-is helps apply newer patches easily on top as opposed to redoing
+the changes. I would prefer not to move to ARRAY_SIZE and stick to
+what's already in the file.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/powerpc/xmon/ppc-opc.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-opc.c
-index ac2b55b1332e..f3f57a12d43b 100644
---- a/arch/powerpc/xmon/ppc-opc.c
-+++ b/arch/powerpc/xmon/ppc-opc.c
-@@ -966,8 +966,7 @@ const struct powerpc_operand powerpc_operands[]    { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
- };
- 
--const unsigned int num_powerpc_operands = (sizeof (powerpc_operands)
--					   / sizeof (powerpc_operands[0]));
-+const unsigned int num_powerpc_operands = ARRAY_SIZE(powerpc_operands);
- 
- /* The functions used to insert and extract complicated operands.  */
- 
-@@ -6980,8 +6979,7 @@ const struct powerpc_opcode powerpc_opcodes[] = {
- {"fcfidu.",	XRC(63,974,1),	XRA_MASK, POWER7|PPCA2,	PPCVLE,		{FRT, FRB}},
- };
- 
--const int powerpc_num_opcodes -  sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
-+const int powerpc_num_opcodes = ARRAY_SIZE(powerpc_opcodes);
- 
- /* The VLE opcode table.
- 
-@@ -7219,8 +7217,7 @@ const struct powerpc_opcode vle_opcodes[] = {
- {"se_bl",	BD8(58,0,1),	BD8_MASK,	PPCVLE,	0,		{B8}},
- };
- 
--const int vle_num_opcodes -  sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
-+const int vle_num_opcodes = ARRAY_SIZE(vle_opcodes);
- 
- /* The macro table.  This is only used by the assembler.  */
- 
-@@ -7288,5 +7285,4 @@ const struct powerpc_macro powerpc_macros[] = {
- {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-(%3)"},
- };
- 
--const int powerpc_num_macros -  sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
-+const int powerpc_num_macros = ARRAY_SIZE(powerpc_macros);
--- 
-2.14.1
-
+Balbir Singh.
