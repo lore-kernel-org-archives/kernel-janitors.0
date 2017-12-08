@@ -1,7 +1,7 @@
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Fri, 08 Dec 2017 21:22:38 +0000
+Date: Fri, 08 Dec 2017 21:28:23 +0000
 Subject: Re: [PATCH 1/2] mtd: onenand: samsung: use devm_ function to simplify code and fix some leaks
-Message-Id: <20171208222238.4b778805@bbrezillon>
+Message-Id: <20171208222823.068191f6@bbrezillon>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <cover.1512765898.git.christophe.jaillet@wanadoo.fr>
  <6cde66a56d0228d3933cf0d92fdc725ccb880b4a.1512765898.git.christophe.jaillet@wanadoo.fr>
@@ -67,6 +67,13 @@ Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 > +	onenand->base_res = devm_request_mem_region(&pdev->dev, r->start,
 > +						    resource_size(r),
 > +						    pdev->name);
+
+Oh, and you should also get rid of all the onenand->xxx_res fields,
+they're no longer needed after switching to devm_ helpers.
+
+Just move the 'onenand->phys_base = r->start' assignment here and you
+should be good.
+
 >  	if (!onenand->base_res) {
 >  		dev_err(&pdev->dev, "failed to request memory resource\n");
 > -		err = -EBUSY;
@@ -74,21 +81,3 @@ Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 > +		return -EBUSY;
 >  	}
 >  
-> -	onenand->base = ioremap(r->start, resource_size(r));
-> +	onenand->base = devm_ioremap(&pdev->dev, r->start, resource_size(r));
->  	if (!onenand->base) {
->  		dev_err(&pdev->dev, "failed to map memory resource\n");
-> -		err = -EFAULT;
-> -		goto ioremap_failed;
-> +		return -EFAULT;
->  	}
-
-Can still be simplified with the following pattern:
-
-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-	onenand->base = devm_ioremap_resource(&pdev->dev, r);
-	if (IS_ERR(onenand->base))
-		return PTR_ERR(onenand->base);
-
-No need to keep the error messages, since devm_ioremap_resource()
-already takes care of that.
