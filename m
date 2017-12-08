@@ -1,54 +1,42 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 29 Dec 2017 17:53:29 +0000
-Subject: Re: [PATCH] video/fbdev/vt8500lcdfb: Delete an error message for a failed memory allocation in vt850
-Message-Id: <3740850.4D0mjicDMo@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 16:42:44 +0000
+Subject: [PATCH] serial: sc16is7xx: Delete an error message for a failed memory allocation in sc16is7xx_probe
+Message-Id: <0c66b1b0-e715-b4ca-9b64-4a950d62b2b8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171124195318epcas2p1b030ce8d47da92659b3c6068c0810778@epcas2p1.samsung.com>
- <d229eccd-ab20-d594-caa1-55fb464357ac@users.sourceforge.net>
-In-Reply-To: <d229eccd-ab20-d594-caa1-55fb464357ac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Tony Prisk <linux@prisktech.co.nz>, linux-arm-kernel@lists.infradead.org
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Friday, November 24, 2017 08:53:02 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 24 Nov 2017 20:42:08 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/video/fbdev/vt8500lcdfb.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/vt8500lcdfb.c b/drivers/video/fbdev/vt8500lcdfb.c
-> index 1a1176bf0906..5c5cd2923041 100644
-> --- a/drivers/video/fbdev/vt8500lcdfb.c
-> +++ b/drivers/video/fbdev/vt8500lcdfb.c
-> @@ -289,10 +289,8 @@ static int vt8500lcd_probe(struct platform_device *pdev)
->  
->  	fbi = devm_kzalloc(&pdev->dev, sizeof(struct vt8500lcd_info)
->  			+ sizeof(u32) * 16, GFP_KERNEL);
-> -	if (!fbi) {
-> -		dev_err(&pdev->dev, "Failed to initialize framebuffer device\n");
-> +	if (!fbi)
->  		return -ENOMEM;
-> -	}
->  
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Dec 2017 17:27:50 +0100
 
-This removes the information about the device for which the allocation
-fails (but as there can be only one vt8500lcdfb device in the system this
-change is okay).
+Omit an extra message for a memory allocation failure in this function.
 
-Patch queued for 4.16, thanks.
+This issue was detected by using the Coccinelle software.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/serial/sc16is7xx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 65792a3539d0..8b3c35f77e7c 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1156,10 +1156,8 @@ static int sc16is7xx_probe(struct device *dev,
+ 	s = devm_kzalloc(dev, sizeof(*s) +
+ 			 sizeof(struct sc16is7xx_one) * devtype->nr_uart,
+ 			 GFP_KERNEL);
+-	if (!s) {
+-		dev_err(dev, "Error allocating port structure\n");
++	if (!s)
+ 		return -ENOMEM;
+-	}
+ 
+ 	s->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(s->clk)) {
+-- 
+2.15.1
 
