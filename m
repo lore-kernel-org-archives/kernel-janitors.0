@@ -1,45 +1,31 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Wed, 06 Dec 2017 21:18:53 +0000
-Subject: Re: [PATCH] USB: hub: Delete an error message for a failed memory allocation in usb_hub_clear_tt_buf
-Message-Id: <Pine.LNX.4.44L0.1712061618140.1507-100000@iolanthe.rowland.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Dec 2017 11:55:16 +0000
+Subject: [PATCH] mmc: block: blk-mq: Potential NULL deref on mmc_blk_alloc_req() failure
+Message-Id: <20171208115516.3h55rvjq54hyfecq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <659939f3-da51-0cfd-2eb2-8a726cb1a42f@users.sourceforge.net>
-In-Reply-To: <659939f3-da51-0cfd-2eb2-8a726cb1a42f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-usb@vger.kernel.org, Daniel Drake <drake@endlessm.com>, Dmitry Fleytman <dmitry@daynix.com>, Eugene Korenevsky <ekorenevsky@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?ISO-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>, Johan Hovold <johan@kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Peter Chen <peter.chen@nxp.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Shawn Lin <shawn.lin@rock-chips.com>, linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 6 Dec 2017, Joe Perches wrote:
+mmc_blk_alloc_req() is supposed to return error pointers but there is
+one path where we forget to set the error code and accidentally return
+NULL.  The callers are not expecting that and will have a NULL pointer
+dereference.
 
-> On Wed, 2017-12-06 at 11:45 -0500, Alan Stern wrote:
-> > On Wed, 6 Dec 2017, SF Markus Elfring wrote:
-> > > Omit an extra message for a memory allocation failure in this function.
-> 
-> Markus' typical terrible commit message.
-> 
-> > > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> []
-> > > @@ -829,7 +829,6 @@ int usb_hub_clear_tt_buffer(struct urb *urb)
-> > >        */
-> > >       clear = kmalloc(sizeof *clear, GFP_ATOMIC);
-> > >       if (clear = NULL) {
-> > > -             dev_err(&udev->dev, "can't save CLEAR_TT_BUFFER state\n");
-> > >               /* FIXME recover somehow ... RESET_TT? */
-> > >               return -ENOMEM;
-> > >       }
-> > 
-> > Does the existing memory allocation error message include the 
-> > &udev->dev device name and driver name?  If it doesn't, there will be 
-> > no way for the user to tell that the error message is related to the 
-> > device failure.
-> 
-> No, but the effect is similar.
-> 
-> OOM does a dump_stack() so this function's call tree is shown.
+Fixes: 23da8bed11f2 ("mmc: block: Simplify cleaning up the queue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A call stack doesn't tell you which device was being handled.
-
-Alan Stern
-
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index ab384ba6cb37..6af2b660b1f7 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -3037,6 +3037,7 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
+ 	 */
+ 	if (!blk_get_queue(md->queue.queue)) {
+ 		mmc_cleanup_queue(&md->queue);
++		ret = -ENODEV;
+ 		goto err_putdisk;
+ 	}
+ 
