@@ -1,42 +1,75 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 17:09:43 +0000
-Subject: [PATCH 1/2] perf: arm_spe: Delete an error message for a failed memory allocation in arm_spe_pmu_dev
-Message-Id: <09c83c44-aebb-f5cb-b398-1986bdbd52db@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 20:13:43 +0000
+Subject: [PATCH 3/3] serial: max3100: Improve unlocking of a mutex in max3100_probe()
+Message-Id: <c8e2234e-5b34-79bf-cb71-f9821ea0eefe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a92bb8f-4295-6912-19a4-9103226a3c62@users.sourceforge.net>
-In-Reply-To: <8a92bb8f-4295-6912-19a4-9103226a3c62@users.sourceforge.net>
+References: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
+In-Reply-To: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 17:27:23 +0100
+Date: Fri, 8 Dec 2017 20:52:37 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only once in this function implementation.
 
-This issue was detected by using the Coccinelle software.
+* Replace three calls by goto statements.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/perf/arm_spe_pmu.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/tty/serial/max3100.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-index 8ce262fc2561..27fac8907d1d 100644
---- a/drivers/perf/arm_spe_pmu.c
-+++ b/drivers/perf/arm_spe_pmu.c
-@@ -1166,9 +1166,7 @@ static int arm_spe_pmu_device_dt_probe(struct platform_device *pdev)
+diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
+index 00c0e650537d..e4908410565c 100644
+--- a/drivers/tty/serial/max3100.c
++++ b/drivers/tty/serial/max3100.c
+@@ -747,8 +747,7 @@ static int max3100_probe(struct spi_device *spi)
+ 		retval = uart_register_driver(&max3100_uart_driver);
+ 		if (retval) {
+ 			printk(KERN_ERR "Couldn't register max3100 uart driver\n");
+-			mutex_unlock(&max3100s_lock);
+-			return retval;
++			goto unlock;
+ 		}
+ 	}
  
- 	spe_pmu = devm_kzalloc(dev, sizeof(*spe_pmu), GFP_KERNEL);
--	if (!spe_pmu) {
--		dev_err(dev, "failed to allocate spe_pmu\n");
-+	if (!spe_pmu)
- 		return -ENOMEM;
--	}
+@@ -757,14 +756,14 @@ static int max3100_probe(struct spi_device *spi)
+ 			break;
+ 	if (i = MAX_MAX3100) {
+ 		dev_warn(&spi->dev, "too many MAX3100 chips\n");
+-		mutex_unlock(&max3100s_lock);
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto unlock;
+ 	}
  
- 	spe_pmu->handle = alloc_percpu(typeof(*spe_pmu->handle));
- 	if (!spe_pmu->handle)
+ 	max3100s[i] = kzalloc(sizeof(*max3100s[i]), GFP_KERNEL);
+ 	if (!max3100s[i]) {
+-		mutex_unlock(&max3100s_lock);
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto unlock;
+ 	}
+ 	max3100s[i]->spi = spi;
+ 	max3100s[i]->irq = spi->irq;
+@@ -803,8 +802,11 @@ static int max3100_probe(struct spi_device *spi)
+ 		tx = MAX3100_WC | MAX3100_SHDN;
+ 		max3100_sr(max3100s[i], tx, &rx);
+ 	}
++
++	retval = 0;
++unlock:
+ 	mutex_unlock(&max3100s_lock);
+-	return 0;
++	return retval;
+ }
+ 
+ static int max3100_remove(struct spi_device *spi)
 -- 
 2.15.1
 
