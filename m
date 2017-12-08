@@ -1,51 +1,42 @@
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 28 Dec 2017 21:19:22 +0000
-Subject: Re: [PATCH] tee: shm: make function __tee_shm_alloc static
-Message-Id: <CAHUa44GJie-vYy4Vzuyaj4fHORBCKAWBdXvmBJc5RqyVhFok7w@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 19:00:34 +0000
+Subject: [PATCH] serial: max310x: Delete an error message for a failed memory allocation in max310x_probe()
+Message-Id: <4153838e-4796-537c-7b7f-98404d4f3481@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171222170122.30477-1-colin.king@canonical.com>
-In-Reply-To: <20171222170122.30477-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 22, 2017 at 6:01 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The function __tee_shm_alloc is local to the source and does
-> not need to be in global scope, so make it static.
->
-> Cleans up sparse warning:
-> symbol '__tee_shm_alloc' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/tee/tee_shm.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> index 04e1b8b37046..13b4de1157c7 100644
-> --- a/drivers/tee/tee_shm.c
-> +++ b/drivers/tee/tee_shm.c
-> @@ -112,9 +112,9 @@ static const struct dma_buf_ops tee_shm_dma_buf_ops = {
->         .mmap = tee_shm_op_mmap,
->  };
->
-> -struct tee_shm *__tee_shm_alloc(struct tee_context *ctx,
-> -                               struct tee_device *teedev,
-> -                               size_t size, u32 flags)
-> +static struct tee_shm *__tee_shm_alloc(struct tee_context *ctx,
-> +                                      struct tee_device *teedev,
-> +                                      size_t size, u32 flags)
->  {
->         struct tee_shm_pool_mgr *poolm = NULL;
->         struct tee_shm *shm;
-> --
-> 2.14.1
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Dec 2017 19:53:10 +0100
 
-Looks good. Thanks.
+Omit an extra message for a memory allocation failure in this function.
 
-/Jens
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/serial/max310x.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index ecb6513a6505..2aad36f402fd 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -1102,10 +1102,8 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 	/* Alloc port structure */
+ 	s = devm_kzalloc(dev, sizeof(*s) +
+ 			 sizeof(struct max310x_one) * devtype->nr, GFP_KERNEL);
+-	if (!s) {
+-		dev_err(dev, "Error allocating port structure\n");
++	if (!s)
+ 		return -ENOMEM;
+-	}
+ 
+ 	clk_osc = devm_clk_get(dev, "osc");
+ 	clk_xtal = devm_clk_get(dev, "xtal");
+-- 
+2.15.1
+
