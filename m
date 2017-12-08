@@ -1,50 +1,37 @@
-From: =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
-Date: Fri, 08 Dec 2017 19:52:36 +0000
-Subject: Re: [PATCH] serial: max310x: Delete an error message for a failed =?iso-8859-1?Q?memory_allocation_i
-Message-Id: <c5d3a5ff-5024-46fd-993c-05f18bada08b@cesnet.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Dec 2017 11:54:25 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: Re-order some code to silence a warning
+Message-Id: <20171208115425.rqclgmhcph5gn47j@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4153838e-4796-537c-7b7f-98404d4f3481@users.sourceforge.net>
-In-Reply-To: <4153838e-4796-537c-7b7f-98404d4f3481@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Cc: alsa-devel@alsa-project.org, Jani Nikula <jani.nikula@intel.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
-On pátek 8. prosince 2017 20:00:34 CET, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 8 Dec 2017 19:53:10 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/tty/serial/max310x.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-> index ecb6513a6505..2aad36f402fd 100644
-> --- a/drivers/tty/serial/max310x.c
-> +++ b/drivers/tty/serial/max310x.c
-> @@ -1102,10 +1102,8 @@ static int max310x_probe(struct device 
-> *dev, struct max310x_devtype *devtype,
->  	/* Alloc port structure */
->  	s = devm_kzalloc(dev, sizeof(*s) +
->  			 sizeof(struct max310x_one) * devtype->nr, GFP_KERNEL);
-> -	if (!s) {
-> -		dev_err(dev, "Error allocating port structure\n");
-> +	if (!s)
->  		return -ENOMEM;
-> -	}
->  
->  	clk_osc = devm_clk_get(dev, "osc");
->  	clk_xtal = devm_clk_get(dev, "xtal");
+I get a Smatch warning here:
 
-I'm looking at this patch because I'm also making some modifications to 
-this driver. This patch makes sense; other drivers also simply return 
-ENOMEM. Tested on ARM, Armada 388; the "good" code path still obviously 
-works :).
+    sound/soc/intel/skylake/skl-nhlt.c:335 skl_get_ssp_clks()
+    error: testing array offset 'j' after use.
 
-Reviewed-by: Jan Kundrát <jan.kundrat@cesnet.cz>
+The code is harmless, but the checker is right that we should swap these
+two conditions so we verify that the offset is within bounds before we
+use it.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/soc/intel/skylake/skl-nhlt.c b/sound/soc/intel/skylake/skl-nhlt.c
+index afa557a1c031..54f9bd630f4f 100644
+--- a/sound/soc/intel/skylake/skl-nhlt.c
++++ b/sound/soc/intel/skylake/skl-nhlt.c
+@@ -331,8 +331,8 @@ static void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
+ 		rate = channels * bps * fs;
+ 
+ 		/* check if the rate is added already to the given SSP's sclk */
+-		for (j = 0; (sclk[id].rate_cfg[j].rate != 0) &&
+-				(j < SKL_MAX_CLK_RATES); j++) {
++		for (j = 0; (j < SKL_MAX_CLK_RATES) &&
++			    (sclk[id].rate_cfg[j].rate != 0); j++) {
+ 			if (sclk[id].rate_cfg[j].rate = rate) {
+ 				present = true;
+ 				break;
