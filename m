@@ -1,84 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 16:37:32 +0000
-Subject: [PATCH 3/3] rapidio: tsi721_dma: Adjust six checks for null pointers
-Message-Id: <c3e79a1a-891e-cb62-990f-bd99839311b9@users.sourceforge.net>
+Date: Fri, 08 Dec 2017 18:10:32 +0000
+Subject: [PATCH 2/4] serial: pch_uart: Use kcalloc() in dma_handle_tx()
+Message-Id: <d9e3c269-9d71-7b58-be1f-8f0c75fdf6a3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <33c63b12-7828-891a-31ef-76a2e3c6b90c@users.sourceforge.net>
-In-Reply-To: <33c63b12-7828-891a-31ef-76a2e3c6b90c@users.sourceforge.net>
+References: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
+In-Reply-To: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 14:35:21 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Fri, 8 Dec 2017 18:38:15 +0100
 
-The script “checkpatch.pl” pointed information out like the following.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-Comparison to NULL could be written !…
+  This issue was detected by using the Coccinelle software.
 
-Thus fix the affected source code places.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/rapidio/devices/tsi721_dma.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/tty/serial/pch_uart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rapidio/devices/tsi721_dma.c b/drivers/rapidio/devices/tsi721_dma.c
-index 14fc36ac3d85..006ea5a45020 100644
---- a/drivers/rapidio/devices/tsi721_dma.c
-+++ b/drivers/rapidio/devices/tsi721_dma.c
-@@ -222,7 +222,7 @@ static int tsi721_bdma_ch_free(struct tsi721_bdma_chan *bdma_chan)
- 	struct tsi721_device *priv = to_tsi721(bdma_chan->dchan.device);
- #endif
+diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+index 0fc72c491c9b..53cdf23b83c6 100644
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -991,7 +991,7 @@ static unsigned int dma_handle_tx(struct eg20t_port *priv)
  
--	if (bdma_chan->bd_base = NULL)
-+	if (!bdma_chan->bd_base)
+ 	priv->tx_dma_use = 1;
+ 
+-	priv->sg_tx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
++	priv->sg_tx_p = kcalloc(num, sizeof(*priv->sg_tx_p), GFP_ATOMIC);
+ 	if (!priv->sg_tx_p)
  		return 0;
  
- 	/* Check if DMA channel still running */
-@@ -346,7 +346,7 @@ tsi721_desc_fill_init(struct tsi721_tx_desc *desc,
- {
- 	u64 rio_addr;
- 
--	if (bd_ptr = NULL)
-+	if (!bd_ptr)
- 		return -EINVAL;
- 
- 	/* Initialize DMA descriptor */
-@@ -370,7 +370,7 @@ tsi721_desc_fill_init(struct tsi721_tx_desc *desc,
- static int
- tsi721_desc_fill_end(struct tsi721_dma_desc *bd_ptr, u32 bcount, bool interrupt)
- {
--	if (bd_ptr = NULL)
-+	if (!bd_ptr)
- 		return -EINVAL;
- 
- 	/* Update DMA descriptor */
-@@ -555,9 +555,7 @@ static void tsi721_advance_work(struct tsi721_bdma_chan *bdma_chan,
- 	 * If there is no data transfer in progress, fetch new descriptor from
- 	 * the pending queue.
- 	*/
--
--	if (desc = NULL && bdma_chan->active_tx = NULL &&
--					!list_empty(&bdma_chan->queue)) {
-+	if (!desc && !bdma_chan->active_tx && !list_empty(&bdma_chan->queue)) {
- 		desc = list_first_entry(&bdma_chan->queue,
- 					struct tsi721_tx_desc, desc_node);
- 		list_del_init((&desc->desc_node));
-@@ -796,7 +794,7 @@ static void tsi721_free_chan_resources(struct dma_chan *dchan)
- 
- 	tsi_debug(DMA, &dchan->dev->device, "DMAC%d", bdma_chan->id);
- 
--	if (bdma_chan->bd_base = NULL)
-+	if (!bdma_chan->bd_base)
- 		return;
- 
- 	tsi721_bdma_interrupt_enable(bdma_chan, 0);
 -- 
 2.15.1
 
