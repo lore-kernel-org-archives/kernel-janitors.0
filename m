@@ -1,42 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 13:07:48 +0000
-Subject: [PATCH 2/2] pinctrl: single: Delete an unnecessary return statement in pcs_irq_chain_handler()
-Message-Id: <c736d14b-0293-82ac-27de-a673b62b61d7@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Dec 2017 11:50:04 +0000
+Subject: [PATCH 2/2] um: vector_kern: Fix NULL deref in destroy_queue()
+Message-Id: <20171209115004.tsxt7qnlhagp4xyn@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6bc679d1-c1ee-52fe-9ece-b28095f653ec@users.sourceforge.net>
-In-Reply-To: <6bc679d1-c1ee-52fe-9ece-b28095f653ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 11:35:44 +0100
+We dereference "qi" before checking whether it is NULL.  There is one
+error path in create_queue() which passes a NULL to destroy_queue() so
+this could result in a NULL pointer dereference.
 
-The script "checkpatch.pl" pointed information out like the following.
+Fixes: ad1f62ab2bd4 ("High Performance UML Vector Network Driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-single.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index f5ff2111481d..16689195e481 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1459,8 +1459,6 @@ static void pcs_irq_chain_handler(struct irq_desc *desc)
- 	pcs_irq_handle(pcs_soc);
- 	/* REVISIT: export and add handle_bad_irq(irq, desc)? */
- 	chained_irq_exit(chip, desc);
--
--	return;
- }
+diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+index bb83a2d22ac2..5219c37b8d03 100644
+--- a/arch/um/drivers/vector_kern.c
++++ b/arch/um/drivers/vector_kern.c
+@@ -455,11 +455,12 @@ static void destroy_queue(struct vector_queue *qi)
+ {
+ 	int i;
+ 	struct iovec *iov;
+-	struct vector_private *vp = netdev_priv(qi->dev);
++	struct vector_private *vp;
+ 	struct mmsghdr *mmsg_vector;
  
- static int pcs_irqdomain_map(struct irq_domain *d, unsigned int irq,
--- 
-2.15.1
-
+ 	if (qi = NULL)
+ 		return;
++	vp = netdev_priv(qi->dev);
+ 	/* deallocate any skbuffs - we rely on any unused to be
+ 	 * set to NULL.
+ 	 */
