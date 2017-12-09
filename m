@@ -1,83 +1,31 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Fri, 08 Dec 2017 21:28:23 +0000
-Subject: Re: [PATCH 1/2] mtd: onenand: samsung: use devm_ function to simplify code and fix some leaks
-Message-Id: <20171208222823.068191f6@bbrezillon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Dec 2017 11:49:40 +0000
+Subject: [PATCH 1/2] um: vector_kern: Unlock on error in vector_net_open()
+Message-Id: <20171209114940.fsi7jbxd7zbhhu74@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1512765898.git.christophe.jaillet@wanadoo.fr>
- <6cde66a56d0228d3933cf0d92fdc725ccb880b4a.1512765898.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6cde66a56d0228d3933cf0d92fdc725ccb880b4a.1512765898.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri,  8 Dec 2017 22:11:04 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+We need to unlock and restore IRQs on this error path.
 
-> Convert all error handling code in 's3c_onenand_probe()' to
-> resource-managed alternatives in order to simplify code.
-> 
-> This fixes a resource leak if 'platform_get_resource()' fails at line 872.
-> 
-> The 'request_irq()' at line 971 was also un-balanced. It is now
-> resource-managed
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
->  drivers/mtd/onenand/samsung.c | 141 +++++++++++++-----------------------------
->  1 file changed, 43 insertions(+), 98 deletions(-)
-> 
-> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-> index af0ac1a7bf8f..04039b967d59 100644
-> --- a/drivers/mtd/onenand/samsung.c
-> +++ b/drivers/mtd/onenand/samsung.c
-> @@ -851,15 +851,14 @@ static int s3c_onenand_probe(struct platform_device *pdev)
->  	/* No need to check pdata. the platform data is optional */
->  
->  	size = sizeof(struct mtd_info) + sizeof(struct onenand_chip);
-> -	mtd = kzalloc(size, GFP_KERNEL);
-> +	mtd = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
->  	if (!mtd)
->  		return -ENOMEM;
->  
-> -	onenand = kzalloc(sizeof(struct s3c_onenand), GFP_KERNEL);
-> -	if (!onenand) {
-> -		err = -ENOMEM;
-> -		goto onenand_fail;
-> -	}
-> +	onenand = devm_kzalloc(&pdev->dev, sizeof(struct s3c_onenand),
-> +			       GFP_KERNEL);
-> +	if (!onenand)
-> +		return -ENOMEM;
->  
->  	this = (struct onenand_chip *) &mtd[1];
->  	mtd->priv = this;
-> @@ -873,22 +872,20 @@ static int s3c_onenand_probe(struct platform_device *pdev)
->  	if (!r) {
->  		dev_err(&pdev->dev, "no memory resource defined\n");
->  		return -ENOENT;
-> -		goto ahb_resource_failed;
->  	}
->  
-> -	onenand->base_res = request_mem_region(r->start, resource_size(r),
-> -					       pdev->name);
-> +	onenand->base_res = devm_request_mem_region(&pdev->dev, r->start,
-> +						    resource_size(r),
-> +						    pdev->name);
+Fixes: ad1f62ab2bd4 ("High Performance UML Vector Network Driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Oh, and you should also get rid of all the onenand->xxx_res fields,
-they're no longer needed after switching to devm_ helpers.
-
-Just move the 'onenand->phys_base = r->start' assignment here and you
-should be good.
-
->  	if (!onenand->base_res) {
->  		dev_err(&pdev->dev, "failed to request memory resource\n");
-> -		err = -EBUSY;
-> -		goto resource_failed;
-> +		return -EBUSY;
->  	}
->  
+diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+index d1d53015d572..bb83a2d22ac2 100644
+--- a/arch/um/drivers/vector_kern.c
++++ b/arch/um/drivers/vector_kern.c
+@@ -1156,8 +1156,10 @@ static int vector_net_open(struct net_device *dev)
+ 	struct vector_device *vdevice;
+ 
+ 	spin_lock_irqsave(&vp->lock, flags);
+-	if (vp->opened)
++	if (vp->opened) {
++		spin_unlock_irqrestore(&vp->lock, flags);
+ 		return -ENXIO;
++	}
+ 	vp->opened = true;
+ 	spin_unlock_irqrestore(&vp->lock, flags);
+ 
