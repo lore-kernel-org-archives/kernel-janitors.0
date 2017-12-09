@@ -1,42 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 17:33:49 +0000
-Subject: [PATCH] pwm-puv3: Delete an error message for a failed memory allocation in pwm_probe()
-Message-Id: <93e81e95-01e0-1493-5b4a-92f36f998dac@users.sourceforge.net>
+Date: Sat, 09 Dec 2017 19:12:21 +0000
+Subject: [PATCH 2/3] serial: ifx6x60: Improve a size determination in ifx_spi_spi_probe()
+Message-Id: <2134a9fd-73d9-686f-cc41-0d143a62cbbe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
+In-Reply-To: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pwm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 18:29:49 +0100
+Date: Sat, 9 Dec 2017 19:22:50 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pwm/pwm-puv3.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/tty/serial/ifx6x60.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/pwm-puv3.c b/drivers/pwm/pwm-puv3.c
-index ed6007b27585..754fd9a98f6b 100644
---- a/drivers/pwm/pwm-puv3.c
-+++ b/drivers/pwm/pwm-puv3.c
-@@ -107,10 +107,8 @@ static int pwm_probe(struct platform_device *pdev)
- 	int ret;
+diff --git a/drivers/tty/serial/ifx6x60.c b/drivers/tty/serial/ifx6x60.c
+index 832751479f41..1883e3382338 100644
+--- a/drivers/tty/serial/ifx6x60.c
++++ b/drivers/tty/serial/ifx6x60.c
+@@ -1005,7 +1005,7 @@ static int ifx_spi_spi_probe(struct spi_device *spi)
+ 	}
  
- 	puv3 = devm_kzalloc(&pdev->dev, sizeof(*puv3), GFP_KERNEL);
--	if (puv3 = NULL) {
--		dev_err(&pdev->dev, "failed to allocate memory\n");
-+	if (!puv3)
+ 	/* initialize structure to hold our device variables */
+-	ifx_dev = kzalloc(sizeof(struct ifx_spi_device), GFP_KERNEL);
++	ifx_dev = kzalloc(sizeof(*ifx_dev), GFP_KERNEL);
+ 	if (!ifx_dev)
  		return -ENOMEM;
--	}
  
- 	puv3->clk = devm_clk_get(&pdev->dev, "OST_CLK");
- 	if (IS_ERR(puv3->clk))
 -- 
 2.15.1
 
