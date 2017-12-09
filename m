@@ -1,40 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 13:12:41 +0000
-Subject: [PATCH 2/4] staging/wlan-ng/prism2fw: Use a known error code after a failed kzalloc() in mkimage()
-Message-Id: <e4ea47b6-ba6d-1b6e-0d51-e5fcceca27d0@users.sourceforge.net>
+Date: Sat, 09 Dec 2017 18:03:54 +0000
+Subject: [PATCH 1/3] serial: ioc3: Delete error messages for a failed memory allocation in ioc3uart_probe()
+Message-Id: <3975ebe3-f1fa-a545-696d-06d701e707cc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
-In-Reply-To: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
+References: <962f1172-3f27-c6b5-653f-c09f2e8fe431@users.sourceforge.net>
+In-Reply-To: <962f1172-3f27-c6b5-653f-c09f2e8fe431@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciek Borzecki <maciek.borzecki@gmail.com>, Simo Koskinen <koskisoft@gmail.com>, Thibaut Sautereau <thibaut.sautereau@telecom-sudparis.eu>
+To: linux-serial@vger.kernel.org, linux-ia64@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 13:20:10 +0100
+Date: Sat, 9 Dec 2017 18:34:36 +0100
 
-Make a memory allocation failure clearer by using the error code "-ENOMEM"
-(instead of the constant "1") in this function.
+Omit extra messages for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/wlan-ng/prism2fw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/ioc3_serial.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index 6888d1b093fa..efca9108dad8 100644
---- a/drivers/staging/wlan-ng/prism2fw.c
-+++ b/drivers/staging/wlan-ng/prism2fw.c
-@@ -558,7 +558,7 @@ static int mkimage(struct imgchunk *clist, unsigned int *ccnt)
- 	for (i = 0; i < *ccnt; i++) {
- 		clist[i].data = kzalloc(clist[i].len, GFP_KERNEL);
- 		if (!clist[i].data)
--			return 1;
-+			return -ENOMEM;
+diff --git a/drivers/tty/serial/ioc3_serial.c b/drivers/tty/serial/ioc3_serial.c
+index d8a1cdd6a53d..0007c2d65028 100644
+--- a/drivers/tty/serial/ioc3_serial.c
++++ b/drivers/tty/serial/ioc3_serial.c
+@@ -2017,11 +2017,9 @@ ioc3uart_probe(struct ioc3_submodule *is, struct ioc3_driver_data *idd)
+ 	DPRINT_CONFIG(("%s (0x%p, 0x%p)\n", __func__, is, idd));
  
- 		pr_debug("chunk[%d]: addr=0x%06x len=%d\n",
- 			 i, clist[i].addr, clist[i].len);
+ 	card_ptr = kzalloc(sizeof(struct ioc3_card), GFP_KERNEL);
+-	if (!card_ptr) {
+-		printk(KERN_WARNING "ioc3_attach_one"
+-		       ": unable to get memory for the IOC3\n");
++	if (!card_ptr)
+ 		return -ENOMEM;
+-	}
++
+ 	idd->data[is->id] = card_ptr;
+ 	Submodule_slot = is->id;
+ 
+@@ -2038,8 +2036,6 @@ ioc3uart_probe(struct ioc3_submodule *is, struct ioc3_driver_data *idd)
+ 	for (phys_port = 0; phys_port < PORTS_PER_CARD; phys_port++) {
+ 		port = kzalloc(sizeof(struct ioc3_port), GFP_KERNEL);
+ 		if (!port) {
+-			printk(KERN_WARNING
+-			       "IOC3 serial memory not available for port\n");
+ 			ret = -ENOMEM;
+ 			goto out4;
+ 		}
 -- 
 2.15.1
 
