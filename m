@@ -1,40 +1,38 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 11 Dec 2017 12:29:28 +0000
-Subject: Re: [PATCH] mmc: block: blk-mq: Potential NULL deref on mmc_blk_alloc_req() failure
-Message-Id: <CAPDyKFpWVPfj6MNadAQa26Tcv3_ARV4sYYH=_VtCHxmXU-6YvQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Dec 2017 11:52:03 +0000
+Subject: [PATCH 1/2] ASoC: nuc900: Fix platform_get_irq() error checking some more
+Message-Id: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171208115516.3h55rvjq54hyfecq@mwanda>
-In-Reply-To: <20171208115516.3h55rvjq54hyfecq@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Shawn Lin <shawn.lin@rock-chips.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-On 8 December 2017 at 12:55, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> mmc_blk_alloc_req() is supposed to return error pointers but there is
-> one path where we forget to set the error code and accidentally return
-> NULL.  The callers are not expecting that and will have a NULL pointer
-> dereference.
->
-> Fixes: 23da8bed11f2 ("mmc: block: Simplify cleaning up the queue")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The error handling doesn't work here because "nuc900_audio->irq_num" is
+unsigned.  Also we should be checking for < 0 and not <= 0 but I believe
+that's harmless.  The platform_get_irq() comments don't talk about the
+return values...
 
-Thanks, applied for next!
+Fixes: fa8cc38165c2 ("ASoC: nuc900: Fix platform_get_irq's error checking")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Kind regards
-Uffe
-
->
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index ab384ba6cb37..6af2b660b1f7 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -3037,6 +3037,7 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
->          */
->         if (!blk_get_queue(md->queue.queue)) {
->                 mmc_cleanup_queue(&md->queue);
-> +               ret = -ENODEV;
->                 goto err_putdisk;
->         }
->
+diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
+index 5e4fbd2d3479..71fce7c85c93 100644
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -345,11 +345,10 @@ static int nuc900_ac97_drvprobe(struct platform_device *pdev)
+ 		goto out;
+ 	}
+ 
+-	nuc900_audio->irq_num = platform_get_irq(pdev, 0);
+-	if (nuc900_audio->irq_num <= 0) {
+-		ret = nuc900_audio->irq_num < 0 ? nuc900_audio->irq_num : -EBUSY;
++	ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
+ 		goto out;
+-	}
++	nuc900_audio->irq_num = ret;
+ 
+ 	nuc900_ac97_data = nuc900_audio;
+ 
