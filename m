@@ -1,42 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Dec 2017 19:30:24 +0000
-Subject: [PATCH] jz4740-battery: Delete an error message for a failed memory allocation in jz_battery_probe()
-Message-Id: <54d86c99-fea3-ced3-12fa-b92b340228b0@users.sourceforge.net>
+Date: Sat, 09 Dec 2017 19:10:15 +0000
+Subject: [PATCH 0/3] tty/serial/ifx6x60: Adjustments for five function implementations
+Message-Id: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Dec 2017 20:23:28 +0100
+Date: Sat, 9 Dec 2017 20:03:45 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in ifx_spi_spi_probe()
+  Improve a size determination in ifx_spi_spi_probe()
+  Add some spaces for better code readability
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/power/supply/jz4740-battery.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/tty/serial/ifx6x60.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/power/supply/jz4740-battery.c b/drivers/power/supply/jz4740-battery.c
-index 88f04f4d1a70..5210c9a92e2d 100644
---- a/drivers/power/supply/jz4740-battery.c
-+++ b/drivers/power/supply/jz4740-battery.c
-@@ -254,10 +254,8 @@ static int jz_battery_probe(struct platform_device *pdev)
- 	}
- 
- 	jz_battery = devm_kzalloc(&pdev->dev, sizeof(*jz_battery), GFP_KERNEL);
--	if (!jz_battery) {
--		dev_err(&pdev->dev, "Failed to allocate driver structure\n");
-+	if (!jz_battery)
- 		return -ENOMEM;
--	}
- 
- 	jz_battery->cell = mfd_get_cell(pdev);
- 
 -- 
 2.15.1
 
