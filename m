@@ -1,35 +1,28 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Fri, 08 Dec 2017 10:42:28 +0000
-Subject: Re: [PATCH 2/2] serial: tegra: Fix a typo in a comment line
-Message-Id: <0dd7a341-e9aa-ff00-357c-43cf994b9188@nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Dec 2017 11:49:14 +0000
+Subject: [PATCH] RISC-V: Logical vs Bitwise typo
+Message-Id: <20171209114914.fbor54gqfcmvqipf@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <605adc2b-3591-86fc-410a-370f48dfb14e@users.sourceforge.net>
- <2b7ff65b-dcb8-996b-1f34-f1bff28bb515@users.sourceforge.net>
- <b7bcd402-1fc2-85aa-bbd6-89e2e465e855@nvidia.com>
-In-Reply-To: <b7bcd402-1fc2-85aa-bbd6-89e2e465e855@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laxman Dewangan <ldewangan@nvidia.com>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: kernel-janitors@vger.kernel.org
 
+In the current code, there is a ! logical NOT where a bitwise ~ NOT was
+intended.  It means that we never return -EINVAL.
 
-On 08/12/17 09:37, Laxman Dewangan wrote:
-> 
-> 
-> On Friday 08 December 2017 01:51 AM, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Thu, 7 Dec 2017 21:06:25 +0100
->>
->> Delete a duplicate character in a word of this description.
->>
-> 
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
-
--- 
-nvpublic
+diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+index a2ae936a093e..79c78668258e 100644
+--- a/arch/riscv/kernel/sys_riscv.c
++++ b/arch/riscv/kernel/sys_riscv.c
+@@ -70,7 +70,7 @@ SYSCALL_DEFINE3(riscv_flush_icache, uintptr_t, start, uintptr_t, end,
+ 	bool local = (flags & SYS_RISCV_FLUSH_ICACHE_LOCAL) != 0;
+ 
+ 	/* Check the reserved flags. */
+-	if (unlikely(flags & !SYS_RISCV_FLUSH_ICACHE_ALL))
++	if (unlikely(flags & ~SYS_RISCV_FLUSH_ICACHE_ALL))
+ 		return -EINVAL;
+ 
+ 	flush_icache_mm(mm, local);
