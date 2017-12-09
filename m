@@ -1,46 +1,43 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 09 Dec 2017 07:24:05 +0000
-Subject: [PATCH 2/2 v2] mtd: onenand: samsung: return an error if  'mtd_device_parse_register()' fails
-Message-Id: <b1d592c0ed60f1bda3d89145bcce5562c00e2575.1512804011.git.christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Dec 2017 11:52:28 +0000
+Subject: [PATCH 2/2 resend] ASoC: nuc900: Fix a loop timeout test
+Message-Id: <20171209115228.5nbcfoz62xy7thv2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1512804011.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1512804011.git.christophe.jaillet@wanadoo.fr>
+References: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
+In-Reply-To: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>, Wan ZongShun <mcuos.com@gmail.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-If 'mtd_device_parse_register()' fails, we still return 0 which mean
-success.
-Return the error code instead, as done in all the other error handling
-paths.
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout = -1.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Compile tested-only
+I sent this one in July but it was missed somehow.
 
-v2: call 'onenand_release()' to undo 'onenand_scan()'
----
- drivers/mtd/onenand/samsung.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-index 2e562c224060..4031f750f334 100644
---- a/drivers/mtd/onenand/samsung.c
-+++ b/drivers/mtd/onenand/samsung.c
-@@ -936,6 +936,11 @@ static int s3c_onenand_probe(struct platform_device *pdev)
- 	err = mtd_device_parse_register(mtd, NULL, NULL,
- 					pdata ? pdata->parts : NULL,
- 					pdata ? pdata->nr_parts : 0);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to parse partitions and register the MTD device\n");
-+		onenand_release(mtd);
-+		return err;
-+	}
+diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
+index 71fce7c85c93..81b09d740ed9 100644
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(struct snd_ac97 *ac97,
  
- 	platform_set_drvdata(pdev, mtd);
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
  
--- 
-2.14.1
-
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
+ 
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout)
