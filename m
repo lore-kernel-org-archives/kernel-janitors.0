@@ -1,57 +1,34 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 15 Dec 2017 17:52:44 +0000
-Subject: Re: [PATCH][next] scsi: arcmsr: remove redundant check for secs < 0
-Message-Id: <5A340BEC.6040704@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Dec 2017 11:45:24 +0000
+Subject: [PATCH] parisc: Add missing curly braces in puts()
+Message-Id: <20171209114524.kwsvkd4ui5jei4r3@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171209003414.17332-1-colin.king@canonical.com>
-In-Reply-To: <20171209003414.17332-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Ching Huang <ching2048@areca.com.tw>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@parisc-linux.org>, Helge Deller <deller@gmx.de>
+Cc: linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Static analysis tools complain that we intended to have curly braces
+around this indent block.  Which is true.
 
+Fixes: 2f3c7b8137ef ("parisc: Add core code for self-extracting kernel")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 09.12.2017 01:34, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check for secs being less than zero is redundant for two reasons.
-> Firstly, secs is unsigned so the check is always going to be false.
-> Secondly, if secs was signed the proceeding calculation of secs is
-> never going to be negative.  Hence we can remove this redundant check
-> and day and secs re-adjustment.
-> 
-> Detected by static analysis with smatch:
-> arcmsr_set_iop_datetime() warn: unsigned 'secs' is never less than zero.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/scsi/arcmsr/arcmsr_hba.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-> index 0707a60bf5c0..e4258b69f4be 100644
-> --- a/drivers/scsi/arcmsr/arcmsr_hba.c
-> +++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-> @@ -3679,10 +3679,6 @@ static void arcmsr_set_iop_datetime(struct timer_list *t)
->  	secs = (u32)(tv.tv_sec - (sys_tz.tz_minuteswest * 60));
->  	days = secs / 86400;
->  	secs = secs - 86400 * days;
-
-mmh, what they want to do is:
-	secs = secs % 86400 ;
-
-> -	if (secs < 0) {
-> -		days = days - 1;
-> -		secs = secs + 86400;
-> -	}
->  	j = days / 146097;
->  	i = days - 146097 * j;
->  	a = i + 719468;
-
-see above.
-btw: are the numbers documented ?
-
-re,
- wh
+diff --git a/arch/parisc/boot/compressed/misc.c b/arch/parisc/boot/compressed/misc.c
+index 9345b44b86f0..432d33804a86 100644
+--- a/arch/parisc/boot/compressed/misc.c
++++ b/arch/parisc/boot/compressed/misc.c
+@@ -121,10 +121,11 @@ int puts(const char *s)
+ 	const char *nuline = s;
+ 
+ 	while ((nuline = strchr(s, '\n')) != NULL) {
+-		if (nuline != s)
++		if (nuline != s) {
+ 			pdc_iodc_print(s, nuline - s);
+ 			pdc_iodc_print("\r\n", 2);
+ 			s = nuline + 1;
++		}
+ 	}
+ 	if (*s != '\0')
+ 		pdc_iodc_print(s, strlen(s));
