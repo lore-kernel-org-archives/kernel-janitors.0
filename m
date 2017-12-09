@@ -1,45 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Dec 2017 19:11:17 +0000
-Subject: [PATCH 1/3] serial: ifx6x60: Delete an error message for a failed memory allocation in ifx_spi_spi_p
-Message-Id: <378523b8-0fd4-2bc0-03f8-fa57e60e95e0@users.sourceforge.net>
+Date: Sat, 09 Dec 2017 18:02:28 +0000
+Subject: [PATCH 0/3] tty/serial/ioc3: Adjustments for three function implementations
+Message-Id: <962f1172-3f27-c6b5-653f-c09f2e8fe431@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
-In-Reply-To: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+To: linux-serial@vger.kernel.org, linux-ia64@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Dec 2017 19:20:37 +0100
+Date: Sat, 9 Dec 2017 19:00:19 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete error messages for a failed memory allocation in ioc3uart_probe()
+  Improve size determinations in ioc3uart_probe()
+  Adjust two function calls together with a variable assignment
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/ifx6x60.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/tty/serial/ioc3_serial.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/tty/serial/ifx6x60.c b/drivers/tty/serial/ifx6x60.c
-index 473f4f81d690..832751479f41 100644
---- a/drivers/tty/serial/ifx6x60.c
-+++ b/drivers/tty/serial/ifx6x60.c
-@@ -1006,10 +1006,9 @@ static int ifx_spi_spi_probe(struct spi_device *spi)
- 
- 	/* initialize structure to hold our device variables */
- 	ifx_dev = kzalloc(sizeof(struct ifx_spi_device), GFP_KERNEL);
--	if (!ifx_dev) {
--		dev_err(&spi->dev, "spi device allocation failed");
-+	if (!ifx_dev)
- 		return -ENOMEM;
--	}
-+
- 	saved_ifx_dev = ifx_dev;
- 	ifx_dev->spi_dev = spi;
- 	clear_bit(IFX_SPI_STATE_IO_IN_PROGRESS, &ifx_dev->flags);
 -- 
 2.15.1
 
