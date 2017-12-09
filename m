@@ -1,37 +1,59 @@
-From: Martin Kelly <martin@martingkelly.com>
-Date: Sat, 23 Dec 2017 21:06:40 +0000
-Subject: [PATCH 0/1] tools: fix cross-compile var export
-Message-Id: <20171223210641.24588-1-martin@martingkelly.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 09 Dec 2017 18:06:28 +0000
+Subject: [PATCH 3/3] serial: ioc3: Adjust two function calls together with a variable assignment
+Message-Id: <cb8e7643-bc3d-780e-58cf-497874305574@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <962f1172-3f27-c6b5-653f-c09f2e8fe431@users.sourceforge.net>
+In-Reply-To: <962f1172-3f27-c6b5-653f-c09f2e8fe431@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-serial@vger.kernel.org, linux-ia64@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Martin Kelly <martin@martingkelly.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 9 Dec 2017 18:48:57 +0100
 
-This patch touches multiple subsystems, and there doesn't appear to be a global
-tools maintainer, so I sent this to kernel janitors. Please let me know if there
-is a better place for it.
+The script "checkpatch.pl" pointed information out like the following.
 
-Martin Kelly (1):
-  tools: fix cross-compile var export
+ERROR: do not use assignment in if condition
 
- tools/cgroup/Makefile            |  1 -
- tools/gpio/Makefile              |  2 --
- tools/hv/Makefile                |  1 -
- tools/iio/Makefile               |  2 --
- tools/laptop/freefall/Makefile   |  1 -
- tools/leds/Makefile              |  1 -
- tools/perf/Makefile.perf         |  6 ------
- tools/power/acpi/Makefile.config |  3 ---
- tools/scripts/Makefile.include   | 18 ++++++++++++++++++
- tools/spi/Makefile               |  2 --
- tools/usb/Makefile               |  1 -
- tools/vm/Makefile                |  1 -
- tools/wmi/Makefile               |  1 -
- 13 files changed, 18 insertions(+), 22 deletions(-)
+Thus fix the affected source code places.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/serial/ioc3_serial.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/serial/ioc3_serial.c b/drivers/tty/serial/ioc3_serial.c
+index d211bb1407d3..0170d6f2bcdf 100644
+--- a/drivers/tty/serial/ioc3_serial.c
++++ b/drivers/tty/serial/ioc3_serial.c
+@@ -1540,8 +1540,8 @@ ioc3uart_intr_one(struct ioc3_submodule *is,
+ 			 * hasn't been delivered to the cpu yet anyway, even
+ 			 * though we see it as asserted when we read the sio_ir.
+ 			 */
+-			if ((sio_ir = PENDING(card_ptr, idd))
+-					& hooks->intr_rx_high) {
++			sio_ir = PENDING(card_ptr, idd);
++			if (sio_ir & hooks->intr_rx_high) {
+ 				if (port->ip_flags & READ_ABORTED) {
+ 					rx_high_rd_aborted++;
+ 				}
+@@ -2162,10 +2162,10 @@ static struct ioc3_submodule ioc3uart_ops = {
+  */
+ static int __init ioc3uart_init(void)
+ {
+-	int ret;
+-
+ 	/* register with serial core */
+-	if ((ret = uart_register_driver(&ioc3_uart)) < 0) {
++	int ret = uart_register_driver(&ioc3_uart);
++
++	if (ret < 0) {
+ 		printk(KERN_WARNING
+ 		       "%s: Couldn't register IOC3 uart serial driver\n",
+ 		       __func__);
 -- 
-2.11.0
+2.15.1
 
