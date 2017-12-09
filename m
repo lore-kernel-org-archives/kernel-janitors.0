@@ -1,18 +1,44 @@
-From: Citi Financial <dorkoper@student.pg.edu.pl>
-Date: Sun, 17 Dec 2017 23:15:31 +0000
-Subject: (brak tematu)
-Message-Id: <179095e202701441ab9c957e757e0cea@student.pg.edu.pl>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 09 Dec 2017 21:11:35 +0000
+Subject: [PATCH] serial: bfin_uart: Delete an error message for a failed memory allocation in bfin_serial_pro
+Message-Id: <6d49e768-0b26-991c-ec4a-ed9226f4da05@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="euc-kr"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-serial@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-CgotLSAKV2lyIGJpZXRlbiBLcmVkaXRlIGFuIGFsbGUgaW4gTm90IG1pdCAzJSBaaW5zc2F0eiwg
-a2VpbmUgU2ljaGVyaGVpdGVuCmJldGVpbGlndCwgw7xiZXJwcsO8ZmVuIHdpciBuaWNodCBhdWNo
-IEtyZWRpdC1TY29yZXMsIGVyaGFsdGVuIHNjaG5lbGxlIAp1bmQgenV2ZXJsw6Rzc2lnZSBEYXJs
-ZWhlbgppbm5lcmhhbGIgdm9uIDMgVGFnZW4gZ2FyYW50aWVyZW4uIEUtTWFpbCBqZXR6dCBmw7xy
-IHdlaXRlcmUgCkluZm9ybWF0aW9uZW4uCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
-OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5
-IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 9 Dec 2017 22:05:54 +0100
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/serial/bfin_uart.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/bfin_uart.c b/drivers/tty/serial/bfin_uart.c
+index 4755fa696321..558f6ebc4f01 100644
+--- a/drivers/tty/serial/bfin_uart.c
++++ b/drivers/tty/serial/bfin_uart.c
+@@ -1221,11 +1221,9 @@ static int bfin_serial_probe(struct platform_device *pdev)
+ 	if (bfin_serial_ports[pdev->id] = NULL) {
+ 
+ 		uart = kzalloc(sizeof(*uart), GFP_KERNEL);
+-		if (!uart) {
+-			dev_err(&pdev->dev,
+-				"fail to malloc bfin_serial_port\n");
++		if (!uart)
+ 			return -ENOMEM;
+-		}
++
+ 		bfin_serial_ports[pdev->id] = uart;
+ 
+ #ifdef CONFIG_EARLY_PRINTK
+-- 
+2.15.1
+
