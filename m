@@ -1,57 +1,44 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Fri, 01 Dec 2017 00:21:15 +0000
-Subject: Re: [PATCH] tools lib traceevent: fix an incorrect comparison with the literal "s64"
-Message-Id: <20171130192115.03d93d38@gandalf.local.home>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 16:07:03 +0000
+Subject: [PATCH] tty: isicom: Delete an error message for a failed memory allocation in load_firmware()
+Message-Id: <b1cad3dc-17bc-d86a-8c2d-f44331f3dcc8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171127161909.15565-1-colin.king@canonical.com>
-In-Reply-To: <20171127161909.15565-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, "David S . Miller" <davem@davemloft.net>, Daniel Borkmann <daniel@iogearbox.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 17:00:05 +0100
 
-Arnaldo,
+Omit an extra message for a memory allocation failure in this function.
 
-Can you take this in your tree. And mark it for stable. Thanks!
+This issue was detected by using the Coccinelle software.
 
-On Mon, 27 Nov 2017 16:19:09 +0000
-Colin King <colin.king@canonical.com> wrote:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/isicom.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> I believe the comparison of the string 'type' with the literal string
-> "s64" is currently incorrect, it is missing a = 0 comparison as per
-> the other comparisons.
-> 
-> Detected by cppcheck:
-> tools/lib/traceevent/event-parse.c:2209: (warning) The comparison
-> operator in 'strcmp(type,"s64") != 0' should maybe be '=' instead,
-> currently the expression 'strcmp(type,"u64") = 0' is redundant.
-> 
-> Fixes: f7d82350e597 ("tools/events: Add files to create libtraceevent.a")
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/lib/traceevent/event-parse.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-> index 7ce724fc0544..82b6c64c5b39 100644
-> --- a/tools/lib/traceevent/event-parse.c
-> +++ b/tools/lib/traceevent/event-parse.c
-> @@ -2206,7 +2206,7 @@ eval_type_str(unsigned long long val, const char *type, int pointer)
->  		return val & 0xffffffff;
->  
->  	if (strcmp(type, "u64") = 0 ||
-> -	    strcmp(type, "s64"))
-> +	    strcmp(type, "s64") = 0)
->  		return val;
->  
->  	if (strcmp(type, "s8") = 0)
+diff --git a/drivers/tty/isicom.c b/drivers/tty/isicom.c
+index ee7958ab269f..c087ebfe62fd 100644
+--- a/drivers/tty/isicom.c
++++ b/drivers/tty/isicom.c
+@@ -1482,11 +1482,9 @@ static int load_firmware(struct pci_dev *pdev,
+ 		}
+ 
+ 		data = kmalloc(word_count * 2, GFP_KERNEL);
+-		if (data = NULL) {
+-			dev_err(&pdev->dev, "Card%d, firmware upload "
+-				"failed, not enough memory\n", index + 1);
++		if (!data)
+ 			goto errrelfw;
+-		}
++
+ 		inw(base);
+ 		insw(base, data, word_count);
+ 		InterruptTheCard(base);
+-- 
+2.15.1
 
