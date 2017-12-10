@@ -1,41 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 03 Dec 2017 16:53:16 +0000
-Subject: [PATCH][next] x86/mm: make function clear_non_loaded_ctxs static
-Message-Id: <20171203165316.28915-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 15:31:18 +0000
+Subject: [PATCH 1/2] tty: moxa: Delete an error message for a failed memory allocation in moxa_init_board()
+Message-Id: <d3ecae07-042f-ad07-9ecf-73e67e9b3282@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
+In-Reply-To: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andy Lutomirski <luto@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 16:03:21 +0100
 
-The function clear_non_loaded_ctxs is local to the source and does
-not need to be in global scope, so make it static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warning:
-arch/x86/mm/tlb.c:37:6: warning: symbol 'clear_non_loaded_ctxs' was
-not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/mm/tlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/moxa.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index f75b6eb47a6d..6ecbd8fc292e 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -34,7 +34,7 @@
-  * necessary invalidation by clearing out the 'ctx_id' which
-  * forces a TLB flush when the context is loaded.
-  */
--void clear_non_loaded_ctxs(void)
-+static void clear_non_loaded_ctxs(void)
- {
- 	u16 asid;
- 
+diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
+index 65a70f3c7cde..a74caf05cf57 100644
+--- a/drivers/tty/moxa.c
++++ b/drivers/tty/moxa.c
+@@ -836,7 +836,6 @@ static int moxa_init_board(struct moxa_board_conf *brd, struct device *dev)
+ 	brd->ports = kcalloc(MAX_PORTS_PER_BOARD, sizeof(*brd->ports),
+ 			GFP_KERNEL);
+ 	if (brd->ports = NULL) {
+-		printk(KERN_ERR "cannot allocate memory for ports\n");
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
 -- 
-2.14.1
+2.15.1
 
