@@ -1,40 +1,27 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 14:51:40 +0000
-Subject: [PATCH 07/12] ARM: davinci: drop unneeded newline
-Message-Id: <1514386305-7402-8-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 15:30:18 +0000
+Subject: [PATCH 0/2] tty-MOXA: Adjustments for moxa_init_board()
+Message-Id: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-gpio_request uses its second argument as a label, so it doesn't seem
-appropriate for it to have a newline.  Done using Coccinelle.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 16:25:43 +0100
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Two update suggestions were taken into account
+from static source code analysis.
 
----
- arch/arm/mach-davinci/board-da850-evm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Return directly after a failed kcalloc()
 
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index cbde003..d898a94 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -798,11 +798,11 @@ static int da850_lcd_hw_init(void)
- {
- 	int status;
- 
--	status = gpio_request(DA850_LCD_BL_PIN, "lcd bl\n");
-+	status = gpio_request(DA850_LCD_BL_PIN, "lcd bl");
- 	if (status < 0)
- 		return status;
- 
--	status = gpio_request(DA850_LCD_PWR_PIN, "lcd pwr\n");
-+	status = gpio_request(DA850_LCD_PWR_PIN, "lcd pwr");
- 	if (status < 0) {
- 		gpio_free(DA850_LCD_BL_PIN);
- 		return status;
+ drivers/tty/moxa.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+-- 
+2.15.1
 
