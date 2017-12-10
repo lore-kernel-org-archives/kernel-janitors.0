@@ -1,66 +1,40 @@
-From: Salil Mehta <salil.mehta@huawei.com>
-Date: Wed, 13 Dec 2017 11:36:19 +0000
-Subject: RE: [bug report] net: hns3: Refactor of the reset interrupt handling logic
-Message-Id: <F4CC6FACFEB3C54C9141D49AD221F7F93BB763A6@FRAEML521-MBX.china.huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 10 Dec 2017 23:32:55 +0000
+Subject: [PATCH][netfilter-next] netfilter: conntrack: make struct nf_conntrack_l4proto_gre4 static
+Message-Id: <20171210233255.15009-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171213104130.tieq5tqujjbvdkjz@mwanda>
-In-Reply-To: <20171213104130.tieq5tqujjbvdkjz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday, December 13, 2017 10:42 AM
-> To: Salil Mehta <salil.mehta@huawei.com>
-> Cc: Salil Mehta <salil.mehta@huawei.com>; kernel-
-> janitors@vger.kernel.org
-> Subject: [bug report] net: hns3: Refactor of the reset interrupt
-> handling logic
-> 
-> Hello Salil Mehta,
-> 
-> The patch ca1d7669b714: "net: hns3: Refactor of the reset interrupt
-> handling logic" from Dec 4, 2017, leads to the following static
-> checker warning:
-> 
-> 	drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:2439
-> hclge_misc_irq_handle()
-> 	error: uninitialized symbol 'clearval'.
-> 
-> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
->   2416  static irqreturn_t hclge_misc_irq_handle(int irq, void *data)
->   2417  {
->   2418          struct hclge_dev *hdev = data;
->   2419          u32 event_cause;
->   2420          u32 clearval;
->   2421
->   2422          hclge_enable_vector(&hdev->misc_vector, false);
->   2423          event_cause = hclge_check_event_cause(hdev, &clearval);
->   2424
->   2425          /* vector 0 interrupt is shared with reset and mailbox
-> source events.
->   2426           * For now, we are not handling mailbox events.
->   2427           */
->   2428          switch (event_cause) {
->   2429          case HCLGE_VECTOR0_EVENT_RST:
->   2430                  hclge_reset_task_schedule(hdev);
->   2431                  break;
->   2432          default:
->   2433                  dev_dbg(&hdev->pdev->dev,
->   2434                          "received unknown or unhandled event of
-> vector0\n");
->   2435                  break;
->                         ^^^^^^
-> This break should probably just call hclge_enable_vector() and then
-> return?
-Ok yes and maybe return IRQ_NONE for such cases.
+The structure nf_conntrack_l4proto_gre4  is local to the source and does
+not need to be in global scope, so make it static.
 
-I will change this after HNS3 VF driver will get accepted otherwise this change
-Will cause conflict with the VF driver patches. Hope this is okay?
+Cleans up sparse warning:
+symbol 'nf_conntrack_l4proto_gre4' was not declared. Should it be static?
 
-Thanks
-Salil
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netfilter/nf_conntrack_proto_gre.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nf_conntrack_proto_gre.c b/net/netfilter/nf_conntrack_proto_gre.c
+index 6d8d1276cf3a..86c346ea1dd5 100644
+--- a/net/netfilter/nf_conntrack_proto_gre.c
++++ b/net/netfilter/nf_conntrack_proto_gre.c
+@@ -352,7 +352,7 @@ static int gre_init_net(struct net *net, u_int16_t proto)
+ }
+ 
+ /* protocol helper struct */
+-struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 = {
++static struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 = {
+ 	.l3proto	 = AF_INET,
+ 	.l4proto	 = IPPROTO_GRE,
+ 	.pkt_to_tuple	 = gre_pkt_to_tuple,
+-- 
+2.14.1
+
