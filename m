@@ -1,38 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 14:47:39 +0000
-Subject: [PATCH] tty: nozomi: Delete an error message for a failed memory allocation in nozomi_card_init()
-Message-Id: <87907c80-d589-c431-4008-ed09d39e5075@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 10 Dec 2017 23:20:58 +0000
+Subject: [PATCH][staging-next] staging: most: core: make functions print_links and most_match static
+Message-Id: <20171210232058.14652-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, Andrey Shvetsov <andrey.shvetsov@k2l.de>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 15:37:26 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The functions print_links and most_match static are local to the source
+and do not need to be in global scope, so make them static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warnings:
+symbol 'print_links' was not declared. Should it be static?
+symbol 'most_match' was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/nozomi.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/most/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index b57b35066ebe..51f515ca4007 100644
---- a/drivers/tty/nozomi.c
-+++ b/drivers/tty/nozomi.c
-@@ -1376,7 +1376,6 @@ static int nozomi_card_init(struct pci_dev *pdev,
+diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
+index c1fba5ba7541..5ba2cd5ec1b0 100644
+--- a/drivers/staging/most/core.c
++++ b/drivers/staging/most/core.c
+@@ -534,7 +534,7 @@ struct show_links_data {
+ 	char *buf;
+ };
  
- 	dc->send_buf = kmalloc(SEND_BUF_MAX, GFP_KERNEL);
- 	if (!dc->send_buf) {
--		dev_err(&pdev->dev, "Could not allocate send buffer?\n");
- 		ret = -ENOMEM;
- 		goto err_free_sbuf;
- 	}
+-int print_links(struct device *dev, void *data)
++static int print_links(struct device *dev, void *data)
+ {
+ 	struct show_links_data *d = data;
+ 	int offs = d->offs;
+@@ -803,7 +803,7 @@ static const struct attribute_group *mc_attr_groups[] = {
+ 	NULL,
+ };
+ 
+-int most_match(struct device *dev, struct device_driver *drv)
++static int most_match(struct device *dev, struct device_driver *drv)
+ {
+ 	if (!strcmp(dev_name(dev), "most"))
+ 		return 0;
 -- 
-2.15.1
+2.14.1
 
