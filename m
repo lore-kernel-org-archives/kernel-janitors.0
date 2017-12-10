@@ -1,75 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 20:13:43 +0000
-Subject: [PATCH 3/3] serial: max3100: Improve unlocking of a mutex in max3100_probe()
-Message-Id: <c8e2234e-5b34-79bf-cb71-f9821ea0eefe@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 15:32:31 +0000
+Subject: [PATCH 2/2] tty: moxa: Return directly after a failed kcalloc() in moxa_init_board()
+Message-Id: <385897ca-48ec-770a-8217-844fe65285f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
-In-Reply-To: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
+References: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
+In-Reply-To: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 20:52:37 +0100
+Date: Sun, 10 Dec 2017 16:15:41 +0100
 
-* Add a jump target so that a call of the function "mutex_unlock" is stored
-  only once in this function implementation.
+* Return directly after a call of the function "kcalloc" failed
+  at the beginning.
 
-* Replace three calls by goto statements.
+* Delete the jump label "err" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/max3100.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/tty/moxa.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
-index 00c0e650537d..e4908410565c 100644
---- a/drivers/tty/serial/max3100.c
-+++ b/drivers/tty/serial/max3100.c
-@@ -747,8 +747,7 @@ static int max3100_probe(struct spi_device *spi)
- 		retval = uart_register_driver(&max3100_uart_driver);
- 		if (retval) {
- 			printk(KERN_ERR "Couldn't register max3100 uart driver\n");
--			mutex_unlock(&max3100s_lock);
--			return retval;
-+			goto unlock;
- 		}
- 	}
+diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
+index a74caf05cf57..571c8456056c 100644
+--- a/drivers/tty/moxa.c
++++ b/drivers/tty/moxa.c
+@@ -835,10 +835,8 @@ static int moxa_init_board(struct moxa_board_conf *brd, struct device *dev)
  
-@@ -757,14 +756,14 @@ static int max3100_probe(struct spi_device *spi)
- 			break;
- 	if (i = MAX_MAX3100) {
- 		dev_warn(&spi->dev, "too many MAX3100 chips\n");
--		mutex_unlock(&max3100s_lock);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto unlock;
- 	}
+ 	brd->ports = kcalloc(MAX_PORTS_PER_BOARD, sizeof(*brd->ports),
+ 			GFP_KERNEL);
+-	if (brd->ports = NULL) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!brd->ports)
++		return -ENOMEM;
  
- 	max3100s[i] = kzalloc(sizeof(*max3100s[i]), GFP_KERNEL);
- 	if (!max3100s[i]) {
--		mutex_unlock(&max3100s_lock);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto unlock;
- 	}
- 	max3100s[i]->spi = spi;
- 	max3100s[i]->irq = spi->irq;
-@@ -803,8 +802,11 @@ static int max3100_probe(struct spi_device *spi)
- 		tx = MAX3100_WC | MAX3100_SHDN;
- 		max3100_sr(max3100s[i], tx, &rx);
- 	}
-+
-+	retval = 0;
-+unlock:
- 	mutex_unlock(&max3100s_lock);
--	return 0;
-+	return retval;
+ 	for (i = 0, p = brd->ports; i < MAX_PORTS_PER_BOARD; i++, p++) {
+ 		tty_port_init(&p->port);
+@@ -892,7 +890,6 @@ static int moxa_init_board(struct moxa_board_conf *brd, struct device *dev)
+ 	for (i = 0; i < MAX_PORTS_PER_BOARD; i++)
+ 		tty_port_destroy(&brd->ports[i].port);
+ 	kfree(brd->ports);
+-err:
+ 	return ret;
  }
  
- static int max3100_remove(struct spi_device *spi)
 -- 
 2.15.1
 
