@@ -1,57 +1,59 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Sat, 09 Dec 2017 08:27:10 +0000
-Subject: Re: [PATCH 0/2 v2] mtd: onenand: samsung: Simplify code and fix leaks in error handling paths
-Message-Id: <20171209092710.4439c55b@bbrezillon>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 10 Dec 2017 16:08:29 +0000
+Subject: Re: =?UTF-8?B?aWlvL+KApjo=?= Use common error handling code
+Message-Id: <20171210160829.16128419@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1512804011.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1512804011.git.christophe.jaillet@wanadoo.fr>
+References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
+        <0f26a13b-7bbf-525b-a864-8aa8e13c3aef@users.sourceforge.net>
+        <20171026174200.5c00b06d@archlinux>
+        <e7292cc3-e4e2-0943-7cf9-4852cf37ef36@users.sourceforge.net>
+In-Reply-To: <e7292cc3-e4e2-0943-7cf9-4852cf37ef36@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 
-On Sat,  9 Dec 2017 08:24:03 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Sun, 10 Dec 2017 13:33:01 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-> The first patch converts 's3c_onenand_probe()' to devm_ functions.
-> This fixes a leak in one path (line 872).
-> This also free_irq which was not handled at all. (I hope I'm correct :) )
-> 
-> The 2nd patch is about an un-handled error code which looks spurious.
-> Not sure if I'm right.
-> 
-> 
-> While compile-testing it, I had to tweak the code because I don't have any
-> cross-compiler.
+> > Again, a general kernel development rule is to float only one
+> > patch of a given type until you have had feedback on it. =20
+>=20
+> A few weeks later =E2=80=A6
+>=20
+>=20
+> > As I said in one of the other patches, I always reply to all
+> > patches I am rejecting so that anyone coming across them later
+> > on their own from an archive or similar can immediately see the
+> > reasons why they are a bad idea without having to know the mailing
+> > list context. =20
+>=20
+> Can you get into the mood to clarify any remaining change possibilities
+> a bit more?
 
-Oh come on! It's really not that complicated to install an arm toolchain
-and cross compile the kernel.
+Hi Markus, I've accepted the ones that I think made an improvement
+outweighing the inherent small costs of making any change.
 
-> I commented the line "#include <asm/mach/flash.h>" and the compilation
-> succeeded. So maybe, this include is also useless.
+So in short, any changes around common error handling need to
+improve the maintainability of the code.  So if we are unifying error
+paths they need to be simple and obviously the same.
 
-Yep, it's not surprising, the driver is really in a poor state. I also
-noticed that buffers allocated with kmalloc are flagged as __iomem
-regions, which is obviously wrong. And I fear we'll find plenty of other
-issues if we dig a bit more.
+We also need to avoid code constructs that are unusual in error handling
+such as backwards gotos.
 
-> I've left it as-is, though.
+Note however that most of the changes made so far are only minor improvemen=
+ts.
+I am not saying I don't appreciate them, but rather than that they are of
+of low importance.
 
-Can be fixed in another patch.
+Thanks,
 
-> 
-> 
-> Theses patches have been compile-tested-only.
-> 
-> 
-> Christophe JAILLET (2):
->   mtd: onenand: samsung: use devm_ function to simplify code and fix
->     some leaks
->   mtd: onenand: samsung: return an error if
->     'mtd_device_parse_register()' fails
-> 
->  drivers/mtd/onenand/samsung.c | 169 +++++++++---------------------------------
->  1 file changed, 34 insertions(+), 135 deletions(-)
-> 
+Jonathan
 
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
