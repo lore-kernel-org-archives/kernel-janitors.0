@@ -1,46 +1,37 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Mon, 11 Dec 2017 16:41:34 +0000
-Subject: Re: [alsa-devel] [PATCH 1/2] ASoC: nuc900: Fix platform_get_irq() error checking some more
-Message-Id: <20171211164134.GE32306@piout.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 12:33:01 +0000
+Subject: =?UTF-8?Q?Re:_iio/=e2=80=a6:_Use_common_error_handling_code?=
+Message-Id: <e7292cc3-e4e2-0943-7cf9-4852cf37ef36@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
- <5A2BE644.3070009@gmail.com>
- <20171209172732.GF15660@piout.net>
- <20171210015200.gr4mxzqgzyvamxui@mwanda>
- <5A2C9E9A.7020501@gmail.com>
- <20171211084053.p5ke733i3kzzk5mz@mwanda>
- <a191218d-fe63-db5f-1993-2167a2077f70@gmail.com>
- <20171211102730.agtoczxiu4dcn5ra@mwanda>
- <20171211114950.GB32306@piout.net>
- <20171211120129.ssrw65eghtdpmjej@mwanda>
-In-Reply-To: <20171211120129.ssrw65eghtdpmjej@mwanda>
+References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
+ <0f26a13b-7bbf-525b-a864-8aa8e13c3aef@users.sourceforge.net>
+ <20171026174200.5c00b06d@archlinux>
+In-Reply-To: <20171026174200.5c00b06d@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 
-On 11/12/2017 at 15:01:29 +0300, Dan Carpenter wrote:
-> On Mon, Dec 11, 2017 at 12:49:50PM +0100, Alexandre Belloni wrote:
-> > Maybe the good thing to do is to actaully leave the nuc900 code alone
-> > instead of trying to change something that never failed and that doesn't
-> > seem to interest anyone anymore (else the platform would have been
-> > converted to DT).
-> >
-> 
-> I don't know.  The bug is less than a month old and this discussion has
-> been useful for me as I review any platform_get_irq() changes sent to
-> staging.
-> 
+> Again, a general kernel development rule is to float only one
+> patch of a given type until you have had feedback on it.
 
-What I meant is that the original code before this "fix" was more that 7
-years old and nobody ever had any issues. And that's because getting
-that IRQ on that platform will simply never fail.
+A few weeks later =E2=80=A6
 
-Also, I really doubt anybody is going to copy paste from the nuc900-ac97
-driver so I'm really wondering whether it is worth fixing this non-issue.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> As I said in one of the other patches, I always reply to all
+> patches I am rejecting so that anyone coming across them later
+> on their own from an archive or similar can immediately see the
+> reasons why they are a bad idea without having to know the mailing
+> list context.
+
+Can you get into the mood to clarify any remaining change possibilities
+a bit more?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
