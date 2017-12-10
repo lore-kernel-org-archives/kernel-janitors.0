@@ -1,26 +1,42 @@
-From: "Sra. Angel Rania" <sra.angelrania83@gmail.com>
-Date: Wed, 27 Dec 2017 10:17:06 +0000
-Subject: Re: You will definetely be interested...
-Message-Id: <CAKx+QTtL6hVN3Sv0baZHHBnMxgEeMprK=PALd6GuhxU+MNPauw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 16:25:59 +0000
+Subject: [PATCH] tty: cyclades: Delete an error message for a failed memory allocation in cy_init_card()
+Message-Id: <e4745dae-bcfc-6ddc-e601-2b21ace53834@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hi Dear,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 17:21:28 +0100
 
-Reading your profile has given me courage in search of a reasponsable
-and trust worthy Fellow. The past has treated me so awfully but now I
-am ready to move on despite of my health condition. I will like to
-have a sincere and important discussion with you that will be in your
-favor likewise to you and your environment especially to your close
-family. Endeavor to reply me and I have attached my picture in case
-you long to know who emailed you. I will be waiting to hear from you
-as soon as possble.
-Thanks for paying attention to my mail and will appreciate so much if
-I receive a reply from you for understable details.
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-Mrs. Rania Hassan
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/cyclades.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/tty/cyclades.c b/drivers/tty/cyclades.c
+index 5d442469c95e..a0dbce2cf2d9 100644
+--- a/drivers/tty/cyclades.c
++++ b/drivers/tty/cyclades.c
+@@ -3061,10 +3061,8 @@ static int cy_init_card(struct cyclades_card *cinfo)
+ 
+ 	cinfo->ports = kcalloc(cinfo->nports, sizeof(*cinfo->ports),
+ 			GFP_KERNEL);
+-	if (cinfo->ports = NULL) {
+-		printk(KERN_ERR "Cyclades: cannot allocate ports\n");
++	if (!cinfo->ports)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (channel = 0, port = cinfo->first_line; channel < cinfo->nports;
+ 			channel++, port++) {
+-- 
+2.15.1
+
