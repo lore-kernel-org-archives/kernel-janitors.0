@@ -1,43 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Dec 2017 19:12:21 +0000
-Subject: [PATCH 2/3] serial: ifx6x60: Improve a size determination in ifx_spi_spi_probe()
-Message-Id: <2134a9fd-73d9-686f-cc41-0d143a62cbbe@users.sourceforge.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 11 Dec 2017 11:46:36 +0000
+Subject: Re: [PATCH] chcr: remove unused variables net_device, pi, adap and cntrl
+Message-Id: <20171211114636.GJ12014@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
-In-Reply-To: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
+References: <20171130141144.20845-1-colin.king@canonical.com>
+In-Reply-To: <20171130141144.20845-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Harsh Jain <harsh@chelsio.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Dec 2017 19:22:50 +0100
+On Thu, Nov 30, 2017 at 02:11:44PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variables adap, pi and cntrl are assigned but are never read, hence
+> they are redundant and can be removed.
+> 
+> Cleans up various clang build warnings.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/ifx6x60.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/ifx6x60.c b/drivers/tty/serial/ifx6x60.c
-index 832751479f41..1883e3382338 100644
---- a/drivers/tty/serial/ifx6x60.c
-+++ b/drivers/tty/serial/ifx6x60.c
-@@ -1005,7 +1005,7 @@ static int ifx_spi_spi_probe(struct spi_device *spi)
- 	}
- 
- 	/* initialize structure to hold our device variables */
--	ifx_dev = kzalloc(sizeof(struct ifx_spi_device), GFP_KERNEL);
-+	ifx_dev = kzalloc(sizeof(*ifx_dev), GFP_KERNEL);
- 	if (!ifx_dev)
- 		return -ENOMEM;
- 
+Patch applied.  Thanks.
 -- 
-2.15.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
