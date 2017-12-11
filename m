@@ -1,43 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 16:27:21 +0000
-Subject: [PATCH 2/3] parport: ax88796: Improve a size determination in parport_ax88796_probe()
-Message-Id: <3f682a30-3584-067b-3e61-ff510ba9c85e@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Dec 2017 16:45:36 +0000
+Subject: [PATCH][usb-next] usb: xhci: make function xhci_dbc_free_req static
+Message-Id: <20171211164536.31425-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <68c7b9ec-1d02-3981-8323-f72d1e7fa146@users.sourceforge.net>
-In-Reply-To: <68c7b9ec-1d02-3981-8323-f72d1e7fa146@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 17:03:30 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Function xhci_dbc_free_req is local to the source and does not need to
+be in global scope, so make it static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warning:
+symbol 'xhci_dbc_free_req' was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/parport/parport_ax88796.c | 2 +-
+ drivers/usb/host/xhci-dbgtty.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/parport/parport_ax88796.c b/drivers/parport/parport_ax88796.c
-index ef0aec4b55f3..09788d8cf467 100644
---- a/drivers/parport/parport_ax88796.c
-+++ b/drivers/parport/parport_ax88796.c
-@@ -280,7 +280,7 @@ static int parport_ax88796_probe(struct platform_device *pdev)
- 	int irq;
- 	int ret;
+diff --git a/drivers/usb/host/xhci-dbgtty.c b/drivers/usb/host/xhci-dbgtty.c
+index 48811d72a94c..8d47b6fbf973 100644
+--- a/drivers/usb/host/xhci-dbgtty.c
++++ b/drivers/usb/host/xhci-dbgtty.c
+@@ -122,7 +122,7 @@ static void dbc_write_complete(struct xhci_hcd *xhci, struct dbc_request *req)
+ 	spin_unlock(&port->port_lock);
+ }
  
--	dd = kzalloc(sizeof(struct ax_drvdata), GFP_KERNEL);
-+	dd = kzalloc(sizeof(*dd), GFP_KERNEL);
- 	if (!dd)
- 		return -ENOMEM;
- 
+-void xhci_dbc_free_req(struct dbc_ep *dep, struct dbc_request *req)
++static void xhci_dbc_free_req(struct dbc_ep *dep, struct dbc_request *req)
+ {
+ 	kfree(req->buf);
+ 	dbc_free_request(dep, req);
 -- 
-2.15.1
+2.14.1
 
