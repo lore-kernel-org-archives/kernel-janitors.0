@@ -1,28 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 20 Dec 2017 12:20:52 +0000
-Subject: Re: [PATCH] pinctrl: mvebu: Delete an error message for a failed memory allocation in mvebu_pinctrl_
-Message-Id: <CACRpkdZ7bN-1nGLSkRTr_ehZJ1YykGN7EYEZErVkf1r3eXtdQQ@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Dec 2017 21:10:09 +0000
+Subject: [PATCH v2] mm: Release a semaphore in 'get_vaddr_frames()'
+Message-Id: <20171211211009.4971-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ba1158ce-87be-6033-72b6-b08d7babc443@users.sourceforge.net>
-In-Reply-To: <ba1158ce-87be-6033-72b6-b08d7babc443@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: dan.j.williams@intel.com, akpm@linux-foundation.org, borntraeger@de.ibm.com, mhocko@suse.com, dsterba@suse.com, gregkh@linuxfoundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Dec 19, 2017 at 10:37 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+A semaphore is acquired before this check, so we must release it before
+leaving.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 19 Dec 2017 22:30:36 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: b7f0554a56f2 ("mm: fail get_vaddr_frames() for filesystem-dax mappings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+-- Untested --
 
-Patch applied.
+v1 -> v2: 'goto out' instead of duplicating code
+---
+ mm/frame_vector.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+index 297c7238f7d4..c64dca6e27c2 100644
+--- a/mm/frame_vector.c
++++ b/mm/frame_vector.c
+@@ -62,8 +62,10 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 	 * get_user_pages_longterm() and disallow it for filesystem-dax
+ 	 * mappings.
+ 	 */
+-	if (vma_is_fsdax(vma))
+-		return -EOPNOTSUPP;
++	if (vma_is_fsdax(vma)) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
+ 
+ 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
+ 		vec->got_ref = true;
+-- 
+2.14.1
+
