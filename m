@@ -1,38 +1,79 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 31 Dec 2017 21:11:33 +0000
-Subject: [PATCH] smsc95xx: Delete an error message for a failed memory allocation in smsc95xx_suspend()
-Message-Id: <21618f18-65a0-3b07-dd37-7c1a29320820@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 11 Dec 2017 12:14:27 +0000
+Subject: Applied "ASoC: nuc900: Fix platform_get_irq() error checking some more" to the asoc tree
+Message-Id: <E1eOMyZ-0004f5-IZ@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
+In-Reply-To: <20171209115203.pdtdfnmzwz6zpjqs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, netdev@vger.kernel.org, UNGLinuxDriver@microchip.com, Steve Glendinning <steve.glendinning@shawell.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, alsa-devel@alsa-project.orgMarkBrownbroonie@kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>alsa-devel@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 31 Dec 2017 22:06:49 +0100
+The patch
 
-Omit an extra message for a memory allocation failure in this function.
+   ASoC: nuc900: Fix platform_get_irq() error checking some more
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From cd430a244cd5d3ca0f4053718eabdf42bc12c517 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 9 Dec 2017 14:52:03 +0300
+Subject: [PATCH] ASoC: nuc900: Fix platform_get_irq() error checking some more
+
+The error handling doesn't work here because "nuc900_audio->irq_num" is
+unsigned.  Also we should be checking for < 0 and not <= 0 but I believe
+that's harmless.  The platform_get_irq() comments don't talk about the
+return values...
+
+Fixes: fa8cc38165c2 ("ASoC: nuc900: Fix platform_get_irq's error checking")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/usb/smsc95xx.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/nuc900/nuc900-ac97.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 309b88acd3d0..5e6ea46358c8 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1671,7 +1671,6 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
- 		int i, filter = 0;
+diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
+index 5e4fbd2d3479..71fce7c85c93 100644
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -345,11 +345,10 @@ static int nuc900_ac97_drvprobe(struct platform_device *pdev)
+ 		goto out;
+ 	}
  
- 		if (!filter_mask) {
--			netdev_warn(dev->net, "Unable to allocate filter_mask\n");
- 			ret = -ENOMEM;
- 			goto done;
- 		}
+-	nuc900_audio->irq_num = platform_get_irq(pdev, 0);
+-	if (nuc900_audio->irq_num <= 0) {
+-		ret = nuc900_audio->irq_num < 0 ? nuc900_audio->irq_num : -EBUSY;
++	ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
+ 		goto out;
+-	}
++	nuc900_audio->irq_num = ret;
+ 
+ 	nuc900_ac97_data = nuc900_audio;
+ 
 -- 
 2.15.1
 
