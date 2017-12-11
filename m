@@ -1,71 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 21:52:12 +0000
-Subject: [PATCH 2/3] serial: ioc4: Improve four size determinations
-Message-Id: <daff34f5-741d-d54c-81ce-aebd962d25c9@users.sourceforge.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 11 Dec 2017 11:46:14 +0000
+Subject: Re: [PATCH] crypto: chelsio: make arrays sgl_ent_len and dsgl_ent_len static
+Message-Id: <20171211114614.GH12014@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
-In-Reply-To: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
+References: <20171130113208.3381-1-colin.king@canonical.com>
+In-Reply-To: <20171130113208.3381-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Harsh Jain <harsh@chelsio.com>, "avid S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 22:22:25 +0100
+On Thu, Nov 30, 2017 at 11:32:08AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The arrays sgl_ent_len and dsgl_ent_len are local to the source and do
+> not need to be in global scope, so make them static. Also re-format the
+> declarations to match the following round_constant array declaration
+> style.
+> 
+> Cleans up sparse warnings:
+> drivers/crypto/chelsio/chcr_algo.c:76:14: warning: symbol 'sgl_ent_len'
+> was not declared. Should it be static?
+> drivers/crypto/chelsio/chcr_algo.c:81:14: warning: symbol 'dsgl_ent_len'
+> was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/ioc4_serial.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/tty/serial/ioc4_serial.c b/drivers/tty/serial/ioc4_serial.c
-index 9524a6d3e1d8..6981ad2ca1b7 100644
---- a/drivers/tty/serial/ioc4_serial.c
-+++ b/drivers/tty/serial/ioc4_serial.c
-@@ -1075,7 +1075,7 @@ static inline int ioc4_attach_local(struct ioc4_driver_data *idd)
- 	/* Create port structures for each port */
- 	for (port_number = 0; port_number < IOC4_NUM_SERIAL_PORTS;
- 							port_number++) {
--		port = kzalloc(sizeof(struct ioc4_port), GFP_KERNEL);
-+		port = kzalloc(sizeof(*port), GFP_KERNEL);
- 		if (!port)
- 			goto free;
- 
-@@ -2797,7 +2797,7 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
- 		ret = -ENODEV;
- 		goto out1;
- 	}
--	serial = ioremap(tmp_addr1, sizeof(struct ioc4_serial));
-+	serial = ioremap(tmp_addr1, sizeof(*serial));
- 	if (!serial) {
- 		printk(KERN_WARNING
- 			 "ioc4 (%p) : unable to remap ioc4 serial register\n",
-@@ -2810,8 +2810,7 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
- 				(void *)serial));
- 
- 	/* Get memory for the new card */
--	control = kzalloc(sizeof(struct ioc4_control), GFP_KERNEL);
--
-+	control = kzalloc(sizeof(*control), GFP_KERNEL);
- 	if (!control) {
- 		ret = -ENOMEM;
- 		goto out2;
-@@ -2819,7 +2818,7 @@ ioc4_serial_attach_one(struct ioc4_driver_data *idd)
- 	idd->idd_serial_data = control;
- 
- 	/* Allocate the soft structure */
--	soft = kzalloc(sizeof(struct ioc4_soft), GFP_KERNEL);
-+	soft = kzalloc(sizeof(*soft), GFP_KERNEL);
- 	if (!soft) {
- 		ret = -ENOMEM;
- 		goto out3;
+Patch applied.  Thanks.
 -- 
-2.15.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
