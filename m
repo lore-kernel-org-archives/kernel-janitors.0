@@ -1,50 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 14:51:34 +0000
-Subject: [PATCH 01/12] dac960: drop unneeded newline
-Message-Id: <1514386305-7402-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 11 Dec 2017 10:43:24 +0000
+Subject: [PATCH 2/6] target: tcm_loop: Improve a size determination in two functions
+Message-Id: <c159ede6-193a-cb5a-8e63-b53cdf54db19@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
+In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-DAC960_Failure prints a newline at the end of the message string, so
-the message string does not need to include a newline explicitly.
-Done using Coccinelle.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 10 Dec 2017 21:23:43 +0100
 
-In the first case, the preceding spaces were also converted to a tab.
-In the second case, doing so would upset the indentation, so it was
-left as is.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/DAC960.c |    4 ++--
+ drivers/target/loopback/tcm_loop.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
-index 442e777..89cd83a 100644
---- a/drivers/block/DAC960.c
-+++ b/drivers/block/DAC960.c
-@@ -1344,7 +1344,7 @@ static bool DAC960_V1_EnableMemoryMailboxInterface(DAC960_Controller_T
- 	CommandMailbox.TypeX.CommandOpcode2 = 0x10;
- 	break;
-       default:
--        DAC960_Failure(Controller, "Unknown Controller Type\n");
-+	DAC960_Failure(Controller, "Unknown Controller Type");
- 	break;
-       }
-   return false;
-@@ -1527,7 +1527,7 @@ static bool DAC960_V2_EnableMemoryMailboxInterface(DAC960_Controller_T
-       DAC960_LP_AcknowledgeHardwareMailboxStatus(ControllerBaseAddress);
-       break;
-     default:
--      DAC960_Failure(Controller, "Unknown Controller Type\n");
-+      DAC960_Failure(Controller, "Unknown Controller Type");
-       CommandStatus = DAC960_V2_AbormalCompletion;
-       break;
-     }
+diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+index 6bd58a064924..60e4185e7508 100644
+--- a/drivers/target/loopback/tcm_loop.c
++++ b/drivers/target/loopback/tcm_loop.c
+@@ -769,7 +769,7 @@ static int tcm_loop_make_nexus(
+ 		return -EEXIST;
+ 	}
+ 
+-	tl_nexus = kzalloc(sizeof(struct tcm_loop_nexus), GFP_KERNEL);
++	tl_nexus = kzalloc(sizeof(*tl_nexus), GFP_KERNEL);
+ 	if (!tl_nexus)
+ 		return -ENOMEM;
+ 
+@@ -1076,7 +1076,7 @@ static struct se_wwn *tcm_loop_make_scsi_hba(
+ 	char *ptr;
+ 	int ret, off = 0;
+ 
+-	tl_hba = kzalloc(sizeof(struct tcm_loop_hba), GFP_KERNEL);
++	tl_hba = kzalloc(sizeof(*tl_hba), GFP_KERNEL);
+ 	if (!tl_hba)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.15.1
 
