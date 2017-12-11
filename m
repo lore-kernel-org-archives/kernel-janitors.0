@@ -1,42 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Dec 2017 20:42:53 +0000
-Subject: [PATCH] bq24190-charger: Delete an error message for a failed memory allocation in bq24190_probe()
-Message-Id: <acf2dc0e-4d62-3eb2-1872-96946c06b842@users.sourceforge.net>
+Date: Mon, 11 Dec 2017 08:15:36 +0000
+Subject: Re: TC: Delete an error message for a failed memory allocation in tc_bus_add_devices()
+Message-Id: <60e20b6d-e130-9c18-d5d4-b75349f0d7be@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <bfb63956-346c-aa17-5b06-fbe19ff0a5e3@users.sourceforge.net>
+ <alpine.LFD.2.21.1712102140570.4266@eddie.linux-mips.org>
+In-Reply-To: <alpine.LFD.2.21.1712102140570.4266@eddie.linux-mips.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "Maciej W. Rozycki" <macro@linux-mips.org>, linux-mips@linux-mips.org
+Cc: =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Dec 2017 21:38:55 +0100
+>> Omit an extra message for a memory allocation failure in this function.
+>>
+>> This issue was detected by using the Coccinelle software.
+> 
+>  And the problem here is?
 
-Omit an extra message for a memory allocation failure in this function.
+I suggest to reconsider the relevance of another error message.
+Would you like to achieve a better explanation for this use case?
 
-This issue was detected by using the Coccinelle software.
+* Do you find the wording “WARNING: Possible unnecessary 'out of memory' message”
+  from the script “checkpatch.pl” more appropriate?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/power/supply/bq24190_charger.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+* Can a default Linux allocation failure report be sufficient?
 
-diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
-index 35ff406aca48..eda6f996b67a 100644
---- a/drivers/power/supply/bq24190_charger.c
-+++ b/drivers/power/supply/bq24190_charger.c
-@@ -1775,10 +1775,8 @@ static int bq24190_probe(struct i2c_client *client,
- 	}
- 
- 	bdi = devm_kzalloc(dev, sizeof(*bdi), GFP_KERNEL);
--	if (!bdi) {
--		dev_err(dev, "Can't alloc bdi struct\n");
-+	if (!bdi)
- 		return -ENOMEM;
--	}
- 
- 	bdi->client = client;
- 	bdi->dev = dev;
--- 
-2.15.1
-
+Regards,
+Markus
