@@ -1,40 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 10 Dec 2017 23:32:55 +0000
-Subject: [PATCH][netfilter-next] netfilter: conntrack: make struct nf_conntrack_l4proto_gre4 static
-Message-Id: <20171210233255.15009-1-colin.king@canonical.com>
+From: Florian Westphal <fw@strlen.de>
+Date: Mon, 11 Dec 2017 09:18:05 +0000
+Subject: Re: [PATCH][netfilter-next] netfilter: conntrack: make struct nf_conntrack_l4proto_gre4 static
+Message-Id: <20171211091805.GK24449@breakpoint.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171210233255.15009-1-colin.king@canonical.com>
+In-Reply-To: <20171210233255.15009-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The structure nf_conntrack_l4proto_gre4  is local to the source and does
+> not need to be in global scope, so make it static.
 
-The structure nf_conntrack_l4proto_gre4  is local to the source and does
-not need to be in global scope, so make it static.
+This bug was added in
+commit b9679a9fd3a7d36ea3deb2864a00cc413c5aae28
+netfilter: conntrack: l4 protocol trackers can be const
 
-Cleans up sparse warning:
-symbol 'nf_conntrack_l4proto_gre4' was not declared. Should it be static?
+> -struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 = {
+> +static struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 = {
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/netfilter/nf_conntrack_proto_gre.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netfilter/nf_conntrack_proto_gre.c b/net/netfilter/nf_conntrack_proto_gre.c
-index 6d8d1276cf3a..86c346ea1dd5 100644
---- a/net/netfilter/nf_conntrack_proto_gre.c
-+++ b/net/netfilter/nf_conntrack_proto_gre.c
-@@ -352,7 +352,7 @@ static int gre_init_net(struct net *net, u_int16_t proto)
- }
- 
- /* protocol helper struct */
--struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 = {
-+static struct nf_conntrack_l4proto nf_conntrack_l4proto_gre4 = {
- 	.l3proto	 = AF_INET,
- 	.l4proto	 = IPPROTO_GRE,
- 	.pkt_to_tuple	 = gre_pkt_to_tuple,
--- 
-2.14.1
-
+This should be 'static const'.
