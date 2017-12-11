@@ -1,30 +1,45 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 13 Dec 2017 18:20:26 +0000
-Subject: Re: RDMA/cxgb4: Add a sanity check in process_work()
-Message-Id: <20171213182026.GE5984@ziepe.ca>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 11 Dec 2017 10:45:22 +0000
+Subject: [PATCH 4/6] target: tcm_loop: Delete two unnecessary variable initialisations in tcm_loop_issue_tmr(
+Message-Id: <ccfd3979-8405-7c78-7b67-20f5f54b1f24@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171205143654.n5ybdhj3ga2tp7t4@mwanda>
-In-Reply-To: <20171205143654.n5ybdhj3ga2tp7t4@mwanda>
+References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
+In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 05, 2017 at 05:36:54PM +0300, Dan Carpenter wrote:
-> The story is that Smatch marks skb->data as untrusted so it generates
-> a warning message here:
-> 
->     drivers/infiniband/hw/cxgb4/cm.c:4100 process_work()
->     error: buffer overflow 'work_handlers' 241 <= 255
-> 
-> In other places which handle this such as t4_uld_rx_handler() there is
-> some checking to make sure that the function pointer is not NULL.  I
-> have added bounds checking and a check for NULL here as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Steve Wise <swise@opengridcomputing.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 11 Dec 2017 10:56:42 +0100
 
-Thanks, applied to -next
+The variables "se_cmd" and "tl_cmd" will eventually be set to appropriate
+pointers a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Jason
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/target/loopback/tcm_loop.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+index d91109c1c4ae..08dbf5b4ff15 100644
+--- a/drivers/target/loopback/tcm_loop.c
++++ b/drivers/target/loopback/tcm_loop.c
+@@ -203,10 +203,10 @@ static int tcm_loop_queuecommand(struct Scsi_Host *sh, struct scsi_cmnd *sc)
+ static int tcm_loop_issue_tmr(struct tcm_loop_tpg *tl_tpg,
+ 			      u64 lun, int task, enum tcm_tmreq_table tmr)
+ {
+-	struct se_cmd *se_cmd = NULL;
++	struct se_cmd *se_cmd;
+ 	struct se_session *se_sess;
+ 	struct tcm_loop_nexus *tl_nexus;
+-	struct tcm_loop_cmd *tl_cmd = NULL;
++	struct tcm_loop_cmd *tl_cmd;
+ 	int ret = TMR_FUNCTION_FAILED, rc;
+ 
+ 	/*
+-- 
+2.15.1
+
