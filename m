@@ -1,125 +1,77 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 17:36:08 +0000
-Subject: [PATCH 3/3] soc/fsl/qe: Use common error handling code in ucc_fast_init()
-Message-Id: <9668351a-8189-037f-5912-5663ac8706b1@users.sourceforge.net>
+Date: Mon, 11 Dec 2017 10:42:12 +0000
+Subject: [PATCH 1/6] target: tcm_loop: Delete an error message for a failed memory allocation in four functio
+Message-Id: <a4645e99-0518-8b1b-2b1a-748087a7ac23@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
-In-Reply-To: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
+References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
+In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 18:18:56 +0100
+Date: Sun, 10 Dec 2017 21:18:15 +0100
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function.
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/soc/fsl/qe/ucc_fast.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/target/loopback/tcm_loop.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/ucc_fast.c b/drivers/soc/fsl/qe/ucc_fast.c
-index 2092bfdcf1bc..268dfc5dc89b 100644
---- a/drivers/soc/fsl/qe/ucc_fast.c
-+++ b/drivers/soc/fsl/qe/ucc_fast.c
-@@ -269,8 +269,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 		printk(KERN_ERR "%s: cannot allocate MURAM for TX FIFO\n",
- 			__func__);
- 		uccf->ucc_fast_tx_virtual_fifo_base_offset = 0;
--		ucc_fast_free(uccf);
--		return -ENOMEM;
-+		goto free_nomem;
+diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+index b6a913e38b30..6bd58a064924 100644
+--- a/drivers/target/loopback/tcm_loop.c
++++ b/drivers/target/loopback/tcm_loop.c
+@@ -184,7 +184,6 @@ static int tcm_loop_queuecommand(struct Scsi_Host *sh, struct scsi_cmnd *sc)
+ 
+ 	tl_cmd = kmem_cache_zalloc(tcm_loop_cmd_cache, GFP_ATOMIC);
+ 	if (!tl_cmd) {
+-		pr_err("Unable to allocate struct tcm_loop_cmd\n");
+ 		set_host_byte(sc, DID_ERROR);
+ 		sc->scsi_done(sc);
+ 		return 0;
+@@ -221,10 +220,8 @@ static int tcm_loop_issue_tmr(struct tcm_loop_tpg *tl_tpg,
  	}
  
- 	/* Allocate memory for Rx Virtual Fifo */
-@@ -282,8 +281,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 		printk(KERN_ERR "%s: cannot allocate MURAM for RX FIFO\n",
- 			__func__);
- 		uccf->ucc_fast_rx_virtual_fifo_base_offset = 0;
--		ucc_fast_free(uccf);
--		return -ENOMEM;
-+		goto free_nomem;
+ 	tl_cmd = kmem_cache_zalloc(tcm_loop_cmd_cache, GFP_KERNEL);
+-	if (!tl_cmd) {
+-		pr_err("Unable to allocate memory for tl_cmd\n");
++	if (!tl_cmd)
+ 		return ret;
+-	}
+ 
+ 	init_completion(&tl_cmd->tmr_done);
+ 
+@@ -773,10 +770,8 @@ static int tcm_loop_make_nexus(
  	}
  
- 	/* Set Virtual Fifo registers */
-@@ -312,8 +310,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 					COMM_DIR_RX)) {
- 			printk(KERN_ERR "%s: illegal value for RX clock\n",
- 			       __func__);
--			ucc_fast_free(uccf);
--			return -EINVAL;
-+			goto free_inval;
- 		}
- 		/* Tx clock routing */
- 		if ((uf_info->tx_clock != QE_CLK_NONE) &&
-@@ -321,8 +318,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 					COMM_DIR_TX)) {
- 			printk(KERN_ERR "%s: illegal value for TX clock\n",
- 			       __func__);
--			ucc_fast_free(uccf);
--			return -EINVAL;
-+			goto free_inval;
- 		}
- 	} else {
- 		/* tdm Rx clock routing */
-@@ -330,8 +326,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 		    ucc_set_tdm_rxtx_clk(uf_info->tdm_num, uf_info->rx_clock,
- 					 COMM_DIR_RX)) {
- 			pr_err("%s: illegal value for RX clock", __func__);
--			ucc_fast_free(uccf);
--			return -EINVAL;
-+			goto free_inval;
- 		}
+ 	tl_nexus = kzalloc(sizeof(struct tcm_loop_nexus), GFP_KERNEL);
+-	if (!tl_nexus) {
+-		pr_err("Unable to allocate struct tcm_loop_nexus\n");
++	if (!tl_nexus)
+ 		return -ENOMEM;
+-	}
  
- 		/* tdm Tx clock routing */
-@@ -339,8 +334,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 		    ucc_set_tdm_rxtx_clk(uf_info->tdm_num, uf_info->tx_clock,
- 					 COMM_DIR_TX)) {
- 			pr_err("%s: illegal value for TX clock", __func__);
--			ucc_fast_free(uccf);
--			return -EINVAL;
-+			goto free_inval;
- 		}
+ 	tl_nexus->se_sess = target_alloc_session(&tl_tpg->tl_se_tpg, 0, 0,
+ 					TARGET_PROT_DIN_PASS | TARGET_PROT_DOUT_PASS,
+@@ -1082,10 +1077,9 @@ static struct se_wwn *tcm_loop_make_scsi_hba(
+ 	int ret, off = 0;
  
- 		/* tdm Rx sync clock routing */
-@@ -348,8 +342,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 		    ucc_set_tdm_rxtx_sync(uf_info->tdm_num, uf_info->rx_sync,
- 					  COMM_DIR_RX)) {
- 			pr_err("%s: illegal value for RX clock", __func__);
--			ucc_fast_free(uccf);
--			return -EINVAL;
-+			goto free_inval;
- 		}
- 
- 		/* tdm Tx sync clock routing */
-@@ -357,8 +350,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 		    ucc_set_tdm_rxtx_sync(uf_info->tdm_num, uf_info->tx_sync,
- 					  COMM_DIR_TX)) {
- 			pr_err("%s: illegal value for TX clock", __func__);
--			ucc_fast_free(uccf);
--			return -EINVAL;
-+			goto free_inval;
- 		}
- 	}
- 
-@@ -374,6 +366,14 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 
- 	*uccf_ret = uccf;
- 	return 0;
+ 	tl_hba = kzalloc(sizeof(struct tcm_loop_hba), GFP_KERNEL);
+-	if (!tl_hba) {
+-		pr_err("Unable to allocate struct tcm_loop_hba\n");
++	if (!tl_hba)
+ 		return ERR_PTR(-ENOMEM);
+-	}
 +
-+free_nomem:
-+	ucc_fast_free(uccf);
-+	return -ENOMEM;
-+
-+free_inval:
-+	ucc_fast_free(uccf);
-+	return -EINVAL;
- }
- EXPORT_SYMBOL(ucc_fast_init);
- 
+ 	/*
+ 	 * Determine the emulated Protocol Identifier and Target Port Name
+ 	 * based on the incoming configfs directory name.
 -- 
 2.15.1
 
