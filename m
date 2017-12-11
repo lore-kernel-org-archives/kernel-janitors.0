@@ -1,44 +1,80 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 19:57:15 +0000
-Subject: [PATCH] wireless: airo: Delete an error message for a failed memory allocation in airo_networks_allo
-Message-Id: <33444ac1-9a8b-bd7d-fd22-f299add190df@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 11 Dec 2017 12:13:47 +0000
+Subject: Applied "ASoC: Intel: Skylake: Re-order some code to silence a warning" to the asoc tree
+Message-Id: <E1eOMxv-0004cf-Qa@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171208115425.rqclgmhcph5gn47j@mwanda>
+In-Reply-To: <20171208115425.rqclgmhcph5gn47j@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Ingo Molnar <mingo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, alsa-devel@alsa-project.org, Jani Nikula <jani.nikula@intel.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.orgMarkBrownbroonie@kernel.org, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>alsa-devel@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 20:48:44 +0100
+The patch
 
-Omit an extra message for a memory allocation failure in this function.
+   ASoC: Intel: Skylake: Re-order some code to silence a warning
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 87684d338a22d15e47b16ee68f569d74ad1d076e Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 8 Dec 2017 14:54:25 +0300
+Subject: [PATCH] ASoC: Intel: Skylake: Re-order some code to silence a warning
+
+I get a Smatch warning here:
+
+    sound/soc/intel/skylake/skl-nhlt.c:335 skl_get_ssp_clks()
+    error: testing array offset 'j' after use.
+
+The code is harmless, but the checker is right that we should swap these
+two conditions so we verify that the offset is within bounds before we
+use it.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/wireless/cisco/airo.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ sound/soc/intel/skylake/skl-nhlt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
-index 86e795de6760..a65d82d26eaa 100644
---- a/drivers/net/wireless/cisco/airo.c
-+++ b/drivers/net/wireless/cisco/airo.c
-@@ -2714,12 +2714,7 @@ static int airo_networks_allocate(struct airo_info *ai)
+diff --git a/sound/soc/intel/skylake/skl-nhlt.c b/sound/soc/intel/skylake/skl-nhlt.c
+index ca5dc2be7b68..bde7f40f29f5 100644
+--- a/sound/soc/intel/skylake/skl-nhlt.c
++++ b/sound/soc/intel/skylake/skl-nhlt.c
+@@ -322,8 +322,8 @@ static void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
+ 		rate = channels * bps * fs;
  
- 	ai->networks = kcalloc(AIRO_MAX_NETWORK_COUNT, sizeof(BSSListElement),
- 			       GFP_KERNEL);
--	if (!ai->networks) {
--		airo_print_warn("", "Out of memory allocating beacons");
--		return -ENOMEM;
--	}
--
--	return 0;
-+	return ai->networks ? 0 : -ENOMEM;
- }
- 
- static void airo_networks_free(struct airo_info *ai)
+ 		/* check if the rate is added already to the given SSP's sclk */
+-		for (j = 0; (sclk[id].rate_cfg[j].rate != 0) &&
+-				(j < SKL_MAX_CLK_RATES); j++) {
++		for (j = 0; (j < SKL_MAX_CLK_RATES) &&
++			    (sclk[id].rate_cfg[j].rate != 0); j++) {
+ 			if (sclk[id].rate_cfg[j].rate = rate) {
+ 				present = true;
+ 				break;
 -- 
 2.15.1
 
