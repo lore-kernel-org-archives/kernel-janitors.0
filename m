@@ -1,29 +1,80 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Dec 2017 11:56:39 +0000
-Subject: [PATCH] staging: ccree: cleanup a small white space issue
-Message-Id: <20171208115639.6gagcps2nazzkxaq@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 11 Dec 2017 12:14:04 +0000
+Subject: Applied "ASoC: nuc900: Fix a loop timeout test" to the asoc tree
+Message-Id: <E1eOMyC-0004dm-GN@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170717081605.a6merkvdy4ngdiqj@mwanda>
+In-Reply-To: <20170717081605.a6merkvdy4ngdiqj@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Wan ZongShun <mcuos.com@gmail.com>, alsa-devel@alsa-project.orgMarkBrownbroonie@kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>alsa-devel@alsa-project.org
 
-The call to set_flow_mode() was supposed to be on the next line.
+The patch
 
+   ASoC: nuc900: Fix a loop timeout test
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 65a12b3aafed5fc59f4ce41b22b752b1729e6701 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 9 Dec 2017 14:52:28 +0300
+Subject: [PATCH] ASoC: nuc900: Fix a loop timeout test
+
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout = -1.
+
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/nuc900/nuc900-ac97.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/ccree/ssi_aead.c b/drivers/staging/ccree/ssi_aead.c
-index 5548c7b24fc9..24e56d69039e 100644
---- a/drivers/staging/ccree/ssi_aead.c
-+++ b/drivers/staging/ccree/ssi_aead.c
-@@ -747,8 +747,8 @@ static void cc_set_assoc_desc(struct aead_request *areq, unsigned int flow_mode,
- 		dev_dbg(dev, "ASSOC buffer type DLLI\n");
- 		hw_desc_init(&desc[idx]);
- 		set_din_type(&desc[idx], DMA_DLLI, sg_dma_address(areq->src),
--			     areq->assoclen, NS_BIT); set_flow_mode(&desc[idx],
--			     flow_mode);
-+			     areq->assoclen, NS_BIT);
-+		set_flow_mode(&desc[idx], flow_mode);
- 		if (ctx->auth_mode = DRV_HASH_XCBC_MAC &&
- 		    areq_ctx->cryptlen > 0)
- 			set_din_not_last_indication(&desc[idx]);
+diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
+index 71fce7c85c93..81b09d740ed9 100644
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(struct snd_ac97 *ac97,
+ 
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
+ 
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout)
+-- 
+2.15.1
+
