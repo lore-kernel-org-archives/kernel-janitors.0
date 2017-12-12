@@ -1,53 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 04 Dec 2017 17:21:06 +0000
-Subject: [PATCH][next] drm/i915/gvt: fix off-by-one comparison of ring_id
-Message-Id: <20171204172106.14950-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 21:49:06 +0000
+Subject: [PATCH 6/8] target/iscsi: Delete an unnecessary variable initialisation in iscsi_create_default_para
+Message-Id: <734e9a91-f127-c454-47ca-ba33f153758f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 21:18:39 +0100
 
-The ring_id maximum boundary is being compared using the > operator
-instead of >=, leading to an off-by-one error and an out of bounds
-write into array vgpu->hws_pga[].  Fix this by simply using the
-correct comparison operator. Also re-work another comparison that
-uses the comparison > I915_NUM_ENGINES - 1 to use the >= idiom using
-to keep this consistent in this code.
+The variable "param" will eventually be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Detected by CoverityScan, CID#1462404 ("Out-of-bounds write")
-
-Fixes: a2ae95af9646 ("drm/i915/gvt: update CSB and CSB write pointer in virtual HWSP")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/i915/gvt/handlers.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/gvt/handlers.c b/drivers/gpu/drm/i915/gvt/handlers.c
-index 7354ed816f92..c982867e7c2b 100644
---- a/drivers/gpu/drm/i915/gvt/handlers.c
-+++ b/drivers/gpu/drm/i915/gvt/handlers.c
-@@ -1398,7 +1398,7 @@ static int hws_pga_write(struct intel_vgpu *vgpu, unsigned int offset,
- 	 * update the VM CSB status correctly. Here listed registers can
- 	 * support BDW, SKL or other platforms with same HWSP registers.
- 	 */
--	if (unlikely(ring_id < 0 || ring_id > I915_NUM_ENGINES)) {
-+	if (unlikely(ring_id < 0 || ring_id >= I915_NUM_ENGINES)) {
- 		gvt_vgpu_err("VM(%d) access unknown hardware status page register:0x%x\n",
- 			     vgpu->id, offset);
- 		return -EINVAL;
-@@ -1473,7 +1473,7 @@ static int elsp_mmio_write(struct intel_vgpu *vgpu, unsigned int offset,
- 	u32 data = *(u32 *)p_data;
- 	int ret = 0;
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 25a3a9550488..151269b8816d 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -196,7 +196,7 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
+ /* #warning Add extension keys */
+ int iscsi_create_default_params(struct iscsi_param_list **param_list_ptr)
+ {
+-	struct iscsi_param *param = NULL;
++	struct iscsi_param *param;
+ 	struct iscsi_param_list *pl;
  
--	if (WARN_ON(ring_id < 0 || ring_id > I915_NUM_ENGINES - 1))
-+	if (WARN_ON(ring_id < 0 || ring_id >= I915_NUM_ENGINES))
- 		return -EINVAL;
- 
- 	execlist = &vgpu->submission.execlist[ring_id];
+ 	pl = kzalloc(sizeof(struct iscsi_param_list), GFP_KERNEL);
 -- 
-2.14.1
+2.15.1
 
