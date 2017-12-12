@@ -1,38 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 14:51:45 +0000
-Subject: [PATCH 12/12] hpfs: drop unneeded newline
-Message-Id: <1514386305-7402-13-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 21:46:42 +0000
+Subject: [PATCH 4/8] target/iscsi: Delete an unnecessary variable initialisation in iscsit_allocate_ooo_cmdsn
+Message-Id: <3db75482-2817-46b1-95e5-ace7342e2a90@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-hpfs_error prints a newline at the end of the message string, so the
-message string does not need to include a newline explicitly.  Done
-using Coccinelle.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 21:13:49 +0100
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The local variable "ooo_cmdsn" will be reassigned by a following statement.
+Thus omit the explicit initialisation at the beginning.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/hpfs/dnode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/target/iscsi/iscsi_target_erl1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hpfs/dnode.c b/fs/hpfs/dnode.c
-index a4ad18a..fc1809b 100644
---- a/fs/hpfs/dnode.c
-+++ b/fs/hpfs/dnode.c
-@@ -914,7 +914,8 @@ struct hpfs_dirent *map_dirent(struct inode *inode, dnode_secno dno,
- 	struct hpfs_dirent *de_end;
- 	int c1, c2 = 0;
+diff --git a/drivers/target/iscsi/iscsi_target_erl1.c b/drivers/target/iscsi/iscsi_target_erl1.c
+index ff3e08b6d4e1..c4c550128161 100644
+--- a/drivers/target/iscsi/iscsi_target_erl1.c
++++ b/drivers/target/iscsi/iscsi_target_erl1.c
+@@ -782,7 +782,7 @@ int iscsit_recover_dataout_sequence(
  
--	if (!S_ISDIR(inode->i_mode)) hpfs_error(inode->i_sb, "map_dirent: not a directory\n");
-+	if (!S_ISDIR(inode->i_mode))
-+		hpfs_error(inode->i_sb, "map_dirent: not a directory");
- 	again:
- 	if (hpfs_sb(inode->i_sb)->sb_chk)
- 		if (hpfs_stop_cycles(inode->i_sb, dno, &c1, &c2, "map_dirent")) return NULL;
+ static struct iscsi_ooo_cmdsn *iscsit_allocate_ooo_cmdsn(void)
+ {
+-	struct iscsi_ooo_cmdsn *ooo_cmdsn = NULL;
++	struct iscsi_ooo_cmdsn *ooo_cmdsn;
+ 
+ 	ooo_cmdsn = kmem_cache_zalloc(lio_ooo_cache, GFP_ATOMIC);
+ 	if (!ooo_cmdsn)
+-- 
+2.15.1
 
