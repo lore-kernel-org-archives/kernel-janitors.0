@@ -1,26 +1,26 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 21:06:00 +0000
-Subject: [PATCH 0/2] at76c50x-usb: Adjustments for two function implementations
-Message-Id: <1d76fe59-af15-ba4d-e05d-09dcd9ee38cd@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 12:20:05 +0000
+Subject: [PATCH 0/2] target/iscsi/cxgbit: Adjustments for seven function implementations
+Message-Id: <77d06f1c-a650-644f-7364-55bb52aeb6ac@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Andrew Zaborowski <andrew.zaborowski@intel.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Kalle Valo <kvalo@codeaurora.org>, Kees Cook <keescook@chromium.org>
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Varun Prakash <varun@chelsio.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 22:01:23 +0100
+Date: Tue, 12 Dec 2017 13:12:11 +0100
 
 Two update suggestions were taken into account
 from static source code analysis.
 
 Markus Elfring (2):
-  Delete an error message for a failed memory allocation in at76_submit_rx_urb()
-  Improve size determinations in at76_usbdfu_download()
+  Delete an error message for a failed memory allocation in two functions
+  Combine substrings for 11 messages
 
- drivers/net/wireless/atmel/at76c50x-usb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/target/iscsi/cxgbit/cxgbit_target.c | 58 +++++++++--------------------
+ 1 file changed, 18 insertions(+), 40 deletions(-)
 
 -- 
 2.15.1
