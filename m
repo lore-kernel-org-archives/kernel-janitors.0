@@ -1,27 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 15:30:18 +0000
-Subject: [PATCH 0/2] tty-MOXA: Adjustments for moxa_init_board()
-Message-Id: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 21:50:09 +0000
+Subject: [PATCH 7/8] target/iscsi: Delete an unnecessary variable initialisation in iscsi_set_default_param()
+Message-Id: <b5de8128-f836-a973-1eb2-2cb54c8418b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 16:25:43 +0100
+Date: Tue, 12 Dec 2017 21:21:31 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+The local variable "param" will be reassigned by a following statement.
+Thus omit the explicit initialisation at the beginning.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Return directly after a failed kcalloc()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/tty/moxa.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 151269b8816d..a49b0b2a4f6c 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -127,7 +127,7 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
+ 		char *name, char *value, u8 phase, u8 scope, u8 sender,
+ 		u16 type_range, u8 use)
+ {
+-	struct iscsi_param *param = NULL;
++	struct iscsi_param *param;
+ 
+ 	param = kzalloc(sizeof(struct iscsi_param), GFP_KERNEL);
+ 	if (!param)
 -- 
 2.15.1
 
