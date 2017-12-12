@@ -1,40 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 11 Dec 2017 16:45:36 +0000
-Subject: [PATCH][usb-next] usb: xhci: make function xhci_dbc_free_req static
-Message-Id: <20171211164536.31425-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 12:21:38 +0000
+Subject: [PATCH 1/2] target: cxgbit: Delete an error message for a failed memory allocation in two functions
+Message-Id: <c2568ddf-715e-101b-7dbf-3459179d9e16@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <77d06f1c-a650-644f-7364-55bb52aeb6ac@users.sourceforge.net>
+In-Reply-To: <77d06f1c-a650-644f-7364-55bb52aeb6ac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Varun Prakash <varun@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 11:34:51 +0100
 
-Function xhci_dbc_free_req is local to the source and does not need to
-be in global scope, so make it static.
+Omit an extra message for a memory allocation failure in these functions.
 
-Cleans up sparse warning:
-symbol 'xhci_dbc_free_req' was not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/host/xhci-dbgtty.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/iscsi/cxgbit/cxgbit_target.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-dbgtty.c b/drivers/usb/host/xhci-dbgtty.c
-index 48811d72a94c..8d47b6fbf973 100644
---- a/drivers/usb/host/xhci-dbgtty.c
-+++ b/drivers/usb/host/xhci-dbgtty.c
-@@ -122,7 +122,7 @@ static void dbc_write_complete(struct xhci_hcd *xhci, struct dbc_request *req)
- 	spin_unlock(&port->port_lock);
- }
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_target.c b/drivers/target/iscsi/cxgbit/cxgbit_target.c
+index 514986b57c2d..9163152b6d0b 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_target.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_target.c
+@@ -1126,8 +1126,6 @@ static int cxgbit_handle_nop_out(struct cxgbit_sock *csk, struct iscsi_cmd *cmd)
+ 	if (payload_length && hdr->ttt = cpu_to_be32(0xFFFFFFFF)) {
+ 		ping_data = kzalloc(payload_length + 1, GFP_KERNEL);
+ 		if (!ping_data) {
+-			pr_err("Unable to allocate memory for"
+-				" NOPOUT ping data.\n");
+ 			ret = -1;
+ 			goto out;
+ 		}
+@@ -1188,11 +1186,9 @@ cxgbit_handle_text_cmd(struct cxgbit_sock *csk, struct iscsi_cmd *cmd)
  
--void xhci_dbc_free_req(struct dbc_ep *dep, struct dbc_request *req)
-+static void xhci_dbc_free_req(struct dbc_ep *dep, struct dbc_request *req)
- {
- 	kfree(req->buf);
- 	dbc_free_request(dep, req);
+ 	if (payload_length) {
+ 		text_in = kzalloc(payload_length, GFP_KERNEL);
+-		if (!text_in) {
+-			pr_err("Unable to allocate text_in of payload_length: %u\n",
+-			       payload_length);
++		if (!text_in)
+ 			return -ENOMEM;
+-		}
++
+ 		skb_copy_bits(csk->skb, pdu_cb->doffset,
+ 			      text_in, payload_length);
+ 
 -- 
-2.14.1
+2.15.1
 
