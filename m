@@ -1,28 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Dec 2017 19:10:15 +0000
-Subject: [PATCH 0/3] tty/serial/ifx6x60: Adjustments for five function implementations
-Message-Id: <992f55e5-961d-79ea-a6cd-441ceb3ad058@users.sourceforge.net>
+Date: Tue, 12 Dec 2017 21:47:40 +0000
+Subject: [PATCH 5/8] target/iscsi: Delete an unnecessary variable initialisation in iscsi_copy_param_list()
+Message-Id: <1dc1578d-277b-ec04-6493-f243a3f568ce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Dec 2017 20:03:45 +0100
+Date: Tue, 12 Dec 2017 21:15:55 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
+The variable "param_list" will be reassigned by a following statement.
+Thus omit the explicit initialisation at the beginning.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in ifx_spi_spi_probe()
-  Improve a size determination in ifx_spi_spi_probe()
-  Add some spaces for better code readability
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/tty/serial/ifx6x60.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 06310b2c4e26..25a3a9550488 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -566,7 +566,7 @@ int iscsi_copy_param_list(
+ {
+ 	struct iscsi_param *param = NULL;
+ 	struct iscsi_param *new_param = NULL;
+-	struct iscsi_param_list *param_list = NULL;
++	struct iscsi_param_list *param_list;
+ 
+ 	param_list = kzalloc(sizeof(struct iscsi_param_list), GFP_KERNEL);
+ 	if (!param_list)
 -- 
 2.15.1
 
