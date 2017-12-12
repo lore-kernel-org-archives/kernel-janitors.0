@@ -1,42 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 21:18:14 +0000
-Subject: [PATCH] rt2x00: Delete an error message for a failed memory allocation in rt2x00queue_allocate()
-Message-Id: <cdeaa8a2-06bb-10e9-05d7-f531c00eef5d@users.sourceforge.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 12 Dec 2017 12:44:45 +0000
+Subject: [PATCH 4.14 105/164] irqchip/qcom: Fix u32 comparison with value less than zero
+Message-Id: <20171212123448.806421851@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171212123443.785979602@linuxfoundation.org>
+In-Reply-To: <20171212123443.785979602@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sasha Levin <alexander.levin@verizon.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 22:11:42 +0100
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Omit an extra message for a memory allocation failure in this function.
+------------------
 
-This issue was detected by using the Coccinelle software.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+[ Upstream commit e9990d70e8a063a7b894c5cbb99f630a0f41200d ]
+
+The comparison of u32 nregs being less than zero is never true since
+nregs is unsigned. Fix this by making nregs a signed integer.
+
+Fixes: f20cc9b00c7b ("irqchip/qcom: Add IRQ combiner driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: kernel-janitors@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>
+Link: https://lkml.kernel.org/r/20171117183553.2739-1-colin.king@canonical.com
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ralink/rt2x00/rt2x00queue.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/irqchip/qcom-irq-combiner.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c b/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
-index a2c1ca5c76d1..6598cefdbe71 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
-@@ -1244,10 +1244,8 @@ int rt2x00queue_allocate(struct rt2x00_dev *rt2x00dev)
- 	rt2x00dev->data_queues = 2 + rt2x00dev->ops->tx_queues + req_atim;
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -238,7 +238,7 @@ static int __init combiner_probe(struct
+ {
+ 	struct combiner *combiner;
+ 	size_t alloc_sz;
+-	u32 nregs;
++	int nregs;
+ 	int err;
  
- 	queue = kcalloc(rt2x00dev->data_queues, sizeof(*queue), GFP_KERNEL);
--	if (!queue) {
--		rt2x00_err(rt2x00dev, "Queue allocation failed\n");
-+	if (!queue)
- 		return -ENOMEM;
--	}
- 
- 	/*
- 	 * Initialize pointers
--- 
-2.15.1
+ 	nregs = count_registers(pdev);
+
 
