@@ -1,43 +1,79 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 21:12:39 +0000
-Subject: [PATCH 2/3] tty/serial/ucc_uart: Improve a size determination in ucc_uart_probe()
-Message-Id: <38dd53cc-f7e8-57b9-bd0f-0946c787ac2e@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 17:33:34 +0000
+Subject: [PATCH 1/3] soc/fsl/qe: Delete an error message for a failed memory allocation in three functions
+Message-Id: <c979f5f0-dc1d-1e10-644a-d32e65fadf82@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
-In-Reply-To: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
+References: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
+In-Reply-To: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@tabi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 21:45:32 +0100
+Date: Wed, 13 Dec 2017 17:45:23 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/ucc_uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/fsl/qe/gpio.c     | 4 +---
+ drivers/soc/fsl/qe/ucc_fast.c | 5 +----
+ drivers/soc/fsl/qe/ucc_slow.c | 5 +----
+ 3 files changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
-index 48364f0eba72..a9ce652899aa 100644
---- a/drivers/tty/serial/ucc_uart.c
-+++ b/drivers/tty/serial/ucc_uart.c
-@@ -1253,7 +1253,7 @@ static int ucc_uart_probe(struct platform_device *ofdev)
- 		}
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 3b27075c21a7..9239cf176e67 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -143,10 +143,8 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
+ 	unsigned long flags;
+ 
+ 	qe_pin = kzalloc(sizeof(*qe_pin), GFP_KERNEL);
+-	if (!qe_pin) {
+-		pr_debug("%s: can't allocate memory\n", __func__);
++	if (!qe_pin)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	err = of_get_gpio(np, index);
+ 	if (err < 0)
+diff --git a/drivers/soc/fsl/qe/ucc_fast.c b/drivers/soc/fsl/qe/ucc_fast.c
+index 83d8d16e3a69..59b68bf4aebb 100644
+--- a/drivers/soc/fsl/qe/ucc_fast.c
++++ b/drivers/soc/fsl/qe/ucc_fast.c
+@@ -195,11 +195,8 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
  	}
  
--	qe_port = kzalloc(sizeof(struct uart_qe_port), GFP_KERNEL);
-+	qe_port = kzalloc(sizeof(*qe_port), GFP_KERNEL);
- 	if (!qe_port)
+ 	uccf = kzalloc(sizeof(struct ucc_fast_private), GFP_KERNEL);
+-	if (!uccf) {
+-		printk(KERN_ERR "%s: Cannot allocate private data\n",
+-			__func__);
++	if (!uccf)
  		return -ENOMEM;
+-	}
  
+ 	/* Fill fast UCC structure */
+ 	uccf->uf_info = uf_info;
+diff --git a/drivers/soc/fsl/qe/ucc_slow.c b/drivers/soc/fsl/qe/ucc_slow.c
+index 9334bdbd9b30..fc91412e2300 100644
+--- a/drivers/soc/fsl/qe/ucc_slow.c
++++ b/drivers/soc/fsl/qe/ucc_slow.c
+@@ -153,11 +153,8 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
+ 	}
+ 
+ 	uccs = kzalloc(sizeof(struct ucc_slow_private), GFP_KERNEL);
+-	if (!uccs) {
+-		printk(KERN_ERR "%s: Cannot allocate private data\n",
+-			__func__);
++	if (!uccs)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* Fill slow UCC structure */
+ 	uccs->us_info = us_info;
 -- 
 2.15.1
 
