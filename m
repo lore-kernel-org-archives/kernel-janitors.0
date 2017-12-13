@@ -1,43 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 18:43:00 +0000
-Subject: Re: [0/5] video-SMSC UFX: Adjustments for five function implementations
-Message-Id: <265c7022-d12f-bcbe-c6f0-452ba3f73744@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 13:12:41 +0000
+Subject: [PATCH 2/4] staging/wlan-ng/prism2fw: Use a known error code after a failed kzalloc() in mkimage()
+Message-Id: <e4ea47b6-ba6d-1b6e-0d51-e5fcceca27d0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171125204312epcas2p149d6487ac83e886f95aefe0b35aef1b0@epcas2p1.samsung.com>
- <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
- <1736749.UIs06O4xc5@amdc3058>
-In-Reply-To: <1736749.UIs06O4xc5@amdc3058>
+References: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
+In-Reply-To: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Steve Glendinning <steve.glendinning@shawell.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciek Borzecki <maciek.borzecki@gmail.com>, Simo Koskinen <koskisoft@gmail.com>, Thibaut Sautereau <thibaut.sautereau@telecom-sudparis.eu>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->>   Delete an error message for a failed memory allocation in two functions
-> 
-> This patch removes the information about the device for which the allocation fails.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 13:20:10 +0100
 
-Should a Linux allocation failure report be sufficient here?
+Make a memory allocation failure clearer by using the error code "-ENOMEM"
+(instead of the constant "1") in this function.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/wlan-ng/prism2fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>   Less checks in ufx_usb_probe() after error detection
-> 
-> This patch depends on the earlier patch (which is not being merged)
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index 6888d1b093fa..efca9108dad8 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -558,7 +558,7 @@ static int mkimage(struct imgchunk *clist, unsigned int *ccnt)
+ 	for (i = 0; i < *ccnt; i++) {
+ 		clist[i].data = kzalloc(clist[i].len, GFP_KERNEL);
+ 		if (!clist[i].data)
+-			return 1;
++			return -ENOMEM;
+ 
+ 		pr_debug("chunk[%d]: addr=0x%06x len=%d\n",
+ 			 i, clist[i].addr, clist[i].len);
+-- 
+2.15.1
 
-Partly, yes.
-
-
-> so please re-base it if you want it to be applied.
-
-Would you dare to pick another change possibility up from a patch hunk?
-
-
->>   Adjust three checks for null pointers
-> 
-> This patch contains unrelated change ({} braces addition) which should be dropped.
-
-I presented such an update approach so that warnings from the script “checkpatch.pl”
-will be fixed together.
-
-Regards,
-Markus
