@@ -1,45 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 14:51:38 +0000
-Subject: [PATCH 05/12] openvswitch: drop unneeded newline
-Message-Id: <1514386305-7402-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 19:07:21 +0000
+Subject: [PATCH 1/2] sn/ioc3: Delete an error message for a failed memory allocation in ioc3_probe()
+Message-Id: <9cfe5f4c-92cf-8f6b-c302-59d471c4a7c0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5248143d-b207-536a-16eb-ea899cd639b8@users.sourceforge.net>
+In-Reply-To: <5248143d-b207-536a-16eb-ea899cd639b8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pravin Shelar <pshelar@nicira.com>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-OVS_NLERR prints a newline at the end of the message string, so the
-message string does not need to include a newline explicitly.  Done
-using Coccinelle.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 19:39:18 +0100
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/openvswitch/conntrack.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/sn/ioc3.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/net/openvswitch/conntrack.c b/net/openvswitch/conntrack.c
-index b27c5c6..62f36cc9 100644
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -1266,14 +1266,14 @@ static int parse_nat(const struct nlattr *attr,
- 		/* Do not allow flags if no type is given. */
- 		if (info->range.flags) {
- 			OVS_NLERR(log,
--				  "NAT flags may be given only when NAT range (SRC or DST) is also specified.\n"
-+				  "NAT flags may be given only when NAT range (SRC or DST) is also specified."
- 				  );
- 			return -EINVAL;
- 		}
- 		info->nat = OVS_CT_NAT;   /* NAT existing connections. */
- 	} else if (!info->commit) {
- 		OVS_NLERR(log,
--			  "NAT attributes may be specified only when CT COMMIT flag is also specified.\n"
-+			  "NAT attributes may be specified only when CT COMMIT flag is also specified."
- 			  );
- 		return -EINVAL;
+diff --git a/drivers/sn/ioc3.c b/drivers/sn/ioc3.c
+index fb7ea0d9a734..2e6e0514d8f7 100644
+--- a/drivers/sn/ioc3.c
++++ b/drivers/sn/ioc3.c
+@@ -631,9 +631,6 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+ 	/* Set up per-IOC3 data */
+ 	idd = kzalloc(sizeof(struct ioc3_driver_data), GFP_KERNEL);
+ 	if (!idd) {
+-		printk(KERN_WARNING
+-		       "%s: Failed to allocate IOC3 data for pci_dev %s.\n",
+-		       __func__, pci_name(pdev));
+ 		ret = -ENODEV;
+ 		goto out_idd;
  	}
+-- 
+2.15.1
 
