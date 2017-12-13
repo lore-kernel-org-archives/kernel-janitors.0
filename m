@@ -1,71 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 19:50:54 +0000
-Subject: [PATCH] wlcore: Delete an error message for a failed memory allocation in three functions
-Message-Id: <a5e86825-a5e2-a9e7-9036-b7ef3a1814fe@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 19:08:26 +0000
+Subject: [PATCH 2/2] sn/ioc3: Improve a size determination in ioc3_probe()
+Message-Id: <347f356e-02e4-b2bf-15b6-8177f53e74b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5248143d-b207-536a-16eb-ea899cd639b8@users.sourceforge.net>
+In-Reply-To: <5248143d-b207-536a-16eb-ea899cd639b8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arend Van Spriel <arend.vanspriel@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, Eyal Reizer <eyalr@ti.com>, Franky Lin <franky.lin@broadcom.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Iain Hunter <drhunter95@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 20:40:49 +0100
+Date: Wed, 13 Dec 2017 19:53:18 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/ti/wlcore/main.c | 8 ++------
- drivers/net/wireless/ti/wlcore/spi.c  | 4 +---
- 2 files changed, 3 insertions(+), 9 deletions(-)
+ drivers/sn/ioc3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-index c346c021b999..970e59871547 100644
---- a/drivers/net/wireless/ti/wlcore/main.c
-+++ b/drivers/net/wireless/ti/wlcore/main.c
-@@ -1301,10 +1301,8 @@ static struct sk_buff *wl12xx_alloc_dummy_packet(struct wl1271 *wl)
- 			    sizeof(struct wl1271_tx_hw_descr) - sizeof(*hdr);
+diff --git a/drivers/sn/ioc3.c b/drivers/sn/ioc3.c
+index 2e6e0514d8f7..1cacc6178e6f 100644
+--- a/drivers/sn/ioc3.c
++++ b/drivers/sn/ioc3.c
+@@ -629,7 +629,7 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+ #endif
  
- 	skb = dev_alloc_skb(TOTAL_TX_DUMMY_PACKET_SIZE);
--	if (!skb) {
--		wl1271_warning("Failed to allocate a dummy packet skb");
-+	if (!skb)
- 		return NULL;
--	}
- 
- 	skb_reserve(skb, sizeof(struct wl1271_tx_hw_descr));
- 
-@@ -1421,10 +1419,8 @@ int wl1271_rx_filter_alloc_field(struct wl12xx_rx_filter *filter,
- 	field = &filter->fields[filter->num_fields];
- 
- 	field->pattern = kzalloc(len, GFP_KERNEL);
--	if (!field->pattern) {
--		wl1271_warning("Failed to allocate RX filter pattern");
-+	if (!field->pattern)
- 		return -ENOMEM;
--	}
- 
- 	filter->num_fields++;
- 
-diff --git a/drivers/net/wireless/ti/wlcore/spi.c b/drivers/net/wireless/ti/wlcore/spi.c
-index 62ce54a949e9..fc94a0d1a01d 100644
---- a/drivers/net/wireless/ti/wlcore/spi.c
-+++ b/drivers/net/wireless/ti/wlcore/spi.c
-@@ -489,10 +489,8 @@ static int wl1271_probe(struct spi_device *spi)
- 	pdev_data->if_ops = &spi_ops;
- 
- 	glue = devm_kzalloc(&spi->dev, sizeof(*glue), GFP_KERNEL);
--	if (!glue) {
--		dev_err(&spi->dev, "can't allocate glue\n");
-+	if (!glue)
- 		return -ENOMEM;
--	}
- 
- 	glue->dev = &spi->dev;
- 
+ 	/* Set up per-IOC3 data */
+-	idd = kzalloc(sizeof(struct ioc3_driver_data), GFP_KERNEL);
++	idd = kzalloc(sizeof(*idd), GFP_KERNEL);
+ 	if (!idd) {
+ 		ret = -ENODEV;
+ 		goto out_idd;
 -- 
 2.15.1
 
