@@ -1,77 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:42:12 +0000
-Subject: [PATCH 1/6] target: tcm_loop: Delete an error message for a failed memory allocation in four functio
-Message-Id: <a4645e99-0518-8b1b-2b1a-748087a7ac23@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 19:05:55 +0000
+Subject: [PATCH 0/2] sn/ioc3: Adjustments for ioc3_probe()
+Message-Id: <5248143d-b207-536a-16eb-ea899cd639b8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
-In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 21:18:15 +0100
+Date: Wed, 13 Dec 2017 20:03:45 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/target/loopback/tcm_loop.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/sn/ioc3.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
-index b6a913e38b30..6bd58a064924 100644
---- a/drivers/target/loopback/tcm_loop.c
-+++ b/drivers/target/loopback/tcm_loop.c
-@@ -184,7 +184,6 @@ static int tcm_loop_queuecommand(struct Scsi_Host *sh, struct scsi_cmnd *sc)
- 
- 	tl_cmd = kmem_cache_zalloc(tcm_loop_cmd_cache, GFP_ATOMIC);
- 	if (!tl_cmd) {
--		pr_err("Unable to allocate struct tcm_loop_cmd\n");
- 		set_host_byte(sc, DID_ERROR);
- 		sc->scsi_done(sc);
- 		return 0;
-@@ -221,10 +220,8 @@ static int tcm_loop_issue_tmr(struct tcm_loop_tpg *tl_tpg,
- 	}
- 
- 	tl_cmd = kmem_cache_zalloc(tcm_loop_cmd_cache, GFP_KERNEL);
--	if (!tl_cmd) {
--		pr_err("Unable to allocate memory for tl_cmd\n");
-+	if (!tl_cmd)
- 		return ret;
--	}
- 
- 	init_completion(&tl_cmd->tmr_done);
- 
-@@ -773,10 +770,8 @@ static int tcm_loop_make_nexus(
- 	}
- 
- 	tl_nexus = kzalloc(sizeof(struct tcm_loop_nexus), GFP_KERNEL);
--	if (!tl_nexus) {
--		pr_err("Unable to allocate struct tcm_loop_nexus\n");
-+	if (!tl_nexus)
- 		return -ENOMEM;
--	}
- 
- 	tl_nexus->se_sess = target_alloc_session(&tl_tpg->tl_se_tpg, 0, 0,
- 					TARGET_PROT_DIN_PASS | TARGET_PROT_DOUT_PASS,
-@@ -1082,10 +1077,9 @@ static struct se_wwn *tcm_loop_make_scsi_hba(
- 	int ret, off = 0;
- 
- 	tl_hba = kzalloc(sizeof(struct tcm_loop_hba), GFP_KERNEL);
--	if (!tl_hba) {
--		pr_err("Unable to allocate struct tcm_loop_hba\n");
-+	if (!tl_hba)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	/*
- 	 * Determine the emulated Protocol Identifier and Target Port Name
- 	 * based on the incoming configfs directory name.
 -- 
 2.15.1
 
