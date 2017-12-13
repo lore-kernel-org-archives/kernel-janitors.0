@@ -1,40 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 15:31:18 +0000
-Subject: [PATCH 1/2] tty: moxa: Delete an error message for a failed memory allocation in moxa_init_board()
-Message-Id: <d3ecae07-042f-ad07-9ecf-73e67e9b3282@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 13:13:37 +0000
+Subject: [PATCH 3/4] staging/wlan-ng/prism2fw: Delete an error message for a failed memory allocation in writ
+Message-Id: <191428e7-b3e7-a089-a93d-98bfd50494eb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
-In-Reply-To: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
+References: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
+In-Reply-To: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciek Borzecki <maciek.borzecki@gmail.com>, Simo Koskinen <koskisoft@gmail.com>, Thibaut Sautereau <thibaut.sautereau@telecom-sudparis.eu>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 16:03:21 +0100
+Date: Wed, 13 Dec 2017 13:28:15 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
-This issue was detected by using the Coccinelle software.
-
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/moxa.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/wlan-ng/prism2fw.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-index 65a70f3c7cde..a74caf05cf57 100644
---- a/drivers/tty/moxa.c
-+++ b/drivers/tty/moxa.c
-@@ -836,7 +836,6 @@ static int moxa_init_board(struct moxa_board_conf *brd, struct device *dev)
- 	brd->ports = kcalloc(MAX_PORTS_PER_BOARD, sizeof(*brd->ports),
- 			GFP_KERNEL);
- 	if (brd->ports = NULL) {
--		printk(KERN_ERR "cannot allocate memory for ports\n");
- 		ret = -ENOMEM;
- 		goto err;
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index efca9108dad8..e6f7ed17106a 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -1014,9 +1014,6 @@ static int writeimage(struct wlandevice *wlandev, struct imgchunk *fchunk,
+ 	if (!rstmsg || !rwrmsg) {
+ 		kfree(rstmsg);
+ 		kfree(rwrmsg);
+-		netdev_err(wlandev->netdev,
+-			   "%s: no memory for firmware download, aborting download\n",
+-			   __func__);
+ 		return -ENOMEM;
  	}
+ 
 -- 
 2.15.1
 
