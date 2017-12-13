@@ -1,51 +1,30 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 12 Dec 2017 12:44:45 +0000
-Subject: [PATCH 4.14 105/164] irqchip/qcom: Fix u32 comparison with value less than zero
-Message-Id: <20171212123448.806421851@linuxfoundation.org>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Wed, 13 Dec 2017 18:20:26 +0000
+Subject: Re: RDMA/cxgb4: Add a sanity check in process_work()
+Message-Id: <20171213182026.GE5984@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171212123443.785979602@linuxfoundation.org>
-In-Reply-To: <20171212123443.785979602@linuxfoundation.org>
+References: <20171205143654.n5ybdhj3ga2tp7t4@mwanda>
+In-Reply-To: <20171205143654.n5ybdhj3ga2tp7t4@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sasha Levin <alexander.levin@verizon.com>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Dec 05, 2017 at 05:36:54PM +0300, Dan Carpenter wrote:
+> The story is that Smatch marks skb->data as untrusted so it generates
+> a warning message here:
+> 
+>     drivers/infiniband/hw/cxgb4/cm.c:4100 process_work()
+>     error: buffer overflow 'work_handlers' 241 <= 255
+> 
+> In other places which handle this such as t4_uld_rx_handler() there is
+> some checking to make sure that the function pointer is not NULL.  I
+> have added bounds checking and a check for NULL here as well.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Steve Wise <swise@opengridcomputing.com>
 
-------------------
+Thanks, applied to -next
 
-From: Colin Ian King <colin.king@canonical.com>
-
-
-[ Upstream commit e9990d70e8a063a7b894c5cbb99f630a0f41200d ]
-
-The comparison of u32 nregs being less than zero is never true since
-nregs is unsigned. Fix this by making nregs a signed integer.
-
-Fixes: f20cc9b00c7b ("irqchip/qcom: Add IRQ combiner driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>
-Link: https://lkml.kernel.org/r/20171117183553.2739-1-colin.king@canonical.com
-Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/irqchip/qcom-irq-combiner.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/irqchip/qcom-irq-combiner.c
-+++ b/drivers/irqchip/qcom-irq-combiner.c
-@@ -238,7 +238,7 @@ static int __init combiner_probe(struct
- {
- 	struct combiner *combiner;
- 	size_t alloc_sz;
--	u32 nregs;
-+	int nregs;
- 	int err;
- 
- 	nregs = count_registers(pdev);
-
-
+Jason
