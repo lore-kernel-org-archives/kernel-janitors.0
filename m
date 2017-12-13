@@ -1,76 +1,125 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 15 Dec 2017 09:03:01 +0000
-Subject: Re: [PATCH] kvm_main: Use common error handling code in kvm_dev_ioctl_create_vm()
-Message-Id: <fc1bf7f8-6d6a-4076-ae81-afd5f25f1b2a@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 17:36:08 +0000
+Subject: [PATCH 3/3] soc/fsl/qe: Use common error handling code in ucc_fast_init()
+Message-Id: <9668351a-8189-037f-5912-5663ac8706b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <46892736-f9a1-cd30-0968-80c0cf41c3ee@users.sourceforge.net>
-In-Reply-To: <46892736-f9a1-cd30-0968-80c0cf41c3ee@users.sourceforge.net>
+References: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
+In-Reply-To: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kvm@vger.kernel.org, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 21/11/2017 13:46, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 21 Nov 2017 13:40:17 +0100
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  virt/kvm/kvm_main.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 39e4db469f2e..c84341c79955 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -3155,21 +3155,18 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
->  		return PTR_ERR(kvm);
->  #ifdef CONFIG_KVM_MMIO
->  	r = kvm_coalesced_mmio_init(kvm);
-> -	if (r < 0) {
-> -		kvm_put_kvm(kvm);
-> -		return r;
-> -	}
-> +	if (r < 0)
-> +		goto put_kvm;
->  #endif
->  	r = get_unused_fd_flags(O_CLOEXEC);
-> -	if (r < 0) {
-> -		kvm_put_kvm(kvm);
-> -		return r;
-> -	}
-> +	if (r < 0)
-> +		goto put_kvm;
-> +
->  	file = anon_inode_getfile("kvm-vm", &kvm_vm_fops, kvm, O_RDWR);
->  	if (IS_ERR(file)) {
->  		put_unused_fd(r);
-> -		kvm_put_kvm(kvm);
-> -		return PTR_ERR(file);
-> +		r = PTR_ERR(file);
-> +		goto put_kvm;
->  	}
->  
->  	/*
-> @@ -3187,6 +3184,10 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
->  
->  	fd_install(r, file);
->  	return r;
-> +
-> +put_kvm:
-> +	kvm_put_kvm(kvm);
-> +	return r;
->  }
->  
->  static long kvm_dev_ioctl(struct file *filp,
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 13 Dec 2017 18:18:56 +0100
 
-Queued, thanks.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function.
 
-Paolo
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/soc/fsl/qe/ucc_fast.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/soc/fsl/qe/ucc_fast.c b/drivers/soc/fsl/qe/ucc_fast.c
+index 2092bfdcf1bc..268dfc5dc89b 100644
+--- a/drivers/soc/fsl/qe/ucc_fast.c
++++ b/drivers/soc/fsl/qe/ucc_fast.c
+@@ -269,8 +269,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 		printk(KERN_ERR "%s: cannot allocate MURAM for TX FIFO\n",
+ 			__func__);
+ 		uccf->ucc_fast_tx_virtual_fifo_base_offset = 0;
+-		ucc_fast_free(uccf);
+-		return -ENOMEM;
++		goto free_nomem;
+ 	}
+ 
+ 	/* Allocate memory for Rx Virtual Fifo */
+@@ -282,8 +281,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 		printk(KERN_ERR "%s: cannot allocate MURAM for RX FIFO\n",
+ 			__func__);
+ 		uccf->ucc_fast_rx_virtual_fifo_base_offset = 0;
+-		ucc_fast_free(uccf);
+-		return -ENOMEM;
++		goto free_nomem;
+ 	}
+ 
+ 	/* Set Virtual Fifo registers */
+@@ -312,8 +310,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 					COMM_DIR_RX)) {
+ 			printk(KERN_ERR "%s: illegal value for RX clock\n",
+ 			       __func__);
+-			ucc_fast_free(uccf);
+-			return -EINVAL;
++			goto free_inval;
+ 		}
+ 		/* Tx clock routing */
+ 		if ((uf_info->tx_clock != QE_CLK_NONE) &&
+@@ -321,8 +318,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 					COMM_DIR_TX)) {
+ 			printk(KERN_ERR "%s: illegal value for TX clock\n",
+ 			       __func__);
+-			ucc_fast_free(uccf);
+-			return -EINVAL;
++			goto free_inval;
+ 		}
+ 	} else {
+ 		/* tdm Rx clock routing */
+@@ -330,8 +326,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 		    ucc_set_tdm_rxtx_clk(uf_info->tdm_num, uf_info->rx_clock,
+ 					 COMM_DIR_RX)) {
+ 			pr_err("%s: illegal value for RX clock", __func__);
+-			ucc_fast_free(uccf);
+-			return -EINVAL;
++			goto free_inval;
+ 		}
+ 
+ 		/* tdm Tx clock routing */
+@@ -339,8 +334,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 		    ucc_set_tdm_rxtx_clk(uf_info->tdm_num, uf_info->tx_clock,
+ 					 COMM_DIR_TX)) {
+ 			pr_err("%s: illegal value for TX clock", __func__);
+-			ucc_fast_free(uccf);
+-			return -EINVAL;
++			goto free_inval;
+ 		}
+ 
+ 		/* tdm Rx sync clock routing */
+@@ -348,8 +342,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 		    ucc_set_tdm_rxtx_sync(uf_info->tdm_num, uf_info->rx_sync,
+ 					  COMM_DIR_RX)) {
+ 			pr_err("%s: illegal value for RX clock", __func__);
+-			ucc_fast_free(uccf);
+-			return -EINVAL;
++			goto free_inval;
+ 		}
+ 
+ 		/* tdm Tx sync clock routing */
+@@ -357,8 +350,7 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 		    ucc_set_tdm_rxtx_sync(uf_info->tdm_num, uf_info->tx_sync,
+ 					  COMM_DIR_TX)) {
+ 			pr_err("%s: illegal value for TX clock", __func__);
+-			ucc_fast_free(uccf);
+-			return -EINVAL;
++			goto free_inval;
+ 		}
+ 	}
+ 
+@@ -374,6 +366,14 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 
+ 	*uccf_ret = uccf;
+ 	return 0;
++
++free_nomem:
++	ucc_fast_free(uccf);
++	return -ENOMEM;
++
++free_inval:
++	ucc_fast_free(uccf);
++	return -EINVAL;
+ }
+ EXPORT_SYMBOL(ucc_fast_init);
+ 
+-- 
+2.15.1
+
