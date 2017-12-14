@@ -1,55 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 14:32:31 +0000
-Subject: [PATCH] pinctrl: tegra: Delete two error messages for a failed memory allocation in tegra_pinctrl_pr
-Message-Id: <0a67035f-e089-85f6-adff-14e41c957ab6@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 14 Dec 2017 06:03:50 +0000
+Subject: [PATCH 2/4 v3] mtd: onenand: samsung: return an error if  'mtd_device_parse_register()' fails
+Message-Id: <a4e43e367b09184a7caa0bb9b9f1bc3fa8be54d1.1513230484.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 15:15:08 +0100
+If 'mtd_device_parse_register()' fails, we still return 0 which mean
+success.
+Return the error code instead, as done in all the other error handling
+paths.
 
-Omit extra messages for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Cross-compiled tested-only
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 51716819129d..72c718e66ebb 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -666,10 +666,9 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 	int fn, gn, gfn;
+v2: call 'onenand_release()' to undo 'onenand_scan()'
+v3: no change
+---
+ drivers/mtd/onenand/samsung.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+index b650290611d2..b5497c5a35f1 100644
+--- a/drivers/mtd/onenand/samsung.c
++++ b/drivers/mtd/onenand/samsung.c
+@@ -936,6 +936,11 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 	err = mtd_device_parse_register(mtd, NULL, NULL,
+ 					pdata ? pdata->parts : NULL,
+ 					pdata ? pdata->nr_parts : 0);
++	if (err) {
++		dev_err(&pdev->dev, "failed to parse partitions and register the MTD device\n");
++		onenand_release(mtd);
++		return err;
++	}
  
- 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
--	if (!pmx) {
--		dev_err(&pdev->dev, "Can't alloc tegra_pmx\n");
-+	if (!pmx)
- 		return -ENOMEM;
--	}
-+
- 	pmx->dev = &pdev->dev;
- 	pmx->soc = soc_data;
+ 	platform_set_drvdata(pdev, mtd);
  
-@@ -722,10 +721,8 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 
- 	pmx->regs = devm_kzalloc(&pdev->dev, pmx->nbanks * sizeof(*pmx->regs),
- 				 GFP_KERNEL);
--	if (!pmx->regs) {
--		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
-+	if (!pmx->regs)
- 		return -ENOMEM;
--	}
- 
- 	for (i = 0; i < pmx->nbanks; i++) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
 -- 
-2.15.1
+2.14.1
 
