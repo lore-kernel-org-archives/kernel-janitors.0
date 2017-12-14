@@ -1,34 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 07 Dec 2017 08:58:53 +0000
-Subject: Re: [PATCH][next] pinctrl: intel: ensure error return ret is initialized
-Message-Id: <CACRpkdY7maQih6iYze5BbZRsAHW+s+SENVnsbA5QenLKSbpAzg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 14 Dec 2017 06:03:48 +0000
+Subject: [PATCH 0/4 v3] mtd: onenand: samsung: Simplify code and fix leaks in error handling paths
+Message-Id: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171204170815.14779-1-colin.king@canonical.com>
-In-Reply-To: <20171204170815.14779-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Dec 4, 2017 at 6:08 PM, Colin King <colin.king@canonical.com> wrote:
+The first patch converts 's3c_onenand_probe()' to devm_ functions.
+This fixes a leak in one path (line 872).
+This also free_irq which was not handled at all. ( I hope I'm correct :) )
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> In the (unlikely) event that community->ngpps is zero, or if every
-> gpp->gpio_base is less than zero, then an ininitialized value in
-> ret is returned by function intel_gpio_add_pin_ranges. Fix this by
-> ensuring ret is initialized to zero.  It's a moot point, but I think
-> it is worthwhile ensuring this corner case is fixed.
->
-> Detected by CoverityScan, CID#1462415 ("Uninitialized scalar variable")
->
-> Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The 2nd patch is about an un-handled error code which looks spurious.
+Not sure if I'm right.
 
-Patch applied with Mika's ACK.
+The 3rd patch propagates an error code instead of returning a hard-coded
+value.
 
-Thanks for running these Coverity scans.
+The last one removes a useless include spotted while compile-testing.
 
-Yours,
-Linus Walleij
+
+v3: patch 1/4 updated to fix a bug introduced in v2
+    patch 2/4 unchanged
+    patch 3/4 and 4/4 added
+    now the patch are cross-compile tested :)
+
+Theses patches have been cross compile-tested-only.
+
+Christophe JAILLET (4):
+  mtd: onenand: samsung: use devm_ function to simplify
+    code and fix some leaks
+  mtd: onenand: samsung: return an error if 
+    'mtd_device_parse_register()' fails
+  mtd: onenand: samsung: Propagate the error returned
+    by 'onenand_scan()'
+  mtd: onenand: samsung: Remove a useless include
+
+ drivers/mtd/onenand/samsung.c | 172 +++++++++---------------------------------
+ 1 file changed, 35 insertions(+), 137 deletions(-)
+
+-- 
+2.14.1
+
