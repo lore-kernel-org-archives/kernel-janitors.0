@@ -1,56 +1,43 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 18 Dec 2017 20:03:32 +0000
-Subject: Re: [PATCH 0/4 v3] mtd: onenand: samsung: Simplify code and fix leaks in error handling paths
-Message-Id: <20171218210332.4fd91ec3@bbrezillon>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 Dec 2017 10:13:22 +0000
+Subject: [PATCH] mt76: fix memcpy to potential null pointer on failed allocation
+Message-Id: <20171214101322.10178-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, 14 Dec 2017 07:03:48 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The first patch converts 's3c_onenand_probe()' to devm_ functions.
-> This fixes a leak in one path (line 872).
-> This also free_irq which was not handled at all. ( I hope I'm correct :) )
-> 
-> The 2nd patch is about an un-handled error code which looks spurious.
-> Not sure if I'm right.
-> 
-> The 3rd patch propagates an error code instead of returning a hard-coded
-> value.
-> 
-> The last one removes a useless include spotted while compile-testing.
-> 
-> 
-> v3: patch 1/4 updated to fix a bug introduced in v2
->     patch 2/4 unchanged
->     patch 3/4 and 4/4 added
->     now the patch are cross-compile tested :)
-> 
-> Theses patches have been cross compile-tested-only.
+Currently if the allocation of skb fails and returns NULL then the
+call to skb_put will cause a null pointer dereference. Fix this by
+checking for a null skb and returning NULL.  Note that calls to
+function mt76x2_mcu_msg_alloc don't directly check the null return
+but instead pass the NULL pointer to mt76x2_mcu_msg_send which
+checks for the NULL and returns ENOMEM in this case.
 
-Applied the whole series.
+Detected by CoverityScan, CID#1462624 ("Dereference null return value")
 
-Thanks,
+Fixes: 7bc04215a66b ("mt76: add driver code for MT76x2e")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt76x2_mcu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Boris
-
-> 
-> Christophe JAILLET (4):
->   mtd: onenand: samsung: use devm_ function to simplify
->     code and fix some leaks
->   mtd: onenand: samsung: return an error if 
->     'mtd_device_parse_register()' fails
->   mtd: onenand: samsung: Propagate the error returned
->     by 'onenand_scan()'
->   mtd: onenand: samsung: Remove a useless include
-> 
->  drivers/mtd/onenand/samsung.c | 172 +++++++++---------------------------------
->  1 file changed, 35 insertions(+), 137 deletions(-)
-> 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_mcu.c b/drivers/net/wireless/mediatek/mt76/mt76x2_mcu.c
+index d45737ee1412..15820b11f9db 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2_mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2_mcu.c
+@@ -45,6 +45,8 @@ static struct sk_buff *mt76x2_mcu_msg_alloc(const void *data, int len)
+ 	struct sk_buff *skb;
+ 
+ 	skb = alloc_skb(len, GFP_KERNEL);
++	if (!skb)
++		return NULL;
+ 	memcpy(skb_put(skb, len), data, len);
+ 
+ 	return skb;
+-- 
+2.14.1
 
