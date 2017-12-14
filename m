@@ -1,38 +1,32 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 29 Dec 2017 18:10:22 +0000
-Subject: Re: [PATCH 0/2] video: ssd1307fb: Adjustments for ssd1307fb_probe()
-Message-Id: <2091464.qzRHS0Wsad@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Dec 2017 10:34:01 +0000
+Subject: Re: [PATCH 0/3] S390-DASD: Fine-tuning for some function implementations
+Message-Id: <d7e6649b-cdb4-e686-df0e-472958c94202@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171125160425epcas5p43b2d94fbcc74745017c4c91ff08de685@epcas5p4.samsung.com>
- <9433118e-4c2b-db31-7064-df692a99c1b2@users.sourceforge.net>
-In-Reply-To: <9433118e-4c2b-db31-7064-df692a99c1b2@users.sourceforge.net>
+References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
+In-Reply-To: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel@lists.freedesktop.org, Bastian Stender <bst@pengutronix.de>
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Saturday, November 25, 2017 05:04:02 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 25 Nov 2017 16:56:46 +0100
+> Date: Wed, 10 May 2017 19:43:21 +0200
 > 
-> Two update suggestions were taken into account
+> A few update suggestions were taken into account
 > from static source code analysis.
 > 
-> Markus Elfring (2):
->   Delete an error message for a failed memory allocation
+> Markus Elfring (3):
+>   Adjust buffer output in dasd_hosts_print()
+>   Fix typos in two comment lines
+>   Adjust six checks for null pointers
+> 
+>  drivers/s390/block/dasd_eckd.c | 24 +++++++++++-------------
+>  1 file changed, 11 insertions(+), 13 deletions(-)
 
-This patch removes the information about the device for which the allocation
-fails.
 
->   Improve a size determination
+Are there any chances that such change possibilities (and further adjustments)
+will be integrated in this software area?
 
-This patch depends on the earlier patch (which is not being merged) so please
-re-base it if you want it to be applied.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Regards,
+Markus
