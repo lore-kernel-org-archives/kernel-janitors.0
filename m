@@ -1,51 +1,40 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Fri, 22 Dec 2017 12:54:40 +0000
-Subject: Re: [PATCH][next] soundwire: intel: fix missing assignment to ret
-Message-Id: <20171222124239.GX18649@localhost>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 14 Dec 2017 06:03:52 +0000
+Subject: [PATCH 3/4 v3] mtd: onenand: samsung: Remove a useless include
+Message-Id: <3841b40286522d07585e773fb62c4c737ebf757b.1513230484.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171221233210.8821-1-colin.king@canonical.com>
-In-Reply-To: <20171221233210.8821-1-colin.king@canonical.com>
+References: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Dec 21, 2017 at 11:32:10PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the return status ret is being checked but it has not been
-> updated since the previous check on ret. It appears that assignment of
-> ret from return status of the call to sdw_cdns_enable_interrupt was
-> accidentally ommited.  Fix this.
+This include is not needed, so remove it.
 
-Applied, thanks
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Cross-compiled tested-only
 
-> 
-> Detected by CoverityScan, CID#1463148 ("Logically dead code")
-> 
-> Fixes: 71bb8a1b059e ("soundwire: intel: Add Intel Master driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/soundwire/intel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-> index 6a9177ea6eb9..86a7bd1fc912 100644
-> --- a/drivers/soundwire/intel.c
-> +++ b/drivers/soundwire/intel.c
-> @@ -295,7 +295,7 @@ static int intel_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_init;
->  
-> -	sdw_cdns_enable_interrupt(&sdw->cdns);
-> +	ret = sdw_cdns_enable_interrupt(&sdw->cdns);
->  	if (ret)
->  		goto err_init;
->  
-> -- 
-> 2.14.1
-> 
+v3: new patch in the serie
+---
+ drivers/mtd/onenand/samsung.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+index 206aa90140c9..c21d025fee87 100644
+--- a/drivers/mtd/onenand/samsung.c
++++ b/drivers/mtd/onenand/samsung.c
+@@ -25,8 +25,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ 
+-#include <asm/mach/flash.h>
+-
+ #include "samsung.h"
+ 
+ enum soc_type {
 -- 
-~Vinod
+2.14.1
+
