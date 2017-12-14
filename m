@@ -1,40 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:50:09 +0000
-Subject: [PATCH 7/8] target/iscsi: Delete an unnecessary variable initialisation in iscsi_set_default_param()
-Message-Id: <b5de8128-f836-a973-1eb2-2cb54c8418b1@users.sourceforge.net>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Thu, 14 Dec 2017 15:30:39 +0000
+Subject: Re: ath9k_htc: Add a sanity check in ath9k_htc_ampdu_action()
+Message-Id: <1ba6b3947c1441f38ef51d1e827ce62c@euamsexm01a.eu.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
-In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+References: <20171205143508.qbnbm4d3wesguu2g@mwanda>
+In-Reply-To: <20171205143508.qbnbm4d3wesguu2g@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Sujith <Sujith.Manoharan@atheros.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:21:31 +0100
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-The local variable "param" will be reassigned by a following statement.
-Thus omit the explicit initialisation at the beginning.
+> Smatch generates a warning here:
+> 
+>     drivers/net/wireless/ath/ath9k/htc_drv_main.c:1688 ath9k_htc_ampdu_action()
+>     error: buffer overflow 'ista->tid_state' 8 <= 15
+> 
+> I don't know if it's a real bug or not but the other paths through this
+> function all ensure that "tid" is less than ATH9K_HTC_MAX_TID (8) so
+> checking here makes things more consistent.
+> 
+> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-index 151269b8816d..a49b0b2a4f6c 100644
---- a/drivers/target/iscsi/iscsi_target_parameters.c
-+++ b/drivers/target/iscsi/iscsi_target_parameters.c
-@@ -127,7 +127,7 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
- 		char *name, char *value, u8 phase, u8 scope, u8 sender,
- 		u16 type_range, u8 use)
- {
--	struct iscsi_param *param = NULL;
-+	struct iscsi_param *param;
- 
- 	param = kzalloc(sizeof(struct iscsi_param), GFP_KERNEL);
- 	if (!param)
+413fd2f5c023 ath9k_htc: Add a sanity check in ath9k_htc_ampdu_action()
+
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10093021/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
