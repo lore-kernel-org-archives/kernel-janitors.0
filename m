@@ -1,40 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:46:42 +0000
-Subject: [PATCH 4/8] target/iscsi: Delete an unnecessary variable initialisation in iscsit_allocate_ooo_cmdsn
-Message-Id: <3db75482-2817-46b1-95e5-ace7342e2a90@users.sourceforge.net>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Date: Thu, 14 Dec 2017 11:07:34 +0000
+Subject: Re: [PATCH 0/3] S390-DASD: Fine-tuning for some function implementations
+Message-Id: <20171214110734.GD4238@osiris>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
-In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
+ <d7e6649b-cdb4-e686-df0e-472958c94202@users.sourceforge.net>
+In-Reply-To: <d7e6649b-cdb4-e686-df0e-472958c94202@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-s390@vger.kernel.org, Jan =?iso-8859-1?Q?H=F6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:13:49 +0100
+On Thu, Dec 14, 2017 at 11:34:01AM +0100, SF Markus Elfring wrote:
+> > Date: Wed, 10 May 2017 19:43:21 +0200
+> > 
+> > A few update suggestions were taken into account
+> > from static source code analysis.
+> > 
+> > Markus Elfring (3):
+> >   Adjust buffer output in dasd_hosts_print()
+> >   Fix typos in two comment lines
+> >   Adjust six checks for null pointers
+> > 
+> >  drivers/s390/block/dasd_eckd.c | 24 +++++++++++-------------
+> >  1 file changed, 11 insertions(+), 13 deletions(-)
+> 
+> 
+> Are there any chances that such change possibilities (and further adjustments)
+> will be integrated in this software area?
 
-The local variable "ooo_cmdsn" will be reassigned by a following statement.
-Thus omit the explicit initialisation at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/target/iscsi/iscsi_target_erl1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/target/iscsi/iscsi_target_erl1.c b/drivers/target/iscsi/iscsi_target_erl1.c
-index ff3e08b6d4e1..c4c550128161 100644
---- a/drivers/target/iscsi/iscsi_target_erl1.c
-+++ b/drivers/target/iscsi/iscsi_target_erl1.c
-@@ -782,7 +782,7 @@ int iscsit_recover_dataout_sequence(
- 
- static struct iscsi_ooo_cmdsn *iscsit_allocate_ooo_cmdsn(void)
- {
--	struct iscsi_ooo_cmdsn *ooo_cmdsn = NULL;
-+	struct iscsi_ooo_cmdsn *ooo_cmdsn;
- 
- 	ooo_cmdsn = kmem_cache_zalloc(lio_ooo_cache, GFP_ATOMIC);
- 	if (!ooo_cmdsn)
--- 
-2.15.1
+No.
 
