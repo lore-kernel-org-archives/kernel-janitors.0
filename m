@@ -1,24 +1,49 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Tue, 19 Dec 2017 14:38:11 +0000
-Subject: Re: [PATCH v2] Adjustments: lock/unlock task in context_switch
-Message-Id: <20171219143811.yooqtut2ugwuq5hx@hirez.programming.kicks-ass.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 Dec 2017 11:40:21 +0000
+Subject: [PATCH] net: alteon: acenic: clean up indentation issue
+Message-Id: <20171214114021.5300-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171215140603.gxe5i2y6fg5ojfpp@smtp.gmail.com>
- <20171218193002.zzuocnd2hyt34ok5@hirez.programming.kicks-ass.net>
- <20171219142357.cfmdyfyhay4hsxrb@smtp.gmail.com>
-In-Reply-To: <20171219142357.cfmdyfyhay4hsxrb@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jes Sorensen <jes@trained-monkey.org>, linux-acenic@sunsite.dk, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 19, 2017 at 12:23:57PM -0200, Rodrigo Siqueira wrote:
-> In the original patch, I called this function as release_lock_task,
-> because the release_task was already declared as extern in
-> include/linux/sched/task.h. I believe there is a function name conflict
-> here, is that correct?
+From: Colin Ian King <colin.king@canonical.com>
 
-Bah, you're right. Clearly I didn't compile test yet.. I'll fix it up.
+There is a hunk of code that is incorrectly indented with spaces
+and rather than a tab.  Clean this up.
 
-Thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/alteon/acenic.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/ethernet/alteon/acenic.c b/drivers/net/ethernet/alteon/acenic.c
+index a1a52eb53b14..8f71b79b4949 100644
+--- a/drivers/net/ethernet/alteon/acenic.c
++++ b/drivers/net/ethernet/alteon/acenic.c
+@@ -1436,13 +1436,13 @@ static int ace_init(struct net_device *dev)
+ 	ace_set_txprd(regs, ap, 0);
+ 	writel(0, &regs->RxRetCsm);
+ 
+-       /*
+-	* Enable DMA engine now.
+-	* If we do this sooner, Mckinley box pukes.
+-	* I assume it's because Tigon II DMA engine wants to check
+-	* *something* even before the CPU is started.
+-	*/
+-       writel(1, &regs->AssistState);  /* enable DMA */
++	/*
++	 * Enable DMA engine now.
++	 * If we do this sooner, Mckinley box pukes.
++	 * I assume it's because Tigon II DMA engine wants to check
++	 * *something* even before the CPU is started.
++	 */
++	writel(1, &regs->AssistState);  /* enable DMA */
+ 
+ 	/*
+ 	 * Start the NIC CPU
+-- 
+2.14.1
+
