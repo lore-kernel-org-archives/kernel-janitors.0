@@ -1,61 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 14:51:41 +0000
-Subject: [PATCH 08/12] perf test: drop unneeded newline
-Message-Id: <1514386305-7402-9-git-send-email-Julia.Lawall@lip6.fr>
+From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
+Date: Fri, 15 Dec 2017 13:15:33 +0000
+Subject: [PATCH] x86: Remove unused parameter of prepare_switch_to
+Message-Id: <20171215131533.hp6kqebw45o7uvsb@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org
+To: tglx@linutronix.de
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-TEST_ASSERT_VAL prints a newline at the end of the message string,
-so the message string does not need to include a newline explicitly.
-Done using Coccinelle.
+Commit e37e43a497d5 ("x86/mm/64: Enable vmapped stacks
+(CONFIG_HAVE_ARCH_VMAP_STACK=y)") added prepare_switch_to with one extra
+parameter which is not used by the function, remove it.
 
-There are some white-space adjustments in the calls to avoid exceeding 80
-characters and to put continuation line arguments to the right of the (.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- tools/perf/tests/dso-data.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/switch_to.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/tests/dso-data.c b/tools/perf/tests/dso-data.c
-index 7f6c520..f514515 100644
---- a/tools/perf/tests/dso-data.c
-+++ b/tools/perf/tests/dso-data.c
-@@ -150,7 +150,7 @@ int test__dso_data(struct test *test __maybe_unused, int subtest __maybe_unused)
- 		u8 *buf;
+diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
+index 8c6bd6863db9..1008d4622709 100644
+--- a/arch/x86/include/asm/switch_to.h
++++ b/arch/x86/include/asm/switch_to.h
+@@ -16,8 +16,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
+ 		      struct tss_struct *tss);
  
- 		buf = malloc(TEST_FILE_SIZE);
--		TEST_ASSERT_VAL("ENOMEM\n", buf);
-+		TEST_ASSERT_VAL("ENOMEM", buf);
+ /* This runs runs on the previous thread's stack. */
+-static inline void prepare_switch_to(struct task_struct *prev,
+-				     struct task_struct *next)
++static inline void prepare_switch_to(struct task_struct *next)
+ {
+ #ifdef CONFIG_VMAP_STACK
+ 	/*
+@@ -70,7 +69,7 @@ struct fork_frame {
  
- 		/* First iteration to fill caches, second one to read them. */
- 		for (c = 0; c < 2; c++) {
-@@ -265,8 +265,8 @@ int test__dso_data_cache(struct test *test __maybe_unused, int subtest __maybe_u
- 
- 	/* and this is now our dso open FDs limit */
- 	dso_cnt = limit / 2;
--	TEST_ASSERT_VAL("failed to create dsos\n",
--		!dsos__create(dso_cnt, TEST_FILE_SIZE));
-+	TEST_ASSERT_VAL("failed to create dsos",
-+			!dsos__create(dso_cnt, TEST_FILE_SIZE));
- 
- 	for (i = 0; i < (dso_cnt - 1); i++) {
- 		struct dso *dso = dsos[i];
-@@ -336,7 +336,8 @@ int test__dso_data_reopen(struct test *test __maybe_unused, int subtest __maybe_
- 	TEST_ASSERT_VAL("failed to set file limit",
- 			!set_fd_limit((nr + 3)));
- 
--	TEST_ASSERT_VAL("failed to create dsos\n", !dsos__create(3, TEST_FILE_SIZE));
-+	TEST_ASSERT_VAL("failed to create dsos",
-+			!dsos__create(3, TEST_FILE_SIZE));
- 
- 	/* open dso_0 */
- 	fd = dso__data_fd(dso_0, &machine);
+ #define switch_to(prev, next, last)					\
+ do {									\
+-	prepare_switch_to(prev, next);					\
++	prepare_switch_to(next);					\
+ 									\
+ 	((last) = __switch_to_asm((prev), (next)));			\
+ } while (0)
+-- 
+2.15.1
 
