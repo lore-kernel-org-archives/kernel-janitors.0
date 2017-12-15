@@ -1,36 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Mon, 11 Dec 2017 11:54:03 +0000
-Subject: Re: [PATCH] ASoC: Intel: Skylake: Re-order some code to silence a warning
-Message-Id: <1512993243.25007.592.camel@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 Dec 2017 10:53:43 +0000
+Subject: [PATCH] drm/amd/display: remove redundant null check of array 'data'
+Message-Id: <20171215105343.11372-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171208115425.rqclgmhcph5gn47j@mwanda>
-         <1512991223.25007.590.camel@linux.intel.com>
-         <20171211113345.ubl7rj7ftt62ox5s@mwanda>
-In-Reply-To: <20171211113345.ubl7rj7ftt62ox5s@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Jani Nikula <jani.nikula@intel.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>, Vinod Koul <vinod.koul@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Harry Wentland <harry.wentland@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2017-12-11 at 14:33 +0300, Dan Carpenter wrote:
-> On Mon, Dec 11, 2017 at 01:20:23PM +0200, Andy Shevchenko wrote:
-> > On Fri, 2017-12-08 at 14:54 +0300, Dan Carpenter wrote:
-> > > 
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
+The null check on aconnector->base.edid_blob_ptr->data is redundant
+since data is an array and can never be null.  Remove it.
 
-> I didn't like the way the code was written either but it's impossible
-> to know how much change people are going to accept.  Even though I
-> think
-> that extra parenthesis shouldn't have been there, the original author
-> felt they helped, so I try to be accomodating...
-> 
-> Anyway, I can resend.
+Detected by CoverityScan, CID#1460369 ("Array compared against 0")
 
-Since Vinod ACKed this change, I'm fine with it.
-Consider my comment as JFYI.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index ccbf10e3bbb6..c388778dbba3 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2725,8 +2725,7 @@ static void create_eml_sink(struct amdgpu_dm_connector *aconnector)
+ 	};
+ 	struct edid *edid;
+ 
+-	if (!aconnector->base.edid_blob_ptr ||
+-		!aconnector->base.edid_blob_ptr->data) {
++	if (!aconnector->base.edid_blob_ptr) {
+ 		DRM_ERROR("No EDID firmware found on connector: %s ,forcing to OFF!\n",
+ 				aconnector->base.name);
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.14.1
+
