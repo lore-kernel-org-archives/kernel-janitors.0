@@ -1,34 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 28 Dec 2017 12:41:43 +0000
-Subject: Re: [PATCH] pinctrl: msm: Delete an error message for a failed memory allocation in msm_pinctrl_prob
-Message-Id: <CACRpkdZ29c7GVMzOc_cVjwegbifWkqWhh7HQzCtzf-iGy564TA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Dec 2017 10:26:36 +0000
+Subject: [PATCH 0/7] RapidIO: Adjustments for some function implementations
+Message-Id: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d5eae19-c8f9-3280-e68e-419646535512@users.sourceforge.net>
-In-Reply-To: <0d5eae19-c8f9-3280-e68e-419646535512@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 27, 2017 at 10:10 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Dec 2017 11:20:33 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Dec 2017 22:04:22 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Some update suggestions were taken into account
+from static source code analysis.
 
-Patch applied with Bj=C3=B6rn's ACK.
+Markus Elfring (7):
+  Delete an error message for a failed memory allocation in rio_init_mports()
+  Adjust 12 checks for null pointers
+  Adjust five function calls together with a variable assignment
+  Improve a size determination in five functions
+  Delete an unnecessary variable initialisation in three functions
+  Return an error code only as a constant in two functions
+  Move 12 EXPORT_SYMBOL_GPL() calls to function implementations
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/rapidio/rio.c | 110 ++++++++++++++++++++++----------------------------
+ 1 file changed, 48 insertions(+), 62 deletions(-)
+
+-- 
+2.15.1
+
