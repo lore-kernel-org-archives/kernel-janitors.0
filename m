@@ -1,55 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 17:13:56 +0000
-Subject: [PATCH] pinctrl: tz1090: Delete an error message for a failed memory allocation in two functions
-Message-Id: <91c76055-bba2-8a6e-4294-1dae0daf1363@users.sourceforge.net>
+Date: Fri, 15 Dec 2017 10:28:41 +0000
+Subject: [PATCH 1/7] rapidio: Delete an error message for a failed memory allocation in rio_init_mports()
+Message-Id: <dfd6887b-2521-cbf2-af5b-e70b5fa4c33c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
+In-Reply-To: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>
+To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 17:55:48 +0100
+Date: Thu, 14 Dec 2017 15:11:12 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-tz1090.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/rapidio/rio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-tz1090.c b/drivers/pinctrl/pinctrl-tz1090.c
-index 74d1ffcc2199..2379ce2be365 100644
---- a/drivers/pinctrl/pinctrl-tz1090.c
-+++ b/drivers/pinctrl/pinctrl-tz1090.c
-@@ -1082,10 +1082,8 @@ static int add_map_configs(struct device *dev,
+diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
+index 38d949405618..032ede23a8cb 100644
+--- a/drivers/rapidio/rio.c
++++ b/drivers/rapidio/rio.c
+@@ -2189,7 +2189,6 @@ int rio_init_mports(void)
  
- 	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
- 			      GFP_KERNEL);
--	if (!dup_configs) {
--		dev_err(dev, "kmemdup(configs) failed\n");
-+	if (!dup_configs)
- 		return -ENOMEM;
--	}
- 
- 	(*map)[*num_maps].type = PIN_MAP_TYPE_CONFIGS_GROUP;
- 	(*map)[*num_maps].data.configs.group_or_pin = group;
-@@ -1946,10 +1944,9 @@ static int tz1090_pinctrl_probe(struct platform_device *pdev)
- 	struct resource *res;
- 
- 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
--	if (!pmx) {
--		dev_err(&pdev->dev, "Can't alloc tz1090_pmx\n");
-+	if (!pmx)
- 		return -ENOMEM;
--	}
-+
- 	pmx->dev = &pdev->dev;
- 	spin_lock_init(&pmx->lock);
- 
+ 	work = kcalloc(n, sizeof *work, GFP_KERNEL);
+ 	if (!work) {
+-		pr_err("RIO: no memory for work struct\n");
+ 		destroy_workqueue(rio_wq);
+ 		goto no_disc;
+ 	}
 -- 
 2.15.1
 
