@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 21:07:05 +0000
-Subject: [PATCH 1/2] at76c50x-usb: Delete an error message for a failed memory allocation in at76_submit_rx_u
-Message-Id: <c50358b4-79e2-0861-9087-99104944a0b8@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 20:11:54 +0000
+Subject: [PATCH 1/3] pm2301-charger: Delete an error message for a failed memory allocation in pm2xxx_wall_ch
+Message-Id: <6841b772-84ad-8f41-af0c-e797bc68a015@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d76fe59-af15-ba4d-e05d-09dcd9ee38cd@users.sourceforge.net>
-In-Reply-To: <1d76fe59-af15-ba4d-e05d-09dcd9ee38cd@users.sourceforge.net>
+References: <b11627bc-502d-b3af-ee96-ac2a693448a7@users.sourceforge.net>
+In-Reply-To: <b11627bc-502d-b3af-ee96-ac2a693448a7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Andrew Zaborowski <andrew.zaborowski@intel.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Kalle Valo <kvalo@codeaurora.org>, Kees Cook <keescook@chromium.org>
+To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 21:50:12 +0100
+Date: Sat, 16 Dec 2017 20:30:26 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -20,22 +20,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/atmel/at76c50x-usb.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/power/supply/pm2301_charger.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/atmel/at76c50x-usb.c b/drivers/net/wireless/atmel/at76c50x-usb.c
-index ede89d4ffc88..2893d339b440 100644
---- a/drivers/net/wireless/atmel/at76c50x-usb.c
-+++ b/drivers/net/wireless/atmel/at76c50x-usb.c
-@@ -1223,8 +1223,6 @@ static int at76_submit_rx_urb(struct at76_priv *priv)
- 	if (!skb) {
- 		skb = dev_alloc_skb(sizeof(struct at76_rx_buffer));
- 		if (!skb) {
--			wiphy_err(priv->hw->wiphy,
--				  "cannot allocate rx skbuff\n");
- 			ret = -ENOMEM;
- 			goto exit;
- 		}
+diff --git a/drivers/power/supply/pm2301_charger.c b/drivers/power/supply/pm2301_charger.c
+index 78561b6884fc..0a0c2da936cf 100644
+--- a/drivers/power/supply/pm2301_charger.c
++++ b/drivers/power/supply/pm2301_charger.c
+@@ -991,10 +991,8 @@ static int pm2xxx_wall_charger_probe(struct i2c_client *i2c_client,
+ 	}
+ 
+ 	pm2 = kzalloc(sizeof(struct pm2xxx_charger), GFP_KERNEL);
+-	if (!pm2) {
+-		dev_err(&i2c_client->dev, "pm2xxx_charger allocation failed\n");
++	if (!pm2)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* get parent data */
+ 	pm2->dev = &i2c_client->dev;
 -- 
 2.15.1
 
