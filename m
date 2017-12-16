@@ -1,46 +1,93 @@
-From: Helge Deller <deller@gmx.de>
-Date: Sat, 09 Dec 2017 15:22:31 +0000
-Subject: Re: [PATCH] parisc: Add missing curly braces in puts()
-Message-Id: <b9dec23a-cf0f-9aac-fa5d-4a201eafb38c@gmx.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 13:54:03 +0000
+Subject: [PATCH 2/2] ps3: Improve a size determination in five functions
+Message-Id: <7aed1208-aa55-edb6-54be-f47fb1498bfd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171209114524.kwsvkd4ui5jei4r3@mwanda>
-In-Reply-To: <20171209114524.kwsvkd4ui5jei4r3@mwanda>
+References: <9b6464bc-a408-de2a-1b54-cb7794b92506@users.sourceforge.net>
+In-Reply-To: <9b6464bc-a408-de2a-1b54-cb7794b92506@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>
-Cc: linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Geoff Levand <geoff@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 09.12.2017 12:45, Dan Carpenter wrote:
-> Static analysis tools complain that we intended to have curly braces
-> around this indent block.  Which is true.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 14:21:04 +0100
 
-No, it's not.
-I think the existing indenting is simply wrong and thus the static 
-analysis tool assumes it wrongly.
-I'll check and fix either way.
+Replace the specification of data structures by variable references
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Helge
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ps3/ps3-sys-manager.c |  9 ++-------
+ drivers/ps3/ps3-vuart.c       | 11 +++--------
+ 2 files changed, 5 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/ps3/ps3-sys-manager.c b/drivers/ps3/ps3-sys-manager.c
+index 73e496a72113..e7d8ef93576a 100644
+--- a/drivers/ps3/ps3-sys-manager.c
++++ b/drivers/ps3/ps3-sys-manager.c
+@@ -249,9 +249,7 @@ static int ps3_sys_manager_write(struct ps3_system_bus_device *dev,
+ 	BUG_ON(header->payload_size != 8 && header->payload_size != 16);
+ 	BUG_ON(header->service_id > 8);
  
-> Fixes: 2f3c7b8137ef ("parisc: Add core code for self-extracting kernel")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/arch/parisc/boot/compressed/misc.c b/arch/parisc/boot/compressed/misc.c
-> index 9345b44b86f0..432d33804a86 100644
-> --- a/arch/parisc/boot/compressed/misc.c
-> +++ b/arch/parisc/boot/compressed/misc.c
-> @@ -121,10 +121,11 @@ int puts(const char *s)
->  	const char *nuline = s;
->  
->  	while ((nuline = strchr(s, '\n')) != NULL) {
-> -		if (nuline != s)
-> +		if (nuline != s) {
->  			pdc_iodc_print(s, nuline - s);
->  			pdc_iodc_print("\r\n", 2);
->  			s = nuline + 1;
-> +		}
->  	}
->  	if (*s != '\0')
->  		pdc_iodc_print(s, strlen(s));
-> 
+-	result = ps3_vuart_write(dev, header,
+-		sizeof(struct ps3_sys_manager_header));
+-
++	result = ps3_vuart_write(dev, header, sizeof(*header));
+ 	if (!result)
+ 		result = ps3_vuart_write(dev, payload, header->payload_size);
+ 
+@@ -537,11 +535,8 @@ static int ps3_sys_manager_handle_cmd(struct ps3_system_bus_device *dev)
+ 
+ static int ps3_sys_manager_handle_msg(struct ps3_system_bus_device *dev)
+ {
+-	int result;
+ 	struct ps3_sys_manager_header header;
+-
+-	result = ps3_vuart_read(dev, &header,
+-		sizeof(struct ps3_sys_manager_header));
++	int result = ps3_vuart_read(dev, &header, sizeof(header));
+ 
+ 	if (result)
+ 		return result;
+diff --git a/drivers/ps3/ps3-vuart.c b/drivers/ps3/ps3-vuart.c
+index bbaad30a876f..c82362cbaf4a 100644
+--- a/drivers/ps3/ps3-vuart.c
++++ b/drivers/ps3/ps3-vuart.c
+@@ -522,8 +522,7 @@ int ps3_vuart_write(struct ps3_system_bus_device *dev, const void *buf,
+ 	} else
+ 		spin_unlock_irqrestore(&priv->tx_list.lock, flags);
+ 
+-	lb = kmalloc(sizeof(struct list_buffer) + bytes, GFP_KERNEL);
+-
++	lb = kmalloc(sizeof(*lb) + bytes, GFP_KERNEL);
+ 	if (!lb)
+ 		return -ENOMEM;
+ 
+@@ -575,9 +574,7 @@ static int ps3_vuart_queue_rx_bytes(struct ps3_system_bus_device *dev,
+ 	/* Add some extra space for recently arrived data. */
+ 
+ 	bytes += 128;
+-
+-	lb = kmalloc(sizeof(struct list_buffer) + bytes, GFP_ATOMIC);
+-
++	lb = kmalloc(sizeof(*lb) + bytes, GFP_ATOMIC);
+ 	if (!lb)
+ 		return -ENOMEM;
+ 
+@@ -925,9 +922,7 @@ static int ps3_vuart_bus_interrupt_get(void)
+ 		return 0;
+ 
+ 	BUG_ON(vuart_bus_priv.bmp);
+-
+-	vuart_bus_priv.bmp = kzalloc(sizeof(struct ports_bmp), GFP_KERNEL);
+-
++	vuart_bus_priv.bmp = kzalloc(sizeof(*vuart_bus_priv.bmp), GFP_KERNEL);
+ 	if (!vuart_bus_priv.bmp) {
+ 		result = -ENOMEM;
+ 		goto fail_bmp_malloc;
+-- 
+2.15.1
 
