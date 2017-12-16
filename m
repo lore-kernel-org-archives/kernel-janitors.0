@@ -1,35 +1,37 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Fri, 08 Dec 2017 10:42:03 +0000
-Subject: Re: [PATCH 1/2] serial: tegra: Delete an error message for a failed memory allocation in tegra_uart_
-Message-Id: <b19da0a2-6164-6c66-c191-576f4d48537e@nvidia.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 16 Dec 2017 23:44:24 +0000
+Subject: [PATCH][next] mei: fix spelling mistake: "botther" -> "bother"
+Message-Id: <20171216234424.5708-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <605adc2b-3591-86fc-410a-370f48dfb14e@users.sourceforge.net>
- <aee3d79d-a59e-a3fd-6c6b-45ee46132cc6@users.sourceforge.net>
- <cced0e90-61b1-2182-a2b3-327ee9394190@nvidia.com>
-In-Reply-To: <cced0e90-61b1-2182-a2b3-327ee9394190@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laxman Dewangan <ldewangan@nvidia.com>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Tomas Winkler <tomas.winkler@intel.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 08/12/17 09:37, Laxman Dewangan wrote:
-> On Friday 08 December 2017 01:49 AM, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Thu, 7 Dec 2017 21:00:05 +0100
->>
->> Omit an extra message for a memory allocation failure in this function.
->>
->> This issue was detected by using the Coccinelle software.
->>
-> 
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+Trivial fix to spelling mistake in dev_dbg debug message. Also
+add in a missing comma.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/mei/bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-Jon
-
+diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
+index 2a5146bdecf1..3e5eabdae8d9 100644
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -549,7 +549,7 @@ int mei_cldev_disable(struct mei_cl_device *cldev)
+ 	}
+ 
+ 	if (bus->dev_state = MEI_DEV_POWER_DOWN) {
+-		dev_dbg(bus->dev, "Device is powering down don't botther with disconnection\n");
++		dev_dbg(bus->dev, "Device is powering down, don't bother with disconnection\n");
+ 		err = 0;
+ 		goto out;
+ 	}
 -- 
-nvpublic
+2.14.1
+
