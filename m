@@ -1,58 +1,54 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Thu, 28 Dec 2017 05:38:46 +0000
-Subject: Re: [PATCH] pinctrl/spear/plgpio: Delete two error messages for a failed memory allocation in plgpio
-Message-Id: <20171228052646.GC8652@vireshk-i7>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 13:51:42 +0000
+Subject: [PATCH 1/2] ps3: Delete an error message for a failed memory allocation in two functions
+Message-Id: <58807b28-b2b9-7e77-11b8-21db43c9d5ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
-In-Reply-To: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
+References: <9b6464bc-a408-de2a-1b54-cb7794b92506@users.sourceforge.net>
+In-Reply-To: <9b6464bc-a408-de2a-1b54-cb7794b92506@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Geoff Levand <geoff@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 27-12-17, 22:39, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Dec 2017 22:34:28 +0100
-> 
-> Omit extra messages for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/pinctrl/spear/pinctrl-plgpio.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
-> index 6a0ed8ab33b9..d2123e396b29 100644
-> --- a/drivers/pinctrl/spear/pinctrl-plgpio.c
-> +++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
-> @@ -519,10 +519,8 @@ static int plgpio_probe(struct platform_device *pdev)
->  	int ret, irq;
->  
->  	plgpio = devm_kzalloc(&pdev->dev, sizeof(*plgpio), GFP_KERNEL);
-> -	if (!plgpio) {
-> -		dev_err(&pdev->dev, "memory allocation fail\n");
-> +	if (!plgpio)
->  		return -ENOMEM;
-> -	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	plgpio->base = devm_ioremap_resource(&pdev->dev, res);
-> @@ -544,10 +542,8 @@ static int plgpio_probe(struct platform_device *pdev)
->  			sizeof(*plgpio->csave_regs) *
->  			DIV_ROUND_UP(plgpio->chip.ngpio, MAX_GPIO_PER_REG),
->  			GFP_KERNEL);
-> -	if (!plgpio->csave_regs) {
-> -		dev_err(&pdev->dev, "csave registers memory allocation fail\n");
-> +	if (!plgpio->csave_regs)
->  		return -ENOMEM;
-> -	}
->  #endif
->  
->  	platform_set_drvdata(pdev, plgpio);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 12:32:42 +0100
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Omit an extra message for a memory allocation failure in these functions.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ps3/ps3-lpm.c   | 2 --
+ drivers/ps3/ps3-vuart.c | 1 -
+ 2 files changed, 3 deletions(-)
+
+diff --git a/drivers/ps3/ps3-lpm.c b/drivers/ps3/ps3-lpm.c
+index e34de9a7d517..ac8d5725c9b4 100644
+--- a/drivers/ps3/ps3-lpm.c
++++ b/drivers/ps3/ps3-lpm.c
+@@ -1123,8 +1123,6 @@ int ps3_lpm_open(enum ps3_lpm_tb_type tb_type, void *tb_cache,
+ 		lpm_priv->tb_cache_internal = kzalloc(
+ 			lpm_priv->tb_cache_size + 127, GFP_KERNEL);
+ 		if (!lpm_priv->tb_cache_internal) {
+-			dev_err(sbd_core(), "%s:%u: alloc internal tb_cache "
+-				"failed\n", __func__, __LINE__);
+ 			result = -ENOMEM;
+ 			goto fail_malloc;
+ 		}
+diff --git a/drivers/ps3/ps3-vuart.c b/drivers/ps3/ps3-vuart.c
+index b7f300b79ffd..bbaad30a876f 100644
+--- a/drivers/ps3/ps3-vuart.c
++++ b/drivers/ps3/ps3-vuart.c
+@@ -929,7 +929,6 @@ static int ps3_vuart_bus_interrupt_get(void)
+ 	vuart_bus_priv.bmp = kzalloc(sizeof(struct ports_bmp), GFP_KERNEL);
+ 
+ 	if (!vuart_bus_priv.bmp) {
+-		pr_debug("%s:%d: kzalloc failed.\n", __func__, __LINE__);
+ 		result = -ENOMEM;
+ 		goto fail_bmp_malloc;
+ 	}
 -- 
-viresh
+2.15.1
+
