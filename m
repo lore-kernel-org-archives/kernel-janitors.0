@@ -1,54 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Dec 2017 18:43:07 +0000
-Subject: [PATCH] tps65090-charger: Delete an error message for a failed memory allocation in two functions
-Message-Id: <aa138aa9-d8c9-c6e3-7071-9fc642e7b248@users.sourceforge.net>
+From: Joe Perches <joe@perches.com>
+Date: Sat, 16 Dec 2017 18:53:52 +0000
+Subject: Re: [PATCH] tps65090-charger: Delete an error message for a failed memory allocation in two function
+Message-Id: <1513450432.4647.47.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <aa138aa9-d8c9-c6e3-7071-9fc642e7b248@users.sourceforge.net>
+In-Reply-To: <aa138aa9-d8c9-c6e3-7071-9fc642e7b248@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Dec 2017 19:32:02 +0100
+On Sat, 2017-12-16 at 19:43 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 16 Dec 2017 19:32:02 +0100
+> 
+> Omit an extra message for a memory allocation failure in these functions.
 
-Omit an extra message for a memory allocation failure in these functions.
+Because???
 
-This issue was detected by using the Coccinelle software.
+Fix your commit message.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/power/supply/tps65090-charger.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Say _WHY_ should this be applied.
 
-diff --git a/drivers/power/supply/tps65090-charger.c b/drivers/power/supply/tps65090-charger.c
-index 1b4b5e09538e..43c44d2eaeca 100644
---- a/drivers/power/supply/tps65090-charger.c
-+++ b/drivers/power/supply/tps65090-charger.c
-@@ -202,10 +202,8 @@ static struct tps65090_platform_data *
- 	unsigned int prop;
- 
- 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(&pdev->dev, "Memory alloc for tps65090_pdata failed\n");
-+	if (!pdata)
- 		return NULL;
--	}
- 
- 	prop = of_property_read_bool(np, "ti,enable-low-current-chrg");
- 	pdata->enable_low_current_chrg = prop;
-@@ -257,10 +255,8 @@ static int tps65090_charger_probe(struct platform_device *pdev)
- 	}
- 
- 	cdata = devm_kzalloc(&pdev->dev, sizeof(*cdata), GFP_KERNEL);
--	if (!cdata) {
--		dev_err(&pdev->dev, "failed to allocate memory status\n");
-+	if (!cdata)
- 		return -ENOMEM;
--	}
- 
- 	platform_set_drvdata(pdev, cdata);
- 
--- 
-2.15.1
-
+Otherwise, just stop sending these patches.
