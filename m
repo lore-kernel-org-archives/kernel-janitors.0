@@ -1,58 +1,34 @@
-From: Michal Hocko <mhocko@kernel.org>
-Date: Sun, 10 Dec 2017 09:45:45 +0000
-Subject: Re: [PATCH] mm: Release a semaphore in 'get_vaddr_frames()'
-Message-Id: <20171210094545.GW20234@dhcp22.suse.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 06:27:25 +0000
+Subject: Re: jsm_tty: Deletion of a null pointer check in two functions?
+Message-Id: <817fcf72-cd9d-bf5b-ce83-ce2844e3e901@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171209070941.31828-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171209070941.31828-1-christophe.jaillet@wanadoo.fr>
+References: <5c78db97-88f5-8655-9a47-eeee0a043fba@users.sourceforge.net>
+ <1511976187.19952.65.camel@perches.com> <20171129173504.GA20581@kroah.com>
+ <1511977896.19952.69.camel@perches.com> <20171129180528.GA24705@kroah.com>
+ <089a4b85-64e8-cb4a-c5f8-9abb2556e5e5@users.sourceforge.net>
+ <8ae240fa-7f77-8f4c-225c-853cdda73a67@linux.vnet.ibm.com>
+In-Reply-To: <8ae240fa-7f77-8f4c-225c-853cdda73a67@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dan.j.williams@intel.com, akpm@linux-foundation.org, borntraeger@de.ibm.com, dsterba@suse.com, gregkh@linuxfoundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>, linux-serial@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat 09-12-17 08:09:41, Christophe JAILLET wrote:
-> A semaphore is acquired before this check, so we must release it before
-> leaving.
-> 
-> Fixes: b7f0554a56f2 ("mm: fail get_vaddr_frames() for filesystem-dax mappings")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> -- Untested --
-> 
-> The wording of the commit entry and log description could be improved
-> but I didn't find something better.
+> Thanks for the fix.
 
-The changelog is ok imo.
+Thanks for your positive feedback.
 
-> ---
->  mm/frame_vector.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/frame_vector.c b/mm/frame_vector.c
-> index 297c7238f7d4..e0c5e659fa82 100644
-> --- a/mm/frame_vector.c
-> +++ b/mm/frame_vector.c
-> @@ -62,8 +62,10 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
->  	 * get_user_pages_longterm() and disallow it for filesystem-dax
->  	 * mappings.
->  	 */
-> -	if (vma_is_fsdax(vma))
-> +	if (vma_is_fsdax(vma)) {
-> +		up_read(&mm->mmap_sem);
->  		return -EOPNOTSUPP;
-> +	}
 
-Is there any reason to do a different error handling than other error
-paths? Namely not going without goto out?
+> I was on vacation - but now seeing all the analysis made here,
 
->  
->  	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
->  		vec->got_ref = true;
-> -- 
-> 2.14.1
-> 
+I assume that special communication settings could trigger
+corresponding consequences for the discussed source code adjustment.
 
--- 
-Michal Hocko
-SUSE Labs
+
+> if "ch" can't be NULL then please go ahead and remove the check =)
+
+Would you dare to convert this request into a concrete patch?
+
+Regards,
+Markus
