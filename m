@@ -1,27 +1,54 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 01 Dec 2017 09:42:17 +0000
-Subject: Re: [PATCH] wlcore, wl1251: fix spelling mistake: "Couldnt" -> "Couldn't"
-Message-Id: <1512121337.19952.154.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 18:43:07 +0000
+Subject: [PATCH] tps65090-charger: Delete an error message for a failed memory allocation in two functions
+Message-Id: <aa138aa9-d8c9-c6e3-7071-9fc642e7b248@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171201093433.9154-1-colin.king@canonical.com>
-In-Reply-To: <20171201093433.9154-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 2017-12-01 at 09:34 +0000, Colin King wrote:
-> Trivial fix to spelling mistake in error message text.
-[]
-> diff --git a/drivers/net/wireless/ti/wl1251/init.c b/drivers/net/wireless/ti/wl1251/init.c
-[]
-> @@ -311,7 +311,7 @@ static int wl1251_hw_init_data_path_config(struct wl1251 *wl)
->  	wl->data_path = kzalloc(sizeof(struct acx_data_path_params_resp),
->  				GFP_KERNEL);
->  	if (!wl->data_path) {
-> -		wl1251_error("Couldnt allocate data path parameters");
-> +		wl1251_error("Couldn't allocate data path parameters");
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 19:32:02 +0100
 
-Might be better to remove this one.
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/power/supply/tps65090-charger.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/power/supply/tps65090-charger.c b/drivers/power/supply/tps65090-charger.c
+index 1b4b5e09538e..43c44d2eaeca 100644
+--- a/drivers/power/supply/tps65090-charger.c
++++ b/drivers/power/supply/tps65090-charger.c
+@@ -202,10 +202,8 @@ static struct tps65090_platform_data *
+ 	unsigned int prop;
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "Memory alloc for tps65090_pdata failed\n");
++	if (!pdata)
+ 		return NULL;
+-	}
+ 
+ 	prop = of_property_read_bool(np, "ti,enable-low-current-chrg");
+ 	pdata->enable_low_current_chrg = prop;
+@@ -257,10 +255,8 @@ static int tps65090_charger_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	cdata = devm_kzalloc(&pdev->dev, sizeof(*cdata), GFP_KERNEL);
+-	if (!cdata) {
+-		dev_err(&pdev->dev, "failed to allocate memory status\n");
++	if (!cdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	platform_set_drvdata(pdev, cdata);
+ 
+-- 
+2.15.1
 
