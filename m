@@ -1,42 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Dec 2017 20:18:27 +0000
-Subject: [PATCH] platform/x86/dell-smo8800: Delete an error message for a failed memory allocation in smo8800
-Message-Id: <3ce85d6b-6b25-2988-960b-84fa0b7a8c61@users.sourceforge.net>
+Date: Sat, 16 Dec 2017 20:13:08 +0000
+Subject: [PATCH 2/3] pm2301-charger: Improve a size determination in pm2xxx_wall_charger_probe()
+Message-Id: <8b954bef-c66e-2ad9-233c-9cb05ee0871f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b11627bc-502d-b3af-ee96-ac2a693448a7@users.sourceforge.net>
+In-Reply-To: <b11627bc-502d-b3af-ee96-ac2a693448a7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Dec 2017 21:12:10 +0100
+Date: Sat, 16 Dec 2017 20:33:37 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/platform/x86/dell-smo8800.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/power/supply/pm2301_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/dell-smo8800.c b/drivers/platform/x86/dell-smo8800.c
-index 1d87237bc731..9590d5e7c5ca 100644
---- a/drivers/platform/x86/dell-smo8800.c
-+++ b/drivers/platform/x86/dell-smo8800.c
-@@ -150,10 +150,8 @@ static int smo8800_add(struct acpi_device *device)
- 	struct smo8800_device *smo8800;
+diff --git a/drivers/power/supply/pm2301_charger.c b/drivers/power/supply/pm2301_charger.c
+index 0a0c2da936cf..99a9892f0f68 100644
+--- a/drivers/power/supply/pm2301_charger.c
++++ b/drivers/power/supply/pm2301_charger.c
+@@ -990,7 +990,7 @@ static int pm2xxx_wall_charger_probe(struct i2c_client *i2c_client,
+ 		return -EINVAL;
+ 	}
  
- 	smo8800 = devm_kzalloc(&device->dev, sizeof(*smo8800), GFP_KERNEL);
--	if (!smo8800) {
--		dev_err(&device->dev, "failed to allocate device data\n");
-+	if (!smo8800)
+-	pm2 = kzalloc(sizeof(struct pm2xxx_charger), GFP_KERNEL);
++	pm2 = kzalloc(sizeof(*pm2), GFP_KERNEL);
+ 	if (!pm2)
  		return -ENOMEM;
--	}
  
- 	smo8800->dev = &device->dev;
- 	smo8800->miscdev.minor = MISC_DYNAMIC_MINOR;
 -- 
 2.15.1
 
