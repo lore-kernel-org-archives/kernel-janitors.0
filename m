@@ -1,34 +1,42 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Thu, 14 Dec 2017 11:07:34 +0000
-Subject: Re: [PATCH 0/3] S390-DASD: Fine-tuning for some function implementations
-Message-Id: <20171214110734.GD4238@osiris>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Dec 2017 19:30:24 +0000
+Subject: [PATCH] jz4740-battery: Delete an error message for a failed memory allocation in jz_battery_probe()
+Message-Id: <54d86c99-fea3-ced3-12fa-b92b340228b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
- <d7e6649b-cdb4-e686-df0e-472958c94202@users.sourceforge.net>
-In-Reply-To: <d7e6649b-cdb4-e686-df0e-472958c94202@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-s390@vger.kernel.org, Jan =?iso-8859-1?Q?H=F6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 14, 2017 at 11:34:01AM +0100, SF Markus Elfring wrote:
-> > Date: Wed, 10 May 2017 19:43:21 +0200
-> > 
-> > A few update suggestions were taken into account
-> > from static source code analysis.
-> > 
-> > Markus Elfring (3):
-> >   Adjust buffer output in dasd_hosts_print()
-> >   Fix typos in two comment lines
-> >   Adjust six checks for null pointers
-> > 
-> >  drivers/s390/block/dasd_eckd.c | 24 +++++++++++-------------
-> >  1 file changed, 11 insertions(+), 13 deletions(-)
-> 
-> 
-> Are there any chances that such change possibilities (and further adjustments)
-> will be integrated in this software area?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Dec 2017 20:23:28 +0100
 
-No.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/power/supply/jz4740-battery.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/power/supply/jz4740-battery.c b/drivers/power/supply/jz4740-battery.c
+index 88f04f4d1a70..5210c9a92e2d 100644
+--- a/drivers/power/supply/jz4740-battery.c
++++ b/drivers/power/supply/jz4740-battery.c
+@@ -254,10 +254,8 @@ static int jz_battery_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	jz_battery = devm_kzalloc(&pdev->dev, sizeof(*jz_battery), GFP_KERNEL);
+-	if (!jz_battery) {
+-		dev_err(&pdev->dev, "Failed to allocate driver structure\n");
++	if (!jz_battery)
+ 		return -ENOMEM;
+-	}
+ 
+ 	jz_battery->cell = mfd_get_cell(pdev);
+ 
+-- 
+2.15.1
 
