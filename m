@@ -1,51 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 Dec 2017 14:11:32 +0000
-Subject: [PATCH][next] ASoC: pcm186x: make pcm186x_dai_ops and pcm186x_adc_input_channel_sel_value static
-Message-Id: <20171207141132.25928-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Dec 2017 19:54:09 +0000
+Subject: [PATCH] gpio-charger: Delete an error message for a failed memory allocation in gpio_charger_probe()
+Message-Id: <1a9a3040-f276-049c-8d08-251cb3b0c92a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Michael Stecklein <m-stecklein@ti.com>, Andreas Dannenberg <dannenberg@ti.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Dec 2017 20:50:04 +0100
 
-pcm186x_dai_ops and pcm186x_adc_input_channel_sel_value are local to the
-source and do not need to be in global scope, so make them static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warnings:
-symbol 'pcm186x_dai_ops' was not declared. Should it be static?
-symbol 'pcm186x_adc_input_channel_sel_value' was not declared. Should it
-be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/pcm186x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/supply/gpio-charger.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/pcm186x.c b/sound/soc/codecs/pcm186x.c
-index f7aa56e20169..cdb51427facc 100644
---- a/sound/soc/codecs/pcm186x.c
-+++ b/sound/soc/codecs/pcm186x.c
-@@ -59,7 +59,7 @@ static const struct snd_kcontrol_new pcm1865_snd_controls[] = {
- 			   pcm186x_pga_tlv),
- };
+diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
+index 001731e88718..fb80734e2e51 100644
+--- a/drivers/power/supply/gpio-charger.c
++++ b/drivers/power/supply/gpio-charger.c
+@@ -138,10 +138,8 @@ static int gpio_charger_probe(struct platform_device *pdev)
  
--const unsigned int pcm186x_adc_input_channel_sel_value[] = {
-+static const unsigned int pcm186x_adc_input_channel_sel_value[] = {
- 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
- 	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
- 	0x10, 0x20, 0x30
-@@ -475,7 +475,7 @@ static int pcm186x_set_dai_sysclk(struct snd_soc_dai *dai, int clk_id,
- 	return 0;
- }
+ 	gpio_charger = devm_kzalloc(&pdev->dev, sizeof(*gpio_charger),
+ 					GFP_KERNEL);
+-	if (!gpio_charger) {
+-		dev_err(&pdev->dev, "Failed to alloc driver structure\n");
++	if (!gpio_charger)
+ 		return -ENOMEM;
+-	}
  
--const struct snd_soc_dai_ops pcm186x_dai_ops = {
-+static const struct snd_soc_dai_ops pcm186x_dai_ops = {
- 	.set_sysclk = pcm186x_set_dai_sysclk,
- 	.set_tdm_slot = pcm186x_set_tdm_slot,
- 	.set_fmt = pcm186x_set_fmt,
+ 	/*
+ 	 * This will fetch a GPIO descriptor from device tree, ACPI or
 -- 
-2.14.1
+2.15.1
 
