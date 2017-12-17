@@ -1,28 +1,18 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 16:25:08 +0000
-Subject: [PATCH 0/3] parport-AX88796: Adjustments for parport_ax88796_probe()
-Message-Id: <68c7b9ec-1d02-3981-8323-f72d1e7fa146@users.sourceforge.net>
+From: Citi Financial <dorkoper@student.pg.edu.pl>
+Date: Sun, 17 Dec 2017 23:15:31 +0000
+Subject: (brak tematu)
+Message-Id: <179095e202701441ab9c957e757e0cea@student.pg.edu.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="euc-kr"
+Content-Transfer-Encoding: base64
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2017 17:21:23 +0100
-
-Three update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
-  Delete an unnecessary variable initialisation
-
- drivers/parport/parport_ax88796.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
--- 
-2.15.1
-
+CgotLSAKV2lyIGJpZXRlbiBLcmVkaXRlIGFuIGFsbGUgaW4gTm90IG1pdCAzJSBaaW5zc2F0eiwg
+a2VpbmUgU2ljaGVyaGVpdGVuCmJldGVpbGlndCwgw7xiZXJwcsO8ZmVuIHdpciBuaWNodCBhdWNo
+IEtyZWRpdC1TY29yZXMsIGVyaGFsdGVuIHNjaG5lbGxlIAp1bmQgenV2ZXJsw6Rzc2lnZSBEYXJs
+ZWhlbgppbm5lcmhhbGIgdm9uIDMgVGFnZW4gZ2FyYW50aWVyZW4uIEUtTWFpbCBqZXR6dCBmw7xy
+IHdlaXRlcmUgCkluZm9ybWF0aW9uZW4uCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5
+IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21v
+IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
