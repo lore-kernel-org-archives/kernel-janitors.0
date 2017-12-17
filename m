@@ -1,50 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 10 Dec 2017 23:20:58 +0000
-Subject: [PATCH][staging-next] staging: most: core: make functions print_links and most_match static
-Message-Id: <20171210232058.14652-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Dec 2017 21:08:12 +0000
+Subject: [PATCH] abx500_chargalg: Delete an error message for a failed memory allocation in abx500_chargalg_p
+Message-Id: <b16d7d4b-df0d-a4ce-f5fd-e4e2ab3d38c4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, Andrey Shvetsov <andrey.shvetsov@k2l.de>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Dec 2017 22:02:11 +0100
 
-The functions print_links and most_match static are local to the source
-and do not need to be in global scope, so make them static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warnings:
-symbol 'print_links' was not declared. Should it be static?
-symbol 'most_match' was not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/most/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/supply/abx500_chargalg.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-index c1fba5ba7541..5ba2cd5ec1b0 100644
---- a/drivers/staging/most/core.c
-+++ b/drivers/staging/most/core.c
-@@ -534,7 +534,7 @@ struct show_links_data {
- 	char *buf;
- };
+diff --git a/drivers/power/supply/abx500_chargalg.c b/drivers/power/supply/abx500_chargalg.c
+index a4411d6bbc96..5340421014c9 100644
+--- a/drivers/power/supply/abx500_chargalg.c
++++ b/drivers/power/supply/abx500_chargalg.c
+@@ -2054,10 +2054,8 @@ static int abx500_chargalg_probe(struct platform_device *pdev)
+ 	int ret = 0;
  
--int print_links(struct device *dev, void *data)
-+static int print_links(struct device *dev, void *data)
- {
- 	struct show_links_data *d = data;
- 	int offs = d->offs;
-@@ -803,7 +803,7 @@ static const struct attribute_group *mc_attr_groups[] = {
- 	NULL,
- };
+ 	di = devm_kzalloc(&pdev->dev, sizeof(*di), GFP_KERNEL);
+-	if (!di) {
+-		dev_err(&pdev->dev, "%s no mem for ab8500_chargalg\n", __func__);
++	if (!di)
+ 		return -ENOMEM;
+-	}
  
--int most_match(struct device *dev, struct device_driver *drv)
-+static int most_match(struct device *dev, struct device_driver *drv)
- {
- 	if (!strcmp(dev_name(dev), "most"))
- 		return 0;
+ 	if (!plat) {
+ 		dev_err(&pdev->dev, "no battery management data supplied\n");
 -- 
-2.14.1
+2.15.1
 
