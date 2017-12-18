@@ -1,27 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 05 Dec 2017 21:48:30 +0000
-Subject: [PATCH 0/2] usbip: Adjustments for two function implementations
-Message-Id: <6a84f1e4-a5c1-84da-bd14-de28e306991b@users.sourceforge.net>
+Date: Mon, 18 Dec 2017 21:30:05 +0000
+Subject: [PATCH 2/2] platform/x86/thinkpad_acpi: Improve a size determination in tpacpi_new_rfkill()
+Message-Id: <36da9194-4254-91ef-5b82-ab150801b911@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
+In-Reply-To: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>, Valentina Manea <valentina.manea.m@gmail.com>
+To: ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 5 Dec 2017 22:44:55 +0100
+Date: Mon, 18 Dec 2017 22:13:53 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in two functions
-  Use common error handling code in stub_recv_cmd_submit()
+This issue was detected by using the Coccinelle software.
 
- drivers/usb/usbip/stub_rx.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 729144925880..40b7a1b9a019 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -1258,7 +1258,7 @@ static int __init tpacpi_new_rfkill(const enum tpacpi_rfk_id id,
+ 
+ 	BUG_ON(id >= TPACPI_RFK_SW_MAX || tpacpi_rfkill_switches[id]);
+ 
+-	atp_rfk = kzalloc(sizeof(struct tpacpi_rfk), GFP_KERNEL);
++	atp_rfk = kzalloc(sizeof(*atp_rfk), GFP_KERNEL);
+ 	if (atp_rfk)
+ 		atp_rfk->rfkill = rfkill_alloc(name,
+ 						&tpacpi_pdev->dev,
 -- 
 2.15.1
 
