@@ -1,45 +1,49 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 29 Dec 2017 09:07:32 +0000
-Subject: [PATCH][V2] wcn36xx: fix incorrect assignment to msg_body.min_ch_time
-Message-Id: <20171229090732.14928-2-colin.king@canonical.com>
+Date: Mon, 18 Dec 2017 17:47:07 +0000
+Subject: [PATCH][next] bpf: make function skip_callee static and return NULL rather than 0
+Message-Id: <20171218174707.15430-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171229090732.14928-1-colin.king@canonical.com>
-In-Reply-To: <20171229090732.14928-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eugene Krasnikov <k.eugene.e@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The second assignment to msg_body.min_ch_time is incorrect, it
-should actually be to msg_body.max_ch_time.
+Function skip_callee is local to the source and does not need to
+be in global scope, so make it static. Also return NULL rather than 0.
+Cleans up two sparse warnings:
 
-Thanks to Bjorn Andersson for identifying the correct way to fix
-this as my original fix was incorrect.
+symbol 'skip_callee' was not declared. Should it be static?
+Using plain integer as NULL pointer
 
-Detected by CoverityScan, CID#1463042 ("Unused Value")
-
-Fixes: 2f3bef4b247e ("wcn36xx: Add hardware scan offload support")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ath/wcn36xx/smd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/bpf/verifier.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-index 2914618a0335..2a4871ca9c72 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.c
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-@@ -626,7 +626,7 @@ int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 2f6f09cd1925..52689f2abbcb 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -823,6 +823,7 @@ static int check_subprogs(struct bpf_verifier_env *env)
+ 	return 0;
+ }
  
- 	msg_body.scan_type = WCN36XX_HAL_SCAN_TYPE_ACTIVE;
- 	msg_body.min_ch_time = 30;
--	msg_body.min_ch_time = 100;
-+	msg_body.max_ch_time = 100;
- 	msg_body.scan_hidden = 1;
- 	memcpy(msg_body.mac, vif->addr, ETH_ALEN);
- 	msg_body.p2p_search = vif->p2p;
++static
+ struct bpf_verifier_state *skip_callee(struct bpf_verifier_env *env,
+ 				       const struct bpf_verifier_state *state,
+ 				       struct bpf_verifier_state *parent,
+@@ -867,7 +868,7 @@ struct bpf_verifier_state *skip_callee(struct bpf_verifier_env *env,
+ 	verbose(env, "verifier bug regno %d tmp %p\n", regno, tmp);
+ 	verbose(env, "regno %d parent frame %d current frame %d\n",
+ 		regno, parent->curframe, state->curframe);
+-	return 0;
++	return NULL;
+ }
+ 
+ static int mark_reg_read(struct bpf_verifier_env *env,
 -- 
 2.14.1
 
