@@ -1,43 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 07 Dec 2017 21:20:23 +0000
-Subject: [PATCH 2/2] serial: sccnxp: Improve a size determination in sccnxp_probe()
-Message-Id: <e52a355c-1b56-dd0e-89e4-d489df5d96dc@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Dec 2017 15:02:45 +0000
+Subject: [PATCH][next] ath10k: wmi: remove redundant integer fc
+Message-Id: <20171218150245.9073-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <90e7fa7a-c0e6-4819-9fa6-fae1a71685eb@users.sourceforge.net>
-In-Reply-To: <90e7fa7a-c0e6-4819-9fa6-fae1a71685eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 7 Dec 2017 22:00:40 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Variable fc is being assigned but never used, so remove it. Cleans
+up the clang warning:
 
-This issue was detected by using the Coccinelle software.
+warning: Value stored to 'fc' is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/serial/sccnxp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/wmi-tlv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
-index ba1653ba5f37..21be1fb5fd6d 100644
---- a/drivers/tty/serial/sccnxp.c
-+++ b/drivers/tty/serial/sccnxp.c
-@@ -856,7 +856,7 @@ static int sccnxp_probe(struct platform_device *pdev)
- 	if (IS_ERR(membase))
- 		return PTR_ERR(membase);
+diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+index 8d53063bd503..06fde53aa679 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
++++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+@@ -2494,7 +2494,6 @@ ath10k_wmi_tlv_op_gen_mgmt_tx(struct ath10k *ar, struct sk_buff *msdu)
+ 	void *ptr;
+ 	int len;
+ 	u32 buf_len = msdu->len;
+-	u16 fc;
+ 	struct ath10k_vif *arvif;
+ 	dma_addr_t mgmt_frame_dma;
+ 	u32 vdev_id;
+@@ -2503,7 +2502,6 @@ ath10k_wmi_tlv_op_gen_mgmt_tx(struct ath10k *ar, struct sk_buff *msdu)
+ 		return ERR_PTR(-EINVAL);
  
--	s = devm_kzalloc(&pdev->dev, sizeof(struct sccnxp_port), GFP_KERNEL);
-+	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
- 	if (!s)
- 		return -ENOMEM;
+ 	hdr = (struct ieee80211_hdr *)msdu->data;
+-	fc = le16_to_cpu(hdr->frame_control);
+ 	arvif = (void *)cb->vif->drv_priv;
+ 	vdev_id = arvif->vdev_id;
  
 -- 
-2.15.1
+2.14.1
 
