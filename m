@@ -1,7 +1,7 @@
-From: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
-Date: Mon, 18 Dec 2017 14:36:15 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Dec 2017 17:14:30 +0000
 Subject: Re: jsm_tty: Deletion of a null pointer check in two functions?
-Message-Id: <533d608d-c502-824f-9c79-880e387f4d09@linux.vnet.ibm.com>
+Message-Id: <5e7d7252-16d8-0232-c78a-8e01f89e52d8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5c78db97-88f5-8655-9a47-eeee0a043fba@users.sourceforge.net>
  <1511976187.19952.65.camel@perches.com> <20171129173504.GA20581@kroah.com>
@@ -9,43 +9,26 @@ References: <5c78db97-88f5-8655-9a47-eeee0a043fba@users.sourceforge.net>
  <089a4b85-64e8-cb4a-c5f8-9abb2556e5e5@users.sourceforge.net>
  <8ae240fa-7f77-8f4c-225c-853cdda73a67@linux.vnet.ibm.com>
  <817fcf72-cd9d-bf5b-ce83-ce2844e3e901@users.sourceforge.net>
-In-Reply-To: <817fcf72-cd9d-bf5b-ce83-ce2844e3e901@users.sourceforge.net>
+ <533d608d-c502-824f-9c79-880e387f4d09@linux.vnet.ibm.com>
+In-Reply-To: <533d608d-c502-824f-9c79-880e387f4d09@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>, linux-serial@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12/16/2017 04:27 AM, SF Markus Elfring wrote:
->> Thanks for the fix.
-> 
-> Thanks for your positive feedback.
-> 
-> 
->> I was on vacation - but now seeing all the analysis made here,
-> 
-> I assume that special communication settings could trigger
-> corresponding consequences for the discussed source code adjustment.
-> 
-> 
->> if "ch" can't be NULL then please go ahead and remove the check =)
-> 
-> Would you dare to convert this request into a concrete patch?
+> So, what do you prefer? Send it yourself,
 
-For me, it's OK if you send the patch or I can do it myself.
-It's a minor patch...but it's correct the way I see it.
-
-So, what do you prefer? Send it yourself, or want me to send
-it with your sign-off too? (since was your idea).
-
-Thanks,
+I became concerned that “my patch” would not get picked up because of
+Greg's communication settings (for my initial messages when they do not get
+resent by other contributors).
 
 
-Guilherme
+> or want me to send it with your sign-off too? (since was your idea).
 
+I would prefer this variant because I assume that the chances for integration
+are higher for the discussed small source code adjustment.
+I guess that the tag “Suggested-by” would be sufficient in this case.
 
-> 
-> Regards,
-> Markus
-> 
-
+Regards,
+Markus
