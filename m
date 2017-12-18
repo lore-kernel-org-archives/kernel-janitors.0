@@ -1,46 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 05 Dec 2017 08:31:48 +0000
-Subject: Re: [PATCH] misc: rtsx: make several functions static
-Message-Id: <20171205083148.gtfc2ayn5kmmyok7@dell>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Dec 2017 18:21:24 +0000
+Subject: Re: [PATCH 0/6] PNP: Adjustments for four function implementations
+Message-Id: <770be6e8-f97e-fd95-562c-3973f2faf542@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171204124329.5569-1-colin.king@canonical.com>
-In-Reply-To: <20171204124329.5569-1-colin.king@canonical.com>
+References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 04 Dec 2017, Colin King wrote:
+> Date: Mon, 15 May 2017 21:03:21 +0200
+> 
+> A few update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (6):
+>   Delete an error message for a failed memory allocation in pnp_alloc()
+>   Improve a size determination in pnp_alloc_dev()
+>   Improve a size determination in pnp_clone_dependent_set()
+>   Delete an error message for a failed memory allocation in pnp_clone_dependent_set()
+>   Improve a size determination in quirk_awe32_add_ports()
+>   Delete an error message for a failed memory allocation in quirk_awe32_add_ports()
+> 
+>  drivers/pnp/core.c   |  6 ++----
+>  drivers/pnp/quirks.c | 15 ++++-----------
+>  2 files changed, 6 insertions(+), 15 deletions(-)
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Several functions are local to the source and do not need to be in global
-> scope, so make them static.
->=20
-> Cleans up sparse warnings:
-> symbol 'rtsx_pm_power_saving' was not declared. Should it be static?
-> symbol 'rtsx_set_l1off_sub_cfg_d0' was not declared. Should it be static?
-> symbol 'rtsx_pm_full_on' was not declared. Should it be static?
-> symbol 'rtsx_comm_set_ltr_latency' was not declared. Should it be static?
-> symbol 'rtsx_pci_process_ocp' was not declared. Should it be static?
-> symbol 'rtsx_pci_process_ocp_interrupt' was not declared. Should it be
-> static?
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/misc/cardreader/rtsx_pcr.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+How are the chances that such change possibilities will be integrated
+in this software module?
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Markus
