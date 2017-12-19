@@ -1,55 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 15:32:31 +0000
-Subject: [PATCH 2/2] tty: moxa: Return directly after a failed kcalloc() in moxa_init_board()
-Message-Id: <385897ca-48ec-770a-8217-844fe65285f3@users.sourceforge.net>
+Date: Tue, 19 Dec 2017 20:03:29 +0000
+Subject: [PATCH] platform/x86/mlxcpld-hotplug: Delete an error message for a failed memory allocation in mlxc
+Message-Id: <679408d6-5412-562e-8051-319302635354@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
-In-Reply-To: <7d1badbd-8bb1-4109-5c40-1ba1f226a2b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Vadim Pasternak <vadimp@mellanox.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 10 Dec 2017 16:15:41 +0100
+Date: Tue, 19 Dec 2017 20:56:56 +0100
 
-* Return directly after a call of the function "kcalloc" failed
-  at the beginning.
+Omit an extra message for a memory allocation failure in this function.
 
-* Delete the jump label "err" which became unnecessary with
-  this refactoring.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/moxa.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/platform/x86/mlxcpld-hotplug.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-index a74caf05cf57..571c8456056c 100644
---- a/drivers/tty/moxa.c
-+++ b/drivers/tty/moxa.c
-@@ -835,10 +835,8 @@ static int moxa_init_board(struct moxa_board_conf *brd, struct device *dev)
+diff --git a/drivers/platform/x86/mlxcpld-hotplug.c b/drivers/platform/x86/mlxcpld-hotplug.c
+index aff3686b3b37..d45cb8be221f 100644
+--- a/drivers/platform/x86/mlxcpld-hotplug.c
++++ b/drivers/platform/x86/mlxcpld-hotplug.c
+@@ -165,11 +165,8 @@ static int mlxcpld_hotplug_attr_init(struct mlxcpld_hotplug_priv_data *priv)
+ 			PRIV_DEV_ATTR(i).nr = MLXCPLD_HOTPLUG_ATTR_TYPE_FAN;
+ 		}
  
- 	brd->ports = kcalloc(MAX_PORTS_PER_BOARD, sizeof(*brd->ports),
- 			GFP_KERNEL);
--	if (brd->ports = NULL) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!brd->ports)
-+		return -ENOMEM;
+-		if (!PRIV_ATTR(i)->name) {
+-			dev_err(&priv->pdev->dev, "Memory allocation failed for sysfs attribute %d.\n",
+-				i + 1);
++		if (!PRIV_ATTR(i)->name)
+ 			return -ENOMEM;
+-		}
  
- 	for (i = 0, p = brd->ports; i < MAX_PORTS_PER_BOARD; i++, p++) {
- 		tty_port_init(&p->port);
-@@ -892,7 +890,6 @@ static int moxa_init_board(struct moxa_board_conf *brd, struct device *dev)
- 	for (i = 0; i < MAX_PORTS_PER_BOARD; i++)
- 		tty_port_destroy(&brd->ports[i].port);
- 	kfree(brd->ports);
--err:
- 	return ret;
- }
- 
+ 		PRIV_DEV_ATTR(i).dev_attr.attr.name = PRIV_ATTR(i)->name;
+ 		PRIV_DEV_ATTR(i).dev_attr.attr.mode = S_IRUGO;
 -- 
 2.15.1
 
