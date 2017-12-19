@@ -1,46 +1,42 @@
-From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
-Date: Fri, 15 Dec 2017 13:15:33 +0000
-Subject: [PATCH] x86: Remove unused parameter of prepare_switch_to
-Message-Id: <20171215131533.hp6kqebw45o7uvsb@smtp.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Dec 2017 20:18:27 +0000
+Subject: [PATCH] platform/x86/dell-smo8800: Delete an error message for a failed memory allocation in smo8800
+Message-Id: <3ce85d6b-6b25-2988-960b-84fa0b7a8c61@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tglx@linutronix.de
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Commit e37e43a497d5 ("x86/mm/64: Enable vmapped stacks
-(CONFIG_HAVE_ARCH_VMAP_STACK=y)") added prepare_switch_to with one extra
-parameter which is not used by the function, remove it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Dec 2017 21:12:10 +0100
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/include/asm/switch_to.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/platform/x86/dell-smo8800.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
-index 8c6bd6863db9..1008d4622709 100644
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -16,8 +16,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 		      struct tss_struct *tss);
+diff --git a/drivers/platform/x86/dell-smo8800.c b/drivers/platform/x86/dell-smo8800.c
+index 1d87237bc731..9590d5e7c5ca 100644
+--- a/drivers/platform/x86/dell-smo8800.c
++++ b/drivers/platform/x86/dell-smo8800.c
+@@ -150,10 +150,8 @@ static int smo8800_add(struct acpi_device *device)
+ 	struct smo8800_device *smo8800;
  
- /* This runs runs on the previous thread's stack. */
--static inline void prepare_switch_to(struct task_struct *prev,
--				     struct task_struct *next)
-+static inline void prepare_switch_to(struct task_struct *next)
- {
- #ifdef CONFIG_VMAP_STACK
- 	/*
-@@ -70,7 +69,7 @@ struct fork_frame {
+ 	smo8800 = devm_kzalloc(&device->dev, sizeof(*smo8800), GFP_KERNEL);
+-	if (!smo8800) {
+-		dev_err(&device->dev, "failed to allocate device data\n");
++	if (!smo8800)
+ 		return -ENOMEM;
+-	}
  
- #define switch_to(prev, next, last)					\
- do {									\
--	prepare_switch_to(prev, next);					\
-+	prepare_switch_to(next);					\
- 									\
- 	((last) = __switch_to_asm((prev), (next)));			\
- } while (0)
+ 	smo8800->dev = &device->dev;
+ 	smo8800->miscdev.minor = MISC_DYNAMIC_MINOR;
 -- 
 2.15.1
 
