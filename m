@@ -1,46 +1,42 @@
-From: Mihail Atanassov <Mihail.Atanassov@arm.com>
-Date: Mon, 11 Dec 2017 10:10:55 +0000
-Subject: Re: [PATCH] drm: mali-dp: Uninitialized variable in malidp_se_check_scaling()
-Message-Id: <8645d90e-2bc4-8f31-458f-331ce32adf82@arm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Dec 2017 21:37:51 +0000
+Subject: [PATCH] pinctrl: mvebu: Delete an error message for a failed memory allocation in mvebu_pinctrl_prob
+Message-Id: <ba1158ce-87be-6033-72b6-b08d7babc443@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171209114612.yrdmsak5rhn4kheq@mwanda>
-In-Reply-To: <20171209114612.yrdmsak5rhn4kheq@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Liviu Dudau <liviu.dudau@arm.com>
-Cc: Brian Starkey <brian.starkey@arm.com>, Mali DP Maintainers <malidp@foss.arm.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, nd@arm.com
+To: linux-arm-kernel@lists.infradead.org
 
-On 09/12/17 11:46, Dan Carpenter wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Dec 2017 22:30:36 +0100
 
-> We use "mc" without initializing it if scaling is not necessary.
-> 
-> Fixes: 28ce675b7474 ("drm: mali-dp: Add plane upscaling support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-> index 33c5ef96ced0..82f9eaa5ee33 100644
-> --- a/drivers/gpu/drm/arm/malidp_planes.c
-> +++ b/drivers/gpu/drm/arm/malidp_planes.c
-> @@ -148,6 +148,8 @@ static int malidp_se_check_scaling(struct malidp_plane *mp,
->  	if (!crtc_state)
->  		return -EINVAL;
->  
-> +	mc = to_malidp_crtc_state(crtc_state);
-> +
->  	clip.x2 = crtc_state->adjusted_mode.hdisplay;
->  	clip.y2 = crtc_state->adjusted_mode.vdisplay;
->  	ret = drm_atomic_helper_check_plane_state(state, crtc_state, &clip,
-> @@ -166,8 +168,6 @@ static int malidp_se_check_scaling(struct malidp_plane *mp,
->  	if (mp->layer->id & (DE_SMART | DE_GRAPHICS2))
->  		return -EINVAL;
->  
-> -	mc = to_malidp_crtc_state(crtc_state);
-> -
->  	mc->scaled_planes_mask |= mp->layer->id;
->  	/* Defer scaling requirements calculation to the crtc check. */
->  	return 0;
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Reviewed-by: Mihail Atanassov <Mihail.Atanassov@arm.com>
+diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+index 163d4614b0f8..9e05cfaf75f0 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
++++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+@@ -636,10 +636,9 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
+ 	 */
+ 	size = pctl->num_groups * sizeof(*pctl->groups) + noname * 8;
+ 	p = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
+-	if (!p) {
+-		dev_err(&pdev->dev, "failed to alloc group data\n");
++	if (!p)
+ 		return -ENOMEM;
+-	}
++
+ 	pctl->groups = p;
+ 	noname_buf = p + pctl->num_groups * sizeof(*pctl->groups);
+ 
+-- 
+2.15.1
+
