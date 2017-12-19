@@ -1,64 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 20:32:52 +0000
-Subject: [PATCH 2/2] pcmcia/rsrc_nonstatic: Improve a size determination in three functions
-Message-Id: <4ec19574-d66d-5138-dca9-463235e3e717@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 19 Dec 2017 16:48:25 +0000
+Subject: [PATCH][next] media: lirc: don't kfree the uninitialized pointer txbuf
+Message-Id: <20171219164825.14642-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <19f2a908-8515-ce68-bbba-e74dd90d6ad2@users.sourceforge.net>
-In-Reply-To: <19f2a908-8515-ce68-bbba-e74dd90d6ad2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 21:07:39 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of data structures by variable references
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The current error exit path if ir_raw_encode_scancode fails is via the
+label out_kfree which kfree's an uninitialized pointer txbuf. Fix this
+by exiting via a new exit path that does not kfree txbuf.  Also exit
+via this new exit path for a failed allocation of txbuf to avoid a
+redundant kfree on a NULL pointer (to save a bunch of CPU cycles).
 
-This issue was detected by using the Coccinelle software.
+Detected by: CoverityScan, CID#1463070 ("Uninitialized pointer read")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: f81a8158d4fb ("media: lirc: release lock before sleep")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/pcmcia/rsrc_nonstatic.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/media/rc/lirc_dev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
-index 91dc559e4a81..50169b00f389 100644
---- a/drivers/pcmcia/rsrc_nonstatic.c
-+++ b/drivers/pcmcia/rsrc_nonstatic.c
-@@ -120,7 +120,7 @@ static int add_interval(struct resource_map *map, u_long base, u_long num)
- 		if ((p->next = map) || (p->next->base > base+num-1))
- 			break;
- 	}
--	q = kmalloc(sizeof(struct resource_map), GFP_KERNEL);
-+	q = kmalloc(sizeof(*q), GFP_KERNEL);
- 	if (!q)
- 		return -ENOMEM;
+diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
+index fae42f120aa4..62afa4493aea 100644
+--- a/drivers/media/rc/lirc_dev.c
++++ b/drivers/media/rc/lirc_dev.c
+@@ -295,14 +295,14 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
+ 		ret = ir_raw_encode_scancode(scan.rc_proto, scan.scancode,
+ 					     raw, LIRCBUF_SIZE);
+ 		if (ret < 0)
+-			goto out_kfree;
++			goto out_kfree_raw;
  
-@@ -157,8 +157,7 @@ static int sub_interval(struct resource_map *map, u_long base, u_long num)
- 				q->num = base - q->base;
- 			} else {
- 				/* Split the block into two pieces */
--				p = kmalloc(sizeof(struct resource_map),
--					GFP_KERNEL);
-+				p = kmalloc(sizeof(*p), GFP_KERNEL);
- 				if (!p)
- 					return -ENOMEM;
+ 		count = ret;
  
-@@ -1014,9 +1013,8 @@ static inline int nonstatic_autoadd_resources(struct pcmcia_socket *s)
+ 		txbuf = kmalloc_array(count, sizeof(unsigned int), GFP_KERNEL);
+ 		if (!txbuf) {
+ 			ret = -ENOMEM;
+-			goto out_kfree;
++			goto out_kfree_raw;
+ 		}
  
- static int nonstatic_init(struct pcmcia_socket *s)
- {
--	struct socket_data *data;
-+	struct socket_data *data = kzalloc(sizeof(*data), GFP_KERNEL);
- 
--	data = kzalloc(sizeof(struct socket_data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
+ 		for (i = 0; i < count; i++)
+@@ -366,6 +366,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
+ 	return n;
+ out_kfree:
+ 	kfree(txbuf);
++out_kfree_raw:
+ 	kfree(raw);
+ out_unlock:
+ 	mutex_unlock(&dev->lock);
 -- 
-2.15.1
+2.14.1
 
