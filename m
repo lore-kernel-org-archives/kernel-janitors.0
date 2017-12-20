@@ -1,26 +1,56 @@
-From: Timur Tabi <timur@tabi.org>
-Date: Wed, 06 Dec 2017 22:22:18 +0000
-Subject: Re: [PATCH 0/3] tty/serial/ucc_uart: Adjustments for two functions
-Message-Id: <cf5c7c5d-ceee-58bd-1dfb-8f9dff48abe3@tabi.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Dec 2017 12:01:52 +0000
+Subject: [PATCH 1/2] pinctrl: adi2: Delete an error message for a failed memory allocation in two functions
+Message-Id: <43b12b78-51a4-d590-9f61-e1ec61e291bc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
-In-Reply-To: <5c6d363d-398b-4695-78c3-33b9e8dbffa3@users.sourceforge.net>
+References: <3d620bed-db19-aacd-0ea5-4c64aee104d1@users.sourceforge.net>
+In-Reply-To: <3d620bed-db19-aacd-0ea5-4c64aee104d1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sonic Zhang <sonic.zhang@analog.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12/06/2017 03:10 PM, SF Markus Elfring wrote:
-> 
-> Three update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (3):
->    Delete an error message for a failed memory allocation in ucc_uart_probe()
->    Improve a size determination in ucc_uart_probe()
->    Fix a typo in a comment line
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Dec 2017 12:32:10 +0100
 
-All three:
+Omit an extra message for a memory allocation failure in these functions.
 
-Acked-by: Timur Tabi <timur@tabi.org>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinctrl-adi2.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
+index 56aa181084ac..aefaf5855089 100644
+--- a/drivers/pinctrl/pinctrl-adi2.c
++++ b/drivers/pinctrl/pinctrl-adi2.c
+@@ -830,10 +830,8 @@ static int adi_gpio_pint_probe(struct platform_device *pdev)
+ 	struct gpio_pint *pint;
+ 
+ 	pint = devm_kzalloc(dev, sizeof(struct gpio_pint), GFP_KERNEL);
+-	if (!pint) {
+-		dev_err(dev, "Memory alloc failed\n");
++	if (!pint)
+ 		return -ENOMEM;
+-	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pint->base = devm_ioremap_resource(dev, res);
+@@ -946,10 +944,8 @@ static int adi_gpio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 
+ 	port = devm_kzalloc(dev, sizeof(struct gpio_port), GFP_KERNEL);
+-	if (!port) {
+-		dev_err(dev, "Memory alloc failed\n");
++	if (!port)
+ 		return -ENOMEM;
+-	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	port->base = devm_ioremap_resource(dev, res);
+-- 
+2.15.1
+
