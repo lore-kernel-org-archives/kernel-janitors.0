@@ -1,71 +1,43 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 29 Dec 2017 10:52:41 +0000
-Subject: Re: [PATCH][next] wcn36xx: remove redundant assignment to msg_body.min_ch_time
-Message-Id: <40d7d90a-193e-e4e5-c78c-37068d97a175@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Dec 2017 09:52:34 +0000
+Subject: [PATCH 2/2] pinctrl/nomadik/abx500: Improve a size determination in abx500_gpio_probe()
+Message-Id: <93beb4d9-99e2-e7f2-e752-2d7228a8df46@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171219170401.15154-1-colin.king@canonical.com>
- <20171226201312.GA7480@builder>
- <CAMZdPi8hYToYoPSMggPY-tVpsJNL2W57uzB+d0nSLdfNtPK6Cg@mail.gmail.com>
-In-Reply-To: <CAMZdPi8hYToYoPSMggPY-tVpsJNL2W57uzB+d0nSLdfNtPK6Cg@mail.gmail.com>
+References: <e5be1da7-460d-a47d-59b8-c1902907f5a4@users.sourceforge.net>
+In-Reply-To: <e5be1da7-460d-a47d-59b8-c1902907f5a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Loic Poulain <loic.poulain@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Eugene Krasnikov <k.eugene.e@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 29/12/17 07:44, Loic Poulain wrote:
-> Hi Colin, Bjorn,
-> 
-> On 26 December 2017 at 21:13, Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
->> On Tue 19 Dec 09:04 PST 2017, Colin King wrote:
->>
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> msg_body.min_ch_time is being assigned twice; remove the redundant
->>> first assignment.
->>>
->>> Detected by CoverityScan, CID#1463042 ("Unused Value")
->>>
->>
->> Happy to see Coverity working for us :)
->>
->>
->> This should have had a:
->>
->> Fixes: 2f3bef4b247e ("wcn36xx: Add hardware scan offload support")
->>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/net/wireless/ath/wcn36xx/smd.c | 1 -
->>>  1 file changed, 1 deletion(-)
->>>
->>> diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
->>> index 2914618a0335..bab2eca5fcac 100644
->>> --- a/drivers/net/wireless/ath/wcn36xx/smd.c
->>> +++ b/drivers/net/wireless/ath/wcn36xx/smd.c
->>> @@ -625,7 +625,6 @@ int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
->>>       INIT_HAL_MSG(msg_body, WCN36XX_HAL_START_SCAN_OFFLOAD_REQ);
->>>
->>>       msg_body.scan_type = WCN36XX_HAL_SCAN_TYPE_ACTIVE;
->>> -     msg_body.min_ch_time = 30;
->>>       msg_body.min_ch_time = 100;
->>
->> But I strongly suspect the second line is supposed to be max_ch_time.
->>
->> @Loic, do you agree?
-> 
-> You're absolutely right.
-> Colin could you please update your patch accordingly?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Dec 2017 10:22:53 +0100
 
-Resent as "wcn36xx: fix incorrect assignment to msg_body.min_ch_time"
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> 
-> Regards,
-> Loic
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/nomadik/pinctrl-abx500.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+index feb030d1ea63..7d00a5d864f5 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+@@ -1155,8 +1155,7 @@ static int abx500_gpio_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	pct = devm_kzalloc(&pdev->dev, sizeof(struct abx500_pinctrl),
+-				   GFP_KERNEL);
++	pct = devm_kzalloc(&pdev->dev, sizeof(*pct), GFP_KERNEL);
+ 	if (!pct)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.1
 
