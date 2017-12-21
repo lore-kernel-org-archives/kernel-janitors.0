@@ -1,56 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Dec 2017 12:01:52 +0000
-Subject: [PATCH 1/2] pinctrl: adi2: Delete an error message for a failed memory allocation in two functions
-Message-Id: <43b12b78-51a4-d590-9f61-e1ec61e291bc@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Dec 2017 09:22:20 +0000
+Subject: Re: [PATCH 1/2] pinctrl: adi2: Delete an error message for a failed memory allocation in two functio
+Message-Id: <CACRpkdbzpLagiD3ioNZohbBj9-+m60seNHZFjJFHwbBH0Jj9YA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3d620bed-db19-aacd-0ea5-4c64aee104d1@users.sourceforge.net>
-In-Reply-To: <3d620bed-db19-aacd-0ea5-4c64aee104d1@users.sourceforge.net>
+References: <3d620bed-db19-aacd-0ea5-4c64aee104d1@users.sourceforge.net> <43b12b78-51a4-d590-9f61-e1ec61e291bc@users.sourceforge.net>
+In-Reply-To: <43b12b78-51a4-d590-9f61-e1ec61e291bc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sonic Zhang <sonic.zhang@analog.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Sonic Zhang <sonic.zhang@analog.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Dec 2017 12:32:10 +0100
+On Wed, Dec 20, 2017 at 1:01 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Omit an extra message for a memory allocation failure in these functions.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 20 Dec 2017 12:32:10 +0100
+>
+> Omit an extra message for a memory allocation failure in these functions.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Patch applied.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-adi2.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
-index 56aa181084ac..aefaf5855089 100644
---- a/drivers/pinctrl/pinctrl-adi2.c
-+++ b/drivers/pinctrl/pinctrl-adi2.c
-@@ -830,10 +830,8 @@ static int adi_gpio_pint_probe(struct platform_device *pdev)
- 	struct gpio_pint *pint;
- 
- 	pint = devm_kzalloc(dev, sizeof(struct gpio_pint), GFP_KERNEL);
--	if (!pint) {
--		dev_err(dev, "Memory alloc failed\n");
-+	if (!pint)
- 		return -ENOMEM;
--	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pint->base = devm_ioremap_resource(dev, res);
-@@ -946,10 +944,8 @@ static int adi_gpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 
- 	port = devm_kzalloc(dev, sizeof(struct gpio_port), GFP_KERNEL);
--	if (!port) {
--		dev_err(dev, "Memory alloc failed\n");
-+	if (!port)
- 		return -ENOMEM;
--	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	port->base = devm_ioremap_resource(dev, res);
--- 
-2.15.1
-
+Yours,
+Linus Walleij
