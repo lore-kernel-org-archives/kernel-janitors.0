@@ -1,32 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 10:26:36 +0000
-Subject: [PATCH 0/7] RapidIO: Adjustments for some function implementations
-Message-Id: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
+From: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
+Date: Thu, 21 Dec 2017 13:51:05 +0000
+Subject: RE: [PATCH 0/7] RapidIO: Adjustments for some function implementations
+Message-Id: <8D983423E7EDF846BB3056827B8CC5D161B3BCB2@corpmail1>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
+In-Reply-To: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Matt Porter <mporter@kernel.crashing.org>, Andrew Morton <akpm@linux-foundation.org>
 Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 11:20:33 +0100
-
-Some update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (7):
-  Delete an error message for a failed memory allocation in rio_init_mports()
-  Adjust 12 checks for null pointers
-  Adjust five function calls together with a variable assignment
-  Improve a size determination in five functions
-  Delete an unnecessary variable initialisation in three functions
-  Return an error code only as a constant in two functions
-  Move 12 EXPORT_SYMBOL_GPL() calls to function implementations
-
- drivers/rapidio/rio.c | 110 ++++++++++++++++++++++----------------------------
- 1 file changed, 48 insertions(+), 62 deletions(-)
-
--- 
-2.15.1
-
+QWNrZWQtYnk6IEFsZXhhbmRyZSBCb3VuaW5lIDxhbGV4YW5kcmUuYm91bmluZUBpZHQuY29tPg0K
+DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogU0YgTWFya3VzIEVsZnJpbmcgW21h
+aWx0bzplbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldF0gDQpTZW50OiBGcmlkYXksIERlY2Vt
+YmVyIDE1LCAyMDE3IDU6MjcgQU0NClRvOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3Jn
+OyBCb3VuaW5lLCBBbGV4YW5kcmUgPEFsZXhhbmRyZS5Cb3VuaW5lQGlkdC5jb20+OyBNYXR0IFBv
+cnRlciA8bXBvcnRlckBrZXJuZWwuY3Jhc2hpbmcub3JnPg0KQ2M6IExLTUwgPGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmc+DQpTdWJqZWN0OiBbUEFUQ0ggMC83XSBSYXBpZElPOiBBZGp1c3Rt
+ZW50cyBmb3Igc29tZSBmdW5jdGlvbiBpbXBsZW1lbnRhdGlvbnMNCg0KRnJvbTogTWFya3VzIEVs
+ZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KRGF0ZTogRnJpLCAxNSBEZWMg
+MjAxNyAxMToyMDozMyArMDEwMA0KDQpTb21lIHVwZGF0ZSBzdWdnZXN0aW9ucyB3ZXJlIHRha2Vu
+IGludG8gYWNjb3VudA0KZnJvbSBzdGF0aWMgc291cmNlIGNvZGUgYW5hbHlzaXMuDQoNCk1hcmt1
+cyBFbGZyaW5nICg3KToNCiAgRGVsZXRlIGFuIGVycm9yIG1lc3NhZ2UgZm9yIGEgZmFpbGVkIG1l
+bW9yeSBhbGxvY2F0aW9uIGluIHJpb19pbml0X21wb3J0cygpDQogIEFkanVzdCAxMiBjaGVja3Mg
+Zm9yIG51bGwgcG9pbnRlcnMNCiAgQWRqdXN0IGZpdmUgZnVuY3Rpb24gY2FsbHMgdG9nZXRoZXIg
+d2l0aCBhIHZhcmlhYmxlIGFzc2lnbm1lbnQNCiAgSW1wcm92ZSBhIHNpemUgZGV0ZXJtaW5hdGlv
+biBpbiBmaXZlIGZ1bmN0aW9ucw0KICBEZWxldGUgYW4gdW5uZWNlc3NhcnkgdmFyaWFibGUgaW5p
+dGlhbGlzYXRpb24gaW4gdGhyZWUgZnVuY3Rpb25zDQogIFJldHVybiBhbiBlcnJvciBjb2RlIG9u
+bHkgYXMgYSBjb25zdGFudCBpbiB0d28gZnVuY3Rpb25zDQogIE1vdmUgMTIgRVhQT1JUX1NZTUJP
+TF9HUEwoKSBjYWxscyB0byBmdW5jdGlvbiBpbXBsZW1lbnRhdGlvbnMNCg0KIGRyaXZlcnMvcmFw
+aWRpby9yaW8uYyB8IDExMCArKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA0OCBpbnNlcnRpb25zKCspLCA2MiBkZWxldGlv
+bnMoLSkNCg0KLS0gDQoyLjE1LjENCg0K
