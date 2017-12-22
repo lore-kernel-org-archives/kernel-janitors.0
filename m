@@ -1,40 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 16:36:15 +0000
-Subject: [PATCH 2/3] rapidio: tsi721_dma: Delete an unnecessary variable initialisation in tsi721_alloc_chan_
-Message-Id: <728d8e20-4ae9-d661-d932-2d99ce67e71f@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Dec 2017 16:38:24 +0000
+Subject: [PATCH] btrfs: fix trivial indentation issues
+Message-Id: <20171222163824.28976-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <33c63b12-7828-891a-31ef-76a2e3c6b90c@users.sourceforge.net>
-In-Reply-To: <33c63b12-7828-891a-31ef-76a2e3c6b90c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 14:22:44 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The local variable "desc" will eventually be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+remove extraneous white space in indentation, fix misaligned
+indentation.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/rapidio/devices/tsi721_dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/ioctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rapidio/devices/tsi721_dma.c b/drivers/rapidio/devices/tsi721_dma.c
-index f7bc85a27d1b..14fc36ac3d85 100644
---- a/drivers/rapidio/devices/tsi721_dma.c
-+++ b/drivers/rapidio/devices/tsi721_dma.c
-@@ -735,7 +735,7 @@ static dma_cookie_t tsi721_tx_submit(struct dma_async_tx_descriptor *txd)
- static int tsi721_alloc_chan_resources(struct dma_chan *dchan)
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index ca605ca32eec..e1dff4a3af79 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -2297,8 +2297,8 @@ static noinline int btrfs_search_path_in_tree(struct btrfs_fs_info *info,
+ static noinline int btrfs_ioctl_ino_lookup(struct file *file,
+ 					   void __user *argp)
  {
- 	struct tsi721_bdma_chan *bdma_chan = to_tsi721_chan(dchan);
--	struct tsi721_tx_desc *desc = NULL;
-+	struct tsi721_tx_desc *desc;
- 	int i;
+-	 struct btrfs_ioctl_ino_lookup_args *args;
+-	 struct inode *inode;
++	struct btrfs_ioctl_ino_lookup_args *args;
++	struct inode *inode;
+ 	int ret = 0;
  
- 	tsi_debug(DMA, &dchan->dev->device, "DMAC%d", bdma_chan->id);
+ 	args = memdup_user(argp, sizeof(*args));
 -- 
-2.15.1
+2.14.1
 
