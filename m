@@ -1,35 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 09 Dec 2017 11:50:04 +0000
-Subject: [PATCH 2/2] um: vector_kern: Fix NULL deref in destroy_queue()
-Message-Id: <20171209115004.tsxt7qnlhagp4xyn@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Dec 2017 00:39:36 +0000
+Subject: [PATCH] scsi: lpfc: fix a couple of minor indentation issues
+Message-Id: <20171222003936.11297-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We dereference "qi" before checking whether it is NULL.  There is one
-error path in create_queue() which passes a NULL to destroy_queue() so
-this could result in a NULL pointer dereference.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: ad1f62ab2bd4 ("High Performance UML Vector Network Driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Several statements are indented too far, fix these
 
-diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-index bb83a2d22ac2..5219c37b8d03 100644
---- a/arch/um/drivers/vector_kern.c
-+++ b/arch/um/drivers/vector_kern.c
-@@ -455,11 +455,12 @@ static void destroy_queue(struct vector_queue *qi)
- {
- 	int i;
- 	struct iovec *iov;
--	struct vector_private *vp = netdev_priv(qi->dev);
-+	struct vector_private *vp;
- 	struct mmsghdr *mmsg_vector;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_els.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index dfb21d9efb0d..234c7c015982 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -6862,7 +6862,7 @@ lpfc_els_rcv_rtv(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
+ 		return 1;
  
- 	if (qi = NULL)
- 		return;
-+	vp = netdev_priv(qi->dev);
- 	/* deallocate any skbuffs - we rely on any unused to be
- 	 * set to NULL.
- 	 */
+ 	pcmd = (uint8_t *) (((struct lpfc_dmabuf *) elsiocb->context2)->virt);
+-		*((uint32_t *) (pcmd)) = ELS_CMD_ACC;
++	*((uint32_t *) (pcmd)) = ELS_CMD_ACC;
+ 	pcmd += sizeof(uint32_t); /* Skip past command */
+ 
+ 	/* use the command's xri in the response */
+@@ -8155,9 +8155,9 @@ lpfc_els_unsol_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 			lpfc_nlp_put(ndlp);
+ 		break;
+ 	case ELS_CMD_REC:
+-			/* receive this due to exchange closed */
+-			rjt_err = LSRJT_UNABLE_TPC;
+-			rjt_exp = LSEXP_INVALID_OX_RX;
++		/* receive this due to exchange closed */
++		rjt_err = LSRJT_UNABLE_TPC;
++		rjt_exp = LSEXP_INVALID_OX_RX;
+ 		break;
+ 	default:
+ 		lpfc_debugfs_disc_trc(vport, LPFC_DISC_TRC_ELS_UNSOL,
+-- 
+2.14.1
+
