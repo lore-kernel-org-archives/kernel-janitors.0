@@ -1,41 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 14:51:35 +0000
-Subject: [PATCH 02/12] dlm: drop unneeded newline
-Message-Id: <1514386305-7402-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Dec 2017 01:07:24 +0000
+Subject: [PATCH] slimbus: make functions slim_ack_txn and slim_alloc_txbuf static
+Message-Id: <20171222010724.12465-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christine Caulfield <ccaulfie@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, David Teigland <teigland@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-log_print prints a newline at the end of the message string, so
-the message string does not need to include a newline explicitly.
-Done using Coccinelle.
+From: Colin Ian King <colin.king@canonical.com>
 
-The two strings were additionally merged into one, for easier
-grepping.
+The functions slim_ack_txn and slim_alloc_txbuf are local to the
+source and do not need to be in global scope, so make them static.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Cleans up sparse warnings:
+symbol 'slim_ack_txn' was not declared. Should it be static?
+symbol 'slim_alloc_txbuf' was not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/dlm/plock.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/slimbus/qcom-ctrl.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
-index a4c63e9..ee84584 100644
---- a/fs/dlm/plock.c
-+++ b/fs/dlm/plock.c
-@@ -231,8 +231,7 @@ static int dlm_plock_callback(struct plock_op *op)
- 	rv = notify(fl, 0);
- 	if (rv) {
- 		/* XXX: We need to cancel the fs lock here: */
--		log_print("dlm_plock_callback: lock granted after lock request "
--			  "failed; dangling lock!\n");
-+		log_print("dlm_plock_callback: lock granted after lock request failed; dangling lock!");
- 		goto out;
- 	}
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index 9b7846f1f8c3..f24293a8aea8 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -148,7 +148,7 @@ static void *slim_alloc_rxbuf(struct qcom_slim_ctrl *ctrl)
+ 	return ctrl->rx.base + (idx * ctrl->rx.sl_sz);
+ }
  
+-void slim_ack_txn(struct qcom_slim_ctrl *ctrl, int err)
++static void slim_ack_txn(struct qcom_slim_ctrl *ctrl, int err)
+ {
+ 	struct completion *comp;
+ 	unsigned long flags;
+@@ -301,8 +301,9 @@ static int qcom_clk_pause_wakeup(struct slim_controller *sctrl)
+ 	return 0;
+ }
+ 
+-void *slim_alloc_txbuf(struct qcom_slim_ctrl *ctrl, struct slim_msg_txn *txn,
+-		       struct completion *done)
++static void *slim_alloc_txbuf(struct qcom_slim_ctrl *ctrl,
++			      struct slim_msg_txn *txn,
++			      struct completion *done)
+ {
+ 	unsigned long flags;
+ 	int idx;
+-- 
+2.14.1
 
