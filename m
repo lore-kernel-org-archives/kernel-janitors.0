@@ -1,43 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 11:52:14 +0000
-Subject: [PATCH] USB: emi62: Delete an error message for a failed memory allocation in emi62_writememory()
-Message-Id: <127ca958-ef62-dbda-5329-02252c1a2763@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Dec 2017 00:55:08 +0000
+Subject: [PATCH] btrfs: qgroup: remove unused label 'retry'
+Message-Id: <20171222005508.11975-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 12:42:20 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Label 'retry' is not used, remove it. Cleans up a clang build
+warning:
 
-This issue was detected by using the Coccinelle software.
+warning: label ‘retry’ defined but not used [-Wunused-label]
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: b283738ab0ad ("Revert "btrfs: qgroups: Retry after commit on getting EDQUOT"")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/misc/emi62.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/btrfs/qgroup.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/misc/emi62.c b/drivers/usb/misc/emi62.c
-index 3eea60437f56..f85946731aaa 100644
---- a/drivers/usb/misc/emi62.c
-+++ b/drivers/usb/misc/emi62.c
-@@ -51,10 +51,9 @@ static int emi62_writememory(struct usb_device *dev, int address,
- 	int result;
- 	unsigned char *buffer =  kmemdup(data, length, GFP_KERNEL);
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index de3b96f1005b..2b89848e767d 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -2429,7 +2429,6 @@ static int qgroup_reserve(struct btrfs_root *root, u64 num_bytes, bool enforce,
+ 	    capable(CAP_SYS_RESOURCE))
+ 		enforce = false;
  
--	if (!buffer) {
--		dev_err(&dev->dev, "kmalloc(%d) failed.\n", length);
-+	if (!buffer)
- 		return -ENOMEM;
--	}
-+
- 	/* Note: usb_control_msg returns negative value on error or length of the
- 	 * 		 data that was written! */
- 	result = usb_control_msg (dev, usb_sndctrlpipe(dev, 0), request, 0x40, address, 0, buffer, length, 300);
+-retry:
+ 	spin_lock(&fs_info->qgroup_lock);
+ 	quota_root = fs_info->quota_root;
+ 	if (!quota_root)
 -- 
-2.15.1
+2.14.1
 
