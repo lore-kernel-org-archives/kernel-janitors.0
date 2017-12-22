@@ -1,55 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Dec 2017 20:27:26 +0000
-Subject: [PATCH] bq24735-charger: Delete an error message for a failed memory allocation in two functions
-Message-Id: <d5366c73-4f02-8966-ed8d-3665f201354e@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Dec 2017 00:01:08 +0000
+Subject: [PATCH][next] slimbus: avoid null pointer dereference on msg
+Message-Id: <20171222000108.9533-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Dec 2017 21:23:23 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in these functions.
+The pointer msg is checked to see if it is null at the start of
+the function and jumps to the error exit label reterr that then
+dereferences msg when it prints a dev_err error message. Avoid
+this potential null pointer dereference by only printing the
+error message if msg is not null.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1463141 ("Dereference after null check")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: afbdcc7c384b ("slimbus: Add messaging APIs to slimbus framework")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/power/supply/bq24735-charger.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/slimbus/messaging.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/bq24735-charger.c b/drivers/power/supply/bq24735-charger.c
-index 6931e1d826f5..c9fd9275dfae 100644
---- a/drivers/power/supply/bq24735-charger.c
-+++ b/drivers/power/supply/bq24735-charger.c
-@@ -326,11 +326,8 @@ static struct bq24735_platform *bq24735_parse_dt_data(struct i2c_client *client)
- 	int ret;
- 
- 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(&client->dev,
--			"Memory alloc for bq24735 pdata failed\n");
-+	if (!pdata)
- 		return NULL;
--	}
- 
- 	ret = of_property_read_u32(np, "ti,charge-current", &val);
- 	if (!ret)
-@@ -379,10 +376,8 @@ static int bq24735_charger_probe(struct i2c_client *client,
- 		name = devm_kasprintf(&client->dev, GFP_KERNEL,
- 				      "bq24735@%s",
- 				      dev_name(&client->dev));
--		if (!name) {
--			dev_err(&client->dev, "Failed to alloc device name\n");
-+		if (!name)
- 			return -ENOMEM;
--		}
+diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
+index 755462a4c75e..8b2c77f516b9 100644
+--- a/drivers/slimbus/messaging.c
++++ b/drivers/slimbus/messaging.c
+@@ -170,8 +170,9 @@ static int slim_val_inf_sanity(struct slim_controller *ctrl,
+ 		break;
  	}
+ reterr:
+-	dev_err(ctrl->dev, "Sanity check failed:msg:offset:0x%x, mc:%d\n",
+-		msg->start_offset, mc);
++	if (msg)
++		dev_err(ctrl->dev, "Sanity check failed:msg:offset:0x%x, mc:%d\n",
++			msg->start_offset, mc);
+ 	return -EINVAL;
+ }
  
- 	charger->client = client;
 -- 
-2.15.1
+2.14.1
 
