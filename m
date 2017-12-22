@@ -1,35 +1,38 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 22 Dec 2017 07:15:22 +0000
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Fri, 22 Dec 2017 08:22:35 +0000
 Subject: Re: [PATCH][next] soundwire: intel: fix missing assignment to ret
-Message-Id: <20171222071522.GA11094@kroah.com>
+Message-Id: <20171222081034.GP18649@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171221233210.8821-1-colin.king@canonical.com>
  <20171222033148.GN18649@localhost>
-In-Reply-To: <20171222033148.GN18649@localhost>
+ <20171222071522.GA11094@kroah.com>
+In-Reply-To: <20171222071522.GA11094@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
 Cc: Colin King <colin.king@canonical.com>, Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Dec 22, 2017 at 09:01:49AM +0530, Vinod Koul wrote:
-> On Thu, Dec 21, 2017 at 11:32:10PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
+On Fri, Dec 22, 2017 at 08:15:22AM +0100, Greg KH wrote:
+> On Fri, Dec 22, 2017 at 09:01:49AM +0530, Vinod Koul wrote:
+> > On Thu, Dec 21, 2017 at 11:32:10PM +0000, Colin King wrote:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > Currently the return status ret is being checked but it has not been
+> > > updated since the previous check on ret. It appears that assignment of
+> > > ret from return status of the call to sdw_cdns_enable_interrupt was
+> > > accidentally ommited.  Fix this.
 > > 
-> > Currently the return status ret is being checked but it has not been
-> > updated since the previous check on ret. It appears that assignment of
-> > ret from return status of the call to sdw_cdns_enable_interrupt was
-> > accidentally ommited.  Fix this.
+> > Thanks Colin, this looks good to me.
+> > 
+> > Greg, we have this and another patch from Colin, both lgtm.
+> > 
+> > Would you like me to collect these and send to you before merge cycle or
+> > apply directly?
 > 
-> Thanks Colin, this looks good to me.
-> 
-> Greg, we have this and another patch from Colin, both lgtm.
-> 
-> Would you like me to collect these and send to you before merge cycle or
-> apply directly?
+> Please collect and then send on, as it is not in my queue at all.
 
-Please collect and then send on, as it is not in my queue at all.
+Sounds good, will do that
 
-thanks,
-
-greg k-h
+-- 
+~Vinod
