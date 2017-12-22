@@ -1,63 +1,48 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 10 Dec 2017 19:45:52 +0000
-Subject: Re: =?UTF-8?B?aWlvL+KApjo=?= Use common error handling code
-Message-Id: <20171210194552.28aa4a9c@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Dec 2017 00:28:52 +0000
+Subject: [PATCH] scsi: lpfc: don't dereference localport before it has been null checked
+Message-Id: <20171222002852.10892-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
-        <0f26a13b-7bbf-525b-a864-8aa8e13c3aef@users.sourceforge.net>
-        <20171026174200.5c00b06d@archlinux>
-        <e7292cc3-e4e2-0943-7cf9-4852cf37ef36@users.sourceforge.net>
-        <20171210160829.16128419@archlinux>
-        <f8289b08-389a-a6d6-21f6-ca1ba20c2c85@users.sourceforge.net>
-In-Reply-To: <f8289b08-389a-a6d6-21f6-ca1ba20c2c85@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 10 Dec 2017 17:43:34 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> > Hi Markus, I've accepted the ones that I think made an improvement
-> > outweighing the inherent small costs of making any change.  
-> 
-> Does such a kind of feedback mean that you reconsidered any places
-> where you expressed a rejection initially?
-No.  Once I have expressed strong reservations about a patch it
-would require some change in the facts to make me reevaluate.
-> 
-> 
-> > We also need to avoid code constructs that are unusual in error handling
-> > such as backwards gotos.  
-> 
-> Why would you like to exclude this approach if anything useful could be achieved
-> in the shown software design direction?
-Yes - exclude this. It trades of ease of review against briefness of code.
-Ease of review and hence verification of correctness is more important in these
-cases.
+localport is being dereferenced to assign lport and then immediately
+afterwards localport is being sanity checked to see if it is null.
+Fix this by only dereferencing localport until after it has been
+null checked.
 
-> 
-> 
-> > Note however that most of the changes made so far are only minor improvements.  
-> 
-> I agree that corresponding effects are small just because the discussed
-> source code adjustments affected specific function implementations.
-> 
-> 
-> > I am not saying I don't appreciate them,  
-> 
-> Thanks.
-> 
-> 
-> > but rather than that they are of of low importance.  
-> 
-> A lot of details are competing also for our software development attention.
->
-Exactly.
+Detected by CoverityScan, CID#1463038 ("Dereference before null check")
 
-Jonathan
+Fixes: 3a8cefbfc5ee ("scsi: lpfc: Beef up stat counters for debug")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_attr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+index 797bb42a6306..986a3dc2efaf 100644
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -277,13 +277,13 @@ lpfc_nvme_info_show(struct device *dev, struct device_attribute *attr,
+ 	}
  
-> Regards,
-> Markus
+ 	localport = vport->localport;
+-	lport = (struct lpfc_nvme_lport *)localport->private;
+ 	if (!localport) {
+ 		len = snprintf(buf, PAGE_SIZE,
+ 				"NVME Initiator x%llx is not allocated\n",
+ 				wwn_to_u64(vport->fc_portname.u.wwn));
+ 		return len;
+ 	}
++	lport = (struct lpfc_nvme_lport *)localport->private;
+ 	len = snprintf(buf, PAGE_SIZE, "NVME Initiator Enabled\n");
+ 
+ 	spin_lock_irq(shost->host_lock);
+-- 
+2.14.1
 
