@@ -1,45 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:45:22 +0000
-Subject: [PATCH 4/6] target: tcm_loop: Delete two unnecessary variable initialisations in tcm_loop_issue_tmr(
-Message-Id: <ccfd3979-8405-7c78-7b67-20f5f54b1f24@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Dec 2017 01:18:05 +0000
+Subject: [PATCH][V2] nfsd: fix incorrect indentation on goto and break statements
+Message-Id: <20171222011805.12888-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
-In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "J . Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:56:42 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The variables "se_cmd" and "tl_cmd" will eventually be set to appropriate
-pointers a bit later.
-Thus omit the explicit initialisation at the beginning.
+The goto and break statements requires one more level of
+indentation, add it.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/target/loopback/tcm_loop.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfsd/nfs4state.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
-index d91109c1c4ae..08dbf5b4ff15 100644
---- a/drivers/target/loopback/tcm_loop.c
-+++ b/drivers/target/loopback/tcm_loop.c
-@@ -203,10 +203,10 @@ static int tcm_loop_queuecommand(struct Scsi_Host *sh, struct scsi_cmnd *sc)
- static int tcm_loop_issue_tmr(struct tcm_loop_tpg *tl_tpg,
- 			      u64 lun, int task, enum tcm_tmreq_table tmr)
- {
--	struct se_cmd *se_cmd = NULL;
-+	struct se_cmd *se_cmd;
- 	struct se_session *se_sess;
- 	struct tcm_loop_nexus *tl_nexus;
--	struct tcm_loop_cmd *tl_cmd = NULL;
-+	struct tcm_loop_cmd *tl_cmd;
- 	int ret = TMR_FUNCTION_FAILED, rc;
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index b29b5a185a2c..e3ba585fe3be 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -6151,15 +6151,15 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 		case NFS4_READ_LT:
+ 		case NFS4_READW_LT:
+ 			file_lock->fl_type = F_RDLCK;
+-		break;
++			break;
+ 		case NFS4_WRITE_LT:
+ 		case NFS4_WRITEW_LT:
+ 			file_lock->fl_type = F_WRLCK;
+-		break;
++			break;
+ 		default:
+ 			dprintk("NFSD: nfs4_lockt: bad lock type!\n");
+ 			status = nfserr_inval;
+-		goto out;
++			goto out;
+ 	}
  
- 	/*
+ 	lo = find_lockowner_str(cstate->clp, &lockt->lt_owner);
 -- 
-2.15.1
+2.14.1
 
