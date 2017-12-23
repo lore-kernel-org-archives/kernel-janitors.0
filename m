@@ -1,40 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:49:06 +0000
-Subject: [PATCH 6/8] target/iscsi: Delete an unnecessary variable initialisation in iscsi_create_default_para
-Message-Id: <734e9a91-f127-c454-47ca-ba33f153758f@users.sourceforge.net>
+Date: Sat, 23 Dec 2017 19:55:15 +0000
+Subject: [PATCH] pinctrl: at91: Delete an error message for a failed memory allocation in at91_pinctrl_mux_ma
+Message-Id: <b5da388b-7fa2-ad77-7b64-26eadd55b41c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
-In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 21:18:39 +0100
+Date: Sat, 23 Dec 2017 20:44:27 +0100
 
-The variable "param" will eventually be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-at91.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-index 25a3a9550488..151269b8816d 100644
---- a/drivers/target/iscsi/iscsi_target_parameters.c
-+++ b/drivers/target/iscsi/iscsi_target_parameters.c
-@@ -196,7 +196,7 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
- /* #warning Add extension keys */
- int iscsi_create_default_params(struct iscsi_param_list **param_list_ptr)
- {
--	struct iscsi_param *param = NULL;
-+	struct iscsi_param *param;
- 	struct iscsi_param_list *pl;
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index 03492e3c09fa..297f1d161211 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1050,10 +1050,8 @@ static int at91_pinctrl_mux_mask(struct at91_pinctrl *info,
+ 	info->nmux = size / gpio_banks;
  
- 	pl = kzalloc(sizeof(struct iscsi_param_list), GFP_KERNEL);
+ 	info->mux_mask = devm_kzalloc(info->dev, sizeof(u32) * size, GFP_KERNEL);
+-	if (!info->mux_mask) {
+-		dev_err(info->dev, "could not alloc mux_mask\n");
++	if (!info->mux_mask)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ret = of_property_read_u32_array(np, "atmel,mux-mask",
+ 					  info->mux_mask, size);
 -- 
 2.15.1
 
