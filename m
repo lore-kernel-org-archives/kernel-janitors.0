@@ -1,43 +1,34 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Date: Sat, 23 Dec 2017 01:40:33 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Dec 2017 07:12:21 +0000
 Subject: Re: platform/x86/thinkpad_acpi: Adjustments for four function implementations
-Message-Id: <20171223014033.jx7fzu7uzjfbzyca@khazad-dum.debian.net>
+Message-Id: <80ae8328-5851-01b0-cb31-474f7baf1686@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
  <CAHp75Vckgw1Eqao_vsq0n8RuYJRP2JZWJz6-MxZ6Wwb8eAEVgA@mail.gmail.com>
  <ea910da9-ca59-b895-b071-35d9c5cbd112@users.sourceforge.net>
-In-Reply-To: <ea910da9-ca59-b895-b071-35d9c5cbd112@users.sourceforge.net>
+ <20171223014033.jx7fzu7uzjfbzyca@khazad-dum.debian.net>
+In-Reply-To: <20171223014033.jx7fzu7uzjfbzyca@khazad-dum.debian.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 19 Dec 2017, SF Markus Elfring wrote:
-> >>   Delete an error message for a failed memory allocation in three functions
-> > 
-> > This one is questionable since it prints error messages at ->init() stage.
-> > I would rather not touch this.
+>> Do you find the Linux allocation failure report insufficient in this case?
 > 
-> Do you find the Linux allocation failure report insufficient in this case?
+> Leave those pr_ messages alone, please,
 
-Leave those pr_ messages alone, please, unless they are really causing
-some sort of issue (which?).
+Have you got special software development concerns?
 
-> >>   Improve a size determination in tpacpi_new_rfkill()
-> > 
-> > Doesn't make any sense right now. One style over the other.
-> > Nothing gets better or worth at this point.
-> 
-> Would you like to care for a bit more compliance with information
-> from the section “14) Allocating memory” in the document “coding-style.rst”?
 
-No, unless the change is actually fixing something, or gives us a
-down-to-earth, *real* advantage of some sort.  In which case, the commit
-message better do a rather good job of explaining it.
+> unless they are really causing some sort of issue (which?).
 
-Doing it just for "compliance" with a doc isn't nearly good enough
-reason.
+Can the code be redundant here?
 
--- 
-  Henrique Holschuh
+
+> Doing it just for "compliance" with a doc isn't nearly good enough reason.
+
+Do you give only a low value to coding style guidelines in this use case?
+
+Regards,
+Markus
