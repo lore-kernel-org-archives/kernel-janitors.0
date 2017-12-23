@@ -1,56 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 18:37:14 +0000
-Subject: [PATCH 2/3] uio: Return directly after a failed kzalloc() in uio_dmem_genirq_probe()
-Message-Id: <b6158483-3ace-d787-87f2-7ff51c889dc9@users.sourceforge.net>
+Date: Sat, 23 Dec 2017 21:38:50 +0000
+Subject: [PATCH 1/3] pinctrl: rockchip: Delete error messages for a failed memory allocation in two functions
+Message-Id: <7a067193-e0c3-c2b9-b85a-e05c8ff8860e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
-In-Reply-To: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
+References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+In-Reply-To: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 19:11:49 +0100
+Date: Sat, 23 Dec 2017 22:02:47 +0100
 
-* Return directly after a call of the function "kzalloc" failed
-  in an if branch.
+Omit extra messages for a memory allocation failure in these functions.
 
-* Delete the jump label "bad2" which became unnecessary with
-  this refactoring.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/uio/uio_dmem_genirq.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
-index b7b0acd1bf01..4f230ce8b861 100644
---- a/drivers/uio/uio_dmem_genirq.c
-+++ b/drivers/uio/uio_dmem_genirq.c
-@@ -158,10 +158,9 @@ static int uio_dmem_genirq_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 2ba17548ad5b..285169170eb2 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2400,18 +2400,14 @@ static int rockchip_pinctrl_parse_dt(struct platform_device *pdev,
+ 	info->functions = devm_kzalloc(dev, info->nfunctions *
+ 					      sizeof(struct rockchip_pmx_func),
+ 					      GFP_KERNEL);
+-	if (!info->functions) {
+-		dev_err(dev, "failed to allocate memory for function list\n");
++	if (!info->functions)
+ 		return -EINVAL;
+-	}
  
- 		/* alloc uioinfo for one device */
- 		uioinfo = kzalloc(sizeof(*uioinfo), GFP_KERNEL);
--		if (!uioinfo) {
--			ret = -ENOMEM;
--			goto bad2;
--		}
-+		if (!uioinfo)
-+			return -ENOMEM;
-+
- 		uioinfo->name = pdev->dev.of_node->name;
- 		uioinfo->version = "devicetree";
+ 	info->groups = devm_kzalloc(dev, info->ngroups *
+ 					    sizeof(struct rockchip_pin_group),
+ 					    GFP_KERNEL);
+-	if (!info->groups) {
+-		dev_err(dev, "failed allocate memory for ping group list\n");
++	if (!info->groups)
+ 		return -EINVAL;
+-	}
  
-@@ -285,7 +284,7 @@ static int uio_dmem_genirq_probe(struct platform_device *pdev)
- 	/* kfree uioinfo for OF */
- 	if (pdev->dev.of_node)
- 		kfree(uioinfo);
-- bad2:
+ 	i = 0;
+ 
+@@ -2447,10 +2443,9 @@ static int rockchip_pinctrl_register(struct platform_device *pdev,
+ 
+ 	pindesc = devm_kzalloc(&pdev->dev, sizeof(*pindesc) *
+ 			info->ctrl->nr_pins, GFP_KERNEL);
+-	if (!pindesc) {
+-		dev_err(&pdev->dev, "mem alloc for pin descriptors failed\n");
++	if (!pindesc)
+ 		return -ENOMEM;
+-	}
 +
- 	return ret;
- }
+ 	ctrldesc->pins = pindesc;
+ 	ctrldesc->npins = info->ctrl->nr_pins;
  
 -- 
 2.15.1
