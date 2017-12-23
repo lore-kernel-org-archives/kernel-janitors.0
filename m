@@ -1,67 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 21:53:26 +0000
-Subject: [PATCH 3/3] serial: ioc4: Adjust three function calls together with a variable assignment
-Message-Id: <0256ab08-9330-26d6-19eb-e3c264c1ff1d@users.sourceforge.net>
+Date: Sat, 23 Dec 2017 21:42:35 +0000
+Subject: [PATCH 3/3] pinctrl: rockchip: Fix a typo in four comment lines
+Message-Id: <989b7476-5e5e-d1ed-0d95-9dbdcec2382c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
-In-Reply-To: <514232dd-7e91-00f9-b95c-3e8f740090ca@users.sourceforge.net>
+References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+In-Reply-To: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Pat Gefre <pfg@sgi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 22:40:31 +0100
+Date: Sat, 23 Dec 2017 22:22:54 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
-
-ERROR: do not use assignment in if condition
-
-Thus fix the affected source code places.
+Adjust words in these descriptions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/ioc4_serial.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/ioc4_serial.c b/drivers/tty/serial/ioc4_serial.c
-index 6981ad2ca1b7..ba95a4cb8130 100644
---- a/drivers/tty/serial/ioc4_serial.c
-+++ b/drivers/tty/serial/ioc4_serial.c
-@@ -1945,7 +1945,8 @@ static void handle_intr(void *arg, uint32_t sio_ir)
- 			 * hasn't been delivered to the cpu yet anyway, even
- 			 * though we see it as asserted when we read the sio_ir.
- 			 */
--			if ((sio_ir = PENDING(port)) & hooks->intr_rx_high) {
-+			sio_ir = PENDING(port);
-+			if (sio_ir & hooks->intr_rx_high) {
- 				if ((port->ip_flags & READ_ABORTED) = 0) {
- 					port->ip_ienb &= ~hooks->intr_rx_high;
- 					port->ip_flags |= INPUT_HIGH;
-@@ -2902,16 +2903,18 @@ static struct ioc4_submodule ioc4_serial_submodule = {
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 5e76a6d8a1cb..1cd85411e906 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -136,7 +136,7 @@ struct rockchip_drv {
+  * @iomux: array describing the 4 iomux sources of the bank
+  * @drv: array describing the 4 drive strength sources of the bank
+  * @pull_type: array describing the 4 pull type sources of the bank
+- * @valid: are all necessary informations present
++ * @valid: is all necessary information present
+  * @of_node: dt node of this bank
+  * @drvdata: common pinctrl basedata
+  * @domain: irqdomain of the gpio bank
+@@ -1988,7 +1988,7 @@ static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
+ 		info->functions[selector].name, info->groups[group].name);
+ 
+ 	/*
+-	 * for each pin in the pin group selected, program the correspoding pin
++	 * for each pin in the pin group selected, program the corresponding
+ 	 * pin function number in the config register.
+ 	 */
+ 	for (cnt = 0; cnt < info->groups[group].npins; cnt++) {
+@@ -2527,7 +2527,7 @@ static int rockchip_gpio_get(struct gpio_chip *gc, unsigned offset)
+ 
+ /*
+  * gpiolib gpio_direction_input callback function. The setting of the pin
+- * mux function as 'gpio input' will be handled by the pinctrl susbsystem
++ * mux function as 'gpio input' will be handled by the pinctrl subsystem
+  * interface.
   */
- static int __init ioc4_serial_init(void)
- {
--	int ret;
--
- 	/* register with serial core */
--	if ((ret = uart_register_driver(&ioc4_uart_rs232)) < 0) {
-+	int ret = uart_register_driver(&ioc4_uart_rs232);
-+
-+	if (ret < 0) {
- 		printk(KERN_WARNING
- 			"%s: Couldn't register rs232 IOC4 serial driver\n",
- 			__func__);
- 		goto out;
- 	}
--	if ((ret = uart_register_driver(&ioc4_uart_rs422)) < 0) {
-+
-+	ret = uart_register_driver(&ioc4_uart_rs422);
-+	if (ret < 0) {
- 		printk(KERN_WARNING
- 			"%s: Couldn't register rs422 IOC4 serial driver\n",
- 			__func__);
+ static int rockchip_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+@@ -2537,7 +2537,7 @@ static int rockchip_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+ 
+ /*
+  * gpiolib gpio_direction_output callback function. The setting of the pin
+- * mux function as 'gpio output' will be handled by the pinctrl susbsystem
++ * mux function as 'gpio output' will be handled by the pinctrl subsystem
+  * interface.
+  */
+ static int rockchip_gpio_direction_output(struct gpio_chip *gc,
 -- 
 2.15.1
 
