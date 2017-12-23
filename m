@@ -1,49 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Dec 2017 00:39:36 +0000
-Subject: [PATCH] scsi: lpfc: fix a couple of minor indentation issues
-Message-Id: <20171222003936.11297-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Dec 2017 21:40:00 +0000
+Subject: [PATCH 2/3] pinctrl: rockchip: Improve a size determination in rockchip_pinctrl_probe()
+Message-Id: <e0bceb4a-bd46-5032-2ac9-d51aa46440a5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+In-Reply-To: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Dec 2017 22:07:30 +0100
 
-Several statements are indented too far, fix these
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/lpfc/lpfc_els.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index dfb21d9efb0d..234c7c015982 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -6862,7 +6862,7 @@ lpfc_els_rcv_rtv(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
- 		return 1;
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 285169170eb2..5e76a6d8a1cb 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -3158,7 +3158,7 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
- 	pcmd = (uint8_t *) (((struct lpfc_dmabuf *) elsiocb->context2)->virt);
--		*((uint32_t *) (pcmd)) = ELS_CMD_ACC;
-+	*((uint32_t *) (pcmd)) = ELS_CMD_ACC;
- 	pcmd += sizeof(uint32_t); /* Skip past command */
+-	info = devm_kzalloc(dev, sizeof(struct rockchip_pinctrl), GFP_KERNEL);
++	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+ 		return -ENOMEM;
  
- 	/* use the command's xri in the response */
-@@ -8155,9 +8155,9 @@ lpfc_els_unsol_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
- 			lpfc_nlp_put(ndlp);
- 		break;
- 	case ELS_CMD_REC:
--			/* receive this due to exchange closed */
--			rjt_err = LSRJT_UNABLE_TPC;
--			rjt_exp = LSEXP_INVALID_OX_RX;
-+		/* receive this due to exchange closed */
-+		rjt_err = LSRJT_UNABLE_TPC;
-+		rjt_exp = LSEXP_INVALID_OX_RX;
- 		break;
- 	default:
- 		lpfc_debugfs_disc_trc(vport, LPFC_DISC_TRC_ELS_UNSOL,
 -- 
-2.14.1
+2.15.1
 
