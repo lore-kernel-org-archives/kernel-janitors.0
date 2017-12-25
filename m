@@ -1,36 +1,53 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 07 Dec 2017 13:26:03 +0000
-Subject: Re: rsi: fix memory leak on buf and usb_reg_buf
-Message-Id: <20171207132603.1A9C260240@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 25 Dec 2017 21:02:03 +0000
+Subject: [PATCH] pinctrl: xway: Delete two error messages for a failed memory allocation in pinmux_xway_probe
+Message-Id: <0a27abb0-c222-765b-3a96-7e02163a0858@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171116173918.3030-1-colin.king@canonical.com>
-In-Reply-To: <20171116173918.3030-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org, John Crispin <john@phrozen.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 25 Dec 2017 21:51:26 +0100
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the cases where len is too long, the error return path fails to
-> kfree allocated buffers buf and usb_reg_buf.  The simplest fix is to
-> perform the sanity check on len before the allocations to avoid having
-> to do the kfree'ing in the first place.
-> 
-> Detected by CoverityScan, CID#1452258,1452259 ("Resource Leak")
-> 
-> Fixes: 59f73e2ae185 ("rsi: check length before USB read/write register")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Omit extra messages for a memory allocation failure in this function.
 
-Patch applied to wireless-drivers-next.git, thanks.
+This issue was detected by using the Coccinelle software.
 
-c4ee30a280b1 wlcore, wl1251: fix spelling: "Couldnt" -> "Couldn't" and remove error on -ENOMEM
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinctrl-xway.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index f9e98a7d4f0c..cd0f402c1164 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1730,18 +1730,16 @@ static int pinmux_xway_probe(struct platform_device *pdev)
+ 	xway_info.pads = devm_kzalloc(&pdev->dev,
+ 			sizeof(struct pinctrl_pin_desc) * xway_chip.ngpio,
+ 			GFP_KERNEL);
+-	if (!xway_info.pads) {
+-		dev_err(&pdev->dev, "Failed to allocate pads\n");
++	if (!xway_info.pads)
+ 		return -ENOMEM;
+-	}
++
+ 	for (i = 0; i < xway_chip.ngpio; i++) {
+ 		/* strlen("ioXY") + 1 = 5 */
+ 		char *name = devm_kzalloc(&pdev->dev, 5, GFP_KERNEL);
+ 
+-		if (!name) {
+-			dev_err(&pdev->dev, "Failed to allocate pad name\n");
++		if (!name)
+ 			return -ENOMEM;
+-		}
++
+ 		snprintf(name, 5, "io%d", i);
+ 		xway_info.pads[i].number = GPIO0 + i;
+ 		xway_info.pads[i].name = name;
 -- 
-https://patchwork.kernel.org/patch/10061619/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.15.1
 
