@@ -1,42 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 10:48:29 +0000
-Subject: [PATCH 6/6] target: tcm_loop: Use seq_puts() in tcm_loop_show_info()
-Message-Id: <0ea85e80-f7a7-eeff-18c2-206281b74ea5@users.sourceforge.net>
+Date: Mon, 25 Dec 2017 17:13:56 +0000
+Subject: [PATCH] pinctrl: tz1090: Delete an error message for a failed memory allocation in two functions
+Message-Id: <91c76055-bba2-8a6e-4294-1dae0daf1363@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
-In-Reply-To: <42f13f0c-ae1d-ec1e-fd9d-62dd15aeba8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 11 Dec 2017 11:01:57 +0100
+Date: Mon, 25 Dec 2017 17:55:48 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit an extra message for a memory allocation failure in these functions.
 
-WARNING: Prefer seq_puts to seq_printf
-
-Thus fix the affected source code place.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/loopback/tcm_loop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-tz1090.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
-index ec01070bbb40..9cd4ffe76c07 100644
---- a/drivers/target/loopback/tcm_loop.c
-+++ b/drivers/target/loopback/tcm_loop.c
-@@ -64,7 +64,7 @@ static void tcm_loop_release_cmd(struct se_cmd *se_cmd)
+diff --git a/drivers/pinctrl/pinctrl-tz1090.c b/drivers/pinctrl/pinctrl-tz1090.c
+index 74d1ffcc2199..2379ce2be365 100644
+--- a/drivers/pinctrl/pinctrl-tz1090.c
++++ b/drivers/pinctrl/pinctrl-tz1090.c
+@@ -1082,10 +1082,8 @@ static int add_map_configs(struct device *dev,
  
- static int tcm_loop_show_info(struct seq_file *m, struct Scsi_Host *host)
- {
--	seq_printf(m, "tcm_loop_proc_info()\n");
-+	seq_puts(m, "tcm_loop_proc_info()\n");
- 	return 0;
- }
+ 	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
+ 			      GFP_KERNEL);
+-	if (!dup_configs) {
+-		dev_err(dev, "kmemdup(configs) failed\n");
++	if (!dup_configs)
+ 		return -ENOMEM;
+-	}
+ 
+ 	(*map)[*num_maps].type = PIN_MAP_TYPE_CONFIGS_GROUP;
+ 	(*map)[*num_maps].data.configs.group_or_pin = group;
+@@ -1946,10 +1944,9 @@ static int tz1090_pinctrl_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+-	if (!pmx) {
+-		dev_err(&pdev->dev, "Can't alloc tz1090_pmx\n");
++	if (!pmx)
+ 		return -ENOMEM;
+-	}
++
+ 	pmx->dev = &pdev->dev;
+ 	spin_lock_init(&pmx->lock);
  
 -- 
 2.15.1
