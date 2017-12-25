@@ -1,43 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 05 Dec 2017 17:13:33 +0000
-Subject: [PATCH 2/2] video: ARM CLCD: Improve a size determination in clcdfb_probe()
-Message-Id: <3656de6d-53cc-f6a4-1950-71fc989c79a4@users.sourceforge.net>
+Date: Mon, 25 Dec 2017 17:34:40 +0000
+Subject: [PATCH] pinctrl: tz1090-pdc: Delete an error message for a failed memory allocation in two functions
+Message-Id: <f52b8393-9e1f-bd65-1374-4e9db1a0e4c0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
-In-Reply-To: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Russell King <linux@armlinux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Landley <rob@landley.net>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 5 Dec 2017 17:53:19 +0100
+Date: Mon, 25 Dec 2017 18:28:02 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/amba-clcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-tz1090-pdc.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/video/fbdev/amba-clcd.c b/drivers/video/fbdev/amba-clcd.c
-index 79f5ebf23fcd..38c1f324ce15 100644
---- a/drivers/video/fbdev/amba-clcd.c
-+++ b/drivers/video/fbdev/amba-clcd.c
-@@ -967,7 +967,7 @@ static int clcdfb_probe(struct amba_device *dev, const struct amba_id *id)
- 		goto out;
- 	}
+diff --git a/drivers/pinctrl/pinctrl-tz1090-pdc.c b/drivers/pinctrl/pinctrl-tz1090-pdc.c
+index 5cfa93cecf73..b16d1c96b7eb 100644
+--- a/drivers/pinctrl/pinctrl-tz1090-pdc.c
++++ b/drivers/pinctrl/pinctrl-tz1090-pdc.c
+@@ -357,10 +357,8 @@ static int add_map_configs(struct device *dev,
  
--	fb = kzalloc(sizeof(struct clcd_fb), GFP_KERNEL);
-+	fb = kzalloc(sizeof(*fb), GFP_KERNEL);
- 	if (!fb) {
- 		ret = -ENOMEM;
- 		goto free_region;
+ 	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
+ 			      GFP_KERNEL);
+-	if (!dup_configs) {
+-		dev_err(dev, "kmemdup(configs) failed\n");
++	if (!dup_configs)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/*
+ 	 * We support both pins and pin groups, but we need to figure out which
+@@ -931,10 +929,9 @@ static int tz1090_pdc_pinctrl_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+-	if (!pmx) {
+-		dev_err(&pdev->dev, "Can't alloc tz1090_pdc_pmx\n");
++	if (!pmx)
+ 		return -ENOMEM;
+-	}
++
+ 	pmx->dev = &pdev->dev;
+ 	spin_lock_init(&pmx->lock);
+ 
 -- 
 2.15.1
 
