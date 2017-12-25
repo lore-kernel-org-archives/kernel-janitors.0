@@ -1,27 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 20:30:25 +0000
-Subject: [PATCH 0/2] PCMCIA-rsrc_nonstatic: Adjustments for two function implementations
-Message-Id: <19f2a908-8515-ce68-bbba-e74dd90d6ad2@users.sourceforge.net>
+Date: Mon, 25 Dec 2017 19:15:41 +0000
+Subject: [PATCH] pinctrl: utils: Delete an error message for a failed memory allocation in pinctrl_utils_add_
+Message-Id: <4a1181a6-e37c-3f2b-782c-6dd4279ce39f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
+To: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@nvidia.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 21:26:54 +0100
+Date: Mon, 25 Dec 2017 20:04:05 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in three functions
+This issue was detected by using the Coccinelle software.
 
- drivers/pcmcia/rsrc_nonstatic.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinctrl-utils.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/pinctrl/pinctrl-utils.c b/drivers/pinctrl/pinctrl-utils.c
+index 9189fbafb102..f2bcbf62c03d 100644
+--- a/drivers/pinctrl/pinctrl-utils.c
++++ b/drivers/pinctrl/pinctrl-utils.c
+@@ -83,10 +83,8 @@ int pinctrl_utils_add_map_configs(struct pinctrl_dev *pctldev,
+ 
+ 	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
+ 			      GFP_KERNEL);
+-	if (!dup_configs) {
+-		dev_err(pctldev->dev, "kmemdup(configs) failed\n");
++	if (!dup_configs)
+ 		return -ENOMEM;
+-	}
+ 
+ 	(*map)[*num_maps].type = type;
+ 	(*map)[*num_maps].data.configs.group_or_pin = group;
 -- 
 2.15.1
 
