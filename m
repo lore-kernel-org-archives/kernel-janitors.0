@@ -1,40 +1,101 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Date: Sat, 23 Dec 2017 01:29:17 +0000
-Subject: Re: [PATCH 0/2] platform/x86/thinkpad_acpi: Adjustments for four function implementations
-Message-Id: <20171223012917.vbe6mvz4yltiyws3@khazad-dum.debian.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 26 Dec 2017 17:05:04 +0000
+Subject: [PATCH 0/1] Input: inline macros for MODULE_LICENSE, etc
+Message-Id: <1514307905-3486-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
- <CAHp75Vckgw1Eqao_vsq0n8RuYJRP2JZWJz6-MxZ6Wwb8eAEVgA@mail.gmail.com>
-In-Reply-To: <CAHp75Vckgw1Eqao_vsq0n8RuYJRP2JZWJz6-MxZ6Wwb8eAEVgA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Tue, 19 Dec 2017, Andy Shevchenko wrote:
-> On Mon, Dec 18, 2017 at 11:26 PM, SF Markus Elfring
-> <elfring@users.sourceforge.net> wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Mon, 18 Dec 2017 22:23:45 +0100
-> >
-> > Two update suggestions were taken into account
-> > from static source code analysis.
-> >
-> > Markus Elfring (2):
-> >   Delete an error message for a failed memory allocation in three functions
-> 
-> This one is questionable since it prints error messages at ->init() stage.
-> I would rather not touch this.
-> 
-> >   Improve a size determination in tpacpi_new_rfkill()
-> 
-> Doesn't make any sense right now. One style over the other.
-> Nothing gets better or worth at this point.
-> 
-> Sorry, but NAK for both.
+Inline macro for MODULE_LICENSE to make the license information easy to
+find, eg with grep.  Inline the other module-related macros at the same
+time.
 
-Agreed.  NAK from me as well.
+The complete semantic patch is as follows: (http://coccinelle.lip6.fr/)
 
--- 
-  Henrique Holschuh
+// <smpl>
+@q@
+declarer name MODULE_LICENSE;
+identifier i;
+constant c;
+position p;
+@@
+
+MODULE_LICENSE(c@i@p);
+
+@r depends on q@
+declarer name MODULE_AUTHOR, MODULE_DESCRIPTION, MODULE_VERSION;
+identifier i;
+constant c;
+position p;
+@@
+
+(
+MODULE_AUTHOR(c@i@p);
+|
+MODULE_DESCRIPTION(c@i@p);
+|
+MODULE_LICENSE(c@i@p);
+|
+MODULE_VERSION(c@i@p);
+)
+
+@other@
+identifier r.i;
+position p != r.p;
+@@
+
+i@p
+
+@s depends on !other@
+identifier r.i;
+expression e;
+@@
+
+#define i e
+
+@@
+identifier r.i;
+position r.p;
+expression s.e;
+@@
+
+(
+MODULE_AUTHOR(
+- i@p
++ e
+ );
+|
+MODULE_DESCRIPTION(
+- i@p
++ e
+ );
+|
+MODULE_LICENSE(
+- i@p
++ e
+ );
+|
+MODULE_VERSION(
+- i@p
++ e
+ );
+)
+
+@@
+identifier r.i;
+expression s.e;
+@@
+
+-#define i e
+// </smpl>
+
+---
+
+ drivers/input/misc/keyspan_remote.c |    9 +++------
+ drivers/input/tablet/acecad.c       |    9 +++------
+ drivers/input/tablet/hanwang.c      |   10 +++-------
+ drivers/input/tablet/kbtab.c        |    9 +++------
+ 4 files changed, 12 insertions(+), 25 deletions(-)
