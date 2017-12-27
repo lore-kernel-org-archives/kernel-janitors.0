@@ -1,41 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 19:55:15 +0000
-Subject: [PATCH] pinctrl: at91: Delete an error message for a failed memory allocation in at91_pinctrl_mux_ma
-Message-Id: <b5da388b-7fa2-ad77-7b64-26eadd55b41c@users.sourceforge.net>
+From: "Sra. Angel Rania" <sra.angelrania83@gmail.com>
+Date: Wed, 27 Dec 2017 10:17:06 +0000
+Subject: Re: You will definetely be interested...
+Message-Id: <CAKx+QTtL6hVN3Sv0baZHHBnMxgEeMprK=PALd6GuhxU+MNPauw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 20:44:27 +0100
+Hi Dear,
 
-Omit an extra message for a memory allocation failure in this function.
+Reading your profile has given me courage in search of a reasponsable
+and trust worthy Fellow. The past has treated me so awfully but now I
+am ready to move on despite of my health condition. I will like to
+have a sincere and important discussion with you that will be in your
+favor likewise to you and your environment especially to your close
+family. Endeavor to reply me and I have attached my picture in case
+you long to know who emailed you. I will be waiting to hear from you
+as soon as possble.
+Thanks for paying attention to my mail and will appreciate so much if
+I receive a reply from you for understable details.
 
-This issue was detected by using the Coccinelle software.
+Thanks,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-at91.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index 03492e3c09fa..297f1d161211 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1050,10 +1050,8 @@ static int at91_pinctrl_mux_mask(struct at91_pinctrl *info,
- 	info->nmux = size / gpio_banks;
- 
- 	info->mux_mask = devm_kzalloc(info->dev, sizeof(u32) * size, GFP_KERNEL);
--	if (!info->mux_mask) {
--		dev_err(info->dev, "could not alloc mux_mask\n");
-+	if (!info->mux_mask)
- 		return -ENOMEM;
--	}
- 
- 	ret = of_property_read_u32_array(np, "atmel,mux-mask",
- 					  info->mux_mask, size);
--- 
-2.15.1
-
+Mrs. Rania Hassan
