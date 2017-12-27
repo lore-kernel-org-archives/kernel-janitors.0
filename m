@@ -1,27 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 05 Dec 2017 17:10:26 +0000
-Subject: [PATCH 0/2] video/fbdev/amba-clcd: Adjustments for clcdfb_probe()
-Message-Id: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:36 +0000
+Subject: [PATCH 03/12] net: dccp: drop unneeded newline
+Message-Id: <1514386305-7402-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Russell King <linux@armlinux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Gerrit Renker <gerrit@erg.abdn.ac.uk>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, dccp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 5 Dec 2017 18:07:06 +0100
+DCCP_CRIT prints some other text and then a newline after the message
+string, so the message string does not need to include a newline
+explicitly.  Done using Coccinelle.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+---
+ net/dccp/ackvec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/video/fbdev/amba-clcd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
--- 
-2.15.1
+diff --git a/net/dccp/ackvec.c b/net/dccp/ackvec.c
+index 3de0d03..2a24f7d 100644
+--- a/net/dccp/ackvec.c
++++ b/net/dccp/ackvec.c
+@@ -228,7 +228,7 @@ static void dccp_ackvec_add_new(struct dccp_ackvec *av, u32 num_packets,
+ 	}
+ 
+ 	if (num_cells + dccp_ackvec_buflen(av) >= DCCPAV_MAX_ACKVEC_LEN) {
+-		DCCP_CRIT("Ack Vector buffer overflow: dropping old entries\n");
++		DCCP_CRIT("Ack Vector buffer overflow: dropping old entries");
+ 		av->av_overflow = true;
+ 	}
+ 
 
