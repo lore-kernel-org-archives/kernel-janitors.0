@@ -1,31 +1,41 @@
-From: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
-Date: Thu, 21 Dec 2017 13:59:30 +0000
-Subject: RE: [PATCH 0/3] RapidIO: Tsi721-DMA: Adjustments for five function implementations
-Message-Id: <8D983423E7EDF846BB3056827B8CC5D161B3BD16@corpmail1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Dec 2017 21:48:58 +0000
+Subject: [PATCH] pinctrl: spear: Delete an error message for a failed memory allocation in spear_pinctrl_prob
+Message-Id: <3d936763-6a8a-edd3-3bcf-0075c9343e37@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <33c63b12-7828-891a-31ef-76a2e3c6b90c@users.sourceforge.net>
-In-Reply-To: <33c63b12-7828-891a-31ef-76a2e3c6b90c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Matt Porter <mporter@kernel.crashing.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-QWNrZWQtYnk6IEFsZXhhbmRyZSBCb3VuaW5lIDxhbGV4YW5kcmUuYm91bmluZUBpZHQuY29tPg0K
-DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBTRiBNYXJrdXMgRWxmcmluZyBb
-bWFpbHRvOmVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0XSANClNlbnQ6IEZyaWRheSwgRGVj
-ZW1iZXIgMTUsIDIwMTcgMTE6MzMgQU0NClRvOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwu
-b3JnOyBCb3VuaW5lLCBBbGV4YW5kcmUgPEFsZXhhbmRyZS5Cb3VuaW5lQGlkdC5jb20+OyBNYXR0
-IFBvcnRlciA8bXBvcnRlckBrZXJuZWwuY3Jhc2hpbmcub3JnPg0KQ2M6IExLTUwgPGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc+DQpTdWJqZWN0OiBbUEFUQ0ggMC8zXSBSYXBpZElPOiBUc2k3
-MjEtRE1BOiBBZGp1c3RtZW50cyBmb3IgZml2ZSBmdW5jdGlvbiBpbXBsZW1lbnRhdGlvbnMNCg0K
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KRGF0
-ZTogRnJpLCAxNSBEZWMgMjAxNyAxNzoyODozMiArMDEwMA0KDQpUaHJlZSB1cGRhdGUgc3VnZ2Vz
-dGlvbnMgd2VyZSB0YWtlbiBpbnRvIGFjY291bnQNCmZyb20gc3RhdGljIHNvdXJjZSBjb2RlIGFu
-YWx5c2lzLg0KDQpNYXJrdXMgRWxmcmluZyAoMyk6DQogIERlbGV0ZSBhbiBlcnJvciBtZXNzYWdl
-IGZvciBhIGZhaWxlZCBtZW1vcnkgYWxsb2NhdGlvbiBpbiB0c2k3MjFfYWxsb2NfY2hhbl9yZXNv
-dXJjZXMoKQ0KICBEZWxldGUgYW4gdW5uZWNlc3NhcnkgdmFyaWFibGUgaW5pdGlhbGlzYXRpb24g
-aW4gdHNpNzIxX2FsbG9jX2NoYW5fcmVzb3VyY2VzKCkNCiAgQWRqdXN0IHNpeCBjaGVja3MgZm9y
-IG51bGwgcG9pbnRlcnMNCg0KIGRyaXZlcnMvcmFwaWRpby9kZXZpY2VzL3RzaTcyMV9kbWEuYyB8
-IDE3ICsrKysrKy0tLS0tLS0tLS0tDQogMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwg
-MTEgZGVsZXRpb25zKC0pDQoNCi0tIA0KMi4xNS4xDQoNCg=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Dec 2017 22:44:04 +0100
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/spear/pinctrl-spear.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
+index 4db52ba38d8d..efe79d3f7659 100644
+--- a/drivers/pinctrl/spear/pinctrl-spear.c
++++ b/drivers/pinctrl/spear/pinctrl-spear.c
+@@ -361,10 +361,8 @@ int spear_pinctrl_probe(struct platform_device *pdev,
+ 		return -ENODEV;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+-	if (!pmx) {
+-		dev_err(&pdev->dev, "Can't alloc spear_pmx\n");
++	if (!pmx)
+ 		return -ENOMEM;
+-	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pmx->vbase = devm_ioremap_resource(&pdev->dev, res);
+-- 
+2.15.1
+
