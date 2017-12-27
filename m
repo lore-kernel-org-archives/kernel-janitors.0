@@ -1,45 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 04 Dec 2017 16:48:18 +0000
-Subject: [PATCH][next] drm/i915/gvt: Add missing breaks in switch statement
-Message-Id: <20171204164818.13041-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:34 +0000
+Subject: [PATCH 01/12] dac960: drop unneeded newline
+Message-Id: <1514386305-7402-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+DAC960_Failure prints a newline at the end of the message string, so
+the message string does not need to include a newline explicitly.
+Done using Coccinelle.
 
-The switch statement is missing breaks for the cases of
-GVT_FAILSAFE_INSUFFICIENT_RESOURCE and GVT_FAILSAFE_GUEST_ERR. Add them
-in.
+In the first case, the preceding spaces were also converted to a tab.
+In the second case, doing so would upset the indentation, so it was
+left as is.
 
-Detected by CoverityScan, CID#1462416 ("Missing break in switch")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fixes: e011c6ce2b4f ("drm/i915/gvt: Add VM healthy check for workload_thread")
-Fixes: a33fc7a0482a ("drm/i915/gvt: enter failsafe mode when guest requires more resources")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/i915/gvt/handlers.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/DAC960.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gvt/handlers.c b/drivers/gpu/drm/i915/gvt/handlers.c
-index 94fc04210bac..7354ed816f92 100644
---- a/drivers/gpu/drm/i915/gvt/handlers.c
-+++ b/drivers/gpu/drm/i915/gvt/handlers.c
-@@ -174,8 +174,10 @@ void enter_failsafe_mode(struct intel_vgpu *vgpu, int reason)
- 		break;
- 	case GVT_FAILSAFE_INSUFFICIENT_RESOURCE:
- 		pr_err("Graphics resource is not enough for the guest\n");
-+		break;
- 	case GVT_FAILSAFE_GUEST_ERR:
- 		pr_err("GVT Internal error  for the guest\n");
-+		break;
- 	default:
- 		break;
- 	}
--- 
-2.14.1
+diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
+index 442e777..89cd83a 100644
+--- a/drivers/block/DAC960.c
++++ b/drivers/block/DAC960.c
+@@ -1344,7 +1344,7 @@ static bool DAC960_V1_EnableMemoryMailboxInterface(DAC960_Controller_T
+ 	CommandMailbox.TypeX.CommandOpcode2 = 0x10;
+ 	break;
+       default:
+-        DAC960_Failure(Controller, "Unknown Controller Type\n");
++	DAC960_Failure(Controller, "Unknown Controller Type");
+ 	break;
+       }
+   return false;
+@@ -1527,7 +1527,7 @@ static bool DAC960_V2_EnableMemoryMailboxInterface(DAC960_Controller_T
+       DAC960_LP_AcknowledgeHardwareMailboxStatus(ControllerBaseAddress);
+       break;
+     default:
+-      DAC960_Failure(Controller, "Unknown Controller Type\n");
++      DAC960_Failure(Controller, "Unknown Controller Type");
+       CommandStatus = DAC960_V2_AbormalCompletion;
+       break;
+     }
 
