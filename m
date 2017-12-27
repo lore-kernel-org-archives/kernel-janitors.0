@@ -1,28 +1,43 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Wed, 06 Dec 2017 16:40:13 +0000
-Subject: Re: [Xen-devel] [PATCH 2/2] xen/pvcalls: Fix a check in pvcalls_front_remove()
-Message-Id: <6faea52c-2c30-e32e-5ad8-e3822119a84c@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Dec 2017 21:10:25 +0000
+Subject: [PATCH] pinctrl: msm: Delete an error message for a failed memory allocation in msm_pinctrl_probe()
+Message-Id: <0d5eae19-c8f9-3280-e68e-419646535512@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1712051029410.3403@sstabellini-ThinkPad-X260>
-In-Reply-To: <alpine.DEB.2.10.1712051029410.3403@sstabellini-ThinkPad-X260>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12/05/2017 01:29 PM, Stefano Stabellini wrote:
-> On Tue, 5 Dec 2017, Dan Carpenter wrote:
->> bedata->ref can't be less than zero because it's unsigned.  This affects
->> certain error paths in probe.  We first set ->ref = -1 and then we set
->> it to a valid value later.
->>
->> Fixes: 219681909913 ("xen/pvcalls: connect to the backend")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Dec 2017 22:04:22 +0100
 
+Omit an extra message for a memory allocation failure in this function.
 
-Applied to for-linus-4.15.
+This issue was detected by using the Coccinelle software.
 
--boris
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 7a960590ecaa..495432f3341b 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -898,10 +898,9 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 	int ret;
+ 
+ 	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
+-	if (!pctrl) {
+-		dev_err(&pdev->dev, "Can't allocate msm_pinctrl\n");
++	if (!pctrl)
+ 		return -ENOMEM;
+-	}
++
+ 	pctrl->dev = &pdev->dev;
+ 	pctrl->soc = soc_data;
+ 	pctrl->chip = msm_gpio_template;
+-- 
+2.15.1
 
