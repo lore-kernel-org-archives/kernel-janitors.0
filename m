@@ -1,48 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 18:35:53 +0000
-Subject: [PATCH 1/3] uio: Delete two error messages for a failed memory allocation in uio_dmem_genirq_probe()
-Message-Id: <3995c42d-3138-743e-d4a0-85380ed11261@users.sourceforge.net>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Wed, 27 Dec 2017 10:03:31 +0000
+Subject: Re: [next] ath10k: wmi: remove redundant integer fc
+Message-Id: <9a6c9d36025e46fd9b22e985d3662d93@euamsexm01a.eu.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
-In-Reply-To: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
+References: <20171218150245.9073-1-colin.king@canonical.com>
+In-Reply-To: <20171218150245.9073-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 18:05:12 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Omit extra messages for a memory allocation failure in this function.
+> Variable fc is being assigned but never used, so remove it. Cleans
+> up the clang warning:
+> 
+> warning: Value stored to 'fc' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/uio/uio_dmem_genirq.c | 2 --
- 1 file changed, 2 deletions(-)
+a0709dfd7ff8 ath10k: wmi: remove redundant integer fc
 
-diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
-index e1134a4d97f3..b7b0acd1bf01 100644
---- a/drivers/uio/uio_dmem_genirq.c
-+++ b/drivers/uio/uio_dmem_genirq.c
-@@ -160,7 +160,6 @@ static int uio_dmem_genirq_probe(struct platform_device *pdev)
- 		uioinfo = kzalloc(sizeof(*uioinfo), GFP_KERNEL);
- 		if (!uioinfo) {
- 			ret = -ENOMEM;
--			dev_err(&pdev->dev, "unable to kmalloc\n");
- 			goto bad2;
- 		}
- 		uioinfo->name = pdev->dev.of_node->name;
-@@ -188,7 +187,6 @@ static int uio_dmem_genirq_probe(struct platform_device *pdev)
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv) {
- 		ret = -ENOMEM;
--		dev_err(&pdev->dev, "unable to kmalloc\n");
- 		goto bad0;
- 	}
- 
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10119831/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
