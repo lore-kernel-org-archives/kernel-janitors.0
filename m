@@ -1,38 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 20:33:44 +0000
-Subject: [PATCH] wireless: b43: Delete an error message for a failed memory allocation in b43_sdio_probe()
-Message-Id: <175d361f-0c00-2a32-c860-a5ad198e74ba@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:40 +0000
+Subject: [PATCH 07/12] ARM: davinci: drop unneeded newline
+Message-Id: <1514386305-7402-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 30 Dec 2017 21:23:47 +0100
+gpio_request uses its second argument as a label, so it doesn't seem
+appropriate for it to have a newline.  Done using Coccinelle.
 
-Omit an extra message for a memory allocation failure in this function.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/broadcom/b43/sdio.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/mach-davinci/board-da850-evm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/sdio.c b/drivers/net/wireless/broadcom/b43/sdio.c
-index 59a521800694..5a6dbcf170f9 100644
---- a/drivers/net/wireless/broadcom/b43/sdio.c
-+++ b/drivers/net/wireless/broadcom/b43/sdio.c
-@@ -146,7 +146,6 @@ static int b43_sdio_probe(struct sdio_func *func,
- 	sdio = kzalloc(sizeof(*sdio), GFP_KERNEL);
- 	if (!sdio) {
- 		error = -ENOMEM;
--		dev_err(&func->dev, "failed to allocate ssb bus\n");
- 		goto err_disable_func;
- 	}
- 	error = ssb_bus_sdiobus_register(&sdio->ssb, func,
--- 
-2.15.1
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index cbde003..d898a94 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -798,11 +798,11 @@ static int da850_lcd_hw_init(void)
+ {
+ 	int status;
+ 
+-	status = gpio_request(DA850_LCD_BL_PIN, "lcd bl\n");
++	status = gpio_request(DA850_LCD_BL_PIN, "lcd bl");
+ 	if (status < 0)
+ 		return status;
+ 
+-	status = gpio_request(DA850_LCD_PWR_PIN, "lcd pwr\n");
++	status = gpio_request(DA850_LCD_PWR_PIN, "lcd pwr");
+ 	if (status < 0) {
+ 		gpio_free(DA850_LCD_BL_PIN);
+ 		return status;
 
