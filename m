@@ -1,33 +1,35 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 11 Dec 2017 11:46:45 +0000
-Subject: Re: [PATCH] chcr: ensure cntrl is initialized to fix bit-wise or'ing of garabage data
-Message-Id: <20171211114645.GK12014@gondor.apana.org.au>
+From: JI-HUN KIM <jihuun.k@gmail.com>
+Date: Wed, 27 Dec 2017 05:54:16 +0000
+Subject: [PATCH 2/3] staging: irda: add spaces around '|' operator
+Message-Id: <20171227055412.GA32724@MacBook-Air>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171130142354.21225-1-colin.king@canonical.com>
-In-Reply-To: <20171130142354.21225-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Harsh Jain <harsh@chelsio.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: samuel@sortiz.org
+Cc: gregkh@linuxfoundation.org, davem@davemloft.net, shreeya.patel23498@gmail.com, netdev@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 30, 2017 at 02:23:54PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where skb->ip_summed != CHECKSUM_PARTIAL then cntrl contains
-> garbage value and this is possibly being bit-wise or'd and stored into
-> cpl->ctrl1.  Fix this by initializing cntrl to zero.
-> 
-> Cleans up clang warning:
-> drivers/crypto/chelsio/chcr_ipsec.c:374:9: warning: The left expression
-> of the compound assignment is an uninitialized value. The computed value
-> will also be garbage
-> 
-> Fixes: 6dad4e8ab3ec ("chcr: Add support for Inline IPSec")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Clean up checkpatch warning:
+CHECK: spaces preferred around that '|' (ctx:VxV)
 
-Patch applied.  Thanks.
+Signed-off-by: JI-HUN KIM <jihuun.k@gmail.com>
+---
+ drivers/staging/irda/drivers/esi-sir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/irda/drivers/esi-sir.c b/drivers/staging/irda/drivers/esi-sir.c
+index a12cf55..00866a3 100644
+--- a/drivers/staging/irda/drivers/esi-sir.c
++++ b/drivers/staging/irda/drivers/esi-sir.c
+@@ -69,7 +69,7 @@ static int esi_open(struct sir_dev *dev)
+ 	/* Power up and set dongle to 9600 baud */
+ 	sirdev_set_dtr_rts(dev, FALSE, TRUE);
+ 
+-	qos->baud_rate.bits &= IR_9600|IR_19200|IR_115200;
++	qos->baud_rate.bits &= IR_9600 | IR_19200 | IR_115200;
+ 	qos->min_turn_time.bits = 0x01; /* Needs at least 10 ms */
+ 	irda_qos_bits_to_value(qos);
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.10.1 (Apple Git-78)
+
