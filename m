@@ -1,20 +1,38 @@
-From: Loretta Robles <Loretta.Robles@hci.utah.edu>
-Date: Sat, 30 Dec 2017 00:28:56 +0000
-Subject: RE: ATTENTION!!!
-Message-Id: <35D4F79A8B8138489F38DE5CF6200454E572AB2F@HCI-EX-MB2.hci.utah.edu>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:45 +0000
+Subject: [PATCH 12/12] hpfs: drop unneeded newline
+Message-Id: <1514386305-7402-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <35D4F79A8B8138489F38DE5CF6200454E570015C@HCI-EX-MB2.hci.utah.edu>
-In-Reply-To: <35D4F79A8B8138489F38DE5CF6200454E570015C@HCI-EX-MB2.hci.utah.edu>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Loretta Robles <Loretta.Robles@hci.utah.edu>
+To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+hpfs_error prints a newline at the end of the message string, so the
+message string does not need to include a newline explicitly.  Done
+using Coccinelle.
 
-________________________________
-From: Loretta Robles
-Sent: Friday, December 29, 2017 1:01 PM
-To: Loretta Robles
-Subject: ATTENTION!!!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-You have been randomly selected for a donation. Contact soriz4040@gmail.com for claims.
+---
+ fs/hpfs/dnode.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/hpfs/dnode.c b/fs/hpfs/dnode.c
+index a4ad18a..fc1809b 100644
+--- a/fs/hpfs/dnode.c
++++ b/fs/hpfs/dnode.c
+@@ -914,7 +914,8 @@ struct hpfs_dirent *map_dirent(struct inode *inode, dnode_secno dno,
+ 	struct hpfs_dirent *de_end;
+ 	int c1, c2 = 0;
+ 
+-	if (!S_ISDIR(inode->i_mode)) hpfs_error(inode->i_sb, "map_dirent: not a directory\n");
++	if (!S_ISDIR(inode->i_mode))
++		hpfs_error(inode->i_sb, "map_dirent: not a directory");
+ 	again:
+ 	if (hpfs_sb(inode->i_sb)->sb_chk)
+ 		if (hpfs_stop_cycles(inode->i_sb, dno, &c1, &c2, "map_dirent")) return NULL;
+
