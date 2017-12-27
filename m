@@ -1,43 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Dec 2017 00:21:43 +0000
-Subject: [PATCH][next] slimbus: fix retries comparison to correctly identify failed allocation
-Message-Id: <20171222002143.10660-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:38 +0000
+Subject: [PATCH 05/12] openvswitch: drop unneeded newline
+Message-Id: <1514386305-7402-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pravin Shelar <pshelar@nicira.com>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+OVS_NLERR prints a newline at the end of the message string, so the
+message string does not need to include a newline explicitly.  Done
+using Coccinelle.
 
-Currently the check for too many retries fails because retries is actually
--1 when the retry loop terminates if no pbuf can be allocated because of
-the post decrement on retries.  Fix this by not comparing retries with zero
-but instead check if it is negative.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Detected by CoverityScan, CID#1463143 ("Logically dead code") and
-CID#1463144 ("Dereference after null check")
-
-Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/slimbus/qcom-ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/openvswitch/conntrack.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-index 35ad70dbfe3a..9b7846f1f8c3 100644
---- a/drivers/slimbus/qcom-ctrl.c
-+++ b/drivers/slimbus/qcom-ctrl.c
-@@ -347,7 +347,7 @@ static int qcom_xfer_msg(struct slim_controller *sctrl,
+diff --git a/net/openvswitch/conntrack.c b/net/openvswitch/conntrack.c
+index b27c5c6..62f36cc9 100644
+--- a/net/openvswitch/conntrack.c
++++ b/net/openvswitch/conntrack.c
+@@ -1266,14 +1266,14 @@ static int parse_nat(const struct nlattr *attr,
+ 		/* Do not allow flags if no type is given. */
+ 		if (info->range.flags) {
+ 			OVS_NLERR(log,
+-				  "NAT flags may be given only when NAT range (SRC or DST) is also specified.\n"
++				  "NAT flags may be given only when NAT range (SRC or DST) is also specified."
+ 				  );
+ 			return -EINVAL;
  		}
+ 		info->nat = OVS_CT_NAT;   /* NAT existing connections. */
+ 	} else if (!info->commit) {
+ 		OVS_NLERR(log,
+-			  "NAT attributes may be specified only when CT COMMIT flag is also specified.\n"
++			  "NAT attributes may be specified only when CT COMMIT flag is also specified."
+ 			  );
+ 		return -EINVAL;
  	}
- 
--	if (!retries && !pbuf)
-+	if (retries < 0 && !pbuf)
- 		return -ENOMEM;
- 
- 	puc = (u8 *)pbuf;
--- 
-2.14.1
 
