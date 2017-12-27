@@ -1,39 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 Dec 2017 13:30:09 +0000
-Subject: [PATCH] regulator: fix incorrect indentation of two assignment statements
-Message-Id: <20171207133009.24948-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:43 +0000
+Subject: [PATCH 10/12] hpsa: drop unneeded newline
+Message-Id: <1514386305-7402-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Don Brace <don.brace@microsemi.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+hpsa_show_dev_msg prints other information and a newline after the
+message string, so the message string does not need to include a
+newline explicitly.  Done using Coccinelle.
 
-Remove extraneous space to fix indentation on a couple of assignment
-statements.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/regulator/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/hpsa.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index b64b7916507f..365b32e3f505 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2605,8 +2605,8 @@ int regulator_get_hardware_vsel_register(struct regulator *regulator,
- 	if (ops->set_voltage_sel != regulator_set_voltage_sel_regmap)
- 		return -EOPNOTSUPP;
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index b0aa5dc..3bb8191 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -3518,7 +3518,7 @@ static void hpsa_get_enclosure_info(struct ctlr_info *h,
  
--	 *vsel_reg = rdev->desc->vsel_reg;
--	 *vsel_mask = rdev->desc->vsel_mask;
-+	*vsel_reg = rdev->desc->vsel_reg;
-+	*vsel_mask = rdev->desc->vsel_mask;
- 
- 	 return 0;
+ 	if (rc != IO_OK)
+ 		hpsa_show_dev_msg(KERN_INFO, h, encl_dev,
+-			"Error, could not get enclosure information\n");
++			"Error, could not get enclosure information");
  }
--- 
-2.14.1
+ 
+ static u64 hpsa_get_sas_address_from_report_physical(struct ctlr_info *h,
 
