@@ -1,42 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 21:40:00 +0000
-Subject: [PATCH 2/3] pinctrl: rockchip: Improve a size determination in rockchip_pinctrl_probe()
-Message-Id: <e0bceb4a-bd46-5032-2ac9-d51aa46440a5@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:42 +0000
+Subject: [PATCH 09/12] [media] pvrusb2: drop unneeded newline
+Message-Id: <1514386305-7402-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
-In-Reply-To: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mike Isely <isely@pobox.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 22:07:30 +0100
+pvr2_trace prints a newline at the end of the message string, so the
+message string does not need to include a newline explicitly.  Done
+using Coccinelle.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 285169170eb2..5e76a6d8a1cb 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3158,7 +3158,7 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 		return -ENODEV;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+index 09bd6c6..e035316 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+@@ -2351,7 +2351,8 @@ struct pvr2_hdw *pvr2_hdw_create(struct usb_interface *intf,
+ 
+ 	if (hdw_desc = NULL) {
+ 		pvr2_trace(PVR2_TRACE_INIT, "pvr2_hdw_create: No device description pointer, unable to continue.");
+-		pvr2_trace(PVR2_TRACE_INIT, "If you have a new device type, please contact Mike Isely <isely@pobox.com> to get it included in the driver\n");
++		pvr2_trace(PVR2_TRACE_INIT,
++			   "If you have a new device type, please contact Mike Isely <isely@pobox.com> to get it included in the driver");
+ 		goto fail;
  	}
  
--	info = devm_kzalloc(dev, sizeof(struct rockchip_pinctrl), GFP_KERNEL);
-+	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
- 		return -ENOMEM;
- 
--- 
-2.15.1
 
