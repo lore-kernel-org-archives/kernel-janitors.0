@@ -1,49 +1,40 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 29 Dec 2017 18:02:03 +0000
-Subject: Re: [PATCH 0/4] video-UDLFB: Adjustments for five function implementations
-Message-Id: <1768474.zA76iyE2Y1@amdc3058>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:39 +0000
+Subject: [PATCH 06/12] [S390] dasd: drop unneeded newline
+Message-Id: <1514386305-7402-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
-        <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
-In-Reply-To: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bernie Thompson <bernie@plugable.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Stefan Haberland <sth@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, Jan Hoeppner <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday, November 24, 2017 09:48:14 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 24 Nov 2017 21:45:54 +0100
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (4):
->   Delete an error message for a failed memory allocation in two functions
+DBF_DEV_EVENT prints a newline at the end of the message string,
+so the message string does not need to include a newline explicitly.
+Done using Coccinelle.
 
-This patch removes the information about the device for which the allocation
-fails.
+The two strings are also concatenated into one for easier grepping.
 
->   Return an error code only as a constant in dlfb_realloc_framebuffer()
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This patch depends on the earlier patch (which is not being merged) so please
-re-base it if you want it to be applied.
+---
+ drivers/s390/block/dasd_diag.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
->   Improve a size determination in dlfb_alloc_urb_list()
-
-Patch queued for 4.16, thanks.
-
->   Delete an unnecessary return statement in two functions
-
-Patch queued for 4.16, thanks.
- 
->  drivers/video/fbdev/udlfb.c | 23 +++++------------------
->  1 file changed, 5 insertions(+), 18 deletions(-)
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/s390/block/dasd_diag.c b/drivers/s390/block/dasd_diag.c
+index f035c2f..96c507a 100644
+--- a/drivers/s390/block/dasd_diag.c
++++ b/drivers/s390/block/dasd_diag.c
+@@ -329,8 +329,7 @@ static void dasd_ext_handler(struct ext_code ext_code,
+ 		private = kzalloc(sizeof(*private), GFP_KERNEL);
+ 		if (private = NULL) {
+ 			DBF_DEV_EVENT(DBF_WARNING, device, "%s",
+-				"Allocating memory for private DASD data "
+-				      "failed\n");
++				"Allocating memory for private DASD data failed");
+ 			return -ENOMEM;
+ 		}
+ 		ccw_device_get_id(device->cdev, &private->dev_id);
 
