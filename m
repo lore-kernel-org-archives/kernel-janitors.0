@@ -1,44 +1,27 @@
-From: JI-HUN KIM <jihuun.k@gmail.com>
-Date: Wed, 27 Dec 2017 05:52:54 +0000
-Subject: [PATCH 1/3] staging: irda: fix type from "unsigned" to "unsigned int"
-Message-Id: <20171227055250.GA32718@MacBook-Air>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 27 Dec 2017 12:45:37 +0000
+Subject: Re: [PATCH 1/3] staging: irda: fix type from "unsigned" to "unsigned int"
+Message-Id: <20171227124537.GA2914@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171227055250.GA32718@MacBook-Air>
+In-Reply-To: <20171227055250.GA32718@MacBook-Air>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: samuel@sortiz.org
-Cc: gregkh@linuxfoundation.org, davem@davemloft.net, shreeya.patel23498@gmail.com, netdev@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: JI-HUN KIM <jihuun.k@gmail.com>
+Cc: samuel@sortiz.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, shreeya.patel23498@gmail.com, netdev@vger.kernel.org, davem@davemloft.net
 
-Clean up checkpatch warning:
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+On Tue, Dec 26, 2017 at 09:52:54PM -0800, JI-HUN KIM wrote:
+> Clean up checkpatch warning:
+> WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> 
+> Signed-off-by: JI-HUN KIM <jihuun.k@gmail.com>
+> ---
+>  drivers/staging/irda/drivers/esi-sir.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: JI-HUN KIM <jihuun.k@gmail.com>
----
- drivers/staging/irda/drivers/esi-sir.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please read drivers/staging/irda/TODO
 
-diff --git a/drivers/staging/irda/drivers/esi-sir.c b/drivers/staging/irda/drivers/esi-sir.c
-index eb7aa64..a12cf55 100644
---- a/drivers/staging/irda/drivers/esi-sir.c
-+++ b/drivers/staging/irda/drivers/esi-sir.c
-@@ -39,7 +39,7 @@
- 
- static int esi_open(struct sir_dev *);
- static int esi_close(struct sir_dev *);
--static int esi_change_speed(struct sir_dev *, unsigned);
-+static int esi_change_speed(struct sir_dev *, unsigned int);
- static int esi_reset(struct sir_dev *);
- 
- static struct dongle_driver esi = {
-@@ -93,7 +93,7 @@ static int esi_close(struct sir_dev *dev)
-  * Apparently (see old esi-driver) no delays are needed here...
-  *
-  */
--static int esi_change_speed(struct sir_dev *dev, unsigned speed)
-+static int esi_change_speed(struct sir_dev *dev, unsigned int speed)
- {
- 	int ret = 0;
- 	int dtr, rts;
--- 
-2.10.1 (Apple Git-78)
+sorry.
 
+greg k-h
