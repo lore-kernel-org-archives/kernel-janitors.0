@@ -1,70 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 21:45:45 +0000
-Subject: [PATCH 1/3] pcmcia/cistpl: Delete error messages for a failed memory allocation in three functions
-Message-Id: <45a0f894-3de7-0606-08d1-3422d135cf2d@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 27 Dec 2017 14:51:35 +0000
+Subject: [PATCH 02/12] dlm: drop unneeded newline
+Message-Id: <1514386305-7402-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
-In-Reply-To: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org, Bhumika Goyal <bhumirks@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christine Caulfield <ccaulfie@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, David Teigland <teigland@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Dec 2017 22:12:00 +0100
+log_print prints a newline at the end of the message string, so
+the message string does not need to include a newline explicitly.
+Done using Coccinelle.
 
-Omit extra messages for a memory allocation failure in these functions.
+The two strings were additionally merged into one, for easier
+grepping.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pcmcia/cistpl.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ fs/dlm/plock.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
-index 102646fedb56..192c0e8e9c3d 100644
---- a/drivers/pcmcia/cistpl.c
-+++ b/drivers/pcmcia/cistpl.c
-@@ -379,10 +379,9 @@ int verify_cis_cache(struct pcmcia_socket *s)
- 		return -EINVAL;
- 
- 	buf = kmalloc(256, GFP_KERNEL);
--	if (buf = NULL) {
--		dev_warn(&s->dev, "no memory for verifying CIS\n");
-+	if (!buf)
- 		return -ENOMEM;
--	}
-+
- 	mutex_lock(&s->ops_mutex);
- 	list_for_each_entry(cis, &s->cis_cache, node) {
- 		int len = cis->len;
-@@ -419,7 +418,6 @@ int pcmcia_replace_cis(struct pcmcia_socket *s,
- 	kfree(s->fake_cis);
- 	s->fake_cis = kmalloc(len, GFP_KERNEL);
- 	if (s->fake_cis = NULL) {
--		dev_warn(&s->dev, "no memory to replace CIS\n");
- 		mutex_unlock(&s->ops_mutex);
- 		return -ENOMEM;
- 	}
-@@ -1395,14 +1393,12 @@ int pccard_validate_cis(struct pcmcia_socket *s, unsigned int *info)
- 	mutex_unlock(&s->ops_mutex);
- 
- 	tuple = kmalloc(sizeof(*tuple), GFP_KERNEL);
--	if (tuple = NULL) {
--		dev_warn(&s->dev, "no memory to validate CIS\n");
-+	if (!tuple)
- 		return -ENOMEM;
--	}
-+
- 	p = kmalloc(sizeof(*p), GFP_KERNEL);
- 	if (p = NULL) {
- 		kfree(tuple);
--		dev_warn(&s->dev, "no memory to validate CIS\n");
- 		return -ENOMEM;
+diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
+index a4c63e9..ee84584 100644
+--- a/fs/dlm/plock.c
++++ b/fs/dlm/plock.c
+@@ -231,8 +231,7 @@ static int dlm_plock_callback(struct plock_op *op)
+ 	rv = notify(fl, 0);
+ 	if (rv) {
+ 		/* XXX: We need to cancel the fs lock here: */
+-		log_print("dlm_plock_callback: lock granted after lock request "
+-			  "failed; dangling lock!\n");
++		log_print("dlm_plock_callback: lock granted after lock request failed; dangling lock!");
+ 		goto out;
  	}
  
--- 
-2.15.1
 
