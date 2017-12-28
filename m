@@ -1,41 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 20:11:43 +0000
-Subject: [PATCH 1/3] serial: max3100: Delete an error message for a failed memory allocation in max3100_probe
-Message-Id: <7a876c15-6fea-aa9f-451d-0856c913a59c@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 17:08:19 +0000
+Subject: [PATCH 0/2] Perf-ARM SPE: Adjustments for two function implementations
+Message-Id: <8a92bb8f-4295-6912-19a4-9103226a3c62@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
-In-Reply-To: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 20:20:58 +0100
+Date: Thu, 28 Dec 2017 17:56:54 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+    in arm_spe_pmu_device_dt_probe()
+  Delete an unnecessary return statement in __arm_spe_pmu_dev_probe()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/max3100.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/perf/arm_spe_pmu.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
-index 27d6049eb6a9..b7b7e6582f3f 100644
---- a/drivers/tty/serial/max3100.c
-+++ b/drivers/tty/serial/max3100.c
-@@ -763,8 +763,6 @@ static int max3100_probe(struct spi_device *spi)
- 
- 	max3100s[i] = kzalloc(sizeof(struct max3100_port), GFP_KERNEL);
- 	if (!max3100s[i]) {
--		dev_warn(&spi->dev,
--			 "kmalloc for max3100 structure %d failed!\n", i);
- 		mutex_unlock(&max3100s_lock);
- 		return -ENOMEM;
- 	}
 -- 
 2.15.1
 
