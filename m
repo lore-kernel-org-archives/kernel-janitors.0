@@ -1,80 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 11 Dec 2017 12:13:47 +0000
-Subject: Applied "ASoC: Intel: Skylake: Re-order some code to silence a warning" to the asoc tree
-Message-Id: <E1eOMxv-0004cf-Qa@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 21:45:45 +0000
+Subject: [PATCH 1/3] pcmcia/cistpl: Delete error messages for a failed memory allocation in three functions
+Message-Id: <45a0f894-3de7-0606-08d1-3422d135cf2d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171208115425.rqclgmhcph5gn47j@mwanda>
-In-Reply-To: <20171208115425.rqclgmhcph5gn47j@mwanda>
+References: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
+In-Reply-To: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, alsa-devel@alsa-project.org, Jani Nikula <jani.nikula@intel.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.orgMarkBrownbroonie@kernel.org, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>alsa-devel@alsa-project.org
+To: linux-pcmcia@lists.infradead.org, Bhumika Goyal <bhumirks@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 22:12:00 +0100
 
-   ASoC: Intel: Skylake: Re-order some code to silence a warning
+Omit extra messages for a memory allocation failure in these functions.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 87684d338a22d15e47b16ee68f569d74ad1d076e Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 8 Dec 2017 14:54:25 +0300
-Subject: [PATCH] ASoC: Intel: Skylake: Re-order some code to silence a warning
-
-I get a Smatch warning here:
-
-    sound/soc/intel/skylake/skl-nhlt.c:335 skl_get_ssp_clks()
-    error: testing array offset 'j' after use.
-
-The code is harmless, but the checker is right that we should swap these
-two conditions so we verify that the offset is within bounds before we
-use it.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/skylake/skl-nhlt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pcmcia/cistpl.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-nhlt.c b/sound/soc/intel/skylake/skl-nhlt.c
-index ca5dc2be7b68..bde7f40f29f5 100644
---- a/sound/soc/intel/skylake/skl-nhlt.c
-+++ b/sound/soc/intel/skylake/skl-nhlt.c
-@@ -322,8 +322,8 @@ static void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
- 		rate = channels * bps * fs;
+diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
+index 102646fedb56..192c0e8e9c3d 100644
+--- a/drivers/pcmcia/cistpl.c
++++ b/drivers/pcmcia/cistpl.c
+@@ -379,10 +379,9 @@ int verify_cis_cache(struct pcmcia_socket *s)
+ 		return -EINVAL;
  
- 		/* check if the rate is added already to the given SSP's sclk */
--		for (j = 0; (sclk[id].rate_cfg[j].rate != 0) &&
--				(j < SKL_MAX_CLK_RATES); j++) {
-+		for (j = 0; (j < SKL_MAX_CLK_RATES) &&
-+			    (sclk[id].rate_cfg[j].rate != 0); j++) {
- 			if (sclk[id].rate_cfg[j].rate = rate) {
- 				present = true;
- 				break;
+ 	buf = kmalloc(256, GFP_KERNEL);
+-	if (buf = NULL) {
+-		dev_warn(&s->dev, "no memory for verifying CIS\n");
++	if (!buf)
+ 		return -ENOMEM;
+-	}
++
+ 	mutex_lock(&s->ops_mutex);
+ 	list_for_each_entry(cis, &s->cis_cache, node) {
+ 		int len = cis->len;
+@@ -419,7 +418,6 @@ int pcmcia_replace_cis(struct pcmcia_socket *s,
+ 	kfree(s->fake_cis);
+ 	s->fake_cis = kmalloc(len, GFP_KERNEL);
+ 	if (s->fake_cis = NULL) {
+-		dev_warn(&s->dev, "no memory to replace CIS\n");
+ 		mutex_unlock(&s->ops_mutex);
+ 		return -ENOMEM;
+ 	}
+@@ -1395,14 +1393,12 @@ int pccard_validate_cis(struct pcmcia_socket *s, unsigned int *info)
+ 	mutex_unlock(&s->ops_mutex);
+ 
+ 	tuple = kmalloc(sizeof(*tuple), GFP_KERNEL);
+-	if (tuple = NULL) {
+-		dev_warn(&s->dev, "no memory to validate CIS\n");
++	if (!tuple)
+ 		return -ENOMEM;
+-	}
++
+ 	p = kmalloc(sizeof(*p), GFP_KERNEL);
+ 	if (p = NULL) {
+ 		kfree(tuple);
+-		dev_warn(&s->dev, "no memory to validate CIS\n");
+ 		return -ENOMEM;
+ 	}
+ 
 -- 
 2.15.1
 
