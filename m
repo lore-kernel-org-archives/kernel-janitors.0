@@ -1,85 +1,57 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 07 Dec 2017 17:48:26 +0000
-Subject: Applied "ASoC: pcm186x: make pcm186x_dai_ops and pcm186x_adc_input_channel_sel_value static" to the 
-Message-Id: <E1eN0Ha-00043M-32@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 21:46:54 +0000
+Subject: [PATCH 2/3] pcmcia/cis: Delete an error message for a failed memory allocation in two functions
+Message-Id: <c22708e9-bd7f-71fa-d70c-eed78a04de01@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171207141132.25928-1-colin.king@canonical.com>
-In-Reply-To: <20171207141132.25928-1-colin.king@canonical.com>
+References: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
+In-Reply-To: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Michael Stecklein <m-stecklein@ti.com>, Andreas Dannenberg <dannenberg@ti.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: linux-pcmcia@lists.infradead.org, Bhumika Goyal <bhumirks@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 22:20:51 +0100
 
-   ASoC: pcm186x: make pcm186x_dai_ops and pcm186x_adc_input_channel_sel_value static
+Omit an extra message for a memory allocation failure in these functions.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From dce231a484f72983cd7d5832aed4da04870a4d47 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 7 Dec 2017 14:11:32 +0000
-Subject: [PATCH] ASoC: pcm186x: make pcm186x_dai_ops and
- pcm186x_adc_input_channel_sel_value static
-
-pcm186x_dai_ops and pcm186x_adc_input_channel_sel_value are local to the
-source and do not need to be in global scope, so make them static.
-
-Cleans up sparse warnings:
-symbol 'pcm186x_dai_ops' was not declared. Should it be static?
-symbol 'pcm186x_adc_input_channel_sel_value' was not declared. Should it
-be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/pcm186x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pcmcia/pcmcia_cis.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/pcm186x.c b/sound/soc/codecs/pcm186x.c
-index f7aa56e20169..cdb51427facc 100644
---- a/sound/soc/codecs/pcm186x.c
-+++ b/sound/soc/codecs/pcm186x.c
-@@ -59,7 +59,7 @@ static const struct snd_kcontrol_new pcm1865_snd_controls[] = {
- 			   pcm186x_pga_tlv),
- };
+diff --git a/drivers/pcmcia/pcmcia_cis.c b/drivers/pcmcia/pcmcia_cis.c
+index 1c05d74e850d..ffcd014b7bc1 100644
+--- a/drivers/pcmcia/pcmcia_cis.c
++++ b/drivers/pcmcia/pcmcia_cis.c
+@@ -43,10 +43,9 @@ int pccard_read_tuple(struct pcmcia_socket *s, unsigned int function,
+ 	int ret;
  
--const unsigned int pcm186x_adc_input_channel_sel_value[] = {
-+static const unsigned int pcm186x_adc_input_channel_sel_value[] = {
- 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
- 	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
- 	0x10, 0x20, 0x30
-@@ -475,7 +475,7 @@ static int pcm186x_set_dai_sysclk(struct snd_soc_dai *dai, int clk_id,
- 	return 0;
- }
+ 	buf = kmalloc(256, GFP_KERNEL);
+-	if (buf = NULL) {
+-		dev_warn(&s->dev, "no memory to read tuple\n");
++	if (!buf)
+ 		return -ENOMEM;
+-	}
++
+ 	tuple.DesiredTuple = code;
+ 	tuple.Attributes = 0;
+ 	if (function = BIND_FN_ALL)
+@@ -93,10 +92,8 @@ int pccard_loop_tuple(struct pcmcia_socket *s, unsigned int function,
+ 	int ret;
  
--const struct snd_soc_dai_ops pcm186x_dai_ops = {
-+static const struct snd_soc_dai_ops pcm186x_dai_ops = {
- 	.set_sysclk = pcm186x_set_dai_sysclk,
- 	.set_tdm_slot = pcm186x_set_tdm_slot,
- 	.set_fmt = pcm186x_set_fmt,
+ 	buf = kzalloc(256, GFP_KERNEL);
+-	if (buf = NULL) {
+-		dev_warn(&s->dev, "no memory to read tuple\n");
++	if (!buf)
+ 		return -ENOMEM;
+-	}
+ 
+ 	tuple.TupleData = buf;
+ 	tuple.TupleDataMax = 255;
 -- 
 2.15.1
 
