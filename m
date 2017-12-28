@@ -1,157 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 12:23:28 +0000
-Subject: [PATCH 2/2] target: cxgbit: Combine substrings for 11 messages
-Message-Id: <5cb63750-250e-2eff-c06e-7c9083dd4919@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 20:32:52 +0000
+Subject: [PATCH 2/2] pcmcia/rsrc_nonstatic: Improve a size determination in three functions
+Message-Id: <4ec19574-d66d-5138-dca9-463235e3e717@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <77d06f1c-a650-644f-7364-55bb52aeb6ac@users.sourceforge.net>
-In-Reply-To: <77d06f1c-a650-644f-7364-55bb52aeb6ac@users.sourceforge.net>
+References: <19f2a908-8515-ce68-bbba-e74dd90d6ad2@users.sourceforge.net>
+In-Reply-To: <19f2a908-8515-ce68-bbba-e74dd90d6ad2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Varun Prakash <varun@chelsio.com>
+To: linux-pcmcia@lists.infradead.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Dec 2017 12:57:47 +0100
+Date: Thu, 28 Dec 2017 21:07:39 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Replace the specification of data structures by variable references
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-WARNING: quoted string split across lines
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/iscsi/cxgbit/cxgbit_target.c | 50 +++++++++--------------------
- 1 file changed, 16 insertions(+), 34 deletions(-)
+ drivers/pcmcia/rsrc_nonstatic.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/target/iscsi/cxgbit/cxgbit_target.c b/drivers/target/iscsi/cxgbit/cxgbit_target.c
-index 9163152b6d0b..e4a0dbc8fb9d 100644
---- a/drivers/target/iscsi/cxgbit/cxgbit_target.c
-+++ b/drivers/target/iscsi/cxgbit/cxgbit_target.c
-@@ -881,9 +881,7 @@ cxgbit_handle_immediate_data(struct iscsi_cmd *cmd, struct iscsi_scsi_req *hdr,
- 	if (pdu_cb->flags & PDUCBF_RX_DCRC_ERR) {
- 		pr_err("ImmediateData CRC32C DataDigest error\n");
- 		if (!conn->sess->sess_ops->ErrorRecoveryLevel) {
--			pr_err("Unable to recover from"
--			       " Immediate Data digest failure while"
--			       " in ERL=0.\n");
-+			pr_err("Unable to recover from Immediate Data digest failure while in ERL=0.\n");
- 			iscsit_reject_cmd(cmd, ISCSI_REASON_DATA_DIGEST_ERROR,
- 					  (unsigned char *)hdr);
- 			return IMMEDIATE_DATA_CANNOT_RECOVER;
-@@ -1054,19 +1052,14 @@ static int cxgbit_handle_iscsi_dataout(struct cxgbit_sock *csk)
+diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
+index 91dc559e4a81..50169b00f389 100644
+--- a/drivers/pcmcia/rsrc_nonstatic.c
++++ b/drivers/pcmcia/rsrc_nonstatic.c
+@@ -120,7 +120,7 @@ static int add_interval(struct resource_map *map, u_long base, u_long num)
+ 		if ((p->next = map) || (p->next->base > base+num-1))
+ 			break;
  	}
+-	q = kmalloc(sizeof(struct resource_map), GFP_KERNEL);
++	q = kmalloc(sizeof(*q), GFP_KERNEL);
+ 	if (!q)
+ 		return -ENOMEM;
  
- 	if (pdu_cb->flags & PDUCBF_RX_DCRC_ERR) {
--		pr_err("ITT: 0x%08x, Offset: %u, Length: %u,"
--		       " DataSN: 0x%08x\n",
--		       hdr->itt, hdr->offset, data_len,
--		       hdr->datasn);
--
-+		pr_err("ITT: 0x%08x, Offset: %u, Length: %u, DataSN: 0x%08x\n",
-+		       hdr->itt, hdr->offset, data_len, hdr->datasn);
- 		dcrc_err = true;
- 		goto check_payload;
- 	}
+@@ -157,8 +157,7 @@ static int sub_interval(struct resource_map *map, u_long base, u_long num)
+ 				q->num = base - q->base;
+ 			} else {
+ 				/* Split the block into two pieces */
+-				p = kmalloc(sizeof(struct resource_map),
+-					GFP_KERNEL);
++				p = kmalloc(sizeof(*p), GFP_KERNEL);
+ 				if (!p)
+ 					return -ENOMEM;
  
--	pr_debug("DataOut data_len: %u, "
--		"write_data_done: %u, data_length: %u\n",
--		  data_len,  cmd->write_data_done,
--		  cmd->se_cmd.data_length);
-+	pr_debug("DataOut data_len: %u, write_data_done: %u, data_length: %u\n",
-+		 data_len, cmd->write_data_done, cmd->se_cmd.data_length);
+@@ -1014,9 +1013,8 @@ static inline int nonstatic_autoadd_resources(struct pcmcia_socket *s)
  
- 	if (!(pdu_cb->flags & PDUCBF_RX_DATA_DDPD)) {
- 		u32 skip = data_offset % PAGE_SIZE;
-@@ -1102,9 +1095,7 @@ static int cxgbit_handle_nop_out(struct cxgbit_sock *csk, struct iscsi_cmd *cmd)
+ static int nonstatic_init(struct pcmcia_socket *s)
+ {
+-	struct socket_data *data;
++	struct socket_data *data = kzalloc(sizeof(*data), GFP_KERNEL);
  
- 	if (pdu_cb->flags & PDUCBF_RX_DCRC_ERR) {
- 		if (!conn->sess->sess_ops->ErrorRecoveryLevel) {
--			pr_err("Unable to recover from"
--			       " NOPOUT Ping DataCRC failure while in"
--			       " ERL=0.\n");
-+			pr_err("Unable to recover from NOPOUT Ping DataCRC failure while in ERL=0.\n");
- 			ret = -1;
- 			goto out;
- 		} else {
-@@ -1112,9 +1103,8 @@ static int cxgbit_handle_nop_out(struct cxgbit_sock *csk, struct iscsi_cmd *cmd)
- 			 * drop this PDU and let the
- 			 * initiator plug the CmdSN gap.
- 			 */
--			pr_info("Dropping NOPOUT"
--				" Command CmdSN: 0x%08x due to"
--				" DataCRC error.\n", hdr->cmdsn);
-+			pr_info("Dropping NOPOUT Command CmdSN: 0x%08x due to DataCRC error.\n",
-+				hdr->cmdsn);
- 			ret = 0;
- 			goto out;
- 		}
-@@ -1139,9 +1129,7 @@ static int cxgbit_handle_nop_out(struct cxgbit_sock *csk, struct iscsi_cmd *cmd)
- 		 */
- 		cmd->buf_ptr = ping_data;
- 		cmd->buf_ptr_size = payload_length;
--
--		pr_debug("Got %u bytes of NOPOUT ping"
--			" data.\n", payload_length);
-+		pr_debug("Got %u bytes of NOPOUT ping data.\n", payload_length);
- 		pr_debug("Ping Data: \"%s\"\n", ping_data);
- 	}
+-	data = kzalloc(sizeof(struct socket_data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
  
-@@ -1168,18 +1156,15 @@ cxgbit_handle_text_cmd(struct cxgbit_sock *csk, struct iscsi_cmd *cmd)
- 
- 	if (pdu_cb->flags & PDUCBF_RX_DCRC_ERR) {
- 		if (!conn->sess->sess_ops->ErrorRecoveryLevel) {
--			pr_err("Unable to recover from"
--			       " Text Data digest failure while in"
--			       " ERL=0.\n");
-+			pr_err("Unable to recover from Text Data digest failure while in ERL=0.\n");
- 			goto reject;
- 		} else {
- 			/*
- 			 * drop this PDU and let the
- 			 * initiator plug the CmdSN gap.
- 			 */
--			pr_info("Dropping Text"
--				" Command CmdSN: 0x%08x due to"
--				" DataCRC error.\n", hdr->cmdsn);
-+			pr_info("Dropping Text Command CmdSN: 0x%08x due to DataCRC error.\n",
-+				hdr->cmdsn);
- 			return 0;
- 		}
- 	}
-@@ -1302,8 +1287,8 @@ static int cxgbit_rx_opcode(struct cxgbit_sock *csk)
- 	if (conn->sess->sess_ops->SessionType &&
- 	    ((!(opcode & ISCSI_OP_TEXT)) ||
- 	     (!(opcode & ISCSI_OP_LOGOUT)))) {
--		pr_err("Received illegal iSCSI Opcode: 0x%02x"
--			" while in Discovery Session, rejecting.\n", opcode);
-+		pr_err("Received illegal iSCSI Opcode: 0x%02x while in Discovery Session, rejecting.\n",
-+		       opcode);
- 		iscsit_add_reject(conn, ISCSI_REASON_PROTOCOL_ERROR,
- 				  (unsigned char *)hdr);
- 		goto transport_err;
-@@ -1327,9 +1312,7 @@ static int cxgbit_rx_login_pdu(struct cxgbit_sock *csk)
- 
- 	login_req = (struct iscsi_login_req *)login->req;
- 	memcpy(login_req, pdu_cb->hdr, sizeof(*login_req));
--
--	pr_debug("Got Login Command, Flags 0x%02x, ITT: 0x%08x,"
--		" CmdSN: 0x%08x, ExpStatSN: 0x%08x, CID: %hu, Length: %u\n",
-+	pr_debug("Got Login Command, Flags 0x%02x, ITT: 0x%08x, CmdSN: 0x%08x, ExpStatSN: 0x%08x, CID: %hu, Length: %u\n",
- 		login_req->flags, login_req->itt, login_req->cmdsn,
- 		login_req->exp_statsn, login_req->cid, pdu_cb->dlen);
- 	/*
-@@ -1394,8 +1377,7 @@ static void cxgbit_lro_skb_dump(struct sk_buff *skb)
- 		skb, lro_cb->csk, lro_cb->pdu_idx, lro_cb->pdu_totallen);
- 
- 	for (i = 0; i < lro_cb->pdu_idx; i++, pdu_cb++)
--		pr_info("skb 0x%p, pdu %d, %u, f 0x%x, seq 0x%x, dcrc 0x%x, "
--			"frags %u.\n",
-+		pr_info("skb 0x%p, pdu %d, %u, f 0x%x, seq 0x%x, dcrc 0x%x, frags %u.\n",
- 			skb, i, pdu_cb->pdulen, pdu_cb->flags, pdu_cb->seq,
- 			pdu_cb->ddigest, pdu_cb->frags);
- 	for (i = 0; i < ssi->nr_frags; i++)
 -- 
 2.15.1
 
