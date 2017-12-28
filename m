@@ -1,31 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Dec 2017 14:37:39 +0000
-Subject: [PATCH] media: imx274: Silence uninitialized variable warning
-Message-Id: <20171205143739.uoct55nitjrt4xun@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 21:44:32 +0000
+Subject: [PATCH 0/3] PCMCIA-CIS: Adjustments for six function implementations
+Message-Id: <4eaa454f-8b57-fe0a-4802-3676bc2f582e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Leon Luo <leonl@leopardimaging.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org, Bhumika Goyal <bhumirks@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Smatch complains that "err" can be uninitialized if we have a zero size
-write.  The flow analysis is a little complicated so I'm not sure if
-that's possible or not, but it's harmless to set this to zero and it
-makes the code easier to read.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 22:42:10 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Three update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 800b9bf9cdd3..e7c12933cfd2 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -634,7 +634,7 @@ static int imx274_regmap_util_write_table_8(struct regmap *regmap,
- 					    const struct reg_8 table[],
- 					    u16 wait_ms_addr, u16 end_addr)
- {
--	int err;
-+	int err = 0;
- 	const struct reg_8 *next;
- 	u8 val;
- 
+Markus Elfring (3):
+  cistpl: Delete error messages for a failed memory allocation
+    in three functions
+  cis: Delete an error message for a failed memory allocation
+    in two functions
+  cis: Improve a size determination in pcmcia_loop_config()
+
+ drivers/pcmcia/cistpl.c     | 12 ++++--------
+ drivers/pcmcia/pcmcia_cis.c | 11 ++++-------
+ 2 files changed, 8 insertions(+), 15 deletions(-)
+
+-- 
+2.15.1
+
