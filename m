@@ -1,41 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Dec 2017 21:48:58 +0000
-Subject: [PATCH] pinctrl: spear: Delete an error message for a failed memory allocation in spear_pinctrl_prob
-Message-Id: <3d936763-6a8a-edd3-3bcf-0075c9343e37@users.sourceforge.net>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Thu, 28 Dec 2017 05:39:03 +0000
+Subject: Re: [PATCH] pinctrl: spear: Delete an error message for a failed memory allocation in spear_pinctrl_
+Message-Id: <20171228052703.GD8652@vireshk-i7>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <3d936763-6a8a-edd3-3bcf-0075c9343e37@users.sourceforge.net>
+In-Reply-To: <3d936763-6a8a-edd3-3bcf-0075c9343e37@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Dec 2017 22:44:04 +0100
+On 27-12-17, 22:48, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Dec 2017 22:44:04 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/pinctrl/spear/pinctrl-spear.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
+> index 4db52ba38d8d..efe79d3f7659 100644
+> --- a/drivers/pinctrl/spear/pinctrl-spear.c
+> +++ b/drivers/pinctrl/spear/pinctrl-spear.c
+> @@ -361,10 +361,8 @@ int spear_pinctrl_probe(struct platform_device *pdev,
+>  		return -ENODEV;
+>  
+>  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+> -	if (!pmx) {
+> -		dev_err(&pdev->dev, "Can't alloc spear_pmx\n");
+> +	if (!pmx)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	pmx->vbase = devm_ioremap_resource(&pdev->dev, res);
 
-Omit an extra message for a memory allocation failure in this function.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/spear/pinctrl-spear.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
-index 4db52ba38d8d..efe79d3f7659 100644
---- a/drivers/pinctrl/spear/pinctrl-spear.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear.c
-@@ -361,10 +361,8 @@ int spear_pinctrl_probe(struct platform_device *pdev,
- 		return -ENODEV;
- 
- 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
--	if (!pmx) {
--		dev_err(&pdev->dev, "Can't alloc spear_pmx\n");
-+	if (!pmx)
- 		return -ENOMEM;
--	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pmx->vbase = devm_ioremap_resource(&pdev->dev, res);
 -- 
-2.15.1
-
+viresh
