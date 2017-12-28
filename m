@@ -1,44 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 18:09:26 +0000
-Subject: [PATCH 1/4] serial: pch_uart: Delete an error message for a failed memory allocation in dma_handle_t
-Message-Id: <2378ba53-4894-e532-7523-b578e42c8eb2@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 14:32:31 +0000
+Subject: [PATCH] pinctrl: tegra: Delete two error messages for a failed memory allocation in tegra_pinctrl_pr
+Message-Id: <0a67035f-e089-85f6-adff-14e41c957ab6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
-In-Reply-To: <f8220e08-da4c-65d6-ecc7-9405cab6f375@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 18:28:20 +0100
+Date: Thu, 28 Dec 2017 15:15:08 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit extra messages for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/pch_uart.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index 760d5dd0aada..0fc72c491c9b 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -992,10 +992,8 @@ static unsigned int dma_handle_tx(struct eg20t_port *priv)
- 	priv->tx_dma_use = 1;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 51716819129d..72c718e66ebb 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -666,10 +666,9 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	int fn, gn, gfn;
  
- 	priv->sg_tx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
--	if (!priv->sg_tx_p) {
--		dev_err(priv->port.dev, "%s:kzalloc Failed\n", __func__);
-+	if (!priv->sg_tx_p)
- 		return 0;
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+-	if (!pmx) {
+-		dev_err(&pdev->dev, "Can't alloc tegra_pmx\n");
++	if (!pmx)
+ 		return -ENOMEM;
+-	}
++
+ 	pmx->dev = &pdev->dev;
+ 	pmx->soc = soc_data;
+ 
+@@ -722,10 +721,8 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	pmx->regs = devm_kzalloc(&pdev->dev, pmx->nbanks * sizeof(*pmx->regs),
+ 				 GFP_KERNEL);
+-	if (!pmx->regs) {
+-		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
++	if (!pmx->regs)
+ 		return -ENOMEM;
 -	}
  
- 	sg_init_table(priv->sg_tx_p, num); /* Initialize SG table */
- 	sg = priv->sg_tx_p;
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
 -- 
 2.15.1
 
