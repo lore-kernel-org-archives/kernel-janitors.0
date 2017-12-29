@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 29 Dec 2017 09:07:31 +0000
+Date: Fri, 29 Dec 2017 09:07:32 +0000
 Subject: [PATCH][V2] wcn36xx: fix incorrect assignment to msg_body.min_ch_time
-Message-Id: <20171229090732.14928-1-colin.king@canonical.com>
+Message-Id: <20171229090732.14928-2-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171229090732.14928-1-colin.king@canonical.com>
+In-Reply-To: <20171229090732.14928-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
