@@ -1,41 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 13:15:22 +0000
-Subject: [PATCH] USB: imx21-hcd: Delete an error message for a failed memory allocation in activate_etd()
-Message-Id: <72f18353-9c48-d64d-c860-7ee776b021b7@users.sourceforge.net>
+Date: Fri, 29 Dec 2017 16:28:41 +0000
+Subject: [PATCH 3/3] parport: ax88796: Delete an unnecessary variable initialisation in parport_ax88796_probe
+Message-Id: <ad4acd77-f807-277c-5ec4-ba561f81eaf4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <68c7b9ec-1d02-3981-8323-f72d1e7fa146@users.sourceforge.net>
+In-Reply-To: <68c7b9ec-1d02-3981-8323-f72d1e7fa146@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Johan Hovold <johan@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 13:23:35 +0100
+Date: Fri, 29 Dec 2017 17:08:47 +0100
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+The local variable "pp" will eventually be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/host/imx21-hcd.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/parport/parport_ax88796.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/imx21-hcd.c b/drivers/usb/host/imx21-hcd.c
-index 3a8bbfe43a8e..2f3d60b07aea 100644
---- a/drivers/usb/host/imx21-hcd.c
-+++ b/drivers/usb/host/imx21-hcd.c
-@@ -281,10 +281,8 @@ static void activate_etd(struct imx21 *imx21, int etd_num, u8 dir)
- 								etd->len,
- 								GFP_ATOMIC);
- 			}
--			if (!etd->bounce_buffer) {
--				dev_err(imx21->dev, "failed bounce alloc\n");
-+			if (!etd->bounce_buffer)
- 				goto err_bounce_alloc;
--			}
- 
- 			etd->dma_handle  				dma_map_single(imx21->dev,
+diff --git a/drivers/parport/parport_ax88796.c b/drivers/parport/parport_ax88796.c
+index 09788d8cf467..bfe97c2a8d4c 100644
+--- a/drivers/parport/parport_ax88796.c
++++ b/drivers/parport/parport_ax88796.c
+@@ -273,7 +273,7 @@ static int parport_ax88796_probe(struct platform_device *pdev)
+ {
+ 	struct device *_dev = &pdev->dev;
+ 	struct ax_drvdata *dd;
+-	struct parport *pp = NULL;
++	struct parport *pp;
+ 	struct resource *res;
+ 	unsigned long size;
+ 	int spacing;
 -- 
 2.15.1
 
