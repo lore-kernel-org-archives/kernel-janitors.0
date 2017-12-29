@@ -1,71 +1,55 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date: Fri, 01 Dec 2017 15:27:53 +0000
-Subject: Re: [PATCH] power: supply: sbs-message: double left shift bug in sbsm_select()
-Message-Id: <20171201152753.7c5l47q2voqdgsdp@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="hiqo7d4eej7fqedu"
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Fri, 29 Dec 2017 18:05:17 +0000
+Subject: Re: [PATCH] video/fbdev/stifb: Delete an error message for a failed memory allocation in stifb_init_
+Message-Id: <1680261.Msdj7gi9fB@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107124322.mm3fqkrggw3zidrx@mwanda>
-In-Reply-To: <20171107124322.mm3fqkrggw3zidrx@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Karl-Heinz Schneider <karl-heinz@schneider-inet.de>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <7dcd32b6-9691-14a1-29cf-3a746ef5adfc@users.sourceforge.net>
+        <CGME20171124213055epcas4p45c641222185056871b97f4e7bc235d2e@epcas4p4.samsung.com>
+        <25624997.nONnEdNj0s@daneel.sf-tec.de>
+In-Reply-To: <25624997.nONnEdNj0s@daneel.sf-tec.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Rolf Eike Beer <eike-kernel@sf-tec.de>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org, Helge Deller <deller@gmx.de>, "James E. J. Bottomley" <jejb@parisc-linux.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+On Friday, November 24, 2017 10:30:34 PM Rolf Eike Beer wrote:
+> Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Fri, 24 Nov 2017 22:22:06 +0100
+> > 
+> > Omit an extra message for a memory allocation failure in this function.
+> > 
+> > This issue was detected by using the Coccinelle software.
+> > 
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > ---
+> >  drivers/video/fbdev/stifb.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/video/fbdev/stifb.c b/drivers/video/fbdev/stifb.c
+> > index 6ded5c198998..fe217a2f7d21 100644
+> > --- a/drivers/video/fbdev/stifb.c
+> > +++ b/drivers/video/fbdev/stifb.c
+> > @@ -1126,10 +1126,8 @@ static int __init stifb_init_fb(struct sti_struct
+> > *sti, int bpp_pref) int bpp, xres, yres;
+> > 
+> >  	fb = kzalloc(sizeof(*fb), GFP_ATOMIC);
+> > -	if (!fb) {
+> > -		printk(KERN_ERR "stifb: Could not allocate stifb structure\n");
+> > +	if (!fb)
+> >  		return -ENODEV;
+> > -	}
+> > 
+> >  	info = &fb->info;
+> 
+> This should be -ENOMEM.
 
---hiqo7d4eej7fqedu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Markus, please fix this issue first (before doing cleanups).
 
-Hi,
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-On Tue, Nov 07, 2017 at 03:43:22PM +0300, Dan Carpenter wrote:
-> The original code does this: "1 << (1 << 11)" which is undefined in C.
->=20
-> Fixes: dbc4deda03fe ("power: Adds support for Smart Battery System Manage=
-r")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-
-Thanks, queued.
-
--- Sebastian
-
-> From static analysis.  Not tested.
->=20
-> diff --git a/drivers/power/supply/sbs-manager.c b/drivers/power/supply/sb=
-s-manager.c
-> index ccb4217b9638..cb6e8f66c7a2 100644
-> --- a/drivers/power/supply/sbs-manager.c
-> +++ b/drivers/power/supply/sbs-manager.c
-> @@ -183,7 +183,7 @@ static int sbsm_select(struct i2c_mux_core *muxc, u32=
- chan)
->  		return ret;
-> =20
->  	/* chan goes from 1 ... 4 */
-> -	reg =3D 1 << BIT(SBSM_SMB_BAT_OFFSET + chan);
-> +	reg =3D BIT(SBSM_SMB_BAT_OFFSET + chan);
->  	ret =3D sbsm_write_word(data->client, SBSM_CMD_BATSYSSTATE, reg);
->  	if (ret)
->  		dev_err(dev, "Failed to select channel %i\n", chan);
-
---hiqo7d4eej7fqedu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlohdPcACgkQ2O7X88g7
-+pp2/Q//XxwsaWnRR/ygD/mFUMMo818lBVMOkyKK3jhV2kEM2LJGwOHyy96XiIKz
-2wJV4xqBGPbV8eMZwNSj0VoL5/2Ros2fHpKOy2H6NWbotjy/TdLFq57nXkn64PU4
-ehVkXg8kiuVW/XB8oIllls4UGIR/vToek1BACjrqSRjK8RjUuegCVlepUk+XIto6
-U9LQOsHjiKGsjBGiwQJbA2AtyAQej2sKMndv8q0mKz3kIIIGfI7aFAf/BwgVsIin
-9aCd2xwrxsewpzIAsdHkAjjVUUPsIFs4cBAsiQWMInj0EGYwxNlgnNdKxqi+9YK4
-n2MPDTHcR/5GUhXz+dj4KOQoX/mweXJQo+sZQhHABS4Yy+rSifQJPZFmLvlY+4iS
-wEOlO6JFxuK83IBBZi+erXojA2W3V2fp5az2a6vg1qIvhwsLBDxRnPzXugnI5ebB
-s+xzn9pXINzUOVt3Mw0r8LrIZu03p8sp/G12bVK2uwxsc7jPONrZXdtULP/xZz6O
-7ymGKAhiPmePWl6ZI7dFTiqoS6OsjQMouwyPkDsu9jpgGtNtmnF9S71LNIZcIkMk
-D/wBCQudbR+KrlFXaRAp7ExIsBsAvbToC/qDNGwrujUWg2UrOGsBjv20gGOb/Gdi
-UnBMbT8jRFqBvEn07K+gEry0WABQe5vu9b+cTjsDzWFVIrNR/Kw=
-=lXai
------END PGP SIGNATURE-----
-
---hiqo7d4eej7fqedu--
