@@ -1,65 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 21:42:35 +0000
-Subject: [PATCH 3/3] pinctrl: rockchip: Fix a typo in four comment lines
-Message-Id: <989b7476-5e5e-d1ed-0d95-9dbdcec2382c@users.sourceforge.net>
+Date: Fri, 29 Dec 2017 16:27:21 +0000
+Subject: [PATCH 2/3] parport: ax88796: Improve a size determination in parport_ax88796_probe()
+Message-Id: <3f682a30-3584-067b-3e61-ff510ba9c85e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
-In-Reply-To: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+References: <68c7b9ec-1d02-3981-8323-f72d1e7fa146@users.sourceforge.net>
+In-Reply-To: <68c7b9ec-1d02-3981-8323-f72d1e7fa146@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 22:22:54 +0100
+Date: Fri, 29 Dec 2017 17:03:30 +0100
 
-Adjust words in these descriptions.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/parport/parport_ax88796.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 5e76a6d8a1cb..1cd85411e906 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -136,7 +136,7 @@ struct rockchip_drv {
-  * @iomux: array describing the 4 iomux sources of the bank
-  * @drv: array describing the 4 drive strength sources of the bank
-  * @pull_type: array describing the 4 pull type sources of the bank
-- * @valid: are all necessary informations present
-+ * @valid: is all necessary information present
-  * @of_node: dt node of this bank
-  * @drvdata: common pinctrl basedata
-  * @domain: irqdomain of the gpio bank
-@@ -1988,7 +1988,7 @@ static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 		info->functions[selector].name, info->groups[group].name);
+diff --git a/drivers/parport/parport_ax88796.c b/drivers/parport/parport_ax88796.c
+index ef0aec4b55f3..09788d8cf467 100644
+--- a/drivers/parport/parport_ax88796.c
++++ b/drivers/parport/parport_ax88796.c
+@@ -280,7 +280,7 @@ static int parport_ax88796_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int ret;
  
- 	/*
--	 * for each pin in the pin group selected, program the correspoding pin
-+	 * for each pin in the pin group selected, program the corresponding
- 	 * pin function number in the config register.
- 	 */
- 	for (cnt = 0; cnt < info->groups[group].npins; cnt++) {
-@@ -2527,7 +2527,7 @@ static int rockchip_gpio_get(struct gpio_chip *gc, unsigned offset)
+-	dd = kzalloc(sizeof(struct ax_drvdata), GFP_KERNEL);
++	dd = kzalloc(sizeof(*dd), GFP_KERNEL);
+ 	if (!dd)
+ 		return -ENOMEM;
  
- /*
-  * gpiolib gpio_direction_input callback function. The setting of the pin
-- * mux function as 'gpio input' will be handled by the pinctrl susbsystem
-+ * mux function as 'gpio input' will be handled by the pinctrl subsystem
-  * interface.
-  */
- static int rockchip_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
-@@ -2537,7 +2537,7 @@ static int rockchip_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- 
- /*
-  * gpiolib gpio_direction_output callback function. The setting of the pin
-- * mux function as 'gpio output' will be handled by the pinctrl susbsystem
-+ * mux function as 'gpio output' will be handled by the pinctrl subsystem
-  * interface.
-  */
- static int rockchip_gpio_direction_output(struct gpio_chip *gc,
 -- 
 2.15.1
 
