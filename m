@@ -1,38 +1,43 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 26 Dec 2017 18:10:48 +0000
-Subject: Re: [PATCH 0/1] Input: inline macros for MODULE_LICENSE, etc
-Message-Id: <alpine.DEB.2.20.1712261906440.5715@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Dec 2017 09:07:31 +0000
+Subject: [PATCH][V2] wcn36xx: fix incorrect assignment to msg_body.min_ch_time
+Message-Id: <20171229090732.14928-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514307905-3486-1-git-send-email-Julia.Lawall@lip6.fr> <1514311471.3468.8.camel@perches.com>
-In-Reply-To: <1514311471.3468.8.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Eugene Krasnikov <k.eugene.e@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The second assignment to msg_body.min_ch_time is incorrect, it
+should actually be to msg_body.max_ch_time.
 
-On Tue, 26 Dec 2017, Joe Perches wrote:
+Thanks to Bjorn Andersson for identifying the correct way to fix
+this as my original fix was incorrect.
 
-> On Tue, 2017-12-26 at 18:05 +0100, Julia Lawall wrote:
-> > Inline macro for MODULE_LICENSE to make the license information easy to
-> > find, eg with grep.  Inline the other module-related macros at the same
-> > time.
->
-> Perhaps it'd be better to not make this
-> dependent on a MODULE_LICENSE use, but allow
-> any #define foo/#define MODULE_<FOO> foo
-> where foo is used once to be converted.
+Detected by CoverityScan, CID#1463042 ("Unused Value")
 
-Well, I wanted something that could be checked in a finite (small) amount
-of time...  There seemed to be a slightly more compelling argument for
-inlining the license, so I decided to focus on that.  What you suggested
-resulted in around 5000 lines of patch code, mostly inlining authors and
-descriptions.
+Fixes: 2f3bef4b247e ("wcn36xx: Add hardware scan offload support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/wcn36xx/smd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But maybe you have already done the things done in my patch and it hasn't
-been picked up yet?
-
-julia
+diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
+index 2914618a0335..2a4871ca9c72 100644
+--- a/drivers/net/wireless/ath/wcn36xx/smd.c
++++ b/drivers/net/wireless/ath/wcn36xx/smd.c
+@@ -626,7 +626,7 @@ int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
+ 
+ 	msg_body.scan_type = WCN36XX_HAL_SCAN_TYPE_ACTIVE;
+ 	msg_body.min_ch_time = 30;
+-	msg_body.min_ch_time = 100;
++	msg_body.max_ch_time = 100;
+ 	msg_body.scan_hidden = 1;
+ 	memcpy(msg_body.mac, vif->addr, ETH_ALEN);
+ 	msg_body.p2p_search = vif->p2p;
+-- 
+2.14.1
 
