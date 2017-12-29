@@ -1,34 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Dec 2017 17:14:30 +0000
-Subject: Re: jsm_tty: Deletion of a null pointer check in two functions?
-Message-Id: <5e7d7252-16d8-0232-c78a-8e01f89e52d8@users.sourceforge.net>
+Date: Fri, 29 Dec 2017 18:10:00 +0000
+Subject: Re: [0/4] video-UDLFB: Adjustments for five function implementations
+Message-Id: <ea9813ee-a5a8-7e35-bac5-b2e0652f6602@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c78db97-88f5-8655-9a47-eeee0a043fba@users.sourceforge.net>
- <1511976187.19952.65.camel@perches.com> <20171129173504.GA20581@kroah.com>
- <1511977896.19952.69.camel@perches.com> <20171129180528.GA24705@kroah.com>
- <089a4b85-64e8-cb4a-c5f8-9abb2556e5e5@users.sourceforge.net>
- <8ae240fa-7f77-8f4c-225c-853cdda73a67@linux.vnet.ibm.com>
- <817fcf72-cd9d-bf5b-ce83-ce2844e3e901@users.sourceforge.net>
- <533d608d-c502-824f-9c79-880e387f4d09@linux.vnet.ibm.com>
-In-Reply-To: <533d608d-c502-824f-9c79-880e387f4d09@linux.vnet.ibm.com>
+References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
+ <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+ <1768474.zA76iyE2Y1@amdc3058>
+In-Reply-To: <1768474.zA76iyE2Y1@amdc3058>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>, linux-serial@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, Bernie Thompson <bernie@plugable.com>, LKML <linux-kernel@vger.kernel.org>
 
-> So, what do you prefer? Send it yourself,
+>>   Delete an error message for a failed memory allocation in two functions
+> 
+> This patch removes the information about the device for which the allocation fails.
 
-I became concerned that “my patch” would not get picked up because of
-Greg's communication settings (for my initial messages when they do not get
-resent by other contributors).
+* Do you find a Linux allocation failure report insufficient in this use case?
+
+* Are you looking for any more clarification?
 
 
-> or want me to send it with your sign-off too? (since was your idea).
+>>   Improve a size determination in dlfb_alloc_urb_list()
+> 
+> Patch queued for 4.16, thanks.
 
-I would prefer this variant because I assume that the chances for integration
-are higher for the discussed small source code adjustment.
-I guess that the tag “Suggested-by” would be sufficient in this case.
+Thanks for your acceptance of other change possibilities.
 
 Regards,
 Markus
