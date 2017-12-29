@@ -1,39 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Dec 2017 10:28:41 +0000
-Subject: [PATCH 1/7] rapidio: Delete an error message for a failed memory allocation in rio_init_mports()
-Message-Id: <dfd6887b-2521-cbf2-af5b-e70b5fa4c33c@users.sourceforge.net>
+Date: Fri, 29 Dec 2017 20:52:15 +0000
+Subject: [PATCH] cw1200: Delete an error message for a failed memory allocation in three functions
+Message-Id: <b000d5f0-c659-0d04-2c40-e70e25b68b13@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
-In-Reply-To: <f6e4d185-2c9d-a31d-793d-bda521c450ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, Solomon Peachy <pizza@shaftnet.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Dec 2017 15:11:12 +0100
+Date: Fri, 29 Dec 2017 21:48:05 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit an extra message for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/rapidio/rio.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/st/cw1200/cw1200_sdio.c | 4 +---
+ drivers/net/wireless/st/cw1200/cw1200_spi.c  | 4 +---
+ drivers/net/wireless/st/cw1200/fwio.c        | 1 -
+ 3 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
-index 38d949405618..032ede23a8cb 100644
---- a/drivers/rapidio/rio.c
-+++ b/drivers/rapidio/rio.c
-@@ -2189,7 +2189,6 @@ int rio_init_mports(void)
+diff --git a/drivers/net/wireless/st/cw1200/cw1200_sdio.c b/drivers/net/wireless/st/cw1200/cw1200_sdio.c
+index 1037ec62659d..82c6827579a9 100644
+--- a/drivers/net/wireless/st/cw1200/cw1200_sdio.c
++++ b/drivers/net/wireless/st/cw1200/cw1200_sdio.c
+@@ -289,10 +289,8 @@ static int cw1200_sdio_probe(struct sdio_func *func,
+ 		return -ENODEV;
  
- 	work = kcalloc(n, sizeof *work, GFP_KERNEL);
- 	if (!work) {
--		pr_err("RIO: no memory for work struct\n");
- 		destroy_workqueue(rio_wq);
- 		goto no_disc;
+ 	self = kzalloc(sizeof(*self), GFP_KERNEL);
+-	if (!self) {
+-		pr_err("Can't allocate SDIO hwbus_priv.\n");
++	if (!self)
+ 		return -ENOMEM;
+-	}
+ 
+ 	func->card->quirks |= MMC_QUIRK_LENIENT_FN0;
+ 
+diff --git a/drivers/net/wireless/st/cw1200/cw1200_spi.c b/drivers/net/wireless/st/cw1200/cw1200_spi.c
+index 412fb6e49aed..7b6d5e5c5a62 100644
+--- a/drivers/net/wireless/st/cw1200/cw1200_spi.c
++++ b/drivers/net/wireless/st/cw1200/cw1200_spi.c
+@@ -399,10 +399,8 @@ static int cw1200_spi_probe(struct spi_device *func)
+ 	}
+ 
+ 	self = devm_kzalloc(&func->dev, sizeof(*self), GFP_KERNEL);
+-	if (!self) {
+-		pr_err("Can't allocate SPI hwbus_priv.");
++	if (!self)
+ 		return -ENOMEM;
+-	}
+ 
+ 	self->pdata = plat_data;
+ 	self->func = func;
+diff --git a/drivers/net/wireless/st/cw1200/fwio.c b/drivers/net/wireless/st/cw1200/fwio.c
+index 30e7646d04af..79dd7a8ffb05 100644
+--- a/drivers/net/wireless/st/cw1200/fwio.c
++++ b/drivers/net/wireless/st/cw1200/fwio.c
+@@ -153,7 +153,6 @@ static int cw1200_load_firmware_cw1200(struct cw1200_common *priv)
+ 
+ 	buf = kmalloc(DOWNLOAD_BLOCK_SIZE, GFP_KERNEL | GFP_DMA);
+ 	if (!buf) {
+-		pr_err("Can't allocate firmware load buffer.\n");
+ 		ret = -ENOMEM;
+ 		goto firmware_release;
  	}
 -- 
 2.15.1
