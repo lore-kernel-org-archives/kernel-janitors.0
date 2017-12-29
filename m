@@ -1,28 +1,37 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Dec 2017 20:10:48 +0000
-Subject: [PATCH 0/3] tty/serial/max3100: Adjustments for max3100_probe()
-Message-Id: <82c37f92-b4ee-8bea-bd10-de3b6691151d@users.sourceforge.net>
+Date: Fri, 29 Dec 2017 18:23:39 +0000
+Subject: Re: [0/2] video: ssd1307fb: Adjustments for ssd1307fb_probe()
+Message-Id: <f5dd0d53-2014-a967-03c3-05ff8a1cc05d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20171125160425epcas5p43b2d94fbcc74745017c4c91ff08de685@epcas5p4.samsung.com>
+ <9433118e-4c2b-db31-7064-df692a99c1b2@users.sourceforge.net>
+ <2091464.qzRHS0Wsad@amdc3058>
+In-Reply-To: <2091464.qzRHS0Wsad@amdc3058>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Bastian Stender <bst@pengutronix.de>, Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Dec 2017 21:05:43 +0100
+>>   Delete an error message for a failed memory allocation
+> 
+> This patch removes the information about the device for which the allocation fails.
 
-Three update suggestions were taken into account
-from static source code analysis.
+How do you think about to take another look if a Linux allocation failure report
+could be sufficient in this use case?
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
-  Improve unlocking of a mutex
 
- drivers/tty/serial/max3100.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+>>   Improve a size determination
+> 
+> This patch depends on the earlier patch (which is not being merged)
 
--- 
-2.15.1
+Partly, yes.
 
+
+> so please re-base it if you want it to be applied.
+
+Would you dare to reduce any context lines for this update step so that
+such a small adjustment will still work?
+
+Regards,
+Markus
