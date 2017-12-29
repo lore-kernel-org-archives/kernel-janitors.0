@@ -1,31 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 18:34:24 +0000
-Subject: [PATCH 0/3] UIO: Adjustments for two function implementations
-Message-Id: <2efe226c-065a-b77d-d278-4345ab2586b1@users.sourceforge.net>
+Date: Fri, 29 Dec 2017 18:43:00 +0000
+Subject: Re: [0/5] video-SMSC UFX: Adjustments for five function implementations
+Message-Id: <265c7022-d12f-bcbe-c6f0-452ba3f73744@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20171125204312epcas2p149d6487ac83e886f95aefe0b35aef1b0@epcas2p1.samsung.com>
+ <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
+ <1736749.UIs06O4xc5@amdc3058>
+In-Reply-To: <1736749.UIs06O4xc5@amdc3058>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Steve Glendinning <steve.glendinning@shawell.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 19:32:10 +0100
+>>   Delete an error message for a failed memory allocation in two functions
+> 
+> This patch removes the information about the device for which the allocation fails.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Should a Linux allocation failure report be sufficient here?
 
-Markus Elfring (3):
-  Delete two error messages for a failed memory allocation
-    in uio_dmem_genirq_probe()
-  Return directly after a failed kzalloc() in uio_dmem_genirq_probe()
-  Delete two error messages for a failed memory allocation
-    in uio_pdrv_genirq_probe()
 
- drivers/uio/uio_dmem_genirq.c | 11 ++++-------
- drivers/uio/uio_pdrv_genirq.c |  9 +++------
- 2 files changed, 7 insertions(+), 13 deletions(-)
+>>   Less checks in ufx_usb_probe() after error detection
+> 
+> This patch depends on the earlier patch (which is not being merged)
 
--- 
-2.15.1
+Partly, yes.
 
+
+> so please re-base it if you want it to be applied.
+
+Would you dare to pick another change possibility up from a patch hunk?
+
+
+>>   Adjust three checks for null pointers
+> 
+> This patch contains unrelated change ({} braces addition) which should be dropped.
+
+I presented such an update approach so that warnings from the script “checkpatch.pl”
+will be fixed together.
+
+Regards,
+Markus
