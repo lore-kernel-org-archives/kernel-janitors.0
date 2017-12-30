@@ -1,41 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 08 Dec 2017 21:11:03 +0000
-Subject: [PATCH 0/2] mtd: onenand: samsung: Simplify code and fix leaks in error handling paths
-Message-Id: <cover.1512765898.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 19:57:15 +0000
+Subject: [PATCH] wireless: airo: Delete an error message for a failed memory allocation in airo_networks_allo
+Message-Id: <33444ac1-9a8b-bd7d-fd22-f299add190df@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Ingo Molnar <mingo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The first patch converts 's3c_onenand_probe()' to devm_ functions.
-This fixes a leak in one path (line 872).
-This also free_irq which was not handled at all. (I hope I'm correct :) )
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 20:48:44 +0100
 
-The 2nd patch is about an un-handled error code which looks spurious.
-Not sure if I'm right.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-While compile-testing it, I had to tweak the code because I don't have any
-cross-compiler.
-I commented the line "#include <asm/mach/flash.h>" and the compilation
-succeeded. So maybe, this include is also useless.
-I've left it as-is, though.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/cisco/airo.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-
-Theses patches have been compile-tested-only.
-
-
-Christophe JAILLET (2):
-  mtd: onenand: samsung: use devm_ function to simplify code and fix
-    some leaks
-  mtd: onenand: samsung: return an error if
-    'mtd_device_parse_register()' fails
-
- drivers/mtd/onenand/samsung.c | 145 ++++++++++++++----------------------------
- 1 file changed, 47 insertions(+), 98 deletions(-)
-
+diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
+index 86e795de6760..a65d82d26eaa 100644
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -2714,12 +2714,7 @@ static int airo_networks_allocate(struct airo_info *ai)
+ 
+ 	ai->networks = kcalloc(AIRO_MAX_NETWORK_COUNT, sizeof(BSSListElement),
+ 			       GFP_KERNEL);
+-	if (!ai->networks) {
+-		airo_print_warn("", "Out of memory allocating beacons");
+-		return -ENOMEM;
+-	}
+-
+-	return 0;
++	return ai->networks ? 0 : -ENOMEM;
+ }
+ 
+ static void airo_networks_free(struct airo_info *ai)
 -- 
-2.14.1
+2.15.1
 
