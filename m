@@ -1,44 +1,52 @@
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 07 Dec 2017 06:57:45 +0000
-Subject: Re: [PATCH] staging: ccree: Uninitialized return in ssi_ahash_import()
-Message-Id: <CAOtvUMfRt9KU_0J+GTuy4i9SCy0jY8+sPgQXq-KG-MUH2hmUdA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 21:08:23 +0000
+Subject: [PATCH 2/2] at76c50x-usb: Improve size determinations in at76_usbdfu_download()
+Message-Id: <08f4f979-481c-2861-cf59-408c49f3f627@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171205143717.gqhyethohcet3fz7@mwanda>
-In-Reply-To: <20171205143717.gqhyethohcet3fz7@mwanda>
+References: <1d76fe59-af15-ba4d-e05d-09dcd9ee38cd@users.sourceforge.net>
+In-Reply-To: <1d76fe59-af15-ba4d-e05d-09dcd9ee38cd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Andrew Zaborowski <andrew.zaborowski@intel.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Kalle Valo <kvalo@codeaurora.org>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 5, 2017 at 4:37 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The return value isn't initialized on some success paths.
->
-> Fixes: c5f39d07860c ("staging: ccree: fix leak of import() after init()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/staging/ccree/ssi_hash.c b/drivers/staging/ccree/ssi_hash.c
-> index a2e8a9d32e00..3855c42e61af 100644
-> --- a/drivers/staging/ccree/ssi_hash.c
-> +++ b/drivers/staging/ccree/ssi_hash.c
-> @@ -1823,7 +1823,7 @@ static int ssi_ahash_import(struct ahash_request *req, const void *in)
->         struct device *dev = drvdata_to_dev(ctx->drvdata);
->         struct ahash_req_ctx *state = ahash_request_ctx(req);
->         u32 tmp;
-> -       int rc;
-> +       int rc = 0;
->
->         memcpy(&tmp, in, sizeof(u32));
->         if (tmp != CC_EXPORT_MAGIC) {
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 21:56:56 +0100
 
-Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Replace the specification of two data types by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-And thanks!
-Gilad
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/atmel/at76c50x-usb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/atmel/at76c50x-usb.c b/drivers/net/wireless/atmel/at76c50x-usb.c
+index 2893d339b440..6144d4a258ca 100644
+--- a/drivers/net/wireless/atmel/at76c50x-usb.c
++++ b/drivers/net/wireless/atmel/at76c50x-usb.c
+@@ -383,7 +383,7 @@ static int at76_usbdfu_download(struct usb_device *udev, u8 *buf, u32 size,
+ 		return -EINVAL;
+ 	}
+ 
+-	dfu_stat_buf = kmalloc(sizeof(struct dfu_status), GFP_KERNEL);
++	dfu_stat_buf = kmalloc(sizeof(*dfu_stat_buf), GFP_KERNEL);
+ 	if (!dfu_stat_buf) {
+ 		ret = -ENOMEM;
+ 		goto exit;
+@@ -395,7 +395,7 @@ static int at76_usbdfu_download(struct usb_device *udev, u8 *buf, u32 size,
+ 		goto exit;
+ 	}
+ 
+-	dfu_state = kmalloc(sizeof(u8), GFP_KERNEL);
++	dfu_state = kmalloc(sizeof(*dfu_state), GFP_KERNEL);
+ 	if (!dfu_state) {
+ 		ret = -ENOMEM;
+ 		goto exit;
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+2.15.1
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
