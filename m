@@ -1,17 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 17:33:34 +0000
-Subject: [PATCH 1/3] soc/fsl/qe: Delete an error message for a failed memory allocation in three functions
-Message-Id: <c979f5f0-dc1d-1e10-644a-d32e65fadf82@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 19:30:03 +0000
+Subject: [PATCH] orinoco: Delete an error message for a failed memory allocation in three functions
+Message-Id: <aae8e17c-805e-f167-ced8-3436d6dcfbfc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
-In-Reply-To: <07738369-a787-98b4-41a5-71b7d630c356@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Colin Ian King <colin.king@canonical.com>, "David S. Miller" <davem@davemloft.net>, David Windsor <dwindsor@gmail.com>, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maksim Salau <maksim.salau@gmail.com>, Tobias Klauser <tklauser@distanz.ch>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 17:45:23 +0100
+Date: Sat, 30 Dec 2017 20:20:56 +0100
 
 Omit an extra message for a memory allocation failure in these functions.
 
@@ -19,61 +18,57 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/soc/fsl/qe/gpio.c     | 4 +---
- drivers/soc/fsl/qe/ucc_fast.c | 5 +----
- drivers/soc/fsl/qe/ucc_slow.c | 5 +----
- 3 files changed, 3 insertions(+), 11 deletions(-)
+ drivers/net/wireless/intersil/orinoco/main.c        | 10 ++--------
+ drivers/net/wireless/intersil/orinoco/orinoco_usb.c |  5 ++---
+ 2 files changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
-index 3b27075c21a7..9239cf176e67 100644
---- a/drivers/soc/fsl/qe/gpio.c
-+++ b/drivers/soc/fsl/qe/gpio.c
-@@ -143,10 +143,8 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
- 	unsigned long flags;
- 
- 	qe_pin = kzalloc(sizeof(*qe_pin), GFP_KERNEL);
--	if (!qe_pin) {
--		pr_debug("%s: can't allocate memory\n", __func__);
-+	if (!qe_pin)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	err = of_get_gpio(np, index);
- 	if (err < 0)
-diff --git a/drivers/soc/fsl/qe/ucc_fast.c b/drivers/soc/fsl/qe/ucc_fast.c
-index 83d8d16e3a69..59b68bf4aebb 100644
---- a/drivers/soc/fsl/qe/ucc_fast.c
-+++ b/drivers/soc/fsl/qe/ucc_fast.c
-@@ -195,11 +195,8 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+diff --git a/drivers/net/wireless/intersil/orinoco/main.c b/drivers/net/wireless/intersil/orinoco/main.c
+index 28dac36d7c4c..0b214f92a503 100644
+--- a/drivers/net/wireless/intersil/orinoco/main.c
++++ b/drivers/net/wireless/intersil/orinoco/main.c
+@@ -785,11 +785,8 @@ static void orinoco_rx_monitor(struct net_device *dev, u16 rxfid,
  	}
  
- 	uccf = kzalloc(sizeof(struct ucc_fast_private), GFP_KERNEL);
--	if (!uccf) {
--		printk(KERN_ERR "%s: Cannot allocate private data\n",
--			__func__);
-+	if (!uccf)
- 		return -ENOMEM;
+ 	skb = dev_alloc_skb(hdrlen + datalen);
+-	if (!skb) {
+-		printk(KERN_WARNING "%s: Cannot allocate skb for monitor frame\n",
+-		       dev->name);
++	if (!skb)
+ 		goto update_stats;
 -	}
  
- 	/* Fill fast UCC structure */
- 	uccf->uf_info = uf_info;
-diff --git a/drivers/soc/fsl/qe/ucc_slow.c b/drivers/soc/fsl/qe/ucc_slow.c
-index 9334bdbd9b30..fc91412e2300 100644
---- a/drivers/soc/fsl/qe/ucc_slow.c
-+++ b/drivers/soc/fsl/qe/ucc_slow.c
-@@ -153,11 +153,8 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
- 	}
- 
- 	uccs = kzalloc(sizeof(struct ucc_slow_private), GFP_KERNEL);
--	if (!uccs) {
--		printk(KERN_ERR "%s: Cannot allocate private data\n",
--			__func__);
-+	if (!uccs)
- 		return -ENOMEM;
+ 	/* Copy the 802.11 header to the skb */
+ 	skb_put_data(skb, &(desc->frame_ctl), hdrlen);
+@@ -900,11 +897,8 @@ void __orinoco_ev_rx(struct net_device *dev, struct hermes *hw)
+ 	   packets from the card, which has an IO granularity of 16
+ 	   bits */
+ 	skb = dev_alloc_skb(length + ETH_HLEN + 2 + 1);
+-	if (!skb) {
+-		printk(KERN_WARNING "%s: Can't allocate skb for Rx\n",
+-		       dev->name);
++	if (!skb)
+ 		goto update_stats;
 -	}
  
- 	/* Fill slow UCC structure */
- 	uccs->us_info = us_info;
+ 	/* We'll prepend the header, so reserve space for it.  The worst
+ 	   case is no decapsulation, when 802.3 header is prepended and
+diff --git a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+index 501180584b4b..8ef96a1c231f 100644
+--- a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+@@ -805,10 +805,9 @@ static int ezusb_firmware_download(struct ezusb_priv *upriv,
+ 	int variant_offset;
+ 
+ 	fw_buffer = kmalloc(FW_BUF_SIZE, GFP_KERNEL);
+-	if (!fw_buffer) {
+-		printk(KERN_ERR PFX "Out of memory for firmware buffer.\n");
++	if (!fw_buffer)
+ 		return -ENOMEM;
+-	}
++
+ 	/*
+ 	 * This byte is 1 and should be replaced with 0.  The offset is
+ 	 * 0x10AD in version 0.0.6.  The byte in question should follow
 -- 
 2.15.1
 
