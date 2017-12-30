@@ -1,44 +1,41 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 14 Dec 2017 06:03:51 +0000
-Subject: [PATCH 3/4 v3] mtd: onenand: samsung: Propagate the error returned by 'onenand_scan()'
-Message-Id: <6a50f5e1872bedd649c5f0d0651243b5e4bb1184.1513230484.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 21:07:05 +0000
+Subject: [PATCH 1/2] at76c50x-usb: Delete an error message for a failed memory allocation in at76_submit_rx_u
+Message-Id: <c50358b4-79e2-0861-9087-99104944a0b8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1513230484.git.christophe.jaillet@wanadoo.fr>
+References: <1d76fe59-af15-ba4d-e05d-09dcd9ee38cd@users.sourceforge.net>
+In-Reply-To: <1d76fe59-af15-ba4d-e05d-09dcd9ee38cd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Andrew Zaborowski <andrew.zaborowski@intel.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Kalle Valo <kvalo@codeaurora.org>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Propagate the error code returned by 'onenand_scan()' instead of a
-hard-coded -EFAULT.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 21:50:12 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Cross-compiled tested-only
+ drivers/net/wireless/atmel/at76c50x-usb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-v3: new patch in the serie
----
- drivers/mtd/onenand/samsung.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-index b5497c5a35f1..206aa90140c9 100644
---- a/drivers/mtd/onenand/samsung.c
-+++ b/drivers/mtd/onenand/samsung.c
-@@ -921,8 +921,9 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+diff --git a/drivers/net/wireless/atmel/at76c50x-usb.c b/drivers/net/wireless/atmel/at76c50x-usb.c
+index ede89d4ffc88..2893d339b440 100644
+--- a/drivers/net/wireless/atmel/at76c50x-usb.c
++++ b/drivers/net/wireless/atmel/at76c50x-usb.c
+@@ -1223,8 +1223,6 @@ static int at76_submit_rx_urb(struct at76_priv *priv)
+ 	if (!skb) {
+ 		skb = dev_alloc_skb(sizeof(struct at76_rx_buffer));
+ 		if (!skb) {
+-			wiphy_err(priv->hw->wiphy,
+-				  "cannot allocate rx skbuff\n");
+ 			ret = -ENOMEM;
+ 			goto exit;
  		}
- 	}
- 
--	if (onenand_scan(mtd, 1))
--		return -EFAULT;
-+	err = onenand_scan(mtd, 1);
-+	if (err)
-+		return err;
- 
- 	if (onenand->type != TYPE_S5PC110) {
- 		/* S3C doesn't handle subpage write */
 -- 
-2.14.1
+2.15.1
 
