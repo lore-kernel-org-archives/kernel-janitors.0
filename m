@@ -1,18 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 07 Dec 2017 21:19:14 +0000
-Subject: [PATCH 1/2] serial: sccnxp: Delete an error message for a failed memory allocation in sccnxp_probe()
-Message-Id: <0cc41c23-26f9-2102-7fe9-271271b0e8f5@users.sourceforge.net>
+Date: Sat, 30 Dec 2017 20:33:44 +0000
+Subject: [PATCH] wireless: b43: Delete an error message for a failed memory allocation in b43_sdio_probe()
+Message-Id: <175d361f-0c00-2a32-c860-a5ad198e74ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <90e7fa7a-c0e6-4819-9fa6-fae1a71685eb@users.sourceforge.net>
-In-Reply-To: <90e7fa7a-c0e6-4819-9fa6-fae1a71685eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+To: b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 7 Dec 2017 21:55:09 +0100
+Date: Sat, 30 Dec 2017 21:23:47 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -20,26 +18,21 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/sccnxp.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/wireless/broadcom/b43/sdio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
-index d6ae3086c2a2..ba1653ba5f37 100644
---- a/drivers/tty/serial/sccnxp.c
-+++ b/drivers/tty/serial/sccnxp.c
-@@ -857,10 +857,9 @@ static int sccnxp_probe(struct platform_device *pdev)
- 		return PTR_ERR(membase);
- 
- 	s = devm_kzalloc(&pdev->dev, sizeof(struct sccnxp_port), GFP_KERNEL);
--	if (!s) {
--		dev_err(&pdev->dev, "Error allocating port structure\n");
-+	if (!s)
- 		return -ENOMEM;
--	}
-+
- 	platform_set_drvdata(pdev, s);
- 
- 	spin_lock_init(&s->lock);
+diff --git a/drivers/net/wireless/broadcom/b43/sdio.c b/drivers/net/wireless/broadcom/b43/sdio.c
+index 59a521800694..5a6dbcf170f9 100644
+--- a/drivers/net/wireless/broadcom/b43/sdio.c
++++ b/drivers/net/wireless/broadcom/b43/sdio.c
+@@ -146,7 +146,6 @@ static int b43_sdio_probe(struct sdio_func *func,
+ 	sdio = kzalloc(sizeof(*sdio), GFP_KERNEL);
+ 	if (!sdio) {
+ 		error = -ENOMEM;
+-		dev_err(&func->dev, "failed to allocate ssb bus\n");
+ 		goto err_disable_func;
+ 	}
+ 	error = ssb_bus_sdiobus_register(&sdio->ssb, func,
 -- 
 2.15.1
 
