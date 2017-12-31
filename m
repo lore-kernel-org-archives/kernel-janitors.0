@@ -1,45 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 13:11:29 +0000
-Subject: [PATCH 1/4] staging/wlan-ng/prism2fw: Delete an error message for a failed memory allocation in mkim
-Message-Id: <8c1727a5-425f-da88-7ae5-6fb97f8e03d8@users.sourceforge.net>
+Date: Sun, 31 Dec 2017 21:30:18 +0000
+Subject: [PATCH] ppp: Delete an error message for a failed memory allocation in three functions
+Message-Id: <303ae3e8-f86e-1ed5-6d63-a966aa8b0552@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
-In-Reply-To: <3599ae76-1aa8-4b6a-bf31-90e467759629@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciek Borzecki <maciek.borzecki@gmail.com>, Simo Koskinen <koskisoft@gmail.com>, Thibaut Sautereau <thibaut.sautereau@telecom-sudparis.eu>
+To: netdev@vger.kernel.org, linux-ppp@vger.kernel.org, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Dec 2017 12:57:13 +0100
+Date: Sun, 31 Dec 2017 22:27:23 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit an extra message for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/wlan-ng/prism2fw.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ppp/ppp_generic.c | 12 ++++--------
+ drivers/net/ppp/ppp_synctty.c |  5 ++---
+ 2 files changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index 344bec8cc31b..6888d1b093fa 100644
---- a/drivers/staging/wlan-ng/prism2fw.c
-+++ b/drivers/staging/wlan-ng/prism2fw.c
-@@ -557,10 +557,9 @@ static int mkimage(struct imgchunk *clist, unsigned int *ccnt)
- 	/* Allocate buffer space for chunks */
- 	for (i = 0; i < *ccnt; i++) {
- 		clist[i].data = kzalloc(clist[i].len, GFP_KERNEL);
--		if (!clist[i].data) {
--			pr_err("failed to allocate image space, exitting.\n");
-+		if (!clist[i].data)
- 			return 1;
+diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+index d8e5747ff4e3..d9119dcaa04e 100644
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -2098,11 +2098,9 @@ ppp_receive_nonmp_frame(struct ppp *ppp, struct sk_buff *skb)
+ 		if (skb_tailroom(skb) < 124 || skb_cloned(skb)) {
+ 			/* copy to a new sk_buff with more tailroom */
+ 			ns = dev_alloc_skb(skb->len + 128);
+-			if (!ns) {
+-				netdev_err(ppp->dev, "PPP: no memory "
+-					   "(VJ decomp)\n");
++			if (!ns)
+ 				goto err;
+-			}
++
+ 			skb_reserve(ns, 2);
+ 			skb_copy_bits(skb, 0, skb_put(ns, skb->len), skb->len);
+ 			consume_skb(skb);
+@@ -2237,11 +2235,9 @@ ppp_decompress_frame(struct ppp *ppp, struct sk_buff *skb)
+ 		}
+ 
+ 		ns = dev_alloc_skb(obuff_size);
+-		if (!ns) {
+-			netdev_err(ppp->dev, "ppp_decompress_frame: "
+-				   "no memory\n");
++		if (!ns)
+ 			goto err;
 -		}
 +
- 		pr_debug("chunk[%d]: addr=0x%06x len=%d\n",
- 			 i, clist[i].addr, clist[i].len);
- 	}
+ 		/* the decompressor still expects the A/C bytes in the hdr */
+ 		len = ppp->rcomp->decompress(ppp->rc_state, skb->data - 2,
+ 				skb->len + 2, ns->data, obuff_size);
+diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
+index 7196f00f0991..f801e5218170 100644
+--- a/drivers/net/ppp/ppp_synctty.c
++++ b/drivers/net/ppp/ppp_synctty.c
+@@ -682,10 +682,9 @@ ppp_sync_input(struct syncppp *ap, const unsigned char *buf,
+ 
+ 	/* stuff the chars in the skb */
+ 	skb = dev_alloc_skb(ap->mru + PPP_HDRLEN + 2);
+-	if (!skb) {
+-		printk(KERN_ERR "PPPsync: no memory (input pkt)\n");
++	if (!skb)
+ 		goto err;
+-	}
++
+ 	/* Try to get the payload 4-byte aligned */
+ 	if (buf[0] != PPP_ALLSTATIONS)
+ 		skb_reserve(skb, 2 + (buf[0] & 1));
 -- 
 2.15.1
 
