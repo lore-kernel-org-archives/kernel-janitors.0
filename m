@@ -1,43 +1,11 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Dec 2017 20:24:51 +0000
-Subject: [PATCH] tty: synclinkmp: Delete an error message for a failed memory allocation in startup()
-Message-Id: <8a63c9bc-77c3-5b7e-6911-86397e63abd7@users.sourceforge.net>
+From: foundation@gmail.com
+Date: Sun, 31 Dec 2017 22:26:21 +0000
+Subject: =?utf-8?q?Spende_von_=E2=82=AC_3=2E400=2E000=2C00_EUR?=
+Message-Id: <20171231224706.353AF270A71C@wsbmail01.wsb.wroclaw.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Dec 2017 21:21:07 +0100
-
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/synclinkmp.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/tty/synclinkmp.c b/drivers/tty/synclinkmp.c
-index d45f234e1914..e47d19bbe87a 100644
---- a/drivers/tty/synclinkmp.c
-+++ b/drivers/tty/synclinkmp.c
-@@ -2640,11 +2640,8 @@ static int startup(SLMP_INFO * info)
- 
- 	if (!info->tx_buf) {
- 		info->tx_buf = kmalloc(info->max_frame_size, GFP_KERNEL);
--		if (!info->tx_buf) {
--			printk(KERN_ERR"%s(%d):%s can't allocate transmit buffer\n",
--				__FILE__,__LINE__,info->device_name);
-+		if (!info->tx_buf)
- 			return -ENOMEM;
--		}
- 	}
- 
- 	info->pending_bh = 0;
--- 
-2.15.1
-
+Hallo, ich Roy Cockrum, 58, aus Knoxville, Tennessee Vereinigte Staaten von Amerika, du hast eine Wohltätigkeitsspende von € 3.400.000,00 EUR, ich gewann die America Lotterie in Amerika im Wert von $ 259,9 Millionen, und ich gebe einen Teil davon Zu fünf glücklichen Leuten und Wohltätigkeitshäusern in Gelübde, um die Armut vor dieser Welt zu beseitigen, ich kämpfe gegen die Armut. Kontaktieren Sie mich für weitere Details: roycockrumpovertyfoundation@gmail.com
