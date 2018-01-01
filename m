@@ -1,95 +1,122 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 16 Jan 2018 06:19:28 +0000
-Subject: Re: [PATCH] EDAC, mv64x60: Remove some code duplication
-Message-Id: <1229c4dd-0c83-7f33-29d4-dfd7d80b2075@wanadoo.fr>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 01 Jan 2018 21:07:44 +0000
+Subject: Re: [PATCH 11/12] drm/amd/powerplay: drop unneeded newline
+Message-Id: <CADnq5_OwRm41P4i_sQ0u8HvA_9YA-v13UCbpm20hbAgx+nuNjw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180113072821.8100-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180113072821.8100-1-christophe.jaillet@wanadoo.fr>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1514386305-7402-12-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-12-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Michael Ellerman <mpe@ellerman.id.au>, Chris Packham <Chris.Packham@alliedtelesis.co.nz>, Borislav Petkov <bp@alien8.de>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-Le 15/01/2018 à 23:31, Michael Ellerman a écrit :
-> Chris Packham <Chris.Packham@alliedtelesis.co.nz> writes:
->> On 14/01/18 06:17, Christophe JAILLET wrote:
->>> Le 13/01/2018 à 15:22, Borislav Petkov a écrit :
->>>> + Chris Packham who's been fixing some stuff in here too.
->>>>
->>>> On Sat, Jan 13, 2018 at 08:28:21AM +0100, Christophe JAILLET wrote:
->>>>> Reorder the error handling code in order to release the resources in
->>>>> reverse order than allocation.
->>>>>
->>>>> Introduce a new 'release_group' label in the error handling path and use
->>>>> it to void some code duplication.
->>>>>
->>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>>> ---
->>>>>     drivers/edac/mv64x60_edac.c | 7 ++++---
->>>>>     1 file changed, 4 insertions(+), 3 deletions(-)
-> ...
->>>>>     
->>>>> -- 
->>>> Thanks, looks good. But looking at this driver, mv64x60_mc_err_probe()
->>>> and mv64x60_sram_err_probe() have the same problem too. Can you address them
->>>> with your patch too pls?
->>> Will do. mv64x60_pci_err_probe() also needs some tweaks.
->>>
->>>> Also, if you feel like fixing more stuff in this driver, it doesn't use
->>>> the edac_printk() infrastructure but naked printk() calls. It could be
->>>> converted to it.
->>> I will only propose to remove a useless message and improve another one,
->>> but won't convert the whole driver, sorry.
->>>
->> I take this you mean you have a system with a mv64x60 SoC? You might
->> want to make yourself known to the linuxppc-dev list. A while back the
->> prospects of dropping CONFIG_MV64X60 was raised[1]. I don't see anyone
->> actually following through on this yet but I'm not really following
->> linuxppc that closely.
-> That's just because I haven't had time to do it and no one else took the
-> hint :)
+On Wed, Dec 27, 2017 at 9:51 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> PP_ASSERT_WITH_CODE prints a newline at the end of the message string,
+> so the message string does not need to include a newline explicitly.
+> Done using Coccinelle.
 >
-> So yes, Christophe if you have a machine that uses this driver please
-> speak up, otherwise it will probably be removed.
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Applied.  thanks!
+
+Alex
+
 >
-> cheers
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ---
 >
-Hi,
-
-No I don't have.
-
-I use static checker to find some potential issues in Linux (most of the 
-time, with my own coccinelle scripts).
-Before proposing some patches, I check if the development on the 
-corresponding files is still active.
-This driver looked active (i.e. there were several recent commits, even 
-if only cleanups).
-
-If it is nearly dead, my small fixes/cleanups are useless, and I will 
-leave it as-is.
-
-Thanks for pointing this out. I'll dig somewhere else :)
-
-
-For the records, and if someone is interested, in order to search for 
-"active" files in what I've touched, I use:
-(this is a slightly updated version of a script found on Internet)
-
-     # date of the last modification of updated files
-     git status -s -uno | while read mode file; do echo "$(git log -1 
---date=format:'%Y%m%d_%H:%M:%S' --format=%cd $file)   $file"; done | 
-sort -s -n -k 1,1 > last_modified.txt
-
-When I find a potential candidate, I then have a look in its recent 
-history with 'git log' or with 
-'https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/...'
-
-Best regards,
-CJ
-
-
+> I couldn't figure out how to configure the kernel to get any of this code
+> to compile.
+>
+>  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c        |   12 ++++++++----
+>  drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c      |    2 +-
+>  drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c   |    2 +-
+>  drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c |    2 +-
+>  drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c     |    2 +-
+>  5 files changed, 12 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+> index 40adc85..8d7fd06 100644
+> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+> @@ -2266,14 +2266,18 @@ static int smu7_set_private_data_based_on_pptable_v0(struct pp_hwmgr *hwmgr)
+>         struct phm_clock_voltage_dependency_table *allowed_mclk_vddci_table = hwmgr->dyn_state.vddci_dependency_on_mclk;
+>
+>         PP_ASSERT_WITH_CODE(allowed_sclk_vddc_table != NULL,
+> -               "VDDC dependency on SCLK table is missing. This table is mandatory\n", return -EINVAL);
+> +               "VDDC dependency on SCLK table is missing. This table is mandatory",
+> +               return -EINVAL);
+>         PP_ASSERT_WITH_CODE(allowed_sclk_vddc_table->count >= 1,
+> -               "VDDC dependency on SCLK table has to have is missing. This table is mandatory\n", return -EINVAL);
+> +               "VDDC dependency on SCLK table has to have is missing. This table is mandatory",
+> +               return -EINVAL);
+>
+>         PP_ASSERT_WITH_CODE(allowed_mclk_vddc_table != NULL,
+> -               "VDDC dependency on MCLK table is missing. This table is mandatory\n", return -EINVAL);
+> +               "VDDC dependency on MCLK table is missing. This table is mandatory",
+> +               return -EINVAL);
+>         PP_ASSERT_WITH_CODE(allowed_mclk_vddc_table->count >= 1,
+> -               "VDD dependency on MCLK table has to have is missing. This table is mandatory\n", return -EINVAL);
+> +               "VDD dependency on MCLK table has to have is missing. This table is mandatory",
+> +               return -EINVAL);
+>
+>         data->min_vddc_in_pptable = (uint16_t)allowed_sclk_vddc_table->entries[0].v;
+>         data->max_vddc_in_pptable = (uint16_t)allowed_sclk_vddc_table->entries[allowed_sclk_vddc_table->count - 1].v;
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> index 085d81c..427daa6 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> @@ -1799,7 +1799,7 @@ static int fiji_populate_clock_stretcher_data_table(struct pp_hwmgr *hwmgr)
+>                 phm_cap_unset(hwmgr->platform_descriptor.platformCaps,
+>                                 PHM_PlatformCaps_ClockStretcher);
+>                 PP_ASSERT_WITH_CODE(false,
+> -                               "Stretch Amount in PPTable not supported\n",
+> +                               "Stretch Amount in PPTable not supported",
+>                                 return -EINVAL);
+>         }
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> index 1253126..6400065 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> @@ -546,7 +546,7 @@ static int iceland_get_std_voltage_value_sidd(struct pp_hwmgr *hwmgr,
+>
+>         /* SCLK/VDDC Dependency Table has to exist. */
+>         PP_ASSERT_WITH_CODE(NULL != hwmgr->dyn_state.vddc_dependency_on_sclk,
+> -                       "The SCLK/VDDC Dependency Table does not exist.\n",
+> +                       "The SCLK/VDDC Dependency Table does not exist.",
+>                         return -EINVAL);
+>
+>         if (NULL = hwmgr->dyn_state.cac_leakage_table) {
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+> index cdb4765..fd874f7 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+> @@ -1652,7 +1652,7 @@ static int polaris10_populate_clock_stretcher_data_table(struct pp_hwmgr *hwmgr)
+>                 phm_cap_unset(hwmgr->platform_descriptor.platformCaps,
+>                                 PHM_PlatformCaps_ClockStretcher);
+>                 PP_ASSERT_WITH_CODE(false,
+> -                               "Stretch Amount in PPTable not supported\n",
+> +                               "Stretch Amount in PPTable not supported",
+>                                 return -EINVAL);
+>         }
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> index 79e5c05..5eb719e 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> @@ -1699,7 +1699,7 @@ static int tonga_populate_clock_stretcher_data_table(struct pp_hwmgr *hwmgr)
+>                 phm_cap_unset(hwmgr->platform_descriptor.platformCaps,
+>                                 PHM_PlatformCaps_ClockStretcher);
+>                 PP_ASSERT_WITH_CODE(false,
+> -                               "Stretch Amount in PPTable not supported\n",
+> +                               "Stretch Amount in PPTable not supported",
+>                                 return -EINVAL);
+>         }
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
