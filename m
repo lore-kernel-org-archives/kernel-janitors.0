@@ -1,36 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Jan 2018 19:32:18 +0000
-Subject: [PATCH] x86/cpu/bugs: fix spelling mistake: "vunerable"-> "vulnerable"
-Message-Id: <20180130193218.9271-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Jan 2018 19:56:55 +0000
+Subject: [PATCH] igb: Delete an error message for a failed memory allocation in igb_enable_sriov()
+Message-Id: <d6fe0ffd-4439-1f2b-1f78-2a3552f5dd09@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, David Woodhouse <dwmw@amazon.co.uk>, Borislav Petkov <bp@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, Andi Kleen <ak@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jan 2018 20:53:10 +0100
 
-Trivial fix to spelling mistake in pr_err error message text.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/cpu/bugs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/igb/igb_main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 3bfb2b23d79c..fa1aaf415253 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -103,7 +103,7 @@ bool retpoline_module_ok(bool has_retpoline)
- 	if (spectre_v2_enabled = SPECTRE_V2_NONE || has_retpoline)
- 		return true;
- 
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
- }
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index e94d3c256667..1621aaa3eb28 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -3200,8 +3200,6 @@ static int igb_enable_sriov(struct pci_dev *pdev, int num_vfs)
+ 	/* if allocation failed then we do not support SR-IOV */
+ 	if (!adapter->vf_data) {
+ 		adapter->vfs_allocated_count = 0;
+-		dev_err(&pdev->dev,
+-			"Unable to allocate memory for VF Data Storage\n");
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
 -- 
 2.15.1
 
