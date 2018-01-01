@@ -1,25 +1,46 @@
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Date: Fri, 19 Jan 2018 16:59:30 +0000
-Subject: Re: [PATCH 1/3] soc-knav_dma: Use seq_putc() in dma_debug_show_channels()
-Message-Id: <01885292-d7a1-1b5c-d176-86e82af90a70@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Jan 2018 19:17:55 +0000
+Subject: [PATCH] ehea: Delete an error message for a failed memory allocation in two functions
+Message-Id: <68b26725-68b2-9965-93b1-dd0013cc6f7a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eddc35f7-a04b-42f5-ad8b-d345ca0b57b4@users.sourceforge.net>
- <54a54866-6828-1ae5-6524-ca3f0dc4ab33@users.sourceforge.net>
-In-Reply-To: <54a54866-6828-1ae5-6524-ca3f0dc4ab33@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org, Douglas Miller <dougmill@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 5/1/2017 12:27 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 May 2017 20:55:55 +0200
-> 
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-Will pick all three patches. Thanks !!
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jan 2018 20:14:25 +0100
+
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/ibm/ehea/ehea_main.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ibm/ehea/ehea_main.c b/drivers/net/ethernet/ibm/ehea/ehea_main.c
+index 4878b7169e0f..b234bb9b9586 100644
+--- a/drivers/net/ethernet/ibm/ehea/ehea_main.c
++++ b/drivers/net/ethernet/ibm/ehea/ehea_main.c
+@@ -1512,7 +1512,6 @@ static int ehea_init_port_res(struct ehea_port *port, struct ehea_port_res *pr,
+ 	init_attr = kzalloc(sizeof(*init_attr), GFP_KERNEL);
+ 	if (!init_attr) {
+ 		ret = -ENOMEM;
+-		pr_err("no mem for ehea_qp_init_attr\n");
+ 		goto out_free;
+ 	}
+ 
+@@ -3409,7 +3408,6 @@ static int ehea_probe_adapter(struct platform_device *dev)
+ 	adapter = devm_kzalloc(&dev->dev, sizeof(*adapter), GFP_KERNEL);
+ 	if (!adapter) {
+ 		ret = -ENOMEM;
+-		dev_err(&dev->dev, "no mem for ehea_adapter\n");
+ 		goto out;
+ 	}
+ 
+-- 
+2.15.1
+
