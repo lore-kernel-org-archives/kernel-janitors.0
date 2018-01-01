@@ -1,45 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 15:07:45 +0000
-Subject: [PATCH 1/5] mtd/rfd_ftl: Delete an error message for a failed memory allocation in scan_header()
-Message-Id: <90d58d5f-73e4-b47e-d013-19cd84c4ccda@users.sourceforge.net>
+Date: Mon, 01 Jan 2018 17:18:52 +0000
+Subject: [PATCH] LiquidIO: Delete two error messages for a failed memory allocation in octeon_setup_interrupt
+Message-Id: <94411e3f-3709-3b76-537d-d189cf14cdb4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
-In-Reply-To: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: netdev@vger.kernel.org, Derek Chickles <derek.chickles@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 14:07:31 +0100
+Date: Mon, 1 Jan 2018 18:14:49 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit extra messages for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/rfd_ftl.c | 5 +----
+ drivers/net/ethernet/cavium/liquidio/lio_core.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/rfd_ftl.c b/drivers/mtd/rfd_ftl.c
-index d1cbf26db2c0..efff25f15d5b 100644
---- a/drivers/mtd/rfd_ftl.c
-+++ b/drivers/mtd/rfd_ftl.c
-@@ -190,11 +190,8 @@ static int scan_header(struct partition *part)
- 		goto err;
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+index 32ae63b6f20e..012829de76b7 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+@@ -915,10 +915,8 @@ int octeon_setup_interrupt(struct octeon_device *oct, u32 num_ioqs)
+ 		/* allocate storage for the names assigned to each irq */
+ 		oct->irq_name_storage  			kcalloc(num_interrupts, INTRNAMSIZ, GFP_KERNEL);
+-		if (!oct->irq_name_storage) {
+-			dev_err(&oct->pci_dev->dev, "Irq name storage alloc failed...\n");
++		if (!oct->irq_name_storage)
+ 			return -ENOMEM;
+-		}
  
- 	part->sector_map = vmalloc(part->sector_count * sizeof(u_long));
--	if (!part->sector_map) {
--		printk(KERN_ERR PREFIX "'%s': unable to allocate memory for "
--			"sector map", part->mbd.mtd->name);
-+	if (!part->sector_map)
- 		goto err;
--	}
+ 		queue_irq_names = oct->irq_name_storage;
  
- 	for (i=0; i<part->sector_count; i++)
- 		part->sector_map[i] = -1;
+@@ -930,7 +928,6 @@ int octeon_setup_interrupt(struct octeon_device *oct, u32 num_ioqs)
+ 					    sizeof(struct msix_entry),
+ 					    GFP_KERNEL);
+ 		if (!oct->msix_entries) {
+-			dev_err(&oct->pci_dev->dev, "Memory Alloc failed...\n");
+ 			kfree(oct->irq_name_storage);
+ 			oct->irq_name_storage = NULL;
+ 			return -ENOMEM;
 -- 
 2.15.1
 
