@@ -1,43 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 16:25:41 +0000
-Subject: [PATCH 3/5] irqchip/irq-gic-v2m: Mark a of_device_id variable as "const"
-Message-Id: <fb56a882-cd8e-a3c2-9874-3eb39aca4ded@users.sourceforge.net>
+Date: Mon, 01 Jan 2018 16:40:36 +0000
+Subject: [PATCH] bcm63xx_enet: Delete two error messages for a failed memory allocation in bcm_enetsw_open()
+Message-Id: <e417429f-196b-6d03-0d40-02bfe0cd4903@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
-In-Reply-To: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 16:33:43 +0100
+Date: Mon, 1 Jan 2018 17:30:04 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit extra messages for a memory allocation failure in this function.
 
-WARNING: struct of_device_id should normally be const
-
-Thus fix the affected source code place.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/irqchip/irq-gic-v2m.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-index 930261710ba2..7482c2b86bb8 100644
---- a/drivers/irqchip/irq-gic-v2m.c
-+++ b/drivers/irqchip/irq-gic-v2m.c
-@@ -380,7 +380,7 @@ static int __init gicv2m_init_one(struct fwnode_handle *fwnode,
- 	return ret;
- }
- 
--static struct of_device_id gicv2m_device_id[] = {
-+static const struct of_device_id gicv2m_device_id[] = {
- 	{	.compatible	= "arm,gic-v2m-frame",	},
- 	{},
- };
+diff --git a/drivers/net/ethernet/broadcom/bcm63xx_enet.c b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+index d9346e2ac720..52a42e3058cf 100644
+--- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
++++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+@@ -2166,7 +2166,6 @@ static int bcm_enetsw_open(struct net_device *dev)
+ 	priv->tx_skb = kzalloc(sizeof(struct sk_buff *) * priv->tx_ring_size,
+ 			       GFP_KERNEL);
+ 	if (!priv->tx_skb) {
+-		dev_err(kdev, "cannot allocate rx skb queue\n");
+ 		ret = -ENOMEM;
+ 		goto out_free_tx_ring;
+ 	}
+@@ -2180,7 +2179,6 @@ static int bcm_enetsw_open(struct net_device *dev)
+ 	priv->rx_skb = kzalloc(sizeof(struct sk_buff *) * priv->rx_ring_size,
+ 			       GFP_KERNEL);
+ 	if (!priv->rx_skb) {
+-		dev_err(kdev, "cannot allocate rx skb queue\n");
+ 		ret = -ENOMEM;
+ 		goto out_free_tx_skb;
+ 	}
 -- 
 2.15.1
 
