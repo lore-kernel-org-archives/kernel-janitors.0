@@ -1,39 +1,38 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Sat, 06 Jan 2018 16:42:59 +0000
-Subject: Re: [PATCH] Bluetooth: bpa10x: make array 'req' static, shrinks object size
-Message-Id: <5236E589-503D-4845-B4BF-EAD9EF4461B0@holtmann.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Jan 2018 16:07:20 +0000
+Subject: [PATCH] bonding: Delete an error message for a failed memory allocation in bond_update_slave_arr()
+Message-Id: <6cdc726b-82bc-85b6-393b-0e2002c19341@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106161514.18308-1-colin.king@canonical.com>
-In-Reply-To: <20180106161514.18308-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Andy Gospodarek <andy@greyhouse.net>, Jay Vosburgh <j.vosburgh@gmail.com>, Veaceslav Falico <vfalico@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jan 2018 17:00:04 +0100
 
-> Don't populate the const read-only array 'req' on the stack but instead
-> make it static. Makes the object code smaller by over 40 bytes:
-> 
-> Before:
->   text	   data	    bss	    dec	    hex	filename
->   8497	   3408	    128	  12033	   2f01	linux/drivers/bluetooth/bpa10x.o
-> 
-> After:
->   text	   data	    bss	    dec	    hex	filename
->   8366	   3496	    128	  11990	   2ed6	linux/drivers/bluetooth/bpa10x.o
-> 
-> (gcc version 7.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/bluetooth/bpa10x.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+Omit an extra message for a memory allocation failure in this function.
 
-patch has been applied to bluetooth-next tree.
+This issue was detected by using the Coccinelle software.
 
-Regards
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/bonding/bond_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Marcel
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index c669554d70bb..a96e0c9cc4bf 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -3910,7 +3910,6 @@ int bond_update_slave_arr(struct bonding *bond, struct slave *skipslave)
+ 			  GFP_KERNEL);
+ 	if (!new_arr) {
+ 		ret = -ENOMEM;
+-		pr_err("Failed to build slave-array.\n");
+ 		goto out;
+ 	}
+ 	if (BOND_MODE(bond) = BOND_MODE_8023AD) {
+-- 
+2.15.1
 
