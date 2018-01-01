@@ -1,55 +1,27 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 06 Jan 2018 20:18:55 +0000
-Subject: [PATCH 2/2] ASoC: Intel: sst: Fix some style
-Message-Id: <20180106201855.6131-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Jan 2018 17:52:36 +0000
+Subject: [PATCH 0/2] benet: Adjustments for two function implementations
+Message-Id: <86e577a3-77a4-2e74-dd2d-4d63e90ffb72@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Ajit Khaparde <ajit.khaparde@broadcom.com>, Sathya Perla <sathya.perla@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This patch fixes 3 small issues:
- - missing 2nd '*' at the beginning of a doxygen comment
- - extra space after a '\n' in a dev_dbg message
- - extra tab before a 'return" statement
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jan 2018 18:50:05 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- sound/soc/intel/atom/sst/sst_stream.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Two update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
-index 20f5066fefb9..7ee6aeb7e0af 100644
---- a/sound/soc/intel/atom/sst/sst_stream.c
-+++ b/sound/soc/intel/atom/sst/sst_stream.c
-@@ -223,7 +223,7 @@ int sst_send_byte_stream_mrfld(struct intel_sst_drv *sst_drv_ctx,
- 	return ret;
- }
- 
--/*
-+/**
-  * sst_pause_stream - Send msg for a pausing stream
-  * @str_id:	 stream ID
-  *
-@@ -261,7 +261,7 @@ int sst_pause_stream(struct intel_sst_drv *sst_drv_ctx, int str_id)
- 		}
- 	} else {
- 		retval = -EBADRQC;
--		dev_dbg(sst_drv_ctx->dev, "SST DBG:BADRQC for stream\n ");
-+		dev_dbg(sst_drv_ctx->dev, "SST DBG:BADRQC for stream\n");
- 	}
- 
- 	return retval;
-@@ -284,7 +284,7 @@ int sst_resume_stream(struct intel_sst_drv *sst_drv_ctx, int str_id)
- 	if (!str_info)
- 		return -EINVAL;
- 	if (str_info->status = STREAM_RUNNING)
--			return 0;
-+		return 0;
- 	if (str_info->status = STREAM_PAUSED) {
- 		retval = sst_prepare_and_post_msg(sst_drv_ctx, str_info->task_id,
- 				IPC_CMD, IPC_IA_RESUME_STREAM_MRFLD,
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in be_alloc_work()
+  Delete an unnecessary return statement in be_work_add_vxlan_port()
+
+ drivers/net/ethernet/emulex/benet/be_main.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
 -- 
-2.14.1
+2.15.1
 
