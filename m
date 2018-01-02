@@ -1,29 +1,50 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Tue, 23 Jan 2018 14:47:17 +0000
-Subject: Re: [PATCH] HID: roccat: prevent an out of bounds read in kovaplus_profile_activated()
-Message-Id: <nycvar.YFH.7.76.1801231547100.11852@cbobk.fhfr.pm>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:28:08 +0000
+Subject: [PATCH 12/12] power: reset: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180110093903.yyoknoi7oc2cd5iy@mwanda>
-In-Reply-To: <20180110093903.yyoknoi7oc2cd5iy@mwanda>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, 10 Jan 2018, Dan Carpenter wrote:
+This driver creates a const structure that it stores in the data
+field of an of_device_id array.
 
-> We get the "new_profile_index" value from the mouse device when we're
-> handling raw events.  Smatch taints it as untrusted data and complains
-> that we need a bounds check.  This seems like a reasonable warning
-> otherwise there is a small read beyond the end of the array.
-> 
-> Fixes: 0e70f97f257e ("HID: roccat: Add support for Kova[+] mouse")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add const to the declaration of the location that receives a value
+from the data field to ensure that the compiler will continue to check
+that the value is not modified and remove the const-dropping cast on
+the access to the data field.
 
-Applied, thanks.
+Done using Coccinelle.
 
--- 
-Jiri Kosina
-SUSE Labs
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/power/reset/at91-sama5d2_shdwc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/power/reset/at91-sama5d2_shdwc.c b/drivers/power/reset/at91-sama5d2_shdwc.c
+--- a/drivers/power/reset/at91-sama5d2_shdwc.c
++++ b/drivers/power/reset/at91-sama5d2_shdwc.c
+@@ -68,7 +68,7 @@ struct shdwc_config {
+ };
+ 
+ struct shdwc {
+-	struct shdwc_config *cfg;
++	const struct shdwc_config *cfg;
+ 	void __iomem *at91_shdwc_base;
+ };
+ 
+@@ -260,7 +260,7 @@ static int __init at91_shdwc_probe(struc
+ 	}
+ 
+ 	match = of_match_node(at91_shdwc_of_match, pdev->dev.of_node);
+-	at91_shdwc->cfg = (struct shdwc_config *)(match->data);
++	at91_shdwc->cfg = match->data;
+ 
+ 	sclk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(sclk))
 
