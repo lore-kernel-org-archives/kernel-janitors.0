@@ -1,16 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 12:55:55 +0000
-Subject: [PATCH] mfd/tps80031: Delete an error message for a failed memory allocation in tps80031_probe()
-Message-Id: <4234ad34-d531-e339-3c52-34f1307f7572@users.sourceforge.net>
+Date: Tue, 02 Jan 2018 20:48:54 +0000
+Subject: [PATCH] ethernet: cpsw-phy-sel: Delete an error message for a failed memory allocation in cpsw_phy_s
+Message-Id: <3addaad6-2767-8a2f-cde3-a25148780f36@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
+To: netdev@vger.kernel.org, linux-omap@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Mugunthan V N <mugunthanvnm@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Daniel Mack <zonque@gmail.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 13:43:03 +0100
+Date: Tue, 2 Jan 2018 21:41:25 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -18,25 +18,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mfd/tps80031.c | 4 +---
+ drivers/net/ethernet/ti/cpsw-phy-sel.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/tps80031.c b/drivers/mfd/tps80031.c
-index 0812df3b0d47..608c7f77830e 100644
---- a/drivers/mfd/tps80031.c
-+++ b/drivers/mfd/tps80031.c
-@@ -431,10 +431,8 @@ static int tps80031_probe(struct i2c_client *client,
- 	}
+diff --git a/drivers/net/ethernet/ti/cpsw-phy-sel.c b/drivers/net/ethernet/ti/cpsw-phy-sel.c
+index 18013645e76c..d29bc349bfc4 100644
+--- a/drivers/net/ethernet/ti/cpsw-phy-sel.c
++++ b/drivers/net/ethernet/ti/cpsw-phy-sel.c
+@@ -213,10 +213,8 @@ static int cpsw_phy_sel_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  
- 	tps80031 = devm_kzalloc(&client->dev, sizeof(*tps80031), GFP_KERNEL);
--	if (!tps80031) {
--		dev_err(&client->dev, "Malloc failed for tps80031\n");
-+	if (!tps80031)
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(&pdev->dev, "unable to alloc memory for cpsw phy sel\n");
++	if (!priv)
  		return -ENOMEM;
 -	}
  
- 	for (i = 0; i < TPS80031_NUM_SLAVES; i++) {
- 		if (tps80031_slave_address[i] = client->addr)
+ 	priv->dev = &pdev->dev;
+ 	priv->cpsw_phy_sel = of_id->data;
 -- 
 2.15.1
 
