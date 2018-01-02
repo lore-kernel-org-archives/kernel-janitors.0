@@ -1,25 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 18 Jan 2018 07:52:03 +0000
-Subject: Re: [PATCH -next] pinctrl: ingenic: remove redundant dev_err call in ingenic_pinctrl_probe()
-Message-Id: <CACRpkdZ4AmJg98ccqS5S8CnVsBFgaWkwY_03pyCYpGwgo4=W6g@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:28:07 +0000
+Subject: [PATCH 11/12] iio: common: ssp_sensors: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516188557-147454-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516188557-147454-1-git-send-email-weiyongjun1@huawei.com>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 17, 2018 at 12:29 PM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+This driver creates a number of const structures that it stores in the
+data field of an of_device_id array.
 
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Add const to the declaration of the location that receives a value
+from the data field to ensure that the compiler will continue to check
+that the value is not modified and remove the const-dropping cast on
+the access to the data field.
 
-Patch applied.
+Done using Coccinelle.
 
-Yours,
-Linus Walleij
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/iio/common/ssp_sensors/ssp.h     |    2 +-
+ drivers/iio/common/ssp_sensors/ssp_dev.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/iio/common/ssp_sensors/ssp.h b/drivers/iio/common/ssp_sensors/ssp.h
+--- a/drivers/iio/common/ssp_sensors/ssp.h
++++ b/drivers/iio/common/ssp_sensors/ssp.h
+@@ -188,7 +188,7 @@ struct ssp_sensorhub_info {
+  */
+ struct ssp_data {
+ 	struct spi_device *spi;
+-	struct ssp_sensorhub_info *sensorhub_info;
++	const struct ssp_sensorhub_info *sensorhub_info;
+ 	struct timer_list wdt_timer;
+ 	struct work_struct work_wdt;
+ 	struct delayed_work work_refresh;
+diff -u -p a/drivers/iio/common/ssp_sensors/ssp_dev.c b/drivers/iio/common/ssp_sensors/ssp_dev.c
+--- a/drivers/iio/common/ssp_sensors/ssp_dev.c
++++ b/drivers/iio/common/ssp_sensors/ssp_dev.c
+@@ -486,7 +486,7 @@ static struct ssp_data *ssp_parse_dt(str
+ 	if (!match)
+ 		goto err_mcu_reset_gpio;
+ 
+-	data->sensorhub_info = (struct ssp_sensorhub_info *)match->data;
++	data->sensorhub_info = match->data;
+ 
+ 	dev_set_drvdata(dev, data);
+ 
+
