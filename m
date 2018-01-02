@@ -1,43 +1,45 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 09 Jan 2018 09:48:06 +0000
-Subject: Re: [PATCH 2/2] slimbus: qcom-ctrl: Fix devm_ioremap_resource() error handling
-Message-Id: <b69e1b08-b23a-85b2-1c90-ef6b80a41a86@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jan 2018 09:21:06 +0000
+Subject: [PATCH][crypto-next] crypto: tcrypt: fix spelling mistake: "bufufer"-> "buffer"
+Message-Id: <20180102092106.7726-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180109092644.wa4ubwxkcvc3lyza@mwanda>
-In-Reply-To: <20180109092644.wa4ubwxkcvc3lyza@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistakes in pr_err error message text.
 
-On 09/01/18 09:26, Dan Carpenter wrote:
-> devm_ioremap_resource() returns error pointers, not NULL so the check
-> needs to be fixed.
-> 
-> Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-> index 3ab59209cbdc..6bf95bf33299 100644
-> --- a/drivers/slimbus/qcom-ctrl.c
-> +++ b/drivers/slimbus/qcom-ctrl.c
-> @@ -528,9 +528,9 @@ static int qcom_slim_probe(struct platform_device *pdev)
->   
->   	slim_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl");
->   	ctrl->base = devm_ioremap_resource(ctrl->dev, slim_mem);
-> -	if (!ctrl->base) {
-> +	if (IS_ERR(ctrl->base)) {
->   		dev_err(&pdev->dev, "IOremap failed\n");
-> -		return -ENOMEM;
-> +		return PTR_ERR(ctrl->base);
->   	}
->   
->   	sctrl->set_laddr = qcom_set_laddr;
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ crypto/tcrypt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Already fixed at:
+diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
+index 58e3344d7169..f61d2f40dd90 100644
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -328,7 +328,7 @@ static void test_mb_aead_speed(const char *algo, int enc, int secs,
+ 		b_size = aead_sizes;
+ 		do {
+ 			if (*b_size + authsize > XBUFSIZE * PAGE_SIZE) {
+-				pr_err("template (%u) too big for bufufer (%lu)\n",
++				pr_err("template (%u) too big for buffer (%lu)\n",
+ 				       authsize + *b_size,
+ 				       XBUFSIZE * PAGE_SIZE);
+ 				goto out;
+@@ -1269,7 +1269,7 @@ static void test_mb_skcipher_speed(const char *algo, int enc, int secs,
+ 		b_size = block_sizes;
+ 		do {
+ 			if (*b_size > XBUFSIZE * PAGE_SIZE) {
+-				pr_err("template (%u) too big for bufufer (%lu)\n",
++				pr_err("template (%u) too big for buffer (%lu)\n",
+ 				       *b_size, XBUFSIZE * PAGE_SIZE);
+ 				goto out;
+ 			}
+-- 
+2.14.1
 
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1575797.html
