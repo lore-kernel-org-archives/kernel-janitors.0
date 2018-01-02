@@ -1,61 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 09:43:59 +0000
-Subject: Re: Coccinelle: Rename the script for a transformation of memory allocations
-Message-Id: <6e685bda-6f8f-4adf-4b0c-bf93b59981c2@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:28:00 +0000
+Subject: [PATCH 04/12] PCI: qcom: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
- <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
- <alpine.DEB.2.20.1801021528160.24055@hadrien>
- <6423882b-20df-61fd-d7c6-ac1bb4ec891d@users.sourceforge.net>
- <alpine.DEB.2.20.1801031301470.3229@hadrien>
- <d576069f-2786-d1fe-e015-9d7ed63e5d94@users.sourceforge.net>
- <alpine.DEB.2.20.1801031315230.23130@hadrien>
- <2ca7ce82-3223-9733-9aa5-6061c79ff804@users.sourceforge.net>
- <alpine.DEB.2.20.1801031339410.23130@hadrien>
- <7490d0cb-4246-8e10-05cd-6219b58c4f14@users.sourceforge.net>
- <alpine.DEB.2.20.1801040954020.3077@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1801040954020.3077@hadrien>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr
-Cc: Gilles Muller <Gilles.Muller@lip6.fr>, Himanshu Jha <himanshujha199640@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: kernel-janitors@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> Would you find the file name selection “zalloc-extra_changes1.cocci” acceptable?
-> 
-> No.
+This driver creates various const structures that it stores in the
+data field of an of_device_id array.
 
-Next try then …
+Adding const to the declaration of the location that receives the
+const value from the data field ensures that the compiler will
+continue to check that the value is not modified.  Furthermore, the
+const-discarding cast on the extraction from the data field is no
+longer needed.
 
+Done using Coccinelle.
 
-> I do't know what the extra changes are
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This script for the semantic patch language was designed in the way
-that more source code would be adjusted (or just reformatted)
-than I see as an essential transformation for the replacement
-of function calls in the shown case.
+---
+ drivers/pci/dwc/pcie-qcom.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Example:
-…
-(
-- x = kmalloc(E1,E2);
-+ x = kzalloc(E1,E2);
-|
-…
+diff -u -p a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
+@@ -171,7 +171,7 @@ struct qcom_pcie {
+ 	union qcom_pcie_resources res;
+ 	struct phy *phy;
+ 	struct gpio_desc *reset;
+-	struct qcom_pcie_ops *ops;
++	const struct qcom_pcie_ops *ops;
+ };
+ 
+ #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
+@@ -1234,7 +1234,7 @@ static int qcom_pcie_probe(struct platfo
+ 
+ 	pcie->pci = pci;
+ 
+-	pcie->ops = (struct qcom_pcie_ops *)of_device_get_match_data(dev);
++	pcie->ops = of_device_get_match_data(dev);
+ 
+ 	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
+ 	if (IS_ERR(pcie->reset))
 
-
-We are discussing consequences from the specification of a different
-change granularity for a while.
-I hope that another SmPL script variant could be integrated
-which will work with a higher precision then so that involved
-software developers can choose the preferred transformation approach
-also on their own.
-
-
-> and I don't know what the number 1 means.
-
-How do you think about to start with numbering for subsequent
-SmPL scripts?
-
-Regards,
-Markus
