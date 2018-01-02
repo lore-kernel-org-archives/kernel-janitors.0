@@ -1,112 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 02 Jan 2018 13:27:56 +0000
-Subject: [PATCH 00/12] account for const type of of_device_id.data
-Message-Id: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:49:38 +0000
+Subject: Re: [PATCH 1/2] pinctrl: single: Delete an error message for a failed memory allocation in pcs_probe
+Message-Id: <CACRpkdYEnJv2SsR_+Jt=Rp364VgRukjDJ=gBC55X5zOSvu92xw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6bc679d1-c1ee-52fe-9ece-b28095f653ec@users.sourceforge.net>
+ <bc8e7af9-6dcb-6f08-388a-31fc1b88cd00@users.sourceforge.net>
+In-Reply-To: <bc8e7af9-6dcb-6f08-388a-31fc1b88cd00@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Maintain const annotations when putting values into the data field of
-an of_device_id structure, and afterwards when extracting them from
-the data field of such a structure.
+On Mon, Dec 25, 2017 at 2:06 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-This was done using the following semantic patch:
-(http://coccinelle.lip6.fr/)
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 25 Dec 2017 11:27:55 +0100
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-// <smpl>
-@r@
-identifier i,j;
-const struct j *m;
-struct i *y;
-type T;
-expression x,e;
-position p;
-@@
+Patch applied.
 
-(
-y =@p (T)(of_device_get_match_data(...));
-|
-x = of_match_node(...);
-... when != x = e
-(
-m = e;
-|
-y =@p (T)(x->data);
-)
-)
-
-@s@
-identifier r.i,j;
-@@
-
-const struct i j = { ... };
-
-@t depends on s disable optional_qualifier@
-expression e;
-identifier r.i,x,j,n;
-struct j *m;
-struct i *e1;
-position any r.p;
-type T;
-@@
-
-(
-+const
-struct i *x;
-<+...
-(
-x =@p 
--   (T)(e)
-+   e
-|
-x =@p e
-)
-...+>
-|
-m->@e1 n =@p 
--   (T)(e)
-+   e
-|
-m->@e1 n =@p e
-)
-
-@disable optional_qualifier@
-identifier t.j,t.n,r.i;
-@@
-
-struct j {
-  ...
-+ const
-  struct i *n;
-  ...
-}
-
-@@
-identifier x,s.j;
-type T;
-@@
-
-struct of_device_id x[] = { ...,
-  { .data -           (T)
-            &j, }, ...};
-
-// </smpl>
-
----
-
- drivers/i2c/busses/i2c-rk3x.c               |   16 ++++++++--------
- drivers/iio/common/ssp_sensors/ssp.h        |    2 +-
- drivers/iio/common/ssp_sensors/ssp_dev.c    |    2 +-
- drivers/mtd/spi-nor/fsl-quadspi.c           |    8 ++++----
- drivers/pci/dwc/pcie-qcom.c                 |    4 ++--
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    4 ++--
- drivers/pinctrl/pinctrl-at91-pio4.c         |    4 ++--
- drivers/pinctrl/pinctrl-axp209.c            |    2 +-
- drivers/power/avs/rockchip-io-domain.c      |   24 ++++++++++++------------
- drivers/power/reset/at91-sama5d2_shdwc.c    |    4 ++--
- drivers/power/supply/axp20x_ac_power.c      |    8 ++++----
- drivers/spi/spi-fsl-dspi.c                  |    7 +++----
- drivers/spi/spi-sirf.c                      |    4 ++--
- 13 files changed, 44 insertions(+), 44 deletions(-)
+Yours,
+Linus Walleij
