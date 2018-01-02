@@ -1,23 +1,51 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 17 Jan 2018 06:18:25 +0000
-Subject: Re: [PATCH] scsi: storvsc: missing error code in storvsc_probe()
-Message-Id: <yq1a7xdt3da.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:27:58 +0000
+Subject: [PATCH 02/12] pinctrl: at91-pio4: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180116104022.GA3517@mwanda>
-In-Reply-To: <20180116104022.GA3517@mwanda> (Dan Carpenter's message of "Tue,
-        16 Jan 2018 13:40:22 +0300")
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, Cathy Avery <cavery@redhat.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, devel@linuxdriverproject.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+This driver creates a const structure that it stores in the data field
+of an of_device_id array.
 
-Dan,
+Adding const to the declaration of the location that receives the
+const value from the data field ensures that the compiler will
+continue to check that the value is not modified.  Furthermore, the
+const-discarding cast on the extraction from the data field is no
+longer needed.
 
-> We should set the error code if fc_remote_port_add() fails.
+Done using Coccinelle.
 
-Applied to 4.16/scsi-queue, thanks!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -910,7 +910,7 @@ static int atmel_pinctrl_probe(struct pl
+ 	int i, ret;
+ 	struct resource	*res;
+ 	struct atmel_pioctrl *atmel_pioctrl;
+-	struct atmel_pioctrl_data *atmel_pioctrl_data;
++	const struct atmel_pioctrl_data *atmel_pioctrl_data;
+ 
+ 	atmel_pioctrl = devm_kzalloc(dev, sizeof(*atmel_pioctrl), GFP_KERNEL);
+ 	if (!atmel_pioctrl)
+@@ -924,7 +924,7 @@ static int atmel_pinctrl_probe(struct pl
+ 		dev_err(dev, "unknown compatible string\n");
+ 		return -ENODEV;
+ 	}
+-	atmel_pioctrl_data = (struct atmel_pioctrl_data *)match->data;
++	atmel_pioctrl_data = match->data;
+ 	atmel_pioctrl->nbanks = atmel_pioctrl_data->nbanks;
+ 	atmel_pioctrl->npins = atmel_pioctrl->nbanks * ATMEL_PIO_NPINS_PER_BANK;
+ 
+
