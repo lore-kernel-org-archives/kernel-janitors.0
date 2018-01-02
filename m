@@ -1,37 +1,40 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 12 Jan 2018 21:41:27 +0000
-Subject: [PATCH 0/4] usb: gadget: fotg210-udc: Fixes and cleanup
-Message-Id: <cover.1515791144.git.christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jan 2018 15:43:04 +0000
+Subject: [PATCH] crypto: tcrypt - free xoutbuf instead of axbuf
+Message-Id: <20180102154304.14523-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org, bhumirks@gmail.com, leoyang.li@nxp.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Antoine Tenart <antoine.tenart@free-electrons.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This serie aims to fix 2 issues. (path 2 & 4)
+From: Colin Ian King <colin.king@canonical.com>
 
-The 2nd patch fixes a memory leak. It uses devm_ function a simplify the
-handling of the memory.
+There seems to be a cut-n-paste bug with the name of the buffer being
+free'd, xoutbuf should be used instead of axbuf.
 
-The 4th patch fixes a potential invalid pointer dereference.
+Detected by CoverityScan, CID#1463420 ("Copy-paste error")
 
-The 2 other ones, are just clean-ups to remove useless code and add other
-uses of devm_ function to simplify code.
+Fixes: 427988d981c4 ("crypto: tcrypt - add multibuf aead speed test")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ crypto/tcrypt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've left the request_irq/free_irq because I'm unsure of potential side
-effects if some other resources are freed while an IRQ can still be
-triggered. So I've preferred to leave it as-is.
-
-Christophe JAILLET (4):
-  usb: gadget: fotg210-udc: Remove a useless
-  usb: gadget: fotg210-udc: Fix a memory leak
-  usb: gadget: fotg210-udc: Simplify code
-  usb: gadget: fotg210-udc: Fix a potential invalid pointer dereference
-
- drivers/usb/gadget/udc/fotg210-udc.c | 41 ++++++++++++------------------------
- 1 file changed, 14 insertions(+), 27 deletions(-)
-
+diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
+index f61d2f40dd90..14213a096fd2 100644
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -298,7 +298,7 @@ static void test_mb_aead_speed(const char *algo, int enc, int secs,
+ 	for (i = 0; i < num_mb; ++i)
+ 		if (testmgr_alloc_buf(data[i].xoutbuf)) {
+ 			while (i--)
+-				testmgr_free_buf(data[i].axbuf);
++				testmgr_free_buf(data[i].xoutbuf);
+ 			goto out_free_axbuf;
+ 		}
+ 
 -- 
 2.14.1
 
