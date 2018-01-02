@@ -1,60 +1,109 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 26 Jan 2018 11:54:14 +0000
-Subject: [PATCH] staging: rtl8723bs: remove a couple of redundant initializations
-Message-Id: <20180126115414.16922-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:27:57 +0000
+Subject: [PATCH 01/12] PM / AVS: rockchip-io: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Larry Finger <Larry.Finger@lwfinger.net>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This driver creates a number of const structures that it stores in the
+data field of an of_device_id array.
 
-The initialization of PwrCfgCmd is redundant as the value is never read
-and it is being re-assigned to PwrSeqCmd[AryIdx] inside a loop, hence
-it can be removed.  Also, the initialization of ie_ptr is redundant as
-the value is never read and it is being re-assigned in either path of
-an if statement, hence it can be removed too.
+The data field of an of_device_id structure has type const void *, so
+there is no need for a const-discarding cast when putting const values
+into such a structure.
 
-Cleans up clang warnings:
-drivers/staging/rtl8723bs/hal/HalPwrSeqCmd.c:53:15: warning: Value
-stored to 'PwrCfgCmd' during its initialization is never read
-drivers/staging/rtl8723bs/os_dep/ioctl_linux.c:374:7: warning: Value
-stored to 'ie_ptr' during its initialization is never read
+Furthermore, adding const to the declaration of the location that
+receives a const value from such a field ensures that the compiler
+will continue to check that the value is not modified.  The
+const-discarding cast on the extraction from the data field is
+thus no longer needed.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Done using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/rtl8723bs/hal/HalPwrSeqCmd.c   | 2 +-
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/avs/rockchip-io-domain.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/HalPwrSeqCmd.c b/drivers/staging/rtl8723bs/hal/HalPwrSeqCmd.c
-index f4619768a99f..334d680b9b1c 100644
---- a/drivers/staging/rtl8723bs/hal/HalPwrSeqCmd.c
-+++ b/drivers/staging/rtl8723bs/hal/HalPwrSeqCmd.c
-@@ -50,7 +50,7 @@ u8 HalPwrSeqCmdParsing(
- 	WLAN_PWR_CFG PwrSeqCmd[]
- )
- {
--	WLAN_PWR_CFG PwrCfgCmd = {0};
-+	WLAN_PWR_CFG PwrCfgCmd;
- 	u8 bPollingBit = false;
- 	u32 AryIdx = 0;
- 	u8 value = 0;
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index da59496f6e04..cc18d0ad7d7b 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -371,7 +371,7 @@ static char *translate_scan(struct adapter *padapter,
- 		u8 *wpsie_ptr = NULL;
- 		uint wps_ielen = 0;
+diff -u -p a/drivers/power/avs/rockchip-io-domain.c b/drivers/power/avs/rockchip-io-domain.c
+--- a/drivers/power/avs/rockchip-io-domain.c
++++ b/drivers/power/avs/rockchip-io-domain.c
+@@ -76,7 +76,7 @@ struct rockchip_iodomain_supply {
+ struct rockchip_iodomain {
+ 	struct device *dev;
+ 	struct regmap *grf;
+-	struct rockchip_iodomain_soc_data *soc_data;
++	const struct rockchip_iodomain_soc_data *soc_data;
+ 	struct rockchip_iodomain_supply supplies[MAX_SUPPLIES];
+ };
  
--		u8 *ie_ptr = pnetwork->network.IEs + ie_offset;
-+		u8 *ie_ptr;
- 		total_ielen = pnetwork->network.IELength - ie_offset;
+@@ -382,43 +382,43 @@ static const struct rockchip_iodomain_so
+ static const struct of_device_id rockchip_iodomain_match[] = {
+ 	{
+ 		.compatible = "rockchip,rk3188-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3188
++		.data = &soc_data_rk3188
+ 	},
+ 	{
+ 		.compatible = "rockchip,rk3228-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3228
++		.data = &soc_data_rk3228
+ 	},
+ 	{
+ 		.compatible = "rockchip,rk3288-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3288
++		.data = &soc_data_rk3288
+ 	},
+ 	{
+ 		.compatible = "rockchip,rk3328-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3328
++		.data = &soc_data_rk3328
+ 	},
+ 	{
+ 		.compatible = "rockchip,rk3368-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3368
++		.data = &soc_data_rk3368
+ 	},
+ 	{
+ 		.compatible = "rockchip,rk3368-pmu-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3368_pmu
++		.data = &soc_data_rk3368_pmu
+ 	},
+ 	{
+ 		.compatible = "rockchip,rk3399-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3399
++		.data = &soc_data_rk3399
+ 	},
+ 	{
+ 		.compatible = "rockchip,rk3399-pmu-io-voltage-domain",
+-		.data = (void *)&soc_data_rk3399_pmu
++		.data = &soc_data_rk3399_pmu
+ 	},
+ 	{
+ 		.compatible = "rockchip,rv1108-io-voltage-domain",
+-		.data = (void *)&soc_data_rv1108
++		.data = &soc_data_rv1108
+ 	},
+ 	{
+ 		.compatible = "rockchip,rv1108-pmu-io-voltage-domain",
+-		.data = (void *)&soc_data_rv1108_pmu
++		.data = &soc_data_rv1108_pmu
+ 	},
+ 	{ /* sentinel */ },
+ };
+@@ -443,7 +443,7 @@ static int rockchip_iodomain_probe(struc
+ 	platform_set_drvdata(pdev, iod);
  
- 		if (pnetwork->network.Reserved[0] = 2) { /*  Probe Request */
--- 
-2.15.1
+ 	match = of_match_node(rockchip_iodomain_match, np);
+-	iod->soc_data = (struct rockchip_iodomain_soc_data *)match->data;
++	iod->soc_data = match->data;
+ 
+ 	parent = pdev->dev.parent;
+ 	if (parent && parent->of_node) {
 
