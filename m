@@ -1,51 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 15:46:28 +0000
-Subject: [PATCH] ocfs2: Combine two seq_printf() calls into one call in ocfs2_dlm_seq_show()
-Message-Id: <441d5e20-ea32-cfe8-bb1e-794d94c85be7@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:46:22 +0000
+Subject: Re: [PATCH 1/3] pinctrl: rockchip: Delete error messages for a failed memory allocation in two funct
+Message-Id: <CACRpkdan-McvJ+N++GwZyP0B8ove67CebG1XN72CdYhiexxW0g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+ <7a067193-e0c3-c2b9-b85a-e05c8ff8860e@users.sourceforge.net>
+In-Reply-To: <7a067193-e0c3-c2b9-b85a-e05c8ff8860e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com, Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@versity.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 16:36:51 +0100
+On Sat, Dec 23, 2017 at 10:38 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Some data were printed into a sequence by two separate function calls.
-Print almost the same data by a single function call instead.
-(Omit a tab character at the line end within a format string.)
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Dec 2017 22:02:47 +0100
+>
+> Omit extra messages for a memory allocation failure in these functions.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Patch applied.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/ocfs2/dlmglue.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index e4b9085a657a..909b4a339c80 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -3104,7 +3104,7 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, void *v)
- 		   "%llu\t"
- 		   "%u\t"
- 		   "%u\t"
--		   "%u\t",
-+		   "%u\n",
- 		   lock_num_prmode(lockres),
- 		   lock_num_exmode(lockres),
- 		   lock_num_prmode_failed(lockres),
-@@ -3114,9 +3114,6 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, void *v)
- 		   lock_max_prmode(lockres),
- 		   lock_max_exmode(lockres),
- 		   lock_refresh(lockres));
--
--	/* End the line */
--	seq_printf(m, "\n");
- 	return 0;
- }
- 
--- 
-2.15.1
-
+Yours,
+Linus Walleij
