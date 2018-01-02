@@ -1,30 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 10:06:42 +0000
-Subject: Re: [PATCH] pinctrl/nomadik/abx500: Use seq_putc() in abx500_gpio_dbg_show()
-Message-Id: <CACRpkdZcJaCQZ8e5GazOoOW_t8sforOSby7_svay0_AVsD1-0A@mail.gmail.com>
+From: Jan Kara <jack@suse.cz>
+Date: Tue, 02 Jan 2018 13:42:30 +0000
+Subject: Re: [PATCH 04/12] ext2: drop unneeded newline
+Message-Id: <20180102134230.GA30307@quack2.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <88354751-0a61-4893-35ad-9a7c7337ebce@users.sourceforge.net>
-In-Reply-To: <88354751-0a61-4893-35ad-9a7c7337ebce@users.sourceforge.net>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1514386305-7402-5-git-send-email-Julia.Lawall@lip6.fr>
+ <20171228043042.GB30269@thunk.org>
+In-Reply-To: <20171228043042.GB30269@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jan 13, 2018 at 11:09 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Wed 27-12-17 23:30:42, Ted Tso wrote:
+> On Wed, Dec 27, 2017 at 03:51:37PM +0100, Julia Lawall wrote:
+> > ext2_msg prints a newline at the end of the message string, so the message
+> > string does not need to include a newline explicitly.  Done using
+> > Coccinelle.
+> > 
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 13 Jan 2018 11:04:29 +0100
->
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Thanks. I've picked up the patch to my tree.
 
-Patch applied.
-
-Yours,
-Linus Walleij
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
