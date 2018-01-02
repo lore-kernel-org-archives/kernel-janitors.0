@@ -1,47 +1,41 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 10 Jan 2018 22:56:04 +0000
-Subject: Re: [PATCH][bpf-next] bpf: fix spelling mistake: "obusing" -> "abusing"
-Message-Id: <20180110225602.synp2j4icjfife4x@ast-mbp>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 14:28:29 +0000
+Subject: =?UTF-8?Q?Re=3A_Rename_the_SmPL_script_=E2=80=9Ckzalloc-=E2=80=A6=2Ecocci=E2=80=9D=3F?=
+Message-Id: <alpine.DEB.2.20.1801021528160.24055@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-1513314391-1514903310=:24055"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180110092054.23345-1-colin.king@canonical.com>
- <753b49bf-57e3-a559-6275-880cca2d426d@iogearbox.net>
-In-Reply-To: <753b49bf-57e3-a559-6275-880cca2d426d@iogearbox.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
+ <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
+In-Reply-To: <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
+To: cocci@systeme.lip6.fr
 
-On Wed, Jan 10, 2018 at 11:39:14AM +0100, Daniel Borkmann wrote:
-> On 01/10/2018 10:20 AM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Trivial fix to spelling mistake in error message text.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  kernel/bpf/verifier.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > index 97bbef3eecdf..e388f30c4168 100644
-> > --- a/kernel/bpf/verifier.c
-> > +++ b/kernel/bpf/verifier.c
-> > @@ -5336,7 +5336,7 @@ static int fixup_bpf_calls(struct bpf_verifier_env *env)
-> >  			 */
-> >  			map_ptr = env->insn_aux_data[i + delta].map_ptr;
-> >  			if (map_ptr = BPF_MAP_PTR_POISON) {
-> > -				verbose(env, "tail_call obusing map_ptr\n");
-> > +				verbose(env, "tail_call abusing map_ptr\n");
-> >  				return -EINVAL;
-> >  			}
-> >  			if (!map_ptr->unpriv_array)
-> > 
-> 
-> This is not in bpf-next tree yet, but only in bpf tree. I will let this sit
-> for a bit in patchwork until bpf-next has all the stuff from bpf merged back,
-> and then apply it into bpf-next.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-since the typo was just introduced in bpf tree it's better to fix it right away.
-Applied, Thanks Colin.
+--8323329-1513314391-1514903310=:24055
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+
+
+On Tue, 2 Jan 2018, SF Markus Elfring wrote:
+
+> Hello,
+>
+> A script for the semantic patch language was extended in significant ways.
+>
+> [PATCH v2] Coccinelle: kzalloc-simple: Add “all” zero allocating functions
+> https://lkml.org/lkml/2017/12/26/182
+> https://patchwork.kernel.org/patch/10133277/
+> https://lkml.kernel.org/r/<1514324410-14561-1-git-send-email-himanshujha199640@gmail.com>
+> https://systeme.lip6.fr/pipermail/cocci/2017-December/004783.html
+>
+> Now I find that it became more advanced than the previous version.
+> How do you think about to update also the corresponding file name
+> (instead of keeping the word “simple” there)?
+
+Why not send a patch for it yourself?
+
+julia
+--8323329-1513314391-1514903310=:24055--
