@@ -1,30 +1,112 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 Jan 2018 18:27:21 +0000
-Subject: [PATCH 0/5] misc-PTI: Adjustments for some function implementations
-Message-Id: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:27:56 +0000
+Subject: [PATCH 00/12] account for const type of of_device_id.data
+Message-Id: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 9 Jan 2018 19:06:36 +0100
+Maintain const annotations when putting values into the data field of
+an of_device_id structure, and afterwards when extracting them from
+the data field of such a structure.
 
-A few update suggestions were taken into account
-from static source code analysis.
+This was done using the following semantic patch:
+(http://coccinelle.lip6.fr/)
 
-Markus Elfring (5):
-  Delete an error message for a failed memory allocation in two functions
-  Fix a typo in five comment lines
-  Improve a size determination in two functions
-  Adjust 11 checks for null pointers
-  Delete an unnecessary return statement in two functions
+// <smpl>
+@r@
+identifier i,j;
+const struct j *m;
+struct i *y;
+type T;
+expression x,e;
+position p;
+@@
 
- drivers/misc/pti.c | 45 +++++++++++++++++++--------------------------
- 1 file changed, 19 insertions(+), 26 deletions(-)
+(
+y =@p (T)(of_device_get_match_data(...));
+|
+x = of_match_node(...);
+... when != x = e
+(
+m = e;
+|
+y =@p (T)(x->data);
+)
+)
 
--- 
-2.15.1
+@s@
+identifier r.i,j;
+@@
 
+const struct i j = { ... };
+
+@t depends on s disable optional_qualifier@
+expression e;
+identifier r.i,x,j,n;
+struct j *m;
+struct i *e1;
+position any r.p;
+type T;
+@@
+
+(
++const
+struct i *x;
+<+...
+(
+x =@p 
+-   (T)(e)
++   e
+|
+x =@p e
+)
+...+>
+|
+m->@e1 n =@p 
+-   (T)(e)
++   e
+|
+m->@e1 n =@p e
+)
+
+@disable optional_qualifier@
+identifier t.j,t.n,r.i;
+@@
+
+struct j {
+  ...
++ const
+  struct i *n;
+  ...
+}
+
+@@
+identifier x,s.j;
+type T;
+@@
+
+struct of_device_id x[] = { ...,
+  { .data -           (T)
+            &j, }, ...};
+
+// </smpl>
+
+---
+
+ drivers/i2c/busses/i2c-rk3x.c               |   16 ++++++++--------
+ drivers/iio/common/ssp_sensors/ssp.h        |    2 +-
+ drivers/iio/common/ssp_sensors/ssp_dev.c    |    2 +-
+ drivers/mtd/spi-nor/fsl-quadspi.c           |    8 ++++----
+ drivers/pci/dwc/pcie-qcom.c                 |    4 ++--
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    4 ++--
+ drivers/pinctrl/pinctrl-at91-pio4.c         |    4 ++--
+ drivers/pinctrl/pinctrl-axp209.c            |    2 +-
+ drivers/power/avs/rockchip-io-domain.c      |   24 ++++++++++++------------
+ drivers/power/reset/at91-sama5d2_shdwc.c    |    4 ++--
+ drivers/power/supply/axp20x_ac_power.c      |    8 ++++----
+ drivers/spi/spi-fsl-dspi.c                  |    7 +++----
+ drivers/spi/spi-sirf.c                      |    4 ++--
+ 13 files changed, 44 insertions(+), 44 deletions(-)
