@@ -1,28 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 Jan 2018 20:27:36 +0000
-Subject: [PATCH 0/3] mtd/nand/ams-delta: Adjustments for three function implementations
-Message-Id: <8f678424-3ce1-3a4c-1b0d-f3ac9a226f00@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:45:10 +0000
+Subject: Re: [PATCH] pinctrl: palmas: Delete an error message for a failed memory allocation in palmas_pinctr
+Message-Id: <CACRpkdZ1pns0OLatudq3vMP-Xe+HB34_1ZM+qc4y+-QjK_0E3A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <acda9837-523a-2f49-f7ba-b5e60eb8371e@users.sourceforge.net>
+In-Reply-To: <acda9837-523a-2f49-f7ba-b5e60eb8371e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 Jan 2018 21:21:12 +0100
+On Sat, Dec 23, 2017 at 9:30 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Three update suggestions were taken into account
-from static source code analysis.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Dec 2017 21:16:42 +0100
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in ams_delta_init()
-  Improve a size determination in ams_delta_init()
-  Add some spaces for better code readability
+Patch applied.
 
- drivers/mtd/nand/ams-delta.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
--- 
-2.15.1
-
+Yours,
+Linus Walleij
