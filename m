@@ -1,90 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 08 Jan 2018 16:23:19 +0000
-Subject: Applied "ASoC: Intel: sst: Fix some style" to the asoc tree
-Message-Id: <E1eYaCl-0002Fz-89@debutante>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:28:06 +0000
+Subject: [PATCH 10/12] spi: spi-fsl-dspi: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106201855.6131-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180106201855.6131-1-christophe.jaillet@wanadoo.fr>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Mark Brown <broonie@kernel.org>@kernel.org, perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+This driver creates a number of const structures that it stores in the
+data field of an of_device_id array.
 
-   ASoC: Intel: sst: Fix some style
+The data field of an of_device_id structure has type const void *, so
+there is no need for a const-discarding cast when putting const values
+into such a structure.
 
-has been applied to the asoc tree at
+Done using Coccinelle.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 25f3fd043ec1f60f3955f9d7277d97e2f9c1612c Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 6 Jan 2018 21:18:55 +0100
-Subject: [PATCH] ASoC: Intel: sst: Fix some style
-
-This patch fixes 3 small issues:
- - missing 2nd '*' at the beginning of a doxygen comment
- - extra space after a '\n' in a dev_dbg message
- - extra tab before a 'return" statement
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/atom/sst/sst_stream.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi-fsl-dspi.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
-index 20f5066fefb9..7ee6aeb7e0af 100644
---- a/sound/soc/intel/atom/sst/sst_stream.c
-+++ b/sound/soc/intel/atom/sst/sst_stream.c
-@@ -223,7 +223,7 @@ int sst_send_byte_stream_mrfld(struct intel_sst_drv *sst_drv_ctx,
- 	return ret;
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 02d3ed7..0630962 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -903,10 +903,9 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
  }
  
--/*
-+/**
-  * sst_pause_stream - Send msg for a pausing stream
-  * @str_id:	 stream ID
-  *
-@@ -261,7 +261,7 @@ int sst_pause_stream(struct intel_sst_drv *sst_drv_ctx, int str_id)
- 		}
- 	} else {
- 		retval = -EBADRQC;
--		dev_dbg(sst_drv_ctx->dev, "SST DBG:BADRQC for stream\n ");
-+		dev_dbg(sst_drv_ctx->dev, "SST DBG:BADRQC for stream\n");
- 	}
- 
- 	return retval;
-@@ -284,7 +284,7 @@ int sst_resume_stream(struct intel_sst_drv *sst_drv_ctx, int str_id)
- 	if (!str_info)
- 		return -EINVAL;
- 	if (str_info->status = STREAM_RUNNING)
--			return 0;
-+		return 0;
- 	if (str_info->status = STREAM_PAUSED) {
- 		retval = sst_prepare_and_post_msg(sst_drv_ctx, str_info->task_id,
- 				IPC_CMD, IPC_IA_RESUME_STREAM_MRFLD,
--- 
-2.15.1
-
+ static const struct of_device_id fsl_dspi_dt_ids[] = {
+-	{ .compatible = "fsl,vf610-dspi", .data = (void *)&vf610_data, },
+-	{ .compatible = "fsl,ls1021a-v1.0-dspi",
+-		.data = (void *)&ls1021a_v1_data, },
+-	{ .compatible = "fsl,ls2085a-dspi", .data = (void *)&ls2085a_data, },
++	{ .compatible = "fsl,vf610-dspi", .data = &vf610_data, },
++	{ .compatible = "fsl,ls1021a-v1.0-dspi", .data = &ls1021a_v1_data, },
++	{ .compatible = "fsl,ls2085a-dspi", .data = &ls2085a_data, },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, fsl_dspi_dt_ids);
