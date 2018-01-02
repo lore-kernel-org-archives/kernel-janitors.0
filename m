@@ -1,46 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Jan 2018 16:19:11 +0000
-Subject: [PATCH] clocksource/drivers/fsl_ftm_timer: fix unsigned < 0 comparison check
-Message-Id: <20180130161911.1613-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:52:20 +0000
+Subject: Re: [PATCH] pinctrl: tz1090-pdc: Delete an error message for a failed memory allocation in two funct
+Message-Id: <CACRpkdbVK8R-f9ot5ZKxx+zOHvx=GbfLcjgYKUwjbicLVLagvw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f52b8393-9e1f-bd65-1374-4e9db1a0e4c0@users.sourceforge.net>
+In-Reply-To: <f52b8393-9e1f-bd65-1374-4e9db1a0e4c0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Landley <rob@landley.net>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Dec 25, 2017 at 6:34 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-The return from the call __ftm_clk_init can be negative if there
-is an error, and this is being checked, however, the check is
-always false because freq is unsigned.  Fix this by removing the
-unsigned type qualifier, making freq just a long.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 25 Dec 2017 18:28:02 +0100
+>
+> Omit an extra message for a memory allocation failure in these functions.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Detected using Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
+Patch applied.
 
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clocksource/fsl_ftm_timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clocksource/fsl_ftm_timer.c b/drivers/clocksource/fsl_ftm_timer.c
-index 3ee7e6fea621..846d18daf893 100644
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct device_node *np, char *cnt_name,
- 
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
- 
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
--- 
-2.15.1
-
+Yours,
+Linus Walleij
