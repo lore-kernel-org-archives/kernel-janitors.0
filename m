@@ -1,28 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 12:52:06 +0000
-Subject: [PATCH 0/2] Input: matrix_keypad: Adjustments for two function implementations
-Message-Id: <106bffd0-28ed-7c33-1f32-ae84b40f52c7@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:53:06 +0000
+Subject: Re: [PATCH] pinctrl: utils: Delete an error message for a failed memory allocation in pinctrl_utils_
+Message-Id: <CACRpkdaoo7vfEybH_2DZup6XyCqaTg4fapOk+=i=NPgN0jfP9Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4a1181a6-e37c-3f2b-782c-6dd4279ce39f@users.sourceforge.net>
+In-Reply-To: <4a1181a6-e37c-3f2b-782c-6dd4279ce39f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, David Rivshin <DRivshin@allworx.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 13:48:42 +0100
+On Mon, Dec 25, 2017 at 8:15 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Two update suggestions were taken into account
-from static source code analysis.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 25 Dec 2017 20:04:05 +0100
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Markus Elfring (2):
-  Delete two error messages for a failed memory allocation
-    in matrix_keypad_parse_dt()
-  Improve a size determination in matrix_keypad_probe()
+Patch applied.
 
- drivers/input/keyboard/matrix_keypad.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
--- 
-2.16.1
-
+Yours,
+Linus Walleij
