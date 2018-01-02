@@ -1,40 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 14:03:55 +0000
-Subject: [PATCH] mtd/maps/vmu-flash: Delete an error message for a failed memory allocation in maple_vmu_read
-Message-Id: <efc677c8-35c6-dd97-2091-8daa91576602@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:27:59 +0000
+Subject: [PATCH 03/12] spi: sirf: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Jan 2018 14:54:08 +0100
+This driver creates various const structures that it stores in the
+data field of an of_device_id array.
 
-Omit an extra message for a memory allocation failure in this function.
+Adding const to the declaration of the location that receives the
+const value from the data field ensures that the compiler will
+continue to check that the value is not modified.  Furthermore, the
+const-discarding cast on the extraction from the data field is no
+longer needed.
 
-This issue was detected by using the Coccinelle software.
+Done using Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/mtd/maps/vmu-flash.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/spi/spi-sirf.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/maps/vmu-flash.c b/drivers/mtd/maps/vmu-flash.c
-index 6b223cfe92b7..a76a5ff402e1 100644
---- a/drivers/mtd/maps/vmu-flash.c
-+++ b/drivers/mtd/maps/vmu-flash.c
-@@ -130,9 +130,6 @@ static int maple_vmu_read_block(unsigned int num, unsigned char *buf,
- 	if (!pcache->buffer) {
- 		pcache->buffer = kmalloc(card->blocklen, GFP_KERNEL);
- 		if (!pcache->buffer) {
--			dev_err(&mdev->dev, "VMU at (%d, %d) - read fails due"
--				" to lack of memory\n", mdev->port,
--				mdev->unit);
- 			error = -ENOMEM;
- 			goto outB;
- 		}
--- 
-2.15.1
+diff -u -p a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
+--- a/drivers/spi/spi-sirf.c
++++ b/drivers/spi/spi-sirf.c
+@@ -1072,7 +1072,7 @@ static int spi_sirfsoc_probe(struct plat
+ 	struct sirfsoc_spi *sspi;
+ 	struct spi_master *master;
+ 	struct resource *mem_res;
+-	struct sirf_spi_comp_data *spi_comp_data;
++	const struct sirf_spi_comp_data *spi_comp_data;
+ 	int irq;
+ 	int ret;
+ 	const struct of_device_id *match;
+@@ -1092,7 +1092,7 @@ static int spi_sirfsoc_probe(struct plat
+ 	platform_set_drvdata(pdev, master);
+ 	sspi = spi_master_get_devdata(master);
+ 	sspi->fifo_full_offset = ilog2(sspi->fifo_size);
+-	spi_comp_data = (struct sirf_spi_comp_data *)match->data;
++	spi_comp_data = match->data;
+ 	sspi->regs = spi_comp_data->regs;
+ 	sspi->type = spi_comp_data->type;
+ 	sspi->fifo_level_chk_mask = (sspi->fifo_size / 4) - 1;
 
