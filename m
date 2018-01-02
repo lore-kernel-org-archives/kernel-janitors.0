@@ -1,29 +1,49 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 16 Jan 2018 14:32:49 +0000
-Subject: Re: [next] ath10k: fix spelling mistake: "addrress" -> "address"
-Message-Id: <20180116143249.BD04D60854@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jan 2018 16:38:48 +0000
+Subject: [PATCH][ocfs2-next] ocfs2: don't use a bool for error return from call to ocfs2_get_clusters
+Message-Id: <20180102163848.15408-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180112091450.8285-1-colin.king@canonical.com>
-In-Reply-To: <20180112091450.8285-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Trivial fix to spelling mistake in warning message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Currently a bool is being used to get and check for a -ve error
+return from the call to ocfs2_get_clusters but the check for ret < 0 is
+never true for a bool.  Fix this by using an int type for an error return
+instead.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Detected by CoverityScan, CID#1463416 ("Operands don't affect result")
 
-cdd4743e9ba3 ath10k: fix spelling mistake: "addrress" -> "address"
+Fixes: ea6b711ecfb6 ("ocfs2-fall-back-to-buffer-io-when-append-dio-is-disabled-with-file-hole-existing-fix")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/aops.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 87562112cb5e..a3be523e001c 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -2432,10 +2432,12 @@ static bool ocfs2_range_has_holes(struct inode *inode, loff_t pos, size_t count)
+ 	clusters = ocfs2_clusters_for_bytes(sb, pos + count) - cpos;
+ 
+ 	while (clusters) {
+-		ret = ocfs2_get_clusters(inode, cpos, &phys_cpos, &extent_len,
++		int err;
++
++		err = ocfs2_get_clusters(inode, cpos, &phys_cpos, &extent_len,
+ 					 &extent_flags);
+-		if (ret < 0) {
+-			mlog_errno(ret);
++		if (err < 0) {
++			mlog_errno(err);
+ 			goto out;
+ 		}
+ 
 -- 
-https://patchwork.kernel.org/patch/10160107/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
 
