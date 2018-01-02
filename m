@@ -1,30 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 Jan 2018 11:55:17 +0000
-Subject: [PATCH v2 0/2] video/fbdev/stifb: Adjustments for stifb_init_fb()
-Message-Id: <889131fe-199c-3bef-0781-00761b807426@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:54:16 +0000
+Subject: Re: [PATCH] pinctrl: xway: Delete two error messages for a failed memory allocation in pinmux_xway_p
+Message-Id: <CACRpkdZqJYQBZORX2VPEhsYRmsOBYWq6YWftrOLmHKkFviRa5g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7dcd32b6-9691-14a1-29cf-3a746ef5adfc@users.sourceforge.net>
- <CGME20171124213055epcas4p45c641222185056871b97f4e7bc235d2e@epcas4p4.samsung.com>
- <25624997.nONnEdNj0s@daneel.sf-tec.de> <1680261.Msdj7gi9fB@amdc3058>
-In-Reply-To: <1680261.Msdj7gi9fB@amdc3058>
+References: <0a27abb0-c222-765b-3a96-7e02163a0858@users.sourceforge.net>
+In-Reply-To: <0a27abb0-c222-765b-3a96-7e02163a0858@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Helge Deller <deller@gmx.de>, "James E. J. Bottomley" <jejb@parisc-linux.org>, Rolf Eike Beer <eike-kernel@sf-tec.de>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, John Crispin <john@phrozen.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 Jan 2018 12:45:54 +0100
+On Mon, Dec 25, 2017 at 10:02 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Two update suggestions were taken into account.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 25 Dec 2017 21:51:26 +0100
+>
+> Omit extra messages for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Markus Elfring (2):
-  Return -ENOMEM after a failed kzalloc()
-  Delete an error message for a failed memory allocation
+Patch applied.
 
- drivers/video/fbdev/stifb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
--- 
-2.15.1
-
+Yours,
+Linus Walleij
