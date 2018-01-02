@@ -1,37 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 21:41:08 +0000
-Subject: Re: bonding: Completion of error handling around bond_update_slave_arr()
-Message-Id: <892dbd56-ec95-8244-540a-cbd53db62ec7@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:28:05 +0000
+Subject: [PATCH 09/12] mtd: fsl-quadspi: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6cdc726b-82bc-85b6-393b-0e2002c19341@users.sourceforge.net>
- <CAF2d9jhjL7pbcsEzwXRxLVzyMid5s2OY96AwSyRTuuqho-w_EQ@mail.gmail.com>
- <f93750d3-700f-897d-c4ef-2cf5b5a3374e@users.sourceforge.net>
- <CAF2d9jh1EHUx3BzWghBWRAZt4acO6W-_eUXtD7dk2YBJZfuwsg@mail.gmail.com>
- <4af2b714-245a-0f0d-5982-818d5f81cade@users.sourceforge.net>
- <CAF2d9jjyfWT8Nm1V3fCKSrEE4Xs9gShs7nvj+dAYqXg42kUhvg@mail.gmail.com>
-In-Reply-To: <CAF2d9jjyfWT8Nm1V3fCKSrEE4Xs9gShs7nvj+dAYqXg42kUhvg@mail.gmail.com>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS1?= =?UTF-8?B?4KS+4KSwKQ==?= <maheshb@google.com>, linux-netdev <netdev@vger.kernel.org>
-Cc: Andy Gospodarek <andy@greyhouse.net>, Jay Vosburgh <j.vosburgh@gmail.com>, Veaceslav Falico <vfalico@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Han Xu <han.xu@nxp.com>
+Cc: kernel-janitors@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
->>> If you see 8 out of 9 call sites in this file ignore the return value.
->>
->> How do you think about to fix error detection and corresponding
->> exception handling then?
->>
-> If I understand your question correctly - not having memory is not a
-> correctable error
+This driver creates a number of const structures that it stores in the
+data field of an of_device_id array.
 
-I am unsure if it would be feasible to retry memory allocations for
-this software module under other circumstances.
+The data field of an of_device_id structure has type const void *, so
+there is no need for a const-discarding cast when putting const values
+into such a structure.
 
+Done using Coccinelle.
 
-> and hence there are consequences.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Could one consequence be to let the error code “-ENOMEM” move through
-the function call hierarchy?
+---
+ drivers/mtd/spi-nor/fsl-quadspi.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Regards,
-Markus
+diff -u -p a/drivers/mtd/spi-nor/fsl-quadspi.c b/drivers/mtd/spi-nor/fsl-quadspi.c
+--- a/drivers/mtd/spi-nor/fsl-quadspi.c
++++ b/drivers/mtd/spi-nor/fsl-quadspi.c
+@@ -801,10 +801,10 @@ static int fsl_qspi_nor_setup_last(struc
+ }
+ 
+ static const struct of_device_id fsl_qspi_dt_ids[] = {
+-	{ .compatible = "fsl,vf610-qspi", .data = (void *)&vybrid_data, },
+-	{ .compatible = "fsl,imx6sx-qspi", .data = (void *)&imx6sx_data, },
+-	{ .compatible = "fsl,imx7d-qspi", .data = (void *)&imx7d_data, },
+-	{ .compatible = "fsl,imx6ul-qspi", .data = (void *)&imx6ul_data, },
++	{ .compatible = "fsl,vf610-qspi", .data = &vybrid_data, },
++	{ .compatible = "fsl,imx6sx-qspi", .data = &imx6sx_data, },
++	{ .compatible = "fsl,imx7d-qspi", .data = &imx7d_data, },
++	{ .compatible = "fsl,imx6ul-qspi", .data = &imx6ul_data, },
+ 	{ .compatible = "fsl,ls1021a-qspi", .data = (void *)&ls1021a_data, },
+ 	{ /* sentinel */ }
+ };
+
