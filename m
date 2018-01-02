@@ -1,55 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 Jan 2018 17:09:36 +0000
-Subject: [PATCH] misc/lattice-ecp3-config: Delete an error message for a failed memory allocation in two func
-Message-Id: <293c6ae3-7b1e-690c-7ac0-352dee270e32@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:47:20 +0000
+Subject: Re: [PATCH 2/3] pinctrl: rockchip: Improve a size determination in rockchip_pinctrl_probe()
+Message-Id: <CACRpkdYEe_OTTeiUqzt2gJB+-_j7=3Z15y_e+fzB3ZM9BspKXA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+ <e0bceb4a-bd46-5032-2ac9-d51aa46440a5@users.sourceforge.net>
+In-Reply-To: <e0bceb4a-bd46-5032-2ac9-d51aa46440a5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 Jan 2018 18:01:39 +0100
+On Sat, Dec 23, 2017 at 10:40 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Omit an extra message for a memory allocation failure in these functions.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Dec 2017 22:07:30 +0100
+>
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Patch applied.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/misc/lattice-ecp3-config.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/misc/lattice-ecp3-config.c b/drivers/misc/lattice-ecp3-config.c
-index 626fdcaf2510..8aa60907ced4 100644
---- a/drivers/misc/lattice-ecp3-config.c
-+++ b/drivers/misc/lattice-ecp3-config.c
-@@ -119,10 +119,8 @@ static void firmware_load(const struct firmware *fw, void *context)
- 	dev_dbg(&spi->dev, "FPGA Status=%08x\n", status);
- 
- 	buffer = kzalloc(fw->size + 8, GFP_KERNEL);
--	if (!buffer) {
--		dev_err(&spi->dev, "Error: Can't allocate memory!\n");
-+	if (!buffer)
- 		return;
--	}
- 
- 	/*
- 	 * Insert WRITE_INC command into stream (one SPI frame)
-@@ -196,10 +194,9 @@ static int lattice_ecp3_probe(struct spi_device *spi)
- 	int err;
- 
- 	data = devm_kzalloc(&spi->dev, sizeof(*data), GFP_KERNEL);
--	if (!data) {
--		dev_err(&spi->dev, "Memory allocation for fpga_data failed\n");
-+	if (!data)
- 		return -ENOMEM;
--	}
-+
- 	spi_set_drvdata(spi, data);
- 
- 	init_completion(&data->fw_loaded);
--- 
-2.15.1
-
+Yours,
+Linus Walleij
