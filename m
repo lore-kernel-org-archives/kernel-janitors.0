@@ -1,57 +1,27 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Jan 2018 18:03:53 +0000
-Subject: [PATCH 4/5] powerpc/4xx: Improve a size determination in two functions
-Message-Id: <8ac91d54-bd2b-42cb-f890-e3007489b758@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 02 Jan 2018 08:48:27 +0000
+Subject: Re: [PATCH 3/3] pinctrl: rockchip: Fix a typo in four comment lines
+Message-Id: <CACRpkdYU0PX+yjCeEzxzMbf_rtdM1T8p6tWqPqj=F7ZfAETGhQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
-In-Reply-To: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
+References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
+ <989b7476-5e5e-d1ed-0d95-9dbdcec2382c@users.sourceforge.net>
+In-Reply-To: <989b7476-5e5e-d1ed-0d95-9dbdcec2382c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Jan 2018 18:32:33 +0100
+On Sat, Dec 23, 2017 at 10:42 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Dec 2017 22:22:54 +0100
+>
+> Adjust words in these descriptions.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Patch applied.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/powerpc/platforms/4xx/msi.c | 2 +-
- arch/powerpc/platforms/4xx/ocm.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/platforms/4xx/msi.c b/arch/powerpc/platforms/4xx/msi.c
-index d16b81303cb0..f693cab07752 100644
---- a/arch/powerpc/platforms/4xx/msi.c
-+++ b/arch/powerpc/platforms/4xx/msi.c
-@@ -223,7 +223,7 @@ static int ppc4xx_msi_probe(struct platform_device *dev)
- 
- 	dev_dbg(&dev->dev, "PCIE-MSI: Setting up MSI support...\n");
- 
--	msi = kzalloc(sizeof(struct ppc4xx_msi), GFP_KERNEL);
-+	msi = kzalloc(sizeof(*msi), GFP_KERNEL);
- 	if (!msi)
- 		return -ENOMEM;
- 
-diff --git a/arch/powerpc/platforms/4xx/ocm.c b/arch/powerpc/platforms/4xx/ocm.c
-index 5a750d0ad446..11418f090bf4 100644
---- a/arch/powerpc/platforms/4xx/ocm.c
-+++ b/arch/powerpc/platforms/4xx/ocm.c
-@@ -335,7 +335,7 @@ void *ppc4xx_ocm_alloc(phys_addr_t *phys, int size, int align,
- 		if (IS_ERR_VALUE(offset))
- 			continue;
- 
--		ocm_blk = kzalloc(sizeof(struct ocm_block), GFP_KERNEL);
-+		ocm_blk = kzalloc(sizeof(*ocm_blk), GFP_KERNEL);
- 		if (!ocm_blk) {
- 			rh_free(ocm_reg->rh, offset);
- 			break;
--- 
-2.15.1
-
+Yours,
+Linus Walleij
