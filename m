@@ -1,41 +1,38 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 03 Jan 2018 12:02:40 +0000
-Subject: Re: [PATCH] Coccinelle: Rename the script for a transformation of memory allocations
-Message-Id: <alpine.DEB.2.20.1801031301470.3229@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 02 Jan 2018 13:28:04 +0000
+Subject: [PATCH 08/12] pinctrl: axp209: account for const type of of_device_id.data
+Message-Id: <1514899688-27844-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
- <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
- <alpine.DEB.2.20.1801021528160.24055@hadrien>
- <6423882b-20df-61fd-d7c6-ac1bb4ec891d@users.sourceforge.net>
-In-Reply-To: <6423882b-20df-61fd-d7c6-ac1bb4ec891d@users.sourceforge.net>
+References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+The return value of of_device_get_match_data has type const void *.
+The desc field of the pctl structure also has a const type, so there
+is no need for the const-discarding cast between them.
 
+Done using Coccinelle.
 
-On Wed, 3 Jan 2018, SF Markus Elfring wrote:
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 3 Jan 2018 12:43:45 +0100
->
-> A script for the semantic patch language was extended
-> in a significant way.
-> An other file name is more appropriate then to indicate
-> the provided functionality. Thus rename this file.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  ...kzalloc-simple.cocci => use zalloc functions with extra changes.cocci} | 0
->  1 file changed, 0 insertions(+), 0 deletions(-)
->  rename scripts/coccinelle/api/alloc/{kzalloc-simple.cocci => use zalloc functions with extra changes.cocci} (100%)
->
-> diff --git a/scripts/coccinelle/api/alloc/kzalloc-simple.cocci b/scripts/coccinelle/api/alloc/use zalloc functions with extra changes.cocci
-> similarity index 100%
-> rename from scripts/coccinelle/api/alloc/kzalloc-simple.cocci
-> rename to scripts/coccinelle/api/alloc/use zalloc functions with extra changes.cocci
+---
+ drivers/pinctrl/pinctrl-axp209.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-NACK. The name is too long and should not contain spaces.
+diff -u -p a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -414,7 +414,7 @@ static int axp20x_pctl_probe(struct plat
+ 	pctl->chip.direction_input	= axp20x_gpio_input;
+ 	pctl->chip.direction_output	= axp20x_gpio_output;
+ 
+-	pctl->desc = (struct axp20x_pctrl_desc *)of_device_get_match_data(dev);
++	pctl->desc = of_device_get_match_data(dev);
+ 
+ 	pctl->chip.ngpio		= pctl->desc->npins;
+ 
 
-julia
