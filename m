@@ -1,50 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jan 2018 20:43:27 +0000
-Subject: [PATCH 2/3] mfd/abx500-core: Improve two size determinations in abx500_register_ops()
-Message-Id: <777a907c-49b6-287f-3ce6-a31ae1b84abd@users.sourceforge.net>
+Date: Wed, 03 Jan 2018 20:13:19 +0000
+Subject: [PATCH 2/2] wireless: libertas_tf: Improve a size determination in two functions
+Message-Id: <2887651c-f571-120e-1a63-1768db668ee4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d1862d7a-412e-9aaf-8200-bb2070ee402a@users.sourceforge.net>
-In-Reply-To: <d1862d7a-412e-9aaf-8200-bb2070ee402a@users.sourceforge.net>
+References: <e8b93aae-8dea-7089-43fe-9222054f0749@users.sourceforge.net>
+In-Reply-To: <e8b93aae-8dea-7089-43fe-9222054f0749@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jan 2018 21:19:10 +0100
+Date: Wed, 3 Jan 2018 21:02:17 +0100
 
-Replace the specification of two data structures by pointer dereferences
+Replace the specification of data structures by variable references
 as the parameter for the operator "sizeof" to make the corresponding size
 determination a bit safer according to the Linux coding style convention.
 
-This issue was detected by using the Coccinelle software.
-
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mfd/abx500-core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/wireless/marvell/libertas_tf/if_usb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
-index c8c9d41abcaa..17176e91cbd0 100644
---- a/drivers/mfd/abx500-core.c
-+++ b/drivers/mfd/abx500-core.c
-@@ -37,14 +37,12 @@ int abx500_register_ops(struct device *dev, struct abx500_ops *ops)
- {
- 	struct abx500_device_entry *dev_entry;
+diff --git a/drivers/net/wireless/marvell/libertas_tf/if_usb.c b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
+index 9eebc84cd15a..98e81a6f2338 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/if_usb.c
++++ b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
+@@ -152,7 +152,7 @@ static int if_usb_probe(struct usb_interface *intf,
+ 	lbtf_deb_enter(LBTF_DEB_USB);
+ 	udev = interface_to_usbdev(intf);
  
--	dev_entry = devm_kzalloc(dev,
--				 sizeof(struct abx500_device_entry),
--				 GFP_KERNEL);
-+	dev_entry = devm_kzalloc(dev, sizeof(*dev_entry), GFP_KERNEL);
- 	if (!dev_entry)
- 		return -ENOMEM;
+-	cardp = kzalloc(sizeof(struct if_usb_card), GFP_KERNEL);
++	cardp = kzalloc(sizeof(*cardp), GFP_KERNEL);
+ 	if (!cardp)
+ 		goto error;
  
- 	dev_entry->dev = dev;
--	memcpy(&dev_entry->ops, ops, sizeof(struct abx500_ops));
-+	memcpy(&dev_entry->ops, ops, sizeof(*ops));
+@@ -536,8 +536,7 @@ static void if_usb_receive_fwload(struct urb *urb)
+ 		return;
+ 	}
  
- 	list_add_tail(&dev_entry->list, &abx500_list);
- 	return 0;
+-	syncfwheader = kmemdup(skb->data, sizeof(struct fwsyncheader),
+-			       GFP_ATOMIC);
++	syncfwheader = kmemdup(skb->data, sizeof(*syncfwheader), GFP_ATOMIC);
+ 	if (!syncfwheader) {
+ 		lbtf_deb_usbd(&cardp->udev->dev,
+ 			"Failure to allocate syncfwheader\n");
 -- 
 2.15.1
 
