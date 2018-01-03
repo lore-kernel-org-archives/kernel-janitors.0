@@ -1,39 +1,36 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 22 Jan 2018 15:22:18 +0000
-Subject: Re: [PATCH] mfd/htc-i2cpld: Delete an error message for a failed memory allocation in htcpld_setup_c
-Message-Id: <20180122152218.5mdfwixqdp2a6oly@dell>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jan 2018 09:18:05 +0000
+Subject: [PATCH][next] usbip: vhci: fix spelling mistake: "synchronuously" -> "synchronously"
+Message-Id: <20180103091805.24064-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b957af3a-b637-bbbf-9f08-00744fca1b51@users.sourceforge.net>
-In-Reply-To: <b957af3a-b637-bbbf-9f08-00744fca1b51@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Valentina Manea <valentina.manea.m@gmail.com>, Shuah Khan <shuah@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 14 Jan 2018, SF Markus Elfring wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 14 Jan 2018 22:02:16 +0100
->=20
-> Omit an extra message for a memory allocation failure in this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mfd/htc-i2cpld.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Trivial fix to spelling mistake in dev_dbg debug message.
 
-Applied, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/usbip/vhci_rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/usb/usbip/vhci_rx.c b/drivers/usb/usbip/vhci_rx.c
+index 112ebb90d8c9..44cd64518925 100644
+--- a/drivers/usb/usbip/vhci_rx.c
++++ b/drivers/usb/usbip/vhci_rx.c
+@@ -30,7 +30,7 @@ struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev, __u32 seqnum)
+ 			/* fall through */
+ 		case -ECONNRESET:
+ 			dev_dbg(&urb->dev->dev,
+-				 "urb seq# %u was unlinked %ssynchronuously\n",
++				 "urb seq# %u was unlinked %ssynchronously\n",
+ 				 seqnum, status = -ENOENT ? "" : "a");
+ 			break;
+ 		case -EINPROGRESS:
+-- 
+2.14.1
+
