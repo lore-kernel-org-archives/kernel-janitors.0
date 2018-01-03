@@ -1,46 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 11 Jan 2018 11:21:51 +0000
-Subject: [PATCH net-next] net: phy: mdio-bcm-unimac: fix potential NULL dereference in unimac_mdio_probe()
-Message-Id: <1515669711-126459-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 Jan 2018 15:08:59 +0000
+Subject: [PATCH] net: plip: Delete an error message for a failed memory allocation in plip_receive_packet()
+Message-Id: <0beaf692-5639-f52a-d592-f8a157fe1e19@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-platform_get_resource() may fail and return NULL, so we should
-better check it's return value to avoid a NULL pointer dereference
-a bit later in the code.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 3 Jan 2018 16:00:23 +0100
 
-This is detected by Coccinelle semantic patch.
+Omit an extra message for a memory allocation failure in this function.
 
-@@
-expression pdev, res, n, t, e, e1, e2;
-@@
+This issue was detected by using the Coccinelle software.
 
-res = platform_get_resource(pdev, t, n);
-+ if (!res)
-+   return -EINVAL;
-... when != res = NULL
-e = devm_ioremap(e1, res->start, e2);
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/phy/mdio-bcm-unimac.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/plip/plip.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
-index 08e0647..8d37066 100644
---- a/drivers/net/phy/mdio-bcm-unimac.c
-+++ b/drivers/net/phy/mdio-bcm-unimac.c
-@@ -205,6 +205,8 @@ static int unimac_mdio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!r)
-+		return -EINVAL;
- 
- 	/* Just ioremap, as this MDIO block is usually integrated into an
- 	 * Ethernet MAC controller register range
+diff --git a/drivers/net/plip/plip.c b/drivers/net/plip/plip.c
+index feb92ecd1880..22f10d395d9c 100644
+--- a/drivers/net/plip/plip.c
++++ b/drivers/net/plip/plip.c
+@@ -632,10 +632,9 @@ plip_receive_packet(struct net_device *dev, struct net_local *nl,
+ 		}
+ 		/* Malloc up new buffer. */
+ 		rcv->skb = dev_alloc_skb(rcv->length.h + 2);
+-		if (rcv->skb = NULL) {
+-			printk(KERN_ERR "%s: Memory squeeze.\n", dev->name);
++		if (!rcv->skb)
+ 			return ERROR;
+-		}
++
+ 		skb_reserve(rcv->skb, 2);	/* Align IP on 16 byte boundaries */
+ 		skb_put(rcv->skb,rcv->length.h);
+ 		rcv->skb->dev = dev;
+-- 
+2.15.1
 
