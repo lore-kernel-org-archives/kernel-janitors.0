@@ -1,9 +1,11 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Wed, 03 Jan 2018 12:15:23 +0000
+Date: Wed, 03 Jan 2018 12:22:55 +0000
 Subject: Applied "spi: sirf: account for const type of of_device_id.data" to the spi tree
-Message-Id: <E1eWhx5-0002II-8d@debutante>
+Message-Id: <E1eWi4N-0003OF-1D@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
 In-Reply-To: <1514899688-27844-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <E1eWhx5-0002II-8d@debutante>
+In-Reply-To: <E1eWhx5-0002II-8d@debutante>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
