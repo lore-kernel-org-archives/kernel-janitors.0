@@ -1,56 +1,39 @@
-From: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Date: Sun, 07 Jan 2018 18:08:19 +0000
-Subject: Re: [PATCH 09/12] mtd: fsl-quadspi: account for const type of of_device_id.data
-Message-Id: <865dd318-e30e-e747-ea9f-8bbb549d4471@wedev4u.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 Jan 2018 14:40:59 +0000
+Subject: [PATCH] ps3_gelic_net: Delete an error message for a failed memory allocation in gelic_descr_prepare
+Message-Id: <9613bfbf-11cc-1e66-484a-84fcda022861@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
- <1514899688-27844-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514899688-27844-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Han Xu <han.xu@nxp.com>
-Cc: kernel-janitors@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Geoff Levand <geoff@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Le 02/01/2018 à 14:28, Julia Lawall a écrit :
-> This driver creates a number of const structures that it stores in the
-> data field of an of_device_id array.
-> 
-> The data field of an of_device_id structure has type const void *, so
-> there is no need for a const-discarding cast when putting const values
-> into such a structure.
-> 
-> Done using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 3 Jan 2018 14:50:59 +0100
 
-Applied to the spi-nor/next branch of linux-mtd
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks!
+This issue was detected by using the Coccinelle software.
 
-> ---
->  drivers/mtd/spi-nor/fsl-quadspi.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff -u -p a/drivers/mtd/spi-nor/fsl-quadspi.c b/drivers/mtd/spi-nor/fsl-quadspi.c
-> --- a/drivers/mtd/spi-nor/fsl-quadspi.c
-> +++ b/drivers/mtd/spi-nor/fsl-quadspi.c
-> @@ -801,10 +801,10 @@ static int fsl_qspi_nor_setup_last(struc
->  }
->  
->  static const struct of_device_id fsl_qspi_dt_ids[] = {
-> -	{ .compatible = "fsl,vf610-qspi", .data = (void *)&vybrid_data, },
-> -	{ .compatible = "fsl,imx6sx-qspi", .data = (void *)&imx6sx_data, },
-> -	{ .compatible = "fsl,imx7d-qspi", .data = (void *)&imx7d_data, },
-> -	{ .compatible = "fsl,imx6ul-qspi", .data = (void *)&imx6ul_data, },
-> +	{ .compatible = "fsl,vf610-qspi", .data = &vybrid_data, },
-> +	{ .compatible = "fsl,imx6sx-qspi", .data = &imx6sx_data, },
-> +	{ .compatible = "fsl,imx7d-qspi", .data = &imx7d_data, },
-> +	{ .compatible = "fsl,imx6ul-qspi", .data = &imx6ul_data, },
->  	{ .compatible = "fsl,ls1021a-qspi", .data = (void *)&ls1021a_data, },
->  	{ /* sentinel */ }
->  };
-> 
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/toshiba/ps3_gelic_net.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+index 88d74aef218a..644b875e324c 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+@@ -395,8 +395,6 @@ static int gelic_descr_prepare_rx(struct gelic_card *card,
+ 	descr->skb = dev_alloc_skb(bufsize + GELIC_NET_RXBUF_ALIGN - 1);
+ 	if (!descr->skb) {
+ 		descr->buf_addr = 0; /* tell DMAC don't touch memory */
+-		dev_info(ctodev(card),
+-			 "%s:allocate skb failed !!\n", __func__);
+ 		return -ENOMEM;
+ 	}
+ 	descr->buf_size = cpu_to_be32(bufsize);
+-- 
+2.15.1
 
