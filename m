@@ -1,55 +1,37 @@
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 18 Jan 2018 08:43:05 +0000
-Subject: Re: [PATCH -next] staging: ccree: remove redundant dev_err call in init_cc_resources()
-Message-Id: <CAOtvUMdmbWaD3LkCA9gKDmLO1LVh5y8Xc8-2avu3yBsvCrY4nA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 Jan 2018 11:55:36 +0000
+Subject: [PATCH] Coccinelle: Rename the script for a transformation of memory allocations
+Message-Id: <6423882b-20df-61fd-d7c6-ac1bb4ec891d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1515669297-125873-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1515669297-125873-1-git-send-email-weiyongjun1@huawei.com>
+References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
+ <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
+ <alpine.DEB.2.20.1801021528160.24055@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1801021528160.24055@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr, Gilles Muller <Gilles.Muller@lip6.fr>, Himanshu Jha <himanshujha199640@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Amitoj Kaur Chawla <amitoj1606@gmail.com>
 
-On Thu, Jan 11, 2018 at 1:14 PM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/staging/ccree/cc_driver.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/staging/ccree/cc_driver.c b/drivers/staging/ccree/cc_driver.c
-> index 6682d9d..c27d5a8 100644
-> --- a/drivers/staging/ccree/cc_driver.c
-> +++ b/drivers/staging/ccree/cc_driver.c
-> @@ -174,10 +174,8 @@ static int init_cc_resources(struct platform_device *plat_dev)
->         req_mem_cc_regs = platform_get_resource(plat_dev, IORESOURCE_MEM, 0);
->         /* Map registers space */
->         new_drvdata->cc_base = devm_ioremap_resource(dev, req_mem_cc_regs);
-> -       if (IS_ERR(new_drvdata->cc_base)) {
-> -               dev_err(dev, "Failed to ioremap registers");
-> +       if (IS_ERR(new_drvdata->cc_base))
->                 return PTR_ERR(new_drvdata->cc_base);
-> -       }
->
->         dev_dbg(dev, "Got MEM resource (%s): %pR\n", req_mem_cc_regs->name,
->                 req_mem_cc_regs);
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 3 Jan 2018 12:43:45 +0100
 
-Yeah, that makes sense.
+A script for the semantic patch language was extended
+in a significant way.
+An other file name is more appropriate then to indicate
+the provided functionality. Thus rename this file.
 
-Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ ...kzalloc-simple.cocci => use zalloc functions with extra changes.cocci} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename scripts/coccinelle/api/alloc/{kzalloc-simple.cocci => use zalloc functions with extra changes.cocci} (100%)
 
-Thanks,
-Gilad
-
+diff --git a/scripts/coccinelle/api/alloc/kzalloc-simple.cocci b/scripts/coccinelle/api/alloc/use zalloc functions with extra changes.cocci
+similarity index 100%
+rename from scripts/coccinelle/api/alloc/kzalloc-simple.cocci
+rename to scripts/coccinelle/api/alloc/use zalloc functions with extra changes.cocci
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+2.15.1
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+
