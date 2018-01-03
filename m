@@ -1,7 +1,7 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Wed, 03 Jan 2018 01:13:52 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 Jan 2018 08:41:04 +0000
 Subject: Re: platform/x86/thinkpad_acpi: Adjustments for four function implementations
-Message-Id: <20180103011352.GE24794@fury>
+Message-Id: <9ea2c1c7-a07d-19c3-a2dc-0c69352d9558@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
  <CAHp75Vckgw1Eqao_vsq0n8RuYJRP2JZWJz6-MxZ6Wwb8eAEVgA@mail.gmail.com>
@@ -9,32 +9,54 @@ References: <81459d11-693a-eb51-9173-9c189677f422@users.sourceforge.net>
  <20171223014033.jx7fzu7uzjfbzyca@khazad-dum.debian.net>
  <80ae8328-5851-01b0-cb31-474f7baf1686@users.sourceforge.net>
  <20180103001034.GC24794@fury>
- <1514940583.31497.4.camel@perches.com>
-In-Reply-To: <1514940583.31497.4.camel@perches.com>
+In-Reply-To: <20180103001034.GC24794@fury>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Darren Hart <dvhart@infradead.org>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
+Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Andy Shevchenko <andy.shevchenko@gmail.com>, Andy Shevchenko <andy@infradead.org>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 02, 2018 at 04:49:43PM -0800, Joe Perches wrote:
-> On Tue, 2018-01-02 at 16:10 -0800, Darren Hart wrote:
-> > > > Leave those pr_ messages alone, please,
-> []
-> > Andy and Henrique raised a few reasons why these patches should not be
-> > accepted:
-> > 
-> > 1. This is init code (so any space savings is short lived)
-> 
-> Not exactly true.
-> 
-> The object code itself is short lived, but the
-> string constant of the format is not as it is
-> placed in const and not discarded.
+> I understand it can be frustrating to encounter different policies
+> across kernel maintainers.
 
-Thanks for the clarification, appreciate it. I hadn't looked into it in enough
-detail previously.
+The change acceptance is varying for special transformation patterns.
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+
+> You'll even run in to this with maintainers of the same subsystem
+> from time to time.
+
+Interesting, isn't it?
+
+
+> I'm supportive of cleaning up old code in general,
+
+Nice.
+
+
+> and we routinely apply such patches as these developed with cocci.
+
+Good to know =E2=80=A6
+
+
+> 1. This is init code )so any space savings is short lived)
+
+Would you dare to achieve another small improvement there?
+
+
+> So it isn't that we place a low value on coding style guidelines,
+> but rather we place higher value on not perturbing code
+
+I can follow this view in principle.
+
+
+> we can't fully test without a demonstrable functional reasons to do so.
+
+How do you think about to get a bit nicer run time characteristics?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
