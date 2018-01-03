@@ -1,39 +1,39 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 22 Jan 2018 15:40:43 +0000
-Subject: Re: [PATCH] mfd/janz-cmodio: Delete an error message for a failed memory allocation in cmodio_pci_pr
-Message-Id: <20180122154043.xvsncovr45y52yhm@dell>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 Jan 2018 14:22:03 +0000
+Subject: Re: ethernet: mlx4: Delete an error message for a failed memory allocation in five functions
+Message-Id: <d693dbdb-f3a2-5194-07e9-7c56e9ccbb2b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5a66d47c-317f-1abd-7eb1-3a4f74843c78@users.sourceforge.net>
-In-Reply-To: <5a66d47c-317f-1abd-7eb1-3a4f74843c78@users.sourceforge.net>
+References: <30191db0-4d99-0349-b66a-c7354ef90d50@users.sourceforge.net>
+ <0fea8f2f-f8fc-ce2e-3d33-44227de3637a@mellanox.com>
+ <alpine.DEB.2.20.1801030904290.5305@hadrien>
+ <adfc3229-d3f9-afb9-00e6-9f765af0cbe8@mellanox.com>
+In-Reply-To: <adfc3229-d3f9-afb9-00e6-9f765af0cbe8@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tariq Toukan <tariqt@mellanox.com>, linux-rdma@vger.kernel.org, netdev@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 14 Jan 2018, SF Markus Elfring wrote:
+> I don't really accept this claim...
+> Short informative strings worth the tiny space they consume.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 14 Jan 2018 22:15:09 +0100
->=20
-> Omit an extra message for a memory allocation failure in this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mfd/janz-cmodio.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+There can be different opinions for their usefulness.
 
-Applied, thanks.
 
---=20
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> In addition, some out-of-memory errors are recoverable, even though their backtrace is also printed.
+
+How do you think about to suppress the backtrace generation for them?
+
+
+> For example, in function mlx4_en_create_cq (appears in patch) we have a first allocation attempt (kzalloc_node)
+
+Would it be helpful to pass the option “__GFP_NOWARN” there?
+
+
+> and a fallback (kzalloc). I'd prefer to state a clear error message only when both have failed,
+> because otherwise the user might be confused whether the backtrace should indicate a malfunctioning interface, or not.
+
+Can the distinction become easier by any other means?
+
+Regards,
+Markus
