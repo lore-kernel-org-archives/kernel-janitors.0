@@ -1,44 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 16:27:43 +0000
-Subject: [PATCH 5/5] irqchip/irq-gic-v3-its: Mark an array of text strings as "const"
-Message-Id: <3b51857b-f168-1fa2-1a05-c187ca51a59f@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Jan 2018 13:35:55 +0000
+Subject: [PATCH][cifs-next] CIFS: SMBD: make functions smbd_recv_buf and smbd_recv_page static
+Message-Id: <20180104133555.8449-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
-In-Reply-To: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 17:05:34 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+The functions smbd_recv_buf and smbd_recv_page are local to the source
+and do not need to be in global scope, so make them static.
 
-WARNING: static const char * array should probably be
-static const char * const
+Cleans up sparse warnings:
+symbol 'smbd_recv_buf' was not declared. Should it be static?
+symbol 'smbd_recv_page' was not declared. Should it be static?
 
-Thus fix the affected source code place.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/smbdirect.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 100c3125f20e..09f0297a1f59 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1551,7 +1551,7 @@ static int __init its_alloc_lpi_tables(void)
- 	return its_lpi_init(lpi_id_bits);
- }
- 
--static const char *its_base_type_string[] = {
-+static const char * const its_base_type_string[] = {
- 	[GITS_BASER_TYPE_DEVICE]	= "Devices",
- 	[GITS_BASER_TYPE_VCPU]		= "Virtual CPUs",
- 	[GITS_BASER_TYPE_RESERVED3]	= "Reserved (3)",
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index 731577d4317f..0d0545ef735f 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -1855,7 +1855,8 @@ struct smbd_connection *smbd_get_connection(
+  * consumed. But this will require more changes to upper layer code, and also
+  * need to consider packet boundaries while they still being reassembled.
+  */
+-int smbd_recv_buf(struct smbd_connection *info, char *buf, unsigned int size)
++static int smbd_recv_buf(struct smbd_connection *info, char *buf,
++			 unsigned int size)
+ {
+ 	struct smbd_response *response;
+ 	struct smbd_data_transfer *data_transfer;
+@@ -1995,8 +1996,8 @@ int smbd_recv_buf(struct smbd_connection *info, char *buf, unsigned int size)
+  * to_read: the length of data to read
+  * return value: actual data read
+  */
+-int smbd_recv_page(struct smbd_connection *info,
+-		struct page *page, unsigned int to_read)
++static int smbd_recv_page(struct smbd_connection *info,
++			  struct page *page, unsigned int to_read)
+ {
+ 	int ret;
+ 	char *to_address;
 -- 
-2.15.1
+2.14.1
 
