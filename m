@@ -1,37 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 19:23:13 +0000
-Subject: [PATCH 0/7] VMCI: Adjustments for several function implementations
-Message-Id: <2747f123-a95d-bc68-b858-0327dce3758b@users.sourceforge.net>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 04 Jan 2018 04:29:42 +0000
+Subject: Re: [PATCH 10/12] hpsa: drop unneeded newline
+Message-Id: <yq1r2r6w8jt.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
+        <1514386305-7402-11-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1514386305-7402-11-git-send-email-Julia.Lawall@lip6.fr> (Julia
+        Lawall's message of "Wed, 27 Dec 2017 15:51:43 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Don Brace <don.brace@microsemi.com>, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 20:13:45 +0100
 
-Some update suggestions were taken into account
-from static source code analysis.
+Julia,
 
-Markus Elfring (7):
-  Delete error messages for a failed memory allocation in seven functions
-  Improve a size determination in two functions
-  Update a word in five comment lines
-  Delete an unnecessary null pointer check in qp_broker_create()
-  Delete an unnecessary variable initialisation in qp_broker_create()
-  Less function calls in qp_broker_create() after error detection
-  Adjust 32 checks for null pointers
+> hpsa_show_dev_msg prints other information and a newline after the
+> message string, so the message string does not need to include a
+> newline explicitly.  Done using Coccinelle.
 
- drivers/misc/vmw_vmci/vmci_context.c    | 24 +++++++-------
- drivers/misc/vmw_vmci/vmci_datagram.c   | 14 ++++----
- drivers/misc/vmw_vmci/vmci_doorbell.c   |  8 ++---
- drivers/misc/vmw_vmci/vmci_guest.c      | 16 +++------
- drivers/misc/vmw_vmci/vmci_host.c       | 10 ++----
- drivers/misc/vmw_vmci/vmci_queue_pair.c | 57 ++++++++++++++++-----------------
- 6 files changed, 54 insertions(+), 75 deletions(-)
+Applied to 4.16/scsi-queue, thanks.
 
 -- 
-2.15.1
-
+Martin K. Petersen	Oracle Linux Engineering
