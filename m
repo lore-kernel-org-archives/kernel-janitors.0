@@ -1,53 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 04 Jan 2018 13:35:55 +0000
-Subject: [PATCH][cifs-next] CIFS: SMBD: make functions smbd_recv_buf and smbd_recv_page static
-Message-Id: <20180104133555.8449-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 04 Jan 2018 03:53:59 +0000
+Subject: Re: [PATCH] scsi: lpfc: fix a couple of minor indentation issues
+Message-Id: <yq1fu7mxors.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171222003936.11297-1-colin.king@canonical.com>
+In-Reply-To: <20171222003936.11297-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 22 Dec 2017 00:39:36 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The functions smbd_recv_buf and smbd_recv_page are local to the source
-and do not need to be in global scope, so make them static.
+Colin,
 
-Cleans up sparse warnings:
-symbol 'smbd_recv_buf' was not declared. Should it be static?
-symbol 'smbd_recv_page' was not declared. Should it be static?
+> Several statements are indented too far, fix these
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/cifs/smbdirect.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Applied to 4.16/scsi-queue.
 
-diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index 731577d4317f..0d0545ef735f 100644
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -1855,7 +1855,8 @@ struct smbd_connection *smbd_get_connection(
-  * consumed. But this will require more changes to upper layer code, and also
-  * need to consider packet boundaries while they still being reassembled.
-  */
--int smbd_recv_buf(struct smbd_connection *info, char *buf, unsigned int size)
-+static int smbd_recv_buf(struct smbd_connection *info, char *buf,
-+			 unsigned int size)
- {
- 	struct smbd_response *response;
- 	struct smbd_data_transfer *data_transfer;
-@@ -1995,8 +1996,8 @@ int smbd_recv_buf(struct smbd_connection *info, char *buf, unsigned int size)
-  * to_read: the length of data to read
-  * return value: actual data read
-  */
--int smbd_recv_page(struct smbd_connection *info,
--		struct page *page, unsigned int to_read)
-+static int smbd_recv_page(struct smbd_connection *info,
-+			  struct page *page, unsigned int to_read)
- {
- 	int ret;
- 	char *to_address;
 -- 
-2.14.1
-
+Martin K. Petersen	Oracle Linux Engineering
