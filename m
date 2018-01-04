@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 Jan 2018 12:45:20 +0000
+Date: Thu, 04 Jan 2018 08:36:32 +0000
 Subject: Re: Coccinelle: Rename the script for a transformation of memory allocations
-Message-Id: <4d726540-5433-9b53-8ae7-bc381ba11e84@users.sourceforge.net>
+Message-Id: <7490d0cb-4246-8e10-05cd-6219b58c4f14@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
  <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
@@ -23,8 +23,7 @@ Cc: Gilles Muller <Gilles.Muller@lip6.fr>, Himanshu Jha <himanshujha199640@gmail
 > 
 > Yes.  But I will also nack any very long name.
 
-Will any other artificial identifier become appropriate if it would be too hard
-to achieve consensus on a more meaningful description in the file name?
+Would you find the the file name selection “zalloc-extra_changes1.cocci” acceptable?
 
 Regards,
 Markus
