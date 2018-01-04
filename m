@@ -1,20 +1,20 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 Jan 2018 18:31:17 +0000
-Subject: [PATCH 3/5] misc/pti: Improve a size determination in two functions
-Message-Id: <0b51421a-4fd6-7ea5-ae23-88b98e7cee48@users.sourceforge.net>
+Date: Thu, 04 Jan 2018 10:52:27 +0000
+Subject: [PATCH 2/2] mtd/maps/sun_uflash: Improve a size determination in uflash_devinit()
+Message-Id: <1c70e16b-f34c-d655-fdd4-67730f17a680@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
-In-Reply-To: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
+References: <30c07f5a-578c-0e53-b80f-675fb24e6223@users.sourceforge.net>
+In-Reply-To: <30c07f5a-578c-0e53-b80f-675fb24e6223@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 9 Jan 2018 18:28:44 +0100
+Date: Thu, 4 Jan 2018 11:38:28 +0100
 
-Replace the specification of data structures by pointer dereferences
+Replace the specification of a data structure by a pointer dereference
 as the parameter for the operator "sizeof" to make the corresponding size
 determination a bit safer according to the Linux coding style convention.
 
@@ -22,33 +22,21 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/pti.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/mtd/maps/sun_uflash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/pti.c b/drivers/misc/pti.c
-index 8292e8098cc8..8ae79b286573 100644
---- a/drivers/misc/pti.c
-+++ b/drivers/misc/pti.c
-@@ -243,10 +243,9 @@ static struct pti_masterchannel *get_id(u8 *id_array,
- 					int base_id,
- 					const char *thread_name)
- {
--	struct pti_masterchannel *mc;
- 	int i, j, mask;
-+	struct pti_masterchannel *mc = kmalloc(sizeof(*mc), GFP_KERNEL);
+diff --git a/drivers/mtd/maps/sun_uflash.c b/drivers/mtd/maps/sun_uflash.c
+index 80a253cc72e2..16a4f16a2680 100644
+--- a/drivers/mtd/maps/sun_uflash.c
++++ b/drivers/mtd/maps/sun_uflash.c
+@@ -61,7 +61,7 @@ int uflash_devinit(struct platform_device *op, struct device_node *dp)
+ 		return -ENODEV;
+ 	}
  
--	mc = kmalloc(sizeof(struct pti_masterchannel), GFP_KERNEL);
- 	if (mc = NULL)
- 		return NULL;
- 
-@@ -465,7 +464,7 @@ static int pti_tty_install(struct tty_driver *driver, struct tty_struct *tty)
- 	int ret = tty_standard_install(driver, tty);
- 
- 	if (ret = 0) {
--		pti_tty_data = kmalloc(sizeof(struct pti_tty), GFP_KERNEL);
-+		pti_tty_data = kmalloc(sizeof(*pti_tty_data), GFP_KERNEL);
- 		if (pti_tty_data = NULL)
- 			return -ENOMEM;
+-	up = kzalloc(sizeof(struct uflash_dev), GFP_KERNEL);
++	up = kzalloc(sizeof(*up), GFP_KERNEL);
+ 	if (!up)
+ 		return -ENOMEM;
  
 -- 
 2.15.1
