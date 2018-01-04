@@ -1,25 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Jan 2018 21:58:35 +0000
-Subject: Re: [PATCH net-next] cxgb4: make symbol pedits static
-Message-Id: <20180124.165835.176949720991377727.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 04 Jan 2018 08:19:52 +0000
+Subject: Re: bonding: Completion of error handling around bond_update_slave_arr()
+Message-Id: <4af2b714-245a-0f0d-5982-818d5f81cade@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516760073-129333-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516760073-129333-1-git-send-email-weiyongjun1@huawei.com>
+References: <6cdc726b-82bc-85b6-393b-0e2002c19341@users.sourceforge.net>
+ <CAF2d9jhjL7pbcsEzwXRxLVzyMid5s2OY96AwSyRTuuqho-w_EQ@mail.gmail.com>
+ <f93750d3-700f-897d-c4ef-2cf5b5a3374e@users.sourceforge.net>
+ <CAF2d9jh1EHUx3BzWghBWRAZt4acO6W-_eUXtD7dk2YBJZfuwsg@mail.gmail.com>
+In-Reply-To: <CAF2d9jh1EHUx3BzWghBWRAZt4acO6W-_eUXtD7dk2YBJZfuwsg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: ganeshgr@chelsio.com, kumaras@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS1?= =?UTF-8?B?4KS+4KSwKQ==?= <maheshb@google.com>, linux-netdev <netdev@vger.kernel.org>
+Cc: Andy Gospodarek <andy@greyhouse.net>, Jay Vosburgh <j.vosburgh@gmail.com>, Veaceslav Falico <vfalico@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 24 Jan 2018 02:14:33 +0000
+> If you see 8 out of 9 call sites in this file ignore the return value.
 
-> Fixes the following sparse warning:
-> 
-> drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c:46:27: warning:
->  symbol 'pedits' was not declared. Should it be static?
-> 
-> Fixes: 27ece1f357b7 ("cxgb4: add tc flower support for ETH-DMAC rewrite")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+How do you think about to fix error detection and corresponding
+exception handling then?
 
-Applied, thank you.
+Regards,
+Markus
