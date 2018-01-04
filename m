@@ -1,42 +1,56 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 09 Jan 2018 09:48:23 +0000
-Subject: Re: [PATCH 1/2] slimbus: qcom-ctrl: fix a NULL test
-Message-Id: <0e365f53-bb45-2d95-30fb-9a862319df35@linaro.org>
+From: Jan Kara <jack@suse.cz>
+Date: Thu, 04 Jan 2018 15:40:18 +0000
+Subject: Re: [PATCH] ext4: fix incorrect indentation of if statement
+Message-Id: <20180104154018.GB2170@quack2.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180109092616.mfha2rs56oaxfjaz@mwanda>
-In-Reply-To: <20180109092616.mfha2rs56oaxfjaz@mwanda>
+References: <20171129142059.21898-1-colin.king@canonical.com>
+In-Reply-To: <20171129142059.21898-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Sagar Dharia <sdharia@codeaurora.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-On 09/01/18 09:26, Dan Carpenter wrote:
-> "retries" ends when it is set to -1 and not 0 so that part of the test
-> is wrong.  This bug would lead to a NULL dereference a couple lines
-> later.
+On Wed 29-11-17 14:20:59, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Fixes: afbdcc7c384b ("slimbus: Add messaging APIs to slimbus framework")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> The indentation is incorrect and spaces need replacing with a tab
+> on the if statement.
+> 
+> Cleans up smatch warning:
+> fs/ext4/namei.c:3220 ext4_link() warn: inconsistent indenting
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+This seems to fall through cracks. The patch looks good. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+
 > ---
-> Should Greg be added to the MAINTAINERS file for this driver?
+>  fs/ext4/namei.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-> index fb1a5e0eb8dd..3ab59209cbdc 100644
-> --- a/drivers/slimbus/qcom-ctrl.c
-> +++ b/drivers/slimbus/qcom-ctrl.c
-> @@ -345,7 +345,7 @@ static int qcom_xfer_msg(struct slim_controller *sctrl,
->   		}
->   	}
->   
-> -	if (!retries && !pbuf)
-> +	if (!pbuf)
->   		return -ENOMEM;
->   
->   	puc = (u8 *)pbuf;
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index 798b3ac680db..d3fabc553c65 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -3217,8 +3217,8 @@ static int ext4_link(struct dentry *old_dentry,
+>  	if (err)
+>  		return err;
+>  
+> -       if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
+> -	   (!projid_eq(EXT4_I(dir)->i_projid,
+> +	if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
+> +	    (!projid_eq(EXT4_I(dir)->i_projid,
+>  		       EXT4_I(old_dentry->d_inode)->i_projid)))
+>  		return -EXDEV;
+>  
+> -- 
+> 2.14.1
 > 
-
-Already fixed at:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1575799.html
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
