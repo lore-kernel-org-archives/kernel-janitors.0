@@ -1,39 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 26 Jan 2018 22:13:44 +0000
-Subject: [PATCH] regulator: of: Add a missing 'of_node_put()' in an error handling path of 'of_regulator_matc
-Message-Id: <20180126221344.32314-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 05 Jan 2018 20:27:36 +0000
+Subject: [PATCH 0/3] mtd/nand/ams-delta: Adjustments for three function implementations
+Message-Id: <8f678424-3ce1-3a4c-1b0d-f3ac9a226f00@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: lgirdwood@gmail.com, broonie@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If an unlikely failure in 'of_get_regulator_init_data()' occurs, we must
-release the reference on the current 'child' node before returning.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 Jan 2018 21:21:12 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/regulator/of_regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+Three update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 41dad42b18f0..532a9a3d5f9b 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -307,6 +307,7 @@ int of_regulator_match(struct device *dev, struct device_node *node,
- 				dev_err(dev,
- 					"failed to parse DT for regulator %s\n",
- 					child->name);
-+				of_node_put(child);
- 				return -EINVAL;
- 			}
- 			match->of_node = of_node_get(child);
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in ams_delta_init()
+  Improve a size determination in ams_delta_init()
+  Add some spaces for better code readability
+
+ drivers/mtd/nand/ams-delta.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
 -- 
-2.14.1
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+2.15.1
 
