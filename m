@@ -1,27 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 17:38:13 +0000
-Subject: [PATCH 0/2] Input-arc_ps2: Adjustments for two function implementations
-Message-Id: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
+Date: Fri, 05 Jan 2018 21:34:33 +0000
+Subject: [PATCH] mtd/nand/sunxi: Delete an error message for a failed memory allocation in sunxi_nand_chip_in
+Message-Id: <9a6e9845-23f0-0eb8-3c5b-d877e9874a1d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 18:34:56 +0100
+Date: Fri, 5 Jan 2018 22:27:09 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in arc_ps2_probe()
-  Improve a size determination in two functions
+This issue was detected by using the Coccinelle software.
 
- drivers/input/serio/arc_ps2.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/nand/sunxi_nand.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/mtd/nand/sunxi_nand.c b/drivers/mtd/nand/sunxi_nand.c
+index 82244be3e766..ebfa130a9285 100644
+--- a/drivers/mtd/nand/sunxi_nand.c
++++ b/drivers/mtd/nand/sunxi_nand.c
+@@ -2019,10 +2019,8 @@ static int sunxi_nand_chip_init(struct device *dev, struct sunxi_nfc *nfc,
+ 			    sizeof(*chip) +
+ 			    (nsels * sizeof(struct sunxi_nand_chip_sel)),
+ 			    GFP_KERNEL);
+-	if (!chip) {
+-		dev_err(dev, "could not allocate chip\n");
++	if (!chip)
+ 		return -ENOMEM;
+-	}
+ 
+ 	chip->nsels = nsels;
+ 	chip->selected = -1;
 -- 
-2.16.1
+2.15.1
 
