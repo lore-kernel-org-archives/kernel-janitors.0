@@ -1,42 +1,37 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 18:19:27 +0000
-Subject: [PATCH] Input: mcs5000_ts: Delete an error message for a failed memory allocation in mcs5000_ts_prob
-Message-Id: <47946655-de9f-f51f-3b6a-d5c76861e92a@users.sourceforge.net>
+Date: Fri, 05 Jan 2018 14:45:06 +0000
+Subject: Re: [v3] runchecks: Generalize make C={1, 2} to support multiple checkers
+Message-Id: <3eced649-7dd2-b353-9e71-3926df844f1d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1515096931.31439.647.camel@oracle.com>
+In-Reply-To: <1515096931.31439.647.camel@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 19:14:15 +0100
+> I do feel confident that the benefits of python for this outweighs the drawbacks
+> compared to my initial shell script implementation, or using perl or even C.
+>
+> Further advice on this appreciated,
 
-Omit an extra message for a memory allocation failure in this function.
+I got further ideas around this software situation. I am curious on how they fit
+to your vision.
 
-This issue was detected by using the Coccinelle software.
+One of the challenges for integration of your contribution can also be the
+acceptance of corresponding configuration files. There are design choices
+available to work with suggested data structures.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/touchscreen/mcs5000_ts.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+How do you think about the develop an official data format specification
+for which the shown Python script could be the first reference implementation?
+Alternative implementations could be applied on concrete demand.
 
-diff --git a/drivers/input/touchscreen/mcs5000_ts.c b/drivers/input/touchscreen/mcs5000_ts.c
-index 8868573133ab..ca3c5f78ab55 100644
---- a/drivers/input/touchscreen/mcs5000_ts.c
-+++ b/drivers/input/touchscreen/mcs5000_ts.c
-@@ -198,10 +198,8 @@ static int mcs5000_ts_probe(struct i2c_client *client,
- 		return -EINVAL;
- 
- 	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
--	if (!data) {
--		dev_err(&client->dev, "Failed to allocate memory\n");
-+	if (!data)
- 		return -ENOMEM;
--	}
- 
- 	data->client = client;
- 
--- 
-2.16.0
 
+I would like to add another development concern:
+
+* Do all (Python) classes need to be stored within the same script file so far?
+
+* Do we need to think about structures around plug-ins (or add-ons) already?
+
+Regards,
+Markus
