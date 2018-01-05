@@ -1,25 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 11 Jan 2018 09:50:15 +0000
-Subject: Re: [PATCH -next] gpio: thunderx: fix error return code in thunderx_gpio_probe()
-Message-Id: <CACRpkdbACSBoj8HzTFw1z8WiMSeerSe6mkBxyk0KYOTrtTXEtQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 05 Jan 2018 20:55:28 +0000
+Subject: [PATCH] mtd/nand/atmel: Delete an error message for a failed memory allocation in two functions
+Message-Id: <81cadb76-8c67-9289-1375-2d4a55a4adfa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1515595033-83888-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1515595033-83888-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: David Daney <david.daney@cavium.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Jan 10, 2018 at 3:37 PM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 Jan 2018 21:45:04 +0100
 
-> Fix to return error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
->
-> Fixes: 5a2a30024d8c ("gpio: Add gpio driver support for ThunderX and OCTEON-TX")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Omit an extra message for a memory allocation failure in these functions.
 
-Patch applied with David's ACK.
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/nand/atmel/nand-controller.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
+index 90a71a56bc23..a41b999229c9 100644
+--- a/drivers/mtd/nand/atmel/nand-controller.c
++++ b/drivers/mtd/nand/atmel/nand-controller.c
+@@ -1612,10 +1612,8 @@ static int atmel_nand_register(struct atmel_nand *nand)
+ 		mtd->name = devm_kasprintf(nc->dev, GFP_KERNEL,
+ 					   "%s:nand.%d", dev_name(nc->dev),
+ 					   nand->cs[0].id);
+-		if (!mtd->name) {
+-			dev_err(nc->dev, "Failed to allocate mtd->name\n");
++		if (!mtd->name)
+ 			return -ENOMEM;
+-		}
+ 	}
+ 
+ 	ret = nand_scan_tail(mtd);
+@@ -1654,10 +1652,8 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
+ 	nand = devm_kzalloc(nc->dev,
+ 			    sizeof(*nand) + (numcs * sizeof(*nand->cs)),
+ 			    GFP_KERNEL);
+-	if (!nand) {
+-		dev_err(nc->dev, "Failed to allocate NAND object\n");
++	if (!nand)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	nand->numcs = numcs;
+ 
+-- 
+2.15.1
+
