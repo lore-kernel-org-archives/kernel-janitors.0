@@ -1,49 +1,47 @@
-From: Harsh Jain <harsh@chelsio.com>
-Date: Tue, 23 Jan 2018 04:10:05 +0000
-Subject: Re: [PATCH] crypto: chelsio - Delete stray tabs in create_authenc_wr()
-Message-Id: <6eeb22ce-6423-81df-f86c-dae26e864b7a@chelsio.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 06 Jan 2018 16:23:28 +0000
+Subject: [PATCH] Bluetooth: btintel: make array 'param' static, shrinks object size
+Message-Id: <20180106162328.18625-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180122102140.GA23912@mwanda>
-In-Reply-To: <20180122102140.GA23912@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Don't populate the const read-only array 'param' on the stack but instead
+make it static. Makes the object code smaller by nearly 20 bytes:
 
-On 22-01-2018 15:51, Dan Carpenter wrote:
-> We removed some if statements but left these statements indented too
-> far.
-HI Dan,
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  11605	   2629	     64	  14298	   37da	linux/drivers/bluetooth/btintel.o
 
-Change already applied to cryptodev tree.
+After:
+   text	   data	    bss	    dec	    hex	filename
+  11531	   2685	     64	  14280	   37c8	linux/drivers/bluetooth/btintel.o
 
-https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg30560.html
+(gcc version 7.2.0 x86_64)
 
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-> index a9c894bf9c01..34a02d690548 100644
-> --- a/drivers/crypto/chelsio/chcr_algo.c
-> +++ b/drivers/crypto/chelsio/chcr_algo.c
-> @@ -2112,11 +2112,11 @@ static struct sk_buff *create_authenc_wr(struct aead_request *req,
->  	error = chcr_aead_common_init(req, op_type);
->  	if (error)
->  		return ERR_PTR(error);
-> -		dnents = sg_nents_xlen(req->dst, assoclen, CHCR_DST_SG_SIZE, 0);
-> -		dnents += sg_nents_xlen(req->dst, req->cryptlen +
-> -			(op_type ? -authsize : authsize), CHCR_DST_SG_SIZE,
-> -			req->assoclen);
-> -		dnents += MIN_AUTH_SG; // For IV
-> +	dnents = sg_nents_xlen(req->dst, assoclen, CHCR_DST_SG_SIZE, 0);
-> +	dnents += sg_nents_xlen(req->dst, req->cryptlen +
-> +		(op_type ? -authsize : authsize), CHCR_DST_SG_SIZE,
-> +		req->assoclen);
-> +	dnents += MIN_AUTH_SG; // For IV
->  
->  	dst_size = get_space_for_phys_dsgl(dnents);
->  	kctx_len = (ntohl(KEY_CONTEXT_CTX_LEN_V(aeadctx->key_ctx_hdr)) << 4)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/bluetooth/btintel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
+index 4459555c9d88..07f00e422e85 100644
+--- a/drivers/bluetooth/btintel.c
++++ b/drivers/bluetooth/btintel.c
+@@ -75,7 +75,7 @@ EXPORT_SYMBOL_GPL(btintel_check_bdaddr);
+ 
+ int btintel_enter_mfg(struct hci_dev *hdev)
+ {
+-	const u8 param[] = { 0x01, 0x00 };
++	static const u8 param[] = { 0x01, 0x00 };
+ 	struct sk_buff *skb;
+ 
+ 	skb = __hci_cmd_sync(hdev, 0xfc11, 2, param, HCI_CMD_TIMEOUT);
+-- 
+2.15.1
 
