@@ -1,28 +1,88 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 Jan 2018 20:10:55 +0000
-Subject: [PATCH 0/2] wireless: libertas_tf: Adjustments for three function implementations
-Message-Id: <e8b93aae-8dea-7089-43fe-9222054f0749@users.sourceforge.net>
+Date: Sat, 06 Jan 2018 12:46:39 +0000
+Subject: [PATCH 2/3] mtd/nftlmount: Delete eight unwanted spaces behind function names
+Message-Id: <0095db26-a0ff-a400-3509-6085d701ecab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
+In-Reply-To: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, Kees Cook <keescook@chromium.org>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 3 Jan 2018 21:06:54 +0100
+Date: Sat, 6 Jan 2018 12:55:23 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+The script "checkpatch.pl" pointed information out like the following.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-    in __if_usb_submit_rx_urb()
-  Improve a size determination in two functions
+WARNING: space prohibited between function name and open parenthesis '('
 
- drivers/net/wireless/marvell/libertas_tf/if_usb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Thus fix the affected source code places.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/nftlmount.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
+index 6b9634a70229..d1eaa87c88ba 100644
+--- a/drivers/mtd/nftlmount.c
++++ b/drivers/mtd/nftlmount.c
+@@ -314,7 +314,7 @@ int NFTL_formatblock(struct NFTLrecord *nftl, int block)
+ 			  8, &retlen, (char *)&uci) < 0)
+ 		goto default_uci1;
+ 
+-	erase_mark = le16_to_cpu ((uci.EraseMark | uci.EraseMark1));
++	erase_mark = le16_to_cpu(uci.EraseMark | uci.EraseMark1);
+ 	if (erase_mark != ERASE_MARK) {
+ 	default_uci1:
+ 		uci.EraseMark = cpu_to_le16(ERASE_MARK);
+@@ -501,11 +501,12 @@ static int check_and_mark_free_block(struct NFTLrecord *nftl, int block)
+ 			  &retlen, (char *)&h1) < 0)
+ 		return -1;
+ 
+-	erase_mark = le16_to_cpu ((h1.EraseMark | h1.EraseMark1));
++	erase_mark = le16_to_cpu(h1.EraseMark | h1.EraseMark1);
+ 	if (erase_mark != ERASE_MARK) {
+ 		/* if no erase mark, the block must be totally free. This is
+ 		   possible in two cases : empty filesystem or interrupted erase (very unlikely) */
+-		if (check_free_sectors (nftl, block * nftl->EraseSize, nftl->EraseSize, 1) != 0)
++		if (check_free_sectors(nftl, block * nftl->EraseSize,
++				       nftl->EraseSize, 1) != 0)
+ 			return -1;
+ 
+ 		/* free block : write erase mark */
+@@ -521,8 +522,9 @@ static int check_and_mark_free_block(struct NFTLrecord *nftl, int block)
+ 		/* if erase mark present, need to skip it when doing check */
+ 		for (i = 0; i < nftl->EraseSize; i += SECTORSIZE) {
+ 			/* check free sector */
+-			if (check_free_sectors (nftl, block * nftl->EraseSize + i,
+-						SECTORSIZE, 0) != 0)
++			if (check_free_sectors(nftl,
++					       block * nftl->EraseSize + i,
++					       SECTORSIZE, 0) != 0)
+ 				return -1;
+ 
+ 			if (nftl_read_oob(mtd, block * nftl->EraseSize + i,
+@@ -608,10 +610,13 @@ int NFTL_mount(struct NFTLrecord *s)
+ 					break;
+ 				}
+ 
+-				logical_block = le16_to_cpu ((h0.VirtUnitNum | h0.SpareVirtUnitNum));
+-				rep_block = le16_to_cpu ((h0.ReplUnitNum | h0.SpareReplUnitNum));
+-				nb_erases = le32_to_cpu (h1.WearInfo);
+-				erase_mark = le16_to_cpu ((h1.EraseMark | h1.EraseMark1));
++				logical_block = le16_to_cpu(h0.VirtUnitNum |
++							    h0.SpareVirtUnitNum);
++				rep_block = le16_to_cpu(h0.ReplUnitNum |
++							h0.SpareReplUnitNum);
++				nb_erases = le32_to_cpu(h1.WearInfo);
++				erase_mark = le16_to_cpu(h1.EraseMark |
++							 h1.EraseMark1);
+ 
+ 				is_first_block = !(logical_block >> 15);
+ 				logical_block = logical_block & 0x7fff;
 -- 
 2.15.1
 
