@@ -1,42 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 20:52:05 +0000
-Subject: [PATCH] Input: spear-keyboard: Delete an error message for a failed memory allocation in spear_kbd_p
-Message-Id: <57b7b09c-1f32-8f0b-cc1c-135e1ef211ed@users.sourceforge.net>
+Date: Sat, 06 Jan 2018 12:45:35 +0000
+Subject: [PATCH 1/3] mtd/nftlmount: Delete two error messages for a failed memory allocation in find_boot_rec
+Message-Id: <e07f94b5-3589-2fe3-3058-8fcf83a77af0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
+In-Reply-To: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 21:49:13 +0100
+Date: Sat, 6 Jan 2018 11:04:59 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit extra messages for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/keyboard/spear-keyboard.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mtd/nftlmount.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
-index 7d25fa338ab4..1386440a870d 100644
---- a/drivers/input/keyboard/spear-keyboard.c
-+++ b/drivers/input/keyboard/spear-keyboard.c
-@@ -197,10 +197,8 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
+index 184c8fbfe465..6b9634a70229 100644
+--- a/drivers/mtd/nftlmount.c
++++ b/drivers/mtd/nftlmount.c
+@@ -201,15 +201,12 @@ device is already correct.
  
- 	kbd = devm_kzalloc(&pdev->dev, sizeof(*kbd), GFP_KERNEL);
--	if (!kbd) {
--		dev_err(&pdev->dev, "not enough memory for driver data\n");
-+	if (!kbd)
- 		return -ENOMEM;
--	}
+ 		/* memory alloc */
+ 		nftl->EUNtable = kmalloc(nftl->nb_blocks * sizeof(u16), GFP_KERNEL);
+-		if (!nftl->EUNtable) {
+-			printk(KERN_NOTICE "NFTL: allocation of EUNtable failed\n");
++		if (!nftl->EUNtable)
+ 			return -ENOMEM;
+-		}
  
- 	input_dev = devm_input_allocate_device(&pdev->dev);
- 	if (!input_dev) {
+ 		nftl->ReplUnitTable = kmalloc(nftl->nb_blocks * sizeof(u16), GFP_KERNEL);
+ 		if (!nftl->ReplUnitTable) {
+ 			kfree(nftl->EUNtable);
+-			printk(KERN_NOTICE "NFTL: allocation of ReplUnitTable failed\n");
+ 			return -ENOMEM;
+ 		}
+ 
 -- 
-2.16.1
+2.15.1
 
