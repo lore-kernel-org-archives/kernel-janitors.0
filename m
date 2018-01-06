@@ -1,25 +1,60 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Tue, 02 Jan 2018 15:52:31 +0000
-Subject: Re: [PATCH] btrfs: qgroup: remove unused label 'retry'
-Message-Id: <20180102155231.GT3553@twin.jikos.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 06 Jan 2018 12:47:37 +0000
+Subject: [PATCH 3/3] mtd/nftlmount: Add some spaces for better code readability
+Message-Id: <a0ebf648-a73a-e3ff-5ca9-e84598d4196c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171222005508.11975-1-colin.king@canonical.com>
-In-Reply-To: <20171222005508.11975-1-colin.king@canonical.com>
+References: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
+In-Reply-To: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 22, 2017 at 12:55:08AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Label 'retry' is not used, remove it. Cleans up a clang build
-> warning:
-> 
-> warning: label ‘retry’ defined but not used [-Wunused-label]
-> 
-> Fixes: b283738ab0ad ("Revert "btrfs: qgroups: Retry after commit on getting EDQUOT"")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 6 Jan 2018 12:58:37 +0100
 
-Thanks, we already have another patch to fix that in for-next.
+Use space characters at some source code places according to
+the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/nftlmount.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
+index d1eaa87c88ba..457f3572c582 100644
+--- a/drivers/mtd/nftlmount.c
++++ b/drivers/mtd/nftlmount.c
+@@ -253,7 +253,7 @@ The new DiskOnChip driver already scanned the bad block table.  Just query it.
+ 
+ 	} /* foreach (block) */
+ 
+-	return boot_record_count?0:-1;
++	return boot_record_count ? 0 : -1;
+ }
+ 
+ static int memcmpb(void *a, int c, int n)
+@@ -282,8 +282,8 @@ static int check_free_sectors(struct NFTLrecord *nftl, unsigned int address, int
+ 			return -1;
+ 
+ 		if (check_oob) {
+-			if(nftl_read_oob(mtd, address, mtd->oobsize,
+-					 &retlen, &buf[SECTORSIZE]) < 0)
++			if (nftl_read_oob(mtd, address, mtd->oobsize,
++					  &retlen, &buf[SECTORSIZE]) < 0)
+ 				return -1;
+ 			if (memcmpb(buf + SECTORSIZE, 0xff, mtd->oobsize) != 0)
+ 				return -1;
+@@ -389,7 +389,7 @@ static void check_sectors_in_chain(struct NFTLrecord *nftl, unsigned int first_b
+ 			else
+ 				status = bci.Status | bci.Status1;
+ 
+-			switch(status) {
++			switch (status) {
+ 			case SECTOR_FREE:
+ 				/* verify that the sector is really free. If not, mark
+ 				   as ignore */
+-- 
+2.15.1
+
