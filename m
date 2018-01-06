@@ -1,10 +1,10 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 12:47:37 +0000
-Subject: [PATCH 3/3] mtd/nftlmount: Add some spaces for better code readability
-Message-Id: <a0ebf648-a73a-e3ff-5ca9-e84598d4196c@users.sourceforge.net>
+Date: Sat, 06 Jan 2018 15:09:44 +0000
+Subject: [PATCH 3/5] mtd/rfd_ftl: Improve a size determination in two functions
+Message-Id: <dc2790d6-6c96-65e4-5407-a2440f5a97e8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
-In-Reply-To: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
+References: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
+In-Reply-To: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,49 +12,44 @@ To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electro
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 12:58:37 +0100
+Date: Sat, 6 Jan 2018 15:03:29 +0100
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/nftlmount.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mtd/rfd_ftl.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
-index d1eaa87c88ba..457f3572c582 100644
---- a/drivers/mtd/nftlmount.c
-+++ b/drivers/mtd/nftlmount.c
-@@ -253,7 +253,7 @@ The new DiskOnChip driver already scanned the bad block table.  Just query it.
+diff --git a/drivers/mtd/rfd_ftl.c b/drivers/mtd/rfd_ftl.c
+index 19e14f909dc6..dcf1b88e1193 100644
+--- a/drivers/mtd/rfd_ftl.c
++++ b/drivers/mtd/rfd_ftl.c
+@@ -323,10 +323,9 @@ static void erase_callback(struct erase_info *erase)
  
- 	} /* foreach (block) */
+ static int erase_block(struct partition *part, int block)
+ {
+-	struct erase_info *erase;
+ 	int rc = -ENOMEM;
++	struct erase_info *erase = kmalloc(sizeof(*erase), GFP_KERNEL);
  
--	return boot_record_count?0:-1;
-+	return boot_record_count ? 0 : -1;
- }
+-	erase = kmalloc(sizeof(struct erase_info), GFP_KERNEL);
+ 	if (!erase)
+ 		goto err;
  
- static int memcmpb(void *a, int c, int n)
-@@ -282,8 +282,8 @@ static int check_free_sectors(struct NFTLrecord *nftl, unsigned int address, int
- 			return -1;
+@@ -759,7 +758,7 @@ static void rfd_ftl_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
+ 	if (mtd->type != MTD_NORFLASH || mtd->size > UINT_MAX)
+ 		return;
  
- 		if (check_oob) {
--			if(nftl_read_oob(mtd, address, mtd->oobsize,
--					 &retlen, &buf[SECTORSIZE]) < 0)
-+			if (nftl_read_oob(mtd, address, mtd->oobsize,
-+					  &retlen, &buf[SECTORSIZE]) < 0)
- 				return -1;
- 			if (memcmpb(buf + SECTORSIZE, 0xff, mtd->oobsize) != 0)
- 				return -1;
-@@ -389,7 +389,7 @@ static void check_sectors_in_chain(struct NFTLrecord *nftl, unsigned int first_b
- 			else
- 				status = bci.Status | bci.Status1;
+-	part = kzalloc(sizeof(struct partition), GFP_KERNEL);
++	part = kzalloc(sizeof(*part), GFP_KERNEL);
+ 	if (!part)
+ 		return;
  
--			switch(status) {
-+			switch (status) {
- 			case SECTOR_FREE:
- 				/* verify that the sector is really free. If not, mark
- 				   as ignore */
 -- 
 2.15.1
 
