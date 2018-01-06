@@ -1,42 +1,58 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 22 Jan 2018 15:45:36 +0000
-Subject: Re: [PATCH 2/2] mfd/rc5t583: Improve a size determination in rc5t583_i2c_probe()
-Message-Id: <20180122154536.tc45jwvlxl5gornt@dell>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 06 Jan 2018 19:52:26 +0000
+Subject: [PATCH v2] pinctrl: mcp23s08: Combine two function calls into one in mcp23s08_dbg_show()
+Message-Id: <3f5bd410-e685-d067-14e3-b8e77552a121@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <681cd296-5d05-cdf8-f031-162d7f837b36@users.sourceforge.net>
- <144ca5ca-1cfd-28a7-7bf3-8f513d567abc@users.sourceforge.net>
-In-Reply-To: <144ca5ca-1cfd-28a7-7bf3-8f513d567abc@users.sourceforge.net>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+ <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
+ <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
+In-Reply-To: <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, 15 Jan 2018, SF Markus Elfring wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 6 Jan 2018 20:40:04 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 15 Jan 2018 14:50:25 +0100
->=20
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mfd/rc5t583.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+* Print a line break together with other data in a single function call.
 
-Applied, thanks.
+* Adjust indentation.
 
---=20
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2:
+This update suggestion was rebased on source files from the software
+"Linux next-20180105".
+
+ drivers/pinctrl/pinctrl-mcp23s08.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index e6ad36dea3e5..95d548f3ba53 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -748,13 +748,12 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		if (!label)
+ 			continue;
+ 
+-		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s",
+-			chip->base + t, bank, t, label,
+-			(iodir & mask) ? "in " : "out",
+-			(gpio & mask) ? "hi" : "lo",
+-			(gppu & mask) ? "up" : "  ");
++		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s\n",
++			   chip->base + t, bank, t, label,
++			   (iodir & mask) ? "in " : "out",
++			   (gpio & mask) ? "hi" : "lo",
++			   (gppu & mask) ? "up" : "  ");
+ 		/* NOTE:  ignoring the irq-related registers */
+-		seq_puts(s, "\n");
+ 	}
+ done:
+ 	mutex_unlock(&mcp->lock);
+-- 
+2.15.1
+
