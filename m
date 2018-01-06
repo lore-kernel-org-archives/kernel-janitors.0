@@ -1,44 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 16:34:51 +0000
-Subject: [PATCH 1/3] Input: apbps2: Delete an error message for a failed memory allocation in apbps2_of_probe
-Message-Id: <ee3d6628-e8a4-c6c5-c66b-597fb2b28a47@users.sourceforge.net>
+Date: Sat, 06 Jan 2018 15:08:51 +0000
+Subject: [PATCH 2/5] mtd/rfd_ftl: Less function calls in scan_header() after error detection
+Message-Id: <6f10248e-d2c9-3c48-922c-be95ac5caba9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
-In-Reply-To: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
+References: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
+In-Reply-To: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 16:43:04 +0100
+Date: Sat, 6 Jan 2018 14:50:58 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+The functions "kfree" and "vfree" were called in three cases
+by the scan_header() function during error handling even if
+the passed data structure member contained a null pointer.
 
-This issue was detected by using the Coccinelle software.
+Adjust jump targets according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/serio/apbps2.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mtd/rfd_ftl.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/input/serio/apbps2.c b/drivers/input/serio/apbps2.c
-index 45d4e08ca4f8..9b75c4e1bc13 100644
---- a/drivers/input/serio/apbps2.c
-+++ b/drivers/input/serio/apbps2.c
-@@ -140,10 +140,8 @@ static int apbps2_of_probe(struct platform_device *ofdev)
- 	struct resource *res;
+diff --git a/drivers/mtd/rfd_ftl.c b/drivers/mtd/rfd_ftl.c
+index efff25f15d5b..19e14f909dc6 100644
+--- a/drivers/mtd/rfd_ftl.c
++++ b/drivers/mtd/rfd_ftl.c
+@@ -182,16 +182,16 @@ static int scan_header(struct partition *part)
  
- 	priv = devm_kzalloc(&ofdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(&ofdev->dev, "memory allocation failed\n");
-+	if (!priv)
- 		return -ENOMEM;
--	}
+ 	part->header_cache = kmalloc(part->header_size, GFP_KERNEL);
+ 	if (!part->header_cache)
+-		goto err;
++		return -ENOMEM;
  
- 	/* Find Device Address */
- 	res = platform_get_resource(ofdev, IORESOURCE_MEM, 0);
+ 	part->blocks = kcalloc(part->total_blocks, sizeof(struct block),
+ 			GFP_KERNEL);
+ 	if (!part->blocks)
+-		goto err;
++		goto free_cache;
+ 
+ 	part->sector_map = vmalloc(part->sector_count * sizeof(u_long));
+ 	if (!part->sector_map)
+-		goto err;
++		goto free_blocks;
+ 
+ 	for (i=0; i<part->sector_count; i++)
+ 		part->sector_map[i] = -1;
+@@ -229,9 +229,10 @@ static int scan_header(struct partition *part)
+ 
+ err:
+ 	vfree(part->sector_map);
+-	kfree(part->header_cache);
++free_blocks:
+ 	kfree(part->blocks);
+-
++free_cache:
++	kfree(part->header_cache);
+ 	return rc;
+ }
+ 
 -- 
-2.16.1
+2.15.1
 
