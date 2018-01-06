@@ -1,39 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 14:00:07 +0000
-Subject: [PATCH] iommu/dmar: Delete an error message for a failed memory allocation in dmar_alloc_pci_notify_
-Message-Id: <bc2cf250-0c52-57df-e7e1-fd20a8c23731@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 06 Jan 2018 16:03:27 +0000
+Subject: [PATCH] [media] exynos4-is: make array 'cmd' static, shrinks object size
+Message-Id: <20180106160327.17961-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: iommu@lists.linux-foundation.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 14:55:21 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Don't populate the const read-only array 'cmd' on the stack but instead
+make it static. Makes the object code smaller by 38 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   4950	    868	      0	   5818	   16ba	fimc-is-regs.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+   4824	    956	      0	   5780	   1694	fimc-is-regs.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iommu/dmar.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-is-regs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 9a7ffd13c7f0..da6b121590cc 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -150,8 +150,6 @@ dmar_alloc_pci_notify_info(struct pci_dev *dev, unsigned long event)
- 	} else {
- 		info = kzalloc(size, GFP_KERNEL);
- 		if (!info) {
--			pr_warn("Out of memory when allocating notify_info "
--				"for %s.\n", pci_name(dev));
- 			if (dmar_dev_scope_status = 0)
- 				dmar_dev_scope_status = -ENOMEM;
- 			return NULL;
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+index cfe4406a83ff..e0e291066037 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+@@ -159,7 +159,7 @@ void fimc_is_hw_load_setfile(struct fimc_is *is)
+ 
+ int fimc_is_hw_change_mode(struct fimc_is *is)
+ {
+-	const u8 cmd[] = {
++	static const u8 cmd[] = {
+ 		HIC_PREVIEW_STILL, HIC_PREVIEW_VIDEO,
+ 		HIC_CAPTURE_STILL, HIC_CAPTURE_VIDEO,
+ 	};
 -- 
 2.15.1
 
