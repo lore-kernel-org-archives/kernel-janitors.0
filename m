@@ -1,55 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Jan 2018 18:00:33 +0000
-Subject: [PATCH 1/5] powerpc/4xx: Combine four seq_printf() calls into two in ocm_debugfs_show()
-Message-Id: <90e9f81b-25ad-cf02-663c-50a9997d9d53@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 06 Jan 2018 20:18:24 +0000
+Subject: [PATCH 1/2] ASoC: Intel: sst: Fix the return value of 'sst_send_byte_stream_mrfld()'
+Message-Id: <20180106201824.6081-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
-In-Reply-To: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Jan 2018 18:08:08 +0100
+In some error handling paths, an error code is assiegned to 'ret'.
+However, the function always return 0.
 
-Some data were printed into a sequence by four separate function calls.
-Print the same data by two single function calls instead.
+Fix it and return the error code if such an error paths is taken.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/powerpc/platforms/4xx/ocm.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ sound/soc/intel/atom/sst/sst_stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/4xx/ocm.c b/arch/powerpc/platforms/4xx/ocm.c
-index 85d9e37f5ccb..5bc1baf809d1 100644
---- a/arch/powerpc/platforms/4xx/ocm.c
-+++ b/arch/powerpc/platforms/4xx/ocm.c
-@@ -245,9 +245,7 @@ static int ocm_debugfs_show(struct seq_file *m, void *v)
- 		seq_printf(m, "PhysAddr     : 0x%llx\n", ocm->phys);
- 		seq_printf(m, "MemTotal     : %d Bytes\n", ocm->memtotal);
- 		seq_printf(m, "MemTotal(NC) : %d Bytes\n", ocm->nc.memtotal);
--		seq_printf(m, "MemTotal(C)  : %d Bytes\n", ocm->c.memtotal);
--
--		seq_printf(m, "\n");
-+		seq_printf(m, "MemTotal(C)  : %d Bytes\n\n", ocm->c.memtotal);
+diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
+index 65e257b17a7e..20f5066fefb9 100644
+--- a/sound/soc/intel/atom/sst/sst_stream.c
++++ b/sound/soc/intel/atom/sst/sst_stream.c
+@@ -220,7 +220,7 @@ int sst_send_byte_stream_mrfld(struct intel_sst_drv *sst_drv_ctx,
+ 		sst_free_block(sst_drv_ctx, block);
+ out:
+ 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
+-	return 0;
++	return ret;
+ }
  
- 		seq_printf(m, "NC.PhysAddr  : 0x%llx\n", ocm->nc.phys);
- 		seq_printf(m, "NC.VirtAddr  : 0x%p\n", ocm->nc.virt);
-@@ -259,9 +257,7 @@ static int ocm_debugfs_show(struct seq_file *m, void *v)
- 							blk->size, blk->owner);
- 		}
- 
--		seq_printf(m, "\n");
--
--		seq_printf(m, "C.PhysAddr   : 0x%llx\n", ocm->c.phys);
-+		seq_printf(m, "\nC.PhysAddr   : 0x%llx\n", ocm->c.phys);
- 		seq_printf(m, "C.VirtAddr   : 0x%p\n", ocm->c.virt);
- 		seq_printf(m, "C.MemTotal   : %d Bytes\n", ocm->c.memtotal);
- 		seq_printf(m, "C.MemFree    : %d Bytes\n", ocm->c.memfree);
+ /*
 -- 
-2.15.1
+2.14.1
 
