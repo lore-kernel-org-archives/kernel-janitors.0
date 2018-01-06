@@ -1,56 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Jan 2018 17:33:09 +0000
-Subject: [PATCH] media: cx25821: prevent out-of-bounds read on array card
-Message-Id: <20180131173309.16377-1-colin.king@canonical.com>
+Date: Sat, 06 Jan 2018 17:28:09 +0000
+Subject: [PATCH] gpu: ipu-v3: make array 'int_reg' static, shrinks object size
+Message-Id: <20180106172809.19913-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently an out of range dev->nr is detected by just reporting the
-issue and later on an out-of-bounds read on array card occurs because
-of this. Fix this by checking the upper range of dev->nr with the size
-of array card (removes the hard coded size), move this check earlier
-and also exit with the error -ENOSYS to avoid the later out-of-bounds
-array read.
+Don't populate the const read-only array 'int_reg' on the stack but instead
+make it static. Makes the object code smaller by over 80 bytes:
 
-Detected by CoverityScan, CID#711191 ("Out-of-bounds-read")
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  28024	   8936	    192	  37152	   9120	drivers/gpu/ipu-v3/ipu-common.o
 
-Fixes: commit 02b20b0b4cde ("V4L/DVB (12730): Add conexant cx25821 driver")
+After:
+   text	   data	    bss	    dec	    hex	filename
+  27794	   9080	    192	  37066	   90ca	drivers/gpu/ipu-v3/ipu-common.o
+
+(gcc version 7.2.0 x86_64)
+
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/pci/cx25821/cx25821-core.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/ipu-v3/ipu-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx25821/cx25821-core.c b/drivers/media/pci/cx25821/cx25821-core.c
-index 04aa4a68a0ae..c1184e73cb2d 100644
---- a/drivers/media/pci/cx25821/cx25821-core.c
-+++ b/drivers/media/pci/cx25821/cx25821-core.c
-@@ -867,6 +867,10 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
- 	dev->nr = ++cx25821_devcount;
- 	sprintf(dev->name, "cx25821[%d]", dev->nr);
+diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
+index 658fa2d3e40c..babf1aee7ca5 100644
+--- a/drivers/gpu/ipu-v3/ipu-common.c
++++ b/drivers/gpu/ipu-v3/ipu-common.c
+@@ -1089,7 +1089,7 @@ static void ipu_irq_handler(struct irq_desc *desc)
+ {
+ 	struct ipu_soc *ipu = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+-	const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
++	static const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
  
-+	if (dev->nr >= ARRAY_SIZE(card)) {
-+		CX25821_INFO("dev->nr >= %ld", ARRAY_SIZE(card));
-+		return -ENODEV;
-+	}
- 	if (dev->pci->device != 0x8210) {
- 		pr_info("%s(): Exiting. Incorrect Hardware device = 0x%02x\n",
- 			__func__, dev->pci->device);
-@@ -882,9 +886,6 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
- 		dev->channels[i].sram_channels = &cx25821_sram_channels[i];
- 	}
+ 	chained_irq_enter(chip, desc);
  
--	if (dev->nr > 1)
--		CX25821_INFO("dev->nr > 1!");
--
- 	/* board config */
- 	dev->board = 1;		/* card[dev->nr]; */
- 	dev->_max_num_decoders = MAX_DECODERS;
 -- 
 2.15.1
 
