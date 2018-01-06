@@ -1,42 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 19:05:14 +0000
-Subject: [PATCH] Input: eeti_ts: Delete an error message for a failed memory allocation in eeti_ts_probe()
-Message-Id: <c1bb1997-5430-1173-1d54-b63bc72af156@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 06 Jan 2018 09:26:43 +0000
+Subject: [PATCH] dm mpath: potential NULL dereference with parse_path()
+Message-Id: <20180106092643.pq67kkzj2jsjlvzy@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Daniel Mack <daniel@zonque.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: dm-devel@redhat.com, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 20:00:03 +0100
+We forgot to set the error code on this path so it means we accidentally
+return NULL.  The caller is expecting error pointers and will crash
+with a NULL dereference.
 
-Omit an extra message for a memory allocation failure in this function.
+Fixes: faf782b1c93d ("dm mpath: optimize NVMe bio-based support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/touchscreen/eeti_ts.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/input/touchscreen/eeti_ts.c b/drivers/input/touchscreen/eeti_ts.c
-index 2facad75eb6d..337f171e0f86 100644
---- a/drivers/input/touchscreen/eeti_ts.c
-+++ b/drivers/input/touchscreen/eeti_ts.c
-@@ -161,10 +161,8 @@ static int eeti_ts_probe(struct i2c_client *client,
- 	 */
- 
- 	eeti = devm_kzalloc(dev, sizeof(*eeti), GFP_KERNEL);
--	if (!eeti) {
--		dev_err(dev, "failed to allocate driver data\n");
-+	if (!eeti)
- 		return -ENOMEM;
--	}
- 
- 	input = devm_input_allocate_device(dev);
- 	if (!input) {
--- 
-2.16.0
-
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index d1f32103ae86..0436a5466281 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -883,6 +883,7 @@ static struct pgpath *parse_path(struct dm_arg_set *as, struct path_selector *ps
+ 		INIT_DELAYED_WORK(&p->activate_path, activate_path_work);
+ 		if (setup_scsi_dh(p->path.dev->bdev, m, &ti->error)) {
+ 			dm_put_device(ti, p->path.dev);
++			r = -EINVAL;
+ 			goto bad;
+ 		}
+ 	}
