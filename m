@@ -1,45 +1,49 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 12:02:30 +0000
-Subject: [PATCH 4/4] mfd/tps65910: Move an assignment in tps65910_sleepinit()
-Message-Id: <ecbcfe5a-ed61-9a8a-72ce-d495c2e59763@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 06 Jan 2018 15:50:27 +0000
+Subject: [PATCH][next] HID: asus: make array 'buf' static const, shrinks object size
+Message-Id: <20180106155027.17561-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
-In-Reply-To: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 12:22:28 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Move the assignment for the local variable "dev" so that its setting
-will be performed after a configuration check by this function.
+Don't populate the const read-only array 'buf' on the stack but instead
+make it stati. Makes the object code smaller by 26 bytes:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  14378	   2384	     64	  16826	   41ba	linux/drivers/hid/hid-asus.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  14296	   2440	     64	  16800	   41a0	linux/drivers/hid/hid-asus.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mfd/tps65910.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hid-asus.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index 7e7d3d1642c6..bf16cbe6fd88 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -315,11 +315,11 @@ static int tps65910_sleepinit(struct tps65910 *tps65910,
- 	struct device *dev;
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+index 6d2894b7d8e7..89d29f323366 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -561,7 +561,9 @@ static int asus_input_mapping(struct hid_device *hdev,
+ static int asus_start_multitouch(struct hid_device *hdev)
+ {
  	int ret;
+-	const unsigned char buf[] = { FEATURE_REPORT_ID, 0x00, 0x03, 0x01, 0x00 };
++	static const unsigned char buf[] = {
++		FEATURE_REPORT_ID, 0x00, 0x03, 0x01, 0x00
++	};
+ 	unsigned char *dmabuf = kmemdup(buf, sizeof(buf), GFP_KERNEL);
  
--	dev = tps65910->dev;
--
- 	if (!pmic_pdata->en_dev_slp)
- 		return 0;
- 
-+	dev = tps65910->dev;
-+
- 	/* enabling SLEEP device state */
- 	ret = tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
- 				DEVCTRL_DEV_SLP_MASK);
+ 	if (!dmabuf) {
 -- 
 2.15.1
 
