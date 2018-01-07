@@ -1,31 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 10:00:53 +0000
-Subject: Re: [PATCH 2/4] gpio-stmpe: Improve a size determination in stmpe_gpio_probe()
-Message-Id: <CACRpkdYn0OASSMe3msNy7zJdur5tJ15yWB9AJno2PXBC0Sk4EA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 07 Jan 2018 23:15:10 +0000
+Subject: [PATCH] scsi: bfa: use ARRAY_SIZE for array sizing calculation on array __pciids
+Message-Id: <20180107231510.7755-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net> <fdd3ba06-afb7-e36e-6e58-ac4e974d7720@users.sourceforge.net>
-In-Reply-To: <fdd3ba06-afb7-e36e-6e58-ac4e974d7720@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 9:02 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 Jan 2018 19:36:29 +0100
->
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Use the ARRAY_SIZE macro on array __pciids to determine size of the array.
+Improvement suggested by coccinelle.
 
-Patch applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/bfa/bfa_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/scsi/bfa/bfa_core.c b/drivers/scsi/bfa/bfa_core.c
+index 3e1caec82554..10a63be92544 100644
+--- a/drivers/scsi/bfa/bfa_core.c
++++ b/drivers/scsi/bfa/bfa_core.c
+@@ -1957,7 +1957,7 @@ bfa_get_pciids(struct bfa_pciid_s **pciids, int *npciids)
+ 		{BFA_PCI_VENDOR_ID_BROCADE, BFA_PCI_DEVICE_ID_CT_FC},
+ 	};
+ 
+-	*npciids = sizeof(__pciids) / sizeof(__pciids[0]);
++	*npciids = ARRAY_SIZE(__pciids);
+ 	*pciids = __pciids;
+ }
+ 
+-- 
+2.15.1
+
