@@ -1,40 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 12:01:21 +0000
-Subject: [PATCH 3/4] mfd/tps65910: Delete an unnecessary variable initialisation in tps65910_sleepinit()
-Message-Id: <0e5997de-0c43-da8c-8ec6-9c3e593d9f5a@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 16:00:49 +0000
+Subject: [PATCH v3 0/3] video-SMSC UFX: Adjustments for two function implementations
+Message-Id: <a36fa112-40a1-703c-c2ac-ce7e88bb8609@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
-In-Reply-To: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
+References: <CGME20171125204312epcas2p149d6487ac83e886f95aefe0b35aef1b0@epcas2p1.samsung.com>
+ <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
+ <1736749.UIs06O4xc5@amdc3058>
+In-Reply-To: <1736749.UIs06O4xc5@amdc3058>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 12:10:49 +0100
+Date: Sun, 7 Jan 2018 16:54:32 +0100
 
-The local variable "dev" will be reassigned by a following statement.
-Thus omit the explicit initialisation at the beginning.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Markus Elfring (3):
+  Less checks in ufx_usb_probe() after error detection
+  Return an error code only as a constant
+    in ufx_realloc_framebuffer()
+  Delete an error message for a failed memory allocation
+    in ufx_realloc_framebuffer()
+
 ---
- drivers/mfd/tps65910.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index 80ea1474c654..7e7d3d1642c6 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -312,7 +312,7 @@ static int tps65910_ck32k_init(struct tps65910 *tps65910,
- static int tps65910_sleepinit(struct tps65910 *tps65910,
- 		struct tps65910_board *pmic_pdata)
- {
--	struct device *dev = NULL;
-+	struct device *dev;
- 	int ret;
- 
- 	dev = tps65910->dev;
+v3:
+Rebased on Linux next-20180105.
+
+ drivers/video/fbdev/smscufx.c | 59 ++++++++++++++++---------------------------
+ 1 file changed, 22 insertions(+), 37 deletions(-)
+
 -- 
 2.15.1
 
