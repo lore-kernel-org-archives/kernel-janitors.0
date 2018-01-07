@@ -1,30 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 Jan 2018 18:12:07 +0000
-Subject: Re: ARM-SMMU: Delete error messages for a failed memory allocation in three functions
-Message-Id: <a714a4ab-8118-e4ef-5982-4395ac2e6c4b@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 21:01:00 +0000
+Subject: [PATCH 0/2] misc/apds9802als: Adjustments for apds9802als_probe()
+Message-Id: <cfd7cb73-7437-0d95-ef7a-8c8f6ce49e3d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c3e91414-dd5b-2889-d86c-b19aff56571b@users.sourceforge.net>
- <ac171b23-624d-2df3-d1d1-8e9479ae03bc@arm.com>
-In-Reply-To: <ac171b23-624d-2df3-d1d1-8e9479ae03bc@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
->> Date: Sat, 20 Jan 2018 15:30:17 +0100
->>
->> Omit extra messages for a memory allocation failure in these functions.
-> 
-> Why?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 7 Jan 2018 21:58:42 +0100
 
-Do you find the wording “WARNING: Possible unnecessary 'out of memory' message”
-(from the script “checkpatch.pl”) more reasonable?
+Two update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-> This may as well be "delete some stuff because I feel like it".
+ drivers/misc/apds9802als.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Do you find the Linux allocation failure report insufficient
-in this use case?
+-- 
+2.15.1
 
-Regards,
-Markus
