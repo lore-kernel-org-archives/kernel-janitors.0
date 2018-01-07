@@ -1,54 +1,46 @@
-From: Stefano Brivio <sbrivio@redhat.com>
-Date: Sun, 07 Jan 2018 15:30:08 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 16:30:12 +0000
 Subject: Re: atm/clip: Use seq_puts() in svc_addr()
-Message-Id: <20180107163008.4ddd0c79@elisabeth>
+Message-Id: <c6ab8967-ec45-2bfb-9212-9db42562be81@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <97636808-1d9f-d196-ebce-fbd2505c50e2@users.sourceforge.net>
-        <20180106232539.5d6bb620@elisabeth>
-        <a42edf4b-92c7-469d-dab1-3238cd7487bd@users.sourceforge.net>
-In-Reply-To: <a42edf4b-92c7-469d-dab1-3238cd7487bd@users.sourceforge.net>
+ <20180106232539.5d6bb620@elisabeth>
+ <a42edf4b-92c7-469d-dab1-3238cd7487bd@users.sourceforge.net>
+ <20180107163008.4ddd0c79@elisabeth>
+In-Reply-To: <20180107163008.4ddd0c79@elisabeth>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: netdev@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, David Windsor <dwindsor@gmail.com>, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Kees Cook <keescook@chromium.org>, Roopa Prabhu <roopa@cumulusnetworks.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Stefano Brivio <sbrivio@redhat.com>, netdev@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, David Windsor <dwindsor@gmail.com>, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Kees Cook <keescook@chromium.org>, Roopa Prabhu <roopa@cumulusnetworks.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 7 Jan 2018 09:19:17 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
-> >> Two strings should be quickly put into a sequence by two function calls.
-> >> Thus use the function "seq_puts" instead of "seq_printf".
-> >>
-> >> This issue was detected by using the Coccinelle software.  
-> > 
-> > Can you please explain what the issue really is and what you're trying
-> > to do here?  
+>> Is the function "seq_puts" a bit more efficient for the desired output
+>> of a single string in comparison to calling the function "seq_printf"
+>> for this purpose?
 > 
-> Is the function "seq_puts" a bit more efficient for the desired output
-> of a single string in comparison to calling the function "seq_printf"
-> for this purpose?
+> Will you please be so kind and tell us?
 
-Will you please be so kind and tell us?
+How do you think about to get the run time characteristics for these
+sequence output functions better documented?
+https://elixir.free-electrons.com/linux/v4.15-rc6/source/fs/seq_file.c#L660
 
-> > One shouldn't need to dig into Coccinelle patterns to find
-> > out what you mean,  
+Can an information like “WARNING: Prefer seq_puts to seq_printf”
+(from the script “checkpatch.pl”) be another incentive?
+
+
+>>> and "strings should be quickly put into a sequence"
+>>> isn't terribly helpful.  
+>>
+>> Which wording would you find more appropriate for the suggested
+>> adjustment of these function calls?
 > 
-> Why did an attribution for a software tool confuse you?
-
-I'm not confused. I'm saying that one shouldn't need to dig into
-Coccinelle patterns to find out what you mean.
-
-> > and "strings should be quickly put into a sequence"
-> > isn't terribly helpful.  
+> Whatever describes the actual issue and what you're doing about it.
+> Turn your rhetorical question above into a commit message, done.
 > 
-> Which wording would you find more appropriate for the suggested
-> adjustment of these function calls?
+> Compare that with your original commit message, on the other hand,
+> and you should understand what I mean.
 
-Whatever describes the actual issue and what you're doing about it.
-Turn your rhetorical question above into a commit message, done.
+Which descriptions are you really missing for the affected data output?
 
-Compare that with your original commit message, on the other hand,
-and you should understand what I mean.
-
--- 
-Stefano
+Regards,
+Markus
