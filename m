@@ -1,44 +1,36 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 16:14:14 +0000
-Subject: [PATCH 1/2] Input: gamecon: Delete an error message for a failed memory allocation in gc_attach()
-Message-Id: <1097eb0c-fd33-3229-90be-417aca3795bd@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 13:33:36 +0000
+Subject: [PATCH v2 0/2] video-UDLFB: Adjustments for dlfb_realloc_framebuffer()
+Message-Id: <25aee051-12fb-de5f-c806-f419fa4c0ef1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e02726e3-2ee7-e690-a8ea-90a55f8fd0c2@users.sourceforge.net>
-In-Reply-To: <e02726e3-2ee7-e690-a8ea-90a55f8fd0c2@users.sourceforge.net>
+References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
+ <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+ <1768474.zA76iyE2Y1@amdc3058>
+In-Reply-To: <1768474.zA76iyE2Y1@amdc3058>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 16:27:11 +0100
+Date: Sun, 7 Jan 2018 14:24:34 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Return an error code only as a constant
+  Delete an error message for a failed memory allocation
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/joystick/gamecon.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/input/joystick/gamecon.c b/drivers/input/joystick/gamecon.c
-index 2ffb2e8bdc3b..f6006383d30d 100644
---- a/drivers/input/joystick/gamecon.c
-+++ b/drivers/input/joystick/gamecon.c
-@@ -966,10 +966,8 @@ static void gc_attach(struct parport *pp)
- 	}
- 
- 	gc = kzalloc(sizeof(struct gc), GFP_KERNEL);
--	if (!gc) {
--		pr_err("Not enough memory\n");
-+	if (!gc)
- 		goto err_unreg_pardev;
--	}
- 
- 	mutex_init(&gc->mutex);
- 	gc->pd = pd;
+v2:
+Rebased on Linux next-20180105.
+
+ drivers/video/fbdev/udlfb.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
 -- 
-2.16.1
+2.15.1
 
