@@ -1,65 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 20:17:51 +0000
-Subject: [PATCH 2/2] RDMA/bnxt_re: Use common error handling code in bnxt_qplib_alloc_dpi_tbl()
-Message-Id: <30f2eb91-16c6-6c13-343d-64c5f42f2497@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 11:55:17 +0000
+Subject: [PATCH v2 0/2] video/fbdev/stifb: Adjustments for stifb_init_fb()
+Message-Id: <889131fe-199c-3bef-0781-00761b807426@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
-In-Reply-To: <19c755a6-8c52-bbd5-a425-48fc08cecd4f-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <7dcd32b6-9691-14a1-29cf-3a746ef5adfc@users.sourceforge.net>
+ <CGME20171124213055epcas4p45c641222185056871b97f4e7bc235d2e@epcas4p4.samsung.com>
+ <25624997.nONnEdNj0s@daneel.sf-tec.de> <1680261.Msdj7gi9fB@amdc3058>
+In-Reply-To: <1680261.Msdj7gi9fB@amdc3058>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Somnath Kotur <somnath.kotur-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Sriharsha Basavapatna <sriharsha.basavapatna-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Himanshu Jha <himanshujha199640-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Helge Deller <deller@gmx.de>, "James E. J. Bottomley" <jejb@parisc-linux.org>, Rolf Eike Beer <eike-kernel@sf-tec.de>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 20:56:56 +0100
+Date: Sun, 7 Jan 2018 12:45:54 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Two update suggestions were taken into account.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/bnxt_re/qplib_res.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Markus Elfring (2):
+  Return -ENOMEM after a failed kzalloc()
+  Delete an error message for a failed memory allocation
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-index 9dacfd24869b..539a5d44e6db 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-@@ -705,10 +705,8 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
- 	dpit->max = dbr_len / PAGE_SIZE;
- 
- 	dpit->app_tbl = kcalloc(dpit->max, sizeof(void *), GFP_KERNEL);
--	if (!dpit->app_tbl) {
--		pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
--		return -ENOMEM;
--	}
-+	if (!dpit->app_tbl)
-+		goto unmap_io;
- 
- 	bytes = dpit->max >> 3;
- 	if (!bytes)
-@@ -716,15 +714,18 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
- 
- 	dpit->tbl = kmalloc(bytes, GFP_KERNEL);
- 	if (!dpit->tbl) {
--		pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
- 		kfree(dpit->app_tbl);
- 		dpit->app_tbl = NULL;
--		return -ENOMEM;
-+		goto unmap_io;
- 	}
- 
- 	memset((u8 *)dpit->tbl, 0xFF, bytes);
- 
- 	return 0;
-+
-+unmap_io:
-+	pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
-+	return -ENOMEM;
- }
- 
- /* PKEYs */
+ drivers/video/fbdev/stifb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
 -- 
-2.16.1
+2.15.1
 
