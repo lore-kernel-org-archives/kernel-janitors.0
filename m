@@ -1,36 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Jan 2018 09:14:50 +0000
-Subject: [PATCH][next] ath10k: fix spelling mistake: "addrress" -> "address"
-Message-Id: <20180112091450.8285-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 11:58:47 +0000
+Subject: [PATCH v2 2/2] video/fbdev/stifb: Delete an error message for a failed memory allocation in stifb_in
+Message-Id: <f92f41b1-d4fa-4ffa-8c19-af4eb0d2d8cf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7dcd32b6-9691-14a1-29cf-3a746ef5adfc@users.sourceforge.net>
+ <CGME20171124213055epcas4p45c641222185056871b97f4e7bc235d2e@epcas4p4.samsung.com>
+ <25624997.nONnEdNj0s@daneel.sf-tec.de> <1680261.Msdj7gi9fB@amdc3058>
+ <889131fe-199c-3bef-0781-00761b807426@users.sourceforge.net>
+In-Reply-To: <889131fe-199c-3bef-0781-00761b807426@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Helge Deller <deller@gmx.de>, "James E. J. Bottomley" <jejb@parisc-linux.org>, Rolf Eike Beer <eike-kernel@sf-tec.de>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 7 Jan 2018 12:34:22 +0100
 
-Trivial fix to spelling mistake in warning message text.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/ath/ath10k/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
-index 8abaccc25227..f6a23f2d0335 100644
---- a/drivers/net/wireless/ath/ath10k/pci.c
-+++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@ -1484,7 +1484,7 @@ static int ath10k_pci_dump_memory_section(struct ath10k *ar,
- 	cur_section = &mem_region->section_table.sections[0];
+v2:
+This update suggestion was rebased on source files from the software
+"Linux next-20180105" together with a change for an error code.
+
+ drivers/video/fbdev/stifb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/video/fbdev/stifb.c b/drivers/video/fbdev/stifb.c
+index 511a594889af..dec8efb4f256 100644
+--- a/drivers/video/fbdev/stifb.c
++++ b/drivers/video/fbdev/stifb.c
+@@ -1126,10 +1126,8 @@ static int __init stifb_init_fb(struct sti_struct *sti, int bpp_pref)
+ 	int bpp, xres, yres;
  
- 	if (mem_region->start > cur_section->start) {
--		ath10k_warn(ar, "incorrect memdump region 0x%x with section start addrress 0x%x.\n",
-+		ath10k_warn(ar, "incorrect memdump region 0x%x with section start address 0x%x.\n",
- 			    mem_region->start, cur_section->start);
- 		return 0;
- 	}
+ 	fb = kzalloc(sizeof(*fb), GFP_ATOMIC);
+-	if (!fb) {
+-		printk(KERN_ERR "stifb: Could not allocate stifb structure\n");
++	if (!fb)
+ 		return -ENOMEM;
+-	}
+ 	
+ 	info = &fb->info;
+ 
 -- 
 2.15.1
 
