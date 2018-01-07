@@ -1,74 +1,37 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Mon, 08 Jan 2018 08:38:33 +0000
-Subject: Re: [PATCH] gpu: ipu-v3: make array 'int_reg' static, shrinks object size
-Message-Id: <1515400713.3202.2.camel@pengutronix.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 07 Jan 2018 23:45:08 +0000
+Subject: [PATCH] be2net: use ARRAY_SIZE for array sizing calculation on array cmd_priv_map
+Message-Id: <20180107234508.8221-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106172809.19913-1-colin.king@canonical.com>
-In-Reply-To: <20180106172809.19913-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sathya Perla <sathya.perla@broadcom.com>, Ajit Khaparde <ajit.khaparde@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Sat, 2018-01-06 at 17:28 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const read-only array 'int_reg' on the stack but instead
-> make it static. Makes the object code smaller by over 80 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   28024	   8936	    192	  37152	   9120	drivers/gpu/ipu-v3/ipu-common.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   27794	   9080	    192	  37066	   90ca	drivers/gpu/ipu-v3/ipu-common.o
-> 
-> (gcc version 7.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Use the ARRAY_SIZE macro on array cmd_priv_map to determine size of the
+array.  Improvement suggested by coccinelle.
 
-Thank you for the patch.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/emulex/benet/be_cmds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/ipu-v3/ipu-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
-> index 658fa2d3e40c..babf1aee7ca5 100644
-> --- a/drivers/gpu/ipu-v3/ipu-common.c
-> +++ b/drivers/gpu/ipu-v3/ipu-common.c
-> @@ -1089,7 +1089,7 @@ static void ipu_irq_handler(struct irq_desc *desc)
->  {
->  	struct ipu_soc *ipu = irq_desc_get_handler_data(desc);
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> -	const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
-> +	static const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
->  
->  	chained_irq_enter(chip, desc);
+diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.c b/drivers/net/ethernet/emulex/benet/be_cmds.c
+index 02dd5246dfae..1a49297224ed 100644
+--- a/drivers/net/ethernet/emulex/benet/be_cmds.c
++++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
+@@ -103,7 +103,7 @@ static struct be_cmd_priv_map cmd_priv_map[] = {
+ static bool be_cmd_allowed(struct be_adapter *adapter, u8 opcode, u8 subsystem)
+ {
+ 	int i;
+-	int num_entries = sizeof(cmd_priv_map)/sizeof(struct be_cmd_priv_map);
++	int num_entries = ARRAY_SIZE(cmd_priv_map);
+ 	u32 cmd_privileges = adapter->cmd_privileges;
+ 
+ 	for (i = 0; i < num_entries; i++)
+-- 
+2.15.1
 
-There's the same issue in ipu_irq_err_handler right below:
-
-----------8<----------
-diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
-index babf1aee7ca58..48685cddbad1b 100644
---- a/drivers/gpu/ipu-v3/ipu-common.c
-+++ b/drivers/gpu/ipu-v3/ipu-common.c
-@@ -1102,7 +1102,7 @@ static void ipu_err_irq_handler(struct irq_desc *desc)
- {
-        struct ipu_soc *ipu = irq_desc_get_handler_data(desc);
-        struct irq_chip *chip = irq_desc_get_chip(desc);
--       const int int_reg[] = { 4, 5, 8, 9};
-+       static const int int_reg[] = { 4, 5, 8, 9};
- 
-        chained_irq_enter(chip, desc);
- 
----------->8----------
-
-If you don't mind, I'll amend this change.
-
-regards
-Philipp
