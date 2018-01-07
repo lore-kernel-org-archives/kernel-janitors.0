@@ -1,102 +1,94 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 15:11:38 +0000
-Subject: [PATCH 5/5] mtd/rfd_ftl: Add some spaces for better code readability
-Message-Id: <847904e4-c5a2-0716-24ae-c2ac085fe3a3@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 07 Jan 2018 14:51:46 +0000
+Subject: [PATCH] ixgbevf: use ARRAY_SIZE for various array sizing calculations
+Message-Id: <20180107145146.2934-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
-In-Reply-To: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 15:47:01 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+Use the ARRAY_SIZE macro on various arrays to determine
+size of the arrays. Improvement suggested by coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/rfd_ftl.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/vf.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mtd/rfd_ftl.c b/drivers/mtd/rfd_ftl.c
-index e3155ec4be64..b6cc3690b9ed 100644
---- a/drivers/mtd/rfd_ftl.c
-+++ b/drivers/mtd/rfd_ftl.c
-@@ -103,7 +103,7 @@ static int build_block_map(struct partition *part, int block_no)
+diff --git a/drivers/net/ethernet/intel/ixgbevf/vf.c b/drivers/net/ethernet/intel/ixgbevf/vf.c
+index 0c25006ce9af..cd79c4a73b48 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/vf.c
++++ b/drivers/net/ethernet/intel/ixgbevf/vf.c
+@@ -285,7 +285,7 @@ static s32 ixgbevf_set_uc_addr_vf(struct ixgbe_hw *hw, u32 index, u8 *addr)
+ 		ether_addr_copy(msg_addr, addr);
  
- 	block->state = BLOCK_OK;
+ 	ret_val = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
+-					     sizeof(msgbuf) / sizeof(u32));
++					     ARRAY_SIZE(msgbuf));
+ 	if (!ret_val) {
+ 		msgbuf[0] &= ~IXGBE_VT_MSGTYPE_CTS;
  
--	for (i=0; i<part->data_sectors_per_block; i++) {
-+	for (i = 0; i < part->data_sectors_per_block; i++) {
- 		u16 entry;
+@@ -455,8 +455,7 @@ static s32 ixgbevf_set_rar_vf(struct ixgbe_hw *hw, u32 index, u8 *addr,
+ 	ether_addr_copy(msg_addr, addr);
  
- 		entry = le16_to_cpu(part->header_cache[HEADER_MAP_OFFSET + i]);
-@@ -193,10 +193,10 @@ static int scan_header(struct partition *part)
- 	if (!part->sector_map)
- 		goto free_blocks;
+ 	ret_val = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
+-					     sizeof(msgbuf) / sizeof(u32));
+-
++					     ARRAY_SIZE(msgbuf));
+ 	msgbuf[0] &= ~IXGBE_VT_MSGTYPE_CTS;
  
--	for (i=0; i<part->sector_count; i++)
-+	for (i = 0; i < part->sector_count; i++)
- 		part->sector_map[i] = -1;
+ 	/* if nacked the address was rejected, use "perm_addr" */
+@@ -571,7 +570,7 @@ static s32 ixgbevf_update_xcast_mode(struct ixgbe_hw *hw, int xcast_mode)
+ 	msgbuf[1] = xcast_mode;
  
--	for (i=0, blocks_found=0; i<part->total_blocks; i++) {
-+	for (i = 0, blocks_found = 0; i < part->total_blocks; i++) {
- 		rc = mtd_read(part->mbd.mtd, i * part->block_size,
- 			      part->header_size, &retlen,
- 			      (u_char *)part->header_cache);
-@@ -380,7 +380,7 @@ static int move_block_contents(struct partition *part, int block_no, u_long *old
- 		goto err;
- 	}
+ 	err = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
+-					 sizeof(msgbuf) / sizeof(u32));
++					 ARRAY_SIZE(msgbuf));
+ 	if (err)
+ 		return err;
  
--	for (i=0; i<part->data_sectors_per_block; i++) {
-+	for (i = 0; i < part->data_sectors_per_block; i++) {
- 		u16 entry = le16_to_cpu(map[HEADER_MAP_OFFSET + i]);
- 		u_long addr;
+@@ -609,7 +608,7 @@ static s32 ixgbevf_set_vfta_vf(struct ixgbe_hw *hw, u32 vlan, u32 vind,
+ 	msgbuf[0] |= vlan_on << IXGBE_VT_MSGINFO_SHIFT;
  
-@@ -452,7 +452,7 @@ static int reclaim_block(struct partition *part, u_long *old_sector)
- 	else
- 		old_sector_block = -1;
+ 	err = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
+-					 sizeof(msgbuf) / sizeof(u32));
++					 ARRAY_SIZE(msgbuf));
+ 	if (err)
+ 		goto mbx_err;
  
--	for (block=0; block<part->total_blocks; block++) {
-+	for (block = 0; block < part->total_blocks; block++) {
- 		int this_score;
+@@ -813,7 +812,7 @@ static s32 ixgbevf_set_rlpml_vf(struct ixgbe_hw *hw, u16 max_size)
+ 	msgbuf[1] = max_size;
  
- 		if (block = part->reserved_block)
-@@ -625,8 +625,7 @@ static int find_free_sector(const struct partition *part, const struct block *bl
+ 	ret_val = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
+-					     sizeof(msgbuf) / sizeof(u32));
++					     ARRAY_SIZE(msgbuf));
+ 	if (ret_val)
+ 		return ret_val;
+ 	if ((msgbuf[0] & IXGBE_VF_SET_LPE) &&
+@@ -859,8 +858,7 @@ static int ixgbevf_negotiate_api_version_vf(struct ixgbe_hw *hw, int api)
+ 	msg[1] = api;
+ 	msg[2] = 0;
  
- 		if (++i = part->data_sectors_per_block)
- 			i = 0;
--	}
--	while(i != stop);
-+	} while (i != stop);
+-	err = ixgbevf_write_msg_read_ack(hw, msg, msg,
+-					 sizeof(msg) / sizeof(u32));
++	err = ixgbevf_write_msg_read_ack(hw, msg, msg, ARRAY_SIZE(msg));
+ 	if (!err) {
+ 		msg[0] &= ~IXGBE_VT_MSGTYPE_CTS;
  
- 	return -1;
- }
-@@ -718,7 +717,7 @@ static int rfd_ftl_writesect(struct mtd_blktrans_dev *dev, u_long sector, char *
+@@ -911,8 +909,7 @@ int ixgbevf_get_queues(struct ixgbe_hw *hw, unsigned int *num_tcs,
+ 	msg[0] = IXGBE_VF_GET_QUEUE;
+ 	msg[1] = msg[2] = msg[3] = msg[4] = 0;
  
- 	old_addr = part->sector_map[sector];
+-	err = ixgbevf_write_msg_read_ack(hw, msg, msg,
+-					 sizeof(msg) / sizeof(u32));
++	err = ixgbevf_write_msg_read_ack(hw, msg, msg, ARRAY_SIZE(msg));
+ 	if (!err) {
+ 		msg[0] &= ~IXGBE_VT_MSGTYPE_CTS;
  
--	for (i=0; i<SECTOR_SIZE; i++) {
-+	for (i = 0; i < SECTOR_SIZE; i++) {
- 		if (!buf[i])
- 			continue;
- 
-@@ -799,10 +798,9 @@ static void rfd_ftl_remove_dev(struct mtd_blktrans_dev *dev)
- 	struct partition *part = (struct partition*)dev;
- 	int i;
- 
--	for (i=0; i<part->total_blocks; i++) {
-+	for (i = 0; i < part->total_blocks; i++)
- 		pr_debug("rfd_ftl_remove_dev:'%s': erase unit #%02d: %d erases\n",
- 			part->mbd.mtd->name, i, part->blocks[i].erases);
--	}
- 
- 	del_mtd_blktrans_dev(dev);
- 	vfree(part->sector_map);
 -- 
 2.15.1
 
