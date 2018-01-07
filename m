@@ -1,30 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 19 Jan 2018 19:36:51 +0000
-Subject: Re: [PATCH][devlink-next] devlink: make functions a couple of new functions static
-Message-Id: <20180119.143651.630642000688996110.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 08:19:17 +0000
+Subject: Re: atm/clip: Use seq_puts() in svc_addr()
+Message-Id: <a42edf4b-92c7-469d-dab1-3238cd7487bd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180117112303.20149-1-colin.king@canonical.com>
-In-Reply-To: <20180117112303.20149-1-colin.king@canonical.com>
+References: <97636808-1d9f-d196-ebce-fbd2505c50e2@users.sourceforge.net>
+ <20180106232539.5d6bb620@elisabeth>
+In-Reply-To: <20180106232539.5d6bb620@elisabeth>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jiri@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stefano Brivio <sbrivio@redhat.com>, netdev@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, David Windsor <dwindsor@gmail.com>, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Kees Cook <keescook@chromium.org>, Roopa Prabhu <roopa@cumulusnetworks.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 17 Jan 2018 11:23:03 +0000
+>> Two strings should be quickly put into a sequence by two function calls.
+>> Thus use the function "seq_puts" instead of "seq_printf".
+>>
+>> This issue was detected by using the Coccinelle software.
+> 
+> Can you please explain what the issue really is and what you're trying
+> to do here?
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions devlink_resource_find and devlink_resource_validate_children
-> are local to the source and do not need to be in global scope, so make
-> them static.
-> 
-> Cleans up sparse warnings:
-> symbol 'devlink_resource_find' was not declared. Should it be static?
-> warning: symbol 'devlink_resource_validate_children' was not declared.
-> Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Is the function "seq_puts" a bit more efficient for the desired output
+of a single string in comparison to calling the function "seq_printf"
+for this purpose?
 
-Applied.
+
+> One shouldn't need to dig into Coccinelle patterns to find
+> out what you mean,
+
+Why did an attribution for a software tool confuse you?
+
+
+> and "strings should be quickly put into a sequence"
+> isn't terribly helpful.
+
+Which wording would you find more appropriate for the suggested
+adjustment of these function calls?
+
+Regards,
+Markus
