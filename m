@@ -1,31 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 23 Jan 2018 13:34:42 +0000
-Subject: Re: [3/3] mfd/sm501: Adjust 12 checks for null pointers
-Message-Id: <b15e6160-53db-2558-0729-73eac686dd6b@users.sourceforge.net>
+Date: Sun, 07 Jan 2018 21:03:56 +0000
+Subject: [PATCH 2/2] misc/apds9802als: Improve a size determination in apds9802als_probe()
+Message-Id: <a1fd0305-9f42-c172-3869-e2d0e1990011@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f292e2f3-2471-4ea0-3a02-349e6c10ff03@users.sourceforge.net>
- <10199b4b-ba7d-a253-25c5-e81cafb1d8c9@users.sourceforge.net>
- <20180122154906.dl2cyvwfdmi2j6r6@dell> <20180123130409.gffspkjm7nqben6k@dell>
-In-Reply-To: <20180123130409.gffspkjm7nqben6k@dell>
+References: <cfd7cb73-7437-0d95-ef7a-8c8f6ce49e3d@users.sourceforge.net>
+In-Reply-To: <cfd7cb73-7437-0d95-ef7a-8c8f6ce49e3d@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Lee Jones <lee.jones@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-> This patch does not apply.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 7 Jan 2018 21:48:50 +0100
 
-This change possibility partly depends on the update step
-“[PATCH 2/3] mfd/sm501: Improve a size determination in two functions”
-which you did not like yesterday.
-https://lkml.org/lkml/2018/1/22/564
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
+This issue was detected by using the Coccinelle software.
 
-> Please rebase and resend.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/apds9802als.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Will the change acceptance grow then really?
+diff --git a/drivers/misc/apds9802als.c b/drivers/misc/apds9802als.c
+index fa548796c92e..acf467666737 100644
+--- a/drivers/misc/apds9802als.c
++++ b/drivers/misc/apds9802als.c
+@@ -228,9 +228,8 @@ static int apds9802als_probe(struct i2c_client *client,
+ 			     const struct i2c_device_id *id)
+ {
+ 	int res;
+-	struct als_data *data;
++	struct als_data *data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 
+-	data = kzalloc(sizeof(struct als_data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.1
 
-Do you find the proposed source code transformation generally acceptable?
-
-Regards,
-Markus
