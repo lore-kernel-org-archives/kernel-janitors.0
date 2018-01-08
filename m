@@ -1,39 +1,48 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 22 Jan 2018 15:41:05 +0000
-Subject: Re: [PATCH] mfd/jz4740-adc: Delete an error message for a failed memory allocation in jz4740_adc_pro
-Message-Id: <20180122154105.ebfoiw4uzbi47r3u@dell>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 Jan 2018 09:42:22 +0000
+Subject: [PATCH 2/3] GenWQE: Fix a typo in two comments
+Message-Id: <dc64ae8b-46af-2838-a2f8-c2c1801b9113@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <448b31bd-4466-b373-988f-f6452e32f390@users.sourceforge.net>
-In-Reply-To: <448b31bd-4466-b373-988f-f6452e32f390@users.sourceforge.net>
+References: <e1b73b1a-ae0a-b76b-33d7-4dc5af8e39b5@users.sourceforge.net>
+In-Reply-To: <e1b73b1a-ae0a-b76b-33d7-4dc5af8e39b5@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Frank Haverkamp <haver@linux.vnet.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?J=c3=b6rg-Stephan_Vogt?= <jsvogt@de.ibm.com>, Michael Jung <MIJUNG@de.ibm.com>, =?UTF-8?Q?Michael_R=c3=bcttger?= <michael@ibmra.de>, trivial@kernel.org
 
-On Sun, 14 Jan 2018, SF Markus Elfring wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 Jan 2018 09:57:10 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 14 Jan 2018 22:26:21 +0100
->=20
-> Omit an extra message for a memory allocation failure in this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mfd/jz4740-adc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Add a missing character in two words of these descriptions.
 
-Applied, thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/genwqe/card_utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=20
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
+index 55c389a9e7d7..0b466664c908 100644
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -453,7 +453,7 @@ int genwqe_setup_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 		s += 8;		/* continue 8 elements further */
+ 	}
+  fixup:
+-	if (j = 1) {		/* combining happend on last entry! */
++	if (j = 1) {		/* combining happened on last entry! */
+ 		s -= 8;		/* full shift needed on previous sgl block */
+ 		j =  7;		/* shift all elements */
+ 	}
+@@ -471,7 +471,7 @@ int genwqe_setup_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+  * genwqe_free_sync_sgl() - Free memory for sgl and overlapping pages
+  *
+  * After the DMA transfer has been completed we free the memory for
+- * the sgl and the cached pages. Data is being transfered from cached
++ * the sgl and the cached pages. Data is being transferred from cached
+  * pages into user-space buffers.
+  */
+ int genwqe_free_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl)
+-- 
+2.15.1
+
