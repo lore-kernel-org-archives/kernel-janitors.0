@@ -1,70 +1,54 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 02 Jan 2018 10:36:05 +0000
-Subject: Re: [PATCH v1 05/10] staging: atomisp: Remove non-ACPI leftovers
-Message-Id: <alpine.DEB.2.20.1801021135000.24055@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 Jan 2018 23:14:44 +0000
+Subject: [PATCH][next] ASoC: TSCS42xx: make functions pll_event and dac_event static
+Message-Id: <20180108231444.8415-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171219205957.10933-1-andriy.shevchenko@linux.intel.com> <20171219205957.10933-5-andriy.shevchenko@linux.intel.com> <20171220053828.5wphhl6oc2sl3su5@mwanda> <alpine.DEB.2.20.1712201127240.13140@hadrien>
- <20180102102644.km2lb65ehesphso7@mwanda>
-In-Reply-To: <20180102102644.km2lb65ehesphso7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, kernel-janitors@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, Kristian Beilke <beilke@posteo.de>
+To: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The functions pll_event and dac_event are local to the source and do
+not need to be in global scope, so make them static.
 
-On Tue, 2 Jan 2018, Dan Carpenter wrote:
+Cleans up sparse warnings:
+symbol 'pll_event' was not declared. Should it be static?
+symbol 'dac_event' was not declared. Should it be static?
 
-> On Wed, Dec 20, 2017 at 11:30:01AM +0100, Julia Lawall wrote:
-> >
-> >
-> > On Wed, 20 Dec 2017, Dan Carpenter wrote:
-> >
-> > > On Tue, Dec 19, 2017 at 10:59:52PM +0200, Andy Shevchenko wrote:
-> > > > @@ -914,9 +904,7 @@ static int lm3554_probe(struct i2c_client *client)
-> > > >  		dev_err(&client->dev, "gpio request/direction_output fail");
-> > > >  		goto fail2;
-> > > >  	}
-> > > > -	if (ACPI_HANDLE(&client->dev))
-> > > > -		err = atomisp_register_i2c_module(&flash->sd, NULL, LED_FLASH);
-> > > > -	return 0;
-> > > > +	return atomisp_register_i2c_module(&flash->sd, NULL, LED_FLASH);
-> > > >  fail2:
-> > > >  	media_entity_cleanup(&flash->sd.entity);
-> > > >  	v4l2_ctrl_handler_free(&flash->ctrl_handler);
-> > >
-> > > Actually every place where we directly return a function call is wrong
-> > > and needs error handling added.  I've been meaning to write a Smatch
-> > > check for this because it's a common anti-pattern we don't check the
-> > > last function call for errors.
-> > >
-> > > Someone could probably do the same in Coccinelle if they want.
-> >
-> > I'm not sure what you are suggesting.  Is every case of return f(...);
-> > for any f wrong?  Or is it a particular function that is of concern?  Or
-> > would it be that every function call that has error handling somewhere
-> > should have error handling everywhere?  Or is it related to what seems to
-> > be the problem in the above code that err is initialized but nothing
-> > happens to it?
-> >
->
-> I was just thinking that it's a common pattern to treat the last
-> function call differently and one mistake I often see looks like this:
->
-> 	ret = frob();
-> 	if (ret) {
-> 		cleanup();
-> 		return ret;
-> 	}
->
-> 	return another_function();
->
-> No error handling for the last function call.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/tscs42xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-OK, I see.  When there was error handling code along the way, a direct
-return of a function that could fail needs error handling code too.
+diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
+index eedd600875e5..9e8155766ea9 100644
+--- a/sound/soc/codecs/tscs42xx.c
++++ b/sound/soc/codecs/tscs42xx.c
+@@ -355,8 +355,8 @@ static int dapm_micb_event(struct snd_soc_dapm_widget *w,
+ 	return 0;
+ }
+ 
+-int pll_event(struct snd_soc_dapm_widget *w,
+-		   struct snd_kcontrol *kcontrol, int event)
++static int pll_event(struct snd_soc_dapm_widget *w,
++		     struct snd_kcontrol *kcontrol, int event)
+ {
+ 	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
+ 	int ret;
+@@ -369,8 +369,8 @@ int pll_event(struct snd_soc_dapm_widget *w,
+ 	return ret;
+ }
+ 
+-int dac_event(struct snd_soc_dapm_widget *w,
+-		   struct snd_kcontrol *kcontrol, int event)
++static int dac_event(struct snd_soc_dapm_widget *w,
++		     struct snd_kcontrol *kcontrol, int event)
+ {
+ 	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
+ 	struct tscs42xx *tscs42xx = snd_soc_codec_get_drvdata(codec);
+-- 
+2.15.1
 
-Thanks for the clarification,
-
-julia
