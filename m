@@ -1,48 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 19:28:33 +0000
-Subject: [PATCH 4/7] VMCI: Delete an unnecessary null pointer check in qp_broker_create()
-Message-Id: <423462ca-25f1-3249-2609-ecfb0da6d987@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 08 Jan 2018 17:28:58 +0000
+Subject: Re: mt76: fix memcpy to potential null pointer on failed allocation
+Message-Id: <20180108172858.AB27260346@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2747f123-a95d-bc68-b858-0327dce3758b@users.sourceforge.net>
-In-Reply-To: <2747f123-a95d-bc68-b858-0327dce3758b@users.sourceforge.net>
+References: <20171214101322.10178-1-colin.king@canonical.com>
+In-Reply-To: <20171214101322.10178-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Felix Fietkau <nbd@nbd.name>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 19:00:24 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-The exception handling code should usually only be reached with a valid
-pointer in the local variable "entry" at the end of this function.
-Thus remove an extra null pointer check here.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently if the allocation of skb fails and returns NULL then the
+> call to skb_put will cause a null pointer dereference. Fix this by
+> checking for a null skb and returning NULL.  Note that calls to
+> function mt76x2_mcu_msg_alloc don't directly check the null return
+> but instead pass the NULL pointer to mt76x2_mcu_msg_send which
+> checks for the NULL and returns ENOMEM in this case.
+> 
+> Detected by CoverityScan, CID#1462624 ("Dereference null return value")
+> 
+> Fixes: 7bc04215a66b ("mt76: add driver code for MT76x2e")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Felix Fietkau <nbd@nbd.name>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/misc/vmw_vmci/vmci_queue_pair.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-index 381e25c69c1f..7d4437240099 100644
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -1434,12 +1434,9 @@ static int qp_broker_create(struct vmci_handle handle,
- 	return VMCI_SUCCESS;
- 
-  error:
--	if (entry != NULL) {
--		qp_host_free_queue(entry->produce_q, guest_produce_size);
--		qp_host_free_queue(entry->consume_q, guest_consume_size);
--		kfree(entry);
--	}
--
-+	qp_host_free_queue(entry->produce_q, guest_produce_size);
-+	qp_host_free_queue(entry->consume_q, guest_consume_size);
-+	kfree(entry);
- 	return result;
- }
- 
+364bea50dbea mt76: fix memcpy to potential null pointer on failed allocation
+
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10111747/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
