@@ -1,44 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 08:55:08 +0000
-Subject: [PATCH v2] md-multipath: Use seq_putc() in multipath_status()
-Message-Id: <0b59904d-1be7-7a76-9c32-3f7f9696ff2d@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 08 Jan 2018 16:23:27 +0000
+Subject: Applied "ASoC: Intel: sst: Fix the return value of 'sst_send_byte_stream_mrfld()'" to the asoc tree
+Message-Id: <E1eYaCt-0002Gy-6e@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
- <6e70a1a7-fd86-914e-84ab-bd5c7facb235@users.sourceforge.net>
-In-Reply-To: <6e70a1a7-fd86-914e-84ab-bd5c7facb235@users.sourceforge.net>
+References: <20180106201824.6081-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20180106201824.6081-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mark Brown <broonie@kernel.org>@kernel.org, perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 09:49:03 +0100
+The patch
 
-A single character (closing square bracket) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+   ASoC: Intel: sst: Fix the return value of 'sst_send_byte_stream_mrfld()'
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From eaadb1caa966a91128297b754e90b7c92b350a00 Mon Sep 17 00:00:00 2001
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 6 Jan 2018 21:18:24 +0100
+Subject: [PATCH] ASoC: Intel: sst: Fix the return value of
+ 'sst_send_byte_stream_mrfld()'
+
+In some error handling paths, an error code is assiegned to 'ret'.
+However, the function always return 0.
+
+Fix it and return the error code if such an error paths is taken.
+
+Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/md/md-multipath.c | 2 +-
+ sound/soc/intel/atom/sst/sst_stream.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/md-multipath.c b/drivers/md/md-multipath.c
-index e40065bdbfc8..0a7e99d62c69 100644
---- a/drivers/md/md-multipath.c
-+++ b/drivers/md/md-multipath.c
-@@ -157,7 +157,7 @@ static void multipath_status(struct seq_file *seq, struct mddev *mddev)
- 		seq_printf (seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
- 	}
- 	rcu_read_unlock();
--	seq_printf (seq, "]");
-+	seq_putc(seq, ']');
+diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
+index 65e257b17a7e..20f5066fefb9 100644
+--- a/sound/soc/intel/atom/sst/sst_stream.c
++++ b/sound/soc/intel/atom/sst/sst_stream.c
+@@ -220,7 +220,7 @@ int sst_send_byte_stream_mrfld(struct intel_sst_drv *sst_drv_ctx,
+ 		sst_free_block(sst_drv_ctx, block);
+ out:
+ 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
+-	return 0;
++	return ret;
  }
  
- static int multipath_congested(struct mddev *mddev, int bits)
+ /*
 -- 
 2.15.1
 
