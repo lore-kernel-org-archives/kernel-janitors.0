@@ -1,20 +1,20 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 17:40:24 +0000
-Subject: [PATCH 2/2] Input: arc_ps2: Improve a size determination in two functions
-Message-Id: <38a03d93-7663-f3c3-9066-88cd935e3790@users.sourceforge.net>
+Date: Mon, 08 Jan 2018 13:09:32 +0000
+Subject: [PATCH 2/3] misc/ibmasm: Improve a size determination in ibmasm_init_one()
+Message-Id: <bda74202-f96e-9117-87cf-75f080d87123@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
-In-Reply-To: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
+References: <842e4179-dbac-cd43-e320-c5009d896a28@users.sourceforge.net>
+In-Reply-To: <842e4179-dbac-cd43-e320-c5009d896a28@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Anton Vasilyev <vasilyev@ispras.ru>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 18:30:45 +0100
+Date: Mon, 8 Jan 2018 13:43:20 +0100
 
-Replace the specification of data structures by pointer dereferences
+Replace the specification of a data structure by a pointer dereference
 as the parameter for the operator "sizeof" to make the corresponding size
 determination a bit safer according to the Linux coding style convention.
 
@@ -22,34 +22,22 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/serio/arc_ps2.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/misc/ibmasm/module.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/serio/arc_ps2.c b/drivers/input/serio/arc_ps2.c
-index 9860b1c1e67a..6a3c845e12ea 100644
---- a/drivers/input/serio/arc_ps2.c
-+++ b/drivers/input/serio/arc_ps2.c
-@@ -156,9 +156,8 @@ static int arc_ps2_create_port(struct platform_device *pdev,
- 					 int index)
- {
- 	struct arc_ps2_port *port = &arc_ps2->port[index];
--	struct serio *io;
-+	struct serio *io = kzalloc(sizeof(*io), GFP_KERNEL);
+diff --git a/drivers/misc/ibmasm/module.c b/drivers/misc/ibmasm/module.c
+index d22b3c428ca9..894397b1ee51 100644
+--- a/drivers/misc/ibmasm/module.c
++++ b/drivers/misc/ibmasm/module.c
+@@ -78,7 +78,7 @@ static int ibmasm_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	/* vnc client won't work without bus-mastering */
+ 	pci_set_master(pdev);
  
--	io = kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!io)
- 		return -ENOMEM;
- 
-@@ -195,8 +194,7 @@ static int arc_ps2_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	arc_ps2 = devm_kzalloc(&pdev->dev, sizeof(struct arc_ps2_data),
--				GFP_KERNEL);
-+	arc_ps2 = devm_kzalloc(&pdev->dev, sizeof(*arc_ps2), GFP_KERNEL);
- 	if (!arc_ps2)
- 		return -ENOMEM;
- 
+-	sp = kzalloc(sizeof(struct service_processor), GFP_KERNEL);
++	sp = kzalloc(sizeof(*sp), GFP_KERNEL);
+ 	if (sp = NULL) {
+ 		result = -ENOMEM;
+ 		goto error_kmalloc;
 -- 
-2.16.1
+2.15.1
 
