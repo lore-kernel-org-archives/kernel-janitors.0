@@ -1,72 +1,26 @@
-From: =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Date: Mon, 29 Jan 2018 13:24:00 +0000
-Subject: Re: [PATCH][next] hwrng: exynos: check for -ve error return from readl_poll_timeout
-Message-Id: <87fu6oyf0v.fsf%l.stelmach@samsung.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 Jan 2018 11:44:43 +0000
+Subject: Re: Adjustments for a lot of function implementations
+Message-Id: <a180fe61-35a0-154e-1e9a-d7a01c2be856@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180112163048.26960-1-colin.king@canonical.com>
- <CGME20180129132405eucas1p244f341793274cd1c11aa09e0b1d2c4bd@eucas1p2.samsung.com>
-In-Reply-To: <20180112163048.26960-1-colin.king@canonical.com>
-To: linux-arm-kernel@lists.infradead.org
+References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+ <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
+ <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
+ <alpine.DEB.2.20.1710301745530.2160@hadrien>
+ <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
+ <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
+ <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
+In-Reply-To: <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+> ??? I did that: either one patch per directory with the same type of change,
+> or one patch per driver combining all the changes for that driver.
 
-It was <2018-01-12 pi=C4=85 17:30>, when Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently, the return from readl_poll_timeout is being assigned to
-> a u32 and this is being checked for a -ve return which is always
-> false since a u32 cannot be less than zero.  Fix this by changing
-> val to an int so that error returns can be correctly detected.
->
-> Detected by CoverityScan, CID#1463776 ("Logically dead code")
->
-> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/char/hw_random/exynos-trng.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
-m/exynos-trng.c
-> index 34d6f51ecbee..f4643e3ec346 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-> @@ -55,7 +55,7 @@ static int exynos_trng_do_read(struct hwrng *rng, void =
-*data, size_t max,
->  			       bool wait)
->  {
->  	struct exynos_trng_dev *trng;
-> -	u32 val;
-> +	int val;
->=20=20
->  	max =3D min_t(size_t, max, (EXYNOS_TRNG_FIFO_LEN * 4));
+Are you going to answer any of my remaining questions in a more constructive way?
 
-Fixed.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/c=
-ommit/?id=3Da8bc71d4960391f732ec0307ebd69e4a25aaf4d3
-
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBCAAGBQJabyBwAAoJELCuHpyYpYAQZwYH/RlxAx/YurLQ/T+cRM8BRMoE
-t5RVRMByVZKd0J6ReIPtgKUeO8QF+HJYvgbXdKGFZ1GcQWBzY/57Zix5lryC9lZR
-2kWKXrW0Ji3G6XEPjnvknCTVK24uZ9tO84sh34yuXd6b0JnESraORsoT6ryq32jv
-LVNlXH2fsoEixNbQHsBwyRCwa+Ov9PuMHRS1yU/m8+MkucIy4kNX4tcdlOTVN8l7
-pI2Jxz4pUFCju6lySUTT4Nh7GzU3M8oIC/s8tVQkpTOF0q81AYCg55666gnGtwSr
-19Ynrr9CikelpWhtqoPHusunbRuLrQBrm4Pexd+U88PkkbszCw4mE7+TsOsmxCA=
-=i0mm
------END PGP SIGNATURE-----
---=-=-=--
+Regards,
+Markus
