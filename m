@@ -1,28 +1,29 @@
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Date: Wed, 17 Jan 2018 18:03:41 +0000
-Subject: Re: [PATCH] memory-EMIF: Use seq_putc() in emif_regdump_show()
-Message-Id: <0ca52803-4ca8-c9e9-05bb-a142dc5ba24f@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 Jan 2018 18:19:23 +0000
+Subject: Re: hyperv/netvsc: Delete two error messages for a failed memory allocation in netvsc_init_buf()
+Message-Id: <31b03449-4ef8-538d-a021-cb3e5bbc2a21@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1762e245-a88d-f82e-57e8-a4dab179ca03@users.sourceforge.net>
-In-Reply-To: <1762e245-a88d-f82e-57e8-a4dab179ca03@users.sourceforge.net>
+References: <bb8fac96-9ba6-e54f-2321-72a8fba90085@users.sourceforge.net>
+ <CY4PR2101MB0867CEFAF4FB72AF47FA3AA7CA130@CY4PR2101MB0867.namprd21.prod.outlook.com>
+In-Reply-To: <CY4PR2101MB0867CEFAF4FB72AF47FA3AA7CA130@CY4PR2101MB0867.namprd21.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Haiyang Zhang <haiyangz@microsoft.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, netdev@vger.kernel.org
+Cc: KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 1/13/2018 1:34 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 13 Jan 2018 10:24:03 +0100
+> These messages are not displayed anywhere else:
+> "unable to allocate receive buffer of size %u\n"
+> "unable to allocate send buffer of size %u\n",
 > 
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-Looks fine. Will pick it up for next merge window.
+> After set ret = -ENOMEM; and cleanup, we won't know which buffer allocation failed without the error message.
+
+Do you notice a Linux allocation failure report before them in your system?
+
+
+> So please do not remove these messages.
+
+How much does the distinction matter for these buffers?
 
 Regards,
-Santosh
+Markus
