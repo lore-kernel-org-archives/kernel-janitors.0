@@ -1,27 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 Jan 2018 21:01:00 +0000
-Subject: [PATCH 0/2] misc/apds9802als: Adjustments for apds9802als_probe()
-Message-Id: <cfd7cb73-7437-0d95-ef7a-8c8f6ce49e3d@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 08 Jan 2018 17:41:05 +0000
+Subject: Re: wl1251: check return from call to wl1251_acx_arp_ip_filter
+Message-Id: <20180108174105.1C68E60314@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171226173318.5076-1-colin.king@canonical.com>
+In-Reply-To: <20171226173318.5076-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Cong Wang <xiyou.wangcong@gmail.com>, Johannes Berg <johannes.berg@intel.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 Jan 2018 21:58:42 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Two update suggestions were taken into account
-from static source code analysis.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the less than zero error check on ret is incorrect
+> as it is checking a far earlier ret assignment rather than the
+> return from the call to wl1251_acx_arp_ip_filter. Fix this by
+> adding in the missing assginment.
+> 
+> Detected by CoverityScan, CID#1164835 ("Logically dead code")
+> 
+> Fixes: 204cc5c44fb6 ("wl1251: implement hardware ARP filtering")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+Patch applied to wireless-drivers-next.git, thanks.
 
- drivers/misc/apds9802als.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ac1181c60822 wl1251: check return from call to wl1251_acx_arp_ip_filter
 
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10133201/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
