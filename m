@@ -1,18 +1,39 @@
-From: Robin Holt <robinmholt@gmail.com>
-Date: Thu, 11 Jan 2018 18:16:48 +0000
-Subject: Re: [PATCH 2/3] sgi-xpc: Improve a size determination in two functions
-Message-Id: <CAPp3RGqvxCQteHXUhrKHgArzeMRmQkzY78OwiuaVhvMqnaLGCw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 Jan 2018 23:06:32 +0000
+Subject: [PATCH][btrfs-next] Btrfs: extent map selftest: add missing void parameter to btrfs_test_extent_map
+Message-Id: <20180108230632.8101-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net> <683a3165-76e9-6b49-d6b1-695456ba3b75@users.sourceforge.net>
-In-Reply-To: <683a3165-76e9-6b49-d6b1-695456ba3b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, Liu Bo <bo.li.liu@oracle.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 8:05 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Robin Holt <robinmholt@gmail.com>
+Add a missing void parameter to function btrfs_test_extent_map, fixes
+sparse warning:
+
+warning: non-ANSI function declaration of function 'btrfs_test_extent_map'
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/tests/extent-map-tests.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/tests/extent-map-tests.c b/fs/btrfs/tests/extent-map-tests.c
+index 66d5523d7a2b..d42e14c43a6a 100644
+--- a/fs/btrfs/tests/extent-map-tests.c
++++ b/fs/btrfs/tests/extent-map-tests.c
+@@ -340,7 +340,7 @@ static void test_case_4(struct extent_map_tree *em_tree)
+ 	__test_case_4(em_tree, SZ_4K);
+ }
+ 
+-int btrfs_test_extent_map()
++int btrfs_test_extent_map(void)
+ {
+ 	struct extent_map_tree *em_tree;
+ 
+-- 
+2.15.1
+
