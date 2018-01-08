@@ -1,39 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 16:36:53 +0000
-Subject: [PATCH 3/3] Input: apbps2: Fix typos in a comment
-Message-Id: <ba412c8a-e125-2289-ffdf-da3d68533c55@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 08 Jan 2018 15:46:54 +0000
+Subject: Re: rt2x00: Delete an error message for a failed memory allocation in rt2x00queue_allocate()
+Message-Id: <20180108154654.7975660215@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
-In-Reply-To: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
+References: <cdeaa8a2-06bb-10e9-05d7-f531c00eef5d@users.sourceforge.net>
+In-Reply-To: <cdeaa8a2-06bb-10e9-05d7-f531c00eef5d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Helmut Schaa <helmut.schaa@googlemail.com>, Stanislaw Gruszka <sgruszka@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 17:21:18 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-Adjust two words in this description.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 29 Dec 2017 22:11:42 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/serio/apbps2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/input/serio/apbps2.c b/drivers/input/serio/apbps2.c
-index a1c64df3b6cb..baa93bad993c 100644
---- a/drivers/input/serio/apbps2.c
-+++ b/drivers/input/serio/apbps2.c
-@@ -117,7 +117,7 @@ static int apbps2_open(struct serio *io)
- 	while ((ioread32be(&priv->regs->status) & APBPS2_STATUS_DR) && --limit)
- 		tmp = ioread32be(&priv->regs->data);
- 
--	/* Enable reciever and it's interrupt */
-+	/* Enable receiver and its interrupt */
- 	iowrite32be(APBPS2_CTRL_RE | APBPS2_CTRL_RI, &priv->regs->ctrl);
- 
- 	return 0;
+cd7c0cdab7ff rt2x00: Delete an error message for a failed memory allocation in rt2x00queue_allocate()
+
 -- 
-2.16.1
+https://patchwork.kernel.org/patch/10137399/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
