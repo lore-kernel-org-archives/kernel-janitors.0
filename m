@@ -1,74 +1,118 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 17 Jan 2018 11:24:01 +0000
-Subject: Applied "ASoC: Intel: remove second duplicated assignment to pointer 'res'" to the asoc tree
-Message-Id: <E1eblp3-0003i2-8z@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 09 Jan 2018 18:32:29 +0000
+Subject: [PATCH 4/5] misc/pti: Adjust 11 checks for null pointers
+Message-Id: <a558f623-724f-6c7b-0cdd-0de3ea41256a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180117101708.11698-1-colin.king@canonical.com>
-In-Reply-To: <20180117101708.11698-1-colin.king@canonical.com>
+References: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
+In-Reply-To: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 9 Jan 2018 18:48:10 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-   ASoC: Intel: remove second duplicated assignment to pointer 'res'
+The script “checkpatch.pl” pointed information out like the following.
 
-has been applied to the asoc tree at
+Comparison to NULL could be written …
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Thus fix the affected source code places.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From fb2fcaeaad504ae9dad26f7b26a8ea840d00535f Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 17 Jan 2018 10:17:08 +0000
-Subject: [PATCH] ASoC: Intel: remove second duplicated assignment to pointer
- 'res'
-
-The second assignment to res is identical to the previous assignment
-so it is redundant and can be removed.
-
-Cleans up clang warning:
-sound/soc/intel/skylake/skl-topology.c:191:25: warning: Value stored to
-'res' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/skylake/skl-topology.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/misc/pti.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
-index 28bc16a8e09a..73af6e19ebbd 100644
---- a/sound/soc/intel/skylake/skl-topology.c
-+++ b/sound/soc/intel/skylake/skl-topology.c
-@@ -190,7 +190,6 @@ skl_tplg_free_pipe_mcps(struct skl *skl, struct skl_module_cfg *mconfig)
- 	u8 res_idx = mconfig->res_idx;
- 	struct skl_module_res *res = &mconfig->module->resources[res_idx];
+diff --git a/drivers/misc/pti.c b/drivers/misc/pti.c
+index 8ae79b286573..11d92c3f43ba 100644
+--- a/drivers/misc/pti.c
++++ b/drivers/misc/pti.c
+@@ -246,7 +246,7 @@ static struct pti_masterchannel *get_id(u8 *id_array,
+ 	int i, j, mask;
+ 	struct pti_masterchannel *mc = kmalloc(sizeof(*mc), GFP_KERNEL);
  
--	res = &mconfig->module->resources[res_idx];
- 	skl->resource.mcps -= res->cps;
- }
+-	if (mc = NULL)
++	if (!mc)
+ 		return NULL;
  
+ 	/* look for a byte with a free bit */
+@@ -386,5 +386,5 @@ void pti_writedata(struct pti_masterchannel *mc, u8 *buf, int count)
+ 	 * API function, thus, all parameters should
+ 	 * be checked for validity.
+ 	 */
+-	if ((mc != NULL) && (buf != NULL) && (count > 0))
++	if (mc && buf && count > 0)
+ 		pti_write_to_aperture(mc, buf, count);
+@@ -465,7 +465,7 @@ static int pti_tty_install(struct tty_driver *driver, struct tty_struct *tty)
+ 
+ 	if (ret = 0) {
+ 		pti_tty_data = kmalloc(sizeof(*pti_tty_data), GFP_KERNEL);
+-		if (pti_tty_data = NULL)
++		if (!pti_tty_data)
+ 			return -ENOMEM;
+ 
+ 		if (idx = PTITTY_MINOR_START)
+@@ -473,7 +473,7 @@ static int pti_tty_install(struct tty_driver *driver, struct tty_struct *tty)
+ 		else
+ 			pti_tty_data->mc = pti_request_masterchannel(2, NULL);
+ 
+-		if (pti_tty_data->mc = NULL) {
++		if (!pti_tty_data->mc) {
+ 			kfree(pti_tty_data);
+ 			return -ENXIO;
+ 		}
+@@ -492,7 +492,8 @@ static int pti_tty_install(struct tty_driver *driver, struct tty_struct *tty)
+ static void pti_tty_cleanup(struct tty_struct *tty)
+ {
+ 	struct pti_tty *pti_tty_data = tty->driver_data;
+-	if (pti_tty_data = NULL)
++
++	if (!pti_tty_data)
+ 		return;
+ 	pti_release_masterchannel(pti_tty_data->mc);
+ 	kfree(pti_tty_data);
+@@ -516,7 +517,8 @@ static int pti_tty_driver_write(struct tty_struct *tty,
+ 	const unsigned char *buf, int len)
+ {
+ 	struct pti_tty *pti_tty_data = tty->driver_data;
+-	if ((pti_tty_data != NULL) && (pti_tty_data->mc != NULL)) {
++
++	if (pti_tty_data && pti_tty_data->mc) {
+ 		pti_write_to_aperture(pti_tty_data->mc, (u8 *)buf, len);
+ 		return len;
+ 	}
+@@ -561,7 +563,7 @@ static int pti_char_open(struct inode *inode, struct file *filp)
+ 	 * Slightly easier to debug if this driver needs debugging.
+ 	 */
+ 	mc = pti_request_masterchannel(0, NULL);
+-	if (mc = NULL)
++	if (!mc)
+ 		return -ENOMEM;
+ 	filp->private_data = mc;
+ 	return 0;
+@@ -820,7 +822,7 @@ static int pti_pci_probe(struct pci_dev *pdev,
+ 	}
+ 
+ 	drv_data = kzalloc(sizeof(*drv_data), GFP_KERNEL);
+-	if (drv_data = NULL) {
++	if (!drv_data) {
+ 		retval = -ENOMEM;
+ 		goto err_disable_pci;
+ 	}
+@@ -916,7 +918,7 @@ static int __init pti_init(void)
+ 	/* First register module as tty device */
+ 
+ 	pti_tty_driver = alloc_tty_driver(PTITTY_MINOR_NUM);
+-	if (pti_tty_driver = NULL) {
++	if (!pti_tty_driver) {
+ 		pr_err("%s(%d): Memory allocation failed for ptiTTY driver\n",
+ 			__func__, __LINE__);
+ 		return -ENOMEM;
 -- 
 2.15.1
 
