@@ -1,19 +1,19 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 08 Jan 2018 16:23:27 +0000
-Subject: Applied "ASoC: Intel: sst: Fix the return value of 'sst_send_byte_stream_mrfld()'" to the asoc tree
-Message-Id: <E1eYaCt-0002Gy-6e@debutante>
+Date: Tue, 09 Jan 2018 17:43:34 +0000
+Subject: Applied "ASoC: TSCS42xx: make functions pll_event and dac_event static" to the asoc tree
+Message-Id: <E1eYxvy-0006bO-J0@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106201824.6081-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180106201824.6081-1-christophe.jaillet@wanadoo.fr>
+References: <20180108231444.8415-1-colin.king@canonical.com>
+In-Reply-To: <20180108231444.8415-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Mark Brown <broonie@kernel.org>@kernel.org, perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
 The patch
 
-   ASoC: Intel: sst: Fix the return value of 'sst_send_byte_stream_mrfld()'
+   ASoC: TSCS42xx: make functions pll_event and dac_event static
 
 has been applied to the asoc tree at
 
@@ -38,37 +38,51 @@ to this mail.
 Thanks,
 Mark
 
-From eaadb1caa966a91128297b754e90b7c92b350a00 Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 6 Jan 2018 21:18:24 +0100
-Subject: [PATCH] ASoC: Intel: sst: Fix the return value of
- 'sst_send_byte_stream_mrfld()'
+From 3511108a790fc8942448556b82046d6de945b80f Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 8 Jan 2018 23:14:44 +0000
+Subject: [PATCH] ASoC: TSCS42xx: make functions pll_event and dac_event static
 
-In some error handling paths, an error code is assiegned to 'ret'.
-However, the function always return 0.
+The functions pll_event and dac_event are local to the source and do
+not need to be in global scope, so make them static.
 
-Fix it and return the error code if such an error paths is taken.
+Cleans up sparse warnings:
+symbol 'pll_event' was not declared. Should it be static?
+symbol 'dac_event' was not declared. Should it be static?
 
-Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/atom/sst/sst_stream.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/tscs42xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
-index 65e257b17a7e..20f5066fefb9 100644
---- a/sound/soc/intel/atom/sst/sst_stream.c
-+++ b/sound/soc/intel/atom/sst/sst_stream.c
-@@ -220,7 +220,7 @@ int sst_send_byte_stream_mrfld(struct intel_sst_drv *sst_drv_ctx,
- 		sst_free_block(sst_drv_ctx, block);
- out:
- 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
--	return 0;
-+	return ret;
+diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
+index 4a5b32a717f2..e7661d0315e6 100644
+--- a/sound/soc/codecs/tscs42xx.c
++++ b/sound/soc/codecs/tscs42xx.c
+@@ -355,8 +355,8 @@ static int dapm_micb_event(struct snd_soc_dapm_widget *w,
+ 	return 0;
  }
  
- /*
+-int pll_event(struct snd_soc_dapm_widget *w,
+-		   struct snd_kcontrol *kcontrol, int event)
++static int pll_event(struct snd_soc_dapm_widget *w,
++		     struct snd_kcontrol *kcontrol, int event)
+ {
+ 	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
+ 	int ret;
+@@ -369,8 +369,8 @@ int pll_event(struct snd_soc_dapm_widget *w,
+ 	return ret;
+ }
+ 
+-int dac_event(struct snd_soc_dapm_widget *w,
+-		   struct snd_kcontrol *kcontrol, int event)
++static int dac_event(struct snd_soc_dapm_widget *w,
++		     struct snd_kcontrol *kcontrol, int event)
+ {
+ 	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
+ 	struct tscs42xx *tscs42xx = snd_soc_codec_get_drvdata(codec);
 -- 
 2.15.1
 
