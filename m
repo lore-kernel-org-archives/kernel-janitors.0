@@ -1,27 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Jan 2018 17:52:36 +0000
-Subject: [PATCH 0/2] benet: Adjustments for two function implementations
-Message-Id: <86e577a3-77a4-2e74-dd2d-4d63e90ffb72@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 09 Jan 2018 08:20:30 +0000
+Subject: Re: [V2] wcn36xx: fix incorrect assignment to msg_body.min_ch_time
+Message-Id: <20180109082030.BE49F6081B@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171229090732.14928-1-colin.king@canonical.com>
+In-Reply-To: <20171229090732.14928-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Ajit Khaparde <ajit.khaparde@broadcom.com>, Sathya Perla <sathya.perla@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Eugene Krasnikov <k.eugene.e@gmail.com>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jan 2018 18:50:05 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Two update suggestions were taken into account
-from static source code analysis.
+> The second assignment to msg_body.min_ch_time is incorrect, it
+> should actually be to msg_body.max_ch_time.
+> 
+> Thanks to Bjorn Andersson for identifying the correct way to fix
+> this as my original fix was incorrect.
+> 
+> Detected by CoverityScan, CID#1463042 ("Unused Value")
+> 
+> Fixes: 2f3bef4b247e ("wcn36xx: Add hardware scan offload support")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in be_alloc_work()
-  Delete an unnecessary return statement in be_work_add_vxlan_port()
+Patch applied to ath-next branch of ath.git, thanks.
 
- drivers/net/ethernet/emulex/benet/be_main.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+4c8cf8df2f42 wcn36xx: fix incorrect assignment to msg_body.min_ch_time
 
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10136929/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
