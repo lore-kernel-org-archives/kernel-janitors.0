@@ -1,34 +1,38 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 11 Jan 2018 11:11:51 +0000
-Subject: [PATCH -next] ASoC: stm32: fix a typo in stm32_adfsdm_probe()
-Message-Id: <1515669111-125208-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 09 Jan 2018 16:10:05 +0000
+Subject: [PATCH] misc/mic/host: Delete an error message for a failed memory allocation in mic_probe()
+Message-Id: <317c580a-028f-2119-efd1-3a65732a433c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Fix a typo, we should return PTR_ERR(priv->iio_cb) instead of
-PTR_ERR(priv->iio_ch).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 9 Jan 2018 17:03:41 +0100
 
-Fixes: 55da094824c4 ("ASoC: stm32: add DFSDM DAI support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/stm/stm32_adfsdm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/mic/host/mic_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index af50891..7306e3e 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -320,7 +320,7 @@ static int stm32_adfsdm_probe(struct platform_device *pdev)
- 
- 	priv->iio_cb = iio_channel_get_all_cb(&pdev->dev, NULL, NULL);
- 	if (IS_ERR(priv->iio_cb))
--		return PTR_ERR(priv->iio_ch);
-+		return PTR_ERR(priv->iio_cb);
- 
- 	ret = devm_snd_soc_register_platform(&pdev->dev,
- 					     &stm32_adfsdm_soc_platform);
+diff --git a/drivers/misc/mic/host/mic_main.c b/drivers/misc/mic/host/mic_main.c
+index 035be3e9ceba..e3d38f6018c4 100644
+--- a/drivers/misc/mic/host/mic_main.c
++++ b/drivers/misc/mic/host/mic_main.c
+@@ -175,7 +175,6 @@ static int mic_probe(struct pci_dev *pdev,
+ 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
+ 	if (!mdev) {
+ 		rc = -ENOMEM;
+-		dev_err(&pdev->dev, "mdev kmalloc failed rc %d\n", rc);
+ 		goto mdev_alloc_fail;
+ 	}
+ 	mdev->id = ida_simple_get(&g_mic_ida, 0, MIC_MAX_NUM_DEVS, GFP_KERNEL);
+-- 
+2.15.1
 
