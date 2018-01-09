@@ -1,54 +1,22 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 08 Jan 2018 23:14:44 +0000
-Subject: [PATCH][next] ASoC: TSCS42xx: make functions pll_event and dac_event static
-Message-Id: <20180108231444.8415-1-colin.king@canonical.com>
+From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+Date: Tue, 09 Jan 2018 15:52:30 +0000
+Subject: Re: [PATCH][next] ASoC: TSCS42xx: make functions pll_event and dac_event static
+Message-Id: <20180109155227.xlg45ob3rqqme2yz@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180108231444.8415-1-colin.king@canonical.com>
+In-Reply-To: <20180108231444.8415-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Jan 08, 2018 at 11:14:44PM +0000, Colin King wrote:
 
-The functions pll_event and dac_event are local to the source and do
-not need to be in global scope, so make them static.
+> The functions pll_event and dac_event are local to the source and do
+> not need to be in global scope, so make them static.
 
-Cleans up sparse warnings:
-symbol 'pll_event' was not declared. Should it be static?
-symbol 'dac_event' was not declared. Should it be static?
+This looks good to me. Thanks for catching this. You can add:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/tscs42xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
-index eedd600875e5..9e8155766ea9 100644
---- a/sound/soc/codecs/tscs42xx.c
-+++ b/sound/soc/codecs/tscs42xx.c
-@@ -355,8 +355,8 @@ static int dapm_micb_event(struct snd_soc_dapm_widget *w,
- 	return 0;
- }
- 
--int pll_event(struct snd_soc_dapm_widget *w,
--		   struct snd_kcontrol *kcontrol, int event)
-+static int pll_event(struct snd_soc_dapm_widget *w,
-+		     struct snd_kcontrol *kcontrol, int event)
- {
- 	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
- 	int ret;
-@@ -369,8 +369,8 @@ int pll_event(struct snd_soc_dapm_widget *w,
- 	return ret;
- }
- 
--int dac_event(struct snd_soc_dapm_widget *w,
--		   struct snd_kcontrol *kcontrol, int event)
-+static int dac_event(struct snd_soc_dapm_widget *w,
-+		     struct snd_kcontrol *kcontrol, int event)
- {
- 	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
- 	struct tscs42xx *tscs42xx = snd_soc_codec_get_drvdata(codec);
--- 
-2.15.1
+Reviewed-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
 
