@@ -1,30 +1,33 @@
-From: Tariq Toukan <tariqt@mellanox.com>
-Date: Thu, 04 Jan 2018 09:28:34 +0000
-Subject: Re: [PATCH] ethernet: mlx4: Delete an error message for a failed memory allocation in five functions
-Message-Id: <118ac936-0a88-bd90-6440-7397874e344e@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Jan 2018 09:26:16 +0000
+Subject: [PATCH 1/2] slimbus: qcom-ctrl: fix a NULL test
+Message-Id: <20180109092616.mfha2rs56oaxfjaz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <30191db0-4d99-0349-b66a-c7354ef90d50@users.sourceforge.net>
-In-Reply-To: <30191db0-4d99-0349-b66a-c7354ef90d50-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tariq Toukan <tariqt-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Sagar Dharia <sdharia@codeaurora.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+"retries" ends when it is set to -1 and not 0 so that part of the test
+is wrong.  This bug would lead to a NULL dereference a couple lines
+later.
 
+Fixes: afbdcc7c384b ("slimbus: Add messaging APIs to slimbus framework")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Should Greg be added to the MAINTAINERS file for this driver?
 
-On 01/01/2018 10:46 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 Jan 2018 21:42:27 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-
-
-Acked-by: Tariq Toukan <tariqt@mellanox.com>
-
-Thanks.
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index fb1a5e0eb8dd..3ab59209cbdc 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -345,7 +345,7 @@ static int qcom_xfer_msg(struct slim_controller *sctrl,
+ 		}
+ 	}
+ 
+-	if (!retries && !pbuf)
++	if (!pbuf)
+ 		return -ENOMEM;
+ 
+ 	puc = (u8 *)pbuf;
