@@ -1,24 +1,33 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 18 Jan 2018 12:02:24 +0000
-Subject: Re: [PATCH] hwrng: exynos - Signedness bug in exynos_trng_do_read()
-Message-Id: <20180118120224.GD20717@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Jan 2018 09:27:14 +0000
+Subject: [PATCH] IB/hfi1: Prevent a NULL dereference
+Message-Id: <20180109092714.valolokywtmbprw7@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180110093658.kxnmhqkoow7o2xab@mwanda>
-In-Reply-To: <20180110093658.kxnmhqkoow7o2xab@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>, Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Michael J. Ruhl" <michael.j.ruhl-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, Jan 10, 2018 at 12:36:58PM +0300, Dan Carpenter wrote:
-> "val" needs to be signed for the error handling to work.
-> 
-> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In the original code, we set "fd->uctxt" to NULL and then dereference it
+which will cause an Oops.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: f2a3bc00a03c ("IB/hfi1: Protect context array set/clear with spinlock")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/infiniband/hw/hfi1/file_ops.c b/drivers/infiniband/hw/hfi1/file_ops.c
+index 82086241aac3..3de1ac94bb85 100644
+--- a/drivers/infiniband/hw/hfi1/file_ops.c
++++ b/drivers/infiniband/hw/hfi1/file_ops.c
+@@ -763,10 +763,10 @@ static int complete_subctxt(struct hfi1_filedata *fd)
+ 	}
+ 
+ 	if (ret) {
++		__clear_bit(fd->subctxt, fd->uctxt->in_use_ctxts);
+ 		hfi1_rcd_put(fd->uctxt);
+ 		fd->uctxt = NULL;
+ 		spin_lock_irqsave(&fd->dd->uctxt_lock, flags);
+-		__clear_bit(fd->subctxt, fd->uctxt->in_use_ctxts);
+ 		spin_unlock_irqrestore(&fd->dd->uctxt_lock, flags);
+ 	}
+ 
