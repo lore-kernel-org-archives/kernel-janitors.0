@@ -1,44 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 19:36:22 +0000
-Subject: [PATCH 2/2] Input: da9063_onkey: Improve a size determination in da9063_onkey_probe()
-Message-Id: <b6c60de6-122b-43d8-8298-9bd0be98dfee@users.sourceforge.net>
+Date: Tue, 09 Jan 2018 18:33:27 +0000
+Subject: [PATCH 5/5] misc/pti: Delete an unnecessary return statement in two functions
+Message-Id: <2741f1bd-ba63-8ff6-e88b-4084ac608b65@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b0e8f6a-6386-d307-34fc-7936c52bd0c6@users.sourceforge.net>
-In-Reply-To: <9b0e8f6a-6386-d307-34fc-7936c52bd0c6@users.sourceforge.net>
+References: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
+In-Reply-To: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, support.opensource@diasemi.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 20:24:47 +0100
+Date: Tue, 9 Jan 2018 18:52:36 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/misc/da9063_onkey.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/misc/pti.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/input/misc/da9063_onkey.c b/drivers/input/misc/da9063_onkey.c
-index acf592975bef..310f9c408636 100644
---- a/drivers/input/misc/da9063_onkey.c
-+++ b/drivers/input/misc/da9063_onkey.c
-@@ -213,8 +213,7 @@ static int da9063_onkey_probe(struct platform_device *pdev)
- 	if (!match)
- 		return -ENXIO;
+diff --git a/drivers/misc/pti.c b/drivers/misc/pti.c
+index 11d92c3f43ba..7f9235e56cc0 100644
+--- a/drivers/misc/pti.c
++++ b/drivers/misc/pti.c
+@@ -142,7 +142,6 @@ static void pti_write_to_aperture(struct pti_masterchannel *mc,
+ 		ptiword |= *p++ << (24-(8*i));
  
--	onkey = devm_kzalloc(&pdev->dev, sizeof(struct da9063_onkey),
--			     GFP_KERNEL);
-+	onkey = devm_kzalloc(&pdev->dev, sizeof(*onkey), GFP_KERNEL);
- 	if (!onkey)
- 		return -ENOMEM;
+ 	iowrite32(ptiword, aperture);
+-	return;
+ }
+ 
+ /**
+@@ -390,5 +389,4 @@ void pti_writedata(struct pti_masterchannel *mc, u8 *buf, int count)
+ 		pti_write_to_aperture(mc, buf, count);
+-	return;
+ }
+ EXPORT_SYMBOL_GPL(pti_writedata);
  
 -- 
-2.16.1
+2.15.1
 
