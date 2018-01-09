@@ -1,33 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 10:09:57 +0000
-Subject: Re: [PATCH 0/3] mfd/abx500-core: Adjustments for eight function implementations
-Message-Id: <CACRpkdY-F4DqVUd7qe6p3=Sc5C5jfweyLFDv52TwJgoBd=1c-g@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Jan 2018 09:26:44 +0000
+Subject: [PATCH 2/2] slimbus: qcom-ctrl: Fix devm_ioremap_resource() error handling
+Message-Id: <20180109092644.wa4ubwxkcvc3lyza@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d1862d7a-412e-9aaf-8200-bb2070ee402a@users.sourceforge.net>
-In-Reply-To: <d1862d7a-412e-9aaf-8200-bb2070ee402a@users.sourceforge.net>
+References: <20180109092616.mfha2rs56oaxfjaz@mwanda>
+In-Reply-To: <20180109092616.mfha2rs56oaxfjaz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, Lee Jones <lee.jones@linaro.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 14, 2018 at 9:40 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+devm_ioremap_resource() returns error pointers, not NULL so the check
+needs to be fixed.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 14 Jan 2018 21:38:42 +0100
->
-> Three update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (3):
->   Delete an error message for a failed memory allocation
->     in abx500_register_ops()
->   Improve two size determinations in abx500_register_ops()
->   Adjust 14 checks for null pointers
+Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The series:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index 3ab59209cbdc..6bf95bf33299 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -528,9 +528,9 @@ static int qcom_slim_probe(struct platform_device *pdev)
+ 
+ 	slim_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl");
+ 	ctrl->base = devm_ioremap_resource(ctrl->dev, slim_mem);
+-	if (!ctrl->base) {
++	if (IS_ERR(ctrl->base)) {
+ 		dev_err(&pdev->dev, "IOremap failed\n");
+-		return -ENOMEM;
++		return PTR_ERR(ctrl->base);
+ 	}
+ 
+ 	sctrl->set_laddr = qcom_set_laddr;
