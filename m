@@ -1,49 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 Jan 2018 20:31:30 +0000
-Subject: [PATCH 3/3] mtd/nand/ams-delta: Add some spaces for better code readability
-Message-Id: <9e8454a8-41aa-9afc-e2b9-c1824028f91f@users.sourceforge.net>
+Date: Tue, 09 Jan 2018 16:40:05 +0000
+Subject: [PATCH] misc/phantom: Delete an error message for a failed memory allocation in phantom_probe()
+Message-Id: <73220c52-2399-12a5-276d-9145877a5bea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8f678424-3ce1-3a4c-1b0d-f3ac9a226f00@users.sourceforge.net>
-In-Reply-To: <8f678424-3ce1-3a4c-1b0d-f3ac9a226f00@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 Jan 2018 21:14:20 +0100
+Date: Tue, 9 Jan 2018 17:25:59 +0100
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/nand/ams-delta.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/phantom.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/nand/ams-delta.c b/drivers/mtd/nand/ams-delta.c
-index 4f5fc104c510..9ea61271fee6 100644
---- a/drivers/mtd/nand/ams-delta.c
-+++ b/drivers/mtd/nand/ams-delta.c
-@@ -94,7 +94,7 @@ static void ams_delta_write_buf(struct mtd_info *mtd, const u_char *buf,
- {
- 	int i;
+diff --git a/drivers/misc/phantom.c b/drivers/misc/phantom.c
+index 8fa68cf308e0..ab55d2114136 100644
+--- a/drivers/misc/phantom.c
++++ b/drivers/misc/phantom.c
+@@ -365,10 +365,8 @@ static int phantom_probe(struct pci_dev *pdev,
  
--	for (i=0; i<len; i++)
-+	for (i = 0; i < len; i++)
- 		ams_delta_write_byte(mtd, buf[i]);
- }
+ 	retval = -ENOMEM;
+ 	pht = kzalloc(sizeof(*pht), GFP_KERNEL);
+-	if (pht = NULL) {
+-		dev_err(&pdev->dev, "unable to allocate device\n");
++	if (!pht)
+ 		goto err_reg;
+-	}
  
-@@ -102,7 +102,7 @@ static void ams_delta_read_buf(struct mtd_info *mtd, u_char *buf, int len)
- {
- 	int i;
- 
--	for (i=0; i<len; i++)
-+	for (i = 0; i < len; i++)
- 		buf[i] = ams_delta_read_byte(mtd);
- }
- 
+ 	pht->caddr = pci_iomap(pdev, 0, 0);
+ 	if (pht->caddr = NULL) {
 -- 
 2.15.1
 
