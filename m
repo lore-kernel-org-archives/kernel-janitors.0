@@ -1,40 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 20:56:14 +0000
-Subject: [PATCH] pinctrl: sh-pfc: Use seq_puts() in sh_pfc_pin_dbg_show()
-Message-Id: <7e3a88a6-2ea8-1704-b7a0-67f1f4b4f3f6@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 09 Jan 2018 14:29:06 +0000
+Subject: Re: [PATCH] pinctrl: sh-pfc: Use seq_puts() in sh_pfc_pin_dbg_show()
+Message-Id: <CACRpkdb-eGrqequRO_B1__rnT07=FO6yecsxEPEw6YLAU6nyrw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7e3a88a6-2ea8-1704-b7a0-67f1f4b4f3f6@users.sourceforge.net>
+In-Reply-To: <7e3a88a6-2ea8-1704-b7a0-67f1f4b4f3f6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 21:50:20 +0100
+On Sat, Jan 6, 2018 at 9:56 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 6 Jan 2018 21:50:20 +0100
+>
+> A string which did not contain a data format specification should be put
+> into a sequence. Thus use the corresponding function "seq_puts".
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Leaving to Geert to pick this up. (Looks good.)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/sh-pfc/pinctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index 736634aee500..70db21638901 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -75,7 +75,7 @@ static int sh_pfc_get_group_pins(struct pinctrl_dev *pctldev, unsigned selector,
- static void sh_pfc_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
- 				unsigned offset)
- {
--	seq_printf(s, "%s", DRV_NAME);
-+	seq_puts(s, DRV_NAME);
- }
- 
- #ifdef CONFIG_OF
--- 
-2.15.1
-
+Yours,
+Linus Walleij
