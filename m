@@ -1,14 +1,30 @@
-From: Tom Crist <tomaskova@novybydzov.cz>
-Date: Mon, 15 Jan 2018 23:38:45 +0000
-Subject: =?utf-8?Q?Neujahrsspende_von_4.800.000_=E2=82=AC?=
-Message-Id: <1740494516.33088.1516059525614.JavaMail.zimbra@novybydzov.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 09 Jan 2018 18:27:21 +0000
+Subject: [PATCH 0/5] misc-PTI: Adjustments for some function implementations
+Message-Id: <bd359852-a809-280d-3d52-89216edc2058@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 9 Jan 2018 19:06:36 +0100
 
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (5):
+  Delete an error message for a failed memory allocation in two functions
+  Fix a typo in five comment lines
+  Improve a size determination in two functions
+  Adjust 11 checks for null pointers
+  Delete an unnecessary return statement in two functions
+
+ drivers/misc/pti.c | 45 +++++++++++++++++++--------------------------
+ 1 file changed, 19 insertions(+), 26 deletions(-)
 
 -- 
- Hallo, Sie haben eine Spende von 4.800.000,00 Euro, ich habe die America Lottery in Amerika im Wert von 40 Millionen Dollar gewonnen und ich gebe einen Teil davon an fünf glückliche Menschen und Wohltätigkeits-Häuser in Erinnerung an meine verstorbene Frau, die an Krebs gestorben ist. Kontaktieren Sie mich für weitere Details:(tomcrist2009@gmail.com)
+2.15.1
+
