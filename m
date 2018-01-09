@@ -1,25 +1,42 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 18 Jan 2018 12:03:05 +0000
-Subject: Re: [PATCH -next] hwrng: exynos - remove redundant dev_err call in exynos_trng_probe()
-Message-Id: <20180118120305.GF20717@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 09 Jan 2018 15:55:43 +0000
+Subject: [PATCH][next] IB/mlx5: remove redundant assignment of mdev
+Message-Id: <20180109155543.15027-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: l.stelmach@samsung.com, mpm@selenic.com, arnd@arndb.de, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 01:30:59PM +0000, Wei Yongjun wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+The initial assignment to mdev is redundant as mdev is re-assigned
+later and the first assigned value is never read. Remove this
+redundant assignment.
+
+Cleans up clang warning:
+drivers/infiniband/hw/mlx5/main.c:359:24: warning: Value stored
+to 'mdev' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/mlx5/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index 5d6fba986fa5..91e6b42798e5 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -356,7 +356,7 @@ static int mlx5_query_port_roce(struct ib_device *device, u8 port_num,
+ 				struct ib_port_attr *props)
+ {
+ 	struct mlx5_ib_dev *dev = to_mdev(device);
+-	struct mlx5_core_dev *mdev = dev->mdev;
++	struct mlx5_core_dev *mdev;
+ 	struct net_device *ndev, *upper;
+ 	enum ib_mtu ndev_ib_mtu;
+ 	bool put_mdev = true;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.15.1
+
