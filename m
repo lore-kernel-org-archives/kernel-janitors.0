@@ -1,44 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 18:18:47 +0000
-Subject: [PATCH 1/3] IB/iser: Delete an error message for a failed memory allocation in iser_send_data_out()
-Message-Id: <8dc6dc89-c77f-513d-70d3-11bcf963a539@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 09 Jan 2018 17:06:40 +0000
+Subject: [PATCH][staging-next] ncpfs: remove redundant cast of struct ncp_inode_info
+Message-Id: <20180109170640.16561-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
-In-Reply-To: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jan Kara <jack@suse.cz>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 17:48:47 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Casting a value returned by memory an allocation function is
+not required and can be removed. Also add in a newline after before
+the first statement. Code clean up as suggested by coccinelle.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/infiniband/ulp/iser/iser_initiator.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/ncpfs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/iser/iser_initiator.c b/drivers/infiniband/ulp/iser/iser_initiator.c
-index 2a07692007bd..3ae2571ba5b4 100644
---- a/drivers/infiniband/ulp/iser/iser_initiator.c
-+++ b/drivers/infiniband/ulp/iser/iser_initiator.c
-@@ -452,10 +452,8 @@ int iser_send_data_out(struct iscsi_conn *conn,
- 		 __func__,(int)itt,(int)data_seg_len,(int)buf_offset);
- 
- 	tx_desc = kmem_cache_zalloc(ig.desc_cache, GFP_ATOMIC);
--	if (tx_desc = NULL) {
--		iser_err("Failed to alloc desc for post dataout\n");
-+	if (!tx_desc)
- 		return -ENOMEM;
--	}
- 
- 	tx_desc->type = ISCSI_TX_DATAOUT;
- 	tx_desc->cqe.done = iser_dataout_comp;
+diff --git a/drivers/staging/ncpfs/inode.c b/drivers/staging/ncpfs/inode.c
+index 41de88cdc053..bb411610a071 100644
+--- a/drivers/staging/ncpfs/inode.c
++++ b/drivers/staging/ncpfs/inode.c
+@@ -53,7 +53,8 @@ static struct kmem_cache * ncp_inode_cachep;
+ static struct inode *ncp_alloc_inode(struct super_block *sb)
+ {
+ 	struct ncp_inode_info *ei;
+-	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
++
++	ei = kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
 -- 
-2.16.1
+2.15.1
 
