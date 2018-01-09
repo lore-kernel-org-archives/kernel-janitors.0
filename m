@@ -1,30 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 10:07:41 +0000
-Subject: Re: [PATCH] pinctrl: pinmux: Use seq_putc() in pinmux_pins_show()
-Message-Id: <CACRpkdZps9XjXE+BP+xi4J1a85BVjmbOfdzDMXYHRjJbZDnegw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Jan 2018 09:39:10 +0000
+Subject: [PATCH] mmc: tmio, renesas_sdhi: Remove unneeded NULL check
+Message-Id: <20180109093910.sbwgcqilgyfhjfns@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bb070097-4d6a-3986-398d-7276cb18bb37@users.sourceforge.net>
-In-Reply-To: <bb070097-4d6a-3986-398d-7276cb18bb37@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 13, 2018 at 11:49 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+The inconsistent NULL checking in this function causes static checker
+warnings.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 13 Jan 2018 11:33:47 +0100
->
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+    drivers/mmc/host/renesas_sdhi_sys_dmac.c:360 renesas_sdhi_sys_dmac_issue_tasklet_fn()
+    error: we previously assumed 'host' could be null (see line 351)
 
-Patch applied.
+On reviewing this code, "host" can't ever be NULL so we can just remove
+the check.
 
-Yours,
-Linus Walleij
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index c8a74b2dee00..82d757c480b2 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -348,7 +348,7 @@ static void renesas_sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
+ 
+ 	spin_lock_irq(&host->lock);
+ 
+-	if (host && host->data) {
++	if (host->data) {
+ 		if (host->data->flags & MMC_DATA_READ)
+ 			chan = host->chan_rx;
+ 		else
