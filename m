@@ -1,42 +1,84 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 21:20:24 +0000
-Subject: [PATCH 2/3] RDMA/iwpm: Adjust a variable initialisation in iwpm_create_nlmsg()
-Message-Id: <4f13c537-5adb-cb38-5ba6-206699033849@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 10:25:52 +0000
+Subject: [PATCH 4/4] sgi-xpnet: Adjust five checks for null pointers
+Message-Id: <59002d3f-49f1-dcfb-4e9d-aee6f24d29f0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
-In-Reply-To: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
+References: <f1f2d65f-940f-f835-db4e-878e911f6011@users.sourceforge.net>
+In-Reply-To: <f1f2d65f-940f-f835-db4e-878e911f6011@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>, Doug Ledford <dledford@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Jason Gunthorpe <jgg@ziepe.ca>, Johannes Berg <johannes.berg@intel.com>, Leon Romanovsky <leonro@mellanox.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Cliff Whickman <cpw@sgi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robin Holt <robinmholt@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 21:56:54 +0100
+Date: Wed, 10 Jan 2018 11:00:14 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The local variable "skb" will be reassigned by a following statement.
-Thus adjust the initialisation at the beginning.
+The script “checkpatch.pl” pointed information out like the following.
+
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/core/iwpm_util.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/misc/sgi-xp/xpnet.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/core/iwpm_util.c b/drivers/infiniband/core/iwpm_util.c
-index 9821ae900f6d..9eb527074c32 100644
---- a/drivers/infiniband/core/iwpm_util.c
-+++ b/drivers/infiniband/core/iwpm_util.c
-@@ -436,9 +436,8 @@ int iwpm_compare_sockaddr(struct sockaddr_storage *a_sockaddr,
- struct sk_buff *iwpm_create_nlmsg(u32 nl_op, struct nlmsghdr **nlh,
- 						int nl_client)
+diff --git a/drivers/misc/sgi-xp/xpnet.c b/drivers/misc/sgi-xp/xpnet.c
+index 088c96a883f9..038d6bd59840 100644
+--- a/drivers/misc/sgi-xp/xpnet.c
++++ b/drivers/misc/sgi-xp/xpnet.c
+@@ -260,8 +260,7 @@ xpnet_connection_activity(enum xp_retval reason, short partid, int channel,
+ 
+ 	switch (reason) {
+ 	case xpMsgReceived:	/* message received */
+-		DBUG_ON(data = NULL);
+-
++		DBUG_ON(!data);
+ 		xpnet_receive(partid, channel, (struct xpnet_message *)data);
+ 		break;
+ 
+@@ -341,8 +340,7 @@ xpnet_send_completed(enum xp_retval reason, short partid, int channel,
  {
--	struct sk_buff *skb = NULL;
-+	struct sk_buff *skb = dev_alloc_skb(IWPM_MSG_SIZE);
+ 	struct xpnet_pending_msg *queued_msg = (struct xpnet_pending_msg *)__qm;
  
--	skb = dev_alloc_skb(IWPM_MSG_SIZE);
- 	if (!skb)
- 		goto create_nlmsg_exit;
+-	DBUG_ON(queued_msg = NULL);
+-
++	DBUG_ON(!queued_msg);
+ 	dev_dbg(xpnet, "message to %d notified with reason %d\n",
+ 		partid, reason);
  
+@@ -425,7 +423,7 @@ xpnet_dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	 * remain, release the skb.
+ 	 */
+ 	queued_msg = kmalloc(sizeof(*queued_msg), GFP_ATOMIC);
+-	if (queued_msg = NULL) {
++	if (!queued_msg) {
+ 		dev->stats.tx_errors++;
+ 		goto free_skb;
+ 	}
+@@ -516,7 +514,7 @@ xpnet_init(void)
+ 
+ 	xpnet_broadcast_partitions = kzalloc(BITS_TO_LONGS(xp_max_npartitions) *
+ 					     sizeof(long), GFP_KERNEL);
+-	if (xpnet_broadcast_partitions = NULL)
++	if (!xpnet_broadcast_partitions)
+ 		return -ENOMEM;
+ 
+ 	/*
+@@ -525,7 +523,7 @@ xpnet_init(void)
+ 	 */
+ 	xpnet_device = alloc_netdev(0, XPNET_DEVICE_NAME, NET_NAME_UNKNOWN,
+ 				    ether_setup);
+-	if (xpnet_device = NULL) {
++	if (!xpnet_device) {
+ 		kfree(xpnet_broadcast_partitions);
+ 		return -ENOMEM;
+ 	}
 -- 
-2.16.1
+2.15.1
 
