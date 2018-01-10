@@ -1,41 +1,37 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 27 Jan 2018 10:53:57 +0000
-Subject: [PATCH 1/2] um: vector: Fix a memory allocation check
-Message-Id: <20180127105357.2728-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 19:23:13 +0000
+Subject: [PATCH 0/7] VMCI: Adjustments for several function implementations
+Message-Id: <2747f123-a95d-bc68-b858-0327dce3758b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Checking the result of the previous 'kstrdup()' call is expected here, so
-we should test 'params' and not 'str' (which is known to be non-NULL at
-this point)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 20:13:45 +0100
 
-Fixes: ad1f62ab2bd4 ("High Performance UML Vector Network Driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/um/drivers/vector_kern.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Some update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-index d1d53015d572..3c1e6ad91016 100644
---- a/arch/um/drivers/vector_kern.c
-+++ b/arch/um/drivers/vector_kern.c
-@@ -723,7 +723,7 @@ static int vector_config(char *str, char **error_out)
- 	 */
- 
- 	params = kstrdup(params, GFP_KERNEL);
--	if (str = NULL) {
-+	if (params = NULL) {
- 		*error_out = "vector_config failed to strdup string";
- 		return -ENOMEM;
- 	}
+Markus Elfring (7):
+  Delete error messages for a failed memory allocation in seven functions
+  Improve a size determination in two functions
+  Update a word in five comment lines
+  Delete an unnecessary null pointer check in qp_broker_create()
+  Delete an unnecessary variable initialisation in qp_broker_create()
+  Less function calls in qp_broker_create() after error detection
+  Adjust 32 checks for null pointers
+
+ drivers/misc/vmw_vmci/vmci_context.c    | 24 +++++++-------
+ drivers/misc/vmw_vmci/vmci_datagram.c   | 14 ++++----
+ drivers/misc/vmw_vmci/vmci_doorbell.c   |  8 ++---
+ drivers/misc/vmw_vmci/vmci_guest.c      | 16 +++------
+ drivers/misc/vmw_vmci/vmci_host.c       | 10 ++----
+ drivers/misc/vmw_vmci/vmci_queue_pair.c | 57 ++++++++++++++++-----------------
+ 6 files changed, 54 insertions(+), 75 deletions(-)
+
 -- 
-2.14.1
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+2.15.1
 
