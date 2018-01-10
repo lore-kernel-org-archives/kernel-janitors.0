@@ -1,52 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 10:22:25 +0000
-Subject: [PATCH 1/4] sgi-xpnet: Delete an error message for a failed memory allocation in two functions
-Message-Id: <c85a9ea2-431c-c436-b1f6-3694bb4ebdfb@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 15:32:23 +0000
+Subject: [PATCH 1/3] misc/ti-st: Delete an error message for a failed memory allocation in kim_probe()
+Message-Id: <8aad653c-de9d-491f-140b-259dd7569404@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f1f2d65f-940f-f835-db4e-878e911f6011@users.sourceforge.net>
-In-Reply-To: <f1f2d65f-940f-f835-db4e-878e911f6011@users.sourceforge.net>
+References: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
+In-Reply-To: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Cliff Whickman <cpw@sgi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robin Holt <robinmholt@gmail.com>
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>
 Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 10:46:46 +0100
+Date: Wed, 10 Jan 2018 16:04:52 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/sgi-xp/xpnet.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/misc/ti-st/st_kim.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/sgi-xp/xpnet.c b/drivers/misc/sgi-xp/xpnet.c
-index 0c26eaf5f62b..e13aa6c74028 100644
---- a/drivers/misc/sgi-xp/xpnet.c
-+++ b/drivers/misc/sgi-xp/xpnet.c
-@@ -168,9 +168,6 @@ xpnet_receive(short partid, int channel, struct xpnet_message *msg)
- 	/* reserve an extra cache line */
- 	skb = dev_alloc_skb(msg->size + L1_CACHE_BYTES);
- 	if (!skb) {
--		dev_err(xpnet, "failed on dev_alloc_skb(%d)\n",
--			msg->size + L1_CACHE_BYTES);
--
- 		xpc_received(partid, channel, (void *)msg);
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+index b77aacafc3fc..68ebdf466b17 100644
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -736,10 +736,9 @@ static int kim_probe(struct platform_device *pdev)
+ 	}
  
- 		xpnet_device->stats.rx_errors++;
-@@ -432,9 +429,6 @@ xpnet_dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	 */
- 	queued_msg = kmalloc(sizeof(struct xpnet_pending_msg), GFP_ATOMIC);
- 	if (queued_msg = NULL) {
--		dev_warn(xpnet, "failed to kmalloc %ld bytes; dropping "
--			 "packet\n", sizeof(struct xpnet_pending_msg));
--
- 		dev->stats.tx_errors++;
- 		dev_kfree_skb(skb);
- 		return NETDEV_TX_OK;
+ 	kim_gdata = kzalloc(sizeof(struct kim_data_s), GFP_ATOMIC);
+-	if (!kim_gdata) {
+-		pr_err("no mem to allocate");
++	if (!kim_gdata)
+ 		return -ENOMEM;
+-	}
++
+ 	platform_set_drvdata(pdev, kim_gdata);
+ 
+ 	err = st_core_init(&kim_gdata->core_data);
 -- 
 2.15.1
 
