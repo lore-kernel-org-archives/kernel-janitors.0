@@ -1,43 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 17:18:54 +0000
-Subject: [PATCH] Input: kxtj9: Delete an error message for a failed memory allocation in kxtj9_probe()
-Message-Id: <0d5cb90a-28e7-544b-3b77-3e50f11edb15@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 15:34:34 +0000
+Subject: [PATCH 3/3] misc/ti-st: Delete an unnecessary return statement in two functions
+Message-Id: <4b83dec4-c493-eb70-f60e-6bc490821d4a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
+In-Reply-To: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 18:13:57 +0100
+Date: Wed, 10 Jan 2018 16:16:55 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/misc/kxtj9.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/misc/ti-st/st_kim.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/input/misc/kxtj9.c b/drivers/input/misc/kxtj9.c
-index efaffcc57e36..ddd5ca6812cb 100644
---- a/drivers/input/misc/kxtj9.c
-+++ b/drivers/input/misc/kxtj9.c
-@@ -526,11 +526,8 @@ static int kxtj9_probe(struct i2c_client *client,
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+index 948e3461d02e..e33eb4bcb608 100644
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -206,7 +206,6 @@ static void kim_int_recv(struct kim_data_s *kim_gdata,
+ 		kim_gdata->rx_skb->cb[1] = 0;
+ 
  	}
+-	return;
+ }
  
- 	tj9 = kzalloc(sizeof(*tj9), GFP_KERNEL);
--	if (!tj9) {
--		dev_err(&client->dev,
--			"failed to allocate memory for module data\n");
-+	if (!tj9)
- 		return -ENOMEM;
--	}
+ static long read_local_version(struct kim_data_s *kim_gdata, char *bts_scr_name)
+@@ -436,7 +435,6 @@ void st_kim_recv(void *disc_data, const unsigned char *data, long count)
+ 	 * from other fw responses when data gathering is complete
+ 	 */
+ 	kim_int_recv(kim_gdata, data, count);
+-	return;
+ }
  
- 	tj9->client = client;
- 	tj9->pdata = *pdata;
+ /* to signal completion of line discipline installation
 -- 
-2.16.1
+2.15.1
 
