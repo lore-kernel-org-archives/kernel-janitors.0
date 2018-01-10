@@ -1,16 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 15:08:47 +0000
-Subject: [PATCH] Input: twl6040-vibra: Delete an error message for a failed memory allocation in twl6040_vibr
-Message-Id: <d020fc80-4805-81da-aa27-2c3082129f74@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 14:45:41 +0000
+Subject: [PATCH] spear13xx_pcie_gadget: Delete an error message for a failed memory allocation in spear_pcie_
+Message-Id: <4890202a-cb60-bcba-781d-4823f3e58b0a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 16:01:32 +0100
+Date: Wed, 10 Jan 2018 15:35:14 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -18,21 +18,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/misc/twl6040-vibra.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/misc/spear13xx_pcie_gadget.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/input/misc/twl6040-vibra.c b/drivers/input/misc/twl6040-vibra.c
-index 5690eb7ff954..1bdca0eeed3f 100644
---- a/drivers/input/misc/twl6040-vibra.c
-+++ b/drivers/input/misc/twl6040-vibra.c
-@@ -259,7 +259,6 @@ static int twl6040_vibra_probe(struct platform_device *pdev)
- 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
- 	if (!info) {
- 		of_node_put(twl6040_core_node);
--		dev_err(&pdev->dev, "couldn't allocate memory\n");
- 		return -ENOMEM;
- 	}
+diff --git a/drivers/misc/spear13xx_pcie_gadget.c b/drivers/misc/spear13xx_pcie_gadget.c
+index ee120dcbb3e6..75d5ecb2961b 100644
+--- a/drivers/misc/spear13xx_pcie_gadget.c
++++ b/drivers/misc/spear13xx_pcie_gadget.c
+@@ -671,10 +671,8 @@ static int spear_pcie_gadget_probe(struct platform_device *pdev)
+ 	struct configfs_subsystem *subsys;
  
+ 	target = devm_kzalloc(&pdev->dev, sizeof(*target), GFP_KERNEL);
+-	if (!target) {
+-		dev_err(&pdev->dev, "out of memory\n");
++	if (!target)
+ 		return -ENOMEM;
+-	}
+ 
+ 	cg_item = &target->subsys.su_group.cg_item;
+ 	sprintf(cg_item->ci_namebuf, "pcie_gadget.%d", pdev->id);
 -- 
-2.16.1
+2.15.1
 
