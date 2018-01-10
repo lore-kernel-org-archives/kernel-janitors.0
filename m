@@ -1,42 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 16:17:49 +0000
-Subject: [PATCH] mfd/twl6030-irq: Delete an error message for a failed memory allocation in twl6030_init_irq(
-Message-Id: <d030ee42-5e28-4b92-1ea0-ebc9fca2f192@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 10:20:52 +0000
+Subject: [PATCH 0/4] SGI-XPNET: Adjustments for five function implementations
+Message-Id: <f1f2d65f-940f-f835-db4e-878e911f6011@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Cliff Whickman <cpw@sgi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robin Holt <robinmholt@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 17:06:51 +0100
+Date: Wed, 10 Jan 2018 11:16:54 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation in two functions
+  Improve a size determination in xpnet_dev_hard_start_xmit()
+  Use common code in xpnet_dev_hard_start_xmit()
+  Adjust five checks for null pointers
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mfd/twl6030-irq.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/misc/sgi-xp/xpnet.c | 36 ++++++++++++++----------------------
+ 1 file changed, 14 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/mfd/twl6030-irq.c b/drivers/mfd/twl6030-irq.c
-index e3ec8dfa9f1e..e939431ed10c 100644
---- a/drivers/mfd/twl6030-irq.c
-+++ b/drivers/mfd/twl6030-irq.c
-@@ -392,10 +392,8 @@ int twl6030_init_irq(struct device *dev, int irq_num)
- 	nr_irqs = TWL6030_NR_IRQS;
- 
- 	twl6030_irq = devm_kzalloc(dev, sizeof(*twl6030_irq), GFP_KERNEL);
--	if (!twl6030_irq) {
--		dev_err(dev, "twl6030_irq: Memory allocation failed\n");
-+	if (!twl6030_irq)
- 		return -ENOMEM;
--	}
- 
- 	mask[0] = 0xFF;
- 	mask[1] = 0xFF;
 -- 
 2.15.1
 
