@@ -1,62 +1,36 @@
-From: Nick Dyer <nick@shmanahar.org>
-Date: Wed, 24 Jan 2018 20:36:39 +0000
-Subject: Re: [PATCH] input/rmi4: Delete an error message for a failed memory allocation in two functions
-Message-Id: <20180124203639.GB5922@lava.h.shmanahar.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 Jan 2018 09:20:54 +0000
+Subject: [PATCH][bpf-next] bpf: fix spelling mistake: "obusing" -> "abusing"
+Message-Id: <20180110092054.23345-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <423a3ec4-eef2-f663-d6b8-9ec9d31ddfc2@users.sourceforge.net>
-In-Reply-To: <423a3ec4-eef2-f663-d6b8-9ec9d31ddfc2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, Andrew Duggan <aduggan@synaptics.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lyude Paul <thatslyude@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 07:28:44PM +0100, SF Markus Elfring wrote:
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Nick Dyer <nick@shmanahar.org>
+Trivial fix to spelling mistake in error message text.
 
-> ---
->  drivers/input/rmi4/rmi_driver.c | 4 +---
->  drivers/input/rmi4/rmi_f30.c    | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
-> index 4f2bb5947a4e..6c47e4f3ca7e 100644
-> --- a/drivers/input/rmi4/rmi_driver.c
-> +++ b/drivers/input/rmi4/rmi_driver.c
-> @@ -1060,10 +1060,8 @@ int rmi_probe_interrupts(struct rmi_driver_data *data)
->  
->  	size = BITS_TO_LONGS(data->irq_count) * sizeof(unsigned long);
->  	data->irq_memory = devm_kzalloc(dev, size * 4, GFP_KERNEL);
-> -	if (!data->irq_memory) {
-> -		dev_err(dev, "Failed to allocate memory for irq masks.\n");
-> +	if (!data->irq_memory)
->  		return -ENOMEM;
-> -	}
->  
->  	data->irq_status	= data->irq_memory + size * 0;
->  	data->fn_irq_bits	= data->irq_memory + size * 1;
-> diff --git a/drivers/input/rmi4/rmi_f30.c b/drivers/input/rmi4/rmi_f30.c
-> index 82e0f0d43d55..a111ea370c30 100644
-> --- a/drivers/input/rmi4/rmi_f30.c
-> +++ b/drivers/input/rmi4/rmi_f30.c
-> @@ -238,10 +238,8 @@ static int rmi_f30_map_gpios(struct rmi_function *fn,
->  					    button_count,
->  					    sizeof(f30->gpioled_key_map[0]),
->  					    GFP_KERNEL);
-> -	if (!f30->gpioled_key_map) {
-> -		dev_err(&fn->dev, "Failed to allocate gpioled map memory.\n");
-> +	if (!f30->gpioled_key_map)
->  		return -ENOMEM;
-> -	}
->  
->  	for (i = 0; i < button_count; i++) {
->  		if (!rmi_f30_is_valid_button(i, f30->ctrl))
-> -- 
-> 2.16.1
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/bpf/verifier.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 97bbef3eecdf..e388f30c4168 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5336,7 +5336,7 @@ static int fixup_bpf_calls(struct bpf_verifier_env *env)
+ 			 */
+ 			map_ptr = env->insn_aux_data[i + delta].map_ptr;
+ 			if (map_ptr = BPF_MAP_PTR_POISON) {
+-				verbose(env, "tail_call obusing map_ptr\n");
++				verbose(env, "tail_call abusing map_ptr\n");
+ 				return -EINVAL;
+ 			}
+ 			if (!map_ptr->unpriv_array)
+-- 
+2.15.1
+
