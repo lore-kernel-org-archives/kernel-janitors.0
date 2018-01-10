@@ -1,44 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 17:39:10 +0000
-Subject: [PATCH 1/2] Input: arc_ps2: Delete an error message for a failed memory allocation in arc_ps2_probe(
-Message-Id: <dff3cfe5-c994-1ee1-5b9e-fde79fd3cfd9@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 10:23:40 +0000
+Subject: [PATCH 2/4] sgi-xpnet: Improve a size determination in xpnet_dev_hard_start_xmit()
+Message-Id: <41b59f3b-00e4-13e2-2952-50781804b52f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
-In-Reply-To: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
+References: <f1f2d65f-940f-f835-db4e-878e911f6011@users.sourceforge.net>
+In-Reply-To: <f1f2d65f-940f-f835-db4e-878e911f6011@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Cliff Whickman <cpw@sgi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robin Holt <robinmholt@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 18:17:32 +0100
+Date: Wed, 10 Jan 2018 10:48:25 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/serio/arc_ps2.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/misc/sgi-xp/xpnet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/serio/arc_ps2.c b/drivers/input/serio/arc_ps2.c
-index 99e57a418753..9860b1c1e67a 100644
---- a/drivers/input/serio/arc_ps2.c
-+++ b/drivers/input/serio/arc_ps2.c
-@@ -197,10 +197,8 @@ static int arc_ps2_probe(struct platform_device *pdev)
- 
- 	arc_ps2 = devm_kzalloc(&pdev->dev, sizeof(struct arc_ps2_data),
- 				GFP_KERNEL);
--	if (!arc_ps2) {
--		dev_err(&pdev->dev, "out of memory\n");
-+	if (!arc_ps2)
- 		return -ENOMEM;
--	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	arc_ps2->addr = devm_ioremap_resource(&pdev->dev, res);
+diff --git a/drivers/misc/sgi-xp/xpnet.c b/drivers/misc/sgi-xp/xpnet.c
+index e13aa6c74028..a4415616c03c 100644
+--- a/drivers/misc/sgi-xp/xpnet.c
++++ b/drivers/misc/sgi-xp/xpnet.c
+@@ -427,7 +427,7 @@ xpnet_dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	 * xpc_send_notifies are relying on this skb.  When none
+ 	 * remain, release the skb.
+ 	 */
+-	queued_msg = kmalloc(sizeof(struct xpnet_pending_msg), GFP_ATOMIC);
++	queued_msg = kmalloc(sizeof(*queued_msg), GFP_ATOMIC);
+ 	if (queued_msg = NULL) {
+ 		dev->stats.tx_errors++;
+ 		dev_kfree_skb(skb);
 -- 
-2.16.1
+2.15.1
 
