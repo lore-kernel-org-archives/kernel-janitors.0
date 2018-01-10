@@ -1,102 +1,37 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Date: Fri, 26 Jan 2018 08:10:07 +0000
-Subject: Re: [PATCH] spi: orion: Fix a resource leak if the optional "axi" clk is deferred
-Message-Id: <87fu6t2g80.fsf@free-electrons.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 10 Jan 2018 14:37:13 +0000
+Subject: [PATCH -next] gpio: thunderx: fix error return code in thunderx_gpio_probe()
+Message-Id: <1515595033-83888-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180125201617.17099-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180125201617.17099-1-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Thu, 25 Jan 2018 21:16:17 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: broonie@kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Fix to return error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
+
+Fixes: 5a2a30024d8c ("gpio: Add gpio driver support for ThunderX and OCTEON-TX")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-thunderx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
+index b5adb79..d16e9d4 100644
+--- a/drivers/gpio/gpio-thunderx.c
++++ b/drivers/gpio/gpio-thunderx.c
+@@ -553,8 +553,10 @@ static int thunderx_gpio_probe(struct pci_dev *pdev,
+ 	txgpio->irqd = irq_domain_create_hierarchy(irq_get_irq_data(txgpio->msix_entries[0].vector)->domain,
+ 						   0, 0, of_node_to_fwnode(dev->of_node),
+ 						   &thunderx_gpio_irqd_ops, txgpio);
+-	if (!txgpio->irqd)
++	if (!txgpio->irqd) {
++		err = -ENOMEM;
+ 		goto out;
++	}
  
- On jeu., janv. 25 2018, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+ 	/* Push on irq_data and the domain for each line. */
+ 	for (i = 0; i < ngpio; i++) {
 
-> If the optional "axi" clk is deferred, we still need to undo some
-> initialisation. Espacially 'master' must be released. It will be
-                  Especially
-
-> reallocated the next time 'orion_spi_probe()' is called.
->
-> Add a new label to clean what needs to be cleaned and rename another
-> label to improve the names used.
->
-> Fixes: 92ae112e477a ("spi: orion: Fix clock resource by adding an optional bus clock")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-Thanks,
-
-Gregory
-
-
-> ---
->  drivers/spi/spi-orion.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
-> index 482a0cf3b7aa..deca63e82ff6 100644
-> --- a/drivers/spi/spi-orion.c
-> +++ b/drivers/spi/spi-orion.c
-> @@ -638,8 +638,10 @@ static int orion_spi_probe(struct platform_device *pdev)
->  	/* The following clock is only used by some SoCs */
->  	spi->axi_clk = devm_clk_get(&pdev->dev, "axi");
->  	if (IS_ERR(spi->axi_clk) &&
-> -	    PTR_ERR(spi->axi_clk) = -EPROBE_DEFER)
-> -		return -EPROBE_DEFER;
-> +	    PTR_ERR(spi->axi_clk) = -EPROBE_DEFER) {
-> +		status = -EPROBE_DEFER;
-> +		goto out_rel_clk;
-> +	}
->  	if (!IS_ERR(spi->axi_clk))
->  		clk_prepare_enable(spi->axi_clk);
->  
-> @@ -667,7 +669,7 @@ static int orion_spi_probe(struct platform_device *pdev)
->  	spi->base = devm_ioremap_resource(&pdev->dev, r);
->  	if (IS_ERR(spi->base)) {
->  		status = PTR_ERR(spi->base);
-> -		goto out_rel_clk;
-> +		goto out_rel_axi_clk;
->  	}
->  
->  	/* Scan all SPI devices of this controller for direct mapped devices */
-> @@ -705,7 +707,7 @@ static int orion_spi_probe(struct platform_device *pdev)
->  							    PAGE_SIZE);
->  		if (!spi->direct_access[cs].vaddr) {
->  			status = -ENOMEM;
-> -			goto out_rel_clk;
-> +			goto out_rel_axi_clk;
->  		}
->  		spi->direct_access[cs].size = PAGE_SIZE;
->  
-> @@ -733,8 +735,9 @@ static int orion_spi_probe(struct platform_device *pdev)
->  
->  out_rel_pm:
->  	pm_runtime_disable(&pdev->dev);
-> -out_rel_clk:
-> +out_rel_axi_clk:
->  	clk_disable_unprepare(spi->axi_clk);
-> +out_rel_clk:
->  	clk_disable_unprepare(spi->clk);
->  out:
->  	spi_master_put(master);
-> -- 
-> 2.14.1
->
->
-> ---
-> L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-> https://www.avast.com/antivirus
->
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
