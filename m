@@ -1,43 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 05 Jan 2018 15:50:37 +0000
-Subject: [PATCH][scsi-next] scsi: qla2xxx: remove redundant assignment of d
-Message-Id: <20180105155037.17981-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 10 Jan 2018 21:50:53 +0000
+Subject: Re: [PATCH][scsi-next] scsi: qla2xxx: remove redundant assignment of d
+Message-Id: <yq1po6hv0w2.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170605172958.12844-1-colin.king@canonical.com>
-In-Reply-To: <20170605172958.12844-1-colin.king@canonical.com>
+References: <20180105155037.17981-1-colin.king@canonical.com>
+In-Reply-To: <20180105155037.17981-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 5 Jan 2018 15:50:37 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The initialization of d is redundant as this value is never read
-and it is overwritten inside the subsequent for-loop.  Remove this
-redundant assignment.
+Colin,
 
-Cleans up clang warning:
-drivers/scsi/qla2xxx/qla_gs.c:3985:29: warning: Value stored to 'd'
-during its initialization is never read
+> The initialization of d is redundant as this value is never read
+> and it is overwritten inside the subsequent for-loop.  Remove this
+> redundant assignment.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/qla2xxx/qla_gs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to 4.16/scsi-queue.
 
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index 6bfe24eeb402..f40ea8f120b7 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3982,7 +3982,7 @@ static void qla2x00_async_gpnft_gnnft_sp_done(void *s, int res)
- 		(struct ct_sns_req *)sp->u.iocb_cmd.u.ctarg.req;
- 	struct ct_sns_gpnft_rsp *ct_rsp  		(struct ct_sns_gpnft_rsp *)sp->u.iocb_cmd.u.ctarg.rsp;
--	struct ct_sns_gpn_ft_data *d = &ct_rsp->entries[0];
-+	struct ct_sns_gpn_ft_data *d;
- 	struct fab_scan_rp *rp;
- 	int i, j, k;
- 	u16 cmd = be16_to_cpu(ct_req->command);
 -- 
-2.15.1
-
+Martin K. Petersen	Oracle Linux Engineering
