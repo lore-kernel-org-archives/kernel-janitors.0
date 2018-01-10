@@ -1,43 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 15:46:56 +0000
-Subject: [PATCH 1/2] Input: sirfsoc-onkey: Delete an error message for a failed memory allocation in sirfsoc_
-Message-Id: <00544fed-52b0-0536-ad4e-f023668f08dd@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 15:30:58 +0000
+Subject: [PATCH 0/3] misc/TI-ST: Adjustments for three function implementations
+Message-Id: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b66f4105-57f2-adc2-ecde-cd4dacac408c@users.sourceforge.net>
-In-Reply-To: <b66f4105-57f2-adc2-ecde-cd4dacac408c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 16:32:09 +0100
+Date: Wed, 10 Jan 2018 16:26:36 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in kim_probe()
+  Improve a size determination in kim_probe()
+  Delete an unnecessary return statement in two functions
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/misc/sirfsoc-onkey.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/misc/ti-st/st_kim.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/misc/sirfsoc-onkey.c b/drivers/input/misc/sirfsoc-onkey.c
-index 4fd038d476a3..9d8b4e2d7063 100644
---- a/drivers/input/misc/sirfsoc-onkey.c
-+++ b/drivers/input/misc/sirfsoc-onkey.c
-@@ -113,10 +113,8 @@ static int sirfsoc_pwrc_probe(struct platform_device *pdev)
- 
- 	pwrcdrv = devm_kzalloc(&pdev->dev, sizeof(struct sirfsoc_pwrc_drvdata),
- 			       GFP_KERNEL);
--	if (!pwrcdrv) {
--		dev_info(&pdev->dev, "Not enough memory for the device data\n");
-+	if (!pwrcdrv)
- 		return -ENOMEM;
--	}
- 
- 	/*
- 	 * We can't use of_iomap because pwrc is not mapped in memory,
 -- 
-2.16.1
+2.15.1
 
