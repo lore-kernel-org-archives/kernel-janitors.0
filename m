@@ -1,40 +1,36 @@
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Date: Tue, 23 Jan 2018 08:28:04 +0000
-Subject: Re: [PATCH -next] mmc: mmci: fix error return code in mmci_probe()
-Message-Id: <e3730a8e-2bc2-6173-c4d3-374a93ef6114@st.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 10 Jan 2018 14:19:48 +0000
+Subject: [PATCH -next] meson-gx-socinfo: make local function meson_gx_socinfo_init static
+Message-Id: <1515593988-78626-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516673353-170330-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516673353-170330-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linus-amlogic@lists.infradead.org
 
-SGkgV2VpDQoNCk9uIDAxLzIzLzIwMTggMDM6MDkgQU0sIFdlaSBZb25nanVuIHdyb3RlOg0KPiBG
-aXggdG8gcmV0dXJuIGEgbmVnYXRpdmUgZXJyb3IgY29kZSBmcm9tIHRoZSBlcnJvciBoYW5kbGlu
-Zw0KPiBjYXNlIGluc3RlYWQgb2YgMCwgYXMgZG9uZSBlbHNld2hlcmUgaW4gdGhpcyBmdW5jdGlv
-bi4NCj4gDQo+IEZpeGVzOiBmOWJiMzA0Y2U4NTUgKCJtbWM6IG1tY2k6IEFkZCBzdXBwb3J0IGZv
-ciBzZXR0aW5nIHBhZCB0eXBlIHZpYSBwaW5jdHJsIikNCj4gU2lnbmVkLW9mZi1ieTogV2VpIFlv
-bmdqdW4gPHdlaXlvbmdqdW4xQGh1YXdlaS5jb20+DQo+IC0tLQ0KPiAgIGRyaXZlcnMvbW1jL2hv
-c3QvbW1jaS5jIHwgMyArKysNCj4gICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspDQo+
-IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC9tbWNpLmMgYi9kcml2ZXJzL21tYy9o
-b3N0L21tY2kuYw0KPiBpbmRleCA2MjQ2ZWFhLi43MGIwZGY4IDEwMDY0NA0KPiAtLS0gYS9kcml2
-ZXJzL21tYy9ob3N0L21tY2kuYw0KPiArKysgYi9kcml2ZXJzL21tYy9ob3N0L21tY2kuYw0KPiBA
-QCAtMTY0Niw2ICsxNjQ2LDcgQEAgc3RhdGljIGludCBtbWNpX3Byb2JlKHN0cnVjdCBhbWJhX2Rl
-dmljZSAqZGV2LA0KPiAgIAkJaG9zdC0+cGluY3RybCA9IGRldm1fcGluY3RybF9nZXQoJmRldi0+
-ZGV2KTsNCj4gICAJCWlmIChJU19FUlIoaG9zdC0+cGluY3RybCkpIHsNCj4gICAJCQlkZXZfZXJy
-KCZkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgcGluY3RybCIpOw0KPiArCQkJcmV0ID0gUFRSX0VS
-Uihob3N0LT5waW5jdHJsKTsNCj4gICAJCQlnb3RvIGhvc3RfZnJlZTsNCj4gICAJCX0NCj4gICAN
-Cj4gQEAgLTE2NTMsNiArMTY1NCw3IEBAIHN0YXRpYyBpbnQgbW1jaV9wcm9iZShzdHJ1Y3QgYW1i
-YV9kZXZpY2UgKmRldiwNCj4gICAJCQkJCQkJICBQSU5DVFJMX1NUQVRFX0RFRkFVTFQpOw0KPiAg
-IAkJaWYgKElTX0VSUihob3N0LT5waW5zX2RlZmF1bHQpKSB7DQo+ICAgCQkJZGV2X2VycihtbWNf
-ZGV2KG1tYyksICJDYW4ndCBzZWxlY3QgZGVmYXVsdCBwaW5zXG4iKTsNCj4gKwkJCXJldCA9IFBU
-Ul9FUlIoaG9zdC0+cGluc19kZWZhdWx0KTsNCj4gICAJCQlnb3RvIGhvc3RfZnJlZTsNCj4gICAJ
-CX0NCj4gICANCj4gQEAgLTE2NjAsNiArMTY2Miw3IEBAIHN0YXRpYyBpbnQgbW1jaV9wcm9iZShz
-dHJ1Y3QgYW1iYV9kZXZpY2UgKmRldiwNCj4gICAJCQkJCQkJICAgIE1NQ0lfUElOQ1RSTF9TVEFU
-RV9PUEVORFJBSU4pOw0KPiAgIAkJaWYgKElTX0VSUihob3N0LT5waW5zX29wZW5kcmFpbikpIHsN
-Cj4gICAJCQlkZXZfZXJyKG1tY19kZXYobW1jKSwgIkNhbid0IHNlbGVjdCBvcGVuZHJhaW4gcGlu
-c1xuIik7DQo+ICsJCQlyZXQgPSBQVFJfRVJSKGhvc3QtPnBpbnNfb3BlbmRyYWluKTsNCj4gICAJ
-CQlnb3RvIGhvc3RfZnJlZTsNCj4gICAJCX0NCj4gICAJfQ0KPiANCg0KUmV2aWV3ZWQtYnk6IFBh
-dHJpY2UgQ2hvdGFyZCA8cGF0cmljZS5jaG90YXJkQHN0LmNvbT4NCg0KVGhhbmtz
+Fixes the following sparse warnings:
+
+drivers/soc/amlogic/meson-gx-socinfo.c:100:12: warning:
+ symbol 'meson_gx_socinfo_init' was not declared. Should it be static?
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/soc/amlogic/meson-gx-socinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+index f2d8c3c..ea091f1 100644
+--- a/drivers/soc/amlogic/meson-gx-socinfo.c
++++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+@@ -97,7 +97,7 @@ static const char *socinfo_to_soc_id(u32 socinfo)
+ 	return "Unknown";
+ }
+ 
+-int __init meson_gx_socinfo_init(void)
++static int __init meson_gx_socinfo_init(void)
+ {
+ 	struct soc_device_attribute *soc_dev_attr;
+ 	struct soc_device *soc_dev;
+
+
+
