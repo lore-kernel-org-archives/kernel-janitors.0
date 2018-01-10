@@ -1,37 +1,27 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 10 Jan 2018 13:30:59 +0000
-Subject: [PATCH -next] hwrng: exynos - remove redundant dev_err call in exynos_trng_probe()
-Message-Id: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 10 Jan 2018 14:24:19 +0000
+Subject: Re: [PATCH -next] hwrng: exynos - remove redundant dev_err call in exynos_trng_probe()
+Message-Id: <CAJKOXPfQKHNxNe-3kOTpp9rUSoh3nLVhBxtZiyDJSoBgKLR4vg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1515591059-73230-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: l.stelmach@samsung.com, mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: l.stelmach@samsung.com, mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+On Wed, Jan 10, 2018 at 2:30 PM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/char/hw_random/exynos-trng.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/char/hw_random/exynos-trng.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-index 34d6f51..4c8a2be 100644
---- a/drivers/char/hw_random/exynos-trng.c
-+++ b/drivers/char/hw_random/exynos-trng.c
-@@ -129,10 +129,8 @@ static int exynos_trng_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	trng->mem = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(trng->mem)) {
--		dev_err(&pdev->dev, "Could not map IO resources.\n");
-+	if (IS_ERR(trng->mem))
- 		return PTR_ERR(trng->mem);
--	}
- 
- 	pm_runtime_enable(&pdev->dev);
- 	ret = pm_runtime_get_sync(&pdev->dev);
-
+Best regards,
+Krzysztof
