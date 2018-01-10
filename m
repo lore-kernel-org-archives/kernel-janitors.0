@@ -1,25 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 Jan 2018 09:55:45 +0000
-Subject: =?UTF-8?Q?Re:_Rename_the_SmPL_script_=e2=80=9ckzalloc-=e2=80=a6.coc?= =?UTF-8?B?Y2nigJ0/?=
-Message-Id: <cae7bbf4-0910-bcdb-cd57-4ab379ecada4@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jan 2018 09:40:04 +0000
+Subject: [PATCH] drm/vmwgfx: Potential off by one in vmw_view_add()
+Message-Id: <20180110094004.wg5i2bzcejupvqz4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
- <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
- <alpine.DEB.2.20.1801021528160.24055@hadrien>
- <96aee198-15b2-dc96-a349-d8a70d06dc67@users.sourceforge.net>
- <alpine.DEB.2.20.1801021541070.24055@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1801021541070.24055@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr
-Cc: Gilles Muller <Gilles.Muller@lip6.fr>, Himanshu Jha <himanshujha199640@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-> If you want to be more general than kzalloc, then perhaps
-> zalloc-simple.cocci would be ok.
+The vmw_view_cmd_to_type() function returns vmw_view_max (3) on error.
+It's one element beyond the end of the vmw_view_cotables[] table.
 
-Are you going to commit such a file name adjustment when it seems
-that you would not like to accept any other suggestion there?
+My read on this is that it's possible to hit this failure.  header->id
+comes from vmw_cmd_check() and it's a user controlled number between
+1040 and 1225 so we can hit that error.  But I don't have the hardware
+to test this code.
 
-Regards,
-Markus
+Fixes: d80efd5cb3de ("drm/vmwgfx: Initial DX support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index b700667f6f0b..c9d5cc237124 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -2731,6 +2731,8 @@ static int vmw_cmd_dx_view_define(struct vmw_private *dev_priv,
+ 	}
+ 
+ 	view_type = vmw_view_cmd_to_type(header->id);
++	if (view_type = vmw_view_max)
++		return -EINVAL;
+ 	cmd = container_of(header, typeof(*cmd), header);
+ 	ret = vmw_cmd_res_check(dev_priv, sw_context, vmw_res_surface,
+ 				user_surface_converter,
