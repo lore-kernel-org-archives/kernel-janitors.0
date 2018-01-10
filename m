@@ -1,36 +1,44 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 16 Jan 2018 15:59:39 +0000
-Subject: Re: [next] rtlwifi: btcoexist: remove redundant variable fw_ps_state
-Message-Id: <20180116155939.A7AAC6025D@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jan 2018 12:29:11 +0000
+Subject: [PATCH v2] soundwire: Fix a signedness bug
+Message-Id: <20180110122911.tsd4h7vc65ormdbx@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180109164329.15919-1-colin.king@canonical.com>
-In-Reply-To: <20180109164329.15919-1-colin.king@canonical.com>
+References: <20180110105425.GY18649@localhost>
+In-Reply-To: <20180110105425.GY18649@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, Yan-Hsuan Chuang <yhchuang@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Sanyog Kale <sanyog.r.kale@intel.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+"ret" is an int and "buf" is a u8.  sdw_read() returns negative error
+codes which are truncated to the u8, 0-255 range before being stored as
+an int.  It means that "ret" can't be less than zero.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable fw_ps_state is assigned a value but it is never read, hence
-> it is redundant and can be removed.
-> 
-> Cleans up clang warning:
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:736:2:
-> warning: Value stored to 'fw_ps_state' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Fixes: b0a9c37b0178 ("soundwire: Add slave status handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: style change
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-7e2c49222b4e rtlwifi: btcoexist: remove redundant variable fw_ps_state
-
--- 
-https://patchwork.kernel.org/patch/10152901/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+index 4c345197eb55..ae698e63bdf6 100644
+--- a/drivers/soundwire/bus.c
++++ b/drivers/soundwire/bus.c
+@@ -771,7 +771,7 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
+ 	sdw_modify_slave_status(slave, SDW_SLAVE_ALERT);
+ 
+ 	/* Read Instat 1, Instat 2 and Instat 3 registers */
+-	ret = buf = sdw_read(slave, SDW_SCP_INT1);
++	buf = ret = sdw_read(slave, SDW_SCP_INT1);
+ 	if (ret < 0) {
+ 		dev_err(slave->bus->dev,
+ 					"SDW_SCP_INT1 read failed:%d", ret);
+@@ -870,7 +870,7 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
+ 		 * Read status again to ensure no new interrupts arrived
+ 		 * while servicing interrupts.
+ 		 */
+-		ret = _buf = sdw_read(slave, SDW_SCP_INT1);
++		_buf = ret = sdw_read(slave, SDW_SCP_INT1);
+ 		if (ret < 0) {
+ 			dev_err(slave->bus->dev,
+ 					"SDW_SCP_INT1 read failed:%d", ret);
