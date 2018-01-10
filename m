@@ -1,65 +1,79 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 09 Jan 2018 14:23:38 +0000
-Subject: Re: [PATCH] IB/hfi1: Prevent a NULL dereference
-Message-Id: <20180109142338.f7242rjtqffogwop@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 14:04:41 +0000
+Subject: [PATCH 1/3] sgi-xpc: Delete error messages for a failed memory allocation in three functions
+Message-Id: <c3fd4b0b-b34e-92ae-18ca-2983d2ec4dc1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180109092714.valolokywtmbprw7@mwanda>
- <14063C7AD467DE4B82DEDB5C278E8663A9F7F391@fmsmsx107.amr.corp.intel.com>
-In-Reply-To: <14063C7AD467DE4B82DEDB5C278E8663A9F7F391@fmsmsx107.amr.corp.intel.com>
+References: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net>
+In-Reply-To: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Ruhl, Michael J" <michael.j.ruhl@intel.com>
-Cc: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>, "Dalessandro, Dennis" <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robin Holt <robinmholt@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jan 09, 2018 at 02:16:59PM +0000, Ruhl, Michael J wrote:
-> > -----Original Message-----
-> > From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> > Sent: Tuesday, January 9, 2018 4:27 AM
-> > To: Marciniszyn, Mike <mike.marciniszyn@intel.com>; Ruhl, Michael J
-> > <michael.j.ruhl@intel.com>
-> > Cc: Dalessandro, Dennis <dennis.dalessandro@intel.com>; Doug Ledford
-> > <dledford@redhat.com>; Jason Gunthorpe <jgg@ziepe.ca>; linux-
-> > rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > Subject: [PATCH] IB/hfi1: Prevent a NULL dereference
-> > 
-> > In the original code, we set "fd->uctxt" to NULL and then dereference it
-> > which will cause an Oops.
-> > 
-> > Fixes: f2a3bc00a03c ("IB/hfi1: Protect context array set/clear with spinlock")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/infiniband/hw/hfi1/file_ops.c
-> > b/drivers/infiniband/hw/hfi1/file_ops.c
-> > index 82086241aac3..3de1ac94bb85 100644
-> > --- a/drivers/infiniband/hw/hfi1/file_ops.c
-> > +++ b/drivers/infiniband/hw/hfi1/file_ops.c
-> > @@ -763,10 +763,10 @@ static int complete_subctxt(struct hfi1_filedata *fd)
-> >  	}
-> > 
-> >  	if (ret) {
-> > +		__clear_bit(fd->subctxt, fd->uctxt->in_use_ctxts);
-> >  		hfi1_rcd_put(fd->uctxt);
-> >  		fd->uctxt = NULL;
-> >  		spin_lock_irqsave(&fd->dd->uctxt_lock, flags);
-> > -		__clear_bit(fd->subctxt, fd->uctxt->in_use_ctxts);
-> >  		spin_unlock_irqrestore(&fd->dd->uctxt_lock, flags);
-> >  	}
-> > 
-> 
-> Hi Dan,
-> 
-> Thanks for catching this.
-> 
-> However, the patch is not quite correct.
-> 
-> The __clear_bit() spin_lock_irqsave/restore need stay together.  The patch should be:
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 14:00:17 +0100
 
-Oh.  Yeah.  I should have noticed that now the spin_lock is pointless.
-Let me resend.  Thanks.
+Omit extra messages for a memory allocation failure in these functions.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/sgi-xp/xpc_main.c | 8 ++------
+ drivers/misc/sgi-xp/xpc_uv.c   | 4 ----
+ 2 files changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/misc/sgi-xp/xpc_main.c b/drivers/misc/sgi-xp/xpc_main.c
+index 0c775d6fcf59..c90a9ff30680 100644
+--- a/drivers/misc/sgi-xp/xpc_main.c
++++ b/drivers/misc/sgi-xp/xpc_main.c
+@@ -418,10 +418,8 @@ xpc_setup_ch_structures(struct xpc_partition *part)
+ 	DBUG_ON(part->channels != NULL);
+ 	part->channels = kzalloc(sizeof(struct xpc_channel) * XPC_MAX_NCHANNELS,
+ 				 GFP_KERNEL);
+-	if (part->channels = NULL) {
+-		dev_err(xpc_chan, "can't get memory for channels\n");
++	if (!part->channels)
+ 		return xpNoMemory;
+-	}
+ 
+ 	/* allocate the remote open and close args */
+ 
+@@ -907,10 +905,8 @@ xpc_setup_partitions(void)
+ 
+ 	xpc_partitions = kzalloc(sizeof(struct xpc_partition) *
+ 				 xp_max_npartitions, GFP_KERNEL);
+-	if (xpc_partitions = NULL) {
+-		dev_err(xpc_part, "can't get memory for partition structure\n");
++	if (!xpc_partitions)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/*
+ 	 * The first few fields of each entry of xpc_partitions[] need to
+diff --git a/drivers/misc/sgi-xp/xpc_uv.c b/drivers/misc/sgi-xp/xpc_uv.c
+index 340b44d9e8cf..0c95f9994649 100644
+--- a/drivers/misc/sgi-xp/xpc_uv.c
++++ b/drivers/misc/sgi-xp/xpc_uv.c
+@@ -217,8 +217,6 @@ xpc_create_gru_mq_uv(unsigned int mq_size, int cpu, char *irq_name,
+ 
+ 	mq = kmalloc(sizeof(struct xpc_gru_mq_uv), GFP_KERNEL);
+ 	if (mq = NULL) {
+-		dev_err(xpc_part, "xpc_create_gru_mq_uv() failed to kmalloc() "
+-			"a xpc_gru_mq_uv structure\n");
+ 		ret = -ENOMEM;
+ 		goto out_0;
+ 	}
+@@ -226,8 +224,6 @@ xpc_create_gru_mq_uv(unsigned int mq_size, int cpu, char *irq_name,
+ 	mq->gru_mq_desc = kzalloc(sizeof(struct gru_message_queue_desc),
+ 				  GFP_KERNEL);
+ 	if (mq->gru_mq_desc = NULL) {
+-		dev_err(xpc_part, "xpc_create_gru_mq_uv() failed to kmalloc() "
+-			"a gru_message_queue_desc structure\n");
+ 		ret = -ENOMEM;
+ 		goto out_1;
+ 	}
+-- 
+2.15.1
 
