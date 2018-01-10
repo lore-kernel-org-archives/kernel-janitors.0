@@ -1,31 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 09 Jan 2018 14:10:28 +0000
-Subject: Re: [PATCH v2] pinctrl: mcp23s08: Combine two function calls into one in mcp23s08_dbg_show()
-Message-Id: <CACRpkdZD6VnO0otw=Sh207SrDNwh5eTE7=6yNh9ZCd7GRqJjqg@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 10 Jan 2018 13:06:46 +0000
+Subject: [PATCH net-next] netfilter: nf_queue: remove duplicated include from nf_queue.c
+Message-Id: <1515589606-71967-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
- <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
- <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com> <3f5bd410-e685-d067-14e3-b8e77552a121@users.sourceforge.net>
-In-Reply-To: <3f5bd410-e685-d067-14e3-b8e77552a121@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 6, 2018 at 8:52 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+Remove duplicated include.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 6 Jan 2018 20:40:04 +0100
->
-> * Print a line break together with other data in a single function call.
->
-> * Adjust indentation.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/netfilter/nf_queue.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Patch applied.
+diff --git a/net/netfilter/nf_queue.c b/net/netfilter/nf_queue.c
+index 7f55af5..d67a96a 100644
+--- a/net/netfilter/nf_queue.c
++++ b/net/netfilter/nf_queue.c
+@@ -15,8 +15,6 @@
+ #include <linux/netfilter_bridge.h>
+ #include <linux/seq_file.h>
+ #include <linux/rcupdate.h>
+-#include <linux/netfilter_ipv4.h>
+-#include <linux/netfilter_ipv6.h>
+ #include <net/protocol.h>
+ #include <net/netfilter/nf_queue.h>
+ #include <net/dst.h>
 
-Yours,
-Linus Walleij
