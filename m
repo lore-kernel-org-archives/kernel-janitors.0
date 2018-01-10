@@ -1,44 +1,31 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Wed, 24 Jan 2018 04:07:29 +0000
-Subject: Re: [PATCH] ntb_perf: Fix an error code in perf_copy_chunk()
-Message-Id: <20180124040728.GC20474@kudzu.us>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 10 Jan 2018 13:07:06 +0000
+Subject: [PATCH net-next] netfilter: nf_flow_table: remove duplicated include from nf_flow_table_ipv6.c
+Message-Id: <1515589626-72041-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180123083356.GC10091@mwanda>
-In-Reply-To: <20180123083356.GC10091@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 23, 2018 at 11:55:31AM +0300, Serge Semin wrote:
-> On Tue, Jan 23, 2018 at 11:33:56AM +0300, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > We accidentally return success if dmaengine_submit() fails.  The fix is
-> > to preserve the error code from dma_submit_error().
-> > 
-> 
-> Yep, absolutely right. Thanks!
-> 
-> Acked-by: Serge Semin <fancer.lancer@gmail.com>
+Remove duplicated include.
 
-Applied to ntb-next
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/ipv6/netfilter/nf_flow_table_ipv6.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks,
-Jon
+diff --git a/net/ipv6/netfilter/nf_flow_table_ipv6.c b/net/ipv6/netfilter/nf_flow_table_ipv6.c
+index 0c3b9d3..fff2160 100644
+--- a/net/ipv6/netfilter/nf_flow_table_ipv6.c
++++ b/net/ipv6/netfilter/nf_flow_table_ipv6.c
+@@ -5,7 +5,6 @@
+ #include <linux/rhashtable.h>
+ #include <linux/ipv6.h>
+ #include <linux/netdevice.h>
+-#include <linux/ipv6.h>
+ #include <net/ipv6.h>
+ #include <net/ip6_route.h>
+ #include <net/neighbour.h>
 
-> 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
-> > index 8de72f3fba4d..387e685063fc 100644
-> > --- a/drivers/ntb/test/ntb_perf.c
-> > +++ b/drivers/ntb/test/ntb_perf.c
-> > @@ -828,7 +828,8 @@ static int perf_copy_chunk(struct perf_thread *pthr,
-> >  	tx->callback_param = pthr;
-> >  	dma_set_unmap(tx, unmap);
-> >  
-> > -	if (dma_submit_error(dmaengine_submit(tx))) {
-> > +	ret = dma_submit_error(dmaengine_submit(tx));
-> > +	if (ret) {
-> >  		dmaengine_unmap_put(unmap);
-> >  		goto err_free_resource;
-> >  	}
