@@ -1,31 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 Jan 2018 09:47:35 +0000
-Subject: [PATCH] netfilter: nf_tables: copy and paste bug in nf_tables_getflowtable()
-Message-Id: <20180110094735.zyfdsonrb76x7cd6@mwanda>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Wed, 10 Jan 2018 14:20:45 +0000
+Subject: Re: [PATCH] netfilter: nf_tables: copy and paste bug in nf_tables_getflowtable()
+Message-Id: <20180110142045.4jtqqmmuadcshlhd@salvia>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180110094735.zyfdsonrb76x7cd6@mwanda>
+In-Reply-To: <20180110094735.zyfdsonrb76x7cd6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-We should be testing "flowtable" instead of "table".
+On Wed, Jan 10, 2018 at 12:47:35PM +0300, Dan Carpenter wrote:
+> We should be testing "flowtable" instead of "table".
 
-Fixes: 3b49e2e94e6e ("netfilter: nf_tables: add flow table netlink frontend")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-The bug hasn't hit net-next yet, it's still in the netfilter tree.
+Your robot was too late, sorry :)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 336b81689ac9..40594bb57012 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -5420,7 +5420,7 @@ static int nf_tables_getflowtable(struct net *net, struct sock *nlsk,
- 
- 	flowtable = nf_tables_flowtable_lookup(table, nla[NFTA_FLOWTABLE_NAME],
- 					       genmask);
--	if (IS_ERR(table))
-+	if (IS_ERR(flowtable))
- 		return PTR_ERR(flowtable);
- 
- 	skb2 = alloc_skb(NLMSG_GOODSIZE, GFP_KERNEL);
+I'm taking the patch from Wei Yongjun.
+
+Thank you.
