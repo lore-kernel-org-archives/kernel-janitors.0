@@ -1,43 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 21:16:15 +0000
-Subject: [PATCH 2/2] Input: auo-pixcir-ts: Delete an unnecessary return statement in auo_pixcir_input_close()
-Message-Id: <285e8d30-2d7e-f035-f4a4-679b3d79f57b@users.sourceforge.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 10 Jan 2018 14:23:00 +0000
+Subject: [PATCH -next] clocksource/drivers/stm32: fix error return code in stm32_timer_init()
+Message-Id: <1515594180-80214-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df18b548-f95e-e315-9e77-f379af7909e8@users.sourceforge.net>
-In-Reply-To: <df18b548-f95e-e315-9e77-f379af7909e8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 22:06:28 +0100
+Fix to return error code -ENOMEM from the kzalloc error handling
+case instead of 0, as done elsewhere in this function.
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/input/touchscreen/auo-pixcir-ts.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clocksource/timer-stm32.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/auo-pixcir-ts.c b/drivers/input/touchscreen/auo-pixcir-ts.c
-index 398e27c48a51..df8ca856393b 100644
---- a/drivers/input/touchscreen/auo-pixcir-ts.c
-+++ b/drivers/input/touchscreen/auo-pixcir-ts.c
-@@ -408,8 +408,6 @@ static void auo_pixcir_input_close(struct input_dev *dev)
- 	struct auo_pixcir_ts *ts = input_get_drvdata(dev);
+diff --git a/drivers/clocksource/timer-stm32.c b/drivers/clocksource/timer-stm32.c
+index e5cdc3a..2717f88 100644
+--- a/drivers/clocksource/timer-stm32.c
++++ b/drivers/clocksource/timer-stm32.c
+@@ -304,8 +304,10 @@ static int __init stm32_timer_init(struct device_node *node)
  
- 	auo_pixcir_stop(ts);
--
--	return;
- }
+ 	to->private_data = kzalloc(sizeof(struct stm32_timer_private),
+ 				   GFP_KERNEL);
+-	if (!to->private_data)
++	if (!to->private_data) {
++		ret = -ENOMEM;
+ 		goto deinit;
++	}
  
- static int __maybe_unused auo_pixcir_suspend(struct device *dev)
--- 
-2.16.0
+ 	rstc = of_reset_control_get(node, NULL);
+ 	if (!IS_ERR(rstc)) {
+
+
 
