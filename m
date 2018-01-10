@@ -1,25 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 23 Jan 2018 15:59:58 +0000
-Subject: Re: [PATCH net-next] net: aquantia: make symbol hw_atl_boards static
-Message-Id: <20180123.105958.1725862517855125272.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jan 2018 09:39:03 +0000
+Subject: [PATCH] HID: roccat: prevent an out of bounds read in kovaplus_profile_activated()
+Message-Id: <20180110093903.yyoknoi7oc2cd5iy@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516673438-170662-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516673438-170662-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: darcari@redhat.com, colin.king@canonical.com, vomlehn@texas.net, igor.russkikh@aquantia.com, pavel.belous@aquantia.com, Dmitrii.Tarakanov@aquantia.com, Alexander.Loktionov@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stefan Achatz <erazor_de@users.sourceforge.net>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 23 Jan 2018 02:10:38 +0000
+We get the "new_profile_index" value from the mouse device when we're
+handling raw events.  Smatch taints it as untrusted data and complains
+that we need a bounds check.  This seems like a reasonable warning
+otherwise there is a small read beyond the end of the array.
 
-> Fixes the following sparse warning:
-> 
-> drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c:50:34: warning:
->  symbol 'hw_atl_boards' was not declared. Should it be static?
-> 
-> Fixes: 4948293ff963 ("net: aquantia: Introduce new AQC devices and capabilities")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 0e70f97f257e ("HID: roccat: Add support for Kova[+] mouse")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/hid/hid-roccat-kovaplus.c b/drivers/hid/hid-roccat-kovaplus.c
+index 43617fb28b87..317c9c2c0a7c 100644
+--- a/drivers/hid/hid-roccat-kovaplus.c
++++ b/drivers/hid/hid-roccat-kovaplus.c
+@@ -37,6 +37,8 @@ static uint kovaplus_convert_event_cpi(uint value)
+ static void kovaplus_profile_activated(struct kovaplus_device *kovaplus,
+ 		uint new_profile_index)
+ {
++	if (new_profile_index >= ARRAY_SIZE(kovaplus->profile_settings))
++		return;
+ 	kovaplus->actual_profile = new_profile_index;
+ 	kovaplus->actual_cpi = kovaplus->profile_settings[new_profile_index].cpi_startup_level;
+ 	kovaplus->actual_x_sensitivity = kovaplus->profile_settings[new_profile_index].sensitivity_x;
