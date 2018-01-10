@@ -1,54 +1,57 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 23 Jan 2018 10:17:27 +0000
-Subject: [PATCH] rtc: ds1302: remove redundant initializations of pointer bp
-Message-Id: <20180123101727.31028-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 19:25:53 +0000
+Subject: [PATCH 2/7] VMCI: Improve a size determination in two functions
+Message-Id: <05412529-d0e2-0894-6229-431caa48c498@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2747f123-a95d-bc68-b858-0327dce3758b@users.sourceforge.net>
+In-Reply-To: <2747f123-a95d-bc68-b858-0327dce3758b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Jan 2018 17:47:40 +0100
 
-Pointe bp is being initialized and this value is never read, it
-is being updated to the same value later just before it is going to
-be used. Remove the initialization as it is never read and keep
-the setting of bp closer to the use of bp.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Cleans up clang warnings:
-drivers/rtc/rtc-ds1302.c:115:7: warning: Value stored to 'bp' during
-its initialization is never read
-drivers/rtc/rtc-ds1302.c:46:7: warning: Value stored to 'bp' during
-its initialization is never read
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/rtc/rtc-ds1302.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/vmw_vmci/vmci_context.c | 2 +-
+ drivers/misc/vmw_vmci/vmci_host.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-ds1302.c b/drivers/rtc/rtc-ds1302.c
-index 0ec4be62322b..43bcb17c922e 100644
---- a/drivers/rtc/rtc-ds1302.c
-+++ b/drivers/rtc/rtc-ds1302.c
-@@ -43,7 +43,7 @@ static int ds1302_rtc_set_time(struct device *dev, struct rtc_time *time)
+diff --git a/drivers/misc/vmw_vmci/vmci_context.c b/drivers/misc/vmw_vmci/vmci_context.c
+index c0ea68255340..c7085ff76327 100644
+--- a/drivers/misc/vmw_vmci/vmci_context.c
++++ b/drivers/misc/vmw_vmci/vmci_context.c
+@@ -618,7 +618,7 @@ int vmci_ctx_add_notification(u32 context_id, u32 remote_cid)
+ 		goto out;
+ 	}
+ 
+-	notifier = kmalloc(sizeof(struct vmci_handle_list), GFP_KERNEL);
++	notifier = kmalloc(sizeof(*notifier), GFP_KERNEL);
+ 	if (!notifier) {
+ 		result = VMCI_ERROR_NO_MEM;
+ 		goto out;
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index 4246a033de18..14da8210fd34 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -124,7 +124,7 @@ static int vmci_host_open(struct inode *inode, struct file *filp)
  {
- 	struct spi_device	*spi = dev_get_drvdata(dev);
- 	u8		buf[1 + RTC_CLCK_LEN];
--	u8		*bp = buf;
-+	u8		*bp;
- 	int		status;
+ 	struct vmci_host_dev *vmci_host_dev;
  
- 	/* Enable writing */
-@@ -112,7 +112,7 @@ static int ds1302_probe(struct spi_device *spi)
- 	struct rtc_device	*rtc;
- 	u8		addr;
- 	u8		buf[4];
--	u8		*bp = buf;
-+	u8		*bp;
- 	int		status;
+-	vmci_host_dev = kzalloc(sizeof(struct vmci_host_dev), GFP_KERNEL);
++	vmci_host_dev = kzalloc(sizeof(*vmci_host_dev), GFP_KERNEL);
+ 	if (vmci_host_dev = NULL)
+ 		return -ENOMEM;
  
- 	/* Sanity check board setup data.  This may be hooked up
 -- 
 2.15.1
 
