@@ -1,56 +1,34 @@
-From: Jan Kara <jack@suse.cz>
-Date: Thu, 04 Jan 2018 15:40:18 +0000
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Thu, 11 Jan 2018 19:18:10 +0000
 Subject: Re: [PATCH] ext4: fix incorrect indentation of if statement
-Message-Id: <20180104154018.GB2170@quack2.suse.cz>
+Message-Id: <20180111191810.GF19241@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171129142059.21898-1-colin.king@canonical.com>
-In-Reply-To: <20171129142059.21898-1-colin.king@canonical.com>
+ <20180104154018.GB2170@quack2.suse.cz>
+In-Reply-To: <20180104154018.GB2170@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: Colin King <colin.king@canonical.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed 29-11-17 14:20:59, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, Jan 04, 2018 at 04:40:18PM +0100, Jan Kara wrote:
+> On Wed 29-11-17 14:20:59, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The indentation is incorrect and spaces need replacing with a tab
+> > on the if statement.
+> > 
+> > Cleans up smatch warning:
+> > fs/ext4/namei.c:3220 ext4_link() warn: inconsistent indenting
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > 
-> The indentation is incorrect and spaces need replacing with a tab
-> on the if statement.
+> This seems to fall through cracks. The patch looks good. You can add:
 > 
-> Cleans up smatch warning:
-> fs/ext4/namei.c:3220 ext4_link() warn: inconsistent indenting
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-This seems to fall through cracks. The patch looks good. You can add:
+Thanks, applied.  There was actually another whitespace issue on the
+following line, which I've fixed up and merged into this patch.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-
-> ---
->  fs/ext4/namei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index 798b3ac680db..d3fabc553c65 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -3217,8 +3217,8 @@ static int ext4_link(struct dentry *old_dentry,
->  	if (err)
->  		return err;
->  
-> -       if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
-> -	   (!projid_eq(EXT4_I(dir)->i_projid,
-> +	if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
-> +	    (!projid_eq(EXT4_I(dir)->i_projid,
->  		       EXT4_I(old_dentry->d_inode)->i_projid)))
->  		return -EXDEV;
->  
-> -- 
-> 2.14.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	  	      	   	    	- Ted
