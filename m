@@ -1,67 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 12:00:06 +0000
-Subject: [PATCH 2/4] mfd/tps65910: Delete an unnecessary variable initialisation in four functions
-Message-Id: <4cb93571-498f-bafa-0efc-30ebc1dab3fe@users.sourceforge.net>
+Date: Thu, 11 Jan 2018 18:00:33 +0000
+Subject: [PATCH 1/5] powerpc/4xx: Combine four seq_printf() calls into two in ocm_debugfs_show()
+Message-Id: <90e9f81b-25ad-cf02-663c-50a9997d9d53@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
-In-Reply-To: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
+References: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
+In-Reply-To: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 11:40:28 +0100
+Date: Thu, 11 Jan 2018 18:08:08 +0100
 
-The local variable "ret" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Some data were printed into a sequence by four separate function calls.
+Print the same data by two single function calls instead.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mfd/tps65910.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/platforms/4xx/ocm.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index 555bd394efc3..80ea1474c654 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -229,7 +229,7 @@ static struct regmap_irq_chip tps65910_irq_chip = {
- static int tps65910_irq_init(struct tps65910 *tps65910, int irq,
- 		    struct tps65910_platform_data *pdata)
- {
--	int ret = 0;
-+	int ret;
- 	static struct regmap_irq_chip *tps6591x_irqs_chip;
+diff --git a/arch/powerpc/platforms/4xx/ocm.c b/arch/powerpc/platforms/4xx/ocm.c
+index 85d9e37f5ccb..5bc1baf809d1 100644
+--- a/arch/powerpc/platforms/4xx/ocm.c
++++ b/arch/powerpc/platforms/4xx/ocm.c
+@@ -245,9 +245,7 @@ static int ocm_debugfs_show(struct seq_file *m, void *v)
+ 		seq_printf(m, "PhysAddr     : 0x%llx\n", ocm->phys);
+ 		seq_printf(m, "MemTotal     : %d Bytes\n", ocm->memtotal);
+ 		seq_printf(m, "MemTotal(NC) : %d Bytes\n", ocm->nc.memtotal);
+-		seq_printf(m, "MemTotal(C)  : %d Bytes\n", ocm->c.memtotal);
+-
+-		seq_printf(m, "\n");
++		seq_printf(m, "MemTotal(C)  : %d Bytes\n\n", ocm->c.memtotal);
  
- 	if (!irq) {
-@@ -313,7 +313,7 @@ static int tps65910_sleepinit(struct tps65910 *tps65910,
- 		struct tps65910_board *pmic_pdata)
- {
- 	struct device *dev = NULL;
--	int ret = 0;
-+	int ret;
+ 		seq_printf(m, "NC.PhysAddr  : 0x%llx\n", ocm->nc.phys);
+ 		seq_printf(m, "NC.VirtAddr  : 0x%p\n", ocm->nc.virt);
+@@ -259,9 +257,7 @@ static int ocm_debugfs_show(struct seq_file *m, void *v)
+ 							blk->size, blk->owner);
+ 		}
  
- 	dev = tps65910->dev;
- 
-@@ -383,7 +383,7 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
- 	struct tps65910_board *board_info;
- 	unsigned int prop;
- 	const struct of_device_id *match;
--	int ret = 0;
-+	int ret;
- 
- 	match = of_match_device(tps65910_of_match, &client->dev);
- 	if (!match) {
-@@ -460,7 +460,7 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
- 	struct tps65910_board *of_pmic_plat_data = NULL;
- 	struct tps65910_platform_data *init_data;
- 	unsigned long chip_id = id->driver_data;
--	int ret = 0;
-+	int ret;
- 
- 	pmic_plat_data = dev_get_platdata(&i2c->dev);
- 
+-		seq_printf(m, "\n");
+-
+-		seq_printf(m, "C.PhysAddr   : 0x%llx\n", ocm->c.phys);
++		seq_printf(m, "\nC.PhysAddr   : 0x%llx\n", ocm->c.phys);
+ 		seq_printf(m, "C.VirtAddr   : 0x%p\n", ocm->c.virt);
+ 		seq_printf(m, "C.MemTotal   : %d Bytes\n", ocm->c.memtotal);
+ 		seq_printf(m, "C.MemFree    : %d Bytes\n", ocm->c.memfree);
 -- 
 2.15.1
 
