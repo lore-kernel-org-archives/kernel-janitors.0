@@ -1,31 +1,35 @@
-From: Geoff Levand <geoff@infradead.org>
-Date: Tue, 23 Jan 2018 18:25:28 +0000
-Subject: Re: [PATCH] powerpc/ps3: remove an unneeded NULL check
-Message-Id: <61ad7fd7-6bb6-6b29-0053-5dfc3c96469b@infradead.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 11 Jan 2018 11:13:58 +0000
+Subject: [PATCH -next] scsi: hisi_sas: make local symbol host_attrs static
+Message-Id: <1515669238-125768-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180123083318.GB10091@mwanda>
-In-Reply-To: <20180123083318.GB10091@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: John Garry <john.garry@huawei.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Fixes the following sparse warning:
 
-On 01/23/2018 12:33 AM, Dan Carpenter wrote:
-> @@ -43,7 +43,7 @@ void ps3_sys_manager_register_ops(const struct ps3_sys_manager_ops *ops)
->  {
->  	BUG_ON(!ops);
->  	BUG_ON(!ops->dev);
-> -	ps3_sys_manager_ops = ops ? *ops : ps3_sys_manager_ops;
-> +	ps3_sys_manager_ops = *ops;
+drivers/scsi/hisi_sas/hisi_sas_main.c:1691:25: warning:
+ symbol 'host_attrs' was not declared. Should it be static?
 
-This seems to be a left over from when I was adding the modular
-system-manager support.  It doesn't really make sense if you
-look at how the ps3_sys_manager_ops variable is used.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I added your patch to my ps3-queue branch.  Thanks for the
-contribution.
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 360ecef..e3e7285 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -1688,7 +1688,7 @@ void hisi_sas_kill_tasklets(struct hisi_hba *hisi_hba)
+ struct scsi_transport_template *hisi_sas_stt;
+ EXPORT_SYMBOL_GPL(hisi_sas_stt);
+ 
+-struct device_attribute *host_attrs[] = {
++static struct device_attribute *host_attrs[] = {
+ 	&dev_attr_phy_event_threshold,
+ 	NULL,
+ };
 
--Geoff
