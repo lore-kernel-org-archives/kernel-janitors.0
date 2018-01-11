@@ -1,42 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 20:04:04 +0000
-Subject: [PATCH] mailbox/pcc: Delete an error message for a failed memory allocation in acpi_pcc_probe()
-Message-Id: <60382a41-83d9-b7a6-e904-e2c869012414@users.sourceforge.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 11 Jan 2018 11:21:51 +0000
+Subject: [PATCH net-next] net: phy: mdio-bcm-unimac: fix potential NULL dereference in unimac_mdio_probe()
+Message-Id: <1515669711-126459-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Jassi Brar <jassisinghbrar@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 20:55:22 +0100
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-Omit an extra message for a memory allocation failure in this function.
+This is detected by Coccinelle semantic patch.
 
-This issue was detected by using the Coccinelle software.
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+res = platform_get_resource(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap(e1, res->start, e2);
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/mailbox/pcc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/phy/mdio-bcm-unimac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-index 3ef7f036ceea..78097ae183ec 100644
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -478,10 +478,8 @@ static int __init acpi_pcc_probe(void)
- 
- 	pcc_mbox_channels = kzalloc(sizeof(struct mbox_chan) *
- 			sum, GFP_KERNEL);
--	if (!pcc_mbox_channels) {
--		pr_err("Could not allocate space for PCC mbox channels\n");
-+	if (!pcc_mbox_channels)
+diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
+index 08e0647..8d37066 100644
+--- a/drivers/net/phy/mdio-bcm-unimac.c
++++ b/drivers/net/phy/mdio-bcm-unimac.c
+@@ -205,6 +205,8 @@ static int unimac_mdio_probe(struct platform_device *pdev)
  		return -ENOMEM;
--	}
  
- 	pcc_doorbell_vaddr = kcalloc(sum, sizeof(void *), GFP_KERNEL);
- 	if (!pcc_doorbell_vaddr) {
--- 
-2.15.1
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!r)
++		return -EINVAL;
+ 
+ 	/* Just ioremap, as this MDIO block is usually integrated into an
+ 	 * Ethernet MAC controller register range
 
