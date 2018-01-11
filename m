@@ -1,71 +1,40 @@
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Mon, 22 Jan 2018 07:13:48 +0000
-Subject: Re: [PATCH][next] staging: ccree: fix memory leaks in cc_ivgen_init
-Message-Id: <CAOtvUMdryGz_4ybsdM+EM7QrmcU4Eszo2ot_dO3oUpG9qA=dKg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 Jan 2018 16:55:39 +0000
+Subject: [PATCH][scsi-next] scsi: mpt3sas: make function _get_st_from_smid static
+Message-Id: <20180111165539.1248-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180112161018.26595-1-colin.king@canonical.com>
-In-Reply-To: <20180112161018.26595-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 6:10 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The current error exit path in function cc_ivgen_init via label
-> 'out' free's resources from the drvdata->ivgen_handle context.
-> However, drvdata->ivgen_handle has not been assigned to the
-> context ivgen_ctx at this point, so the resources are not freed.
-> Fix this by setting drvdata->ivgen_handle to ivgen_ctx as early
-> as possible so that the clean up error exit return path can free
-> the resources.
->
-> Detected by CoveritScan, CID#1463795 ("Resource leak")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/ccree/cc_ivgen.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/staging/ccree/cc_ivgen.c b/drivers/staging/ccree/cc_ivgen.c
-> index 25a3131a93ce..c47f419b277b 100644
-> --- a/drivers/staging/ccree/cc_ivgen.c
-> +++ b/drivers/staging/ccree/cc_ivgen.c
-> @@ -178,6 +178,8 @@ int cc_ivgen_init(struct cc_drvdata *drvdata)
->         if (!ivgen_ctx)
->                 return -ENOMEM;
->
-> +       drvdata->ivgen_handle = ivgen_ctx;
-> +
->         /* Allocate pool's header for initial enc. key/IV */
->         ivgen_ctx->pool_meta = dma_alloc_coherent(device, CC_IVPOOL_META_SIZE,
->                                                   &ivgen_ctx->pool_meta_dma,
-> @@ -196,8 +198,6 @@ int cc_ivgen_init(struct cc_drvdata *drvdata)
->                 goto out;
->         }
->
-> -       drvdata->ivgen_handle = ivgen_ctx;
-> -
->         return cc_init_iv_sram(drvdata);
->
->  out:
-> --
-> 2.15.1
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Good catch!
+The function _get_st_from_smid is local to the source and does
+not need to be in global scope, so make it static.
 
-Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cleans up sparse warning:
+symbol '_get_st_from_smid' was not declared. Should it be static?
 
-Thanks,
-Gilad
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index a44b9be6e3c5..13d6e4ec3022 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -888,7 +888,7 @@ _base_async_event(struct MPT3SAS_ADAPTER *ioc, u8 msix_index, u32 reply)
+ 	return 1;
+ }
+ 
+-struct scsiio_tracker *
++static struct scsiio_tracker *
+ _get_st_from_smid(struct MPT3SAS_ADAPTER *ioc, u16 smid)
+ {
+ 	struct scsi_cmnd *cmd;
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+2.15.1
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
