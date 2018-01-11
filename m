@@ -1,46 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 06 Jan 2018 16:03:27 +0000
-Subject: [PATCH] [media] exynos4-is: make array 'cmd' static, shrinks object size
-Message-Id: <20180106160327.17961-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Jan 2018 17:58:21 +0000
+Subject: [PATCH 0/5] powerpc/platforms/4xx: Adjustments for six function implementations
+Message-Id: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Jan 2018 18:48:28 +0100
 
-Don't populate the const read-only array 'cmd' on the stack but instead
-make it static. Makes the object code smaller by 38 bytes:
+A few update suggestions were taken into account
+from static source code analysis.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   4950	    868	      0	   5818	   16ba	fimc-is-regs.o
+Markus Elfring (5):
+  Combine four seq_printf() calls into two in ocm_debugfs_show()
+  Use seq_putc() in ocm_debugfs_show()
+  Delete an error message for a failed memory allocation in three functions
+  Improve a size determination in two functions
+  Delete an unnecessary return statement in two functions
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   4824	    956	      0	   5780	   1694	fimc-is-regs.o
+ arch/powerpc/platforms/4xx/msi.c |  7 +++----
+ arch/powerpc/platforms/4xx/ocm.c | 19 +++++--------------
+ arch/powerpc/platforms/4xx/pci.c |  1 -
+ 3 files changed, 8 insertions(+), 19 deletions(-)
 
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/exynos4-is/fimc-is-regs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
-index cfe4406a83ff..e0e291066037 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
-@@ -159,7 +159,7 @@ void fimc_is_hw_load_setfile(struct fimc_is *is)
- 
- int fimc_is_hw_change_mode(struct fimc_is *is)
- {
--	const u8 cmd[] = {
-+	static const u8 cmd[] = {
- 		HIC_PREVIEW_STILL, HIC_PREVIEW_VIDEO,
- 		HIC_CAPTURE_STILL, HIC_CAPTURE_VIDEO,
- 	};
 -- 
 2.15.1
 
