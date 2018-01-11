@@ -1,29 +1,20 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 14:03:23 +0000
-Subject: [PATCH 0/3] SGI-XPC: Adjustments for some function implementations
-Message-Id: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net>
+From: Robin Holt <robinmholt@gmail.com>
+Date: Thu, 11 Jan 2018 18:19:37 +0000
+Subject: Re: [PATCH 0/3] SGI-XPC: Adjustments for some function implementations
+Message-Id: <CAPp3RGoGnPegWSEQUd-m=-Mf3wtAYL6YNwFR7Cpw_s_8AwOEEA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net>
+In-Reply-To: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robin Holt <robinmholt@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 14:54:34 +0100
+If you need to resubmit, please consider re-ordering the changes to
+due the comparison to NULL changes in your first patch, followed by the
+other two in either order.  I think it will clear up some of the inconsistency
+in your first patch.
 
-A few update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (3):
-  Delete error messages for a failed memory allocation in three functions
-  Improve a size determination in two functions
-  Adjust 27 checks for null pointers
-
- drivers/misc/sgi-xp/xpc_main.c | 16 +++++-------
- drivers/misc/sgi-xp/xpc_uv.c   | 59 ++++++++++++++++++------------------------
- 2 files changed, 31 insertions(+), 44 deletions(-)
-
--- 
-2.15.1
-
+Thanks,
+Robin
