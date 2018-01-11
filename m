@@ -1,20 +1,20 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 12:15:06 +0000
-Subject: [PATCH 2/2] Input: max7359_keypad: Improve a size determination in max7359_probe()
-Message-Id: <c75b2086-5b58-638a-781d-fe6c4545619a@users.sourceforge.net>
+Date: Thu, 11 Jan 2018 18:03:53 +0000
+Subject: [PATCH 4/5] powerpc/4xx: Improve a size determination in two functions
+Message-Id: <8ac91d54-bd2b-42cb-f890-e3007489b758@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <95f7f53b-fa1e-8270-ae4c-5b3d721a4831@users.sourceforge.net>
-In-Reply-To: <95f7f53b-fa1e-8270-ae4c-5b3d721a4831@users.sourceforge.net>
+References: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
+In-Reply-To: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 13:00:10 +0100
+Date: Thu, 11 Jan 2018 18:32:33 +0100
 
-Replace the specification of a data structure by a pointer dereference
+Replace the specification of data structures by pointer dereferences
 as the parameter for the operator "sizeof" to make the corresponding size
 determination a bit safer according to the Linux coding style convention.
 
@@ -22,24 +22,36 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/keyboard/max7359_keypad.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/powerpc/platforms/4xx/msi.c | 2 +-
+ arch/powerpc/platforms/4xx/ocm.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/keyboard/max7359_keypad.c b/drivers/input/keyboard/max7359_keypad.c
-index ba6a670a769e..7791250b4667 100644
---- a/drivers/input/keyboard/max7359_keypad.c
-+++ b/drivers/input/keyboard/max7359_keypad.c
-@@ -181,9 +181,7 @@ static int max7359_probe(struct i2c_client *client,
- 	}
+diff --git a/arch/powerpc/platforms/4xx/msi.c b/arch/powerpc/platforms/4xx/msi.c
+index d16b81303cb0..f693cab07752 100644
+--- a/arch/powerpc/platforms/4xx/msi.c
++++ b/arch/powerpc/platforms/4xx/msi.c
+@@ -223,7 +223,7 @@ static int ppc4xx_msi_probe(struct platform_device *dev)
  
- 	dev_dbg(&client->dev, "keys FIFO is 0x%02x\n", ret);
--
--	keypad = devm_kzalloc(&client->dev, sizeof(struct max7359_keypad),
--			      GFP_KERNEL);
-+	keypad = devm_kzalloc(&client->dev, sizeof(*keypad), GFP_KERNEL);
- 	if (!keypad)
+ 	dev_dbg(&dev->dev, "PCIE-MSI: Setting up MSI support...\n");
+ 
+-	msi = kzalloc(sizeof(struct ppc4xx_msi), GFP_KERNEL);
++	msi = kzalloc(sizeof(*msi), GFP_KERNEL);
+ 	if (!msi)
  		return -ENOMEM;
  
+diff --git a/arch/powerpc/platforms/4xx/ocm.c b/arch/powerpc/platforms/4xx/ocm.c
+index 5a750d0ad446..11418f090bf4 100644
+--- a/arch/powerpc/platforms/4xx/ocm.c
++++ b/arch/powerpc/platforms/4xx/ocm.c
+@@ -335,7 +335,7 @@ void *ppc4xx_ocm_alloc(phys_addr_t *phys, int size, int align,
+ 		if (IS_ERR_VALUE(offset))
+ 			continue;
+ 
+-		ocm_blk = kzalloc(sizeof(struct ocm_block), GFP_KERNEL);
++		ocm_blk = kzalloc(sizeof(*ocm_blk), GFP_KERNEL);
+ 		if (!ocm_blk) {
+ 			rh_free(ocm_reg->rh, offset);
+ 			break;
 -- 
-2.16.1
+2.15.1
 
