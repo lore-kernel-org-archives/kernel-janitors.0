@@ -1,94 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 07 Jan 2018 14:51:46 +0000
-Subject: [PATCH] ixgbevf: use ARRAY_SIZE for various array sizing calculations
-Message-Id: <20180107145146.2934-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 11 Jan 2018 11:12:55 +0000
+Subject: [PATCH -next] test_firmware: fix missing unlock on error in config_num_requests_store()
+Message-Id: <1515669175-125502-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Add the missing unlock before return from function
+config_num_requests_store() in the error handling case.
 
-Use the ARRAY_SIZE macro on various arrays to determine
-size of the arrays. Improvement suggested by coccinelle.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/ethernet/intel/ixgbevf/vf.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ lib/test_firmware.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/vf.c b/drivers/net/ethernet/intel/ixgbevf/vf.c
-index 0c25006ce9af..cd79c4a73b48 100644
---- a/drivers/net/ethernet/intel/ixgbevf/vf.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/vf.c
-@@ -285,7 +285,7 @@ static s32 ixgbevf_set_uc_addr_vf(struct ixgbe_hw *hw, u32 index, u8 *addr)
- 		ether_addr_copy(msg_addr, addr);
- 
- 	ret_val = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
--					     sizeof(msgbuf) / sizeof(u32));
-+					     ARRAY_SIZE(msgbuf));
- 	if (!ret_val) {
- 		msgbuf[0] &= ~IXGBE_VT_MSGTYPE_CTS;
- 
-@@ -455,8 +455,7 @@ static s32 ixgbevf_set_rar_vf(struct ixgbe_hw *hw, u32 index, u8 *addr,
- 	ether_addr_copy(msg_addr, addr);
- 
- 	ret_val = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
--					     sizeof(msgbuf) / sizeof(u32));
--
-+					     ARRAY_SIZE(msgbuf));
- 	msgbuf[0] &= ~IXGBE_VT_MSGTYPE_CTS;
- 
- 	/* if nacked the address was rejected, use "perm_addr" */
-@@ -571,7 +570,7 @@ static s32 ixgbevf_update_xcast_mode(struct ixgbe_hw *hw, int xcast_mode)
- 	msgbuf[1] = xcast_mode;
- 
- 	err = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
--					 sizeof(msgbuf) / sizeof(u32));
-+					 ARRAY_SIZE(msgbuf));
- 	if (err)
- 		return err;
- 
-@@ -609,7 +608,7 @@ static s32 ixgbevf_set_vfta_vf(struct ixgbe_hw *hw, u32 vlan, u32 vind,
- 	msgbuf[0] |= vlan_on << IXGBE_VT_MSGINFO_SHIFT;
- 
- 	err = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
--					 sizeof(msgbuf) / sizeof(u32));
-+					 ARRAY_SIZE(msgbuf));
- 	if (err)
- 		goto mbx_err;
- 
-@@ -813,7 +812,7 @@ static s32 ixgbevf_set_rlpml_vf(struct ixgbe_hw *hw, u16 max_size)
- 	msgbuf[1] = max_size;
- 
- 	ret_val = ixgbevf_write_msg_read_ack(hw, msgbuf, msgbuf,
--					     sizeof(msgbuf) / sizeof(u32));
-+					     ARRAY_SIZE(msgbuf));
- 	if (ret_val)
- 		return ret_val;
- 	if ((msgbuf[0] & IXGBE_VF_SET_LPE) &&
-@@ -859,8 +858,7 @@ static int ixgbevf_negotiate_api_version_vf(struct ixgbe_hw *hw, int api)
- 	msg[1] = api;
- 	msg[2] = 0;
- 
--	err = ixgbevf_write_msg_read_ack(hw, msg, msg,
--					 sizeof(msg) / sizeof(u32));
-+	err = ixgbevf_write_msg_read_ack(hw, msg, msg, ARRAY_SIZE(msg));
- 	if (!err) {
- 		msg[0] &= ~IXGBE_VT_MSGTYPE_CTS;
- 
-@@ -911,8 +909,7 @@ int ixgbevf_get_queues(struct ixgbe_hw *hw, unsigned int *num_tcs,
- 	msg[0] = IXGBE_VF_GET_QUEUE;
- 	msg[1] = msg[2] = msg[3] = msg[4] = 0;
- 
--	err = ixgbevf_write_msg_read_ack(hw, msg, msg,
--					 sizeof(msg) / sizeof(u32));
-+	err = ixgbevf_write_msg_read_ack(hw, msg, msg, ARRAY_SIZE(msg));
- 	if (!err) {
- 		msg[0] &= ~IXGBE_VT_MSGTYPE_CTS;
- 
--- 
-2.15.1
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index 964784d..4647647 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -371,6 +371,7 @@ static ssize_t config_num_requests_store(struct device *dev,
+ 	if (test_fw_config->reqs) {
+ 		pr_err("Must call release_all_firmware prior to changing config\n");
+ 		rc = -EINVAL;
++		mutex_unlock(&test_fw_mutex);
+ 		goto out;
+ 	}
+ 	mutex_unlock(&test_fw_mutex);
 
