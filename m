@@ -1,42 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Jan 2018 21:30:19 +0000
-Subject: [PATCH] IPMMU-VMSA: Delete an error message for a failed memory allocation in ipmmu_probe()
-Message-Id: <457b87a4-8653-913a-c678-328c1fb681db@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Jan 2018 21:46:01 +0000
+Subject: [PATCH] ixgbe: Fix && vs || typo
+Message-Id: <20180111214601.4cyjpvmbsothnc23@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: iommu@lists.linux-foundation.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Jan 2018 22:22:38 +0100
+"offset" can't be both 0x0 and 0xFFFF so presumably || was intended
+instead of &&.  That matches with how this check is done in other
+functions.
 
-Omit an extra message for a memory allocation failure in this function.
+Fixes: 73834aec7199 ("ixgbe: extend firmware version support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/iommu/ipmmu-vmsa.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 8dce3a9de9d8..1f78d60f2029 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -949,10 +949,8 @@ static int ipmmu_probe(struct platform_device *pdev)
- 	int ret;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
+index 1948e4208fb4..27de8a7f2aeb 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
+@@ -4084,7 +4084,7 @@ void ixgbe_get_oem_prod_version(struct ixgbe_hw *hw,
+ 	hw->eeprom.ops.read(hw, NVM_OEM_PROD_VER_PTR, &offset);
  
- 	mmu = devm_kzalloc(&pdev->dev, sizeof(*mmu), GFP_KERNEL);
--	if (!mmu) {
--		dev_err(&pdev->dev, "cannot allocate device data\n");
-+	if (!mmu)
- 		return -ENOMEM;
--	}
+ 	/* Return is offset to OEM Product Version block is invalid */
+-	if (offset = 0x0 && offset = NVM_INVALID_PTR)
++	if (offset = 0x0 || offset = NVM_INVALID_PTR)
+ 		return;
  
- 	mmu->dev = &pdev->dev;
- 	mmu->num_utlbs = 32;
--- 
-2.15.1
-
+ 	/* Read product version block */
