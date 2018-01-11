@@ -1,27 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jan 2018 21:21:56 +0000
-Subject: Re: [PATCH] byteorder: silence warning by use the proper type
-Message-Id: <20180124212156.3ftylyibl3fqgq4u@mwanda>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 11 Jan 2018 18:57:26 +0000
+Subject: Re: [PATCH net-next] net: phy: mdio-bcm-unimac: fix potential NULL dereference in unimac_mdio_probe(
+Message-Id: <20180111.135726.1299937792649052032.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180124190725.4rj5yban2heqd65r@smtp.gmail.com>
-In-Reply-To: <20180124190725.4rj5yban2heqd65r@smtp.gmail.com>
+References: <1515669711-126459-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1515669711-126459-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
-Cc: mika.westerberg@linux.intel.com, michael.jamet@intel.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: weiyongjun1@huawei.com
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 05:07:25PM -0200, rodrigosiqueira wrote:
-> This patch fixes the GCC warning:
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 11 Jan 2018 11:21:51 +0000
+
+> platform_get_resource() may fail and return NULL, so we should
+> better check it's return value to avoid a NULL pointer dereference
+> a bit later in the code.
 > 
-> warning: comparison between signed and unsigned integer expressions
-> [-Wsign-compare]
->   for (i = 0; i < len; i++)
->                 ^
+> This is detected by Coccinelle semantic patch.
+> 
+> @@
+> expression pdev, res, n, t, e, e1, e2;
+> @@
+> 
+> res = platform_get_resource(pdev, t, n);
+> + if (!res)
+> +   return -EINVAL;
+> ... when != res = NULL
+> e = devm_ioremap(e1, res->start, e2);
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-I wish GCC wouldn't generate warnings which are clearly dumb.  :(  This
-kind of warning has a over 99% false positive rate in finding real bugs.
+Applied, thank you.
 
-regards,
-dan carpenter
+> diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
+> index 08e0647..8d37066 100644
+> --- a/drivers/net/phy/mdio-bcm-unimac.c
+> +++ b/drivers/net/phy/mdio-bcm-unimac.c
+> @@ -205,6 +205,8 @@ static int unimac_mdio_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!r)
+> +		return -EINVAL;
+>  
+>  	/* Just ioremap, as this MDIO block is usually integrated into an
+>  	 * Ethernet MAC controller register range
+> 
 
+I have to say, the devm_*() routines may make it easier to write drivers and probe
+routines, but it makes patches much harder to review.
+
+I couldn't figure out if you were leaking resources here without going into the
+source file and looking at all of the relevant context.
+
+Just though I'd make this meta-comment...
