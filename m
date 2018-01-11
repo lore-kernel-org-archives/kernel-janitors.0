@@ -1,52 +1,33 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Sat, 20 Jan 2018 13:49:06 +0000
-Subject: Re: [PATCH -next] mtd: onenand: omap2: Remove redundant dev_err call in omap2_onenand_probe()
-Message-Id: <20180120144906.3d22a204@bbrezillon>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 11 Jan 2018 11:21:38 +0000
+Subject: [PATCH net-next] net: socionext: Fix error return code in netsec_netdev_open()
+Message-Id: <1515669698-126382-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516188333-144550-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516188333-144550-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jassi Brar <jaswinder.singh@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 17 Jan 2018 11:25:33 +0000
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
+Fix to return error code -ENODEV from the of_phy_connect() error
+handling case instead of 0, as done elsewhere in this function.
 
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
+Fixes: 533dd11a12f6 ("net: socionext: Add Synquacer NetSec driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/socionext/netsec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied.
-
-Thanks,
-
-Boris
-
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/mtd/onenand/omap2.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mtd/onenand/omap2.c b/drivers/mtd/onenand/omap2.c
-> index a4a2159..87c34f6 100644
-> --- a/drivers/mtd/onenand/omap2.c
-> +++ b/drivers/mtd/onenand/omap2.c
-> @@ -532,10 +532,8 @@ static int omap2_onenand_probe(struct platform_device *pdev)
->  	c->phys_base = res->start;
->  
->  	c->onenand.base = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(c->onenand.base)) {
-> -		dev_err(dev, "Cannot reserve memory region %pR\n", res);
-> +	if (IS_ERR(c->onenand.base))
->  		return PTR_ERR(c->onenand.base);
-> -	}
->  
->  	c->int_gpiod = devm_gpiod_get_optional(dev, "int", GPIOD_IN);
->  	if (IS_ERR(c->int_gpiod)) {
-> 
-> 
-> 
+diff --git a/drivers/net/ethernet/socionext/netsec.c b/drivers/net/ethernet/socionext/netsec.c
+index a8edcf3..78e4ff6 100644
+--- a/drivers/net/ethernet/socionext/netsec.c
++++ b/drivers/net/ethernet/socionext/netsec.c
+@@ -1292,6 +1292,7 @@ static int netsec_netdev_open(struct net_device *ndev)
+ 				    netsec_phy_adjust_link, 0,
+ 				    priv->phy_interface)) {
+ 			netif_err(priv, link, priv->ndev, "missing PHY\n");
++			ret = -ENODEV;
+ 			goto err3;
+ 		}
+ 	} else {
 
