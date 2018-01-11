@@ -1,30 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 06 Jan 2018 09:26:43 +0000
-Subject: [PATCH] dm mpath: potential NULL dereference with parse_path()
-Message-Id: <20180106092643.pq67kkzj2jsjlvzy@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Jan 2018 18:04:54 +0000
+Subject: [PATCH 5/5] powerpc/4xx: Delete an unnecessary return statement in two functions
+Message-Id: <de85bbcd-36a8-7de5-8d18-96e1530a23c2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
+In-Reply-To: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: dm-devel@redhat.com, kernel-janitors@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We forgot to set the error code on this path so it means we accidentally
-return NULL.  The caller is expecting error pointers and will crash
-with a NULL dereference.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Jan 2018 18:40:23 +0100
 
-Fixes: faf782b1c93d ("dm mpath: optimize NVMe bio-based support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The script "checkpatch.pl" pointed information out like the following.
 
-diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
-index d1f32103ae86..0436a5466281 100644
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -883,6 +883,7 @@ static struct pgpath *parse_path(struct dm_arg_set *as, struct path_selector *ps
- 		INIT_DELAYED_WORK(&p->activate_path, activate_path_work);
- 		if (setup_scsi_dh(p->path.dev->bdev, m, &ti->error)) {
- 			dm_put_device(ti, p->path.dev);
-+			r = -EINVAL;
- 			goto bad;
- 		}
- 	}
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected functions.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/platforms/4xx/ocm.c | 2 --
+ arch/powerpc/platforms/4xx/pci.c | 1 -
+ 2 files changed, 3 deletions(-)
+
+diff --git a/arch/powerpc/platforms/4xx/ocm.c b/arch/powerpc/platforms/4xx/ocm.c
+index 11418f090bf4..aee5f041ff14 100644
+--- a/arch/powerpc/platforms/4xx/ocm.c
++++ b/arch/powerpc/platforms/4xx/ocm.c
+@@ -226,8 +226,6 @@ static void __init ocm_init_node(int count, struct device_node *node)
+ 	INIT_LIST_HEAD(&ocm->c.list);
+ 
+ 	ocm->ready = 1;
+-
+-	return;
+ }
+ 
+ static int ocm_debugfs_show(struct seq_file *m, void *v)
+diff --git a/arch/powerpc/platforms/4xx/pci.c b/arch/powerpc/platforms/4xx/pci.c
+index 73e6b36bcd51..b73ea8f4be1f 100644
+--- a/arch/powerpc/platforms/4xx/pci.c
++++ b/arch/powerpc/platforms/4xx/pci.c
+@@ -1399,7 +1399,6 @@ static void __init ppc_476fpe_pciex_check_link(struct ppc4xx_pciex_port *port)
+ 		printk(KERN_WARNING "PCIE%d: Link up failed\n", port->index);
+ 
+ 	iounmap(mbase);
+-	return;
+ }
+ 
+ static struct ppc4xx_pciex_hwops ppc_476fpe_pcie_hwops __initdata -- 
+2.15.1
+
