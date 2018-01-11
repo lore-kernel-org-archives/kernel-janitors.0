@@ -1,40 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 20:39:57 +0000
-Subject: [PATCH 1/2] macintosh/rack-meter: Delete an error message for a failed memory allocation in rackmete
-Message-Id: <e8373573-fb9d-5a90-96e7-1faf5434e6e1@users.sourceforge.net>
+Date: Thu, 11 Jan 2018 18:01:33 +0000
+Subject: [PATCH 2/5] powerpc/4xx: Use seq_putc() in ocm_debugfs_show()
+Message-Id: <400b7f67-bd62-9f5f-228b-9633c23671d7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c11e0a90-a7b2-dddd-7751-7dac3e62215b@users.sourceforge.net>
-In-Reply-To: <c11e0a90-a7b2-dddd-7751-7dac3e62215b@users.sourceforge.net>
+References: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
+In-Reply-To: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 21:23:36 +0100
+Date: Thu, 11 Jan 2018 18:10:02 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/macintosh/rack-meter.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/platforms/4xx/ocm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/macintosh/rack-meter.c b/drivers/macintosh/rack-meter.c
-index 910b5b6f96b1..0796b74174d4 100644
---- a/drivers/macintosh/rack-meter.c
-+++ b/drivers/macintosh/rack-meter.c
-@@ -399,7 +399,6 @@ static int rackmeter_probe(struct macio_dev* mdev,
- 	/* Create and initialize our instance data */
- 	rm = kzalloc(sizeof(struct rackmeter), GFP_KERNEL);
- 	if (rm = NULL) {
--		printk(KERN_ERR "rackmeter: failed to allocate memory !\n");
- 		rc = -ENOMEM;
- 		goto bail_release;
+diff --git a/arch/powerpc/platforms/4xx/ocm.c b/arch/powerpc/platforms/4xx/ocm.c
+index 5bc1baf809d1..8cb601e8bed7 100644
+--- a/arch/powerpc/platforms/4xx/ocm.c
++++ b/arch/powerpc/platforms/4xx/ocm.c
+@@ -267,7 +267,7 @@ static int ocm_debugfs_show(struct seq_file *m, void *v)
+ 						blk->size, blk->owner);
+ 		}
+ 
+-		seq_printf(m, "\n");
++		seq_putc(m, '\n');
  	}
+ 
+ 	return 0;
 -- 
 2.15.1
 
