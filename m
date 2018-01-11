@@ -1,29 +1,37 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Mon, 15 Jan 2018 10:03:00 +0000
-Subject: Re: [PATCH] gpio-wm831x: Use seq_putc() in wm831x_gpio_dbg_show()
-Message-Id: <20180115100300.rtvqfaebjm22kcsx@localhost.localdomain>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 11 Jan 2018 11:12:41 +0000
+Subject: [PATCH -next] IIO: ADC: fix return value check in stm32_dfsdm_adc_probe()
+Message-Id: <1515669161-125426-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
-In-Reply-To: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Jan 12, 2018 at 09:37:53PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 Jan 2018 21:30:09 +0100
-> 
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+In case of error, the function devm_iio_device_alloc() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Fixes: e2e6771c6462 ("IIO: ADC: add STM32 DFSDM sigma delta ADC support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/iio/adc/stm32-dfsdm-adc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Charles
+diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+index e628d04..5e87140 100644
+--- a/drivers/iio/adc/stm32-dfsdm-adc.c
++++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+@@ -1100,9 +1100,9 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
+ 	dev_data = (const struct stm32_dfsdm_dev_data *)of_id->data;
+ 
+ 	iio = devm_iio_device_alloc(dev, sizeof(*adc));
+-	if (IS_ERR(iio)) {
++	if (!iio) {
+ 		dev_err(dev, "%s: Failed to allocate IIO\n", __func__);
+-		return PTR_ERR(iio);
++		return -ENOMEM;
+ 	}
+ 
+ 	adc = iio_priv(iio);
+
