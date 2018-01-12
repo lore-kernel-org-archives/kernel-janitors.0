@@ -1,71 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 Jan 2018 16:04:04 +0000
-Subject: [PATCH v3 2/3] video: smscufx: Return an error code only as a constant in ufx_realloc_framebuffer()
-Message-Id: <31ecfef4-a193-dea0-0ff3-0d5a108a14f3@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 21:22:51 +0000
+Subject: [PATCH] drm/amdgpu: Use seq_putc() in two functions
+Message-Id: <c7ec76b3-3020-80c3-1f43-5f29714f87f2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171125204312epcas2p149d6487ac83e886f95aefe0b35aef1b0@epcas2p1.samsung.com>
- <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
- <1736749.UIs06O4xc5@amdc3058>
- <a36fa112-40a1-703c-c2ac-ce7e88bb8609@users.sourceforge.net>
-In-Reply-To: <a36fa112-40a1-703c-c2ac-ce7e88bb8609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Alex Xie <AlexBin.Xie@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Junwei Zhang <Jerry.Zhang@amd.com>, =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel.daenzer@amd.com>, =?UTF-8?Q?Nicolai_H=c3=a4hnle?= <nicolai.haehnle@amd.com>, Yong Zhao <Yong.Zhao@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 Jan 2018 16:07:11 +0100
+Date: Fri, 12 Jan 2018 22:08:50 +0100
 
-* Return an error code without storing it in an intermediate variable.
+A few single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-* Delete the label "error" and local variable "retval"
-  which became unnecessary with this refactoring.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c  | 9 +++------
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-v3:
-This update suggestion was rebased on source files from the software
-"Linux next-20180105".
-
- drivers/video/fbdev/smscufx.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/video/fbdev/smscufx.c b/drivers/video/fbdev/smscufx.c
-index 893daeb1ffd9..abbded605d68 100644
---- a/drivers/video/fbdev/smscufx.c
-+++ b/drivers/video/fbdev/smscufx.c
-@@ -1293,7 +1293,6 @@ static struct fb_ops ufx_ops = {
-  * Assumes no active clients have framebuffer open */
- static int ufx_realloc_framebuffer(struct ufx_data *dev, struct fb_info *info)
- {
--	int retval = -ENOMEM;
- 	int old_len = info->fix.smem_len;
- 	int new_len;
- 	unsigned char *old_fb = info->screen_base;
-@@ -1310,7 +1309,7 @@ static int ufx_realloc_framebuffer(struct ufx_data *dev, struct fb_info *info)
- 		new_fb = vmalloc(new_len);
- 		if (!new_fb) {
- 			pr_err("Virtual framebuffer alloc failed");
--			goto error;
-+			return -ENOMEM;
- 		}
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index 10805edcf964..7ac233f5abe2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -806,8 +806,8 @@ static int amdgpu_debugfs_gem_bo_info(int id, void *ptr, void *data)
+ 	pin_count = READ_ONCE(bo->pin_count);
+ 	if (pin_count)
+ 		seq_printf(m, " pin count %d", pin_count);
+-	seq_printf(m, "\n");
  
- 		if (info->screen_base) {
-@@ -1323,11 +1322,7 @@ static int ufx_realloc_framebuffer(struct ufx_data *dev, struct fb_info *info)
- 		info->fix.smem_start = (unsigned long) new_fb;
- 		info->flags = smscufx_info_flags;
- 	}
--
--	retval = 0;
--
--error:
--	return retval;
-+	return 0;
++	seq_putc(m, '\n');
+ 	return 0;
  }
  
- /* sets up I2C Controller for 100 Kbps, std. speed, 7-bit addr, master,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c
+index 3144400435b7..57ce42d960ae 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c
+@@ -419,11 +419,8 @@ void amdgpu_sa_bo_dump_debug_info(struct amdgpu_sa_manager *sa_manager,
+ 	list_for_each_entry(i, &sa_manager->olist, olist) {
+ 		uint64_t soffset = i->soffset + sa_manager->gpu_addr;
+ 		uint64_t eoffset = i->eoffset + sa_manager->gpu_addr;
+-		if (&i->olist = sa_manager->hole) {
+-			seq_printf(m, ">");
+-		} else {
+-			seq_printf(m, " ");
+-		}
++
++		seq_putc(m, (&i->olist = sa_manager->hole) ? '>' : ' ');
+ 		seq_printf(m, "[0x%010llx 0x%010llx] size %8lld",
+ 			   soffset, eoffset, eoffset - soffset);
+ 
+@@ -431,7 +428,7 @@ void amdgpu_sa_bo_dump_debug_info(struct amdgpu_sa_manager *sa_manager,
+ 			seq_printf(m, " protected by 0x%08x on context %llu",
+ 				   i->fence->seqno, i->fence->context);
+ 
+-		seq_printf(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ 	spin_unlock(&sa_manager->wq.lock);
+ }
 -- 
 2.15.1
 
