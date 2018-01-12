@@ -1,67 +1,40 @@
-From: Miquel Raynal <miquel.raynal@free-electrons.com>
-Date: Fri, 19 Jan 2018 07:39:52 +0000
-Subject: Re: [PATCH][next] mtd: nand: fix spelling mistake: "suceed"-> "succeed"
-Message-Id: <20180119083952.23c4baeb@xps13>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:37:53 +0000
+Subject: [PATCH] gpio-wm831x: Use seq_putc() in wm831x_gpio_dbg_show()
+Message-Id: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180116102808.23232-1-colin.king@canonical.com>
- <5A5DDCA0.1000908@bfs.de>
-In-Reply-To: <5A5DDCA0.1000908@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: walter harms <wharms@bfs.de>
-Cc: kernel-janitors@vger.kernel.org, Colin King <colin.king@canonical.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 21:30:09 +0100
 
-Can you please change the prefix, it should be:
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-mtd: nand: marvell:
+This issue was detected by using the Coccinelle software.
 
-On Tue, 16 Jan
-2018 12:06:08 +0100 walter harms <wharms@bfs.de> wrote:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-wm831x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Am 16.01.2018 11:28, schrieb Colin King:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >=20
-> > Trivial fix to spelling mistakes in dev_err error message text.
-> >=20
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/mtd/nand/marvell_nand.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/mtd/nand/marvell_nand.c
-> > b/drivers/mtd/nand/marvell_nand.c index b8fec6093b75..4bd53b360277
-> > 100644 --- a/drivers/mtd/nand/marvell_nand.c
-> > +++ b/drivers/mtd/nand/marvell_nand.c
-> > @@ -517,7 +517,7 @@ static int marvell_nfc_prepare_cmd(struct
-> > nand_chip *chip) /* Poll ND_RUN and clear NDSR before issuing any
-> > command */ ret =3D marvell_nfc_wait_ndrun(chip);
-> >  	if (ret) {
-> > -		dev_err(nfc->dev, "Last operation did not
-> > suceed\n");
-> > +		dev_err(nfc->dev, "Last operation did not
-> > succeed\n"); return ret;
-> >  	}
-> >   =20
->=20
-> not succeed =3D Failed ??
+diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
+index 938bbe3f831c..324813e8304e 100644
+--- a/drivers/gpio/gpio-wm831x.c
++++ b/drivers/gpio/gpio-wm831x.c
+@@ -182,7 +182,7 @@ static void wm831x_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 			dev_err(wm831x->dev,
+ 				"GPIO control %d read failed: %d\n",
+ 				gpio, reg);
+-			seq_printf(s, "\n");
++			seq_putc(s, '\n');
+ 			continue;
+ 		}
+ 
+-- 
+2.15.1
 
-I personally do not have a preference, as long as there is a clear
-error message in this case.
-
-> someone who is debugging may also interessted to know what operation
-> failed.
-
-It is not as easy to do, but starting from enabling dynamic debug in
-both the driver and the NAND core should give you enough traces to
-locate the issue.
-
-Thanks,
-Miqu=C3=A8l
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
