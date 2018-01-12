@@ -1,39 +1,41 @@
-From: Michal Hocko <mhocko@kernel.org>
-Date: Wed, 10 Jan 2018 10:14:39 +0000
-Subject: Re: [PATCH] mm, hugetlb: Fix a double unlock bug in alloc_surplus_huge_page()
-Message-Id: <20180110101439.GQ1732@dhcp22.suse.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:04:32 +0000
+Subject: [PATCH 4/4] gpio-stmpe: Delete an unnecessary variable initialisation in stmpe_gpio_probe()
+Message-Id: <245fffed-3b76-5265-25b1-9f9077518894@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180109200559.g3iz5kvbdrz7yydp@mwanda>
-In-Reply-To: <20180109200559.g3iz5kvbdrz7yydp@mwanda>
+References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
+In-Reply-To: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Kravetz <mike.kravetz@oracle.com>, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Punit Agrawal <punit.agrawal@arm.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue 09-01-18 23:06:00, Dan Carpenter wrote:
-> We aren't holding the hugetlb_lock so there is no need to unlock.
-> 
-> Fixes: b27f11e5e675 ("mm, hugetlb: get rid of surplus page accounting tricks")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:48:40 +0100
 
-Ups, a left over after refactoring. Andrew, could you fold this into
-mm-hugetlb-further-simplify-hugetlb-allocation-api.patch please?
+The local variable "irq" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-stmpe.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index d51e27eb1c59..d9f370bf460d 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -432,8 +432,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 	struct stmpe *stmpe = dev_get_drvdata(pdev->dev.parent);
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct stmpe_gpio *stmpe_gpio;
+-	int ret;
+-	int irq = 0;
++	int ret, irq;
  
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index ffcae114ceed..742a929f2311 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1567,7 +1567,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
->  
->  	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask);
->  	if (!page)
-> -		goto out_unlock;
-> +		return NULL;
->  
->  	spin_lock(&hugetlb_lock);
->  	/*
-
+ 	stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
+ 	if (!stmpe_gpio)
 -- 
-Michal Hocko
-SUSE Labs
+2.15.1
+
