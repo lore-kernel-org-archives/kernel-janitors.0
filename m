@@ -1,25 +1,40 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 31 Jan 2018 02:24:41 +0000
-Subject: Re: [PATCH] scsi: csiostor: remove redundant assignment to pointer 'ln'
-Message-Id: <yq1shamg3yu.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Jan 2018 16:37:15 +0000
+Subject: [PATCH][xfs-next] xfs: fix check on struct_version for versions 4 or greater
+Message-Id: <20180112163715.27169-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180124145801.18920-1-colin.king@canonical.com>
-In-Reply-To: <20180124145801.18920-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 24 Jan 2018 14:58:01 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>, Dave Chinner <dchinner@redhat.com>, Eric Sandeen <sandeen@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+It appears that the check for versions 4 or more is incorrect and is
+off-by-one. Fix this.
 
-> The pointer ln is assigned a value that is never read, it is re-assigned
-> a new value in the list_for_each loop hence the initialization is
-> redundant and can be removed.
+Detected by CoverityScan, CID#1463775 ("Logically dead code")
 
-Applied to 4.16/scsi-fixes. Thank you.
+Fixes: ac503a4cc9e8 ("xfs: refactor the geometry structure filling function")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/xfs/libxfs/xfs_sb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
+index 35b005d66977..869a2f3f0375 100644
+--- a/fs/xfs/libxfs/xfs_sb.c
++++ b/fs/xfs/libxfs/xfs_sb.c
+@@ -951,7 +951,7 @@ xfs_fs_geometry(
+ 	geo->rtsectsize = sbp->sb_blocksize;
+ 	geo->dirblocksize = xfs_dir2_dirblock_bytes(sbp);
+ 
+-	if (struct_version < 3)
++	if (struct_version < 4)
+ 		return 0;
+ 
+ 	if (xfs_sb_version_haslogv2(sbp))
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.15.1
+
