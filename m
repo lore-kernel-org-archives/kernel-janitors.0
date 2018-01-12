@@ -1,38 +1,27 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 06 Jan 2018 20:18:24 +0000
-Subject: [PATCH 1/2] ASoC: Intel: sst: Fix the return value of 'sst_send_byte_stream_mrfld()'
-Message-Id: <20180106201824.6081-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 16:57:20 +0000
+Subject: [PATCH 0/2] mvebu-mbus: Adjustments for mvebu_devs_debug_show()
+Message-Id: <4796228f-fa7f-24db-0049-2d2b9041c5b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, =?UTF-8?Q?Jan_L=c3=bcbbe?= <jlu@pengutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-In some error handling paths, an error code is assiegned to 'ret'.
-However, the function always return 0.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 17:47:57 +0100
 
-Fix it and return the error code if such an error paths is taken.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- sound/soc/intel/atom/sst/sst_stream.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Markus Elfring (2):
+  Use seq_putc()
+  Fix a typo in five comment lines
 
-diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
-index 65e257b17a7e..20f5066fefb9 100644
---- a/sound/soc/intel/atom/sst/sst_stream.c
-+++ b/sound/soc/intel/atom/sst/sst_stream.c
-@@ -220,7 +220,7 @@ int sst_send_byte_stream_mrfld(struct intel_sst_drv *sst_drv_ctx,
- 		sst_free_block(sst_drv_ctx, block);
- out:
- 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
--	return 0;
-+	return ret;
- }
- 
- /*
+ drivers/bus/mvebu-mbus.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
 -- 
-2.14.1
+2.15.1
 
