@@ -1,27 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 03 Jan 2018 08:03:41 +0000
-Subject: Re: [PATCH 05/12] pinctrl: armada-37xx: account for const type of of_device_id.data
-Message-Id: <CACRpkdZhQKtrRgGu17OkDca3XR1tOSj00hDABfv6JKTUDh2xBg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:03:35 +0000
+Subject: [PATCH 3/4] gpio-stmpe: Move an assignment in stmpe_gpio_probe()
+Message-Id: <25ddf208-1f02-8bb7-b6b8-e0ffa422b754@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
- <1514899688-27844-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514899688-27844-6-git-send-email-Julia.Lawall@lip6.fr>
+References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
+In-Reply-To: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 2, 2018 at 2:28 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:44:15 +0100
 
-> The data field of an of_device_id structure has type const void *, so
-> there is no need for a const-discarding cast when putting const values
-> into such a structure.
->
-> Done using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Move the assignment for the local variable "irq" so that its setting
+will only be performed directly before it is checked by this function.
 
-Patch applied with Gregory's ACK.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-stmpe.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 2cf30dcba82a..d51e27eb1c59 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -435,8 +435,6 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int irq = 0;
+ 
+-	irq = platform_get_irq(pdev, 0);
+-
+ 	stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
+ 	if (!stmpe_gpio)
+ 		return -ENOMEM;
+@@ -459,6 +457,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 	if (stmpe_gpio->norequest_mask)
+ 		stmpe_gpio->chip.irq.need_valid_mask = true;
+ 
++	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0)
+ 		dev_info(&pdev->dev,
+ 			"device configured in no-irq mode: "
+-- 
+2.15.1
+
