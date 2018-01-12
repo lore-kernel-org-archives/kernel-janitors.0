@@ -1,41 +1,55 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 02 Jan 2018 15:16:30 +0000
-Subject: Re: [Cluster-devel] [PATCH 00/12] drop unneeded newline
-Message-Id: <alpine.DEB.2.20.1801021615510.23552@hadrien>
+From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Date: Fri, 12 Jan 2018 17:48:57 +0000
+Subject: Re: [Intel-gfx] [PATCH][next] drm/i915/pmu: fix sizeof on attr, should be *attr
+Message-Id: <1465951f-474c-e157-892b-33d12ad436cb@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
- <1878806802.2632123.1514901158666.JavaMail.zimbra@redhat.com>
- <1019862289.2632779.1514901387442.JavaMail.zimbra@redhat.com>
- <alpine.DEB.2.20.1801021458360.24055@hadrien>
- <1514905900.4242.4.camel@wdc.com>
-In-Reply-To: <1514905900.4242.4.camel@wdc.com>
+References: <20180112173603.28486-1-colin.king@canonical.com>
+In-Reply-To: <20180112173603.28486-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "dev@openvswitch.org" <dev@openvswitch.org>, "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "dccp@vger.kernel.org" <dccp@vger.kernel.org>, "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, "esc.storagedev@microsemi.com" <esc.storagedev@microsemi.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "julia.lawall@lip6.fr" <julia.lawall@lip6.fr>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "rpeterso@redhat.com" <rpeterso@redhat.com>, "namhyung@kernel.org" <namhyung@kernel.org>, linux-ext4@vger.kernel.
+To: Colin King <colin.king@canonical.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+Hi,
 
-On Tue, 2 Jan 2018, Bart Van Assche wrote:
+On 12/01/2018 17:36, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> I believe the sizeof(attr) should be in fact sizeof(*attr), fortunately
+> the current code works because sizeof(struct attribute **) is the same
+> as sizeof(struct attribute *) for x86.
 
-> On Tue, 2018-01-02 at 15:00 +0100, Julia Lawall wrote:
-> > On Tue, 2 Jan 2018, Bob Peterson wrote:
-> > > ----- Original Message -----
-> > > > ----- Original Message -----
-> > > >
-> > > Still, the GFS2 and DLM code has a plethora of broken-up printk messages,
-> > > and I don't like the thought of re-combining them all.
-> >
-> > Actually, the point of the patch was to remove the unnecessary \n at the
-> > end of the string, because log_print will add another one.  If you prefer
-> > to keep the string broken up, I can resend the patch in that form, but
-> > without the unnecessary \n.
->
-> Please combine any user-visible strings into a single line for which the
-> unneeded newline is dropped since these strings are modified anyway by
-> your patch.
+Thanks, kbuild also reported it and I just pushed a fix.
 
-That is what the submitted patch (2/12 specifically) did.
+Out of curiosity, there are platforms where size of pointer is different 
+from the size of a pointer to a pointer?
 
-julia
+Regards,
+
+Tvrtko
+
+> 
+> Detected by CoverityScan, CID#1463854 ("Sizeof not portable")
+> 
+> Fixes: 109ec558370f ("drm/i915/pmu: Only enumerate available counters in sysfs")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/gpu/drm/i915/i915_pmu.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> index 95ab5e28f5be..9be4f5201e41 100644
+> --- a/drivers/gpu/drm/i915/i915_pmu.c
+> +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> @@ -794,7 +794,7 @@ create_event_attributes(struct drm_i915_private *i915)
+>   		goto err_alloc;
+>   
+>   	/* Max one pointer of each attribute type plus a termination entry. */
+> -	attr = kzalloc((count * 2 + 1) * sizeof(attr), GFP_KERNEL);
+> +	attr = kzalloc((count * 2 + 1) * sizeof(*attr), GFP_KERNEL);
+>   	if (!attr)
+>   		goto err_alloc;
+>   
+> 
