@@ -1,61 +1,43 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Wed, 24 Jan 2018 04:07:08 +0000
-Subject: Re: [PATCH -next] ntb_hw_switchtec: Make function switchtec_ntb_remove() static
-Message-Id: <20180124040707.GB20474@kudzu.us>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:02:39 +0000
+Subject: [PATCH 2/4] gpio-stmpe: Improve a size determination in stmpe_gpio_probe()
+Message-Id: <fdd3ba06-afb7-e36e-6e58-ac4e974d7720@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516673361-170397-1-git-send-email-weiyongjun1@huawei.com>
- <14b5eb05-c152-6a30-d590-881600a8a72f@deltatee.com>
-In-Reply-To: <14b5eb05-c152-6a30-d590-881600a8a72f@deltatee.com>
+References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
+In-Reply-To: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 23, 2018 at 09:35:52AM -0700, Logan Gunthorpe wrote:
-> Looks good, thanks.
-> 
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 19:36:29 +0100
 
-Applied to ntb-next
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Thanks,
-Jon
+This issue was detected by using the Coccinelle software.
 
-> 
-> Logan
-> 
-> 
-> On 22/01/18 07:09 PM, Wei Yongjun wrote:
-> > Fixes the following sparse warnings:
-> > 
-> > drivers/ntb/hw/mscc/ntb_hw_switchtec.c:1552:6: warning:
-> >   symbol 'switchtec_ntb_remove' was not declared. Should it be static?
-> > 
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >   drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> > index a1d547b6..f624ae2 100644
-> > --- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> > +++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-> > @@ -1549,8 +1549,8 @@ static int switchtec_ntb_add(struct device *dev,
-> >   	return rc;
-> >   }
-> > -void switchtec_ntb_remove(struct device *dev,
-> > -			  struct class_interface *class_intf)
-> > +static void switchtec_ntb_remove(struct device *dev,
-> > +				 struct class_interface *class_intf)
-> >   {
-> >   	struct switchtec_dev *stdev = to_stdev(dev);
-> >   	struct switchtec_ntb *sndev = stdev->sndev;
-> > 
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
-> To post to this group, send email to linux-ntb@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/14b5eb05-c152-6a30-d590-881600a8a72f%40deltatee.com.
-> For more options, visit https://groups.google.com/d/optout.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-stmpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 79858c6ad31a..2cf30dcba82a 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -437,7 +437,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 
+-	stmpe_gpio = kzalloc(sizeof(struct stmpe_gpio), GFP_KERNEL);
++	stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
+ 	if (!stmpe_gpio)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.1
+
