@@ -1,71 +1,42 @@
-From: Ladislav Michl <ladis@linux-mips.org>
-Date: Sat, 20 Jan 2018 00:16:45 +0000
-Subject: Re: [PATCH -next] PCI: dra7xx: Fix potential NULL dereference
-Message-Id: <20180120001645.GA21343@lenoch>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:01:49 +0000
+Subject: [PATCH 1/4] gpio-stmpe: Use seq_putc() in stmpe_dbg_show()
+Message-Id: <91234c1e-9106-ae5d-ebed-8e3d5f272c1e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516284037-81537-1-git-send-email-weiyongjun1@huawei.com>
- <20180118145420.GA21163@lenoch>
- <20180118183525.GG53542@bhelgaas-glaptop.roam.corp.google.com>
- <20180119095857.GA26765@lenoch>
- <20180119170657.GA27882@lenoch>
-In-Reply-To: <20180119170657.GA27882@lenoch>
+References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
+In-Reply-To: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Kishon Vijay Abraham I <kishon@ti.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 19, 2018 at 06:06:57PM +0100, Ladislav Michl wrote:
-> On Fri, Jan 19, 2018 at 10:58:57AM +0100, Ladislav Michl wrote:
-> > On Thu, Jan 18, 2018 at 12:35:25PM -0600, Bjorn Helgaas wrote:
-> > > That's probably a better idea.  Maybe we should add a comment like this
-> > > to help avoid this in the future:
-> > 
-> > That seems to spot another a bit more serious problem (given how late
-> > release cycle is now).
-> > 
-> > Both devm_ioremap() and devm_ioremap_resource() shares the same release
-> > function: devm_ioremap_release(). However this function is not aware of
-> > memory region previously requested by devm_request_mem_region() called
-> > from devm_ioremap_resource().
-> > 
-> > Bellow is just a quick hack, even untested as looking at devm_ioremap,
-> > devm_ioremap_wc and devm_ioremap_wc, there is some room for optimization.
-> 
-> Okay, forget it, above analysis is not correct, however there is a bug (and
-> also in PCI version). To show it, let's make following modification:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 19:30:50 +0100
 
-I will never ever work in single tree for two different boards without full
-recompile (which should save time and caused opposite) as it makes debugging
-pointless - there is no bug.
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-As a request forgiveness, please accept following draft as proposed solution
-for $subj
+This issue was detected by using the Coccinelle software.
 
-Subject: [PATCH] PCI: dra7xx: Use devm_ioremap_resource()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-stmpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
-index 8bf7c2714db6..7f422ae258ac 100644
---- a/drivers/pci/dwc/pci-dra7xx.c
-+++ b/drivers/pci/dwc/pci-dra7xx.c
-@@ -409,14 +409,14 @@ static int __init dra7xx_add_pcie_ep(struct dra7xx_pcie *dra7xx,
- 	ep->ops = &pcie_ep_ops;
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index e3d048e65339..79858c6ad31a 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -350,7 +350,7 @@ static void stmpe_dbg_show(struct seq_file *s, struct gpio_chip *gc)
  
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics");
--	pci->dbi_base = devm_ioremap(dev, res->start, resource_size(res));
--	if (!pci->dbi_base)
--		return -ENOMEM;
-+	pci->dbi_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(pci->dbi_base))
-+		return PTR_ERR(pci->dbi_base);
+ 	for (i = 0; i < gc->ngpio; i++, gpio++) {
+ 		stmpe_dbg_show_one(s, gc, i, gpio);
+-		seq_printf(s, "\n");
++		seq_putc(s, '\n');
+ 	}
+ }
  
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics2");
--	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
--	if (!pci->dbi_base2)
--		return -ENOMEM;
-+	pci->dbi_base2 = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(pci->dbi_base2))
-+		return PTR_ERR(pci->dbi_base2);
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
- 	if (!res)
+-- 
+2.15.1
+
