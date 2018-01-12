@@ -1,44 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 09:54:10 +0000
-Subject: [PATCH 1/2] Input: nspire-keypad: Delete an error message for a failed memory allocation in nspire_k
-Message-Id: <17d03396-2abe-4e09-1a86-14773b51073b@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Jan 2018 09:14:50 +0000
+Subject: [PATCH][next] ath10k: fix spelling mistake: "addrress" -> "address"
+Message-Id: <20180112091450.8285-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bb959d5e-5600-df03-303e-1f96d2890717@users.sourceforge.net>
-In-Reply-To: <bb959d5e-5600-df03-303e-1f96d2890717@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Daniel Tang <dt.tangr@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 10:33:37 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Trivial fix to spelling mistake in warning message text.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/input/keyboard/nspire-keypad.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/wireless/ath/ath10k/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/nspire-keypad.c b/drivers/input/keyboard/nspire-keypad.c
-index c7f26fa3034c..f13b50213f94 100644
---- a/drivers/input/keyboard/nspire-keypad.c
-+++ b/drivers/input/keyboard/nspire-keypad.c
-@@ -175,10 +175,8 @@ static int nspire_keypad_probe(struct platform_device *pdev)
+diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
+index 8abaccc25227..f6a23f2d0335 100644
+--- a/drivers/net/wireless/ath/ath10k/pci.c
++++ b/drivers/net/wireless/ath/ath10k/pci.c
+@@ -1484,7 +1484,7 @@ static int ath10k_pci_dump_memory_section(struct ath10k *ar,
+ 	cur_section = &mem_region->section_table.sections[0];
  
- 	keypad = devm_kzalloc(&pdev->dev, sizeof(struct nspire_keypad),
- 			      GFP_KERNEL);
--	if (!keypad) {
--		dev_err(&pdev->dev, "failed to allocate keypad memory\n");
-+	if (!keypad)
- 		return -ENOMEM;
--	}
- 
- 	keypad->row_shift = get_count_order(KEYPAD_BITMASK_COLS);
- 
+ 	if (mem_region->start > cur_section->start) {
+-		ath10k_warn(ar, "incorrect memdump region 0x%x with section start addrress 0x%x.\n",
++		ath10k_warn(ar, "incorrect memdump region 0x%x with section start address 0x%x.\n",
+ 			    mem_region->start, cur_section->start);
+ 		return 0;
+ 	}
 -- 
-2.16.1
+2.15.1
 
