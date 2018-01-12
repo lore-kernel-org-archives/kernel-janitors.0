@@ -1,28 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 31 Jan 2018 02:32:38 +0000
-Subject: Re: [PATCH] mptfusion: Add bounds check in mptctl_hp_targetinfo()
-Message-Id: <yq1fu6mg3ll.fsf@oracle.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 Jan 2018 21:41:27 +0000
+Subject: [PATCH 0/4] usb: gadget: fotg210-udc: Fixes and cleanup
+Message-Id: <cover.1515791144.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180125142727.GA23945@mwanda>
-In-Reply-To: <20180125142727.GA23945@mwanda> (Dan Carpenter's message of "Thu,
-        25 Jan 2018 17:27:27 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, bhumirks@gmail.com, leoyang.li@nxp.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+This serie aims to fix 2 issues. (path 2 & 4)
 
-Dan,
+The 2nd patch fixes a memory leak. It uses devm_ function a simplify the
+handling of the memory.
 
-> My static checker complains about an out of bounds read:
->
->     drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
->     error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
->
-> It's true that we probably should have a bounds check here.
+The 4th patch fixes a potential invalid pointer dereference.
 
-Applied to 4.16/scsi-fixes, thanks!
+The 2 other ones, are just clean-ups to remove useless code and add other
+uses of devm_ function to simplify code.
+
+I've left the request_irq/free_irq because I'm unsure of potential side
+effects if some other resources are freed while an IRQ can still be
+triggered. So I've preferred to leave it as-is.
+
+Christophe JAILLET (4):
+  usb: gadget: fotg210-udc: Remove a useless
+  usb: gadget: fotg210-udc: Fix a memory leak
+  usb: gadget: fotg210-udc: Simplify code
+  usb: gadget: fotg210-udc: Fix a potential invalid pointer dereference
+
+ drivers/usb/gadget/udc/fotg210-udc.c | 41 ++++++++++++------------------------
+ 1 file changed, 14 insertions(+), 27 deletions(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.14.1
+
