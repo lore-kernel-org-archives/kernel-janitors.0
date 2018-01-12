@@ -1,28 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 Jan 2018 13:07:07 +0000
-Subject: [PATCH 0/3] misc-IBM ASM SP: Adjustments for ibmasm_init_one()
-Message-Id: <842e4179-dbac-cd43-e320-c5009d896a28@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 15:48:20 +0000
+Subject: [PATCH] score-setup: Combine two seq_printf() calls into one call in show_cpuinfo()
+Message-Id: <ddcfff3a-9502-6ce0-b08a-365eb55ce958@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Anton Vasilyev <vasilyev@ispras.ru>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>
+To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 Jan 2018 14:01:24 +0100
+Date: Fri, 12 Jan 2018 16:36:35 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
+Some data were printed into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
-  Adjust two function calls together with a variable assignment
+This issue was detected by using the Coccinelle software.
 
- drivers/misc/ibmasm/module.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/score/kernel/setup.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/arch/score/kernel/setup.c b/arch/score/kernel/setup.c
+index f3a0649ab521..627416bbd0b1 100644
+--- a/arch/score/kernel/setup.c
++++ b/arch/score/kernel/setup.c
+@@ -124,9 +124,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ {
+ 	unsigned long n = (unsigned long) v - 1;
+ 
+-	seq_printf(m, "processor\t\t: %ld\n", n);
+-	seq_printf(m, "\n");
+-
++	seq_printf(m, "processor\t\t: %ld\n\n", n);
+ 	return 0;
+ }
+ 
 -- 
 2.15.1
 
