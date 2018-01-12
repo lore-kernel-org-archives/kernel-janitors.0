@@ -1,43 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 Jan 2018 15:08:59 +0000
-Subject: [PATCH] net: plip: Delete an error message for a failed memory allocation in plip_receive_packet()
-Message-Id: <0beaf692-5639-f52a-d592-f8a157fe1e19@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 Jan 2018 21:44:33 +0000
+Subject: [PATCH 4/4] usb: gadget: fotg210-udc: Fix a potential invalid pointer dereference
+Message-Id: <401ba0ff47de1c12c0798ed38fc9b0124f5de269.1515791144.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, bhumirks@gmail.com, leoyang.li@nxp.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 3 Jan 2018 16:00:23 +0100
+We should not call 'fotg210_ep_free_request()' with NULL as a 2nd parameter.
+Depending of the layout of 'struct fotg210_request', this could lead to an
+un-expected behavior.
 
-Omit an extra message for a memory allocation failure in this function.
+So, if 'fotg210_ep_alloc_request()' fails, we should return directly.
+This also gives the opportunity to further simplify code.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+(In fact, this change should be a no-op, because 'req' is the first field of
+'struct fotg210_request'. So passing NULL would result in 'free(NULL)' in
+'fotg210_ep_free_request()'. Anyway avoiding the goto is cleaner.)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/plip/plip.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/udc/fotg210-udc.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/plip/plip.c b/drivers/net/plip/plip.c
-index feb92ecd1880..22f10d395d9c 100644
---- a/drivers/net/plip/plip.c
-+++ b/drivers/net/plip/plip.c
-@@ -632,10 +632,9 @@ plip_receive_packet(struct net_device *dev, struct net_local *nl,
- 		}
- 		/* Malloc up new buffer. */
- 		rcv->skb = dev_alloc_skb(rcv->length.h + 2);
--		if (rcv->skb = NULL) {
--			printk(KERN_ERR "%s: Memory squeeze.\n", dev->name);
-+		if (!rcv->skb)
- 			return ERROR;
--		}
-+
- 		skb_reserve(rcv->skb, 2);	/* Align IP on 16 byte boundaries */
- 		skb_put(rcv->skb,rcv->length.h);
- 		rcv->skb->dev = dev;
+diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
+index 99a18b14c8c2..03adfcb58548 100644
+--- a/drivers/usb/gadget/udc/fotg210-udc.c
++++ b/drivers/usb/gadget/udc/fotg210-udc.c
+@@ -1075,8 +1075,7 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res, *ires;
+ 	struct fotg210_udc *fotg210 = NULL;
+-	int ret = 0;
+-	int i;
++	int ret, i;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+@@ -1090,8 +1089,6 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	ret = -ENOMEM;
+-
+ 	/* initialize udc */
+ 	fotg210 = devm_kzalloc(&pdev->dev, sizeof(struct fotg210_udc),
+ 			       GFP_KERNEL);
+@@ -1155,8 +1152,8 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 
+ 	fotg210->ep0_req = fotg210_ep_alloc_request(&fotg210->ep[0]->ep,
+ 				GFP_KERNEL);
+-	if (fotg210->ep0_req = NULL)
+-		goto err_req;
++	if (!fotg210->ep0_req)
++		return -ENOMEM;
+ 
+ 	fotg210_init(fotg210);
+ 
 -- 
-2.15.1
+2.14.1
 
