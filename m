@@ -1,43 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 21:00:17 +0000
-Subject: [PATCH 2/2] Input: tps6507x-ts: Improve a size determination in tps6507x_ts_probe()
-Message-Id: <61c1f15b-64aa-8bad-6f56-9607590421c4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Jan 2018 16:52:58 +0000
+Subject: [PATCH][btrfs-next] btrfs: remove redundant check on ret and goto
+Message-Id: <20180112165258.27431-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1ee278a0-a855-cfb3-fd04-24034ec42a65@users.sourceforge.net>
-In-Reply-To: <1ee278a0-a855-cfb3-fd04-24034ec42a65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Yegor Yefremov <yegorslists@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, Liu Bo <bo.li.liu@oracle.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 21:47:16 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The check for a non-zero ret is redundant as the goto will jump to
+the very next statement anyway.  Remove this extraneous code.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1463784 ("Identical code for different
+branches")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/input/touchscreen/tps6507x-ts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/tests/btrfs-tests.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/tps6507x-ts.c b/drivers/input/touchscreen/tps6507x-ts.c
-index 5b2756ec1766..83b24e202d8e 100644
---- a/drivers/input/touchscreen/tps6507x-ts.c
-+++ b/drivers/input/touchscreen/tps6507x-ts.c
-@@ -226,7 +226,7 @@ static int tps6507x_ts_probe(struct platform_device *pdev)
- 	 */
- 	init_data = tps_board->tps6507x_ts_init_data;
- 
--	tsc = devm_kzalloc(&pdev->dev, sizeof(struct tps6507x_ts), GFP_KERNEL);
-+	tsc = devm_kzalloc(&pdev->dev, sizeof(*tsc), GFP_KERNEL);
- 	if (!tsc)
- 		return -ENOMEM;
- 
+diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
+index 9786d8cd0aa6..e74278170806 100644
+--- a/fs/btrfs/tests/btrfs-tests.c
++++ b/fs/btrfs/tests/btrfs-tests.c
+@@ -278,8 +278,7 @@ int btrfs_run_sanity_tests(void)
+ 		}
+ 	}
+ 	ret = btrfs_test_extent_map();
+-	if (ret)
+-		goto out;
++
+ out:
+ 	btrfs_destroy_test_fs();
+ 	return ret;
 -- 
 2.15.1
 
