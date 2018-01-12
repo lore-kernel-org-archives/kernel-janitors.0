@@ -1,49 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 02 Jan 2018 16:38:48 +0000
-Subject: [PATCH][ocfs2-next] ocfs2: don't use a bool for error return from call to ocfs2_get_clusters
-Message-Id: <20180102163848.15408-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 Jan 2018 21:44:30 +0000
+Subject: [PATCH 1/4] usb: gadget: fotg210-udc: Remove a useless
+Message-Id: <0c3925c9ee4e56cd819347ab9ec515011b54d0ae.1515791144.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, bhumirks@gmail.com, leoyang.li@nxp.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+There is no need to use an intermediate array for these memory allocations,
+so, axe it.
 
-Currently a bool is being used to get and check for a -ve error
-return from the call to ocfs2_get_clusters but the check for ret < 0 is
-never true for a bool.  Fix this by using an int type for an error return
-instead.
+While at it, turn a '= NULL' into a shorter '!' when testing memory
+allocation failure.
 
-Detected by CoverityScan, CID#1463416 ("Operands don't affect result")
-
-Fixes: ea6b711ecfb6 ("ocfs2-fall-back-to-buffer-io-when-append-dio-is-disabled-with-file-hole-existing-fix")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/ocfs2/aops.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/udc/fotg210-udc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 87562112cb5e..a3be523e001c 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -2432,10 +2432,12 @@ static bool ocfs2_range_has_holes(struct inode *inode, loff_t pos, size_t count)
- 	clusters = ocfs2_clusters_for_bytes(sb, pos + count) - cpos;
+diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
+index 53a48f561458..2fea32a153b7 100644
+--- a/drivers/usb/gadget/udc/fotg210-udc.c
++++ b/drivers/usb/gadget/udc/fotg210-udc.c
+@@ -1078,7 +1078,6 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res, *ires;
+ 	struct fotg210_udc *fotg210 = NULL;
+-	struct fotg210_ep *_ep[FOTG210_MAX_NUM_EP];
+ 	int ret = 0;
+ 	int i;
  
- 	while (clusters) {
--		ret = ocfs2_get_clusters(inode, cpos, &phys_cpos, &extent_len,
-+		int err;
-+
-+		err = ocfs2_get_clusters(inode, cpos, &phys_cpos, &extent_len,
- 					 &extent_flags);
--		if (ret < 0) {
--			mlog_errno(ret);
-+		if (err < 0) {
-+			mlog_errno(err);
- 			goto out;
- 		}
+@@ -1102,10 +1101,9 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 		goto err_alloc;
  
+ 	for (i = 0; i < FOTG210_MAX_NUM_EP; i++) {
+-		_ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
+-		if (_ep[i] = NULL)
++		fotg210->ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
++		if (!fotg210->ep[i])
+ 			goto err_alloc;
+-		fotg210->ep[i] = _ep[i];
+ 	}
+ 
+ 	fotg210->reg = ioremap(res->start, resource_size(res));
 -- 
 2.14.1
 
