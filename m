@@ -1,42 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 Jan 2018 21:15:47 +0000
-Subject: [PATCH] mtd/nand/omap2: Delete an error message for a failed memory allocation in omap_nand_probe()
-Message-Id: <4b92ade2-5fcd-3213-bf1b-110a1e03472c@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 Jan 2018 21:44:31 +0000
+Subject: [PATCH 2/4] usb: gadget: fotg210-udc: Fix a memory leak
+Message-Id: <74fd44ce7000aa0da44c1004ff08c75060a48b70.1515791144.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, bhumirks@gmail.com, leoyang.li@nxp.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 Jan 2018 22:10:39 +0100
+The memory referenced by the 'fotg210->ep[]' array, is never freed.
+So there is a memory leak in the error handling path of the probe function
+and when the driver is unloaded.
+Use 'devm_kzalloc()' to fix these leaks.
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mtd/nand/omap2.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/usb/gadget/udc/fotg210-udc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/omap2.c b/drivers/mtd/nand/omap2.c
-index dad438c4906a..5c96c291426b 100644
---- a/drivers/mtd/nand/omap2.c
-+++ b/drivers/mtd/nand/omap2.c
-@@ -1947,10 +1947,8 @@ static int omap_nand_probe(struct platform_device *pdev)
- 	if (!mtd->name) {
- 		mtd->name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
- 					   "omap2-nand.%d", info->gpmc_cs);
--		if (!mtd->name) {
--			dev_err(&pdev->dev, "Failed to set MTD name\n");
-+		if (!mtd->name)
- 			return -ENOMEM;
--		}
- 	}
+diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
+index 2fea32a153b7..a4d46b9759be 100644
+--- a/drivers/usb/gadget/udc/fotg210-udc.c
++++ b/drivers/usb/gadget/udc/fotg210-udc.c
+@@ -1101,7 +1101,8 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 		goto err_alloc;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	for (i = 0; i < FOTG210_MAX_NUM_EP; i++) {
+-		fotg210->ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
++		fotg210->ep[i] = devm_kzalloc(&pdev->dev,
++					sizeof(struct fotg210_ep), GFP_KERNEL);
+ 		if (!fotg210->ep[i])
+ 			goto err_alloc;
+ 	}
 -- 
-2.15.1
+2.14.1
 
