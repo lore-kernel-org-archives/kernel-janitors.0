@@ -1,52 +1,60 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Sat, 13 Jan 2018 20:17:09 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jan 2018 21:08:43 +0000
 Subject: Re: pci/setup-bus: Delete an error message for a failed memory allocation in add_to_list()
-Message-Id: <20180113201709.GF205469@bhelgaas-glaptop.roam.corp.google.com>
+Message-Id: <f0a643f8-27f0-596b-a99d-671c6e0b3d97@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <fd9d212e-e8da-1aa7-be7f-7bf6d8f1e15f@users.sourceforge.net>
  <20180113000839.GD205469@bhelgaas-glaptop.roam.corp.google.com>
  <03f4a55c-3bc3-0f15-bfc4-73049861edc4@users.sourceforge.net>
-In-Reply-To: <03f4a55c-3bc3-0f15-bfc4-73049861edc4@users.sourceforge.net>
+ <20180113201709.GF205469@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180113201709.GF205469@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 13, 2018 at 07:15:04AM +0100, SF Markus Elfring wrote:
-> >> Omit an extra message for a memory allocation failure in this function.
-> > 
-> > If this is an "extra" message, I assume there's some other message?
-> > Can you mention where that is in the changelog?
-> 
-> * Would you like to get a more detailed commit description?
-
-Your commit message says "omit an extra message", which suggests that
-there are currently two messages about the memory allocation failure,
-and that your patch removes one of them.
-
-If that's the case, it would be nice to know where the other message
-is.
-
-If your patch removes the *only* message about the memory allocation
-failure, that might be worth doing, but the changelog should be clear
-about that and say "I don't think the error message is worthwhile
-because the function already returns failure" or something similar.
-
-> * Are you looking for a reminder on the Linux allocation failure report?
-
-I don't know what the "Linux allocation failure report" is.
-
-> > Also, please squash all the drivers/pci patches into one.
-> 
-> To which other change possibilities do you refer here?
-
-You posted two patches that remove error messages about memory
-allocation failures:
-
-  http://lkml.kernel.org/r/dc3922b4-50f6-e7fa-482f-18e6ff5d905f@users.sourceforge.net
-  http://lkml.kernel.org/r/fd9d212e-e8da-1aa7-be7f-7bf6d8f1e15f@users.sourceforge.net
-
-These are doing the same thing and could be combined into one patch.
-
-Bjorn
+PiBZb3VyIGNvbW1pdCBtZXNzYWdlIHNheXMgIm9taXQgYW4gZXh0cmEgbWVzc2FnZSIsIHdoaWNo
+IHN1Z2dlc3RzIHRoYXQKPiB0aGVyZSBhcmUgY3VycmVudGx5IHR3byBtZXNzYWdlcyBhYm91dCB0
+aGUgbWVtb3J5IGFsbG9jYXRpb24gZmFpbHVyZSwKPiBhbmQgdGhhdCB5b3VyIHBhdGNoIHJlbW92
+ZXMgb25lIG9mIHRoZW0uCgpZZXMuIC0gVGhlcmUgaXMgYSBnZW5lcmFsIHRyYW5zZm9ybWF0aW9u
+IHBhdHRlcm4gYXBwbGllZC4KCgo+IElmIHRoYXQncyB0aGUgY2FzZSwgaXQgd291bGQgYmUgbmlj
+ZSB0byBrbm93IHdoZXJlIHRoZSBvdGhlciBtZXNzYWdlIGlzLgoKSGF2ZSB5b3UgZ290IGFueSBz
+cGVjaWFsIGV4cGVyaWVuY2VzIHdpdGggYmFja3RyYWNlcz8KCgoKPiBJZiB5b3VyIHBhdGNoIHJl
+bW92ZXMgdGhlICpvbmx5KiBtZXNzYWdlIGFib3V0IHRoZSBtZW1vcnkgYWxsb2NhdGlvbgo+IGZh
+aWx1cmUsIHRoYXQgbWlnaHQgYmUgd29ydGggZG9pbmcsCgpUaGFua3MgZm9yIGEgYml0IG9mIHBv
+c2l0aXZlIGZlZWRiYWNrLgoKCj4gYnV0IHRoZSBjaGFuZ2Vsb2cgc2hvdWxkIGJlIGNsZWFyIGFi
+b3V0IHRoYXQKCkRvIHlvdSBkaXN0aW5ndWlzaCB0aGUg4oCcbG9n4oCdIGZyb20gYSBjb21taXQg
+ZGVzY3JpcHRpb24/CgoKPiBhbmQgc2F5ICJJIGRvbid0IHRoaW5rIHRoZSBlcnJvciBtZXNzYWdl
+IGlzIHdvcnRod2hpbGUKPiBiZWNhdXNlIHRoZSBmdW5jdGlvbiBhbHJlYWR5IHJldHVybnMgZmFp
+bHVyZSIgb3Igc29tZXRoaW5nIHNpbWlsYXIuCgpEbyB5b3UgZmluZCB0aGUgd29yZGluZyDigJxX
+QVJOSU5HOiBQb3NzaWJsZSB1bm5lY2Vzc2FyeSAnb3V0IG9mIG1lbW9yeScgbWVzc2FnZeKAnQoo
+ZnJvbSB0aGUgc2NyaXB0IOKAnGNoZWNrcGF0Y2gucGzigJ0pIG1vcmUgcmVhc29uYWJsZT8KCgoK
+Pj4gKiBBcmUgeW91IGxvb2tpbmcgZm9yIGEgcmVtaW5kZXIgb24gdGhlIExpbnV4IGFsbG9jYXRp
+b24gZmFpbHVyZSByZXBvcnQ/Cj4gCj4gSSBkb24ndCBrbm93IHdoYXQgdGhlICJMaW51eCBhbGxv
+Y2F0aW9uIGZhaWx1cmUgcmVwb3J0IiBpcy4KClRoaXMgaW5mb3JtYXRpb24gc2VlbXMgdG8gYmUg
+4oCcaGlkZGVu4oCdIGluIHNvdXJjZSBjb2RlLgoKaHR0cHM6Ly9lbGl4aXIuZnJlZS1lbGVjdHJv
+bnMuY29tL2xpbnV4L3Y0LjE1LXJjNy9zb3VyY2UvaW5jbHVkZS9saW51eC9nZnAuaCNMMTkxCmh0
+dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xp
+bnV4LmdpdC90cmVlL2luY2x1ZGUvbGludXgvZ2ZwLmg/aWTJMmE5YTQ2MWRmZjYxNDBjNTM5YzYx
+ZTQ1N2FhOTdkZjI5NTE3ZDYjbjIxMwoKCkFyZSB5b3UgZmFtaWxpYXIgd2l0aCB0aGUgdXNhZ2Ug
+b2YgdGhlIG9wdGlvbiDigJxfX0dGUF9OT1dBUk7igJ0/CgoKCj4+PiBBbHNvLCBwbGVhc2Ugc3F1
+YXNoIGFsbCB0aGUgZHJpdmVycy9wY2kgcGF0Y2hlcyBpbnRvIG9uZS4KPj4KPj4gVG8gd2hpY2gg
+b3RoZXIgY2hhbmdlIHBvc3NpYmlsaXRpZXMgZG8geW91IHJlZmVyIGhlcmU/Cj4gCj4gWW91IHBv
+c3RlZCB0d28gcGF0Y2hlcyB0aGF0IHJlbW92ZSBlcnJvciBtZXNzYWdlcyBhYm91dCBtZW1vcnkK
+PiBhbGxvY2F0aW9uIGZhaWx1cmVzOgoKWWVzLiAtIEFsc28gZm9yIHRoaXMgc29mdHdhcmUgYXJl
+YSDigKYKCgo+ICAgaHR0cDovL2xrbWwua2VybmVsLm9yZy9yL2RjMzkyMmI0LTUwZjYtZTdmYS00
+ODJmLTE4ZTZmZjVkOTA1ZkB1c2Vycy5zb3VyY2Vmb3JnZS5uZXQKCklzIGl0IHNhZmVyIHRvIGhh
+bmRsZSBhZGp1c3RtZW50cyBmb3IgdGhlIGRpcmVjdG9yeSDigJxkcml2ZXJzL3BjaS9ob3RwbHVn
+4oCdIHNlcGFyYXRlbHk/CgoKPiAgIGh0dHA6Ly9sa21sLmtlcm5lbC5vcmcvci9mZDlkMjEyZS1l
+OGRhLTFhYTctYmU3Zi03YmY2ZDhmMWUxNWZAdXNlcnMuc291cmNlZm9yZ2UubmV0Cj4gCj4gVGhl
+c2UgYXJlIGRvaW5nIHRoZSBzYW1lIHRoaW5nIGFuZCBjb3VsZCBiZSBjb21iaW5lZCBpbnRvIG9u
+ZSBwYXRjaC4KClRoZSBmaW5hbCBjb21taXR0ZXIgY291bGQgcGVyZm9ybSBzdWNoIGFuIG9wZXJh
+dGlvbiBpZiBhbiBvdGhlciBwYXRjaCBncmFudWxhcml0eQp3b3VsZCBiZSBwcmVmZXJyZWQgKG9y
+IGlmIHlvdSB3b3VsZCBpbnNpc3Qgb24gcGF0Y2ggc3F1YXNoaW5nKS4KSSBndWVzcyB0aGF0IHlv
+dSBkbyBub3QgbmVlZCB0byB3YWl0IG9uIG1lIHRvIGFwcGx5IGFuIGFkanVzdGVkIHNvZnR3YXJl
+IGNvbWJpbmF0aW9uCmluIHRoaXMgY2FzZS4KClJlZ2FyZHMsCk1hcmt1cwotLQpUbyB1bnN1YnNj
+cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWph
+bml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
+Lm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
+ZG9tby1pbmZvLmh0bWw=
