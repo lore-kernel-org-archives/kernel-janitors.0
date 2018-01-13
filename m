@@ -1,53 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 01 Dec 2017 10:02:58 +0000
-Subject: [PATCH][V2] wlcore, wl1251: fix spelling: "Couldnt" -> "Couldn't" and remove error on -ENOMEM
-Message-Id: <20171201100258.10029-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 13 Jan 2018 07:28:21 +0000
+Subject: [PATCH] EDAC, mv64x60: Remove some code duplication
+Message-Id: <20180113072821.8100-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bp@alien8.de, mchehab@kernel.org
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Reorder the error handling code in order to release the resources in
+reverse order than allocation.
 
-Trivial fix to spelling mistake in error message text.  Also remove the
-error message on an kzalloc failure as this is redundant.
+Introduce a new 'release_group' label in the error handling path and use
+it to void some code duplication.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/wireless/ti/wl1251/init.c | 4 +---
- drivers/net/wireless/ti/wlcore/acx.c  | 2 +-
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/edac/mv64x60_edac.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ti/wl1251/init.c b/drivers/net/wireless/ti/wl1251/init.c
-index 1d799bffaa9f..e7d77acdf18c 100644
---- a/drivers/net/wireless/ti/wl1251/init.c
-+++ b/drivers/net/wireless/ti/wl1251/init.c
-@@ -310,10 +310,8 @@ static int wl1251_hw_init_data_path_config(struct wl1251 *wl)
- 	/* asking for the data path parameters */
- 	wl->data_path = kzalloc(sizeof(struct acx_data_path_params_resp),
- 				GFP_KERNEL);
--	if (!wl->data_path) {
--		wl1251_error("Couldnt allocate data path parameters");
-+	if (!wl->data_path)
- 		return -ENOMEM;
--	}
- 
- 	ret = wl1251_acx_data_path_params(wl, wl->data_path);
- 	if (ret < 0) {
-diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
-index a4859993db3c..3ca9167d6146 100644
---- a/drivers/net/wireless/ti/wlcore/acx.c
-+++ b/drivers/net/wireless/ti/wlcore/acx.c
-@@ -146,7 +146,7 @@ int wl1271_acx_feature_cfg(struct wl1271 *wl, struct wl12xx_vif *wlvif)
- 	ret = wl1271_cmd_configure(wl, ACX_FEATURE_CFG,
- 				   feature, sizeof(*feature));
- 	if (ret < 0) {
--		wl1271_error("Couldnt set HW encryption");
-+		wl1271_error("Couldn't set HW encryption");
- 		goto out;
+diff --git a/drivers/edac/mv64x60_edac.c b/drivers/edac/mv64x60_edac.c
+index 3c68bb525d5d..aa5bc1d8f424 100644
+--- a/drivers/edac/mv64x60_edac.c
++++ b/drivers/edac/mv64x60_edac.c
+@@ -450,8 +450,8 @@ static int mv64x60_cpu_err_probe(struct platform_device *pdev)
+ 					      "cpu", 1, NULL, 0, 0, NULL, 0,
+ 					      edac_dev_idx);
+ 	if (!edac_dev) {
+-		devres_release_group(&pdev->dev, mv64x60_cpu_err_probe);
+-		return -ENOMEM;
++		res = -ENOMEM;
++		goto release_group;
  	}
+ 
+ 	pdata = edac_dev->pvt_info;
+@@ -561,8 +561,9 @@ static int mv64x60_cpu_err_probe(struct platform_device *pdev)
+ err2:
+ 	edac_device_del_device(&pdev->dev);
+ err:
+-	devres_release_group(&pdev->dev, mv64x60_cpu_err_probe);
+ 	edac_device_free_ctl_info(edac_dev);
++release_group:
++	devres_release_group(&pdev->dev, mv64x60_cpu_err_probe);
+ 	return res;
+ }
  
 -- 
 2.14.1
