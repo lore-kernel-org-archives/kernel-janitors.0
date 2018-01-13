@@ -1,38 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 21:06:01 +0000
-Subject: [PATCH] Input: sh_keysc: Delete an error message for a failed memory allocation in sh_keysc_probe()
-Message-Id: <28d7c2df-81ed-95b3-ba9d-bf6c8aa00197@users.sourceforge.net>
+Date: Sat, 13 Jan 2018 08:55:08 +0000
+Subject: [PATCH v2] md-multipath: Use seq_putc() in multipath_status()
+Message-Id: <0b59904d-1be7-7a76-9c32-3f7f9696ff2d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
+ <6e70a1a7-fd86-914e-84ab-bd5c7facb235@users.sourceforge.net>
+In-Reply-To: <6e70a1a7-fd86-914e-84ab-bd5c7facb235@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 22:02:46 +0100
+Date: Sat, 13 Jan 2018 09:49:03 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+A single character (closing square bracket) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/keyboard/sh_keysc.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/md/md-multipath.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/sh_keysc.c b/drivers/input/keyboard/sh_keysc.c
-index 7abf03b4cc9c..e214d47724f8 100644
---- a/drivers/input/keyboard/sh_keysc.c
-+++ b/drivers/input/keyboard/sh_keysc.c
-@@ -191,7 +191,6 @@ static int sh_keysc_probe(struct platform_device *pdev)
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (priv = NULL) {
--		dev_err(&pdev->dev, "failed to allocate driver data\n");
- 		error = -ENOMEM;
- 		goto err0;
+diff --git a/drivers/md/md-multipath.c b/drivers/md/md-multipath.c
+index e40065bdbfc8..0a7e99d62c69 100644
+--- a/drivers/md/md-multipath.c
++++ b/drivers/md/md-multipath.c
+@@ -157,7 +157,7 @@ static void multipath_status(struct seq_file *seq, struct mddev *mddev)
+ 		seq_printf (seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
  	}
+ 	rcu_read_unlock();
+-	seq_printf (seq, "]");
++	seq_putc(seq, ']');
+ }
+ 
+ static int multipath_congested(struct mddev *mddev, int bits)
 -- 
-2.16.1
+2.15.1
 
