@@ -1,42 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 20:41:43 +0000
-Subject: [PATCH] Input: tegra-kbc: Delete an error message for a failed memory allocation in tegra_kbc_probe(
-Message-Id: <4b9b77a1-e5af-21c9-f219-be72430fc76f@users.sourceforge.net>
+Date: Sat, 13 Jan 2018 19:40:11 +0000
+Subject: [PATCH] sunrpc: Use seq_putc() in unix_gid_show()
+Message-Id: <5b9ca3b8-b801-a658-ae76-2b6bc43826ea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Rakesh Iyer <riyer@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+To: linux-nfs@vger.kernel.org, netdev@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, Jeff Layton <jlayton@kernel.org>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@primarydata.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 21:36:46 +0100
+Date: Sat, 13 Jan 2018 20:33:05 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/keyboard/tegra-kbc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/sunrpc/svcauth_unix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index 875205f445b5..a4d6eea7aebe 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -622,10 +622,8 @@ static int tegra_kbc_probe(struct platform_device *pdev)
- 	match = of_match_device(tegra_kbc_of_match, &pdev->dev);
+diff --git a/net/sunrpc/svcauth_unix.c b/net/sunrpc/svcauth_unix.c
+index af7f28fb8102..df1327c0dd1c 100644
+--- a/net/sunrpc/svcauth_unix.c
++++ b/net/sunrpc/svcauth_unix.c
+@@ -566,7 +566,7 @@ static int unix_gid_show(struct seq_file *m,
+ 	seq_printf(m, "%u %d:", from_kuid_munged(user_ns, ug->uid), glen);
+ 	for (i = 0; i < glen; i++)
+ 		seq_printf(m, " %d", from_kgid_munged(user_ns, ug->gi->gid[i]));
+-	seq_printf(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
  
- 	kbc = devm_kzalloc(&pdev->dev, sizeof(*kbc), GFP_KERNEL);
--	if (!kbc) {
--		dev_err(&pdev->dev, "failed to alloc memory for kbc\n");
-+	if (!kbc)
- 		return -ENOMEM;
--	}
- 
- 	kbc->dev = &pdev->dev;
- 	kbc->hw_support = match->data;
 -- 
-2.16.1
+2.15.1
 
