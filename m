@@ -1,52 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jan 2018 13:49:07 +0000
-Subject: [PATCH 1/2] Input: omap4-keypad: Delete two error messages for a failed memory allocation in omap4_k
-Message-Id: <e547d1f3-e4d8-b69b-c9b2-0298feb2bef7@users.sourceforge.net>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Date: Sat, 13 Jan 2018 00:08:39 +0000
+Subject: Re: [PATCH] pci/setup-bus: Delete an error message for a failed memory allocation in add_to_list()
+Message-Id: <20180113000839.GD205469@bhelgaas-glaptop.roam.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3df8e062-2a39-05c9-bf49-c85fd636abff@users.sourceforge.net>
-In-Reply-To: <3df8e062-2a39-05c9-bf49-c85fd636abff@users.sourceforge.net>
+References: <fd9d212e-e8da-1aa7-be7f-7bf6d8f1e15f@users.sourceforge.net>
+In-Reply-To: <fd9d212e-e8da-1aa7-be7f-7bf6d8f1e15f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jan 2018 14:24:35 +0100
+On Fri, Dec 29, 2017 at 12:47:11PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 29 Dec 2017 12:15:16 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
 
-Omit extra messages for a memory allocation failure in this function.
+If this is an "extra" message, I assume there's some other message?
+Can you mention where that is in the changelog?
 
-This issue was detected by using the Coccinelle software.
+Also, please squash all the drivers/pci patches into one.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/keyboard/omap4-keypad.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-index 940d38b08e6b..6fe554e4026e 100644
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -257,10 +257,8 @@ static int omap4_keypad_probe(struct platform_device *pdev)
- 	}
- 
- 	keypad_data = kzalloc(sizeof(struct omap4_keypad), GFP_KERNEL);
--	if (!keypad_data) {
--		dev_err(&pdev->dev, "keypad_data memory allocation failed\n");
-+	if (!keypad_data)
- 		return -ENOMEM;
--	}
- 
- 	keypad_data->irq = irq;
- 
-@@ -340,7 +338,6 @@ static int omap4_keypad_probe(struct platform_device *pdev)
- 	keypad_data->keymap = kzalloc(max_keys * sizeof(keypad_data->keymap[0]),
- 				      GFP_KERNEL);
- 	if (!keypad_data->keymap) {
--		dev_err(&pdev->dev, "Not enough memory for keymap\n");
- 		error = -ENOMEM;
- 		goto err_free_input;
- 	}
--- 
-2.16.1
-
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/pci/setup-bus.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index b1ad466199ad..d131d29c4fdb 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -67,10 +67,8 @@ static int add_to_list(struct list_head *head,
+>  	struct pci_dev_resource *tmp;
+>  
+>  	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+> -	if (!tmp) {
+> -		pr_warn("add_to_list: kmalloc() failed!\n");
+> +	if (!tmp)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	tmp->res = res;
+>  	tmp->dev = dev;
+> -- 
+> 2.15.1
+> 
