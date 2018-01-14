@@ -1,62 +1,42 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Date: Wed, 17 Jan 2018 16:47:55 +0000
-Subject: Re: [PATCH -next] drm/etnaviv: make local symbols static
-Message-Id: <1516207675.2735.23.camel@pengutronix.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jan 2018 21:30:04 +0000
+Subject: [PATCH] mfd/jz4740-adc: Delete an error message for a failed memory allocation in jz4740_adc_probe()
+Message-Id: <448b31bd-4466-b373-988f-f6452e32f390@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1515670499-132320-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1515670499-132320-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Russell King <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Am Donnerstag, den 11.01.2018, 11:34 +0000 schrieb Wei Yongjun:
-> Fixes the following sparse warnings:
-> 
-> drivers/gpu/drm/etnaviv/etnaviv_iommu.c:161:39: warning:
->  symbol 'etnaviv_iommuv1_ops' was not declared. Should it be static?
-> drivers/gpu/drm/etnaviv/etnaviv_iommu_v2.c:239:39: warning:
->  symbol 'etnaviv_iommuv2_ops' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jan 2018 22:26:21 +0100
 
-Thanks, applied to etnaviv/next.
+Omit an extra message for a memory allocation failure in this function.
 
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_iommu.c | 2 +-
->  drivers/gpu/drm/etnaviv/etnaviv_iommu_v2.c | 2 +-
->  2 file changed, 2 insertion(+), 2 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-> b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-> index 7a8c947..4b9b11c 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-> @@ -158,7 +158,7 @@ void etnaviv_iommuv1_restore(struct etnaviv_gpu
-> *gpu)
->  	gpu_write(gpu, VIVS_MC_MMU_RA_PAGE_TABLE, pgtable);
->  }
->  
-> -const struct etnaviv_iommu_domain_ops etnaviv_iommuv1_ops = {
-> +static const struct etnaviv_iommu_domain_ops etnaviv_iommuv1_ops = {
->  	.free = etnaviv_iommuv1_domain_free,
->  	.map = etnaviv_iommuv1_map,
->  	.unmap = etnaviv_iommuv1_unmap,
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_iommu_v2.c
-> b/drivers/gpu/drm/etnaviv/etnaviv_iommu_v2.c
-> index 1e956e2..6e7c892 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_iommu_v2.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_iommu_v2.c
-> @@ -236,7 +236,7 @@ void etnaviv_iommuv2_restore(struct etnaviv_gpu
-> *gpu)
->  	gpu_write(gpu, VIVS_MMUv2_CONTROL,
-> VIVS_MMUv2_CONTROL_ENABLE);
->  }
->  
-> -const struct etnaviv_iommu_domain_ops etnaviv_iommuv2_ops = {
-> +static const struct etnaviv_iommu_domain_ops etnaviv_iommuv2_ops = {
->  	.free = etnaviv_iommuv2_domain_free,
->  	.map = etnaviv_iommuv2_map,
->  	.unmap = etnaviv_iommuv2_unmap,
-> 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/jz4740-adc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/jz4740-adc.c b/drivers/mfd/jz4740-adc.c
+index 798e44306382..f4cd14294b61 100644
+--- a/drivers/mfd/jz4740-adc.c
++++ b/drivers/mfd/jz4740-adc.c
+@@ -212,10 +212,8 @@ static int jz4740_adc_probe(struct platform_device *pdev)
+ 	int irq_base;
+ 
+ 	adc = devm_kzalloc(&pdev->dev, sizeof(*adc), GFP_KERNEL);
+-	if (!adc) {
+-		dev_err(&pdev->dev, "Failed to allocate driver structure\n");
++	if (!adc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	adc->irq = platform_get_irq(pdev, 0);
+ 	if (adc->irq < 0) {
+-- 
+2.15.1
+
