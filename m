@@ -1,67 +1,42 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 23 Jan 2018 15:14:19 +0000
-Subject: Re: mfd/viperboard: Delete an error message for a failed memory allocation in vprbrd_probe()
-Message-Id: <20180123151419.prwq62c7gpsnpbx3@dell>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jan 2018 21:18:51 +0000
+Subject: [PATCH] mfd/janz-cmodio: Delete an error message for a failed memory allocation in cmodio_pci_probe(
+Message-Id: <5a66d47c-317f-1abd-7eb1-3a4f74843c78@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9c50fe6a-21cc-e49d-1b10-5d2457ed4e2a@users.sourceforge.net>
- <20180123125851.ysypf7375sjlgsc6@dell>
- <20180123130130.powyttapsx3djawx@dell>
- <f8900a77-eea4-d244-37e1-44d22484f826@users.sourceforge.net>
-In-Reply-To: <f8900a77-eea4-d244-37e1-44d22484f826@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Lars =?iso-8859-1?Q?P=F6schel?= <poeschel@lemonage.de>, Samuel Ortiz <sameo@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 23 Jan 2018, SF Markus Elfring wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jan 2018 22:15:09 +0100
 
-> >> Can you please fix-up all of the patches I've NACKed and collect them
-> >> up with all the other MFD patches you currently have on the list and
-> >> send them as a single set please?
-> >>
-> >> Reviewing them one after another, is taking a lot of time and causing
-> >> my a great deal of pain.
-> 
-> There will be review efforts needed as usual. They might be more noticeable
-> in this case just because I sent some update suggestions also for software
-> modules from the directory “drivers/mfd”.
+Omit an extra message for a memory allocation failure in this function.
 
-"It's not you, it's me!"
+This issue was detected by using the Coccinelle software.
 
-My preferred mailer (Mutt) re-orders replied-to mails by putting them
-to the top of my Inbox.  At which point I have to re-navigate down to
-the next patch to review.  This is fine for most submissions, but you
-have fired ~30, mostly individual patches at me.  Most of which could
-realistically be squashed into ~5 patches (if I was feeling mean).
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/janz-cmodio.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-The choice is yours though, either squash them into patches dealing
-with the same type of fix-up or merely send all of the un-applied
-patches again as a single set, so I can deal with them in a sane
-manner.
-
-> >> I am marking all of your other MFD submissions as 'read and reviewed'
-> >> and will not be processing any more until the are all contained in a
-> >> single, threaded set.
-> >>
-> >> Thank you!
-> > 
-> > Also, could you change the subject lines, so they match that expected
-> > by the subsystem.
-> 
-> Do you request a resent for almost all changes from this patch series here?
-
-I'm not sure I can decipher this.
-
-I'd like you to do the following please:
-
-  - Pull all un-applied MFD patches into a single branch based on Mainline
-  - Add any Reviewed-by/Acked-by's you've received
-  - Fix the subject lines on all of the patches 's///: /'
-  - Resubmit as one single threaded patch-set
-
+diff --git a/drivers/mfd/janz-cmodio.c b/drivers/mfd/janz-cmodio.c
+index ec1f46a6be3a..317a47ad5bb7 100644
+--- a/drivers/mfd/janz-cmodio.c
++++ b/drivers/mfd/janz-cmodio.c
+@@ -183,10 +183,8 @@ static int cmodio_pci_probe(struct pci_dev *dev,
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(&dev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(&dev->dev, "unable to allocate private data\n");
++	if (!priv)
+ 		return -ENOMEM;
+-	}
+ 
+ 	pci_set_drvdata(dev, priv);
+ 	priv->pdev = dev;
 -- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.15.1
+
