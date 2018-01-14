@@ -1,49 +1,99 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Jan 2018 17:18:52 +0000
-Subject: [PATCH] LiquidIO: Delete two error messages for a failed memory allocation in octeon_setup_interrupt
-Message-Id: <94411e3f-3709-3b76-537d-d189cf14cdb4@users.sourceforge.net>
+Date: Sun, 14 Jan 2018 20:44:43 +0000
+Subject: [PATCH 3/3] mfd/abx500-core: Adjust 14 checks for null pointers
+Message-Id: <54712a5d-5874-c29a-40b4-5482ea06958c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d1862d7a-412e-9aaf-8200-bb2070ee402a@users.sourceforge.net>
+In-Reply-To: <d1862d7a-412e-9aaf-8200-bb2070ee402a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Derek Chickles <derek.chickles@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jan 2018 18:14:49 +0100
+Date: Sun, 14 Jan 2018 21:31:50 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit extra messages for a memory allocation failure in this function.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/cavium/liquidio/lio_core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/mfd/abx500-core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
-index 32ae63b6f20e..012829de76b7 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
-@@ -915,10 +915,8 @@ int octeon_setup_interrupt(struct octeon_device *oct, u32 num_ioqs)
- 		/* allocate storage for the names assigned to each irq */
- 		oct->irq_name_storage  			kcalloc(num_interrupts, INTRNAMSIZ, GFP_KERNEL);
--		if (!oct->irq_name_storage) {
--			dev_err(&oct->pci_dev->dev, "Irq name storage alloc failed...\n");
-+		if (!oct->irq_name_storage)
- 			return -ENOMEM;
--		}
+diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
+index 17176e91cbd0..f282d39a5917 100644
+--- a/drivers/mfd/abx500-core.c
++++ b/drivers/mfd/abx500-core.c
+@@ -65,7 +65,7 @@ int abx500_set_register_interruptible(struct device *dev, u8 bank, u8 reg,
+ 	struct abx500_ops *ops;
  
- 		queue_irq_names = oct->irq_name_storage;
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->set_register != NULL))
++	if (ops && ops->set_register)
+ 		return ops->set_register(dev, bank, reg, value);
+ 	else
+ 		return -ENOTSUPP;
+@@ -78,7 +78,7 @@ int abx500_get_register_interruptible(struct device *dev, u8 bank, u8 reg,
+ 	struct abx500_ops *ops;
  
-@@ -930,7 +928,6 @@ int octeon_setup_interrupt(struct octeon_device *oct, u32 num_ioqs)
- 					    sizeof(struct msix_entry),
- 					    GFP_KERNEL);
- 		if (!oct->msix_entries) {
--			dev_err(&oct->pci_dev->dev, "Memory Alloc failed...\n");
- 			kfree(oct->irq_name_storage);
- 			oct->irq_name_storage = NULL;
- 			return -ENOMEM;
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->get_register != NULL))
++	if (ops && ops->get_register)
+ 		return ops->get_register(dev, bank, reg, value);
+ 	else
+ 		return -ENOTSUPP;
+@@ -91,7 +91,7 @@ int abx500_get_register_page_interruptible(struct device *dev, u8 bank,
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->get_register_page != NULL))
++	if (ops && ops->get_register_page)
+ 		return ops->get_register_page(dev, bank,
+ 			first_reg, regvals, numregs);
+ 	else
+@@ -105,7 +105,7 @@ int abx500_mask_and_set_register_interruptible(struct device *dev, u8 bank,
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->mask_and_set_register != NULL))
++	if (ops && ops->mask_and_set_register)
+ 		return ops->mask_and_set_register(dev, bank,
+ 			reg, bitmask, bitvalues);
+ 	else
+@@ -118,7 +118,7 @@ int abx500_get_chip_id(struct device *dev)
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->get_chip_id != NULL))
++	if (ops && ops->get_chip_id)
+ 		return ops->get_chip_id(dev);
+ 	else
+ 		return -ENOTSUPP;
+@@ -130,7 +130,7 @@ int abx500_event_registers_startup_state_get(struct device *dev, u8 *event)
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->event_registers_startup_state_get != NULL))
++	if (ops && ops->event_registers_startup_state_get)
+ 		return ops->event_registers_startup_state_get(dev, event);
+ 	else
+ 		return -ENOTSUPP;
+@@ -142,7 +142,7 @@ int abx500_startup_irq_enabled(struct device *dev, unsigned int irq)
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->startup_irq_enabled != NULL))
++	if (ops && ops->startup_irq_enabled)
+ 		return ops->startup_irq_enabled(dev, irq);
+ 	else
+ 		return -ENOTSUPP;
 -- 
 2.15.1
 
