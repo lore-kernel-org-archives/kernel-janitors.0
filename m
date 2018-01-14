@@ -1,22 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 23 Jan 2018 15:43:48 +0000
-Subject: Re: [PATCH net-next] nfp: fix error return code in nfp_pci_probe()
-Message-Id: <20180123.104348.14959653350851249.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jan 2018 21:06:30 +0000
+Subject: [PATCH] mfd/htc-i2cpld: Delete an error message for a failed memory allocation in htcpld_setup_chips
+Message-Id: <b957af3a-b637-bbbf-9f08-00744fca1b51@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516673427-170584-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516673427-170584-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jakub.kicinski@netronome.com, simon.horman@netronome.com, david.brunecz@netronome.com, oss-drivers@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 23 Jan 2018 02:10:27 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jan 2018 22:02:16 +0100
 
-> Fix to return error code -EINVAL instead of 0 when num_vfs above
-> limit_vfs, as done elsewhere in this function.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Applied, thank you.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/htc-i2cpld.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/htc-i2cpld.c b/drivers/mfd/htc-i2cpld.c
+index 3f9eee5f8fb9..4bf8b7781c77 100644
+--- a/drivers/mfd/htc-i2cpld.c
++++ b/drivers/mfd/htc-i2cpld.c
+@@ -479,10 +479,8 @@ static int htcpld_setup_chips(struct platform_device *pdev)
+ 	htcpld->nchips = pdata->num_chip;
+ 	htcpld->chip = devm_kzalloc(dev, sizeof(struct htcpld_chip) * htcpld->nchips,
+ 				    GFP_KERNEL);
+-	if (!htcpld->chip) {
+-		dev_warn(dev, "Unable to allocate memory for chips\n");
++	if (!htcpld->chip)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* Add the chips as best we can */
+ 	for (i = 0; i < htcpld->nchips; i++) {
+-- 
+2.15.1
+
