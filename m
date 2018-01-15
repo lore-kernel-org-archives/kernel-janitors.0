@@ -1,43 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 Jan 2018 20:30:00 +0000
-Subject: [PATCH 2/3] mtd/nand/ams-delta: Improve a size determination in ams_delta_init()
-Message-Id: <4df8f355-b072-f0a6-1314-354a6bafe772@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 13:14:15 +0000
+Subject: [PATCH 0/3] mfd/omap-usb-tll: Adjustments for usbtll_omap_probe()
+Message-Id: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8f678424-3ce1-3a4c-1b0d-f3ac9a226f00@users.sourceforge.net>
-In-Reply-To: <8f678424-3ce1-3a4c-1b0d-f3ac9a226f00@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 Jan 2018 21:03:20 +0100
+Date: Mon, 15 Jan 2018 14:09:28 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete two error messages for a failed memory allocation
+  Improve a size determination
+  Return an error code only as a constant
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mtd/nand/ams-delta.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/omap-usb-tll.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/mtd/nand/ams-delta.c b/drivers/mtd/nand/ams-delta.c
-index effaecff0f2e..4f5fc104c510 100644
---- a/drivers/mtd/nand/ams-delta.c
-+++ b/drivers/mtd/nand/ams-delta.c
-@@ -183,7 +183,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 		return -ENXIO;
- 
- 	/* Allocate memory for MTD device structure and private data */
--	this = kzalloc(sizeof(struct nand_chip), GFP_KERNEL);
-+	this = kzalloc(sizeof(*this), GFP_KERNEL);
- 	if (!this) {
- 		err = -ENOMEM;
- 		goto out;
 -- 
 2.15.1
 
