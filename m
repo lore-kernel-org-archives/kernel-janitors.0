@@ -1,22 +1,29 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Thu, 18 Jan 2018 21:23:34 +0000
-Subject: Re: [PATCH v2] tools/bpftool: silence a static checker warning
-Message-Id: <32647e96-1fd5-72c6-8d3d-9980acab1c97@iogearbox.net>
+From: James Morse <james.morse@arm.com>
+Date: Mon, 15 Jan 2018 10:38:06 +0000
+Subject: Re: [PATCH -next] firmware: arm_sdei: Fix return value check in sdei_present_dt()
+Message-Id: <5A5C848E.70304@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180118093521.GA19707@mwanda>
-In-Reply-To: <20180118093521.GA19707@mwanda>
+References: <1516012913-196560-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1516012913-196560-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alexei Starovoitov <ast@kernel.org>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 01/18/2018 10:35 AM, Dan Carpenter wrote:
-> There is a static checker warning that "proglen" has an upper bound but
-> no lower bound.  The allocation will just fail harmlessly so it's not a
-> big deal.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi Wei,
 
-Applied to bpf-next, thanks Dan! (I changed the prefix from 'tools/bpftool'
-into 'tools/bpf_jit_disasm' since it's not touching bpftool here.)
+On 15/01/18 10:41, Wei Yongjun wrote:
+> In case of error, the function of_platform_device_create() returns
+> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
+> check should be replaced with NULL test.
+
+Bother, so it does!
+
+Thanks for catching this.
+Acked-by: James Morse <james.morse@arm.com>
+
+
+Thanks,
+
+James
+
