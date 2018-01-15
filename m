@@ -1,7 +1,7 @@
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Sun, 14 Jan 2018 14:04:35 +0000
+Date: Mon, 15 Jan 2018 10:02:42 +0000
 Subject: Re: [PATCH] mtd: onenand: samsung: remove incorrect __iomem annotation
-Message-Id: <20180114150435.2b575f7e@bbrezillon>
+Message-Id: <20180115110242.60354eca@bbrezillon>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180113165616.19992-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20180113165616.19992-1-christophe.jaillet@wanadoo.fr>
@@ -16,14 +16,16 @@ Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
 > 'page_buf' and 'oob_buf' are allocated with 'devm_kzalloc()' and should not
 > have __iommem decoration.
-
-	^ __iomem
-
-No need to send a new version, I'll fix it when applying.
-
 > 
 > Remove these decorations and some useless casting.
 > 
+
+Applied.
+
+Thanks,
+
+Boris
+
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
 >  drivers/mtd/onenand/samsung.c | 12 ++++++------
