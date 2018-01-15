@@ -1,37 +1,66 @@
-From: Pkshih <pkshih@realtek.com>
-Date: Mon, 29 Jan 2018 04:27:33 +0000
-Subject: Re: [PATCH] staging: rtlwifi: remove redundant initialization of 'cfg_cmd'
-Message-Id: <1517200053.21191.1.camel@realtek.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 13:17:26 +0000
+Subject: [PATCH 3/3] mfd/omap-usb-tll: Return an error code only as a constant in usbtll_omap_probe()
+Message-Id: <367e77d8-3a65-2c12-5e79-75a626b65f41@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180126135255.18539-1-colin.king@canonical.com>
-In-Reply-To: <20180126135255.18539-1-colin.king@canonical.com>
+References: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+In-Reply-To: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "colin.king@canonical.com" <colin.king@canonical.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTAxLTI2IGF0IDEzOjUyICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPsKgDQo+IFRo
-ZSBpbml0aWFsaXphdGlvbiBvZiBjZmdfY21kIGlzIHJlZHVuZGFudCBhcyB0aGUgdmFsdWUgaXMg
-bmV2ZXIgcmVhZA0KPiBhbmQgaXQgaXMgYmVpbmcgcmUtYXNzaWduZWQgdG8gY2ZnX2NtZCA9IHB3
-cmNmZ2NtZFthcnlfaWR4XSBpbnNpZGUgYQ0KPiBsb29wLCBoZW5jZSBpdCBjYW4gYmUgcmVtb3Zl
-ZC4NCj7CoA0KPiBDbGVhbnMgdXAgY2xhbmcgd2FybmluZzoNCj4gZHJpdmVycy9zdGFnaW5nL3J0
-bHdpZmkvY29yZS5jOjE4MTk6MjI6IHdhcm5pbmc6IFZhbHVlIHN0b3JlZCB0bw0KPiAnY2ZnX2Nt
-ZCcgZHVyaW5nIGl0cyBpbml0aWFsaXphdGlvbiBpcyBuZXZlciByZWFkDQo+wqANCj4gU2lnbmVk
-LW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KSXQg
-bG9va3MgZ29vZCB0byBtZS4NCg0KQWNrZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0
-ZWsuY29tPg0KDQo+IC0tLQ0KPsKgwqBkcml2ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMgfCAy
-ICstDQo+wqDCoDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0K
-PsKgDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMgYi9kcml2
-ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMNCj4gaW5kZXggYTQzZDM3NDUyZThiLi4zZWMwMzk0
-OTgyMDggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9ydGx3aWZpL2NvcmUuYw0KPiAr
-KysgYi9kcml2ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMNCj4gQEAgLTE4MTYsNyArMTgxNiw3
-IEBAIGJvb2wgcnRsX2hhbF9wd3JzZXFjbWRwYXJzaW5nKHN0cnVjdCBydGxfcHJpdiAqcnRscHJp
-diwNCj4gdTggY3V0X3ZlcnNpb24sDQo+wqDCoAkJCcKgwqDCoMKgwqDCoHU4IGZhdmVyc2lvbiwg
-dTggaW50ZXJmYWNlX3R5cGUsDQo+wqDCoAkJCcKgwqDCoMKgwqDCoHN0cnVjdCB3bGFuX3B3cl9j
-ZmcgcHdyY2ZnY21kW10pDQo+wqDCoHsNCj4gLQlzdHJ1Y3Qgd2xhbl9wd3JfY2ZnIGNmZ19jbWQg
-PSB7MH07DQo+ICsJc3RydWN0IHdsYW5fcHdyX2NmZyBjZmdfY21kOw0KPsKgwqAJYm9vbCBwb2xs
-aW5nX2JpdCA9IGZhbHNlOw0KPsKgwqAJdTMyIGFyeV9pZHggPSAwOw0KPsKgwqAJdTggdmFsdWUg
-PSAwOw0KPiAtLcKgDQo+IDIuMTUuMQ0KPsKgDQo+wqANCj4gLS0tLS0tUGxlYXNlIGNvbnNpZGVy
-IHRoZSBlbnZpcm9ubWVudCBiZWZvcmUgcHJpbnRpbmcgdGhpcyBlLW1haWwu
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 14:00:45 +0100
+
+* Return an error code without storing it in an intermediate variable.
+
+* Delete the label "err_clk_alloc" and local variable "ret"
+  which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/omap-usb-tll.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index c8b4ad40910a..6c0be886fd87 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -216,7 +216,6 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 	struct device				*dev =  &pdev->dev;
+ 	struct resource				*res;
+ 	struct usbtll_omap			*tll;
+-	int					ret = 0;
+ 	int					i, ver;
+ 
+ 	dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+@@ -254,8 +253,9 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 	tll->ch_clk = devm_kzalloc(dev, sizeof(struct clk *) * tll->nch,
+ 						GFP_KERNEL);
+ 	if (!tll->ch_clk) {
+-		ret = -ENOMEM;
+-		goto err_clk_alloc;
++		pm_runtime_put_sync(dev);
++		pm_runtime_disable(dev);
++		return -ENOMEM;
+ 	}
+ 
+ 	for (i = 0; i < tll->nch; i++) {
+@@ -278,12 +278,6 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 	spin_unlock(&tll_lock);
+ 
+ 	return 0;
+-
+-err_clk_alloc:
+-	pm_runtime_put_sync(dev);
+-	pm_runtime_disable(dev);
+-
+-	return ret;
+ }
+ 
+ /**
+-- 
+2.15.1
+
