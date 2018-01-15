@@ -1,26 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 19 Jan 2018 19:52:38 +0000
-Subject: Re: [PATCH net-next] devlink: Make some functions static
-Message-Id: <20180119.145238.1922937467055191863.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 14:02:05 +0000
+Subject: [PATCH 2/2] mfd/rc5t583: Improve a size determination in rc5t583_i2c_probe()
+Message-Id: <144ca5ca-1cfd-28a7-7bf3-8f513d567abc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516159662-109725-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516159662-109725-1-git-send-email-weiyongjun1@huawei.com>
+References: <681cd296-5d05-cdf8-f031-162d7f837b36@users.sourceforge.net>
+In-Reply-To: <681cd296-5d05-cdf8-f031-162d7f837b36@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jiri@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Jan 2018 03:27:42 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 14:50:25 +0100
 
-> Fixes the following sparse warnings:
-> 
-> net/core/devlink.c:2297:25: warning:
->  symbol 'devlink_resource_find' was not declared. Should it be static?
-> net/core/devlink.c:2322:6: warning:
->  symbol 'devlink_resource_validate_children' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/rc5t583.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
+index 411dba636a53..fd46de02b715 100644
+--- a/drivers/mfd/rc5t583.c
++++ b/drivers/mfd/rc5t583.c
+@@ -258,7 +258,7 @@ static int rc5t583_i2c_probe(struct i2c_client *i2c,
+ 		return -EINVAL;
+ 	}
+ 
+-	rc5t583 = devm_kzalloc(&i2c->dev, sizeof(struct rc5t583), GFP_KERNEL);
++	rc5t583 = devm_kzalloc(&i2c->dev, sizeof(*rc5t583), GFP_KERNEL);
+ 	if (!rc5t583)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.1
+
