@@ -1,31 +1,54 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Thu, 25 Jan 2018 09:49:32 +0000
-Subject: Re: [PATCH 2/2] Input: wm831x-on: Improve a size determination in wm831x_on_probe()
-Message-Id: <20180125094932.5ue4aueosfehkzsn@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 16:21:47 +0000
+Subject: Re: [1/3] mfd/omap-usb-tll: Delete two error messages for a failed memory allocation in usbtll_omap_
+Message-Id: <11eaf92d-3928-531f-35e8-fb5a60ff03e3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e307cfde-58e2-3f4d-ecd7-5c80ace0bb5b@users.sourceforge.net>
- <43f052c7-c98d-7ca2-08ca-e5428b5ad575@users.sourceforge.net>
-In-Reply-To: <43f052c7-c98d-7ca2-08ca-e5428b5ad575@users.sourceforge.net>
+References: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+ <7719b4e7-1081-6fa4-6f14-f45cf062482d@users.sourceforge.net>
+ <20180115134101.GA6711@lenoch>
+ <1ebb5ac5-aa4d-7c19-94db-210b518d562f@users.sourceforge.net>
+ <20180115160522.GA2672@lenoch>
+In-Reply-To: <20180115160522.GA2672@lenoch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, patches@opensource.cirrus.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ladislav Michl <ladis@linux-mips.org>, linux-omap@vger.kernel.org
+Cc: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 10:22:35PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 24 Jan 2018 21:58:42 +0100
+>>>> @@ -258,7 +256,6 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+>>>>  						GFP_KERNEL);
+>>>>  	if (!tll->ch_clk) {
+>>>>  		ret = -ENOMEM;
+>>>> -		dev_err(dev, "Couldn't allocate memory for channel clocks\n");
+>>>
+>>> I'd either leave this one, just to know which allocation failed or better use
+>>> something like this …
+>>
+>> Are you aware on the structure for a Linux allocation failure report?
 > 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+> Just created one (not OMAP and not this driver, but that does not matter now):
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Thanks for your example.
 
-Thanks,
-Charles
+
+> ---[ end trace 3c79eadf2363e939 ]---
+> max9867: probe of 1-0018 failed with error -12
+> 
+> driver was instructed to alloc insane number of bytes using devm_kzalloc in
+> max9867_i2c_probe.
+> Now, if probe function calls devm_kzalloc two times and one of them fails,
+> you cannot easily say which one without looking at assembly listing.
+
+Will this situation change with any other implementation for such backtraces?
+
+
+> Or did I misunderstand your question?
+
+No. - It seems that we have found a “common wavelength”.
+
+Would it become acceptable to move the mentioned memory allocation into
+an additional function implementation so that you could see a difference
+from the function call stack dump already?
+
+Regards,
+Markus
