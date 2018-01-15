@@ -1,46 +1,44 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Sat, 20 Jan 2018 13:49:35 +0000
-Subject: Re: [PATCH][V2] mtd: nand: marvell: fix spelling mistake: "suceed"-> "succeed"
-Message-Id: <20180120144935.020fa2e9@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 13:16:17 +0000
+Subject: [PATCH 2/3] mfd/omap-usb-tll: Improve a size determination in usbtll_omap_probe()
+Message-Id: <49a9d036-ab90-4342-90a8-db63e027017e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180119075531.14841-1-colin.king@canonical.com>
-In-Reply-To: <20180119075531.14841-1-colin.king@canonical.com>
+References: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+In-Reply-To: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Miquel Raynal <miquel.raynal@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 19 Jan 2018 07:55:31 +0000
-Colin King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 13:43:53 +0100
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistakes in dev_err error message text.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Applied.
+This issue was detected by using the Coccinelle software.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/omap-usb-tll.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Boris
-
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/mtd/nand/marvell_nand.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/marvell_nand.c b/drivers/mtd/nand/marvell_nand.c
-> index b8fec6093b75..4bd53b360277 100644
-> --- a/drivers/mtd/nand/marvell_nand.c
-> +++ b/drivers/mtd/nand/marvell_nand.c
-> @@ -517,7 +517,7 @@ static int marvell_nfc_prepare_cmd(struct nand_chip *chip)
->  	/* Poll ND_RUN and clear NDSR before issuing any command */
->  	ret = marvell_nfc_wait_ndrun(chip);
->  	if (ret) {
-> -		dev_err(nfc->dev, "Last operation did not suceed\n");
-> +		dev_err(nfc->dev, "Last operation did not succeed\n");
->  		return ret;
->  	}
->  
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index 7945efa0152e..c8b4ad40910a 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -220,8 +220,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 	int					i, ver;
+ 
+ 	dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+-
+-	tll = devm_kzalloc(dev, sizeof(struct usbtll_omap), GFP_KERNEL);
++	tll = devm_kzalloc(dev, sizeof(*tll), GFP_KERNEL);
+ 	if (!tll)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.1
 
