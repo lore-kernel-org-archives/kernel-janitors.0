@@ -1,69 +1,137 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 10 Jan 2018 21:53:41 +0000
-Subject: Re: [PATCH][next] IB/mlx5: remove redundant assignment of mdev
-Message-Id: <1515621221.3403.171.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-wtA3h/kQyuZdtfr0FAXN"
+From: Ladislav Michl <ladis@linux-mips.org>
+Date: Mon, 15 Jan 2018 20:25:05 +0000
+Subject: [PATCH v2] mfd: omap-usb-tll: Allocate driver data at once
+Message-Id: <20180115202505.GA2628@lenoch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180109155543.15027-1-colin.king@canonical.com>
-         <20180110074003.GG7368@mtr-leonro.local>
-In-Reply-To: <20180110074003.GG7368-U/DQcQFIOTAAJjI8aNfphQ@public.gmane.org>
-To: Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-
-
---=-wtA3h/kQyuZdtfr0FAXN
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2018-01-10 at 09:40 +0200, Leon Romanovsky wrote:
-> On Tue, Jan 09, 2018 at 03:55:43PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >=20
-> > The initial assignment to mdev is redundant as mdev is re-assigned
-> > later and the first assigned value is never read. Remove this
-> > redundant assignment.
-> >=20
-> > Cleans up clang warning:
-> > drivers/infiniband/hw/mlx5/main.c:359:24: warning: Value stored
-> > to 'mdev' during its initialization is never read
-> >=20
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/infiniband/hw/mlx5/main.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
->=20
-> Thanks,
-> Acked-by: Leon Romanovsky <leonro@mellanox.com>
-
-Thanks, applied to for-next.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-wtA3h/kQyuZdtfr0FAXN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: linux-omap@vger.kernel.org
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
+Allocating memory to store clk array together with driver
+data simplifies error unwinding and allows deleting memory
+allocation failure message as there is now only single point
+of failure already covered by allocation failure report.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlpWi2UACgkQuCajMw5X
-L92+OQ/+MfK9s+NsUdSb+NVAf/DkFuXmkWPmPFHIjwVqHHTovJweqZgQORm/uBah
-HkcflMAw4fLghmGkEKsMK0JciO2mMBfSLPngsWvgsNckHlRNDL1rzllHrYdeE2bb
-xXZ3KhVKZWLIYRadEOcLVId79YncBng1z1grjtScCcmQ8cBhnxrKZ92P4zODlUpa
-gCFg7xLQZQxP7r8zURvnuqf6X+16H2LXAl7V/FquqzBWSps/1OWN+hrqiQXmJF+R
-nmGjtSkwgnS468iK0d2aycTqfcIj+JeUXGqX9VKJt/iOsmwRkFdDXS6An56GK+8t
-/CaXUmp5JhiU2T+Rvzc3CsNIJ0UFG2YqLH2NCCmw8wu/z+/VHz8/IyG+9A4t1nsd
-zuUU/gcjo9POZeI75xGKzIpSbtdFtiOJ2AW1bZ7i3mtPXiGkeyIbRvxNvtpqIOMp
-058VPLSsnS4tJ+6XSo8iuAEL/e3jtSav7orzMnS5VFE0WNlv7zkz9NpxF2n8RvOF
-YC6b9apqTpf/XiRNwmxwX0FR9Q7uF9yd80u5t2JUXdkbmEaAKDRbkd0TavPxNFxA
-VsJmgQTLEVQILSrFnIFjdtNYJRfJbWbwzoUQeh2ZC4YzM9tFxl9decZ/x0A9uE8z
-ydrOSp9lbT2gr0P1uCGbcBo9tr6o9WWcEuSv40xYyvTcN0TwDRU=
-=g9Hh
------END PGP SIGNATURE-----
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+[Markus Elfring: simplified error unwinding, error message removal]
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Link: https://lkml.org/lkml/2018/1/15/411
+---
+ Changes:
+ - v2: reindent 'rev' debug message
+       credit Markus Elfring
 
---=-wtA3h/kQyuZdtfr0FAXN--
+ drivers/mfd/omap-usb-tll.c | 60 +++++++++++++++++++---------------------------
+ 1 file changed, 25 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index 44a5d66314c6..446713dbee27 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -108,9 +108,9 @@
+ 					 (x) != OMAP_EHCI_PORT_MODE_PHY)
+ 
+ struct usbtll_omap {
+-	int					nch;	/* num. of channels */
+-	struct clk				**ch_clk;
+-	void __iomem				*base;
++	void __iomem	*base;
++	int		nch;		/* num. of channels */
++	struct clk	*ch_clk[0];	/* must be the last member */
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -216,53 +216,49 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 	struct device				*dev =  &pdev->dev;
+ 	struct resource				*res;
+ 	struct usbtll_omap			*tll;
+-	int					ret = 0;
+-	int					i, ver;
++	void __iomem				*base;
++	int					i, nch, ver;
+ 
+ 	dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+ 
+-	tll = devm_kzalloc(dev, sizeof(struct usbtll_omap), GFP_KERNEL);
+-	if (!tll) {
+-		dev_err(dev, "Memory allocation failed\n");
+-		return -ENOMEM;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	tll->base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(tll->base))
+-		return PTR_ERR(tll->base);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
+ 
+-	platform_set_drvdata(pdev, tll);
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
+ 
+-	ver =  usbtll_read(tll->base, OMAP_USBTLL_REVISION);
++	ver = usbtll_read(base, OMAP_USBTLL_REVISION);
+ 	switch (ver) {
+ 	case OMAP_USBTLL_REV1:
+ 	case OMAP_USBTLL_REV4:
+-		tll->nch = OMAP_TLL_CHANNEL_COUNT;
++		nch = OMAP_TLL_CHANNEL_COUNT;
+ 		break;
+ 	case OMAP_USBTLL_REV2:
+ 	case OMAP_USBTLL_REV3:
+-		tll->nch = OMAP_REV2_TLL_CHANNEL_COUNT;
++		nch = OMAP_REV2_TLL_CHANNEL_COUNT;
+ 		break;
+ 	default:
+-		tll->nch = OMAP_TLL_CHANNEL_COUNT;
+-		dev_dbg(dev,
+-		 "USB TLL Rev : 0x%x not recognized, assuming %d channels\n",
+-			ver, tll->nch);
++		nch = OMAP_TLL_CHANNEL_COUNT;
++		dev_dbg(dev, "rev 0x%x not recognized, assuming %d channels\n",
++			ver, nch);
+ 		break;
+ 	}
+ 
+-	tll->ch_clk = devm_kzalloc(dev, sizeof(struct clk *) * tll->nch,
+-						GFP_KERNEL);
+-	if (!tll->ch_clk) {
+-		ret = -ENOMEM;
+-		dev_err(dev, "Couldn't allocate memory for channel clocks\n");
+-		goto err_clk_alloc;
++	tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
++			   GFP_KERNEL);
++	if (!tll) {
++		pm_runtime_put_sync(dev);
++		pm_runtime_disable(dev);
++		return -ENOMEM;
+ 	}
+ 
+-	for (i = 0; i < tll->nch; i++) {
++	tll->base = base;
++	tll->nch = nch;
++	platform_set_drvdata(pdev, tll);
++
++	for (i = 0; i < nch; i++) {
+ 		char clkname[] = "usb_tll_hs_usb_chx_clk";
+ 
+ 		snprintf(clkname, sizeof(clkname),
+@@ -282,12 +278,6 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 	spin_unlock(&tll_lock);
+ 
+ 	return 0;
+-
+-err_clk_alloc:
+-	pm_runtime_put_sync(dev);
+-	pm_runtime_disable(dev);
+-
+-	return ret;
+ }
+ 
+ /**
+-- 
+2.15.1
 
