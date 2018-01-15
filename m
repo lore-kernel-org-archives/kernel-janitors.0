@@ -1,55 +1,59 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Thu, 04 Jan 2018 17:40:39 +0000
-Subject: Re: [PATCH][V2] wcn36xx: fix incorrect assignment to msg_body.min_ch_time
-Message-Id: <20180104174039.GL12655@minitux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 19:04:03 +0000
+Subject: Re: mfd/omap-usb-tll: Allocate driver data at once in usbtll_omap_probe()
+Message-Id: <8144f711-b4fd-730c-4e9f-780c42d5e68f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171229090732.14928-1-colin.king@canonical.com>
-In-Reply-To: <20171229090732.14928-1-colin.king@canonical.com>
+References: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+ <7719b4e7-1081-6fa4-6f14-f45cf062482d@users.sourceforge.net>
+ <20180115134101.GA6711@lenoch>
+ <1ebb5ac5-aa4d-7c19-94db-210b518d562f@users.sourceforge.net>
+ <20180115160522.GA2672@lenoch>
+ <11eaf92d-3928-531f-35e8-fb5a60ff03e3@users.sourceforge.net>
+ <20180115163543.GA10657@lenoch>
+ <ead577ac-a36b-dfc4-9f2c-3d5f34495d78@users.sourceforge.net>
+ <20180115174122.GA20745@lenoch>
+ <cadb0da1-23d0-f629-8dcf-8d2566058812@users.sourceforge.net>
+ <20180115183059.GA30039@lenoch>
+In-Reply-To: <20180115183059.GA30039@lenoch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Eugene Krasnikov <k.eugene.e@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ladislav Michl <ladis@linux-mips.org>, linux-omap@vger.kernel.org
+Cc: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri 29 Dec 01:07 PST 2017, Colin King wrote:
+>> So I hope that your solution approach will be also fine.
+>> Will it supersede my proposal?
+> 
+> Who knows, perhaps it would be the best if you could judge yourself...
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The second assignment to msg_body.min_ch_time is incorrect, it
-> should actually be to msg_body.max_ch_time.
-> 
-> Thanks to Bjorn Andersson for identifying the correct way to fix
-> this as my original fix was incorrect.
-> 
-> Detected by CoverityScan, CID#1463042 ("Unused Value")
-> 
-> Fixes: 2f3bef4b247e ("wcn36xx: Add hardware scan offload support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I am also curious on how other contributors will respond to
+your following update suggestion.
 
-Thanks Colin,
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 8<--------
+> 
+> Subject: [PATCH] mfd/omap-usb-tll: Allocate driver data at once
+
+Would it have been clearer to use this information as the subject
+for this reply already?
+
+Are you fine with that this change approach was recorded in
+a possibly questionable format?
+https://patchwork.kernel.org/patch/10165193/
+
+
+> Allocating memory to store clk array together with driver
+> data simplifies error unwinding and allows deleting memory
+> allocation failure message as there is now only single point
+> where allocation could fail.
+
+* Will it matter to mention the previous software situation a bit
+  in such a commit description?
+
+* Would you like to add a tag “link”?
+
+* Are you going to “supersede” any more source code adjustments
+  around questionable error messages?
 
 Regards,
-Bjorn
-
-> ---
->  drivers/net/wireless/ath/wcn36xx/smd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-> index 2914618a0335..2a4871ca9c72 100644
-> --- a/drivers/net/wireless/ath/wcn36xx/smd.c
-> +++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-> @@ -626,7 +626,7 @@ int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
->  
->  	msg_body.scan_type = WCN36XX_HAL_SCAN_TYPE_ACTIVE;
->  	msg_body.min_ch_time = 30;
-> -	msg_body.min_ch_time = 100;
-> +	msg_body.max_ch_time = 100;
->  	msg_body.scan_hidden = 1;
->  	memcpy(msg_body.mac, vif->addr, ETH_ALEN);
->  	msg_body.p2p_search = vif->p2p;
-> -- 
-> 2.14.1
-> 
+Markus
