@@ -1,49 +1,48 @@
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Date: Mon, 08 Jan 2018 15:37:27 +0000
-Subject: RE: [PATCH] hyperv/netvsc: Delete two error messages for a failed memory allocation in netvsc_init_b
-Message-Id: <CY4PR2101MB0867CEFAF4FB72AF47FA3AA7CA130@CY4PR2101MB0867.namprd21.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 15:14:22 +0000
+Subject: [PATCH 1/3] mfd/sm501: Delete an error message for a failed memory allocation in two functions
+Message-Id: <132f079f-8f99-329f-105b-91542ed7fcca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bb8fac96-9ba6-e54f-2321-72a8fba90085@users.sourceforge.net>
-In-Reply-To: <bb8fac96-9ba6-e54f-2321-72a8fba90085@users.sourceforge.net>
+References: <f292e2f3-2471-4ea0-3a02-349e6c10ff03@users.sourceforge.net>
+In-Reply-To: <f292e2f3-2471-4ea0-3a02-349e6c10ff03@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU0YgTWFya3VzIEVsZnJp
-bmcgW21haWx0bzplbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldF0NCj4gU2VudDogU3VuZGF5
-LCBKYW51YXJ5IDcsIDIwMTggMzoxMCBQTQ0KPiBUbzogZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0
-Lm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgSGFpeWFuZyBaaGFuZw0KPiA8aGFpeWFuZ3pA
-bWljcm9zb2Z0LmNvbT47IEtZIFNyaW5pdmFzYW4gPGt5c0BtaWNyb3NvZnQuY29tPjsgU3RlcGhl
-bg0KPiBIZW1taW5nZXIgPHN0aGVtbWluQG1pY3Jvc29mdC5jb20+DQo+IENjOiBMS01MIDxsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9y
-Zw0KPiBTdWJqZWN0OiBbUEFUQ0hdIGh5cGVydi9uZXR2c2M6IERlbGV0ZSB0d28gZXJyb3IgbWVz
-c2FnZXMgZm9yIGEgZmFpbGVkDQo+IG1lbW9yeSBhbGxvY2F0aW9uIGluIG5ldHZzY19pbml0X2J1
-ZigpDQo+IA0KPiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3Jn
-ZS5uZXQ+DQo+IERhdGU6IFN1biwgNyBKYW4gMjAxOCAyMTowMzoyNiArMDEwMA0KPiANCj4gT21p
-dCBleHRyYSBtZXNzYWdlcyBmb3IgYSBtZW1vcnkgYWxsb2NhdGlvbiBmYWlsdXJlIGluIHRoaXMg
-ZnVuY3Rpb24uDQo+IA0KPiBUaGlzIGlzc3VlIHdhcyBkZXRlY3RlZCBieSB1c2luZyB0aGUgQ29j
-Y2luZWxsZSBzb2Z0d2FyZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1hcmt1cyBFbGZyaW5nIDxl
-bGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9oeXBl
-cnYvbmV0dnNjLmMgfCA1IC0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNSBkZWxldGlvbnMoLSkN
-Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9oeXBlcnYvbmV0dnNjLmMgYi9kcml2ZXJz
-L25ldC9oeXBlcnYvbmV0dnNjLmMgaW5kZXgNCj4gMTdlNTI5YWY3OWRjLi5jMWVjMDJmODAxZjYg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2h5cGVydi9uZXR2c2MuYw0KPiArKysgYi9kcml2
-ZXJzL25ldC9oeXBlcnYvbmV0dnNjLmMNCj4gQEAgLTI3NSw5ICsyNzUsNiBAQCBzdGF0aWMgaW50
-IG5ldHZzY19pbml0X2J1ZihzdHJ1Y3QgaHZfZGV2aWNlICpkZXZpY2UsDQo+IA0KPiAgCW5ldF9k
-ZXZpY2UtPnJlY3ZfYnVmID0gdnphbGxvYyhidWZfc2l6ZSk7DQo+ICAJaWYgKCFuZXRfZGV2aWNl
-LT5yZWN2X2J1Zikgew0KPiAtCQluZXRkZXZfZXJyKG5kZXYsDQo+IC0JCQkgICAidW5hYmxlIHRv
-IGFsbG9jYXRlIHJlY2VpdmUgYnVmZmVyIG9mIHNpemUgJXVcbiIsDQo+IC0JCQkgICBidWZfc2l6
-ZSk7DQo+ICAJCXJldCA9IC1FTk9NRU07DQo+ICAJCWdvdG8gY2xlYW51cDsNCj4gIAl9DQo+IEBA
-IC0zNTcsOCArMzU0LDYgQEAgc3RhdGljIGludCBuZXR2c2NfaW5pdF9idWYoc3RydWN0IGh2X2Rl
-dmljZSAqZGV2aWNlLA0KPiANCj4gIAluZXRfZGV2aWNlLT5zZW5kX2J1ZiA9IHZ6YWxsb2MoYnVm
-X3NpemUpOw0KPiAgCWlmICghbmV0X2RldmljZS0+c2VuZF9idWYpIHsNCj4gLQkJbmV0ZGV2X2Vy
-cihuZGV2LCAidW5hYmxlIHRvIGFsbG9jYXRlIHNlbmQgYnVmZmVyIG9mDQo+IHNpemUgJXVcbiIs
-DQo+IC0JCQkgICBidWZfc2l6ZSk7DQo+ICAJCXJldCA9IC1FTk9NRU07DQo+ICAJCWdvdG8gY2xl
-YW51cDsNCj4gIAl9DQoNClRoZXNlIG1lc3NhZ2VzIGFyZSBub3QgZGlzcGxheWVkIGFueXdoZXJl
-IGVsc2U6DQoidW5hYmxlIHRvIGFsbG9jYXRlIHJlY2VpdmUgYnVmZmVyIG9mIHNpemUgJXVcbiIN
-CiJ1bmFibGUgdG8gYWxsb2NhdGUgc2VuZCBidWZmZXIgb2Ygc2l6ZSAldVxuIiwNCg0KQWZ0ZXIg
-c2V0IHJldCA9IC1FTk9NRU07IGFuZCBjbGVhbnVwLCB3ZSB3b24ndCBrbm93IHdoaWNoIGJ1ZmZl
-ciBhbGxvY2F0aW9uIGZhaWxlZCB3aXRob3V0IHRoZSBlcnJvciBtZXNzYWdlLg0KDQpTbyBwbGVh
-c2UgZG8gbm90IHJlbW92ZSB0aGVzZSBtZXNzYWdlcy4NCg0KVGhhbmtzLA0KLSBIYWl5YW5nDQo
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 15:40:46 +0100
+
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/sm501.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+index ad774161a22d..7298d6b571a1 100644
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -1385,7 +1385,6 @@ static int sm501_plat_probe(struct platform_device *dev)
+ 
+ 	sm = kzalloc(sizeof(struct sm501_devdata), GFP_KERNEL);
+ 	if (sm = NULL) {
+-		dev_err(&dev->dev, "no memory for device data\n");
+ 		ret = -ENOMEM;
+ 		goto err1;
+ 	}
+@@ -1575,7 +1574,6 @@ static int sm501_pci_probe(struct pci_dev *dev,
+ 
+ 	sm = kzalloc(sizeof(struct sm501_devdata), GFP_KERNEL);
+ 	if (sm = NULL) {
+-		dev_err(&dev->dev, "no memory for device data\n");
+ 		err = -ENOMEM;
+ 		goto err1;
+ 	}
+-- 
+2.15.1
+
