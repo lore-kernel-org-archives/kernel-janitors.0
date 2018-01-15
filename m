@@ -1,42 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 16 Jan 2018 17:44:04 +0000
-Subject: [PATCH] i2c-stm32f4: remove redundant initialization of pointer reg
-Message-Id: <20180116174404.19464-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 15 Jan 2018 08:11:47 +0000
+Subject: [PATCH] media: staging/imx: Checking the right variable in vdic_get_ipu_resources()
+Message-Id: <20180115081147.upana3zubsxp4vvd@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve Longerbeam <slongerbeam@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We recently changed this error handling around but missed this error
+pointer check.  We're testing "priv->vdi_in_ch_n" instead of "ch" so the
+error handling can't be triggered.
 
-The pointer reg is assigned a value that is never read, it is later
-overwritten with a new value, hence the redundant initialization can
-be removed.
+Fixes: 0b2e9e7947e7 ("media: staging/imx: remove confusing IS_ERR_OR_NULL usage")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cleans up clang warning:
-drivers/i2c/busses/i2c-stm32f4.c:352:16: warning: Value stored to 'reg'
-during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/i2c/busses/i2c-stm32f4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-stm32f4.c b/drivers/i2c/busses/i2c-stm32f4.c
-index 47c8d00de53f..ba600d77a3f8 100644
---- a/drivers/i2c/busses/i2c-stm32f4.c
-+++ b/drivers/i2c/busses/i2c-stm32f4.c
-@@ -349,7 +349,7 @@ static void stm32f4_i2c_read_msg(struct stm32f4_i2c_dev *i2c_dev)
- static void stm32f4_i2c_terminate_xfer(struct stm32f4_i2c_dev *i2c_dev)
- {
- 	struct stm32f4_i2c_msg *msg = &i2c_dev->msg;
--	void __iomem *reg = i2c_dev->base + STM32F4_I2C_CR2;
-+	void __iomem *reg;
+diff --git a/drivers/staging/media/imx/imx-media-vdic.c b/drivers/staging/media/imx/imx-media-vdic.c
+index 433474d58e3e..ed356844cdf6 100644
+--- a/drivers/staging/media/imx/imx-media-vdic.c
++++ b/drivers/staging/media/imx/imx-media-vdic.c
+@@ -177,7 +177,7 @@ static int vdic_get_ipu_resources(struct vdic_priv *priv)
+ 		priv->vdi_in_ch = ch;
  
- 	stm32f4_i2c_disable_irq(i2c_dev);
- 
--- 
-2.15.1
-
+ 		ch = ipu_idmac_get(priv->ipu, IPUV3_CHANNEL_MEM_VDI_NEXT);
+-		if (IS_ERR(priv->vdi_in_ch_n)) {
++		if (IS_ERR(ch)) {
+ 			err_chan = IPUV3_CHANNEL_MEM_VDI_NEXT;
+ 			ret = PTR_ERR(ch);
+ 			goto out_err_chan;
