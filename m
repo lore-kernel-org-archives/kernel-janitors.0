@@ -1,110 +1,52 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 10 Jan 2018 22:03:29 +0000
-Subject: Re: [PATCH v2] IB/hfi1: Prevent a NULL dereference
-Message-Id: <1515621809.3403.175.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-8ikicQG7I5V6RyPAKsw9"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 13:15:11 +0000
+Subject: [PATCH 1/3] mfd/omap-usb-tll: Delete two error messages for a failed memory allocation in usbtll_oma
+Message-Id: <7719b4e7-1081-6fa4-6f14-f45cf062482d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <14063C7AD467DE4B82DEDB5C278E8663A9F7F391@fmsmsx107.amr.corp.intel.com>
-         <20180109200346.rlsrxa24xmltpz2r@mwanda>
-         <14063C7AD467DE4B82DEDB5C278E8663A9F7FC30@fmsmsx107.amr.corp.intel.com>
-In-Reply-To: <14063C7AD467DE4B82DEDB5C278E8663A9F7FC30@fmsmsx107.amr.corp.intel.com>
-To: "Ruhl, Michael J" <michael.j.ruhl@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
-Cc: "Dalessandro, Dennis" <dennis.dalessandro@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-
-
---=-8ikicQG7I5V6RyPAKsw9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 2018-01-09 at 20:39 +0000, Ruhl, Michael J wrote:
-> > -----Original Message-----
-> > From: linux-rdma-owner@vger.kernel.org [mailto:linux-rdma-
-> > owner@vger.kernel.org] On Behalf Of Dan Carpenter
-> > Sent: Tuesday, January 9, 2018 3:04 PM
-> > To: Marciniszyn, Mike <mike.marciniszyn@intel.com>
-> > Cc: Dalessandro, Dennis <dennis.dalessandro@intel.com>; Doug Ledford
-> > <dledford@redhat.com>; Jason Gunthorpe <jgg@ziepe.ca>; linux-
-> > rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > Subject: [PATCH v2] IB/hfi1: Prevent a NULL dereference
-> >=20
-> > In the original code, we set "fd->uctxt" to NULL and then dereference i=
-t
-> > which will cause an Oops.
-> >=20
-> > Fixes: f2a3bc00a03c ("IB/hfi1: Protect context array set/clear with spi=
-nlock")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: In v1, I accidentally moved the __clear_bit() out from under the
-> >     spin_lock().  Thanks for the review, Michael!
-> >=20
-> > diff --git a/drivers/infiniband/hw/hfi1/file_ops.c
-> > b/drivers/infiniband/hw/hfi1/file_ops.c
-> > index 82086241aac3..bd6f03cc5ee0 100644
-> > --- a/drivers/infiniband/hw/hfi1/file_ops.c
-> > +++ b/drivers/infiniband/hw/hfi1/file_ops.c
-> > @@ -763,11 +763,11 @@ static int complete_subctxt(struct hfi1_filedata =
-*fd)
-> >  	}
-> >=20
-> >  	if (ret) {
-> > -		hfi1_rcd_put(fd->uctxt);
-> > -		fd->uctxt =3D NULL;
-> >  		spin_lock_irqsave(&fd->dd->uctxt_lock, flags);
-> >  		__clear_bit(fd->subctxt, fd->uctxt->in_use_ctxts);
-> >  		spin_unlock_irqrestore(&fd->dd->uctxt_lock, flags);
-> > +		hfi1_rcd_put(fd->uctxt);
-> > +		fd->uctxt =3D NULL;
-> >  	}
-> >=20
-> >  	return ret;
-> > --
->=20
-> Cc: <stable@vger.kernel.org> # 4.14.x
-
-Unfortunately, patchworks doesn't pick up additional Cc: tags, only
-reviewed-bys and acks.  In any case, I hand added it.  Thanks, applied
-to for-rc.
-
-> Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
->=20
-> Looks good.  Adding tag for stable too.
->=20
-> Thanks,
->=20
-> Mike
->=20
-> > To unsubscribe from this list: send the line "unsubscribe linux-rdma" i=
-n
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-8ikicQG7I5V6RyPAKsw9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+References: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+In-Reply-To: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jan 2018 13:39:25 +0100
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlpWjbEACgkQuCajMw5X
-L90LNA/+LaT/dchBLJ32A2LG0hCehHZubf6IC/UwnRaBA1QMuNa599HNWXwB35vv
-wSil4bQxV7g526yPj0zK7Pg0a4yiyWKaH79VYJvmHER1yNXtO7Cst6GqWAeIbPLS
-jmRWM4KyBfvHMWwIYtbmqaXUNq+Mr7dm+SlbyoW0gUjov6nYrQzIG218knhaMkQ8
-86tFay804HVnrOeoGGobINQQL1G4av3Vh8s6zLb7Shz0SHWIu30XFBp9REslQRSx
-23gEbVGLbBoF+JIaTmpC8TO/V9tKL2yn2Fa5S7FeTNINAKVlwTjYetusEbaYcDp8
-1wOGVLoe8cL9Y3VnJIVc2iHYx866sXsWU4uAp6Adqcr/oMQRZ8fz/KjnRFUb7kvW
-B6UgmVvC0LhU/1dYzM3+dNHmLSxC51OTOoqvQDKYumNCZc8iwo2Ds8O0YIcEYvZK
-lpxO1o7r3fKpcQKbCcNUQoZyDW9/b87IY9YrxEavS8mYBThczVhuqX4Hmj1vx1Hd
-9ELKbhcByE/3EahePRvEJnG6ZJYr0qakPHagGynzeCqe0OXsidFpyNJZRDAYMkxY
-NoHNWLMAqRX0ISQjZrCjLPKUnXMG/vzQikPMNwfT7uWNRTI7OCbovcnwuY/aoWA2
-DOT/SmfaGDYHQiBUZcCf8ymCKMXH2DdDGzaxjP4izTqNZ0hq8uI=
-=hAYV
------END PGP SIGNATURE-----
+Omit extra messages for a memory allocation failure in this function.
 
---=-8ikicQG7I5V6RyPAKsw9--
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/omap-usb-tll.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index 44a5d66314c6..7945efa0152e 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -222,10 +222,8 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 	dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+ 
+ 	tll = devm_kzalloc(dev, sizeof(struct usbtll_omap), GFP_KERNEL);
+-	if (!tll) {
+-		dev_err(dev, "Memory allocation failed\n");
++	if (!tll)
+ 		return -ENOMEM;
+-	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	tll->base = devm_ioremap_resource(dev, res);
+@@ -258,7 +256,6 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+ 						GFP_KERNEL);
+ 	if (!tll->ch_clk) {
+ 		ret = -ENOMEM;
+-		dev_err(dev, "Couldn't allocate memory for channel clocks\n");
+ 		goto err_clk_alloc;
+ 	}
+ 
+-- 
+2.15.1
 
