@@ -1,42 +1,14 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Jan 2018 21:04:11 +0000
-Subject: [PATCH] iio/pressure: Delete an error message for a failed memory allocation in hid_press_probe()
-Message-Id: <e7dfe444-616a-e156-31d5-8ed626434d1f@users.sourceforge.net>
+From: Tom Crist <tomaskova@novybydzov.cz>
+Date: Mon, 15 Jan 2018 23:38:45 +0000
+Subject: =?utf-8?Q?Neujahrsspende_von_4.800.000_=E2=82=AC?=
+Message-Id: <1740494516.33088.1516059525614.JavaMail.zimbra@novybydzov.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Archana Patni <archana.patni@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Jan 2018 21:55:08 +0100
 
-Omit an extra message for a memory allocation failure in this function.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/iio/pressure/hid-sensor-press.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/iio/pressure/hid-sensor-press.c b/drivers/iio/pressure/hid-sensor-press.c
-index 4c437918f1d2..9de7590d50b0 100644
---- a/drivers/iio/pressure/hid-sensor-press.c
-+++ b/drivers/iio/pressure/hid-sensor-press.c
-@@ -280,10 +280,8 @@ static int hid_press_probe(struct platform_device *pdev)
- 
- 	indio_dev->channels = kmemdup(press_channels, sizeof(press_channels),
- 				      GFP_KERNEL);
--	if (!indio_dev->channels) {
--		dev_err(&pdev->dev, "failed to duplicate channels\n");
-+	if (!indio_dev->channels)
- 		return -ENOMEM;
--	}
- 
- 	ret = press_parse_report(pdev, hsdev,
- 				 (struct iio_chan_spec *)indio_dev->channels,
 -- 
-2.16.1
-
+ Hallo, Sie haben eine Spende von 4.800.000,00 Euro, ich habe die America Lottery in Amerika im Wert von 40 Millionen Dollar gewonnen und ich gebe einen Teil davon an fünf glückliche Menschen und Wohltätigkeits-Häuser in Erinnerung an meine verstorbene Frau, die an Krebs gestorben ist. Kontaktieren Sie mich für weitere Details:(tomcrist2009@gmail.com)
