@@ -1,45 +1,64 @@
-From: Miquel Raynal <miquel.raynal@free-electrons.com>
-Date: Fri, 19 Jan 2018 07:41:18 +0000
-Subject: Re: [PATCH][next] mtd: nand: remove redundant variable 'oob_len'
-Message-Id: <20180119084118.3450d47f@xps13>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Jan 2018 10:22:50 +0000
+Subject: [PATCH] bnxt_en: don't update cpr->rx_bytes with uninitialized length len
+Message-Id: <20180116102250.22914-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180116125748.26042-1-colin.king@canonical.com>
-In-Reply-To: <20180116125748.26042-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Chan <michael.chan@broadcom.com>, netdev@vger.kernel.org, andrew.gospodarek@broadcom.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, 16 Jan 2018 12:57:48 +0000
-Colin King <colin.king@canonical.com> wrote:
+Currently in the cases where cmp_type = CMP_TYPE_RX_L2_TPA_START_CMP or
+CMP_TYPE_RX_L2_TPA_END_CMP the exit path updates cpr->rx_bytes with an
+uninitialized length len.  Fix this by adding a new exit path that does
+not update the cpr stats with the bogus length len and remove the unused
+label next_rx_no_prod.
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Variable oob_len is assigned and never read, hence it is redundant and
-> can be removed.
->=20
-> Cleans up clang warnings:
->=20
-> drivers/mtd/nand/marvell_nand.c:1356:6: warning: Value stored to
-> 'oob_len' during its initialization is never read
-> drivers/mtd/nand/marvell_nand.c:1369:4: warning: Value stored to
-> 'oob_len' is never read
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+Detected by CoverityScan, CID#1463807 ("Uninitialized scalar variable")
+Fixes: 6a8788f25625 ("bnxt_en: add support for software dynamic interrupt moderation")
 
-Same as before, can you change the prefix to:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-mtd: nand: marvell:
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index cf6ebf1e324b..6b2a7fe0dbde 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1510,7 +1510,7 @@ static int bnxt_rx_pkt(struct bnxt *bp, struct bnxt_napi *bnapi, u32 *raw_cons,
+ 			       (struct rx_tpa_start_cmp_ext *)rxcmp1);
+ 
+ 		*event |= BNXT_RX_EVENT;
+-		goto next_rx_no_prod;
++		goto next_rx_no_prod_no_len;
+ 
+ 	} else if (cmp_type = CMP_TYPE_RX_L2_TPA_END_CMP) {
+ 		skb = bnxt_tpa_end(bp, bnapi, &tmp_raw_cons,
+@@ -1526,7 +1526,7 @@ static int bnxt_rx_pkt(struct bnxt *bp, struct bnxt_napi *bnapi, u32 *raw_cons,
+ 			rc = 1;
+ 		}
+ 		*event |= BNXT_RX_EVENT;
+-		goto next_rx_no_prod;
++		goto next_rx_no_prod_no_len;
+ 	}
+ 
+ 	cons = rxcmp->rx_cmp_opaque;
+@@ -1644,9 +1644,10 @@ static int bnxt_rx_pkt(struct bnxt *bp, struct bnxt_napi *bnapi, u32 *raw_cons,
+ 	rxr->rx_prod = NEXT_RX(prod);
+ 	rxr->rx_next_cons = NEXT_RX(cons);
+ 
+-next_rx_no_prod:
+ 	cpr->rx_packets += 1;
+ 	cpr->rx_bytes += len;
++
++next_rx_no_prod_no_len:
+ 	*raw_cons = tmp_raw_cons;
+ 
+ 	return rc;
+-- 
+2.15.1
 
-Thank you,
-Miqu=C3=A8l
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
