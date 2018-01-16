@@ -1,24 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 22 Jan 2018 20:01:26 +0000
-Subject: Re: [PATCH spark] sparc: vDSO: remove an extra tab
-Message-Id: <20180122.150126.2221990318050453617.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Jan 2018 19:08:15 +0000
+Subject: [PATCH] scsi: mptsas: remove duplicated assignment to pointer head
+Message-Id: <20180116190815.20930-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180119132321.GA32694@mwanda>
-In-Reply-To: <20180119132321.GA32694@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Jan 2018 21:19:39 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Fri, Jan 19, 2018 at 10:09:44AM -0800, nagarathnam muthusamy wrote:
->>
->> Should the subject be sparc instead of spark? Other than that,
->> 
-> 
-> Stupid iphone auto corrects all my emails...  Just kidding, I made that
-> typo.  Fortunately, that part doesn't get saved to the final git log.
+The pointer head is re-assigned the same value twice, so remove the
+second redundant assignment.
 
-Applied, thanks :)
+Cleans up clang warning:
+drivers/message/fusion/mptsas.c:1161:20: warning: Value stored to 'head'
+during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/message/fusion/mptsas.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
+index 345f6035599e..439ee9c5f535 100644
+--- a/drivers/message/fusion/mptsas.c
++++ b/drivers/message/fusion/mptsas.c
+@@ -1165,7 +1165,6 @@ mptsas_schedule_target_reset(void *iocp)
+ 	 * issue target reset to next device in the queue
+ 	 */
+ 
+-	head = &hd->target_reset_list;
+ 	if (list_empty(head))
+ 		return;
+ 
+-- 
+2.15.1
+
