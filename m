@@ -1,42 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 17:44:52 +0000
-Subject: Re: [0/4] video-UDLFB: Adjustments for five function implementations
-Message-Id: <8c2a6370-29f5-9486-2239-177b55d61f7a@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Jan 2018 11:56:11 +0000
+Subject: [PATCH][next] gpiolib: remove redundant initialization of pointer desc
+Message-Id: <20180116115611.24962-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
- <1768474.zA76iyE2Y1@amdc3058>
- <ea9813ee-a5a8-7e35-bac5-b2e0652f6602@users.sourceforge.net>
- <3534828.CjlOGYDRrE@amdc3058>
-In-Reply-To: <3534828.CjlOGYDRrE@amdc3058>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Bernie Thompson <bernie@plugable.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> * Do you find a Linux allocation failure report insufficient in this use case?
-> 
-> Yes,
+From: Colin Ian King <colin.king@canonical.com>
 
-Interesting …
+The initialized value stored in pointer desc is never read as it
+is updated in the first executable statement in the function.
+This is therefore redundant and can be removed.
 
+Cleans up clang warning:
+drivers/gpio/gpiolib.c:3710:20: warning: Value stored to 'desc'
+during its initialization is never read
 
-> there is more information available currently in the driver and
-> I see no real improvement in removing it.
-> 
->> * Are you looking for any more clarification?
-> 
-> I will not apply any of such patches for now. The only exception
-> being drivers that support hardware that can have only one instance
-> in the system …
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for your feedback.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 39a0144d5be5..b4c833b3d4e0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3707,7 +3707,7 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+ 					 enum gpiod_flags dflags,
+ 					 const char *label)
+ {
+-	struct gpio_desc *desc = ERR_PTR(-ENODEV);
++	struct gpio_desc *desc;
+ 	unsigned long lflags = 0;
+ 	enum of_gpio_flags flags;
+ 	bool active_low = false;
+-- 
+2.15.1
 
-
-> and the patch needs to be reviewed by a someone else than the author).
-
-I am curious if this will ever happen again for my update suggestions
-in such a software area.
-
-Regards,
-Markus
