@@ -1,53 +1,119 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Date: Mon, 15 Jan 2018 09:10:07 +0000
-Subject: Re: [PATCH] drm/sun4i: Fix error code in sun4i_tcon_bind()
-Message-Id: <20180115091007.bii37i6xccy757mh@flea.lan>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="d5mnt7t36td3rtnx"
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 16 Jan 2018 11:27:05 +0000
+Subject: [PATCH -next] bpf: cpumap: make some functions static
+Message-Id: <1516102025-181063-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180115081113.wlam5wkmdynisf4r@mwanda>
-In-Reply-To: <20180115081113.wlam5wkmdynisf4r@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Fixes the following sparse warnings:
 
---d5mnt7t36td3rtnx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+kernel/bpf/cpumap.c:146:6: warning:
+ symbol '__cpu_map_queue_destructor' was not declared. Should it be static?
+kernel/bpf/cpumap.c:225:16: warning:
+ symbol 'cpu_map_build_skb' was not declared. Should it be static?
+kernel/bpf/cpumap.c:340:26: warning:
+ symbol '__cpu_map_entry_alloc' was not declared. Should it be static?
+kernel/bpf/cpumap.c:398:6: warning:
+ symbol '__cpu_map_entry_free' was not declared. Should it be static?
+kernel/bpf/cpumap.c:441:6: warning:
+ symbol '__cpu_map_entry_replace' was not declared. Should it be static?
+kernel/bpf/cpumap.c:454:5: warning:
+ symbol 'cpu_map_delete_elem' was not declared. Should it be static?
+kernel/bpf/cpumap.c:467:5: warning:
+ symbol 'cpu_map_update_elem' was not declared. Should it be static?
+kernel/bpf/cpumap.c:505:6: warning:
+ symbol 'cpu_map_free' was not declared. Should it be static?
 
-On Mon, Jan 15, 2018 at 11:11:13AM +0300, Dan Carpenter wrote:
-> We accidentally passed the wrong variable to PTR_ERR().
->=20
-> Fixes: a0c1214e4764 ("drm/sun4i: Add LVDS support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ kernel/bpf/cpumap.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-Applied, thanks!
-Maxime
+diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
+index ce5b669..d392826 100644
+--- a/kernel/bpf/cpumap.c
++++ b/kernel/bpf/cpumap.c
+@@ -143,7 +143,7 @@ static struct bpf_map *cpu_map_alloc(union bpf_attr *attr)
+ 	return ERR_PTR(err);
+ }
+ 
+-void __cpu_map_queue_destructor(void *ptr)
++static void __cpu_map_queue_destructor(void *ptr)
+ {
+ 	/* The tear-down procedure should have made sure that queue is
+ 	 * empty.  See __cpu_map_entry_replace() and work-queue
+@@ -222,8 +222,8 @@ static struct xdp_pkt *convert_to_xdp_pkt(struct xdp_buff *xdp)
+ 	return xdp_pkt;
+ }
+ 
+-struct sk_buff *cpu_map_build_skb(struct bpf_cpu_map_entry *rcpu,
+-				  struct xdp_pkt *xdp_pkt)
++static struct sk_buff *cpu_map_build_skb(struct bpf_cpu_map_entry *rcpu,
++					 struct xdp_pkt *xdp_pkt)
+ {
+ 	unsigned int frame_size;
+ 	void *pkt_data_start;
+@@ -337,7 +337,8 @@ static int cpu_map_kthread_run(void *data)
+ 	return 0;
+ }
+ 
+-struct bpf_cpu_map_entry *__cpu_map_entry_alloc(u32 qsize, u32 cpu, int map_id)
++static struct bpf_cpu_map_entry *__cpu_map_entry_alloc(u32 qsize, u32 cpu,
++						       int map_id)
+ {
+ 	gfp_t gfp = GFP_ATOMIC|__GFP_NOWARN;
+ 	struct bpf_cpu_map_entry *rcpu;
+@@ -395,7 +396,7 @@ struct bpf_cpu_map_entry *__cpu_map_entry_alloc(u32 qsize, u32 cpu, int map_id)
+ 	return NULL;
+ }
+ 
+-void __cpu_map_entry_free(struct rcu_head *rcu)
++static void __cpu_map_entry_free(struct rcu_head *rcu)
+ {
+ 	struct bpf_cpu_map_entry *rcpu;
+ 	int cpu;
+@@ -438,8 +439,8 @@ void __cpu_map_entry_free(struct rcu_head *rcu)
+  * cpu_map_kthread_stop, which waits for an RCU graze period before
+  * stopping kthread, emptying the queue.
+  */
+-void __cpu_map_entry_replace(struct bpf_cpu_map *cmap,
+-			     u32 key_cpu, struct bpf_cpu_map_entry *rcpu)
++static void __cpu_map_entry_replace(struct bpf_cpu_map *cmap,
++				    u32 key_cpu, struct bpf_cpu_map_entry *rcpu)
+ {
+ 	struct bpf_cpu_map_entry *old_rcpu;
+ 
+@@ -451,7 +452,7 @@ void __cpu_map_entry_replace(struct bpf_cpu_map *cmap,
+ 	}
+ }
+ 
+-int cpu_map_delete_elem(struct bpf_map *map, void *key)
++static int cpu_map_delete_elem(struct bpf_map *map, void *key)
+ {
+ 	struct bpf_cpu_map *cmap = container_of(map, struct bpf_cpu_map, map);
+ 	u32 key_cpu = *(u32 *)key;
+@@ -464,8 +465,8 @@ int cpu_map_delete_elem(struct bpf_map *map, void *key)
+ 	return 0;
+ }
+ 
+-int cpu_map_update_elem(struct bpf_map *map, void *key, void *value,
+-				u64 map_flags)
++static int cpu_map_update_elem(struct bpf_map *map, void *key, void *value,
++			       u64 map_flags)
+ {
+ 	struct bpf_cpu_map *cmap = container_of(map, struct bpf_cpu_map, map);
+ 	struct bpf_cpu_map_entry *rcpu;
+@@ -502,7 +503,7 @@ int cpu_map_update_elem(struct bpf_map *map, void *key, void *value,
+ 	return 0;
+ }
+ 
+-void cpu_map_free(struct bpf_map *map)
++static void cpu_map_free(struct bpf_map *map)
+ {
+ 	struct bpf_cpu_map *cmap = container_of(map, struct bpf_cpu_map, map);
+ 	int cpu;
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---d5mnt7t36td3rtnx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpcb+4ACgkQ0rTAlCFN
-r3Sl5A//a/eZcL9pDdw1X8msUZD/osrhrGbABThJY6jNsaj5i6NNkeDw02smFYjp
-iRXZb3Xk6PKPFqNIBp19jNLJ7yRdF39IYj5DK98tUkMcJzu40JjW6FnK8FpjZM6g
-/nsKtjstfVMCdaMbwHtsAi8ApoIwbBN/1wVdrCLMgBH+SPjlSfM4o5DJ+sSywcta
-E5qpTvmtsyxYGW76qm8Nl7FBoO/3olnL8VmqWuhgs6sjFvZQuDbLbQF5IwSMG6pN
-ilR4nkacEaF50hBT7q6lyimMyHw7pskc64jrare5XTnT3RwVSjepmwYASF70wwM5
-+TwN4gqa5WrAmle/TklmKZNLF1AbJ2d35uAvmfjowoykOvl0puqLTuQKa0IOZ66T
-MmgBQJOojOMfetKBn5RBUC5REephDkihPx9PNTZA2rBF0vVjWbgfgpU3UClYWHPz
-24ftwNDP+9+4g8WNiInz+MOyw62fGgZAlnoPX9QRH6Xj9M+mYap9FrjK8P3SBZNf
-D6xdcsFv/iM8mdiDgNlvfRcGXKO6mtdgACGMy5tdBqgfiscjF3VVYMB56oIkUjXP
-jkEOnvGWQln9Hdh0BIn3qtwZtNa/jpxh4GMsvLHz74C9ZLsALN+C5j+fG1LzurmF
-LqHUYpYOm7DJ4w+90A4jFlBHp0lf4pSAJk9skXo0H13FkfPHUZs=
-=WN+p
------END PGP SIGNATURE-----
-
---d5mnt7t36td3rtnx--
