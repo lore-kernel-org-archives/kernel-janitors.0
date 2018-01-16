@@ -1,48 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Jan 2018 10:23:32 +0000
-Subject: [PATCH] staging: rts5208: Fix "seg_no" calculation in reset_ms_card()
-Message-Id: <20180122102332.GB23912@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 20:39:57 +0000
+Subject: [PATCH 1/2] macintosh/rack-meter: Delete an error message for a failed memory allocation in rackmete
+Message-Id: <e8373573-fb9d-5a90-96e7-1faf5434e6e1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c11e0a90-a7b2-dddd-7751-7dac3e62215b@users.sourceforge.net>
+In-Reply-To: <c11e0a90-a7b2-dddd-7751-7dac3e62215b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-I get some static checker warnings like this:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 21:23:36 +0100
 
-    drivers/staging/rts5208/ms.c:2607 ms_build_l2p_tbl()
-    error: buffer underflow 'ms_card->segment' (-1)-16
+Omit an extra message for a memory allocation failure in this function.
 
-The problem is that we memset "ms_card" to zero at the start of the
-reset_ms_card() function.  That means that when we try to calculate
-"ms_card->total_block / 512 - 1" then it's just always -1.  The fix is
-to calculate "seg_no" before doing the memset().
+This issue was detected by using the Coccinelle software.
 
-This is a static checker fix, and I am not able to test it.  My theory
-is that reset_ms_card() gets very little testing which is why this bug
-exists.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/macintosh/rack-meter.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/drivers/macintosh/rack-meter.c b/drivers/macintosh/rack-meter.c
+index 910b5b6f96b1..0796b74174d4 100644
+--- a/drivers/macintosh/rack-meter.c
++++ b/drivers/macintosh/rack-meter.c
+@@ -399,7 +399,6 @@ static int rackmeter_probe(struct macio_dev* mdev,
+ 	/* Create and initialize our instance data */
+ 	rm = kzalloc(sizeof(struct rackmeter), GFP_KERNEL);
+ 	if (rm = NULL) {
+-		printk(KERN_ERR "rackmeter: failed to allocate memory !\n");
+ 		rc = -ENOMEM;
+ 		goto bail_release;
+ 	}
+-- 
+2.15.1
 
-diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
-index 7cdce87f3051..821256b95e22 100644
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -2821,6 +2821,7 @@ static int ms_build_l2p_tbl(struct rtsx_chip *chip, int seg_no)
- int reset_ms_card(struct rtsx_chip *chip)
- {
- 	struct ms_info *ms_card = &chip->ms_card;
-+	int seg_no = ms_card->total_block / 512 - 1;
- 	int retval;
- 
- 	memset(ms_card, 0, sizeof(struct ms_info));
-@@ -2863,7 +2864,7 @@ int reset_ms_card(struct rtsx_chip *chip)
- 		/* Build table for the last segment,
- 		 * to check if L2P table block exists, erasing it
- 		 */
--		retval = ms_build_l2p_tbl(chip, ms_card->total_block / 512 - 1);
-+		retval = ms_build_l2p_tbl(chip, seg_no);
- 		if (retval != STATUS_SUCCESS) {
- 			rtsx_trace(chip);
- 			return STATUS_FAIL;
