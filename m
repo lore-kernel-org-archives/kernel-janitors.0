@@ -1,28 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 21:17:59 +0000
-Subject: [PATCH 0/3] RDMA/iwpm: Adjustments for three function implementations
-Message-Id: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 08:18:25 +0000
+Subject: [PATCH 1/2] mfd: smsc-ece1099: Delete an error message for a failed memory allocation in smsc_i2c_pr
+Message-Id: <6be526f1-cf39-9fa9-3508-ac75c9751986@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <978023d9-01f2-3a16-5eba-e06b8359cfc0@users.sourceforge.net>
+In-Reply-To: <978023d9-01f2-3a16-5eba-e06b8359cfc0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>, Doug Ledford <dledford@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Jason Gunthorpe <jgg@ziepe.ca>, Johannes Berg <johannes.berg@intel.com>, Leon Romanovsky <leonro@mellanox.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 22:12:34 +0100
+Date: Tue, 16 Jan 2018 08:52:27 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in iwpm_create_nlmsg()
-  Adjust a variable initialisation in iwpm_create_nlmsg()
-  Improve a size determination in two functions
+This issue was detected by using the Coccinelle software.
 
- drivers/infiniband/core/iwpm_util.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/smsc-ece1099.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/mfd/smsc-ece1099.c b/drivers/mfd/smsc-ece1099.c
+index 93a8297de52a..b9d96651cc0d 100644
+--- a/drivers/mfd/smsc-ece1099.c
++++ b/drivers/mfd/smsc-ece1099.c
+@@ -39,10 +39,8 @@ static int smsc_i2c_probe(struct i2c_client *i2c,
+ 
+ 	smsc = devm_kzalloc(&i2c->dev, sizeof(struct smsc),
+ 				GFP_KERNEL);
+-	if (!smsc) {
+-		dev_err(&i2c->dev, "smsc mfd driver memory allocation failed\n");
++	if (!smsc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	smsc->regmap = devm_regmap_init_i2c(i2c, &smsc_regmap_config);
+ 	if (IS_ERR(smsc->regmap))
 -- 
-2.16.1
+2.15.1
 
