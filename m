@@ -1,30 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 11 Jan 2018 21:46:01 +0000
-Subject: [PATCH] ixgbe: Fix && vs || typo
-Message-Id: <20180111214601.4cyjpvmbsothnc23@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 16 Jan 2018 14:34:24 +0000
+Subject: Re: ath10k: remove redundant -ve check against u32 integer size
+Message-Id: <20180116143424.26848602BA@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180112172713.28252-1-colin.king@canonical.com>
+In-Reply-To: <20180112172713.28252-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"offset" can't be both 0x0 and 0xFFFF so presumably || was intended
-instead of &&.  That matches with how this check is done in other
-functions.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Fixes: 73834aec7199 ("ixgbe: extend firmware version support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Variable section_table.size is a u32 and so cannot be less than
+> zero, hence the less than zero check is redundant and can be
+> removed.
+> 
+> Detected by CoverityScan, CID#1463855 ("Unsigned compared against 0")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-index 1948e4208fb4..27de8a7f2aeb 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-@@ -4084,7 +4084,7 @@ void ixgbe_get_oem_prod_version(struct ixgbe_hw *hw,
- 	hw->eeprom.ops.read(hw, NVM_OEM_PROD_VER_PTR, &offset);
- 
- 	/* Return is offset to OEM Product Version block is invalid */
--	if (offset = 0x0 && offset = NVM_INVALID_PTR)
-+	if (offset = 0x0 || offset = NVM_INVALID_PTR)
- 		return;
- 
- 	/* Read product version block */
+Patch applied to ath-next branch of ath.git, thanks.
+
+95f27a51ee02 ath10k: remove redundant -ve check against u32 integer size
+
+-- 
+https://patchwork.kernel.org/patch/10161483/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
