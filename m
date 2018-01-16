@@ -1,42 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 18:03:40 +0000
-Subject: [PATCH] Input: mms114: Delete an error message for a failed memory allocation in mms114_parse_dt()
-Message-Id: <9e7748dc-76ba-f147-6ee0-d06c160c7aa6@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 20:40:57 +0000
+Subject: [PATCH 2/2] macintosh/rack-meter: Improve a size determination in rackmeter_probe()
+Message-Id: <862e3609-1010-95d8-0d64-0493f5759f78@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c11e0a90-a7b2-dddd-7751-7dac3e62215b@users.sourceforge.net>
+In-Reply-To: <c11e0a90-a7b2-dddd-7751-7dac3e62215b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 18:58:11 +0100
+Date: Tue, 16 Jan 2018 21:26:52 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/touchscreen/mms114.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/macintosh/rack-meter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/mms114.c b/drivers/input/touchscreen/mms114.c
-index e5eeb6311f7d..b4482a024084 100644
---- a/drivers/input/touchscreen/mms114.c
-+++ b/drivers/input/touchscreen/mms114.c
-@@ -386,10 +386,8 @@ static struct mms114_platform_data *mms114_parse_dt(struct device *dev)
- 		return NULL;
+diff --git a/drivers/macintosh/rack-meter.c b/drivers/macintosh/rack-meter.c
+index 0796b74174d4..800fc6822ad8 100644
+--- a/drivers/macintosh/rack-meter.c
++++ b/drivers/macintosh/rack-meter.c
+@@ -397,7 +397,7 @@ static int rackmeter_probe(struct macio_dev* mdev,
+ 	}
  
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(dev, "failed to allocate platform data\n");
-+	if (!pdata)
- 		return NULL;
--	}
- 
- 	if (of_property_read_u32(np, "x-size", &pdata->x_size)) {
- 		dev_err(dev, "failed to get x-size property\n");
+ 	/* Create and initialize our instance data */
+-	rm = kzalloc(sizeof(struct rackmeter), GFP_KERNEL);
++	rm = kzalloc(sizeof(*rm), GFP_KERNEL);
+ 	if (rm = NULL) {
+ 		rc = -ENOMEM;
+ 		goto bail_release;
 -- 
-2.16.0
+2.15.1
 
