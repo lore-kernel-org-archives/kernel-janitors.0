@@ -1,28 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 15:12:58 +0000
-Subject: [PATCH 0/3] mfd/sm501: Adjustments for five function implementations
-Message-Id: <f292e2f3-2471-4ea0-3a02-349e6c10ff03@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 12:01:21 +0000
+Subject: [PATCH 3/4] mfd/tps65910: Delete an unnecessary variable initialisation in tps65910_sleepinit()
+Message-Id: <0e5997de-0c43-da8c-8ec6-9c3e593d9f5a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
+In-Reply-To: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 16:11:22 +0100
+Date: Tue, 16 Jan 2018 12:10:49 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+The local variable "dev" will be reassigned by a following statement.
+Thus omit the explicit initialisation at the beginning.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in two functions
-  Adjust 12 checks for null pointers
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/tps65910.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/mfd/sm501.c | 34 +++++++++++++---------------------
- 1 file changed, 13 insertions(+), 21 deletions(-)
-
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 80ea1474c654..7e7d3d1642c6 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -312,7 +312,7 @@ static int tps65910_ck32k_init(struct tps65910 *tps65910,
+ static int tps65910_sleepinit(struct tps65910 *tps65910,
+ 		struct tps65910_board *pmic_pdata)
+ {
+-	struct device *dev = NULL;
++	struct device *dev;
+ 	int ret;
+ 
+ 	dev = tps65910->dev;
 -- 
 2.15.1
 
