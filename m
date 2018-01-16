@@ -1,27 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Jan 2018 16:57:20 +0000
-Subject: [PATCH 0/2] mvebu-mbus: Adjustments for mvebu_devs_debug_show()
-Message-Id: <4796228f-fa7f-24db-0049-2d2b9041c5b0@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Jan 2018 12:48:09 +0000
+Subject: [PATCH] ixgbe: remove redundant initialization of 'pool'
+Message-Id: <20180116124809.25790-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, =?UTF-8?Q?Jan_L=c3=bcbbe?= <jlu@pengutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Jan 2018 17:47:57 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Variable pool is being assigned zero and then in the following for-loop
+is it being set to zero again. Remove the redundant first assignment.
 
-Markus Elfring (2):
-  Use seq_putc()
-  Fix a typo in five comment lines
+Cleans up clang warning:
+drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c:61:2: warning: Value stored
+to 'pool' is never read
 
- drivers/bus/mvebu-mbus.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
+index b3c282d09b18..d57c77f2811f 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
+@@ -58,7 +58,6 @@ static bool ixgbe_cache_ring_dcb_sriov(struct ixgbe_adapter *adapter)
+ 		return false;
+ 
+ 	/* start at VMDq register offset for SR-IOV enabled setups */
+-	pool = 0;
+ 	reg_idx = vmdq->offset * __ALIGN_MASK(1, ~vmdq->mask);
+ 	for (i = 0, pool = 0; i < adapter->num_rx_queues; i++, reg_idx++) {
+ 		/* If we are greater than indices move to next pool */
 -- 
 2.15.1
 
