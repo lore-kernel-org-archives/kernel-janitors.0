@@ -1,53 +1,41 @@
-From: Christopher =?ISO-8859-1?Q?D=EDaz?= Riveros <chrisadr@gentoo.org>
-Date: Fri, 19 Jan 2018 00:02:03 +0000
-Subject: Hi community
-Message-Id: <1516320123.2510.83.camel@gentoo.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-qsSXT+onJ0kkWpCy+SkS"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Jan 2018 17:38:03 +0000
+Subject: [PATCH] HID: logitech-hidpp: remove duplicated assignment to 'hidpp'
+Message-Id: <20180116173803.19272-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-
---=-qsSXT+onJ0kkWpCy+SkS
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hello everyone,
-
-I've been subscribed here for about a week, I'm a software development
-student from Lima, Peru. For a long time I have wanted to help the
-Kernel community, but I think I was a little nervous about presenting
-patches because I felt I was not prepared for that, but I think now is
-a good time to start and try to learn as much as I can, I've already
-sent a couple of trivial patches, and I'll probably stay here for a
-long time, so I wanted to introduce myself and say it's an honor to be
-able to contribute to the kernel community even with my little patches
-:)
-
-Pleased to meet you all,
---=20
-Christopher D=C3=ADaz Riveros
-Gentoo Linux Developer
-GPG Fingerprint: E517 5ECB 8152 98E4 FEBC  2BAA 4DBB D10F 0FDD 2547
---=-qsSXT+onJ0kkWpCy+SkS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+From: Colin Ian King <colin.king@canonical.com>
 
-iQGTBAABCgB9FiEE5Rdey4FSmOT+vCuqTbvRDw/dJUcFAlphNXtfFIAAAAAALgAo
-aXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5maWZ0aGhvcnNlbWFuLm5ldEU1
-MTc1RUNCODE1Mjk4RTRGRUJDMkJBQTREQkJEMTBGMEZERDI1NDcACgkQTbvRDw/d
-JUd/PwgAlkGJM0dspE5LYWU8naP1Mr2o+F7ogYfMyGzmMUAw2viAiSp1jUiqy9ps
-Whr5kP85A7pXmL1atyDB2isj1gQVBkiZjD/VFdq1X2dQoPvtP6r+Kw6qg9dIXdhu
-8YhcUmcSmhRcmCq6iHs5ChSz7WMVCnfnynZ/zbWoLvQpGnb8Exvvx9Az5ZW5E5F+
-kD1uAlExpbETRBqom8QB/toRoEV3BrQ/2jTvQtUnVukiSLK/FNzbmhgiFWNY8zFD
-lCjOYkARRPaWxo79z2hpbL4v0sm3w/4x5ELsT9QQpW3rMaWaPJTHW0bXdzoiVUjB
-zPB+/a6TBLLJiuRn9/GeFnXnSO/7xg==
-=DW3b
------END PGP SIGNATURE-----
+Pointer hidpp is being assigned twice with the same value, remove
+the second occurrance as it is redundant.
 
---=-qsSXT+onJ0kkWpCy+SkS--
+Cleans up clang warning:
+drivers/hid/hid-logitech-hidpp.c:177:23: warning: Value stored to
+'hidpp' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-logitech-hidpp.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index 19cc980eebce..b91e416a677d 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -177,8 +177,6 @@ static int __hidpp_send_report(struct hid_device *hdev,
+ 	struct hidpp_device *hidpp = hid_get_drvdata(hdev);
+ 	int fields_count, ret;
+ 
+-	hidpp = hid_get_drvdata(hdev);
+-
+ 	switch (hidpp_report->report_id) {
+ 	case REPORT_ID_HIDPP_SHORT:
+ 		fields_count = HIDPP_REPORT_SHORT_LENGTH;
+-- 
+2.15.1
 
