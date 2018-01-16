@@ -1,43 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 18:51:23 +0000
-Subject: [PATCH 2/2] Input: egalax_ts: Improve a size determination in egalax_ts_probe()
-Message-Id: <9010bf32-e058-d29d-8ea2-acb43f200175@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 08:16:48 +0000
+Subject: [PATCH 0/2] mfd: smsc-ece1099: Adjustments for smsc_i2c_probe()
+Message-Id: <978023d9-01f2-3a16-5eba-e06b8359cfc0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <52f0c32d-2cf9-bef3-4fb3-4120c5b758c4@users.sourceforge.net>
-In-Reply-To: <52f0c32d-2cf9-bef3-4fb3-4120c5b758c4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 19:40:30 +0100
+Date: Tue, 16 Jan 2018 09:14:56 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/touchscreen/egalax_ts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/smsc-ece1099.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/touchscreen/egalax_ts.c b/drivers/input/touchscreen/egalax_ts.c
-index 29ec1166626d..da8b46ee2c1c 100644
---- a/drivers/input/touchscreen/egalax_ts.c
-+++ b/drivers/input/touchscreen/egalax_ts.c
-@@ -171,7 +171,7 @@ static int egalax_ts_probe(struct i2c_client *client,
- 	struct input_dev *input_dev;
- 	int error;
- 
--	ts = devm_kzalloc(&client->dev, sizeof(struct egalax_ts), GFP_KERNEL);
-+	ts = devm_kzalloc(&client->dev, sizeof(*ts), GFP_KERNEL);
- 	if (!ts)
- 		return -ENOMEM;
- 
 -- 
-2.16.0
+2.15.1
 
