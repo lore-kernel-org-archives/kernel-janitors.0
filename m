@@ -1,38 +1,42 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Jan 2018 11:26:18 +0000
-Subject: [PATCH -next] clk: samsung: exynos-audss: Remove redundant dev_err call in exynos_audss_clk_probe()
-Message-Id: <1516188378-144847-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 09:43:32 +0000
+Subject: [PATCH] mfd/tps65090: Delete an error message for a failed memory allocation in tps65090_i2c_probe()
+Message-Id: <298ee6b1-c14b-e794-c800-f2aeb6b42a53@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 10:37:33 +0100
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/samsung/clk-exynos-audss.c | 4 +---
+ drivers/mfd/tps65090.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 5bfc92e..b4b057c 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -143,10 +143,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+index d7ec318c40c3..f13e4cd06e89 100644
+--- a/drivers/mfd/tps65090.c
++++ b/drivers/mfd/tps65090.c
+@@ -192,10 +192,8 @@ static int tps65090_i2c_probe(struct i2c_client *client,
+ 		irq_base = pdata->irq_base;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg_base)) {
--		dev_err(dev, "failed to map audss registers\n");
-+	if (IS_ERR(reg_base))
- 		return PTR_ERR(reg_base);
+ 	tps65090 = devm_kzalloc(&client->dev, sizeof(*tps65090), GFP_KERNEL);
+-	if (!tps65090) {
+-		dev_err(&client->dev, "mem alloc for tps65090 failed\n");
++	if (!tps65090)
+ 		return -ENOMEM;
 -	}
  
- 	epll = ERR_PTR(-ENODEV);
- 
-
-
+ 	tps65090->dev = &client->dev;
+ 	i2c_set_clientdata(client, tps65090);
+-- 
+2.15.1
 
