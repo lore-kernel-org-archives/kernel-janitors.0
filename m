@@ -1,48 +1,66 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 12:45:35 +0000
-Subject: [PATCH 1/3] mtd/nftlmount: Delete two error messages for a failed memory allocation in find_boot_rec
-Message-Id: <e07f94b5-3589-2fe3-3058-8fcf83a77af0@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 12:00:06 +0000
+Subject: [PATCH 2/4] mfd/tps65910: Delete an unnecessary variable initialisation in four functions
+Message-Id: <4cb93571-498f-bafa-0efc-30ebc1dab3fe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
-In-Reply-To: <57d4cbcf-c99c-f3d5-e2bf-f67873f321ea@users.sourceforge.net>
+References: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
+In-Reply-To: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 11:04:59 +0100
+Date: Tue, 16 Jan 2018 11:40:28 +0100
 
-Omit extra messages for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/nftlmount.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/mfd/tps65910.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
-index 184c8fbfe465..6b9634a70229 100644
---- a/drivers/mtd/nftlmount.c
-+++ b/drivers/mtd/nftlmount.c
-@@ -201,15 +201,12 @@ device is already correct.
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 555bd394efc3..80ea1474c654 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -229,7 +229,7 @@ static struct regmap_irq_chip tps65910_irq_chip = {
+ static int tps65910_irq_init(struct tps65910 *tps65910, int irq,
+ 		    struct tps65910_platform_data *pdata)
+ {
+-	int ret = 0;
++	int ret;
+ 	static struct regmap_irq_chip *tps6591x_irqs_chip;
  
- 		/* memory alloc */
- 		nftl->EUNtable = kmalloc(nftl->nb_blocks * sizeof(u16), GFP_KERNEL);
--		if (!nftl->EUNtable) {
--			printk(KERN_NOTICE "NFTL: allocation of EUNtable failed\n");
-+		if (!nftl->EUNtable)
- 			return -ENOMEM;
--		}
+ 	if (!irq) {
+@@ -313,7 +313,7 @@ static int tps65910_sleepinit(struct tps65910 *tps65910,
+ 		struct tps65910_board *pmic_pdata)
+ {
+ 	struct device *dev = NULL;
+-	int ret = 0;
++	int ret;
  
- 		nftl->ReplUnitTable = kmalloc(nftl->nb_blocks * sizeof(u16), GFP_KERNEL);
- 		if (!nftl->ReplUnitTable) {
- 			kfree(nftl->EUNtable);
--			printk(KERN_NOTICE "NFTL: allocation of ReplUnitTable failed\n");
- 			return -ENOMEM;
- 		}
+ 	dev = tps65910->dev;
+ 
+@@ -383,7 +383,7 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
+ 	struct tps65910_board *board_info;
+ 	unsigned int prop;
+ 	const struct of_device_id *match;
+-	int ret = 0;
++	int ret;
+ 
+ 	match = of_match_device(tps65910_of_match, &client->dev);
+ 	if (!match) {
+@@ -460,7 +460,7 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
+ 	struct tps65910_board *of_pmic_plat_data = NULL;
+ 	struct tps65910_platform_data *init_data;
+ 	unsigned long chip_id = id->driver_data;
+-	int ret = 0;
++	int ret;
+ 
+ 	pmic_plat_data = dev_get_platdata(&i2c->dev);
  
 -- 
 2.15.1
