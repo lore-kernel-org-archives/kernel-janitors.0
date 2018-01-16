@@ -1,16 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 Jan 2018 20:48:54 +0000
-Subject: [PATCH] ethernet: cpsw-phy-sel: Delete an error message for a failed memory allocation in cpsw_phy_s
-Message-Id: <3addaad6-2767-8a2f-cde3-a25148780f36@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 10:07:40 +0000
+Subject: [PATCH] mfd/tps6586x: Delete an error message for a failed memory allocation in tps6586x_parse_dt()
+Message-Id: <e75d92e0-6994-f415-29bd-97ac9198afa9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-omap@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Mugunthan V N <mugunthanvnm@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Daniel Mack <zonque@gmail.com>
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Jan 2018 21:41:25 +0100
+Date: Tue, 16 Jan 2018 11:02:56 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -18,25 +18,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/ti/cpsw-phy-sel.c | 4 +---
+ drivers/mfd/tps6586x.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/cpsw-phy-sel.c b/drivers/net/ethernet/ti/cpsw-phy-sel.c
-index 18013645e76c..d29bc349bfc4 100644
---- a/drivers/net/ethernet/ti/cpsw-phy-sel.c
-+++ b/drivers/net/ethernet/ti/cpsw-phy-sel.c
-@@ -213,10 +213,8 @@ static int cpsw_phy_sel_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index 5628a6b5b19b..b89379782741 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -423,10 +423,8 @@ static struct tps6586x_platform_data *tps6586x_parse_dt(struct i2c_client *clien
+ 	struct tps6586x_platform_data *pdata;
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(&pdev->dev, "unable to alloc memory for cpsw phy sel\n");
-+	if (!priv)
- 		return -ENOMEM;
+ 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata) {
+-		dev_err(&client->dev, "Memory allocation failed\n");
++	if (!pdata)
+ 		return NULL;
 -	}
  
- 	priv->dev = &pdev->dev;
- 	priv->cpsw_phy_sel = of_id->data;
+ 	pdata->num_subdevs = 0;
+ 	pdata->subdevs = NULL;
 -- 
 2.15.1
 
