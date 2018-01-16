@@ -1,18 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 18:50:21 +0000
-Subject: [PATCH 1/2] Input: egalax_ts: Delete an error message for a failed memory allocation in egalax_ts_pr
-Message-Id: <99b5c583-e215-82eb-701c-6796b605fb92@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 16:17:49 +0000
+Subject: [PATCH] mfd/twl6030-irq: Delete an error message for a failed memory allocation in twl6030_init_irq(
+Message-Id: <d030ee42-5e28-4b92-1ea0-ebc9fca2f192@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <52f0c32d-2cf9-bef3-4fb3-4120c5b758c4@users.sourceforge.net>
-In-Reply-To: <52f0c32d-2cf9-bef3-4fb3-4120c5b758c4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 19:34:38 +0100
+Date: Tue, 16 Jan 2018 17:06:51 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -20,25 +18,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/touchscreen/egalax_ts.c | 4 +---
+ drivers/mfd/twl6030-irq.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/input/touchscreen/egalax_ts.c b/drivers/input/touchscreen/egalax_ts.c
-index 752ae9cf4514..29ec1166626d 100644
---- a/drivers/input/touchscreen/egalax_ts.c
-+++ b/drivers/input/touchscreen/egalax_ts.c
-@@ -172,10 +172,8 @@ static int egalax_ts_probe(struct i2c_client *client,
- 	int error;
+diff --git a/drivers/mfd/twl6030-irq.c b/drivers/mfd/twl6030-irq.c
+index e3ec8dfa9f1e..e939431ed10c 100644
+--- a/drivers/mfd/twl6030-irq.c
++++ b/drivers/mfd/twl6030-irq.c
+@@ -392,10 +392,8 @@ int twl6030_init_irq(struct device *dev, int irq_num)
+ 	nr_irqs = TWL6030_NR_IRQS;
  
- 	ts = devm_kzalloc(&client->dev, sizeof(struct egalax_ts), GFP_KERNEL);
--	if (!ts) {
--		dev_err(&client->dev, "Failed to allocate memory\n");
-+	if (!ts)
+ 	twl6030_irq = devm_kzalloc(dev, sizeof(*twl6030_irq), GFP_KERNEL);
+-	if (!twl6030_irq) {
+-		dev_err(dev, "twl6030_irq: Memory allocation failed\n");
++	if (!twl6030_irq)
  		return -ENOMEM;
 -	}
  
- 	input_dev = devm_input_allocate_device(&client->dev);
- 	if (!input_dev) {
+ 	mask[0] = 0xFF;
+ 	mask[1] = 0xFF;
 -- 
-2.16.0
+2.15.1
 
