@@ -1,28 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 10:03:04 +0000
-Subject: Re: [PATCH 3/4] gpio-stmpe: Move an assignment in stmpe_gpio_probe()
-Message-Id: <CACRpkdYEKtnxun+ev-oscbDW4+Gjj=0pFdeW=1LznYZaH9vyPw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Jan 2018 10:40:22 +0000
+Subject: [PATCH] scsi: storvsc: missing error code in storvsc_probe()
+Message-Id: <20180116104022.GA3517@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net> <25ddf208-1f02-8bb7-b6b8-e0ffa422b754@users.sourceforge.net>
-In-Reply-To: <25ddf208-1f02-8bb7-b6b8-e0ffa422b754@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "K. Y. Srinivasan" <kys@microsoft.com>, Cathy Avery <cavery@redhat.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, devel@linuxdriverproject.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 9:03 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+We should set the error code if fc_remote_port_add() fails.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 Jan 2018 20:44:15 +0100
->
-> Move the assignment for the local variable "irq" so that its setting
-> will only be performed directly before it is checked by this function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: daf0cd445a21 ("scsi: storvsc: Add support for FC rport.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index 3b3d1d050cac..40fc7a590e81 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -1834,8 +1834,10 @@ static int storvsc_probe(struct hv_device *device,
+ 		fc_host_node_name(host) = stor_device->node_name;
+ 		fc_host_port_name(host) = stor_device->port_name;
+ 		stor_device->rport = fc_remote_port_add(host, 0, &ids);
+-		if (!stor_device->rport)
++		if (!stor_device->rport) {
++			ret = -ENOMEM;
+ 			goto err_out4;
++		}
+ 	}
+ #endif
+ 	return 0;
