@@ -1,37 +1,42 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Date: Thu, 18 Jan 2018 11:37:14 +0000
-Subject: Re: [PATCH] soc: xilinx: xlnx_vcu: Fix && vs & typo
-Message-Id: <7bea45bc-a684-3c6e-c818-c2428a5990b5@xilinx.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 16:42:26 +0000
+Subject: [PATCH] mfd/viperboard: Delete an error message for a failed memory allocation in vprbrd_probe()
+Message-Id: <9c50fe6a-21cc-e49d-1b10-5d2457ed4e2a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180118102823.GA21064@mwanda>
-In-Reply-To: <20180118102823.GA21064@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Lars_P=c3=b6schel?= <poeschel@lemonage.de>, Samuel Ortiz <sameo@linux.intel.com>
 
-On 18.1.2018 11:28, Dan Carpenter wrote:
-> We accidentally used a logical AND instead of a bitwise AND here.
-> 
-> Fixes: cee8113a295a ("soc: xilinx: xlnx_vcu: Add Xilinx ZYNQMP VCU logicoreIP init driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
-> index c1d6f1b190b6..a840c0272135 100644
-> --- a/drivers/soc/xilinx/xlnx_vcu.c
-> +++ b/drivers/soc/xilinx/xlnx_vcu.c
-> @@ -334,7 +334,7 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
->  	 */
->  	vcu_pll_ctrl = xvcu_read(xvcu->vcu_slcr_ba, VCU_PLL_CTRL);
->  	clkoutdiv = vcu_pll_ctrl >> VCU_PLL_CTRL_CLKOUTDIV_SHIFT;
-> -	clkoutdiv = clkoutdiv && VCU_PLL_CTRL_CLKOUTDIV_MASK;
-> +	clkoutdiv = clkoutdiv & VCU_PLL_CTRL_CLKOUTDIV_MASK;
->  	if (clkoutdiv != 1) {
->  		dev_err(xvcu->dev, "clkoutdiv value is invalid\n");
->  		return -EINVAL;
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 17:30:23 +0100
 
-Already fixed by https://www.spinics.net/lists/arm-kernel/msg628989.html
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks,
-Michal
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/viperboard.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/viperboard.c b/drivers/mfd/viperboard.c
+index e6b3c70aeb22..e9f61262d583 100644
+--- a/drivers/mfd/viperboard.c
++++ b/drivers/mfd/viperboard.c
+@@ -59,10 +59,8 @@ static int vprbrd_probe(struct usb_interface *interface,
+ 
+ 	/* allocate memory for our device state and initialize it */
+ 	vb = kzalloc(sizeof(*vb), GFP_KERNEL);
+-	if (vb = NULL) {
+-		dev_err(&interface->dev, "Out of memory\n");
++	if (!vb)
+ 		return -ENOMEM;
+-	}
+ 
+ 	mutex_init(&vb->lock);
+ 
+-- 
+2.15.1
+
