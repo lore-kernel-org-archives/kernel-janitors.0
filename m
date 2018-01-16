@@ -1,24 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 08 Jan 2018 19:30:46 +0000
-Subject: Re: [PATCH] mdio-sun4i: Fix a memory leak
-Message-Id: <20180108.143046.2103730003500033321.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Jan 2018 10:38:59 +0000
+Subject: [PATCH net-next] bnxt_en: uninitialized variable in bnxt_rx_pkt()
+Message-Id: <20180116103859.GA3374@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106080009.5325-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180106080009.5325-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Michael Chan <michael.chan@broadcom.com>, Andy Gospodarek <gospo@broadcom.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat,  6 Jan 2018 09:00:09 +0100
+There are a couple failure paths where "len" is used uninitialized.  It
+means we record the number of rx_packets incorrectly.
 
-> If the probing of the regulator is deferred, the memory allocated by
-> 'mdiobus_alloc_size()' will be leaking.
-> It should be freed before the next call to 'sun4i_mdio_probe()' which will
-> reallocate it.
-> 
-> Fixes: 4bdcb1dd9feb ("net: Add MDIO bus driver for the Allwinner EMAC")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 6a8788f25625 ("bnxt_en: add support for software dynamic interrupt moderation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thank you.
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index cf6ebf1e324b..5b5c4f266f1b 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1482,7 +1482,7 @@ static int bnxt_rx_pkt(struct bnxt *bp, struct bnxt_napi *bnapi, u32 *raw_cons,
+ 	u32 tmp_raw_cons = *raw_cons;
+ 	u16 cfa_code, cons, prod, cp_cons = RING_CMP(tmp_raw_cons);
+ 	struct bnxt_sw_rx_bd *rx_buf;
+-	unsigned int len;
++	unsigned int len = 0;
+ 	u8 *data_ptr, agg_bufs, cmp_type;
+ 	dma_addr_t dma_addr;
+ 	struct sk_buff *skb;
