@@ -1,27 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 21:20:32 +0000
-Subject: [PATCH 0/2] Input: wm831x-on: Adjustments for wm831x_on_probe()
-Message-Id: <e307cfde-58e2-3f4d-ecd7-5c80ace0bb5b@users.sourceforge.net>
+Date: Tue, 16 Jan 2018 11:59:01 +0000
+Subject: [PATCH 1/4] mfd/tps65910: Delete an error message for a failed memory allocation in tps65910_parse_d
+Message-Id: <c6d936d4-a3b3-43ba-24af-9688aa538780@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
+In-Reply-To: <a524388f-a56d-c2f3-9ec3-fd6343062aad@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, patches@opensource.cirrus.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 22:15:43 +0100
+Date: Tue, 16 Jan 2018 11:14:40 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+This issue was detected by using the Coccinelle software.
 
- drivers/input/misc/wm831x-on.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/tps65910.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 8263605f6d2f..555bd394efc3 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -395,10 +395,8 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
+ 
+ 	board_info = devm_kzalloc(&client->dev, sizeof(*board_info),
+ 			GFP_KERNEL);
+-	if (!board_info) {
+-		dev_err(&client->dev, "Failed to allocate pdata\n");
++	if (!board_info)
+ 		return NULL;
+-	}
+ 
+ 	ret = of_property_read_u32(np, "ti,vmbch-threshold", &prop);
+ 	if (!ret)
 -- 
-2.16.1
+2.15.1
 
