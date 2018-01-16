@@ -1,28 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 13:14:15 +0000
-Subject: [PATCH 0/3] mfd/omap-usb-tll: Adjustments for usbtll_omap_probe()
-Message-Id: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 16 Jan 2018 14:32:49 +0000
+Subject: Re: [next] ath10k: fix spelling mistake: "addrress" -> "address"
+Message-Id: <20180116143249.BD04D60854@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180112091450.8285-1-colin.king@canonical.com>
+In-Reply-To: <20180112091450.8285-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 14:09:28 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Three update suggestions were taken into account
-from static source code analysis.
+> Trivial fix to spelling mistake in warning message text.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Markus Elfring (3):
-  Delete two error messages for a failed memory allocation
-  Improve a size determination
-  Return an error code only as a constant
+Patch applied to ath-next branch of ath.git, thanks.
 
- drivers/mfd/omap-usb-tll.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+cdd4743e9ba3 ath10k: fix spelling mistake: "addrress" -> "address"
 
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10160107/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
