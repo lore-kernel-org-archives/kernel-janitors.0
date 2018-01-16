@@ -1,43 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Jan 2018 20:02:39 +0000
-Subject: [PATCH 2/4] gpio-stmpe: Improve a size determination in stmpe_gpio_probe()
-Message-Id: <fdd3ba06-afb7-e36e-6e58-ac4e974d7720@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 16 Jan 2018 10:00:53 +0000
+Subject: Re: [PATCH 2/4] gpio-stmpe: Improve a size determination in stmpe_gpio_probe()
+Message-Id: <CACRpkdYn0OASSMe3msNy7zJdur5tJ15yWB9AJno2PXBC0Sk4EA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
-In-Reply-To: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
+References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net> <fdd3ba06-afb7-e36e-6e58-ac4e974d7720@users.sourceforge.net>
+In-Reply-To: <fdd3ba06-afb7-e36e-6e58-ac4e974d7720@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Jan 2018 19:36:29 +0100
+On Fri, Jan 12, 2018 at 9:02 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 12 Jan 2018 19:36:29 +0100
+>
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Patch applied.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpio/gpio-stmpe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 79858c6ad31a..2cf30dcba82a 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -437,7 +437,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 
--	stmpe_gpio = kzalloc(sizeof(struct stmpe_gpio), GFP_KERNEL);
-+	stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
- 	if (!stmpe_gpio)
- 		return -ENOMEM;
- 
--- 
-2.15.1
-
+Yours,
+Linus Walleij
