@@ -1,45 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Jan 2018 16:40:36 +0000
-Subject: [PATCH] bcm63xx_enet: Delete two error messages for a failed memory allocation in bcm_enetsw_open()
-Message-Id: <e417429f-196b-6d03-0d40-02bfe0cd4903@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 16 Jan 2018 15:59:39 +0000
+Subject: Re: [next] rtlwifi: btcoexist: remove redundant variable fw_ps_state
+Message-Id: <20180116155939.A7AAC6025D@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180109164329.15919-1-colin.king@canonical.com>
+In-Reply-To: <20180109164329.15919-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, Yan-Hsuan Chuang <yhchuang@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jan 2018 17:30:04 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Omit extra messages for a memory allocation failure in this function.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable fw_ps_state is assigned a value but it is never read, hence
+> it is redundant and can be removed.
+> 
+> Cleans up clang warning:
+> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:736:2:
+> warning: Value stored to 'fw_ps_state' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/broadcom/bcm63xx_enet.c | 2 --
- 1 file changed, 2 deletions(-)
+7e2c49222b4e rtlwifi: btcoexist: remove redundant variable fw_ps_state
 
-diff --git a/drivers/net/ethernet/broadcom/bcm63xx_enet.c b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-index d9346e2ac720..52a42e3058cf 100644
---- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-+++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
-@@ -2166,7 +2166,6 @@ static int bcm_enetsw_open(struct net_device *dev)
- 	priv->tx_skb = kzalloc(sizeof(struct sk_buff *) * priv->tx_ring_size,
- 			       GFP_KERNEL);
- 	if (!priv->tx_skb) {
--		dev_err(kdev, "cannot allocate rx skb queue\n");
- 		ret = -ENOMEM;
- 		goto out_free_tx_ring;
- 	}
-@@ -2180,7 +2179,6 @@ static int bcm_enetsw_open(struct net_device *dev)
- 	priv->rx_skb = kzalloc(sizeof(struct sk_buff *) * priv->rx_ring_size,
- 			       GFP_KERNEL);
- 	if (!priv->rx_skb) {
--		dev_err(kdev, "cannot allocate rx skb queue\n");
- 		ret = -ENOMEM;
- 		goto out_free_tx_skb;
- 	}
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10152901/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
