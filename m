@@ -1,51 +1,84 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 02 Jan 2018 13:27:59 +0000
-Subject: [PATCH 03/12] spi: sirf: account for const type of of_device_id.data
-Message-Id: <1514899688-27844-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 16 Jan 2018 13:57:14 +0000
+Subject: Applied "ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()" to the asoc tree
+Message-Id: <E1ebRjm-0005D1-DP@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20180115080838.q6nupi7rs7k5pdky@mwanda>
+In-Reply-To: <20180115080838.q6nupi7rs7k5pdky@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Manuel Lauss <manuel.lauss@googlemail.com>, alsa-devel@alsa-project.orgMarkBrownbroonie@kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>alsa-devel@alsa-project.org
 
-This driver creates various const structures that it stores in the
-data field of an of_device_id array.
+The patch
 
-Adding const to the declaration of the location that receives the
-const value from the data field ensures that the compiler will
-continue to check that the value is not modified.  Furthermore, the
-const-discarding cast on the extraction from the data field is no
-longer needed.
+   ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
 
-Done using Coccinelle.
+has been applied to the asoc tree at
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 123af9043e93cb6f235207d260d50f832cdb5439 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 15 Jan 2018 11:08:38 +0300
+Subject: [PATCH] ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
+
+The loop timeout doesn't work because it's a post op and ends with "tmo"
+set to -1.  I changed it from a post-op to a pre-op and I changed the
+initial the starting value from 5 to 6 so we still iterate 5 times.  I
+left the other as it was because it's a large number.
+
+Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-sirf.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/au1x/ac97c.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff -u -p a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
---- a/drivers/spi/spi-sirf.c
-+++ b/drivers/spi/spi-sirf.c
-@@ -1072,7 +1072,7 @@ static int spi_sirfsoc_probe(struct plat
- 	struct sirfsoc_spi *sspi;
- 	struct spi_master *master;
- 	struct resource *mem_res;
--	struct sirf_spi_comp_data *spi_comp_data;
-+	const struct sirf_spi_comp_data *spi_comp_data;
- 	int irq;
- 	int ret;
- 	const struct of_device_id *match;
-@@ -1092,7 +1092,7 @@ static int spi_sirfsoc_probe(struct plat
- 	platform_set_drvdata(pdev, master);
- 	sspi = spi_master_get_devdata(master);
- 	sspi->fifo_full_offset = ilog2(sspi->fifo_size);
--	spi_comp_data = (struct sirf_spi_comp_data *)match->data;
-+	spi_comp_data = match->data;
- 	sspi->regs = spi_comp_data->regs;
- 	sspi->type = spi_comp_data->type;
- 	sspi->fifo_level_chk_mask = (sspi->fifo_size / 4) - 1;
+diff --git a/sound/soc/au1x/ac97c.c b/sound/soc/au1x/ac97c.c
+index 29a97d52e8ad..66d6c52e7761 100644
+--- a/sound/soc/au1x/ac97c.c
++++ b/sound/soc/au1x/ac97c.c
+@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_read(struct snd_ac97 *ac97,
+ 	do {
+ 		mutex_lock(&ctx->lock);
+ 
+-		tmo = 5;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		tmo = 6;
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			udelay(21);	/* wait an ac97 frame time */
+ 		if (!tmo) {
+ 			pr_debug("ac97rd timeout #1\n");
+@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_read(struct snd_ac97 *ac97,
+ 		 * poll, Forrest, poll...
+ 		 */
+ 		tmo = 0x10000;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			asm volatile ("nop");
+ 		data = RD(ctx, AC97_CMDRESP);
+ 
+-- 
+2.15.1
 
