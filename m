@@ -1,67 +1,47 @@
-From: Nick Dyer <nick@shmanahar.org>
-Date: Wed, 24 Jan 2018 20:35:32 +0000
-Subject: Re: [PATCH] Input: atmel_mxt_ts: Delete error messages for a failed memory allocation in two functio
-Message-Id: <20180124203531.GA5922@lava.h.shmanahar.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 12:42:41 +0000
+Subject: [PATCH -next] scsi: qedf: Fix error return code in __qedf_probe()
+Message-Id: <1516192961-52789-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e6d21a83-6628-66f6-d7ce-bb5bf530faf2@users.sourceforge.net>
-In-Reply-To: <e6d21a83-6628-66f6-d7ce-bb5bf530faf2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, QLogic-Storage-Upstream@cavium.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 21, 2018 at 10:33:50PM +0100, SF Markus Elfring wrote:
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fix to return error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Thanks!
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/scsi/qedf/qedf_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Signed-off-by: Nick Dyer <nick@shmanahar.org>
+diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+index 40800dd..ccd9a08 100644
+--- a/drivers/scsi/qedf/qedf_main.c
++++ b/drivers/scsi/qedf/qedf_main.c
+@@ -3126,6 +3126,7 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 	qedf->cmd_mgr = qedf_cmd_mgr_alloc(qedf);
+ 	if (!qedf->cmd_mgr) {
+ 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to allocate cmd mgr.\n");
++		rc = -ENOMEM;
+ 		goto err5;
+ 	}
+ 
+@@ -3149,6 +3150,7 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 		create_workqueue(host_buf);
+ 	if (!qedf->ll2_recv_wq) {
+ 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to LL2 workqueue.\n");
++		rc = -ENOMEM;
+ 		goto err7;
+ 	}
+ 
+@@ -3192,6 +3194,7 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 	if (!qedf->timer_work_queue) {
+ 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to start timer "
+ 			  "workqueue.\n");
++		rc = -ENOMEM;
+ 		goto err7;
+ 	}
 
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 7659bc48f1db..f38711e9c256 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -1507,10 +1507,8 @@ static int mxt_update_cfg(struct mxt_data *data, const struct firmware *cfg)
->  			MXT_INFO_CHECKSUM_SIZE;
->  	config_mem_size = data->mem_size - cfg_start_ofs;
->  	config_mem = kzalloc(config_mem_size, GFP_KERNEL);
-> -	if (!config_mem) {
-> -		dev_err(dev, "Failed to allocate memory\n");
-> +	if (!config_mem)
->  		return -ENOMEM;
-> -	}
->  
->  	ret = mxt_prepare_cfg_mem(data, cfg, data_pos, cfg_start_ofs,
->  				  config_mem, config_mem_size);
-> @@ -1612,10 +1610,8 @@ static int mxt_get_object_table(struct mxt_data *data)
->  
->  	table_size = data->info.object_num * sizeof(struct mxt_object);
->  	object_table = kzalloc(table_size, GFP_KERNEL);
-> -	if (!object_table) {
-> -		dev_err(&data->client->dev, "Failed to allocate memory\n");
-> +	if (!object_table)
->  		return -ENOMEM;
-> -	}
->  
->  	error = __mxt_read_reg(client, MXT_OBJECT_START, table_size,
->  			object_table);
-> @@ -1714,7 +1710,6 @@ static int mxt_get_object_table(struct mxt_data *data)
->  	data->msg_buf = kcalloc(data->max_reportid,
->  				data->T5_msg_size, GFP_KERNEL);
->  	if (!data->msg_buf) {
-> -		dev_err(&client->dev, "Failed to allocate message buffer\n");
->  		error = -ENOMEM;
->  		goto free_object_table;
->  	}
-> -- 
-> 2.16.0
-> 
