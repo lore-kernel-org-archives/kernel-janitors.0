@@ -1,48 +1,38 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 23 Jan 2018 13:04:40 +0000
-Subject: Re: [PATCH 3/3] mfd/omap-usb-tll: Return an error code only as a constant in usbtll_omap_probe()
-Message-Id: <20180123130440.lgfoeq4rzsa2e4gk@dell>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:40:34 +0000
+Subject: [PATCH -next] hwrng: bcm2835 - Remove redundant dev_err call in bcm2835_rng_probe()
+Message-Id: <1516189234-11957-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
- <367e77d8-3a65-2c12-5e79-75a626b65f41@users.sourceforge.net>
- <20180122155057.7eiu53l6xjls6uga@dell>
-In-Reply-To: <20180122155057.7eiu53l6xjls6uga@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, 22 Jan 2018, Lee Jones wrote:
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-> On Mon, 15 Jan 2018, SF Markus Elfring wrote:
->=20
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Mon, 15 Jan 2018 14:00:45 +0100
-> >=20
-> > * Return an error code without storing it in an intermediate variable.
-> >=20
-> > * Delete the label "err_clk_alloc" and local variable "ret"
-> >   which became unnecessary with this refactoring.
-> >=20
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/mfd/omap-usb-tll.c | 12 +++---------
-> >  1 file changed, 3 insertions(+), 9 deletions(-)
->=20
-> Applied, thanks.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/char/hw_random/bcm2835-rng.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-This patch does not apply.
+diff --git a/drivers/char/hw_random/bcm2835-rng.c b/drivers/char/hw_random/bcm2835-rng.c
+index 25e5631..7a84cec 100644
+--- a/drivers/char/hw_random/bcm2835-rng.c
++++ b/drivers/char/hw_random/bcm2835-rng.c
+@@ -158,10 +158,8 @@ static int bcm2835_rng_probe(struct platform_device *pdev)
+ 
+ 	/* map peripheral */
+ 	priv->base = devm_ioremap_resource(dev, r);
+-	if (IS_ERR(priv->base)) {
+-		dev_err(dev, "failed to remap rng regs");
++	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+-	}
+ 
+ 	/* Clock is optional on most platforms */
+ 	priv->clk = devm_clk_get(dev, NULL);
 
-Please rebase and resend.
 
---=20
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
