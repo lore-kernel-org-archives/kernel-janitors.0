@@ -1,71 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 11 Jan 2018 12:31:03 +0000
-Subject: Applied "ASoC: stm32: fix a typo in stm32_adfsdm_probe()" to the asoc tree
-Message-Id: <E1eZc0d-0007Qk-1v@debutante>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:32:50 +0000
+Subject: [PATCH -next] slimbus: qcom: remove redundant dev_err call in qcom_slim_probe()
+Message-Id: <1516188770-4716-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1515669111-125208-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1515669111-125208-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maxime@sirena.org.uk, Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org@alsa-project.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-   ASoC: stm32: fix a typo in stm32_adfsdm_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 6dee6722c6065f4850eab98c2b7b9f4a08a35813 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 11 Jan 2018 11:11:51 +0000
-Subject: [PATCH] ASoC: stm32: fix a typo in stm32_adfsdm_probe()
-
-Fix a typo, we should return PTR_ERR(priv->iio_cb) instead of
-PTR_ERR(priv->iio_ch).
-
-Fixes: 55da094824c4 ("ASoC: stm32: add DFSDM DAI support")
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/stm/stm32_adfsdm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/slimbus/qcom-ctrl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index af50891983c6..7306e3eca9e1 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -320,7 +320,7 @@ static int stm32_adfsdm_probe(struct platform_device *pdev)
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index ffb46f9..2f671dd 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -529,10 +529,8 @@ static int qcom_slim_probe(struct platform_device *pdev)
  
- 	priv->iio_cb = iio_channel_get_all_cb(&pdev->dev, NULL, NULL);
- 	if (IS_ERR(priv->iio_cb))
--		return PTR_ERR(priv->iio_ch);
-+		return PTR_ERR(priv->iio_cb);
+ 	slim_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl");
+ 	ctrl->base = devm_ioremap_resource(ctrl->dev, slim_mem);
+-	if (IS_ERR(ctrl->base)) {
+-		dev_err(&pdev->dev, "IOremap failed\n");
++	if (IS_ERR(ctrl->base))
+ 		return PTR_ERR(ctrl->base);
+-	}
  
- 	ret = devm_snd_soc_register_platform(&pdev->dev,
- 					     &stm32_adfsdm_soc_platform);
--- 
-2.15.1
+ 	sctrl->set_laddr = qcom_set_laddr;
+ 	sctrl->xfer_msg = qcom_xfer_msg;
+
+
 
