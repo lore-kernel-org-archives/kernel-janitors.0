@@ -1,28 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 22 Jan 2018 15:52:13 +0000
-Subject: Re: [PATCH] net: caif: remove redundant re-assignment of pointer pfrm
-Message-Id: <20180122.105213.111724497958584270.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:24:52 +0000
+Subject: [PATCH -next] media: rcar_drif: fix error return code in rcar_drif_alloc_dmachannels()
+Message-Id: <1516188292-144008-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180122152543.14719-1-colin.king@canonical.com>
-In-Reply-To: <20180122152543.14719-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dmitry.tarnyagin@lockless.no, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 22 Jan 2018 15:25:43 +0000
+Fix to return error code -ENODEV from the dma_request_slave_channel()
+error handling case instead of 0, as done elsewhere in this function.
+rc can be overwrite to 0 by dmaengine_slave_config() in the for loop.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer pfrm is initialized and then later re-assigned the same
-> value and hence the second assignment is redundant and can be removed.
-> 
-> Cleans up clang warning:
-> drivers/net/caif/caif_hsi.c:222:6: warning: Value stored to 'pfrm'
-> during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/media/platform/rcar_drif.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Ok, applied to net-next, thanks Colin.
+diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
+index b2e080e..dc7e280 100644
+--- a/drivers/media/platform/rcar_drif.c
++++ b/drivers/media/platform/rcar_drif.c
+@@ -274,7 +274,7 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
+ {
+ 	struct dma_slave_config dma_cfg;
+ 	unsigned int i;
+-	int ret = -ENODEV;
++	int ret;
+ 
+ 	for_each_rcar_drif_channel(i, &sdr->cur_ch_mask) {
+ 		struct rcar_drif *ch = sdr->ch[i];
+@@ -282,6 +282,7 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
+ 		ch->dmach = dma_request_slave_channel(&ch->pdev->dev, "rx");
+ 		if (!ch->dmach) {
+ 			rdrif_err(sdr, "ch%u: dma channel req failed\n", i);
++			ret = -ENODEV;
+ 			goto dmach_error;
+ 		}
+
