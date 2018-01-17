@@ -1,36 +1,31 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Jan 2018 11:40:24 +0000
-Subject: [PATCH -next] crypto: stm32 - remove redundant dev_err call in stm32_cryp_probe()
-Message-Id: <1516189224-11877-1-git-send-email-weiyongjun1@huawei.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+Date: Wed, 17 Jan 2018 13:02:40 +0000
+Subject: Re: [PATCH -next] crypto: stm32 - remove redundant dev_err call in stm32_cryp_probe()
+Message-Id: <d2641cbb-61fa-00e7-6ac8-f05d3cde0628@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1516189224-11877-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1516189224-11877-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/crypto/stm32/stm32-cryp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/crypto/stm32/stm32-cryp.c b/drivers/crypto/stm32/stm32-cryp.c
-index cf1dddb..4a06a7a 100644
---- a/drivers/crypto/stm32/stm32-cryp.c
-+++ b/drivers/crypto/stm32/stm32-cryp.c
-@@ -1052,10 +1052,8 @@ static int stm32_cryp_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	cryp->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(cryp->regs)) {
--		dev_err(dev, "Cannot map CRYP IO\n");
-+	if (IS_ERR(cryp->regs))
- 		return PTR_ERR(cryp->regs);
--	}
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
-
+SGksDQoNCg0KVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guDQoNCg0KT24gMTcvMDEvMTggMTI6NDAs
+IFdlaSBZb25nanVuIHdyb3RlOg0KPiBUaGVyZSBpcyBhIGVycm9yIG1lc3NhZ2Ugd2l0aGluIGRl
+dm1faW9yZW1hcF9yZXNvdXJjZQ0KPiBhbHJlYWR5LCBzbyByZW1vdmUgdGhlIGRldl9lcnIgY2Fs
+bCB0byBhdm9pZCByZWR1bmRhbnQNCj4gZXJyb3IgbWVzc2FnZS4NCj4NCj4gU2lnbmVkLW9mZi1i
+eTogV2VpIFlvbmdqdW4gPHdlaXlvbmdqdW4xQGh1YXdlaS5jb20+DQpSZXZpZXdlZC1ieTogRmFi
+aWVuIERlc3Nlbm5lIDxmYWJpZW4uZGVzc2VubmVAc3QuY29tPg0KPiAtLS0NCj4gICBkcml2ZXJz
+L2NyeXB0by9zdG0zMi9zdG0zMi1jcnlwLmMgfCA0ICstLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKyksIDMgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2NyeXB0by9zdG0zMi9zdG0zMi1jcnlwLmMgYi9kcml2ZXJzL2NyeXB0by9zdG0zMi9zdG0zMi1j
+cnlwLmMNCj4gaW5kZXggY2YxZGRkYi4uNGEwNmE3YSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9j
+cnlwdG8vc3RtMzIvc3RtMzItY3J5cC5jDQo+ICsrKyBiL2RyaXZlcnMvY3J5cHRvL3N0bTMyL3N0
+bTMyLWNyeXAuYw0KPiBAQCAtMTA1MiwxMCArMTA1Miw4IEBAIHN0YXRpYyBpbnQgc3RtMzJfY3J5
+cF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgIA0KPiAgIAlyZXMgPSBw
+bGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0KPiAgIAljcnlw
+LT5yZWdzID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKGRldiwgcmVzKTsNCj4gLQlpZiAoSVNfRVJS
+KGNyeXAtPnJlZ3MpKSB7DQo+IC0JCWRldl9lcnIoZGV2LCAiQ2Fubm90IG1hcCBDUllQIElPXG4i
+KTsNCj4gKwlpZiAoSVNfRVJSKGNyeXAtPnJlZ3MpKQ0KPiAgIAkJcmV0dXJuIFBUUl9FUlIoY3J5
+cC0+cmVncyk7DQo+IC0JfQ0KPiAgIA0KPiAgIAlpcnEgPSBwbGF0Zm9ybV9nZXRfaXJxKHBkZXYs
+IDApOw0KPiAgIAlpZiAoaXJxIDwgMCkgew0KPg0K
