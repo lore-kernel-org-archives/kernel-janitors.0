@@ -1,46 +1,53 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 02 Jan 2018 14:43:01 +0000
-Subject: =?UTF-8?Q?Re=3A_Rename_the_SmPL_script_=E2=80=9Ckzalloc-=E2=80=A6=2Ecocci=E2=80=9D=3F?=
-Message-Id: <alpine.DEB.2.20.1801021541070.24055@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1008439410-1514904181=:24055"
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Jan 2018 11:23:03 +0000
+Subject: [PATCH][devlink-next] devlink: make functions a couple of new functions static
+Message-Id: <20180117112303.20149-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
- <ae67a02e-7257-c7e0-f4a1-bdf35a3bb2d0@users.sourceforge.net>
- <alpine.DEB.2.20.1801021528160.24055@hadrien>
- <96aee198-15b2-dc96-a349-d8a70d06dc67@users.sourceforge.net>
-In-Reply-To: <96aee198-15b2-dc96-a349-d8a70d06dc67@users.sourceforge.net>
-To: cocci@systeme.lip6.fr
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Pirko <jiri@mellanox.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Colin Ian King <colin.king@canonical.com>
 
---8323329-1008439410-1514904181=:24055
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+The functions devlink_resource_find and devlink_resource_validate_children
+are local to the source and do not need to be in global scope, so make
+them static.
 
+Cleans up sparse warnings:
+symbol 'devlink_resource_find' was not declared. Should it be static?
+warning: symbol 'devlink_resource_validate_children' was not declared.
+Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/core/devlink.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Tue, 2 Jan 2018, SF Markus Elfring wrote:
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index dd7d6dd07bfb..66d36705fb9d 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -2294,7 +2294,7 @@ static int devlink_nl_cmd_dpipe_table_counters_set(struct sk_buff *skb,
+ 						counters_enable);
+ }
+ 
+-struct devlink_resource *
++static struct devlink_resource *
+ devlink_resource_find(struct devlink *devlink,
+ 		      struct devlink_resource *resource, u64 resource_id)
+ {
+@@ -2319,7 +2319,8 @@ devlink_resource_find(struct devlink *devlink,
+ 	return NULL;
+ }
+ 
+-void devlink_resource_validate_children(struct devlink_resource *resource)
++static void
++devlink_resource_validate_children(struct devlink_resource *resource)
+ {
+ 	struct devlink_resource *child_resource;
+ 	bool size_valid = true;
+-- 
+2.15.1
 
-> >> Now I find that it became more advanced than the previous version.
-> >> How do you think about to update also the corresponding file name
-> >> (instead of keeping the word “simple” there)?
-> >
-> > Why not send a patch for it yourself?
->
-> * I would like to check your views around renaming of such files.
->
-> * I am unsure which name will be better finally.
->   Would we like to achieve another permalink here?
-
-Actually, according to th original name choice it is stillsimple, becaue
-it doesn't account for the possibility of many statement between the alloc
-and the memset and it doesn't account for different ways of expressing the
-size between the two calls.
-
-If you want to be more general than kzalloc, then perhaps
-zalloc-simple.cocci would be ok.
-
-julia
---8323329-1008439410-1514904181=:24055--
