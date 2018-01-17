@@ -1,45 +1,47 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 23 Jan 2018 12:55:58 +0000
-Subject: Re: [PATCH v2] mfd: omap-usb-tll: Allocate driver data at once
-Message-Id: <20180123125558.pcvztj2spuimatdk@dell>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 03:27:42 +0000
+Subject: [PATCH net-next] devlink: Make some functions static
+Message-Id: <1516159662-109725-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180115202505.GA2628@lenoch>
-In-Reply-To: <20180115202505.GA2628@lenoch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: linux-omap@vger.kernel.org, SF Markus Elfring <elfring@users.sourceforge.net>, Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 15 Jan 2018, Ladislav Michl wrote:
+Fixes the following sparse warnings:
 
-> Allocating memory to store clk array together with driver
-> data simplifies error unwinding and allows deleting memory
-> allocation failure message as there is now only single point
-> of failure already covered by allocation failure report.
->=20
-> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-> [Markus Elfring: simplified error unwinding, error message removal]
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Link: https://lkml.org/lkml/2018/1/15/411
-> ---
->  Changes:
->  - v2: reindent 'rev' debug message
->        credit Markus Elfring
->=20
->  drivers/mfd/omap-usb-tll.c | 60 +++++++++++++++++++---------------------=
-------
->  1 file changed, 25 insertions(+), 35 deletions(-)
+net/core/devlink.c:2297:25: warning:
+ symbol 'devlink_resource_find' was not declared. Should it be static?
+net/core/devlink.c:2322:6: warning:
+ symbol 'devlink_resource_validate_children' was not declared. Should it be static?
 
-Applied, thanks.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/core/devlink.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---=20
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index dd7d6dd..66d3670 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -2294,7 +2294,7 @@ static int devlink_nl_cmd_dpipe_table_counters_set(struct sk_buff *skb,
+ 						counters_enable);
+ }
+ 
+-struct devlink_resource *
++static struct devlink_resource *
+ devlink_resource_find(struct devlink *devlink,
+ 		      struct devlink_resource *resource, u64 resource_id)
+ {
+@@ -2319,7 +2319,8 @@ struct devlink_resource *
+ 	return NULL;
+ }
+ 
+-void devlink_resource_validate_children(struct devlink_resource *resource)
++static void
++devlink_resource_validate_children(struct devlink_resource *resource)
+ {
+ 	struct devlink_resource *child_resource;
+ 	bool size_valid = true;
+
