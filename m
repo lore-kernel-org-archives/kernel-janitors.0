@@ -1,13 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 17 Jan 2018 09:52:39 +0000
-Subject: [PATCH] cifs: remove redundant duplicated assignment of pointer 'node'
-Message-Id: <20180117095239.10670-1-colin.king@canonical.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
+Date: Wed, 17 Jan 2018 23:11:23 +0000
+Subject: Re: [PATCH] cifs: remove redundant duplicated assignment of pointer 'node'
+Message-Id: <2031352942.702941.1516230683335.JavaMail.zimbra@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180117095239.10670-1-colin.king@canonical.com>
+In-Reply-To: <20180117095239.10670-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+
+
+----- Original Message -----
+From: "Colin King" <colin.king@canonical.com>
+To: "Steve French" <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Sent: Wednesday, 17 January, 2018 8:52:39 PM
+Subject: [PATCH] cifs: remove redundant duplicated assignment of pointer 'node'
 
 From: Colin Ian King <colin.king@canonical.com>
 
@@ -41,3 +53,7 @@ index 0efd22e75ac7..63c5d85fe25e 100644
 -- 
 2.15.1
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
