@@ -1,84 +1,27 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 16 Jan 2018 13:57:14 +0000
-Subject: Applied "ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()" to the asoc tree
-Message-Id: <E1ebRjm-0005D1-DP@debutante>
+From: Emile Kenold <alckaa32@gmail.com>
+Date: Wed, 17 Jan 2018 01:31:22 +0000
+Subject: Ut
+Message-Id: <CAH=T6A8+M9o1nJiEiOgMkeZuD2RR4A8JyynNM36LrM5t-1ofJA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180115080838.q6nupi7rs7k5pdky@mwanda>
-In-Reply-To: <20180115080838.q6nupi7rs7k5pdky@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Manuel Lauss <manuel.lauss@googlemail.com>, alsa-devel@alsa-project.orgMarkBrownbroonie@kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-The patch
+--=20
+My name is Mrs. Emile Kenold from London. Am suffering from lung
+cancer which had damaged my liver and back bone, my health is no
+longer responding to treatment.
 
-   ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
+I have made up my mind to give a charity donation of =C2=A37 Million
+British Pound Sterling to you and i hope you use my donation for
+charity work according to my will as i need your urgent response so
+that i will move this money to you due to my bad health condition.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 123af9043e93cb6f235207d260d50f832cdb5439 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 15 Jan 2018 11:08:38 +0300
-Subject: [PATCH] ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
-
-The loop timeout doesn't work because it's a post op and ends with "tmo"
-set to -1.  I changed it from a post-op to a pre-op and I changed the
-initial the starting value from 5 to 6 so we still iterate 5 times.  I
-left the other as it was because it's a large number.
-
-Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/au1x/ac97c.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/au1x/ac97c.c b/sound/soc/au1x/ac97c.c
-index 29a97d52e8ad..66d6c52e7761 100644
---- a/sound/soc/au1x/ac97c.c
-+++ b/sound/soc/au1x/ac97c.c
-@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_read(struct snd_ac97 *ac97,
- 	do {
- 		mutex_lock(&ctx->lock);
- 
--		tmo = 5;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		tmo = 6;
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			udelay(21);	/* wait an ac97 frame time */
- 		if (!tmo) {
- 			pr_debug("ac97rd timeout #1\n");
-@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_read(struct snd_ac97 *ac97,
- 		 * poll, Forrest, poll...
- 		 */
- 		tmo = 0x10000;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			asm volatile ("nop");
- 		data = RD(ctx, AC97_CMDRESP);
- 
--- 
-2.15.1
-
+Regards
+Emile.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
