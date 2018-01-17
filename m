@@ -1,42 +1,71 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 10:07:40 +0000
-Subject: [PATCH] mfd/tps6586x: Delete an error message for a failed memory allocation in tps6586x_parse_dt()
-Message-Id: <e75d92e0-6994-f415-29bd-97ac9198afa9@users.sourceforge.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:28:14 +0000
+Subject: [PATCH -next] perf: hisi: Remove redundant dev_err call
+Message-Id: <1516188494-147057-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 11:02:56 +0100
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/mfd/tps6586x.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c | 4 +---
+ drivers/perf/hisilicon/hisi_uncore_hha_pmu.c | 4 +---
+ drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c | 4 +---
+ 3 file changed, 3 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index 5628a6b5b19b..b89379782741 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -423,10 +423,8 @@ static struct tps6586x_platform_data *tps6586x_parse_dt(struct i2c_client *clien
- 	struct tps6586x_platform_data *pdata;
+diff --git a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+index 1b10ea0..deb11d2 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+@@ -270,10 +270,8 @@ static int hisi_ddrc_pmu_init_data(struct platform_device *pdev,
  
- 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(&client->dev, "Memory allocation failed\n");
-+	if (!pdata)
- 		return NULL;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	ddrc_pmu->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(ddrc_pmu->base)) {
+-		dev_err(&pdev->dev, "ioremap failed for ddrc_pmu resource\n");
++	if (IS_ERR(ddrc_pmu->base))
+ 		return PTR_ERR(ddrc_pmu->base);
 -	}
  
- 	pdata->num_subdevs = 0;
- 	pdata->subdevs = NULL;
--- 
-2.15.1
+ 	return 0;
+ }
+diff --git a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
+index 443906e..dbf7629 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
+@@ -263,10 +263,8 @@ static int hisi_hha_pmu_init_data(struct platform_device *pdev,
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	hha_pmu->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(hha_pmu->base)) {
+-		dev_err(&pdev->dev, "ioremap failed for hha_pmu resource\n");
++	if (IS_ERR(hha_pmu->base))
+ 		return PTR_ERR(hha_pmu->base);
+-	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+index 0bde5d9..8d79d88 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+@@ -266,10 +266,8 @@ static int hisi_l3c_pmu_init_data(struct platform_device *pdev,
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	l3c_pmu->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(l3c_pmu->base)) {
+-		dev_err(&pdev->dev, "ioremap failed for l3c_pmu resource\n");
++	if (IS_ERR(l3c_pmu->base))
+ 		return PTR_ERR(l3c_pmu->base);
+-	}
+ 
+ 	return 0;
+ }
 
