@@ -1,36 +1,38 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Thu, 04 Jan 2018 03:41:42 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] igb: Delete an error message for a failed memory allocation in igb_ena
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C72FE85@ORSMSX101.amr.corp.intel.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:26:27 +0000
+Subject: [PATCH -next] clk: samsung: exynos5433: Remove redundant dev_err call in exynos5433_cmu_probe()
+Message-Id: <1516188387-144930-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6fe0ffd-4439-1f2b-1f78-2a3552f5dd09@users.sourceforge.net>
-In-Reply-To: <d6fe0ffd-4439-1f2b-1f78-2a3552f5dd09@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of SF Markus Elfring
-> Sent: Monday, January 1, 2018 11:57 AM
-> To: netdev@vger.kernel.org; intel-wired-lan@lists.osuosl.org; Kirsher,
-> Jeffrey T <jeffrey.t.kirsher@intel.com>
-> Cc: kernel-janitors@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>
-> Subject: [Intel-wired-lan] [PATCH] igb: Delete an error message for a failed
-> memory allocation in igb_enable_sriov()
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 Jan 2018 20:53:10 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/ethernet/intel/igb/igb_main.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index db27090..9323e6b 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -5513,10 +5513,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(reg_base)) {
+-		dev_err(dev, "failed to map registers\n");
++	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
+-	}
+ 
+ 	for (i = 0; i < info->nr_clk_ids; ++i)
+ 		ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
+
+
+
