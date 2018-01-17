@@ -1,40 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 15:14:45 +0000
-Subject: [PATCH 1/2] Input: gtco: Delete an error message for a failed memory allocation in gtco_probe()
-Message-Id: <6a7cfd59-769a-9e3e-3c24-e7b028d96254@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Jan 2018 11:14:04 +0000
+Subject: [PATCH][next] staging: fsl-mc: make function its_fsl_mc_msi_init static
+Message-Id: <20180117111404.19938-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
-In-Reply-To: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 15:03:33 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The function its_fsl_mc_msi_init is local to the source and does
+not need to be in global scope, so make it static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warning:
+symbol 'its_fsl_mc_msi_init' was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/input/tablet/gtco.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/tablet/gtco.c b/drivers/input/tablet/gtco.c
-index 4b8b9d7aa75e..f2670872735f 100644
---- a/drivers/input/tablet/gtco.c
-+++ b/drivers/input/tablet/gtco.c
-@@ -902,7 +902,6 @@ static int gtco_probe(struct usb_interface *usbinterface,
+diff --git a/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c b/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c
+index ffeaea574a40..54463d3efa6a 100644
+--- a/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c
++++ b/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c
+@@ -67,7 +67,7 @@ static const struct of_device_id its_device_id[] = {
+ 	{},
+ };
  
- 	report = kzalloc(le16_to_cpu(hid_desc->wDescriptorLength), GFP_KERNEL);
- 	if (!report) {
--		dev_err(&usbinterface->dev, "No more memory for report\n");
- 		error = -ENOMEM;
- 		goto err_free_urb;
- 	}
+-int __init its_fsl_mc_msi_init(void)
++static int __init its_fsl_mc_msi_init(void)
+ {
+ 	struct device_node *np;
+ 	struct irq_domain *parent;
 -- 
-2.16.1
+2.15.1
 
