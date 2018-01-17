@@ -1,28 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 15:30:58 +0000
-Subject: [PATCH 0/3] misc/TI-ST: Adjustments for three function implementations
-Message-Id: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:26:18 +0000
+Subject: [PATCH -next] clk: samsung: exynos-audss: Remove redundant dev_err call in exynos_audss_clk_probe()
+Message-Id: <1516188378-144847-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 16:26:36 +0100
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/samsung/clk-exynos-audss.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in kim_probe()
-  Improve a size determination in kim_probe()
-  Delete an unnecessary return statement in two functions
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 5bfc92e..b4b057c 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -143,10 +143,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(reg_base)) {
+-		dev_err(dev, "failed to map audss registers\n");
++	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
+-	}
+ 
+ 	epll = ERR_PTR(-ENODEV);
+ 
 
- drivers/misc/ti-st/st_kim.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
 
--- 
-2.15.1
 
