@@ -1,44 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 20:59:16 +0000
-Subject: [PATCH 1/2] Input: tps6507x-ts: Delete an error message for a failed memory allocation in tps6507x_t
-Message-Id: <a0661b85-bdc8-baed-c3a6-adaa383ea30d@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Jan 2018 11:54:27 +0000
+Subject: [PATCH] USB: serial: remove redundant initializations of 'mos_parport'
+Message-Id: <20180117115427.20686-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1ee278a0-a855-cfb3-fd04-24034ec42a65@users.sourceforge.net>
-In-Reply-To: <1ee278a0-a855-cfb3-fd04-24034ec42a65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Yegor Yefremov <yegorslists@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 21:43:54 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The pointer mos_parport is being initialized to pp->private_data and
+then the assignment is duplicated after a spin lock.  Remove the
+initialization as it occurs before the spin lock and it is a redundant
+assignment.
 
-This issue was detected by using the Coccinelle software.
+Cleans up clang warnings:
+drivers/usb/serial/mos7720.c:521:26: warning: Value stored to
+'mos_parport' during its initialization is never read
+drivers/usb/serial/mos7720.c:557:26: warning: Value stored to
+'mos_parport' during its initialization is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/input/touchscreen/tps6507x-ts.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/usb/serial/mos7720.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/tps6507x-ts.c b/drivers/input/touchscreen/tps6507x-ts.c
-index 75170a7439b1..5b2756ec1766 100644
---- a/drivers/input/touchscreen/tps6507x-ts.c
-+++ b/drivers/input/touchscreen/tps6507x-ts.c
-@@ -227,10 +227,8 @@ static int tps6507x_ts_probe(struct platform_device *pdev)
- 	init_data = tps_board->tps6507x_ts_init_data;
+diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
+index f4df3d5bf69c..bd57630e67e2 100644
+--- a/drivers/usb/serial/mos7720.c
++++ b/drivers/usb/serial/mos7720.c
+@@ -518,7 +518,7 @@ static void parport_mos7715_write_control(struct parport *pp, unsigned char d)
  
- 	tsc = devm_kzalloc(&pdev->dev, sizeof(struct tps6507x_ts), GFP_KERNEL);
--	if (!tsc) {
--		dev_err(tps6507x_dev->dev, "failed to allocate driver data\n");
-+	if (!tsc)
- 		return -ENOMEM;
--	}
+ static unsigned char parport_mos7715_read_control(struct parport *pp)
+ {
+-	struct mos7715_parport *mos_parport = pp->private_data;
++	struct mos7715_parport *mos_parport;
+ 	__u8 dcr;
  
- 	tsc->mfd = tps6507x_dev;
- 	tsc->dev = tps6507x_dev->dev;
+ 	spin_lock(&release_lock);
+@@ -554,7 +554,7 @@ static unsigned char parport_mos7715_frob_control(struct parport *pp,
+ static unsigned char parport_mos7715_read_status(struct parport *pp)
+ {
+ 	unsigned char status;
+-	struct mos7715_parport *mos_parport = pp->private_data;
++	struct mos7715_parport *mos_parport;
+ 
+ 	spin_lock(&release_lock);
+ 	mos_parport = pp->private_data;
 -- 
 2.15.1
 
