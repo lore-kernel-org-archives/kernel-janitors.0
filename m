@@ -1,38 +1,42 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Jan 2018 11:40:34 +0000
-Subject: [PATCH -next] hwrng: bcm2835 - Remove redundant dev_err call in bcm2835_rng_probe()
-Message-Id: <1516189234-11957-1-git-send-email-weiyongjun1@huawei.com>
+From: Eric Anholt <eric@anholt.net>
+Date: Wed, 17 Jan 2018 19:47:58 +0000
+Subject: Re: [PATCH -next] hwrng: bcm2835 - Remove redundant dev_err call in bcm2835_rng_probe()
+Message-Id: <876080mfm9.fsf@anholt.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <1516189234-11957-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1516189234-11957-1-git-send-email-weiyongjun1@huawei.com>
 To: linux-arm-kernel@lists.infradead.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/char/hw_random/bcm2835-rng.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Wei Yongjun <weiyongjun1@huawei.com> writes:
 
-diff --git a/drivers/char/hw_random/bcm2835-rng.c b/drivers/char/hw_random/bcm2835-rng.c
-index 25e5631..7a84cec 100644
---- a/drivers/char/hw_random/bcm2835-rng.c
-+++ b/drivers/char/hw_random/bcm2835-rng.c
-@@ -158,10 +158,8 @@ static int bcm2835_rng_probe(struct platform_device *pdev)
- 
- 	/* map peripheral */
- 	priv->base = devm_ioremap_resource(dev, r);
--	if (IS_ERR(priv->base)) {
--		dev_err(dev, "failed to remap rng regs");
-+	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
--	}
- 
- 	/* Clock is optional on most platforms */
- 	priv->clk = devm_clk_get(dev, NULL);
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
 
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlpfqG4ACgkQtdYpNtH8
+nujAqA//d1bInXWbR9uj53UfIu7iEapW7aw0BI3r+OznVdI09Qbq9dSpdLGdraSS
+49wvw8rAS/mjUQIWvUJdtvye4OP3720kDi3p6JUlib+ygBIbbxizkDOMsQae43Fw
+/8N54XkiTTRaQBEJQ6wG2Rbdu/V/J6VWkjv67EofrRugSUJAwEso3q6yzkvaAtq7
+Erom20bN0uRFnueP8+6LKWaKuATWWcph/FFQEDp0fPryCsJ3vA+Fmrj50va9RsZG
++2+Kkclr97pJNN7FL74ognNqalJOFetY0Vr54CiEcWrIdifvwDCOxMzlPMlr7l84
+BN/LZNHFLbOWV/ZFgJdl7RSNRcR9AGaO/kGTtSOogkJHKRJVbehmwAvnyCv65yuX
++Je5enHQXJHvftPLjUMI/bnY0312FHvCSPWSujxl7rRGm7SdACKEQBsl4UjmomWk
+lzfqvurpkStE4nEWAkhWnH/JW7XAdk8wq8rfyMdzRz79H46v/lzevEhTa8OvgACV
+Pno0yTk8lKvX5v05WVkBCeyFTQXr3kTq+WNuyG/DOkR9Oiwlq6cDbaujGuuSz5fh
+TVKn1P2Nz8+fYsb0exLOrPWI2zPRkV3K1IYxilmqyFFfYZdk35Z+S+85p6xX/0SB
+CtGW61gnEbTQu/e9dQov432CLN5yzKKn+IR1/rG/q8QRcPQM/ks=
+=h7JS
+-----END PGP SIGNATURE-----
+--=-=-=--
