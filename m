@@ -1,40 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 11 Jan 2018 16:55:39 +0000
-Subject: [PATCH][scsi-next] scsi: mpt3sas: make function _get_st_from_smid static
-Message-Id: <20180111165539.1248-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 17 Jan 2018 06:02:33 +0000
+Subject: Re: [PATCH][scsi-next] scsi: mpt3sas: make function _get_st_from_smid static
+Message-Id: <yq1r2qpt43q.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180111165539.1248-1-colin.king@canonical.com>
+In-Reply-To: <20180111165539.1248-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 11 Jan 2018 16:55:39 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The function _get_st_from_smid is local to the source and does
-not need to be in global scope, so make it static.
+Colin,
 
-Cleans up sparse warning:
-symbol '_get_st_from_smid' was not declared. Should it be static?
+> The function _get_st_from_smid is local to the source and does
+> not need to be in global scope, so make it static.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to 4.16/scsi-queue, thanks!
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index a44b9be6e3c5..13d6e4ec3022 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -888,7 +888,7 @@ _base_async_event(struct MPT3SAS_ADAPTER *ioc, u8 msix_index, u32 reply)
- 	return 1;
- }
- 
--struct scsiio_tracker *
-+static struct scsiio_tracker *
- _get_st_from_smid(struct MPT3SAS_ADAPTER *ioc, u16 smid)
- {
- 	struct scsi_cmnd *cmd;
 -- 
-2.15.1
-
+Martin K. Petersen	Oracle Linux Engineering
