@@ -1,43 +1,43 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 29 Jan 2018 14:17:59 +0000
-Subject: Re: [PATCH] Coccinelle: memdup: drop spurious line
-Message-Id: <CAK7LNATM-QFQUMRWeaW-QTLP_8BwgTc4NdJ0Yk6nAr=+R-cW7w@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Jan 2018 09:52:39 +0000
+Subject: [PATCH] cifs: remove redundant duplicated assignment of pointer 'node'
+Message-Id: <20180117095239.10670-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1517077416-17848-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1517077416-17848-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2018-01-28 3:23 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> The kmemdup line in the non-patch case was left over from the added kmemdup
-> line in the patch case.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  scripts/coccinelle/api/memdup.cocci |    1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/scripts/coccinelle/api/memdup.cocci b/scripts/coccinelle/api/memdup.cocci
-> index 3d1aa71..1249b72 100644
-> --- a/scripts/coccinelle/api/memdup.cocci
-> +++ b/scripts/coccinelle/api/memdup.cocci
-> @@ -49,7 +49,6 @@ statement S;
->  @@
->
->  *  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-> -   to = kmemdup(from,size,flag);
->     if (to=NULL || ...) S
->  *  memcpy(to, from, size);
->
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to linux-kbuild/misc.  Thanks!
+Node is assigned twice to rb_first(root), first during declaration
+time and second after a taking a spin lock, so we have a duplicated
+assignment.  Remove the first assignment because it is redundant and
+also not protected by the spin lock.
 
+Cleans up clang warning:
+fs/cifs/connect.c:4435:18: warning: Value stored to 'node' during
+its initialization is never read
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/connect.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 0efd22e75ac7..63c5d85fe25e 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -4432,7 +4432,7 @@ cifs_prune_tlinks(struct work_struct *work)
+ 	struct cifs_sb_info *cifs_sb = container_of(work, struct cifs_sb_info,
+ 						    prune_tlinks.work);
+ 	struct rb_root *root = &cifs_sb->tlink_tree;
+-	struct rb_node *node = rb_first(root);
++	struct rb_node *node;
+ 	struct rb_node *tmp;
+ 	struct tcon_link *tlink;
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.15.1
+
