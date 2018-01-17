@@ -1,24 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 09 Jan 2018 16:41:10 +0000
-Subject: Re: [PATCH] ipv6: use ARRAY_SIZE for array sizing calculation on array seg6_action_table
-Message-Id: <20180109.114110.846074032577787600.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 03:27:33 +0000
+Subject: [PATCH net-next] mlxsw: spectrum: Make function mlxsw_sp_kvdl_part_occ() static
+Message-Id: <1516159653-109657-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180107235026.8387-1-colin.king@canonical.com>
-In-Reply-To: <20180107235026.8387-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, Arkadi Sharshevsky <arkadis@mellanox.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun,  7 Jan 2018 23:50:26 +0000
+Fixes the following sparse warning:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Use the ARRAY_SIZE macro on array seg6_action_table to determine size of
-> the array. Improvement suggested by coccinelle.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c:289:5: warning:
+ symbol 'mlxsw_sp_kvdl_part_occ' was not declared. Should it be static?
 
-Applied to net-next.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
+index cfacc17..55f9d2d 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
+@@ -286,7 +286,7 @@ static void mlxsw_sp_kvdl_parts_fini(struct mlxsw_sp *mlxsw_sp)
+ 		mlxsw_sp_kvdl_part_fini(mlxsw_sp, i);
+ }
+ 
+-u64 mlxsw_sp_kvdl_part_occ(struct mlxsw_sp_kvdl_part *part)
++static u64 mlxsw_sp_kvdl_part_occ(struct mlxsw_sp_kvdl_part *part)
+ {
+ 	unsigned int nr_entries;
+ 	int bit = -1;
+
