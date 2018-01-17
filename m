@@ -1,87 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 03 Jan 2018 12:22:55 +0000
-Subject: Applied "spi: sirf: account for const type of of_device_id.data" to the spi tree
-Message-Id: <E1eWi4N-0003OF-1D@debutante>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:25:11 +0000
+Subject: [PATCH -next] ipmi/powernv: Fix error return code in ipmi_powernv_probe()
+Message-Id: <1516188311-144227-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1514899688-27844-4-git-send-email-Julia.Lawall@lip6.fr>
-References: <E1eWhx5-0002II-8d@debutante>
-In-Reply-To: <E1eWhx5-0002II-8d@debutante>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael
+ Ellerman <mpe@ellerman.id.au>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, openipmi-developer@lists.sourceforge.net, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+Fix to return a negative error code from the request_irq() error
+handling case instead of 0, as done elsewhere in this function.
 
-   spi: sirf: account for const type of of_device_id.data
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9e327ce71f3894e7e6b57f5c15a0dfa5be79f44e Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 2 Jan 2018 14:27:59 +0100
-Subject: [PATCH] spi: sirf: account for const type of of_device_id.data
-
-This driver creates various const structures that it stores in the
-data field of an of_device_id array.
-
-Adding const to the declaration of the location that receives the
-const value from the data field ensures that the compiler will
-continue to check that the value is not modified.  Furthermore, the
-const-discarding cast on the extraction from the data field is no
-longer needed.
-
-Done using Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/spi/spi-sirf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/ipmi/ipmi_powernv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
-index bbb1a275f718..f009d76f96b1 100644
---- a/drivers/spi/spi-sirf.c
-+++ b/drivers/spi/spi-sirf.c
-@@ -1072,7 +1072,7 @@ static int spi_sirfsoc_probe(struct platform_device *pdev)
- 	struct sirfsoc_spi *sspi;
- 	struct spi_master *master;
- 	struct resource *mem_res;
--	struct sirf_spi_comp_data *spi_comp_data;
-+	const struct sirf_spi_comp_data *spi_comp_data;
- 	int irq;
- 	int ret;
- 	const struct of_device_id *match;
-@@ -1092,7 +1092,7 @@ static int spi_sirfsoc_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, master);
- 	sspi = spi_master_get_devdata(master);
- 	sspi->fifo_full_offset = ilog2(sspi->fifo_size);
--	spi_comp_data = (struct sirf_spi_comp_data *)match->data;
-+	spi_comp_data = match->data;
- 	sspi->regs = spi_comp_data->regs;
- 	sspi->type = spi_comp_data->type;
- 	sspi->fifo_level_chk_mask = (sspi->fifo_size / 4) - 1;
--- 
-2.15.1
+diff --git a/drivers/char/ipmi/ipmi_powernv.c b/drivers/char/ipmi/ipmi_powernv.c
+index c687c8d..bcf493d 100644
+--- a/drivers/char/ipmi/ipmi_powernv.c
++++ b/drivers/char/ipmi/ipmi_powernv.c
+@@ -250,8 +250,9 @@ static int ipmi_powernv_probe(struct platform_device *pdev)
+ 		ipmi->irq = opal_event_request(prop);
+ 	}
+ 
+-	if (request_irq(ipmi->irq, ipmi_opal_event, IRQ_TYPE_LEVEL_HIGH,
+-				"opal-ipmi", ipmi)) {
++	rc = request_irq(ipmi->irq, ipmi_opal_event, IRQ_TYPE_LEVEL_HIGH,
++			 "opal-ipmi", ipmi);
++	if (rc) {
+ 		dev_warn(dev, "Unable to request irq\n");
+ 		goto err_dispose;
+ 	}
 
