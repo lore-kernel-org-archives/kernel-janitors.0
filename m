@@ -1,26 +1,42 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Tue, 23 Jan 2018 10:14:41 +0000
-Subject: Re: [PATCH -next] cpufreq: scpi: fix error return code in scpi_cpufreq_init()
-Message-Id: <15661228-4bb6-233e-b81b-8f51f4579616@arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Jan 2018 13:41:57 +0000
+Subject: [PATCH] mmc: sh_mmcif: remove redundant initialization of 'opc'
+Message-Id: <20180117134157.23943-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516673342-170261-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516673342-170261-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Variable opc is initialized with a value that is never read, opc
+is later re-assigned a newer value, hence the initialization can
+be removed.
 
-On 23/01/18 02:09, Wei Yongjun wrote:
-> Fix to return a negative error code from the clk_get() error handling
-> case instead of 0, as done elsewhere in this function.
-> 
+Cleans up clang warning:
+drivers/mmc/host/sh_mmcif.c:919:6: warning: Value stored to 'opc'
+during its initialization is never read
 
-Thanks for catching this.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/sh_mmcif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-
+diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+index 53fb18bb7bee..7bb00c68a756 100644
+--- a/drivers/mmc/host/sh_mmcif.c
++++ b/drivers/mmc/host/sh_mmcif.c
+@@ -916,7 +916,7 @@ static void sh_mmcif_start_cmd(struct sh_mmcif_host *host,
+ 			       struct mmc_request *mrq)
+ {
+ 	struct mmc_command *cmd = mrq->cmd;
+-	u32 opc = cmd->opcode;
++	u32 opc;
+ 	u32 mask = 0;
+ 	unsigned long flags;
+ 
 -- 
-Regards,
-Sudeep
+2.15.1
+
