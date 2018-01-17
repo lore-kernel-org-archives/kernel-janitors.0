@@ -1,24 +1,39 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 26 Jan 2018 15:45:13 +0000
-Subject: Re: [PATCH -next] crypto: stm32 - remove redundant dev_err call in stm32_cryp_probe()
-Message-Id: <20180126154513.GE4002@gondor.apana.org.au>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jan 2018 11:29:17 +0000
+Subject: [PATCH -next] pinctrl: ingenic: remove redundant dev_err call in ingenic_pinctrl_probe()
+Message-Id: <1516188557-147454-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516189224-11877-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516189224-11877-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 17, 2018 at 11:40:24AM +0000, Wei Yongjun wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 372ddf3..ac38a3f 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -736,10 +736,8 @@ static int ingenic_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	base = devm_ioremap_resource(dev,
+ 			platform_get_resource(pdev, IORESOURCE_MEM, 0));
+-	if (IS_ERR(base)) {
+-		dev_err(dev, "Failed to ioremap registers\n");
++	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+-	}
+ 
+ 	jzpc->map = devm_regmap_init_mmio(dev, base,
+ 			&ingenic_pinctrl_regmap_config);
+
+
+
