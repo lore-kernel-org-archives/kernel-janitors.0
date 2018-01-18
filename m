@@ -1,25 +1,44 @@
-From: 57593531@mylife.unisa.ac.za
-Date: Wed, 24 Jan 2018 14:47:09 +0000
-Subject: Darlehensangebot
-Message-Id: <HE1PR01MB3017D3FB56AB027E41EE444BB5E20@HE1PR01MB3017.eurprd01.prod.exchangelabs.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 16:22:57 +0000
+Subject: [PATCH 1/5] irqchip/irq-gic-v2m: Delete an error message for a failed memory allocation in gicv2m_in
+Message-Id: <d93bb46d-41c5-22a8-4bbe-171c39fb532e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
+In-Reply-To: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Schönen Tag,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 15:44:01 +0100
 
-Sie benötigen einen echten Kredit online Ihre Rechnungen zu sichern?
-Startet ein neues Unternehmen? Sie benötigen einen persönlichen Kredit
-oder Business-Darlehen? Wir bieten ein Darlehen von € 10.000 bis €
-500,000.000.00 mit 2% Zinsen pro Jahr und auch mit einem
-erschwinglichen Rückzahlungsbedingungen und Zustand. Ich suche für
-Darlehen und Projektinvestmentfonds ? Wir halten professionelle
-Exzellenz, unsere Definition von Exzellenz liegt in hervorragenden
-Kundenservice, erschwingliche Zahlung und Rückzahlung Pläne, schnell
-und einfach-Prozess.
-Hochachtungsvoll....
+Omit an extra message for a memory allocation failure in this function.
 
-Freundliche Grüße,
-Herr Kelly Williams
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/irqchip/irq-gic-v2m.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index 993a8426a453..b795fefafb12 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -309,10 +309,8 @@ static int __init gicv2m_init_one(struct fwnode_handle *fwnode,
+ 	struct v2m_data *v2m;
+ 
+ 	v2m = kzalloc(sizeof(struct v2m_data), GFP_KERNEL);
+-	if (!v2m) {
+-		pr_err("Failed to allocate struct v2m_data.\n");
++	if (!v2m)
+ 		return -ENOMEM;
+-	}
+ 
+ 	INIT_LIST_HEAD(&v2m->entry);
+ 	v2m->fwnode = fwnode;
+-- 
+2.15.1
+
