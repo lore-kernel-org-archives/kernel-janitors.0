@@ -1,54 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 17 Jan 2018 11:54:27 +0000
-Subject: [PATCH] USB: serial: remove redundant initializations of 'mos_parport'
-Message-Id: <20180117115427.20686-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 16:24:30 +0000
+Subject: [PATCH 2/5] irqchip/irq-gic-v2m: Improve a size determination in gicv2m_init_one()
+Message-Id: <10ededda-66a9-001c-4ad6-db5baa80b679@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
+In-Reply-To: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 16:07:41 +0100
 
-The pointer mos_parport is being initialized to pp->private_data and
-then the assignment is duplicated after a spin lock.  Remove the
-initialization as it occurs before the spin lock and it is a redundant
-assignment.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Cleans up clang warnings:
-drivers/usb/serial/mos7720.c:521:26: warning: Value stored to
-'mos_parport' during its initialization is never read
-drivers/usb/serial/mos7720.c:557:26: warning: Value stored to
-'mos_parport' during its initialization is never read
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/serial/mos7720.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-gic-v2m.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
-index f4df3d5bf69c..bd57630e67e2 100644
---- a/drivers/usb/serial/mos7720.c
-+++ b/drivers/usb/serial/mos7720.c
-@@ -518,7 +518,7 @@ static void parport_mos7715_write_control(struct parport *pp, unsigned char d)
- 
- static unsigned char parport_mos7715_read_control(struct parport *pp)
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index b795fefafb12..930261710ba2 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -306,9 +306,8 @@ static int __init gicv2m_init_one(struct fwnode_handle *fwnode,
+ 				  struct resource *res)
  {
--	struct mos7715_parport *mos_parport = pp->private_data;
-+	struct mos7715_parport *mos_parport;
- 	__u8 dcr;
+ 	int ret;
+-	struct v2m_data *v2m;
++	struct v2m_data *v2m = kzalloc(sizeof(*v2m), GFP_KERNEL);
  
- 	spin_lock(&release_lock);
-@@ -554,7 +554,7 @@ static unsigned char parport_mos7715_frob_control(struct parport *pp,
- static unsigned char parport_mos7715_read_status(struct parport *pp)
- {
- 	unsigned char status;
--	struct mos7715_parport *mos_parport = pp->private_data;
-+	struct mos7715_parport *mos_parport;
+-	v2m = kzalloc(sizeof(struct v2m_data), GFP_KERNEL);
+ 	if (!v2m)
+ 		return -ENOMEM;
  
- 	spin_lock(&release_lock);
- 	mos_parport = pp->private_data;
 -- 
 2.15.1
 
