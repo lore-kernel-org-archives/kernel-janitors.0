@@ -1,29 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 16 Jan 2018 20:24:53 +0000
-Subject: Re: [PATCH] bnxt_en: don't update cpr->rx_bytes with uninitialized length len
-Message-Id: <20180116.152453.1072329036192883739.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 18 Jan 2018 13:59:11 +0000
+Subject: [PATCH -next] mtd: ubi: wl: Fix error return code in ubi_wl_init()
+Message-Id: <1516284305-82544-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180116102250.22914-1-colin.king@canonical.com>
-In-Reply-To: <20180116102250.22914-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: michael.chan@broadcom.com, netdev@vger.kernel.org, andrew.gospodarek@broadcom.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 16 Jan 2018 10:22:50 +0000
+Fix to return error code -ENOMEM from the kmem_cache_alloc() error
+handling case instead of 0, as done elsewhere in this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently in the cases where cmp_type = CMP_TYPE_RX_L2_TPA_START_CMP or
-> CMP_TYPE_RX_L2_TPA_END_CMP the exit path updates cpr->rx_bytes with an
-> uninitialized length len.  Fix this by adding a new exit path that does
-> not update the cpr stats with the bogus length len and remove the unused
-> label next_rx_no_prod.
-> 
-> Detected by CoverityScan, CID#1463807 ("Uninitialized scalar variable")
-> Fixes: 6a8788f25625 ("bnxt_en: add support for software dynamic interrupt moderation")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/mtd/ubi/wl.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Applied, thanks.
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 77ab49f..2052a64 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1617,8 +1617,10 @@ int ubi_wl_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
+ 		cond_resched();
+ 
+ 		e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
+-		if (!e)
++		if (!e) {
++			err = -ENOMEM;
+ 			goto out_free;
++		}
+ 
+ 		e->pnum = aeb->pnum;
+ 		e->ec = aeb->ec;
+@@ -1637,8 +1639,10 @@ int ubi_wl_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
+ 			cond_resched();
+ 
+ 			e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
+-			if (!e)
++			if (!e) {
++				err = -ENOMEM;
+ 				goto out_free;
++			}
+ 
+ 			e->pnum = aeb->pnum;
+ 			e->ec = aeb->ec;
+
