@@ -1,46 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Jan 2018 15:33:59 +0000
-Subject: [PATCH] NFC: fdp: fix signed less or equal zero check in u8 max_size
-Message-Id: <20180130153359.524-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 21:13:37 +0000
+Subject: [PATCH 0/3] irq-imx-gpcv2: Adjustments for imx_gpcv2_irqchip_init()
+Message-Id: <e9033837-9e04-be5b-2875-aa746840d5a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>, "David S . Miller" <davem@davemloft.net>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Shenwei Wang <shenwei.wang@freescale.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 22:08:44 +0100
 
-The u8 variable max_size is being assigned a return value from the
-call to nci_conn_max_data_pkt_payload_size that can return a -ve
-error return. Since max_size is a u8, the -ve check for the error will
-always be false. Fix this by making max_size an int type.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Detected using Coccinelle:
-drivers/nfc/fdp/fdp.c:208:5-13: WARNING: Unsigned expression compared
-with zero: max_size <= 0
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
+  Use common error handling code
 
-Fixes: a06347c04c13 ("NFC: Add Intel Fields Peak NFC solution driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/nfc/fdp/fdp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-imx-gpcv2.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
-index d5784a47fc13..5ddc01b4913a 100644
---- a/drivers/nfc/fdp/fdp.c
-+++ b/drivers/nfc/fdp/fdp.c
-@@ -192,8 +192,8 @@ static int fdp_nci_send_patch(struct nci_dev *ndev, u8 conn_id, u8 type)
- 	const struct firmware *fw;
- 	struct sk_buff *skb;
- 	unsigned long len;
--	u8 max_size, payload_size;
--	int rc = 0;
-+	u8 payload_size;
-+	int max_size, rc = 0;
- 
- 	if ((type = NCI_PATCH_TYPE_OTP && !info->otp_patch) ||
- 	    (type = NCI_PATCH_TYPE_RAM && !info->ram_patch))
 -- 
 2.15.1
 
