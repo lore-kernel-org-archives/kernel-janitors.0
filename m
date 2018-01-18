@@ -1,59 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Jan 2018 21:26:15 +0000
-Subject: [PATCH] iio/orientation: Delete an error message for a failed memory allocation in two functions
-Message-Id: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 21:17:19 +0000
+Subject: [PATCH 3/3] irq-imx-gpcv2: Use common error handling code in imx_gpcv2_irqchip_init()
+Message-Id: <f97b7f91-11f7-224e-a953-f6ff1982becd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e9033837-9e04-be5b-2875-aa746840d5a7@users.sourceforge.net>
+In-Reply-To: <e9033837-9e04-be5b-2875-aa746840d5a7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Shenwei Wang <shenwei.wang@freescale.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Jan 2018 22:20:07 +0100
+Date: Thu, 18 Jan 2018 22:00:05 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
-
-This issue was detected by using the Coccinelle software.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/iio/orientation/hid-sensor-incl-3d.c  | 4 +---
- drivers/iio/orientation/hid-sensor-rotation.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/irqchip/irq-imx-gpcv2.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/orientation/hid-sensor-incl-3d.c b/drivers/iio/orientation/hid-sensor-incl-3d.c
-index 1e5451d1ff88..742c0e0eb4cf 100644
---- a/drivers/iio/orientation/hid-sensor-incl-3d.c
-+++ b/drivers/iio/orientation/hid-sensor-incl-3d.c
-@@ -336,10 +336,8 @@ static int hid_incl_3d_probe(struct platform_device *pdev)
+diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
+index e62f22c84112..2dc348581877 100644
+--- a/drivers/irqchip/irq-imx-gpcv2.c
++++ b/drivers/irqchip/irq-imx-gpcv2.c
+@@ -233,16 +233,14 @@ static int __init imx_gpcv2_irqchip_init(struct device_node *node,
+ 	cd->gpc_base = of_iomap(node, 0);
+ 	if (!cd->gpc_base) {
+ 		pr_err("fsl-gpcv2: unable to map gpc registers\n");
+-		kfree(cd);
+-		return -ENOMEM;
++		goto free_data;
+ 	}
  
- 	indio_dev->channels = kmemdup(incl_3d_channels,
- 				      sizeof(incl_3d_channels), GFP_KERNEL);
--	if (!indio_dev->channels) {
--		dev_err(&pdev->dev, "failed to duplicate channels\n");
-+	if (!indio_dev->channels)
- 		return -ENOMEM;
--	}
+ 	domain = irq_domain_add_hierarchy(parent_domain, 0, GPC_MAX_IRQS,
+ 				node, &gpcv2_irqchip_data_domain_ops, cd);
+ 	if (!domain) {
+ 		iounmap(cd->gpc_base);
+-		kfree(cd);
+-		return -ENOMEM;
++		goto free_data;
+ 	}
+ 	irq_set_default_host(domain);
  
- 	ret = incl_3d_parse_report(pdev, hsdev,
- 				   (struct iio_chan_spec *)indio_dev->channels,
-diff --git a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
-index a69db2002414..cbf5e406b1ee 100644
---- a/drivers/iio/orientation/hid-sensor-rotation.c
-+++ b/drivers/iio/orientation/hid-sensor-rotation.c
-@@ -277,10 +277,8 @@ static int hid_dev_rot_probe(struct platform_device *pdev)
- 	indio_dev->channels = devm_kmemdup(&pdev->dev, dev_rot_channels,
- 					   sizeof(dev_rot_channels),
- 					   GFP_KERNEL);
--	if (!indio_dev->channels) {
--		dev_err(&pdev->dev, "failed to duplicate channels\n");
-+	if (!indio_dev->channels)
- 		return -ENOMEM;
--	}
+@@ -272,6 +270,10 @@ static int __init imx_gpcv2_irqchip_init(struct device_node *node,
+ 	 */
+ 	of_node_clear_flag(node, OF_POPULATED);
+ 	return 0;
++
++free_data:
++	kfree(cd);
++	return -ENOMEM;
+ }
  
- 	ret = dev_rot_parse_report(pdev, hsdev,
- 				   (struct iio_chan_spec *)indio_dev->channels,
+ IRQCHIP_DECLARE(imx_gpcv2, "fsl,imx7d-gpc", imx_gpcv2_irqchip_init);
 -- 
-2.16.1
+2.15.1
 
