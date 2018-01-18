@@ -1,43 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 15:15:59 +0000
-Subject: [PATCH 2/2] Input: gtco: Improve a size determination in gtco_probe()
-Message-Id: <0c363cc1-5532-e482-82bf-c8b59c2bd72f@users.sourceforge.net>
+Date: Thu, 18 Jan 2018 16:25:41 +0000
+Subject: [PATCH 3/5] irqchip/irq-gic-v2m: Mark a of_device_id variable as "const"
+Message-Id: <fb56a882-cd8e-a3c2-9874-3eb39aca4ded@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
-In-Reply-To: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
+References: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
+In-Reply-To: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 15:08:42 +0100
+Date: Thu, 18 Jan 2018 16:33:43 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: struct of_device_id should normally be const
+
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/tablet/gtco.c | 2 +-
+ drivers/irqchip/irq-gic-v2m.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/tablet/gtco.c b/drivers/input/tablet/gtco.c
-index f2670872735f..6094241d4aa1 100644
---- a/drivers/input/tablet/gtco.c
-+++ b/drivers/input/tablet/gtco.c
-@@ -829,7 +829,7 @@ static int gtco_probe(struct usb_interface *usbinterface,
- 	struct usb_device	*udev = interface_to_usbdev(usbinterface);
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index 930261710ba2..7482c2b86bb8 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -380,7 +380,7 @@ static int __init gicv2m_init_one(struct fwnode_handle *fwnode,
+ 	return ret;
+ }
  
- 	/* Allocate memory for device structure */
--	gtco = kzalloc(sizeof(struct gtco), GFP_KERNEL);
-+	gtco = kzalloc(sizeof(*gtco), GFP_KERNEL);
- 	input_dev = input_allocate_device();
- 	if (!gtco || !input_dev) {
- 		dev_err(&usbinterface->dev, "No more memory\n");
+-static struct of_device_id gicv2m_device_id[] = {
++static const struct of_device_id gicv2m_device_id[] = {
+ 	{	.compatible	= "arm,gic-v2m-frame",	},
+ 	{},
+ };
 -- 
-2.16.1
+2.15.1
 
