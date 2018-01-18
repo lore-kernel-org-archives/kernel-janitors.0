@@ -1,39 +1,63 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Sat, 06 Jan 2018 16:43:52 +0000
-Subject: Re: [PATCH] Bluetooth: btintel: make array 'param' static, shrinks object size
-Message-Id: <1B85A899-6FB7-4BDB-B123-848C14BDFE54@holtmann.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 18 Jan 2018 13:54:27 +0000
+Subject: [PATCH -next] PCI: dra7xx: Fix potential NULL dereference
+Message-Id: <1516284037-81537-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106162328.18625-1-colin.king@canonical.com>
-In-Reply-To: <20180106162328.18625-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+platform_get_resource_byname() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference a
+bit later in the code.
 
-> Don't populate the const read-only array 'param' on the stack but instead
-> make it static. Makes the object code smaller by nearly 20 bytes:
-> 
-> Before:
->   text	   data	    bss	    dec	    hex	filename
->  11605	   2629	     64	  14298	   37da	linux/drivers/bluetooth/btintel.o
-> 
-> After:
->   text	   data	    bss	    dec	    hex	filename
->  11531	   2685	     64	  14280	   37c8	linux/drivers/bluetooth/btintel.o
-> 
-> (gcc version 7.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/bluetooth/btintel.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+This is detected by Coccinelle semantic patch.
 
-patch has been applied to bluetooth-next tree.
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
 
-Regards
+res = platform_get_resource_byname(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap(e1, res->start, e2);
 
-Marcel
+Fixes: 608793e27b33 ("PCI: dwc: dra7xx: Add EP mode support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pci/dwc/pci-dra7xx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+index 8bf7c27..aafded8 100644
+--- a/drivers/pci/dwc/pci-dra7xx.c
++++ b/drivers/pci/dwc/pci-dra7xx.c
+@@ -409,11 +409,15 @@ static int __init dra7xx_add_pcie_ep(struct dra7xx_pcie *dra7xx,
+ 	ep->ops = &pcie_ep_ops;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics");
++	if (!res)
++		return -EINVAL;
+ 	pci->dbi_base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!pci->dbi_base)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics2");
++	if (!res)
++		return -EINVAL;
+ 	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!pci->dbi_base2)
+ 		return -ENOMEM;
+@@ -462,6 +466,8 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
+ 		return ret;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rc_dbics");
++	if (!res)
++		return -EINVAL;
+ 	pci->dbi_base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!pci->dbi_base)
+ 		return -ENOMEM;
 
