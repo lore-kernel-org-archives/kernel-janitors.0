@@ -1,7 +1,7 @@
 From: Joe Perches <joe@perches.com>
-Date: Thu, 18 Jan 2018 15:14:06 +0000
+Date: Thu, 18 Jan 2018 19:23:03 +0000
 Subject: Re: [PATCH-next] MEMCG: memcontrol: make local symbol static
-Message-Id: <1516288446.14023.0.camel@perches.com>
+Message-Id: <1516303383.14023.2.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180118150805.18521-1-chrisadr@gentoo.org>
 In-Reply-To: <20180118150805.18521-1-chrisadr@gentoo.org>
