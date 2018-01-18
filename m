@@ -1,66 +1,37 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Wed, 24 Jan 2018 04:06:47 +0000
-Subject: Re: [PATCH][next] NTB: ntb_tool: fix memory leak on 'buf' on error exit path
-Message-Id: <20180124040646.GA20474@kudzu.us>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 18 Jan 2018 02:23:34 +0000
+Subject: [PATCH net-next] mac80211_hwsim: fix possible memory leak in hwsim_new_radio_nl()
+Message-Id: <1516242214-51095-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180122093857.2174-1-colin.king@canonical.com>
- <20180122100239.GA32024@mobilestation>
-In-Reply-To: <20180122100239.GA32024@mobilestation>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, Kalle Valo <kvalo@codeaurora.org>, Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 22, 2018 at 01:02:39PM +0300, Serge Semin wrote:
-> On Mon, Jan 22, 2018 at 09:38:57AM +0000, Colin King <colin.king@canonical.com> wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently there is a memory leak on buf when the call to ntb_mw_get_align
-> > fails.  Add an exit err label and jump to this so that kfree on buf frees
-> > the memory.
-> > 
-> > Detected by CoverityScan, CID#1464286 ("Resource leak")
-> > 
-> > Fixes: d637628ce00c ("NTB: ntb_tool: Add full multi-port NTB API support")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Good catch, thanks!
-> 
-> Acked-by: Serge Semin <fancer.lancer@gmail.com>
+'hwname' is malloced in hwsim_new_radio_nl() and should be freed
+before leaving from the error handling cases, otherwise it will cause
+memory leak.
 
-Applied to ntb-next
+Fixes: ff4dd73dd2b4 ("mac80211_hwsim: check HWSIM_ATTR_RADIO_NAME length")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/mac80211_hwsim.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Jon
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index e542555..34052c1 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3155,8 +3155,10 @@ static int hwsim_new_radio_nl(struct sk_buff *msg, struct genl_info *info)
+ 	if (info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]) {
+ 		u32 idx = nla_get_u32(info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]);
+ 
+-		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom))
++		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom)) {
++			kfree(hwname);
+ 			return -EINVAL;
++		}
+ 		param.regd = hwsim_world_regdom_custom[idx];
+ 	}
 
-> 
-> > ---
-> >  drivers/ntb/test/ntb_tool.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
-> > index 920fc9b161b0..d592c0ffbd19 100644
-> > --- a/drivers/ntb/test/ntb_tool.c
-> > +++ b/drivers/ntb/test/ntb_tool.c
-> > @@ -659,7 +659,7 @@ static ssize_t tool_mw_trans_read(struct file *filep, char __user *ubuf,
-> >  	ret = ntb_mw_get_align(inmw->tc->ntb, inmw->pidx, inmw->widx,
-> >  			       &addr_align, &size_align, &size_max);
-> >  	if (ret)
-> > -		return ret;
-> > +		goto err;
-> >  
-> >  	off += scnprintf(buf + off, buf_size - off,
-> >  			 "Inbound MW     \t%d\n",
-> > @@ -694,6 +694,8 @@ static ssize_t tool_mw_trans_read(struct file *filep, char __user *ubuf,
-> >  			 &size_max);
-> >  
-> >  	ret = simple_read_from_buffer(ubuf, size, offp, buf, off);
-> > +
-> > +err:
-> >  	kfree(buf);
-> >  
-> >  	return ret;
-> > -- 
-> > 2.15.1
-> > 
