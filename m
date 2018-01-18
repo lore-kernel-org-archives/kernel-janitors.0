@@ -1,78 +1,44 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 31 Jan 2018 16:19:54 +0000
-Subject: Re: [PATCH] RDMA/bnxt_re: Fix an error code in bnxt_qplib_create_srq()
-Message-Id: <1517415594.19117.17.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-yTOH6P/zmBnZELqUhOWs"
+From: =?UTF-8?q?Christopher=20D=C3=ADaz=20Riveros?= <chrisadr@gentoo.org>
+Date: Thu, 18 Jan 2018 22:06:29 +0000
+Subject: [PATCH-next] init/main.c: make local symbol static
+Message-Id: <20180118220629.25116-1-chrisadr@gentoo.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180130150434.GA13690@mwanda>
-         <CANjDDBjO7ZWE+OAzBRUZh_233YrRf++aeB3BitFAZNGf2RS-5w@mail.gmail.com>
-In-Reply-To: <CANjDDBjO7ZWE+OAzBRUZh_233YrRf++aeB3BitFAZNGf2RS-5w@mail.gmail.com>
-To: Devesh Sharma <devesh.sharma@broadcom.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma <linux-rdma@vger.kernel.org>, kernel-janitors@vger.kernel.org
-
-
---=-yTOH6P/zmBnZELqUhOWs
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+To: mingo@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de, keescook@chromium.org, lauraa@codeaurora.org, rostedt@goodmis.org, mhocko@suse.com, thomas.lendacky@amd.com, tal.shorer@gmail.com, viresh.kumar@linaro.org, lokeshvutla@ti.com
+Cc: =?UTF-8?q?Christopher=20D=C3=ADaz=20Riveros?= <chrisadr@gentoo.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2018-01-31 at 11:06 +0530, Devesh Sharma wrote:
-> On Wed, Jan 31, 2018 at 2:10 AM, Dan Carpenter <dan.carpenter@oracle.com>=
- wrote:
-> > We should return -ENOMEM if the allocation fails.  (The current code
-> > returns succees).
-> >=20
-> > Fixes: 37cb11acf1f7 ("RDMA/bnxt_re: Add SRQ support for Broadcom adapte=
-rs")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >=20
-> > diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infinib=
-and/hw/bnxt_re/qplib_fp.c
-> > index 8b5f11ac0e42..1b0e94697fe3 100644
-> > --- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-> > +++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-> > @@ -557,8 +557,10 @@ int bnxt_qplib_create_srq(struct bnxt_qplib_res *r=
-es,
-> >=20
-> >         srq->swq =3D kcalloc(srq->hwq.max_elements, sizeof(*srq->swq),
-> >                            GFP_KERNEL);
-> > -       if (!srq->swq)
-> > +       if (!srq->swq) {
-> > +               rc =3D -ENOMEM;
-> >                 goto fail;
-> > +       }
->=20
-> Opps!! my bad. Thanks for fixing.
->=20
-> Acked-By: Devesh Sharma <devesh.sharma@broadcom.com>
+Fixes the following sparse warning:
 
-Thanks, applied.
+init/main.c:167:12: warning:
+  symbol 'envp_init' was not declared. Should it be static?
 
+Signed-off-by: Christopher D=C3=ADaz Riveros <chrisadr@gentoo.org>
+---
+ init/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/init/main.c b/init/main.c
+index a8100b954839..ae86addb306c 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -164,7 +164,7 @@ static int __init set_reset_devices(char *str)
+ __setup("reset_devices", set_reset_devices);
+=20
+ static const char *argv_init[MAX_INIT_ARGS+2] =3D { "init", NULL, };
+-const char *envp_init[MAX_INIT_ENVS+2] =3D { "HOME=3D/", "TERM=3Dlinux", N=
+ULL, };
++static const char *envp_init[MAX_INIT_ENVS+2] =3D { "HOME=3D/", "TERM=3Dli=
+nux", NULL, };
+ static const char *panic_later, *panic_param;
+=20
+ extern const struct obs_kernel_param __setup_start[], __setup_end[];
 --=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-yTOH6P/zmBnZELqUhOWs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+2.15.1
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlpx7KoACgkQuCajMw5X
-L924eA/+M7LWzYb/FB1QLR3EOp/KvHMH4HHdhOFeB1dbCCSgx32Kl1t+YfGToYXd
-FQOSeJagVPN7s1vtaBeWI2ZwkAsznrfzgOkBVFXNucVxzpAfk6nSOkuk1LAASX0E
-9k2Of28aSlZJPOugDxvkHUHXSMMuD0Z+ATH4HkMHCocubXcHEI81spvWWmFy1+t9
-VjdA4PGdRd/9d3Xl7itvnPD/C4BgTwl9wMrfKKDCq7Xphg5cVHWqrna9dHoMgBmn
-p2t+T+ZgLZWPczlr7dvsEeqc0Kaz72PXe9FNdL31rzCrC6t1SHIYX5FcZra/Ryhx
-4QTh/n+1u4hZRuw4SKNtSgfQOwRuUgSxAwfqZVb4oZKi22eKMoowceA0YxL1rz7k
-pA11ZL4QAUcGqdcEQffPfOBRXvy3zoDgUx8EGg+c44Y8TcQWz13WmQlqKR3YFJ5+
-5Ozdopri5zEf3zUWByBe/fyNoMp2DdgZ9SdvyokH/eJnoX6HAvoYc+u5/nsJowz7
-Dy6lS1LJYeZG5yfrn3pm+9D/RqlxOVvObzFR/GTW968y7gOnD9m4Vkd/RzpUmvRv
-7RMB/mf38AUUjels0vAJihTZEHGDm3BBwiQ/mb4C8jySteNnzAdsk3TCF3hTK9je
-n7jNJMZCdm5EH+TjBvw3F64vpvze/7W9M3IDzd4uuS6zyGoe4Rc=
-=al6f
------END PGP SIGNATURE-----
-
---=-yTOH6P/zmBnZELqUhOWs--
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
