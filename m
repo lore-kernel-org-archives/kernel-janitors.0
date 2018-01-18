@@ -1,28 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 02 Jan 2018 08:58:01 +0000
-Subject: Re: [PATCH] pinctrl/spear/plgpio: Delete two error messages for a failed memory allocation in plgpio
-Message-Id: <CACRpkdbAJqrgghCV2tj4FdoPHweKYkze1s1UnmrvU71gqRVkAw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 Jan 2018 10:28:23 +0000
+Subject: [PATCH] soc: xilinx: xlnx_vcu: Fix && vs & typo
+Message-Id: <20180118102823.GA21064@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
-In-Reply-To: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Dec 27, 2017 at 10:39 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+We accidentally used a logical AND instead of a bitwise AND here.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Dec 2017 22:34:28 +0100
->
-> Omit extra messages for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: cee8113a295a ("soc: xilinx: xlnx_vcu: Add Xilinx ZYNQMP VCU logicoreIP init driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied with Viresh's ACK.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
+index c1d6f1b190b6..a840c0272135 100644
+--- a/drivers/soc/xilinx/xlnx_vcu.c
++++ b/drivers/soc/xilinx/xlnx_vcu.c
+@@ -334,7 +334,7 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
+ 	 */
+ 	vcu_pll_ctrl = xvcu_read(xvcu->vcu_slcr_ba, VCU_PLL_CTRL);
+ 	clkoutdiv = vcu_pll_ctrl >> VCU_PLL_CTRL_CLKOUTDIV_SHIFT;
+-	clkoutdiv = clkoutdiv && VCU_PLL_CTRL_CLKOUTDIV_MASK;
++	clkoutdiv = clkoutdiv & VCU_PLL_CTRL_CLKOUTDIV_MASK;
+ 	if (clkoutdiv != 1) {
+ 		dev_err(xvcu->dev, "clkoutdiv value is invalid\n");
+ 		return -EINVAL;
