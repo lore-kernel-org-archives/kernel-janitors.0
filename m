@@ -1,44 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 10:51:17 +0000
-Subject: [PATCH 1/2] mtd/maps/sun_uflash: Delete an error message for a failed memory allocation in uflash_de
-Message-Id: <7417f52d-ddba-e8f8-0014-31bc787213db@users.sourceforge.net>
+From: Christopher =?ISO-8859-1?Q?D=EDaz?= Riveros <chrisadr@gentoo.org>
+Date: Fri, 19 Jan 2018 00:02:03 +0000
+Subject: Hi community
+Message-Id: <1516320123.2510.83.camel@gentoo.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-qsSXT+onJ0kkWpCy+SkS"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <30c07f5a-578c-0e53-b80f-675fb24e6223@users.sourceforge.net>
-In-Reply-To: <30c07f5a-578c-0e53-b80f-675fb24e6223@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+
+--=-qsSXT+onJ0kkWpCy+SkS
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello everyone,
+
+I've been subscribed here for about a week, I'm a software development
+student from Lima, Peru. For a long time I have wanted to help the
+Kernel community, but I think I was a little nervous about presenting
+patches because I felt I was not prepared for that, but I think now is
+a good time to start and try to learn as much as I can, I've already
+sent a couple of trivial patches, and I'll probably stay here for a
+long time, so I wanted to introduce myself and say it's an honor to be
+able to contribute to the kernel community even with my little patches
+:)
+
+Pleased to meet you all,
+--=20
+Christopher D=C3=ADaz Riveros
+Gentoo Linux Developer
+GPG Fingerprint: E517 5ECB 8152 98E4 FEBC  2BAA 4DBB D10F 0FDD 2547
+--=-qsSXT+onJ0kkWpCy+SkS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Jan 2018 10:20:14 +0100
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Omit an extra message for a memory allocation failure in this function.
+iQGTBAABCgB9FiEE5Rdey4FSmOT+vCuqTbvRDw/dJUcFAlphNXtfFIAAAAAALgAo
+aXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5maWZ0aGhvcnNlbWFuLm5ldEU1
+MTc1RUNCODE1Mjk4RTRGRUJDMkJBQTREQkJEMTBGMEZERDI1NDcACgkQTbvRDw/d
+JUd/PwgAlkGJM0dspE5LYWU8naP1Mr2o+F7ogYfMyGzmMUAw2viAiSp1jUiqy9ps
+Whr5kP85A7pXmL1atyDB2isj1gQVBkiZjD/VFdq1X2dQoPvtP6r+Kw6qg9dIXdhu
+8YhcUmcSmhRcmCq6iHs5ChSz7WMVCnfnynZ/zbWoLvQpGnb8Exvvx9Az5ZW5E5F+
+kD1uAlExpbETRBqom8QB/toRoEV3BrQ/2jTvQtUnVukiSLK/FNzbmhgiFWNY8zFD
+lCjOYkARRPaWxo79z2hpbL4v0sm3w/4x5ELsT9QQpW3rMaWaPJTHW0bXdzoiVUjB
+zPB+/a6TBLLJiuRn9/GeFnXnSO/7xg==
+=DW3b
+-----END PGP SIGNATURE-----
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mtd/maps/sun_uflash.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/maps/sun_uflash.c b/drivers/mtd/maps/sun_uflash.c
-index 1e73bba6e286..80a253cc72e2 100644
---- a/drivers/mtd/maps/sun_uflash.c
-+++ b/drivers/mtd/maps/sun_uflash.c
-@@ -62,10 +62,8 @@ int uflash_devinit(struct platform_device *op, struct device_node *dp)
- 	}
- 
- 	up = kzalloc(sizeof(struct uflash_dev), GFP_KERNEL);
--	if (!up) {
--		printk(KERN_ERR PFX "Cannot allocate struct uflash_dev\n");
-+	if (!up)
- 		return -ENOMEM;
--	}
- 
- 	/* copy defaults and tweak parameters */
- 	memcpy(&up->map, &uflash_map_templ, sizeof(uflash_map_templ));
--- 
-2.15.1
+--=-qsSXT+onJ0kkWpCy+SkS--
 
