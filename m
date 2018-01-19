@@ -1,52 +1,31 @@
-From: Andi Shyti <andi@etezian.org>
-Date: Mon, 22 Jan 2018 07:43:03 +0000
-Subject: Re: [PATCH] Input: edt-ft5x06: Delete an error message for a failed memory allocation in edt_ft5x06_
-Message-Id: <20180122074303.GB26752@brancaleone.zhora.eu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Jan 2018 13:23:21 +0000
+Subject: [PATCH spark] sparc: vDSO: remove an extra tab
+Message-Id: <20180119132321.GA32694@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45f8a6c2-423b-5bc1-6512-c5b954c5620b@users.sourceforge.net>
-In-Reply-To: <45f8a6c2-423b-5bc1-6512-c5b954c5620b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, Andi Shyti <andi@etezian.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?iso-8859-15?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>, Martin Kepplinger <martink@posteo.de>, Rob Herring <robh@kernel.org>, Simon Budig <simon.budig@kernelconcepts.de>, Stefan =?iso-8859-15?Q?Sch=F6fegger?= <stefan.schoefegger@ginzinger.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Markus,
+This statement is indented one tab too far which is confusing and
+leads to a Smatch warning:
 
-On Sun, Jan 21, 2018 at 08:19:00PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 21 Jan 2018 20:10:03 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+    arch/sparc/vdso/vma.c:254 arch_setup_additional_pages()
+    warn: curly braces intended?
 
-Acked-by: Andi Shyti <andi@etezian.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Andi
-
-> ---
->  drivers/input/touchscreen/edt-ft5x06.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-> index c53a3d7239e7..9d2799c90150 100644
-> --- a/drivers/input/touchscreen/edt-ft5x06.c
-> +++ b/drivers/input/touchscreen/edt-ft5x06.c
-> @@ -978,10 +978,8 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
->  	dev_dbg(&client->dev, "probing for EDT FT5x06 I2C\n");
->  
->  	tsdata = devm_kzalloc(&client->dev, sizeof(*tsdata), GFP_KERNEL);
-> -	if (!tsdata) {
-> -		dev_err(&client->dev, "failed to allocate driver data.\n");
-> +	if (!tsdata)
->  		return -ENOMEM;
-> -	}
->  
->  	chip_data = of_device_get_match_data(&client->dev);
->  	if (!chip_data)
-> -- 
-> 2.16.0
+diff --git a/arch/sparc/vdso/vma.c b/arch/sparc/vdso/vma.c
+index 0a6f50098e23..f51595f861b8 100644
+--- a/arch/sparc/vdso/vma.c
++++ b/arch/sparc/vdso/vma.c
+@@ -251,7 +251,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	else
+ 		return map_vdso(&vdso_image_32_builtin, &vdso_mapping32);
+ #else
+-		return map_vdso(&vdso_image_64_builtin, &vdso_mapping64);
++	return map_vdso(&vdso_image_64_builtin, &vdso_mapping64);
+ #endif
+ 
+ }
