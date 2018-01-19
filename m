@@ -1,67 +1,149 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 14 Jan 2018 11:03:19 +0000
-Subject: Re: [PATCH] iio: adc: aspeed: Fix error handling path
-Message-Id: <20180114110319.3bffcb4d@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Jan 2018 15:19:33 +0000
+Subject: [PATCH] Coccinelle: zalloc-simple: Delete duplicate specifications of the key word "expression"
+Message-Id: <081fc0aa-2394-47c4-11fa-c615a429bc0d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180108064736.15991-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180108064736.15991-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, raltherr@google.com, joel@jms.id.au, arvind.yadav.cs@gmail.com, mykolak@mellanox.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr, Gilles Muller <Gilles.Muller@lip6.fr>, Himanshu Jha <himanshujha199640@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon,  8 Jan 2018 07:47:36 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Jan 2018 16:00:22 +0100
 
-> The labels and branching order of the error path of 'aspeed_adc_probe()'
-> are broken.
-> Re-order the labels and goto statements.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reduce the file size a bit by removing 12 specifications of the
+key word "expression" in this script for the semantic patch language.
 
-Applied to the fixes-togreg-post-rc1 branch of iio.git.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ scripts/coccinelle/api/alloc/zalloc-simple.cocci | 36 ++++++++----------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
-The patch doesn't apply that far back so I'm going to assume
-you are right and that it was a merge conflict that went wrong.
-
-Anyhow, will go in sometime after rc1.
-
-Thanks,
-
-Jonathan
-
-> ---
-> Not sure where it comes from.
-> Merge conflict incorrectly fixed?
-> ---
->  drivers/iio/adc/aspeed_adc.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/aspeed_adc.c b/drivers/iio/adc/aspeed_adc.c
-> index 327a49ba1991..9515ca165dfd 100644
-> --- a/drivers/iio/adc/aspeed_adc.c
-> +++ b/drivers/iio/adc/aspeed_adc.c
-> @@ -243,7 +243,7 @@ static int aspeed_adc_probe(struct platform_device *pdev)
->  					 ASPEED_ADC_INIT_POLLING_TIME,
->  					 ASPEED_ADC_INIT_TIMEOUT);
->  		if (ret)
-> -			goto scaler_error;
-> +			goto poll_timeout_error;
->  	}
->  
->  	/* Start all channels in normal mode. */
-> @@ -274,9 +274,10 @@ static int aspeed_adc_probe(struct platform_device *pdev)
->  	writel(ASPEED_OPERATION_MODE_POWER_DOWN,
->  		data->base + ASPEED_REG_ENGINE_CONTROL);
->  	clk_disable_unprepare(data->clk_scaler->clk);
-> -reset_error:
-> -	reset_control_assert(data->rst);
->  clk_enable_error:
-> +poll_timeout_error:
-> +	reset_control_assert(data->rst);
-> +reset_error:
->  	clk_hw_unregister_divider(data->clk_scaler);
->  scaler_error:
->  	clk_hw_unregister_divider(data->clk_prescaler);
+diff --git a/scripts/coccinelle/api/alloc/zalloc-simple.cocci b/scripts/coccinelle/api/alloc/zalloc-simple.cocci
+index 92b20913055f..a8a530696a5e 100644
+--- a/scripts/coccinelle/api/alloc/zalloc-simple.cocci
++++ b/scripts/coccinelle/api/alloc/zalloc-simple.cocci
+@@ -28,8 +28,7 @@ virtual report
+ 
+ @depends on context@
+ type T, T2;
+-expression x;
+-expression E1;
++expression x,E1;
+ statement S;
+ @@
+ 
+@@ -46,8 +45,7 @@ statement S;
+ 
+ @depends on patch@
+ type T, T2;
+-expression x;
+-expression E1,E2,E3,E4;
++expression x,E1,E2,E3,E4;
+ statement S;
+ @@
+ 
+@@ -151,8 +149,7 @@ statement S;
+ 
+ @r depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2;
++expression x,E1,E2;
+ statement S;
+ position p;
+ @@
+@@ -181,8 +178,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r1 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1;
++expression x,E1;
+ statement S;
+ position p;
+ @@
+@@ -211,8 +207,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r2 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2,E3,E4;
++expression x,E1,E2,E3,E4;
+ statement S;
+ position p;
+ @@
+@@ -241,8 +236,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r3 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2,E3;
++expression x,E1,E2,E3;
+ statement S;
+ position p;
+ @@
+@@ -271,8 +265,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r4 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2,E3;
++expression x,E1,E2,E3;
+ statement S;
+ position p;
+ @@
+@@ -301,8 +294,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r5 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2;
++expression x,E1,E2;
+ statement S;
+ position p;
+ @@
+@@ -331,8 +323,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r6 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2,E3;
++expression x,E1,E2,E3;
+ statement S;
+ position p;
+ @@
+@@ -361,8 +352,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r7 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2;
++expression x,E1,E2;
+ statement S;
+ position p;
+ @@
+@@ -391,8 +381,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r8 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2,E3;
++expression x,E1,E2,E3;
+ statement S;
+ position p;
+ @@
+@@ -420,8 +409,7 @@ coccilib.report.print_report(p[0], msg)
+ //-----------------------------------------------------------------
+ @r9 depends on org || report@
+ type T, T2;
+-expression x;
+-expression E1,E2,E3;
++expression x,E1,E2,E3;
+ statement S;
+ position p;
+ @@
+-- 
+2.15.1
 
