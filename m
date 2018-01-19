@@ -1,42 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Jan 2018 14:53:48 +0000
-Subject: [PATCH] esp4: remove redundant initialization of pointer esph
-Message-Id: <20180130145348.32202-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Jan 2018 16:14:23 +0000
+Subject: Re: Coccinelle: zalloc-simple: Checking consequences from the usage of at signs in Python strings
+Message-Id: <ff8a1313-90a3-d009-dbc4-034fdbae82af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
+In-Reply-To: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: cocci@systeme.lip6.fr, Masahiro Yamada <yamada.masahiro@socionext.com>, Himanshu Jha <himanshujha199640@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+> I removed the blank line at EOF,
+> then applied to linux-kbuild/misc.
 
-Pointer esph is being assigned a value that is never read, esph is
-re-assigned and only read inside an if statement, hence the
-initialization is redundant and can be removed.
+This script for the semantic patch language is using the at sign within string
+literals for Python code.
 
-Cleans up clang warning:
-net/ipv4/esp4.c:657:21: warning: Value stored to 'esph' during
-its initialization is never read
+It is nice when this character seems to work also with the current software.
+How does its usage fit to the following information in the SmPL manual?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/ipv4/esp4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://github.com/coccinelle/coccinelle/blob/bf1c6a5869dd324f5faeeaa3a12d57270e478b21/docs/manual/cocci_syntax.tex#L50
 
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index 296d0b956bfe..97689012b357 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -654,7 +654,7 @@ static void esp_input_restore_header(struct sk_buff *skb)
- static void esp_input_set_header(struct sk_buff *skb, __be32 *seqhi)
- {
- 	struct xfrm_state *x = xfrm_input_state(skb);
--	struct ip_esp_hdr *esph = (struct ip_esp_hdr *)skb->data;
-+	struct ip_esp_hdr *esph;
- 
- 	/* For ESN we move the header forward by 4 bytes to
- 	 * accomodate the high bits.  We will move it back after
--- 
-2.15.1
+“…
+Furthermore, @ should not be used in this code.
+Spatch scans the script code for the next @ and considers that to be the
+beginning of the next rule, even if @ occurs within e.g., a comment.
+…”
 
+
+See also:
+Configuration or escaping of @ characters for embedded programming language scripts
+https://github.com/coccinelle/coccinelle/issues/36
+
+Regards,
+Markus
