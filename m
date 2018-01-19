@@ -1,50 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 16 Jan 2018 12:57:48 +0000
-Subject: [PATCH][next] mtd: nand: remove redundant variable 'oob_len'
-Message-Id: <20180116125748.26042-1-colin.king@canonical.com>
+From: Miquel Raynal <miquel.raynal@free-electrons.com>
+Date: Fri, 19 Jan 2018 07:41:18 +0000
+Subject: Re: [PATCH][next] mtd: nand: remove redundant variable 'oob_len'
+Message-Id: <20180119084118.3450d47f@xps13>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180116125748.26042-1-colin.king@canonical.com>
+In-Reply-To: <20180116125748.26042-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-Variable oob_len is assigned and never read, hence it is redundant and
-can be removed.
+On Tue, 16 Jan 2018 12:57:48 +0000
+Colin King <colin.king@canonical.com> wrote:
 
-Cleans up clang warnings:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Variable oob_len is assigned and never read, hence it is redundant and
+> can be removed.
+>=20
+> Cleans up clang warnings:
+>=20
+> drivers/mtd/nand/marvell_nand.c:1356:6: warning: Value stored to
+> 'oob_len' during its initialization is never read
+> drivers/mtd/nand/marvell_nand.c:1369:4: warning: Value stored to
+> 'oob_len' is never read
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-drivers/mtd/nand/marvell_nand.c:1356:6: warning: Value stored to 'oob_len'
-during its initialization is never read
-drivers/mtd/nand/marvell_nand.c:1369:4: warning: Value stored to 'oob_len'
-is never read
+Same as before, can you change the prefix to:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mtd/nand/marvell_nand.c | 2 --
- 1 file changed, 2 deletions(-)
+mtd: nand: marvell:
 
-diff --git a/drivers/mtd/nand/marvell_nand.c b/drivers/mtd/nand/marvell_nand.c
-index 4bd53b360277..f15ab37edf4e 100644
---- a/drivers/mtd/nand/marvell_nand.c
-+++ b/drivers/mtd/nand/marvell_nand.c
-@@ -1353,7 +1353,6 @@ static int marvell_nfc_hw_ecc_bch_write_page_raw(struct mtd_info *mtd,
- 	int data_len = lt->data_bytes;
- 	int spare_len = lt->spare_bytes;
- 	int ecc_len = lt->ecc_bytes;
--	int oob_len = spare_len + ecc_len;
- 	int spare_offset = 0;
- 	int ecc_offset = (lt->full_chunk_cnt * lt->spare_bytes) +
- 		lt->last_spare_bytes;
-@@ -1366,7 +1365,6 @@ static int marvell_nfc_hw_ecc_bch_write_page_raw(struct mtd_info *mtd,
- 			data_len = lt->last_data_bytes;
- 			spare_len = lt->last_spare_bytes;
- 			ecc_len = lt->last_ecc_bytes;
--			oob_len = spare_len + ecc_len;
- 		}
- 
- 		/* Point to the column of the next chunk */
--- 
-2.15.1
+Thank you,
+Miqu=C3=A8l
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
