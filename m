@@ -1,71 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Jan 2018 11:28:14 +0000
-Subject: [PATCH -next] perf: hisi: Remove redundant dev_err call
-Message-Id: <1516188494-147057-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 20 Jan 2018 22:31:06 +0000
+Subject: [PATCH] staging: rtl8712: remove redundant initialization to 'rfPath'
+Message-Id: <20180120223106.22469-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The value stored to rfPath during initialization is never read, the
+following switch statement re-assigns it a new value on all the
+case and default paths. Hence the initialization is redundant and
+can be removed.
+
+Cleans up clang warning:
+drivers/staging/rtl8712/rtl871x_mp.c:544:5: warning: Value stored to
+'rfPath' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c | 4 +---
- drivers/perf/hisilicon/hisi_uncore_hha_pmu.c | 4 +---
- drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c | 4 +---
- 3 file changed, 3 insertion(+), 9 deletions(-)
+ drivers/staging/rtl8712/rtl871x_mp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-index 1b10ea0..deb11d2 100644
---- a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-@@ -270,10 +270,8 @@ static int hisi_ddrc_pmu_init_data(struct platform_device *pdev,
+diff --git a/drivers/staging/rtl8712/rtl871x_mp.c b/drivers/staging/rtl8712/rtl871x_mp.c
+index 3c10a2c848c8..ba208a2e1e4e 100644
+--- a/drivers/staging/rtl8712/rtl871x_mp.c
++++ b/drivers/staging/rtl8712/rtl871x_mp.c
+@@ -541,7 +541,7 @@ void r8712_SetSingleCarrierTx(struct _adapter *pAdapter, u8 bStart)
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	ddrc_pmu->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(ddrc_pmu->base)) {
--		dev_err(&pdev->dev, "ioremap failed for ddrc_pmu resource\n");
-+	if (IS_ERR(ddrc_pmu->base))
- 		return PTR_ERR(ddrc_pmu->base);
--	}
+ void r8712_SetSingleToneTx(struct _adapter *pAdapter, u8 bStart)
+ {
+-	u8 rfPath = pAdapter->mppriv.curr_rfpath;
++	u8 rfPath;
  
- 	return 0;
- }
-diff --git a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-index 443906e..dbf7629 100644
---- a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-@@ -263,10 +263,8 @@ static int hisi_hha_pmu_init_data(struct platform_device *pdev,
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	hha_pmu->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(hha_pmu->base)) {
--		dev_err(&pdev->dev, "ioremap failed for hha_pmu resource\n");
-+	if (IS_ERR(hha_pmu->base))
- 		return PTR_ERR(hha_pmu->base);
--	}
- 
- 	return 0;
- }
-diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-index 0bde5d9..8d79d88 100644
---- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-@@ -266,10 +266,8 @@ static int hisi_l3c_pmu_init_data(struct platform_device *pdev,
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	l3c_pmu->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(l3c_pmu->base)) {
--		dev_err(&pdev->dev, "ioremap failed for l3c_pmu resource\n");
-+	if (IS_ERR(l3c_pmu->base))
- 		return PTR_ERR(l3c_pmu->base);
--	}
- 
- 	return 0;
- }
+ 	switch (pAdapter->mppriv.antenna_tx) {
+ 	case ANTENNA_B:
+-- 
+2.15.1
 
