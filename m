@@ -1,19 +1,38 @@
-From: Abdul Mohammed Suleman <shari.mrshadak02009@gmail.com>
-Date: Tue, 09 Jan 2018 09:51:04 +0000
-Subject: Loan & Project Funding
-Message-Id: <CACE92RhzX2ZQUp5BOodp0FzxtN_c7sGhNo1FhJWxhJxYNNctRA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 13:34:57 +0000
+Subject: [PATCH] Exynos-IOMMU: Delete an error message for a failed memory allocation in exynos_iommu_init()
+Message-Id: <1cdc825c-66d2-03ec-f7e5-935ca8d01f7e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Good day,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 14:28:13 +0100
 
-I give loans to private and public organizations at very low and
-considerate interest rates with flexible Loan Terms and conditions.
+Omit an extra message for a memory allocation failure in this function.
 
-Contact me if interested.
+This issue was detected by using the Coccinelle software.
 
-Best regards,
-Mr. Abdul
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iommu/exynos-iommu.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 79c45650f8de..456a88483089 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -1370,8 +1370,6 @@ static int __init exynos_iommu_init(void)
+ 
+ 	zero_lv2_table = kmem_cache_zalloc(lv2table_kmem_cache, GFP_KERNEL);
+ 	if (zero_lv2_table = NULL) {
+-		pr_err("%s: Failed to allocate zero level2 page table\n",
+-			__func__);
+ 		ret = -ENOMEM;
+ 		goto err_zero_lv2;
+ 	}
+-- 
+2.15.1
+
