@@ -1,41 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Jan 2018 17:36:03 +0000
-Subject: [PATCH][next] drm/i915/pmu: fix sizeof on attr, should be *attr
-Message-Id: <20180112173603.28486-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 20:15:40 +0000
+Subject: [PATCH 0/2] Input-zforce_ts: Adjustments for two function implementations
+Message-Id: <e36553b1-3221-7944-59bd-6bb9358c488f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko.stuebner@bqreaders.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 21:07:42 +0100
 
-I believe the sizeof(attr) should be in fact sizeof(*attr), fortunately
-the current code works because sizeof(struct attribute **) is the same
-as sizeof(struct attribute *) for x86.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan, CID#1463854 ("Sizeof not portable")
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in zforce_parse_dt()
+  Delete an unnecessary return statement in zforce_input_close()
 
-Fixes: 109ec558370f ("drm/i915/pmu: Only enumerate available counters in sysfs")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/i915_pmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/touchscreen/zforce_ts.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-index 95ab5e28f5be..9be4f5201e41 100644
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -794,7 +794,7 @@ create_event_attributes(struct drm_i915_private *i915)
- 		goto err_alloc;
- 
- 	/* Max one pointer of each attribute type plus a termination entry. */
--	attr = kzalloc((count * 2 + 1) * sizeof(attr), GFP_KERNEL);
-+	attr = kzalloc((count * 2 + 1) * sizeof(*attr), GFP_KERNEL);
- 	if (!attr)
- 		goto err_alloc;
- 
 -- 
 2.15.1
 
