@@ -1,30 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Jan 2018 10:26:14 +0000
-Subject: [PATCH] staging: lustre: libcfs: Prevent harmless read underflow
-Message-Id: <20180122102614.GC23912@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 20 Jan 2018 06:12:22 +0000
+Subject: [PATCH] scsi: 3ware: use pci_iounmap instead of iounmap
+Message-Id: <20180120061222.29166-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: aradford@gmail.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Because this is a post-op instead of a pre-op, then it means we check
-if knl_buffer[-1] is a space.  It doesn't really hurt anything, but
-it causes a static checker warning so let's fix it.
+'base_addr' has been mapped using 'pci_iomap()'. It should be freed with
+the corresponding 'pci_iounmap()' instead of 'iomap()'.
 
-Fixes: d7e09d0397e8 ("staging: add Lustre file system client support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/3w-sas.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/lnet/libcfs/tracefile.c b/drivers/staging/lustre/lnet/libcfs/tracefile.c
-index da2844f37edf..57913aae1d88 100644
---- a/drivers/staging/lustre/lnet/libcfs/tracefile.c
-+++ b/drivers/staging/lustre/lnet/libcfs/tracefile.c
-@@ -785,7 +785,7 @@ int cfs_trace_copyin_string(char *knl_buffer, int knl_buffer_nob,
- 		return -EFAULT;
+diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
+index cf9f2a09b47d..231b04dd9076 100644
+--- a/drivers/scsi/3w-sas.c
++++ b/drivers/scsi/3w-sas.c
+@@ -1692,7 +1692,7 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 		pci_disable_msi(pdev);
+ 	scsi_remove_host(host);
+ out_iounmap:
+-	iounmap(tw_dev->base_addr);
++	pci_iounmap(pdev, tw_dev->base_addr);
+ out_release_mem_region:
+ 	pci_release_regions(pdev);
+ out_free_device_extension:
+@@ -1738,7 +1738,7 @@ static void twl_remove(struct pci_dev *pdev)
+ 		pci_disable_msi(pdev);
  
- 	nob = strnlen(knl_buffer, usr_buffer_nob);
--	while (nob-- >= 0)		      /* strip trailing whitespace */
-+	while (--nob >= 0)		      /* strip trailing whitespace */
- 		if (!isspace(knl_buffer[nob]))
- 			break;
+ 	/* Free IO remapping */
+-	iounmap(tw_dev->base_addr);
++	pci_iounmap(pdev, tw_dev->base_addr);
  
+ 	/* Free up the mem region */
+ 	pci_release_regions(pdev);
+-- 
+2.14.1
+
