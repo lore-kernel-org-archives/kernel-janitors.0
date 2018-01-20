@@ -1,39 +1,40 @@
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Tue, 09 Jan 2018 13:35:02 +0000
-Subject: Re: [PATCH] tee: shm: Potential NULL dereference calling tee_shm_register()
-Message-Id: <CAHUa44HDn2Hxnzeo3WgE1W5YMDwYm0pA4VC6zuWhLksBXdDNeQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 21:28:16 +0000
+Subject: [PATCH 1/2] Input: sur40: Delete an error message for a failed memory allocation in sur40_probe()
+Message-Id: <122986b6-b7f2-9b34-b11d-4d63557a2b97@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106092230.kwoztytj555muqg6@mwanda>
-In-Reply-To: <20180106092230.kwoztytj555muqg6@mwanda>
+References: <a7e25da3-587a-f0e8-d574-8066b340d9a6@users.sourceforge.net>
+In-Reply-To: <a7e25da3-587a-f0e8-d574-8066b340d9a6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Echtler <floe@butterbrot.org>, Johan Hovold <johan@kernel.org>, Martin Kaltenbrunner <modin@yuri.at>, Martin Kepplinger <martink@posteo.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 6, 2018 at 10:22 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> get_user_pages_fast() can return zero in certain error paths.  We should
-> handle that or else it means we accidentally return ERR_PTR(0) which is
-> NULL instead of an error pointer.  The callers are not expecting that
-> and will crash with a NULL dereference.
->
-> Fixes: 033ddf12bcf5 ("tee: add register user memory")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> index 04e1b8b37046..cdeb4156acda 100644
-> --- a/drivers/tee/tee_shm.c
-> +++ b/drivers/tee/tee_shm.c
-> @@ -283,7 +283,7 @@ struct tee_shm *tee_shm_register(struct tee_context *ctx, unsigned long addr,
->         if (rc > 0)
->                 shm->num_pages = rc;
->         if (rc != num_pages) {
-> -               if (rc > 0)
-> +               if (rc >= 0)
->                         rc = -ENOMEM;
->                 ret = ERR_PTR(rc);
->                 goto err;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 22:11:24 +0100
 
-Looks good. Thanks.
+Omit an extra message for a memory allocation failure in this function.
 
-/Jens
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/touchscreen/sur40.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/sur40.c b/drivers/input/touchscreen/sur40.c
+index f16f8358c70a..c7a0a92b2044 100644
+--- a/drivers/input/touchscreen/sur40.c
++++ b/drivers/input/touchscreen/sur40.c
+@@ -591,7 +591,6 @@ static int sur40_probe(struct usb_interface *interface,
+ 	sur40->bulk_in_epaddr = endpoint->bEndpointAddress;
+ 	sur40->bulk_in_buffer = kmalloc(sur40->bulk_in_size, GFP_KERNEL);
+ 	if (!sur40->bulk_in_buffer) {
+-		dev_err(&interface->dev, "Unable to allocate input buffer.");
+ 		error = -ENOMEM;
+ 		goto err_free_polldev;
+ 	}
+-- 
+2.15.1
+
