@@ -1,48 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 Jan 2018 16:19:10 +0000
-Subject: [PATCH 4/4] misc/ioc4: Adjust one function call together with a variable assignment
-Message-Id: <f51d4d70-6c21-229e-fdc6-8c4032bb974d@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 20 Jan 2018 22:09:34 +0000
+Subject: [PATCH] mtd: block2mtd: remove redundant initialization of 'bdev'
+Message-Id: <20180120220934.21992-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4fb26753-2ae3-7c17-7777-03c6923a1d4b@users.sourceforge.net>
-In-Reply-To: <4fb26753-2ae3-7c17-7777-03c6923a1d4b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Brent Casavant <bcasavan@sgi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeremy Higdon <jeremy@sgi.com>, Pat Gefre <pfg@sgi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Joern Engel <joern@lazybastard.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 Jan 2018 16:43:21 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+Pointer bdev is being initialized however this value is never
+read as bdev is assigned an updated value from the returned
+call to blkdev_get_by_path.  Remove the redundant assignment.
 
-ERROR: do not use assignment in if condition
+Cleans up clang warning:
+drivers/mtd/devices/block2mtd.c:228:23: warning: Value stored to
+'bdev' during its initialization is never read
 
-Thus fix the affected source code place.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/misc/ioc4.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mtd/devices/block2mtd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/ioc4.c b/drivers/misc/ioc4.c
-index 704e13382df0..8381dd9c7dd9 100644
---- a/drivers/misc/ioc4.c
-+++ b/drivers/misc/ioc4.c
-@@ -283,10 +283,11 @@ ioc4_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
- 	struct ioc4_driver_data *idd;
- 	struct ioc4_submodule *is;
- 	uint32_t pcmd;
--	int ret;
+diff --git a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
+index 62fd6905c648..bb0734600a07 100644
+--- a/drivers/mtd/devices/block2mtd.c
++++ b/drivers/mtd/devices/block2mtd.c
+@@ -225,7 +225,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
+ 	int i;
+ #endif
+ 	const fmode_t mode = FMODE_READ | FMODE_WRITE | FMODE_EXCL;
+-	struct block_device *bdev = ERR_PTR(-ENODEV);
++	struct block_device *bdev;
+ 	struct block2mtd_dev *dev;
+ 	char *name;
  
- 	/* Enable IOC4 and take ownership of it */
--	if ((ret = pci_enable_device(pdev))) {
-+	int ret = pci_enable_device(pdev);
-+
-+	if (ret) {
- 		printk(KERN_WARNING
- 		       "%s: Failed to enable IOC4 device for pci_dev %s.\n",
- 		       __func__, pci_name(pdev));
 -- 
 2.15.1
 
