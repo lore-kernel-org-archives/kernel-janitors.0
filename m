@@ -1,38 +1,39 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Jan 2018 11:26:27 +0000
-Subject: [PATCH -next] clk: samsung: exynos5433: Remove redundant dev_err call in exynos5433_cmu_probe()
-Message-Id: <1516188387-144930-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 14:00:07 +0000
+Subject: [PATCH] iommu/dmar: Delete an error message for a failed memory allocation in dmar_alloc_pci_notify_
+Message-Id: <bc2cf250-0c52-57df-e7e1-fd20a8c23731@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: iommu@lists.linux-foundation.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 14:55:21 +0100
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/iommu/dmar.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index db27090..9323e6b 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -5513,10 +5513,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg_base)) {
--		dev_err(dev, "failed to map registers\n");
-+	if (IS_ERR(reg_base))
- 		return PTR_ERR(reg_base);
--	}
- 
- 	for (i = 0; i < info->nr_clk_ids; ++i)
- 		ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
-
-
+diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+index 9a7ffd13c7f0..da6b121590cc 100644
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -150,8 +150,6 @@ dmar_alloc_pci_notify_info(struct pci_dev *dev, unsigned long event)
+ 	} else {
+ 		info = kzalloc(size, GFP_KERNEL);
+ 		if (!info) {
+-			pr_warn("Out of memory when allocating notify_info "
+-				"for %s.\n", pci_name(dev));
+ 			if (dmar_dev_scope_status = 0)
+ 				dmar_dev_scope_status = -ENOMEM;
+ 			return NULL;
+-- 
+2.15.1
 
