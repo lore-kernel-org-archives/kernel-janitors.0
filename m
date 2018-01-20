@@ -1,31 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 23:19:31 +0000
-Subject: Re: [PATCH][next] gpiolib: remove redundant initialization of pointer desc
-Message-Id: <CACRpkdboW19udLX3++e0OCw=tfTKEuasb8Jv3a4AZueJxjhUhg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 21:30:08 +0000
+Subject: [PATCH 2/2] Input: sur40: Improve a size determination in sur40_probe()
+Message-Id: <11e0b313-f8c2-93ec-0324-24b30053a586@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180116115611.24962-1-colin.king@canonical.com>
-In-Reply-To: <20180116115611.24962-1-colin.king@canonical.com>
+References: <a7e25da3-587a-f0e8-d574-8066b340d9a6@users.sourceforge.net>
+In-Reply-To: <a7e25da3-587a-f0e8-d574-8066b340d9a6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Echtler <floe@butterbrot.org>, Johan Hovold <johan@kernel.org>, Martin Kaltenbrunner <modin@yuri.at>, Martin Kepplinger <martink@posteo.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 16, 2018 at 12:56 PM, Colin King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Jan 2018 22:16:14 +0100
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The initialized value stored in pointer desc is never read as it
-> is updated in the first executable statement in the function.
-> This is therefore redundant and can be removed.
->
-> Cleans up clang warning:
-> drivers/gpio/gpiolib.c:3710:20: warning: Value stored to 'desc'
-> during its initialization is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Patch applied.
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/touchscreen/sur40.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/sur40.c b/drivers/input/touchscreen/sur40.c
+index c7a0a92b2044..946e1a0328b4 100644
+--- a/drivers/input/touchscreen/sur40.c
++++ b/drivers/input/touchscreen/sur40.c
+@@ -550,7 +550,7 @@ static int sur40_probe(struct usb_interface *interface,
+ 		return -ENODEV;
+ 
+ 	/* Allocate memory for our device state and initialize it. */
+-	sur40 = kzalloc(sizeof(struct sur40_state), GFP_KERNEL);
++	sur40 = kzalloc(sizeof(*sur40), GFP_KERNEL);
+ 	if (!sur40)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.1
+
