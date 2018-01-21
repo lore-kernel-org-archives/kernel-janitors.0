@@ -1,16 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Jan 2018 19:43:35 +0000
-Subject: [PATCH] i40e: Delete an error message for a failed memory allocation in i40e_init_interrupt_scheme()
-Message-Id: <c9c151e5-bd26-5b72-d26b-c153249811ab@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 19:05:14 +0000
+Subject: [PATCH] Input: eeti_ts: Delete an error message for a failed memory allocation in eeti_ts_probe()
+Message-Id: <c1bb1997-5430-1173-1d54-b63bc72af156@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+To: linux-input@vger.kernel.org, Daniel Mack <daniel@zonque.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jan 2018 20:38:14 +0100
+Date: Sun, 21 Jan 2018 20:00:03 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -18,26 +18,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/input/touchscreen/eeti_ts.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 4a964d6e4a9e..fd9ac22ee65a 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -10445,10 +10445,9 @@ static int i40e_init_interrupt_scheme(struct i40e_pf *pf)
- 	/* set up vector assignment tracking */
- 	size = sizeof(struct i40e_lump_tracking) + (sizeof(u16) * vectors);
- 	pf->irq_pile = kzalloc(size, GFP_KERNEL);
--	if (!pf->irq_pile) {
--		dev_err(&pf->pdev->dev, "error allocating irq_pile memory\n");
-+	if (!pf->irq_pile)
+diff --git a/drivers/input/touchscreen/eeti_ts.c b/drivers/input/touchscreen/eeti_ts.c
+index 2facad75eb6d..337f171e0f86 100644
+--- a/drivers/input/touchscreen/eeti_ts.c
++++ b/drivers/input/touchscreen/eeti_ts.c
+@@ -161,10 +161,8 @@ static int eeti_ts_probe(struct i2c_client *client,
+ 	 */
+ 
+ 	eeti = devm_kzalloc(dev, sizeof(*eeti), GFP_KERNEL);
+-	if (!eeti) {
+-		dev_err(dev, "failed to allocate driver data\n");
++	if (!eeti)
  		return -ENOMEM;
 -	}
-+
- 	pf->irq_pile->num_entries = vectors;
- 	pf->irq_pile->search_hint = 0;
  
+ 	input = devm_input_allocate_device(dev);
+ 	if (!input) {
 -- 
-2.15.1
+2.16.0
 
