@@ -1,27 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 14:00:09 +0000
-Subject: [PATCH 0/2] mfd/rc5t583: Adjustments for rc5t583_i2c_probe()
-Message-Id: <681cd296-5d05-cdf8-f031-162d7f837b36@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 19:48:37 +0000
+Subject: [PATCH 2/2] Input: da9034-ts: Improve a size determination in da9034_touch_probe()
+Message-Id: <8e27d655-4f18-b156-3d78-a12b28f79b5b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <44ae37ef-deaa-c963-e0f7-c407159afa0c@users.sourceforge.net>
+In-Reply-To: <44ae37ef-deaa-c963-e0f7-c407159afa0c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 14:57:28 +0100
+Date: Sun, 21 Jan 2018 20:36:20 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+This issue was detected by using the Coccinelle software.
 
- drivers/mfd/rc5t583.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/touchscreen/da9034-ts.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/input/touchscreen/da9034-ts.c b/drivers/input/touchscreen/da9034-ts.c
+index b30cfe1e62da..c9c423aebe1e 100644
+--- a/drivers/input/touchscreen/da9034-ts.c
++++ b/drivers/input/touchscreen/da9034-ts.c
+@@ -303,8 +303,7 @@ static int da9034_touch_probe(struct platform_device *pdev)
+ 	struct input_dev *input_dev;
+ 	int error;
+ 
+-	touch = devm_kzalloc(&pdev->dev, sizeof(struct da9034_touch),
+-			     GFP_KERNEL);
++	touch = devm_kzalloc(&pdev->dev, sizeof(*touch), GFP_KERNEL);
+ 	if (!touch)
+ 		return -ENOMEM;
+ 
 -- 
-2.15.1
+2.16.0
 
