@@ -1,53 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 19:40:39 +0000
-Subject: Re: mfd/omap-usb-tll: Allocate driver data at once in usbtll_omap_probe()
-Message-Id: <b2734327-5e60-4ad9-87c5-e1b9099fe3c0@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 19:19:00 +0000
+Subject: [PATCH] Input: edt-ft5x06: Delete an error message for a failed memory allocation in edt_ft5x06_ts_p
+Message-Id: <45f8a6c2-423b-5bc1-6512-c5b954c5620b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180115134101.GA6711@lenoch>
- <1ebb5ac5-aa4d-7c19-94db-210b518d562f@users.sourceforge.net>
- <20180115160522.GA2672@lenoch>
- <11eaf92d-3928-531f-35e8-fb5a60ff03e3@users.sourceforge.net>
- <20180115163543.GA10657@lenoch>
- <ead577ac-a36b-dfc4-9f2c-3d5f34495d78@users.sourceforge.net>
- <20180115174122.GA20745@lenoch>
- <cadb0da1-23d0-f629-8dcf-8d2566058812@users.sourceforge.net>
- <20180115183059.GA30039@lenoch>
- <8144f711-b4fd-730c-4e9f-780c42d5e68f@users.sourceforge.net>
- <20180115192303.GA31762@lenoch>
-In-Reply-To: <20180115192303.GA31762@lenoch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-input@vger.kernel.org, Andi Shyti <andi@etezian.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Martin Kepplinger <martink@posteo.de>, Rob Herring <robh@kernel.org>, Simon Budig <simon.budig@kernelconcepts.de>, =?UTF-8?Q?Stefan_Sch=c3=b6fegger?= <stefan.schoefegger@ginzinger.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> * Would you like to add a tag “link”?
-> 
-> Are you okay with this one?
-> https://lkml.org/lkml/2018/1/15/411
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 20:10:03 +0100
 
-Yes.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-> - resend as v2
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/touchscreen/edt-ft5x06.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-I was unsure about your patch handling from the previous replies.
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index c53a3d7239e7..9d2799c90150 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -978,10 +978,8 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ 	dev_dbg(&client->dev, "probing for EDT FT5x06 I2C\n");
+ 
+ 	tsdata = devm_kzalloc(&client->dev, sizeof(*tsdata), GFP_KERNEL);
+-	if (!tsdata) {
+-		dev_err(&client->dev, "failed to allocate driver data.\n");
++	if (!tsdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	chip_data = of_device_get_match_data(&client->dev);
+ 	if (!chip_data)
+-- 
+2.16.0
 
-
-> Also, patch contains all your changes, so you should be credited
-> somehow - hence the need for v2 anyway.
-
-Thanks.
-
-
-> What about:
-> [marcus: simplified error unwinding, error message removal]
-      ^
-
-I would prefer my name written as in the other places.
-
-
-Will this software development dialogue evolve in further constructive ways?
-
-Regards,
-Markus
