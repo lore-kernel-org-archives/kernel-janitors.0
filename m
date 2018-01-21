@@ -1,45 +1,143 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 16:24:30 +0000
-Subject: [PATCH 2/5] irqchip/irq-gic-v2m: Improve a size determination in gicv2m_init_one()
-Message-Id: <10ededda-66a9-001c-4ad6-db5baa80b679@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 20:30:19 +0000
+Subject: [PATCH 3/3] Input: cyttsp4_core: Adjust 13 checks for null pointers
+Message-Id: <6c4f8970-11bd-fe4c-1041-48a006b98b15@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
-In-Reply-To: <cd9daaf3-677e-9845-0d36-b6826b3457b5@users.sourceforge.net>
+References: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
+In-Reply-To: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ferruh Yigit <fery@cypress.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 16:07:41 +0100
+Date: Sun, 21 Jan 2018 21:15:11 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/irqchip/irq-gic-v2m.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/input/touchscreen/cyttsp4_core.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-index b795fefafb12..930261710ba2 100644
---- a/drivers/irqchip/irq-gic-v2m.c
-+++ b/drivers/irqchip/irq-gic-v2m.c
-@@ -306,9 +306,8 @@ static int __init gicv2m_init_one(struct fwnode_handle *fwnode,
- 				  struct resource *res)
- {
- 	int ret;
--	struct v2m_data *v2m;
-+	struct v2m_data *v2m = kzalloc(sizeof(*v2m), GFP_KERNEL);
+diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
+index 35f48b66ff36..32a4a45554fe 100644
+--- a/drivers/input/touchscreen/cyttsp4_core.c
++++ b/drivers/input/touchscreen/cyttsp4_core.c
+@@ -213,7 +213,7 @@ static int cyttsp4_si_get_cydata(struct cyttsp4 *cd)
+ 			si->si_ofs.cydata_size);
  
--	v2m = kzalloc(sizeof(struct v2m_data), GFP_KERNEL);
- 	if (!v2m)
+ 	p = krealloc(si->si_ptrs.cydata, si->si_ofs.cydata_size, GFP_KERNEL);
+-	if (p = NULL) {
++	if (!p) {
+ 		dev_err(cd->dev, "%s: failed to allocate cydata memory\n",
+ 			__func__);
  		return -ENOMEM;
+@@ -288,7 +288,7 @@ static int cyttsp4_si_get_test_data(struct cyttsp4 *cd)
+ 	si->si_ofs.test_size = si->si_ofs.pcfg_ofs - si->si_ofs.test_ofs;
  
+ 	p = krealloc(si->si_ptrs.test, si->si_ofs.test_size, GFP_KERNEL);
+-	if (p = NULL) {
++	if (!p) {
+ 		dev_err(cd->dev, "%s: failed to allocate test memory\n",
+ 			__func__);
+ 		return -ENOMEM;
+@@ -347,7 +347,7 @@ static int cyttsp4_si_get_pcfg_data(struct cyttsp4 *cd)
+ 	si->si_ofs.pcfg_size = si->si_ofs.opcfg_ofs - si->si_ofs.pcfg_ofs;
+ 
+ 	p = krealloc(si->si_ptrs.pcfg, si->si_ofs.pcfg_size, GFP_KERNEL);
+-	if (p = NULL) {
++	if (!p) {
+ 		dev_err(cd->dev, "%s: failed to allocate pcfg memory\n",
+ 			__func__);
+ 		return -ENOMEM;
+@@ -399,7 +399,7 @@ static int cyttsp4_si_get_opcfg_data(struct cyttsp4 *cd)
+ 	si->si_ofs.opcfg_size = si->si_ofs.ddata_ofs - si->si_ofs.opcfg_ofs;
+ 
+ 	p = krealloc(si->si_ptrs.opcfg, si->si_ofs.opcfg_size, GFP_KERNEL);
+-	if (p = NULL) {
++	if (!p) {
+ 		dev_err(cd->dev, "%s: failed to allocate opcfg memory\n",
+ 			__func__);
+ 		return -ENOMEM;
+@@ -488,7 +488,7 @@ static int cyttsp4_si_get_ddata(struct cyttsp4 *cd)
+ 	si->si_ofs.ddata_size = si->si_ofs.mdata_ofs - si->si_ofs.ddata_ofs;
+ 
+ 	p = krealloc(si->si_ptrs.ddata, si->si_ofs.ddata_size, GFP_KERNEL);
+-	if (p = NULL) {
++	if (!p) {
+ 		dev_err(cd->dev, "%s: fail alloc ddata memory\n", __func__);
+ 		return -ENOMEM;
+ 	}
+@@ -515,7 +515,7 @@ static int cyttsp4_si_get_mdata(struct cyttsp4 *cd)
+ 	si->si_ofs.mdata_size = si->si_ofs.map_sz - si->si_ofs.mdata_ofs;
+ 
+ 	p = krealloc(si->si_ptrs.mdata, si->si_ofs.mdata_size, GFP_KERNEL);
+-	if (p = NULL) {
++	if (!p) {
+ 		dev_err(cd->dev, "%s: fail alloc mdata memory\n", __func__);
+ 		return -ENOMEM;
+ 	}
+@@ -548,16 +548,16 @@ static int cyttsp4_si_get_btn_data(struct cyttsp4 *cd)
+ 
+ 		p = krealloc(si->btn, si->si_ofs.btn_keys_size,
+ 				GFP_KERNEL|__GFP_ZERO);
+-		if (p = NULL) {
++		if (!p) {
+ 			dev_err(cd->dev, "%s: %s\n", __func__,
+ 				"fail alloc btn_keys memory");
+ 			return -ENOMEM;
+ 		}
+ 		si->btn = p;
+ 
+-		if (cd->cpdata->sett[CY_IC_GRPNUM_BTN_KEYS] = NULL)
++		if (!cd->cpdata->sett[CY_IC_GRPNUM_BTN_KEYS])
+ 			num_defined_keys = 0;
+-		else if (cd->cpdata->sett[CY_IC_GRPNUM_BTN_KEYS]->data = NULL)
++		else if (!cd->cpdata->sett[CY_IC_GRPNUM_BTN_KEYS]->data)
+ 			num_defined_keys = 0;
+ 		else
+ 			num_defined_keys = cd->cpdata->sett
+@@ -592,19 +592,19 @@ static int cyttsp4_si_get_op_data_ptrs(struct cyttsp4 *cd)
+ 	void *p;
+ 
+ 	p = krealloc(si->xy_mode, si->si_ofs.mode_size, GFP_KERNEL|__GFP_ZERO);
+-	if (p = NULL)
++	if (!p)
+ 		return -ENOMEM;
+ 	si->xy_mode = p;
+ 
+ 	p = krealloc(si->xy_data, si->si_ofs.data_size, GFP_KERNEL|__GFP_ZERO);
+-	if (p = NULL)
++	if (!p)
+ 		return -ENOMEM;
+ 	si->xy_data = p;
+ 
+ 	p = krealloc(si->btn_rec_data,
+ 			si->si_ofs.btn_rec_size * si->si_ofs.num_btns,
+ 			GFP_KERNEL|__GFP_ZERO);
+-	if (p = NULL)
++	if (!p)
+ 		return -ENOMEM;
+ 	si->btn_rec_data = p;
+ 
+@@ -1977,7 +1977,7 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
+ 	dev_vdbg(dev, "%s: Create the input device and register it\n",
+ 		__func__);
+ 	md->input = input_allocate_device();
+-	if (md->input = NULL) {
++	if (!md->input) {
+ 		dev_err(dev, "%s: Error, failed to allocate input device\n",
+ 			__func__);
+ 		rc = -ENOSYS;
 -- 
-2.15.1
+2.16.0
 
