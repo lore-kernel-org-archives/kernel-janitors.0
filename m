@@ -1,27 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 19:28:52 +0000
-Subject: [PATCH 0/2] mtdconcat: Adjustments for two function implementations
-Message-Id: <07947bdd-2b30-e4b5-82f7-d98b62df858e@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 20:27:28 +0000
+Subject: [PATCH 1/3] Input: cyttsp4_core: Delete two error messages for a failed memory allocation in cyttsp4
+Message-Id: <2ca4b5f1-2b2f-19f4-d0ce-95586bb9d5cd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
+In-Reply-To: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ferruh Yigit <fery@cypress.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Jan 2018 20:24:56 +0100
+Date: Sun, 21 Jan 2018 20:57:40 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit extra messages for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in mtd_concat_create()
-  Improve a size determination in concat_erase()
+This issue was detected by using the Coccinelle software.
 
- drivers/mtd/mtdconcat.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/touchscreen/cyttsp4_core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
+index 727c3232517c..f0bf3cc20e9d 100644
+--- a/drivers/input/touchscreen/cyttsp4_core.c
++++ b/drivers/input/touchscreen/cyttsp4_core.c
+@@ -2037,14 +2037,12 @@ struct cyttsp4 *cyttsp4_probe(const struct cyttsp4_bus_ops *ops,
+ 
+ 	cd = kzalloc(sizeof(*cd), GFP_KERNEL);
+ 	if (!cd) {
+-		dev_err(dev, "%s: Error, kzalloc\n", __func__);
+ 		rc = -ENOMEM;
+ 		goto error_alloc_data;
+ 	}
+ 
+ 	cd->xfer_buf = kzalloc(xfer_buf_size, GFP_KERNEL);
+ 	if (!cd->xfer_buf) {
+-		dev_err(dev, "%s: Error, kzalloc\n", __func__);
+ 		rc = -ENOMEM;
+ 		goto error_free_cd;
+ 	}
 -- 
-2.15.1
+2.16.0
 
