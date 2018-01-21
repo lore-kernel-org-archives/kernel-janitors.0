@@ -1,39 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Jan 2018 19:56:55 +0000
-Subject: [PATCH] igb: Delete an error message for a failed memory allocation in igb_enable_sriov()
-Message-Id: <d6fe0ffd-4439-1f2b-1f78-2a3552f5dd09@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 18:49:07 +0000
+Subject: [PATCH 0/2] Input-egalax_ts: Adjustments for egalax_ts_probe()
+Message-Id: <52f0c32d-2cf9-bef3-4fb3-4120c5b758c4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jan 2018 20:53:10 +0100
+Date: Sun, 21 Jan 2018 19:46:54 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/input/touchscreen/egalax_ts.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index e94d3c256667..1621aaa3eb28 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -3200,8 +3200,6 @@ static int igb_enable_sriov(struct pci_dev *pdev, int num_vfs)
- 	/* if allocation failed then we do not support SR-IOV */
- 	if (!adapter->vf_data) {
- 		adapter->vfs_allocated_count = 0;
--		dev_err(&pdev->dev,
--			"Unable to allocate memory for VF Data Storage\n");
- 		err = -ENOMEM;
- 		goto out;
- 	}
 -- 
-2.15.1
+2.16.0
 
