@@ -1,54 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 31 Jan 2018 21:10:36 +0000
-Subject: [PATCH] iio/adc: Delete an error message for a failed memory allocation in two functions
-Message-Id: <0a3e6b48-f837-ce30-4adf-28ce5d885c24@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 20:29:20 +0000
+Subject: [PATCH 2/3] Input: cyttsp4_core: Delete an unnecessary return statement in three functions
+Message-Id: <fd2239f0-ec16-ee88-5418-a7ae3efa1e21@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
+In-Reply-To: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ferruh Yigit <fery@cypress.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 31 Jan 2018 21:57:50 +0100
+Date: Sun, 21 Jan 2018 21:13:21 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/iio/adc/at91_adc.c | 1 -
- drivers/iio/adc/max1027.c  | 4 +---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/input/touchscreen/cyttsp4_core.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-index 3836d4222a3e..ce37cfeb8d1c 100644
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -912,7 +912,6 @@ static int at91_adc_probe_dt(struct at91_adc_state *st,
- 					sizeof(struct at91_adc_trigger),
- 					GFP_KERNEL);
- 	if (!st->trigger_list) {
--		dev_err(&idev->dev, "Could not allocate trigger list memory.\n");
- 		ret = -ENOMEM;
- 		goto error_ret;
- 	}
-diff --git a/drivers/iio/adc/max1027.c b/drivers/iio/adc/max1027.c
-index 375da6491499..74b305c775f2 100644
---- a/drivers/iio/adc/max1027.c
-+++ b/drivers/iio/adc/max1027.c
-@@ -425,10 +425,8 @@ static int max1027_probe(struct spi_device *spi)
- 	st->buffer = devm_kmalloc(&indio_dev->dev,
- 				  indio_dev->num_channels * 2,
- 				  GFP_KERNEL);
--	if (st->buffer = NULL) {
--		dev_err(&indio_dev->dev, "Can't allocate buffer\n");
-+	if (!st->buffer)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
+index f0bf3cc20e9d..35f48b66ff36 100644
+--- a/drivers/input/touchscreen/cyttsp4_core.c
++++ b/drivers/input/touchscreen/cyttsp4_core.c
+@@ -956,8 +956,6 @@ static void cyttsp4_get_mt_touches(struct cyttsp4_mt_data *md, int num_cur_tch)
+ 	cyttsp4_final_sync(md->input, si->si_ofs.tch_abs[CY_TCH_T].max, ids);
  
- 	ret = iio_triggered_buffer_setup(indio_dev, &iio_pollfunc_store_time,
- 					 &max1027_trigger_handler, NULL);
+ 	md->num_prv_tch = num_cur_tch;
+-
+-	return;
+ }
+ 
+ /* read xy_data for all current touches */
+@@ -1272,8 +1270,6 @@ static void cyttsp4_watchdog_timer(struct timer_list *t)
+ 	dev_vdbg(cd->dev, "%s: Watchdog timer triggered\n", __func__);
+ 
+ 	schedule_work(&cd->watchdog_work);
+-
+-	return;
+ }
+ 
+ static int cyttsp4_request_exclusive(struct cyttsp4 *cd, void *ownptr,
+@@ -1492,7 +1488,6 @@ static void cyttsp4_watchdog_work(struct work_struct *work)
+ 	cyttsp4_start_wd_timer(cd);
+ cyttsp4_timer_watchdog_exit_error:
+ 	mutex_unlock(&cd->system_lock);
+-	return;
+ }
+ 
+ static int cyttsp4_core_sleep_(struct cyttsp4 *cd)
 -- 
-2.16.1
+2.16.0
 
