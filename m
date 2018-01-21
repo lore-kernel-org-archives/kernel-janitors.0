@@ -1,24 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 02 Jan 2018 18:50:30 +0000
-Subject: Re: [PATCH 05/12] openvswitch: drop unneeded newline
-Message-Id: <20180102.135030.669121099735044482.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 18:51:23 +0000
+Subject: [PATCH 2/2] Input: egalax_ts: Improve a size determination in egalax_ts_probe()
+Message-Id: <9010bf32-e058-d29d-8ea2-acb43f200175@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1514386305-7402-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-6-git-send-email-Julia.Lawall@lip6.fr>
+References: <52f0c32d-2cf9-bef3-4fb3-4120c5b758c4@users.sourceforge.net>
+In-Reply-To: <52f0c32d-2cf9-bef3-4fb3-4120c5b758c4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: pshelar@nicira.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 27 Dec 2017 15:51:38 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Jan 2018 19:40:30 +0100
 
-> OVS_NLERR prints a newline at the end of the message string, so the
-> message string does not need to include a newline explicitly.  Done
-> using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/touchscreen/egalax_ts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/egalax_ts.c b/drivers/input/touchscreen/egalax_ts.c
+index 29ec1166626d..da8b46ee2c1c 100644
+--- a/drivers/input/touchscreen/egalax_ts.c
++++ b/drivers/input/touchscreen/egalax_ts.c
+@@ -171,7 +171,7 @@ static int egalax_ts_probe(struct i2c_client *client,
+ 	struct input_dev *input_dev;
+ 	int error;
+ 
+-	ts = devm_kzalloc(&client->dev, sizeof(struct egalax_ts), GFP_KERNEL);
++	ts = devm_kzalloc(&client->dev, sizeof(*ts), GFP_KERNEL);
+ 	if (!ts)
+ 		return -ENOMEM;
+ 
+-- 
+2.16.0
+
