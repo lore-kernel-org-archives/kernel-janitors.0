@@ -1,25 +1,41 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 09 Jan 2018 02:50:57 +0000
-Subject: Re: [PATCH][scsi-next] scsi: aacraid: remove redundant setting of variable c
-Message-Id: <yq1wp0roicu.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jan 2018 10:37:14 +0000
+Subject: [PATCH] [media] s3c-camif: array underflow in __camif_subdev_try_format()
+Message-Id: <20180122103714.GA25044@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180105153106.17605-1-colin.king@canonical.com>
-In-Reply-To: <20180105153106.17605-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 5 Jan 2018 15:31:06 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The while loop is a post op, "while (i-- >= 0)" so the last iteration
+will read camif_mbus_formats[-1] and then the loop will exit with "i"
+set to -2 and so we do: "mf->code = camif_mbus_formats[-2];".
 
-Colin,
+I've changed it to a pre-op, I've added a check to ensure we found the
+right format and I've removed the "mf->code = camif_mbus_formats[i];"
+because that is a no-op anyway.
 
-> A previous commit no longer stores the contents of c, so we now have a
-> situation where c is being updated but the value is never read. Clean
-> up the code by removing the now redundant setting of variable c.
+Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.16/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+index 437395a61065..012f4b389c55 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -1261,11 +1261,11 @@ static void __camif_subdev_try_format(struct camif_dev *camif,
+ 	/* FIXME: constraints against codec or preview path ? */
+ 	pix_lim = &variant->vp_pix_limits[VP_CODEC];
+ 
+-	while (i-- >= 0)
++	while (--i >= 0)
+ 		if (camif_mbus_formats[i] = mf->code)
+ 			break;
+-
+-	mf->code = camif_mbus_formats[i];
++	if (i < 0)
++		return;
+ 
+ 	if (pad = CAMIF_SD_PAD_SINK) {
+ 		v4l_bound_align_image(&mf->width, 8, CAMIF_MAX_PIX_WIDTH,
