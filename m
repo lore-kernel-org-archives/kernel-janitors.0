@@ -1,27 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 20:38:55 +0000
-Subject: [PATCH 0/2] macintosh/rack-meter: Adjustments for rackmeter_probe()
-Message-Id: <c11e0a90-a7b2-dddd-7751-7dac3e62215b@users.sourceforge.net>
+Date: Mon, 22 Jan 2018 18:12:07 +0000
+Subject: Re: ARM-SMMU: Delete error messages for a failed memory allocation in three functions
+Message-Id: <a714a4ab-8118-e4ef-5982-4395ac2e6c4b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c3e91414-dd5b-2889-d86c-b19aff56571b@users.sourceforge.net>
+ <ac171b23-624d-2df3-d1d1-8e9479ae03bc@arm.com>
+In-Reply-To: <ac171b23-624d-2df3-d1d1-8e9479ae03bc@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 21:36:56 +0100
+>> Date: Sat, 20 Jan 2018 15:30:17 +0100
+>>
+>> Omit extra messages for a memory allocation failure in these functions.
+> 
+> Why?
 
-Two update suggestions were taken into account
-from static source code analysis.
+Do you find the wording “WARNING: Possible unnecessary 'out of memory' message”
+(from the script “checkpatch.pl”) more reasonable?
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
 
- drivers/macintosh/rack-meter.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> This may as well be "delete some stuff because I feel like it".
 
--- 
-2.15.1
+Do you find the Linux allocation failure report insufficient
+in this use case?
 
+Regards,
+Markus
