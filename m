@@ -1,42 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 19:15:17 +0000
-Subject: [PATCH] IB/usnic: Delete an error message for a failed memory allocation in usnic_transport_init()
-Message-Id: <d9b22086-13d0-b519-3126-937a531d93d2@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jan 2018 10:23:32 +0000
+Subject: [PATCH] staging: rts5208: Fix "seg_no" calculation in reset_ms_card()
+Message-Id: <20180122102332.GB23912@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Christian Benvenuti <benve@cisco.com>, Dave Goodell <dgoodell@cisco.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Roland Dreier <roland@purestorage.com>, Upinder Malhi <umalhi@cisco.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 20:06:59 +0100
+I get some static checker warnings like this:
 
-Omit an extra message for a memory allocation failure in this function.
+    drivers/staging/rts5208/ms.c:2607 ms_build_l2p_tbl()
+    error: buffer underflow 'ms_card->segment' (-1)-16
 
-This issue was detected by using the Coccinelle software.
+The problem is that we memset "ms_card" to zero at the start of the
+reset_ms_card() function.  That means that when we try to calculate
+"ms_card->total_block / 512 - 1" then it's just always -1.  The fix is
+to calculate "seg_no" before doing the memset().
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/usnic/usnic_transport.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This is a static checker fix, and I am not able to test it.  My theory
+is that reset_ms_card() gets very little testing which is why this bug
+exists.
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_transport.c b/drivers/infiniband/hw/usnic/usnic_transport.c
-index de318389a301..2e9bba52a686 100644
---- a/drivers/infiniband/hw/usnic/usnic_transport.c
-+++ b/drivers/infiniband/hw/usnic/usnic_transport.c
-@@ -201,10 +201,8 @@ int usnic_transport_sock_get_addr(struct socket *sock, int *proto,
- int usnic_transport_init(void)
+Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
+index 7cdce87f3051..821256b95e22 100644
+--- a/drivers/staging/rts5208/ms.c
++++ b/drivers/staging/rts5208/ms.c
+@@ -2821,6 +2821,7 @@ static int ms_build_l2p_tbl(struct rtsx_chip *chip, int seg_no)
+ int reset_ms_card(struct rtsx_chip *chip)
  {
- 	roce_bitmap = kzalloc(ROCE_BITMAP_SZ, GFP_KERNEL);
--	if (!roce_bitmap) {
--		usnic_err("Failed to allocate bit map");
-+	if (!roce_bitmap)
- 		return -ENOMEM;
--	}
+ 	struct ms_info *ms_card = &chip->ms_card;
++	int seg_no = ms_card->total_block / 512 - 1;
+ 	int retval;
  
- 	/* Do not ever allocate bit 0, hence set it here */
- 	bitmap_set(roce_bitmap, 0, 1);
--- 
-2.16.1
-
+ 	memset(ms_card, 0, sizeof(struct ms_info));
+@@ -2863,7 +2864,7 @@ int reset_ms_card(struct rtsx_chip *chip)
+ 		/* Build table for the last segment,
+ 		 * to check if L2P table block exists, erasing it
+ 		 */
+-		retval = ms_build_l2p_tbl(chip, ms_card->total_block / 512 - 1);
++		retval = ms_build_l2p_tbl(chip, seg_no);
+ 		if (retval != STATUS_SUCCESS) {
+ 			rtsx_trace(chip);
+ 			return STATUS_FAIL;
