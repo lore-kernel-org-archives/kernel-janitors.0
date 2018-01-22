@@ -1,24 +1,37 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Date: Mon, 15 Jan 2018 18:17:24 +0000
-Subject: Re: [PATCH -next] firmware: arm_sdei: Fix return value check in sdei_present_dt()
-Message-Id: <20180115181724.dwgzareorag7ndxc@armageddon.cambridge.arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jan 2018 10:21:40 +0000
+Subject: [PATCH] crypto: chelsio - Delete stray tabs in create_authenc_wr()
+Message-Id: <20180122102140.GA23912@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516012913-196560-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516012913-196560-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Harsh Jain <harsh@chelsio.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 15, 2018 at 10:41:53AM +0000, Wei Yongjun wrote:
-> In case of error, the function of_platform_device_create() returns
-> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test.
-> 
-> Fixes: 677a60bd2003 ("firmware: arm_sdei: Discover SDEI support via ACPI")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+We removed some if statements but left these statements indented too
+far.
 
-Applied. Thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Catalin
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index a9c894bf9c01..34a02d690548 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -2112,11 +2112,11 @@ static struct sk_buff *create_authenc_wr(struct aead_request *req,
+ 	error = chcr_aead_common_init(req, op_type);
+ 	if (error)
+ 		return ERR_PTR(error);
+-		dnents = sg_nents_xlen(req->dst, assoclen, CHCR_DST_SG_SIZE, 0);
+-		dnents += sg_nents_xlen(req->dst, req->cryptlen +
+-			(op_type ? -authsize : authsize), CHCR_DST_SG_SIZE,
+-			req->assoclen);
+-		dnents += MIN_AUTH_SG; // For IV
++	dnents = sg_nents_xlen(req->dst, assoclen, CHCR_DST_SG_SIZE, 0);
++	dnents += sg_nents_xlen(req->dst, req->cryptlen +
++		(op_type ? -authsize : authsize), CHCR_DST_SG_SIZE,
++		req->assoclen);
++	dnents += MIN_AUTH_SG; // For IV
+ 
+ 	dst_size = get_space_for_phys_dsgl(dnents);
+ 	kctx_len = (ntohl(KEY_CONTEXT_CTX_LEN_V(aeadctx->key_ctx_hdr)) << 4)
