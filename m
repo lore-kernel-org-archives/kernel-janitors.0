@@ -1,32 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 03 Jan 2018 07:58:24 +0000
-Subject: Re: [PATCH 02/12] pinctrl: at91-pio4: account for const type of of_device_id.data
-Message-Id: <CACRpkdZD6x4NZbbUBSZDOtFGS=Rg21ewup3-Gr9n3e1fosA0cg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 22 Jan 2018 15:57:30 +0000
+Subject: [PATCH] staging: rtl8192u: remove redundant initialization of 'timeout'
+Message-Id: <20180122155730.16216-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
- <1514899688-27844-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514899688-27844-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <20170209110643.22590-1-colin.king@canonical.com>
+In-Reply-To: <20170209110643.22590-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, simran singhal <singhalsimran0@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jan 2, 2018 at 2:27 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This driver creates a const structure that it stores in the data field
-> of an of_device_id array.
->
-> Adding const to the declaration of the location that receives the
-> const value from the data field ensures that the compiler will
-> continue to check that the value is not modified.  Furthermore, the
-> const-discarding cast on the extraction from the data field is no
-> longer needed.
->
-> Done using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Variable timeout is initialized however this value is never read and
+it is reassigned a new value a little later, hence the initialization
+is redundant and can be removed.
 
-Patch applied.
+Cleans up clang warning:
+drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c:1728:6: warning:
+Value stored to 'timeout' during its initialization is never read
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+index f56fdc7a4b61..25c186a8bde3 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+@@ -1725,7 +1725,7 @@ static void ieee80211_sta_ps_send_null_frame(struct ieee80211_device *ieee,
+ static short ieee80211_sta_ps_sleep(struct ieee80211_device *ieee, u32 *time_h,
+ 				    u32 *time_l)
+ {
+-	int timeout = ieee->ps_timeout;
++	int timeout;
+ 	u8 dtim;
+ 	/*if(ieee->ps = IEEE80211_PS_DISABLED ||
+ 		ieee->iw_mode != IW_MODE_INFRA ||
+-- 
+2.15.1
+
