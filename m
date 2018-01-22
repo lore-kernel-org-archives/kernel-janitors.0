@@ -1,42 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jan 2018 21:30:04 +0000
-Subject: [PATCH] mfd/jz4740-adc: Delete an error message for a failed memory allocation in jz4740_adc_probe()
-Message-Id: <448b31bd-4466-b373-988f-f6452e32f390@users.sourceforge.net>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 22 Jan 2018 15:41:05 +0000
+Subject: Re: [PATCH] mfd/jz4740-adc: Delete an error message for a failed memory allocation in jz4740_adc_pro
+Message-Id: <20180122154105.ebfoiw4uzbi47r3u@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <448b31bd-4466-b373-988f-f6452e32f390@users.sourceforge.net>
+In-Reply-To: <448b31bd-4466-b373-988f-f6452e32f390@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jan 2018 22:26:21 +0100
+On Sun, 14 Jan 2018, SF Markus Elfring wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 14 Jan 2018 22:26:21 +0100
+>=20
+> Omit an extra message for a memory allocation failure in this function.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/mfd/jz4740-adc.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-This issue was detected by using the Coccinelle software.
+Applied, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mfd/jz4740-adc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/jz4740-adc.c b/drivers/mfd/jz4740-adc.c
-index 798e44306382..f4cd14294b61 100644
---- a/drivers/mfd/jz4740-adc.c
-+++ b/drivers/mfd/jz4740-adc.c
-@@ -212,10 +212,8 @@ static int jz4740_adc_probe(struct platform_device *pdev)
- 	int irq_base;
- 
- 	adc = devm_kzalloc(&pdev->dev, sizeof(*adc), GFP_KERNEL);
--	if (!adc) {
--		dev_err(&pdev->dev, "Failed to allocate driver structure\n");
-+	if (!adc)
- 		return -ENOMEM;
--	}
- 
- 	adc->irq = platform_get_irq(pdev, 0);
- 	if (adc->irq < 0) {
--- 
-2.15.1
-
+--=20
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
