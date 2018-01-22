@@ -1,46 +1,40 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Thu, 04 Jan 2018 19:08:24 +0000
-Subject: Re: [PATCH][next] usbip: vhci: fix spelling mistake: "synchronuously" -> "synchronously"
-Message-Id: <8420ec79-7172-1cb7-9a86-fa0d4562334e@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 22 Jan 2018 15:25:43 +0000
+Subject: [PATCH] net: caif: remove redundant re-assignment of pointer pfrm
+Message-Id: <20180122152543.14719-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180103091805.24064-1-colin.king@canonical.com>
-In-Reply-To: <20180103091805.24064-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Valentina Manea <valentina.manea.m@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>
+To: Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01/03/2018 02:18 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_dbg debug message.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/usbip/vhci_rx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/usbip/vhci_rx.c b/drivers/usb/usbip/vhci_rx.c
-> index 112ebb90d8c9..44cd64518925 100644
-> --- a/drivers/usb/usbip/vhci_rx.c
-> +++ b/drivers/usb/usbip/vhci_rx.c
-> @@ -30,7 +30,7 @@ struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev, __u32 seqnum)
->  			/* fall through */
->  		case -ECONNRESET:
->  			dev_dbg(&urb->dev->dev,
-> -				 "urb seq# %u was unlinked %ssynchronuously\n",
-> +				 "urb seq# %u was unlinked %ssynchronously\n",
->  				 seqnum, status = -ENOENT ? "" : "a");
->  			break;
->  		case -EINPROGRESS:
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks Colin!
+The pointer pfrm is initialized and then later re-assigned the same
+value and hence the second assignment is redundant and can be removed.
 
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+Cleans up clang warning:
+drivers/net/caif/caif_hsi.c:222:6: warning: Value stored to 'pfrm'
+during its initialization is never read
 
-Greg, Please pick this up.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/caif/caif_hsi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-thanks,
--- Shuah
+diff --git a/drivers/net/caif/caif_hsi.c b/drivers/net/caif/caif_hsi.c
+index b8029ea03307..433a14b9f731 100644
+--- a/drivers/net/caif/caif_hsi.c
++++ b/drivers/net/caif/caif_hsi.c
+@@ -264,7 +264,6 @@ static int cfhsi_tx_frm(struct cfhsi_desc *desc, struct cfhsi *cfhsi)
+ 	}
+ 
+ 	/* Create payload CAIF frames. */
+-	pfrm = desc->emb_frm + CFHSI_MAX_EMB_FRM_SZ;
+ 	while (nfrms < CFHSI_MAX_PKTS) {
+ 		struct caif_payload_info *info;
+ 		int hpad;
+-- 
+2.15.1
+
