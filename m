@@ -1,17 +1,19 @@
-From: Martin Kepplinger <martink@posteo.de>
-Date: Mon, 22 Jan 2018 07:00:47 +0000
+From: Andi Shyti <andi@etezian.org>
+Date: Mon, 22 Jan 2018 07:43:03 +0000
 Subject: Re: [PATCH] Input: edt-ft5x06: Delete an error message for a failed memory allocation in edt_ft5x06_
-Message-Id: <850ca75e-6b13-8e08-b97e-2512e0841152@posteo.de>
+Message-Id: <20180122074303.GB26752@brancaleone.zhora.eu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <45f8a6c2-423b-5bc1-6512-c5b954c5620b@users.sourceforge.net>
 In-Reply-To: <45f8a6c2-423b-5bc1-6512-c5b954c5620b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-input@vger.kernel.org, Andi Shyti <andi@etezian.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Simon Budig <simon.budig@kernelconcepts.de>, =?UTF-8?Q?Stefan_Sch=c3=b6fegger?= <stefan.schoefegger@ginzinger.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-input@vger.kernel.org, Andi Shyti <andi@etezian.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?iso-8859-15?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>, Martin Kepplinger <martink@posteo.de>, Rob Herring <robh@kernel.org>, Simon Budig <simon.budig@kernelconcepts.de>, Stefan =?iso-8859-15?Q?Sch=F6fegger?= <stefan.schoefegger@ginzinger.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 2018-01-21 20:19, SF Markus Elfring wrote:
+Hi Markus,
+
+On Sun, Jan 21, 2018 at 08:19:00PM +0100, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Sun, 21 Jan 2018 20:10:03 +0100
 > 
@@ -21,7 +23,10 @@ On 2018-01-21 20:19, SF Markus Elfring wrote:
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Acked-by: Martin Kepplinger <martink@posteo.de>
+Acked-by: Andi Shyti <andi@etezian.org>
+
+Thanks,
+Andi
 
 > ---
 >  drivers/input/touchscreen/edt-ft5x06.c | 4 +---
@@ -43,5 +48,5 @@ Acked-by: Martin Kepplinger <martink@posteo.de>
 >  
 >  	chip_data = of_device_get_match_data(&client->dev);
 >  	if (!chip_data)
-> 
-
+> -- 
+> 2.16.0
