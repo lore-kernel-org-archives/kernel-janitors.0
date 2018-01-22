@@ -1,30 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 15:06:37 +0000
-Subject: [PATCH 0/5] mtd/rfd_ftl: Adjustments for some function implementations
-Message-Id: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jan 2018 10:26:14 +0000
+Subject: [PATCH] staging: lustre: libcfs: Prevent harmless read underflow
+Message-Id: <20180122102614.GC23912@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lustre-devel@lists.lustre.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 16:00:01 +0100
+Because this is a post-op instead of a pre-op, then it means we check
+if knl_buffer[-1] is a space.  It doesn't really hurt anything, but
+it causes a static checker warning so let's fix it.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Fixes: d7e09d0397e8 ("staging: add Lustre file system client support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (5):
-  Delete an error message for a failed memory allocation in scan_header()
-  Less function calls in scan_header() after error detection
-  Improve a size determination in two functions
-  Return directly after a failed kmalloc() in erase_block()
-  Add some spaces for better code readability
-
- drivers/mtd/rfd_ftl.c | 45 +++++++++++++++++++--------------------------
- 1 file changed, 19 insertions(+), 26 deletions(-)
-
--- 
-2.15.1
-
+diff --git a/drivers/staging/lustre/lnet/libcfs/tracefile.c b/drivers/staging/lustre/lnet/libcfs/tracefile.c
+index da2844f37edf..57913aae1d88 100644
+--- a/drivers/staging/lustre/lnet/libcfs/tracefile.c
++++ b/drivers/staging/lustre/lnet/libcfs/tracefile.c
+@@ -785,7 +785,7 @@ int cfs_trace_copyin_string(char *knl_buffer, int knl_buffer_nob,
+ 		return -EFAULT;
+ 
+ 	nob = strnlen(knl_buffer, usr_buffer_nob);
+-	while (nob-- >= 0)		      /* strip trailing whitespace */
++	while (--nob >= 0)		      /* strip trailing whitespace */
+ 		if (!isspace(knl_buffer[nob]))
+ 			break;
+ 
