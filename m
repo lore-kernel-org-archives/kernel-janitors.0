@@ -1,42 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jan 2018 21:06:30 +0000
-Subject: [PATCH] mfd/htc-i2cpld: Delete an error message for a failed memory allocation in htcpld_setup_chips
-Message-Id: <b957af3a-b637-bbbf-9f08-00744fca1b51@users.sourceforge.net>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 22 Jan 2018 15:22:18 +0000
+Subject: Re: [PATCH] mfd/htc-i2cpld: Delete an error message for a failed memory allocation in htcpld_setup_c
+Message-Id: <20180122152218.5mdfwixqdp2a6oly@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b957af3a-b637-bbbf-9f08-00744fca1b51@users.sourceforge.net>
+In-Reply-To: <b957af3a-b637-bbbf-9f08-00744fca1b51@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jan 2018 22:02:16 +0100
+On Sun, 14 Jan 2018, SF Markus Elfring wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 14 Jan 2018 22:02:16 +0100
+>=20
+> Omit an extra message for a memory allocation failure in this function.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/mfd/htc-i2cpld.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-This issue was detected by using the Coccinelle software.
+Applied, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mfd/htc-i2cpld.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/htc-i2cpld.c b/drivers/mfd/htc-i2cpld.c
-index 3f9eee5f8fb9..4bf8b7781c77 100644
---- a/drivers/mfd/htc-i2cpld.c
-+++ b/drivers/mfd/htc-i2cpld.c
-@@ -479,10 +479,8 @@ static int htcpld_setup_chips(struct platform_device *pdev)
- 	htcpld->nchips = pdata->num_chip;
- 	htcpld->chip = devm_kzalloc(dev, sizeof(struct htcpld_chip) * htcpld->nchips,
- 				    GFP_KERNEL);
--	if (!htcpld->chip) {
--		dev_warn(dev, "Unable to allocate memory for chips\n");
-+	if (!htcpld->chip)
- 		return -ENOMEM;
--	}
- 
- 	/* Add the chips as best we can */
- 	for (i = 0; i < htcpld->nchips; i++) {
--- 
-2.15.1
-
+--=20
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
