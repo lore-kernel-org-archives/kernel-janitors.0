@@ -1,38 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 Jan 2018 09:36:23 +0000
-Subject: [PATCH] media: lirc: Fix uninitialized variable in ir_lirc_transmit_ir()
-Message-Id: <20180110093623.z5kqrsnu72stchu5@mwanda>
+From: Sean Young <sean@mess.org>
+Date: Tue, 23 Jan 2018 13:14:25 +0000
+Subject: Re: [PATCH] media: lirc: Fix uninitialized variable in ir_lirc_transmit_ir()
+Message-Id: <20180123131425.sghf77ivdd6weqsf@gofer.mess.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180110093623.z5kqrsnu72stchu5@mwanda>
+In-Reply-To: <20180110093623.z5kqrsnu72stchu5@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>
-Cc: David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "txbuf" is uninitialized when we call ir_raw_encode_scancode() so
-this failure path would lead to a crash.
-
-Fixes: a74b2bff5945 ("media: lirc: do not pass ERR_PTR to kfree")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
-index fae42f120aa4..5efe9cd2309a 100644
---- a/drivers/media/rc/lirc_dev.c
-+++ b/drivers/media/rc/lirc_dev.c
-@@ -295,7 +295,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
- 		ret = ir_raw_encode_scancode(scan.rc_proto, scan.scancode,
- 					     raw, LIRCBUF_SIZE);
- 		if (ret < 0)
--			goto out_kfree;
-+			goto out_free_raw;
- 
- 		count = ret;
- 
-@@ -366,6 +366,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
- 	return n;
- out_kfree:
- 	kfree(txbuf);
-+out_free_raw:
- 	kfree(raw);
- out_unlock:
- 	mutex_unlock(&dev->lock);
+T24gV2VkLCBKYW4gMTAsIDIwMTggYXQgMTI6MzY6MjNQTSArMDMwMCwgRGFuIENhcnBlbnRlciB3
+cm90ZToKPiBUaGUgInR4YnVmIiBpcyB1bmluaXRpYWxpemVkIHdoZW4gd2UgY2FsbCBpcl9yYXdf
+ZW5jb2RlX3NjYW5jb2RlKCkgc28KPiB0aGlzIGZhaWx1cmUgcGF0aCB3b3VsZCBsZWFkIHRvIGEg
+Y3Jhc2guCgpUaGFua3MgZm9yIHJlcG9ydGluZyB0aGlzIGlzc3VlLCBob3dldmVyIEknbSBhZnJh
+aWQgdGhhdCB0aGUgaXNzdWUgaGFzCmFscmVhZHkgYmVlbiByZXNvbHZlZDoKCmh0dHBzOi8vd3d3
+Lm1haWwtYXJjaGl2ZS5jb20vbGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnL21zZzEyMzY3Mi5o
+dG1sCgphbmQ6CgpodHRwczovL2dpdC5saW51eHR2Lm9yZy9tZWRpYV90cmVlLmdpdC9jb21taXQv
+P2lkjTI1ZTE1ZDk0YTJkN2I2MGMyOGQzYTMwZTRlMGU3ODBjYWIyMDU2CgpNYW55IHRoYW5rcywK
+ClNlYW4KCgo+IAo+IEZpeGVzOiBhNzRiMmJmZjU5NDUgKCJtZWRpYTogbGlyYzogZG8gbm90IHBh
+c3MgRVJSX1BUUiB0byBrZnJlZSIpCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFu
+LmNhcnBlbnRlckBvcmFjbGUuY29tPgo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3Jj
+L2xpcmNfZGV2LmMgYi9kcml2ZXJzL21lZGlhL3JjL2xpcmNfZGV2LmMKPiBpbmRleCBmYWU0MmYx
+MjBhYTQuLjVlZmU5Y2QyMzA5YSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL21lZGlhL3JjL2xpcmNf
+ZGV2LmMKPiArKysgYi9kcml2ZXJzL21lZGlhL3JjL2xpcmNfZGV2LmMKPiBAQCAtMjk1LDcgKzI5
+NSw3IEBAIHN0YXRpYyBzc2l6ZV90IGlyX2xpcmNfdHJhbnNtaXRfaXIoc3RydWN0IGZpbGUgKmZp
+bGUsIGNvbnN0IGNoYXIgX191c2VyICpidWYsCj4gIAkJcmV0ID0gaXJfcmF3X2VuY29kZV9zY2Fu
+Y29kZShzY2FuLnJjX3Byb3RvLCBzY2FuLnNjYW5jb2RlLAo+ICAJCQkJCSAgICAgcmF3LCBMSVJD
+QlVGX1NJWkUpOwo+ICAJCWlmIChyZXQgPCAwKQo+IC0JCQlnb3RvIG91dF9rZnJlZTsKPiArCQkJ
+Z290byBvdXRfZnJlZV9yYXc7Cj4gIAo+ICAJCWNvdW50ID0gcmV0Owo+ICAKPiBAQCAtMzY2LDYg
+KzM2Niw3IEBAIHN0YXRpYyBzc2l6ZV90IGlyX2xpcmNfdHJhbnNtaXRfaXIoc3RydWN0IGZpbGUg
+KmZpbGUsIGNvbnN0IGNoYXIgX191c2VyICpidWYsCj4gIAlyZXR1cm4gbjsKPiAgb3V0X2tmcmVl
+Ogo+ICAJa2ZyZWUodHhidWYpOwo+ICtvdXRfZnJlZV9yYXc6Cj4gIAlrZnJlZShyYXcpOwo+ICBv
+dXRfdW5sb2NrOgo+ICAJbXV0ZXhfdW5sb2NrKCZkZXYtPmxvY2spOwotLQpUbyB1bnN1YnNjcmli
+ZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0
+b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9y
+ZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9t
+by1pbmZvLmh0bWw=
