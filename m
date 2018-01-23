@@ -1,22 +1,37 @@
-From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-Date: Tue, 09 Jan 2018 15:52:30 +0000
-Subject: Re: [PATCH][next] ASoC: TSCS42xx: make functions pll_event and dac_event static
-Message-Id: <20180109155227.xlg45ob3rqqme2yz@localhost.localdomain>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 23 Jan 2018 02:09:21 +0000
+Subject: [PATCH -next] ntb_hw_switchtec: Make function switchtec_ntb_remove() static
+Message-Id: <1516673361-170397-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180108231444.8415-1-colin.king@canonical.com>
-In-Reply-To: <20180108231444.8415-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Logan Gunthorpe <logang@deltatee.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 08, 2018 at 11:14:44PM +0000, Colin King wrote:
+Fixes the following sparse warnings:
 
-> The functions pll_event and dac_event are local to the source and do
-> not need to be in global scope, so make them static.
+drivers/ntb/hw/mscc/ntb_hw_switchtec.c:1552:6: warning:
+ symbol 'switchtec_ntb_remove' was not declared. Should it be static?
 
-This looks good to me. Thanks for catching this. You can add:
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+index a1d547b6..f624ae2 100644
+--- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
++++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+@@ -1549,8 +1549,8 @@ static int switchtec_ntb_add(struct device *dev,
+ 	return rc;
+ }
+ 
+-void switchtec_ntb_remove(struct device *dev,
+-			  struct class_interface *class_intf)
++static void switchtec_ntb_remove(struct device *dev,
++				 struct class_interface *class_intf)
+ {
+ 	struct switchtec_dev *stdev = to_stdev(dev);
+ 	struct switchtec_ntb *sndev = stdev->sndev;
 
