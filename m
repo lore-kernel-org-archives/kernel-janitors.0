@@ -1,34 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 08 Jan 2018 11:45:53 +0000
-Subject: Re: [PATCH] tools: fix cross-compile var export
-Message-Id: <20180108114553.37buovfs7qimokzq@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 Jan 2018 14:43:09 +0000
+Subject: Re: [3/3] mfd/omap-usb-tll: Return an error code only as a constant in usbtll_omap_probe()
+Message-Id: <a3048e12-86d8-6c68-5021-35b7f6474264@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106201601.11074-1-martin@martingkelly.com>
- <20180107161140.GM6273@windriver.com>
- <549cf839-9ae7-78ce-58df-3d84fc7b3d05@martingkelly.com>
- <c021c0f9-4504-6323-98ed-455a196463fc@martingkelly.com>
-In-Reply-To: <c021c0f9-4504-6323-98ed-455a196463fc@martingkelly.com>
+References: <c048a681-70e4-ecdd-e0f8-48c8f1bb0ac4@users.sourceforge.net>
+ <367e77d8-3a65-2c12-5e79-75a626b65f41@users.sourceforge.net>
+ <20180122155057.7eiu53l6xjls6uga@dell> <20180123130440.lgfoeq4rzsa2e4gk@dell>
+In-Reply-To: <20180123130440.lgfoeq4rzsa2e4gk@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Martin Kelly <martin@martingkelly.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-embedded@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Matt Mackall <mpm@selenic.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Lee Jones <lee.jones@linaro.org>, linux-omap@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Ladislav Michl <ladis@linux-mips.org>
 
-On Sun, Jan 07, 2018 at 10:51:21AM -0800, Martin Kelly wrote:
-> Urg, I accidentally sent to kernel-kbuild instead of linux-kbuild, changed
-> now. It appears that past changes to tools/scripts/Makefile.include have
-> been handled by linux-kbuild and often Masahiro Yamada.
+>> Applied, thanks.
 > 
-> Perhaps the best sequence here is to send a patch to kbuild adding the
-> call-override function and calls to it to the main common Makefile. Then I
-> can send individual subsystem patches dropping the individual CC = lines and
-> similar. It will be 13 patches instead of 1 but will eventually result in
-> the same thing.
+> This patch does not apply.
 > 
-> Paul, any thoughts?
-> 
+> Please rebase and resend.
 
-That sounds good.
+Did you notice that this update suggestion could eventually be superseded
+by the software change “[PATCH v2] mfd: omap-usb-tll: Allocate driver data at once”?
 
-regards,
-dan carpenter
+https://lkml.org/lkml/2018/1/23/277
+https://patchwork.kernel.org/patch/10165339/
+https://lkml.kernel.org/r/<20180115202505.GA2628@lenoch>
+
+Regards,
+Markus
