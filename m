@@ -1,36 +1,31 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Tue, 16 Jan 2018 23:15:16 +0000
-Subject: Re: [PATCH -next] bpf: cpumap: make some functions static
-Message-Id: <0206fefe-ccbd-1e7c-6bb5-51254e416d84@iogearbox.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 23 Jan 2018 02:09:02 +0000
+Subject: [PATCH -next] cpufreq: scpi: fix error return code in scpi_cpufreq_init()
+Message-Id: <1516673342-170261-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516102025-181063-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516102025-181063-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Alexei Starovoitov <ast@kernel.org>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 01/16/2018 12:27 PM, Wei Yongjun wrote:
-> Fixes the following sparse warnings:
-> 
-> kernel/bpf/cpumap.c:146:6: warning:
->  symbol '__cpu_map_queue_destructor' was not declared. Should it be static?
-> kernel/bpf/cpumap.c:225:16: warning:
->  symbol 'cpu_map_build_skb' was not declared. Should it be static?
-> kernel/bpf/cpumap.c:340:26: warning:
->  symbol '__cpu_map_entry_alloc' was not declared. Should it be static?
-> kernel/bpf/cpumap.c:398:6: warning:
->  symbol '__cpu_map_entry_free' was not declared. Should it be static?
-> kernel/bpf/cpumap.c:441:6: warning:
->  symbol '__cpu_map_entry_replace' was not declared. Should it be static?
-> kernel/bpf/cpumap.c:454:5: warning:
->  symbol 'cpu_map_delete_elem' was not declared. Should it be static?
-> kernel/bpf/cpumap.c:467:5: warning:
->  symbol 'cpu_map_update_elem' was not declared. Should it be static?
-> kernel/bpf/cpumap.c:505:6: warning:
->  symbol 'cpu_map_free' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fix to return a negative error code from the clk_get() error handling
+case instead of 0, as done elsewhere in this function.
 
-Applied to bpf-next, thanks Wei!
+Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/cpufreq/scpi-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+index 247fcbf..7095fc0 100644
+--- a/drivers/cpufreq/scpi-cpufreq.c
++++ b/drivers/cpufreq/scpi-cpufreq.c
+@@ -145,6 +145,7 @@ static int scpi_cpufreq_init(struct cpufreq_policy *policy)
+ 	if (IS_ERR(priv->clk)) {
+ 		dev_err(cpu_dev, "%s: Failed to get clk for cpu: %d\n",
+ 			__func__, cpu_dev->id);
++		ret = PTR_ERR(priv->clk);
+ 		goto out_free_cpufreq_table;
+ 	}
+
