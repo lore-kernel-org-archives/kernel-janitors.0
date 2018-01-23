@@ -1,67 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 15:08:51 +0000
-Subject: [PATCH 2/5] mtd/rfd_ftl: Less function calls in scan_header() after error detection
-Message-Id: <6f10248e-d2c9-3c48-922c-be95ac5caba9@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Jan 2018 10:17:27 +0000
+Subject: [PATCH] rtc: ds1302: remove redundant initializations of pointer bp
+Message-Id: <20180123101727.31028-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
-In-Reply-To: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 14:50:58 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The functions "kfree" and "vfree" were called in three cases
-by the scan_header() function during error handling even if
-the passed data structure member contained a null pointer.
+Pointe bp is being initialized and this value is never read, it
+is being updated to the same value later just before it is going to
+be used. Remove the initialization as it is never read and keep
+the setting of bp closer to the use of bp.
 
-Adjust jump targets according to the Linux coding style convention.
+Cleans up clang warnings:
+drivers/rtc/rtc-ds1302.c:115:7: warning: Value stored to 'bp' during
+its initialization is never read
+drivers/rtc/rtc-ds1302.c:46:7: warning: Value stored to 'bp' during
+its initialization is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/rfd_ftl.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/rtc/rtc-ds1302.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/rfd_ftl.c b/drivers/mtd/rfd_ftl.c
-index efff25f15d5b..19e14f909dc6 100644
---- a/drivers/mtd/rfd_ftl.c
-+++ b/drivers/mtd/rfd_ftl.c
-@@ -182,16 +182,16 @@ static int scan_header(struct partition *part)
+diff --git a/drivers/rtc/rtc-ds1302.c b/drivers/rtc/rtc-ds1302.c
+index 0ec4be62322b..43bcb17c922e 100644
+--- a/drivers/rtc/rtc-ds1302.c
++++ b/drivers/rtc/rtc-ds1302.c
+@@ -43,7 +43,7 @@ static int ds1302_rtc_set_time(struct device *dev, struct rtc_time *time)
+ {
+ 	struct spi_device	*spi = dev_get_drvdata(dev);
+ 	u8		buf[1 + RTC_CLCK_LEN];
+-	u8		*bp = buf;
++	u8		*bp;
+ 	int		status;
  
- 	part->header_cache = kmalloc(part->header_size, GFP_KERNEL);
- 	if (!part->header_cache)
--		goto err;
-+		return -ENOMEM;
+ 	/* Enable writing */
+@@ -112,7 +112,7 @@ static int ds1302_probe(struct spi_device *spi)
+ 	struct rtc_device	*rtc;
+ 	u8		addr;
+ 	u8		buf[4];
+-	u8		*bp = buf;
++	u8		*bp;
+ 	int		status;
  
- 	part->blocks = kcalloc(part->total_blocks, sizeof(struct block),
- 			GFP_KERNEL);
- 	if (!part->blocks)
--		goto err;
-+		goto free_cache;
- 
- 	part->sector_map = vmalloc(part->sector_count * sizeof(u_long));
- 	if (!part->sector_map)
--		goto err;
-+		goto free_blocks;
- 
- 	for (i=0; i<part->sector_count; i++)
- 		part->sector_map[i] = -1;
-@@ -229,9 +229,10 @@ static int scan_header(struct partition *part)
- 
- err:
- 	vfree(part->sector_map);
--	kfree(part->header_cache);
-+free_blocks:
- 	kfree(part->blocks);
--
-+free_cache:
-+	kfree(part->header_cache);
- 	return rc;
- }
- 
+ 	/* Sanity check board setup data.  This may be hooked up
 -- 
 2.15.1
 
