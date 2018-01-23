@@ -1,13 +1,15 @@
 From: =?UTF-8?q?Christopher=20D=C3=ADaz=20Riveros?= <chrisadr@gentoo.org>
-Date: Tue, 23 Jan 2018 20:10:09 +0000
+Date: Tue, 23 Jan 2018 20:14:39 +0000
 Subject: [PATCH-next] misc: mic: Use PTR_ERR_OR_ZERO
-Message-Id: <20180123201009.12998-1-chrisadr@gentoo.org>
+Message-Id: <20180123201439.13269-1-chrisadr@gentoo.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180123201009.12998-1-chrisadr@gentoo.org>
+In-Reply-To: <20180123201009.12998-1-chrisadr@gentoo.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: sudeep.dutt@intel.com, ashutosh.dixit@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk
-Cc: =?UTF-8?q?Christopher=20D=C3=ADaz=20Riveros?= <chrisadr@gentoo.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Christopher=20D=C3=ADaz=20Riveros?= <chrisadr@gentoo.org>
 
 Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
