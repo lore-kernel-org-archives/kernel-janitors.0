@@ -1,7 +1,7 @@
-From: Silvan Jegen <s.jegen@gmail.com>
-Date: Mon, 15 Jan 2018 20:21:11 +0000
+From: Jiri Kosina <jikos@kernel.org>
+Date: Tue, 23 Jan 2018 14:47:17 +0000
 Subject: Re: [PATCH] HID: roccat: prevent an out of bounds read in kovaplus_profile_activated()
-Message-Id: <20180115202111.GA12555@myarchbang.localdomain>
+Message-Id: <nycvar.YFH.7.76.1801231547100.11852@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180110093903.yyoknoi7oc2cd5iy@mwanda>
 In-Reply-To: <20180110093903.yyoknoi7oc2cd5iy@mwanda>
@@ -9,11 +9,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi
+On Wed, 10 Jan 2018, Dan Carpenter wrote:
 
-On Wed, Jan 10, 2018 at 12:39:03PM +0300, Dan Carpenter wrote:
 > We get the "new_profile_index" value from the mouse device when we're
 > handling raw events.  Smatch taints it as untrusted data and complains
 > that we need a bounds check.  This seems like a reasonable warning
@@ -22,25 +21,9 @@ On Wed, Jan 10, 2018 at 12:39:03PM +0300, Dan Carpenter wrote:
 > Fixes: 0e70f97f257e ("HID: roccat: Add support for Kova[+] mouse")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks good to me.
+Applied, thanks.
 
-Acked-by: Silvan Jegen <s.jegen@gmail.com>
+-- 
+Jiri Kosina
+SUSE Labs
 
-
-> diff --git a/drivers/hid/hid-roccat-kovaplus.c b/drivers/hid/hid-roccat-kovaplus.c
-> index 43617fb28b87..317c9c2c0a7c 100644
-> --- a/drivers/hid/hid-roccat-kovaplus.c
-> +++ b/drivers/hid/hid-roccat-kovaplus.c
-> @@ -37,6 +37,8 @@ static uint kovaplus_convert_event_cpi(uint value)
->  static void kovaplus_profile_activated(struct kovaplus_device *kovaplus,
->  		uint new_profile_index)
->  {
-> +	if (new_profile_index >= ARRAY_SIZE(kovaplus->profile_settings))
-> +		return;
->  	kovaplus->actual_profile = new_profile_index;
->  	kovaplus->actual_cpi = kovaplus->profile_settings[new_profile_index].cpi_startup_level;
->  	kovaplus->actual_x_sensitivity = kovaplus->profile_settings[new_profile_index].sensitivity_x;
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
