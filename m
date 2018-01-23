@@ -1,35 +1,44 @@
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Date: Wed, 10 Jan 2018 12:45:42 +0000
-Subject: RE: [PATCH 2/2] soundwire: Testing the wrong variable
-Message-Id: <6AADFAC011213A4C87B956458587ADB40132733A@dggemi507-mbx.china.huawei.com>
+From: =?UTF-8?q?Christopher=20D=C3=ADaz=20Riveros?= <chrisadr@gentoo.org>
+Date: Tue, 23 Jan 2018 20:10:09 +0000
+Subject: [PATCH-next] misc: mic: Use PTR_ERR_OR_ZERO
+Message-Id: <20180123201009.12998-1-chrisadr@gentoo.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180109093700.7275ardpus7g6rkq@mwanda>
- <20180109093744.egp4vynjgghidp6i@mwanda> <20180110105544.GZ18649@localhost>
- <20180110122544.jihugwmbjr4qphf4@mwanda>
-In-Reply-To: <20180110122544.jihugwmbjr4qphf4@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: sudeep.dutt@intel.com, ashutosh.dixit@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk
+Cc: =?UTF-8?q?Christopher=20D=C3=ADaz=20Riveros?= <chrisadr@gentoo.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan Carpenter
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-> 
-> 
-> Hi Wei,
-> 
-> It looks like you're fixing static checker warnings?  Could you CC
-> kernel-janitors@vger.kernel.org for those fixes?  Otherwise we end up
-> sending duplicates a lot.
-> 
-> Colin King, Julia Lawall, Christophe JAILLET, and I all CC our static
-> checker fixes to kernel-janitors.  I still end up sending duplicates
-> sometimes...  Which is fine.
+This issue was detected by using the Coccinelle software.
 
-Yes, I am running a static checker. I will CC kernel-janitors@vger.kernel.org for
-those later patches.
+Signed-off-by: Christopher D=C3=ADaz Riveros <chrisadr@gentoo.org>
+---
+ drivers/misc/mic/scif/scif_epd.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Regards,
-Yongjun Wei
+diff --git a/drivers/misc/mic/scif/scif_epd.h b/drivers/misc/mic/scif/scif_=
+epd.h
+index f39b663da287..b2a835665390 100644
+--- a/drivers/misc/mic/scif/scif_epd.h
++++ b/drivers/misc/mic/scif/scif_epd.h
+@@ -165,9 +165,7 @@ static inline int scif_verify_epd(struct scif_endpt *ep)
+ static inline int scif_anon_inode_getfile(scif_epd_t epd)
+ {
+ 	epd->anon =3D anon_inode_getfile("scif", &scif_anon_fops, NULL, 0);
+-	if (IS_ERR(epd->anon))
+-		return PTR_ERR(epd->anon);
+-	return 0;
++	return PTR_ERR_OR_ZERO(epd->anon);
+ }
+=20
+ static inline void scif_anon_inode_fput(scif_epd_t epd)
+--=20
+2.16.0
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
