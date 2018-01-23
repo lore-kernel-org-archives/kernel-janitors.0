@@ -1,46 +1,35 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 30 Jan 2018 09:57:52 +0000
-Subject: Re: [PATCH] drm/mgag200: fix a test in mga_vga_mode_valid()
-Message-Id: <20180130095752.GJ25930@phenom.ffwll.local>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 23 Jan 2018 02:08:56 +0000
+Subject: [PATCH -next] hwrng: make symbol imx_rngc_pm_ops static
+Message-Id: <1516673336-170194-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180125142655.GA23885@mwanda>
-In-Reply-To: <20180125142655.GA23885@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dave Airlie <airlied@redhat.com>, Julia Lemire <jlemire@matrox.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sinclair Yeh <syeh@vmware.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Peter Rosin <peda@axentia.se>, Keith Packard <keithp@keithp.com>, Mathieu Larouche <mathieu.larouche@matrox.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin Kaiser <martin@kaiser.cx>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 05:26:55PM +0300, Dan Carpenter wrote:
-> The parentheses are in the wrong place here so we pass the bits per
-> pixel as zero.
-> 
-> Fixes: abbee6238775 ("drm/mgag200: Added resolution and bandwidth limits for various G200e products.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static analysis.  Not tested.
+Fixes the following sparse warnings:
 
-Looks reasonable. Thanks for the patch, applied.
--Daniel
+drivers/char/hw_random/imx-rngc.c:303:1: warning:
+ symbol 'imx_rngc_pm_ops' was not declared. Should it be static?
 
-> 
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c b/drivers/gpu/drm/mgag200/mgag200_mode.c
-> index 68e5d9c94475..fb50a9ddaae8 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_mode.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
-> @@ -1620,8 +1620,8 @@ static int mga_vga_mode_valid(struct drm_connector *connector,
->  			return MODE_VIRTUAL_X;
->  		if (mode->vdisplay > 1024)
->  			return MODE_VIRTUAL_Y;
-> -		if (mga_vga_calculate_mode_bandwidth(mode,
-> -			bpp > (31877 * 1024)))
-> +		if (mga_vga_calculate_mode_bandwidth(mode, bpp) >
-> +		    (31877 * 1024))
->  			return MODE_BANDWIDTH;
->  	} else if (mdev->type = G200_EV &&
->  		(mga_vga_calculate_mode_bandwidth(mode, bpp)
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/char/hw_random/imx-rngc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/char/hw_random/imx-rngc.c b/drivers/char/hw_random/imx-rngc.c
+index eca8724..250123b 100644
+--- a/drivers/char/hw_random/imx-rngc.c
++++ b/drivers/char/hw_random/imx-rngc.c
+@@ -300,7 +300,7 @@ static int __maybe_unused imx_rngc_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-SIMPLE_DEV_PM_OPS(imx_rngc_pm_ops, imx_rngc_suspend, imx_rngc_resume);
++static SIMPLE_DEV_PM_OPS(imx_rngc_pm_ops, imx_rngc_suspend, imx_rngc_resume);
+ 
+ static const struct of_device_id imx_rngc_dt_ids[] = {
+ 	{ .compatible = "fsl,imx25-rngb", .data = NULL, },
+
