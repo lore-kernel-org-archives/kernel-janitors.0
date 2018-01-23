@@ -1,40 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 08:11:43 +0000
-Subject: [PATCH] bcache: Use seq_putc() in debug_seq_show()
-Message-Id: <9de4911b-23ff-ef53-5187-73eca1d521ea@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Jan 2018 10:43:16 +0000
+Subject: [PATCH] staging: comedi: dt2811: remove redundant initialization of 'ns'
+Message-Id: <20180123104316.31360-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-bcache@vger.kernel.org, Kent Overstreet <kent.overstreet@gmail.com>, Michael Lyle <mlyle@lyle.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 09:05:03 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Variable ns is being initialized with a value that is never read, ns
+is being re-assigned a new value later on. Remove the redundant
+initialization.
 
-This issue was detected by using the Coccinelle software.
+Cleans up clang warning:
+drivers/staging/comedi/drivers/dt2811.c:310:21: warning: Value stored
+to 'ns' during its initialization is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/md/bcache/closure.c | 2 +-
+ drivers/staging/comedi/drivers/dt2811.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/closure.c b/drivers/md/bcache/closure.c
-index 1841d0359bac..9cdbddbe0ed0 100644
---- a/drivers/md/bcache/closure.c
-+++ b/drivers/md/bcache/closure.c
-@@ -179,7 +179,7 @@ static int debug_seq_show(struct seq_file *f, void *data)
- 			seq_printf(f, " W %pF\n",
- 				   (void *) cl->waiting_on);
- 
--		seq_printf(f, "\n");
-+		seq_putc(f, '\n');
- 	}
- 
- 	spin_unlock_irq(&closure_list_lock);
+diff --git a/drivers/staging/comedi/drivers/dt2811.c b/drivers/staging/comedi/drivers/dt2811.c
+index fea0a1baf10b..05207a519755 100644
+--- a/drivers/staging/comedi/drivers/dt2811.c
++++ b/drivers/staging/comedi/drivers/dt2811.c
+@@ -307,7 +307,7 @@ static int dt2811_ai_cmd(struct comedi_device *dev,
+ static unsigned int dt2811_ns_to_timer(unsigned int *nanosec,
+ 				       unsigned int flags)
+ {
+-	unsigned long long ns = *nanosec;
++	unsigned long long ns;
+ 	unsigned int ns_lo = COMEDI_MIN_SPEED;
+ 	unsigned int ns_hi = 0;
+ 	unsigned int divisor_hi = 0;
 -- 
 2.15.1
 
