@@ -1,25 +1,36 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 11 Jan 2018 20:21:49 +0000
-Subject: Re: [PATCH 0/3] SGI-XPC: Adjustments for some function implementations
-Message-Id: <20180111202149.GA31382@kroah.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 23 Jan 2018 02:10:38 +0000
+Subject: [PATCH net-next] net: aquantia: make symbol hw_atl_boards static
+Message-Id: <1516673438-170662-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net>
- <CAPp3RGoGnPegWSEQUd-m=-Mf3wtAYL6YNwFR7Cpw_s_8AwOEEA@mail.gmail.com>
-In-Reply-To: <CAPp3RGoGnPegWSEQUd-m=-Mf3wtAYL6YNwFR7Cpw_s_8AwOEEA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robin Holt <robinmholt@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>
+To: David Arcari <darcari@redhat.com>, Colin Ian King <colin.king@canonical.com>, David VomLehn <vomlehn@texas.net>, Igor Russkikh <igor.russkikh@aquantia.com>, Pavel Belous <pavel.belous@aquantia.com>, Dmitrii Tarakanov <Dmitrii.Tarakanov@aquantia.com>, Alexander Loktionov <Alexander.Loktionov@aquantia.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 11, 2018 at 12:19:37PM -0600, Robin Holt wrote:
-> If you need to resubmit, please consider re-ordering the changes to
-> due the comparison to NULL changes in your first patch, followed by the
-> other two in either order.  I think it will clear up some of the inconsistency
-> in your first patch.
+Fixes the following sparse warning:
 
-Note you are responding to someone who is on my, and many other kernel
-maintainers, blacklists, so I never see the patches.  So it's not really
-worth reviewing, as I'll not be picking them up myself, sorry.
+drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c:50:34: warning:
+ symbol 'hw_atl_boards' was not declared. Should it be static?
 
-greg k-h
+Fixes: 4948293ff963 ("net: aquantia: Introduce new AQC devices and capabilities")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+index f5dd5f7..51a1a90 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+@@ -47,7 +47,7 @@
+ 	{}
+ };
+ 
+-const struct aq_board_revision_s hw_atl_boards[] = {
++static const struct aq_board_revision_s hw_atl_boards[] = {
+ 	{ AQ_DEVICE_ID_0001,	AQ_HWREV_1,	&hw_atl_ops_a0, &hw_atl_a0_caps_aqc107, },
+ 	{ AQ_DEVICE_ID_D100,	AQ_HWREV_1,	&hw_atl_ops_a0, &hw_atl_a0_caps_aqc100, },
+ 	{ AQ_DEVICE_ID_D107,	AQ_HWREV_1,	&hw_atl_ops_a0, &hw_atl_a0_caps_aqc107, },
+
