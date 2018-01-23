@@ -1,33 +1,31 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 11 Jan 2018 11:12:55 +0000
-Subject: [PATCH -next] test_firmware: fix missing unlock on error in config_num_requests_store()
-Message-Id: <1515669175-125502-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 Jan 2018 13:34:42 +0000
+Subject: Re: [3/3] mfd/sm501: Adjust 12 checks for null pointers
+Message-Id: <b15e6160-53db-2558-0729-73eac686dd6b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f292e2f3-2471-4ea0-3a02-349e6c10ff03@users.sourceforge.net>
+ <10199b4b-ba7d-a253-25c5-e81cafb1d8c9@users.sourceforge.net>
+ <20180122154906.dl2cyvwfdmi2j6r6@dell> <20180123130409.gffspkjm7nqben6k@dell>
+In-Reply-To: <20180123130409.gffspkjm7nqben6k@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Lee Jones <lee.jones@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Add the missing unlock before return from function
-config_num_requests_store() in the error handling case.
+> This patch does not apply.
 
-Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- lib/test_firmware.c | 1 +
- 1 file changed, 1 insertion(+)
+This change possibility partly depends on the update step
+“[PATCH 2/3] mfd/sm501: Improve a size determination in two functions”
+which you did not like yesterday.
+https://lkml.org/lkml/2018/1/22/564
 
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index 964784d..4647647 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -371,6 +371,7 @@ static ssize_t config_num_requests_store(struct device *dev,
- 	if (test_fw_config->reqs) {
- 		pr_err("Must call release_all_firmware prior to changing config\n");
- 		rc = -EINVAL;
-+		mutex_unlock(&test_fw_mutex);
- 		goto out;
- 	}
- 	mutex_unlock(&test_fw_mutex);
 
+> Please rebase and resend.
+
+Will the change acceptance grow then really?
+
+Do you find the proposed source code transformation generally acceptable?
+
+Regards,
+Markus
