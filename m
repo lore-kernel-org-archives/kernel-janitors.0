@@ -1,31 +1,47 @@
-From: Jan Kara <jack@suse.cz>
-Date: Tue, 02 Jan 2018 13:42:30 +0000
-Subject: Re: [PATCH 04/12] ext2: drop unneeded newline
-Message-Id: <20180102134230.GA30307@quack2.suse.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Jan 2018 09:44:08 +0000
+Subject: [PATCH] bnx2: remove redundant initializations of pointers txr and rxr
+Message-Id: <20180123094408.30366-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
- <1514386305-7402-5-git-send-email-Julia.Lawall@lip6.fr>
- <20171228043042.GB30269@thunk.org>
-In-Reply-To: <20171228043042.GB30269@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rasesh Mody <rasesh.mody@cavium.com>, Harish Patil <harish.patil@cavium.com>, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed 27-12-17 23:30:42, Ted Tso wrote:
-> On Wed, Dec 27, 2017 at 03:51:37PM +0100, Julia Lawall wrote:
-> > ext2_msg prints a newline at the end of the message string, so the message
-> > string does not need to include a newline explicitly.  Done using
-> > Coccinelle.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks. I've picked up the patch to my tree.
+Pointers txr and rxr are being initialized and a few statements later
+are being assigned new values without the original values ever being
+read. The initialized values are therefore redundant and can be
+removed.
 
-								Honza
+Cleans up clang warnings:
+drivers/net/ethernet/broadcom/bnx2.c:5821:28: warning: Value stored to
+'txr' during its initialization is never read
+drivers/net/ethernet/broadcom/bnx2.c:5822:28: warning: Value stored to
+'rxr' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/bnx2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2.c b/drivers/net/ethernet/broadcom/bnx2.c
+index 154866e8517a..5de4c33f682e 100644
+--- a/drivers/net/ethernet/broadcom/bnx2.c
++++ b/drivers/net/ethernet/broadcom/bnx2.c
+@@ -5818,8 +5818,8 @@ bnx2_run_loopback(struct bnx2 *bp, int loopback_mode)
+ 	struct l2_fhdr *rx_hdr;
+ 	int ret = -ENODEV;
+ 	struct bnx2_napi *bnapi = &bp->bnx2_napi[0], *tx_napi;
+-	struct bnx2_tx_ring_info *txr = &bnapi->tx_ring;
+-	struct bnx2_rx_ring_info *rxr = &bnapi->rx_ring;
++	struct bnx2_tx_ring_info *txr;
++	struct bnx2_rx_ring_info *rxr;
+ 
+ 	tx_napi = bnapi;
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.15.1
+
