@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 21:15:16 +0000
-Subject: [PATCH 1/2] Input: auo-pixcir-ts: Delete an error message for a failed memory allocation in auo_pixc
-Message-Id: <4f101927-97fe-1d8d-2bd7-4d9c3e2de8c5@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 20:30:09 +0000
+Subject: [PATCH 1/3] Input: bcm5974: Delete an error message for a failed memory allocation in bcm5974_wellsp
+Message-Id: <9371a1f7-beee-212d-05d7-ba081a6990c1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df18b548-f95e-e315-9e77-f379af7909e8@users.sourceforge.net>
-In-Reply-To: <df18b548-f95e-e315-9e77-f379af7909e8@users.sourceforge.net>
+References: <0505482c-287f-8809-76e3-960cf45b3c0a@users.sourceforge.net>
+In-Reply-To: <0505482c-287f-8809-76e3-960cf45b3c0a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@bitmath.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 22:02:32 +0100
+Date: Wed, 24 Jan 2018 21:09:28 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -20,25 +20,21 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/touchscreen/auo-pixcir-ts.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/input/mouse/bcm5974.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/auo-pixcir-ts.c b/drivers/input/touchscreen/auo-pixcir-ts.c
-index 6592fc5d48b4..398e27c48a51 100644
---- a/drivers/input/touchscreen/auo-pixcir-ts.c
-+++ b/drivers/input/touchscreen/auo-pixcir-ts.c
-@@ -487,10 +487,8 @@ static struct auo_pixcir_ts_platdata *auo_pixcir_parse_dt(struct device *dev)
- 		return ERR_PTR(-ENOENT);
+diff --git a/drivers/input/mouse/bcm5974.c b/drivers/input/mouse/bcm5974.c
+index d0122134f320..994805513df9 100644
+--- a/drivers/input/mouse/bcm5974.c
++++ b/drivers/input/mouse/bcm5974.c
+@@ -670,7 +670,6 @@ static int bcm5974_wellspring_mode(struct bcm5974 *dev, bool on)
  
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(dev, "failed to allocate platform data\n");
-+	if (!pdata)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	pdata->gpio_int = of_get_gpio(np, 0);
- 	if (!gpio_is_valid(pdata->gpio_int)) {
+ 	data = kmalloc(c->um_size, GFP_KERNEL);
+ 	if (!data) {
+-		dev_err(&dev->intf->dev, "out of memory\n");
+ 		retval = -ENOMEM;
+ 		goto out;
+ 	}
 -- 
-2.16.0
+2.16.1
 
