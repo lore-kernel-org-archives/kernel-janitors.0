@@ -1,57 +1,85 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jan 2018 08:13:16 +0000
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 24 Jan 2018 08:43:52 +0000
 Subject: Re: [PATCH] [media] s3c-camif: array underflow in __camif_subdev_try_format()
-Message-Id: <20180124081316.r75cr7yrcg3xhpw3@mwanda>
+Message-Id: <CAK8P3a2Jms5tEaYi7=z2cg=AA__ftEott7_kRPtSE9YztAB3yQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180122103714.GA25044@mwanda>
- <5b3b7195-930c-58c3-d52f-b2738c3fde1e@kernel.org>
-In-Reply-To: <5b3b7195-930c-58c3-d52f-b2738c3fde1e@kernel.org>
+References: <20180122103714.GA25044@mwanda> <5b3b7195-930c-58c3-d52f-b2738c3fde1e@kernel.org>
+ <20180124081316.r75cr7yrcg3xhpw3@mwanda>
+In-Reply-To: <20180124081316.r75cr7yrcg3xhpw3@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sylwester Nawrocki <snawrocki@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 22, 2018 at 09:50:04PM +0100, Sylwester Nawrocki wrote:
-> On 01/22/2018 11:37 AM, Dan Carpenter wrote:
-> > --- a/drivers/media/platform/s3c-camif/camif-capture.c
-> > +++ b/drivers/media/platform/s3c-camif/camif-capture.c
-> > @@ -1261,11 +1261,11 @@ static void __camif_subdev_try_format(struct camif_dev *camif,
-> >   	/* FIXME: constraints against codec or preview path ? */
-> >   	pix_lim = &variant->vp_pix_limits[VP_CODEC];
-> >   
-> > -	while (i-- >= 0)
-> > +	while (--i >= 0)
-> >   		if (camif_mbus_formats[i] = mf->code)
-> >   			break;
-> > -
-> > -	mf->code = camif_mbus_formats[i];
-> > +	if (i < 0)
-> > +		return;
-> 
-> Thanks for the patch Dan. mf->width needs to be aligned by this try_format
-> function so we shouldn't return here. Also it needs to be ensured mf->code 
-> is set to one of the supported values when this function returns. Sorry,
-> the current code really doesn't give a clue what was intended.
-> 
-> There is already queued a patch from Arnd [1] addressing the issues you 
-> have found.
->  
-> >   	if (pad = CAMIF_SD_PAD_SINK) {
-> >   		v4l_bound_align_image(&mf->width, 8, CAMIF_MAX_PIX_WIDTH,
-> > 
-> 
-> [1] https://patchwork.linuxtv.org/patch/46508
-> 
-
-Hey Arnd,
-
-I happened to be looking at the same bugs but using Smatch.  Did you get
-these two bugs as well?
-
-drivers/scsi/sym53c8xx_2/sym_hipd.c:549 sym_getsync() error: iterator underflow 'div_10M' (-1)-255
-drivers/media/i2c/sr030pc30.c:522 try_fmt() error: iterator underflow 'sr030pc30_formats' (-1)-4
-
-regards,
-dan carpenter
-
+T24gV2VkLCBKYW4gMjQsIDIwMTggYXQgOToxMyBBTSwgRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBl
+bnRlckBvcmFjbGUuY29tPiB3cm90ZToKPiBPbiBNb24sIEphbiAyMiwgMjAxOCBhdCAwOTo1MDow
+NFBNICswMTAwLCBTeWx3ZXN0ZXIgTmF3cm9ja2kgd3JvdGU6Cj4+IE9uIDAxLzIyLzIwMTggMTE6
+MzcgQU0sIERhbiBDYXJwZW50ZXIgd3JvdGU6Cgo+IEkgaGFwcGVuZWQgdG8gYmUgbG9va2luZyBh
+dCB0aGUgc2FtZSBidWdzIGJ1dCB1c2luZyBTbWF0Y2guICBEaWQgeW91IGdldAo+IHRoZXNlIHR3
+byBidWdzIGFzIHdlbGw/Cj4KPiBkcml2ZXJzL3Njc2kvc3ltNTNjOHh4XzIvc3ltX2hpcGQuYzo1
+NDkgc3ltX2dldHN5bmMoKSBlcnJvcjogaXRlcmF0b3IgdW5kZXJmbG93ICdkaXZfMTBNJyAoLTEp
+LTI1NQo+IGRyaXZlcnMvbWVkaWEvaTJjL3NyMDMwcGMzMC5jOjUyMiB0cnlfZm10KCkgZXJyb3I6
+IGl0ZXJhdG9yIHVuZGVyZmxvdyAnc3IwMzBwYzMwX2Zvcm1hdHMnICgtMSktNAoKSSBkb24ndCBy
+ZWNhbGwgc2VlaW5nIHRob3NlIHR3bywgaGVyZSBpcyBhIGxpc3Qgb2YgYXJyYXktYm91bmRzCndh
+cm5pbmdzIEkgaGFkIGluIHRoZSBwYXN0Cm1vbnRocywgbW9zdGx5IHdoaWxlIGJ1aWxkaW5nIHdp
+dGggZ2NjLTcuMjoKCi9naXQvYXJtLXNvYy9hcmNoL2FybS9tYWNoLXZleHByZXNzL3NwYy5jOjQz
+MTozODogd2FybmluZzogYXJyYXkKc3Vic2NyaXB0IGlzIGJlbG93IGFycmF5IGJvdW5kcyBbLVdh
+cnJheS1ib3VuZHNdCi9naXQvYXJtLXNvYy9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9zdHJpbmdfMzIu
+aDo3MDoxNjogZXJyb3I6IGFycmF5CnN1YnNjcmlwdCBpcyBhYm92ZSBhcnJheSBib3VuZHMgWy1X
+ZXJyb3I9YXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2MvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFj
+Y2Vzc182NC5oOjE0MzoyMDogZXJyb3I6IGFycmF5CnN1YnNjcmlwdCBpcyBhYm92ZSBhcnJheSBi
+b3VuZHMgWy1XZXJyb3I9YXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2MvZHJpdmVycy9jcHVmcmVx
+L2FybV9iaWdfbGl0dGxlLmM6MjAxOjI0OiB3YXJuaW5nOiBhcnJheQpzdWJzY3JpcHQgaXMgYWJv
+dmUgYXJyYXkgYm91bmRzIFstV2FycmF5LWJvdW5kc10KL2dpdC9hcm0tc29jL2RyaXZlcnMvY3B1
+ZnJlcS9hcm1fYmlnX2xpdHRsZS5jOjMyNToxNjogd2FybmluZzogYXJyYXkKc3Vic2NyaXB0IGlz
+IGFib3ZlIGFycmF5IGJvdW5kcyBbLVdhcnJheS1ib3VuZHNdCi9naXQvYXJtLXNvYy9kcml2ZXJz
+L2NwdWZyZXEvYXJtX2JpZ19saXR0bGUuYzo0NDA6Mzk6IHdhcm5pbmc6IGFycmF5CnN1YnNjcmlw
+dCBpcyBhYm92ZSBhcnJheSBib3VuZHMgWy1XYXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2MvZHJp
+dmVycy9kbWEvc2gvcmNhci1kbWFjLmM6ODc2OjI5OiBlcnJvcjogYXJyYXkgc3Vic2NyaXB0Cmlz
+IGFib3ZlIGFycmF5IGJvdW5kcyBbLVdlcnJvcj1hcnJheS1ib3VuZHNdCi9naXQvYXJtLXNvYy9k
+cml2ZXJzL2lzZG4vaGFyZHdhcmUvZWljb24vbWVzc2FnZS5jOjExMzAyOjU0OiBlcnJvcjoKYXJy
+YXkgc3Vic2NyaXB0IGlzIGFib3ZlIGFycmF5IGJvdW5kcyBbLVdlcnJvcj1hcnJheS1ib3VuZHNd
+Ci9naXQvYXJtLXNvYy9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX3B0cC5jOjM2
+NzogZXJyb3I6CmFycmF5IHN1YnNjcmlwdCBpcyBiZWxvdyBhcnJheSBib3VuZHMKL2dpdC9hcm0t
+c29jL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2lnYi9pZ2JfcHRwLmM6NDU1OiBlcnJvcjoK
+YXJyYXkgc3Vic2NyaXB0IGlzIGJlbG93IGFycmF5IGJvdW5kcwovZ2l0L2FybS1zb2MvZHJpdmVy
+cy9zY3NpL3FsYTJ4eHgvcWxhX2dzLmM6MTM5ODo3OiBlcnJvcjogYXJyYXkKc3Vic2NyaXB0IGlz
+IGFib3ZlIGFycmF5IGJvdW5kcyBbLVdlcnJvcj1hcnJheS1ib3VuZHNdCi9naXQvYXJtLXNvYy9k
+cml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfZ3MuYzoyMjc5Ojc6IGVycm9yOiBhcnJheQpzdWJzY3Jp
+cHQgaXMgYWJvdmUgYXJyYXkgYm91bmRzIFstV2Vycm9yPWFycmF5LWJvdW5kc10KL2dpdC9hcm0t
+c29jL2RyaXZlcnMvc2NzaS9zeW01M2M0MTYuYzo1NjU6NTg6IGVycm9yOiBhcnJheSBzdWJzY3Jp
+cHQKaXMgYWJvdmUgYXJyYXkgYm91bmRzIFstV2Vycm9yPWFycmF5LWJvdW5kc10KL2dpdC9hcm0t
+c29jL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL3B0bHJwYy9wdGxycGNkLmM6NDkyOjE0
+OgplcnJvcjogYXJyYXkgc3Vic2NyaXB0IC0xIGlzIGJlbG93IGFycmF5IGJvdW5kcyBvZiAnc3Ry
+dWN0CnB0bHJwY2RfY3RsW10nIFstV2Vycm9yPWFycmF5LWJvdW5kc10KL2dpdC9hcm0tc29jL2Zz
+L2YyZnMvc2VnbWVudC5jOjMwNDQ6NTogZXJyb3I6IGFycmF5IHN1YnNjcmlwdCBpcyBiZWxvdwph
+cnJheSBib3VuZHMgWy1XZXJyb3I9YXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2MvaW5jbHVkZS9s
+aW51eC9jb21waWxlci5oOjI1MzoyMDogZXJyb3I6IGFycmF5IHN1YnNjcmlwdAppcyBhYm92ZSBh
+cnJheSBib3VuZHMgWy1XZXJyb3I9YXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2MvaW5jbHVkZS9s
+aW51eC9keW5hbWljX2RlYnVnLmg6ODY6MjA6IHdhcm5pbmc6IGFycmF5CnN1YnNjcmlwdCBpcyBh
+Ym92ZSBhcnJheSBib3VuZHMgWy1XYXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2MvaW5jbHVkZS9z
+b3VuZC9wY20uaDo5MTk6OTogZXJyb3I6IGFycmF5IHN1YnNjcmlwdCBpcwphYm92ZSBhcnJheSBi
+b3VuZHMgWy1XZXJyb3I9YXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2Mva2VybmVsL2JwZi92ZXJp
+Zmllci5jOjQzMjA6Mjk6IGVycm9yOiBhcnJheSBzdWJzY3JpcHQgaXMKYWJvdmUgYXJyYXkgYm91
+bmRzIFstV2Vycm9yPWFycmF5LWJvdW5kc10KL2dpdC9hcm0tc29jL2tlcm5lbC9yY3UvdHJlZS5j
+OjMzMzI6MTM6IHdhcm5pbmc6IGFycmF5IHN1YnNjcmlwdCBpcwphYm92ZSBhcnJheSBib3VuZHMg
+Wy1XYXJyYXktYm91bmRzXQovZ2l0L2FybS1zb2MvbmV0L2lwdjQvdGNwX291dHB1dC5jOjIxMjk6
+NDA6IGVycm9yOiBhcnJheSBzdWJzY3JpcHQgaXMKYmVsb3cgYXJyYXkgYm91bmRzIFstV2Vycm9y
+PWFycmF5LWJvdW5kc10KL2dpdC9hcm0tc29jL25ldC9pcHY0L3RjcF9vdXRwdXQuYzoyMjA3OjQw
+OiBlcnJvcjogYXJyYXkgc3Vic2NyaXB0IGlzCmJlbG93IGFycmF5IGJvdW5kcyBbLVdlcnJvcj1h
+cnJheS1ib3VuZHNdCi9naXQvYXJtLXNvYy9uZXQvcnhycGMvYXItY29ubmVjdGlvbi5jOjU4OTox
+Njogd2FybmluZzogYXJyYXkKc3Vic2NyaXB0IGlzIGFib3ZlIGFycmF5IGJvdW5kcyBbLVdhcnJh
+eS1ib3VuZHNdCi9naXQvYXJtLXNvYy9zb3VuZC9zb2Mvc2gvcmNhci9jbWQuYzo4ODoxNDogZXJy
+b3I6IGFycmF5IHN1YnNjcmlwdCBpcwpiZWxvdyBhcnJheSBib3VuZHMgWy1XZXJyb3I9YXJyYXkt
+Ym91bmRzXQovZ2l0L2FybS1zb2Mvc291bmQvc29jL3NoL3JjYXIvY21kLmM6ODg6IGVycm9yOiBh
+cnJheSBzdWJzY3JpcHQgaXMKYmVsb3cgYXJyYXkgYm91bmRzCgpJJ3ZlIGFsc28gb3BlbmVkIHR3
+byBnY2MgYnVncyBmb3Igd2FybmluZ3MgdGhhdCBhcHBlYXJlZCB0byBiZSBpc3N1ZWQgaW4gZXJy
+b3I6CgpodHRwczovL2djYy5nbnUub3JnL2J1Z3ppbGxhL3Nob3dfYnVnLmNnaT9pZIMzMTIKaHR0
+cHM6Ly9nY2MuZ251Lm9yZy9idWd6aWxsYS9zaG93X2J1Zy5jZ2k/aWSBNjAxCgpJIGhhdmVuJ3Qg
+YnVpbHQgd2l0aCBnY2MtOCBpbiBhIHdoaWxlLCBzaG91bGQgdHJ5IHRoYXQgYWdhaW4gbm93IHRo
+YXQKUFI4MzMxMiBoYXMgYmVlbgptYXJrZWQgJ2ZpeGVkJy4KCiAgICAgICBBcm5kCi0tClRvIHVu
+c3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJu
+ZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5r
+ZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcv
+bWFqb3Jkb21vLWluZm8uaHRtbA==
