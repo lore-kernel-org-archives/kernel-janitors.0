@@ -1,34 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 31 Jan 2018 17:53:13 +0000
-Subject: =?UTF-8?Q?Re:_[v2]_Coccinelle:_zalloc-simple:_Delete_function_?= =?UTF-8?B?4oCca21lbV9jYWNoZV9hbGxvY
-Message-Id: <f182b411-d378-56dd-1ab5-0e8f039d493e@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 21:21:39 +0000
+Subject: [PATCH 1/2] Input: wm831x-on: Delete an error message for a failed memory allocation in wm831x_on_pr
+Message-Id: <d393999d-0c39-c9ea-3a0c-eb534e61b665@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
- <243e83a2-ae0c-2dd2-7f8f-83ac0978cc0e@users.sourceforge.net>
- <alpine.DEB.2.20.1801311836320.3707@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1801311836320.3707@hadrien>
+References: <e307cfde-58e2-3f4d-ecd7-5c80ace0bb5b@users.sourceforge.net>
+In-Reply-To: <e307cfde-58e2-3f4d-ecd7-5c80ace0bb5b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Himanshu Jha <himanshujha199640@gmail.com>
-Cc: cocci@systeme.lip6.fr, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+To: linux-input@vger.kernel.org, patches@opensource.cirrus.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> Will the rule set be more consistent then?
-> 
-> If E1 is not bound by the kem_cache_alloc rule, then it will match anything.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 21:55:49 +0100
 
-How much was such a software behaviour intended by the discussed SmPL script?
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-> The user can check if it is appropriate.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/misc/wm831x-on.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-How does such an information fit to expectations for safe source code analysis?
+diff --git a/drivers/input/misc/wm831x-on.c b/drivers/input/misc/wm831x-on.c
+index 1b44de265a0a..06f5c4857a0c 100644
+--- a/drivers/input/misc/wm831x-on.c
++++ b/drivers/input/misc/wm831x-on.c
+@@ -77,10 +77,8 @@ static int wm831x_on_probe(struct platform_device *pdev)
+ 
+ 	wm831x_on = devm_kzalloc(&pdev->dev, sizeof(struct wm831x_on),
+ 				 GFP_KERNEL);
+-	if (!wm831x_on) {
+-		dev_err(&pdev->dev, "Can't allocate data\n");
++	if (!wm831x_on)
+ 		return -ENOMEM;
+-	}
+ 
+ 	wm831x_on->wm831x = wm831x;
+ 	INIT_DELAYED_WORK(&wm831x_on->work, wm831x_poll_on);
+-- 
+2.16.1
 
-
-> Another option would be to use the type of the variable storing the result
-> of the call to compute the expected size.
-
-How would this suggestion help here?
-
-Regards,
-Markus
