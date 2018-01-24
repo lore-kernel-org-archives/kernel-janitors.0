@@ -1,28 +1,25 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 21:13:37 +0000
-Subject: [PATCH 0/3] irq-imx-gpcv2: Adjustments for imx_gpcv2_irqchip_init()
-Message-Id: <e9033837-9e04-be5b-2875-aa746840d5a7@users.sourceforge.net>
+From: 57593531@mylife.unisa.ac.za
+Date: Wed, 24 Jan 2018 14:47:09 +0000
+Subject: Darlehensangebot
+Message-Id: <HE1PR01MB3017D3FB56AB027E41EE444BB5E20@HE1PR01MB3017.eurprd01.prod.exchangelabs.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Shenwei Wang <shenwei.wang@freescale.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 22:08:44 +0100
+Schönen Tag,
 
-Three update suggestions were taken into account
-from static source code analysis.
+Sie benötigen einen echten Kredit online Ihre Rechnungen zu sichern?
+Startet ein neues Unternehmen? Sie benötigen einen persönlichen Kredit
+oder Business-Darlehen? Wir bieten ein Darlehen von € 10.000 bis €
+500,000.000.00 mit 2% Zinsen pro Jahr und auch mit einem
+erschwinglichen Rückzahlungsbedingungen und Zustand. Ich suche für
+Darlehen und Projektinvestmentfonds ? Wir halten professionelle
+Exzellenz, unsere Definition von Exzellenz liegt in hervorragenden
+Kundenservice, erschwingliche Zahlung und Rückzahlung Pläne, schnell
+und einfach-Prozess.
+Hochachtungsvoll....
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
-  Use common error handling code
-
- drivers/irqchip/irq-imx-gpcv2.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
--- 
-2.15.1
-
+Freundliche Grüße,
+Herr Kelly Williams
