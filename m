@@ -1,28 +1,27 @@
-From: Jesse Brandeburg <jesse.brandeburg@intel.com>
-Date: Tue, 02 Jan 2018 19:56:00 +0000
-Subject: Re: [Intel-wired-lan] [PATCH] i40e: Delete an error message for a failed memory allocation in i40e_i
-Message-Id: <20180102115600.000047c7@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 19:55:01 +0000
+Subject: [PATCH 0/2] Input-appletouch: Adjustments for two function implementations
+Message-Id: <a86a6a93-21eb-4571-465c-24d4c0687965@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c9c151e5-bd26-5b72-d26b-c153249811ab@users.sourceforge.net>
-In-Reply-To: <c9c151e5-bd26-5b72-d26b-c153249811ab@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jesse.brandeburg@intel.com
+To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, 1 Jan 2018 20:43:35 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 20:50:20 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 Jan 2018 20:38:14 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Thanks for the patch.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in atp_geyser_init()
+  Improve a size determination in atp_probe()
 
-Acked-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+ drivers/input/mouse/appletouch.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+-- 
+2.16.1
+
