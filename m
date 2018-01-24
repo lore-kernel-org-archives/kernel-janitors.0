@@ -1,59 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 13:55:00 +0000
-Subject: [PATCH] Input: gpio_keys: Delete an error message for a failed memory allocation in two functions
-Message-Id: <6a34d439-6465-db9b-e8de-3f3b5b1ca257@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 15:15:59 +0000
+Subject: [PATCH 2/2] Input: gtco: Improve a size determination in gtco_probe()
+Message-Id: <0c363cc1-5532-e482-82bf-c8b59c2bd72f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
+In-Reply-To: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Joseph Lo <josephl@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Lu <lumotuwe@gmail.com>
+To: linux-input@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 14:42:19 +0100
+Date: Wed, 24 Jan 2018 15:08:42 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/keyboard/gpio_keys.c        | 4 +---
- drivers/input/keyboard/gpio_keys_polled.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/input/tablet/gtco.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 87e613dc33b8..d12fccf923d2 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -757,10 +757,8 @@ static int gpio_keys_probe(struct platform_device *pdev)
- 	size = sizeof(struct gpio_keys_drvdata) +
- 			pdata->nbuttons * sizeof(struct gpio_button_data);
- 	ddata = devm_kzalloc(dev, size, GFP_KERNEL);
--	if (!ddata) {
--		dev_err(dev, "failed to allocate state\n");
-+	if (!ddata)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/input/tablet/gtco.c b/drivers/input/tablet/gtco.c
+index f2670872735f..6094241d4aa1 100644
+--- a/drivers/input/tablet/gtco.c
++++ b/drivers/input/tablet/gtco.c
+@@ -829,7 +829,7 @@ static int gtco_probe(struct usb_interface *usbinterface,
+ 	struct usb_device	*udev = interface_to_usbdev(usbinterface);
  
- 	ddata->keymap = devm_kcalloc(dev,
- 				     pdata->nbuttons, sizeof(ddata->keymap[0]),
-diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-index edc7262103b9..c79b1a75d036 100644
---- a/drivers/input/keyboard/gpio_keys_polled.c
-+++ b/drivers/input/keyboard/gpio_keys_polled.c
-@@ -253,10 +253,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
- 	size = sizeof(struct gpio_keys_polled_dev) +
- 			pdata->nbuttons * sizeof(struct gpio_keys_button_data);
- 	bdev = devm_kzalloc(dev, size, GFP_KERNEL);
--	if (!bdev) {
--		dev_err(dev, "no memory for private data\n");
-+	if (!bdev)
- 		return -ENOMEM;
--	}
- 
- 	poll_dev = devm_input_allocate_polled_device(dev);
- 	if (!poll_dev) {
+ 	/* Allocate memory for device structure */
+-	gtco = kzalloc(sizeof(struct gtco), GFP_KERNEL);
++	gtco = kzalloc(sizeof(*gtco), GFP_KERNEL);
+ 	input_dev = input_allocate_device();
+ 	if (!gtco || !input_dev) {
+ 		dev_err(&usbinterface->dev, "No more memory\n");
 -- 
 2.16.1
 
