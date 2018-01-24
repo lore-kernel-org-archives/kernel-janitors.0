@@ -1,55 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 20:24:12 +0000
-Subject: [PATCH] mtdoops: Delete an error message for a failed memory allocation in two functions
-Message-Id: <c3d061ff-1f96-cee5-17ea-036eb80a3da4@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 16:34:51 +0000
+Subject: [PATCH 1/3] Input: apbps2: Delete an error message for a failed memory allocation in apbps2_of_probe
+Message-Id: <ee3d6628-e8a4-c6c5-c66b-597fb2b28a47@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
+In-Reply-To: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Jan 2018 21:10:56 +0100
+Date: Wed, 24 Jan 2018 16:43:04 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/mtdoops.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/input/serio/apbps2.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/mtdoops.c b/drivers/mtd/mtdoops.c
-index 97bb8f6304d4..ea8619ec970b 100644
---- a/drivers/mtd/mtdoops.c
-+++ b/drivers/mtd/mtdoops.c
-@@ -352,10 +352,8 @@ static void mtdoops_notify_add(struct mtd_info *mtd)
- 	/* oops_page_used is a bit field */
- 	cxt->oops_page_used = vmalloc(DIV_ROUND_UP(mtdoops_pages,
- 			BITS_PER_LONG) * sizeof(unsigned long));
--	if (!cxt->oops_page_used) {
--		printk(KERN_ERR "mtdoops: could not allocate page array\n");
-+	if (!cxt->oops_page_used)
- 		return;
--	}
+diff --git a/drivers/input/serio/apbps2.c b/drivers/input/serio/apbps2.c
+index 45d4e08ca4f8..9b75c4e1bc13 100644
+--- a/drivers/input/serio/apbps2.c
++++ b/drivers/input/serio/apbps2.c
+@@ -140,10 +140,8 @@ static int apbps2_of_probe(struct platform_device *ofdev)
+ 	struct resource *res;
  
- 	cxt->dump.max_reason = KMSG_DUMP_OOPS;
- 	cxt->dump.dump = mtdoops_do_dump;
-@@ -420,10 +418,9 @@ static int __init mtdoops_init(void)
- 		cxt->mtd_index = mtd_index;
- 
- 	cxt->oops_buf = vmalloc(record_size);
--	if (!cxt->oops_buf) {
--		printk(KERN_ERR "mtdoops: failed to allocate buffer workspace\n");
-+	if (!cxt->oops_buf)
+ 	priv = devm_kzalloc(&ofdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(&ofdev->dev, "memory allocation failed\n");
++	if (!priv)
  		return -ENOMEM;
 -	}
-+
- 	memset(cxt->oops_buf, 0xff, record_size);
  
- 	INIT_WORK(&cxt->work_erase, mtdoops_workfunc_erase);
+ 	/* Find Device Address */
+ 	res = platform_get_resource(ofdev, IORESOURCE_MEM, 0);
 -- 
-2.15.1
+2.16.1
 
