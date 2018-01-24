@@ -1,29 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 22 Jan 2018 14:27:37 +0000
-Subject: Re: [PATCH][next] devlink: fix memory leak on 'resource'
-Message-Id: <20180122.092737.278179232055886032.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 24 Jan 2018 02:14:33 +0000
+Subject: [PATCH net-next] cxgb4: make symbol pedits static
+Message-Id: <1516760073-129333-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180122103119.4801-1-colin.king@canonical.com>
-In-Reply-To: <20180122103119.4801-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: arkadis@mellanox.com, jiri@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ganesh Goudar <ganeshgr@chelsio.com>, Kumar Sanghvi <kumaras@chelsio.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 22 Jan 2018 10:31:19 +0000
+Fixes the following sparse warning:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently, if the call to devlink_resource_find returns null then
-> the error exit path does not free the devlink_resource 'resource'
-> and a memory leak occurs. Fix this by kfree'ing resource on the
-> error exit path.
-> 
-> Detected by CoverityScan, CID#1464184 ("Resource leak")
-> 
-> Fixes: d9f9b9a4d05f ("devlink: Add support for resource abstraction")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c:46:27: warning:
+ symbol 'pedits' was not declared. Should it be static?
 
-Applied, thanks Colin.
+Fixes: 27ece1f357b7 ("cxgb4: add tc flower support for ETH-DMAC rewrite")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
+index 4fee355..3656336 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
+@@ -43,7 +43,7 @@
+ 
+ #define STATS_CHECK_PERIOD (HZ / 2)
+ 
+-struct ch_tc_pedit_fields pedits[] = {
++static struct ch_tc_pedit_fields pedits[] = {
+ 	PEDIT_FIELDS(ETH_, DMAC_31_0, 4, dmac, 0),
+ 	PEDIT_FIELDS(ETH_, DMAC_47_32, 2, dmac, 4),
+ 	PEDIT_FIELDS(ETH_, SMAC_15_0, 2, smac, 0),
+
