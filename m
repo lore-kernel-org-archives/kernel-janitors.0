@@ -1,53 +1,44 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 23 Jan 2018 13:01:30 +0000
-Subject: Re: [PATCH] mfd/viperboard: Delete an error message for a failed memory allocation in vprbrd_probe()
-Message-Id: <20180123130130.powyttapsx3djawx@dell>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 21:22:35 +0000
+Subject: [PATCH 2/2] Input: wm831x-on: Improve a size determination in wm831x_on_probe()
+Message-Id: <43f052c7-c98d-7ca2-08ca-e5428b5ad575@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9c50fe6a-21cc-e49d-1b10-5d2457ed4e2a@users.sourceforge.net>
- <20180123125851.ysypf7375sjlgsc6@dell>
-In-Reply-To: <20180123125851.ysypf7375sjlgsc6@dell>
+References: <e307cfde-58e2-3f4d-ecd7-5c80ace0bb5b@users.sourceforge.net>
+In-Reply-To: <e307cfde-58e2-3f4d-ecd7-5c80ace0bb5b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Lars =?iso-8859-1?Q?P=F6schel?= <poeschel@lemonage.de>, Samuel Ortiz <sameo@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-input@vger.kernel.org, patches@opensource.cirrus.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 23 Jan 2018, Lee Jones wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 21:58:42 +0100
 
-> On Tue, 16 Jan 2018, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
->=20
-> Markus,
->=20
-> Can you please fix-up all of the patches I've NACKed and collect them
-> up with all the other MFD patches you currently have on the list and
-> send them as a single set please?
->=20
-> Reviewing them one after another, is taking a lot of time and causing
-> my a great deal of pain.
->=20
-> I am marking all of your other MFD submissions as 'read and reviewed'
-> and will not be processing any more until the are all contained in a
-> single, threaded set.
->=20
-> Thank you!
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Also, could you change the subject lines, so they match that expected
-by the subsystem.  You can check what that is by doing:
+This issue was detected by using the Coccinelle software.
 
-  `git log --oneline -- <subsystem>`
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/misc/wm831x-on.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-In MFD case it's:
+diff --git a/drivers/input/misc/wm831x-on.c b/drivers/input/misc/wm831x-on.c
+index 06f5c4857a0c..0d8f7a11f63d 100644
+--- a/drivers/input/misc/wm831x-on.c
++++ b/drivers/input/misc/wm831x-on.c
+@@ -75,8 +75,7 @@ static int wm831x_on_probe(struct platform_device *pdev)
+ 	int irq = wm831x_irq(wm831x, platform_get_irq(pdev, 0));
+ 	int ret;
+ 
+-	wm831x_on = devm_kzalloc(&pdev->dev, sizeof(struct wm831x_on),
+-				 GFP_KERNEL);
++	wm831x_on = devm_kzalloc(&pdev->dev, sizeof(*wm831x_on), GFP_KERNEL);
+ 	if (!wm831x_on)
+ 		return -ENOMEM;
+ 
+-- 
+2.16.1
 
-  "mfd: <driver>: <Succinct headline starting with a capital letter>"
-
---=20
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
