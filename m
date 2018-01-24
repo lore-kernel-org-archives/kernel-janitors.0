@@ -1,24 +1,59 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 18 Jan 2018 02:44:26 +0000
-Subject: Re: [PATCH -next] scsi: qedf: Fix error return code in __qedf_probe()
-Message-Id: <yq1o9lrrilx.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 18:28:44 +0000
+Subject: [PATCH] input/rmi4: Delete an error message for a failed memory allocation in two functions
+Message-Id: <423a3ec4-eef2-f663-d6b8-9ec9d31ddfc2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516192961-52789-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1516192961-52789-1-git-send-email-weiyongjun1@huawei.com> (Wei
-        Yongjun's message of "Wed, 17 Jan 2018 12:42:41 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, QLogic-Storage-Upstream@cavium.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Andrew Duggan <aduggan@synaptics.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lyude Paul <thatslyude@gmail.com>, Nick Dyer <nick@shmanahar.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 19:19:14 +0100
 
-Wei,
+Omit an extra message for a memory allocation failure in these functions.
 
-> Fix to return error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
+This issue was detected by using the Coccinelle software.
 
-Applied to 4.16/scsi-queue, thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/rmi4/rmi_driver.c | 4 +---
+ drivers/input/rmi4/rmi_f30.c    | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
+index 4f2bb5947a4e..6c47e4f3ca7e 100644
+--- a/drivers/input/rmi4/rmi_driver.c
++++ b/drivers/input/rmi4/rmi_driver.c
+@@ -1060,10 +1060,8 @@ int rmi_probe_interrupts(struct rmi_driver_data *data)
+ 
+ 	size = BITS_TO_LONGS(data->irq_count) * sizeof(unsigned long);
+ 	data->irq_memory = devm_kzalloc(dev, size * 4, GFP_KERNEL);
+-	if (!data->irq_memory) {
+-		dev_err(dev, "Failed to allocate memory for irq masks.\n");
++	if (!data->irq_memory)
+ 		return -ENOMEM;
+-	}
+ 
+ 	data->irq_status	= data->irq_memory + size * 0;
+ 	data->fn_irq_bits	= data->irq_memory + size * 1;
+diff --git a/drivers/input/rmi4/rmi_f30.c b/drivers/input/rmi4/rmi_f30.c
+index 82e0f0d43d55..a111ea370c30 100644
+--- a/drivers/input/rmi4/rmi_f30.c
++++ b/drivers/input/rmi4/rmi_f30.c
+@@ -238,10 +238,8 @@ static int rmi_f30_map_gpios(struct rmi_function *fn,
+ 					    button_count,
+ 					    sizeof(f30->gpioled_key_map[0]),
+ 					    GFP_KERNEL);
+-	if (!f30->gpioled_key_map) {
+-		dev_err(&fn->dev, "Failed to allocate gpioled map memory.\n");
++	if (!f30->gpioled_key_map)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (i = 0; i < button_count; i++) {
+ 		if (!rmi_f30_is_valid_button(i, f30->ctrl))
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.16.1
+
