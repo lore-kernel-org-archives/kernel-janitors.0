@@ -1,33 +1,44 @@
-From: klaus Peter <ericlejus@gmail.com>
-Date: Fri, 26 Jan 2018 07:19:02 +0000
-Subject: =?UTF-8?Q?Darlehen_Geld_f=C3=BCr_Einzelpersonen_und_Fachleute_in_w?= =?UTF-8?Q?eniger_als_72_Stunden
-Message-Id: <CA+HL2SE=GX=z8LP=OKqELsH3+T7DzsMKEFr_f95dr0Mcs5AGFw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 20:31:09 +0000
+Subject: [PATCH 2/3] Input: bcm5974: Return directly after a failed kmalloc() in bcm5974_wellspring_mode()
+Message-Id: <8befb181-9f0e-84f4-9080-4bde3d666a3b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0505482c-287f-8809-76e3-960cf45b3c0a@users.sourceforge.net>
+In-Reply-To: <0505482c-287f-8809-76e3-960cf45b3c0a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@bitmath.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hallo,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 21:14:51 +0100
 
-Sind Sie in einer schwierigen Situation, für die Sie sich für ein
-Darlehen suchen? Benötigen Sie eine Finanzierung, um eine Schuld zu
-begleichen oder eine Aktivität zu finanzieren? Haben Sie einen
-Verbraucherkredit, eine Hypothek, einen persönlichen Kredit, eine
-Hypothek, Investition Darlehen, Schuldenkonsolidierung Darlehen oder
-andere braucht?
+Return directly after a call of the function "kmalloc" failed
+at the beginning.
 
-Ich bin ein einzelner Investor. I zur Verfügung stellen die Kredit
-kurz-, mittel- und langfristige. Ihr Finanzierungsbedingungen sind
-sehr einfach und meine Zinssatz beträgt 3% pro Jahr.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/mouse/bcm5974.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Für alle Anfragen, bleibe ich zur Verfügung, um Ihre Fragen zu beantworten.
+diff --git a/drivers/input/mouse/bcm5974.c b/drivers/input/mouse/bcm5974.c
+index 994805513df9..685f56c08931 100644
+--- a/drivers/input/mouse/bcm5974.c
++++ b/drivers/input/mouse/bcm5974.c
+@@ -669,10 +669,8 @@ static int bcm5974_wellspring_mode(struct bcm5974 *dev, bool on)
+ 		return 0;
+ 
+ 	data = kmalloc(c->um_size, GFP_KERNEL);
+-	if (!data) {
+-		retval = -ENOMEM;
+-		goto out;
+-	}
++	if (!data)
++		return -ENOMEM;
+ 
+ 	/* read configuration */
+ 	size = usb_control_msg(dev->udev, usb_rcvctrlpipe(dev->udev, 0),
+-- 
+2.16.1
 
-Danke, dass Sie mir per E-Mail an Sie von  :   klaus.peterschuster@outlook.de
-
-Mit freundlichen Grüßen.
-
-Peter Schuster
-
-Financial Bank
-https://firstfinancialsa.com/de
