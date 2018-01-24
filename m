@@ -1,60 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 20:29:20 +0000
-Subject: [PATCH 2/3] Input: cyttsp4_core: Delete an unnecessary return statement in three functions
-Message-Id: <fd2239f0-ec16-ee88-5418-a7ae3efa1e21@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 16:33:43 +0000
+Subject: [PATCH 0/3] Input-apbps2: Adjustments for two function implementations
+Message-Id: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
-In-Reply-To: <61183426-0b2a-4b93-933c-a2dfd487d92b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ferruh Yigit <fery@cypress.com>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Jan 2018 21:13:21 +0100
+Date: Wed, 24 Jan 2018 17:30:12 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Three update suggestions were taken into account
+from static source code analysis.
 
-WARNING: void function return statements are not generally useful
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
+  Fix typos in a comment
 
-Thus remove such a statement in the affected functions.
+ drivers/input/serio/apbps2.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/touchscreen/cyttsp4_core.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
-index f0bf3cc20e9d..35f48b66ff36 100644
---- a/drivers/input/touchscreen/cyttsp4_core.c
-+++ b/drivers/input/touchscreen/cyttsp4_core.c
-@@ -956,8 +956,6 @@ static void cyttsp4_get_mt_touches(struct cyttsp4_mt_data *md, int num_cur_tch)
- 	cyttsp4_final_sync(md->input, si->si_ofs.tch_abs[CY_TCH_T].max, ids);
- 
- 	md->num_prv_tch = num_cur_tch;
--
--	return;
- }
- 
- /* read xy_data for all current touches */
-@@ -1272,8 +1270,6 @@ static void cyttsp4_watchdog_timer(struct timer_list *t)
- 	dev_vdbg(cd->dev, "%s: Watchdog timer triggered\n", __func__);
- 
- 	schedule_work(&cd->watchdog_work);
--
--	return;
- }
- 
- static int cyttsp4_request_exclusive(struct cyttsp4 *cd, void *ownptr,
-@@ -1492,7 +1488,6 @@ static void cyttsp4_watchdog_work(struct work_struct *work)
- 	cyttsp4_start_wd_timer(cd);
- cyttsp4_timer_watchdog_exit_error:
- 	mutex_unlock(&cd->system_lock);
--	return;
- }
- 
- static int cyttsp4_core_sleep_(struct cyttsp4 *cd)
 -- 
-2.16.0
+2.16.1
 
