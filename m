@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 18:52:33 +0000
-Subject: [PATCH 1/3] Input: ims-pcu: Delete an error message for a failed memory allocation in ims_pcu_buffer
-Message-Id: <64bbf341-27eb-ed44-a37d-758b9ab486b4@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 15:14:45 +0000
+Subject: [PATCH 1/2] Input: gtco: Delete an error message for a failed memory allocation in gtco_probe()
+Message-Id: <6a7cfd59-769a-9e3e-3c24-e7b028d96254@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
-In-Reply-To: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
+References: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
+In-Reply-To: <5c4410ab-5174-ce8d-cab6-7979aa61f996@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Zhen Lei <thunder.leizhen@huawei.com>
+To: linux-input@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 19:06:07 +0100
+Date: Wed, 24 Jan 2018 15:03:33 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -20,20 +20,20 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/misc/ims-pcu.c | 1 -
+ drivers/input/tablet/gtco.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
-index 3d51175c4d72..4aca2a02ff6d 100644
---- a/drivers/input/misc/ims-pcu.c
-+++ b/drivers/input/misc/ims-pcu.c
-@@ -1556,7 +1556,6 @@ static int ims_pcu_buffers_alloc(struct ims_pcu *pcu)
- 	 */
- 	pcu->urb_out_buf = kmalloc(pcu->max_out_size, GFP_KERNEL);
- 	if (!pcu->urb_out_buf) {
--		dev_err(pcu->dev, "Failed to allocate memory for write buffer\n");
+diff --git a/drivers/input/tablet/gtco.c b/drivers/input/tablet/gtco.c
+index 4b8b9d7aa75e..f2670872735f 100644
+--- a/drivers/input/tablet/gtco.c
++++ b/drivers/input/tablet/gtco.c
+@@ -902,7 +902,6 @@ static int gtco_probe(struct usb_interface *usbinterface,
+ 
+ 	report = kzalloc(le16_to_cpu(hid_desc->wDescriptorLength), GFP_KERNEL);
+ 	if (!report) {
+-		dev_err(&usbinterface->dev, "No more memory for report\n");
  		error = -ENOMEM;
- 		goto err_free_in_urb;
+ 		goto err_free_urb;
  	}
 -- 
 2.16.1
