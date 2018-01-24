@@ -1,39 +1,42 @@
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-Date: Wed, 03 Jan 2018 08:38:11 +0000
-Subject: Re: [PATCH][crypto-next] crypto: inside-secure - make function safexcel_try_push_requests static
-Message-Id: <20180103083811.GA21727@kwain>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 24 Jan 2018 14:58:01 +0000
+Subject: [PATCH] scsi: csiostor: remove redundant assignment to pointer 'ln'
+Message-Id: <20180124145801.18920-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180102143410.13261-1-colin.king@canonical.com>
-In-Reply-To: <20180102143410.13261-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, Jan 02, 2018 at 02:34:10PM +0000, Colin King wrote:
-> =20
->  /* Called with ring's lock taken */
-> -int safexcel_try_push_requests(struct safexcel_crypto_priv *priv, int ri=
-ng,
-> -			       int reqs)
-> +static int safexcel_try_push_requests(struct safexcel_crypto_priv *priv,
-> +				     int ring, int reqs)
+The pointer ln is assigned a value that is never read, it is re-assigned
+a new value in the list_for_each loop hence the initialization is
+redundant and can be removed.
 
-Alignment should match open parenthesis, one space is missing. Otherwise,
-looks good to me.
+Cleans up clang warning:
+drivers/scsi/csiostor/csio_lnode.c:117:21: warning: Value stored to 'ln'
+during its initialization is never read
 
-Thanks!
-Antoine
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/csiostor/csio_lnode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Antoine T=E9nart, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
+index be5ee2d37815..7dbbbb81a1e7 100644
+--- a/drivers/scsi/csiostor/csio_lnode.c
++++ b/drivers/scsi/csiostor/csio_lnode.c
+@@ -114,7 +114,7 @@ static enum csio_ln_ev fwevt_to_lnevt[] = {
+ static struct csio_lnode *
+ csio_ln_lookup_by_portid(struct csio_hw *hw, uint8_t portid)
+ {
+-	struct csio_lnode *ln = hw->rln;
++	struct csio_lnode *ln;
+ 	struct list_head *tmp;
+ 
+ 	/* Match siblings lnode with portid */
+-- 
+2.15.1
+
