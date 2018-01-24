@@ -1,39 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 Jan 2018 16:00:49 +0000
-Subject: [PATCH v3 0/3] video-SMSC UFX: Adjustments for two function implementations
-Message-Id: <a36fa112-40a1-703c-c2ac-ce7e88bb8609@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 19:56:11 +0000
+Subject: [PATCH 1/2] Input: appletouch: Delete an error message for a failed memory allocation in atp_geyser_
+Message-Id: <fd7ba984-5294-78f7-73e3-7f6a37ed9dee@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171125204312epcas2p149d6487ac83e886f95aefe0b35aef1b0@epcas2p1.samsung.com>
- <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
- <1736749.UIs06O4xc5@amdc3058>
-In-Reply-To: <1736749.UIs06O4xc5@amdc3058>
+References: <a86a6a93-21eb-4571-465c-24d4c0687965@users.sourceforge.net>
+In-Reply-To: <a86a6a93-21eb-4571-465c-24d4c0687965@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 Jan 2018 16:54:32 +0100
+Date: Wed, 24 Jan 2018 20:40:54 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (3):
-  Less checks in ufx_usb_probe() after error detection
-  Return an error code only as a constant
-    in ufx_realloc_framebuffer()
-  Delete an error message for a failed memory allocation
-    in ufx_realloc_framebuffer()
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/input/mouse/appletouch.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-v3:
-Rebased on Linux next-20180105.
-
- drivers/video/fbdev/smscufx.c | 59 ++++++++++++++++---------------------------
- 1 file changed, 22 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/input/mouse/appletouch.c b/drivers/input/mouse/appletouch.c
+index 81a695d0b4e0..3a709d21ea93 100644
+--- a/drivers/input/mouse/appletouch.c
++++ b/drivers/input/mouse/appletouch.c
+@@ -280,10 +280,8 @@ static int atp_geyser_init(struct atp *dev)
+ 	int ret;
+ 
+ 	data = kmalloc(8, GFP_KERNEL);
+-	if (!data) {
+-		dev_err(&dev->intf->dev, "Out of memory\n");
++	if (!data)
+ 		return -ENOMEM;
+-	}
+ 
+ 	size = usb_control_msg(udev, usb_rcvctrlpipe(udev, 0),
+ 			ATP_GEYSER_MODE_READ_REQUEST_ID,
 -- 
-2.15.1
+2.16.1
 
