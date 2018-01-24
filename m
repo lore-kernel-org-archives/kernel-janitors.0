@@ -1,55 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 Jan 2018 15:09:44 +0000
-Subject: [PATCH 3/5] mtd/rfd_ftl: Improve a size determination in two functions
-Message-Id: <dc2790d6-6c96-65e4-5407-a2440f5a97e8@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 17:39:10 +0000
+Subject: [PATCH 1/2] Input: arc_ps2: Delete an error message for a failed memory allocation in arc_ps2_probe(
+Message-Id: <dff3cfe5-c994-1ee1-5b9e-fde79fd3cfd9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
-In-Reply-To: <a595376a-c343-33ea-8607-370b88e19c61@users.sourceforge.net>
+References: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
+In-Reply-To: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jan 2018 15:03:29 +0100
+Date: Wed, 24 Jan 2018 18:17:32 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/rfd_ftl.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/input/serio/arc_ps2.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/rfd_ftl.c b/drivers/mtd/rfd_ftl.c
-index 19e14f909dc6..dcf1b88e1193 100644
---- a/drivers/mtd/rfd_ftl.c
-+++ b/drivers/mtd/rfd_ftl.c
-@@ -323,10 +323,9 @@ static void erase_callback(struct erase_info *erase)
+diff --git a/drivers/input/serio/arc_ps2.c b/drivers/input/serio/arc_ps2.c
+index 99e57a418753..9860b1c1e67a 100644
+--- a/drivers/input/serio/arc_ps2.c
++++ b/drivers/input/serio/arc_ps2.c
+@@ -197,10 +197,8 @@ static int arc_ps2_probe(struct platform_device *pdev)
  
- static int erase_block(struct partition *part, int block)
- {
--	struct erase_info *erase;
- 	int rc = -ENOMEM;
-+	struct erase_info *erase = kmalloc(sizeof(*erase), GFP_KERNEL);
+ 	arc_ps2 = devm_kzalloc(&pdev->dev, sizeof(struct arc_ps2_data),
+ 				GFP_KERNEL);
+-	if (!arc_ps2) {
+-		dev_err(&pdev->dev, "out of memory\n");
++	if (!arc_ps2)
+ 		return -ENOMEM;
+-	}
  
--	erase = kmalloc(sizeof(struct erase_info), GFP_KERNEL);
- 	if (!erase)
- 		goto err;
- 
-@@ -759,7 +758,7 @@ static void rfd_ftl_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
- 	if (mtd->type != MTD_NORFLASH || mtd->size > UINT_MAX)
- 		return;
- 
--	part = kzalloc(sizeof(struct partition), GFP_KERNEL);
-+	part = kzalloc(sizeof(*part), GFP_KERNEL);
- 	if (!part)
- 		return;
- 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	arc_ps2->addr = devm_ioremap_resource(&pdev->dev, res);
 -- 
-2.15.1
+2.16.1
 
