@@ -1,10 +1,8 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 16:35:47 +0000
-Subject: [PATCH 2/3] Input: apbps2: Improve a size determination in apbps2_of_probe()
-Message-Id: <affc3d44-3fdc-ce54-322a-c0beec3e92c6@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 17:38:13 +0000
+Subject: [PATCH 0/2] Input-arc_ps2: Adjustments for two function implementations
+Message-Id: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
-In-Reply-To: <50013a33-b7ca-fce1-9769-bfe3db850a8a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,30 +10,18 @@ To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 17:15:39 +0100
+Date: Wed, 24 Jan 2018 18:34:56 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/serio/apbps2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in arc_ps2_probe()
+  Improve a size determination in two functions
 
-diff --git a/drivers/input/serio/apbps2.c b/drivers/input/serio/apbps2.c
-index 9b75c4e1bc13..a1c64df3b6cb 100644
---- a/drivers/input/serio/apbps2.c
-+++ b/drivers/input/serio/apbps2.c
-@@ -170,7 +170,7 @@ static int apbps2_of_probe(struct platform_device *ofdev)
- 	/* Set reload register to core freq in kHz/10 */
- 	iowrite32be(freq_hz / 10000, &priv->regs->reload);
- 
--	priv->io = kzalloc(sizeof(struct serio), GFP_KERNEL);
-+	priv->io = kzalloc(sizeof(*priv->io), GFP_KERNEL);
- 	if (!priv->io)
- 		return -ENOMEM;
- 
+ drivers/input/serio/arc_ps2.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
 -- 
 2.16.1
 
