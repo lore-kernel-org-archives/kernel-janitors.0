@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 21:21:31 +0000
-Subject: [PATCH 3/3] RDMA/iwpm: Improve a size determination in two functions
-Message-Id: <c3791ed7-b453-a76d-2f52-3e9d7f50d05e@users.sourceforge.net>
+Date: Wed, 24 Jan 2018 17:40:24 +0000
+Subject: [PATCH 2/2] Input: arc_ps2: Improve a size determination in two functions
+Message-Id: <38a03d93-7663-f3c3-9066-88cd935e3790@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
-In-Reply-To: <b1df0889-b967-97ae-3a3d-0dde0d7258cd-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
+In-Reply-To: <f3c837b2-7be1-11fe-ba2c-1792590125d2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, Johannes Berg <johannes.berg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 22:05:54 +0100
+Date: Wed, 24 Jan 2018 18:30:45 +0100
 
 Replace the specification of data structures by pointer dereferences
 as the parameter for the operator "sizeof" to make the corresponding size
@@ -22,31 +22,33 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/core/iwpm_util.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/input/serio/arc_ps2.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/core/iwpm_util.c b/drivers/infiniband/core/iwpm_util.c
-index 9eb527074c32..902a2677df31 100644
---- a/drivers/infiniband/core/iwpm_util.c
-+++ b/drivers/infiniband/core/iwpm_util.c
-@@ -121,7 +121,8 @@ int iwpm_create_mapinfo(struct sockaddr_storage *local_sockaddr,
+diff --git a/drivers/input/serio/arc_ps2.c b/drivers/input/serio/arc_ps2.c
+index 9860b1c1e67a..6a3c845e12ea 100644
+--- a/drivers/input/serio/arc_ps2.c
++++ b/drivers/input/serio/arc_ps2.c
+@@ -156,9 +156,8 @@ static int arc_ps2_create_port(struct platform_device *pdev,
+ 					 int index)
+ {
+ 	struct arc_ps2_port *port = &arc_ps2->port[index];
+-	struct serio *io;
++	struct serio *io = kzalloc(sizeof(*io), GFP_KERNEL);
  
- 	if (!iwpm_valid_client(nl_client))
- 		return ret;
--	map_info = kzalloc(sizeof(struct iwpm_mapping_info), GFP_KERNEL);
-+
-+	map_info = kzalloc(sizeof(*map_info), GFP_KERNEL);
- 	if (!map_info)
+-	io = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!io)
  		return -ENOMEM;
  
-@@ -298,7 +299,7 @@ struct iwpm_nlmsg_request *iwpm_get_nlmsg_request(__u32 nlmsg_seq,
- 	struct iwpm_nlmsg_request *nlmsg_request = NULL;
- 	unsigned long flags;
+@@ -195,8 +194,7 @@ static int arc_ps2_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
--	nlmsg_request = kzalloc(sizeof(struct iwpm_nlmsg_request), gfp);
-+	nlmsg_request = kzalloc(sizeof(*nlmsg_request), gfp);
- 	if (!nlmsg_request)
- 		return NULL;
+-	arc_ps2 = devm_kzalloc(&pdev->dev, sizeof(struct arc_ps2_data),
+-				GFP_KERNEL);
++	arc_ps2 = devm_kzalloc(&pdev->dev, sizeof(*arc_ps2), GFP_KERNEL);
+ 	if (!arc_ps2)
+ 		return -ENOMEM;
  
 -- 
 2.16.1
