@@ -1,45 +1,34 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Date: Wed, 24 Jan 2018 07:09:22 +0000
-Subject: Re: [PATCH-next] drm/tegra: gem: Use PTR_ERR_OR_ZERO
-Message-Id: <d6a4a713-4d3c-0dd7-4ddc-3fd96040a1f0@kapsi.fi>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jan 2018 14:26:55 +0000
+Subject: [PATCH] drm/mgag200: fix a test in mga_vga_mode_valid()
+Message-Id: <20180125142655.GA23885@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180123202922.14334-1-chrisadr@gentoo.org>
-In-Reply-To: <20180123202922.14334-1-chrisadr@gentoo.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Christopher_D=c3=adaz_Riveros?= <chrisadr@gentoo.org>, thierry.reding@gmail.com, airlied@linux.ie, jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Airlie <airlied@redhat.com>, Julia Lemire <jlemire@matrox.com>
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sinclair Yeh <syeh@vmware.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Peter Rosin <peda@axentia.se>, Keith Packard <keithp@keithp.com>, Mathieu Larouche <mathieu.larouche@matrox.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-This nas been NAK'd before as harder to read than the current way.
+The parentheses are in the wrong place here so we pass the bits per
+pixel as zero.
 
-Thanks,
-Mikko
+Fixes: abbee6238775 ("drm/mgag200: Added resolution and bandwidth limits for various G200e products.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Not tested.
 
-On 01/23/2018 10:29 PM, Christopher Díaz Riveros wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Christopher Díaz Riveros <chrisadr@gentoo.org>
-> ---
->   drivers/gpu/drm/tegra/gem.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index 49b9bf28f872..36c4ecc33e1a 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -416,10 +416,7 @@ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
->   
->   	bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
->   					 &args->handle);
-> -	if (IS_ERR(bo))
-> -		return PTR_ERR(bo);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(bo);
->   }
->   
->   static int tegra_bo_fault(struct vm_fault *vmf)
-> 
+diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c b/drivers/gpu/drm/mgag200/mgag200_mode.c
+index 68e5d9c94475..fb50a9ddaae8 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_mode.c
++++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
+@@ -1620,8 +1620,8 @@ static int mga_vga_mode_valid(struct drm_connector *connector,
+ 			return MODE_VIRTUAL_X;
+ 		if (mode->vdisplay > 1024)
+ 			return MODE_VIRTUAL_Y;
+-		if (mga_vga_calculate_mode_bandwidth(mode,
+-			bpp > (31877 * 1024)))
++		if (mga_vga_calculate_mode_bandwidth(mode, bpp) >
++		    (31877 * 1024))
+ 			return MODE_BANDWIDTH;
+ 	} else if (mdev->type = G200_EV &&
+ 		(mga_vga_calculate_mode_bandwidth(mode, bpp)
