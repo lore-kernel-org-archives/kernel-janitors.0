@@ -1,27 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 20:58:05 +0000
-Subject: [PATCH 0/2] Input: tps6507x-ts: Adjustments for tps6507x_ts_probe()
-Message-Id: <1ee278a0-a855-cfb3-fd04-24034ec42a65@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 18:52:33 +0000
+Subject: [PATCH 1/3] Input: ims-pcu: Delete an error message for a failed memory allocation in ims_pcu_buffer
+Message-Id: <64bbf341-27eb-ed44-a37d-758b9ab486b4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
+In-Reply-To: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Yegor Yefremov <yegorslists@googlemail.com>
+To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Zhen Lei <thunder.leizhen@huawei.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 21:53:21 +0100
+Date: Thu, 25 Jan 2018 19:06:07 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+This issue was detected by using the Coccinelle software.
 
- drivers/input/touchscreen/tps6507x-ts.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/misc/ims-pcu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
+index 3d51175c4d72..4aca2a02ff6d 100644
+--- a/drivers/input/misc/ims-pcu.c
++++ b/drivers/input/misc/ims-pcu.c
+@@ -1556,7 +1556,6 @@ static int ims_pcu_buffers_alloc(struct ims_pcu *pcu)
+ 	 */
+ 	pcu->urb_out_buf = kmalloc(pcu->max_out_size, GFP_KERNEL);
+ 	if (!pcu->urb_out_buf) {
+-		dev_err(pcu->dev, "Failed to allocate memory for write buffer\n");
+ 		error = -ENOMEM;
+ 		goto err_free_in_urb;
+ 	}
 -- 
-2.15.1
+2.16.1
 
