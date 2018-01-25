@@ -1,42 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 09:43:32 +0000
-Subject: [PATCH] mfd/tps65090: Delete an error message for a failed memory allocation in tps65090_i2c_probe()
-Message-Id: <298ee6b1-c14b-e794-c800-f2aeb6b42a53@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 18:53:48 +0000
+Subject: [PATCH 2/3] Input: ims-pcu: Improve a size determination in two functions
+Message-Id: <1819bb70-3c2c-a86a-29a2-5fb049c3f194@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
+In-Reply-To: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Zhen Lei <thunder.leizhen@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jan 2018 10:37:33 +0100
+Date: Thu, 25 Jan 2018 19:20:38 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mfd/tps65090.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/input/misc/ims-pcu.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
-index d7ec318c40c3..f13e4cd06e89 100644
---- a/drivers/mfd/tps65090.c
-+++ b/drivers/mfd/tps65090.c
-@@ -192,10 +192,8 @@ static int tps65090_i2c_probe(struct i2c_client *client,
- 		irq_base = pdata->irq_base;
+diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
+index 4aca2a02ff6d..d7778b273151 100644
+--- a/drivers/input/misc/ims-pcu.c
++++ b/drivers/input/misc/ims-pcu.c
+@@ -288,12 +288,10 @@ static void ims_pcu_gamepad_report(struct ims_pcu *pcu, u32 data)
  
- 	tps65090 = devm_kzalloc(&client->dev, sizeof(*tps65090), GFP_KERNEL);
--	if (!tps65090) {
--		dev_err(&client->dev, "mem alloc for tps65090 failed\n");
-+	if (!tps65090)
+ static int ims_pcu_setup_gamepad(struct ims_pcu *pcu)
+ {
+-	struct ims_pcu_gamepad *gamepad;
+-	struct input_dev *input;
+ 	int error;
++	struct ims_pcu_gamepad *gamepad = kzalloc(sizeof(*gamepad), GFP_KERNEL);
++	struct input_dev *input = input_allocate_device();
+ 
+-	gamepad = kzalloc(sizeof(struct ims_pcu_gamepad), GFP_KERNEL);
+-	input = input_allocate_device();
+ 	if (!gamepad || !input) {
+ 		dev_err(pcu->dev,
+ 			"Not enough memory for gamepad device\n");
+@@ -2003,10 +2001,9 @@ static int ims_pcu_probe(struct usb_interface *intf,
+ 			 const struct usb_device_id *id)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(intf);
+-	struct ims_pcu *pcu;
+ 	int error;
++	struct ims_pcu *pcu = kzalloc(sizeof(*pcu), GFP_KERNEL);
+ 
+-	pcu = kzalloc(sizeof(struct ims_pcu), GFP_KERNEL);
+ 	if (!pcu)
  		return -ENOMEM;
--	}
  
- 	tps65090->dev = &client->dev;
- 	i2c_set_clientdata(client, tps65090);
 -- 
-2.15.1
+2.16.1
 
