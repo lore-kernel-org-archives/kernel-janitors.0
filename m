@@ -1,42 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 Jan 2018 16:16:48 +0000
-Subject: [PATCH 2/4] misc/ioc4: Delete an error message for a failed memory allocation in ioc4_probe()
-Message-Id: <e706f722-1e0b-22ff-c826-a29658771cd3@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 18:54:47 +0000
+Subject: [PATCH 3/3] Input: ims-pcu: Delete an unnecessary variable assignment in ims_pcu_setup_gamepad()
+Message-Id: <903a941e-a562-0456-da6e-9a801254c853@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4fb26753-2ae3-7c17-7777-03c6923a1d4b@users.sourceforge.net>
-In-Reply-To: <4fb26753-2ae3-7c17-7777-03c6923a1d4b@users.sourceforge.net>
+References: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
+In-Reply-To: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Brent Casavant <bcasavan@sgi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeremy Higdon <jeremy@sgi.com>, Pat Gefre <pfg@sgi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Zhen Lei <thunder.leizhen@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 Jan 2018 16:14:49 +0100
+Date: Thu, 25 Jan 2018 19:37:34 +0100
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+An error code was assigned to a local variable in an if branch.
+This value was not read again before it was used by a return statement
+as a constant value at the end of this function.
+Thus remove such an unneeded assignment.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/ioc4.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/input/misc/ims-pcu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/misc/ioc4.c b/drivers/misc/ioc4.c
-index 63a64104d2da..5bd422498fff 100644
---- a/drivers/misc/ioc4.c
-+++ b/drivers/misc/ioc4.c
-@@ -297,9 +297,6 @@ ioc4_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
- 	/* Set up per-IOC4 data */
- 	idd = kmalloc(sizeof(struct ioc4_driver_data), GFP_KERNEL);
- 	if (!idd) {
--		printk(KERN_WARNING
--		       "%s: Failed to allocate IOC4 data for pci_dev %s.\n",
--		       __func__, pci_name(pdev));
- 		ret = -ENOMEM;
- 		goto out_idd;
+diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
+index d7778b273151..aa1bb284c714 100644
+--- a/drivers/input/misc/ims-pcu.c
++++ b/drivers/input/misc/ims-pcu.c
+@@ -295,7 +295,6 @@ static int ims_pcu_setup_gamepad(struct ims_pcu *pcu)
+ 	if (!gamepad || !input) {
+ 		dev_err(pcu->dev,
+ 			"Not enough memory for gamepad device\n");
+-		error = -ENOMEM;
+ 		goto err_free_mem;
  	}
+ 
 -- 
-2.15.1
+2.16.1
 
