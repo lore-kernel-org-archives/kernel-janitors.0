@@ -1,59 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 31 Jan 2018 20:21:43 +0000
-Subject: [PATCH] iio/light: Delete an error message for a failed memory allocation in two functions
-Message-Id: <377187b2-abb5-b693-2e95-8674748854c1@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 19:34:29 +0000
+Subject: [PATCH 0/2] Input-da9063_onkey: Adjustments for da9063_onkey_probe()
+Message-Id: <9b0e8f6a-6386-d307-34fc-7936c52bd0c6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Archana Patni <archana.patni@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: linux-input@vger.kernel.org, support.opensource@diasemi.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Steve Twiss <stwiss.opensource@diasemi.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 31 Jan 2018 21:12:09 +0100
+Date: Thu, 25 Jan 2018 20:30:40 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/iio/light/hid-sensor-als.c  | 4 +---
- drivers/iio/light/hid-sensor-prox.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/input/misc/da9063_onkey.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iio/light/hid-sensor-als.c b/drivers/iio/light/hid-sensor-als.c
-index befd693a4a31..83654156d952 100644
---- a/drivers/iio/light/hid-sensor-als.c
-+++ b/drivers/iio/light/hid-sensor-als.c
-@@ -299,10 +299,8 @@ static int hid_als_probe(struct platform_device *pdev)
- 
- 	indio_dev->channels = kmemdup(als_channels,
- 				      sizeof(als_channels), GFP_KERNEL);
--	if (!indio_dev->channels) {
--		dev_err(&pdev->dev, "failed to duplicate channels\n");
-+	if (!indio_dev->channels)
- 		return -ENOMEM;
--	}
- 
- 	ret = als_parse_report(pdev, hsdev,
- 			       (struct iio_chan_spec *)indio_dev->channels,
-diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
-index 45107f7537b5..f4487620e08b 100644
---- a/drivers/iio/light/hid-sensor-prox.c
-+++ b/drivers/iio/light/hid-sensor-prox.c
-@@ -277,10 +277,8 @@ static int hid_prox_probe(struct platform_device *pdev)
- 
- 	indio_dev->channels = kmemdup(prox_channels, sizeof(prox_channels),
- 				      GFP_KERNEL);
--	if (!indio_dev->channels) {
--		dev_err(&pdev->dev, "failed to duplicate channels\n");
-+	if (!indio_dev->channels)
- 		return -ENOMEM;
--	}
- 
- 	ret = prox_parse_report(pdev, hsdev,
- 				(struct iio_chan_spec *)indio_dev->channels,
 -- 
 2.16.1
 
