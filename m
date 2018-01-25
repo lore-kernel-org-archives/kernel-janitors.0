@@ -1,49 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 06 Jan 2018 15:50:27 +0000
-Subject: [PATCH][next] HID: asus: make array 'buf' static const, shrinks object size
-Message-Id: <20180106155027.17561-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 15:46:56 +0000
+Subject: [PATCH 1/2] Input: sirfsoc-onkey: Delete an error message for a failed memory allocation in sirfsoc_
+Message-Id: <00544fed-52b0-0536-ad4e-f023668f08dd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b66f4105-57f2-adc2-ecde-cd4dacac408c@users.sourceforge.net>
+In-Reply-To: <b66f4105-57f2-adc2-ecde-cd4dacac408c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 16:32:09 +0100
 
-Don't populate the const read-only array 'buf' on the stack but instead
-make it stati. Makes the object code smaller by 26 bytes:
+Omit an extra message for a memory allocation failure in this function.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  14378	   2384	     64	  16826	   41ba	linux/drivers/hid/hid-asus.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  14296	   2440	     64	  16800	   41a0	linux/drivers/hid/hid-asus.o
-
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-asus.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/input/misc/sirfsoc-onkey.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 6d2894b7d8e7..89d29f323366 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -561,7 +561,9 @@ static int asus_input_mapping(struct hid_device *hdev,
- static int asus_start_multitouch(struct hid_device *hdev)
- {
- 	int ret;
--	const unsigned char buf[] = { FEATURE_REPORT_ID, 0x00, 0x03, 0x01, 0x00 };
-+	static const unsigned char buf[] = {
-+		FEATURE_REPORT_ID, 0x00, 0x03, 0x01, 0x00
-+	};
- 	unsigned char *dmabuf = kmemdup(buf, sizeof(buf), GFP_KERNEL);
+diff --git a/drivers/input/misc/sirfsoc-onkey.c b/drivers/input/misc/sirfsoc-onkey.c
+index 4fd038d476a3..9d8b4e2d7063 100644
+--- a/drivers/input/misc/sirfsoc-onkey.c
++++ b/drivers/input/misc/sirfsoc-onkey.c
+@@ -113,10 +113,8 @@ static int sirfsoc_pwrc_probe(struct platform_device *pdev)
  
- 	if (!dmabuf) {
+ 	pwrcdrv = devm_kzalloc(&pdev->dev, sizeof(struct sirfsoc_pwrc_drvdata),
+ 			       GFP_KERNEL);
+-	if (!pwrcdrv) {
+-		dev_info(&pdev->dev, "Not enough memory for the device data\n");
++	if (!pwrcdrv)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/*
+ 	 * We can't use of_iomap because pwrc is not mapped in memory,
 -- 
-2.15.1
+2.16.1
 
