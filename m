@@ -1,53 +1,38 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Date: Sat, 06 Jan 2018 16:20:45 +0000
-Subject: Re: dm mpath: potential NULL dereference with parse_path()
-Message-Id: <20180106162045.GA27922@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 21:06:01 +0000
+Subject: [PATCH] Input: sh_keysc: Delete an error message for a failed memory allocation in sh_keysc_probe()
+Message-Id: <28d7c2df-81ed-95b3-ba9d-bf6c8aa00197@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180106092643.pq67kkzj2jsjlvzy@mwanda>
-In-Reply-To: <20180106092643.pq67kkzj2jsjlvzy@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com, kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 06 2018 at  4:26P -0500,
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 22:02:46 +0100
 
-> We forgot to set the error code on this path so it means we accidentally
-> return NULL.  The caller is expecting error pointers and will crash
-> with a NULL dereference.
-> 
-> Fixes: faf782b1c93d ("dm mpath: optimize NVMe bio-based support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
-> index d1f32103ae86..0436a5466281 100644
-> --- a/drivers/md/dm-mpath.c
-> +++ b/drivers/md/dm-mpath.c
-> @@ -883,6 +883,7 @@ static struct pgpath *parse_path(struct dm_arg_set *as, struct path_selector *ps
->  		INIT_DELAYED_WORK(&p->activate_path, activate_path_work);
->  		if (setup_scsi_dh(p->path.dev->bdev, m, &ti->error)) {
->  			dm_put_device(ti, p->path.dev);
-> +			r = -EINVAL;
->  			goto bad;
->  		}
->  	}
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks for the report, but I prefer the following fix, which I'll fold
-into the original commit:
+This issue was detected by using the Coccinelle software.
 
-diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
-index 99420b0ac2db..be581765edd1 100644
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -882,7 +882,8 @@ static struct pgpath *parse_path(struct dm_arg_set *as, struct path_selector *ps
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/keyboard/sh_keysc.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/sh_keysc.c b/drivers/input/keyboard/sh_keysc.c
+index 7abf03b4cc9c..e214d47724f8 100644
+--- a/drivers/input/keyboard/sh_keysc.c
++++ b/drivers/input/keyboard/sh_keysc.c
+@@ -191,7 +191,6 @@ static int sh_keysc_probe(struct platform_device *pdev)
  
- 	if (m->queue_mode != DM_TYPE_NVME_BIO_BASED) {
- 		INIT_DELAYED_WORK(&p->activate_path, activate_path_work);
--		if (setup_scsi_dh(p->path.dev->bdev, m, &ti->error)) {
-+		r = setup_scsi_dh(p->path.dev->bdev, m, &ti->error);
-+		if (r) {
- 			dm_put_device(ti, p->path.dev);
- 			goto bad;
- 		}
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (priv = NULL) {
+-		dev_err(&pdev->dev, "failed to allocate driver data\n");
+ 		error = -ENOMEM;
+ 		goto err0;
+ 	}
+-- 
+2.16.1
+
