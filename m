@@ -1,61 +1,30 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Wed, 17 Jan 2018 23:12:18 +0000
-Subject: Re: [PATCH 07/12] i2c: rk3x: account for const type of of_device_id.data
-Message-Id: <20180117231218.e3xa5vq4mg6b6kta@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6ejd5npummacfocw"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jan 2018 14:13:40 +0000
+Subject: [PATCH] [SCSI] sym53c8xx_2: iterator underflow in sym_getsync()
+Message-Id: <20180125141340.GA7299@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514899688-27844-1-git-send-email-Julia.Lawall@lip6.fr>
- <1514899688-27844-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514899688-27844-8-git-send-email-Julia.Lawall@lip6.fr>
-To: linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
+We wanted to exit the loop with "div" set to zero, but instead, if we
+don't hit the break then "div" is -1 when we finish the loop.  It leads
+to an array underflow a few lines later.
 
---6ejd5npummacfocw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Tue, Jan 02, 2018 at 02:28:03PM +0100, Julia Lawall wrote:
-> This driver creates a number of const structures that it stores in
-> the data field of an of_device_id array.
->=20
-> The data field of an of_device_id structure has type const void *, so
-> there is no need for a const-discarding cast when putting const values
-> into such a structure.
->=20
-> Furthermore, adding const to the declaration of the location that
-> receives a const value from such a field ensures that the compiler
-> will continue to check that the value is not modified.  The
-> const-discarding cast on the extraction from the data field is thus
-> no longer needed.
->=20
-> Done using Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-
-Applied to for-next, thanks!
-
-
---6ejd5npummacfocw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpf2FIACgkQFA3kzBSg
-Kbbrdg//fpNwPY4hQ/GMvSiT+5PFjFzqtCxWALuyooPc2jsun9TL3RF8SE341817
-jTZCDeEjn5HUJ0uWyl4vtso/Y7A8CYYTWVyT3nPYYNwFbz9Ct5OlcHWl0B2we3/J
-VowannkdPOUx2sif0KNzcDMTXTy/+21vW7T7VCN1O74xWd6TW2B4LCkShAThGaJk
-Yjsfu4OYvsC+R0B7Is3pM4pYOd+37scpV+x2ql6njxDjKHkaXID09tASaouh13cS
-Tv+zhrtYLqpow7Z6hCBc/Djs+tIc/gHxOnJhM+Vp3B33op3UAs+qQOKS+wm7Kgrl
-jtHnvJGLy7OJmZ5srDJGcBjutxmx+EWwUlhDQJUr4yy0D62n9yZCsx6IDtwa2iY4
-AWlHft2so220vY+29w0pR6lXr2PxnDBNirOq5iY2gftrWAT6j+B5MtjYg5PoyxQV
-xYTOcO5XWev3/TaEs7BbGFAndmrPeB/AuNAWp6xdLRCLgjmqOSfQzWIWH4CFWOl+
-G0LfD3L7BI8aU9wLhiAY/vL/bP+8Y5/oY0UnGpYB71/SDAwo4bx0GW34KdU5f30e
-bh8C9rfw4Ok85kCsVMbrqWTztbkg0uLXaU2TCadDoDVM+J2+xbBi2CVlITEPhBy+
-kPNpgpVDXD3+wGKrirzw/qLHXI77911dIGv5oTh3dZE6z7Pitjo=
-=peoi
------END PGP SIGNATURE-----
-
---6ejd5npummacfocw--
+diff --git a/drivers/scsi/sym53c8xx_2/sym_hipd.c b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+index ca360daa6a25..378af306fda1 100644
+--- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
++++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+@@ -536,7 +536,7 @@ sym_getsync(struct sym_hcb *np, u_char dt, u_char sfac, u_char *divp, u_char *fa
+ 	 *  Look for the greatest clock divisor that allows an 
+ 	 *  input speed faster than the period.
+ 	 */
+-	while (div-- > 0)
++	while (--div > 0)
+ 		if (kpc >= (div_10M[div] << 2)) break;
+ 
+ 	/*
