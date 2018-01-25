@@ -1,45 +1,26 @@
-From: Mikulas Patocka <mikulas@twibright.com>
-Date: Mon, 01 Jan 2018 20:23:00 +0000
-Subject: Re: [PATCH 12/12] hpfs: drop unneeded newline
-Message-Id: <alpine.DEB.2.02.1801012120300.14344@leontynka>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 15:45:12 +0000
+Subject: [PATCH 0/2] Input: sirfsoc-onkey: Adjustments for sirfsoc_pwrc_probe()
+Message-Id: <b66f4105-57f2-adc2-ecde-cd4dacac408c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr> <1514386305-7402-13-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-13-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 16:42:24 +0100
 
+Two update suggestions were taken into account
+from static source code analysis.
 
-On Wed, 27 Dec 2017, Julia Lawall wrote:
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-> hpfs_error prints a newline at the end of the message string, so the
-> message string does not need to include a newline explicitly.  Done
-> using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+ drivers/input/misc/sirfsoc-onkey.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Reviewed-by: Mikulas Patocka <mikulas@twibright.com>
+-- 
+2.16.1
 
-> ---
->  fs/hpfs/dnode.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/hpfs/dnode.c b/fs/hpfs/dnode.c
-> index a4ad18a..fc1809b 100644
-> --- a/fs/hpfs/dnode.c
-> +++ b/fs/hpfs/dnode.c
-> @@ -914,7 +914,8 @@ struct hpfs_dirent *map_dirent(struct inode *inode, dnode_secno dno,
->  	struct hpfs_dirent *de_end;
->  	int c1, c2 = 0;
->  
-> -	if (!S_ISDIR(inode->i_mode)) hpfs_error(inode->i_sb, "map_dirent: not a directory\n");
-> +	if (!S_ISDIR(inode->i_mode))
-> +		hpfs_error(inode->i_sb, "map_dirent: not a directory");
->  	again:
->  	if (hpfs_sb(inode->i_sb)->sb_chk)
->  		if (hpfs_stop_cycles(inode->i_sb, dno, &c1, &c2, "map_dirent")) return NULL;
-> 
-> 
