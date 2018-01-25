@@ -1,31 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 02 Jan 2018 08:50:32 +0000
-Subject: Re: [PATCH 2/2] pinctrl: single: Delete an unnecessary return statement in pcs_irq_chain_handler()
-Message-Id: <CACRpkdbHQAW9gDrCqD0GuxYGMgrRuOe+g_52N+ij=niU5_Z6Yw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 18:51:25 +0000
+Subject: [PATCH 0/3] Input: ims-pcu: Adjustments for three function implementations
+Message-Id: <ff77a871-d30a-e873-ab73-2d80198bfbe7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6bc679d1-c1ee-52fe-9ece-b28095f653ec@users.sourceforge.net>
- <c736d14b-0293-82ac-27de-a673b62b61d7@users.sourceforge.net>
-In-Reply-To: <c736d14b-0293-82ac-27de-a673b62b61d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>, Zhen Lei <thunder.leizhen@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 25, 2017 at 2:07 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 19:46:56 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 25 Dec 2017 11:35:44 +0100
->
-> The script "checkpatch.pl" pointed information out like the following.
->
-> WARNING: void function return statements are not generally useful
->
-> Thus remove such a statement in the affected function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Three update suggestions were taken into account
+from static source code analysis.
 
-Patch applied.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+    in ims_pcu_buffers_alloc()
+  Improve a size determination in two functions
+  Delete an unnecessary variable assignment in ims_pcu_setup_gamepad()
 
-Yours,
-Linus Walleij
+ drivers/input/misc/ims-pcu.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+-- 
+2.16.1
+
