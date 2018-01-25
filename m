@@ -1,16 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Jan 2018 18:19:07 +0000
-Subject: [PATCH] net: hns: Delete an error message for a failed memory allocation in hns_rcb_common_get_cfg()
-Message-Id: <9cfe5e9d-e46b-82b8-987a-19c69c60cdb4@users.sourceforge.net>
+Date: Thu, 25 Jan 2018 15:08:47 +0000
+Subject: [PATCH] Input: twl6040-vibra: Delete an error message for a failed memory allocation in twl6040_vibr
+Message-Id: <d020fc80-4805-81da-aa27-2c3082129f74@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, lipeng <lipeng321@huawei.com>, Matthias Brugger <mbrugger@suse.com>, Salil Mehta <salil.mehta@huawei.com>, Timmy Li <lixiaoping3@huawei.com>, Yisen Zhuang <yisen.zhuang@huawei.com>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jan 2018 19:11:46 +0100
+Date: Thu, 25 Jan 2018 16:01:32 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -18,25 +18,21 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/input/misc/twl6040-vibra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-index 6f3570cfb501..cd74f0598dde 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-@@ -767,10 +767,9 @@ int hns_rcb_common_get_cfg(struct dsaf_device *dsaf_dev,
- 	rcb_common  		devm_kzalloc(dsaf_dev->dev, sizeof(*rcb_common) +
- 			ring_num * sizeof(struct ring_pair_cb), GFP_KERNEL);
--	if (!rcb_common) {
--		dev_err(dsaf_dev->dev, "rcb common devm_kzalloc fail!\n");
-+	if (!rcb_common)
+diff --git a/drivers/input/misc/twl6040-vibra.c b/drivers/input/misc/twl6040-vibra.c
+index 5690eb7ff954..1bdca0eeed3f 100644
+--- a/drivers/input/misc/twl6040-vibra.c
++++ b/drivers/input/misc/twl6040-vibra.c
+@@ -259,7 +259,6 @@ static int twl6040_vibra_probe(struct platform_device *pdev)
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+ 	if (!info) {
+ 		of_node_put(twl6040_core_node);
+-		dev_err(&pdev->dev, "couldn't allocate memory\n");
  		return -ENOMEM;
--	}
-+
- 	rcb_common->comm_index = comm_index;
- 	rcb_common->ring_num = ring_num;
- 	rcb_common->dsaf_dev = dsaf_dev;
+ 	}
+ 
 -- 
-2.15.1
+2.16.1
 
