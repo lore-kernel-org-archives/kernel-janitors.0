@@ -1,40 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 16 Jan 2018 12:48:09 +0000
-Subject: [PATCH] ixgbe: remove redundant initialization of 'pool'
-Message-Id: <20180116124809.25790-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jan 2018 14:15:25 +0000
+Subject: [PATCH] [media] sr030pc30: prevent array underflow in try_fmt()
+Message-Id: <20180125141525.GA7351@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Variable pool is being assigned zero and then in the following for-loop
-is it being set to zero again. Remove the redundant first assignment.
 
-Cleans up clang warning:
-drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c:61:2: warning: Value stored
-to 'pool' is never read
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
-index b3c282d09b18..d57c77f2811f 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
-@@ -58,7 +58,6 @@ static bool ixgbe_cache_ring_dcb_sriov(struct ixgbe_adapter *adapter)
- 		return false;
+diff --git a/drivers/media/i2c/sr030pc30.c b/drivers/media/i2c/sr030pc30.c
+index 0bf031b7e4fa..2a4882cddc51 100644
+--- a/drivers/media/i2c/sr030pc30.c
++++ b/drivers/media/i2c/sr030pc30.c
+@@ -511,13 +511,16 @@ static int sr030pc30_get_fmt(struct v4l2_subdev *sd,
+ static const struct sr030pc30_format *try_fmt(struct v4l2_subdev *sd,
+ 					      struct v4l2_mbus_framefmt *mf)
+ {
+-	int i = ARRAY_SIZE(sr030pc30_formats);
++	int i;
  
- 	/* start at VMDq register offset for SR-IOV enabled setups */
--	pool = 0;
- 	reg_idx = vmdq->offset * __ALIGN_MASK(1, ~vmdq->mask);
- 	for (i = 0, pool = 0; i < adapter->num_rx_queues; i++, reg_idx++) {
- 		/* If we are greater than indices move to next pool */
--- 
-2.15.1
-
+ 	sr030pc30_try_frame_size(mf);
+ 
+-	while (i--)
++	for (i = 0; i < ARRAY_SIZE(sr030pc30_formats); i++) {
+ 		if (mf->code = sr030pc30_formats[i].code)
+ 			break;
++	}
++	if (i = ARRAY_SIZE(sr030pc30_formats))
++		i = 0;
+ 
+ 	mf->code = sr030pc30_formats[i].code;
+ 
