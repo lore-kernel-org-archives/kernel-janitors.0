@@ -1,43 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 20:12:04 +0000
-Subject: [PATCH] Input: matrix-keymap: Delete an error message for a failed memory allocation in matrix_keypa
-Message-Id: <78153741-c125-3aa9-59c1-807d842a98e1@users.sourceforge.net>
+Date: Fri, 26 Jan 2018 13:48:07 +0000
+Subject: [PATCH 0/2] Input: omap4-keypad: Adjustments for omap4_keypad_probe()
+Message-Id: <3df8e062-2a39-05c9-bf49-c85fd636abff@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 21:07:00 +0100
+Date: Fri, 26 Jan 2018 14:45:54 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete two error messages for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/input/matrix-keymap.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/input/keyboard/omap4-keypad.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/input/matrix-keymap.c b/drivers/input/matrix-keymap.c
-index 8ccefc15c7a4..298bd56b02bd 100644
---- a/drivers/input/matrix-keymap.c
-+++ b/drivers/input/matrix-keymap.c
-@@ -173,11 +173,8 @@ int matrix_keypad_build_keymap(const struct matrix_keymap_data *keymap_data,
- 		keymap = devm_kzalloc(input_dev->dev.parent,
- 				      max_keys * sizeof(*keymap),
- 				      GFP_KERNEL);
--		if (!keymap) {
--			dev_err(input_dev->dev.parent,
--				"Unable to allocate memory for keymap");
-+		if (!keymap)
- 			return -ENOMEM;
--		}
- 	}
- 
- 	input_dev->keycode = keymap;
 -- 
 2.16.1
 
