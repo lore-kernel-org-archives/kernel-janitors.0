@@ -1,7 +1,7 @@
 From: Lee Jones <lee.jones@linaro.org>
-Date: Fri, 26 Jan 2018 11:45:14 +0000
+Date: Fri, 26 Jan 2018 14:12:55 +0000
 Subject: Re: mfd: Patch management?
-Message-Id: <20180126114514.dwhwwgcp4n6fayre@dell>
+Message-Id: <20180126141255.7adgqjlonuvujp2x@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <9c50fe6a-21cc-e49d-1b10-5d2457ed4e2a@users.sourceforge.net>
  <20180123125851.ysypf7375sjlgsc6@dell>
@@ -11,7 +11,9 @@ References: <9c50fe6a-21cc-e49d-1b10-5d2457ed4e2a@users.sourceforge.net>
  <ef7a4d25-d4f1-77e3-5489-bbc385de3e5d@users.sourceforge.net>
  <20180123163130.h6ygmzig7syafxbh@dell>
  <49873902-c947-468d-094a-4ac175850116@users.sourceforge.net>
-In-Reply-To: <49873902-c947-468d-094a-4ac175850116@users.sourceforge.net>
+ <20180126114514.dwhwwgcp4n6fayre@dell>
+ <c6e799c3-e118-20a1-3a9f-72950a080d03@users.sourceforge.net>
+In-Reply-To: <c6e799c3-e118-20a1-3a9f-72950a080d03@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -20,67 +22,51 @@ Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Lars =
 
 On Fri, 26 Jan 2018, SF Markus Elfring wrote:
 
-Do not send private emails containing list related content.
+Any more private messages from now on will be ignored.
 
-<putting this conversation back on the list, where it belongs>
-
-> > Moving forward, my advice to you would be to collect grouped patches
-> > on a number of topic branches,
+> >> I got other preferences for time ranges around patch distribution.
+> >=20
+> > Not sure what this means.  I'm guessing you're saying that you are not
+> > willing to collect your patches and you intend on sending them one at
+> > a time, over time.
 >=20
-> I am using development branches generally.
-
-Great, so write patches and add them to your topic branches.  Then
-send them out periodically, together, as a threaded set.
-
-  See: `git send-email` -- grep for "--thread"
-
-> > then send them out in batches, perhaps every couple of weeks.
+> You interpreted my feedback in an unwanted direction.
 >=20
-> I got other preferences for time ranges around patch distribution.
-
-Not sure what this means.  I'm guessing you're saying that you are not
-willing to collect your patches and you intend on sending them one at
-a time, over time.
-
-If I am understanding you correctly, then your patches will not be
-reviewed.
-
-> > Sending ~30 patches individually, spaced over a few hours/days,
-> > is actually not a good system.
+> I am just browsing through the Linux software landscape.
+> Corresponding patches will evolve according to the varying sizes of
+> affected directories.
 >=20
-> It happened that several update candidates were noticed by static
-> source code analysis also in this software area.
-
-Doesn't matter.  Collect them up and send them as a batch.
-
-> > It is in fact quite inappropriate and a pain to manage.
 >=20
-> It becomes more interesting when the patch numbers grow, doesn't it?
-
-When contributors do not manage their submissions properly, it does
-become more *annoying* and unmanageable, yes.
-
-> > I for one find many (to be fair, very trivial) patches scatter-gunned
-> > throughout my inbox to be rather inconvenient.
+> > If I am understanding you correctly, then your patches will not
+> > be reviewed.
 >=20
-> Are you looking for any better management tools?
-
-No.
-
-> Do you find any of the remaining change possibilities acceptable
-> in principle?
-
-I'm not going to review them until you re-submit them in an acceptable
-manner, as requested.
-
-> > The two choices are to squash or to create a set.
+> Another review will hopefully happen (under other circumstances).
 >=20
-> When will the adjustments which you could integrate already
-> appear on the Linux next interface?
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/d=
-rivers/mfd/
+>=20
+> >> When will the adjustments which you could integrate already
+> >> appear on the Linux next interface?
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/lo=
+g/drivers/mfd/
+> >=20
+> > When the merge-window closes.
+>=20
+> I am curious if more positive feedback could evolve till then.
+> I would appreciate if a potentially needed resend for my selection
+> of update suggestions could become smaller (when reviewed steps
+> could be already integrated for example).
 
-When the merge-window closes.
+I'm not entirely sure what you're trying to say, in any of your
+responses.  Are you using Google Translate to convert between your
+first language and English?
+
+If you want to rebase your patches, to see what has been applied and
+what hasn't, you can use the MFD repo and its next-next branch.
+
+Repo:
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
+
+Branch:
+  for-mfd-next-next
 
 --=20
 Lee Jones
