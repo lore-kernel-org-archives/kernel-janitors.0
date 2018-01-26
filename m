@@ -1,42 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 Jan 2018 12:42:19 +0000
-Subject: [PATCH] misc/lkdtm_usercopy: Delete an error message for a failed memory allocation in do_usercopy_h
-Message-Id: <4e1e5a7a-3c92-24b3-18fc-081638ad083a@users.sourceforge.net>
+Date: Fri, 26 Jan 2018 13:49:07 +0000
+Subject: [PATCH 1/2] Input: omap4-keypad: Delete two error messages for a failed memory allocation in omap4_k
+Message-Id: <e547d1f3-e4d8-b69b-c9b2-0298feb2bef7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <3df8e062-2a39-05c9-bf49-c85fd636abff@users.sourceforge.net>
+In-Reply-To: <3df8e062-2a39-05c9-bf49-c85fd636abff@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 9 Jan 2018 13:31:43 +0100
+Date: Fri, 26 Jan 2018 14:24:35 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit extra messages for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/lkdtm_usercopy.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/input/keyboard/omap4-keypad.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/misc/lkdtm_usercopy.c b/drivers/misc/lkdtm_usercopy.c
-index 9725aed305bb..ed50c1db4f87 100644
---- a/drivers/misc/lkdtm_usercopy.c
-+++ b/drivers/misc/lkdtm_usercopy.c
-@@ -202,10 +202,8 @@ static void do_usercopy_heap_whitelist(bool to_user)
- 	 * Allocate a buffer with a whitelisted window in the buffer.
- 	 */
- 	buf = kmem_cache_alloc(whitelist_cache, GFP_KERNEL);
--	if (!buf) {
--		pr_warn("Failed to allocate buffer from whitelist cache\n");
-+	if (!buf)
- 		goto free_alloc;
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+index 940d38b08e6b..6fe554e4026e 100644
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -257,10 +257,8 @@ static int omap4_keypad_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	keypad_data = kzalloc(sizeof(struct omap4_keypad), GFP_KERNEL);
+-	if (!keypad_data) {
+-		dev_err(&pdev->dev, "keypad_data memory allocation failed\n");
++	if (!keypad_data)
+ 		return -ENOMEM;
 -	}
  
- 	/* Allocate user memory we'll poke at. */
- 	user_alloc = vm_mmap(NULL, 0, PAGE_SIZE,
+ 	keypad_data->irq = irq;
+ 
+@@ -340,7 +338,6 @@ static int omap4_keypad_probe(struct platform_device *pdev)
+ 	keypad_data->keymap = kzalloc(max_keys * sizeof(keypad_data->keymap[0]),
+ 				      GFP_KERNEL);
+ 	if (!keypad_data->keymap) {
+-		dev_err(&pdev->dev, "Not enough memory for keymap\n");
+ 		error = -ENOMEM;
+ 		goto err_free_input;
+ 	}
 -- 
-2.15.1
+2.16.1
 
