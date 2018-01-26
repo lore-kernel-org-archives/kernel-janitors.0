@@ -1,23 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 04 Jan 2018 03:53:59 +0000
-Subject: Re: [PATCH] scsi: lpfc: fix a couple of minor indentation issues
-Message-Id: <yq1fu7mxors.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Jan 2018 09:35:55 +0000
+Subject: [PATCH] perf tools: fix spelling mistake: "successfull"-> "successful"
+Message-Id: <20180126093555.11370-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171222003936.11297-1-colin.king@canonical.com>
-In-Reply-To: <20171222003936.11297-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 22 Dec 2017 00:39:36 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Trivial fix to spelling mistakes in pr_debug message text.
 
-> Several statements are indented too far, fix these
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/perf/util/bpf-loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.16/scsi-queue.
-
+diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
+index 72c107fcbc5a..8062e1db0eb2 100644
+--- a/tools/perf/util/bpf-loader.c
++++ b/tools/perf/util/bpf-loader.c
+@@ -99,7 +99,7 @@ struct bpf_object *bpf__prepare_load(const char *filename, bool source)
+ 			if (err)
+ 				return ERR_PTR(-BPF_LOADER_ERRNO__COMPILE);
+ 		} else
+-			pr_debug("bpf: successfull builtin compilation\n");
++			pr_debug("bpf: successful builtin compilation\n");
+ 		obj = bpf_object__open_buffer(obj_buf, obj_buf_sz, filename);
+ 
+ 		if (!IS_ERR(obj) && llvm_param.dump_obj)
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.15.1
+
