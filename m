@@ -1,44 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 14:26:54 +0000
-Subject: [PATCH] mfd/si476x-i2c: Delete an error message for a failed memory allocation in si476x_core_probe(
-Message-Id: <507039aa-cc06-4c3e-5e7e-07ce20aa7d3b@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 12:54:23 +0000
+Subject: [PATCH 2/2] Input: matrix_keypad: Improve a size determination in matrix_keypad_probe()
+Message-Id: <8098317f-46bb-fefb-936c-eb82605c565c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <106bffd0-28ed-7c33-1f32-ae84b40f52c7@users.sourceforge.net>
+In-Reply-To: <106bffd0-28ed-7c33-1f32-ae84b40f52c7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, David Rivshin <DRivshin@allworx.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jan 2018 15:10:33 +0100
+Date: Sat, 27 Jan 2018 13:43:16 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mfd/si476x-i2c.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/input/keyboard/matrix_keypad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/si476x-i2c.c b/drivers/mfd/si476x-i2c.c
-index e6a3d999a376..2c5ec93333c3 100644
---- a/drivers/mfd/si476x-i2c.c
-+++ b/drivers/mfd/si476x-i2c.c
-@@ -697,11 +697,9 @@ static int si476x_core_probe(struct i2c_client *client,
- 	int              cell_num;
+diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+index 90238201a9cc..16206a8a5f07 100644
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -487,7 +487,7 @@ static int matrix_keypad_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
- 	core = devm_kzalloc(&client->dev, sizeof(*core), GFP_KERNEL);
--	if (!core) {
--		dev_err(&client->dev,
--			"failed to allocate 'struct si476x_core'\n");
-+	if (!core)
- 		return -ENOMEM;
--	}
-+
- 	core->client = client;
- 
- 	core->regmap = devm_regmap_init_si476x(core);
+-	keypad = kzalloc(sizeof(struct matrix_keypad), GFP_KERNEL);
++	keypad = kzalloc(sizeof(*keypad), GFP_KERNEL);
+ 	input_dev = input_allocate_device();
+ 	if (!keypad || !input_dev) {
+ 		err = -ENOMEM;
 -- 
-2.15.1
+2.16.1
 
