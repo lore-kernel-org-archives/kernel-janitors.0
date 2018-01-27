@@ -1,26 +1,27 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 04 Jan 2018 04:29:42 +0000
-Subject: Re: [PATCH 10/12] hpsa: drop unneeded newline
-Message-Id: <yq1r2r6w8jt.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 16:12:54 +0000
+Subject: [PATCH 0/2] input/joystick/gamecon: Adjustments for gc_attach()
+Message-Id: <e02726e3-2ee7-e690-a8ea-90a55f8fd0c2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1514386305-7402-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1514386305-7402-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1514386305-7402-11-git-send-email-Julia.Lawall@lip6.fr> (Julia
-        Lawall's message of "Wed, 27 Dec 2017 15:51:43 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Don Brace <don.brace@microsemi.com>, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 17:07:27 +0100
 
-Julia,
+Two update suggestions were taken into account
+from static source code analysis.
 
-> hpsa_show_dev_msg prints other information and a newline after the
-> message string, so the message string does not need to include a
-> newline explicitly.  Done using Coccinelle.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Applied to 4.16/scsi-queue, thanks.
+ drivers/input/joystick/gamecon.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.16.1
+
