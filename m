@@ -1,34 +1,67 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 10 Jan 2018 14:19:40 +0000
-Subject: [PATCH -next] meson-mx-socinfo: Make local function meson_mx_socinfo_init() static
-Message-Id: <1515593980-78559-1-git-send-email-weiyongjun1@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 27 Jan 2018 10:55:10 +0000
+Subject: [PATCH 2/2] um: vector: Fix an error handling path in 'vector_parse()'
+Message-Id: <20180127105510.2782-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linus-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warnings:
+If 'find_device()' finds something, we set '*error_out' and we should
+return an error. However, 'err' is known to be 0 at this point.
 
-drivers/soc/amlogic/meson-mx-socinfo.c:107:12: warning:
- symbol 'meson_mx_socinfo_init' was not declared. Should it be static?
+Explicitly return -EINVAL instead.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+While at it, remove the initialization of 'err' at the beginning of the
+function and also explicitly return an error code if the first check
+fails.
+
+Fixes: ad1f62ab2bd4 ("High Performance UML Vector Network Driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/soc/amlogic/meson-mx-socinfo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not sure if correct, but it looks spurious to set 'error_out' and return
+0 (i.e. success)
+---
+ arch/um/drivers/vector_kern.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/amlogic/meson-mx-socinfo.c b/drivers/soc/amlogic/meson-mx-socinfo.c
-index 7bfff5f..78f0f1a 100644
---- a/drivers/soc/amlogic/meson-mx-socinfo.c
-+++ b/drivers/soc/amlogic/meson-mx-socinfo.c
-@@ -104,7 +104,7 @@ static const char *meson_mx_socinfo_soc_id(unsigned int major_ver,
- 	{ /* sentinel */ }
- };
- 
--int __init meson_mx_socinfo_init(void)
-+static int __init meson_mx_socinfo_init(void)
+diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+index 3c1e6ad91016..6fab02a126e6 100644
+--- a/arch/um/drivers/vector_kern.c
++++ b/arch/um/drivers/vector_kern.c
+@@ -677,7 +677,7 @@ static struct vector_device *find_device(int n)
+ static int vector_parse(char *str, int *index_out, char **str_out,
+ 			char **error_out)
  {
- 	struct soc_device_attribute *soc_dev_attr;
- 	struct soc_device *soc_dev;
+-	int n, len, err = -EINVAL;
++	int n, len, err;
+ 	char *start = str;
+ 
+ 	len = strlen(str);
+@@ -686,7 +686,7 @@ static int vector_parse(char *str, int *index_out, char **str_out,
+ 		str++;
+ 	if (*str != ':') {
+ 		*error_out = "Expected ':' after device number";
+-		return err;
++		return -EINVAL;
+ 	}
+ 	*str = '\0';
+ 
+@@ -699,7 +699,7 @@ static int vector_parse(char *str, int *index_out, char **str_out,
+ 	str++;
+ 	if (find_device(n)) {
+ 		*error_out = "Device already configured";
+-		return err;
++		return -EINVAL;
+ 	}
+ 
+ 	*index_out = n;
+-- 
+2.14.1
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
