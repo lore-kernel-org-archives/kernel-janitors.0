@@ -1,27 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Jan 2018 10:50:14 +0000
-Subject: [PATCH 0/2] mtd/maps/sun_uflash: Adjustments for uflash_devinit()
-Message-Id: <30c07f5a-578c-0e53-b80f-675fb24e6223@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 12:15:06 +0000
+Subject: [PATCH 2/2] Input: max7359_keypad: Improve a size determination in max7359_probe()
+Message-Id: <c75b2086-5b58-638a-781d-fe6c4545619a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <95f7f53b-fa1e-8270-ae4c-5b3d721a4831@users.sourceforge.net>
+In-Reply-To: <95f7f53b-fa1e-8270-ae4c-5b3d721a4831@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Rob Herring <robh@kernel.org>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Jan 2018 11:45:54 +0100
+Date: Sat, 27 Jan 2018 13:00:10 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+This issue was detected by using the Coccinelle software.
 
- drivers/mtd/maps/sun_uflash.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/keyboard/max7359_keypad.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/input/keyboard/max7359_keypad.c b/drivers/input/keyboard/max7359_keypad.c
+index ba6a670a769e..7791250b4667 100644
+--- a/drivers/input/keyboard/max7359_keypad.c
++++ b/drivers/input/keyboard/max7359_keypad.c
+@@ -181,9 +181,7 @@ static int max7359_probe(struct i2c_client *client,
+ 	}
+ 
+ 	dev_dbg(&client->dev, "keys FIFO is 0x%02x\n", ret);
+-
+-	keypad = devm_kzalloc(&client->dev, sizeof(struct max7359_keypad),
+-			      GFP_KERNEL);
++	keypad = devm_kzalloc(&client->dev, sizeof(*keypad), GFP_KERNEL);
+ 	if (!keypad)
+ 		return -ENOMEM;
+ 
 -- 
-2.15.1
+2.16.1
 
