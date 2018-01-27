@@ -1,27 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 20:15:40 +0000
-Subject: [PATCH 0/2] Input-zforce_ts: Adjustments for two function implementations
-Message-Id: <e36553b1-3221-7944-59bd-6bb9358c488f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 27 Jan 2018 10:53:57 +0000
+Subject: [PATCH 1/2] um: vector: Fix a memory allocation check
+Message-Id: <20180127105357.2728-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko.stuebner@bqreaders.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Jan 2018 21:07:42 +0100
+Checking the result of the previous 'kstrdup()' call is expected here, so
+we should test 'params' and not 'str' (which is known to be non-NULL at
+this point)
 
-Two update suggestions were taken into account
-from static source code analysis.
+Fixes: ad1f62ab2bd4 ("High Performance UML Vector Network Driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/um/drivers/vector_kern.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in zforce_parse_dt()
-  Delete an unnecessary return statement in zforce_input_close()
-
- drivers/input/touchscreen/zforce_ts.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
+diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+index d1d53015d572..3c1e6ad91016 100644
+--- a/arch/um/drivers/vector_kern.c
++++ b/arch/um/drivers/vector_kern.c
+@@ -723,7 +723,7 @@ static int vector_config(char *str, char **error_out)
+ 	 */
+ 
+ 	params = kstrdup(params, GFP_KERNEL);
+-	if (str = NULL) {
++	if (params = NULL) {
+ 		*error_out = "vector_config failed to strdup string";
+ 		return -ENOMEM;
+ 	}
 -- 
-2.15.1
+2.14.1
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
