@@ -1,28 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 Jan 2018 09:40:10 +0000
-Subject: [PATCH 0/3] GenWQE: Adjustments for some function implementations
-Message-Id: <e1b73b1a-ae0a-b76b-33d7-4dc5af8e39b5@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 15:00:03 +0000
+Subject: [PATCH 2/2] Input: turbografx: Improve a size determination in tgfx_attach()
+Message-Id: <14ac4f8d-90bd-0ad7-eee8-fbb47c2cba5c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <dfa75f58-43e5-dc80-a606-2914b980f6e7@users.sourceforge.net>
+In-Reply-To: <dfa75f58-43e5-dc80-a606-2914b980f6e7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Frank Haverkamp <haver@linux.vnet.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?J=c3=b6rg-Stephan_Vogt?= <jsvogt@de.ibm.com>, Michael Jung <MIJUNG@de.ibm.com>, =?UTF-8?Q?Michael_R=c3=bcttger?= <michael@ibmra.de>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Geliang Tang <geliangtang@gmail.com>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 Jan 2018 10:32:23 +0100
+Date: Sat, 27 Jan 2018 15:46:24 +0100
 
-A few update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in genwqe_user_vmap()
-  Fix a typo in two comments
-  Adjust 12 checks for null pointers
+This issue was detected by using the Coccinelle software.
 
- drivers/misc/genwqe/card_utils.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/joystick/turbografx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/input/joystick/turbografx.c b/drivers/input/joystick/turbografx.c
+index 454d4c032292..472bc438927e 100644
+--- a/drivers/input/joystick/turbografx.c
++++ b/drivers/input/joystick/turbografx.c
+@@ -191,7 +191,7 @@ static void tgfx_attach(struct parport *pp)
+ 		return;
+ 	}
+ 
+-	tgfx = kzalloc(sizeof(struct tgfx), GFP_KERNEL);
++	tgfx = kzalloc(sizeof(*tgfx), GFP_KERNEL);
+ 	if (!tgfx)
+ 		goto err_unreg_pardev;
+ 
 -- 
-2.15.1
+2.16.1
 
