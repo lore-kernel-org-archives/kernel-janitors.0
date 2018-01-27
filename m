@@ -1,61 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 21:17:19 +0000
-Subject: [PATCH 3/3] irq-imx-gpcv2: Use common error handling code in imx_gpcv2_irqchip_init()
-Message-Id: <f97b7f91-11f7-224e-a953-f6ff1982becd@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 18:18:47 +0000
+Subject: [PATCH 1/3] IB/iser: Delete an error message for a failed memory allocation in iser_send_data_out()
+Message-Id: <8dc6dc89-c77f-513d-70d3-11bcf963a539@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9033837-9e04-be5b-2875-aa746840d5a7@users.sourceforge.net>
-In-Reply-To: <e9033837-9e04-be5b-2875-aa746840d5a7@users.sourceforge.net>
+References: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
+In-Reply-To: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Shenwei Wang <shenwei.wang@freescale.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jan 2018 22:00:05 +0100
+Date: Sat, 27 Jan 2018 17:48:47 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/irqchip/irq-imx-gpcv2.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/infiniband/ulp/iser/iser_initiator.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
-index e62f22c84112..2dc348581877 100644
---- a/drivers/irqchip/irq-imx-gpcv2.c
-+++ b/drivers/irqchip/irq-imx-gpcv2.c
-@@ -233,16 +233,14 @@ static int __init imx_gpcv2_irqchip_init(struct device_node *node,
- 	cd->gpc_base = of_iomap(node, 0);
- 	if (!cd->gpc_base) {
- 		pr_err("fsl-gpcv2: unable to map gpc registers\n");
--		kfree(cd);
--		return -ENOMEM;
-+		goto free_data;
- 	}
+diff --git a/drivers/infiniband/ulp/iser/iser_initiator.c b/drivers/infiniband/ulp/iser/iser_initiator.c
+index 2a07692007bd..3ae2571ba5b4 100644
+--- a/drivers/infiniband/ulp/iser/iser_initiator.c
++++ b/drivers/infiniband/ulp/iser/iser_initiator.c
+@@ -452,10 +452,8 @@ int iser_send_data_out(struct iscsi_conn *conn,
+ 		 __func__,(int)itt,(int)data_seg_len,(int)buf_offset);
  
- 	domain = irq_domain_add_hierarchy(parent_domain, 0, GPC_MAX_IRQS,
- 				node, &gpcv2_irqchip_data_domain_ops, cd);
- 	if (!domain) {
- 		iounmap(cd->gpc_base);
--		kfree(cd);
--		return -ENOMEM;
-+		goto free_data;
- 	}
- 	irq_set_default_host(domain);
+ 	tx_desc = kmem_cache_zalloc(ig.desc_cache, GFP_ATOMIC);
+-	if (tx_desc = NULL) {
+-		iser_err("Failed to alloc desc for post dataout\n");
++	if (!tx_desc)
+ 		return -ENOMEM;
+-	}
  
-@@ -272,6 +270,10 @@ static int __init imx_gpcv2_irqchip_init(struct device_node *node,
- 	 */
- 	of_node_clear_flag(node, OF_POPULATED);
- 	return 0;
-+
-+free_data:
-+	kfree(cd);
-+	return -ENOMEM;
- }
- 
- IRQCHIP_DECLARE(imx_gpcv2, "fsl,imx7d-gpc", imx_gpcv2_irqchip_init);
+ 	tx_desc->type = ISCSI_TX_DATAOUT;
+ 	tx_desc->cqe.done = iser_dataout_comp;
 -- 
-2.15.1
+2.16.1
 
