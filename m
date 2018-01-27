@@ -1,40 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 26 Jan 2018 19:42:47 +0000
-Subject: [PATCH] orangefs: replace vmalloc and memset with vzalloc
-Message-Id: <20180126194247.15166-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 16:14:14 +0000
+Subject: [PATCH 1/2] Input: gamecon: Delete an error message for a failed memory allocation in gc_attach()
+Message-Id: <1097eb0c-fd33-3229-90be-417aca3795bd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e02726e3-2ee7-e690-a8ea-90a55f8fd0c2@users.sourceforge.net>
+In-Reply-To: <e02726e3-2ee7-e690-a8ea-90a55f8fd0c2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 16:27:11 +0100
 
-Use vzalloc instead of the vmalloc, memset combo
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/orangefs/devorangefs-req.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/input/joystick/gamecon.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/orangefs/devorangefs-req.c b/fs/orangefs/devorangefs-req.c
-index f073cd9e6687..a50fb8969e0a 100644
---- a/fs/orangefs/devorangefs-req.c
-+++ b/fs/orangefs/devorangefs-req.c
-@@ -463,11 +463,10 @@ static ssize_t orangefs_devreq_write_iter(struct kiocb *iocb,
- 	if (op->downcall.type != ORANGEFS_VFS_OP_READDIR)
- 		goto wakeup;
+diff --git a/drivers/input/joystick/gamecon.c b/drivers/input/joystick/gamecon.c
+index 2ffb2e8bdc3b..f6006383d30d 100644
+--- a/drivers/input/joystick/gamecon.c
++++ b/drivers/input/joystick/gamecon.c
+@@ -966,10 +966,8 @@ static void gc_attach(struct parport *pp)
+ 	}
  
--	op->downcall.trailer_buf = vmalloc(op->downcall.trailer_size);
-+	op->downcall.trailer_buf = vzalloc(op->downcall.trailer_size);
- 	if (!op->downcall.trailer_buf)
- 		goto Enomem;
+ 	gc = kzalloc(sizeof(struct gc), GFP_KERNEL);
+-	if (!gc) {
+-		pr_err("Not enough memory\n");
++	if (!gc)
+ 		goto err_unreg_pardev;
+-	}
  
--	memset(op->downcall.trailer_buf, 0, op->downcall.trailer_size);
- 	if (!copy_from_iter_full(op->downcall.trailer_buf,
- 			         op->downcall.trailer_size, iter)) {
- 		gossip_err("%s: failed to copy trailer.\n", __func__);
+ 	mutex_init(&gc->mutex);
+ 	gc->pd = pd;
 -- 
-2.15.1
+2.16.1
 
