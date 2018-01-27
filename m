@@ -1,42 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 20 Jan 2018 22:09:34 +0000
-Subject: [PATCH] mtd: block2mtd: remove redundant initialization of 'bdev'
-Message-Id: <20180120220934.21992-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 21:20:24 +0000
+Subject: [PATCH 2/3] RDMA/iwpm: Adjust a variable initialisation in iwpm_create_nlmsg()
+Message-Id: <4f13c537-5adb-cb38-5ba6-206699033849@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
+In-Reply-To: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joern Engel <joern@lazybastard.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>, Doug Ledford <dledford@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Jason Gunthorpe <jgg@ziepe.ca>, Johannes Berg <johannes.berg@intel.com>, Leon Romanovsky <leonro@mellanox.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 21:56:54 +0100
 
-Pointer bdev is being initialized however this value is never
-read as bdev is assigned an updated value from the returned
-call to blkdev_get_by_path.  Remove the redundant assignment.
+The local variable "skb" will be reassigned by a following statement.
+Thus adjust the initialisation at the beginning.
 
-Cleans up clang warning:
-drivers/mtd/devices/block2mtd.c:228:23: warning: Value stored to
-'bdev' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/devices/block2mtd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/iwpm_util.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
-index 62fd6905c648..bb0734600a07 100644
---- a/drivers/mtd/devices/block2mtd.c
-+++ b/drivers/mtd/devices/block2mtd.c
-@@ -225,7 +225,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
- 	int i;
- #endif
- 	const fmode_t mode = FMODE_READ | FMODE_WRITE | FMODE_EXCL;
--	struct block_device *bdev = ERR_PTR(-ENODEV);
-+	struct block_device *bdev;
- 	struct block2mtd_dev *dev;
- 	char *name;
+diff --git a/drivers/infiniband/core/iwpm_util.c b/drivers/infiniband/core/iwpm_util.c
+index 9821ae900f6d..9eb527074c32 100644
+--- a/drivers/infiniband/core/iwpm_util.c
++++ b/drivers/infiniband/core/iwpm_util.c
+@@ -436,9 +436,8 @@ int iwpm_compare_sockaddr(struct sockaddr_storage *a_sockaddr,
+ struct sk_buff *iwpm_create_nlmsg(u32 nl_op, struct nlmsghdr **nlh,
+ 						int nl_client)
+ {
+-	struct sk_buff *skb = NULL;
++	struct sk_buff *skb = dev_alloc_skb(IWPM_MSG_SIZE);
+ 
+-	skb = dev_alloc_skb(IWPM_MSG_SIZE);
+ 	if (!skb)
+ 		goto create_nlmsg_exit;
  
 -- 
-2.15.1
+2.16.1
 
