@@ -1,43 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 15:48:16 +0000
-Subject: [PATCH 2/2] Input: sirfsoc-onkey: Improve a size determination in sirfsoc_pwrc_probe()
-Message-Id: <07e55fcd-8ba5-bae4-0d05-34ada8453a47@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 12:14:16 +0000
+Subject: [PATCH 1/2] Input: max7359_keypad: Delete an error message for a failed memory allocation in max7359
+Message-Id: <7ba43976-2b29-abc7-6d08-e8c49b4564a6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b66f4105-57f2-adc2-ecde-cd4dacac408c@users.sourceforge.net>
-In-Reply-To: <b66f4105-57f2-adc2-ecde-cd4dacac408c@users.sourceforge.net>
+References: <95f7f53b-fa1e-8270-ae4c-5b3d721a4831@users.sourceforge.net>
+In-Reply-To: <95f7f53b-fa1e-8270-ae4c-5b3d721a4831@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jan 2018 16:35:13 +0100
+Date: Sat, 27 Jan 2018 12:56:25 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/misc/sirfsoc-onkey.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/input/keyboard/max7359_keypad.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/input/misc/sirfsoc-onkey.c b/drivers/input/misc/sirfsoc-onkey.c
-index 9d8b4e2d7063..cdad20811d35 100644
---- a/drivers/input/misc/sirfsoc-onkey.c
-+++ b/drivers/input/misc/sirfsoc-onkey.c
-@@ -111,8 +111,7 @@ static int sirfsoc_pwrc_probe(struct platform_device *pdev)
- 	int irq;
- 	int error;
+diff --git a/drivers/input/keyboard/max7359_keypad.c b/drivers/input/keyboard/max7359_keypad.c
+index cd44d22d8770..ba6a670a769e 100644
+--- a/drivers/input/keyboard/max7359_keypad.c
++++ b/drivers/input/keyboard/max7359_keypad.c
+@@ -184,10 +184,8 @@ static int max7359_probe(struct i2c_client *client,
  
--	pwrcdrv = devm_kzalloc(&pdev->dev, sizeof(struct sirfsoc_pwrc_drvdata),
--			       GFP_KERNEL);
-+	pwrcdrv = devm_kzalloc(&pdev->dev, sizeof(*pwrcdrv), GFP_KERNEL);
- 	if (!pwrcdrv)
+ 	keypad = devm_kzalloc(&client->dev, sizeof(struct max7359_keypad),
+ 			      GFP_KERNEL);
+-	if (!keypad) {
+-		dev_err(&client->dev, "failed to allocate memory\n");
++	if (!keypad)
  		return -ENOMEM;
+-	}
  
+ 	input_dev = devm_input_allocate_device(&client->dev);
+ 	if (!input_dev) {
 -- 
 2.16.1
 
