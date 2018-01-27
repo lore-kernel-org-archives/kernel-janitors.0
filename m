@@ -1,28 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 02 Jan 2018 08:44:11 +0000
-Subject: Re: [PATCH] pinctrl: at91: Delete an error message for a failed memory allocation in at91_pinctrl_mu
-Message-Id: <CACRpkdY2F0AZLJuRNYCMJp9gNAws0-0nVuOAv=3FaHfJRMEUrg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 18:20:05 +0000
+Subject: [PATCH 2/3] IB/iser: Delete an unnecessary variable initialisation in iser_send_data_out()
+Message-Id: <f9277c5a-50f3-2f7e-ee6f-e4dee15e4eea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b5da388b-7fa2-ad77-7b64-26eadd55b41c@users.sourceforge.net>
-In-Reply-To: <b5da388b-7fa2-ad77-7b64-26eadd55b41c@users.sourceforge.net>
+References: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
+In-Reply-To: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 23, 2017 at 8:55 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 17:55:13 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 23 Dec 2017 20:44:27 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The variable "tx_desc" will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Patch applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/ulp/iser/iser_initiator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/infiniband/ulp/iser/iser_initiator.c b/drivers/infiniband/ulp/iser/iser_initiator.c
+index 3ae2571ba5b4..1425c4957a04 100644
+--- a/drivers/infiniband/ulp/iser/iser_initiator.c
++++ b/drivers/infiniband/ulp/iser/iser_initiator.c
+@@ -436,7 +436,7 @@ int iser_send_data_out(struct iscsi_conn *conn,
+ {
+ 	struct iser_conn *iser_conn = conn->dd_data;
+ 	struct iscsi_iser_task *iser_task = task->dd_data;
+-	struct iser_tx_desc *tx_desc = NULL;
++	struct iser_tx_desc *tx_desc;
+ 	struct iser_mem_reg *mem_reg;
+ 	unsigned long buf_offset;
+ 	unsigned long data_seg_len;
+-- 
+2.16.1
+
