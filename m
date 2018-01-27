@@ -1,35 +1,51 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 11 Jan 2018 11:13:45 +0000
-Subject: [PATCH -next] test_firmware: make local symbol test_fw_config static
-Message-Id: <1515669225-125691-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 20:16:34 +0000
+Subject: [PATCH 1/2] RDMA/bnxt_re: Delete two error messages for a failed memory allocation in bnxt_qplib_all
+Message-Id: <1d57e7ae-b04a-3875-d89a-c4e3c57b96bc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
+In-Reply-To: <19c755a6-8c52-bbd5-a425-48fc08cecd4f-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Somnath Kotur <somnath.kotur-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Sriharsha Basavapatna <sriharsha.basavapatna-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Himanshu Jha <himanshujha199640-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Fixes the following sparse warnings:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 20:40:11 +0100
 
-lib/test_firmware.c:99:20: warning:
- symbol 'test_fw_config' was not declared. Should it be static?
+Omit extra messages for a memory allocation failure in this function.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- lib/test_firmware.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/bnxt_re/qplib_res.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index 964784d..1e907dd3b4 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -96,7 +96,7 @@ struct test_config {
- 			    struct device *device);
- };
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+index ad37d54affcc..9dacfd24869b 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+@@ -707,8 +707,6 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
+ 	dpit->app_tbl = kcalloc(dpit->max, sizeof(void *), GFP_KERNEL);
+ 	if (!dpit->app_tbl) {
+ 		pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
+-		dev_err(&res->pdev->dev,
+-			"QPLIB: DPI app tbl allocation failed");
+ 		return -ENOMEM;
+ 	}
  
--struct test_config *test_fw_config;
-+static struct test_config *test_fw_config;
+@@ -721,9 +719,6 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
+ 		pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
+ 		kfree(dpit->app_tbl);
+ 		dpit->app_tbl = NULL;
+-		dev_err(&res->pdev->dev,
+-			"QPLIB: DPI tbl allocation failed for size = %d",
+-			bytes);
+ 		return -ENOMEM;
+ 	}
  
- static ssize_t test_fw_misc_read(struct file *f, char __user *buf,
- 				 size_t size, loff_t *offset)
+-- 
+2.16.1
 
