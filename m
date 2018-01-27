@@ -1,38 +1,53 @@
-From: Steve Longerbeam <slongerbeam@gmail.com>
-Date: Mon, 15 Jan 2018 16:22:02 +0000
-Subject: Re: [PATCH] media: staging/imx: Checking the right variable in vdic_get_ipu_resources()
-Message-Id: <1cf19bb9-0ada-523e-9c9c-02a36d6deb21@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 27 Jan 2018 12:40:28 +0000
+Subject: [PATCH] ASoC: Intel: Fix some error handling path in 'sst_platform_get_resources()'
+Message-Id: <20180127124028.3795-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180115081147.upana3zubsxp4vvd@mwanda>
-In-Reply-To: <20180115081147.upana3zubsxp4vvd@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, arvind.yadav.cs@gmail.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+Several error handling paths set 'ret' to an error code, but the function
+always returns 0 (i.e. success)
+
+Return 'ret' instead in order to return the error code.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I guess that the code needs more correction. For this first try, I've left
+the logic as-is, but I don't really see why we call 'pci_release_regions()'
+in the normal path.
+A 'return 0;' before the 'do_release_regions' label would sound more
+logical to me.
+---
+ sound/soc/intel/atom/sst/sst_pci.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/atom/sst/sst_pci.c b/sound/soc/intel/atom/sst/sst_pci.c
+index 6906ee624cf6..8cae20802b7c 100644
+--- a/sound/soc/intel/atom/sst/sst_pci.c
++++ b/sound/soc/intel/atom/sst/sst_pci.c
+@@ -105,9 +105,12 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
+ 		goto do_release_regions;
+ 	}
+ 	dev_dbg(ctx->dev, "DRAM Ptr %p\n", ctx->dram);
++
++	ret = 0;
++
+ do_release_regions:
+ 	pci_release_regions(pci);
+-	return 0;
++	return ret;
+ }
+ 
+ /*
+-- 
+2.14.1
 
 
-On 01/15/2018 12:11 AM, Dan Carpenter wrote:
-> We recently changed this error handling around but missed this error
-> pointer check.  We're testing "priv->vdi_in_ch_n" instead of "ch" so the
-> error handling can't be triggered.
->
-> Fixes: 0b2e9e7947e7 ("media: staging/imx: remove confusing IS_ERR_OR_NULL usage")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/staging/media/imx/imx-media-vdic.c b/drivers/staging/media/imx/imx-media-vdic.c
-> index 433474d58e3e..ed356844cdf6 100644
-> --- a/drivers/staging/media/imx/imx-media-vdic.c
-> +++ b/drivers/staging/media/imx/imx-media-vdic.c
-> @@ -177,7 +177,7 @@ static int vdic_get_ipu_resources(struct vdic_priv *priv)
->   		priv->vdi_in_ch = ch;
->   
->   		ch = ipu_idmac_get(priv->ipu, IPUV3_CHANNEL_MEM_VDI_NEXT);
-> -		if (IS_ERR(priv->vdi_in_ch_n)) {
-> +		if (IS_ERR(ch)) {
->   			err_chan = IPUV3_CHANNEL_MEM_VDI_NEXT;
->   			ret = PTR_ERR(ch);
->   			goto out_err_chan;
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
