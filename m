@@ -1,38 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 12 Jan 2018 21:44:31 +0000
-Subject: [PATCH 2/4] usb: gadget: fotg210-udc: Fix a memory leak
-Message-Id: <74fd44ce7000aa0da44c1004ff08c75060a48b70.1515791144.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 09:55:28 +0000
+Subject: [PATCH 2/2] Input: nspire-keypad: Improve a size determination in nspire_keypad_probe()
+Message-Id: <ec6d39ee-d1ce-f632-f80f-21de1ed402ee@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <bb959d5e-5600-df03-303e-1f96d2890717@users.sourceforge.net>
+In-Reply-To: <bb959d5e-5600-df03-303e-1f96d2890717@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org, bhumirks@gmail.com, leoyang.li@nxp.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-input@vger.kernel.org, Daniel Tang <dt.tangr@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The memory referenced by the 'fotg210->ep[]' array, is never freed.
-So there is a memory leak in the error handling path of the probe function
-and when the driver is unloaded.
-Use 'devm_kzalloc()' to fix these leaks.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 10:36:20 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/gadget/udc/fotg210-udc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/input/keyboard/nspire-keypad.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
-index 2fea32a153b7..a4d46b9759be 100644
---- a/drivers/usb/gadget/udc/fotg210-udc.c
-+++ b/drivers/usb/gadget/udc/fotg210-udc.c
-@@ -1101,7 +1101,8 @@ static int fotg210_udc_probe(struct platform_device *pdev)
- 		goto err_alloc;
- 
- 	for (i = 0; i < FOTG210_MAX_NUM_EP; i++) {
--		fotg210->ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
-+		fotg210->ep[i] = devm_kzalloc(&pdev->dev,
-+					sizeof(struct fotg210_ep), GFP_KERNEL);
- 		if (!fotg210->ep[i])
- 			goto err_alloc;
+diff --git a/drivers/input/keyboard/nspire-keypad.c b/drivers/input/keyboard/nspire-keypad.c
+index f13b50213f94..caadc99741c0 100644
+--- a/drivers/input/keyboard/nspire-keypad.c
++++ b/drivers/input/keyboard/nspire-keypad.c
+@@ -173,8 +173,7 @@ static int nspire_keypad_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  	}
+ 
+-	keypad = devm_kzalloc(&pdev->dev, sizeof(struct nspire_keypad),
+-			      GFP_KERNEL);
++	keypad = devm_kzalloc(&pdev->dev, sizeof(*keypad), GFP_KERNEL);
+ 	if (!keypad)
+ 		return -ENOMEM;
+ 
 -- 
-2.14.1
+2.16.1
 
