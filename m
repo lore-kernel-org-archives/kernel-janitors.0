@@ -1,37 +1,59 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 10 Jan 2018 14:23:00 +0000
-Subject: [PATCH -next] clocksource/drivers/stm32: fix error return code in stm32_timer_init()
-Message-Id: <1515594180-80214-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 13:55:00 +0000
+Subject: [PATCH] Input: gpio_keys: Delete an error message for a failed memory allocation in two functions
+Message-Id: <6a34d439-6465-db9b-e8de-3f3b5b1ca257@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-input@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Joseph Lo <josephl@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Lu <lumotuwe@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Fix to return error code -ENOMEM from the kzalloc error handling
-case instead of 0, as done elsewhere in this function.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 14:42:19 +0100
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clocksource/timer-stm32.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/input/keyboard/gpio_keys.c        | 4 +---
+ drivers/input/keyboard/gpio_keys_polled.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clocksource/timer-stm32.c b/drivers/clocksource/timer-stm32.c
-index e5cdc3a..2717f88 100644
---- a/drivers/clocksource/timer-stm32.c
-+++ b/drivers/clocksource/timer-stm32.c
-@@ -304,8 +304,10 @@ static int __init stm32_timer_init(struct device_node *node)
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 87e613dc33b8..d12fccf923d2 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -757,10 +757,8 @@ static int gpio_keys_probe(struct platform_device *pdev)
+ 	size = sizeof(struct gpio_keys_drvdata) +
+ 			pdata->nbuttons * sizeof(struct gpio_button_data);
+ 	ddata = devm_kzalloc(dev, size, GFP_KERNEL);
+-	if (!ddata) {
+-		dev_err(dev, "failed to allocate state\n");
++	if (!ddata)
+ 		return -ENOMEM;
+-	}
  
- 	to->private_data = kzalloc(sizeof(struct stm32_timer_private),
- 				   GFP_KERNEL);
--	if (!to->private_data)
-+	if (!to->private_data) {
-+		ret = -ENOMEM;
- 		goto deinit;
-+	}
+ 	ddata->keymap = devm_kcalloc(dev,
+ 				     pdata->nbuttons, sizeof(ddata->keymap[0]),
+diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+index edc7262103b9..c79b1a75d036 100644
+--- a/drivers/input/keyboard/gpio_keys_polled.c
++++ b/drivers/input/keyboard/gpio_keys_polled.c
+@@ -253,10 +253,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+ 	size = sizeof(struct gpio_keys_polled_dev) +
+ 			pdata->nbuttons * sizeof(struct gpio_keys_button_data);
+ 	bdev = devm_kzalloc(dev, size, GFP_KERNEL);
+-	if (!bdev) {
+-		dev_err(dev, "no memory for private data\n");
++	if (!bdev)
+ 		return -ENOMEM;
+-	}
  
- 	rstc = of_reset_control_get(node, NULL);
- 	if (!IS_ERR(rstc)) {
-
-
+ 	poll_dev = devm_input_allocate_polled_device(dev);
+ 	if (!poll_dev) {
+-- 
+2.16.1
 
