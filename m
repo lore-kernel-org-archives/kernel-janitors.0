@@ -1,40 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 20:30:09 +0000
-Subject: [PATCH 1/3] Input: bcm5974: Delete an error message for a failed memory allocation in bcm5974_wellsp
-Message-Id: <9371a1f7-beee-212d-05d7-ba081a6990c1@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 20:17:51 +0000
+Subject: [PATCH 2/2] RDMA/bnxt_re: Use common error handling code in bnxt_qplib_alloc_dpi_tbl()
+Message-Id: <30f2eb91-16c6-6c13-343d-64c5f42f2497@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0505482c-287f-8809-76e3-960cf45b3c0a@users.sourceforge.net>
-In-Reply-To: <0505482c-287f-8809-76e3-960cf45b3c0a@users.sourceforge.net>
+References: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
+In-Reply-To: <19c755a6-8c52-bbd5-a425-48fc08cecd4f-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Somnath Kotur <somnath.kotur-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Sriharsha Basavapatna <sriharsha.basavapatna-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Himanshu Jha <himanshujha199640-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jan 2018 21:09:28 +0100
+Date: Sat, 27 Jan 2018 20:56:56 +0100
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/mouse/bcm5974.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/hw/bnxt_re/qplib_res.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/mouse/bcm5974.c b/drivers/input/mouse/bcm5974.c
-index d0122134f320..994805513df9 100644
---- a/drivers/input/mouse/bcm5974.c
-+++ b/drivers/input/mouse/bcm5974.c
-@@ -670,7 +670,6 @@ static int bcm5974_wellspring_mode(struct bcm5974 *dev, bool on)
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+index 9dacfd24869b..539a5d44e6db 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+@@ -705,10 +705,8 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
+ 	dpit->max = dbr_len / PAGE_SIZE;
  
- 	data = kmalloc(c->um_size, GFP_KERNEL);
- 	if (!data) {
--		dev_err(&dev->intf->dev, "out of memory\n");
- 		retval = -ENOMEM;
- 		goto out;
+ 	dpit->app_tbl = kcalloc(dpit->max, sizeof(void *), GFP_KERNEL);
+-	if (!dpit->app_tbl) {
+-		pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
+-		return -ENOMEM;
+-	}
++	if (!dpit->app_tbl)
++		goto unmap_io;
+ 
+ 	bytes = dpit->max >> 3;
+ 	if (!bytes)
+@@ -716,15 +714,18 @@ static int bnxt_qplib_alloc_dpi_tbl(struct bnxt_qplib_res     *res,
+ 
+ 	dpit->tbl = kmalloc(bytes, GFP_KERNEL);
+ 	if (!dpit->tbl) {
+-		pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
+ 		kfree(dpit->app_tbl);
+ 		dpit->app_tbl = NULL;
+-		return -ENOMEM;
++		goto unmap_io;
  	}
+ 
+ 	memset((u8 *)dpit->tbl, 0xFF, bytes);
+ 
+ 	return 0;
++
++unmap_io:
++	pci_iounmap(res->pdev, dpit->dbr_bar_reg_iomem);
++	return -ENOMEM;
+ }
+ 
+ /* PKEYs */
 -- 
 2.16.1
 
