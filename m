@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 Jan 2018 21:30:12 +0000
-Subject: [PATCH 2/2] misc/fsa9480: Improve a size determination in fsa9480_probe()
-Message-Id: <4f62f094-3b5c-7c13-8b9f-1d2da9b1baf4@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 16:15:21 +0000
+Subject: [PATCH 2/2] Input: gamecon: Improve a size determination in gc_attach()
+Message-Id: <423af7ee-401a-5e6a-b7f1-fb9b223a2b75@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <afa46cf0-1a3a-e311-7fbd-d63a23785b16@users.sourceforge.net>
-In-Reply-To: <afa46cf0-1a3a-e311-7fbd-d63a23785b16@users.sourceforge.net>
+References: <e02726e3-2ee7-e690-a8ea-90a55f8fd0c2@users.sourceforge.net>
+In-Reply-To: <e02726e3-2ee7-e690-a8ea-90a55f8fd0c2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 Jan 2018 22:20:19 +0100
+Date: Sat, 27 Jan 2018 16:30:58 +0100
 
 Replace the specification of a data structure by a pointer dereference
 as the parameter for the operator "sizeof" to make the corresponding size
@@ -22,22 +22,22 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/fsa9480.c | 2 +-
+ drivers/input/joystick/gamecon.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/fsa9480.c b/drivers/misc/fsa9480.c
-index 4d7f763195bc..bf199cd5fce9 100644
---- a/drivers/misc/fsa9480.c
-+++ b/drivers/misc/fsa9480.c
-@@ -417,7 +417,7 @@ static int fsa9480_probe(struct i2c_client *client,
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
- 		return -EIO;
+diff --git a/drivers/input/joystick/gamecon.c b/drivers/input/joystick/gamecon.c
+index f6006383d30d..0e3d47ab9ab9 100644
+--- a/drivers/input/joystick/gamecon.c
++++ b/drivers/input/joystick/gamecon.c
+@@ -965,7 +965,7 @@ static void gc_attach(struct parport *pp)
+ 		return;
+ 	}
  
--	usbsw = kzalloc(sizeof(struct fsa9480_usbsw), GFP_KERNEL);
-+	usbsw = kzalloc(sizeof(*usbsw), GFP_KERNEL);
- 	if (!usbsw)
- 		return -ENOMEM;
+-	gc = kzalloc(sizeof(struct gc), GFP_KERNEL);
++	gc = kzalloc(sizeof(*gc), GFP_KERNEL);
+ 	if (!gc)
+ 		goto err_unreg_pardev;
  
 -- 
-2.15.1
+2.16.1
 
