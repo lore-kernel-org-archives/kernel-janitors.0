@@ -1,25 +1,27 @@
-From: Will Deacon <will.deacon@arm.com>
-Date: Mon, 22 Jan 2018 11:53:31 +0000
-Subject: Re: [PATCH] ARM-SMMU: Delete error messages for a failed memory allocation in three functions
-Message-Id: <20180122115331.GE15456@arm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 20:15:09 +0000
+Subject: [PATCH 0/2] RDMA/bnxt_re: Adjustments for bnxt_qplib_alloc_dpi_tbl()
+Message-Id: <19c755a6-8c52-bbd5-a425-48fc08cecd4f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c3e91414-dd5b-2889-d86c-b19aff56571b@users.sourceforge.net>
- <ac171b23-624d-2df3-d1d1-8e9479ae03bc@arm.com>
-In-Reply-To: <ac171b23-624d-2df3-d1d1-8e9479ae03bc@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Somnath Kotur <somnath.kotur-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Sriharsha Basavapatna <sriharsha.basavapatna-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Himanshu Jha <himanshujha199640-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On Mon, Jan 22, 2018 at 11:47:13AM +0000, Robin Murphy wrote:
-> On 20/01/18 14:36, SF Markus Elfring wrote:
-> >From: Markus Elfring <elfring@users.sourceforge.net>
-> >Date: Sat, 20 Jan 2018 15:30:17 +0100
-> >
-> >Omit extra messages for a memory allocation failure in these functions.
-> 
-> Why?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jan 2018 21:10:12 +0100
 
-Don't worry -- I was ignoring this patch (and I assume Joerg does the same).
+Two update suggestions were taken into account
+from static source code analysis.
 
-Will
+Markus Elfring (2):
+  Delete two error messages for a failed memory allocation
+  Use common error handling code
+
+ drivers/infiniband/hw/bnxt_re/qplib_res.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+-- 
+2.16.1
+
