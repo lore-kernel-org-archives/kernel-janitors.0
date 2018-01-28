@@ -1,28 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 18:17:14 +0000
-Subject: [PATCH 0/3] IB-iSER: Adjustments for three function implementations
-Message-Id: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
+From: Max Gurtovoy <maxg@mellanox.com>
+Date: Sun, 28 Jan 2018 14:41:16 +0000
+Subject: Re: [PATCH 0/3] IB-iSER: Adjustments for three function implementations
+Message-Id: <5b2d2862-5694-a10a-be3e-17d2f4687d1e@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
+In-Reply-To: <00e8b16f-c856-8999-fe93-2724a2f6a56e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 19:02:34 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in iser_send_data_out()
-  Delete an unnecessary variable initialisation in iser_send_data_out()
-  Combine substrings for three messages
+On 1/27/2018 8:17 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 27 Jan 2018 19:02:34 +0100
+> 
+> Three update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (3):
+>    Delete an error message for a failed memory allocation in iser_send_data_out()
+>    Delete an unnecessary variable initialisation in iser_send_data_out()
+>    Combine substrings for three messages
+> 
+>   drivers/infiniband/ulp/iser/iser_initiator.c | 16 ++++++----------
+>   1 file changed, 6 insertions(+), 10 deletions(-)
+> 
 
- drivers/infiniband/ulp/iser/iser_initiator.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+This series looks good to me,
 
--- 
-2.16.1
-
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
