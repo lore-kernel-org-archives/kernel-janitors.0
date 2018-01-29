@@ -1,44 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 26 Jan 2018 13:52:55 +0000
-Subject: [PATCH] staging: rtlwifi: remove redundant initialization of 'cfg_cmd'
-Message-Id: <20180126135255.18539-1-colin.king@canonical.com>
+From: Pkshih <pkshih@realtek.com>
+Date: Mon, 29 Jan 2018 04:27:33 +0000
+Subject: Re: [PATCH] staging: rtlwifi: remove redundant initialization of 'cfg_cmd'
+Message-Id: <1517200053.21191.1.camel@realtek.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171108133031.26562-1-colin.king@canonical.com>
-In-Reply-To: <20171108133031.26562-1-colin.king@canonical.com>
+References: <20180126135255.18539-1-colin.king@canonical.com>
+In-Reply-To: <20180126135255.18539-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "colin.king@canonical.com" <colin.king@canonical.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The initialization of cfg_cmd is redundant as the value is never read
-and it is being re-assigned to cfg_cmd = pwrcfgcmd[ary_idx] inside a
-loop, hence it can be removed.
-
-Cleans up clang warning:
-drivers/staging/rtlwifi/core.c:1819:22: warning: Value stored to
-'cfg_cmd' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtlwifi/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtlwifi/core.c b/drivers/staging/rtlwifi/core.c
-index a43d37452e8b..3ec039498208 100644
---- a/drivers/staging/rtlwifi/core.c
-+++ b/drivers/staging/rtlwifi/core.c
-@@ -1816,7 +1816,7 @@ bool rtl_hal_pwrseqcmdparsing(struct rtl_priv *rtlpriv, u8 cut_version,
- 			      u8 faversion, u8 interface_type,
- 			      struct wlan_pwr_cfg pwrcfgcmd[])
- {
--	struct wlan_pwr_cfg cfg_cmd = {0};
-+	struct wlan_pwr_cfg cfg_cmd;
- 	bool polling_bit = false;
- 	u32 ary_idx = 0;
- 	u8 value = 0;
--- 
-2.15.1
-
+T24gRnJpLCAyMDE4LTAxLTI2IGF0IDEzOjUyICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPsKgDQo+IFRo
+ZSBpbml0aWFsaXphdGlvbiBvZiBjZmdfY21kIGlzIHJlZHVuZGFudCBhcyB0aGUgdmFsdWUgaXMg
+bmV2ZXIgcmVhZA0KPiBhbmQgaXQgaXMgYmVpbmcgcmUtYXNzaWduZWQgdG8gY2ZnX2NtZCA9IHB3
+cmNmZ2NtZFthcnlfaWR4XSBpbnNpZGUgYQ0KPiBsb29wLCBoZW5jZSBpdCBjYW4gYmUgcmVtb3Zl
+ZC4NCj7CoA0KPiBDbGVhbnMgdXAgY2xhbmcgd2FybmluZzoNCj4gZHJpdmVycy9zdGFnaW5nL3J0
+bHdpZmkvY29yZS5jOjE4MTk6MjI6IHdhcm5pbmc6IFZhbHVlIHN0b3JlZCB0bw0KPiAnY2ZnX2Nt
+ZCcgZHVyaW5nIGl0cyBpbml0aWFsaXphdGlvbiBpcyBuZXZlciByZWFkDQo+wqANCj4gU2lnbmVk
+LW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KSXQg
+bG9va3MgZ29vZCB0byBtZS4NCg0KQWNrZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0
+ZWsuY29tPg0KDQo+IC0tLQ0KPsKgwqBkcml2ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMgfCAy
+ICstDQo+wqDCoDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0K
+PsKgDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMgYi9kcml2
+ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMNCj4gaW5kZXggYTQzZDM3NDUyZThiLi4zZWMwMzk0
+OTgyMDggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9ydGx3aWZpL2NvcmUuYw0KPiAr
+KysgYi9kcml2ZXJzL3N0YWdpbmcvcnRsd2lmaS9jb3JlLmMNCj4gQEAgLTE4MTYsNyArMTgxNiw3
+IEBAIGJvb2wgcnRsX2hhbF9wd3JzZXFjbWRwYXJzaW5nKHN0cnVjdCBydGxfcHJpdiAqcnRscHJp
+diwNCj4gdTggY3V0X3ZlcnNpb24sDQo+wqDCoAkJCcKgwqDCoMKgwqDCoHU4IGZhdmVyc2lvbiwg
+dTggaW50ZXJmYWNlX3R5cGUsDQo+wqDCoAkJCcKgwqDCoMKgwqDCoHN0cnVjdCB3bGFuX3B3cl9j
+ZmcgcHdyY2ZnY21kW10pDQo+wqDCoHsNCj4gLQlzdHJ1Y3Qgd2xhbl9wd3JfY2ZnIGNmZ19jbWQg
+PSB7MH07DQo+ICsJc3RydWN0IHdsYW5fcHdyX2NmZyBjZmdfY21kOw0KPsKgwqAJYm9vbCBwb2xs
+aW5nX2JpdCA9IGZhbHNlOw0KPsKgwqAJdTMyIGFyeV9pZHggPSAwOw0KPsKgwqAJdTggdmFsdWUg
+PSAwOw0KPiAtLcKgDQo+IDIuMTUuMQ0KPsKgDQo+wqANCj4gLS0tLS0tUGxlYXNlIGNvbnNpZGVy
+IHRoZSBlbnZpcm9ubWVudCBiZWZvcmUgcHJpbnRpbmcgdGhpcyBlLW1haWwu
