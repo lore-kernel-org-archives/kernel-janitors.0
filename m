@@ -1,44 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 14:59:18 +0000
-Subject: [PATCH 1/2] Input: turbografx: Delete an error message for a failed memory allocation in tgfx_attach
-Message-Id: <0255c4a7-fff6-f427-e8a1-951b44ef3f54@users.sourceforge.net>
+Date: Mon, 29 Jan 2018 21:26:15 +0000
+Subject: [PATCH] iio/orientation: Delete an error message for a failed memory allocation in two functions
+Message-Id: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dfa75f58-43e5-dc80-a606-2914b980f6e7@users.sourceforge.net>
-In-Reply-To: <dfa75f58-43e5-dc80-a606-2914b980f6e7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Geliang Tang <geliangtang@gmail.com>, Kees Cook <keescook@chromium.org>
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jan 2018 15:43:38 +0100
+Date: Mon, 29 Jan 2018 22:20:07 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit an extra message for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/joystick/turbografx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/iio/orientation/hid-sensor-incl-3d.c  | 4 +---
+ drivers/iio/orientation/hid-sensor-rotation.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/joystick/turbografx.c b/drivers/input/joystick/turbografx.c
-index e2685753e460..454d4c032292 100644
---- a/drivers/input/joystick/turbografx.c
-+++ b/drivers/input/joystick/turbografx.c
-@@ -192,10 +192,8 @@ static void tgfx_attach(struct parport *pp)
- 	}
+diff --git a/drivers/iio/orientation/hid-sensor-incl-3d.c b/drivers/iio/orientation/hid-sensor-incl-3d.c
+index 1e5451d1ff88..742c0e0eb4cf 100644
+--- a/drivers/iio/orientation/hid-sensor-incl-3d.c
++++ b/drivers/iio/orientation/hid-sensor-incl-3d.c
+@@ -336,10 +336,8 @@ static int hid_incl_3d_probe(struct platform_device *pdev)
  
- 	tgfx = kzalloc(sizeof(struct tgfx), GFP_KERNEL);
--	if (!tgfx) {
--		printk(KERN_ERR "turbografx.c: Not enough memory\n");
-+	if (!tgfx)
- 		goto err_unreg_pardev;
+ 	indio_dev->channels = kmemdup(incl_3d_channels,
+ 				      sizeof(incl_3d_channels), GFP_KERNEL);
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
 -	}
  
- 	mutex_init(&tgfx->sem);
- 	tgfx->pd = pd;
+ 	ret = incl_3d_parse_report(pdev, hsdev,
+ 				   (struct iio_chan_spec *)indio_dev->channels,
+diff --git a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
+index a69db2002414..cbf5e406b1ee 100644
+--- a/drivers/iio/orientation/hid-sensor-rotation.c
++++ b/drivers/iio/orientation/hid-sensor-rotation.c
+@@ -277,10 +277,8 @@ static int hid_dev_rot_probe(struct platform_device *pdev)
+ 	indio_dev->channels = devm_kmemdup(&pdev->dev, dev_rot_channels,
+ 					   sizeof(dev_rot_channels),
+ 					   GFP_KERNEL);
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ret = dev_rot_parse_report(pdev, hsdev,
+ 				   (struct iio_chan_spec *)indio_dev->channels,
 -- 
 2.16.1
 
