@@ -1,78 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 14:03:27 +0000
-Subject: [PATCH 1/2] nfsd: Use seq_putc() in four functions
-Message-Id: <3afb88f1-2934-f1be-067b-db43df675bd4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jan 2018 16:19:11 +0000
+Subject: [PATCH] clocksource/drivers/fsl_ftm_timer: fix unsigned < 0 comparison check
+Message-Id: <20180130161911.1613-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <43df7d8b-f37e-91ca-9c8c-96e318adeb4f@users.sourceforge.net>
-In-Reply-To: <43df7d8b-f37e-91ca-9c8c-96e318adeb4f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jan 2018 14:20:27 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Five single characters should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+The return from the call __ftm_clk_init can be negative if there
+is an error, and this is being checked, however, the check is
+always false because freq is unsigned.  Fix this by removing the
+unsigned type qualifier, making freq just a long.
 
-This issue was detected by using the Coccinelle software.
+Detected using Coccinelle:
+drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/nfsd/export.c    | 6 +++---
- fs/nfsd/nfs4idmap.c | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/clocksource/fsl_ftm_timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-index 8ceb25a10ea0..3b035a87e4c4 100644
---- a/fs/nfsd/export.c
-+++ b/fs/nfsd/export.c
-@@ -181,10 +181,10 @@ static int expkey_show(struct seq_file *m,
- 		seq_printf(m, "%08x", ek->ek_fsid[i]);
- 	if (test_bit(CACHE_VALID, &h->flags) && 
- 	    !test_bit(CACHE_NEGATIVE, &h->flags)) {
--		seq_printf(m, " ");
-+		seq_putc(m, ' ');
- 		seq_path(m, &ek->ek_path, "\\ \t\n");
- 	}
--	seq_printf(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
+diff --git a/drivers/clocksource/fsl_ftm_timer.c b/drivers/clocksource/fsl_ftm_timer.c
+index 3ee7e6fea621..846d18daf893 100644
+--- a/drivers/clocksource/fsl_ftm_timer.c
++++ b/drivers/clocksource/fsl_ftm_timer.c
+@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct device_node *np, char *cnt_name,
  
-@@ -1123,7 +1123,7 @@ static void show_expflags(struct seq_file *m, int flags, int mask)
- 
- static void show_secinfo_flags(struct seq_file *m, int flags)
+ static unsigned long __init ftm_clk_init(struct device_node *np)
  {
--	seq_printf(m, ",");
-+	seq_putc(m, ',');
- 	show_expflags(m, flags, NFSEXP_SECINFO_FLAGS);
- }
+-	unsigned long freq;
++	long freq;
  
-diff --git a/fs/nfsd/nfs4idmap.c b/fs/nfsd/nfs4idmap.c
-index a5bb76593ce7..8917b5f09896 100644
---- a/fs/nfsd/nfs4idmap.c
-+++ b/fs/nfsd/nfs4idmap.c
-@@ -161,7 +161,7 @@ idtoname_show(struct seq_file *m, struct cache_detail *cd, struct cache_head *h)
- 			ent->id);
- 	if (test_bit(CACHE_VALID, &h->flags))
- 		seq_printf(m, " %s", ent->name);
--	seq_printf(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
-@@ -332,7 +332,7 @@ nametoid_show(struct seq_file *m, struct cache_detail *cd, struct cache_head *h)
- 			ent->name);
- 	if (test_bit(CACHE_VALID, &h->flags))
- 		seq_printf(m, " %u", ent->id);
--	seq_printf(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
+ 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
+ 	if (freq <= 0)
 -- 
 2.15.1
 
