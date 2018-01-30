@@ -1,26 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 Jan 2018 11:44:43 +0000
-Subject: Re: Adjustments for a lot of function implementations
-Message-Id: <a180fe61-35a0-154e-1e9a-d7a01c2be856@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jan 2018 15:11:44 +0000
+Subject: [PATCH] ocxl: fix signed comparison with less than zero
+Message-Id: <20180130151144.32544-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
- <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
- <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
- <alpine.DEB.2.20.1710301745530.2160@hadrien>
- <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
- <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
- <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
-In-Reply-To: <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Frederic Barrat <fbarrat@linux.vnet.ibm.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> ??? I did that: either one patch per directory with the same type of change,
-> or one patch per driver combining all the changes for that driver.
+From: Colin Ian King <colin.king@canonical.com>
 
-Are you going to answer any of my remaining questions in a more constructive way?
+Currently the comparison of used < 0 is always false because
+uses is a size_t. Fix this by making used a ssize_t type.
 
-Regards,
-Markus
+Detected by Coccinelle:
+drivers/misc/ocxl/file.c:320:6-10: WARNING: Unsigned expression
+compared with zero: used < 0
+
+Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/ocxl/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
+index c90c1a578d2f..1287e4430e6b 100644
+--- a/drivers/misc/ocxl/file.c
++++ b/drivers/misc/ocxl/file.c
+@@ -277,7 +277,7 @@ static ssize_t afu_read(struct file *file, char __user *buf, size_t count,
+ 	struct ocxl_context *ctx = file->private_data;
+ 	struct ocxl_kernel_event_header header;
+ 	ssize_t rc;
+-	size_t used = 0;
++	ssize_t used = 0;
+ 	DEFINE_WAIT(event_wait);
+ 
+ 	memset(&header, 0, sizeof(header));
+-- 
+2.15.1
+
