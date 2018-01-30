@@ -1,42 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 14:45:41 +0000
-Subject: [PATCH] spear13xx_pcie_gadget: Delete an error message for a failed memory allocation in spear_pcie_
-Message-Id: <4890202a-cb60-bcba-781d-4823f3e58b0a@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 30 Jan 2018 20:40:30 +0000
+Subject: [PATCH]  RDMA/bnxt_re: Fix an error code in bnxt_qplib_create_srq()
+Message-Id: <20180130150434.GA13690@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Somnath Kotur <somnath.kotur-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Sriharsha Basavapatna <sriharsha.basavapatna-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgg-uk2M96/98Pc@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 15:35:14 +0100
+We should return -ENOMEM if the allocation fails.  (The current code
+returns succees).
 
-Omit an extra message for a memory allocation failure in this function.
+Fixes: 37cb11acf1f7 ("RDMA/bnxt_re: Add SRQ support for Broadcom adapters")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/misc/spear13xx_pcie_gadget.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/misc/spear13xx_pcie_gadget.c b/drivers/misc/spear13xx_pcie_gadget.c
-index ee120dcbb3e6..75d5ecb2961b 100644
---- a/drivers/misc/spear13xx_pcie_gadget.c
-+++ b/drivers/misc/spear13xx_pcie_gadget.c
-@@ -671,10 +671,8 @@ static int spear_pcie_gadget_probe(struct platform_device *pdev)
- 	struct configfs_subsystem *subsys;
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+index 8b5f11ac0e42..1b0e94697fe3 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+@@ -557,8 +557,10 @@ int bnxt_qplib_create_srq(struct bnxt_qplib_res *res,
  
- 	target = devm_kzalloc(&pdev->dev, sizeof(*target), GFP_KERNEL);
--	if (!target) {
--		dev_err(&pdev->dev, "out of memory\n");
-+	if (!target)
- 		return -ENOMEM;
--	}
+ 	srq->swq = kcalloc(srq->hwq.max_elements, sizeof(*srq->swq),
+ 			   GFP_KERNEL);
+-	if (!srq->swq)
++	if (!srq->swq) {
++		rc = -ENOMEM;
+ 		goto fail;
++	}
  
- 	cg_item = &target->subsys.su_group.cg_item;
- 	sprintf(cg_item->ci_namebuf, "pcie_gadget.%d", pdev->id);
--- 
-2.15.1
-
+ 	RCFW_CMD_PREP(req, CREATE_SRQ, cmd_flags);
+ 
