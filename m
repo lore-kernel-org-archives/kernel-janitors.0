@@ -1,41 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 Jan 2018 21:34:33 +0000
-Subject: [PATCH] mtd/nand/sunxi: Delete an error message for a failed memory allocation in sunxi_nand_chip_in
-Message-Id: <9a6e9845-23f0-0eb8-3c5b-d877e9874a1d@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jan 2018 15:33:59 +0000
+Subject: [PATCH] NFC: fdp: fix signed less or equal zero check in u8 max_size
+Message-Id: <20180130153359.524-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Samuel Ortiz <sameo@linux.intel.com>, "David S . Miller" <davem@davemloft.net>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 Jan 2018 22:27:09 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The u8 variable max_size is being assigned a return value from the
+call to nci_conn_max_data_pkt_payload_size that can return a -ve
+error return. Since max_size is a u8, the -ve check for the error will
+always be false. Fix this by making max_size an int type.
 
-This issue was detected by using the Coccinelle software.
+Detected using Coccinelle:
+drivers/nfc/fdp/fdp.c:208:5-13: WARNING: Unsigned expression compared
+with zero: max_size <= 0
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: a06347c04c13 ("NFC: Add Intel Fields Peak NFC solution driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/nand/sunxi_nand.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/nfc/fdp/fdp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/nand/sunxi_nand.c b/drivers/mtd/nand/sunxi_nand.c
-index 82244be3e766..ebfa130a9285 100644
---- a/drivers/mtd/nand/sunxi_nand.c
-+++ b/drivers/mtd/nand/sunxi_nand.c
-@@ -2019,10 +2019,8 @@ static int sunxi_nand_chip_init(struct device *dev, struct sunxi_nfc *nfc,
- 			    sizeof(*chip) +
- 			    (nsels * sizeof(struct sunxi_nand_chip_sel)),
- 			    GFP_KERNEL);
--	if (!chip) {
--		dev_err(dev, "could not allocate chip\n");
-+	if (!chip)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
+index d5784a47fc13..5ddc01b4913a 100644
+--- a/drivers/nfc/fdp/fdp.c
++++ b/drivers/nfc/fdp/fdp.c
+@@ -192,8 +192,8 @@ static int fdp_nci_send_patch(struct nci_dev *ndev, u8 conn_id, u8 type)
+ 	const struct firmware *fw;
+ 	struct sk_buff *skb;
+ 	unsigned long len;
+-	u8 max_size, payload_size;
+-	int rc = 0;
++	u8 payload_size;
++	int max_size, rc = 0;
  
- 	chip->nsels = nsels;
- 	chip->selected = -1;
+ 	if ((type = NCI_PATCH_TYPE_OTP && !info->otp_patch) ||
+ 	    (type = NCI_PATCH_TYPE_RAM && !info->ram_patch))
 -- 
 2.15.1
 
