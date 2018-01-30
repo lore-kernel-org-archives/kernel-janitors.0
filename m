@@ -1,18 +1,43 @@
-From: Robin Holt <robinmholt@gmail.com>
-Date: Thu, 11 Jan 2018 18:17:21 +0000
-Subject: Re: [PATCH 3/3] sgi-xpc: Adjust 27 checks for null pointers
-Message-Id: <CAPp3RGof6pD-LMvApvx-L55zpXar4FmqppXt8RsZu+0fXeg1OQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jan 2018 17:47:07 +0000
+Subject: [PATCH] libnvdimm, namespace: remove redundant initialization of 'nd_mapping'
+Message-Id: <20180130174707.4921-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cf88f891-5960-ff01-b8b5-b8194ceff4f1@users.sourceforge.net> <cdd5014f-12c1-a737-67b3-7acd104af5fb@users.sourceforge.net>
-In-Reply-To: <cdd5014f-12c1-a737-67b3-7acd104af5fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 8:06 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Robin Holt <robinmholt@gmail.com>
+Pointer nd_mapping is being initialized to a value that is never read,
+instead it is being updated to a new value in all the cases where it
+is being read afterwards, hence the initialization is redundant and
+can be removed.
+
+Cleans up clang warning:
+drivers/nvdimm/namespace_devs.c:2411:21: warning: Value stored to
+'nd_mapping' during its initialization is never rea
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nvdimm/namespace_devs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index bb3ba8cf24d4..658ada497be0 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -2408,7 +2408,7 @@ static struct device **scan_labels(struct nd_region *nd_region)
+ 
+ static struct device **create_namespaces(struct nd_region *nd_region)
+ {
+-	struct nd_mapping *nd_mapping = &nd_region->mapping[0];
++	struct nd_mapping *nd_mapping;
+ 	struct device **devs;
+ 	int i;
+ 
+-- 
+2.15.1
+
