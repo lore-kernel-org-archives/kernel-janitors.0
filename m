@@ -1,55 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Jan 2018 18:04:54 +0000
-Subject: [PATCH 5/5] powerpc/4xx: Delete an unnecessary return statement in two functions
-Message-Id: <de85bbcd-36a8-7de5-8d18-96e1530a23c2@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 20:21:43 +0000
+Subject: [PATCH] iio/light: Delete an error message for a failed memory allocation in two functions
+Message-Id: <377187b2-abb5-b693-2e95-8674748854c1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
-In-Reply-To: <2b9b4285-f1c0-5dc7-35c6-df901c9ca0eb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Archana Patni <archana.patni@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Jan 2018 18:40:23 +0100
+Date: Wed, 31 Jan 2018 21:12:09 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit an extra message for a memory allocation failure in these functions.
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected functions.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/platforms/4xx/ocm.c | 2 --
- arch/powerpc/platforms/4xx/pci.c | 1 -
- 2 files changed, 3 deletions(-)
+ drivers/iio/light/hid-sensor-als.c  | 4 +---
+ drivers/iio/light/hid-sensor-prox.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/platforms/4xx/ocm.c b/arch/powerpc/platforms/4xx/ocm.c
-index 11418f090bf4..aee5f041ff14 100644
---- a/arch/powerpc/platforms/4xx/ocm.c
-+++ b/arch/powerpc/platforms/4xx/ocm.c
-@@ -226,8 +226,6 @@ static void __init ocm_init_node(int count, struct device_node *node)
- 	INIT_LIST_HEAD(&ocm->c.list);
+diff --git a/drivers/iio/light/hid-sensor-als.c b/drivers/iio/light/hid-sensor-als.c
+index befd693a4a31..83654156d952 100644
+--- a/drivers/iio/light/hid-sensor-als.c
++++ b/drivers/iio/light/hid-sensor-als.c
+@@ -299,10 +299,8 @@ static int hid_als_probe(struct platform_device *pdev)
  
- 	ocm->ready = 1;
--
--	return;
- }
+ 	indio_dev->channels = kmemdup(als_channels,
+ 				      sizeof(als_channels), GFP_KERNEL);
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
+-	}
  
- static int ocm_debugfs_show(struct seq_file *m, void *v)
-diff --git a/arch/powerpc/platforms/4xx/pci.c b/arch/powerpc/platforms/4xx/pci.c
-index 73e6b36bcd51..b73ea8f4be1f 100644
---- a/arch/powerpc/platforms/4xx/pci.c
-+++ b/arch/powerpc/platforms/4xx/pci.c
-@@ -1399,7 +1399,6 @@ static void __init ppc_476fpe_pciex_check_link(struct ppc4xx_pciex_port *port)
- 		printk(KERN_WARNING "PCIE%d: Link up failed\n", port->index);
+ 	ret = als_parse_report(pdev, hsdev,
+ 			       (struct iio_chan_spec *)indio_dev->channels,
+diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
+index 45107f7537b5..f4487620e08b 100644
+--- a/drivers/iio/light/hid-sensor-prox.c
++++ b/drivers/iio/light/hid-sensor-prox.c
+@@ -277,10 +277,8 @@ static int hid_prox_probe(struct platform_device *pdev)
  
- 	iounmap(mbase);
--	return;
- }
+ 	indio_dev->channels = kmemdup(prox_channels, sizeof(prox_channels),
+ 				      GFP_KERNEL);
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
+-	}
  
- static struct ppc4xx_pciex_hwops ppc_476fpe_pcie_hwops __initdata -- 
-2.15.1
+ 	ret = prox_parse_report(pdev, hsdev,
+ 				(struct iio_chan_spec *)indio_dev->channels,
+-- 
+2.16.1
 
