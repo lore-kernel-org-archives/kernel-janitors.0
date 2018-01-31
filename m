@@ -1,54 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Jan 2018 20:50:56 +0000
-Subject: [PATCH] IOMMU-Tegra: gart: Delete two error messages for a failed memory allocation in tegra_gart_pr
-Message-Id: <faa84bc9-d663-f0ea-4f62-40b853c0212b@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 31 Jan 2018 16:14:25 +0000
+Subject: [PATCH] be2net: remove redundant initialization of 'head' and pointer txq
+Message-Id: <20180131161425.15011-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sathya Perla <sathya.perla@broadcom.com>, Ajit Khaparde <ajit.khaparde@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Jan 2018 21:44:31 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit extra messages for a memory allocation failure in this function.
+Variable head is initialized to a value that is never read and is
+being updated to a new value a few lines later, hence this
+initialization is redundant and can be safely removed as well
+as the now unused pointer txq.
 
-This issue was detected by using the Coccinelle software.
+Cleans up clang warning:
+drivers/net/ethernet/emulex/benet/be_main.c:996:6: warning: Value
+stored to 'head' during its initialization is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iommu/tegra-gart.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/emulex/benet/be_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index b62f790ad1ba..1fee3a956832 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -419,10 +419,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index c36c81959198..d81e2d37bc3d 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -991,9 +991,8 @@ static u32 be_xmit_enqueue(struct be_adapter *adapter, struct be_tx_obj *txo,
+ {
+ 	u32 i, copied = 0, wrb_cnt = skb_wrb_cnt(skb);
+ 	struct device *dev = &adapter->pdev->dev;
+-	struct be_queue_info *txq = &txo->q;
+ 	bool map_single = false;
+-	u32 head = txq->head;
++	u32 head;
+ 	dma_addr_t busaddr;
+ 	int len;
  
- 	gart = devm_kzalloc(dev, sizeof(*gart), GFP_KERNEL);
--	if (!gart) {
--		dev_err(dev, "failed to allocate gart_device\n");
-+	if (!gart)
- 		return -ENOMEM;
--	}
- 
- 	gart_regs = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!gart_regs) {
-@@ -455,10 +453,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
- 
- 	gart->savedata = vmalloc(sizeof(u32) * gart->page_count);
--	if (!gart->savedata) {
--		dev_err(dev, "failed to allocate context save area\n");
-+	if (!gart->savedata)
- 		return -ENOMEM;
--	}
- 
- 	platform_set_drvdata(pdev, gart);
- 	do_gart_setup(gart, NULL);
 -- 
 2.15.1
 
