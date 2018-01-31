@@ -1,23 +1,28 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Mon, 29 Jan 2018 14:57:49 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 31 Jan 2018 02:32:38 +0000
 Subject: Re: [PATCH] mptfusion: Add bounds check in mptctl_hp_targetinfo()
-Message-Id: <mqd4ln4iufm.fsf@linux-x5ow.site>
+Message-Id: <yq1fu6mg3ll.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180125142727.GA23945@mwanda>
 In-Reply-To: <20180125142727.GA23945@mwanda> (Dan Carpenter's message of "Thu,
         25 Jan 2018 17:27:27 +0300")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+
+Dan,
+
+> My static checker complains about an out of bounds read:
+>
+>     drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
+>     error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
+>
+> It's true that we probably should have a bounds check here.
+
+Applied to 4.16/scsi-fixes, thanks!
+
 -- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Martin K. Petersen	Oracle Linux Engineering
