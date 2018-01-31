@@ -1,39 +1,44 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Jan 2018 11:32:50 +0000
-Subject: [PATCH -next] slimbus: qcom: remove redundant dev_err call in qcom_slim_probe()
-Message-Id: <1516188770-4716-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 21:26:14 +0000
+Subject: [PATCH] hid-sensor-accel-3d: Delete an error message for a failed memory allocation in hid_accel_3d_
+Message-Id: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 22:20:56 +0100
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/slimbus/qcom-ctrl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/iio/accel/hid-sensor-accel-3d.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-index ffb46f9..2f671dd 100644
---- a/drivers/slimbus/qcom-ctrl.c
-+++ b/drivers/slimbus/qcom-ctrl.c
-@@ -529,10 +529,8 @@ static int qcom_slim_probe(struct platform_device *pdev)
- 
- 	slim_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl");
- 	ctrl->base = devm_ioremap_resource(ctrl->dev, slim_mem);
--	if (IS_ERR(ctrl->base)) {
--		dev_err(&pdev->dev, "IOremap failed\n");
-+	if (IS_ERR(ctrl->base))
- 		return PTR_ERR(ctrl->base);
+diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
+index c066a3bdbff7..3d0acde40285 100644
+--- a/drivers/iio/accel/hid-sensor-accel-3d.c
++++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+@@ -383,11 +383,9 @@ static int hid_accel_3d_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 	indio_dev->channels = kmemdup(channel_spec, channel_size, GFP_KERNEL);
+-
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
 -	}
- 
- 	sctrl->set_laddr = qcom_set_laddr;
- 	sctrl->xfer_msg = qcom_xfer_msg;
-
-
++
+ 	ret = accel_3d_parse_report(pdev, hsdev,
+ 				(struct iio_chan_spec *)indio_dev->channels,
+ 				hsdev->usage, accel_state);
+-- 
+2.16.1
 
