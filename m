@@ -1,30 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 09:59:32 +0000
-Subject: Re: [PATCH 1/4] gpio-stmpe: Use seq_putc() in stmpe_dbg_show()
-Message-Id: <CACRpkdZ0hN+AEbghiyk49s9Qec5Nt2JTZLJfe=oJm1w238U7jA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 31 Jan 2018 17:33:09 +0000
+Subject: [PATCH] media: cx25821: prevent out-of-bounds read on array card
+Message-Id: <20180131173309.16377-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net> <91234c1e-9106-ae5d-ebed-8e3d5f272c1e@users.sourceforge.net>
-In-Reply-To: <91234c1e-9106-ae5d-ebed-8e3d5f272c1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 9:01 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 Jan 2018 19:30:50 +0100
->
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Currently an out of range dev->nr is detected by just reporting the
+issue and later on an out-of-bounds read on array card occurs because
+of this. Fix this by checking the upper range of dev->nr with the size
+of array card (removes the hard coded size), move this check earlier
+and also exit with the error -ENOSYS to avoid the later out-of-bounds
+array read.
 
-Patch applied.
+Detected by CoverityScan, CID#711191 ("Out-of-bounds-read")
 
-Yours,
-Linus Walleij
+Fixes: commit 02b20b0b4cde ("V4L/DVB (12730): Add conexant cx25821 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/cx25821/cx25821-core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/pci/cx25821/cx25821-core.c b/drivers/media/pci/cx25821/cx25821-core.c
+index 04aa4a68a0ae..c1184e73cb2d 100644
+--- a/drivers/media/pci/cx25821/cx25821-core.c
++++ b/drivers/media/pci/cx25821/cx25821-core.c
+@@ -867,6 +867,10 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
+ 	dev->nr = ++cx25821_devcount;
+ 	sprintf(dev->name, "cx25821[%d]", dev->nr);
+ 
++	if (dev->nr >= ARRAY_SIZE(card)) {
++		CX25821_INFO("dev->nr >= %ld", ARRAY_SIZE(card));
++		return -ENODEV;
++	}
+ 	if (dev->pci->device != 0x8210) {
+ 		pr_info("%s(): Exiting. Incorrect Hardware device = 0x%02x\n",
+ 			__func__, dev->pci->device);
+@@ -882,9 +886,6 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
+ 		dev->channels[i].sram_channels = &cx25821_sram_channels[i];
+ 	}
+ 
+-	if (dev->nr > 1)
+-		CX25821_INFO("dev->nr > 1!");
+-
+ 	/* board config */
+ 	dev->board = 1;		/* card[dev->nr]; */
+ 	dev->_max_num_decoders = MAX_DECODERS;
+-- 
+2.15.1
+
