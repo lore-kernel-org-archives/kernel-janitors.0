@@ -1,17 +1,19 @@
-From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date: Tue, 30 Jan 2018 23:42:47 +0000
+From: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Date: Wed, 31 Jan 2018 12:57:34 +0000
 Subject: Re: [PATCH] ocxl: fix signed comparison with less than zero
-Message-Id: <7960dfb3-3e56-5e22-548b-322e1c741495@au1.ibm.com>
+Message-Id: <af638e7d-0bdd-1c2a-571f-cb30085e408a@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180130151144.32544-1-colin.king@canonical.com>
 In-Reply-To: <20180130151144.32544-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Frederic Barrat <fbarrat@linux.vnet.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin King <colin.king@canonical.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linuxppc-dev@lists.ozlabs.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 31/01/18 02:11, Colin King wrote:
+
+
+Le 30/01/2018 à 16:11, Colin King a écrit :
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Currently the comparison of used < 0 is always false because
@@ -23,12 +25,11 @@ On 31/01/18 02:11, Colin King wrote:
 > 
 > Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks for picking this up!
-
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-
 > ---
+
+Thanks!
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+
 >   drivers/misc/ocxl/file.c | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
@@ -43,11 +44,7 @@ Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 > -	size_t used = 0;
 > +	ssize_t used = 0;
 >   	DEFINE_WAIT(event_wait);
->   
+> 
 >   	memset(&header, 0, sizeof(header));
 > 
-
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
 
