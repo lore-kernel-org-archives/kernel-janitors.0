@@ -1,26 +1,42 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 04 Jan 2018 03:53:10 +0000
-Subject: Re: [PATCH] scsi: lpfc: don't dereference localport before it has been null checked
-Message-Id: <yq1k1wyxot5.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 20:43:10 +0000
+Subject: [PATCH] hid-sensor-gyro-3d: Delete an error message for a failed memory allocation in hid_gyro_3d_pr
+Message-Id: <e3308896-dd91-1af0-912f-32cc0794361e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171222002852.10892-1-colin.king@canonical.com>
-In-Reply-To: <20171222002852.10892-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 22 Dec 2017 00:28:52 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 21:36:53 +0100
 
-Colin,
+Omit an extra message for a memory allocation failure in this function.
 
-> localport is being dereferenced to assign lport and then immediately
-> afterwards localport is being sanity checked to see if it is null.
-> Fix this by only dereferencing localport until after it has been
-> null checked.
+This issue was detected by using the Coccinelle software.
 
-Applied to 4.16/scsi-queue, thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/gyro/hid-sensor-gyro-3d.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/iio/gyro/hid-sensor-gyro-3d.c b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+index f59995a90387..93465816c5c7 100644
+--- a/drivers/iio/gyro/hid-sensor-gyro-3d.c
++++ b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+@@ -317,10 +317,8 @@ static int hid_gyro_3d_probe(struct platform_device *pdev)
+ 
+ 	indio_dev->channels = kmemdup(gyro_3d_channels,
+ 				      sizeof(gyro_3d_channels), GFP_KERNEL);
+-	if (!indio_dev->channels) {
+-		dev_err(&pdev->dev, "failed to duplicate channels\n");
++	if (!indio_dev->channels)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ret = gyro_3d_parse_report(pdev, hsdev,
+ 				   (struct iio_chan_spec *)indio_dev->channels,
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.16.1
+
