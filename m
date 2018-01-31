@@ -1,69 +1,32 @@
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Date: Fri, 12 Jan 2018 09:37:32 +0000
-Subject: Re: [PATCH -next] IIO: ADC: fix return value check in stm32_dfsdm_adc_probe()
-Message-Id: <bd342999-d205-51fc-6f3d-4a2e69bf6a6a@st.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 31 Jan 2018 17:28:13 +0000
+Subject: =?UTF-8?Q?Re:_[v2]_Coccinelle:_zalloc-simple:_Delete_function_?= =?UTF-8?B?4oCca21lbV9jYWNoZV9hbGxvY
+Message-Id: <243e83a2-ae0c-2dd2-7f8f-83ac0978cc0e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1515669161-125426-1-git-send-email-weiyongjun1@huawei.com>
- <20180111212837.minmnjkvhudstafs@mwanda>
- <6AADFAC011213A4C87B956458587ADB40132A0E3@dggemi507-mbx.china.huawei.com>
-In-Reply-To: <6AADFAC011213A4C87B956458587ADB40132A0E3@dggemi507-mbx.china.huawei.com>
+References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
+In-Reply-To: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: cocci@systeme.lip6.fr
 
+> I removed the blank line at EOF,
+> then applied to linux-kbuild/misc.
 
+I have taken another look at this script for the semantic patch language.
+I imagined that I could refactor the shown SmPL disjunctions a bit.
+But I noticed then that these SmPL rules contain a development mistake.
 
-On 01/12/2018 02:37 AM, weiyongjun (A) wrote:
->>
->> On Thu, Jan 11, 2018 at 11:12:41AM +0000, Wei Yongjun wrote:
->>> In case of error, the function devm_iio_device_alloc() returns NULL
->>> pointer not ERR_PTR(). The IS_ERR() test in the return value check
->>> should be replaced with NULL test.
->>>
->>> Fixes: e2e6771c6462 ("IIO: ADC: add STM32 DFSDM sigma delta ADC
->> support")
->>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->>> ---
->>>  drivers/iio/adc/stm32-dfsdm-adc.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-
->> dfsdm-adc.c
->>> index e628d04..5e87140 100644
->>> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
->>> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
->>> @@ -1100,9 +1100,9 @@ static int stm32_dfsdm_adc_probe(struct
->> platform_device *pdev)
->>>  	dev_data = (const struct stm32_dfsdm_dev_data *)of_id->data;
->>>
->>>  	iio = devm_iio_device_alloc(dev, sizeof(*adc));
->>> -	if (IS_ERR(iio)) {
->>> +	if (!iio) {
->>>  		dev_err(dev, "%s: Failed to allocate IIO\n", __func__);
->>> -		return PTR_ERR(iio);
->>> +		return -ENOMEM;
->>>  	}
->>>
->>>  	adc = iio_priv(iio);
->>         ^^^^^^^^^^^^^^^^^^
->> This one doesn't return an error pointer either.  The check causes a
->> static check warning for me.  (It can't actually fail, though so maybe
->> it will return an error pointer in the future?)
-> 
-> It seems that we can simply remove the check since 'adc' can never
-> be an invalid address here.
+The deletion for a call of the function “memset” depends on the specification
+that a size determination is passed by the expression “E1”.
+The function “kmem_cache_alloc” was specified despite of the technical detail
+that this function does not get a parameter passed which would correspond
+to such a size information.
+https://elixir.free-electrons.com/linux/v4.15/source/tools/testing/radix-tree/linux/slab.h#L14
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/tools/testing/radix-tree/linux/slab.h?idS7659c08a7da298aa748854f65f2aa1f31b1378#n14
 
-Agree, i'm preparing patches for all issue you highlight,
+Thus I suggest to remove it from the first two SmPL rules and omit the rule “r4”.
+Will the rule set be more consistent then?
 
-Thanks for all your remarks
-Arnaud
-> 
-> Regards,
-> Yongjun Wei
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Regards,
+Markus
