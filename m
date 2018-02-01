@@ -1,22 +1,89 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Mon, 19 Feb 2018 17:37:14 +0000
-Subject: Re: [PATCH][V2] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
-Message-Id: <20180219173714.6frfl3nfq3gi4jsv@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Feb 2018 09:48:52 +0000
+Subject: [PATCH] coccinelle: reduce false positives
+Message-Id: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180216165505.20058-1-colin.king@canonical.com>
- <a97bab4dc79c4b7da76826843909cae9@AcuMS.aculab.com>
-In-Reply-To: <a97bab4dc79c4b7da76826843909cae9@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Laight <David.Laight@ACULAB.COM>
-Cc: 'Colin King' <colin.king@canonical.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: cocci@systeme.lip6.fr
 
-On Mon, Feb 19, 2018 at 12:19:16PM +0000, David Laight wrote:
-> This seems to be somewhat excessive 64bit maths on a 32bit system.
-> It is more than enough to make timelo/timehi 'unsigned int'.
+Some files use both a non-devm allocation and a devm_allocation.  Don't
+complain about a free when the same function contains a non-devm
+allocation.
 
-Do you see a difference in the generated code?
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks,
-Richard
+---
+ scripts/coccinelle/free/devm_free.cocci |   55 +++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/coccinelle/free/devm_free.cocci b/scripts/coccinelle/free/devm_free.cocci
+index c990d2c..b2a2cf8b 100644
+--- a/scripts/coccinelle/free/devm_free.cocci
++++ b/scripts/coccinelle/free/devm_free.cocci
+@@ -56,9 +56,62 @@ expression x;
+  x = devm_ioport_map(...)
+ )
+ 
++@safe depends on context || org || report exists@
++expression x;
++position p;
++@@
++
++(
++ x = kmalloc(...)
++|
++ x = kvasprintf(...)
++|
++ x = kasprintf(...)
++|
++ x = kzalloc(...)
++|
++ x = kmalloc_array(...)
++|
++ x = kcalloc(...)
++|
++ x = kstrdup(...)
++|
++ x = kmemdup(...)
++|
++ x = get_free_pages(...)
++|
++ x = request_irq(...)
++|
++ x = ioremap(...)
++|
++ x = ioremap_nocache(...)
++|
++ x = ioport_map(...)
++)
++...
++(
++ kfree@p(x)
++|
++ kzfree@p(x)
++|
++ __krealloc@p(x, ...)
++|
++ krealloc@p(x, ...)
++|
++ free_pages@p(x, ...)
++|
++ free_page@p(x)
++|
++ free_irq@p(x)
++|
++ iounmap@p(x)
++|
++ ioport_unmap@p(x)
++)
++
+ @pb@
+ expression r.x;
+-position p;
++position p != safe.p;
+ @@
+ 
+ (
+
