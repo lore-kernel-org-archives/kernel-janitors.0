@@ -1,33 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Feb 2018 09:15:34 +0000
-Subject: [PATCH] staging: lustre: selftest: freeing an error pointer
-Message-Id: <20180222091534.GD9883@mwanda>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Date: Thu, 01 Feb 2018 16:27:25 +0000
+Subject: Re: [PATCH] Input: adp5520-keys: Delete an error message for a failed memory allocation in adp5520_k
+Message-Id: <4e9d8aa4-3e01-4fb3-d0b5-42b02522a15e@analog.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9d0729d2-59ab-f116-aa12-0457ebde0041@users.sourceforge.net>
+In-Reply-To: <9d0729d2-59ab-f116-aa12-0457ebde0041@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We should just return directly if memdup_user() fails. The current code
-tries to free "param" which is an error pointer so it will Oops.
+On 27.01.2018 15:20, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 27 Jan 2018 15:15:52 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Fixes: 2baddf262e98 ("staging: lustre: use memdup_user to allocate memory and copy from user")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
 
-diff --git a/drivers/staging/lustre/lnet/selftest/conctl.c b/drivers/staging/lustre/lnet/selftest/conctl.c
-index 3c919a536e91..51497cf9a832 100644
---- a/drivers/staging/lustre/lnet/selftest/conctl.c
-+++ b/drivers/staging/lustre/lnet/selftest/conctl.c
-@@ -650,10 +650,8 @@ static int lst_test_add_ioctl(struct lstio_test_args *args)
- 	if (args->lstio_tes_param) {
- 		param = memdup_user(args->lstio_tes_param,
- 				    args->lstio_tes_param_len);
--		if (IS_ERR(param)) {
--			rc = PTR_ERR(param);
--			goto out;
--		}
-+		if (IS_ERR(param))
-+			return PTR_ERR(param);
- 	}
- 
- 	rc = -EFAULT;
+> ---
+>   drivers/input/keyboard/adp5520-keys.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/adp5520-keys.c b/drivers/input/keyboard/adp5520-keys.c
+> index f0b9b37bde58..72e01cb77881 100644
+> --- a/drivers/input/keyboard/adp5520-keys.c
+> +++ b/drivers/input/keyboard/adp5520-keys.c
+> @@ -91,10 +91,8 @@ static int adp5520_keys_probe(struct platform_device *pdev)
+>   		return -EINVAL;
+>   
+>   	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
+> -	if (!dev) {
+> -		dev_err(&pdev->dev, "failed to alloc memory\n");
+> +	if (!dev)
+>   		return -ENOMEM;
+> -	}
+>   
+>   	input = devm_input_allocate_device(&pdev->dev);
+>   	if (!input)
+> 
+
+
