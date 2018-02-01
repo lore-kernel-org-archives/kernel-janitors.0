@@ -1,25 +1,42 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 09 Feb 2018 23:52:51 +0000
-Subject: Re: [PATCH] scsi: pmcraid: remove redundant initializations of pointer 'ioadl'
-Message-Id: <yq1lgg1u3e4.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Feb 2018 17:10:18 +0000
+Subject: [PATCH] lan78xx: remove redundant initialization of pointer 'phydev'
+Message-Id: <20180201171018.22267-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206143410.32210-1-colin.king@canonical.com>
-In-Reply-To: <20180206143410.32210-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 6 Feb 2018 14:34:10 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Woojung Huh <woojung.huh@microchip.com>, Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Pointer phydev is initialized and this value is never read, phydev
+is immediately updated to a new value, hence this initialization
+is redundant and can be removed
 
-> There are several occurrances where pointer ioadl is initialized with a
-> value that is never read and where it is re-assigned a new value later
-> on, hence the initialization is redundant and can be removed.
+Cleans up clang warning:
+drivers/net/usb/lan78xx.c:2009:21: warning: Value stored to 'phydev'
+during its initialization is never read
 
-Applied to 4.17/scsi-queue.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/usb/lan78xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index ec56ff29aac4..60a604cc7647 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2006,7 +2006,7 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ {
+ 	int ret;
+ 	u32 mii_adv;
+-	struct phy_device *phydev = dev->net->phydev;
++	struct phy_device *phydev;
+ 
+ 	phydev = phy_find_first(dev->mdiobus);
+ 	if (!phydev) {
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.15.1
+
