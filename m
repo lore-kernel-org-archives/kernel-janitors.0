@@ -1,28 +1,53 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 22 Feb 2018 15:13:41 +0000
-Subject: Re: [PATCH] crypto: bfin_crc: Delete an error message for a failed memory allocation in bfin_crypto_
-Message-Id: <20180222151340.GK29815@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Feb 2018 17:29:21 +0000
+Subject: [PATCH] vmxnet3: remove redundant initialization of pointer 'rq'
+Message-Id: <20180201172921.22770-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601995f-79fd-8365-5dd3-4438a3515c28@users.sourceforge.net>
-In-Reply-To: <1601995f-79fd-8365-5dd3-4438a3515c28@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Shrikrishna Khare <skhare@vmware.com>, pv-drivers@vmware.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 09:42:26PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Feb 2018 21:34:54 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Pointer rq is being initialized but this value is never read, it
+is being updated inside a for-loop. Remove the initialization and
+move it into the scope of the for-loop.
+
+Cleans up clang warning:
+drivers/net/vmxnet3/vmxnet3_drv.c:2763:27: warning: Value stored
+to 'rq' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/vmxnet3/vmxnet3_drv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index cf95290b160c..8b39c160743d 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -2760,9 +2760,6 @@ static void
+ vmxnet3_adjust_rx_ring_size(struct vmxnet3_adapter *adapter)
+ {
+ 	size_t sz, i, ring0_size, ring1_size, comp_size;
+-	struct vmxnet3_rx_queue	*rq = &adapter->rx_queue[0];
+-
+-
+ 	if (adapter->netdev->mtu <= VMXNET3_MAX_SKB_BUF_SIZE -
+ 				    VMXNET3_MAX_ETH_HDR_SIZE) {
+ 		adapter->skb_buf_size = adapter->netdev->mtu +
+@@ -2794,7 +2791,8 @@ vmxnet3_adjust_rx_ring_size(struct vmxnet3_adapter *adapter)
+ 	comp_size = ring0_size + ring1_size;
+ 
+ 	for (i = 0; i < adapter->num_rx_queues; i++) {
+-		rq = &adapter->rx_queue[i];
++		struct vmxnet3_rx_queue	*rq = &adapter->rx_queue[i];
++
+ 		rq->rx_ring[0].size = ring0_size;
+ 		rq->rx_ring[1].size = ring1_size;
+ 		rq->comp_ring.size = comp_size;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.15.1
+
