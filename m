@@ -1,30 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Feb 2018 14:10:20 +0000
-Subject: Re: scripts/coccinelle/misc/shift.cocci: Refactoring?
-Message-Id: <a241776d-85bf-cbf1-067b-fbd0b80c0e5e@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Feb 2018 18:35:39 +0000
+Subject: [PATCH] ixgbevf: remove redundant initialization of variable 'dma'.
+Message-Id: <20180201183539.24776-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1518094434-12852-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1518094434-12852-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr, Julia Lawall <julia.lawall@lip6.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> +|
-> +WARN_ON(x op@p y)
-> +|
-> +WARN_ON_ONCE(x op@p y)
-> +|
+From: Colin Ian King <colin.king@canonical.com>
 
-Can it be nice to work with nested SmPL disjunctions so that a bit of
-duplicate SmPL code will be reduced?
+Variable dma is initialized with a value that is never read, later
+on it is re-assigned a new value, hence the initialization is redundant
+and can be removed.
 
+Cleans up clang warning:
+drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c:584:13: warning: Value
+stored to 'dma' during its initialization is never read
 
-> +coccilib.org.print_todo(j0[0], msg)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Will it be nicer to pass a string literal instead of a variable for the message
-as a method parameter?
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 9b3d43d28106..be50facec93f 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -558,7 +558,7 @@ static bool ixgbevf_alloc_mapped_page(struct ixgbevf_ring *rx_ring,
+ 				      struct ixgbevf_rx_buffer *bi)
+ {
+ 	struct page *page = bi->page;
+-	dma_addr_t dma = bi->dma;
++	dma_addr_t dma;
+ 
+ 	/* since we are recycling buffers we should seldom need to alloc */
+ 	if (likely(page))
+-- 
+2.15.1
 
-Regards,
-Markus
