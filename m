@@ -1,38 +1,52 @@
-From: Christopher Diaz Riveros <chrisadr@gentoo.org>
-Date: Tue, 20 Feb 2018 16:35:53 +0000
-Subject: [PATCH-next] staging: emxx_udc: Remove unneeded cast
-Message-Id: <20180220163553.14553-1-chrisadr@gentoo.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Thu, 01 Feb 2018 20:29:24 +0000
+Subject: Re: [Intel-wired-lan] [PATCH] ixgbevf: remove redundant initialization of variable 'dma'.
+Message-Id: <CAKgT0UdjYMWV4x7-yy4pkA_8cNY+Bvc4WvJ0yKYRKO5dWf9mTA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180201183539.24776-1-colin.king@canonical.com>
+In-Reply-To: <20180201183539.24776-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan <intel-wired-lan@lists.osuosl.org>, Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix Coccinelle alert:
+On Thu, Feb 1, 2018 at 10:35 AM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Variable dma is initialized with a value that is never read, later
+> on it is re-assigned a new value, hence the initialization is redundant
+> and can be removed.
+>
+> Cleans up clang warning:
+> drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c:584:13: warning: Value
+> stored to 'dma' during its initialization is never read
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-drivers/staging//emxx_udc/emxx_udc.c:2689:19-21: WARNING: casting value returned by memory allocation function to (u8 *) is useless.
+Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Christopher Diaz Riveros <chrisadr@gentoo.org>
----
- drivers/staging/emxx_udc/emxx_udc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
-index 7517001fb8f0..ad69a1e536a7 100644
---- a/drivers/staging/emxx_udc/emxx_udc.c
-+++ b/drivers/staging/emxx_udc/emxx_udc.c
-@@ -2686,7 +2686,7 @@ static int nbu2ss_ep_queue(
- 
- 	if (req->unaligned) {
- 		if (!ep->virt_buf)
--			ep->virt_buf = (u8 *)dma_alloc_coherent(
-+			ep->virt_buf = dma_alloc_coherent(
- 				NULL, PAGE_SIZE,
- 				&ep->phys_buf, GFP_ATOMIC | GFP_DMA);
- 		if (ep->epnum > 0)  {
--- 
-2.16.2
-
+> ---
+>  drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+> index 9b3d43d28106..be50facec93f 100644
+> --- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+> +++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+> @@ -558,7 +558,7 @@ static bool ixgbevf_alloc_mapped_page(struct ixgbevf_ring *rx_ring,
+>                                       struct ixgbevf_rx_buffer *bi)
+>  {
+>         struct page *page = bi->page;
+> -       dma_addr_t dma = bi->dma;
+> +       dma_addr_t dma;
+>
+>         /* since we are recycling buffers we should seldom need to alloc */
+>         if (likely(page))
+> --
+> 2.15.1
+>
+> _______________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
