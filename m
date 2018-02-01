@@ -1,31 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 17:36:46 +0000
-Subject: [PATCH 0/6] HID-Prodikeys: Adjustments for two function implementations
-Message-Id: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 01 Feb 2018 14:43:17 +0000
+Subject: Re: [PATCH] be2net: remove redundant initialization of 'head' and pointer txq
+Message-Id: <20180201.094317.1226307518693749272.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180131161425.15011-1-colin.king@canonical.com>
+In-Reply-To: <20180131161425.15011-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: colin.king@canonical.com
+Cc: sathya.perla@broadcom.com, ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 18:21:23 +0100
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 31 Jan 2018 16:14:25 +0000
 
-A few update suggestions were taken into account
-from static source code analysis.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable head is initialized to a value that is never read and is
+> being updated to a new value a few lines later, hence this
+> initialization is redundant and can be safely removed as well
+> as the now unused pointer txq.
+> 
+> Cleans up clang warning:
+> drivers/net/ethernet/emulex/benet/be_main.c:996:6: warning: Value
+> stored to 'head' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Markus Elfring (6):
-  Delete two error messages for a failed memory allocation in pk_probe()
-  Delete an unnecessary variable initialisation in pk_probe()
-  Move an assignment in pk_probe()
-  Delete an unnecessary return statement in pcmidi_send_note()
-  Combine two condition checks into one statement in pcmidi_send_note()
-  Rename a jump label in pcmidi_send_note()
-
- drivers/hid/hid-prodikeys.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
-
--- 
-2.16.1
-
+Applied, thank you.
