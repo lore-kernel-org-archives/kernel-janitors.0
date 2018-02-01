@@ -1,25 +1,35 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Tue, 06 Feb 2018 14:44:42 +0000
-Subject: Re: [PATCH][btrfs-next] btrfs: remove redundant check on ret and goto
-Message-Id: <20180206144442.GA31890@twin.jikos.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Feb 2018 12:28:40 +0000
+Subject: Re: Coccinelle: reduce false positives
+Message-Id: <9878b76a-bbd5-94d9-a08f-711a3c2abf30@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180112165258.27431-1-colin.king@canonical.com>
-In-Reply-To: <20180112165258.27431-1-colin.king@canonical.com>
+References: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, Liu Bo <bo.li.liu@oracle.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: cocci@systeme.lip6.fr, Julia Lawall <julia.lawall@lip6.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Fri, Jan 12, 2018 at 04:52:58PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check for a non-zero ret is redundant as the goto will jump to
-> the very next statement anyway.  Remove this extraneous code.
-> 
-> Detected by CoverityScan, CID#1463784 ("Identical code for different
-> branches")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> +@safe depends on context || org || report exists@
+> +expression x;
+> +position p;
+> +@@
+> +
+> +(
+> + x =3D kmalloc(...)
+> +|
+> + x =3D kvasprintf(...)
+=E2=80=A6
 
-Added to next, thanks.
+* How do you think about to reduce also a bit of duplicate SmPL code?
+
+* Can it help to work with nested SmPL disjunctions here?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
