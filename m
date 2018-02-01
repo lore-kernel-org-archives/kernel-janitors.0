@@ -1,54 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Feb 2018 08:39:41 +0000
-Subject: Re: Adjustments for a lot of function implementations
-Message-Id: <26a090fe-fb39-8f68-aa4e-ce4f9f6b0781@users.sourceforge.net>
+Date: Thu, 01 Feb 2018 16:24:10 +0000
+Subject: [PATCH] i2c-mux-reg: Delete an error message for a failed memory allocation in i2c_mux_reg_probe_dt(
+Message-Id: <224a8918-f882-9ab1-218c-83df93d4cb2f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
- <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
- <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
- <alpine.DEB.2.20.1710301745530.2160@hadrien>
- <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
- <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
- <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
- <f082b1ae-1be4-440a-6a81-68446c67243e@users.sourceforge.net>
- <ca67319a-622b-e35e-dfb5-045dd04b4deb@xs4all.nl>
-In-Reply-To: <ca67319a-622b-e35e-dfb5-045dd04b4deb@xs4all.nl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-i2c@vger.kernel.org, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, York Sun <yorksun@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
->> Do any contributors get into the mood to take another look at software updates
->> from my selection of change possibilities in a more constructive way?
->>
->> Do you need any additional development resources?
-> 
-> One last time: either post per-driver patches with all the cleanups for a driver
-> in a single patch,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Feb 2018 17:17:19 +0100
 
-I find such a change combination unsafe.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-> or a per-directory patch (drivers/media/pci, usb, etc) doing the same cleanup
-> for all drivers in that directory.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/muxes/i2c-mux-reg.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Would you dare to apply any (of my) scripts for the semantic patch language
-directly on the whole directory for multi-media software?
+diff --git a/drivers/i2c/muxes/i2c-mux-reg.c b/drivers/i2c/muxes/i2c-mux-reg.c
+index c948e5a4cb04..f624ed64a47b 100644
+--- a/drivers/i2c/muxes/i2c-mux-reg.c
++++ b/drivers/i2c/muxes/i2c-mux-reg.c
+@@ -127,10 +127,8 @@ static int i2c_mux_reg_probe_dt(struct regmux *mux,
+ 	values = devm_kzalloc(&pdev->dev,
+ 			      sizeof(*mux->data.values) * mux->data.n_values,
+ 			      GFP_KERNEL);
+-	if (!values) {
+-		dev_err(&pdev->dev, "Cannot allocate values array");
++	if (!values)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for_each_child_of_node(np, child) {
+ 		of_property_read_u32(child, "reg", values + i);
+-- 
+2.16.1
 
-
-> I prefer the first approach, but it's up to you.
-
-Can you handle bigger patches really better than similar patch series?
-
-
-> We don't have the time to wade through dozens of one-liner cleanup patches.
-
-Are there any further possibilities to consider around consequences
-from a general change resistance?
-
-Will any development (or management) tools like “quilt fold” make the regrouping
-of possible update steps more convenient and safer? 
-
-Regards,
-Markus
