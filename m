@@ -1,47 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 06 Feb 2018 22:10:05 +0000
-Subject: [PATCH] mm/ksm: make function stable_node_dup static
-Message-Id: <20180206221005.12642-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Feb 2018 16:57:00 +0000
+Subject: [PATCH 1/2] i2c-tiny-usb: Delete an error message for a failed memory allocation in i2c_tiny_usb_pro
+Message-Id: <39c40369-48ef-e245-4e19-4caf12e9f06b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
+In-Reply-To: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-i2c@vger.kernel.org, Till Harbaum <till@harbaum.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Feb 2018 17:36:50 +0100
 
-The function stable_node_dup is local to the source and does not need
-to be in global scope, so make it static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warning:
-mm/ksm.c:1321:13: warning: symbol 'stable_node_dup' was not
-declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- mm/ksm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-tiny-usb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 293721f5da70..30ebdbfaf373 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -1318,10 +1318,10 @@ bool is_page_sharing_candidate(struct stable_node *stable_node)
- 	return __is_page_sharing_candidate(stable_node, 0);
- }
+diff --git a/drivers/i2c/busses/i2c-tiny-usb.c b/drivers/i2c/busses/i2c-tiny-usb.c
+index a2e3dd715380..e210e36df123 100644
+--- a/drivers/i2c/busses/i2c-tiny-usb.c
++++ b/drivers/i2c/busses/i2c-tiny-usb.c
+@@ -230,10 +230,8 @@ static int i2c_tiny_usb_probe(struct usb_interface *interface,
  
--struct page *stable_node_dup(struct stable_node **_stable_node_dup,
--			     struct stable_node **_stable_node,
--			     struct rb_root *root,
--			     bool prune_stale_stable_nodes)
-+static struct page *stable_node_dup(struct stable_node **_stable_node_dup,
-+				    struct stable_node **_stable_node,
-+				    struct rb_root *root,
-+				    bool prune_stale_stable_nodes)
- {
- 	struct stable_node *dup, *found = NULL, *stable_node = *_stable_node;
- 	struct hlist_node *hlist_safe;
+ 	/* allocate memory for our device state and initialize it */
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (dev = NULL) {
+-		dev_err(&interface->dev, "Out of memory\n");
++	if (!dev)
+ 		goto error;
+-	}
+ 
+ 	dev->usb_dev = usb_get_dev(interface_to_usbdev(interface));
+ 	dev->interface = interface;
 -- 
-2.15.1
+2.16.1
 
