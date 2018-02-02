@@ -1,59 +1,27 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 04 Feb 2018 11:23:46 +0000
-Subject: Re: [PATCH] hid-sensor-accel-3d: Delete an error message for a failed memory allocation in hid_accel
-Message-Id: <20180204112346.0977e938@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 20:08:42 +0000
+Subject: [PATCH 0/2] HSI: ssi_protocol: Adjustments for two function implementations
+Message-Id: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
-In-Reply-To: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>, Sebastian Reichel <sre@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 31 Jan 2018 22:26:14 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 21:03:45 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 31 Jan 2018 22:20:56 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Marcus,
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in ssi_protocol_probe()
+  Fix a typo in two comment lines
 
-If making changes like this I would suggest only sending one until
-you have have a response from the relevant maintainer.
+ drivers/hsi/clients/ssi_protocol.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-It would save you time as often these sorts of changes are
-a matter of personal taste and weighing up of costs vs gains
-- hence it is not obvious that they will be accepted.
-
-Jonathan
-
-> ---
->  drivers/iio/accel/hid-sensor-accel-3d.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
-> index c066a3bdbff7..3d0acde40285 100644
-> --- a/drivers/iio/accel/hid-sensor-accel-3d.c
-> +++ b/drivers/iio/accel/hid-sensor-accel-3d.c
-> @@ -383,11 +383,9 @@ static int hid_accel_3d_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  	indio_dev->channels = kmemdup(channel_spec, channel_size, GFP_KERNEL);
-> -
-> -	if (!indio_dev->channels) {
-> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
-> +	if (!indio_dev->channels)
->  		return -ENOMEM;
-> -	}
-> +
->  	ret = accel_3d_parse_report(pdev, hsdev,
->  				(struct iio_chan_spec *)indio_dev->channels,
->  				hsdev->usage, accel_state);
+-- 
+2.16.1
 
