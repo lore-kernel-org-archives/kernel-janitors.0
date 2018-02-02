@@ -1,74 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Feb 2018 16:58:27 +0000
-Subject: [PATCH 2/2] i2c-tiny-usb: Return an error code only as a constant in i2c_tiny_usb_probe()
-Message-Id: <b6a54fdf-eb83-cf33-b3f9-d26d9be14d03@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 15:39:24 +0000
+Subject: [PATCH 1/2] i2c-nomadik: Delete an error message for a failed memory allocation in nmk_i2c_probe()
+Message-Id: <9448237a-67cb-0e7c-0837-ad1b89fc41a1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
-In-Reply-To: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
+References: <97f41346-6abb-1c14-f536-ad12bbcb4c60@users.sourceforge.net>
+In-Reply-To: <97f41346-6abb-1c14-f536-ad12bbcb4c60@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Till Harbaum <till@harbaum.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Feb 2018 17:45:21 +0100
+Date: Fri, 2 Feb 2018 16:25:14 +0100
 
-* Return an error code without storing it in an intermediate variable.
+Omit an extra message for a memory allocation failure in this function.
 
-* Delete the label "error" and local variable "retval"
-  which became unnecessary with this refactoring.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/busses/i2c-tiny-usb.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/i2c/busses/i2c-nomadik.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-tiny-usb.c b/drivers/i2c/busses/i2c-tiny-usb.c
-index e210e36df123..2416bb0d8a88 100644
---- a/drivers/i2c/busses/i2c-tiny-usb.c
-+++ b/drivers/i2c/busses/i2c-tiny-usb.c
-@@ -223,7 +223,6 @@ static int i2c_tiny_usb_probe(struct usb_interface *interface,
- 			      const struct usb_device_id *id)
- {
- 	struct i2c_tiny_usb *dev;
--	int retval = -ENOMEM;
- 	u16 version;
+diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
+index 49c7c0c91486..a783ad25fe19 100644
+--- a/drivers/i2c/busses/i2c-nomadik.c
++++ b/drivers/i2c/busses/i2c-nomadik.c
+@@ -975,7 +975,6 @@ static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id *id)
  
- 	dev_dbg(&interface->dev, "probing usb device\n");
-@@ -231,7 +230,7 @@ static int i2c_tiny_usb_probe(struct usb_interface *interface,
- 	/* allocate memory for our device state and initialize it */
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
--		goto error;
-+		return -ENOMEM;
- 
- 	dev->usb_dev = usb_get_dev(interface_to_usbdev(interface));
- 	dev->interface = interface;
-@@ -257,8 +256,8 @@ static int i2c_tiny_usb_probe(struct usb_interface *interface,
- 	if (usb_write(&dev->adapter, CMD_SET_DELAY, delay, 0, NULL, 0) != 0) {
- 		dev_err(&dev->adapter.dev,
- 			"failure setting delay to %dus\n", delay);
--		retval = -EIO;
--		goto error;
-+		i2c_tiny_usb_free(dev);
-+		return -EIO;
+ 	dev = devm_kzalloc(&adev->dev, sizeof(struct nmk_i2c_dev), GFP_KERNEL);
+ 	if (!dev) {
+-		dev_err(&adev->dev, "cannot allocate memory\n");
+ 		ret = -ENOMEM;
+ 		goto err_no_mem;
  	}
- 
- 	dev->adapter.dev.parent = &dev->interface->dev;
-@@ -270,12 +269,6 @@ static int i2c_tiny_usb_probe(struct usb_interface *interface,
- 	dev_info(&dev->adapter.dev, "connected i2c-tiny-usb device\n");
- 
- 	return 0;
--
-- error:
--	if (dev)
--		i2c_tiny_usb_free(dev);
--
--	return retval;
- }
- 
- static void i2c_tiny_usb_disconnect(struct usb_interface *interface)
 -- 
 2.16.1
 
