@@ -1,41 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 14 Feb 2018 16:10:36 +0000
-Subject: [PATCH][next] ASoC: uniphier: remove redundant check of blk_id
-Message-Id: <20180214161036.32446-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 15:00:07 +0000
+Subject: [PATCH 0/2] i2c-puv3: Adjustments for puv3_i2c_probe()
+Message-Id: <2fbd709c-2790-af6c-4fd4-0c8ec6b5b3d7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-i2c@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 15:54:32 +0100
 
-The check of blk_id = AUD_CLK_IO is redundant as it also being performed
-in the following switch statement with the same return of -ENOTSUPP. Fix
-this by removing the redundant comparison.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan, CID#1465227 ("Logically dead code")
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/uniphier/aio-cpu.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/i2c/busses/i2c-puv3.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
-index 55f3248a31fd..7cf2316c69a2 100644
---- a/sound/soc/uniphier/aio-cpu.c
-+++ b/sound/soc/uniphier/aio-cpu.c
-@@ -134,9 +134,6 @@ static int uniphier_aio_set_sysclk(struct snd_soc_dai *dai, int clk_id,
- 	bool pll_auto = false;
- 	int pll_id, div_id;
- 
--	if (clk_id = AUD_CLK_IO)
--		return -ENOTSUPP;
--
- 	switch (clk_id) {
- 	case AUD_CLK_IO:
- 		return -ENOTSUPP;
 -- 
-2.15.1
+2.16.1
 
