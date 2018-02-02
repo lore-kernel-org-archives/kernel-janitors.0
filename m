@@ -1,111 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Feb 2018 21:28:46 +0000
-Subject: [PATCH 3/4] HID: logitech-dj: Combine substrings for seven messages
-Message-Id: <c2521760-689d-772e-1e3c-401e51c8ca60@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 17:21:21 +0000
+Subject: [PATCH 1/2] i2c-davinci: Delete an error message for a failed memory allocation in davinci_i2c_probe
+Message-Id: <f890924b-ca68-253b-a7c8-fce269393867@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
-In-Reply-To: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
+References: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
+In-Reply-To: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2018 22:06:20 +0100
+Date: Fri, 2 Feb 2018 18:00:20 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-WARNING: quoted string split across lines
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-logitech-dj.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ drivers/i2c/busses/i2c-davinci.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 0da00d256ca7..f1496c6303ce 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -463,16 +463,17 @@ static void delayedwork_callback(struct work_struct *work)
- 				sizeof(struct dj_report));
+diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
+index cb24a3ffdfa2..71a9c29b3981 100644
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -784,10 +784,8 @@ static int davinci_i2c_probe(struct platform_device *pdev)
  
- 	if (count != sizeof(struct dj_report)) {
--		dev_err(&djrcv_dev->hdev->dev, "%s: workitem triggered without "
--			"notifications available\n", __func__);
-+		dev_err(&djrcv_dev->hdev->dev,
-+			"%s: workitem triggered without notifications available\n",
-+			__func__);
- 		spin_unlock_irqrestore(&djrcv_dev->lock, flags);
- 		return;
- 	}
+ 	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_i2c_dev),
+ 			GFP_KERNEL);
+-	if (!dev) {
+-		dev_err(&pdev->dev, "Memory allocation failed\n");
++	if (!dev)
+ 		return -ENOMEM;
+-	}
  
- 	if (!kfifo_is_empty(&djrcv_dev->notif_fifo)) {
- 		if (schedule_work(&djrcv_dev->work) = 0) {
--			dbg_hid("%s: did not schedule the work item, was "
--				"already queued\n", __func__);
-+			dbg_hid("%s: did not schedule the work item, was already queued\n",
-+				__func__);
- 		}
- 	}
- 
-@@ -502,8 +503,8 @@ static void delayedwork_callback(struct work_struct *work)
- 			break;
- 		}
- 		dev_err(&djrcv_dev->hdev->dev,
--			"%s:logi_dj_recv_query_paired_devices "
--			"error:%d\n", __func__, retval);
-+			"%s:logi_dj_recv_query_paired_devices error:%d\n",
-+			__func__, retval);
- 		}
- 		dbg_hid("%s: unexpected report type\n", __func__);
- 	}
-@@ -517,8 +518,8 @@ static void logi_dj_recv_queue_notification(struct dj_receiver_dev *djrcv_dev,
- 	kfifo_in(&djrcv_dev->notif_fifo, dj_report, sizeof(struct dj_report));
- 
- 	if (schedule_work(&djrcv_dev->work) = 0) {
--		dbg_hid("%s: did not schedule the work item, was already "
--			"queued\n", __func__);
-+		dbg_hid("%s: did not schedule the work item, was already queued\n",
-+			__func__);
- 	}
- }
- 
-@@ -541,8 +542,7 @@ static void logi_dj_recv_forward_null_report(struct dj_receiver_dev *djrcv_dev,
- 					     HID_INPUT_REPORT,
- 					     reportbuffer,
- 					     hid_reportid_size_map[i], 1)) {
--				dbg_hid("hid_input_report error sending null "
--					"report\n");
-+				dbg_hid("hid_input_report error sending null report\n");
- 			}
- 		}
- 	}
-@@ -770,8 +770,8 @@ static int logi_dj_ll_parse(struct hid_device *hid)
- 	}
- 
- 	if (djdev->reports_supported & STD_MOUSE) {
--		dbg_hid("%s: sending a mouse descriptor, reports_supported: "
--			"%x\n", __func__, djdev->reports_supported);
-+		dbg_hid("%s: sending a mouse descriptor, reports_supported: %x\n",
-+			__func__, djdev->reports_supported);
- 		rdcat(rdesc, &rsize, mse_descriptor, sizeof(mse_descriptor));
- 	}
- 
-@@ -1068,8 +1068,9 @@ static int logi_dj_probe(struct hid_device *hdev,
- 
- 	retval = logi_dj_recv_query_paired_devices(djrcv_dev);
- 	if (retval < 0) {
--		dev_err(&hdev->dev, "%s:logi_dj_recv_query_paired_devices "
--			"error:%d\n", __func__, retval);
-+		dev_err(&hdev->dev,
-+			"%s:logi_dj_recv_query_paired_devices error:%d\n",
-+			__func__, retval);
- 		goto logi_dj_recv_query_paired_devices_failed;
- 	}
- 
+ 	init_completion(&dev->cmd_complete);
+ #ifdef CONFIG_CPU_FREQ
 -- 
 2.16.1
 
