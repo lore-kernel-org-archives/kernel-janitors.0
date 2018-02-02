@@ -1,52 +1,43 @@
-From: Jack Wang <jinpu.wang@profitbricks.com>
-Date: Fri, 23 Feb 2018 10:42:08 +0000
-Subject: [stable 4.4 19/29] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
-Message-Id: <1519382538-15143-20-git-send-email-jinpu.wangl@profitbricks.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 15:02:12 +0000
+Subject: [PATCH 2/2] i2c-puv3: Improve a size determination in puv3_i2c_probe()
+Message-Id: <ab401452-cf6c-e4b0-eb8c-f9daf20c981c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1519382538-15143-1-git-send-email-jinpu.wangl@profitbricks.com>
-In-Reply-To: <1519382538-15143-1-git-send-email-jinpu.wangl@profitbricks.com>
+References: <2fbd709c-2790-af6c-4fd4-0c8ec6b5b3d7@users.sourceforge.net>
+In-Reply-To: <2fbd709c-2790-af6c-4fd4-0c8ec6b5b3d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, stable@vger.kernel.org
-Cc: Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>, kernel-janitors@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, Jack Wang <jinpu.wang@profitbricks.com>
+To: linux-i2c@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 15:43:21 +0100
 
-(cherry picked from commit e698dcdfcda41efd0984de539767b4cddd235f1e)
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Trivial fix to spelling mistake in pr_err error message text.
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[jwang: cherry pick to 4.4]
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/cpu/bugs.c | 2 +-
+ drivers/i2c/busses/i2c-puv3.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 812813e..6272c20 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -103,7 +103,7 @@ bool retpoline_module_ok(bool has_retpoline)
- 	if (spectre_v2_enabled = SPECTRE_V2_NONE || has_retpoline)
- 		return true;
+diff --git a/drivers/i2c/busses/i2c-puv3.c b/drivers/i2c/busses/i2c-puv3.c
+index 5bd001d01bef..929fd12b92de 100644
+--- a/drivers/i2c/busses/i2c-puv3.c
++++ b/drivers/i2c/busses/i2c-puv3.c
+@@ -196,7 +196,7 @@ static int puv3_i2c_probe(struct platform_device *pdev)
+ 	if (!request_mem_region(mem->start, resource_size(mem), "puv3_i2c"))
+ 		return -EBUSY;
  
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
- }
+-	adapter = kzalloc(sizeof(struct i2c_adapter), GFP_KERNEL);
++	adapter = kzalloc(sizeof(*adapter), GFP_KERNEL);
+ 	if (adapter = NULL) {
+ 		rc = -ENOMEM;
+ 		goto fail_nomem;
 -- 
-2.7.4
+2.16.1
 
