@@ -1,52 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 06 Feb 2018 17:29:46 +0000
-Subject: [PATCH 1/2] HID: asus: Delete an error message for a failed memory allocation in two functions
-Message-Id: <668be04b-719e-31e7-05bf-7f5e6d6e0a83@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 15:01:07 +0000
+Subject: [PATCH 1/2] i2c-puv3: Delete an error message for a failed memory allocation in puv3_i2c_probe()
+Message-Id: <3bf9bdc5-3bcc-373a-10c3-1d7c77633b5b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5289ace9-8927-9803-4692-c7c621ab0a8d@users.sourceforge.net>
-In-Reply-To: <5289ace9-8927-9803-4692-c7c621ab0a8d@users.sourceforge.net>
+References: <2fbd709c-2790-af6c-4fd4-0c8ec6b5b3d7@users.sourceforge.net>
+In-Reply-To: <2fbd709c-2790-af6c-4fd4-0c8ec6b5b3d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+To: linux-i2c@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Wolfram Sang <wsa@the-dreams.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2018 18:03:19 +0100
+Date: Fri, 2 Feb 2018 15:41:26 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-asus.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-puv3.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 6d2894b7d8e7..9573e0b41922 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -566,7 +566,6 @@ static int asus_start_multitouch(struct hid_device *hdev)
+diff --git a/drivers/i2c/busses/i2c-puv3.c b/drivers/i2c/busses/i2c-puv3.c
+index 287088b8c4c8..5bd001d01bef 100644
+--- a/drivers/i2c/busses/i2c-puv3.c
++++ b/drivers/i2c/busses/i2c-puv3.c
+@@ -198,7 +198,6 @@ static int puv3_i2c_probe(struct platform_device *pdev)
  
- 	if (!dmabuf) {
- 		ret = -ENOMEM;
--		hid_err(hdev, "Asus failed to alloc dma buf: %d\n", ret);
- 		return ret;
+ 	adapter = kzalloc(sizeof(struct i2c_adapter), GFP_KERNEL);
+ 	if (adapter = NULL) {
+-		dev_err(&pdev->dev, "can't allocate interface!\n");
+ 		rc = -ENOMEM;
+ 		goto fail_nomem;
  	}
- 
-@@ -599,10 +598,8 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	struct asus_drvdata *drvdata;
- 
- 	drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (drvdata = NULL) {
--		hid_err(hdev, "Can't alloc Asus descriptor\n");
-+	if (!drvdata)
- 		return -ENOMEM;
--	}
- 
- 	hid_set_drvdata(hdev, drvdata);
- 
 -- 
 2.16.1
 
