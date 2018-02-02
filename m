@@ -1,70 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 26 Feb 2018 11:17:31 +0000
-Subject: Applied "ASoC: sirf: remove duplicated bit-wise or of USP_RXFIFO_THD_INT" to the asoc tree
-Message-Id: <E1eqGmh-0005VX-8k@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 16:45:06 +0000
+Subject: [PATCH] i2c-ibm_iic: Delete an error message for a failed memory allocation in iic_probe()
+Message-Id: <3c085530-c0d4-e2b2-8dcd-393ef7571243@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180223124117.24686-1-colin.king@canonical.com>
-In-Reply-To: <20180223124117.24686-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Barry Song <baohua@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 17:24:57 +0100
 
-   ASoC: sirf: remove duplicated bit-wise or of USP_RXFIFO_THD_INT
+Omit an extra message for a memory allocation failure in this function.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From f49f49aa1541615f1f77bf2c62f184459825ed92 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 12:41:17 +0000
-Subject: [PATCH] ASoC: sirf: remove duplicated bit-wise or of
- USP_RXFIFO_THD_INT
-
-Bit pattern USP_RXFIFO_THD_INT is being bit-wise or'd twice;
-remove the redundant 2nd USP_RXFIFO_THD_INT
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/sirf/sirf-usp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-ibm_iic.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/sirf/sirf-usp.h b/sound/soc/sirf/sirf-usp.h
-index bf0201cb15bc..e22e13a619e8 100644
---- a/sound/soc/sirf/sirf-usp.h
-+++ b/sound/soc/sirf/sirf-usp.h
-@@ -154,7 +154,7 @@
- 					USP_RX_IO_DMA_INT|\
- 					USP_RXFIFO_FULL_INT|\
- 					USP_RXFIFO_THD_INT|\
--					USP_RXFIFO_THD_INT|USP_RX_TIMEOUT_INT)
-+					USP_RX_TIMEOUT_INT)
+diff --git a/drivers/i2c/busses/i2c-ibm_iic.c b/drivers/i2c/busses/i2c-ibm_iic.c
+index 961c5f42d956..1bd4d6dde0fe 100644
+--- a/drivers/i2c/busses/i2c-ibm_iic.c
++++ b/drivers/i2c/busses/i2c-ibm_iic.c
+@@ -702,10 +702,8 @@ static int iic_probe(struct platform_device *ofdev)
+ 	int ret;
  
- #define USP_INT_ALL        0x1FFF
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (!dev) {
+-		dev_err(&ofdev->dev, "failed to allocate device data\n");
++	if (!dev)
+ 		return -ENOMEM;
+-	}
+ 
+ 	platform_set_drvdata(ofdev, dev);
  
 -- 
 2.16.1
