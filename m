@@ -1,78 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 12 Feb 2018 12:52:31 +0000
-Subject: Applied "ASoC: Intel: Skylake: make function skl_clk_round_rate static" to the asoc tree
-Message-Id: <E1elDax-0006Yt-6k@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 18:12:27 +0000
+Subject: [PATCH 1/2] i2c-bfin-twi: Delete an error message for a failed memory allocation in i2c_bfin_twi_pro
+Message-Id: <cfd1ee7e-6f4d-7d05-b857-a509887a6bc4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180208143530.11450-1-colin.king@canonical.com>
-In-Reply-To: <20180208143530.11450-1-colin.king@canonical.com>
+References: <740e31b4-79dd-a4bf-a2f5-001c44864b79@users.sourceforge.net>
+In-Reply-To: <740e31b4-79dd-a4bf-a2f5-001c44864b79@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 18:55:04 +0100
 
-   ASoC: Intel: Skylake: make function skl_clk_round_rate static
+Omit an extra message for a memory allocation failure in this function.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 29c5b8fd8c07a42b07383c5fac47173d882f74b2 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 8 Feb 2018 14:35:30 +0000
-Subject: [PATCH] ASoC: Intel: Skylake: make function skl_clk_round_rate static
-
-The function skl_clk_round_rate is local to the source and does not
-need to be in global scope, so make it static.
-
-Cleans up sparse warning:
-sound/soc/intel/skylake/skl-ssp-clk.c:250:6: warning: symbol
-'skl_clk_round_rate' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/skylake/skl-ssp-clk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-bfin-twi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
-index 7fbddf5e3b00..cda1b5fa7436 100644
---- a/sound/soc/intel/skylake/skl-ssp-clk.c
-+++ b/sound/soc/intel/skylake/skl-ssp-clk.c
-@@ -247,8 +247,8 @@ static unsigned long skl_clk_recalc_rate(struct clk_hw *hw,
- }
+diff --git a/drivers/i2c/busses/i2c-bfin-twi.c b/drivers/i2c/busses/i2c-bfin-twi.c
+index ff3343186a82..ed596fd56b8b 100644
+--- a/drivers/i2c/busses/i2c-bfin-twi.c
++++ b/drivers/i2c/busses/i2c-bfin-twi.c
+@@ -621,10 +621,8 @@ static int i2c_bfin_twi_probe(struct platform_device *pdev)
  
- /* Not supported by clk driver. Implemented to satisfy clk fw */
--long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *parent_rate)
-+static long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
- {
- 	return rate;
- }
+ 	iface = devm_kzalloc(&pdev->dev, sizeof(struct bfin_twi_iface),
+ 			GFP_KERNEL);
+-	if (!iface) {
+-		dev_err(&pdev->dev, "Cannot allocate memory\n");
++	if (!iface)
+ 		return -ENOMEM;
+-	}
+ 
+ 	spin_lock_init(&(iface->lock));
+ 
 -- 
 2.16.1
 
