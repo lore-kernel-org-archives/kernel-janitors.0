@@ -1,42 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 20:54:03 +0000
-Subject: [PATCH] dmaengine: at_xdmac: Delete an error message for a failed memory allocation in at_xdmac_prob
-Message-Id: <980fa869-f75b-3436-a329-09613e2ab915@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 14:20:43 +0000
+Subject: [PATCH 0/2] i2c-sh7760: Adjustments for sh7760_i2c_probe()
+Message-Id: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Vinod Koul <vinod.koul@intel.com>
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 21:48:26 +0100
+Date: Fri, 2 Feb 2018 15:18:29 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/dma/at_xdmac.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-sh7760.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
-index c00e3923d7d8..818ab96f9601 100644
---- a/drivers/dma/at_xdmac.c
-+++ b/drivers/dma/at_xdmac.c
-@@ -1950,10 +1950,8 @@ static int at_xdmac_probe(struct platform_device *pdev)
- 	size = sizeof(*atxdmac);
- 	size += nr_channels * sizeof(struct at_xdmac_chan);
- 	atxdmac = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
--	if (!atxdmac) {
--		dev_err(&pdev->dev, "can't allocate at_xdmac structure\n");
-+	if (!atxdmac)
- 		return -ENOMEM;
--	}
- 
- 	atxdmac->regs = base;
- 	atxdmac->irq = irq;
 -- 
 2.16.1
 
