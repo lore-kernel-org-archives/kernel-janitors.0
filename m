@@ -1,24 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 26 Feb 2018 16:34:05 +0000
-Subject: Re: [PATCH] sfc: falcon: remove duplicated bit-wise or of LOOPBACK_SGMII
-Message-Id: <20180226.113405.1105061701822631136.davem@davemloft.net>
+From: Steffen Klassert <steffen.klassert@secunet.com>
+Date: Fri, 02 Feb 2018 07:37:50 +0000
+Subject: Re: [PATCH] esp4: remove redundant initialization of pointer esph
+Message-Id: <20180202073750.t5gcqfp7cv7vdxiu@gauss3.secunet.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180223140056.27219-1-colin.king@canonical.com>
-In-Reply-To: <20180223140056.27219-1-colin.king@canonical.com>
+References: <20180130145348.32202-1-colin.king@canonical.com>
+In-Reply-To: <20180130145348.32202-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: linux-net-drivers@solarflare.com, ecree@solarflare.com, bkenward@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 14:00:56 +0000
-
+On Tue, Jan 30, 2018 at 02:53:48PM +0000, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Bit pattern LOOPBACK_SGMII is being bit-wise or'd twice; remove the
-> redundant 2nd LOOPBACK_SGMII
+> Pointer esph is being assigned a value that is never read, esph is
+> re-assigned and only read inside an if statement, hence the
+> initialization is redundant and can be removed.
+> 
+> Cleans up clang warning:
+> net/ipv4/esp4.c:657:21: warning: Value stored to 'esph' during
+> its initialization is never read
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied to net-next, thanks.
+I've queued this for ipsec-next, will be applied
+after the merge window.
