@@ -1,29 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Feb 2018 21:24:40 +0000
-Subject: [PATCH 0/4] HID: logitech-dj: Adjustments for some function implementations
-Message-Id: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 14:22:21 +0000
+Subject: [PATCH 2/2] i2c-sh7760: Improve a size determination in sh7760_i2c_probe()
+Message-Id: <51f963df-4ad0-22a9-5d27-67facfac7a27@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
+In-Reply-To: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2018 22:22:11 +0100
+Date: Fri, 2 Feb 2018 14:50:09 +0100
 
-A few update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in four functions
-  Combine substrings for seven messages
-  Fix a typo in a comment line
+This issue was detected by using the Coccinelle software.
 
- drivers/hid/hid-logitech-dj.c | 53 +++++++++++++++++++------------------------
- 1 file changed, 23 insertions(+), 30 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/busses/i2c-sh7760.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/i2c/busses/i2c-sh7760.c b/drivers/i2c/busses/i2c-sh7760.c
+index 4d2e4d10600b..62bc23b9acbb 100644
+--- a/drivers/i2c/busses/i2c-sh7760.c
++++ b/drivers/i2c/busses/i2c-sh7760.c
+@@ -443,7 +443,7 @@ static int sh7760_i2c_probe(struct platform_device *pdev)
+ 		goto out0;
+ 	}
+ 
+-	id = kzalloc(sizeof(struct cami2c), GFP_KERNEL);
++	id = kzalloc(sizeof(*id), GFP_KERNEL);
+ 	if (!id) {
+ 		ret = -ENOMEM;
+ 		goto out0;
 -- 
 2.16.1
 
