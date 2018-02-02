@@ -1,41 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 16:32:55 +0000
-Subject: [PATCH][ACPI-next] ACPI: battery: make function __battery_hook_unregister static
-Message-Id: <20180223163255.3899-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 20:09:53 +0000
+Subject: [PATCH 1/2] HSI: ssi_protocol: Delete an error message for a failed memory allocation in ssi_protoco
+Message-Id: <77f958da-a645-69c9-8641-d37a073c0d53@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
+In-Reply-To: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J . Wysock" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>, Sebastian Reichel <sre@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 2 Feb 2018 20:02:17 +0100
 
-The function __battery_hook_unregister is local to the source and does
-not need to be in global scope, so make it static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warning:
-drivers/acpi/battery.c:654:6: warning: symbol '__battery_hook_unregister'
-was not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/battery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hsi/clients/ssi_protocol.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-index cfdef4c1d097..b4580b2e8706 100644
---- a/drivers/acpi/battery.c
-+++ b/drivers/acpi/battery.c
-@@ -651,7 +651,7 @@ static LIST_HEAD(acpi_battery_list);
- static LIST_HEAD(battery_hook_list);
- static DEFINE_MUTEX(hook_mutex);
+diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_protocol.c
+index 9b167bc6eee4..0bccea2fa119 100644
+--- a/drivers/hsi/clients/ssi_protocol.c
++++ b/drivers/hsi/clients/ssi_protocol.c
+@@ -1088,10 +1088,8 @@ static int ssi_protocol_probe(struct device *dev)
+ 	int err;
  
--void __battery_hook_unregister(struct acpi_battery_hook *hook, int lock)
-+static void __battery_hook_unregister(struct acpi_battery_hook *hook, int lock)
- {
- 	struct acpi_battery *battery;
- 	/*
+ 	ssi = kzalloc(sizeof(*ssi), GFP_KERNEL);
+-	if (!ssi) {
+-		dev_err(dev, "No memory for ssi protocol\n");
++	if (!ssi)
+ 		return -ENOMEM;
+-	}
+ 
+ 	spin_lock_init(&ssi->lock);
+ 	timer_setup(&ssi->rx_wd, ssip_rx_wd, TIMER_DEFERRABLE);
 -- 
-2.15.1
+2.16.1
 
