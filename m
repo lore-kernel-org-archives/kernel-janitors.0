@@ -1,45 +1,20 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 06 Feb 2018 14:45:13 +0000
-Subject: [PATCH 1/3] hid-lg: Delete an error message for a failed memory allocation in lg_probe()
-Message-Id: <14c9b364-5a38-88f3-0cd4-913ca95dfc31@users.sourceforge.net>
+From: jiangyiwen <jiangyiwen@huawei.com>
+Date: Fri, 02 Feb 2018 13:31:37 +0000
+Subject: [V9fs-developer] [RFC] why set SB_NOATIME in v9fs_fill_super by default
+Message-Id: <5A746839.9020602@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c76a767-b1cb-2486-f24d-0d5a220b8985@users.sourceforge.net>
-In-Reply-To: <5c76a767-b1cb-2486-f24d-0d5a220b8985@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Eduard Shishkin <Eduard.Shishkin@huawei.com>, "Wangguoli (Andy)" <andy.wangguoli@huawei.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2018 14:25:32 +0100
+Hi all,
 
-Omit an extra message for a memory allocation failure in this function.
+I found v9fs always set SB_NOATIME into sb->s_flags in v9fs_fill_super,
+even if user use mount option relatime, I am very curious about this
+thing, can anyone tell me?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-lg.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/hid/hid-lg.c b/drivers/hid/hid-lg.c
-index 596227ddb6e0..f4439dc64497 100644
---- a/drivers/hid/hid-lg.c
-+++ b/drivers/hid/hid-lg.c
-@@ -728,10 +728,9 @@ static int lg_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	}
- 
- 	drv_data = kzalloc(sizeof(struct lg_drv_data), GFP_KERNEL);
--	if (!drv_data) {
--		hid_err(hdev, "Insufficient memory, cannot allocate driver data\n");
-+	if (!drv_data)
- 		return -ENOMEM;
--	}
-+
- 	drv_data->quirks = id->driver_data;
- 
- 	hid_set_drvdata(hdev, (void *)drv_data);
--- 
-2.16.1
+Thanks,
+Yiwen Jiang.
 
