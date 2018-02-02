@@ -1,55 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 07 Feb 2018 21:00:11 +0000
-Subject: [PATCH] drm/msm/mdp5: Delete an error message for a failed memory allocation in two functions
-Message-Id: <7726fab0-dbe4-9d70-36a8-17d6078a39ce@users.sourceforge.net>
+Date: Fri, 02 Feb 2018 15:40:17 +0000
+Subject: [PATCH 2/2] i2c-nomadik: Improve a size determination in nmk_i2c_probe()
+Message-Id: <bca34c12-2139-586d-1e7b-87827dce7c58@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <97f41346-6abb-1c14-f536-ad12bbcb4c60@users.sourceforge.net>
+In-Reply-To: <97f41346-6abb-1c14-f536-ad12bbcb4c60@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Archit Taneja <architt@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Neil Armstrong <narmstrong@baylibre.com>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Rob Clark <robdclark@gmail.com>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 7 Feb 2018 21:50:07 +0100
+Date: Fri, 2 Feb 2018 16:28:20 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c | 1 -
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c | 4 +---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-nomadik.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
-index 439e0a300e25..daa224df4457 100644
---- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
-@@ -717,7 +717,6 @@ struct mdp5_ctl_manager *mdp5_ctlm_init(struct drm_device *dev,
+diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
+index a783ad25fe19..e353b528140e 100644
+--- a/drivers/i2c/busses/i2c-nomadik.c
++++ b/drivers/i2c/busses/i2c-nomadik.c
+@@ -973,7 +973,7 @@ static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id *id)
+ 	struct i2c_vendor_data *vendor = id->data;
+ 	u32 max_fifo_threshold = (vendor->fifodepth / 2) - 1;
  
- 	ctl_mgr = kzalloc(sizeof(*ctl_mgr), GFP_KERNEL);
- 	if (!ctl_mgr) {
--		dev_err(dev->dev, "failed to allocate CTL manager\n");
+-	dev = devm_kzalloc(&adev->dev, sizeof(struct nmk_i2c_dev), GFP_KERNEL);
++	dev = devm_kzalloc(&adev->dev, sizeof(*dev), GFP_KERNEL);
+ 	if (!dev) {
  		ret = -ENOMEM;
- 		goto fail;
- 	}
-diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-index 3e9bba4d6624..5bf54ca7ab0a 100644
---- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-@@ -844,10 +844,8 @@ static int interface_init(struct mdp5_kms *mdp5_kms)
- 			continue;
- 
- 		intf = kzalloc(sizeof(*intf), GFP_KERNEL);
--		if (!intf) {
--			dev_err(dev->dev, "failed to construct INTF%d\n", i);
-+		if (!intf)
- 			return -ENOMEM;
--		}
- 
- 		intf->num = i;
- 		intf->type = intf_types[i];
+ 		goto err_no_mem;
 -- 
 2.16.1
 
