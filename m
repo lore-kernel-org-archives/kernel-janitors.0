@@ -1,53 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 14:23:53 +0000
-Subject: [PATCH 2/2] pata_it821x: Use common error handling code in it821x_firmware_command()
-Message-Id: <6fc4ab6f-1168-d362-6a92-7d79b90489a2@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 21:00:40 +0000
+Subject: [PATCH 2/2] HID: ntrig: Improve a size determination in ntrig_probe()
+Message-Id: <cdf13343-71ff-1ebe-d90e-f480febbe45f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
-In-Reply-To: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
+References: <86d02ef2-0ac2-5462-0ff0-a0cd87c3d1f7@users.sourceforge.net>
+In-Reply-To: <86d02ef2-0ac2-5462-0ff0-a0cd87c3d1f7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 14:40:42 +0100
+Date: Sat, 3 Feb 2018 21:48:39 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Reorder three function calls.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/ata/pata_it821x.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/hid/hid-ntrig.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/pata_it821x.c b/drivers/ata/pata_it821x.c
-index 46eacb6b93dd..6470112e5b48 100644
---- a/drivers/ata/pata_it821x.c
-+++ b/drivers/ata/pata_it821x.c
-@@ -675,9 +675,8 @@ static u8 *it821x_firmware_command(struct ata_port *ap, u8 cmd, int len)
- 	while(n++ < 10) {
- 		status = ioread8(ap->ioaddr.status_addr);
- 		if (status & ATA_ERR) {
--			kfree(buf);
- 			printk(KERN_ERR "it821x_firmware_command: rejected\n");
--			return NULL;
-+			goto free_buffer;
- 		}
- 		if (status & ATA_DRQ) {
- 			ioread16_rep(ap->ioaddr.data_addr, buf, len/2);
-@@ -687,6 +686,8 @@ static u8 *it821x_firmware_command(struct ata_port *ap, u8 cmd, int len)
- 	}
--	kfree(buf);
-+
- 	printk(KERN_ERR "it821x_firmware_command: timeout\n");
-+free_buffer:
-+	kfree(buf);
- 	return NULL;
- }
+diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
+index 2a8dafaea2f0..c6878a6a147c 100644
+--- a/drivers/hid/hid-ntrig.c
++++ b/drivers/hid/hid-ntrig.c
+@@ -904,7 +904,7 @@ static int ntrig_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		hdev->quirks |= HID_QUIRK_MULTI_INPUT
+ 				| HID_QUIRK_NO_INIT_REPORTS;
+ 
+-	nd = kmalloc(sizeof(struct ntrig_data), GFP_KERNEL);
++	nd = kmalloc(sizeof(*nd), GFP_KERNEL);
+ 	if (!nd)
+ 		return -ENOMEM;
  
 -- 
 2.16.1
