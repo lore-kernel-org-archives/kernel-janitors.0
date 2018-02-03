@@ -1,44 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Feb 2018 07:25:28 +0000
-Subject: [PATCH 2/2] regmap-i2c: Off by one in regmap_i2c_smbus_i2c_read/write()
-Message-Id: <20180208072528.GB18158@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 17:38:57 +0000
+Subject: [PATCH 2/6] hid-prodikeys: Delete an unnecessary variable initialisation in pk_probe()
+Message-Id: <fce3ae0c-3467-f6be-519b-79b592691153@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20180208072344.GA18158@mwanda>
+References: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
+In-Reply-To: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The commit message says that we are allowed to read and write up to 32
-bytes but the code only allows us to write 31 bytes.  In other words,
-the ">=" should be changed to ">".  But this is already checked in
-regmap_raw_read()/write() so we can just remove the if statemetents.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 14:45:24 +0100
 
-Fixes: 29332534e2b6 ("regmap-i2c: Add smbus i2c block support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The local variable "pm" will eventually be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Not tested.
+ drivers/hid/hid-prodikeys.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap-i2c.c b/drivers/base/regmap/regmap-i2c.c
-index 4735318f4268..056acde5e7d3 100644
---- a/drivers/base/regmap/regmap-i2c.c
-+++ b/drivers/base/regmap/regmap-i2c.c
-@@ -217,8 +217,6 @@ static int regmap_i2c_smbus_i2c_write(void *context, const void *data,
+diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
+index 9cad4973a67b..2e79dfc92162 100644
+--- a/drivers/hid/hid-prodikeys.c
++++ b/drivers/hid/hid-prodikeys.c
+@@ -798,6 +798,6 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	unsigned short ifnum = intf->cur_altsetting->desc.bInterfaceNumber;
+ 	unsigned long quirks = id->driver_data;
+ 	struct pk_device *pk;
+-	struct pcmidi_snd *pm = NULL;
++	struct pcmidi_snd *pm;
  
- 	if (count < 1)
- 		return -EINVAL;
--	if (count >= I2C_SMBUS_BLOCK_MAX)
--		return -E2BIG;
- 
- 	--count;
- 	return i2c_smbus_write_i2c_block_data(i2c, ((u8 *)data)[0], count,
-@@ -235,8 +233,6 @@ static int regmap_i2c_smbus_i2c_read(void *context, const void *reg,
- 
- 	if (reg_size != 1 || val_size < 1)
- 		return -EINVAL;
--	if (val_size >= I2C_SMBUS_BLOCK_MAX)
--		return -E2BIG;
- 
- 	ret = i2c_smbus_read_i2c_block_data(i2c, ((u8 *)reg)[0], val_size, val);
- 	if (ret = val_size)
+ 	pk = kzalloc(sizeof(*pk), GFP_KERNEL);
+-- 
+2.16.1
+
