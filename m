@@ -1,55 +1,49 @@
-From: Christopher Diaz Riveros <chrisadr@gentoo.org>
-Date: Wed, 21 Feb 2018 16:56:46 +0000
-Subject: [RFC] sched/headers: comments clean up <linux/sched.h>
-Message-Id: <20180221165646.15432-1-chrisadr@gentoo.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 17:39:58 +0000
+Subject: [PATCH 3/6] hid-prodikeys: Move an assignment in pk_probe()
+Message-Id: <44c2767f-c66c-3b36-4bd1-059d5d2f4461@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1518787521.2464.20.camel@gentoo.org>
-In-Reply-To: <1518787521.2464.20.camel@gentoo.org>
+References: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
+In-Reply-To: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: juri.lelli@gmail.com, peterz@infradead.org, mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Remove inline comments to merge them into comment blocks.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 17:20:01 +0100
 
-Enhance readability from source code by giving descriptions from the
-structures and data in comment blocks instead from inline comments.
+Move one assignment for a data structure member in one local variable
+so that its setting will only be performed after a corresponding memory
+allocation succeeded by this function.
 
-Signed-off-by: Christopher Diaz Riveros <chrisadr@gentoo.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- include/linux/sched.h | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/hid/hid-prodikeys.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index b161ef8a902e..693a6e51ed0c 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -221,12 +221,21 @@ struct task_cputime {
- #define prof_exp			stime
- #define sched_exp			sum_exec_runtime
+diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
+index 2e79dfc92162..7672f723b268 100644
+--- a/drivers/hid/hid-prodikeys.c
++++ b/drivers/hid/hid-prodikeys.c
+@@ -804,8 +804,6 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	if (!pk)
+ 		return -ENOMEM;
  
-+/*
-+ * vtime_state states:
-+ *
-+ * @VTIME_INACTIVE tells if task is sleeping or running in a CPU with
-+ * VTIME inactive.
-+ *
-+ * @VTIME_USER tells if task is running in userspace in a CPU with
-+ * VTIME active.
-+ *
-+ * @VTIME_SYS tells if task is running in kernelspace in a CPU with
-+ * VTIME active.
-+ */
- enum vtime_state {
--	/* Task is sleeping or running in a CPU with VTIME inactive: */
- 	VTIME_INACTIVE = 0,
--	/* Task runs in userspace in a CPU with VTIME active: */
- 	VTIME_USER,
--	/* Task runs in kernelspace in a CPU with VTIME active: */
- 	VTIME_SYS,
- };
+-	pk->hdev = hdev;
+-
+ 	pm = kzalloc(sizeof(*pm), GFP_KERNEL);
+ 	if (pm = NULL) {
+ 		ret = -ENOMEM;
+@@ -814,6 +812,7 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
  
+ 	pm->pk = pk;
+ 	pk->pm = pm;
++	pk->hdev = hdev;
+ 	pm->ifnum = ifnum;
+ 
+ 	hid_set_drvdata(hdev, pk);
 -- 
-2.16.2
+2.16.1
 
