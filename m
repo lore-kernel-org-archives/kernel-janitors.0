@@ -1,34 +1,52 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 22 Feb 2018 15:12:30 +0000
-Subject: Re: [PATCH 0/4] Ux500 crypto: Adjustments for ux500_cryp_probe()
-Message-Id: <20180222151230.GF29815@gondor.apana.org.au>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Feb 2018 07:44:58 +0000
+Subject: [PATCH] coccinelle: deref_null: avoid useless computation
+Message-Id: <1517643898-2801-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Geliang Tang <geliangtang@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-On Wed, Feb 14, 2018 at 11:16:39AM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Feb 2018 11:12:34 +0100
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (4):
->   Delete an error message for a failed memory allocation
->   Adjust two condition checks
->   Adjust an error message
->   Delete two unnecessary variable initialisations
-> 
->  drivers/crypto/ux500/cryp/cryp_core.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
+The effect of the rules ifm1, pr11, and pr12 is only used in the final rule,
+which depends on context && !org && !report.  Thus these rules should only
+be performed in those circumstances.
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ scripts/coccinelle/null/deref_null.cocci |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/coccinelle/null/deref_null.cocci b/scripts/coccinelle/null/deref_null.cocci
+index f192d60..b16ccb7 100644
+--- a/scripts/coccinelle/null/deref_null.cocci
++++ b/scripts/coccinelle/null/deref_null.cocci
+@@ -212,7 +212,7 @@ else S3
+ // The following three rules are duplicates of ifm, pr1 and pr2 respectively.
+ // It is need because the previous rule as already made a "change".
+ 
+-@ifm1@
++@ifm1 depends on context && !org && !report@
+ expression *E;
+ statement S1,S2;
+ position p1;
+@@ -220,7 +220,7 @@ position p1;
+ 
+ if@p1 ((E = NULL && ...) || ...) S1 else S2
+ 
+-@pr11 expression@
++@pr11 depends on context && !org && !report expression@
+ expression *ifm1.E;
+ identifier f;
+ position p1;
+@@ -228,7 +228,7 @@ position p1;
+ 
+  (E != NULL && ...) ? <+...E->f@p1...+> : ...
+ 
+-@pr12 expression@
++@pr12 depends on context && !org && !report expression@
+ expression *ifm1.E;
+ identifier f;
+ position p2;
+
