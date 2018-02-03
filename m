@@ -1,43 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Feb 2018 07:23:44 +0000
-Subject: [PATCH 1/2] regmap: Fix reversed bounds check in regmap_raw_write()
-Message-Id: <20180208072344.GA18158@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 08:19:21 +0000
+Subject: [PATCH] hid-saitek: Delete an error message for a failed memory allocation in saitek_probe()
+Message-Id: <e04a936f-9925-3808-9274-6cffe3c63cc3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We're supposed to be checking that "val_len" is not too large but
-instead we check if it is smaller than the max.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 09:12:24 +0100
 
-The only function affected would be regmap_i2c_smbus_i2c_write() in
-drivers/base/regmap/regmap-i2c.c.  Strangely that function has its own
-limit check which returns an error if (count >= I2C_SMBUS_BLOCK_MAX) so
-it doesn't look like it has ever been able to do anything except return
-an error.
+Omit an extra message for a memory allocation failure in this function.
 
-Fixes: c335931ed9d2 ("regmap: Add raw_write/read checks for max_raw_write/read sizes")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This is from code review.  I can't test it.
+ drivers/hid/hid-saitek.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Is it possible that there are other ways to reach
-regmap_i2c_smbus_i2c_write() without going through regmap_raw_write()?
-In that case, the temptation would be to just remove this check and the
-one in regmap_raw_read().
-
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index ee302ccdfbc8..453116fd4362 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1831,7 +1831,7 @@ int regmap_raw_write(struct regmap *map, unsigned int reg,
- 		return -EINVAL;
- 	if (val_len % map->format.val_bytes)
- 		return -EINVAL;
--	if (map->max_raw_write && map->max_raw_write > val_len)
-+	if (map->max_raw_write && map->max_raw_write < val_len)
- 		return -E2BIG;
+diff --git a/drivers/hid/hid-saitek.c b/drivers/hid/hid-saitek.c
+index 39e642686ff0..49355ceddd85 100644
+--- a/drivers/hid/hid-saitek.c
++++ b/drivers/hid/hid-saitek.c
+@@ -45,10 +45,8 @@ static int saitek_probe(struct hid_device *hdev,
+ 	int ret;
  
- 	map->lock(map->lock_arg);
+ 	ssc = devm_kzalloc(&hdev->dev, sizeof(*ssc), GFP_KERNEL);
+-	if (ssc = NULL) {
+-		hid_err(hdev, "can't alloc saitek descriptor\n");
++	if (!ssc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ssc->quirks = quirks;
+ 	ssc->mode = -1;
+-- 
+2.16.1
+
