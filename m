@@ -1,58 +1,43 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Tue, 27 Feb 2018 13:47:06 +0000
-Subject: [PATCH v2 2/2] iio:dummy: Add extra paragraphs on Kconfig
-Message-Id: <7cfd9fd93e76fede44d328045e7885cd78324a78.1519738995.git.rodrigosiqueiramelo@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 20:20:27 +0000
+Subject: [PATCH 2/2] HID: picoLCD: Improve a size determination in picolcd_probe()
+Message-Id: <2dd7d4d6-b4d4-b1fe-5ce2-974eb64d8c40@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+References: <1ef884c9-9fbe-b95f-d318-b806639e6065@users.sourceforge.net>
+In-Reply-To: <1ef884c9-9fbe-b95f-d318-b806639e6065@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 21:05:55 +0100
 
-drivers/iio/dummy/Kconfig:21: WARNING: please write a paragraph that
-describes the config symbol fully
-drivers/iio/dummy/Kconfig:27: WARNING: please write a paragraph that
-describes the config symbol fully
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-This patch expands the explanation about IIO_DUMMY_EVGEN by using the
-code documentation found in iio/dummy/iio_dummy_evgen.c. In the same
-way, the information related to IIO_SIMPLE_DUMMY_BUFFER was extracted
-from file iio_simple_dummy_buffer.c.
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/iio/dummy/Kconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/hid/hid-picolcd_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
-index 85e13b2e35bf..c4fd108e91d3 100644
---- a/drivers/iio/dummy/Kconfig
-+++ b/drivers/iio/dummy/Kconfig
-@@ -24,6 +24,10 @@ config IIO_SIMPLE_DUMMY_EVENTS
- 	help
- 	  Add some dummy events to the simple dummy driver.
- 
-+	  The purpose of this is to generate 'fake' event interrupts thus
-+	  allowing that driver's code to be as close as possible to that
-+	  a normal driver talking to hardware.
-+
- config IIO_SIMPLE_DUMMY_BUFFER
- 	bool "Buffered capture support"
- 	select IIO_BUFFER
-@@ -32,6 +36,9 @@ config IIO_SIMPLE_DUMMY_BUFFER
- 	help
- 	  Add buffered data capture to the simple dummy driver.
- 
-+	  Buffer handling elements of industrial I/O reference driver.
-+	  Uses the kfifo buffer.
-+
- endif # IIO_SIMPLE_DUMMY
- 
- endmenu
+diff --git a/drivers/hid/hid-picolcd_core.c b/drivers/hid/hid-picolcd_core.c
+index 5dc48ecc1b98..ff38016be6fb 100644
+--- a/drivers/hid/hid-picolcd_core.c
++++ b/drivers/hid/hid-picolcd_core.c
+@@ -547,7 +547,7 @@ static int picolcd_probe(struct hid_device *hdev,
+ 	 * Let's allocate the picolcd data structure, set some reasonable
+ 	 * defaults, and associate it with the device
+ 	 */
+-	data = kzalloc(sizeof(struct picolcd_data), GFP_KERNEL);
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (data = NULL) {
+ 		error = -ENOMEM;
+ 		goto err_no_cleanup;
 -- 
-2.16.2
+2.16.1
 
