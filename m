@@ -1,10 +1,10 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 20:58:04 +0000
-Subject: [PATCH 1/2] HID: ntrig: Delete an error message for a failed memory allocation in ntrig_probe()
-Message-Id: <a89d945d-6bfa-ed1a-3bf5-cd9efddba6c9@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 17:42:51 +0000
+Subject: [PATCH 6/6] hid-prodikeys: Rename a jump label in pcmidi_send_note()
+Message-Id: <5f63f181-2b5a-911e-996c-6918e277a484@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <86d02ef2-0ac2-5462-0ff0-a0cd87c3d1f7@users.sourceforge.net>
-In-Reply-To: <86d02ef2-0ac2-5462-0ff0-a0cd87c3d1f7@users.sourceforge.net>
+References: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
+In-Reply-To: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,33 +12,33 @@ To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.c
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 21:46:20 +0100
+Date: Sat, 3 Feb 2018 18:10:00 +0100
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+An other label fits better to the jump target. Thus rename it.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-ntrig.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/hid/hid-prodikeys.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
-index 3d121d8ee980..2a8dafaea2f0 100644
---- a/drivers/hid/hid-ntrig.c
-+++ b/drivers/hid/hid-ntrig.c
-@@ -905,10 +905,8 @@ static int ntrig_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 				| HID_QUIRK_NO_INIT_REPORTS;
+diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
+index 1c62dddedd40..4596d97b61eb 100644
+--- a/drivers/hid/hid-prodikeys.c
++++ b/drivers/hid/hid-prodikeys.c
+@@ -228,11 +228,11 @@ static void pcmidi_send_note(struct pcmidi_snd *pm,
  
- 	nd = kmalloc(sizeof(struct ntrig_data), GFP_KERNEL);
--	if (!nd) {
--		hid_err(hdev, "cannot allocate N-Trig data\n");
-+	if (!nd)
- 		return -ENOMEM;
--	}
+ 	if (!pm->in_substream ||
+ 	    !test_bit(pm->in_substream->number, &pm->in_triggered))
+-		goto drop_note;
++		goto unlock;
  
- 	nd->reading_mt = 0;
- 	nd->min_width = 0;
+ 	snd_rawmidi_receive(pm->in_substream, buffer, 3);
+ 
+-drop_note:
++unlock:
+ 	spin_unlock_irqrestore(&pm->rawmidi_in_lock, flags);
+ }
+ 
 -- 
 2.16.1
 
