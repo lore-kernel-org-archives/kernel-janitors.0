@@ -1,67 +1,27 @@
-From: Krzysztof Opasiak <k.opasiak@samsung.com>
-Date: Tue, 27 Feb 2018 13:24:44 +0000
-Subject: Re: [PATCH] usbip: vudc: fix null pointer dereference on udc->lock
-Message-Id: <b021604f-06e0-e595-23c5-cf40e7a02268@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 07:22:54 +0000
+Subject: Re: Coccinelle: zalloc-simple: Checking consistency for SmPL rules
+Message-Id: <c7a59e25-a77f-a0ba-8635-5910dbba5d81@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180222173917.10841-1-colin.king@canonical.com>
-In-Reply-To: <20180222173917.10841-1-colin.king@canonical.com>
+References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
+ <6bee0e11-59ef-b7b1-886e-7abaa30887f2@users.sourceforge.net>
+ <alpine.DEB.2.20.1802011040110.3135@hadrien>
+ <22276745-4723-4391-4460-07f0820ae85b@users.sourceforge.net>
+ <alpine.DEB.2.20.1802011125460.3135@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1802011125460.3135@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: shuah@kernel.org, Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+To: Julia Lawall <julia.lawall@lip6.fr>, Himanshu Jha <himanshujha199640@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: cocci@systeme.lip6.fr, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-
-
-On 02/26/2018 05:40 PM, Shuah Khan wrote:
-> On 02/22/2018 10:39 AM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the driver attempts to spin lock on udc->lock before a NULL
->> pointer check is performed on udc, hence there is a potential null
->> pointer dereference on udc->lock.  Fix this by moving the null check
->> on udc before the lock occurs.
->>
->> Fixes: ea6873a45a22 ("usbip: vudc: Add SysFS infrastructure for VUDC")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   drivers/usb/usbip/vudc_sysfs.c | 8 ++++++--
->>   1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/usbip/vudc_sysfs.c b/drivers/usb/usbip/vudc_sysfs.c
->> index d86f72bbbb91..6dcd3ff655c3 100644
->> --- a/drivers/usb/usbip/vudc_sysfs.c
->> +++ b/drivers/usb/usbip/vudc_sysfs.c
->> @@ -105,10 +105,14 @@ static ssize_t usbip_sockfd_store(struct device *dev, struct device_attribute *a
->>   	if (rv != 0)
->>   		return -EINVAL;
->>   
->> +	if (!udc) {
->> +		dev_err(dev, "no device");
->> +		return -ENODEV;
->> +	}
->>   	spin_lock_irqsave(&udc->lock, flags);
->>   	/* Don't export what we don't have */
->> -	if (!udc || !udc->driver || !udc->pullup) {
->> -		dev_err(dev, "no device or gadget not bound");
->> +	if (!udc->driver || !udc->pullup) {
->> +		dev_err(dev, "gadget not bound");
->>   		ret = -ENODEV;
->>   		goto unlock;
->>   	}
->>
+>> * Do we agree that a proper size determination is essential for every
+>>   condition in the discussed SmPL rules together with forwarding
+>>   this information?
 > 
-> Thanks for the patch. Looks good to me.
-> 
-> Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+> No.  I don't mind a few false positives.
 
-Reviewed-by: Krzysztof Opasiak <k.opasiak@samsung.com>
+Do you care to split SmPL rules by their confidence category in such an use case?
 
-but you could fix also a similar bug one one function above 
-(dev_desc_read()) ;)
-
-Best regards,
--- 
-Krzysztof Opasiak
-Samsung R&D Institute Poland
-Samsung Electronics
+Regards,
+Markus
