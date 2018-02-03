@@ -1,37 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 12:41:17 +0000
-Subject: [PATCH] ASoC: sirf: remove duplicated bit-wise or of USP_RXFIFO_THD_INT
-Message-Id: <20180223124117.24686-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Feb 2018 17:41:49 +0000
+Subject: [PATCH 5/6] hid-prodikeys: Combine two condition checks into one statement in pcmidi_send_note()
+Message-Id: <9a241420-d47e-97ae-3d95-4fd59eda92ad@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
+In-Reply-To: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Barry Song <baohua@kernel.org>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Feb 2018 18:00:06 +0100
 
-Bit pattern USP_RXFIFO_THD_INT is being bit-wise or'd twice;
-remove the redundant 2nd USP_RXFIFO_THD_INT
+The same label was used by goto statements after two condition checks.
+Thus use a single statement instead.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/sirf/sirf-usp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-prodikeys.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/sirf/sirf-usp.h b/sound/soc/sirf/sirf-usp.h
-index bf0201cb15bc..e22e13a619e8 100644
---- a/sound/soc/sirf/sirf-usp.h
-+++ b/sound/soc/sirf/sirf-usp.h
-@@ -154,7 +154,7 @@
- 					USP_RX_IO_DMA_INT|\
- 					USP_RXFIFO_FULL_INT|\
- 					USP_RXFIFO_THD_INT|\
--					USP_RXFIFO_THD_INT|USP_RX_TIMEOUT_INT)
-+					USP_RX_TIMEOUT_INT)
+diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
+index c9eae92ad429..1c62dddedd40 100644
+--- a/drivers/hid/hid-prodikeys.c
++++ b/drivers/hid/hid-prodikeys.c
+@@ -226,9 +226,8 @@ static void pcmidi_send_note(struct pcmidi_snd *pm,
  
- #define USP_INT_ALL        0x1FFF
+ 	spin_lock_irqsave(&pm->rawmidi_in_lock, flags);
  
+-	if (!pm->in_substream)
+-		goto drop_note;
+-	if (!test_bit(pm->in_substream->number, &pm->in_triggered))
++	if (!pm->in_substream ||
++	    !test_bit(pm->in_substream->number, &pm->in_triggered))
+ 		goto drop_note;
+ 
+ 	snd_rawmidi_receive(pm->in_substream, buffer, 3);
 -- 
-2.15.1
+2.16.1
 
