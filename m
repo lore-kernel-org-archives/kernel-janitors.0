@@ -1,40 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 10:18:18 +0000
-Subject: [PATCH 1/4] crypto: ux500: Delete an error message for a failed memory allocation in ux500_cryp_prob
-Message-Id: <e099a8a5-e7dd-5170-f46e-83c3609e8137@users.sourceforge.net>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 04 Feb 2018 11:23:46 +0000
+Subject: Re: [PATCH] hid-sensor-accel-3d: Delete an error message for a failed memory allocation in hid_accel
+Message-Id: <20180204112346.0977e938@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
+References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+In-Reply-To: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Geliang Tang <geliangtang@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 10:12:38 +0100
+On Wed, 31 Jan 2018 22:26:14 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 31 Jan 2018 22:20:56 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Marcus,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/crypto/ux500/cryp/cryp_core.c | 1 -
- 1 file changed, 1 deletion(-)
+If making changes like this I would suggest only sending one until
+you have have a response from the relevant maintainer.
 
-diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
-index 765f53e548ab..50bfc7b4c641 100644
---- a/drivers/crypto/ux500/cryp/cryp_core.c
-+++ b/drivers/crypto/ux500/cryp/cryp_core.c
-@@ -1416,7 +1416,6 @@ static int ux500_cryp_probe(struct platform_device *pdev)
- 	dev_dbg(dev, "[%s]", __func__);
- 	device_data = devm_kzalloc(dev, sizeof(*device_data), GFP_ATOMIC);
- 	if (!device_data) {
--		dev_err(dev, "[%s]: kzalloc() failed!", __func__);
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--- 
-2.16.1
+It would save you time as often these sorts of changes are
+a matter of personal taste and weighing up of costs vs gains
+- hence it is not obvious that they will be accepted.
+
+Jonathan
+
+> ---
+>  drivers/iio/accel/hid-sensor-accel-3d.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
+> index c066a3bdbff7..3d0acde40285 100644
+> --- a/drivers/iio/accel/hid-sensor-accel-3d.c
+> +++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+> @@ -383,11 +383,9 @@ static int hid_accel_3d_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  	indio_dev->channels = kmemdup(channel_spec, channel_size, GFP_KERNEL);
+> -
+> -	if (!indio_dev->channels) {
+> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
+> +	if (!indio_dev->channels)
+>  		return -ENOMEM;
+> -	}
+> +
+>  	ret = accel_3d_parse_report(pdev, hsdev,
+>  				(struct iio_chan_spec *)indio_dev->channels,
+>  				hsdev->usage, accel_state);
 
