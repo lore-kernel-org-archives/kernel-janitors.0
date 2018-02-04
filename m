@@ -1,36 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 13:36:22 +0000
-Subject: [PATCH] brcm80211: remove duplicated bit-wise or of IEEE80211_CHAN_NO_IR
-Message-Id: <20180223133622.25700-1-colin.king@canonical.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 04 Feb 2018 10:58:39 +0000
+Subject: Re: [PATCH] iio/pressure: Delete an error message for a failed memory allocation in hid_press_probe(
+Message-Id: <20180204105839.606f8d2e@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e7dfe444-616a-e156-31d5-8ed626434d1f@users.sourceforge.net>
+In-Reply-To: <e7dfe444-616a-e156-31d5-8ed626434d1f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Archana Patni <archana.patni@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 29 Jan 2018 22:04:11 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-Bit pattern IEEE80211_CHAN_NO_IR is being bit-wise or'd twice;
-remove the redundant 2nd IEEE80211_CHAN_NO_IR
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 29 Jan 2018 21:55:08 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/channel.c | 1 -
- 1 file changed, 1 deletion(-)
+Whilst the error message doesn't add a lot, it does add some information
+over a simple memory copy failed error.
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/channel.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/channel.c
-index 3a03287fa912..db783e94f929 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/channel.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/channel.c
-@@ -652,7 +652,6 @@ static void brcms_reg_apply_radar_flags(struct wiphy *wiphy)
- 		 */
- 		if (!(ch->flags & IEEE80211_CHAN_DISABLED))
- 			ch->flags |= IEEE80211_CHAN_RADAR |
--				     IEEE80211_CHAN_NO_IR |
- 				     IEEE80211_CHAN_NO_IR;
- 	}
- }
--- 
-2.15.1
+Hence I think we should keep it.
+
+Jonathan
+
+> ---
+>  drivers/iio/pressure/hid-sensor-press.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/hid-sensor-press.c b/drivers/iio/pressure/hid-sensor-press.c
+> index 4c437918f1d2..9de7590d50b0 100644
+> --- a/drivers/iio/pressure/hid-sensor-press.c
+> +++ b/drivers/iio/pressure/hid-sensor-press.c
+> @@ -280,10 +280,8 @@ static int hid_press_probe(struct platform_device *pdev)
+>  
+>  	indio_dev->channels = kmemdup(press_channels, sizeof(press_channels),
+>  				      GFP_KERNEL);
+> -	if (!indio_dev->channels) {
+> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
+> +	if (!indio_dev->channels)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	ret = press_parse_report(pdev, hsdev,
+>  				 (struct iio_chan_spec *)indio_dev->channels,
 
