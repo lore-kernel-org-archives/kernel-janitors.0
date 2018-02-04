@@ -1,39 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 15:00:08 +0000
-Subject: [PATCH] staging: rtl8723bs: fix u8 less than zero check
-Message-Id: <20180223150008.30124-1-colin.king@canonical.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 04 Feb 2018 11:01:07 +0000
+Subject: Re: [PATCH] iio/orientation: Delete an error message for a failed memory allocation in two functions
+Message-Id: <20180204110107.19861b13@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
+In-Reply-To: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 29 Jan 2018 22:26:15 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-The error variable ret is currently a u8 and so two comparisons
-to see if an error return is less than zero will always be false
-because ret is unsigned.  Fix this by making ret an int.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 29 Jan 2018 22:20:07 +0100
+> 
+> Omit an extra message for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Same response as previous patch - it might not be adding much information,
+but it is adding some so we should keep it.
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-index 51d48de24a24..1e6c587e4550 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-@@ -3255,7 +3255,7 @@ static int cfg80211_rtw_sched_scan_start(struct wiphy *wiphy,
- 
- 	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
- 	struct	mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	u8 ret;
-+	int ret;
- 
- 	if (padapter->bup = false) {
- 		DBG_871X("%s: net device is down.\n", __func__);
--- 
-2.15.1
+Jonathan
+
+> ---
+>  drivers/iio/orientation/hid-sensor-incl-3d.c  | 4 +---
+>  drivers/iio/orientation/hid-sensor-rotation.c | 4 +---
+>  2 files changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/orientation/hid-sensor-incl-3d.c b/drivers/iio/orientation/hid-sensor-incl-3d.c
+> index 1e5451d1ff88..742c0e0eb4cf 100644
+> --- a/drivers/iio/orientation/hid-sensor-incl-3d.c
+> +++ b/drivers/iio/orientation/hid-sensor-incl-3d.c
+> @@ -336,10 +336,8 @@ static int hid_incl_3d_probe(struct platform_device *pdev)
+>  
+>  	indio_dev->channels = kmemdup(incl_3d_channels,
+>  				      sizeof(incl_3d_channels), GFP_KERNEL);
+> -	if (!indio_dev->channels) {
+> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
+> +	if (!indio_dev->channels)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	ret = incl_3d_parse_report(pdev, hsdev,
+>  				   (struct iio_chan_spec *)indio_dev->channels,
+> diff --git a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
+> index a69db2002414..cbf5e406b1ee 100644
+> --- a/drivers/iio/orientation/hid-sensor-rotation.c
+> +++ b/drivers/iio/orientation/hid-sensor-rotation.c
+> @@ -277,10 +277,8 @@ static int hid_dev_rot_probe(struct platform_device *pdev)
+>  	indio_dev->channels = devm_kmemdup(&pdev->dev, dev_rot_channels,
+>  					   sizeof(dev_rot_channels),
+>  					   GFP_KERNEL);
+> -	if (!indio_dev->channels) {
+> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
+> +	if (!indio_dev->channels)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	ret = dev_rot_parse_report(pdev, hsdev,
+>  				   (struct iio_chan_spec *)indio_dev->channels,
 
