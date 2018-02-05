@@ -1,29 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 08 Feb 2018 14:35:53 +0000
-Subject: [PATCH 0/3] GPU-DRM-GMA500: Adjustments for four function implementations
-Message-Id: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
+Date: Mon, 05 Feb 2018 21:26:16 +0000
+Subject: [PATCH 1/4] HID: logitech-dj: Delete an error message for a failed memory allocation in two function
+Message-Id: <8c8c6986-9f72-4dfd-12f6-a530c4788398@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
+In-Reply-To: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 15:27:38 +0100
+Date: Mon, 5 Feb 2018 21:36:18 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in these functions.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in two functions
-  Improve four size determinations
-  Delete an unnecessary return statement in oaktrail_crtc_hdmi_dpms()
+This issue was detected by using the Coccinelle software.
 
- drivers/gpu/drm/gma500/framebuffer.c   |  7 ++-----
- drivers/gpu/drm/gma500/oaktrail_hdmi.c | 13 ++++---------
- 2 files changed, 6 insertions(+), 14 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-logitech-dj.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index 826fa1e1c8d9..4c92b2cb5768 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -418,12 +418,8 @@ static void logi_dj_recv_add_djhid_device(struct dj_receiver_dev *djrcv_dev,
+ 	strlcat(dj_hiddev->phys, tmpstr, sizeof(dj_hiddev->phys));
+ 
+ 	dj_dev = kzalloc(sizeof(struct dj_device), GFP_KERNEL);
+-
+-	if (!dj_dev) {
+-		dev_err(&djrcv_hdev->dev, "%s: failed allocating dj_device\n",
+-			__func__);
++	if (!dj_dev)
+ 		goto dj_device_allocate_fail;
+-	}
+ 
+ 	dj_dev->reports_supported = get_unaligned_le32(
+ 		dj_report->report_params + DEVICE_PAIRED_RF_REPORT_TYPE);
+@@ -1011,11 +1007,9 @@ static int logi_dj_probe(struct hid_device *hdev,
+ 	/* Treat interface 2 */
+ 
+ 	djrcv_dev = kzalloc(sizeof(struct dj_receiver_dev), GFP_KERNEL);
+-	if (!djrcv_dev) {
+-		dev_err(&hdev->dev,
+-			"%s:failed allocating dj_receiver_dev\n", __func__);
++	if (!djrcv_dev)
+ 		return -ENOMEM;
+-	}
++
+ 	djrcv_dev->hdev = hdev;
+ 	INIT_WORK(&djrcv_dev->work, delayedwork_callback);
+ 	spin_lock_init(&djrcv_dev->lock);
 -- 
 2.16.1
 
