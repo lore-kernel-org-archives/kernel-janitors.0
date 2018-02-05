@@ -1,59 +1,65 @@
-From: "Huang\, Ying" <ying.huang@intel.com>
-Date: Sat, 24 Feb 2018 00:52:32 +0000
-Subject: Re: [PATCH][mm-next] mm, swap: make bool enable_vma_readahead and function swap_vma_readahead static
-Message-Id: <87vaen2oq7.fsf@yhuang-dev.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 05 Feb 2018 13:37:29 +0000
+Subject: [PATCH] qlcnic: remove redundant initializations to pointers vh and nf
+Message-Id: <20180205133729.13453-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180223164852.5159-1-colin.king@canonical.com>
-In-Reply-To: <20180223164852.5159-1-colin.king@canonical.com> (Colin King's
-	message of "Fri, 23 Feb 2018 16:48:52 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Harish Patil <harish.patil@cavium.com>, Manish Chopra <manish.chopra@cavium.com>, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The bool enable_vma_readahead and function swap_vma_readahead are local
-> to the source and do not need to be in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> mm/swap_state.c:41:6: warning: symbol 'enable_vma_readahead' was not
-> declared. Should it be static?
-> mm/swap_state.c:742:13: warning: symbol 'swap_vma_readahead' was not
-> declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Pointer vh is initialized however the value is never read as it
+is re-assigned inside an if-statement.  Move the declaration to
+inside the if-statement and remove the extraneous initialization.
 
-Acked-by: "Huang, Ying" <ying.huang@intel.com>
+Similarly, pointer nf is being initialized and the value is never
+read and is re-assigned later, so this is redundant and can also
+be removed.
 
-> ---
->  mm/swap_state.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 8dde719e973c..f3952138f01d 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -38,7 +38,7 @@ static const struct address_space_operations swap_aops = {
->  
->  struct address_space *swapper_spaces[MAX_SWAPFILES] __read_mostly;
->  static unsigned int nr_swapper_spaces[MAX_SWAPFILES] __read_mostly;
-> -bool enable_vma_readahead __read_mostly = true;
-> +static bool enable_vma_readahead __read_mostly = true;
->  
->  #define SWAP_RA_WIN_SHIFT	(PAGE_SHIFT / 2)
->  #define SWAP_RA_HITS_MASK	((1UL << SWAP_RA_WIN_SHIFT) - 1)
-> @@ -739,8 +739,8 @@ static void swap_ra_info(struct vm_fault *vmf,
->  	pte_unmap(orig_pte);
->  }
->  
-> -struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
-> -				    struct vm_fault *vmf)
-> +static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
-> +				       struct vm_fault *vmf)
->  {
->  	struct blk_plug plug;
->  	struct vm_area_struct *vma = vmf->vma;
+Cleans up clang warnings:
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c:306:22: warning:
+Value stored to 'vh' during its initialization is never read
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c:627:26: warning:
+Value stored to 'nf' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
+index 84dd83031a1b..db0267a8eec4 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
+@@ -303,7 +303,6 @@ static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
+ 			       struct cmd_desc_type0 *first_desc,
+ 			       struct sk_buff *skb)
+ {
+-	struct vlan_ethhdr *vh = (struct vlan_ethhdr *)(skb->data);
+ 	struct ethhdr *phdr = (struct ethhdr *)(skb->data);
+ 	u16 protocol = ntohs(skb->protocol);
+ 	struct qlcnic_filter *fil, *tmp_fil;
+@@ -318,6 +317,8 @@ static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
+ 
+ 	if (adapter->flags & QLCNIC_VLAN_FILTERING) {
+ 		if (protocol = ETH_P_8021Q) {
++			struct vlan_ethhdr *vh;
++
+ 			vh = (struct vlan_ethhdr *)skb->data;
+ 			vlan_id = ntohs(vh->h_vlan_TCI);
+ 		} else if (skb_vlan_tag_present(skb)) {
+@@ -624,7 +625,7 @@ static int qlcnic_map_tx_skb(struct pci_dev *pdev, struct sk_buff *skb,
+ static void qlcnic_unmap_buffers(struct pci_dev *pdev, struct sk_buff *skb,
+ 				 struct qlcnic_cmd_buffer *pbuf)
+ {
+-	struct qlcnic_skb_frag *nf = &pbuf->frag_array[0];
++	struct qlcnic_skb_frag *nf;
+ 	int i, nr_frags = skb_shinfo(skb)->nr_frags;
+ 
+ 	for (i = 0; i < nr_frags; i++) {
+-- 
+2.15.1
+
