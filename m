@@ -1,37 +1,30 @@
-From: Daniel Baluta <daniel.baluta@nxp.com>
-Date: Fri, 16 Feb 2018 13:57:17 +0000
-Subject: Re: [PATCH] iio: apply coding-style into ms5611_probe function
-Message-Id: <1518789437.9517.32.camel@nxp.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Feb 2018 18:26:59 +0000
+Subject: Re: hid-sensor-accel-3d: Delete an error message for a failed memory allocation in hid_accel_3d_prob
+Message-Id: <9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180216133841.3yt4ip3tbck7ihdm@smtp.gmail.com>
-In-Reply-To: <20180216133841.3yt4ip3tbck7ihdm@smtp.gmail.com>
+References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+ <20180204112346.0977e938@archlinux>
+In-Reply-To: <20180204112346.0977e938@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "knaack.h@gmx.de" <knaack.h@gmx.de>, "lars@metafoo.de" <lars@metafoo.de>, "rodrigosiqueiramelo@gmail.com" <rodrigosiqueiramelo@gmail.com>, "jic23@kernel.org" <jic23@kernel.org>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org, linux-input@vger.kernel.org
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-SGkgUm9kcmlnbywNCg0KTW9zdGx5IGxvb2tpbmcgZ29vZC4gRmV3IGNvbW1lbnRzLg0KDQpQbGVh
-c2UgcmVhZDoNCg0KaHR0cHM6Ly9jaHJpcy5iZWFtcy5pby9wb3N0cy9naXQtY29tbWl0Lw0KDQox
-KSBDYXBpdGFsaXplIHRoZSBmaXJzdCBsZXR0ZXIgb2YgY29tbWl0DQoyKSBVc2UgcHJlZml4IHRh
-Z3MgdG8gaW5kaWNhdGUgdGhlIGRyaXZlciB0aGF0IGlzIGNoYW5nZWQuIEhlcmUgaWlvOnByZXNz
-dXJlOm1zNTYxMS4NCg0KSWYgbm90IHN1cmUgd2hhdCBwcmVmaXggdGFncyB0byB1c2UgcGxlYXNl
-IHVzZSBnaXQgbG9nIGZpbGUuYyBhbmQgc2VlIHRoZSB0YWdzIHVzZWQgYnkgcHJldmlvdXMgY29t
-bWl0cy4NCklmIG5vdCBjbGVhciBmcm9tIHByZXZpb3VzIGNvbW1pdHMgYmUgY3JlYXRpdmUhIDop
-DQoNCjMpIEEgYmV0dGVyIHZlcmIgZGVzY3JpYmluZyB0aGUgY2hhbmdlIHdvdWxkIGJlIEZpeCBp
-bnN0ZWFkIG9mIEFwcGx5Lg0KDQpTbywgdGhlIGNvbW1pdCBzdWJqZWN0IHNob3VsZCBiZToNCg0K
-aWlvOnByZXNzdXJlOm1zNTYxMTogRml4IGNvZGluZyBzdHlsZSBpbiBwcm9iZSBmdW5jdGlvbg0K
-DQo0KSBQbGVhc2UgY29ycmVjdCBhbGwgdGhlIG9jY3VyZW5jZXMgb2YgdGhlIHNhbWUgY29kaW5n
-IHN0eWxlIGVycm9yIChub3Qgc3VyZSBpZiBoZXJlIGlzIHRoZSBjYXNlKS4NCg0KT3RoZXIgdGhh
-biB0aGF0IGl0IGxvb2tzIGdvb2QgdG8gbWUuIFBsZWFzZSBzZW5kIHYyLg0KDQpEbyBub3QgZm9y
-Z2V0IHRvIGFkZCB1bmRlciB0aGUgc2Npc3NvciBsaW5lIG9mIHRoZSBuZXcgcGF0Y2ggYSBzbWFs
-bCBjaGFuZ2Vsb2cgZG9jdW1lbnRpbmcgd2hhdA0KaGFzIGNoYW5nZWQgc2luY2UgdjEuDQoNCg0K
-DQpPbiBWaSwgMjAxOC0wMi0xNiBhdCAxMTozOCAtMDIwMCwgcm9kcmlnb3NpcXVlaXJhIHdyb3Rl
-Og0KPiBUaGlzIHBhdGNoIGZpeGVzIHRoZSBjaGVja3BhdGNoLnBsIHdhcm5pbmcgYW5kIGVycm9y
-Og0KPiANCj4gaWlvL3ByZXNzdXJlL21zNTYxMS5oOjY2OiBFUlJPUjogY29kZSBpbmRlbnQgc2hv
-dWxkIHVzZSB0YWJzIHdoZXJlIHBvc3NpYmxlDQo+IGlpby9wcmVzc3VyZS9tczU2MTEuaDo2Njog
-V0FSTklORzogcGxlYXNlLCBubyBzcGFjZXMgYXQgdGhlIHN0YXJ0IG9mIGEgbGluZQ0KPiBpaW8v
-cHJlc3N1cmUvbXM1NjExLmg6NjY6IEVSUk9SOiAiZm9vKiBiYXIiIHNob3VsZCBiZSAiZm9vICpi
-YXIiDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBSb2RyaWdvIFNpcXVlaXJhIDxyb2RyaWdvc2lxdWVp
-cmFtZWxvQGdtYWlsLmNvbT4NCj4gLS0tDQo+IA0KDQpeIHRoaXMgaXMgdGhlIHNjaXNzb3IgbGlu
-ZS4NCg0KdGhhbmtzLA0KRGFuaWVsLg=
+> If making changes like this I would suggest only sending one until
+> you have have a response from the relevant maintainer.
+
+The corresponding feedback can become more positive for such
+a transformation pattern after a while, can't it?
+
+
+> It would save you time as often these sorts of changes are
+> a matter of personal taste and weighing up of costs vs gains
+> - hence it is not obvious that they will be accepted.
+
+Can the wording “WARNING: Possible unnecessary 'out of memory' message”
+(from the script “checkpatch.pl”) be another incentive?
+
+Regards,
+Markus
