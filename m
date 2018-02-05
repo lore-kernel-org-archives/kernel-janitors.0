@@ -1,56 +1,42 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 24 Feb 2018 13:35:47 +0000
-Subject: Re: [PATCH] iio temperature/mlx90632: silence a static checker warning
-Message-Id: <20180224133547.6f5d3384@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 05 Feb 2018 14:08:52 +0000
+Subject: [PATCH] libnvdimm: remove redundant assignment to pointer 'dev'
+Message-Id: <20180205140852.14110-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180222091453.GC9883@mwanda>
-        <CAKv63uuNqfc9=opZTUOpkdViHUREXKnGj1+u1HB71r0gpvySgQ@mail.gmail.com>
-In-Reply-To: <CAKv63uuNqfc9=opZTUOpkdViHUREXKnGj1+u1HB71r0gpvySgQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Crt Mori <cmo@melexis.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linux Iio <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 22 Feb 2018 10:26:17 +0100
-Crt Mori <cmo@melexis.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> OK, makes sense.
-> 
-> Acked-by: Crt Mori <cmo@melexis.com>
-> 
-Applied to the togreg branch of iio.git and pushed out as testing.
+Pointer dev is being assigned a value that is never read, it is being
+re-assigned the same value later on, hence the initialization is redundant
+and can be removed.
 
-Thanks,
+Cleans up clang warning:
+drivers/nvdimm/pfn_devs.c:307:17: warning: Value stored to 'dev' during
+its initialization is never read
 
-Jonathan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nvdimm/pfn_devs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On 22 February 2018 at 10:14, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > This shouldn't affect runtime at all, but Smatch complains that we
-> > should check if mlx90632_read_ambient_raw() otherwise we
-> > "ambient_new_raw" can be uninitialized.
-> >
-> >     drivers/iio/temperature/mlx90632.c:509 mlx90632_calc_ambient_dsp105()
-> >     error: uninitialized symbol 'ambient_new_raw'.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > diff --git a/drivers/iio/temperature/mlx90632.c b/drivers/iio/temperature/mlx90632.c
-> > index d695ab97d27f..9851311aa3fd 100644
-> > --- a/drivers/iio/temperature/mlx90632.c
-> > +++ b/drivers/iio/temperature/mlx90632.c
-> > @@ -506,6 +506,8 @@ static int mlx90632_calc_ambient_dsp105(struct mlx90632_data *data, int *val)
-> >
-> >         ret = mlx90632_read_ambient_raw(data->regmap, &ambient_new_raw,
-> >                                         &ambient_old_raw);
-> > +       if (ret < 0)
-> > +               return ret;
-> >         *val = mlx90632_calc_temp_ambient(ambient_new_raw, ambient_old_raw,
-> >                                           PT, PR, PG, PO, Gb);
-> >         return ret;  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+index f5c4e8c6e29d..2f4d18752c97 100644
+--- a/drivers/nvdimm/pfn_devs.c
++++ b/drivers/nvdimm/pfn_devs.c
+@@ -304,7 +304,7 @@ static const struct attribute_group *nd_pfn_attribute_groups[] = {
+ struct device *nd_pfn_devinit(struct nd_pfn *nd_pfn,
+ 		struct nd_namespace_common *ndns)
+ {
+-	struct device *dev = &nd_pfn->dev;
++	struct device *dev;
+ 
+ 	if (!nd_pfn)
+ 		return NULL;
+-- 
+2.15.1
 
