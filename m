@@ -1,27 +1,111 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 21:38:08 +0000
-Subject: [PATCH 0/2] crypto/bcm: Adjustments for do_shash()
-Message-Id: <68946b12-83d6-ab74-fd54-71b23cf9b7ef@users.sourceforge.net>
+Date: Mon, 05 Feb 2018 21:28:46 +0000
+Subject: [PATCH 3/4] HID: logitech-dj: Combine substrings for seven messages
+Message-Id: <c2521760-689d-772e-1e3c-401e51c8ca60@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
+In-Reply-To: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Colin Ian King <colin.king@canonical.com>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Rob Rice <rob.rice@broadcom.com>, Steve Lin <steven.lin1@broadcom.com>
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 22:30:07 +0100
+Date: Mon, 5 Feb 2018 22:06:20 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+The script "checkpatch.pl" pointed information out like the following.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  One function call less after error detection
+WARNING: quoted string split across lines
 
- drivers/crypto/bcm/util.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Thus fix the affected source code places.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-logitech-dj.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index 0da00d256ca7..f1496c6303ce 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -463,16 +463,17 @@ static void delayedwork_callback(struct work_struct *work)
+ 				sizeof(struct dj_report));
+ 
+ 	if (count != sizeof(struct dj_report)) {
+-		dev_err(&djrcv_dev->hdev->dev, "%s: workitem triggered without "
+-			"notifications available\n", __func__);
++		dev_err(&djrcv_dev->hdev->dev,
++			"%s: workitem triggered without notifications available\n",
++			__func__);
+ 		spin_unlock_irqrestore(&djrcv_dev->lock, flags);
+ 		return;
+ 	}
+ 
+ 	if (!kfifo_is_empty(&djrcv_dev->notif_fifo)) {
+ 		if (schedule_work(&djrcv_dev->work) = 0) {
+-			dbg_hid("%s: did not schedule the work item, was "
+-				"already queued\n", __func__);
++			dbg_hid("%s: did not schedule the work item, was already queued\n",
++				__func__);
+ 		}
+ 	}
+ 
+@@ -502,8 +503,8 @@ static void delayedwork_callback(struct work_struct *work)
+ 			break;
+ 		}
+ 		dev_err(&djrcv_dev->hdev->dev,
+-			"%s:logi_dj_recv_query_paired_devices "
+-			"error:%d\n", __func__, retval);
++			"%s:logi_dj_recv_query_paired_devices error:%d\n",
++			__func__, retval);
+ 		}
+ 		dbg_hid("%s: unexpected report type\n", __func__);
+ 	}
+@@ -517,8 +518,8 @@ static void logi_dj_recv_queue_notification(struct dj_receiver_dev *djrcv_dev,
+ 	kfifo_in(&djrcv_dev->notif_fifo, dj_report, sizeof(struct dj_report));
+ 
+ 	if (schedule_work(&djrcv_dev->work) = 0) {
+-		dbg_hid("%s: did not schedule the work item, was already "
+-			"queued\n", __func__);
++		dbg_hid("%s: did not schedule the work item, was already queued\n",
++			__func__);
+ 	}
+ }
+ 
+@@ -541,8 +542,7 @@ static void logi_dj_recv_forward_null_report(struct dj_receiver_dev *djrcv_dev,
+ 					     HID_INPUT_REPORT,
+ 					     reportbuffer,
+ 					     hid_reportid_size_map[i], 1)) {
+-				dbg_hid("hid_input_report error sending null "
+-					"report\n");
++				dbg_hid("hid_input_report error sending null report\n");
+ 			}
+ 		}
+ 	}
+@@ -770,8 +770,8 @@ static int logi_dj_ll_parse(struct hid_device *hid)
+ 	}
+ 
+ 	if (djdev->reports_supported & STD_MOUSE) {
+-		dbg_hid("%s: sending a mouse descriptor, reports_supported: "
+-			"%x\n", __func__, djdev->reports_supported);
++		dbg_hid("%s: sending a mouse descriptor, reports_supported: %x\n",
++			__func__, djdev->reports_supported);
+ 		rdcat(rdesc, &rsize, mse_descriptor, sizeof(mse_descriptor));
+ 	}
+ 
+@@ -1068,8 +1068,9 @@ static int logi_dj_probe(struct hid_device *hdev,
+ 
+ 	retval = logi_dj_recv_query_paired_devices(djrcv_dev);
+ 	if (retval < 0) {
+-		dev_err(&hdev->dev, "%s:logi_dj_recv_query_paired_devices "
+-			"error:%d\n", __func__, retval);
++		dev_err(&hdev->dev,
++			"%s:logi_dj_recv_query_paired_devices error:%d\n",
++			__func__, retval);
+ 		goto logi_dj_recv_query_paired_devices_failed;
+ 	}
+ 
 -- 
 2.16.1
 
