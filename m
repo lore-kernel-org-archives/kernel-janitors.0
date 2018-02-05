@@ -1,39 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 15 Feb 2018 19:50:52 +0000
-Subject: [PATCH] i40e: check that pointer vsi is not null before dereferencing it
-Message-Id: <20180215195052.29037-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Feb 2018 21:30:22 +0000
+Subject: [PATCH 4/4] HID: logitech-dj: Fix a typo in a comment line
+Message-Id: <0d17da5f-00ad-259f-932e-dc54eb45696c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
+In-Reply-To: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Feb 2018 22:14:49 +0100
 
-Function i40e_find_vsi_from_id can potentially return null, hence
-vsi may be null, so defensively check it is non-null before
-dereferencing it to check the seid.
+Adjust a word in this description.
 
-Fixes: e284fc280473 ("i40e: Add and delete cloud filter")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 2 +-
+ drivers/hid/hid-logitech-dj.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index 5cca083da93c..14bbd5c1db78 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -3062,7 +3062,7 @@ static struct i40e_vsi *i40e_find_vsi_from_seid(struct i40e_vf *vf, u16 seid)
- 
- 	for (i = 0; i < vf->num_tc ; i++) {
- 		vsi = i40e_find_vsi_from_id(pf, vf->ch[i].vsi_id);
--		if (vsi->seid = seid)
-+		if (vsi && vsi->seid = seid)
- 			return vsi;
- 	}
- 	return NULL;
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index f1496c6303ce..de1859fade5c 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -318,7 +318,7 @@ static const char hidpp_descriptor[] = {
+  *
+  * Right now, RF report types have the same report types (or report id's)
+  * than the hid report created from those RF reports. In the future
+- * this doesnt have to be true.
++ * this doesn't have to be true.
+  *
+  * For instance, RF report type 0x01 which has a size of 8 bytes, corresponds
+  * to hid report id 0x01, this is standard keyboard. Same thing applies to mice
 -- 
-2.15.1
+2.16.1
 
