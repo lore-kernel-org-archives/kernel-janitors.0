@@ -1,29 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 14:16:31 +0000
-Subject: Re: [PATCH 1/2] gpio: omap: Delete an error message for a failed memory allocation in omap_gpio_prob
-Message-Id: <CACRpkdaEteCvgQuP-+5eR7Jn1E4ViZdskV9DqA7uekcuqO_k5A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 21:58:36 +0000
+Subject: [PATCH] mm: swap: make pointer swap_avail_heads static
+Message-Id: <20180206215836.12366-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net> <86570340-688b-34ec-2d99-ff728ccbe4a9@users.sourceforge.net>
-In-Reply-To: <86570340-688b-34ec-2d99-ff728ccbe4a9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 10:07 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Feb 2018 21:46:30 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The pointer swap_avail_heads is local to the source and does not need
+to be in global scope, so make it static.
 
-Patch applied.
+Cleans up sparse warning:
+mm/swapfile.c:88:19: warning: symbol 'swap_avail_heads' was not
+declared. Should it be static?
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/swapfile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 006047b16814..0d00471af98b 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -85,7 +85,7 @@ PLIST_HEAD(swap_active_head);
+  * is held and the locking order requires swap_lock to be taken
+  * before any swap_info_struct->lock.
+  */
+-struct plist_head *swap_avail_heads;
++static struct plist_head *swap_avail_heads;
+ static DEFINE_SPINLOCK(swap_avail_lock);
+ 
+ struct swap_info_struct *swap_info[MAX_SWAPFILES];
+-- 
+2.15.1
+
