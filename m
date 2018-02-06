@@ -1,64 +1,127 @@
-From: jiangyiwen <jiangyiwen@huawei.com>
-Date: Sun, 11 Feb 2018 02:33:15 +0000
-Subject: Re: [V9fs-developer] [RFC] we should solve create-unlink-getattr idiom
-Message-Id: <5A7FAB6B.2090802@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 21:23:25 +0000
+Subject: [PATCH 1/2] drm/tilcdc: Delete an error message for a failed memory allocation in seven functions
+Message-Id: <8391221b-45f4-7ad2-ad21-3681a945f034@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5A7D4976.6060407@huawei.com> <20180209123342.11b17062@bahia.lan>
-In-Reply-To: <20180209123342.11b17062@bahia.lan>
+References: <a7c7cebb-f4c9-04b7-5507-e41f8ebfb5f9@users.sourceforge.net>
+In-Reply-To: <a7c7cebb-f4c9-04b7-5507-e41f8ebfb5f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kurz <groug@kaod.org>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, v9fs-developer@lists.sourceforge.net, qemu-devel@nongnu.org, aneesh.kumar@linux.vnet.ibm.com, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Veaceslav Falico <veaceslav.falico@huawei.com>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 2018/2/9 19:33, Greg Kurz wrote:
-> On Fri, 9 Feb 2018 15:10:46 +0800
-> jiangyiwen <jiangyiwen@huawei.com> wrote:
-> 
->> Hi Eric and Greg,
->>
->> I encountered the similar problem with create-unlink-getattr idiom.
->> I use the testcase that create-unlink-setattr idiom, and I see the
->> bug is reported at https://bugs.launchpad.net/qemu/+bug/1336794.
->> Then I also see you already fix the issue and push the patch to upstream.
->> https://github.com/ericvh/linux/commit/eaf70223eac094291169f5a6de580351890162a2
->> http://patchwork.ozlabs.org/patch/626194/
->>
->> Unfortunately, the two patches are not merged into master, I don't know
->> the reason, so I suggest if the patche can be merged into master, and
->> it will solve the create-unlink-getattr idiom.
->>
-> 
-> I had tried to go a bit further and address the general issue of f*() syscalls
-> versus unlinked files:
-> 
-> QEMU:
-> http://lists.gnu.org/archive/html/qemu-devel/2016-06/msg07586.html
-> 
-> Linux 9p driver:
-> https://sourceforge.net/p/v9fs/mailman/message/35175775/
-> 
-> I remember that some issues were then reported during review of the
-> linux patches, and I never got bandwidth to investigate further...
-> 
-> But if you'd like to resurrect these threads, please do. :)
-> 
->> Thanks,
->> Yiwen
->>
-> 
-> Cheers,
-> 
-> --
-> Greg
-> 
-> .
-> 
-Thanks Greg,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 21:51:15 +0100
 
-Ok, we will move forward, I hope we can solve these problems that you
-encountered.
+Omit an extra message for a memory allocation failure in these functions.
 
-Thanks,
-Yiwen.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c   | 4 +---
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c    | 4 +---
+ drivers/gpu/drm/tilcdc/tilcdc_panel.c  | 9 ++-------
+ drivers/gpu/drm/tilcdc/tilcdc_tfp410.c | 8 ++------
+ 4 files changed, 6 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+index 8bf6bb93dc79..1b278a22c8b7 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+@@ -994,10 +994,8 @@ int tilcdc_crtc_create(struct drm_device *dev)
+ 	int ret;
+ 
+ 	tilcdc_crtc = devm_kzalloc(dev->dev, sizeof(*tilcdc_crtc), GFP_KERNEL);
+-	if (!tilcdc_crtc) {
+-		dev_err(dev->dev, "allocation failed\n");
++	if (!tilcdc_crtc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	init_completion(&tilcdc_crtc->palette_loaded);
+ 	tilcdc_crtc->palette_base = dmam_alloc_coherent(dev->dev,
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+index 1afde61f1247..b8a5e4ed22e6 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+@@ -233,10 +233,8 @@ static int tilcdc_init(struct drm_driver *ddrv, struct device *dev)
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(dev, "failed to allocate private data\n");
++	if (!priv)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ddev = drm_dev_alloc(ddrv, dev);
+ 	if (IS_ERR(ddev))
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
+index 8eebb5f826a6..0b6aa95aec89 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
+@@ -101,10 +101,8 @@ static struct drm_encoder *panel_encoder_create(struct drm_device *dev,
+ 
+ 	panel_encoder = devm_kzalloc(dev->dev, sizeof(*panel_encoder),
+ 				     GFP_KERNEL);
+-	if (!panel_encoder) {
+-		dev_err(dev->dev, "allocation failed\n");
++	if (!panel_encoder)
+ 		return NULL;
+-	}
+ 
+ 	panel_encoder->mod = mod;
+ 
+@@ -210,10 +208,8 @@ static struct drm_connector *panel_connector_create(struct drm_device *dev,
+ 
+ 	panel_connector = devm_kzalloc(dev->dev, sizeof(*panel_connector),
+ 				       GFP_KERNEL);
+-	if (!panel_connector) {
+-		dev_err(dev->dev, "allocation failed\n");
++	if (!panel_connector)
+ 		return NULL;
+-	}
+ 
+ 	panel_connector->encoder = encoder;
+ 	panel_connector->mod = mod;
+@@ -294,7 +290,6 @@ static struct tilcdc_panel_info *of_get_panel_info(struct device_node *np)
+ 
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info) {
+-		pr_err("%s: allocation failed\n", __func__);
+ 		of_node_put(info_np);
+ 		return NULL;
+ 	}
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+index 7e3643462a08..c45cabb38db0 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+@@ -111,10 +111,8 @@ static struct drm_encoder *tfp410_encoder_create(struct drm_device *dev,
+ 
+ 	tfp410_encoder = devm_kzalloc(dev->dev, sizeof(*tfp410_encoder),
+ 				      GFP_KERNEL);
+-	if (!tfp410_encoder) {
+-		dev_err(dev->dev, "allocation failed\n");
++	if (!tfp410_encoder)
+ 		return NULL;
+-	}
+ 
+ 	tfp410_encoder->dpms = DRM_MODE_DPMS_OFF;
+ 	tfp410_encoder->mod = mod;
+@@ -224,10 +222,8 @@ static struct drm_connector *tfp410_connector_create(struct drm_device *dev,
+ 
+ 	tfp410_connector = devm_kzalloc(dev->dev, sizeof(*tfp410_connector),
+ 					GFP_KERNEL);
+-	if (!tfp410_connector) {
+-		dev_err(dev->dev, "allocation failed\n");
++	if (!tfp410_connector)
+ 		return NULL;
+-	}
+ 
+ 	tfp410_connector->encoder = encoder;
+ 	tfp410_connector->mod = mod;
+-- 
+2.16.1
 
