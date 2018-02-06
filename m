@@ -1,29 +1,25 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 15:23:53 +0000
-Subject: [PATCH 0/2] crypto/omap: Adjustments for three function implementations
-Message-Id: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
+From: David Sterba <dsterba@suse.cz>
+Date: Tue, 06 Feb 2018 14:44:42 +0000
+Subject: Re: [PATCH][btrfs-next] btrfs: remove redundant check on ret and goto
+Message-Id: <20180206144442.GA31890@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180112165258.27431-1-colin.king@canonical.com>
+In-Reply-To: <20180112165258.27431-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Joel Fernandes <joelf@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, Liu Bo <bo.li.liu@oracle.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 16:18:19 +0100
+On Fri, Jan 12, 2018 at 04:52:58PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The check for a non-zero ret is redundant as the goto will jump to
+> the very next statement anyway.  Remove this extraneous code.
+> 
+> Detected by CoverityScan, CID#1463784 ("Identical code for different
+> branches")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (2):
-  Delete error messages for a failed memory allocation
-  Improve size determinations
-
- drivers/crypto/omap-aes.c  | 8 +++-----
- drivers/crypto/omap-des.c  | 8 +++-----
- drivers/crypto/omap-sham.c | 4 +---
- 3 files changed, 7 insertions(+), 13 deletions(-)
-
--- 
-2.16.1
-
+Added to next, thanks.
