@@ -1,53 +1,66 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 17 Feb 2018 12:42:29 +0000
-Subject: Re: [PATCH v2] iio:pressure:ms5611: Fix coding style in probe function
-Message-Id: <20180217124229.18d335fe@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 23:36:42 +0000
+Subject: [PATCH] crypto: qat - Make several functions static
+Message-Id: <20180206233642.14591-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180216194441.nep5zbb5sjf53cj6@smtp.gmail.com>
-In-Reply-To: <20180216194441.nep5zbb5sjf53cj6@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Eric Biggers <ebiggers@google.com>, qat-linux@intel.com, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018 17:44:41 -0200
-rodrigosiqueira <rodrigosiqueiramelo@gmail.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This patch fixes the checkpatch.pl warning and error:
-> 
-> iio/pressure/ms5611.h:66: ERROR: code indent should use tabs where possible
-> iio/pressure/ms5611.h:66: WARNING: please, no spaces at the start of a line
-> iio/pressure/ms5611.h:66: ERROR: "foo* bar" should be "foo *bar"
-> 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+Functions qat_rsa_set_n, qat_rsa_set_e and qat_rsa_set_n are local to
+the source and do not need to be in global scope, so make them static.
 
-Thanks Daniel for your quick feedback on this.
+Cleans up sparse warnings:
+drivers/crypto/qat/qat_common/qat_asym_algs.c:972:5: warning: symbol
+'qat_rsa_set_n' was not declared. Should it be static?
+drivers/crypto/qat/qat_common/qat_asym_algs.c:1003:5: warning: symbol
+'qat_rsa_set_e' was not declared. Should it be static?
+drivers/crypto/qat/qat_common/qat_asym_algs.c:1027:5: warning: symbol
+'qat_rsa_set_d' was not declared. Should it be static?
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/qat/qat_common/qat_asym_algs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Jonathan
-
-> ---
-> Changes in v2:
->   - Make the commit message more clearer.
-> 
->  drivers/iio/pressure/ms5611.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/pressure/ms5611.h b/drivers/iio/pressure/ms5611.h
-> index ccda63c5b3c3..ead9e9f85894 100644
-> --- a/drivers/iio/pressure/ms5611.h
-> +++ b/drivers/iio/pressure/ms5611.h
-> @@ -63,7 +63,7 @@ struct ms5611_state {
->  };
->  
->  int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
-> -                 const char* name, int type);
-> +		 const char *name, int type);
->  int ms5611_remove(struct iio_dev *indio_dev);
->  
->  #endif /* _MS5611_H */
+diff --git a/drivers/crypto/qat/qat_common/qat_asym_algs.c b/drivers/crypto/qat/qat_common/qat_asym_algs.c
+index 13c52d6bf630..320e7854b4ee 100644
+--- a/drivers/crypto/qat/qat_common/qat_asym_algs.c
++++ b/drivers/crypto/qat/qat_common/qat_asym_algs.c
+@@ -969,7 +969,8 @@ static int qat_rsa_dec(struct akcipher_request *req)
+ 	return ret;
+ }
+ 
+-int qat_rsa_set_n(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
++static int qat_rsa_set_n(struct qat_rsa_ctx *ctx, const char *value,
++			 size_t vlen)
+ {
+ 	struct qat_crypto_instance *inst = ctx->inst;
+ 	struct device *dev = &GET_DEV(inst->accel_dev);
+@@ -1000,7 +1001,8 @@ int qat_rsa_set_n(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
+ 	return ret;
+ }
+ 
+-int qat_rsa_set_e(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
++static int qat_rsa_set_e(struct qat_rsa_ctx *ctx, const char *value,
++			 size_t vlen)
+ {
+ 	struct qat_crypto_instance *inst = ctx->inst;
+ 	struct device *dev = &GET_DEV(inst->accel_dev);
+@@ -1024,7 +1026,8 @@ int qat_rsa_set_e(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
+ 	return 0;
+ }
+ 
+-int qat_rsa_set_d(struct qat_rsa_ctx *ctx, const char *value, size_t vlen)
++static int qat_rsa_set_d(struct qat_rsa_ctx *ctx, const char *value,
++			 size_t vlen)
+ {
+ 	struct qat_crypto_instance *inst = ctx->inst;
+ 	struct device *dev = &GET_DEV(inst->accel_dev);
+-- 
+2.15.1
 
