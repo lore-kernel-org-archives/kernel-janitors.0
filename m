@@ -1,44 +1,30 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Fri, 23 Feb 2018 14:06:43 +0000
-Subject: Re: [PATCH] PCI: rcar-gen2: remove duplicated bit-wise or of RCAR_PCI_INT_SIGRETABORT
-Message-Id: <20180223140643.GA24211@e107981-ln.cambridge.arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 06 Feb 2018 13:29:51 +0000
+Subject: Re: [PATCH] gpio-wm831x: Use seq_putc() in wm831x_gpio_dbg_show()
+Message-Id: <CACRpkdbMRzD11F9b5QHCHeRp7aBqXNCr6dpPjKg9fSFdc5rOVQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180223122949.24291-1-colin.king@canonical.com>
-In-Reply-To: <20180223122949.24291-1-colin.king@canonical.com>
+References: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
+In-Reply-To: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Simon Horman <horms@verge.net.au>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:29:49PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Bit pattern RCAR_PCI_INT_SIGRETABORT is being bit-wise or'd twice;
-> remove the redundant 2nd RCAR_PCI_INT_SIGRETABORT.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pci/host/pci-rcar-gen2.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+On Fri, Jan 12, 2018 at 9:37 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Applied to pci/rcar for v4.17, thanks !
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 12 Jan 2018 21:30:09 +0100
+>
+> A single character (line break) should be put into a sequence.
+> Thus use the corresponding function "seq_putc".
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Lorenzo
+Patch applied with Charles' ACK.
 
-> index a28370bb2b2a..dd4f1a6b57c5 100644
-> --- a/drivers/pci/host/pci-rcar-gen2.c
-> +++ b/drivers/pci/host/pci-rcar-gen2.c
-> @@ -52,7 +52,6 @@
->  #define RCAR_PCI_INT_B			(1 << 17)
->  #define RCAR_PCI_INT_PME		(1 << 19)
->  #define RCAR_PCI_INT_ALLERRORS (RCAR_PCI_INT_SIGTABORT		| \
-> -				RCAR_PCI_INT_SIGRETABORT	| \
->  				RCAR_PCI_INT_SIGRETABORT	| \
->  				RCAR_PCI_INT_REMABORT		| \
->  				RCAR_PCI_INT_PERR		| \
-> -- 
-> 2.15.1
-> 
+Yours,
+Linus Walleij
