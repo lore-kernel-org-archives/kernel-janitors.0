@@ -1,21 +1,42 @@
-From: David Disseldorp <ddiss@suse.de>
-Date: Thu, 22 Feb 2018 14:19:14 +0000
-Subject: Re: [PATCH 0/8] target-iSCSI: Adjustments for several function implementations
-Message-Id: <20180222151914.029b8b6c@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 14:12:36 +0000
+Subject: [PATCH] scsi: isci: remove redundant initialization to 'bit'
+Message-Id: <20180206141236.31651-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
-In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: target-devel@vger.kernel.org
+To: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 22 Feb 2018 16:56:00 +0300, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-...
-> Calling crypto_free_shash(NULL) is actually fine.  It doesn't
-> dereference the parameter, it just does pointer math on it in
-> crypto_shash_tfm() and returns if it's NULL in crypto_destroy_tfm().
+Variable bit is initialized with a value that is never read and is
+being updated immediately after the initialization, hence the
+initialization is redundant and can be removed.
 
-Bleh, you're right. I read the crypto_shash_tfm() code path
-incorrectly.
+Cleans up clang warning:
+drivers/scsi/isci/host.c:2769:8: warning: Value stored to 'bit' during
+its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/isci/host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
+index 13b37cdffa8e..1ee3868ade07 100644
+--- a/drivers/scsi/isci/host.c
++++ b/drivers/scsi/isci/host.c
+@@ -2766,7 +2766,7 @@ static int sci_write_gpio_tx_gp(struct isci_host *ihost, u8 reg_index, u8 reg_co
+ 		int i;
+ 
+ 		for (i = 0; i < 3; i++) {
+-			int bit = (i << 2) + 2;
++			int bit;
+ 
+ 			bit = try_test_sas_gpio_gp_bit(to_sas_gpio_od(d, i),
+ 						       write_data, reg_index,
+-- 
+2.15.1
+
