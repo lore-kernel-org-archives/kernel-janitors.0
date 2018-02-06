@@ -1,44 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Feb 2018 09:13:59 +0000
-Subject: [PATCH] sh: ptrace: remove a bogus check
-Message-Id: <20180222091359.GB9883@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 21:22:04 +0000
+Subject: [PATCH 0/2] GPU-DRM-TILCDC: Adjustments for seven function implementations
+Message-Id: <a7c7cebb-f4c9-04b7-5507-e41f8ebfb5f9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We made "addr" unsigned back in 2010 in commit 9b05a69e0534 ("ptrace:
-change signature of arch_ptrace()").  The check for negatives was always
-just a basic sanity check that duplicated other stricter checks, but now
-it causes static checker warnings so we should remove it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 22:17:44 +0100
 
-Here is the Smatch warning for reference:
+Two update suggestions were taken into account
+from static source code analysis.
 
-    arch/sh/kernel/ptrace_64.c:399 arch_ptrace()
-    warn: unsigned 'addr' is never less than zero.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in seven functions
+  Use common error handling code in of_get_panel_info()
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c   |  4 +---
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c    |  4 +---
+ drivers/gpu/drm/tilcdc/tilcdc_panel.c  | 21 +++++++--------------
+ drivers/gpu/drm/tilcdc/tilcdc_tfp410.c |  8 ++------
+ 4 files changed, 11 insertions(+), 26 deletions(-)
 
-diff --git a/arch/sh/kernel/ptrace_64.c b/arch/sh/kernel/ptrace_64.c
-index 1e0656d9e7af..b38d53be168a 100644
---- a/arch/sh/kernel/ptrace_64.c
-+++ b/arch/sh/kernel/ptrace_64.c
-@@ -396,7 +396,7 @@ long arch_ptrace(struct task_struct *child, long request,
- 		unsigned long tmp;
- 
- 		ret = -EIO;
--		if ((addr & 3) || addr < 0)
-+		if (addr & 3)
- 			break;
- 
- 		if (addr < sizeof(struct pt_regs))
-@@ -424,7 +424,7 @@ long arch_ptrace(struct task_struct *child, long request,
-                    this could crash the kernel or result in a security
-                    loophole. */
- 		ret = -EIO;
--		if ((addr & 3) || addr < 0)
-+		if (addr & 3)
- 			break;
- 
- 		if (addr < sizeof(struct pt_regs)) {
+-- 
+2.16.1
+
