@@ -1,54 +1,42 @@
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Date: Wed, 14 Feb 2018 10:37:04 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: uniphier: fix an error code in uniphier_aio_comprdma_new()
-Message-Id: <264ac405-64a9-f14e-4c37-18dc2a789261@socionext.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 14:21:57 +0000
+Subject: [PATCH] scsi: libfc: remove redundant initialization of 'disc'
+Message-Id: <20180206142157.32001-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180214071531.GB26677@mwanda>
-In-Reply-To: <20180214071531.GB26677@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-2022-jp"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mark Brown <broonie@kernel.org>
+To: Johannes Thumshirn <jth@kernel.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Hello,
+Pointer disc is being intializated a value that is never read and then
+re-assigned the same value later on, hence the initialization is redundant
+and can be removed.
 
-Thank you for fixing, this patch works fine
-on UniPhier LD20 board.
+Cleans up clang warning:
+drivers/scsi/libfc/fc_disc.c:734:18: warning: Value stored to 'disc'
+during its initialization is never read
 
-Tested-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/libfc/fc_disc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-On 2018年02月14日 16:15, Dan Carpenter wrote:
-> The dma_mapping_error() returns true or false, but we want to return
-> -ENOMEM if there was an error.
-> 
-> Fixes: e98131222ff9 ("ASoC: uniphier: add support for UniPhier AIO compress audio")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/sound/soc/uniphier/aio-compress.c b/sound/soc/uniphier/aio-compress.c
-> index 7f7abe3ae99d..4751c8bdabec 100644
-> --- a/sound/soc/uniphier/aio-compress.c
-> +++ b/sound/soc/uniphier/aio-compress.c
-> @@ -54,12 +54,11 @@ static int uniphier_aio_comprdma_new(struct snd_soc_pcm_runtime *rtd)
->   		dma_dir = DMA_TO_DEVICE;
->   
->   	sub->compr_addr = dma_map_single(dev, sub->compr_area, size, dma_dir);
-> -	ret = dma_mapping_error(dev, sub->compr_addr);
-> -	if (ret) {
-> +	if (dma_mapping_error(dev, sub->compr_addr)) {
->   		kfree(sub->compr_area);
->   		sub->compr_area = NULL;
->   
-> -		return ret;
-> +		return -ENOMEM;
->   	}
->   
->   	sub->compr_bytes = size;
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
-> 
+diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
+index 8660f923ace0..3f3569ec5ce3 100644
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -731,7 +731,7 @@ static void fc_disc_stop_final(struct fc_lport *lport)
+  */
+ void fc_disc_config(struct fc_lport *lport, void *priv)
+ {
+-	struct fc_disc *disc = &lport->disc;
++	struct fc_disc *disc;
+ 
+ 	if (!lport->tt.disc_start)
+ 		lport->tt.disc_start = fc_disc_start;
+-- 
+2.15.1
 
