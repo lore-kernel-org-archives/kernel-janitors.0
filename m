@@ -1,40 +1,42 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Tue, 06 Feb 2018 15:42:04 +0000
-Subject: Re: [PATCH] platform/x86: mlx-platform: Fix an ERR_PTR vs NULL issue
-Message-Id: <20180206154204.GB11119@fury>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 06 Feb 2018 20:17:17 +0000
+Subject: [PATCH] cxgb4: Fix error handling path in 'init_one()'
+Message-Id: <20180206201717.27412-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206124536.GA9445@mwanda>
- <AM4PR05MB3330D53BBA5BD43AF7EE6D7DA2FD0@AM4PR05MB3330.eurprd05.prod.outlook.com>
-In-Reply-To: <AM4PR05MB3330D53BBA5BD43AF7EE6D7DA2FD0@AM4PR05MB3330.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Andy Shevchenko <andy@infradead.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: ganeshgr@chelsio.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Feb 06, 2018 at 12:55:58PM +0000, Vadim Pasternak wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> > Sent: Tuesday, February 06, 2018 2:46 PM
-> > To: Vadim Pasternak <vadimp@mellanox.com>
-> > Cc: Darren Hart <dvhart@infradead.org>; Andy Shevchenko
-> > <andy@infradead.org>; platform-driver-x86@vger.kernel.org; kernel-
-> > janitors@vger.kernel.org
-> > Subject: [PATCH] platform/x86: mlx-platform: Fix an ERR_PTR vs NULL issue
-> > 
-> > devm_ioport_map() returns NULL on error but we accidentally check for error
-> > pointers instead.
-> > 
-> > Fixes: c6acad68eb2d ("platform/mellanox: mlxreg-hotplug: Modify to use a
-> > regmap interface")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Vadim Pasternak <vadimp@melanox.com>
+Commit baf5086840ab1 ("cxgb4: restructure VF mgmt code") has reordered
+some code but an error handling label has not been updated accordingly.
+So fix it and free 'adapter' if 't4_wait_dev_ready()' fails.
 
-Queued up for today's PR for 4.16. Thanks.
+Fixes: baf5086840ab1 ("cxgb4: restructure VF mgmt code")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index 725643b4a8ab..79bffaa3c1af 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -5125,7 +5125,7 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	adapter->regs = regs;
+ 	err = t4_wait_dev_ready(regs);
+ 	if (err < 0)
+-		goto out_unmap_bar0;
++		goto out_free_adapter;
+ 
+ 	/* We control everything through one PF */
+ 	whoami = readl(regs + PL_WHOAMI_A);
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.14.1
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
