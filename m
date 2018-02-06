@@ -1,52 +1,42 @@
-From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-Date: Sat, 17 Feb 2018 10:50:16 +0000
-Subject: Re: [PATCH 0/4] usb: gadget: fotg210-udc: Fixes and cleanup
-Message-Id: <alpine.LNX.2.00.1802171142240.10047@T420s>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1598662189-1518864616=:10047"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 14:03:16 +0000
+Subject: [PATCH] scsi: qedf: remove redundant initialization of 'fcport'
+Message-Id: <20180206140316.31453-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1515791144.git.christophe.jaillet@wanadoo.fr> <871shqbnln.fsf@linux.intel.com> <p5sksu$4pc$1@blaine.gmane.org>
-In-Reply-To: <p5sksu$4pc$1@blaine.gmane.org>
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Colin Ian King <colin.king@canonical.com>
 
---8323329-1598662189-1518864616=:10047
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Pointer fcport is initialized with a value that is never read, it is
+re-assigned a new value later on, hence the initialization is redundant
+and can be removed.
 
-Hi Christophe
+Cleans up clang warning:
+drivers/scsi/qedf/qedf_io.c:920:21: warning: Value stored to 'fcport'
+during its initialization is never read
 
-On Mon, 12 Feb 2018, Christophe Jaillet wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qedf/qedf_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Le 12/02/2018 =C3=A0 09:48, Felipe Balbi a =C3=A9crit=C2=A0:
-> >=20
-[..]
+diff --git a/drivers/scsi/qedf/qedf_io.c b/drivers/scsi/qedf/qedf_io.c
+index b15e69586a36..50a50c4249d0 100644
+--- a/drivers/scsi/qedf/qedf_io.c
++++ b/drivers/scsi/qedf/qedf_io.c
+@@ -917,7 +917,7 @@ qedf_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *sc_cmd)
+ 	struct qedf_ctx *qedf = lport_priv(lport);
+ 	struct fc_rport *rport = starget_to_rport(scsi_target(sc_cmd->device));
+ 	struct fc_rport_libfc_priv *rp = rport->dd_data;
+-	struct qedf_rport *fcport = rport->dd_data;
++	struct qedf_rport *fcport;
+ 	struct qedf_ioreq *io_req;
+ 	int rc = 0;
+ 	int rval;
+-- 
+2.15.1
 
-> > way around :-) First fixes, then cleanups. The reason is that fixes can
-> > get accepted during -rc cycle, but cleanups must wait until the next
-> > merge window.
-> >=20
-> > Please fix up your patches, otherwise I'll have to apply the entire
-> > series for v4.17
-> >=20
->=20
-> I agree with you. I will be more careful in the future.
-> However, I will not re-send an updated version. Development on this drive=
-r
-> does not seem to be very active.
-
-=2E.. not quite right.
-This driver and the fotg210-hcd is *currently* under my observation, I=20
-want to add a phy/otg driber on top of these.
-Feel free to CC me if you want to resend these patches.
-
-With "not very active" makes me happy, so I don't break not much.
-And if anyone ask, I have some devices to test, of cource ;-)
-
-Greetings
-Hans Ulli Kroll
-
---8323329-1598662189-1518864616=:10047--
