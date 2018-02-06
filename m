@@ -1,42 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 01 Feb 2018 18:35:39 +0000
-Subject: [PATCH] ixgbevf: remove redundant initialization of variable 'dma'.
-Message-Id: <20180201183539.24776-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 17:29:46 +0000
+Subject: [PATCH 1/2] HID: asus: Delete an error message for a failed memory allocation in two functions
+Message-Id: <668be04b-719e-31e7-05bf-7f5e6d6e0a83@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5289ace9-8927-9803-4692-c7c621ab0a8d@users.sourceforge.net>
+In-Reply-To: <5289ace9-8927-9803-4692-c7c621ab0a8d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 18:03:19 +0100
 
-Variable dma is initialized with a value that is never read, later
-on it is re-assigned a new value, hence the initialization is redundant
-and can be removed.
+Omit an extra message for a memory allocation failure in these functions.
 
-Cleans up clang warning:
-drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c:584:13: warning: Value
-stored to 'dma' during its initialization is never read
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-asus.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 9b3d43d28106..be50facec93f 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -558,7 +558,7 @@ static bool ixgbevf_alloc_mapped_page(struct ixgbevf_ring *rx_ring,
- 				      struct ixgbevf_rx_buffer *bi)
- {
- 	struct page *page = bi->page;
--	dma_addr_t dma = bi->dma;
-+	dma_addr_t dma;
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+index 6d2894b7d8e7..9573e0b41922 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -566,7 +566,6 @@ static int asus_start_multitouch(struct hid_device *hdev)
  
- 	/* since we are recycling buffers we should seldom need to alloc */
- 	if (likely(page))
+ 	if (!dmabuf) {
+ 		ret = -ENOMEM;
+-		hid_err(hdev, "Asus failed to alloc dma buf: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -599,10 +598,8 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	struct asus_drvdata *drvdata;
+ 
+ 	drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
+-	if (drvdata = NULL) {
+-		hid_err(hdev, "Can't alloc Asus descriptor\n");
++	if (!drvdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	hid_set_drvdata(hdev, drvdata);
+ 
 -- 
-2.15.1
+2.16.1
 
