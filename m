@@ -1,36 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Feb 2018 10:02:07 +0000
-Subject: [PATCH][next] HID: fix spelling mistake, "registred" -> "registered"
-Message-Id: <20180222100207.2741-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 16:47:12 +0000
+Subject: [PATCH] HID: core: Delete an error message for a failed memory allocation in open_collection()
+Message-Id: <92b58eb4-e68b-f7eb-d99e-5d0993ad18b6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 17:40:51 +0100
 
-Trivial fix to spelling mistake in hid_err error message text.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-elan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
-index 803a725785cf..52381d1beba3 100644
---- a/drivers/hid/hid-elan.c
-+++ b/drivers/hid/hid-elan.c
-@@ -362,7 +362,7 @@ static int elan_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		return 0;
- 
- 	if (!drvdata->input) {
--		hid_err(hdev, "Input device is not registred\n");
-+		hid_err(hdev, "Input device is not registered\n");
- 		ret = -ENAVAIL;
- 		goto err;
- 	}
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index c2560aae5542..5ad5f52f6f9b 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -133,10 +133,9 @@ static int open_collection(struct hid_parser *parser, unsigned type)
+ 	if (parser->device->maxcollection = parser->device->collection_size) {
+ 		collection = kmalloc(sizeof(struct hid_collection) *
+ 				parser->device->collection_size * 2, GFP_KERNEL);
+-		if (collection = NULL) {
+-			hid_err(parser->device, "failed to reallocate collection array\n");
++		if (!collection)
+ 			return -ENOMEM;
+-		}
++
+ 		memcpy(collection, parser->device->collection,
+ 			sizeof(struct hid_collection) *
+ 			parser->device->collection_size);
 -- 
-2.15.1
+2.16.1
 
