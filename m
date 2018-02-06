@@ -1,29 +1,41 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Sun, 18 Feb 2018 13:17:08 +0000
-Subject: Re: [PATCH 2/3] pata_arasan_cf: Delete an unnecessary variable initialisation in arasan_cf_probe()
-Message-Id: <20180218131708.GZ695913@devbig577.frc2.facebook.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Tue, 06 Feb 2018 12:25:19 +0000
+Subject: Re: [PATCH -next] meson-gx-socinfo: make local function meson_gx_socinfo_init static
+Message-Id: <3cb83737-bb60-7648-e72e-2d39590c8418@baylibre.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
- <3b6bfa0f-3356-2fb9-07ae-bf52c1ccc47e@users.sourceforge.net>
-In-Reply-To: <3b6bfa0f-3356-2fb9-07ae-bf52c1ccc47e@users.sourceforge.net>
+References: <1515593988-78626-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1515593988-78626-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Viresh Kumar <vireshk@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linus-amlogic@lists.infradead.org
 
-On Fri, Feb 16, 2018 at 04:59:01PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 16 Feb 2018 16:28:23 +0100
+On 10/01/2018 15:19, Wei Yongjun wrote:
+> Fixes the following sparse warnings:
 > 
-> The local variable "ret" will eventually be set to an appropriate value
-> a bit later. Thus omit the explicit initialisation at the beginning.
+> drivers/soc/amlogic/meson-gx-socinfo.c:100:12: warning:
+>  symbol 'meson_gx_socinfo_init' was not declared. Should it be static?
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/soc/amlogic/meson-gx-socinfo.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+> index f2d8c3c..ea091f1 100644
+> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
+> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+> @@ -97,7 +97,7 @@ static const char *socinfo_to_soc_id(u32 socinfo)
+>  	return "Unknown";
+>  }
+>  
+> -int __init meson_gx_socinfo_init(void)
+> +static int __init meson_gx_socinfo_init(void)
+>  {
+>  	struct soc_device_attribute *soc_dev_attr;
+>  	struct soc_device *soc_dev;
+> 
+> 
+> 
 
-Applied 1-2 to libata/for-4.17.
-
-Thanks.
-
--- 
-tejun
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
