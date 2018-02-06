@@ -1,49 +1,43 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Fri, 09 Feb 2018 00:49:52 +0000
-Subject: Re: [PATCH -next] meson-gx-socinfo: make local function meson_gx_socinfo_init static
-Message-Id: <7hh8qr9ebz.fsf@baylibre.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 06 Feb 2018 12:35:00 +0000
+Subject: [PATCH] drm/amd/powerplay: delete some dead code
+Message-Id: <20180206123500.GA9203@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1515593988-78626-1-git-send-email-weiyongjun1@huawei.com>
- <3cb83737-bb60-7648-e72e-2d39590c8418@baylibre.com>
-In-Reply-To: <3cb83737-bb60-7648-e72e-2d39590c8418@baylibre.com> (Neil
- Armstrong's message of "Tue, 6 Feb 2018 13:25:19 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linus-amlogic@lists.infradead.org
+To: Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Eric Huang <JinHuiEric.Huang@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+We deleted some code in e154162ef75d ("drm/amd/powerplay: refine pp code
+for raven") but there were a few related bits that were missed.  Let's
+delete them as well.
 
-> On 10/01/2018 15:19, Wei Yongjun wrote:
->> Fixes the following sparse warnings:
->> 
->> drivers/soc/amlogic/meson-gx-socinfo.c:100:12: warning:
->>  symbol 'meson_gx_socinfo_init' was not declared. Should it be static?
->> 
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->> ---
->>  drivers/soc/amlogic/meson-gx-socinfo.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
->> index f2d8c3c..ea091f1 100644
->> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
->> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
->> @@ -97,7 +97,7 @@ static const char *socinfo_to_soc_id(u32 socinfo)
->>  	return "Unknown";
->>  }
->>  
->> -int __init meson_gx_socinfo_init(void)
->> +static int __init meson_gx_socinfo_init(void)
->>  {
->>  	struct soc_device_attribute *soc_dev_attr;
->>  	struct soc_device *soc_dev;
->> 
->> 
->> 
->
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied for v4.17, with Neil's ack.
-
-Kevin
+diff --git a/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h b/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
+index 565fe0832f41..0b0fbb228edf 100644
+--- a/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
++++ b/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
+@@ -608,7 +608,6 @@ struct phm_dynamic_state_info {
+ 	struct phm_ppm_table                          *ppm_parameter_table;
+ 	struct phm_cac_tdp_table                      *cac_dtp_table;
+ 	struct phm_clock_voltage_dependency_table	*vdd_gfx_dependency_on_sclk;
+-	struct phm_vq_budgeting_table				*vq_budgeting_table;
+ };
+ 
+ struct pp_fan_info {
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/processpptables.c b/drivers/gpu/drm/amd/powerplay/hwmgr/processpptables.c
+index c3e7e34535e8..7545776a774d 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/processpptables.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/processpptables.c
+@@ -1697,9 +1697,6 @@ static int pp_tables_uninitialize(struct pp_hwmgr *hwmgr)
+ 	kfree(hwmgr->dyn_state.vdd_gfx_dependency_on_sclk);
+ 	hwmgr->dyn_state.vdd_gfx_dependency_on_sclk = NULL;
+ 
+-	kfree(hwmgr->dyn_state.vq_budgeting_table);
+-	hwmgr->dyn_state.vq_budgeting_table = NULL;
+-
+ 	return 0;
+ }
+ 
