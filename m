@@ -1,103 +1,59 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 07 Feb 2018 15:15:13 +0000
-Subject: Re: [PATCH] coccinelle: reduce false positives
-Message-Id: <CAK7LNATiaN-ELZXJH=nRgMATbbpPoT6+3sfRqhRpO7MoAkNwmg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 21:24:30 +0000
+Subject: [PATCH 2/2] drm/tilcdc: panel: Use common error handling code in of_get_panel_info()
+Message-Id: <23b2cf6c-7b69-9ade-d97a-18af0c6eb73f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1517478532-5444-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <a7c7cebb-f4c9-04b7-5507-e41f8ebfb5f9@users.sourceforge.net>
+In-Reply-To: <a7c7cebb-f4c9-04b7-5507-e41f8ebfb5f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-2018-02-01 18:48 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> Some files use both a non-devm allocation and a devm_allocation.  Don't
-> complain about a free when the same function contains a non-devm
-> allocation.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  scripts/coccinelle/free/devm_free.cocci |   55 +++++++++++++++++++++++++++++++-
->  1 file changed, 54 insertions(+), 1 deletion(-)
->
-> diff --git a/scripts/coccinelle/free/devm_free.cocci b/scripts/coccinelle/free/devm_free.cocci
-> index c990d2c..b2a2cf8b 100644
-> --- a/scripts/coccinelle/free/devm_free.cocci
-> +++ b/scripts/coccinelle/free/devm_free.cocci
-> @@ -56,9 +56,62 @@ expression x;
->   x = devm_ioport_map(...)
->  )
->
-> +@safe depends on context || org || report exists@
-> +expression x;
-> +position p;
-> +@@
-> +
-> +(
-> + x = kmalloc(...)
-> +|
-> + x = kvasprintf(...)
-> +|
-> + x = kasprintf(...)
-> +|
-> + x = kzalloc(...)
-> +|
-> + x = kmalloc_array(...)
-> +|
-> + x = kcalloc(...)
-> +|
-> + x = kstrdup(...)
-> +|
-> + x = kmemdup(...)
-> +|
-> + x = get_free_pages(...)
-> +|
-> + x = request_irq(...)
-> +|
-> + x = ioremap(...)
-> +|
-> + x = ioremap_nocache(...)
-> +|
-> + x = ioport_map(...)
-> +)
-> +...
-> +(
-> + kfree@p(x)
-> +|
-> + kzfree@p(x)
-> +|
-> + __krealloc@p(x, ...)
-> +|
-> + krealloc@p(x, ...)
-> +|
-> + free_pages@p(x, ...)
-> +|
-> + free_page@p(x)
-> +|
-> + free_irq@p(x)
-> +|
-> + iounmap@p(x)
-> +|
-> + ioport_unmap@p(x)
-> +)
-> +
->  @pb@
->  expression r.x;
-> -position p;
-> +position p != safe.p;
->  @@
->
->  (
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 22:10:11 +0100
 
-Anyway, it looks like
-this patch makes the situation better.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/tilcdc/tilcdc_panel.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Applied to linux-kbuild/kbuild.  Thanks!
-
-
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
+index 0b6aa95aec89..cf9ca16fee81 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
+@@ -289,10 +289,8 @@ static struct tilcdc_panel_info *of_get_panel_info(struct device_node *np)
+ 	}
+ 
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
+-	if (!info) {
+-		of_node_put(info_np);
+-		return NULL;
+-	}
++	if (!info)
++		goto put_node;
+ 
+ 	ret |= of_property_read_u32(info_np, "ac-bias", &info->ac_bias);
+ 	ret |= of_property_read_u32(info_np, "ac-bias-intrpt", &info->ac_bias_intrpt);
+@@ -311,11 +309,11 @@ static struct tilcdc_panel_info *of_get_panel_info(struct device_node *np)
+ 	if (ret) {
+ 		pr_err("%s: error reading panel-info properties\n", __func__);
+ 		kfree(info);
+-		of_node_put(info_np);
+-		return NULL;
++		info = NULL;
+ 	}
+-	of_node_put(info_np);
+ 
++put_node:
++	of_node_put(info_np);
+ 	return info;
+ }
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.16.1
+
