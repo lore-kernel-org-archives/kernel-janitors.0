@@ -1,61 +1,43 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Thu, 22 Feb 2018 23:59:47 +0000
-Subject: [PATCH 1/7] drm/virtio: Add tabs at the start of a line
-Message-Id: <1c77c233d4454ee2bdb85beaf17d413e310fac0a.1519343668.git.rodrigosiqueiramelo@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 16:17:46 +0000
+Subject: [PATCH 2/3] HID: lenovo: Improve a size determination in lenovo_probe_tpkbd()
+Message-Id: <4c71a06e-3c13-81e6-42a3-43bae24fe1cf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+References: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
+In-Reply-To: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This patch fixes the checkpatch.pl errors:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 16:52:58 +0100
 
-drivers/gpu/drm/virtio/virtgpu_drv.h:371: ERROR: code indent should use
-tabs where possible
-...
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/virtio/virtgpu_display.c | 2 +-
- drivers/gpu/drm/virtio/virtgpu_drv.h     | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/hid/hid-lenovo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-index 19114a3c5ee4..22513d7f895c 100644
---- a/drivers/gpu/drm/virtio/virtgpu_display.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-@@ -387,7 +387,7 @@ int virtio_gpu_modeset_init(struct virtio_gpu_device *vgdev)
- 	for (i = 0 ; i < vgdev->num_scanouts; ++i)
- 		vgdev_output_init(vgdev, i);
+diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+index 549b84d01b46..f863b94f3476 100644
+--- a/drivers/hid/hid-lenovo.c
++++ b/drivers/hid/hid-lenovo.c
+@@ -685,7 +685,7 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
+ 		hid_warn(hdev, "Could not create sysfs group: %d\n", ret);
  
--        drm_mode_config_reset(vgdev->ddev);
-+	drm_mode_config_reset(vgdev->ddev);
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index da2fb585fea4..59801728cfeb 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -363,12 +363,12 @@ int virtgpu_gem_prime_pin(struct drm_gem_object *obj);
- void virtgpu_gem_prime_unpin(struct drm_gem_object *obj);
- struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj);
- struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
--        struct drm_device *dev, struct dma_buf_attachment *attach,
--        struct sg_table *sgt);
-+	struct drm_device *dev, struct dma_buf_attachment *attach,
-+	struct sg_table *sgt);
- void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj);
- void virtgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
- int virtgpu_gem_prime_mmap(struct drm_gem_object *obj,
--                                struct vm_area_struct *vma);
-+			   struct vm_area_struct *vma);
- 
- static inline struct virtio_gpu_object*
- virtio_gpu_object_ref(struct virtio_gpu_object *bo)
+ 	data_pointer = devm_kzalloc(&hdev->dev,
+-				    sizeof(struct lenovo_drvdata_tpkbd),
++				    sizeof(*data_pointer),
+ 				    GFP_KERNEL);
+ 	if (data_pointer = NULL) {
+ 		ret = -ENOMEM;
 -- 
-2.16.2
+2.16.1
 
