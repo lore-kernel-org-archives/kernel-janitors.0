@@ -1,42 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 08:19:21 +0000
-Subject: [PATCH] hid-saitek: Delete an error message for a failed memory allocation in saitek_probe()
-Message-Id: <e04a936f-9925-3808-9274-6cffe3c63cc3@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 21:42:32 +0000
+Subject: [PATCH] afs: cell: make afs_cell_gc_delay static
+Message-Id: <20180206214232.11049-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 09:12:24 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The variable afs_cell_gc_delay is local to the source and does not need
+to be in global scope, so make it static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warning:
+fs/afs/cell.c:21:24: warning: symbol 'afs_cell_gc_delay' was not
+declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hid/hid-saitek.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/afs/cell.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-saitek.c b/drivers/hid/hid-saitek.c
-index 39e642686ff0..49355ceddd85 100644
---- a/drivers/hid/hid-saitek.c
-+++ b/drivers/hid/hid-saitek.c
-@@ -45,10 +45,8 @@ static int saitek_probe(struct hid_device *hdev,
- 	int ret;
+diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+index 9bb921d120d0..80b8a7e8f38b 100644
+--- a/fs/afs/cell.c
++++ b/fs/afs/cell.c
+@@ -18,7 +18,7 @@
+ #include <keys/rxrpc-type.h>
+ #include "internal.h"
  
- 	ssc = devm_kzalloc(&hdev->dev, sizeof(*ssc), GFP_KERNEL);
--	if (ssc = NULL) {
--		hid_err(hdev, "can't alloc saitek descriptor\n");
-+	if (!ssc)
- 		return -ENOMEM;
--	}
+-unsigned __read_mostly afs_cell_gc_delay = 10;
++static unsigned __read_mostly afs_cell_gc_delay = 10;
  
- 	ssc->quirks = quirks;
- 	ssc->mode = -1;
+ static void afs_manage_cell(struct work_struct *);
+ 
 -- 
-2.16.1
+2.15.1
 
