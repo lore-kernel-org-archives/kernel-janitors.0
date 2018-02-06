@@ -1,29 +1,22 @@
-From: Chao Yu <chao@kernel.org>
-Date: Sun, 25 Feb 2018 15:17:37 +0000
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove redundant initialization of pointer 'p'
-Message-Id: <d7d316b1-7e55-115c-0c45-f381ce774bee@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 08:45:48 +0000
+Subject: =?UTF-8?Q?Re:_Software_evolution_around_=e2=80=9ccheckpatch.pl?= =?UTF-8?B?4oCdPw==?=
+Message-Id: <f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180221181340.7596-1-colin.king@canonical.com>
-In-Reply-To: <20180221181340.7596-1-colin.king@canonical.com>
+References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+ <20180204112346.0977e938@archlinux>
+ <9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
+ <87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
+In-Reply-To: <87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>, linux-iio@vger.kernel.org, linux-input@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 2018/2/22 2:13, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer p is initialized with a value that is never read and is later
-> re-assigned a new value, hence the initialization is redundant and can
-> be removed.
-> 
-> Cleans up clang warning:
-> fs/f2fs/extent_cache.c:463:19: warning: Value stored to 'p' during
-> its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Check patch is dumb and often gives false positives.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Would you like to improve this software situation anyhow?
 
-Thanks,
+Regards,
+Markus
