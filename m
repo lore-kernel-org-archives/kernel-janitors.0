@@ -1,36 +1,42 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Fri, 16 Feb 2018 23:52:32 +0000
-Subject: Re: [PATCH][V2] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
-Message-Id: <20180216235232.GI14177@piout.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 14:49:50 +0000
+Subject: [PATCH] kasan: remove redundant initialization of variable 'real_size'
+Message-Id: <20180206144950.32457-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180215193614.28684-1-colin.king@canonical.com>
-In-Reply-To: <20180215193614.28684-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 15/02/2018 at 19:36:14 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The shifting of buf[5] by 24 bits to the left will be promoted to
-> a 32 bit signed int and then sign-extended to an unsigned long. If
-> the top bit of buf[5] is set then all then all the upper bits sec
-> end up as also being set because of the sign-extension. Fix this by
-> casting buf[5] to an unsigned long before the shift.
-> 
-> Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
-> 
-> Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-tx4939.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-Applied, thanks.
+From: Colin Ian King <colin.king@canonical.com>
 
+Variable real_size is initialized with a value that is never read,
+it is re-assigned a new value later on, hence the initialization is
+redundant and can be removed.
+
+Cleans up clang warning:
+lib/test_kasan.c:422:21: warning: Value stored to 'real_size' during
+its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/test_kasan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index a808d81b409d..dba0ffd45fd7 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -419,7 +419,7 @@ static noinline void __init kasan_stack_oob(void)
+ static noinline void __init ksize_unpoisons_memory(void)
+ {
+ 	char *ptr;
+-	size_t size = 123, real_size = size;
++	size_t size = 123, real_size;
+ 
+ 	pr_info("ksize() unpoisons the whole allocated chunk\n");
+ 	ptr = kmalloc(size, GFP_KERNEL);
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.15.1
+
