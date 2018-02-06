@@ -1,18 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 20:09:53 +0000
-Subject: [PATCH 1/2] HSI: ssi_protocol: Delete an error message for a failed memory allocation in ssi_protoco
-Message-Id: <77f958da-a645-69c9-8641-d37a073c0d53@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 19:35:01 +0000
+Subject: [PATCH] HID: apple: Delete an error message for a failed memory allocation in apple_probe()
+Message-Id: <83d48f20-dd03-00fc-bfea-cd4a87b7254c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
-In-Reply-To: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>, Sebastian Reichel <sre@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 20:02:17 +0100
+Date: Tue, 6 Feb 2018 20:06:53 +0100
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -20,25 +18,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hsi/clients/ssi_protocol.c | 4 +---
+ drivers/hid/hid-apple.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_protocol.c
-index 9b167bc6eee4..0bccea2fa119 100644
---- a/drivers/hsi/clients/ssi_protocol.c
-+++ b/drivers/hsi/clients/ssi_protocol.c
-@@ -1088,10 +1088,8 @@ static int ssi_protocol_probe(struct device *dev)
- 	int err;
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index 25b7bd56ae11..d739dd3aa622 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -374,10 +374,8 @@ static int apple_probe(struct hid_device *hdev,
+ 	int ret;
  
- 	ssi = kzalloc(sizeof(*ssi), GFP_KERNEL);
--	if (!ssi) {
--		dev_err(dev, "No memory for ssi protocol\n");
-+	if (!ssi)
+ 	asc = devm_kzalloc(&hdev->dev, sizeof(*asc), GFP_KERNEL);
+-	if (asc = NULL) {
+-		hid_err(hdev, "can't alloc apple descriptor\n");
++	if (!asc)
  		return -ENOMEM;
 -	}
  
- 	spin_lock_init(&ssi->lock);
- 	timer_setup(&ssi->rx_wd, ssip_rx_wd, TIMER_DEFERRABLE);
+ 	asc->quirks = quirks;
+ 
 -- 
 2.16.1
 
