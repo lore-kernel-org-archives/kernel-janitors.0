@@ -1,34 +1,47 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 15 Feb 2018 15:52:43 +0000
-Subject: Re: [PATCH] crypto: qat - Make several functions static
-Message-Id: <20180215155243.GP7352@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 23:09:20 +0000
+Subject: [PATCH] crypto: chelsio - Make function aead_ccm_validate_input static
+Message-Id: <20180206230920.13764-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206233642.14591-1-colin.king@canonical.com>
-In-Reply-To: <20180206233642.14591-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, "David S . Miller" <davem@davemloft.net>, Eric Biggers <ebiggers@google.com>, qat-linux@intel.com, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 11:36:42PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Functions qat_rsa_set_n, qat_rsa_set_e and qat_rsa_set_n are local to
-> the source and do not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> drivers/crypto/qat/qat_common/qat_asym_algs.c:972:5: warning: symbol
-> 'qat_rsa_set_n' was not declared. Should it be static?
-> drivers/crypto/qat/qat_common/qat_asym_algs.c:1003:5: warning: symbol
-> 'qat_rsa_set_e' was not declared. Should it be static?
-> drivers/crypto/qat/qat_common/qat_asym_algs.c:1027:5: warning: symbol
-> 'qat_rsa_set_d' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Function aead_ccm_validate_input is local to the source and does not
+need to be in global scope, so make it static.
+
+Cleans up sparse warning:
+drivers/crypto/chelsio/chcr_algo.c:2627:5: warning: symbol
+'aead_ccm_validate_input' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/chelsio/chcr_algo.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index 34a02d690548..8a67884512e4 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -2636,10 +2636,10 @@ static void fill_sec_cpl_for_aead(struct cpl_tx_sec_pdu *sec_cpl,
+ 					0, dst_size);
+ }
+ 
+-int aead_ccm_validate_input(unsigned short op_type,
+-			    struct aead_request *req,
+-			    struct chcr_aead_ctx *aeadctx,
+-			    unsigned int sub_type)
++static int aead_ccm_validate_input(unsigned short op_type,
++				   struct aead_request *req,
++				   struct chcr_aead_ctx *aeadctx,
++				   unsigned int sub_type)
+ {
+ 	if (sub_type != CRYPTO_ALG_SUB_TYPE_AEAD_RFC4309) {
+ 		if (crypto_ccm_check_iv(req->iv)) {
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.15.1
+
