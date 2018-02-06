@@ -1,20 +1,41 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Fri, 16 Feb 2018 15:14:51 +0000
-Subject: RE: [PATCH] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
-Message-Id: <d943a549d051472c98e3c163dc4245ac@AcuMS.aculab.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Feb 2018 23:20:01 +0000
+Subject: [PATCH] crypto: ccp - Make function ccp_get_dma_chan_attr static
+Message-Id: <20180206232001.14102-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180215185941.27547-1-colin.king@canonical.com>
- <CAHp75Vf+ky3Ma1b20x57i9z+ykS1j8k1LTuOT3f=Jbu5kCeeAQ@mail.gmail.com>
-In-Reply-To: <CAHp75Vf+ky3Ma1b20x57i9z+ykS1j8k1LTuOT3f=Jbu5kCeeAQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Andy Shevchenko' <andy.shevchenko@gmail.com>, Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogQW5keSBTaGV2Y2hlbmtvDQo+IFNlbnQ6IDE2IEZlYnJ1YXJ5IDIwMTggMTQ6MjMNCi4u
-Lg0KPiBXb3VsZG4ndCBiZSBiZXR0ZXIgdG8gdXNlIGxlMzJfdG9fY3B1KCkgb3IgZ2V0X3VuYWxp
-Z25lZCgpPw0KDQpPciBzaG9vdCB0aGUgbWVtYmVycyBvZiB0aGUgQU5TSSBDIGNvbW1pdHRlZSB3
-aG8gaW5zaXN0ZWQgb24NCnByb21vdGlvbiBvZiB1bnNpZ25lZCBjaGFyL3Nob3J0IHRvIGludCBh
-bmQgc2lnbiBwcmVzZXJ2aW5nDQpwcm9tb3Rpb24gb2YgaW50IHRvIHVuc2lnbmVkIGxvbmcgOi0p
-DQoNCglEYXZpZA0KDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+Function ccp_get_dma_chan_attr is local to the source and does not
+need to be in global scope, so make it static.
+
+Cleans up sparse warning:
+drivers/crypto/ccp/ccp-dmaengine.c:41:14: warning: symbol
+'ccp_get_dma_chan_attr' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/ccp/ccp-dmaengine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/ccp/ccp-dmaengine.c b/drivers/crypto/ccp/ccp-dmaengine.c
+index 8b9da58459df..67155cb21636 100644
+--- a/drivers/crypto/ccp/ccp-dmaengine.c
++++ b/drivers/crypto/ccp/ccp-dmaengine.c
+@@ -38,7 +38,7 @@ static unsigned int dma_chan_attr = CCP_DMA_DFLT;
+ module_param(dma_chan_attr, uint, 0444);
+ MODULE_PARM_DESC(dma_chan_attr, "Set DMA channel visibility: 0 (default) = device defaults, 1 = make private, 2 = make public");
+ 
+-unsigned int ccp_get_dma_chan_attr(struct ccp_device *ccp)
++static unsigned int ccp_get_dma_chan_attr(struct ccp_device *ccp)
+ {
+ 	switch (dma_chan_attr) {
+ 	case CCP_DMA_DFLT:
+-- 
+2.15.1
+
