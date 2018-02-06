@@ -1,64 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 06 Feb 2018 16:19:01 +0000
-Subject: [PATCH 3/3] HID: lenovo: Adjust four checks for null pointers
-Message-Id: <1dc4fe03-be3b-7175-05aa-2f5397f57cb5@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 14:45:13 +0000
+Subject: [PATCH 1/3] hid-lg: Delete an error message for a failed memory allocation in lg_probe()
+Message-Id: <14c9b364-5a38-88f3-0cd4-913ca95dfc31@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
-In-Reply-To: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
+References: <5c76a767-b1cb-2486-f24d-0d5a220b8985@users.sourceforge.net>
+In-Reply-To: <5c76a767-b1cb-2486-f24d-0d5a220b8985@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2018 17:02:53 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 6 Feb 2018 14:25:32 +0100
 
-The script “checkpatch.pl” pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-lenovo.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hid/hid-lg.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
-index f863b94f3476..ba128123466b 100644
---- a/drivers/hid/hid-lenovo.c
-+++ b/drivers/hid/hid-lenovo.c
-@@ -687,7 +687,7 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
- 	data_pointer = devm_kzalloc(&hdev->dev,
- 				    sizeof(*data_pointer),
- 				    GFP_KERNEL);
--	if (data_pointer = NULL) {
-+	if (!data_pointer) {
- 		ret = -ENOMEM;
- 		goto err;
+diff --git a/drivers/hid/hid-lg.c b/drivers/hid/hid-lg.c
+index 596227ddb6e0..f4439dc64497 100644
+--- a/drivers/hid/hid-lg.c
++++ b/drivers/hid/hid-lg.c
+@@ -728,10 +728,9 @@ static int lg_probe(struct hid_device *hdev, const struct hid_device_id *id)
  	}
-@@ -698,7 +698,7 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
  
- 	name_mute = devm_kzalloc(&hdev->dev, name_sz, GFP_KERNEL);
- 	name_micmute = devm_kzalloc(&hdev->dev, name_sz, GFP_KERNEL);
--	if (name_mute = NULL || name_micmute = NULL) {
-+	if (!name_mute || !name_micmute) {
- 		hid_err(hdev, "Could not allocate memory for led data\n");
- 		ret = -ENOMEM;
- 		goto err;
-@@ -823,7 +823,7 @@ static void lenovo_remove_tpkbd(struct hid_device *hdev)
- 	 * Only the trackpoint half of the keyboard has drvdata and stuff that
- 	 * needs unregistering.
- 	 */
--	if (data_pointer = NULL)
-+	if (!data_pointer)
- 		return;
+ 	drv_data = kzalloc(sizeof(struct lg_drv_data), GFP_KERNEL);
+-	if (!drv_data) {
+-		hid_err(hdev, "Insufficient memory, cannot allocate driver data\n");
++	if (!drv_data)
+ 		return -ENOMEM;
+-	}
++
+ 	drv_data->quirks = id->driver_data;
  
- 	sysfs_remove_group(&hdev->dev.kobj,
+ 	hid_set_drvdata(hdev, (void *)drv_data);
 -- 
 2.16.1
 
