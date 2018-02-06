@@ -1,54 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 16:48:52 +0000
-Subject: [PATCH][mm-next] mm, swap: make bool enable_vma_readahead and function swap_vma_readahead static
-Message-Id: <20180223164852.5159-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 14:43:18 +0000
+Subject: [PATCH 0/3] HID-Logitech: Adjustments for two function implementations
+Message-Id: <5c76a767-b1cb-2486-f24d-0d5a220b8985@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Feb 2018 15:38:30 +0100
 
-The bool enable_vma_readahead and function swap_vma_readahead are local
-to the source and do not need to be in global scope, so make them static.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Cleans up sparse warnings:
-mm/swap_state.c:41:6: warning: symbol 'enable_vma_readahead' was not
-declared. Should it be static?
-mm/swap_state.c:742:13: warning: symbol 'swap_vma_readahead' was not
-declared. Should it be static?
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in lg_probe()
+  Improve a size determination in lg_probe()
+  Delete an error message for a failed memory allocation in lg4ff_init()
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/swap_state.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hid/hid-lg.c    | 7 +++----
+ drivers/hid/hid-lg4ff.c | 4 +---
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 8dde719e973c..f3952138f01d 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -38,7 +38,7 @@ static const struct address_space_operations swap_aops = {
- 
- struct address_space *swapper_spaces[MAX_SWAPFILES] __read_mostly;
- static unsigned int nr_swapper_spaces[MAX_SWAPFILES] __read_mostly;
--bool enable_vma_readahead __read_mostly = true;
-+static bool enable_vma_readahead __read_mostly = true;
- 
- #define SWAP_RA_WIN_SHIFT	(PAGE_SHIFT / 2)
- #define SWAP_RA_HITS_MASK	((1UL << SWAP_RA_WIN_SHIFT) - 1)
-@@ -739,8 +739,8 @@ static void swap_ra_info(struct vm_fault *vmf,
- 	pte_unmap(orig_pte);
- }
- 
--struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
--				    struct vm_fault *vmf)
-+static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
-+				       struct vm_fault *vmf)
- {
- 	struct blk_plug plug;
- 	struct vm_area_struct *vma = vmf->vma;
 -- 
-2.15.1
+2.16.1
 
