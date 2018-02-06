@@ -1,44 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Feb 2018 16:57:00 +0000
-Subject: [PATCH 1/2] i2c-tiny-usb: Delete an error message for a failed memory allocation in i2c_tiny_usb_pro
-Message-Id: <39c40369-48ef-e245-4e19-4caf12e9f06b@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 17:30:50 +0000
+Subject: [PATCH 2/2] HID: asus: Return an error code only as a constant in asus_start_multitouch()
+Message-Id: <8408b92e-81fc-89d2-6bf3-e7948673fed6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
-In-Reply-To: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
+References: <5289ace9-8927-9803-4692-c7c621ab0a8d@users.sourceforge.net>
+In-Reply-To: <5289ace9-8927-9803-4692-c7c621ab0a8d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Till Harbaum <till@harbaum.org>, Wolfram Sang <wsa@the-dreams.de>
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Feb 2018 17:36:50 +0100
+Date: Tue, 6 Feb 2018 18:18:50 +0100
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+Return an error code without storing it in an intermediate variable.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/busses/i2c-tiny-usb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/hid/hid-asus.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tiny-usb.c b/drivers/i2c/busses/i2c-tiny-usb.c
-index a2e3dd715380..e210e36df123 100644
---- a/drivers/i2c/busses/i2c-tiny-usb.c
-+++ b/drivers/i2c/busses/i2c-tiny-usb.c
-@@ -230,10 +230,8 @@ static int i2c_tiny_usb_probe(struct usb_interface *interface,
+diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+index 9573e0b41922..5e143552dab9 100644
+--- a/drivers/hid/hid-asus.c
++++ b/drivers/hid/hid-asus.c
+@@ -564,10 +564,8 @@ static int asus_start_multitouch(struct hid_device *hdev)
+ 	const unsigned char buf[] = { FEATURE_REPORT_ID, 0x00, 0x03, 0x01, 0x00 };
+ 	unsigned char *dmabuf = kmemdup(buf, sizeof(buf), GFP_KERNEL);
  
- 	/* allocate memory for our device state and initialize it */
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
--	if (dev = NULL) {
--		dev_err(&interface->dev, "Out of memory\n");
-+	if (!dev)
- 		goto error;
+-	if (!dmabuf) {
+-		ret = -ENOMEM;
+-		return ret;
 -	}
++	if (!dmabuf)
++		return -ENOMEM;
  
- 	dev->usb_dev = usb_get_dev(interface_to_usbdev(interface));
- 	dev->interface = interface;
+ 	ret = hid_hw_raw_request(hdev, dmabuf[0], dmabuf, sizeof(buf),
+ 					HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
 -- 
 2.16.1
 
