@@ -1,43 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 08 Feb 2018 18:36:11 +0000
-Subject: [PATCH] drm_fb_cma_helper: Delete an error message for a failed memory allocation in drm_fbdev_cma_i
-Message-Id: <b42a3095-fc99-1ee4-b3d7-2a71277454d9@users.sourceforge.net>
+Date: Tue, 06 Feb 2018 16:19:01 +0000
+Subject: [PATCH 3/3] HID: lenovo: Adjust four checks for null pointers
+Message-Id: <1dc4fe03-be3b-7175-05aa-2f5397f57cb5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
+In-Reply-To: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo@padovan.org>, Sean Paul <seanpaul@chromium.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 19:30:06 +0100
+Date: Tue, 6 Feb 2018 17:02:53 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit an extra message for a memory allocation failure in this function.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/drm_fb_cma_helper.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/hid/hid-lenovo.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
-index 186d00adfb5f..59f0d8dbfa61 100644
---- a/drivers/gpu/drm/drm_fb_cma_helper.c
-+++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-@@ -408,10 +408,9 @@ struct drm_fbdev_cma *drm_fbdev_cma_init_with_funcs(struct drm_device *dev,
- 	int ret;
+diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+index f863b94f3476..ba128123466b 100644
+--- a/drivers/hid/hid-lenovo.c
++++ b/drivers/hid/hid-lenovo.c
+@@ -687,7 +687,7 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
+ 	data_pointer = devm_kzalloc(&hdev->dev,
+ 				    sizeof(*data_pointer),
+ 				    GFP_KERNEL);
+-	if (data_pointer = NULL) {
++	if (!data_pointer) {
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+@@ -698,7 +698,7 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
  
- 	fbdev_cma = kzalloc(sizeof(*fbdev_cma), GFP_KERNEL);
--	if (!fbdev_cma) {
--		dev_err(dev->dev, "Failed to allocate drm fbdev.\n");
-+	if (!fbdev_cma)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	fbdev_cma->fb_funcs = funcs;
+ 	name_mute = devm_kzalloc(&hdev->dev, name_sz, GFP_KERNEL);
+ 	name_micmute = devm_kzalloc(&hdev->dev, name_sz, GFP_KERNEL);
+-	if (name_mute = NULL || name_micmute = NULL) {
++	if (!name_mute || !name_micmute) {
+ 		hid_err(hdev, "Could not allocate memory for led data\n");
+ 		ret = -ENOMEM;
+ 		goto err;
+@@ -823,7 +823,7 @@ static void lenovo_remove_tpkbd(struct hid_device *hdev)
+ 	 * Only the trackpoint half of the keyboard has drvdata and stuff that
+ 	 * needs unregistering.
+ 	 */
+-	if (data_pointer = NULL)
++	if (!data_pointer)
+ 		return;
  
- 	helper = &fbdev_cma->fb_helper;
+ 	sysfs_remove_group(&hdev->dev.kobj,
 -- 
 2.16.1
 
