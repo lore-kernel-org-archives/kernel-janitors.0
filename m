@@ -1,49 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 17:39:58 +0000
-Subject: [PATCH 3/6] hid-prodikeys: Move an assignment in pk_probe()
-Message-Id: <44c2767f-c66c-3b36-4bd1-059d5d2f4461@users.sourceforge.net>
+Date: Wed, 07 Feb 2018 21:00:11 +0000
+Subject: [PATCH] drm/msm/mdp5: Delete an error message for a failed memory allocation in two functions
+Message-Id: <7726fab0-dbe4-9d70-36a8-17d6078a39ce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
-In-Reply-To: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Archit Taneja <architt@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Neil Armstrong <narmstrong@baylibre.com>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Rob Clark <robdclark@gmail.com>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 17:20:01 +0100
+Date: Wed, 7 Feb 2018 21:50:07 +0100
 
-Move one assignment for a data structure member in one local variable
-so that its setting will only be performed after a corresponding memory
-allocation succeeded by this function.
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-prodikeys.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c | 1 -
+ drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c | 4 +---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
-index 2e79dfc92162..7672f723b268 100644
---- a/drivers/hid/hid-prodikeys.c
-+++ b/drivers/hid/hid-prodikeys.c
-@@ -804,8 +804,6 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	if (!pk)
- 		return -ENOMEM;
+diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
+index 439e0a300e25..daa224df4457 100644
+--- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
++++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_ctl.c
+@@ -717,7 +717,6 @@ struct mdp5_ctl_manager *mdp5_ctlm_init(struct drm_device *dev,
  
--	pk->hdev = hdev;
--
- 	pm = kzalloc(sizeof(*pm), GFP_KERNEL);
- 	if (pm = NULL) {
+ 	ctl_mgr = kzalloc(sizeof(*ctl_mgr), GFP_KERNEL);
+ 	if (!ctl_mgr) {
+-		dev_err(dev->dev, "failed to allocate CTL manager\n");
  		ret = -ENOMEM;
-@@ -814,6 +812,7 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		goto fail;
+ 	}
+diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
+index 3e9bba4d6624..5bf54ca7ab0a 100644
+--- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
+@@ -844,10 +844,8 @@ static int interface_init(struct mdp5_kms *mdp5_kms)
+ 			continue;
  
- 	pm->pk = pk;
- 	pk->pm = pm;
-+	pk->hdev = hdev;
- 	pm->ifnum = ifnum;
+ 		intf = kzalloc(sizeof(*intf), GFP_KERNEL);
+-		if (!intf) {
+-			dev_err(dev->dev, "failed to construct INTF%d\n", i);
++		if (!intf)
+ 			return -ENOMEM;
+-		}
  
- 	hid_set_drvdata(hdev, pk);
+ 		intf->num = i;
+ 		intf->type = intf_types[i];
 -- 
 2.16.1
 
