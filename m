@@ -1,25 +1,45 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 07 Feb 2018 01:25:39 +0000
-Subject: Re: [PATCH] scsi: qedf: remove redundant initialization of 'fcport'
-Message-Id: <yq1372d1tgs.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Feb 2018 10:29:47 +0000
+Subject: [PATCH] lockd: make nlm_ntf_refcnt and nlm_ntf_wq static
+Message-Id: <20180207102947.29292-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206140316.31453-1-colin.king@canonical.com>
-In-Reply-To: <20180206140316.31453-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 6 Feb 2018 14:03:16 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "J . Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+The variables nlm_ntf_refcnt and nlm_ntf_wq are local to the source and
+do not need to be in global scope, so make them static.
 
-> Pointer fcport is initialized with a value that is never read, it is
-> re-assigned a new value later on, hence the initialization is redundant
-> and can be removed.
+Cleans up sparse warnings:
+fs/lockd/svc.c:60:10: warning: symbol 'nlm_ntf_refcnt' was not declared.
+Should it be static?
+fs/lockd/svc.c:61:1: warning: symbol 'nlm_ntf_wq' was not declared.
+Should it be static?
 
-Applied to 4.17/scsi-queue. Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/lockd/svc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+index 9c36d614bf89..346ed161756d 100644
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -57,8 +57,8 @@ static struct task_struct	*nlmsvc_task;
+ static struct svc_rqst		*nlmsvc_rqst;
+ unsigned long			nlmsvc_timeout;
+ 
+-atomic_t nlm_ntf_refcnt = ATOMIC_INIT(0);
+-DECLARE_WAIT_QUEUE_HEAD(nlm_ntf_wq);
++static atomic_t nlm_ntf_refcnt = ATOMIC_INIT(0);
++static DECLARE_WAIT_QUEUE_HEAD(nlm_ntf_wq);
+ 
+ unsigned int lockd_net_id;
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.15.1
+
