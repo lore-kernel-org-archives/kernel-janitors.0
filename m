@@ -1,43 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 08 Feb 2018 14:40:14 +0000
-Subject: [PATCH 3/3] drm/gma500: Delete an unnecessary return statement in oaktrail_crtc_hdmi_dpms()
-Message-Id: <9871ef86-0cd6-aab8-1252-53bc08fc79af@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Feb 2018 11:27:54 +0000
+Subject: [PATCH] NFS: make struct nlmclnt_fl_close_lock_ops static
+Message-Id: <20180207112754.30821-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
-In-Reply-To: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 15:17:48 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+The structure nlmclnt_fl_close_lock_ops s local to the source and does
+not need to be in global scope, so make it static.
 
-WARNING: void function return statements are not generally useful
+Cleans up sparse warning:
+fs/nfs/nfs3proc.c:876:33: warning: symbol 'nlmclnt_fl_close_lock_ops' was not
+declared. Should it be static?
 
-Thus remove such a statement in the affected function.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/gma500/oaktrail_hdmi.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/nfs/nfs3proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi.c b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-index dbc58e5130bb..24c7c6edfca5 100644
---- a/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-+++ b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-@@ -484,8 +484,6 @@ void oaktrail_crtc_hdmi_dpms(struct drm_crtc *crtc, int mode)
- 
- 	/* LNC Chicken Bits - Squawk! */
- 	REG_WRITE(0x70400, 0x4000);
--
--	return;
+diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
+index 49f848fd1f04..7327930ad970 100644
+--- a/fs/nfs/nfs3proc.c
++++ b/fs/nfs/nfs3proc.c
+@@ -873,7 +873,7 @@ static void nfs3_nlm_release_call(void *data)
+ 	}
  }
  
- static void oaktrail_hdmi_dpms(struct drm_encoder *encoder, int mode)
+-const struct nlmclnt_operations nlmclnt_fl_close_lock_ops = {
++static const struct nlmclnt_operations nlmclnt_fl_close_lock_ops = {
+ 	.nlmclnt_alloc_call = nfs3_nlm_alloc_call,
+ 	.nlmclnt_unlock_prepare = nfs3_nlm_unlock_prepare,
+ 	.nlmclnt_release_call = nfs3_nlm_release_call,
 -- 
-2.16.1
+2.15.1
 
