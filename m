@@ -1,68 +1,40 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 04 Feb 2018 11:01:07 +0000
-Subject: Re: [PATCH] iio/orientation: Delete an error message for a failed memory allocation in two functions
-Message-Id: <20180204110107.19861b13@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 07 Feb 2018 21:45:33 +0000
+Subject: [PATCH 1/2] drm/msm/mdp4: Delete an error message for a failed memory allocation in mdp4_kms_init()
+Message-Id: <242c009d-e801-57ef-cc95-e342776244de@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
-In-Reply-To: <ebf6c923-d641-8bf8-5544-630a5ee39980@users.sourceforge.net>
+References: <e090cf0c-0bb0-d28c-ac21-9e045993a995@users.sourceforge.net>
+In-Reply-To: <e090cf0c-0bb0-d28c-ac21-9e045993a995@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Jordan Crouse <jcrouse@codeaurora.org>, Jyri Sarha <jsarha@ti.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sushmita Susheelendra <ssusheel@codeaurora.org>, Rob Clark <robdclark@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 29 Jan 2018 22:26:15 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 7 Feb 2018 22:22:28 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 29 Jan 2018 22:20:07 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Omit an extra message for a memory allocation failure in this function.
 
-Same response as previous patch - it might not be adding much information,
-but it is adding some so we should keep it.
+This issue was detected by using the Coccinelle software.
 
-Jonathan
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> ---
->  drivers/iio/orientation/hid-sensor-incl-3d.c  | 4 +---
->  drivers/iio/orientation/hid-sensor-rotation.c | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/orientation/hid-sensor-incl-3d.c b/drivers/iio/orientation/hid-sensor-incl-3d.c
-> index 1e5451d1ff88..742c0e0eb4cf 100644
-> --- a/drivers/iio/orientation/hid-sensor-incl-3d.c
-> +++ b/drivers/iio/orientation/hid-sensor-incl-3d.c
-> @@ -336,10 +336,8 @@ static int hid_incl_3d_probe(struct platform_device *pdev)
->  
->  	indio_dev->channels = kmemdup(incl_3d_channels,
->  				      sizeof(incl_3d_channels), GFP_KERNEL);
-> -	if (!indio_dev->channels) {
-> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
-> +	if (!indio_dev->channels)
->  		return -ENOMEM;
-> -	}
->  
->  	ret = incl_3d_parse_report(pdev, hsdev,
->  				   (struct iio_chan_spec *)indio_dev->channels,
-> diff --git a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
-> index a69db2002414..cbf5e406b1ee 100644
-> --- a/drivers/iio/orientation/hid-sensor-rotation.c
-> +++ b/drivers/iio/orientation/hid-sensor-rotation.c
-> @@ -277,10 +277,8 @@ static int hid_dev_rot_probe(struct platform_device *pdev)
->  	indio_dev->channels = devm_kmemdup(&pdev->dev, dev_rot_channels,
->  					   sizeof(dev_rot_channels),
->  					   GFP_KERNEL);
-> -	if (!indio_dev->channels) {
-> -		dev_err(&pdev->dev, "failed to duplicate channels\n");
-> +	if (!indio_dev->channels)
->  		return -ENOMEM;
-> -	}
->  
->  	ret = dev_rot_parse_report(pdev, hsdev,
->  				   (struct iio_chan_spec *)indio_dev->channels,
+diff --git a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
+index f7f087419ed8..5c5965a9d1f9 100644
+--- a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
++++ b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
+@@ -417,7 +417,6 @@ struct msm_kms *mdp4_kms_init(struct drm_device *dev)
+ 
+ 	mdp4_kms = kzalloc(sizeof(*mdp4_kms), GFP_KERNEL);
+ 	if (!mdp4_kms) {
+-		dev_err(dev->dev, "failed to allocate kms\n");
+ 		ret = -ENOMEM;
+ 		goto fail;
+ 	}
+-- 
+2.16.1
 
