@@ -1,42 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Feb 2018 21:26:16 +0000
-Subject: [PATCH] firmware-gsmi: Delete an error message for a failed memory allocation in gsmi_buf_alloc()
-Message-Id: <9cea2b6a-f260-a578-b3ed-6c118795907f@users.sourceforge.net>
+Date: Thu, 08 Feb 2018 14:40:14 +0000
+Subject: [PATCH 3/3] drm/gma500: Delete an unnecessary return statement in oaktrail_crtc_hdmi_dpms()
+Message-Id: <9871ef86-0cd6-aab8-1252-53bc08fc79af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
+In-Reply-To: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Feb 2018 22:22:02 +0100
+Date: Thu, 8 Feb 2018 15:17:48 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/firmware/google/gsmi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/gma500/oaktrail_hdmi.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-index c8f169bf2e27..fbf661e0b784 100644
---- a/drivers/firmware/google/gsmi.c
-+++ b/drivers/firmware/google/gsmi.c
-@@ -138,10 +138,8 @@ static struct gsmi_buf *gsmi_buf_alloc(void)
- 	struct gsmi_buf *smibuf;
+diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi.c b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
+index dbc58e5130bb..24c7c6edfca5 100644
+--- a/drivers/gpu/drm/gma500/oaktrail_hdmi.c
++++ b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
+@@ -484,8 +484,6 @@ void oaktrail_crtc_hdmi_dpms(struct drm_crtc *crtc, int mode)
  
- 	smibuf = kzalloc(sizeof(*smibuf), GFP_KERNEL);
--	if (!smibuf) {
--		printk(KERN_ERR "gsmi: out of memory\n");
-+	if (!smibuf)
- 		return NULL;
--	}
+ 	/* LNC Chicken Bits - Squawk! */
+ 	REG_WRITE(0x70400, 0x4000);
+-
+-	return;
+ }
  
- 	/* allocate buffer in 32bit address space */
- 	smibuf->start = dma_pool_alloc(gsmi_dev.dma_pool, GFP_KERNEL,
+ static void oaktrail_hdmi_dpms(struct drm_encoder *encoder, int mode)
 -- 
 2.16.1
 
