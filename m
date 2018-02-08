@@ -1,52 +1,26 @@
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-Date: Wed, 28 Feb 2018 09:52:42 +0000
-Subject: RE: [PATCH] mei: remove dev_err message on an unsupported ioctl
-Message-Id: <5B8DA87D05A7694D9FA63FD143655C1B9422AF6C@hasmsx108.ger.corp.intel.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Thu, 08 Feb 2018 10:05:41 +0000
+Subject: Re: [PATCH -next] cpufreq: scpi: fix error return code in scpi_cpufreq_init()
+Message-Id: <2101717.6379XIZ7aP@aspire.rjw.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180227162105.14113-1-colin.king@canonical.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9422A4CC@hasmsx108.ger.corp.intel.com>
- <20180227181005.GA19944@kroah.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9422A72C@hasmsx108.ger.corp.intel.com>
- <20180228094958.GA12946@kroah.com>
-In-Reply-To: <20180228094958.GA12946@kroah.com>
+References: <1516673342-170261-1-git-send-email-weiyongjun1@huawei.com>
+ <15661228-4bb6-233e-b81b-8f51f4579616@arm.com>
+In-Reply-To: <15661228-4bb6-233e-b81b-8f51f4579616@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
+On Tuesday, January 23, 2018 11:14:41 AM CET Sudeep Holla wrote:
 > 
-> On Tue, Feb 27, 2018 at 09:44:41PM +0000, Winkler, Tomas wrote:
-> > >
-> > > On Tue, Feb 27, 2018 at 05:26:22PM +0000, Winkler, Tomas wrote:
-> > > > >
-> > > > > From: Colin Ian King <colin.king@canonical.com>
-> > > > >
-> > > > > Currently the driver spams the kernel log on unsupported ioctls
-> > > > > which is unnecessary as the ioctl returns -ENOIOCTLCMD to
-> > > > > indicate this
-> > > anyway.
-> > > > > I suspect this was originally for debugging purposes but it
-> > > > > really is not required so remove it.
-> > > > >
-> > > >
-> > > > This is rather strange as most of the legimit applications are
-> > > > using one IOCTL from kernel 3.0 Do you have any reference where
-> > > > this call is
-> > > originated from, frankly this is the first time I got such complain.
-> > > >
-> > > > In any case it would be maybe better to change it a warn once call.
-> > >
-> > > Just drop the message, it should not be this easy for userspace to
-> > > spam the kernel log.  The patch looks fine to me.
-> > >
-> > Fair enough, add my ack too.
-> >
-> > Still I'm curious if this comes from the field.
+> On 23/01/18 02:09, Wei Yongjun wrote:
+> > Fix to return a negative error code from the clk_get() error handling
+> > case instead of 0, as done elsewhere in this function.
+> > 
 > 
-> fuzzers are "in the field" :)
+> Thanks for catching this.
+> 
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-It's definitely fuzzers season.
-
-Tomas
+Patch applied, thanks!
 
