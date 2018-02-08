@@ -1,24 +1,43 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Thu, 01 Feb 2018 22:50:15 +0000
-Subject: Re: [PATCH] RDMA/nldev: missing error code in nldev_res_get_doit()
-Message-Id: <20180201225015.GC8590@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 08 Feb 2018 14:35:30 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: make function skl_clk_round_rate static
+Message-Id: <20180208143530.11450-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180201100148.GA8959@mwanda>
-In-Reply-To: <20180201100148.GA8959@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Leon Romanovsky <leonro@mellanox.com>, Steve Wise <swise@opengridcomputing.com>, Mark Bloch <markb@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 01, 2018 at 01:01:48PM +0300, Dan Carpenter wrote:
-> We should return -ENOMEM if the allocation fails.  The current code
-> accidentally returns success.
-> 
-> Fixes: bf3c5a93c523 ("RDMA/nldev: Provide global resource utilization")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+The function skl_clk_round_rate is local to the source and does not
+need to be in global scope, so make it static.
 
-Jason
+Cleans up sparse warning:
+sound/soc/intel/skylake/skl-ssp-clk.c:250:6: warning: symbol
+'skl_clk_round_rate' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/intel/skylake/skl-ssp-clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
+index 7fbddf5e3b00..cda1b5fa7436 100644
+--- a/sound/soc/intel/skylake/skl-ssp-clk.c
++++ b/sound/soc/intel/skylake/skl-ssp-clk.c
+@@ -247,8 +247,8 @@ static unsigned long skl_clk_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ /* Not supported by clk driver. Implemented to satisfy clk fw */
+-long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+-				unsigned long *parent_rate)
++static long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *parent_rate)
+ {
+ 	return rate;
+ }
+-- 
+2.15.1
+
