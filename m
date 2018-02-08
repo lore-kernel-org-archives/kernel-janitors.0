@@ -1,49 +1,41 @@
-From: "J . Bruce Fields" <bfields@fieldses.org>
-Date: Thu, 22 Feb 2018 00:50:35 +0000
-Subject: Re: [PATCH] lockd: make nlm_ntf_refcnt and nlm_ntf_wq static
-Message-Id: <20180222005035.GG6535@fieldses.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 08 Feb 2018 14:24:37 +0000
+Subject: [PATCH] pinctrl: ocelot: make function ocelot_pinctrl_probe static
+Message-Id: <20180208142437.11217-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180207102947.29292-1-colin.king@canonical.com>
-In-Reply-To: <20180207102947.29292-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks, applying.--b.
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, Feb 07, 2018 at 10:29:47AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variables nlm_ntf_refcnt and nlm_ntf_wq are local to the source and
-> do not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> fs/lockd/svc.c:60:10: warning: symbol 'nlm_ntf_refcnt' was not declared.
-> Should it be static?
-> fs/lockd/svc.c:61:1: warning: symbol 'nlm_ntf_wq' was not declared.
-> Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/lockd/svc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
-> index 9c36d614bf89..346ed161756d 100644
-> --- a/fs/lockd/svc.c
-> +++ b/fs/lockd/svc.c
-> @@ -57,8 +57,8 @@ static struct task_struct	*nlmsvc_task;
->  static struct svc_rqst		*nlmsvc_rqst;
->  unsigned long			nlmsvc_timeout;
->  
-> -atomic_t nlm_ntf_refcnt = ATOMIC_INIT(0);
-> -DECLARE_WAIT_QUEUE_HEAD(nlm_ntf_wq);
-> +static atomic_t nlm_ntf_refcnt = ATOMIC_INIT(0);
-> +static DECLARE_WAIT_QUEUE_HEAD(nlm_ntf_wq);
->  
->  unsigned int lockd_net_id;
->  
-> -- 
-> 2.15.1
+The function ocelot_pinctrl_probe is local to the source and does not
+need to be in global scope, so make it static.
+
+Cleans up sparse warning:
+drivers/pinctrl/pinctrl-ocelot.c:465:5: warning: symbol
+'ocelot_pinctrl_probe' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 01a50d969111..a9423238471e 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -462,7 +462,7 @@ static const struct of_device_id ocelot_pinctrl_of_match[] = {
+ 	{},
+ };
+ 
+-int ocelot_pinctrl_probe(struct platform_device *pdev)
++static int ocelot_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ocelot_pinctrl *info;
+-- 
+2.15.1
+
