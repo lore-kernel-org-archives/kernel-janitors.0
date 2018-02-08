@@ -1,60 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 10:19:40 +0000
-Subject: [PATCH 2/4] crypto: ux500: Adjust two condition checks in ux500_cryp_probe()
-Message-Id: <d79ef7ab-cf49-6b32-01d8-e4aa77424e39@users.sourceforge.net>
+Date: Thu, 08 Feb 2018 20:46:40 +0000
+Subject: [PATCH 3/3] drm/amd/powerplay/hwmgr: Delete an unnecessary return statement in three functions
+Message-Id: <5a8388c9-7d55-0e15-5d36-c3057c4b2945@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
+References: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
+In-Reply-To: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Geliang Tang <geliangtang@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Colin Ian King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>, Eric Huang <JinHuiEric.Huang@amd.com>, Evan Quan <evan.quan@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>, Himanshu Jha <himanshujha199640@gmail.com>, Junwei Zhang <Jerry.Zhang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Tom St Denis <tom.stdenis@amd.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 10:38:44 +0100
+Date: Thu, 8 Feb 2018 21:10:58 +0100
 
-The local variable "cryp_error" was used only for two condition checks.
+The script "checkpatch.pl" pointed information out like the following.
 
-* Check the return values from these function calls directly instead.
+WARNING: void function return statements are not generally useful
 
-* Delete this variable which became unnecessary with this refactoring.
+Thus remove such a statement in the affected functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/ux500/cryp/cryp_core.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c        | 3 ---
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 1 -
+ 2 files changed, 4 deletions(-)
 
-diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
-index 50bfc7b4c641..07cc92f88933 100644
---- a/drivers/crypto/ux500/cryp/cryp_core.c
-+++ b/drivers/crypto/ux500/cryp/cryp_core.c
-@@ -1404,7 +1404,6 @@ static void cryp_algs_unregister_all(void)
- static int ux500_cryp_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+index 2681c9317d25..e07b32491092 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+@@ -653,8 +653,6 @@ void phm_trim_voltage_table_to_fit_state_table(uint32_t max_vol_steps,
+ 		vol_table->entries[i] = vol_table->entries[i + diff];
+ 
+ 	vol_table->count = max_vol_steps;
+-
+-	return;
+ }
+ 
+ int phm_reset_single_dpm_table(void *table,
+@@ -906,7 +904,6 @@ void hwmgr_init_default_caps(struct pp_hwmgr *hwmgr)
+ 
+ 	phm_cap_set(hwmgr->platform_descriptor.platformCaps,
+ 						PHM_PlatformCaps_FanSpeedInTableIsRPM);
+-	return;
+ }
+ 
+ int hwmgr_set_user_specify_caps(struct pp_hwmgr *hwmgr)
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+index 2d55dabc77d4..fcdb3563d860 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+@@ -3618,7 +3618,6 @@ static uint32_t vega10_find_highest_dpm_level(
+ static void vega10_apply_dal_minimum_voltage_request(
+ 		struct pp_hwmgr *hwmgr)
  {
- 	int ret;
--	int cryp_error = 0;
- 	struct resource *res = NULL;
- 	struct resource *res_irq = NULL;
- 	struct cryp_device_data *device_data;
-@@ -1478,15 +1477,13 @@ static int ux500_cryp_probe(struct platform_device *pdev)
- 		goto out_clk_unprepare;
- 	}
+-	return;
+ }
  
--	cryp_error = cryp_check(device_data);
--	if (cryp_error != 0) {
-+	if (cryp_check(device_data)) {
- 		dev_err(dev, "[%s]: cryp_init() failed!", __func__);
- 		ret = -EINVAL;
- 		goto out_power;
- 	}
- 
--	cryp_error = cryp_configure_protection(device_data, &prot);
--	if (cryp_error != 0) {
-+	if (cryp_configure_protection(device_data, &prot)) {
- 		dev_err(dev, "[%s]: cryp_configure_protection() failed!",
- 			__func__);
- 		ret = -EINVAL;
+ static int vega10_get_soc_index_for_max_uclk(struct pp_hwmgr *hwmgr)
 -- 
 2.16.1
 
