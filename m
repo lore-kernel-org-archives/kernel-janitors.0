@@ -1,77 +1,38 @@
-From: Bo YU <tsu.yubo@gmail.com>
-Date: Mon, 26 Feb 2018 05:28:31 +0000
-Subject: Re: [V9fs-developer] [PATCH] fs/9p: don't set SB_NOATIME by default
-Message-Id: <20180226052831.GA26535@yubo-2>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 08 Feb 2018 21:33:22 +0000
+Subject: [PATCH] drm/amdkfd: Delete an error message for a failed memory allocation in kfd_topology_init()
+Message-Id: <94b486c9-92ce-dae8-3d5e-db1943fc0119@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5A7D3C08.7020309@huawei.com>
- <5A90D23F.5070601@huawei.com>
- <5A936439.9040700@huawei.com>
-In-Reply-To: <5A936439.9040700@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jiangyiwen <jiangyiwen@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, v9fs-developer@lists.sourceforge.net, viro@zeniv.linux.org.uk, ericvh@gmail.com, rminnich@sandia.gov, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Oded Gabbay <oded.gabbay@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi,
-I think you would better to modify the subject line without
-[V9fs-developers].
-On Mon, Feb 26, 2018 at 09:34:49AM +0800, jiangyiwen wrote:
->On 2018/2/24 10:47, jiangyiwen wrote:
->> On 2018/2/9 14:13, jiangyiwen wrote:
->>> User use some syscall, for example mmap(v9fs_file_mmap), it will not
->>> update atime even if user's mnt_flags have MNT_NOATIME, because
->>> v9fs default set SB_NOATIME in v9fs_set_super.
->>>
->>> For supporting access time is updated when user mount with relatime,
->>> we should clear SB_NOATIME by default.
->>>
->>> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
->>> ---
->>>  fs/9p/vfs_super.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
->>> index af03c2a..48ce504 100644
->>> --- a/fs/9p/vfs_super.c
->>> +++ b/fs/9p/vfs_super.c
->>> @@ -94,7 +94,7 @@ static int v9fs_set_super(struct super_block *s, void *data)
->>>  	if (v9ses->cache)
->>>  		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
->>>
->>> -	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC | SB_NOATIME;
->>> +	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
->>>  	if (!v9ses->cache)
->>>  		sb->s_flags |= SB_SYNCHRONOUS;
->>>
->> Hi Alexander Viro and Eric,
->>
->> My patch has already sent two weeks, but nobody help me
->> to review, I have a question about now who is the v9fs's
->> maintainer? Or who can help me review the patch?
->>
->> I hope v9fs's maintainer can give me some advices or
->> merge into the mainline if it has no problem.
->>
->> Thanks,
->> Yiwen.
->>
->Hi Andrew,
->
->My patch has already sent more than two weeks, but nobody
->help me to review, I have a question about now who is the
->v9fs's maintainer? Or who can help me review the patch?
->
-There is no maintainer with V9fs  in get_maintain.pl and V9fs git tree
-laterest commit before two years.so,situation become bad.
-Maybe you eamil linus directly,although this is't good
->I hope v9fs's maintainer can give me some advices or
->merge into the mainline if it has no problem.
->
->Thanks,
->Yiwen.
->
->--
->To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Feb 2018 22:23:57 +0100
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+index 19ce59028d6b..610e3d4ac575 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+@@ -1019,7 +1019,6 @@ int kfd_topology_init(void)
+ 		crat_image = kmalloc(image_size, GFP_KERNEL);
+ 		if (!crat_image) {
+ 			ret = -ENOMEM;
+-			pr_err("No memory for allocating CRAT image\n");
+ 			goto err;
+ 		}
+ 		ret = kfd_topology_get_crat_acpi(crat_image, &image_size);
+-- 
+2.16.1
+
