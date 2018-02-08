@@ -1,36 +1,72 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 14:37:38 +0000
-Subject: [PATCH] ASoC: pxa: remove duplicated bit-wise or of SNDRV_PCM_FMTBIT_S24_LE
-Message-Id: <20180223143738.29600-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 08 Feb 2018 20:43:45 +0000
+Subject: [PATCH 1/3] drm/amd/powerplay/hwmgr: Delete an error message for a failed memory allocation in three
+Message-Id: <29e72072-809b-9e8c-8087-0daa9665430d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
+In-Reply-To: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Colin Ian King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>, Eric Huang <JinHuiEric.Huang@amd.com>, Evan Quan <evan.quan@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>, Himanshu Jha <himanshujha199640@gmail.com>, Junwei Zhang <Jerry.Zhang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Tom St Denis <tom.stdenis@amd.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Feb 2018 20:32:39 +0100
 
-Bit pattern SNDRV_PCM_FMTBIT_S24_LE is being bit-wise or'd twice; remove
-the redundant 2nd SNDRV_PCM_FMTBIT_S24_LE
+Omit an extra message for a memory allocation failure in these functions.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/pxa/mmp-sspa.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c | 4 +---
+ drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c    | 1 -
+ drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c | 4 +---
+ 3 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
-index 64b85e30c1f8..7c998ea4ebee 100644
---- a/sound/soc/pxa/mmp-sspa.c
-+++ b/sound/soc/pxa/mmp-sspa.c
-@@ -377,7 +377,6 @@ static int mmp_sspa_probe(struct snd_soc_dai *dai)
- #define MMP_SSPA_FORMATS (SNDRV_PCM_FMTBIT_S8 | \
- 		SNDRV_PCM_FMTBIT_S16_LE | \
- 		SNDRV_PCM_FMTBIT_S24_LE | \
--		SNDRV_PCM_FMTBIT_S24_LE | \
- 		SNDRV_PCM_FMTBIT_S32_LE)
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c
+index b314d09d41af..c0699b884894 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_hwmgr.c
+@@ -286,10 +286,8 @@ static int cz_init_dynamic_state_adjustment_rule_settings(
+ 	struct phm_clock_voltage_dependency_table *table_clk_vlt  					kzalloc(table_size, GFP_KERNEL);
  
- static const struct snd_soc_dai_ops mmp_sspa_dai_ops = {
+-	if (NULL = table_clk_vlt) {
+-		pr_err("Can not allocate memory!\n");
++	if (!table_clk_vlt)
+ 		return -ENOMEM;
+-	}
+ 
+ 	table_clk_vlt->count = 8;
+ 	table_clk_vlt->entries[0].clk = PP_DAL_POWERLEVEL_0;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+index 0229f774f7a9..ded33ed03f11 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+@@ -815,7 +815,6 @@ int phm_initializa_dynamic_state_adjustment_rule_settings(struct pp_hwmgr *hwmgr
+ 	table_clk_vlt = kzalloc(table_size, GFP_KERNEL);
+ 
+ 	if (NULL = table_clk_vlt) {
+-		pr_err("Can not allocate space for vddc_dep_on_dal_pwrl! \n");
+ 		return -ENOMEM;
+ 	} else {
+ 		table_clk_vlt->count = 4;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c
+index 569073e3a5a1..967b93e56113 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/rv_hwmgr.c
+@@ -107,10 +107,8 @@ static int rv_init_dynamic_state_adjustment_rule_settings(
+ 	struct phm_clock_voltage_dependency_table *table_clk_vlt  					kzalloc(table_size, GFP_KERNEL);
+ 
+-	if (NULL = table_clk_vlt) {
+-		pr_err("Can not allocate memory!\n");
++	if (!table_clk_vlt)
+ 		return -ENOMEM;
+-	}
+ 
+ 	table_clk_vlt->count = 8;
+ 	table_clk_vlt->entries[0].clk = PP_DAL_POWERLEVEL_0;
 -- 
-2.15.1
+2.16.1
 
