@@ -1,56 +1,29 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 21 Feb 2018 12:48:34 +0000
-Subject: [PATCH 4.15 085/163] x86/spectre: Fix an error message
-Message-Id: <20180221124535.102667182@linuxfoundation.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 08 Feb 2018 14:35:53 +0000
+Subject: [PATCH 0/3] GPU-DRM-GMA500: Adjustments for four function implementations
+Message-Id: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180221124529.931834518@linuxfoundation.org>
-In-Reply-To: <20180221124529.931834518@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Feb 2018 15:27:38 +0100
 
-------------------
+Three update suggestions were taken into account
+from static source code analysis.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in two functions
+  Improve four size determinations
+  Delete an unnecessary return statement in oaktrail_crtc_hdmi_dpms()
 
-commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
+ drivers/gpu/drm/gma500/framebuffer.c   |  7 ++-----
+ drivers/gpu/drm/gma500/oaktrail_hdmi.c | 13 ++++---------
+ 2 files changed, 6 insertions(+), 14 deletions(-)
 
-If i = ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/kernel/cpu/bugs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -174,7 +174,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
- 
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
-
+-- 
+2.16.1
 
