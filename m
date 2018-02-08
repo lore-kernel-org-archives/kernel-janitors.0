@@ -1,24 +1,43 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Tue, 06 Feb 2018 15:23:07 +0000
-Subject: Re: [PATCH][btrfs-next] Btrfs: extent map selftest: add missing void parameter to btrfs_test_extent_
-Message-Id: <20180206152307.GC31890@twin.jikos.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 08 Feb 2018 14:13:27 +0000
+Subject: [PATCH][btrfs-next] Btrfs: extent map selftest: fix non-ANSI btrfs_test_extent_map declaration
+Message-Id: <20180208141327.10951-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180108230632.8101-1-colin.king@canonical.com>
 In-Reply-To: <20180108230632.8101-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, Liu Bo <bo.li.liu@oracle.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 08, 2018 at 11:06:32PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Add a missing void parameter to function btrfs_test_extent_map, fixes
-> sparse warning:
-> 
-> warning: non-ANSI function declaration of function 'btrfs_test_extent_map'
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Added to next, thanks.
+The function btrfs_test_extent_map requires a void argument to be ANSI C
+compliant and so it matches the prototype in fs/btrfs/tests/btrfs-tests.h
+
+Cleans up sparse warning:
+fs/btrfs/tests/extent-map-tests.c:346:27: warning: non-ANSI function
+declaration of function 'btrfs_test_extent_map'
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/tests/extent-map-tests.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/tests/extent-map-tests.c b/fs/btrfs/tests/extent-map-tests.c
+index 70c993f01670..c23bd00bdd92 100644
+--- a/fs/btrfs/tests/extent-map-tests.c
++++ b/fs/btrfs/tests/extent-map-tests.c
+@@ -343,7 +343,7 @@ static void test_case_4(struct extent_map_tree *em_tree)
+ 	__test_case_4(em_tree, SZ_4K);
+ }
+ 
+-int btrfs_test_extent_map()
++int btrfs_test_extent_map(void)
+ {
+ 	struct extent_map_tree *em_tree;
+ 
+-- 
+2.15.1
+
