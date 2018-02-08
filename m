@@ -1,45 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 26 Feb 2018 11:36:14 +0000
-Subject: [PATCH] clocksource/drivers/fsl_ftm_timer: fix error return checking
-Message-Id: <20180226113614.3092-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Feb 2018 07:25:28 +0000
+Subject: [PATCH 2/2] regmap-i2c: Off by one in regmap_i2c_smbus_i2c_read/write()
+Message-Id: <20180208072528.GB18158@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20180208072344.GA18158@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The commit message says that we are allowed to read and write up to 32
+bytes but the code only allows us to write 31 bytes.  In other words,
+the ">=" should be changed to ">".  But this is already checked in
+regmap_raw_read()/write() so we can just remove the if statemetents.
 
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
-
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 29332534e2b6 ("regmap-i2c: Add smbus i2c block support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/clocksource/fsl_ftm_timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not tested.
 
-diff --git a/drivers/clocksource/fsl_ftm_timer.c b/drivers/clocksource/fsl_ftm_timer.c
-index 3ee7e6fea621..846d18daf893 100644
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct device_node *np, char *cnt_name,
+diff --git a/drivers/base/regmap/regmap-i2c.c b/drivers/base/regmap/regmap-i2c.c
+index 4735318f4268..056acde5e7d3 100644
+--- a/drivers/base/regmap/regmap-i2c.c
++++ b/drivers/base/regmap/regmap-i2c.c
+@@ -217,8 +217,6 @@ static int regmap_i2c_smbus_i2c_write(void *context, const void *data,
  
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
+ 	if (count < 1)
+ 		return -EINVAL;
+-	if (count >= I2C_SMBUS_BLOCK_MAX)
+-		return -E2BIG;
  
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
--- 
-2.15.1
-
+ 	--count;
+ 	return i2c_smbus_write_i2c_block_data(i2c, ((u8 *)data)[0], count,
+@@ -235,8 +233,6 @@ static int regmap_i2c_smbus_i2c_read(void *context, const void *reg,
+ 
+ 	if (reg_size != 1 || val_size < 1)
+ 		return -EINVAL;
+-	if (val_size >= I2C_SMBUS_BLOCK_MAX)
+-		return -E2BIG;
+ 
+ 	ret = i2c_smbus_read_i2c_block_data(i2c, ((u8 *)reg)[0], val_size, val);
+ 	if (ret = val_size)
