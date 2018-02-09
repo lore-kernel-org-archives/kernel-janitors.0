@@ -1,30 +1,27 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 06 Feb 2018 13:29:51 +0000
-Subject: Re: [PATCH] gpio-wm831x: Use seq_putc() in wm831x_gpio_dbg_show()
-Message-Id: <CACRpkdbMRzD11F9b5QHCHeRp7aBqXNCr6dpPjKg9fSFdc5rOVQ@mail.gmail.com>
+From: jiangyiwen <jiangyiwen@huawei.com>
+Date: Fri, 09 Feb 2018 07:10:46 +0000
+Subject: [V9fs-developer] [RFC] we should solve create-unlink-getattr idiom
+Message-Id: <5A7D4976.6060407@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
-In-Reply-To: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Greg Kurz <groug@kaod.org>, v9fs-developer@lists.sourceforge.net, qemu-devel@nongnu.org
+Cc: aneesh.kumar@linux.vnet.ibm.com, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Veaceslav Falico <veaceslav.falico@huawei.com>
 
-On Fri, Jan 12, 2018 at 9:37 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+Hi Eric and Greg,
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 Jan 2018 21:30:09 +0100
->
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+I encountered the similar problem with create-unlink-getattr idiom.
+I use the testcase that create-unlink-setattr idiom, and I see the
+bug is reported at https://bugs.launchpad.net/qemu/+bug/1336794.
+Then I also see you already fix the issue and push the patch to upstream.
+https://github.com/ericvh/linux/commit/eaf70223eac094291169f5a6de580351890162a2
+http://patchwork.ozlabs.org/patch/626194/
 
-Patch applied with Charles' ACK.
+Unfortunately, the two patches are not merged into master, I don't know
+the reason, so I suggest if the patche can be merged into master, and
+it will solve the create-unlink-getattr idiom.
 
-Yours,
-Linus Walleij
+Thanks,
+Yiwen
+
