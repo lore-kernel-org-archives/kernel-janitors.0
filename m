@@ -1,40 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 14 Feb 2018 16:23:41 +0000
-Subject: [PATCH][scsi-next] scsi: myrb: remove shadowed and unassigned variable ldev_num
-Message-Id: <20180214162341.335-1-colin.king@canonical.com>
+From: Michael Brown <info@ukcontactdb.com>
+Date: Fri, 09 Feb 2018 10:01:32 +0000
+Subject: Re: Contact
+Message-Id: <20180209_100132_057265.info@ukcontactdb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.de>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello.
 
-A lower-scoped variable ldev_num is never assigned and is shadowing
-the higher scoped iterator ldev_num and should be removed to avoid
-using garbage ldev_num values.
+After visiting your website, we want to offer you products that will signif=
+icantly increase the sales of your products and services. Our database of U=
+K companies will help you reach the target audience of the right people for=
+ your products.=20
 
-Detected by CoverityScan, CID#1465226 ("Uninitialized scalar variable")
+http://www.ukbusinesscontacts.com/?page=CAtalog
 
-Fixes: dd47c1072226 ("scsi: myrb: Add Mylex RAID controller (block interface)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/myrb.c | 1 -
- 1 file changed, 1 deletion(-)
+Best Regards.
+Michael Brown
 
-diff --git a/drivers/scsi/myrb.c b/drivers/scsi/myrb.c
-index 973a2250208f..65ade4d37b33 100644
---- a/drivers/scsi/myrb.c
-+++ b/drivers/scsi/myrb.c
-@@ -422,7 +422,6 @@ static unsigned short myrb_get_ldev_info(myrb_hba *cb)
- 		myrb_ldev_info *old = NULL;
- 		myrb_ldev_info *new = cb->ldev_info_buf[ldev_num];
- 		struct scsi_device *sdev;
--		unsigned short ldev_num;
- 		myrb_devstate old_state = DAC960_V1_Device_Offline;
- 
- 		sdev = scsi_device_lookup(shost, myrb_logical_channel(shost),
--- 
-2.15.1
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
