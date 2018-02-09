@@ -1,27 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 07 Feb 2018 21:44:21 +0000
-Subject: [PATCH 0/2] drm/msm/mdp4: Adjustments for mdp4_kms_init()
-Message-Id: <e090cf0c-0bb0-d28c-ac21-9e045993a995@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 09 Feb 2018 11:59:36 +0000
+Subject: [PATCH] CIFS: SMBD: fix spelling mistake: "faield" -> "failed"
+Message-Id: <20180209115936.32569-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Jordan Crouse <jcrouse@codeaurora.org>, Jyri Sarha <jsarha@ti.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sushmita Susheelendra <ssusheel@codeaurora.org>, Rob Clark <robdclark@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 7 Feb 2018 22:38:44 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Trivial fix to spelling mistake in log_rdma_mr message text.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Return directly after a failed kzalloc()
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smbdirect.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index 91710eb571fb..5405856a4c8e 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -2295,7 +2295,7 @@ static void smbd_mr_recovery_work(struct work_struct *work)
+ 				rc = ib_dereg_mr(smbdirect_mr->mr);
+ 				if (rc) {
+ 					log_rdma_mr(ERR,
+-						"ib_dereg_mr faield rc=%x\n",
++						"ib_dereg_mr failed rc=%x\n",
+ 						rc);
+ 					smbd_disconnect_rdma_connection(info);
+ 				}
 -- 
-2.16.1
+2.15.1
 
