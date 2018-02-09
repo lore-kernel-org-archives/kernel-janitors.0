@@ -1,19 +1,19 @@
-From: Veaceslav Falico <veaceslav.falico@huawei.com>
-Date: Fri, 09 Feb 2018 07:21:52 +0000
+From: Greg Kurz <groug@kaod.org>
+Date: Fri, 09 Feb 2018 11:33:42 +0000
 Subject: Re: [V9fs-developer] [RFC] we should solve create-unlink-getattr idiom
-Message-Id: <a1ef7be5-d368-fe31-4386-1d40762b5849@huawei.com>
+Message-Id: <20180209123342.11b17062@bahia.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5A7D4976.6060407@huawei.com>
 In-Reply-To: <5A7D4976.6060407@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jiangyiwen <jiangyiwen@huawei.com>, Eric Van Hensbergen <ericvh@gmail.com>, Greg Kurz <groug@kaod.org>, v9fs-developer@lists.sourceforge.net, qemu-devel@nongnu.org
-Cc: aneesh.kumar@linux.vnet.ibm.com, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jiangyiwen <jiangyiwen@huawei.com>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>, v9fs-developer@lists.sourceforge.net, qemu-devel@nongnu.org, aneesh.kumar@linux.vnet.ibm.com, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Veaceslav Falico <veaceslav.falico@huawei.com>
 
-Hi Yiwen, all,
+On Fri, 9 Feb 2018 15:10:46 +0800
+jiangyiwen <jiangyiwen@huawei.com> wrote:
 
-On 2/9/2018 8:10 AM, jiangyiwen wrote:
 > Hi Eric and Greg,
 > 
 > I encountered the similar problem with create-unlink-getattr idiom.
@@ -26,29 +26,27 @@ On 2/9/2018 8:10 AM, jiangyiwen wrote:
 > Unfortunately, the two patches are not merged into master, I don't know
 > the reason, so I suggest if the patche can be merged into master, and
 > it will solve the create-unlink-getattr idiom.
-
-As a follow up - the create-unlink-setattr (mainly ftruncate and anything
-else which works on fd instead of path) isn't fixed by these patches, but
-I'm currently working on a new patch, obviously on top of those two, to
-make the setattr work too.
-
-It's based on the same logic as the above patches though - use FIDs with
-open fd's guest side and use open fd's host side if possible with f*
-functions, otherwise path with l* functions.
-
-It's bigger than the QEMU getattr patch, as there are no f* functions
-available for ftruncate case, for example.
-
-So if those two patches could be merged it'd be a lot easier to then
-go forward with the setattr fix.
-
-Thank you!
-
 > 
+
+I had tried to go a bit further and address the general issue of f*() syscalls
+versus unlinked files:
+
+QEMU:
+http://lists.gnu.org/archive/html/qemu-devel/2016-06/msg07586.html
+
+Linux 9p driver:
+https://sourceforge.net/p/v9fs/mailman/message/35175775/
+
+I remember that some issues were then reported during review of the
+linux patches, and I never got bandwidth to investigate further...
+
+But if you'd like to resurrect these threads, please do. :)
+
 > Thanks,
 > Yiwen
 > 
-> .
-> 
 
+Cheers,
 
+--
+Greg
