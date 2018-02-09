@@ -1,24 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 08 Feb 2018 02:46:43 +0000
-Subject: Re: [PATCH] cxgb4: Fix error handling path in 'init_one()'
-Message-Id: <20180207.214643.1455087255402471687.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 09 Feb 2018 11:53:40 +0000
+Subject: [PATCH] platform/x86: GPD pocket fan: fix spelling mistake: "Mill-celcius" -> "millicelsius"
+Message-Id: <20180209115340.32347-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206201717.27412-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180206201717.27412-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: ganeshgr@chelsio.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue,  6 Feb 2018 21:17:17 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> Commit baf5086840ab1 ("cxgb4: restructure VF mgmt code") has reordered
-> some code but an error handling label has not been updated accordingly.
-> So fix it and free 'adapter' if 't4_wait_dev_ready()' fails.
-> 
-> Fixes: baf5086840ab1 ("cxgb4: restructure VF mgmt code")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Trivial fix to spelling mistake in MODULE_PARM_DESC text and remove
+unnecessary hyphen
 
-Applied, thank you.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/gpd-pocket-fan.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
+index 2d645c505f81..3b923df15b9b 100644
+--- a/drivers/platform/x86/gpd-pocket-fan.c
++++ b/drivers/platform/x86/gpd-pocket-fan.c
+@@ -19,12 +19,12 @@
+ static int temp_limits[3] = { 55000, 60000, 65000 };
+ module_param_array(temp_limits, int, NULL, 0444);
+ MODULE_PARM_DESC(temp_limits,
+-		 "Milli-celcius values above which the fan speed increases");
++		 "Millicelsius values above which the fan speed increases");
+ 
+ static int hysteresis = 3000;
+ module_param(hysteresis, int, 0444);
+ MODULE_PARM_DESC(hysteresis,
+-		 "Hysteresis in milli-celcius before lowering the fan speed");
++		 "Hysteresis in millicelsius before lowering the fan speed");
+ 
+ static int speed_on_ac = 2;
+ module_param(speed_on_ac, int, 0444);
+-- 
+2.15.1
+
