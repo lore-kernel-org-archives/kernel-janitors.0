@@ -1,56 +1,39 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 21 Feb 2018 12:49:14 +0000
-Subject: [PATCH 4.9 65/77] x86/spectre: Fix an error message
-Message-Id: <20180221124434.946852327@linuxfoundation.org>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 09 Feb 2018 12:13:41 +0000
+Subject: NAK: [PATCH] CIFS: SMBD: fix spelling mistake: "faield" -> "failed"
+Message-Id: <280fa85a-a5f8-bc89-447b-c97886f3bc23@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180221124432.172390020@linuxfoundation.org>
-In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
+References: <20180209115936.32569-1-colin.king@canonical.com>
+In-Reply-To: <20180209115936.32569-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On 09/02/18 11:59, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in log_rdma_mr message text.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/cifs/smbdirect.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+> index 91710eb571fb..5405856a4c8e 100644
+> --- a/fs/cifs/smbdirect.c
+> +++ b/fs/cifs/smbdirect.c
+> @@ -2295,7 +2295,7 @@ static void smbd_mr_recovery_work(struct work_struct *work)
+>  				rc = ib_dereg_mr(smbdirect_mr->mr);
+>  				if (rc) {
+>  					log_rdma_mr(ERR,
+> -						"ib_dereg_mr faield rc=%x\n",
+> +						"ib_dereg_mr failed rc=%x\n",
+>  						rc);
+>  					smbd_disconnect_rdma_connection(info);
+>  				}
+> 
 
-------------------
-
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
-
-If i = ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/kernel/cpu/bugs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -173,7 +173,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
- 
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
-
-
+Ignore this, I found another typo in the source, will re-send a V2.
