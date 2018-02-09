@@ -1,27 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 07:22:54 +0000
-Subject: Re: Coccinelle: zalloc-simple: Checking consistency for SmPL rules
-Message-Id: <c7a59e25-a77f-a0ba-8635-5910dbba5d81@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 09 Feb 2018 12:14:15 +0000
+Subject: [PATCH][V2] CIFS: SMBD: fix spelling mistake: "faield" and "legnth"
+Message-Id: <20180209121415.564-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAR27r4j4c1FCh_ObpMpBKXgSP6Vq3P=reA-JKoTji6Q1A@mail.gmail.com>
- <6bee0e11-59ef-b7b1-886e-7abaa30887f2@users.sourceforge.net>
- <alpine.DEB.2.20.1802011040110.3135@hadrien>
- <22276745-4723-4391-4460-07f0820ae85b@users.sourceforge.net>
- <alpine.DEB.2.20.1802011125460.3135@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1802011125460.3135@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Himanshu Jha <himanshujha199640@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: cocci@systeme.lip6.fr, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> * Do we agree that a proper size determination is essential for every
->>   condition in the discussed SmPL rules together with forwarding
->>   this information?
-> 
-> No.  I don't mind a few false positives.
+From: Colin Ian King <colin.king@canonical.com>
 
-Do you care to split SmPL rules by their confidence category in such an use case?
+Trivial fix to spelling mistake in log_rdma_send and log_rdma_mr
+message text.
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smbdirect.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index 91710eb571fb..5aa0b54b32ce 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -1025,7 +1025,7 @@ static int smbd_post_send(struct smbd_connection *info,
+ 
+ 	for (i = 0; i < request->num_sge; i++) {
+ 		log_rdma_send(INFO,
+-			"rdma_request sge[%d] addr=%llu legnth=%u\n",
++			"rdma_request sge[%d] addr=%llu length=%u\n",
+ 			i, request->sge[0].addr, request->sge[0].length);
+ 		ib_dma_sync_single_for_device(
+ 			info->id->device,
+@@ -2295,7 +2295,7 @@ static void smbd_mr_recovery_work(struct work_struct *work)
+ 				rc = ib_dereg_mr(smbdirect_mr->mr);
+ 				if (rc) {
+ 					log_rdma_mr(ERR,
+-						"ib_dereg_mr faield rc=%x\n",
++						"ib_dereg_mr failed rc=%x\n",
+ 						rc);
+ 					smbd_disconnect_rdma_connection(info);
+ 				}
+-- 
+2.15.1
+
