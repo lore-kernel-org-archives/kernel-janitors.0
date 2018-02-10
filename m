@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 12:30:30 +0000
+Date: Sat, 10 Feb 2018 08:39:41 +0000
 Subject: Re: Adjustments for a lot of function implementations
-Message-Id: <4772aced-f43a-f4f4-c593-b42c7b862a37@users.sourceforge.net>
+Message-Id: <26a090fe-fb39-8f68-aa4e-ce4f9f6b0781@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
  <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
@@ -19,45 +19,36 @@ Content-Transfer-Encoding: 8bit
 To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, LKML <linux-kernel@vger.kernel.org>
 
+>> Do any contributors get into the mood to take another look at software updates
+>> from my selection of change possibilities in a more constructive way?
+>>
+>> Do you need any additional development resources?
+> 
 > One last time: either post per-driver patches with all the cleanups for a driver
 > in a single patch,
 
-I preferred to offer source code adjustments according to specific transformation
-patterns mostly for each software module separately (also in small patch series).
+I find such a change combination unsafe.
 
 
 > or a per-directory patch (drivers/media/pci, usb, etc) doing the same cleanup
 > for all drivers in that directory.
 
-I am curious if bigger patch packages would be easier to get accepted.
-
-Or would you get frightened still by any other change combination?
-
+Would you dare to apply any (of my) scripts for the semantic patch language
+directly on the whole directory for multi-media software?
 
 
-> I prefer the first approach,
+> I prefer the first approach, but it's up to you.
 
-We have got different preferences for a safe patch granularity.
-
-
-> but it's up to you.
-
-I imagine that there are more development factors involved.
+Can you handle bigger patches really better than similar patch series?
 
 
 > We don't have the time to wade through dozens of one-liner cleanup patches.
 
-It is usual that integration of update suggestions will take some time.
-How would the situation change if I would dare to regroup possible update steps?
+Are there any further possibilities to consider around consequences
+from a general change resistance?
 
-
-> I don't understand what is so difficult about this.
-
-There are communication difficulties to consider since your terse information
-from your conference meeting.
-
-If you would insist on patch squashing, would you dare to use a development tool
-like “quilt fold” also on your own once more?
+Will any development (or management) tools like “quilt fold” make the regrouping
+of possible update steps more convenient and safer? 
 
 Regards,
 Markus
