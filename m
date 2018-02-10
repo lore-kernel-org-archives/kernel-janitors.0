@@ -1,42 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 07 Feb 2018 20:23:35 +0000
-Subject: [PATCH] drm/tegra/fb: Delete an error message for a failed memory allocation in tegra_fbdev_create()
-Message-Id: <0704416a-23f7-3ce3-2bd2-d6a8c106f10d@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 20:31:24 +0000
+Subject: [PATCH 0/2] GPIO-Timberdale: Adjustments for timbgpio_probe()
+Message-Id: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 7 Feb 2018 21:17:17 +0100
+Date: Sat, 10 Feb 2018 21:28:29 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/tegra/fb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpio/gpio-timberdale.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 001cb77e2f59..e63a0b228751 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -325,10 +325,8 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
- 	struct tegra_fbdev *fbdev;
- 
- 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
--	if (!fbdev) {
--		dev_err(drm->dev, "failed to allocate DRM fbdev\n");
-+	if (!fbdev)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	drm_fb_helper_prepare(drm, &fbdev->base, &tegra_fb_helper_funcs);
- 
 -- 
 2.16.1
 
