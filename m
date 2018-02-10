@@ -1,59 +1,43 @@
-From: Alexey Klimov <klimov.linux@gmail.com>
-Date: Fri, 23 Feb 2018 01:06:16 +0000
-Subject: Re: [PATCH v2] [media] Delete unnecessary variable initialisations in seven functions
-Message-Id: <CALW4P+J4tf377puAGJRQK1rXgWzxRBLjLkBb4RuBTq6Z4hwAyw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 21:08:28 +0000
+Subject: [PATCH 2/2] gpio: omap: Improve a size determination in omap_gpio_probe()
+Message-Id: <422a4c63-5ffc-2b40-4d9a-cf947d4af2fd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45c87e6b-9e01-eb5c-3c47-5aa6dcabb004@users.sourceforge.net>
-In-Reply-To: <45c87e6b-9e01-eb5c-3c47-5aa6dcabb004@users.sourceforge.net>
+References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
+In-Reply-To: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux Media <linux-media@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, =?UTF-8?Q?David_H=C3=A4rdeman?= <david@hardeman.nu>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Romain Reignier <r.reignier@robopec.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 9:22 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 22 Feb 2018 21:45:47 +0100
->
-> Some local variables will be set to an appropriate value before usage.
-> Thus omit explicit initialisations at the beginning of these functions.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->
-> v2:
-> Hans Verkuil insisted on patch squashing. Thus some changes
-> were recombined based on source files from Linux next-20180216.
->
->  drivers/media/radio/radio-mr800.c             | 2 +-
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 21:49:22 +0100
 
-For radio-mr800:
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Acked-by: Alexey Klimov <klimov.linux@gmail.com>
+This issue was detected by using the Coccinelle software.
 
->  drivers/media/radio/radio-wl1273.c            | 2 +-
->  drivers/media/radio/si470x/radio-si470x-usb.c | 2 +-
->  drivers/media/usb/cx231xx/cx231xx-cards.c     | 2 +-
->  drivers/media/usb/cx231xx/cx231xx-dvb.c       | 2 +-
->  drivers/media/usb/go7007/snd-go7007.c         | 2 +-
->  drivers/media/usb/tm6000/tm6000-cards.c       | 2 +-
->  7 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
-> index dc6c4f985911..0f292c6ba338 100644
-> --- a/drivers/media/radio/radio-mr800.c
-> +++ b/drivers/media/radio/radio-mr800.c
-> @@ -511,5 +511,5 @@ static int usb_amradio_probe(struct usb_interface *intf,
->                                 const struct usb_device_id *id)
->  {
->         struct amradio_device *radio;
-> -       int retval = 0;
-> +       int retval;
->
-> diff --git a/drivers/media/radio/radio-wl1273.c b/drivers/media/radio/radio-wl1273.c
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-omap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[..]
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 4db6f13fa133..35971a341c40 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1157,7 +1157,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	if (!pdata)
+ 		return -EINVAL;
+ 
+-	bank = devm_kzalloc(dev, sizeof(struct gpio_bank), GFP_KERNEL);
++	bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+ 	if (!bank)
+ 		return -ENOMEM;
+ 
+-- 
+2.16.1
 
-Thanks!
-Alexey
