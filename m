@@ -1,29 +1,27 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 14:18:30 +0000
-Subject: Re: [PATCH] gpio-ml-ioh: Delete an error message for a failed memory allocation in ioh_gpio_probe()
-Message-Id: <CACRpkdaf=PCcTrOasn0DOqB0+kLZ-VY7yuY0isiqApLhdF6ktQ@mail.gmail.com>
+From: Joe Perches <joe@perches.com>
+Date: Sat, 10 Feb 2018 14:59:43 +0000
+Subject: Re: Software evolution around =?UTF-8?Q?=E2=80=9Ccheckpatch=2Epl=E2=80=9D=3F?=
+Message-Id: <1518274783.6579.2.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0da1b5a4-ccd6-98f6-3546-e466b3f10524@users.sourceforge.net>
-In-Reply-To: <0da1b5a4-ccd6-98f6-3546-e466b3f10524@users.sourceforge.net>
+References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+	 <20180204112346.0977e938@archlinux>
+	 <9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
+	 <87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
+	 <f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
+	 <20180210145336.233c721d@archlinux>
+In-Reply-To: <20180210145336.233c721d@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>, SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 10:30 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Sat, 2018-02-10 at 14:53 +0000, Jonathan Cameron wrote:
+> While it would be great to improve checkpatches false
+> positive rate, it's very nature as a string matcher makes
+> this hard.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Feb 2018 22:27:15 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+true.
 
-Patch applied.
+what are the false positives you see?
 
-Yours,
-Linus Walleij
