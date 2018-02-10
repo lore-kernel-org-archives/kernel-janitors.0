@@ -1,24 +1,43 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Fri, 16 Feb 2018 15:53:45 +0000
-Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
-Message-Id: <20180216155345.zlgmmna7u47xgb36@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 20:33:50 +0000
+Subject: [PATCH 2/2] gpio: timberdale: Improve a size determination in timbgpio_probe()
+Message-Id: <df13123f-5c90-03e0-edb6-0ab9751b7aa2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180215191218.27936-1-colin.king@canonical.com>
- <20180215202757.GB3080@lunn.ch>
-In-Reply-To: <20180215202757.GB3080@lunn.ch>
+References: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net>
+In-Reply-To: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 09:27:57PM +0100, Andrew Lunn wrote:
-> Do you prefer this, or making timehi and timelo a u64?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 21:13:28 +0100
 
-The latter.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-While you are at it, please move the definition of 'ns' to the start
-of the function.
+This issue was detected by using the Coccinelle software.
 
-Thanks,
-Richard
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-timberdale.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
+index ff155e437210..6520a8475910 100644
+--- a/drivers/gpio/gpio-timberdale.c
++++ b/drivers/gpio/gpio-timberdale.c
+@@ -238,7 +238,7 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	tgpio = devm_kzalloc(dev, sizeof(struct timbgpio), GFP_KERNEL);
++	tgpio = devm_kzalloc(dev, sizeof(*tgpio), GFP_KERNEL);
+ 	if (!tgpio)
+ 		return -EINVAL;
+ 
+-- 
+2.16.1
+
