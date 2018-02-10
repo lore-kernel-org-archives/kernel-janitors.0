@@ -1,57 +1,34 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Mon, 19 Feb 2018 09:43:57 +0000
-Subject: Re: [PATCH] drm/bochs: make structure bochs_bo_driver static
-Message-Id: <20180219094357.GL22199@phenom.ffwll.local>
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Date: Sat, 10 Feb 2018 14:53:36 +0000
+Subject: Re: Software evolution around =?UTF-8?B?4oCcY2hlY2twYXRjaC5wbA==?= =?UTF-8?B?4oCdPw==?=
+Message-Id: <20180210145336.233c721d@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180207111353.30261-1-colin.king@canonical.com>
-In-Reply-To: <20180207111353.30261-1-colin.king@canonical.com>
+References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
+        <20180204112346.0977e938@archlinux>
+        <9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
+        <87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
+        <f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
+In-Reply-To: <f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Gerd Hoffmann <kraxel@redhat.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 11:13:53AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure bochs_bo_driver is local to the source and does not need to
-> be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/gpu/drm/bochs/bochs_mm.c:197:22: warning: symbol 'bochs_bo_driver'
-> was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Tue, 6 Feb 2018 09:45:48 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-Applied to drm-misc-next, thanks.
--Daniel
-
-> ---
->  drivers/gpu/drm/bochs/bochs_mm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > Check patch is dumb and often gives false positives.  
 > 
-> diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
-> index 704e879711e4..b1d5aee46316 100644
-> --- a/drivers/gpu/drm/bochs/bochs_mm.c
-> +++ b/drivers/gpu/drm/bochs/bochs_mm.c
-> @@ -194,7 +194,7 @@ static struct ttm_tt *bochs_ttm_tt_create(struct ttm_bo_device *bdev,
->  	return tt;
->  }
->  
-> -struct ttm_bo_driver bochs_bo_driver = {
-> +static struct ttm_bo_driver bochs_bo_driver = {
->  	.ttm_tt_create = bochs_ttm_tt_create,
->  	.ttm_tt_populate = ttm_pool_populate,
->  	.ttm_tt_unpopulate = ttm_pool_unpopulate,
-> -- 
-> 2.15.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Would you like to improve this software situation anyhow?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+While it would be great to improve checkpatches false
+positive rate, it's very nature as a string matcher makes
+this hard.
+
+Jonathan
+
+> 
+> Regards,
+> Markus
+
