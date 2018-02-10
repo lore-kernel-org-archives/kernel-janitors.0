@@ -1,55 +1,44 @@
-From: James Hogan <jhogan@kernel.org>
-Date: Fri, 23 Feb 2018 09:52:21 +0000
-Subject: Re: [PATCH] MIPS: ath25: check for kzalloc allocation failure
-Message-Id: <20180223095220.GK6245@saruman>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="mPOSj6iWmtyhwOMz"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 21:07:17 +0000
+Subject: [PATCH 1/2] gpio: omap: Delete an error message for a failed memory allocation in omap_gpio_probe()
+Message-Id: <86570340-688b-34ec-2d99-ff728ccbe4a9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180222175012.11076-1-colin.king@canonical.com>
-In-Reply-To: <20180222175012.11076-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
+In-Reply-To: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 21:46:30 +0100
 
---mPOSj6iWmtyhwOMz
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Omit an extra message for a memory allocation failure in this function.
 
-On Thu, Feb 22, 2018 at 05:50:12PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently there is no null check on a failed allocation of board_data,
-> and hence a null pointer dereference will occurr.  Fix this by checking
-> for the out of memory null pointer.
->=20
-> Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
 
-Applied to my fixes branch with 3.19+ stable tag.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-omap.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thanks
-James
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index ab5035b96886..4db6f13fa133 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1158,10 +1158,8 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 
+ 	bank = devm_kzalloc(dev, sizeof(struct gpio_bank), GFP_KERNEL);
+-	if (!bank) {
+-		dev_err(dev, "Memory alloc failed\n");
++	if (!bank)
+ 		return -ENOMEM;
+-	}
+ 
+ 	irqc = devm_kzalloc(dev, sizeof(*irqc), GFP_KERNEL);
+ 	if (!irqc)
+-- 
+2.16.1
 
---mPOSj6iWmtyhwOMz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqP5FQACgkQbAtpk944
-dno/kg/+OdLgQEiQPu+8he69/Y2ZIDSfdIn9mblJXoYxnbpS5YaSMK/fPvSizNQ6
-8x+n0VkGC5FgNLd7dTfQOFiP18Z5jv0f0nPzrBKMhK7PF7Zm1+KS8nLspvWjxdbE
-NzDs8xnNF5tu9LCT/WTh/PeSJUCqMG/nbCbZ9XSZ0wM4F9A989kG4AgHQkCiHdsA
-U0Sw7vOouFUboMWYzv+jWBjOGYVU7LvtyGcBkhsbKfhuKJmhqKV4NCasEmrGUMFB
-rjMYvUa5orbGkGX93WbuuFFybDV2Z8HOW+QidvPi7GezbyhI4nq+iM0/wEPe2FZe
-KS8zwnS6Pdqm8H/YtA37onKOl39mlAyOh2tFbjBZ6PusAKnPh5SPBpLCDzXwKoGD
-Nb0kfhT4zbEEbu8MvIOFMnTkfD7sxzE9+h+ZK5LfQiK+csOOIVYJ3F+UMm8I7pJD
-jRS9BnqO4MGea9Fkn5VIgXZ1hyRQ+DSqt/42BsrtgGSuiqRoB//+4T1y9aPLOpHj
-1Q3yXaqYoG5GznU38ioHGPzQAlA9Ho5zK0xetkUXjwIx8y3a4Fhy7TTEkUzUkz1v
-j8fX41yNlkSB6NdVlYv8yMS98qLVYGGbFOqLvT+tUcbpZoa6Dtxl/UD6CpwtpTD3
-Gqj3p+bsxcTSbJS0gXHSl3lbdRtOWbsjXwM0TUmKUzqAaJOoY6k=
-=R+XB
------END PGP SIGNATURE-----
-
---mPOSj6iWmtyhwOMz--
