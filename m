@@ -1,65 +1,42 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 19 Feb 2018 13:40:30 +0000
-Subject: Re: [PATCH][V2] i40evf: remove redundant array comparisons to 0 checks
-Message-Id: <CAHp75Vd-x-26J_QRS=OEpwSa7Uh7o+B=2U7FFS+u__GW04kvBA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Feb 2018 21:04:07 +0000
+Subject: [PATCH] gpio-intel-mid: Delete an error message for a failed memory allocation in intel_gpio_probe()
+Message-Id: <0ea6dba4-0c52-4c9c-ae7e-d80c2f3d50f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180219102330.22045-1-colin.king@canonical.com>
-In-Reply-To: <20180219102330.22045-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 12:23 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The checks to see if key->dst.s6_addr and key->src.s6_addr are null
-> pointers are redundant because these are constant size arrays and
-> so the checks always return true.  Fix this by removing the redundant
-> checks.   Also replace filter->f with vf, allowing wide lines to be
-> condensed and to rejoin some split wide lines.
->
-> Detected by CoverityScan, CID#1465279 ("Array compared to 0")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Feb 2018 21:56:42 +0100
 
-Changelog?
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
->         u16 addr_type = 0;
->         u16 n_proto = 0;
->         int i = 0;
-> +       struct virtchnl_filter *vf = &filter->f;
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-intel-mid.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Perhaps perserve reversed xmas tree order?
-
-
-> -                       filter->f.flow_type = VIRTCHNL_TCP_V6_FLOW;
-> +                       vf->flow_type = VIRTCHNL_TCP_V6_FLOW;
-
-No need to touch.
-
->                 }
->
->                 if (key->ip_proto != IPPROTO_TCP) {
-> @@ -2585,9 +2586,8 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
->                             is_multicast_ether_addr(key->dst)) {
->                                 /* set the mask if a valid dst_mac address */
->                                 for (i = 0; i < ETH_ALEN; i++)
-> -                                       filter->f.mask.tcp_spec.dst_mac[i] |> -                                                                       0xff;
-> -                               ether_addr_copy(filter->f.data.tcp_spec.dst_mac,
-> +                                       vf->mask.tcp_spec.dst_mac[i] |= 0xff;
-> +                               ether_addr_copy(vf->data.tcp_spec.dst_mac,
->                                                 key->dst);
-
-Instead, keep two pointers:
- ... *pointer_mask = &vf->mask.tcp_spec;
- ... *pointer_data = &vf->data.tcp_spec;
-
-
+diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
+index 629575ea46a0..028d64c2cb1e 100644
+--- a/drivers/gpio/gpio-intel-mid.c
++++ b/drivers/gpio/gpio-intel-mid.c
+@@ -361,10 +361,8 @@ static int intel_gpio_probe(struct pci_dev *pdev,
+ 	pcim_iounmap_regions(pdev, 1 << 1);
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(&pdev->dev, "can't allocate chip data\n");
++	if (!priv)
+ 		return -ENOMEM;
+-	}
+ 
+ 	priv->reg_base = pcim_iomap_table(pdev)[0];
+ 	priv->chip.label = dev_name(&pdev->dev);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.16.1
+
