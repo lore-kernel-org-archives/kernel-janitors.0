@@ -1,43 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 28 Feb 2018 11:28:49 +0000
-Subject: [PATCH] staging: rtl8192u: return -ENOMEM on failed allocation of priv->oldaddr
-Message-Id: <20180228112849.16327-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Feb 2018 21:26:16 +0000
+Subject: [PATCH] firmware-gsmi: Delete an error message for a failed memory allocation in gsmi_buf_alloc()
+Message-Id: <9cea2b6a-f260-a578-b3ed-6c118795907f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Feb 2018 22:22:02 +0100
 
-Currently the allocation of priv->oldaddr is not null checked which will
-lead to subsequent errors when accessing priv->oldaddr.  Fix this with
-a null pointer check and a return of -ENOMEM on allocation failure.
+Omit an extra message for a memory allocation failure in this function.
 
-Detected with Coccinelle:
-drivers/staging/rtl8192u/r8192U_core.c:1708:2-15: alloc with no test,
-possible model on line 1723
+This issue was detected by using the Coccinelle software.
 
-Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rtl8192u/r8192U_core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/firmware/google/gsmi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 3c300f7b6a62..d607c59761cf 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -1706,6 +1706,8 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
+diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
+index c8f169bf2e27..fbf661e0b784 100644
+--- a/drivers/firmware/google/gsmi.c
++++ b/drivers/firmware/google/gsmi.c
+@@ -138,10 +138,8 @@ static struct gsmi_buf *gsmi_buf_alloc(void)
+ 	struct gsmi_buf *smibuf;
  
- 		priv->rx_urb[16] = usb_alloc_urb(0, GFP_KERNEL);
- 		priv->oldaddr = kmalloc(16, GFP_KERNEL);
-+		if (!priv->oldaddr)
-+			return -ENOMEM;
- 		oldaddr = priv->oldaddr;
- 		align = ((long)oldaddr) & 3;
- 		if (align) {
+ 	smibuf = kzalloc(sizeof(*smibuf), GFP_KERNEL);
+-	if (!smibuf) {
+-		printk(KERN_ERR "gsmi: out of memory\n");
++	if (!smibuf)
+ 		return NULL;
+-	}
+ 
+ 	/* allocate buffer in 32bit address space */
+ 	smibuf->start = dma_pool_alloc(gsmi_dev.dma_pool, GFP_KERNEL,
 -- 
-2.15.1
+2.16.1
 
