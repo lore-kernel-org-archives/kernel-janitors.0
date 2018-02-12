@@ -1,43 +1,78 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 20:20:27 +0000
-Subject: [PATCH 2/2] HID: picoLCD: Improve a size determination in picolcd_probe()
-Message-Id: <2dd7d4d6-b4d4-b1fe-5ce2-974eb64d8c40@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 12 Feb 2018 12:52:31 +0000
+Subject: Applied "ASoC: Intel: Skylake: make function skl_clk_round_rate static" to the asoc tree
+Message-Id: <E1elDax-0006Yt-6k@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1ef884c9-9fbe-b95f-d318-b806639e6065@users.sourceforge.net>
-In-Reply-To: <1ef884c9-9fbe-b95f-d318-b806639e6065@users.sourceforge.net>
+References: <20180208143530.11450-1-colin.king@canonical.com>
+In-Reply-To: <20180208143530.11450-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 21:05:55 +0100
+The patch
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+   ASoC: Intel: Skylake: make function skl_clk_round_rate static
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 29c5b8fd8c07a42b07383c5fac47173d882f74b2 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 8 Feb 2018 14:35:30 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: make function skl_clk_round_rate static
+
+The function skl_clk_round_rate is local to the source and does not
+need to be in global scope, so make it static.
+
+Cleans up sparse warning:
+sound/soc/intel/skylake/skl-ssp-clk.c:250:6: warning: symbol
+'skl_clk_round_rate' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/hid/hid-picolcd_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/intel/skylake/skl-ssp-clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-picolcd_core.c b/drivers/hid/hid-picolcd_core.c
-index 5dc48ecc1b98..ff38016be6fb 100644
---- a/drivers/hid/hid-picolcd_core.c
-+++ b/drivers/hid/hid-picolcd_core.c
-@@ -547,7 +547,7 @@ static int picolcd_probe(struct hid_device *hdev,
- 	 * Let's allocate the picolcd data structure, set some reasonable
- 	 * defaults, and associate it with the device
- 	 */
--	data = kzalloc(sizeof(struct picolcd_data), GFP_KERNEL);
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (data = NULL) {
- 		error = -ENOMEM;
- 		goto err_no_cleanup;
+diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
+index 7fbddf5e3b00..cda1b5fa7436 100644
+--- a/sound/soc/intel/skylake/skl-ssp-clk.c
++++ b/sound/soc/intel/skylake/skl-ssp-clk.c
+@@ -247,8 +247,8 @@ static unsigned long skl_clk_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ /* Not supported by clk driver. Implemented to satisfy clk fw */
+-long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+-				unsigned long *parent_rate)
++static long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *parent_rate)
+ {
+ 	return rate;
+ }
 -- 
 2.16.1
 
