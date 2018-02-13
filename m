@@ -1,40 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 14 Feb 2018 16:02:52 +0000
-Subject: [PATCH][scsi-next] scsi: myrs: ensure sge_count is set correctly
-Message-Id: <20180214160252.32230-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 16:33:25 +0000
+Subject: [PATCH] efi: Delete an error message for a failed memory allocation in efivar_init()
+Message-Id: <13c1274c-cff4-5056-cd06-353663af58e1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.de>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-efi@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 17:28:22 +0100
 
-The DMA size is not being assigned to sge_count, instead sge_addr is
-being assigned this value, which is incorrected.
+Omit an extra message for a memory allocation failure in this function.
 
-Detected by CoverityScan, CID#1465233 ("Unused value")
+This issue was detected by using the Coccinelle software.
 
-Fixes: 8a8606895947 ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/myrs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/vars.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
-index 16498e1b0dd4..eb67ed3a7cff 100644
---- a/drivers/scsi/myrs.c
-+++ b/drivers/scsi/myrs.c
-@@ -442,7 +442,7 @@ myrs_translate_pdev(myrs_hba *cs, unsigned char channel,
- 		DAC960_V2_TranslatePhysicalToLogicalDevice;
- 	sgl = &mbox->PhysicalDeviceInfo.dma_addr;
- 	sgl->sge[0].sge_addr = devmap_addr;
--	sgl->sge[0].sge_addr = mbox->PhysicalDeviceInfo.dma_size;
-+	sgl->sge[0].sge_count = mbox->PhysicalDeviceInfo.dma_size;
+diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
+index 9336ffdf6e2c..ffdbc5bc3c56 100644
+--- a/drivers/firmware/efi/vars.c
++++ b/drivers/firmware/efi/vars.c
+@@ -437,10 +437,8 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
+ 	int err = 0;
  
- 	myrs_exec_cmd(cs, cmd_blk);
- 	status = cmd_blk->status;
+ 	variable_name = kzalloc(variable_name_size, GFP_KERNEL);
+-	if (!variable_name) {
+-		printk(KERN_ERR "efivars: Memory allocation failed.\n");
++	if (!variable_name)
+ 		return -ENOMEM;
+-	}
+ 
+ 	if (down_interruptible(&efivars_lock)) {
+ 		err = -EINTR;
 -- 
-2.15.1
+2.16.1
 
