@@ -1,41 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 19 Feb 2018 17:13:10 +0000
-Subject: [PATCH][next] CIFS: fix copy-n-paste on new sha512 secmech
-Message-Id: <20180219171310.10515-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 20:23:32 +0000
+Subject: [PATCH 0/2] DMA-PPC4xx: Adjustments for three function implementations
+Message-Id: <4d9b3ca7-e1bd-42f9-5933-550146812f1e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 21:16:42 +0100
 
-The check for the sha512 crypto secmech is checking .md5 rather
-than .sha512, this looks like a copy-paste error when adding
-in this code.  Fix this by using the correct .sha512 field.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan, CID#1465358 ("Copy-paste error")
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in two functions
+  Improve a size determination in ppc440spe_adma_alloc_chan_resources()
 
-Fixes: 1c6614d229e7 ("CIFS: add sha512 secmech")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/cifs/cifsencrypt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/ppc4xx/adma.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/cifs/cifsencrypt.c b/fs/cifs/cifsencrypt.c
-index 6fa6d459678e..a6ef088e057b 100644
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -829,7 +829,7 @@ cifs_crypto_secmech_release(struct TCP_Server_Info *server)
- 		server->secmech.md5 = NULL;
- 	}
- 
--	if (server->secmech.md5) {
-+	if (server->secmech.sha512) {
- 		crypto_free_shash(server->secmech.sha512);
- 		server->secmech.sha512 = NULL;
- 	}
 -- 
-2.15.1
+2.16.1
 
