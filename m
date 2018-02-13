@@ -1,76 +1,89 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 15:25:15 +0000
-Subject: [PATCH 1/2] crypto: omap: Delete an error message for a failed memory allocation in three functions
-Message-Id: <d6a0efa2-3056-de6f-269f-ddf5cdee62fb@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 18:34:53 +0000
+Subject: [PATCH 2/2] firewire: nosy: Adjust eight checks for null pointers
+Message-Id: <d6591d1e-c568-dfcd-d162-03b60ae528cb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
-In-Reply-To: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
+References: <c4e817a2-1554-2480-9469-9d06543b1eee@users.sourceforge.net>
+In-Reply-To: <c4e817a2-1554-2480-9469-9d06543b1eee@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Joel Fernandes <joelf@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 16:00:33 +0100
+Date: Tue, 13 Feb 2018 19:20:26 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit an extra message for a memory allocation failure in these functions.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/omap-aes.c  | 5 ++---
- drivers/crypto/omap-des.c  | 5 ++---
- drivers/crypto/omap-sham.c | 1 -
- 3 files changed, 4 insertions(+), 7 deletions(-)
+ drivers/firewire/nosy.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/crypto/omap-aes.c b/drivers/crypto/omap-aes.c
-index fbec0a2e76dd..a2bac3b869b6 100644
---- a/drivers/crypto/omap-aes.c
-+++ b/drivers/crypto/omap-aes.c
-@@ -1040,10 +1040,9 @@ static int omap_aes_probe(struct platform_device *pdev)
- 	u32 reg;
+diff --git a/drivers/firewire/nosy.c b/drivers/firewire/nosy.c
+index 6192f0718bf2..0eaf79c625c6 100644
+--- a/drivers/firewire/nosy.c
++++ b/drivers/firewire/nosy.c
+@@ -128,7 +128,7 @@ static int
+ packet_buffer_init(struct packet_buffer *buffer, size_t capacity)
+ {
+ 	buffer->data = kmalloc(capacity, GFP_KERNEL);
+-	if (buffer->data = NULL)
++	if (!buffer->data)
+ 		return -ENOMEM;
+ 	buffer->head = (struct packet *) buffer->data;
+ 	buffer->tail = (struct packet *) buffer->data;
+@@ -287,11 +287,11 @@ nosy_open(struct inode *inode, struct file *file)
+ 			break;
+ 		}
+ 	mutex_unlock(&card_mutex);
+-	if (lynx = NULL)
++	if (!lynx)
+ 		return -ENODEV;
  
- 	dd = devm_kzalloc(dev, sizeof(struct omap_aes_dev), GFP_KERNEL);
--	if (dd = NULL) {
--		dev_err(dev, "unable to alloc data struct.\n");
-+	if (!dd)
- 		goto err_data;
--	}
-+
- 	dd->dev = dev;
- 	platform_set_drvdata(pdev, dd);
+ 	client = kmalloc(sizeof *client, GFP_KERNEL);
+-	if (client = NULL)
++	if (!client)
+ 		goto fail;
  
-diff --git a/drivers/crypto/omap-des.c b/drivers/crypto/omap-des.c
-index ebc5c0f11f03..f4199be783a9 100644
---- a/drivers/crypto/omap-des.c
-+++ b/drivers/crypto/omap-des.c
-@@ -964,10 +964,9 @@ static int omap_des_probe(struct platform_device *pdev)
- 	u32 reg;
+ 	client->tcode_mask = ~0;
+@@ -552,7 +552,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
+ 	pci_set_master(dev);
  
- 	dd = devm_kzalloc(dev, sizeof(struct omap_des_dev), GFP_KERNEL);
--	if (dd = NULL) {
--		dev_err(dev, "unable to alloc data struct.\n");
-+	if (!dd)
- 		goto err_data;
--	}
-+
- 	dd->dev = dev;
- 	platform_set_drvdata(pdev, dd);
- 
-diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-index 86b89ace836f..7aa4eb50ebc9 100644
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -2024,7 +2024,6 @@ static int omap_sham_probe(struct platform_device *pdev)
- 
- 	dd = devm_kzalloc(dev, sizeof(struct omap_sham_dev), GFP_KERNEL);
- 	if (dd = NULL) {
--		dev_err(dev, "unable to alloc data struct.\n");
- 		err = -ENOMEM;
- 		goto data_err;
+ 	lynx = kzalloc(sizeof *lynx, GFP_KERNEL);
+-	if (lynx = NULL) {
++	if (!lynx) {
+ 		ret = -ENOMEM;
+ 		goto fail_disable;
  	}
+@@ -565,7 +565,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
+ 
+ 	lynx->registers = ioremap_nocache(pci_resource_start(dev, 0),
+ 					  PCILYNX_MAX_REGISTER);
+-	if (lynx->registers = NULL) {
++	if (!lynx->registers) {
+ 		dev_err(&dev->dev, "Failed to map registers\n");
+ 		ret = -ENOMEM;
+ 		goto fail_deallocate_lynx;
+@@ -577,9 +577,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
+ 				sizeof(struct pcl), &lynx->rcv_pcl_bus);
+ 	lynx->rcv_buffer = pci_alloc_consistent(lynx->pci_device,
+ 				RCV_BUFFER_SIZE, &lynx->rcv_buffer_bus);
+-	if (lynx->rcv_start_pcl = NULL ||
+-	    lynx->rcv_pcl = NULL ||
+-	    lynx->rcv_buffer = NULL) {
++	if (!lynx->rcv_start_pcl || !lynx->rcv_pcl || !lynx->rcv_buffer) {
+ 		dev_err(&dev->dev, "Failed to allocate receive buffer\n");
+ 		ret = -ENOMEM;
+ 		goto fail_deallocate_buffers;
 -- 
 2.16.1
 
