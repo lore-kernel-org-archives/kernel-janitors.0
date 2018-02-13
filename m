@@ -1,65 +1,42 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Fri, 23 Feb 2018 00:00:57 +0000
-Subject: [PATCH 6/7] drm/virtio: Remove multiple blank lines
-Message-Id: <c43a006f2ed93a16fe824b4a2686a2d5e2ef56f5.1519343668.git.rodrigosiqueiramelo@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 20:54:03 +0000
+Subject: [PATCH] dmaengine: at_xdmac: Delete an error message for a failed memory allocation in at_xdmac_prob
+Message-Id: <980fa869-f75b-3436-a329-09613e2ab915@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+To: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This patch fixes the checkpatch.pl check:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 21:48:26 +0100
 
-virtgpu_drv.c:116: CHECK: Please don't use multiple blank lines
-virtgpu_vq.c:599: CHECK: Please don't use multiple blank lines
-virtgpu_prime.c:42: CHECK: Please don't use multiple blank lines
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/virtio/virtgpu_drv.c   | 1 -
- drivers/gpu/drm/virtio/virtgpu_prime.c | 1 -
- drivers/gpu/drm/virtio/virtgpu_vq.c    | 1 -
- 3 files changed, 3 deletions(-)
+ drivers/dma/at_xdmac.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-index 5d21433b1cdf..d9287c144fe5 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-@@ -113,7 +113,6 @@ static const struct file_operations virtio_gpu_driver_fops = {
- 	.llseek = noop_llseek,
- };
+diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
+index c00e3923d7d8..818ab96f9601 100644
+--- a/drivers/dma/at_xdmac.c
++++ b/drivers/dma/at_xdmac.c
+@@ -1950,10 +1950,8 @@ static int at_xdmac_probe(struct platform_device *pdev)
+ 	size = sizeof(*atxdmac);
+ 	size += nr_channels * sizeof(struct at_xdmac_chan);
+ 	atxdmac = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
+-	if (!atxdmac) {
+-		dev_err(&pdev->dev, "can't allocate at_xdmac structure\n");
++	if (!atxdmac)
+ 		return -ENOMEM;
+-	}
  
--
- static struct drm_driver driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME | DRIVER_RENDER | DRIVER_ATOMIC,
- 	.load = virtio_gpu_driver_load,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
-index 6c6e9dbab096..d27a1688714f 100644
---- a/drivers/gpu/drm/virtio/virtgpu_prime.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
-@@ -39,7 +39,6 @@ void virtgpu_gem_prime_unpin(struct drm_gem_object *obj)
- 	WARN_ONCE(1, "not implemented");
- }
- 
--
- struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
- {
- 	WARN_ONCE(1, "not implemented");
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 809d20eb6571..18c78a7fa044 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -596,7 +596,6 @@ static void virtio_gpu_cmd_capset_cb(struct virtio_gpu_device *vgdev,
- 	wake_up(&vgdev->resp_wq);
- }
- 
--
- int virtio_gpu_cmd_get_display_info(struct virtio_gpu_device *vgdev)
- {
- 	struct virtio_gpu_ctrl_hdr *cmd_p;
+ 	atxdmac->regs = base;
+ 	atxdmac->irq = irq;
 -- 
-2.16.2
+2.16.1
 
