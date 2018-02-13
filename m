@@ -1,23 +1,36 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Tue, 06 Feb 2018 21:06:53 +0000
-Subject: Re: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
-Message-Id: <20180206210653.qjqmbxyqsdw43t3w@localhost>
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+Date: Tue, 13 Feb 2018 20:54:10 +0000
+Subject: RE: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
+Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C7E574C@ORSMSX103.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jeffrey.t.kirsher@intel.com, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Tue, Feb 06, 2018 at 08:47:59PM +0100, Christophe JAILLET wrote:
-> 'HWTSTAMP_TX_ON' should be handled as a value, not as a bit mask.
-> The modified code should behave the same, because HWTSTAMP_TX_ON is 1
-> and no other possible values of 'tx_type' would match the test.
-> However, this is more future-proof, should other values be allowed one day.
-
-Nice catch, and I am going to introduce more tx_type values soon.
-
-Thanks,
-Richard
+PiBGcm9tOiBuZXRkZXYtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bmV0ZGV2LQ0KPiBv
+d25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBDaHJpc3RvcGhlIEpBSUxMRVQNCj4g
+U2VudDogVHVlc2RheSwgRmVicnVhcnkgNiwgMjAxOCAxMTo0OCBBTQ0KPiBUbzogS2lyc2hlciwg
+SmVmZnJleSBUIDxqZWZmcmV5LnQua2lyc2hlckBpbnRlbC5jb20+DQo+IENjOiBpbnRlbC13aXJl
+ZC1sYW5AbGlzdHMub3N1b3NsLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+
+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7
+IENocmlzdG9waGUNCj4gSkFJTExFVCA8Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI+DQo+
+IFN1YmplY3Q6IFtQQVRDSF0gaWdiOiBGaXggYSB0ZXN0IHdpdGggSFdUU1RBTVBfVFhfT04NCj4g
+DQo+ICdIV1RTVEFNUF9UWF9PTicgc2hvdWxkIGJlIGhhbmRsZWQgYXMgYSB2YWx1ZSwgbm90IGFz
+IGEgYml0IG1hc2suDQo+IFRoZSBtb2RpZmllZCBjb2RlIHNob3VsZCBiZWhhdmUgdGhlIHNhbWUs
+IGJlY2F1c2UgSFdUU1RBTVBfVFhfT04gaXMNCj4gMQ0KPiBhbmQgbm8gb3RoZXIgcG9zc2libGUg
+dmFsdWVzIG9mICd0eF90eXBlJyB3b3VsZCBtYXRjaCB0aGUgdGVzdC4NCj4gSG93ZXZlciwgdGhp
+cyBpcyBtb3JlIGZ1dHVyZS1wcm9vZiwgc2hvdWxkIG90aGVyIHZhbHVlcyBiZSBhbGxvd2VkIG9u
+ZSBkYXkuDQo+IA0KPiBTZWUgJ3N0cnVjdCBod3RzdGFtcF9jb25maWcnIGluICdpbmNsdWRlL3Vh
+cGkvbGludXgvbmV0X3RzdGFtcC5oJw0KPiANCj4gVGhpcyBmaXhlcyBhIHdhcm5pbmcgcmVwb3J0
+ZWQgYnkgc21hdGNoOg0KPiAgICBpZ2JfeG1pdF9mcmFtZV9yaW5nKCkgd2FybjogYml0IHNoaWZ0
+ZXIgJ0hXVFNUQU1QX1RYX09OJyB1c2VkIGZvcg0KPiBsb2dpY2FsICcmJw0KPiANCj4gRml4ZXM6
+IDI2YmQ0ZTJkYjA2YmUgKCJpZ2I6IHByb3RlY3QgVFggdGltZXN0YW1waW5nIGZyb20gQVBJIG1p
+c3VzZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waGUgSkFJTExFVCA8Y2hyaXN0b3BoZS5q
+YWlsbGV0QHdhbmFkb28uZnI+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwv
+aWdiL2lnYl9tYWluLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSkNCj4gDQoNClRlc3RlZC1ieTogQWFyb24gQnJvd24gPGFhcm9uLmYuYnJv
+d25AaW50ZWwuY29tPg0K
