@@ -1,50 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 15:34:34 +0000
-Subject: [PATCH 3/3] misc/ti-st: Delete an unnecessary return statement in two functions
-Message-Id: <4b83dec4-c493-eb70-f60e-6bc490821d4a@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 13:32:28 +0000
+Subject: [PATCH 0/2] crypto/sahara: Adjustments for sahara_probe()
+Message-Id: <6a487cd1-c05c-3d5d-ec6b-a6a2ae376f05@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
-In-Reply-To: <b038e780-8cd2-a550-108c-2f8a35f3571e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Jan 2018 16:16:55 +0100
+Date: Wed, 14 Feb 2018 14:30:28 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Two update suggestions were taken into account
+from static source code analysis.
 
-WARNING: void function return statements are not generally useful
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Thus remove such a statement in the affected functions.
+ drivers/crypto/sahara.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/misc/ti-st/st_kim.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
-index 948e3461d02e..e33eb4bcb608 100644
---- a/drivers/misc/ti-st/st_kim.c
-+++ b/drivers/misc/ti-st/st_kim.c
-@@ -206,7 +206,6 @@ static void kim_int_recv(struct kim_data_s *kim_gdata,
- 		kim_gdata->rx_skb->cb[1] = 0;
- 
- 	}
--	return;
- }
- 
- static long read_local_version(struct kim_data_s *kim_gdata, char *bts_scr_name)
-@@ -436,7 +435,6 @@ void st_kim_recv(void *disc_data, const unsigned char *data, long count)
- 	 * from other fw responses when data gathering is complete
- 	 */
- 	kim_int_recv(kim_gdata, data, count);
--	return;
- }
- 
- /* to signal completion of line discipline installation
 -- 
-2.15.1
+2.16.1
 
