@@ -1,32 +1,35 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Fri, 09 Feb 2018 04:00:33 +0000
-Subject: Re: ocxl: fix signed comparison with less than zero
-Message-Id: <3zd1Ys6HkGz9sRm@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 08:21:00 +0000
+Subject: Re: efi/apple-properties: Checking error handling in unmarshal_devices()
+Message-Id: <af278523-44af-3483-8503-10ec93f7a6c6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20180130151144.32544-1-colin.king@canonical.com>
+References: <145f8fac-9297-b362-d89f-886632e2507f@users.sourceforge.net>
+ <20180213184033.GA24299@wunner.de>
+In-Reply-To: <20180213184033.GA24299@wunner.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Frederic Barrat <fbarrat@linux.vnet.ibm.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lukas Wunner <lukas@wunner.de>, linux-efi@vger.kernel.org
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 2018-01-30 at 15:11:44 UTC, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the comparison of used < 0 is always false because
-> uses is a size_t. Fix this by making used a ssize_t type.
-> 
-> Detected by Coccinelle:
-> drivers/misc/ocxl/file.c:320:6-10: WARNING: Unsigned expression
-> compared with zero: used < 0
-> 
-> Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+> While the allocator does print an error when allocations fail,
+> it may not be immediately apparent to the user what the
+> *consequences* are.  In this case, the consequence is that the
+> device properties will not be available for consumption by
+> drivers and they may fail to probe or behave in entirely
+> unexpected ways.
 
-Applied to powerpc fixes, thanks.
+Would it make sense to indicate such a questionable software situation
+be any return code?
 
-https://git.kernel.org/powerpc/c/dedab7f0d3137441a97fe7cf9b9ca5
 
-cheers
+> Hence I deliberately printed an error message here so that the user
+> can make the connection between erratic behavior of drivers later on
+> and the memory allocation error here.
+
+Do you find this terse message really sufficient?
+
+Can the mentioned properties be required for the desired system configuration?
+
+Regards,
+Markus
