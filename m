@@ -1,30 +1,29 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 15 Feb 2018 15:52:25 +0000
-Subject: Re: [PATCH] crypto: chelsio - Make function aead_ccm_validate_input static
-Message-Id: <20180215155225.GN7352@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 10:16:39 +0000
+Subject: [PATCH 0/4] Ux500 crypto: Adjustments for ux500_cryp_probe()
+Message-Id: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206230920.13764-1-colin.king@canonical.com>
-In-Reply-To: <20180206230920.13764-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Harsh Jain <harsh@chelsio.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Geliang Tang <geliangtang@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 11:09:20PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Function aead_ccm_validate_input is local to the source and does not
-> need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/crypto/chelsio/chcr_algo.c:2627:5: warning: symbol
-> 'aead_ccm_validate_input' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 11:12:34 +0100
 
-Patch applied.  Thanks.
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation
+  Adjust two condition checks
+  Adjust an error message
+  Delete two unnecessary variable initialisations
+
+ drivers/crypto/ux500/cryp/cryp_core.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.16.1
+
