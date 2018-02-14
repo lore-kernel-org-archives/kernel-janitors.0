@@ -1,39 +1,21 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Feb 2018 21:30:22 +0000
-Subject: [PATCH 4/4] HID: logitech-dj: Fix a typo in a comment line
-Message-Id: <0d17da5f-00ad-259f-932e-dc54eb45696c@users.sourceforge.net>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Wed, 14 Feb 2018 14:43:34 +0000
+Subject: Re: [PATCH -next] clk: samsung: exynos-audss: Remove redundant dev_err call in exynos_audss_clk_prob
+Message-Id: <240b9be5-429c-ca34-63c6-bdd260970ca8@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
-In-Reply-To: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
+References: <1516188378-144847-1-git-send-email-weiyongjun1@huawei.com>
+ <CGME20180214144350epcas1p1d66e605e6d68de23661f51ced410d72e@epcas1p1.samsung.com>
+In-Reply-To: <1516188378-144847-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2018 22:14:49 +0100
+On 01/17/2018 12:26 PM, Wei Yongjun wrote:
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Adjust a word in this description.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-logitech-dj.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index f1496c6303ce..de1859fade5c 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -318,7 +318,7 @@ static const char hidpp_descriptor[] = {
-  *
-  * Right now, RF report types have the same report types (or report id's)
-  * than the hid report created from those RF reports. In the future
-- * this doesnt have to be true.
-+ * this doesn't have to be true.
-  *
-  * For instance, RF report type 0x01 which has a size of 8 bytes, corresponds
-  * to hid report id 0x01, this is standard keyboard. Same thing applies to mice
--- 
-2.16.1
-
+Patch applied, thanks.
