@@ -1,36 +1,43 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Mon, 05 Feb 2018 15:11:22 +0000
-Subject: Re: [PATCH] net: phy-micrel: remove redundant initialization of pointer of_node
-Message-Id: <20180205151122.GE11811@lunn.ch>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 16:17:08 +0000
+Subject: [PATCH] crypto: nx-842: Delete an error message for a failed memory allocation in nx842_pseries_init
+Message-Id: <8261d041-ccd9-c0f8-4530-a4afb43ee7ab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180205124759.19046-1-colin.king@canonical.com>
-In-Reply-To: <20180205124759.19046-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "David S. Miller" <davem@davemloft.net>, Haren Myneni <haren@us.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Dan Streetman <ddstreet@ieee.org>
 
-On Mon, Feb 05, 2018 at 12:47:59PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer of_node is initialized with a value that is never read, of_node
-> is later updated with a new value instead, hence the initialization is
-> redundant and can be removed.  Also remove unused pointer dev and
-> remove an empty line.
-> 
-> Cleans up clang warnings:
-> drivers/net/phy/micrel.c:393:28: warning: Value stored to 'of_node'
-> during its initialization is never read
-> drivers/net/phy/micrel.c:532:28: warning: Value stored to 'of_node'
-> during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 17:05:13 +0100
 
-Hi Colin
+Omit an extra message for a memory allocation failure in this function.
 
-You probably need to repost once netdev re-opens.
+This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/nx/nx-842-pseries.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-    Andrew
+diff --git a/drivers/crypto/nx/nx-842-pseries.c b/drivers/crypto/nx/nx-842-pseries.c
+index bf52cd1d7fca..66869976cfa2 100644
+--- a/drivers/crypto/nx/nx-842-pseries.c
++++ b/drivers/crypto/nx/nx-842-pseries.c
+@@ -1105,10 +1105,9 @@ static int __init nx842_pseries_init(void)
+ 
+ 	RCU_INIT_POINTER(devdata, NULL);
+ 	new_devdata = kzalloc(sizeof(*new_devdata), GFP_KERNEL);
+-	if (!new_devdata) {
+-		pr_err("Could not allocate memory for device data\n");
++	if (!new_devdata)
+ 		return -ENOMEM;
+-	}
++
+ 	RCU_INIT_POINTER(devdata, new_devdata);
+ 
+ 	ret = vio_register_driver(&nx842_vio_driver);
+-- 
+2.16.1
+
