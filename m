@@ -1,75 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Feb 2018 21:27:24 +0000
-Subject: [PATCH 2/4] HID: logitech-dj: Improve a size determination in four functions
-Message-Id: <59f8d1c6-c282-b521-9472-990038862052@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 18:30:14 +0000
+Subject: [PATCH 0/2] crypto/caam: Adjustments for eight function implementations
+Message-Id: <9a9a602d-93da-457d-c37d-2acbb4b7b5d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
-In-Reply-To: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+To: linux-crypto@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2018 21:47:45 +0100
+Date: Wed, 14 Feb 2018 19:23:45 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in seven functions
+  Use common error handling code in four functions
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-logitech-dj.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/crypto/caam/caamalg.c  | 38 +++++++++++++++++---------------------
+ drivers/crypto/caam/caamhash.c | 35 +++++++++++++----------------------
+ drivers/crypto/caam/key_gen.c  |  4 +---
+ 3 files changed, 31 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 4c92b2cb5768..0da00d256ca7 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -417,7 +417,7 @@ static void logi_dj_recv_add_djhid_device(struct dj_receiver_dev *djrcv_dev,
- 	snprintf(tmpstr, sizeof(tmpstr), ":%d", dj_report->device_index);
- 	strlcat(dj_hiddev->phys, tmpstr, sizeof(dj_hiddev->phys));
- 
--	dj_dev = kzalloc(sizeof(struct dj_device), GFP_KERNEL);
-+	dj_dev = kzalloc(sizeof(*dj_dev), GFP_KERNEL);
- 	if (!dj_dev)
- 		goto dj_device_allocate_fail;
- 
-@@ -611,7 +611,7 @@ static int logi_dj_recv_query_paired_devices(struct dj_receiver_dev *djrcv_dev)
- 	if (djrcv_dev->querying_devices)
- 		return 0;
- 
--	dj_report = kzalloc(sizeof(struct dj_report), GFP_KERNEL);
-+	dj_report = kzalloc(sizeof(*dj_report), GFP_KERNEL);
- 	if (!dj_report)
- 		return -ENOMEM;
- 	dj_report->report_id = REPORT_ID_DJ_SHORT;
-@@ -627,11 +627,10 @@ static int logi_dj_recv_switch_to_dj_mode(struct dj_receiver_dev *djrcv_dev,
- 					  unsigned timeout)
- {
- 	struct hid_device *hdev = djrcv_dev->hdev;
--	struct dj_report *dj_report;
- 	u8 *buf;
- 	int retval;
-+	struct dj_report *dj_report = kzalloc(sizeof(*dj_report), GFP_KERNEL);
- 
--	dj_report = kzalloc(sizeof(struct dj_report), GFP_KERNEL);
- 	if (!dj_report)
- 		return -ENOMEM;
- 	dj_report->report_id = REPORT_ID_DJ_SHORT;
-@@ -1005,8 +1004,7 @@ static int logi_dj_probe(struct hid_device *hdev,
- 	}
- 
- 	/* Treat interface 2 */
--
--	djrcv_dev = kzalloc(sizeof(struct dj_receiver_dev), GFP_KERNEL);
-+	djrcv_dev = kzalloc(sizeof(*djrcv_dev), GFP_KERNEL);
- 	if (!djrcv_dev)
- 		return -ENOMEM;
- 
 -- 
 2.16.1
 
