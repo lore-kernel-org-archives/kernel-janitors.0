@@ -1,65 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 05 Feb 2018 13:37:29 +0000
-Subject: [PATCH] qlcnic: remove redundant initializations to pointers vh and nf
-Message-Id: <20180205133729.13453-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 10:22:28 +0000
+Subject: [PATCH 4/4] crypto: ux500: Delete two unnecessary variable initialisations in ux500_cryp_probe()
+Message-Id: <b8fb9abe-2ac4-d720-b676-79083fc7e5e6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
+In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harish Patil <harish.patil@cavium.com>, Manish Chopra <manish.chopra@cavium.com>, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Geliang Tang <geliangtang@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 10:56:38 +0100
 
-Pointer vh is initialized however the value is never read as it
-is re-assigned inside an if-statement.  Move the declaration to
-inside the if-statement and remove the extraneous initialization.
+Two local variables will eventually be set to appropriate pointers
+a bit later. Thus omit their explicit initialisation at the beginning.
 
-Similarly, pointer nf is being initialized and the value is never
-read and is re-assigned later, so this is redundant and can also
-be removed.
-
-Cleans up clang warnings:
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c:306:22: warning:
-Value stored to 'vh' during its initialization is never read
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c:627:26: warning:
-Value stored to 'nf' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-index 84dd83031a1b..db0267a8eec4 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
-@@ -303,7 +303,6 @@ static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
- 			       struct cmd_desc_type0 *first_desc,
- 			       struct sk_buff *skb)
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index 7c811d7eb274..cb31b59c9d53 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -1404,8 +1404,8 @@ static void cryp_algs_unregister_all(void)
+ static int ux500_cryp_probe(struct platform_device *pdev)
  {
--	struct vlan_ethhdr *vh = (struct vlan_ethhdr *)(skb->data);
- 	struct ethhdr *phdr = (struct ethhdr *)(skb->data);
- 	u16 protocol = ntohs(skb->protocol);
- 	struct qlcnic_filter *fil, *tmp_fil;
-@@ -318,6 +317,8 @@ static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
- 
- 	if (adapter->flags & QLCNIC_VLAN_FILTERING) {
- 		if (protocol = ETH_P_8021Q) {
-+			struct vlan_ethhdr *vh;
-+
- 			vh = (struct vlan_ethhdr *)skb->data;
- 			vlan_id = ntohs(vh->h_vlan_TCI);
- 		} else if (skb_vlan_tag_present(skb)) {
-@@ -624,7 +625,7 @@ static int qlcnic_map_tx_skb(struct pci_dev *pdev, struct sk_buff *skb,
- static void qlcnic_unmap_buffers(struct pci_dev *pdev, struct sk_buff *skb,
- 				 struct qlcnic_cmd_buffer *pbuf)
- {
--	struct qlcnic_skb_frag *nf = &pbuf->frag_array[0];
-+	struct qlcnic_skb_frag *nf;
- 	int i, nr_frags = skb_shinfo(skb)->nr_frags;
- 
- 	for (i = 0; i < nr_frags; i++) {
+ 	int ret;
+-	struct resource *res = NULL;
+-	struct resource *res_irq = NULL;
++	struct resource *res;
++	struct resource *res_irq;
+ 	struct cryp_device_data *device_data;
+ 	struct cryp_protection_config prot = {
+ 		.privilege_access = CRYP_STATE_ENABLE
 -- 
-2.15.1
+2.16.1
 
