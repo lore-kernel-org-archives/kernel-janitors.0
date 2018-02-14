@@ -1,24 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 23 Feb 2018 17:45:03 +0000
-Subject: Re: [PATCH] atm: idt77252: remove redundant bit-wise or'ing of zero
-Message-Id: <20180223.124503.1376757527638095759.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Feb 2018 07:14:17 +0000
+Subject: [PATCH] x86/spectre: fix an error message
+Message-Id: <20180214071416.GA26677@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180223122252.23942-1-colin.king@canonical.com>
-In-Reply-To: <20180223122252.23942-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@redhat.com>, KarimAllah Ahmed <karahmed@amazon.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, David Woodhouse <dwmw@amazon.co.uk>, Borislav Petkov <bp@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 12:22:52 +0000
+If i = ARRAY_SIZE(mitigation_options) then we accidentally print
+garbage from one space beyond the end of the mitigation_options[] array.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Zero is being bit-wise or'd in a calculation twice; these are redundant
-> and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index debcdda88560..acee4ebec04f 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -174,7 +174,7 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ 		}
+ 
+ 		if (i >= ARRAY_SIZE(mitigation_options)) {
+-			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
+ 			return SPECTRE_V2_CMD_AUTO;
+ 		}
+ 	}
