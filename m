@@ -1,43 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 17:21:21 +0000
-Subject: [PATCH 1/2] i2c-davinci: Delete an error message for a failed memory allocation in davinci_i2c_probe
-Message-Id: <f890924b-ca68-253b-a7c8-fce269393867@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 10:19:40 +0000
+Subject: [PATCH 2/4] crypto: ux500: Adjust two condition checks in ux500_cryp_probe()
+Message-Id: <d79ef7ab-cf49-6b32-01d8-e4aa77424e39@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
-In-Reply-To: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
+References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
+In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Geliang Tang <geliangtang@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 18:00:20 +0100
+Date: Wed, 14 Feb 2018 10:38:44 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+The local variable "cryp_error" was used only for two condition checks.
 
-This issue was detected by using the Coccinelle software.
+* Check the return values from these function calls directly instead.
+
+* Delete this variable which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/busses/i2c-davinci.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/crypto/ux500/cryp/cryp_core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-index cb24a3ffdfa2..71a9c29b3981 100644
---- a/drivers/i2c/busses/i2c-davinci.c
-+++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -784,10 +784,8 @@ static int davinci_i2c_probe(struct platform_device *pdev)
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index 50bfc7b4c641..07cc92f88933 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -1404,7 +1404,6 @@ static void cryp_algs_unregister_all(void)
+ static int ux500_cryp_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+-	int cryp_error = 0;
+ 	struct resource *res = NULL;
+ 	struct resource *res_irq = NULL;
+ 	struct cryp_device_data *device_data;
+@@ -1478,15 +1477,13 @@ static int ux500_cryp_probe(struct platform_device *pdev)
+ 		goto out_clk_unprepare;
+ 	}
  
- 	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_i2c_dev),
- 			GFP_KERNEL);
--	if (!dev) {
--		dev_err(&pdev->dev, "Memory allocation failed\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
+-	cryp_error = cryp_check(device_data);
+-	if (cryp_error != 0) {
++	if (cryp_check(device_data)) {
+ 		dev_err(dev, "[%s]: cryp_init() failed!", __func__);
+ 		ret = -EINVAL;
+ 		goto out_power;
+ 	}
  
- 	init_completion(&dev->cmd_complete);
- #ifdef CONFIG_CPU_FREQ
+-	cryp_error = cryp_configure_protection(device_data, &prot);
+-	if (cryp_error != 0) {
++	if (cryp_configure_protection(device_data, &prot)) {
+ 		dev_err(dev, "[%s]: cryp_configure_protection() failed!",
+ 			__func__);
+ 		ret = -EINVAL;
 -- 
 2.16.1
 
