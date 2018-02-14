@@ -1,42 +1,21 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 16:45:06 +0000
-Subject: [PATCH] i2c-ibm_iic: Delete an error message for a failed memory allocation in iic_probe()
-Message-Id: <3c085530-c0d4-e2b2-8dcd-393ef7571243@users.sourceforge.net>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Wed, 14 Feb 2018 14:45:05 +0000
+Subject: Re: [PATCH -next] clk: samsung: exynos5433: Remove redundant dev_err call in exynos5433_cmu_probe()
+Message-Id: <a819f423-a283-b30c-b088-b865cea3e6ec@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1516188387-144930-1-git-send-email-weiyongjun1@huawei.com>
+ <CGME20180214144511epcas1p2d950632022f7fbc07151959fc6a43701@epcas1p2.samsung.com>
+In-Reply-To: <1516188387-144930-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 17:24:57 +0100
+On 01/17/2018 12:26 PM, Wei Yongjun wrote:
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/busses/i2c-ibm_iic.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-ibm_iic.c b/drivers/i2c/busses/i2c-ibm_iic.c
-index 961c5f42d956..1bd4d6dde0fe 100644
---- a/drivers/i2c/busses/i2c-ibm_iic.c
-+++ b/drivers/i2c/busses/i2c-ibm_iic.c
-@@ -702,10 +702,8 @@ static int iic_probe(struct platform_device *ofdev)
- 	int ret;
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
--	if (!dev) {
--		dev_err(&ofdev->dev, "failed to allocate device data\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
- 
- 	platform_set_drvdata(ofdev, dev);
- 
--- 
-2.16.1
-
+Patch applied, thanks.
