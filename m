@@ -1,27 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Feb 2018 16:55:05 +0000
-Subject: [PATCH 0/2] i2c-tiny-usb: Adjustments for i2c_tiny_usb_probe()
-Message-Id: <5ab52458-e334-bb06-8d7d-66b48ac3f30b@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 14 Feb 2018 10:30:43 +0000
+Subject: [PATCH][scsi-next] scsi: myrs: Fix spelling mistake: "Cashe"-> "Cache"
+Message-Id: <20180214103043.3112-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Till Harbaum <till@harbaum.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Hannes Reinecke <hare@suse.de>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Feb 2018 17:51:23 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Trivial fix to spelling mistake in info message text.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Return an error code only as a constant
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/myrs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/i2c/busses/i2c-tiny-usb.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
+index 3b87c6942a8e..16498e1b0dd4 100644
+--- a/drivers/scsi/myrs.c
++++ b/drivers/scsi/myrs.c
+@@ -1571,7 +1571,7 @@ static ssize_t myrs_store_flush_cache(struct device *dev,
+ 		return count;
+ 	}
+ 	shost_printk(KERN_INFO, shost,
+-		     "Cashe Flush failed, status 0x%02x\n", status);
++		     "Cache Flush failed, status 0x%02x\n", status);
+ 	return -EIO;
+ }
+ static DEVICE_ATTR(flush_cache, S_IWUSR, NULL, myrs_store_flush_cache);
 -- 
-2.16.1
+2.15.1
 
