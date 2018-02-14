@@ -1,53 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 23 Feb 2018 18:26:55 +0000
-Subject: [PATCH 4.4 182/193] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
-Message-Id: <20180223170354.686167921@linuxfoundation.org>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Date: Wed, 14 Feb 2018 07:52:42 +0000
+Subject: Re: [PATCH] rtc: ds1302: remove redundant initializations of pointer bp
+Message-Id: <20180214075242.GA8219@piout.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180223170325.997716448@linuxfoundation.org>
-In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
+References: <20180123101727.31028-1-colin.king@canonical.com>
+In-Reply-To: <20180123101727.31028-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>, kernel-janitors@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, Jack Wang <jinpu.wang@profitbricks.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On 23/01/2018 at 10:17:27 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointe bp is being initialized and this value is never read, it
+> is being updated to the same value later just before it is going to
+> be used. Remove the initialization as it is never read and keep
+> the setting of bp closer to the use of bp.
+> 
+> Cleans up clang warnings:
+> drivers/rtc/rtc-ds1302.c:115:7: warning: Value stored to 'bp' during
+> its initialization is never read
+> drivers/rtc/rtc-ds1302.c:46:7: warning: Value stored to 'bp' during
+> its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/rtc/rtc-ds1302.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+Applied, thanks.
 
-------------------
-
-From: Colin Ian King <colin.king@canonical.com>
-
-(cherry picked from commit e698dcdfcda41efd0984de539767b4cddd235f1e)
-
-Trivial fix to spelling mistake in pr_err error message text.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-[jwang: cherry pick to 4.4]
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/bugs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -103,7 +103,7 @@ bool retpoline_module_ok(bool has_retpol
- 	if (spectre_v2_enabled = SPECTRE_V2_NONE || has_retpoline)
- 		return true;
- 
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
- }
-
-
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
