@@ -1,64 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 08 Feb 2018 20:46:40 +0000
-Subject: [PATCH 3/3] drm/amd/powerplay/hwmgr: Delete an unnecessary return statement in three functions
-Message-Id: <5a8388c9-7d55-0e15-5d36-c3057c4b2945@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 14 Feb 2018 17:21:53 +0000
+Subject: [PATCH] ASoC: TSCS42xx: make const array norm_addrs static, reduces object code size
+Message-Id: <20180214172153.5749-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
-In-Reply-To: <1e5850db-c07f-add1-919a-be29be9c553d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Colin Ian King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>, Eric Huang <JinHuiEric.Huang@amd.com>, Evan Quan <evan.quan@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>, Himanshu Jha <himanshujha199640@gmail.com>, Junwei Zhang <Jerry.Zhang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Tom St Denis <tom.stdenis@amd.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 21:10:58 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+Don't populate the const array norm_addrs on the stack, instead make it
+static.  Makes the object code smaller by over 230 bytes.  Also re-format
+array data as the insertion of the static keywork made the first line
+overly long.
 
-WARNING: void function return statements are not generally useful
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  53780	  34752	    256	  88788	  15ad4	linux/sound/soc/codecs/tscs42xx.o
 
-Thus remove such a statement in the affected functions.
+After:
+   text	   data	    bss	    dec	    hex	filename
+  53461	  34840	    256	  88557	  159ed	linux/sound/soc/codecs/tscs42xx.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c        | 3 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 1 -
- 2 files changed, 4 deletions(-)
+ sound/soc/codecs/tscs42xx.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-index 2681c9317d25..e07b32491092 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-@@ -653,8 +653,6 @@ void phm_trim_voltage_table_to_fit_state_table(uint32_t max_vol_steps,
- 		vol_table->entries[i] = vol_table->entries[i + diff];
+diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
+index e7661d0315e6..205a55a0329e 100644
+--- a/sound/soc/codecs/tscs42xx.c
++++ b/sound/soc/codecs/tscs42xx.c
+@@ -1317,11 +1317,13 @@ static struct snd_soc_codec_driver soc_codec_dev_tscs42xx = {
  
- 	vol_table->count = max_vol_steps;
--
--	return;
- }
- 
- int phm_reset_single_dpm_table(void *table,
-@@ -906,7 +904,6 @@ void hwmgr_init_default_caps(struct pp_hwmgr *hwmgr)
- 
- 	phm_cap_set(hwmgr->platform_descriptor.platformCaps,
- 						PHM_PlatformCaps_FanSpeedInTableIsRPM);
--	return;
- }
- 
- int hwmgr_set_user_specify_caps(struct pp_hwmgr *hwmgr)
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-index 2d55dabc77d4..fcdb3563d860 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-@@ -3618,7 +3618,6 @@ static uint32_t vega10_find_highest_dpm_level(
- static void vega10_apply_dal_minimum_voltage_request(
- 		struct pp_hwmgr *hwmgr)
+ static inline void init_coeff_ram_cache(struct tscs42xx *tscs42xx)
  {
--	return;
- }
+-	const u8 norm_addrs[] = { 0x00, 0x05, 0x0a, 0x0f, 0x14, 0x19, 0x1f,
+-		0x20, 0x25, 0x2a, 0x2f, 0x34, 0x39, 0x3f, 0x40, 0x45, 0x4a,
+-		0x4f, 0x54, 0x59, 0x5f, 0x60, 0x65, 0x6a, 0x6f, 0x74, 0x79,
+-		0x7f, 0x80, 0x85, 0x8c, 0x91, 0x96, 0x97, 0x9c, 0xa3, 0xa8,
+-		0xad, 0xaf, 0xb0, 0xb5, 0xba, 0xbf, 0xc4, 0xc9, };
++	static const u8 norm_addrs[] = {
++		0x00, 0x05, 0x0a, 0x0f, 0x14, 0x19, 0x1f, 0x20, 0x25, 0x2a,
++		0x2f, 0x34, 0x39, 0x3f, 0x40, 0x45, 0x4a, 0x4f, 0x54, 0x59,
++		0x5f, 0x60, 0x65, 0x6a, 0x6f, 0x74, 0x79, 0x7f, 0x80, 0x85,
++		0x8c, 0x91, 0x96, 0x97, 0x9c, 0xa3, 0xa8, 0xad, 0xaf, 0xb0,
++		0xb5, 0xba, 0xbf, 0xc4, 0xc9,
++	};
+ 	u8 *coeff_ram = tscs42xx->coeff_ram;
+ 	int i;
  
- static int vega10_get_soc_index_for_max_uclk(struct pp_hwmgr *hwmgr)
 -- 
-2.16.1
+2.15.1
 
