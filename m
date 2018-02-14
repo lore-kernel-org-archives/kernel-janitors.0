@@ -1,49 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 17:37:50 +0000
-Subject: [PATCH 1/6] hid-prodikeys: Delete two error messages for a failed memory allocation in pk_probe()
-Message-Id: <b0d723a5-73f9-e937-b93b-79174d4d0ede@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 14 Feb 2018 16:02:52 +0000
+Subject: [PATCH][scsi-next] scsi: myrs: ensure sge_count is set correctly
+Message-Id: <20180214160252.32230-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
-In-Reply-To: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Hannes Reinecke <hare@suse.de>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 14:36:20 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit extra messages for a memory allocation failure in this function.
+The DMA size is not being assigned to sge_count, instead sge_addr is
+being assigned this value, which is incorrected.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1465233 ("Unused value")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 8a8606895947 ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hid/hid-prodikeys.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/scsi/myrs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
-index 87eda34ea2f8..9cad4973a67b 100644
---- a/drivers/hid/hid-prodikeys.c
-+++ b/drivers/hid/hid-prodikeys.c
-@@ -802,15 +802,12 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
+diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
+index 16498e1b0dd4..eb67ed3a7cff 100644
+--- a/drivers/scsi/myrs.c
++++ b/drivers/scsi/myrs.c
+@@ -442,7 +442,7 @@ myrs_translate_pdev(myrs_hba *cs, unsigned char channel,
+ 		DAC960_V2_TranslatePhysicalToLogicalDevice;
+ 	sgl = &mbox->PhysicalDeviceInfo.dma_addr;
+ 	sgl->sge[0].sge_addr = devmap_addr;
+-	sgl->sge[0].sge_addr = mbox->PhysicalDeviceInfo.dma_size;
++	sgl->sge[0].sge_count = mbox->PhysicalDeviceInfo.dma_size;
  
- 	pk = kzalloc(sizeof(*pk), GFP_KERNEL);
--	if (pk = NULL) {
--		hid_err(hdev, "can't alloc descriptor\n");
-+	if (!pk)
- 		return -ENOMEM;
--	}
- 
- 	pk->hdev = hdev;
- 
- 	pm = kzalloc(sizeof(*pm), GFP_KERNEL);
- 	if (pm = NULL) {
--		hid_err(hdev, "can't alloc descriptor\n");
- 		ret = -ENOMEM;
- 		goto err_free_pk;
- 	}
+ 	myrs_exec_cmd(cs, cmd_blk);
+ 	status = cmd_blk->status;
 -- 
-2.16.1
+2.15.1
 
