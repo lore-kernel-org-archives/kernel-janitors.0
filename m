@@ -1,52 +1,76 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Thu, 01 Feb 2018 20:29:24 +0000
-Subject: Re: [Intel-wired-lan] [PATCH] ixgbevf: remove redundant initialization of variable 'dma'.
-Message-Id: <CAKgT0UdjYMWV4x7-yy4pkA_8cNY+Bvc4WvJ0yKYRKO5dWf9mTA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 15:25:15 +0000
+Subject: [PATCH 1/2] crypto: omap: Delete an error message for a failed memory allocation in three functions
+Message-Id: <d6a0efa2-3056-de6f-269f-ddf5cdee62fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180201183539.24776-1-colin.king@canonical.com>
-In-Reply-To: <20180201183539.24776-1-colin.king@canonical.com>
+References: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
+In-Reply-To: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan <intel-wired-lan@lists.osuosl.org>, Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Joel Fernandes <joelf@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 1, 2018 at 10:35 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable dma is initialized with a value that is never read, later
-> on it is re-assigned a new value, hence the initialization is redundant
-> and can be removed.
->
-> Cleans up clang warning:
-> drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c:584:13: warning: Value
-> stored to 'dma' during its initialization is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 16:00:33 +0100
 
-Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Omit an extra message for a memory allocation failure in these functions.
 
-> ---
->  drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-> index 9b3d43d28106..be50facec93f 100644
-> --- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-> +++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-> @@ -558,7 +558,7 @@ static bool ixgbevf_alloc_mapped_page(struct ixgbevf_ring *rx_ring,
->                                       struct ixgbevf_rx_buffer *bi)
->  {
->         struct page *page = bi->page;
-> -       dma_addr_t dma = bi->dma;
-> +       dma_addr_t dma;
->
->         /* since we are recycling buffers we should seldom need to alloc */
->         if (likely(page))
-> --
-> 2.15.1
->
-> _______________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/omap-aes.c  | 5 ++---
+ drivers/crypto/omap-des.c  | 5 ++---
+ drivers/crypto/omap-sham.c | 1 -
+ 3 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/crypto/omap-aes.c b/drivers/crypto/omap-aes.c
+index fbec0a2e76dd..a2bac3b869b6 100644
+--- a/drivers/crypto/omap-aes.c
++++ b/drivers/crypto/omap-aes.c
+@@ -1040,10 +1040,9 @@ static int omap_aes_probe(struct platform_device *pdev)
+ 	u32 reg;
+ 
+ 	dd = devm_kzalloc(dev, sizeof(struct omap_aes_dev), GFP_KERNEL);
+-	if (dd = NULL) {
+-		dev_err(dev, "unable to alloc data struct.\n");
++	if (!dd)
+ 		goto err_data;
+-	}
++
+ 	dd->dev = dev;
+ 	platform_set_drvdata(pdev, dd);
+ 
+diff --git a/drivers/crypto/omap-des.c b/drivers/crypto/omap-des.c
+index ebc5c0f11f03..f4199be783a9 100644
+--- a/drivers/crypto/omap-des.c
++++ b/drivers/crypto/omap-des.c
+@@ -964,10 +964,9 @@ static int omap_des_probe(struct platform_device *pdev)
+ 	u32 reg;
+ 
+ 	dd = devm_kzalloc(dev, sizeof(struct omap_des_dev), GFP_KERNEL);
+-	if (dd = NULL) {
+-		dev_err(dev, "unable to alloc data struct.\n");
++	if (!dd)
+ 		goto err_data;
+-	}
++
+ 	dd->dev = dev;
+ 	platform_set_drvdata(pdev, dd);
+ 
+diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
+index 86b89ace836f..7aa4eb50ebc9 100644
+--- a/drivers/crypto/omap-sham.c
++++ b/drivers/crypto/omap-sham.c
+@@ -2024,7 +2024,6 @@ static int omap_sham_probe(struct platform_device *pdev)
+ 
+ 	dd = devm_kzalloc(dev, sizeof(struct omap_sham_dev), GFP_KERNEL);
+ 	if (dd = NULL) {
+-		dev_err(dev, "unable to alloc data struct.\n");
+ 		err = -ENOMEM;
+ 		goto data_err;
+ 	}
+-- 
+2.16.1
+
