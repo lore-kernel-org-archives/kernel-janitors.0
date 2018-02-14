@@ -1,62 +1,40 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Mon, 19 Feb 2018 14:15:28 +0000
-Subject: Re: [PATCH] gpu: ipu-v3: make const arrays int_reg static, shrinks object size
-Message-Id: <1519049728.3408.18.camel@pengutronix.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 21:39:25 +0000
+Subject: [PATCH 1/2] crypto: bcm: Delete an error message for a failed memory allocation in do_shash()
+Message-Id: <35f107c8-c640-07f9-c10f-83fbe1ce4259@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180214184559.8616-1-colin.king@canonical.com>
-In-Reply-To: <20180214184559.8616-1-colin.king@canonical.com>
+References: <68946b12-83d6-ab74-fd54-71b23cf9b7ef@users.sourceforge.net>
+In-Reply-To: <68946b12-83d6-ab74-fd54-71b23cf9b7ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Colin Ian King <colin.king@canonical.com>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Rob Rice <rob.rice@broadcom.com>, Steve Lin <steven.lin1@broadcom.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 22:05:11 +0100
 
-On Wed, 2018-02-14 at 18:45 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const read-only arrays int_reg on the stack but instead
-> make them static. Makes the object code smaller by over 80 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   28024	   8936	    192	  37152	   9120	drivers/gpu/ipu-v3/ipu-common.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   27794	   9080	    192	  37066	   90ca	drivers/gpu/ipu-v3/ipu-common.o
-> 
-> (gcc version 7.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/ipu-v3/ipu-common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
-> index 658fa2d3e40c..48685cddbad1 100644
-> --- a/drivers/gpu/ipu-v3/ipu-common.c
-> +++ b/drivers/gpu/ipu-v3/ipu-common.c
-> @@ -1089,7 +1089,7 @@ static void ipu_irq_handler(struct irq_desc *desc)
->  {
->  	struct ipu_soc *ipu = irq_desc_get_handler_data(desc);
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> -	const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
-> +	static const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
->  
->  	chained_irq_enter(chip, desc);
->  
-> @@ -1102,7 +1102,7 @@ static void ipu_err_irq_handler(struct irq_desc *desc)
->  {
->  	struct ipu_soc *ipu = irq_desc_get_handler_data(desc);
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> -	const int int_reg[] = { 4, 5, 8, 9};
-> +	static const int int_reg[] = { 4, 5, 8, 9};
->  
->  	chained_irq_enter(chip, desc);
+Omit an extra message for a memory allocation failure in this function.
 
-Applied to imx-drm/next, thank you.
+This issue was detected by using the Coccinelle software.
 
-regards
-Philipp
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/bcm/util.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/crypto/bcm/util.c b/drivers/crypto/bcm/util.c
+index d543c010ccd9..a912c6ad3e85 100644
+--- a/drivers/crypto/bcm/util.c
++++ b/drivers/crypto/bcm/util.c
+@@ -279,7 +279,6 @@ int do_shash(unsigned char *name, unsigned char *result,
+ 	sdesc = kmalloc(size, GFP_KERNEL);
+ 	if (!sdesc) {
+ 		rc = -ENOMEM;
+-		pr_err("%s: Memory allocation failure\n", __func__);
+ 		goto do_shash_err;
+ 	}
+ 	sdesc->shash.tfm = hash;
+-- 
+2.16.1
+
