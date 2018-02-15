@@ -1,30 +1,38 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Sun, 18 Feb 2018 13:25:35 +0000
-Subject: Re: [PATCH 1/3] pata_macio: Delete an error message for a failed memory allocation in two functions
-Message-Id: <20180218132535.GE695913@devbig577.frc2.facebook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Feb 2018 15:46:24 +0000
+Subject: [PATCH] ARM: cpuidle: Delete an error message for a failed memory allocation in arm_idle_init_cpu()
+Message-Id: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e87cf7d-eda2-12d9-af01-17f6619cda72@users.sourceforge.net>
- <0e764e7d-98cf-7f4e-91ff-bf82aa381442@users.sourceforge.net>
-In-Reply-To: <0e764e7d-98cf-7f4e-91ff-bf82aa381442@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-pm@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 01:38:20PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 16 Feb 2018 13:01:45 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Feb 2018 16:40:38 +0100
 
-Applying this one but not the other two.
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks.
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/cpuidle/cpuidle-arm.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/cpuidle/cpuidle-arm.c b/drivers/cpuidle/cpuidle-arm.c
+index ddee1b601b89..e07bc7ace774 100644
+--- a/drivers/cpuidle/cpuidle-arm.c
++++ b/drivers/cpuidle/cpuidle-arm.c
+@@ -129,7 +129,6 @@ static int __init arm_idle_init_cpu(int cpu)
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev) {
+-		pr_err("Failed to allocate cpuidle device\n");
+ 		ret = -ENOMEM;
+ 		goto out_unregister_drv;
+ 	}
 -- 
-tejun
+2.16.1
+
