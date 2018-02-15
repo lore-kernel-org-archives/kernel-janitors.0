@@ -1,30 +1,54 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 13 Feb 2018 18:50:48 +0000
-Subject: Re: [PATCH] efi/apple-properties: Delete an error message for a failed memory allocation in unmarsha
-Message-Id: <1518547848.22190.50.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Feb 2018 19:36:14 +0000
+Subject: [PATCH][V2] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
+Message-Id: <20180215193614.28684-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <145f8fac-9297-b362-d89f-886632e2507f@users.sourceforge.net>
-         <20180213184033.GA24299@wunner.de>
-In-Reply-To: <20180213184033.GA24299@wunner.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Wunner <lukas@wunner.de>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-efi@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-13 at 19:40 +0100, Lukas Wunner wrote:
-> On Tue, Feb 13, 2018 at 06:00:26PM +0100, SF Markus Elfring wrote:
-> > --- a/drivers/firmware/efi/apple-properties.c
-> You didn't cc me on your submission even though I'm the author of
-> 99% of this file.  Please make an effort prior to submission to
-> identify interested parties.
+From: Colin Ian King <colin.king@canonical.com>
 
-If you want to receive patches for this file, even
-if you are not a maintainer or an upstream path,
-you should add yourself as a reviewer to the
-MAINTAINERS file like:
+The shifting of buf[5] by 24 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an unsigned long. If
+the top bit of buf[5] is set then all then all the upper bits sec
+end up as also being set because of the sign-extension. Fix this by
+casting buf[5] to an unsigned long before the shift.
 
-APPLE EFI PROPERTIES
-R:	Lukas Wunner <lukas@wunner.de>
-F:	drivers/firmware/efi/apple-properties.c
+Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
+
+Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-tx4939.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
+index feededce3ded..1f351308afdc 100644
+--- a/drivers/rtc/rtc-tx4939.c
++++ b/drivers/rtc/rtc-tx4939.c
+@@ -109,7 +109,8 @@ static int tx4939_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	for (i = 2; i < 6; i++)
+ 		buf[i] = __raw_readl(&rtcreg->dat);
+ 	spin_unlock_irq(&pdata->lock);
+-	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
++	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
++		(buf[3] << 8) | buf[2];
+ 	rtc_time_to_tm(sec, tm);
+ 	return rtc_valid_tm(tm);
+ }
+@@ -170,7 +171,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
+ 	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
+ 	spin_unlock_irq(&pdata->lock);
+-	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
++	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
++		(buf[3] << 8) | buf[2];
+ 	rtc_time_to_tm(sec, &alrm->time);
+ 	return rtc_valid_tm(&alrm->time);
+ }
+-- 
+2.15.1
 
