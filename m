@@ -1,29 +1,23 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 14:19:50 +0000
-Subject: Re: [PATCH] gpio: merrifield: Delete an error message for a failed memory allocation in mrfld_gpio_p
-Message-Id: <CACRpkdbjJPcRwqCNvRnKyyrSLcrcp9CKCcWXXvSRx8BwtBw72A@mail.gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 15 Feb 2018 23:44:19 +0000
+Subject: Re: [patch RESEND] atp870u: 64 bit bug in atp885_init()
+Message-Id: <yq1bmgplsx8.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
-In-Reply-To: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
+References: <20151209102453.GE3173@mwanda>
+In-Reply-To: <20151209102453.GE3173@mwanda> (Dan Carpenter's message of "Wed,
+        14 Feb 2018 15:02:31 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ondrej Zary <linux@rainbow-software.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <JBottomley@odin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
 
-On Sun, Feb 11, 2018 at 1:42 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Feb 2018 13:30:14 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> On 64 bit CPUs there is a memory corruption bug on probe().  It should
+> be a u32 pointer instead of an unsigned long pointer or we write past
+> the end of the setupdata[] array.
 
-Patch applied.
+Ondrej, please review!
 
-Yours,
-Linus Walleij
+-- 
+Martin K. Petersen	Oracle Linux Engineering
