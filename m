@@ -1,43 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 15 Feb 2018 19:12:18 +0000
-Subject: [PATCH][next] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
-Message-Id: <20180215191218.27936-1-colin.king@canonical.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Thu, 15 Feb 2018 20:27:57 +0000
+Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
+Message-Id: <20180215202757.GB3080@lunn.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180215191218.27936-1-colin.king@canonical.com>
+In-Reply-To: <20180215191218.27936-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: richardcochran@gmail.com
+Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+> index b251d534b70d..758e35fa69ab 100644
+> --- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+> +++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+> @@ -321,7 +321,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+>  	 */
+>  	for ( ; skb; skb = skb_dequeue(rxq)) {
+>  		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
+> -			u64 ns = timehi << 16 | timelo;
+> +			u64 ns = (u64)timehi << 16 | timelo;
 
-The shifting of timehi by 16 bits to the left will be promoted to
-a 32 bit signed int and then sign-extended to an u64. If the top bit
-of timehi is set then all then all the upper bits of ns end up as also
-being set because of the sign-extension. Fix this by casting timehi
-to u64 before the shift.
+Hi Richard
 
-Detected by CoverityScan, CID#1465288 ("Unintended sign extension")
+Do you prefer this, or making timehi and timelo a u64?
 
-Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/dsa/mv88e6xxx/hwtstamp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-index b251d534b70d..758e35fa69ab 100644
---- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-+++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-@@ -321,7 +321,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
- 	 */
- 	for ( ; skb; skb = skb_dequeue(rxq)) {
- 		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
--			u64 ns = timehi << 16 | timelo;
-+			u64 ns = (u64)timehi << 16 | timelo;
- 
- 			mutex_lock(&chip->reg_lock);
- 			ns = timecounter_cyc2time(&chip->tstamp_tc, ns);
--- 
-2.15.1
-
+   Andrew
