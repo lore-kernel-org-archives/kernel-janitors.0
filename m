@@ -1,40 +1,38 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Feb 2018 07:32:05 +0000
-Subject: Re: [PATCH 2/2] crypto: omap: Improve a size determination in three functions
-Message-Id: <3916c49d-f74a-97a0-9240-de9a727bece9@users.sourceforge.net>
+Date: Thu, 15 Feb 2018 21:22:16 +0000
+Subject: [PATCH] sata_dwc_460ex: Delete an error message for a failed memory allocation in sata_dwc_port_star
+Message-Id: <3ba388af-286a-df63-e78f-c82c1d084439@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <28780631-d093-a581-8690-3868f8fa327e@users.sourceforge.net>
- <0a45e47f-5ed0-5dd6-7545-adc8df2d7972@users.sourceforge.net>
- <20180222133813.GB28447@gondor.apana.org.au>
-In-Reply-To: <20180222133813.GB28447@gondor.apana.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Joel Fernandes <joelf@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-ide@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
->> @@ -1032,14 +1032,13 @@ static int omap_aes_get_res_pdev(struct omap_aes_dev *dd,
->>  static int omap_aes_probe(struct platform_device *pdev)
->>  {
->>  	struct device *dev = &pdev->dev;
->> -	struct omap_aes_dev *dd;
->>  	struct crypto_alg *algp;
->>  	struct aead_alg *aalg;
->>  	struct resource res;
->>  	int err = -ENOMEM, i, j, irq = -1;
->>  	u32 reg;
->> +	struct omap_aes_dev *dd = devm_kzalloc(dev, sizeof(*dd), GFP_KERNEL);
->>  
->> -	dd = devm_kzalloc(dev, sizeof(struct omap_aes_dev), GFP_KERNEL);
-> 
-> I'm fine with sizeof(*dd)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Feb 2018 22:15:25 +0100
 
-Thanks for your feedback.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-> but please don't combine the allocation with the declaration.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/sata_dwc_460ex.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Why do you not like such an implementation detail?
+diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
+index 6af4ec3c88c3..ce3d6674ef80 100644
+--- a/drivers/ata/sata_dwc_460ex.c
++++ b/drivers/ata/sata_dwc_460ex.c
+@@ -901,7 +901,6 @@ static int sata_dwc_port_start(struct ata_port *ap)
+ 	/* Allocate Port Struct */
+ 	hsdevp = kzalloc(sizeof(*hsdevp), GFP_KERNEL);
+ 	if (!hsdevp) {
+-		dev_err(ap->dev, "%s: kmalloc failed for hsdevp\n", __func__);
+ 		err = -ENOMEM;
+ 		goto CLEANUP;
+ 	}
+-- 
+2.16.1
 
-Regards,
-Markus
