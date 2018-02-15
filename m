@@ -1,61 +1,43 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 13 Feb 2018 20:40:31 +0000
-Subject: Re: [PATCH 1/2] dma/ppc4xx: Delete an error message for a failed memory allocation in two functions
-Message-Id: <1518554431.22190.56.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Feb 2018 19:12:18 +0000
+Subject: [PATCH][next] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
+Message-Id: <20180215191218.27936-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce6646e3-dfb5-2496-2a3a-d41de4802de6@users.sourceforge.net>
-In-Reply-To: <ce6646e3-dfb5-2496-2a3a-d41de4802de6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Vinod Koul <vinod.koul@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-13 at 21:25 +0100, SF Markus Elfring wrote:
-> Omit an extra message for a memory allocation failure in these functions.
-[]
-> diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-[]
-> @@ -4183,7 +4183,6 @@ static int ppc440spe_adma_probe(struct platform_device *ofdev)
->  		INIT_LIST_HEAD(&ref->node);
->  		list_add_tail(&ref->node, &ppc440spe_adma_chan_list);
->  	} else {
-> -		dev_err(&ofdev->dev, "failed to allocate channel reference!\n");
->  		ret = -ENOMEM;
->  		goto err_ref_alloc;
->  	}
+From: Colin Ian King <colin.king@canonical.com>
 
-Stop being mindless and think about the change
-you are making.
+The shifting of timehi by 16 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an u64. If the top bit
+of timehi is set then all then all the upper bits of ns end up as also
+being set because of the sign-extension. Fix this by casting timehi
+to u64 before the shift.
 
-Reverse the test and unindent the block above.
+Detected by CoverityScan, CID#1465288 ("Unintended sign extension")
+
+Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/ppc4xx/adma.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/dsa/mv88e6xxx/hwtstamp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-index 4cf0d4d0cecf..1fc1a2f03aa4 100644
---- a/drivers/dma/ppc4xx/adma.c
-+++ b/drivers/dma/ppc4xx/adma.c
-@@ -4178,16 +4178,15 @@ static int ppc440spe_adma_probe(struct platform_device *ofdev)
- 	}
+diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+index b251d534b70d..758e35fa69ab 100644
+--- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
++++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+@@ -321,7 +321,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+ 	 */
+ 	for ( ; skb; skb = skb_dequeue(rxq)) {
+ 		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
+-			u64 ns = timehi << 16 | timelo;
++			u64 ns = (u64)timehi << 16 | timelo;
  
- 	ref = kmalloc(sizeof(*ref), GFP_KERNEL);
--	if (ref) {
--		ref->chan = &chan->common;
--		INIT_LIST_HEAD(&ref->node);
--		list_add_tail(&ref->node, &ppc440spe_adma_chan_list);
--	} else {
--		dev_err(&ofdev->dev, "failed to allocate channel reference!\n");
-+	if (!ref) {
- 		ret = -ENOMEM;
- 		goto err_ref_alloc;
- 	}
- 
-+	ref->chan = &chan->common;
-+	INIT_LIST_HEAD(&ref->node);
-+	list_add_tail(&ref->node, &ppc440spe_adma_chan_list);
-+
- 	ret = ppc440spe_adma_setup_irqs(adev, chan, &initcode);
- 	if (ret)
- 		goto err_irq;
+ 			mutex_lock(&chip->reg_lock);
+ 			ns = timecounter_cyc2time(&chip->tstamp_tc, ns);
+-- 
+2.15.1
+
