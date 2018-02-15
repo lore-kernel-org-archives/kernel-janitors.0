@@ -1,89 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 18:34:53 +0000
-Subject: [PATCH 2/2] firewire: nosy: Adjust eight checks for null pointers
-Message-Id: <d6591d1e-c568-dfcd-d162-03b60ae528cb@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Feb 2018 19:50:52 +0000
+Subject: [PATCH] i40e: check that pointer vsi is not null before dereferencing it
+Message-Id: <20180215195052.29037-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c4e817a2-1554-2480-9469-9d06543b1eee@users.sourceforge.net>
-In-Reply-To: <c4e817a2-1554-2480-9469-9d06543b1eee@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 19:20:26 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Colin Ian King <colin.king@canonical.com>
 
-The script “checkpatch.pl” pointed information out like the following.
+Function i40e_find_vsi_from_id can potentially return null, hence
+vsi may be null, so defensively check it is non-null before
+dereferencing it to check the seid.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: e284fc280473 ("i40e: Add and delete cloud filter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/firewire/nosy.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firewire/nosy.c b/drivers/firewire/nosy.c
-index 6192f0718bf2..0eaf79c625c6 100644
---- a/drivers/firewire/nosy.c
-+++ b/drivers/firewire/nosy.c
-@@ -128,7 +128,7 @@ static int
- packet_buffer_init(struct packet_buffer *buffer, size_t capacity)
- {
- 	buffer->data = kmalloc(capacity, GFP_KERNEL);
--	if (buffer->data = NULL)
-+	if (!buffer->data)
- 		return -ENOMEM;
- 	buffer->head = (struct packet *) buffer->data;
- 	buffer->tail = (struct packet *) buffer->data;
-@@ -287,11 +287,11 @@ nosy_open(struct inode *inode, struct file *file)
- 			break;
- 		}
- 	mutex_unlock(&card_mutex);
--	if (lynx = NULL)
-+	if (!lynx)
- 		return -ENODEV;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 5cca083da93c..14bbd5c1db78 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -3062,7 +3062,7 @@ static struct i40e_vsi *i40e_find_vsi_from_seid(struct i40e_vf *vf, u16 seid)
  
- 	client = kmalloc(sizeof *client, GFP_KERNEL);
--	if (client = NULL)
-+	if (!client)
- 		goto fail;
- 
- 	client->tcode_mask = ~0;
-@@ -552,7 +552,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
- 	pci_set_master(dev);
- 
- 	lynx = kzalloc(sizeof *lynx, GFP_KERNEL);
--	if (lynx = NULL) {
-+	if (!lynx) {
- 		ret = -ENOMEM;
- 		goto fail_disable;
+ 	for (i = 0; i < vf->num_tc ; i++) {
+ 		vsi = i40e_find_vsi_from_id(pf, vf->ch[i].vsi_id);
+-		if (vsi->seid = seid)
++		if (vsi && vsi->seid = seid)
+ 			return vsi;
  	}
-@@ -565,7 +565,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
- 
- 	lynx->registers = ioremap_nocache(pci_resource_start(dev, 0),
- 					  PCILYNX_MAX_REGISTER);
--	if (lynx->registers = NULL) {
-+	if (!lynx->registers) {
- 		dev_err(&dev->dev, "Failed to map registers\n");
- 		ret = -ENOMEM;
- 		goto fail_deallocate_lynx;
-@@ -577,9 +577,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
- 				sizeof(struct pcl), &lynx->rcv_pcl_bus);
- 	lynx->rcv_buffer = pci_alloc_consistent(lynx->pci_device,
- 				RCV_BUFFER_SIZE, &lynx->rcv_buffer_bus);
--	if (lynx->rcv_start_pcl = NULL ||
--	    lynx->rcv_pcl = NULL ||
--	    lynx->rcv_buffer = NULL) {
-+	if (!lynx->rcv_start_pcl || !lynx->rcv_pcl || !lynx->rcv_buffer) {
- 		dev_err(&dev->dev, "Failed to allocate receive buffer\n");
- 		ret = -ENOMEM;
- 		goto fail_deallocate_buffers;
+ 	return NULL;
 -- 
-2.16.1
+2.15.1
 
