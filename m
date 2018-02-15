@@ -1,62 +1,90 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 08 Feb 2018 14:37:28 +0000
-Subject: [PATCH 1/3] drm/gma500: Delete an error message for a failed memory allocation in two functions
-Message-Id: <bfd6d815-3c09-9faf-e85f-fe837c38bd4a@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Feb 2018 19:26:05 +0000
+Subject: [PATCH] i40evf: pass struct virtchnl_filter by reference rather than by value
+Message-Id: <20180215192605.28350-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
-In-Reply-To: <079c31b2-a2e6-cf42-cecb-e1e10dd241f6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 14:55:49 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in these functions.
+Passing struct virtchnl_filter f by value requires a 272 byte copy
+on x86_64, so instead pass it by reference is much more efficient. Also
+adjust some lines that are over 80 chars.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1465285 ("Big parameter passed by value")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/gma500/framebuffer.c   | 4 +---
- drivers/gpu/drm/gma500/oaktrail_hdmi.c | 5 +----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ .../net/ethernet/intel/i40evf/i40evf_virtchnl.c    | 32 ++++++++++++----------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-index cb0a2ae916e0..3ff320f3ff47 100644
---- a/drivers/gpu/drm/gma500/framebuffer.c
-+++ b/drivers/gpu/drm/gma500/framebuffer.c
-@@ -530,10 +530,8 @@ int psb_fbdev_init(struct drm_device *dev)
- 	int ret;
- 
- 	fbdev = kzalloc(sizeof(struct psb_fbdev), GFP_KERNEL);
--	if (!fbdev) {
--		dev_err(dev->dev, "no memory\n");
-+	if (!fbdev)
- 		return -ENOMEM;
--	}
- 
- 	dev_priv->fbdev = fbdev;
- 
-diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi.c b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-index 8b2eb32ee988..d9a6d54b6641 100644
---- a/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-+++ b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-@@ -690,11 +690,8 @@ void oaktrail_hdmi_setup(struct drm_device *dev)
- 		return;
- 
- 	hdmi_dev = kzalloc(sizeof(struct oaktrail_hdmi_dev), GFP_KERNEL);
--	if (!hdmi_dev) {
--		dev_err(dev->dev, "failed to allocate memory\n");
-+	if (!hdmi_dev)
- 		goto out;
--	}
--
- 
- 	ret = pci_enable_device(pdev);
- 	if (ret) {
+diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c b/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c
+index 6134b61e0938..3c76c817ca1a 100644
+--- a/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c
++++ b/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c
+@@ -1048,24 +1048,28 @@ void i40evf_disable_channels(struct i40evf_adapter *adapter)
+  * Print the cloud filter
+  **/
+ static void i40evf_print_cloud_filter(struct i40evf_adapter *adapter,
+-				      struct virtchnl_filter f)
++				      struct virtchnl_filter *f)
+ {
+-	switch (f.flow_type) {
++	switch (f->flow_type) {
+ 	case VIRTCHNL_TCP_V4_FLOW:
+ 		dev_info(&adapter->pdev->dev, "dst_mac: %pM src_mac: %pM vlan_id: %hu dst_ip: %pI4 src_ip %pI4 dst_port %hu src_port %hu\n",
+-			 &f.data.tcp_spec.dst_mac, &f.data.tcp_spec.src_mac,
+-			 ntohs(f.data.tcp_spec.vlan_id),
+-			 &f.data.tcp_spec.dst_ip[0], &f.data.tcp_spec.src_ip[0],
+-			 ntohs(f.data.tcp_spec.dst_port),
+-			 ntohs(f.data.tcp_spec.src_port));
++			 &f->data.tcp_spec.dst_mac,
++			 &f->data.tcp_spec.src_mac,
++			 ntohs(f->data.tcp_spec.vlan_id),
++			 &f->data.tcp_spec.dst_ip[0],
++			 &f->data.tcp_spec.src_ip[0],
++			 ntohs(f->data.tcp_spec.dst_port),
++			 ntohs(f->data.tcp_spec.src_port));
+ 		break;
+ 	case VIRTCHNL_TCP_V6_FLOW:
+ 		dev_info(&adapter->pdev->dev, "dst_mac: %pM src_mac: %pM vlan_id: %hu dst_ip: %pI6 src_ip %pI6 dst_port %hu src_port %hu\n",
+-			 &f.data.tcp_spec.dst_mac, &f.data.tcp_spec.src_mac,
+-			 ntohs(f.data.tcp_spec.vlan_id),
+-			 &f.data.tcp_spec.dst_ip, &f.data.tcp_spec.src_ip,
+-			 ntohs(f.data.tcp_spec.dst_port),
+-			 ntohs(f.data.tcp_spec.src_port));
++			 &f->data.tcp_spec.dst_mac,
++			 &f->data.tcp_spec.src_mac,
++			 ntohs(f->data.tcp_spec.vlan_id),
++			 &f->data.tcp_spec.dst_ip,
++			 &f->data.tcp_spec.src_ip,
++			 ntohs(f->data.tcp_spec.dst_port),
++			 ntohs(f->data.tcp_spec.src_port));
+ 		break;
+ 	}
+ }
+@@ -1303,7 +1307,7 @@ void i40evf_virtchnl_completion(struct i40evf_adapter *adapter,
+ 						 i40evf_stat_str(&adapter->hw,
+ 								 v_retval));
+ 					i40evf_print_cloud_filter(adapter,
+-								  cf->f);
++								  &cf->f);
+ 					list_del(&cf->list);
+ 					kfree(cf);
+ 					adapter->num_cloud_filters--;
+@@ -1322,7 +1326,7 @@ void i40evf_virtchnl_completion(struct i40evf_adapter *adapter,
+ 						 i40evf_stat_str(&adapter->hw,
+ 								 v_retval));
+ 					i40evf_print_cloud_filter(adapter,
+-								  cf->f);
++								  &cf->f);
+ 				}
+ 			}
+ 			}
 -- 
-2.16.1
+2.15.1
 
