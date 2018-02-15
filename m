@@ -1,56 +1,74 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 21 Feb 2018 12:48:18 +0000
-Subject: [PATCH 4.14 087/167] x86/spectre: Fix an error message
-Message-Id: <20180221124529.159324497@linuxfoundation.org>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 15 Feb 2018 15:34:15 +0000
+Subject: Applied "ASoC: uniphier: remove redundant check of blk_id" to the asoc tree
+Message-Id: <E1emLY7-0007KZ-Mh@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180221124524.639039577@linuxfoundation.org>
-In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
+References: <20180214161036.32446-1-colin.king@canonical.com>
+In-Reply-To: <20180214161036.32446-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+The patch
 
-------------------
+   ASoC: uniphier: remove redundant check of blk_id
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+has been applied to the asoc tree at
 
-commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-If i = ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 53b8e4504aaa7fc88fd18e6caac3a4d4367bd4a4 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 14 Feb 2018 16:10:36 +0000
+Subject: [PATCH] ASoC: uniphier: remove redundant check of blk_id
+
+The check of blk_id = AUD_CLK_IO is redundant as it also being performed
+in the following switch statement with the same return of -ENOTSUPP. Fix
+this by removing the redundant comparison.
+
+Detected by CoverityScan, CID#1465227 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/uniphier/aio-cpu.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -174,7 +174,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
+diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
+index 55f3248a31fd..7cf2316c69a2 100644
+--- a/sound/soc/uniphier/aio-cpu.c
++++ b/sound/soc/uniphier/aio-cpu.c
+@@ -134,9 +134,6 @@ static int uniphier_aio_set_sysclk(struct snd_soc_dai *dai, int clk_id,
+ 	bool pll_auto = false;
+ 	int pll_id, div_id;
  
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
-
+-	if (clk_id = AUD_CLK_IO)
+-		return -ENOTSUPP;
+-
+ 	switch (clk_id) {
+ 	case AUD_CLK_IO:
+ 		return -ENOTSUPP;
+-- 
+2.16.1
 
