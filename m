@@ -1,27 +1,49 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Fri, 09 Feb 2018 05:28:48 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: Skylake: make function skl_clk_round_rate static
-Message-Id: <20180209051647.GA3666@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Feb 2018 17:08:32 +0000
+Subject: [PATCH] cpufreq: qoriq: Delete two error messages for a failed memory allocation in qoriq_cpufreq_cp
+Message-Id: <650e783f-7b4c-17b5-3bc7-56e3058a95d1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180208143530.11450-1-colin.king@canonical.com>
-In-Reply-To: <20180208143530.11450-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 02:35:30PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function skl_clk_round_rate is local to the source and does not
-> need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> sound/soc/intel/skylake/skl-ssp-clk.c:250:6: warning: symbol
-> 'skl_clk_round_rate' was not declared. Should it be static?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Feb 2018 18:00:37 +0100
 
-Acked-By: Vinod Koul <vinod.koul@intel.com>
+Omit extra messages for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/cpufreq/qoriq-cpufreq.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 0562761a3dec..ee3e3656485b 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -192,16 +192,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	count = clk_hw_get_num_parents(hwclk);
+ 
+ 	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
+-	if (!data->pclk) {
+-		pr_err("%s: no memory\n", __func__);
++	if (!data->pclk)
+ 		goto err_nomem2;
+-	}
+ 
+ 	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
+-	if (!table) {
+-		pr_err("%s: no memory\n", __func__);
++	if (!table)
+ 		goto err_pclk;
+-	}
+ 
+ 	for (i = 0; i < count; i++) {
+ 		clk = clk_hw_get_parent_by_index(hwclk, i)->clk;
 -- 
-~Vinod
+2.16.1
+
