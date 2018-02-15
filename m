@@ -1,37 +1,49 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Tue, 27 Feb 2018 14:47:55 +0000
-Subject: [PATCH] iio:magnetometer: Replace magic number 0 by IIO_CHAN_INFO_RAW
-Message-Id: <20180227144755.ifbzn5gekm345nk5@smtp.gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 15 Feb 2018 19:25:01 +0000
+Subject: NACK: [PATCH] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
+Message-Id: <39b61428-be04-7233-edd8-ab7b37b469d0@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180215185941.27547-1-colin.king@canonical.com>
+In-Reply-To: <20180215185941.27547-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The function magn_3d_read_raw has a switch statement handling multiple
-cases per channel. The first case statement uses the magic number 0,
-which means IIO_CHAN_INFO_RAW. Additionally, the iio_chan_spec for
-magn_3d_channels is configured to be IIO_CHAN_INFO_RAW. Therefore, this
-patch replaces the magic number 0 for the appropriate IIO_CHAN_INFO_RAW.
+On 15/02/18 18:59, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The shifting of buf[5] by 24 bits to the left will be promoted to
+> a 32 bit signed int and then sign-extended to an unsigned long. If
+> the top bit of buf[5] is set then all then all the upper bits sec
+> end up as also being set because of the sign-extension. Fix this by
+> casting buf[5] to an unsigned long before the shift.
+> 
+> Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
+> 
+> Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/rtc/rtc-tx4939.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
+> index feededce3ded..b8a066cbcc42 100644
+> --- a/drivers/rtc/rtc-tx4939.c
+> +++ b/drivers/rtc/rtc-tx4939.c
+> @@ -170,7 +170,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
+>  	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
+>  	spin_unlock_irq(&pdata->lock);
+> -	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
+> +	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
+> +		(buf[3] << 8) | buf[2];
+>  	rtc_time_to_tm(sec, &alrm->time);
+>  	return rtc_valid_tm(&alrm->time);
+>  }
+> 
+Nack, there are two occurrences of this sign extension, I missed the
+other one. I'll re-send a fix.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/iio/magnetometer/hid-sensor-magn-3d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-index a1fd9d591818..d55c4885211a 100644
---- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-+++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-@@ -167,7 +167,7 @@ static int magn_3d_read_raw(struct iio_dev *indio_dev,
- 	*val = 0;
- 	*val2 = 0;
- 	switch (mask) {
--	case 0:
-+	case IIO_CHAN_INFO_RAW:
- 		hid_sensor_power_state(&magn_state->magn_flux_attributes, true);
- 		report_id  			magn_state->magn[chan->address].report_id;
--- 
-2.16.2
-
+Colin
