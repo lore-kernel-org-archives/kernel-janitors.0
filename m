@@ -1,48 +1,93 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Date: Thu, 01 Feb 2018 16:27:25 +0000
-Subject: Re: [PATCH] Input: adp5520-keys: Delete an error message for a failed memory allocation in adp5520_k
-Message-Id: <4e9d8aa4-3e01-4fb3-d0b5-42b02522a15e@analog.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 15 Feb 2018 15:34:11 +0000
+Subject: Applied "ASoC: TSCS42xx: make const array norm_addrs static, reduces object code size" to the asoc t
+Message-Id: <E1emLY3-0007JV-Nz@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9d0729d2-59ab-f116-aa12-0457ebde0041@users.sourceforge.net>
-In-Reply-To: <9d0729d2-59ab-f116-aa12-0457ebde0041@users.sourceforge.net>
+References: <20180214172153.5749-1-colin.king@canonical.com>
+In-Reply-To: <20180214172153.5749-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-On 27.01.2018 15:20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 27 Jan 2018 15:15:52 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The patch
 
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+   ASoC: TSCS42xx: make const array norm_addrs static, reduces object code size
 
-> ---
->   drivers/input/keyboard/adp5520-keys.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/adp5520-keys.c b/drivers/input/keyboard/adp5520-keys.c
-> index f0b9b37bde58..72e01cb77881 100644
-> --- a/drivers/input/keyboard/adp5520-keys.c
-> +++ b/drivers/input/keyboard/adp5520-keys.c
-> @@ -91,10 +91,8 @@ static int adp5520_keys_probe(struct platform_device *pdev)
->   		return -EINVAL;
->   
->   	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
-> -	if (!dev) {
-> -		dev_err(&pdev->dev, "failed to alloc memory\n");
-> +	if (!dev)
->   		return -ENOMEM;
-> -	}
->   
->   	input = devm_input_allocate_device(&pdev->dev);
->   	if (!input)
-> 
+has been applied to the asoc tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 390f7bbdd7c8f812e22100248b0ed7ae1f68b8c9 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 14 Feb 2018 17:21:53 +0000
+Subject: [PATCH] ASoC: TSCS42xx: make const array norm_addrs static, reduces
+ object code size
+
+Don't populate the const array norm_addrs on the stack, instead make it
+static.  Makes the object code smaller by over 230 bytes.  Also re-format
+array data as the insertion of the static keywork made the first line
+overly long.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  53780	  34752	    256	  88788	  15ad4	linux/sound/soc/codecs/tscs42xx.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  53461	  34840	    256	  88557	  159ed	linux/sound/soc/codecs/tscs42xx.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/tscs42xx.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
+index f4f8c613386a..e915261fa1cb 100644
+--- a/sound/soc/codecs/tscs42xx.c
++++ b/sound/soc/codecs/tscs42xx.c
+@@ -1319,11 +1319,13 @@ static struct snd_soc_component_driver soc_codec_dev_tscs42xx = {
+ 
+ static inline void init_coeff_ram_cache(struct tscs42xx *tscs42xx)
+ {
+-	const u8 norm_addrs[] = { 0x00, 0x05, 0x0a, 0x0f, 0x14, 0x19, 0x1f,
+-		0x20, 0x25, 0x2a, 0x2f, 0x34, 0x39, 0x3f, 0x40, 0x45, 0x4a,
+-		0x4f, 0x54, 0x59, 0x5f, 0x60, 0x65, 0x6a, 0x6f, 0x74, 0x79,
+-		0x7f, 0x80, 0x85, 0x8c, 0x91, 0x96, 0x97, 0x9c, 0xa3, 0xa8,
+-		0xad, 0xaf, 0xb0, 0xb5, 0xba, 0xbf, 0xc4, 0xc9, };
++	static const u8 norm_addrs[] = {
++		0x00, 0x05, 0x0a, 0x0f, 0x14, 0x19, 0x1f, 0x20, 0x25, 0x2a,
++		0x2f, 0x34, 0x39, 0x3f, 0x40, 0x45, 0x4a, 0x4f, 0x54, 0x59,
++		0x5f, 0x60, 0x65, 0x6a, 0x6f, 0x74, 0x79, 0x7f, 0x80, 0x85,
++		0x8c, 0x91, 0x96, 0x97, 0x9c, 0xa3, 0xa8, 0xad, 0xaf, 0xb0,
++		0xb5, 0xba, 0xbf, 0xc4, 0xc9,
++	};
+ 	u8 *coeff_ram = tscs42xx->coeff_ram;
+ 	int i;
+ 
+-- 
+2.16.1
 
