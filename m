@@ -1,54 +1,46 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Date: Thu, 22 Feb 2018 05:14:18 +0000
-Subject: RE: Re: [PATCH] PM / devfreq: exynos-ppmu: Delete an error message for a failed memory allocation in
-Message-Id: <20180222051418epcms1p515085d1b1fabaf50983ff2ecb3442c02@epcms1p5>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 14:22:18 +0000
+Subject: [PATCH 1/2] pata_it821x: Delete an error message for a failed memory allocation in it821x_firmware_c
+Message-Id: <939014fc-8c9e-99a4-99fb-2fde4694cd29@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5A8364F8.8050801@samsung.com>
- <e4d3a870-f420-5a06-1665-59152c1924a3@users.sourceforge.net>
- <CGME20180213211754epcas1p12c743dac97dbc187c46206bc2fa16c78@epcms1p5>
-In-Reply-To: <5A8364F8.8050801@samsung.com>
+References: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
+In-Reply-To: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> On 2018년 02월 14일 06:17, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Tue, 13 Feb 2018 22:10:42 +0100
-> > 
-> > Omit an extra message for a memory allocation failure in this function.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/devfreq/event/exynos-ppmu.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> > index d96e3dc71cf8..72ac9113500d 100644
-> > --- a/drivers/devfreq/event/exynos-ppmu.c
-> > +++ b/drivers/devfreq/event/exynos-ppmu.c
-> > @@ -627,11 +627,9 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
-> >  
-> >  	size = sizeof(struct devfreq_event_dev *) * info->num_events;
-> >  	info->edev = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
-> > -	if (!info->edev) {
-> > -		dev_err(&pdev->dev,
-> > -			"failed to allocate memory devfreq-event devices\n");
-> > +	if (!info->edev)
-> >  		return -ENOMEM;
-> > -	}
-> > +
-> >  	edev = info->edev;
-> >  	platform_set_drvdata(pdev, info);
-> >  
-> > 
-> 
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 14:04:49 +0100
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/pata_it821x.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/ata/pata_it821x.c b/drivers/ata/pata_it821x.c
+index 7a21edf89e72..46eacb6b93dd 100644
+--- a/drivers/ata/pata_it821x.c
++++ b/drivers/ata/pata_it821x.c
+@@ -658,10 +658,10 @@ static u8 *it821x_firmware_command(struct ata_port *ap, u8 cmd, int len)
+ 	u8 status;
+ 	int n = 0;
+ 	u16 *buf = kmalloc(len, GFP_KERNEL);
+-	if (buf = NULL) {
+-		printk(KERN_ERR "it821x_firmware_command: Out of memory\n");
++
++	if (!buf)
+ 		return NULL;
+-	}
++
+ 	/* This isn't quite a normal ATA command as we are talking to the
+ 	   firmware not the drives */
+ 	ap->ctl |= ATA_NIEN;
+-- 
+2.16.1
 
