@@ -1,29 +1,40 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Sun, 18 Feb 2018 13:23:38 +0000
-Subject: Re: [PATCH] pata_mpc52xx: Delete an error message for a failed memory allocation in mpc52xx_ata_prob
-Message-Id: <20180218132338.GD695913@devbig577.frc2.facebook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 15:59:01 +0000
+Subject: [PATCH 2/3] pata_arasan_cf: Delete an unnecessary variable initialisation in arasan_cf_probe()
+Message-Id: <3b6bfa0f-3356-2fb9-07ae-bf52c1ccc47e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b9749bf6-0bbb-2b2d-b946-aae893f3e305@users.sourceforge.net>
-In-Reply-To: <b9749bf6-0bbb-2b2d-b946-aae893f3e305@users.sourceforge.net>
+References: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
+In-Reply-To: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Viresh Kumar <vireshk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 11:44:13AM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 16 Feb 2018 11:34:53 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 16:28:23 +0100
 
-Applied to libata/for-4.17.
+The local variable "ret" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/pata_arasan_cf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/ata/pata_arasan_cf.c b/drivers/ata/pata_arasan_cf.c
+index be5fbcedecbf..ebecab8c3f36 100644
+--- a/drivers/ata/pata_arasan_cf.c
++++ b/drivers/ata/pata_arasan_cf.c
+@@ -796,7 +796,7 @@ static int arasan_cf_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	u32 quirk;
+ 	irq_handler_t irq_handler = NULL;
+-	int ret = 0;
++	int ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
 -- 
-tejun
+2.16.1
+
