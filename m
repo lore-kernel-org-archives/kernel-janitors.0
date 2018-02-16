@@ -1,48 +1,38 @@
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Date: Tue, 06 Feb 2018 20:10:03 +0000
-Subject: Re: [PATCH] kasan: remove redundant initialization of variable 'real_size'
-Message-Id: <e86dcb38-d00e-d5d8-ca66-9ff4013a786c@virtuozzo.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 10:44:13 +0000
+Subject: [PATCH] pata_mpc52xx: Delete an error message for a failed memory allocation in mpc52xx_ata_probe()
+Message-Id: <b9749bf6-0bbb-2b2d-b946-aae893f3e305@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206144950.32457-1-colin.king@canonical.com>
-In-Reply-To: <20180206144950.32457-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 11:34:53 +0100
 
+Omit an extra message for a memory allocation failure in this function.
 
-On 02/06/2018 05:49 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable real_size is initialized with a value that is never read,
-> it is re-assigned a new value later on, hence the initialization is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> lib/test_kasan.c:422:21: warning: Value stored to 'real_size' during
-> its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/pata_mpc52xx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> ---
->  lib/test_kasan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-> index a808d81b409d..dba0ffd45fd7 100644
-> --- a/lib/test_kasan.c
-> +++ b/lib/test_kasan.c
-> @@ -419,7 +419,7 @@ static noinline void __init kasan_stack_oob(void)
->  static noinline void __init ksize_unpoisons_memory(void)
->  {
->  	char *ptr;
-> -	size_t size = 123, real_size = size;
-> +	size_t size = 123, real_size;
->  
->  	pr_info("ksize() unpoisons the whole allocated chunk\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> 
+diff --git a/drivers/ata/pata_mpc52xx.c b/drivers/ata/pata_mpc52xx.c
+index 9730125530f6..f1d352d5f128 100644
+--- a/drivers/ata/pata_mpc52xx.c
++++ b/drivers/ata/pata_mpc52xx.c
+@@ -738,7 +738,6 @@ static int mpc52xx_ata_probe(struct platform_device *op)
+ 	/* Prepare our private structure */
+ 	priv = devm_kzalloc(&op->dev, sizeof(*priv), GFP_ATOMIC);
+ 	if (!priv) {
+-		dev_err(&op->dev, "error allocating private structure\n");
+ 		rv = -ENOMEM;
+ 		goto err1;
+ 	}
+-- 
+2.16.1
+
