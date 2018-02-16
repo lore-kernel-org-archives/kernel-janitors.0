@@ -1,62 +1,38 @@
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 09 Feb 2018 23:57:03 +0000
-Subject: Re: [PATCH][V2] CIFS: SMBD: fix spelling mistake: "faield" and "legnth"
-Message-Id: <CAH2r5muR7bKGxjQBgjLbrsDPKOLut_j71vTrq-QNKefNhiJB1w@mail.gmail.com>
+From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
+Date: Fri, 16 Feb 2018 13:38:41 +0000
+Subject: [PATCH] iio: apply coding-style into ms5611_probe function
+Message-Id: <20180216133841.3yt4ip3tbck7ihdm@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180209121415.564-1-colin.king@canonical.com>
-In-Reply-To: <20180209121415.564-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, CIFS <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, samba-technical <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+This patch fixes the checkpatch.pl warning and error:
 
-On Fri, Feb 9, 2018 at 6:14 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in log_rdma_send and log_rdma_mr
-> message text.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smbdirect.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-> index 91710eb571fb..5aa0b54b32ce 100644
-> --- a/fs/cifs/smbdirect.c
-> +++ b/fs/cifs/smbdirect.c
-> @@ -1025,7 +1025,7 @@ static int smbd_post_send(struct smbd_connection *info,
->
->         for (i = 0; i < request->num_sge; i++) {
->                 log_rdma_send(INFO,
-> -                       "rdma_request sge[%d] addr=%llu legnth=%u\n",
-> +                       "rdma_request sge[%d] addr=%llu length=%u\n",
->                         i, request->sge[0].addr, request->sge[0].length);
->                 ib_dma_sync_single_for_device(
->                         info->id->device,
-> @@ -2295,7 +2295,7 @@ static void smbd_mr_recovery_work(struct work_struct *work)
->                                 rc = ib_dereg_mr(smbdirect_mr->mr);
->                                 if (rc) {
->                                         log_rdma_mr(ERR,
-> -                                               "ib_dereg_mr faield rc=%x\n",
-> +                                               "ib_dereg_mr failed rc=%x\n",
->                                                 rc);
->                                         smbd_disconnect_rdma_connection(info);
->                                 }
-> --
-> 2.15.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iio/pressure/ms5611.h:66: ERROR: code indent should use tabs where possible
+iio/pressure/ms5611.h:66: WARNING: please, no spaces at the start of a line
+iio/pressure/ms5611.h:66: ERROR: "foo* bar" should be "foo *bar"
 
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/pressure/ms5611.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/drivers/iio/pressure/ms5611.h b/drivers/iio/pressure/ms5611.h
+index ccda63c5b3c3..ead9e9f85894 100644
+--- a/drivers/iio/pressure/ms5611.h
++++ b/drivers/iio/pressure/ms5611.h
+@@ -63,7 +63,7 @@ struct ms5611_state {
+ };
+ 
+ int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
+-                 const char* name, int type);
++		 const char *name, int type);
+ int ms5611_remove(struct iio_dev *indio_dev);
+ 
+ #endif /* _MS5611_H */
 -- 
-Thanks,
+2.16.1
 
-Steve
