@@ -1,61 +1,46 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Date: Mon, 26 Feb 2018 13:14:59 +0000
-Subject: RE: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than or equal zero
-Message-Id: <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 17:26:30 +0000
+Subject: [PATCH] libata-scsi: Delete an unnecessary variable in ata_scsi_slave_config()
+Message-Id: <52d9a12e-e420-b880-ac02-c8156d977264@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180226120418.3589-1-colin.king@canonical.com>
-In-Reply-To: <20180226120418.3589-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, inus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-ide@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86
-Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBNb25kYXksIEZlYnJ1YXJ5IDI2LCAy
-MDE4IDg6MDQgUE0NCj4gVG86IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBGYWJp
-byBFc3RldmFtDQo+IDxmZXN0ZXZhbUBnbWFpbC5jb20+OyBTaGF3biBHdW8gPHNoYXduZ3VvQGtl
-cm5lbC5vcmc+OyBTdGVmYW4NCj4gQWduZXIgPHN0ZWZhbkBhZ25lci5jaD47IGludXMgV2FsbGVp
-aiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgbGludXgtDQo+IGdwaW9Admdlci5rZXJuZWwu
-b3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
-dmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF0gcGluY3RybDogaW14OiBmaXggdW5z
-aWduZWQgY2hlY2sgaWYgbmZ1bmNzIHdpdGggbGVzcyB0aGFuIG9yDQo+IGVxdWFsIHplcm8NCj4g
-DQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0K
-PiBUaGUgdW5zaWduZWQgaW50ZWdlciBuZnVuY3MgaXMgYmVpbmcgZXJyb3IgY2hlY2tlZCB3aXRo
-IGEgdmFsdWUgbGVzcyBvciBlcXVhbA0KPiB0byB6ZXJvOyB0aGlzIGlzIGFsd2F5cyBmYWxzZSBp
-ZiBvZl9nZXRfY2hpbGRfY291bnQgcmV0dXJucyBhIC12ZSBmb3IgYW4gZXJyb3INCj4gY29uZGl0
-aW9uIHNpbmNlIG5mdW5jcyBpcyBub3Qgc2lnbmVkLiBGaXggdGhpcyBieSBtYWtpbmcgdmFyaWFi
-bGVzIG5mdW5jcyBhbmQgaQ0KPiBzaWduZWQgaW50ZWdlcnMuDQo+IA0KPiBEZXRlY3RlZCB3aXRo
-IENvY2NpbmVsbGU6DQo+IGRyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYzo2
-MjA6Ni0xMjogV0FSTklORzogVW5zaWduZWQNCj4gZXhwcmVzc2lvbiBjb21wYXJlZCB3aXRoIHpl
-cm86IG5mdW5jcyA8PSAwDQo+IA0KPiBGaXhlczogYWU3NWZmODE0NTM4ICgicGluY3RybDogcGlu
-Y3RybC1pbXg6IGFkZCBpbXggcGluY3RybCBjb3JlIGRyaXZlciIpDQo+IFNpZ25lZC1vZmYtYnk6
-IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJp
-dmVycy9waW5jdHJsL2ZyZWVzY2FsZS9waW5jdHJsLWlteC5jIHwgNCArKy0tDQo+ICAxIGZpbGUg
-Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYw0KPiBiL2RyaXZlcnMv
-cGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYw0KPiBpbmRleCAyNGFhZGRkNzYwYTAuLjFl
-OGNhODMzNTJkMCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL2ZyZWVzY2FsZS9waW5j
-dHJsLWlteC5jDQo+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXgu
-Yw0KPiBAQCAtNjA1LDggKzYwNSw4IEBAIHN0YXRpYyBpbnQgaW14X3BpbmN0cmxfcHJvYmVfZHQo
-c3RydWN0DQo+IHBsYXRmb3JtX2RldmljZSAqcGRldiwNCj4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUg
-Km5wID0gcGRldi0+ZGV2Lm9mX25vZGU7DQo+ICAJc3RydWN0IGRldmljZV9ub2RlICpjaGlsZDsN
-Cj4gIAlzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGwgPSBpcGN0bC0+cGN0bDsNCj4gLQl1MzIgbmZ1
-bmNzID0gMDsNCj4gLQl1MzIgaSA9IDA7DQo+ICsJaW50IG5mdW5jcyA9IDA7DQo+ICsJaW50IGkg
-PSAwOw0KPiAgCWJvb2wgZmxhdF9mdW5jczsNCj4gDQoNCkkgc2F3ICdpJywgbGF0ZXIgdXNlZCwg
-aXMgY29udmVydGVkIHRvIHUzMiB1bmNvbmRpdGlvbmFsbHkuIChHQ0MgZGlkIG5vdCBjb21wbGFp
-bikNCmUuZy4NCnJhZGl4X3RyZWVfaW5zZXJ0DQppbXhfcGluY3RybF9wYXJzZV9mdW5jdGlvbnMN
-Cg0KQW5kIG9mX2dldF9jaGlsZF9jb3VudCBzZWVtcyBjYW4ndCAgcmV0dXJuIGEgbWlub3IgdmFs
-dWUuDQoNClNvIGRvZXMgc29tZXRoaW5nIGxpa2UgYmVsb3cgbG9vayBiZXR0ZXI/DQoNCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMgYi9kcml2ZXJz
-L3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMNCmluZGV4IGM5NzZmZmUuLjQyNTkyMDkg
-MTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMNCisr
-KyBiL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYw0KQEAgLTYxMiw3ICs2
-MTIsNyBAQCBzdGF0aWMgaW50IGlteF9waW5jdHJsX3Byb2JlX2R0KHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYsDQogICAgICAgICAgICAgICAgbmZ1bmNzID0gMTsNCiAgICAgICAgfSBlbHNl
-IHsNCiAgICAgICAgICAgICAgICBuZnVuY3MgPSBvZl9nZXRfY2hpbGRfY291bnQobnApOw0KLSAg
-ICAgICAgICAgICAgIGlmIChuZnVuY3MgPD0gMCkgew0KKyAgICAgICAgICAgICAgIGlmIChuZnVu
-Y3MgPT0gMCkgew0KICAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycigmcGRldi0+ZGV2LCAi
-bm8gZnVuY3Rpb25zIGRlZmluZWRcbiIpOw0KICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJu
-IC1FSU5WQUw7DQogICAgICAgICAgICAgICAgfQ0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg0K
-PiAgCWlmICghbnApDQo+IC0tDQo+IDIuMTUuMQ0KDQo
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 18:19:13 +0100
+
+* Return a result code without storing it in an intermediate variable.
+
+* Reduce the needed source code.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/libata-scsi.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 66be961c93a4..93456cff051b 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -1345,14 +1345,9 @@ int ata_scsi_slave_config(struct scsi_device *sdev)
+ {
+ 	struct ata_port *ap = ata_shost_to_port(sdev->host);
+ 	struct ata_device *dev = __ata_scsi_find_dev(ap, sdev);
+-	int rc = 0;
+ 
+ 	ata_scsi_sdev_config(sdev);
+-
+-	if (dev)
+-		rc = ata_scsi_dev_config(sdev, dev);
+-
+-	return rc;
++	return dev ? ata_scsi_dev_config(sdev, dev) : 0;
+ }
+ 
+ /**
+-- 
+2.16.1
+
