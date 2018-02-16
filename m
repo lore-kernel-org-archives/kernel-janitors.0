@@ -1,38 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 15:46:24 +0000
-Subject: [PATCH] ARM: cpuidle: Delete an error message for a failed memory allocation in arm_idle_init_cpu()
-Message-Id: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Fri, 16 Feb 2018 08:03:57 +0000
+Subject: Re: [PATCH] ARM: cpuidle: Delete an error message for a failed memory allocation in arm_idle_init_cp
+Message-Id: <582de86a-d0bd-3f2d-0cbd-cf0a7ca924d8@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
+In-Reply-To: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 16:40:38 +0100
+On 15/02/2018 16:46, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 15 Feb 2018 16:40:38 +0100
+>=20
+> Omit an extra message for a memory allocation failure in this function.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Omit an extra message for a memory allocation failure in this function.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
+ SoCs
 
-This issue was detected by using the Coccinelle software.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/cpuidle/cpuidle-arm.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/cpuidle/cpuidle-arm.c b/drivers/cpuidle/cpuidle-arm.c
-index ddee1b601b89..e07bc7ace774 100644
---- a/drivers/cpuidle/cpuidle-arm.c
-+++ b/drivers/cpuidle/cpuidle-arm.c
-@@ -129,7 +129,6 @@ static int __init arm_idle_init_cpu(int cpu)
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev) {
--		pr_err("Failed to allocate cpuidle device\n");
- 		ret = -ENOMEM;
- 		goto out_unregister_drv;
- 	}
--- 
-2.16.1
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
