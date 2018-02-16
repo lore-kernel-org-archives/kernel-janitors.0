@@ -1,53 +1,53 @@
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Date: Sat, 10 Feb 2018 15:57:34 +0000
-Subject: Re: Software evolution around =?UTF-8?B?4oCcY2hlY2twYXRjaC5wbA==?= =?UTF-8?B?4oCdPw==?=
-Message-Id: <20180210155734.708d01b6@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Feb 2018 16:55:05 +0000
+Subject: [PATCH][V2] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
+Message-Id: <20180216165505.20058-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
-	<20180204112346.0977e938@archlinux>
-	<9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
-	<87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
-	<f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
-	<20180210145336.233c721d@archlinux>
-	<1518274783.6579.2.camel@perches.com>
-In-Reply-To: <1518274783.6579.2.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 10 Feb 2018 06:59:43 -0800
-Joe Perches <joe@perches.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Sat, 2018-02-10 at 14:53 +0000, Jonathan Cameron wrote:
-> > While it would be great to improve checkpatches false
-> > positive rate, it's very nature as a string matcher makes
-> > this hard.  
-> 
-> true.
-> 
-> what are the false positives you see?
-> 
-This particular case is only 'sort of' a false positive
-in the warning that a message printed on a memory allocation
-failure 'may' not add any information over the generic case.
+The shifting of timehi by 16 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an u64. If the top bit
+of timehi is set then all then all the upper bits of ns end up as also
+being set because of the sign-extension. Fix this by making timehi and
+timelo u64.  Also move the declaration of ns.
 
-Very hard to judge on whether it is useful to know more than
-an allocation failed somewhere or not.
+Detected by CoverityScan, CID#1465288 ("Unintended sign extension")
 
-Message makes this clear:
->“WARNING: Possible unnecessary 'out of memory' message”
->(from the script “checkpatch.pl”)  
+Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/mv88e6xxx/hwtstamp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-We also have the balance between any changes to existing code
-adding 'some' maintenance overhead vs changing this stuff
-in a new driver - which is what checkpatch is really intended
-for.
+diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+index b251d534b70d..2149d332dea0 100644
+--- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
++++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+@@ -293,7 +293,8 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+ 			       struct sk_buff *skb, u16 reg,
+ 			       struct sk_buff_head *rxq)
+ {
+-	u16 buf[4] = { 0 }, status, timelo, timehi, seq_id;
++	u16 buf[4] = { 0 }, status, seq_id;
++	u64 ns, timelo, timehi;
+ 	struct skb_shared_hwtstamps *shwt;
+ 	int err;
+ 
+@@ -321,7 +322,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+ 	 */
+ 	for ( ; skb; skb = skb_dequeue(rxq)) {
+ 		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
+-			u64 ns = timehi << 16 | timelo;
++			ns = timehi << 16 | timelo;
+ 
+ 			mutex_lock(&chip->reg_lock);
+ 			ns = timecounter_cyc2time(&chip->tstamp_tc, ns);
+-- 
+2.15.1
 
-So I think checkpatch is striking the right balance here in
-how it warns.  Obviously if it could assess the text
-and come to an informed decision that would be great but
-we are some way from that ;)
-
-Jonathan
