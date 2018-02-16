@@ -1,49 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 24 Feb 2018 23:34:36 +0000
-Subject: Re: [PATCH] lib/test_kmod: Fix an integer overflow test
-Message-Id: <20180224233436.6sj4vgn7l4rnfti5@mwanda>
+From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
+Date: Fri, 16 Feb 2018 19:44:41 +0000
+Subject: [PATCH v2] iio:pressure:ms5611: Fix coding style in probe function
+Message-Id: <20180216194441.nep5zbb5sjf53cj6@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180122102754.GD23912@mwanda>
- <20180224025941.GB14069@wotan.suse.de>
- <20180224084516.pex3ogxzipzj2o5y@mwanda>
- <20180224220601.GG14069@wotan.suse.de>
-In-Reply-To: <20180224220601.GG14069@wotan.suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 10:06:01PM +0000, Luis R. Rodriguez wrote:
-> On Sat, Feb 24, 2018 at 11:45:16AM +0300, Dan Carpenter wrote:
-> > On Sat, Feb 24, 2018 at 02:59:41AM +0000, Luis R. Rodriguez wrote:
-> > > On Mon, Jan 22, 2018 at 01:27:54PM +0300, Dan Carpenter wrote:
-> > > > The main problem is that the parentheses are in the wrong place and the
-> > > > unlikely() call returns either 0 or 1 so it's never less than zero.
-> > > 
-> > > Doh, thanks, yes. Seems worth considering a grammar rule for it.
-> > > 
-> > > > The other problem is that signed integer overflows like "INT_MAX + 1" are
-> > > > undefined behavior.
-> > > 
-> > > Likewise.
-> > > 
-> > > This seems like another possible generic typo issue. But I would not resolve it
-> > > the way you did, in this particular case below num_test_devs represents the
-> > > number of already registered devs, before we increment. So the way to resolve
-> > > this would be:
-> > > 
-> > > 	if (num_test_devs + 1 = INT_MAX)
-> > > 
-> > > I'll get this upstream, thanks!
-> > 
-> > There is no issue if num_test_devs is INT_MAX.  But capping it at
-> > INT_MAX - 1 is also fine.
-> 
-> If num_test_devs is INT_MAX, then doing num_test_devs + 1 overflows
-> and as you noted that is undefined?
+This patch fixes the checkpatch.pl warning and error:
 
-If it's INT_MAX we never do "num_test_devs + 1", we return a NULL.
+iio/pressure/ms5611.h:66: ERROR: code indent should use tabs where possible
+iio/pressure/ms5611.h:66: WARNING: please, no spaces at the start of a line
+iio/pressure/ms5611.h:66: ERROR: "foo* bar" should be "foo *bar"
 
-regards,
-dan carpenter
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+Changes in v2:
+  - Make the commit message more clearer.
+
+ drivers/iio/pressure/ms5611.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/pressure/ms5611.h b/drivers/iio/pressure/ms5611.h
+index ccda63c5b3c3..ead9e9f85894 100644
+--- a/drivers/iio/pressure/ms5611.h
++++ b/drivers/iio/pressure/ms5611.h
+@@ -63,7 +63,7 @@ struct ms5611_state {
+ };
+ 
+ int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
+-                 const char* name, int type);
++		 const char *name, int type);
+ int ms5611_remove(struct iio_dev *indio_dev);
+ 
+ #endif /* _MS5611_H */
+-- 
+2.16.1
 
