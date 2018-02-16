@@ -1,43 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 14:22:21 +0000
-Subject: [PATCH 2/2] i2c-sh7760: Improve a size determination in sh7760_i2c_probe()
-Message-Id: <51f963df-4ad0-22a9-5d27-67facfac7a27@users.sourceforge.net>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Fri, 16 Feb 2018 12:35:10 +0000
+Subject: Re: [PATCH][next] HID: asus: make array 'buf' static const, shrinks object size
+Message-Id: <nycvar.YFH.7.76.1802161335000.13621@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
-In-Reply-To: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
+References: <20180106155027.17561-1-colin.king@canonical.com>
+In-Reply-To: <20180106155027.17561-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 14:50:09 +0100
+On Sat, 6 Jan 2018, Colin King wrote:
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the const read-only array 'buf' on the stack but instead
+> make it stati. Makes the object code smaller by 26 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   14378	   2384	     64	  16826	   41ba	linux/drivers/hid/hid-asus.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   14296	   2440	     64	  16800	   41a0	linux/drivers/hid/hid-asus.o
+> 
+> (gcc version 7.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This issue was detected by using the Coccinelle software.
+Applied to for-4.17/upstream.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/busses/i2c-sh7760.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-sh7760.c b/drivers/i2c/busses/i2c-sh7760.c
-index 4d2e4d10600b..62bc23b9acbb 100644
---- a/drivers/i2c/busses/i2c-sh7760.c
-+++ b/drivers/i2c/busses/i2c-sh7760.c
-@@ -443,7 +443,7 @@ static int sh7760_i2c_probe(struct platform_device *pdev)
- 		goto out0;
- 	}
- 
--	id = kzalloc(sizeof(struct cami2c), GFP_KERNEL);
-+	id = kzalloc(sizeof(*id), GFP_KERNEL);
- 	if (!id) {
- 		ret = -ENOMEM;
- 		goto out0;
 -- 
-2.16.1
+Jiri Kosina
+SUSE Labs
 
