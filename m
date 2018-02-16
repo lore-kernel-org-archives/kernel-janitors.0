@@ -1,29 +1,24 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Thu, 15 Feb 2018 20:27:57 +0000
+From: Richard Cochran <richardcochran@gmail.com>
+Date: Fri, 16 Feb 2018 15:53:45 +0000
 Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
-Message-Id: <20180215202757.GB3080@lunn.ch>
+Message-Id: <20180216155345.zlgmmna7u47xgb36@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180215191218.27936-1-colin.king@canonical.com>
-In-Reply-To: <20180215191218.27936-1-colin.king@canonical.com>
+ <20180215202757.GB3080@lunn.ch>
+In-Reply-To: <20180215202757.GB3080@lunn.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: richardcochran@gmail.com
+To: Andrew Lunn <andrew@lunn.ch>
 Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-> index b251d534b70d..758e35fa69ab 100644
-> --- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-> +++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-> @@ -321,7 +321,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
->  	 */
->  	for ( ; skb; skb = skb_dequeue(rxq)) {
->  		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
-> -			u64 ns = timehi << 16 | timelo;
-> +			u64 ns = (u64)timehi << 16 | timelo;
+On Thu, Feb 15, 2018 at 09:27:57PM +0100, Andrew Lunn wrote:
+> Do you prefer this, or making timehi and timelo a u64?
 
-Hi Richard
+The latter.
 
-Do you prefer this, or making timehi and timelo a u64?
+While you are at it, please move the definition of 'ns' to the start
+of the function.
 
-   Andrew
+Thanks,
+Richard
