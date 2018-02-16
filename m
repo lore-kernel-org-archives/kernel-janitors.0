@@ -1,51 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 08 Feb 2018 17:52:07 +0000
-Subject: [PATCH] drm/exynos: g2d: Delete an error message for a failed memory allocation in two functions
-Message-Id: <f1a7c103-fd17-3a61-61f7-570436e3c452@users.sourceforge.net>
+From: merez@codeaurora.org
+Date: Fri, 16 Feb 2018 08:14:28 +0000
+Subject: Re: [PATCH][next] wil6210: fix spelling mistake: "preperation"-> "preparation"
+Message-Id: <aae1b606d85950d0b2887499c9265370@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180130192737.8986-1-colin.king@canonical.com>
+In-Reply-To: <20180130192737.8986-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless-owner@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Feb 2018 18:42:51 +0100
+On 2018-01-30 21:27, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in debug error message text.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/ath/wil6210/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/wil6210/main.c
+> b/drivers/net/wireless/ath/wil6210/main.c
+> index 0c61a6c13991..04c8651274d9 100644
+> --- a/drivers/net/wireless/ath/wil6210/main.c
+> +++ b/drivers/net/wireless/ath/wil6210/main.c
+> @@ -715,7 +715,7 @@ static void wil_bl_prepare_halt(struct wil6210_priv 
+> *wil)
+>  		    offsetof(struct bl_dedicated_registers_v0,
+>  			     boot_loader_struct_version));
+>  	if (!tmp) {
+> -		wil_dbg_misc(wil, "old BL, skipping halt preperation\n");
+> +		wil_dbg_misc(wil, "old BL, skipping halt preparation\n");
+>  		return;
+>  	}
 
-Omit an extra message for a memory allocation failure in these functions.
+Reviewed-by: Maya Erez <merez@codeaurora.org>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 2b8bf2dd6387..5eb0d3292525 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -286,7 +286,6 @@ static int g2d_init_cmdlist(struct g2d_data *g2d)
- 
- 	node = kcalloc(G2D_CMDLIST_NUM, sizeof(*node), GFP_KERNEL);
- 	if (!node) {
--		dev_err(dev, "failed to allocate memory\n");
- 		ret = -ENOMEM;
- 		goto err;
- 	}
-@@ -1358,10 +1357,9 @@ int exynos_g2d_exec_ioctl(struct drm_device *drm_dev, void *data,
- 		return -EFAULT;
- 
- 	runqueue_node = kmem_cache_alloc(g2d->runqueue_slab, GFP_KERNEL);
--	if (!runqueue_node) {
--		dev_err(dev, "failed to allocate memory\n");
-+	if (!runqueue_node)
- 		return -ENOMEM;
--	}
-+
- 	run_cmdlist = &runqueue_node->run_cmdlist;
- 	event_list = &runqueue_node->event_list;
- 	INIT_LIST_HEAD(run_cmdlist);
 -- 
-2.16.1
-
+Maya Erez
+Qualcomm Israel, Inc. on behalf of Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
