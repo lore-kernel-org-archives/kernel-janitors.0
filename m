@@ -1,46 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 14:22:18 +0000
-Subject: [PATCH 1/2] pata_it821x: Delete an error message for a failed memory allocation in it821x_firmware_c
-Message-Id: <939014fc-8c9e-99a4-99fb-2fde4694cd29@users.sourceforge.net>
+From: Tejun Heo <tj@kernel.org>
+Date: Sun, 18 Feb 2018 13:27:06 +0000
+Subject: Re: [PATCH 1/2] pata_it821x: Delete an error message for a failed memory allocation in it821x_firmwa
+Message-Id: <20180218132706.GF695913@devbig577.frc2.facebook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
-In-Reply-To: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
+ <939014fc-8c9e-99a4-99fb-2fde4694cd29@users.sourceforge.net>
+In-Reply-To: <939014fc-8c9e-99a4-99fb-2fde4694cd29@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 14:04:49 +0100
+On Fri, Feb 16, 2018 at 03:22:18PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 16 Feb 2018 14:04:49 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Omit an extra message for a memory allocation failure in this function.
+Applying this one to libata/for-4.17 but skipping the next one.
+There's no point in making these trivial changes.  It's just churn
+without actual benefits but only risks.
 
-This issue was detected by using the Coccinelle software.
+Thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/ata/pata_it821x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/ata/pata_it821x.c b/drivers/ata/pata_it821x.c
-index 7a21edf89e72..46eacb6b93dd 100644
---- a/drivers/ata/pata_it821x.c
-+++ b/drivers/ata/pata_it821x.c
-@@ -658,10 +658,10 @@ static u8 *it821x_firmware_command(struct ata_port *ap, u8 cmd, int len)
- 	u8 status;
- 	int n = 0;
- 	u16 *buf = kmalloc(len, GFP_KERNEL);
--	if (buf = NULL) {
--		printk(KERN_ERR "it821x_firmware_command: Out of memory\n");
-+
-+	if (!buf)
- 		return NULL;
--	}
-+
- 	/* This isn't quite a normal ATA command as we are talking to the
- 	   firmware not the drives */
- 	ap->ctl |= ATA_NIEN;
 -- 
-2.16.1
-
+tejun
