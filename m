@@ -1,49 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 17:08:32 +0000
-Subject: [PATCH] cpufreq: qoriq: Delete two error messages for a failed memory allocation in qoriq_cpufreq_cp
-Message-Id: <650e783f-7b4c-17b5-3bc7-56e3058a95d1@users.sourceforge.net>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Mon, 19 Feb 2018 03:56:43 +0000
+Subject: Re: [PATCH] cpufreq: qoriq: Delete two error messages for a failed memory allocation in qoriq_cpufre
+Message-Id: <20180219034443.GL28462@vireshk-i7>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <650e783f-7b4c-17b5-3bc7-56e3058a95d1@users.sourceforge.net>
+In-Reply-To: <650e783f-7b4c-17b5-3bc7-56e3058a95d1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 18:00:37 +0100
+On 15-02-18, 18:08, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 15 Feb 2018 18:00:37 +0100
+> 
+> Omit extra messages for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/cpufreq/qoriq-cpufreq.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+> index 0562761a3dec..ee3e3656485b 100644
+> --- a/drivers/cpufreq/qoriq-cpufreq.c
+> +++ b/drivers/cpufreq/qoriq-cpufreq.c
+> @@ -192,16 +192,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	count = clk_hw_get_num_parents(hwclk);
+>  
+>  	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
+> -	if (!data->pclk) {
+> -		pr_err("%s: no memory\n", __func__);
+> +	if (!data->pclk)
+>  		goto err_nomem2;
+> -	}
+>  
+>  	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
+> -	if (!table) {
+> -		pr_err("%s: no memory\n", __func__);
+> +	if (!table)
+>  		goto err_pclk;
+> -	}
+>  
+>  	for (i = 0; i < count; i++) {
+>  		clk = clk_hw_get_parent_by_index(hwclk, i)->clk;
 
-Omit extra messages for a memory allocation failure in this function.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/cpufreq/qoriq-cpufreq.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 0562761a3dec..ee3e3656485b 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -192,16 +192,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	count = clk_hw_get_num_parents(hwclk);
- 
- 	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
--	if (!data->pclk) {
--		pr_err("%s: no memory\n", __func__);
-+	if (!data->pclk)
- 		goto err_nomem2;
--	}
- 
- 	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
--	if (!table) {
--		pr_err("%s: no memory\n", __func__);
-+	if (!table)
- 		goto err_pclk;
--	}
- 
- 	for (i = 0; i < count; i++) {
- 		clk = clk_hw_get_parent_by_index(hwclk, i)->clk;
 -- 
-2.16.1
-
+viresh
