@@ -1,45 +1,41 @@
-From: "Cristian Evans" <f24@wastmail.com>
-Date: Sun, 25 Feb 2018 02:21:15 +0000
-Subject: very urgent Please
-Message-Id: <eee4d327b19b3ee477bad27b1973ebfd.squirrel@webmail.wastmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 20 Feb 2018 09:45:35 +0000
+Subject: [PATCH 1/2] scsi: myrs: cleanup myrs_store_suppress_enclosure_messages()
+Message-Id: <20180220094535.GA22646@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This code causes a static checker because we have an upper bound on
+"value" but not a lower bound.  In other words "value" can be s32min-2.
+It's harmless but really it should just be bool.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-PEACE BE WITH YOU,
-
-Receiving this message might sound as a surprise to you, please do accept
-it as a blessing from God made possible through a woman with a good and
-sincere heart towards the poor orphans. Through these projects millions
-will be positively touched as with God nothing is impossible. I have this
-strong desire to help the poor orphans suffering each day, but this dream
-cannot be realised as a result of my health, which does not improve, hence
-I do not know whether I will survive having undergone different surgical
-operations, which has kept me hospitalized. Right now, life gives me no
-choice, but to answer the call (death); my prayers each day is to have a
-place in Heaven. I have suffered a lot as a result of this incurable
-sickness (terminal cancer)! Above all, I do not have a child as a result
-of my sterility.
-
-The only help I need from you at this point is to be in constant prayers
-with me as I believe you have an open heart towards the poor orphans and
-do believe in GOD. I would be so much happy to see that my funds (Ten
-million EUROS) are properly used to help the less privileged etc before
-leaving this world as this will be a great relieve for me and my soul.
-This is a huge responsibility, but I pray that God gives you the strength
-to handle it. You will also be highly recompensated.
-
-Once I get your reply, I will put you in contact with the institution in
-charge of the transaction in order to start all necessary procedures so as
-to enable you to have possession of my funds as soon as possible before my
-next surgical operations.
-
-I looking forward to reading from you.
-
-Mrs. Cristian Evans
-
-
+diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
+index 3b87c6942a8e..eaa9d143a282 100644
+--- a/drivers/scsi/myrs.c
++++ b/drivers/scsi/myrs.c
+@@ -1590,15 +1590,12 @@ static ssize_t myrs_store_suppress_enclosure_messages(struct device *dev,
+ {
+ 	struct scsi_device *sdev = to_scsi_device(dev);
+ 	myrs_hba *cs = (myrs_hba *)sdev->host->hostdata;
+-	char tmpbuf[8];
+-	ssize_t len;
+-	int value;
++	bool value;
++	int ret;
+ 
+-	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
+-	strncpy(tmpbuf, buf, len);
+-	tmpbuf[len] = '\0';
+-	if (sscanf(tmpbuf, "%d", &value) != 1 || value > 2)
+-		return -EINVAL;
++	ret = kstrtobool(buf, &value);
++	if (ret)
++		return ret;
+ 
+ 	cs->disable_enc_msg = value;
+ 	return count;
