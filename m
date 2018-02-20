@@ -1,39 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 15:39:24 +0000
-Subject: [PATCH 1/2] i2c-nomadik: Delete an error message for a failed memory allocation in nmk_i2c_probe()
-Message-Id: <9448237a-67cb-0e7c-0837-ad1b89fc41a1@users.sourceforge.net>
+From: Christopher Diaz Riveros <chrisadr@gentoo.org>
+Date: Tue, 20 Feb 2018 16:35:53 +0000
+Subject: [PATCH-next] staging: emxx_udc: Remove unneeded cast
+Message-Id: <20180220163553.14553-1-chrisadr@gentoo.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <97f41346-6abb-1c14-f536-ad12bbcb4c60@users.sourceforge.net>
-In-Reply-To: <97f41346-6abb-1c14-f536-ad12bbcb4c60@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 16:25:14 +0100
+Fix Coccinelle alert:
 
-Omit an extra message for a memory allocation failure in this function.
+drivers/staging//emxx_udc/emxx_udc.c:2689:19-21: WARNING: casting value returned by memory allocation function to (u8 *) is useless.
 
 This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christopher Diaz Riveros <chrisadr@gentoo.org>
 ---
- drivers/i2c/busses/i2c-nomadik.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/emxx_udc/emxx_udc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
-index 49c7c0c91486..a783ad25fe19 100644
---- a/drivers/i2c/busses/i2c-nomadik.c
-+++ b/drivers/i2c/busses/i2c-nomadik.c
-@@ -975,7 +975,6 @@ static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id *id)
+diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
+index 7517001fb8f0..ad69a1e536a7 100644
+--- a/drivers/staging/emxx_udc/emxx_udc.c
++++ b/drivers/staging/emxx_udc/emxx_udc.c
+@@ -2686,7 +2686,7 @@ static int nbu2ss_ep_queue(
  
- 	dev = devm_kzalloc(&adev->dev, sizeof(struct nmk_i2c_dev), GFP_KERNEL);
- 	if (!dev) {
--		dev_err(&adev->dev, "cannot allocate memory\n");
- 		ret = -ENOMEM;
- 		goto err_no_mem;
- 	}
+ 	if (req->unaligned) {
+ 		if (!ep->virt_buf)
+-			ep->virt_buf = (u8 *)dma_alloc_coherent(
++			ep->virt_buf = dma_alloc_coherent(
+ 				NULL, PAGE_SIZE,
+ 				&ep->phys_buf, GFP_ATOMIC | GFP_DMA);
+ 		if (ep->epnum > 0)  {
 -- 
-2.16.1
+2.16.2
 
