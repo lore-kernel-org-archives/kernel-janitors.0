@@ -1,86 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 07 Feb 2018 13:23:27 +0000
-Subject: [PATCH] misc: rtsx: make various functions static
-Message-Id: <20180207132327.32192-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 20 Feb 2018 09:46:11 +0000
+Subject: [PATCH 2/2] scsi: myrs: bitwise vs logical OR typo
+Message-Id: <20180220094611.GB22646@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We accidentally used a logical || instead of a | so these bit masks are
+off.
 
-The functions rts5260_get_ocpstat, rts5260_get_ocpstat2,
-rts5260_clear_ocpstat, rts5260_process_ocp, rts5260_init_hw and
-rts5260_set_aspm are local to the source and do not need to be
-in global scope, so make them static.
+Fixes: 8a8606895947 ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cleans up sparse warnings:
-symbol 'rts5260_get_ocpstat' was not declared. Should it be static?
-symbol 'rts5260_get_ocpstat2' was not declared. Should it be static?
-symbol 'rts5260_clear_ocpstat' was not declared. Should it be static?
-symbol 'rts5260_process_ocp' was not declared. Should it be static?
-symbol 'rts5260_init_hw' was not declared. Should it be static?
-symbol 'rts5260_set_aspm' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/misc/cardreader/rts5260.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
-index 07cb93abf685..a493b01c5bc6 100644
---- a/drivers/misc/cardreader/rts5260.c
-+++ b/drivers/misc/cardreader/rts5260.c
-@@ -388,17 +388,17 @@ static void rts5260_disable_ocp(struct rtsx_pcr *pcr)
- 				OC_POWER_DOWN);
- }
- 
--int rts5260_get_ocpstat(struct rtsx_pcr *pcr, u8 *val)
-+static int rts5260_get_ocpstat(struct rtsx_pcr *pcr, u8 *val)
- {
- 	return rtsx_pci_read_register(pcr, REG_OCPSTAT, val);
- }
- 
--int rts5260_get_ocpstat2(struct rtsx_pcr *pcr, u8 *val)
-+static int rts5260_get_ocpstat2(struct rtsx_pcr *pcr, u8 *val)
- {
- 	return rtsx_pci_read_register(pcr, REG_DV3318_OCPSTAT, val);
- }
- 
--void rts5260_clear_ocpstat(struct rtsx_pcr *pcr)
-+static void rts5260_clear_ocpstat(struct rtsx_pcr *pcr)
- {
- 	u8 mask = 0;
- 	u8 val = 0;
-@@ -418,7 +418,7 @@ void rts5260_clear_ocpstat(struct rtsx_pcr *pcr)
- 				DV3318_OCP_INT_CLR | DV3318_OCP_CLR, 0);
- }
- 
--void rts5260_process_ocp(struct rtsx_pcr *pcr)
-+static void rts5260_process_ocp(struct rtsx_pcr *pcr)
- {
- 	if (!pcr->option.ocp_en)
- 		return;
-@@ -449,7 +449,7 @@ void rts5260_process_ocp(struct rtsx_pcr *pcr)
+diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
+index eaa9d143a282..db3c84fc3a29 100644
+--- a/drivers/scsi/myrs.c
++++ b/drivers/scsi/myrs.c
+@@ -907,7 +907,7 @@ static void myrs_log_event(myrs_hba *cs, myrs_event *ev)
  	}
+ 	if (sshdr.sense_key = VENDOR_SPECIFIC &&
+ 	    (sshdr.asc = 0x80 || sshdr.asc = 0x81))
+-		ev->ev_code = ((sshdr.asc - 0x80) << 8 || sshdr.ascq);
++		ev->ev_code = ((sshdr.asc - 0x80) << 8 | sshdr.ascq);
+ 	while (true) {
+ 		ev_code = myrs_ev_list[ev_idx].ev_code;
+ 		if (ev_code = ev->ev_code || ev_code = 0)
+@@ -2201,7 +2201,7 @@ static void myrs_handle_scsi(myrs_hba *cs, myrs_cmdblk *cmd_blk,
+ 	    status = DAC960_V2_DeviceNonresponsive2)
+ 		scmd->result = (DID_BAD_TARGET << 16);
+ 	else
+-		scmd->result = (DID_OK << 16) || status;
++		scmd->result = (DID_OK << 16) | status;
+ 	scmd->scsi_done(scmd);
  }
  
--int rts5260_init_hw(struct rtsx_pcr *pcr)
-+static int rts5260_init_hw(struct rtsx_pcr *pcr)
- {
- 	int err;
- 
-@@ -620,7 +620,7 @@ static int rts5260_extra_init_hw(struct rtsx_pcr *pcr)
- 	return 0;
- }
- 
--void rts5260_set_aspm(struct rtsx_pcr *pcr, bool enable)
-+static void rts5260_set_aspm(struct rtsx_pcr *pcr, bool enable)
- {
- 	struct rtsx_cr_option *option = &pcr->option;
- 	u8 val = 0;
--- 
-2.15.1
-
