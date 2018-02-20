@@ -1,43 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 15:02:12 +0000
-Subject: [PATCH 2/2] i2c-puv3: Improve a size determination in puv3_i2c_probe()
-Message-Id: <ab401452-cf6c-e4b0-eb8c-f9daf20c981c@users.sourceforge.net>
+From: Christopher Diaz Riveros <chrisadr@gentoo.org>
+Date: Tue, 20 Feb 2018 16:30:33 +0000
+Subject: [PATCH-next] staging: net: netlogic: Remove unneeded cast
+Message-Id: <20180220163033.14172-1-chrisadr@gentoo.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2fbd709c-2790-af6c-4fd4-0c8ec6b5b3d7@users.sourceforge.net>
-In-Reply-To: <2fbd709c-2790-af6c-4fd4-0c8ec6b5b3d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: ganesanr@broadcom.com, gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, jchandra@broadcom.com, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 15:43:21 +0100
+Fix Coccinelle alert:
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+drivers/staging//netlogic/xlr_net.c:996:12-30: WARNING: casting value returned by memory allocation function to (struct xlr_adapter *) is useless.
 
 This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christopher Diaz Riveros <chrisadr@gentoo.org>
 ---
- drivers/i2c/busses/i2c-puv3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/netlogic/xlr_net.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-puv3.c b/drivers/i2c/busses/i2c-puv3.c
-index 5bd001d01bef..929fd12b92de 100644
---- a/drivers/i2c/busses/i2c-puv3.c
-+++ b/drivers/i2c/busses/i2c-puv3.c
-@@ -196,7 +196,7 @@ static int puv3_i2c_probe(struct platform_device *pdev)
- 	if (!request_mem_region(mem->start, resource_size(mem), "puv3_i2c"))
- 		return -EBUSY;
+diff --git a/drivers/staging/netlogic/xlr_net.c b/drivers/staging/netlogic/xlr_net.c
+index 30532d8c310b..e461168313bf 100644
+--- a/drivers/staging/netlogic/xlr_net.c
++++ b/drivers/staging/netlogic/xlr_net.c
+@@ -993,8 +993,7 @@ static int xlr_net_probe(struct platform_device *pdev)
+ 	/*
+ 	 * Allocate our adapter data structure and attach it to the device.
+ 	 */
+-	adapter = (struct xlr_adapter *)
+-		devm_kzalloc(&pdev->dev, sizeof(*adapter), GFP_KERNEL);
++	adapter = devm_kzalloc(&pdev->dev, sizeof(*adapter), GFP_KERNEL);
+ 	if (!adapter)
+ 		return -ENOMEM;
  
--	adapter = kzalloc(sizeof(struct i2c_adapter), GFP_KERNEL);
-+	adapter = kzalloc(sizeof(*adapter), GFP_KERNEL);
- 	if (adapter = NULL) {
- 		rc = -ENOMEM;
- 		goto fail_nomem;
 -- 
-2.16.1
+2.16.2
 
