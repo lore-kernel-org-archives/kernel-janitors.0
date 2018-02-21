@@ -1,35 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 28 Feb 2018 17:38:23 +0000
-Subject: [PATCH] ARM: iop13xx: Remove duplicated bit-wise or of PCI_STATUS_REC_TARGET_ABORT
-Message-Id: <20180228173823.4074-1-colin.king@canonical.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 21 Feb 2018 12:49:14 +0000
+Subject: [PATCH 4.9 65/77] x86/spectre: Fix an error message
+Message-Id: <20180221124434.946852327@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180221124432.172390020@linuxfoundation.org>
+In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Bit pattern PCI_STATUS_REC_TARGET_ABORT is being bit-wise or'd twice;
-remove the redundant 2nd PCI_STATUS_REC_TARGET_ABORT
+------------------
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+
+commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
+
+If i = ARRAY_SIZE(mitigation_options) then we accidentally print
+garbage from one space beyond the end of the mitigation_options[] array.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
+Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/mach-iop13xx/pci.h | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-iop13xx/pci.h b/arch/arm/mach-iop13xx/pci.h
-index 736168d8c7ac..c6a0678c1741 100644
---- a/arch/arm/mach-iop13xx/pci.h
-+++ b/arch/arm/mach-iop13xx/pci.h
-@@ -23,7 +23,6 @@ void iop13xx_map_pci_memory(void);
- #define IOP_PCI_STATUS_ERROR (PCI_STATUS_PARITY |	     \
- 			       PCI_STATUS_SIG_TARGET_ABORT | \
- 			       PCI_STATUS_REC_TARGET_ABORT | \
--			       PCI_STATUS_REC_TARGET_ABORT | \
- 			       PCI_STATUS_REC_MASTER_ABORT | \
- 			       PCI_STATUS_SIG_SYSTEM_ERROR | \
- 	 		       PCI_STATUS_DETECTED_PARITY)
--- 
-2.15.1
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -173,7 +173,7 @@ static enum spectre_v2_mitigation_cmd __
+ 		}
+ 
+ 		if (i >= ARRAY_SIZE(mitigation_options)) {
+-			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
+ 			return SPECTRE_V2_CMD_AUTO;
+ 		}
+ 	}
+
 
