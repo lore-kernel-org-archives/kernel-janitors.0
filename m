@@ -1,28 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 06 Feb 2018 16:14:51 +0000
-Subject: [PATCH 0/3] HID-Lenovo: Adjustments for three function implementations
-Message-Id: <06e2d590-f980-0022-c476-6b999239ff9f@users.sourceforge.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 21 Feb 2018 12:48:18 +0000
+Subject: [PATCH 4.14 087/167] x86/spectre: Fix an error message
+Message-Id: <20180221124529.159324497@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180221124524.639039577@linuxfoundation.org>
+In-Reply-To: <20180221124524.639039577@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Feb 2018 17:12:34 +0100
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Three update suggestions were taken into account
-from static source code analysis.
+------------------
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in lenovo_probe_tpkbd()
-  Adjust four checks for null pointers
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
- drivers/hid/hid-lenovo.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
 
--- 
-2.16.1
+If i = ARRAY_SIZE(mitigation_options) then we accidentally print
+garbage from one space beyond the end of the mitigation_options[] array.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
+Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -174,7 +174,7 @@ static enum spectre_v2_mitigation_cmd __
+ 		}
+ 
+ 		if (i >= ARRAY_SIZE(mitigation_options)) {
+-			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
+ 			return SPECTRE_V2_CMD_AUTO;
+ 		}
+ 	}
+
 
