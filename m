@@ -1,38 +1,60 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Fri, 16 Feb 2018 08:03:57 +0000
-Subject: Re: [PATCH] ARM: cpuidle: Delete an error message for a failed memory allocation in arm_idle_init_cp
-Message-Id: <582de86a-d0bd-3f2d-0cbd-cf0a7ca924d8@linaro.org>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Wed, 21 Feb 2018 19:28:07 +0000
+Subject: [PATCH v2] iio:dummy: Replace S_IWUSR by 0200
+Message-Id: <20180221192807.qfyhp7z27f6r6p47@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
-In-Reply-To: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 15/02/2018 16:46, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 15 Feb 2018 16:40:38 +0100
->=20
-> Omit an extra message for a memory allocation failure in this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+This patch fixes the checkpatch.pl warning:
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
- SoCs
+drivers/iio/dummy/iio_dummy_evgen.c:151: WARNING: Symbolic permissions
+'S_IWUSR' are not preferred. Consider using octal permissions '0200'.
+...
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+Changes in v2:
+  - Make the commit message clearer.
+  - Fix just a single part of the code.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/iio/dummy/iio_dummy_evgen.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/iio/dummy/iio_dummy_evgen.c b/drivers/iio/dummy/iio_dummy_evgen.c
+index efd0005f59b4..16ea547f79f0 100644
+--- a/drivers/iio/dummy/iio_dummy_evgen.c
++++ b/drivers/iio/dummy/iio_dummy_evgen.c
+@@ -148,16 +148,16 @@ static ssize_t iio_evgen_poke(struct device *dev,
+ 	return len;
+ }
+ 
+-static IIO_DEVICE_ATTR(poke_ev0, S_IWUSR, NULL, &iio_evgen_poke, 0);
+-static IIO_DEVICE_ATTR(poke_ev1, S_IWUSR, NULL, &iio_evgen_poke, 1);
+-static IIO_DEVICE_ATTR(poke_ev2, S_IWUSR, NULL, &iio_evgen_poke, 2);
+-static IIO_DEVICE_ATTR(poke_ev3, S_IWUSR, NULL, &iio_evgen_poke, 3);
+-static IIO_DEVICE_ATTR(poke_ev4, S_IWUSR, NULL, &iio_evgen_poke, 4);
+-static IIO_DEVICE_ATTR(poke_ev5, S_IWUSR, NULL, &iio_evgen_poke, 5);
+-static IIO_DEVICE_ATTR(poke_ev6, S_IWUSR, NULL, &iio_evgen_poke, 6);
+-static IIO_DEVICE_ATTR(poke_ev7, S_IWUSR, NULL, &iio_evgen_poke, 7);
+-static IIO_DEVICE_ATTR(poke_ev8, S_IWUSR, NULL, &iio_evgen_poke, 8);
+-static IIO_DEVICE_ATTR(poke_ev9, S_IWUSR, NULL, &iio_evgen_poke, 9);
++static IIO_DEVICE_ATTR(poke_ev0, 0200, NULL, &iio_evgen_poke, 0);
++static IIO_DEVICE_ATTR(poke_ev1, 0200, NULL, &iio_evgen_poke, 1);
++static IIO_DEVICE_ATTR(poke_ev2, 0200, NULL, &iio_evgen_poke, 2);
++static IIO_DEVICE_ATTR(poke_ev3, 0200, NULL, &iio_evgen_poke, 3);
++static IIO_DEVICE_ATTR(poke_ev4, 0200, NULL, &iio_evgen_poke, 4);
++static IIO_DEVICE_ATTR(poke_ev5, 0200, NULL, &iio_evgen_poke, 5);
++static IIO_DEVICE_ATTR(poke_ev6, 0200, NULL, &iio_evgen_poke, 6);
++static IIO_DEVICE_ATTR(poke_ev7, 0200, NULL, &iio_evgen_poke, 7);
++static IIO_DEVICE_ATTR(poke_ev8, 0200, NULL, &iio_evgen_poke, 8);
++static IIO_DEVICE_ATTR(poke_ev9, 0200, NULL, &iio_evgen_poke, 9);
+ 
+ static struct attribute *iio_evgen_attrs[] = {
+ 	&iio_dev_attr_poke_ev0.dev_attr.attr,
+-- 
+2.16.2
+
