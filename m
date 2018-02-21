@@ -1,94 +1,42 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Wed, 28 Feb 2018 08:59:52 +0000
-Subject: Re: [v2] [media] Use common error handling code in 20 functions
-Message-Id: <3444809.dyh5Vmx7Dp@avalon>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Feb 2018 18:13:40 +0000
+Subject: [PATCH] f2fs: remove redundant initialization of pointer 'p'
+Message-Id: <20180221181340.7596-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net> <3895609.4O6dNuP5Wm@avalon> <783e7eff-2028-72be-b83c-77fc4340484e@users.sourceforge.net>
-In-Reply-To: <783e7eff-2028-72be-b83c-77fc4340484e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Andrey Utkin <andrey_utkin@fastmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Brian Johnson <brijohn@gmail.com>, Christoph =?ISO-8859-1?Q?B=F6hmwalder?= <christoph@boehmwalder.at>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, Daniele Nicolodi <daniele@grinta.net>, David =?ISO-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, Devendra Sharma <devendra.sharma9091@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Hans Verkuil <hans.verkuil@cisco.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Mike Isely <isely@pobox.com>, Philippe Ombredanne <pombredanne@nexb.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Satendra Singh Thakur <satendra.t@samsung.com>, Sean Young <sean@mess.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Shyam Saini <mayhs11saini@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Todor Tomov <todor.tomov@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wednesday, 28 February 2018 10:45:21 EET SF Markus Elfring wrote:
-> >> +put_isp:
-> >> +	omap3isp_put(video->isp);
-> >> +delete_fh:
-> >> +	v4l2_fh_del(&handle->vfh);
-> >> +	v4l2_fh_exit(&handle->vfh);
-> >> +	kfree(handle);
-> > 
-> > Please prefix the error labels with error_.
-> 
-> How often do you really need such an extra prefix?
-> 
-> >> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> >> @@ -994,10 +994,8 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file,
-> >> void *fh, struct v4l2_queryctrl qc = { .id = ctrl->id };
-> >> 
-> >>  			ret = uvc_query_v4l2_ctrl(chain, &qc);
-> >> 
-> >> -			if (ret < 0) {
-> >> -				ctrls->error_idx = i;
-> >> -				return ret;
-> >> -			}
-> >> +			if (ret < 0)
-> >> +				goto set_index;
-> >> 
-> >>  			ctrl->value = qc.default_value;
-> >>  		
-> >>  		}
-> >> 
-> >> @@ -1013,14 +1011,17 @@ static int uvc_ioctl_g_ext_ctrls(struct file
-> >> *file,
-> >> void *fh, ret = uvc_ctrl_get(chain, ctrl);
-> >> 
-> >>  		if (ret < 0) {
-> >>  		
-> >>  			uvc_ctrl_rollback(handle);
-> >> 
-> >> -			ctrls->error_idx = i;
-> >> -			return ret;
-> >> +			goto set_index;
-> >> 
-> >>  		}
-> >>  	
-> >>  	}
-> >>  	
-> >>  	ctrls->error_idx = 0;
-> >>  	
-> >>  	return uvc_ctrl_rollback(handle);
-> >> 
-> >> +
-> >> +set_index:
-> >> +	ctrls->error_idx = i;
-> >> +	return ret;
-> >> 
-> >>  }
-> > 
-> > For uvcvideo I find this to hinder readability
-> 
-> I got an other development view.
-> 
-> > without adding much added value.
-> 
-> There can be a small effect for such a function implementation.
-> 
-> > Please drop the uvcvideo change from this patch.
-> 
-> Would it be nice if this source code adjustment could be integrated also?
+Pointer p is initialized with a value that is never read and is later
+re-assigned a new value, hence the initialization is redundant and can
+be removed.
 
-Just for the record, and to avoid merging this patch by mistake,
+Cleans up clang warning:
+fs/f2fs/extent_cache.c:463:19: warning: Value stored to 'p' during
+its initialization is never read
 
-Nacked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/f2fs/extent_cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-at least until the requested changes are implemented.
-
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index ff2352a0ed15..956b2744386b 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -460,7 +460,7 @@ static struct extent_node *__insert_extent_tree(struct inode *inode,
+ 				struct rb_node *insert_parent)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct rb_node **p = &et->root.rb_node;
++	struct rb_node **p;
+ 	struct rb_node *parent = NULL;
+ 	struct extent_node *en = NULL;
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.15.1
 
