@@ -1,70 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 26 Feb 2018 11:17:28 +0000
-Subject: Applied "ASoC: pxa: remove duplicated bit-wise or of SNDRV_PCM_FMTBIT_S24_LE" to the asoc tree
-Message-Id: <E1eqGme-0005UW-4n@debutante>
+From: Christopher Diaz Riveros <chrisadr@gentoo.org>
+Date: Wed, 21 Feb 2018 16:56:46 +0000
+Subject: [RFC] sched/headers: comments clean up <linux/sched.h>
+Message-Id: <20180221165646.15432-1-chrisadr@gentoo.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180223143738.29600-1-colin.king@canonical.com>
-In-Reply-To: <20180223143738.29600-1-colin.king@canonical.com>
+References: <1518787521.2464.20.camel@gentoo.org>
+In-Reply-To: <1518787521.2464.20.camel@gentoo.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: juri.lelli@gmail.com, peterz@infradead.org, mingo@redhat.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+Remove inline comments to merge them into comment blocks.
 
-   ASoC: pxa: remove duplicated bit-wise or of SNDRV_PCM_FMTBIT_S24_LE
+Enhance readability from source code by giving descriptions from the
+structures and data in comment blocks instead from inline comments.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 8b597ff47053c9f53384a3a26dcc4c4316a375e5 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 23 Feb 2018 14:37:38 +0000
-Subject: [PATCH] ASoC: pxa: remove duplicated bit-wise or of
- SNDRV_PCM_FMTBIT_S24_LE
-
-Bit pattern SNDRV_PCM_FMTBIT_S24_LE is being bit-wise or'd twice; remove
-the redundant 2nd SNDRV_PCM_FMTBIT_S24_LE
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Christopher Diaz Riveros <chrisadr@gentoo.org>
 ---
- sound/soc/pxa/mmp-sspa.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/sched.h | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
-index 64b85e30c1f8..7c998ea4ebee 100644
---- a/sound/soc/pxa/mmp-sspa.c
-+++ b/sound/soc/pxa/mmp-sspa.c
-@@ -377,7 +377,6 @@ static int mmp_sspa_probe(struct snd_soc_dai *dai)
- #define MMP_SSPA_FORMATS (SNDRV_PCM_FMTBIT_S8 | \
- 		SNDRV_PCM_FMTBIT_S16_LE | \
- 		SNDRV_PCM_FMTBIT_S24_LE | \
--		SNDRV_PCM_FMTBIT_S24_LE | \
- 		SNDRV_PCM_FMTBIT_S32_LE)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index b161ef8a902e..693a6e51ed0c 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -221,12 +221,21 @@ struct task_cputime {
+ #define prof_exp			stime
+ #define sched_exp			sum_exec_runtime
  
- static const struct snd_soc_dai_ops mmp_sspa_dai_ops = {
++/*
++ * vtime_state states:
++ *
++ * @VTIME_INACTIVE tells if task is sleeping or running in a CPU with
++ * VTIME inactive.
++ *
++ * @VTIME_USER tells if task is running in userspace in a CPU with
++ * VTIME active.
++ *
++ * @VTIME_SYS tells if task is running in kernelspace in a CPU with
++ * VTIME active.
++ */
+ enum vtime_state {
+-	/* Task is sleeping or running in a CPU with VTIME inactive: */
+ 	VTIME_INACTIVE = 0,
+-	/* Task runs in userspace in a CPU with VTIME active: */
+ 	VTIME_USER,
+-	/* Task runs in kernelspace in a CPU with VTIME active: */
+ 	VTIME_SYS,
+ };
+ 
 -- 
-2.16.1
+2.16.2
 
