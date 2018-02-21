@@ -1,75 +1,55 @@
-From: Jyri Sarha <jsarha@ti.com>
-Date: Wed, 14 Feb 2018 13:30:25 +0000
-Subject: Re: [PATCH 2/2] drm/tilcdc: panel: Use common error handling code in of_get_panel_info()
-Message-Id: <8ea87afa-0713-eaac-640f-85085e148832@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Feb 2018 16:45:35 +0000
+Subject: Re: [PATCH 0/8] target-iSCSI: Adjustments for several function implementations
+Message-Id: <c9a822a4-248e-c479-9118-4b8ffb1033b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a7c7cebb-f4c9-04b7-5507-e41f8ebfb5f9@users.sourceforge.net>
- <23b2cf6c-7b69-9ade-d97a-18af0c6eb73f@users.sourceforge.net>
-In-Reply-To: <23b2cf6c-7b69-9ade-d97a-18af0c6eb73f@users.sourceforge.net>
+References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: target-devel@vger.kernel.org, linux-scsi@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Disseldorp <ddiss@suse.de>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 06/02/18 23:24, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 6 Feb 2018 22:10:11 +0100
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Well, it is couple of lines less. If I would just have couple weeks time
-to implement proper drm panel support for tilcdc and get rid of this
-driver all together...
-
-Picked for the next tilcdc pullrequest.
-
-Thanks,
-Jyri
-
-
-> ---
->  drivers/gpu/drm/tilcdc/tilcdc_panel.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> index 0b6aa95aec89..cf9ca16fee81 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> @@ -289,10 +289,8 @@ static struct tilcdc_panel_info *of_get_panel_info(struct device_node *np)
->  	}
->  
->  	info = kzalloc(sizeof(*info), GFP_KERNEL);
-> -	if (!info) {
-> -		of_node_put(info_np);
-> -		return NULL;
-> -	}
-> +	if (!info)
-> +		goto put_node;
->  
->  	ret |= of_property_read_u32(info_np, "ac-bias", &info->ac_bias);
->  	ret |= of_property_read_u32(info_np, "ac-bias-intrpt", &info->ac_bias_intrpt);
-> @@ -311,11 +309,11 @@ static struct tilcdc_panel_info *of_get_panel_info(struct device_node *np)
->  	if (ret) {
->  		pr_err("%s: error reading panel-info properties\n", __func__);
->  		kfree(info);
-> -		of_node_put(info_np);
-> -		return NULL;
-> +		info = NULL;
->  	}
-> -	of_node_put(info_np);
->  
-> +put_node:
-> +	of_node_put(info_np);
->  	return info;
->  }
->  
-> 
-
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+PiBEYXRlOiBUdWUsIDEyIERlYyAyMDE3IDIyOjIyOjExICswMTAwCj4gCj4gU29tZSB1cGRhdGUg
+c3VnZ2VzdGlvbnMgd2VyZSB0YWtlbiBpbnRvIGFjY291bnQKPiBmcm9tIHN0YXRpYyBzb3VyY2Ug
+Y29kZSBhbmFseXNpcy4KPiAKPiBNYXJrdXMgRWxmcmluZyAoOCk6Cj4gICBMZXNzIGZ1bmN0aW9u
+IGNhbGxzIGluIGNoYXBfc2VydmVyX2NvbXB1dGVfbWQ1KCkgYWZ0ZXIgZXJyb3IgZGV0ZWN0aW9u
+Cj4gICBNb3ZlIHJlc2V0dGluZyBvZiBzZXZlbiB2YXJpYWJsZXMgaW4gY2hhcF9zZXJ2ZXJfY29t
+cHV0ZV9tZDUoKQo+ICAgRGVsZXRlIDM2IGVycm9yIG1lc3NhZ2VzIGZvciBhIGZhaWxlZCBtZW1v
+cnkgYWxsb2NhdGlvbgo+ICAgRGVsZXRlIGFuIHVubmVjZXNzYXJ5IHZhcmlhYmxlIGluaXRpYWxp
+c2F0aW9uIGluIGlzY3NpdF9hbGxvY2F0ZV9vb29fY21kc24oKQo+ICAgRGVsZXRlIGFuIHVubmVj
+ZXNzYXJ5IHZhcmlhYmxlIGluaXRpYWxpc2F0aW9uIGluIGlzY3NpX2NvcHlfcGFyYW1fbGlzdCgp
+Cj4gICBEZWxldGUgYW4gdW5uZWNlc3NhcnkgdmFyaWFibGUgaW5pdGlhbGlzYXRpb24gaW4gaXNj
+c2lfY3JlYXRlX2RlZmF1bHRfcGFyYW1zKCkKPiAgIERlbGV0ZSBhbiB1bm5lY2Vzc2FyeSB2YXJp
+YWJsZSBpbml0aWFsaXNhdGlvbiBpbiBpc2NzaV9zZXRfZGVmYXVsdF9wYXJhbSgpCj4gICBJbXBy
+b3ZlIDE2IHNpemUgZGV0ZXJtaW5hdGlvbnMKPiAKPiAgZHJpdmVycy90YXJnZXQvaXNjc2kvaXNj
+c2lfdGFyZ2V0LmMgICAgICAgICAgICAgICB8ICAgMiAtCj4gIGRyaXZlcnMvdGFyZ2V0L2lzY3Np
+L2lzY3NpX3RhcmdldF9hdXRoLmMgICAgICAgICAgfCAxMTAgKysrKysrKysrKystLS0tLS0tLS0t
+LQo+ICBkcml2ZXJzL3RhcmdldC9pc2NzaS9pc2NzaV90YXJnZXRfZGF0YWluX3ZhbHVlcy5jIHwg
+ICA2ICstCj4gIGRyaXZlcnMvdGFyZ2V0L2lzY3NpL2lzY3NpX3RhcmdldF9lcmwxLmMgICAgICAg
+ICAgfCAgMTQgKy0tCj4gIGRyaXZlcnMvdGFyZ2V0L2lzY3NpL2lzY3NpX3RhcmdldF9lcmwyLmMg
+ICAgICAgICAgfCAgIDggKy0KPiAgZHJpdmVycy90YXJnZXQvaXNjc2kvaXNjc2lfdGFyZ2V0X2xv
+Z2luLmMgICAgICAgICB8ICAyOSArKy0tLS0KPiAgZHJpdmVycy90YXJnZXQvaXNjc2kvaXNjc2lf
+dGFyZ2V0X25lZ28uYyAgICAgICAgICB8ICAgNCArLQo+ICBkcml2ZXJzL3RhcmdldC9pc2NzaS9p
+c2NzaV90YXJnZXRfcGFyYW1ldGVycy5jICAgIHwgIDU4ICsrKysrLS0tLS0tLQo+ICBkcml2ZXJz
+L3RhcmdldC9pc2NzaS9pc2NzaV90YXJnZXRfc2VxX3BkdV9saXN0LmMgIHwgIDM0ICsrKy0tLS0K
+PiAgZHJpdmVycy90YXJnZXQvaXNjc2kvaXNjc2lfdGFyZ2V0X3RwZy5jICAgICAgICAgICB8ICAx
+MyArLS0KPiAgZHJpdmVycy90YXJnZXQvaXNjc2kvaXNjc2lfdGFyZ2V0X3V0aWwuYyAgICAgICAg
+ICB8ICAxMSArLS0KPiAgMTEgZmlsZXMgY2hhbmdlZCwgMTE4IGluc2VydGlvbnMoKyksIDE3MSBk
+ZWxldGlvbnMoLSkKCk9uZSBvZiB0aGVzZSB1cGRhdGUgc3VnZ2VzdGlvbnMgcmVzdWx0ZWQgaW4g
+dGhlIGNvbW1pdCDigJx0YXJnZXQ6IGF2b2lkIE5VTEwKZGVyZWZlcmVuY2UgaW4gQ0hBUCBhdXRo
+IGVycm9yIHBhdGjigJ0gd2hpY2ggaXMgY29uc2lkZXJlZCBmb3IgaW50ZWdyYXRpb24KaW50byBM
+aW51eCBzdGFibGUgdmVyc2lvbnMgbm93LgpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Bh
+dGNoLzEwMTEwNDU5LwpodHRwczovL2xrbWwua2VybmVsLm9yZy9yLzwyMDE3MTIxMzE3MjIzMC4x
+Mjc2Ny0xLWRkaXNzQHN1c2UuZGU+Cmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
+eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC9jb21taXQvZHJpdmVycy90YXJnZXQvaXNj
+c2kvaXNjc2lfdGFyZ2V0X2F1dGguYz9pZM41MTJkNzlkMDQ2NmE2MDQ3OTNhZGRiNmI3NjlkMTJl
+ZTMyNjgyMgoKCk5vdyBJIGFtIGN1cmlvdXMgaWYgbW9yZSByZW1haW5pbmcgY2hhbmdlIHBvc3Np
+YmlsaXRpZXMgY2FuIGJlIHBpY2tlZCB1cApmcm9tIHRoaXMgcGF0Y2ggc2VyaWVzLgoKKiBXb3Vs
+ZCB5b3UgbGlrZSB0byBpbXByb3ZlIGFueSBtb3JlIGltcGxlbWVudGF0aW9uIGRldGFpbHM/Cgoq
+IERvIHlvdSBuZWVkIGFkZGl0aW9uYWwgZXhwbGFuYXRpb25zIGZvciBmdXJ0aGVyIGJlbmVmaXRz
+PwoKUmVnYXJkcywKTWFya3VzCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
+IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEg
+bWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8g
+YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
