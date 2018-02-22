@@ -1,47 +1,33 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Fri, 23 Feb 2018 00:00:33 +0000
-Subject: [PATCH 4/7] drm/virtio: Remove return from void function
-Message-Id: <fd8dc6599c81c7aec6753c8552c1cabb7baa7577.1519343668.git.rodrigosiqueiramelo@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Feb 2018 09:15:34 +0000
+Subject: [PATCH] staging: lustre: selftest: freeing an error pointer
+Message-Id: <20180222091534.GD9883@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+To: lustre-devel@lists.lustre.org
 
-This patch fixes the checkpatch.pl warning:
+We should just return directly if memdup_user() fails. The current code
+tries to free "param" which is an error pointer so it will Oops.
 
-virtgpu_ttm.c:181: WARNING: void function return statements are not
-generally useful
-...
+Fixes: 2baddf262e98 ("staging: lustre: use memdup_user to allocate memory and copy from user")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/gpu/drm/virtio/virtgpu_ttm.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
-index 36655b709eb2..cd4a17a1409a 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
-@@ -177,7 +177,6 @@ static void ttm_bo_man_put_node(struct ttm_mem_type_manager *man,
- 				struct ttm_mem_reg *mem)
- {
- 	mem->mm_node = (void *)NULL;
--	return;
- }
+diff --git a/drivers/staging/lustre/lnet/selftest/conctl.c b/drivers/staging/lustre/lnet/selftest/conctl.c
+index 3c919a536e91..51497cf9a832 100644
+--- a/drivers/staging/lustre/lnet/selftest/conctl.c
++++ b/drivers/staging/lustre/lnet/selftest/conctl.c
+@@ -650,10 +650,8 @@ static int lst_test_add_ioctl(struct lstio_test_args *args)
+ 	if (args->lstio_tes_param) {
+ 		param = memdup_user(args->lstio_tes_param,
+ 				    args->lstio_tes_param_len);
+-		if (IS_ERR(param)) {
+-			rc = PTR_ERR(param);
+-			goto out;
+-		}
++		if (IS_ERR(param))
++			return PTR_ERR(param);
+ 	}
  
- static int ttm_bo_man_init(struct ttm_mem_type_manager *man,
-@@ -244,7 +243,6 @@ static void virtio_gpu_evict_flags(struct ttm_buffer_object *bo,
- 	placement->busy_placement = &placements;
- 	placement->num_placement = 1;
- 	placement->num_busy_placement = 1;
--	return;
- }
- 
- static int virtio_gpu_verify_access(struct ttm_buffer_object *bo,
--- 
-2.16.2
-
+ 	rc = -EFAULT;
