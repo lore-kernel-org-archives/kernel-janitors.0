@@ -1,41 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 08 Feb 2018 14:24:37 +0000
-Subject: [PATCH] pinctrl: ocelot: make function ocelot_pinctrl_probe static
-Message-Id: <20180208142437.11217-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 22 Feb 2018 13:02:43 +0000
+Subject: Re: [PATCH] pinctrl: ocelot: make function ocelot_pinctrl_probe static
+Message-Id: <CACRpkdYf58BsULzazia1R7iXicuZjuThh_+sAx5x4=EHZW1zZg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180208142437.11217-1-colin.king@canonical.com>
+In-Reply-To: <20180208142437.11217-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Feb 8, 2018 at 3:24 PM, Colin King <colin.king@canonical.com> wrote:
 
-The function ocelot_pinctrl_probe is local to the source and does not
-need to be in global scope, so make it static.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The function ocelot_pinctrl_probe is local to the source and does not
+> need to be in global scope, so make it static.
+>
+> Cleans up sparse warning:
+> drivers/pinctrl/pinctrl-ocelot.c:465:5: warning: symbol
+> 'ocelot_pinctrl_probe' was not declared. Should it be static?
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Cleans up sparse warning:
-drivers/pinctrl/pinctrl-ocelot.c:465:5: warning: symbol
-'ocelot_pinctrl_probe' was not declared. Should it be static?
+Patch applied.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/pinctrl-ocelot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index 01a50d969111..a9423238471e 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -462,7 +462,7 @@ static const struct of_device_id ocelot_pinctrl_of_match[] = {
- 	{},
- };
- 
--int ocelot_pinctrl_probe(struct platform_device *pdev)
-+static int ocelot_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct ocelot_pinctrl *info;
--- 
-2.15.1
-
+Yours,
+Linus Walleij
