@@ -1,40 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Feb 2018 17:22:59 +0000
-Subject: [PATCH] xen/pvcalls: fix null pointer dereference on map->sock
-Message-Id: <20180222172259.10381-1-colin.king@canonical.com>
+From: Juergen Gross <jgross@suse.com>
+Date: Thu, 22 Feb 2018 19:19:51 +0000
+Subject: Re: [PATCH] xen/pvcalls: fix null pointer dereference on map->sock
+Message-Id: <ad17f925-bf95-967d-45d8-3248aea6ddcd@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180222172259.10381-1-colin.king@canonical.com>
+In-Reply-To: <20180222172259.10381-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org
+To: Colin King <colin.king@canonical.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, xen-devel@lists.xenproject.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 22/02/18 18:22, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently if map is null then a potential null pointer deference
+> occurs when calling sock_release on map->sock.  I believe the
+> actual intention was to call sock_release on sock instead. Fix
+> this.
+> 
+> Fixes: 5db4d286a8ef ("xen/pvcalls: implement connect command")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Currently if map is null then a potential null pointer deference
-occurs when calling sock_release on map->sock.  I believe the
-actual intention was to call sock_release on sock instead. Fix
-this.
+Hmm, yes, kind of obvious. :-)
 
-Fixes: 5db4d286a8ef ("xen/pvcalls: implement connect command")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/xen/pvcalls-back.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
-index 156e5aea36db..b1092fbefa63 100644
---- a/drivers/xen/pvcalls-back.c
-+++ b/drivers/xen/pvcalls-back.c
-@@ -416,7 +416,7 @@ static int pvcalls_back_connect(struct xenbus_device *dev,
- 					sock);
- 	if (!map) {
- 		ret = -EFAULT;
--		sock_release(map->sock);
-+		sock_release(sock);
- 	}
- 
- out:
--- 
-2.15.1
+
+Juergen
 
