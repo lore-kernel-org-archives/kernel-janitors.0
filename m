@@ -1,27 +1,39 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 07 Feb 2018 15:38:45 +0000
-Subject: Re: [PATCH] coccinelle: deref_null: avoid useless computation
-Message-Id: <CAK7LNARNBYVK+Fjyx_31KFCx67Y2XxuCxTw9aSPrkWB+9h4fNg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Feb 2018 17:50:12 +0000
+Subject: [PATCH] MIPS: ath25: check for kzalloc allocation failure
+Message-Id: <20180222175012.11076-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1517643898-2801-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1517643898-2801-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2018-02-03 16:44 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> The effect of the rules ifm1, pr11, and pr12 is only used in the final rule,
-> which depends on context && !org && !report.  Thus these rules should only
-> be performed in those circumstances.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to linux-kbuild/kbuild.  Thanks!
+Currently there is no null check on a failed allocation of board_data,
+and hence a null pointer dereference will occurr.  Fix this by checking
+for the out of memory null pointer.
 
+Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/mips/ath25/board.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/arch/mips/ath25/board.c b/arch/mips/ath25/board.c
+index 9ab48ff80c1c..6d11ae581ea7 100644
+--- a/arch/mips/ath25/board.c
++++ b/arch/mips/ath25/board.c
+@@ -135,6 +135,8 @@ int __init ath25_find_config(phys_addr_t base, unsigned long size)
+ 	}
+ 
+ 	board_data = kzalloc(BOARD_CONFIG_BUFSZ, GFP_KERNEL);
++	if (!board_data)
++		goto error;
+ 	ath25_board.config = (struct ath25_boarddata *)board_data;
+ 	memcpy_fromio(board_data, bcfg, 0x100);
+ 	if (broken_boarddata) {
 -- 
-Best Regards
-Masahiro Yamada
+2.15.1
+
