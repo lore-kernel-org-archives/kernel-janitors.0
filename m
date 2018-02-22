@@ -1,34 +1,48 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Wed, 21 Feb 2018 16:15:12 +0000
-Subject: Re: [PATCH] iio:dummy: Fix coding style in simple_dummy and evgen
-Message-Id: <20180221161512.bxpqtjwg4sxjphki@smtp.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Feb 2018 17:39:17 +0000
+Subject: [PATCH] usbip: vudc: fix null pointer dereference on udc->lock
+Message-Id: <20180222173917.10841-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180221140533.lll6vbwg3gyjrlvi@smtp.gmail.com>
- <CAEnQRZAhZ=PR+X3=HYRQKkTHUnczWcsv4945piCrwK31PbuXGg@mail.gmail.com>
-In-Reply-To: <CAEnQRZAhZ=PR+X3=HYRQKkTHUnczWcsv4945piCrwK31PbuXGg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Daniel Baluta <daniel.baluta@nxp.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Shuah Khan <shuah@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/21, Daniel Baluta wrote:
-> On Wed, Feb 21, 2018 at 4:05 PM, Rodrigo Siqueira
-> <rodrigosiqueiramelo@gmail.com> wrote:
-> > This patch fixes the following checkpatch.pl warnings:
-> >
-> > drivers/iio/dummy/iio_simple_dummy.c:603: WARNING: Block comments should
-> > align the * on each line
-> > drivers/iio/dummy/iio_dummy_evgen.c:151: WARNING: Symbolic permissions
-> > 'S_IWUSR' are not preferred. Consider using octal permissions '0200'...
-> > drivers/iio/dummy/iio_simple_dummy.c:693: CHECK: Please use a blank line
-> > after function/struct/union/enum declarations
-> 
-> You are trying to fix 3 things in one patch here. Please don't do that.
-> 
-> One patch per change please.
+From: Colin Ian King <colin.king@canonical.com>
 
-Even for a simple comment line fix?
+Currently the driver attempts to spin lock on udc->lock before a NULL
+pointer check is performed on udc, hence there is a potential null
+pointer dereference on udc->lock.  Fix this by moving the null check
+on udc before the lock occurs.
+
+Fixes: ea6873a45a22 ("usbip: vudc: Add SysFS infrastructure for VUDC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/usbip/vudc_sysfs.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/usbip/vudc_sysfs.c b/drivers/usb/usbip/vudc_sysfs.c
+index d86f72bbbb91..6dcd3ff655c3 100644
+--- a/drivers/usb/usbip/vudc_sysfs.c
++++ b/drivers/usb/usbip/vudc_sysfs.c
+@@ -105,10 +105,14 @@ static ssize_t usbip_sockfd_store(struct device *dev, struct device_attribute *a
+ 	if (rv != 0)
+ 		return -EINVAL;
  
-> thanks,
-> Daniel.
++	if (!udc) {
++		dev_err(dev, "no device");
++		return -ENODEV;
++	}
+ 	spin_lock_irqsave(&udc->lock, flags);
+ 	/* Don't export what we don't have */
+-	if (!udc || !udc->driver || !udc->pullup) {
+-		dev_err(dev, "no device or gadget not bound");
++	if (!udc->driver || !udc->pullup) {
++		dev_err(dev, "gadget not bound");
+ 		ret = -ENODEV;
+ 		goto unlock;
+ 	}
+-- 
+2.15.1
+
