@@ -1,31 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 14:17:35 +0000
-Subject: Re: [PATCH 2/2] gpio: omap: Improve a size determination in omap_gpio_probe()
-Message-Id: <CACRpkdZF+_vG3FF4i=FzJAUnCZqqOKGZp6DqHhUOZQHQ2ZWr5Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Feb 2018 18:08:53 +0000
+Subject: [PATCH] MIPS: OCTEON: irq: check for null return on kzalloc allocation
+Message-Id: <20180222180853.11505-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8ec31664-badc-5454-b759-ae9132833589@users.sourceforge.net> <422a4c63-5ffc-2b40-4d9a-cf947d4af2fd@users.sourceforge.net>
-In-Reply-To: <422a4c63-5ffc-2b40-4d9a-cf947d4af2fd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>, "Steven J . Hill" <Steven.Hill@cavium.com>, David Daney <david.daney@cavium.com>, linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 10:08 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Feb 2018 21:49:22 +0100
->
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The allocation of host_data is not null checked, leading to a
+null pointer dereference if the allocation fails. Fix this by
+adding a null check and return with -ENOMEM.
 
-Patch applied.
+Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/mips/cavium-octeon/octeon-irq.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
+index b993d9f2c9b9..203e1d2a56d5 100644
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2277,6 +2277,8 @@ static int __init octeon_irq_init_cib(struct device_node *ciu_node,
+ 	}
+ 
+ 	host_data = kzalloc(sizeof(*host_data), GFP_KERNEL);
++	if (!host_data)
++		return -ENOMEM;
+ 	raw_spin_lock_init(&host_data->lock);
+ 
+ 	addr = of_get_address(ciu_node, 0, NULL, NULL);
+-- 
+2.15.1
+
