@@ -1,29 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 22 Feb 2018 14:14:38 +0000
-Subject: Re: [PATCH 1/2] gpio: timberdale: Delete an error message for a failed memory allocation in timbgpio
-Message-Id: <CACRpkdZ=nVFP3ROMyBAudXO1Ow+nff+o-X0UY6zDrkY43VT5_g@mail.gmail.com>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Thu, 22 Feb 2018 23:59:33 +0000
+Subject: [PATCH 0/7] drm/virtio: Checkpatch cleanup for virtio
+Message-Id: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net> <758bf4e7-5beb-dbf6-54ed-6c691a56bbee@users.sourceforge.net>
-In-Reply-To: <758bf4e7-5beb-dbf6-54ed-6c691a56bbee@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-On Sat, Feb 10, 2018 at 9:32 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+This patchset fixes warnings and errors found by checkpatch.pl in the
+drm/virtio:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Feb 2018 21:09:08 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+* Removes return from void function;
+* Adds */ in block comments to separate line;
+* Adds blank line after variable declarations;
+* Adds tabs at the start of a line;
+* Replaces 'unsigned' for 'unsigned int';
+* Removes multiple blank lines;
+* Adds spaces around operators.
 
-Patch applied.
+Rodrigo Siqueira (7):
+  drm/virtio: Add tabs at the start of a line
+  drm/virtio: Add blank line after variable declarations
+  drm/virtio: Add */ in block comments to separate line
+  drm/virtio: Remove return from void function
+  drm/virtio: Replace 'unsigned' for 'unsigned int'
+  drm/virtio: Remove multiple blank lines
+  drm/virtio: Add spaces around operators
 
-Yours,
-Linus Walleij
+ drivers/gpu/drm/virtio/virtgpu_display.c |  7 ++++---
+ drivers/gpu/drm/virtio/virtgpu_drv.c     |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_drv.h     |  8 ++++----
+ drivers/gpu/drm/virtio/virtgpu_fb.c      |  6 +++++-
+ drivers/gpu/drm/virtio/virtgpu_gem.c     |  1 +
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c   | 23 +++++++++++++----------
+ drivers/gpu/drm/virtio/virtgpu_prime.c   |  4 ++--
+ drivers/gpu/drm/virtio/virtgpu_ttm.c     |  4 +---
+ drivers/gpu/drm/virtio/virtgpu_vq.c      | 13 ++++++++-----
+ 9 files changed, 39 insertions(+), 29 deletions(-)
+
+-- 
+2.16.2
+
