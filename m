@@ -1,43 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 13:34:48 +0000
-Subject: [PATCH 2/2] crypto: sahara: Improve a size determination in sahara_probe()
-Message-Id: <1ef7c25b-ff37-6a49-b4ac-02a01b0a10dd@users.sourceforge.net>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Thu, 22 Feb 2018 23:59:47 +0000
+Subject: [PATCH 1/7] drm/virtio: Add tabs at the start of a line
+Message-Id: <1c77c233d4454ee2bdb85beaf17d413e310fac0a.1519343668.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6a487cd1-c05c-3d5d-ec6b-a6a2ae376f05@users.sourceforge.net>
-In-Reply-To: <6a487cd1-c05c-3d5d-ec6b-a6a2ae376f05@users.sourceforge.net>
+References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 14:14:05 +0100
+This patch fixes the checkpatch.pl errors:
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+drivers/gpu/drm/virtio/virtgpu_drv.h:371: ERROR: code indent should use
+tabs where possible
+...
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- drivers/crypto/sahara.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/virtio/virtgpu_display.c | 2 +-
+ drivers/gpu/drm/virtio/virtgpu_drv.h     | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/crypto/sahara.c b/drivers/crypto/sahara.c
-index 9f3cdda59139..0f2245e1af2b 100644
---- a/drivers/crypto/sahara.c
-+++ b/drivers/crypto/sahara.c
-@@ -1397,7 +1397,7 @@ static int sahara_probe(struct platform_device *pdev)
- 	int err;
- 	int i;
+diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+index 19114a3c5ee4..22513d7f895c 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_display.c
++++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+@@ -387,7 +387,7 @@ int virtio_gpu_modeset_init(struct virtio_gpu_device *vgdev)
+ 	for (i = 0 ; i < vgdev->num_scanouts; ++i)
+ 		vgdev_output_init(vgdev, i);
  
--	dev = devm_kzalloc(&pdev->dev, sizeof(struct sahara_dev), GFP_KERNEL);
-+	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
- 		return -ENOMEM;
+-        drm_mode_config_reset(vgdev->ddev);
++	drm_mode_config_reset(vgdev->ddev);
+ 	return 0;
+ }
  
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+index da2fb585fea4..59801728cfeb 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -363,12 +363,12 @@ int virtgpu_gem_prime_pin(struct drm_gem_object *obj);
+ void virtgpu_gem_prime_unpin(struct drm_gem_object *obj);
+ struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj);
+ struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
+-        struct drm_device *dev, struct dma_buf_attachment *attach,
+-        struct sg_table *sgt);
++	struct drm_device *dev, struct dma_buf_attachment *attach,
++	struct sg_table *sgt);
+ void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj);
+ void virtgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
+ int virtgpu_gem_prime_mmap(struct drm_gem_object *obj,
+-                                struct vm_area_struct *vma);
++			   struct vm_area_struct *vma);
+ 
+ static inline struct virtio_gpu_object*
+ virtio_gpu_object_ref(struct virtio_gpu_object *bo)
 -- 
-2.16.1
+2.16.2
 
