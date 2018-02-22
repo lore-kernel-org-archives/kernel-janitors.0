@@ -1,33 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Feb 2018 13:56:00 +0000
+From: David Disseldorp <ddiss@suse.de>
+Date: Thu, 22 Feb 2018 14:19:14 +0000
 Subject: Re: [PATCH 0/8] target-iSCSI: Adjustments for several function implementations
-Message-Id: <20180222135600.5vv7vzw7sa5metcb@mwanda>
+Message-Id: <20180222151914.029b8b6c@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 In-Reply-To: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: target-devel@vger.kernel.org
 
-T24gVGh1LCBGZWIgMjIsIDIwMTggYXQgMDI6MzY6MjRQTSArMDEwMCwgRGF2aWQgRGlzc2VsZG9y
-cCB3cm90ZToKPiBbY2MgbGlzdCB0cmltbWVkXQo+IAo+IE9uIFdlZCwgMjEgRmViIDIwMTggMTc6
-NDU6MzUgKzAxMDAsIFNGIE1hcmt1cyBFbGZyaW5nIHdyb3RlOgo+IAo+IC4uLgo+ID4gT25lIG9m
-IHRoZXNlIHVwZGF0ZSBzdWdnZXN0aW9ucyByZXN1bHRlZCBpbiB0aGUgY29tbWl0IOKAnHRhcmdl
-dDogYXZvaWQgTlVMTAo+ID4gZGVyZWZlcmVuY2UgaW4gQ0hBUCBhdXRoIGVycm9yIHBhdGjigJ0g
-d2hpY2ggaXMgY29uc2lkZXJlZCBmb3IgaW50ZWdyYXRpb24KPiA+IGludG8gTGludXggc3RhYmxl
-IHZlcnNpb25zIG5vdy4KPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTAx
-MTA0NTkvCj4gPiBodHRwczovL2xrbWwua2VybmVsLm9yZy9yLzwyMDE3MTIxMzE3MjIzMC4xMjc2
-Ny0xLWRkaXNzQHN1c2UuZGU+Cj4gPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGlu
-dXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvY29tbWl0L2RyaXZlcnMvdGFyZ2V0L2lz
-Y3NpL2lzY3NpX3RhcmdldF9hdXRoLmM/aWTONTEyZDc5ZDA0NjZhNjA0NzkzYWRkYjZiNzY5ZDEy
-ZWUzMjY4MjIKPiAKPiBZb3UncmUgMS84IHBhdGNoIGhhZCBhbiBhY3R1YWwgYnVnIGZpeCBoaWRk
-ZW4gYW1vbmdzdCB0aGUgc3R5bGUgY2h1cm4uCj4gSSBkb24ndCBzZWUgYW55IHN1Y2ggZml4ZXMg
-aW4gdGhlIG90aGVyIHBhdGNoZXMuCj4gCgpDYWxsaW5nIGNyeXB0b19mcmVlX3NoYXNoKE5VTEwp
-IGlzIGFjdHVhbGx5IGZpbmUuICBJdCBkb2Vzbid0CmRlcmVmZXJlbmNlIHRoZSBwYXJhbWV0ZXIs
-IGl0IGp1c3QgZG9lcyBwb2ludGVyIG1hdGggb24gaXQgaW4KY3J5cHRvX3NoYXNoX3RmbSgpIGFu
-ZCByZXR1cm5zIGlmIGl0J3MgTlVMTCBpbiBjcnlwdG9fZGVzdHJveV90Zm0oKS4KCnJlZ2FyZHMs
-CmRhbiBjYXJwZW50ZXIKCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRo
-ZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVz
-c2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
-IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+On Thu, 22 Feb 2018 16:56:00 +0300, Dan Carpenter wrote:
+
+...
+> Calling crypto_free_shash(NULL) is actually fine.  It doesn't
+> dereference the parameter, it just does pointer math on it in
+> crypto_shash_tfm() and returns if it's NULL in crypto_destroy_tfm().
+
+Bleh, you're right. I read the crypto_shash_tfm() code path
+incorrectly.
