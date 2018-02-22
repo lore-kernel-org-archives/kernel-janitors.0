@@ -1,60 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Feb 2018 21:26:16 +0000
-Subject: [PATCH 1/4] HID: logitech-dj: Delete an error message for a failed memory allocation in two function
-Message-Id: <8c8c6986-9f72-4dfd-12f6-a530c4788398@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Feb 2018 09:13:59 +0000
+Subject: [PATCH] sh: ptrace: remove a bogus check
+Message-Id: <20180222091359.GB9883@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
-In-Reply-To: <12e9f2fd-5e85-fe8b-5eec-cd1712b07166@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-sh@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Feb 2018 21:36:18 +0100
+We made "addr" unsigned back in 2010 in commit 9b05a69e0534 ("ptrace:
+change signature of arch_ptrace()").  The check for negatives was always
+just a basic sanity check that duplicated other stricter checks, but now
+it causes static checker warnings so we should remove it.
 
-Omit an extra message for a memory allocation failure in these functions.
+Here is the Smatch warning for reference:
 
-This issue was detected by using the Coccinelle software.
+    arch/sh/kernel/ptrace_64.c:399 arch_ptrace()
+    warn: unsigned 'addr' is never less than zero.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-logitech-dj.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 826fa1e1c8d9..4c92b2cb5768 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -418,12 +418,8 @@ static void logi_dj_recv_add_djhid_device(struct dj_receiver_dev *djrcv_dev,
- 	strlcat(dj_hiddev->phys, tmpstr, sizeof(dj_hiddev->phys));
+diff --git a/arch/sh/kernel/ptrace_64.c b/arch/sh/kernel/ptrace_64.c
+index 1e0656d9e7af..b38d53be168a 100644
+--- a/arch/sh/kernel/ptrace_64.c
++++ b/arch/sh/kernel/ptrace_64.c
+@@ -396,7 +396,7 @@ long arch_ptrace(struct task_struct *child, long request,
+ 		unsigned long tmp;
  
- 	dj_dev = kzalloc(sizeof(struct dj_device), GFP_KERNEL);
--
--	if (!dj_dev) {
--		dev_err(&djrcv_hdev->dev, "%s: failed allocating dj_device\n",
--			__func__);
-+	if (!dj_dev)
- 		goto dj_device_allocate_fail;
--	}
+ 		ret = -EIO;
+-		if ((addr & 3) || addr < 0)
++		if (addr & 3)
+ 			break;
  
- 	dj_dev->reports_supported = get_unaligned_le32(
- 		dj_report->report_params + DEVICE_PAIRED_RF_REPORT_TYPE);
-@@ -1011,11 +1007,9 @@ static int logi_dj_probe(struct hid_device *hdev,
- 	/* Treat interface 2 */
+ 		if (addr < sizeof(struct pt_regs))
+@@ -424,7 +424,7 @@ long arch_ptrace(struct task_struct *child, long request,
+                    this could crash the kernel or result in a security
+                    loophole. */
+ 		ret = -EIO;
+-		if ((addr & 3) || addr < 0)
++		if (addr & 3)
+ 			break;
  
- 	djrcv_dev = kzalloc(sizeof(struct dj_receiver_dev), GFP_KERNEL);
--	if (!djrcv_dev) {
--		dev_err(&hdev->dev,
--			"%s:failed allocating dj_receiver_dev\n", __func__);
-+	if (!djrcv_dev)
- 		return -ENOMEM;
--	}
-+
- 	djrcv_dev->hdev = hdev;
- 	INIT_WORK(&djrcv_dev->work, delayedwork_callback);
- 	spin_lock_init(&djrcv_dev->lock);
--- 
-2.16.1
-
+ 		if (addr < sizeof(struct pt_regs)) {
