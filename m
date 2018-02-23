@@ -1,38 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 Feb 2018 09:46:11 +0000
-Subject: [PATCH 2/2] scsi: myrs: bitwise vs logical OR typo
-Message-Id: <20180220094611.GB22646@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 23 Feb 2018 08:23:00 +0000
+Subject: Re: [2/2] crypto: bcm: One function call less in do_shash() after error detection
+Message-Id: <46bd73e1-73ae-24b2-49d6-623328c14e76@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <68946b12-83d6-ab74-fd54-71b23cf9b7ef@users.sourceforge.net>
+ <55bdcf76-f1c9-180d-6798-959e617b10ac@users.sourceforge.net>
+ <20180222134231.GC28447@gondor.apana.org.au>
+In-Reply-To: <20180222134231.GC28447@gondor.apana.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Colin Ian King <colin.king@canonical.com>, "David S. Miller" <davem@davemloft.net>, Rob Rice <rob.rice@broadcom.com>, Steve Lin <steven.lin1@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We accidentally used a logical || instead of a | so these bit masks are
-off.
+> This patch is pointless as kfree on NULL is a no-op.
 
-Fixes: 8a8606895947 ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I prefer to avoid unnecessary function calls generally.
 
-diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
-index eaa9d143a282..db3c84fc3a29 100644
---- a/drivers/scsi/myrs.c
-+++ b/drivers/scsi/myrs.c
-@@ -907,7 +907,7 @@ static void myrs_log_event(myrs_hba *cs, myrs_event *ev)
- 	}
- 	if (sshdr.sense_key = VENDOR_SPECIFIC &&
- 	    (sshdr.asc = 0x80 || sshdr.asc = 0x81))
--		ev->ev_code = ((sshdr.asc - 0x80) << 8 || sshdr.ascq);
-+		ev->ev_code = ((sshdr.asc - 0x80) << 8 | sshdr.ascq);
- 	while (true) {
- 		ev_code = myrs_ev_list[ev_idx].ev_code;
- 		if (ev_code = ev->ev_code || ev_code = 0)
-@@ -2201,7 +2201,7 @@ static void myrs_handle_scsi(myrs_hba *cs, myrs_cmdblk *cmd_blk,
- 	    status = DAC960_V2_DeviceNonresponsive2)
- 		scmd->result = (DID_BAD_TARGET << 16);
- 	else
--		scmd->result = (DID_OK << 16) || status;
-+		scmd->result = (DID_OK << 16) | status;
- 	scmd->scsi_done(scmd);
- }
- 
+Regards,
+Markus
