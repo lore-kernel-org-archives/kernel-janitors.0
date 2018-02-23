@@ -1,127 +1,85 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 12:40:33 +0000
-Subject: [PATCH 3/3] pata_macio: Adjust 11 checks for null pointers
-Message-Id: <046bc8ef-c7b3-91ed-8fbc-1609a80c4c7b@users.sourceforge.net>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Fri, 23 Feb 2018 00:00:45 +0000
+Subject: [PATCH 5/7] drm/virtio: Replace 'unsigned' for 'unsigned int'
+Message-Id: <ac9c4110785e6519801d44c57d4f05c3e0cdad53.1519343668.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e87cf7d-eda2-12d9-af01-17f6619cda72@users.sourceforge.net>
-In-Reply-To: <1e87cf7d-eda2-12d9-af01-17f6619cda72@users.sourceforge.net>
+References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 13:20:03 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+This patch fixes the checkpatch.pl warning:
 
-The script “checkpatch.pl” pointed information out like the following.
+drivers/gpu/drm/virtio/virtgpu_display.c:64: WARNING: Prefer 'unsigned
+int' to bare use of 'unsigned'
+...
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- drivers/ata/pata_macio.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_display.c | 4 ++--
+ drivers/gpu/drm/virtio/virtgpu_drv.h     | 2 +-
+ drivers/gpu/drm/virtio/virtgpu_fb.c      | 2 +-
+ drivers/gpu/drm/virtio/virtgpu_ttm.c     | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index dc40af4c615c..04d546d672c0 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -405,23 +405,23 @@ static void pata_macio_set_timings(struct ata_port *ap,
- 
- 	/* Now get the PIO timings */
- 	t = pata_macio_find_timing(priv, adev->pio_mode);
--	if (t = NULL) {
-+	if (!t) {
- 		dev_warn(priv->dev, "Invalid PIO timing requested: 0x%x\n",
- 			 adev->pio_mode);
- 		t = pata_macio_find_timing(priv, XFER_PIO_0);
- 	}
--	BUG_ON(t = NULL);
-+	BUG_ON(!t);
- 
- 	/* PIO timings only ever use the first treg */
- 	priv->treg[adev->devno][0] |= t->reg1;
- 
- 	/* Now get DMA timings */
- 	t = pata_macio_find_timing(priv, adev->dma_mode);
--	if (t = NULL || (t->reg1 = 0 && t->reg2 = 0)) {
-+	if (!t || (t->reg1 = 0 && t->reg2 = 0)) {
- 		dev_dbg(priv->dev, "DMA timing not set yet, using MW_DMA_0\n");
- 		t = pata_macio_find_timing(priv, XFER_MW_DMA_0);
- 	}
--	BUG_ON(t = NULL);
-+	BUG_ON(!t);
- 
- 	/* DMA timings can use both tregs */
- 	priv->treg[adev->devno][0] |= t->reg1;
-@@ -705,7 +705,7 @@ static int pata_macio_port_start(struct ata_port *ap)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+index 2d1b25630c0e..8cc8c34d67f5 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_display.c
++++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+@@ -61,9 +61,9 @@ static void virtio_gpu_user_framebuffer_destroy(struct drm_framebuffer *fb)
+ static int
+ virtio_gpu_framebuffer_surface_dirty(struct drm_framebuffer *fb,
+ 				     struct drm_file *file_priv,
+-				     unsigned flags, unsigned color,
++				     unsigned int flags, unsigned int color,
+ 				     struct drm_clip_rect *clips,
+-				     unsigned num_clips)
++				     unsigned int num_clips)
  {
- 	struct pata_macio_priv *priv = ap->private_data;
+ 	struct virtio_gpu_framebuffer *virtio_gpu_fb
+ 		= to_virtio_gpu_framebuffer(fb);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+index 59801728cfeb..d25c8ca224aa 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -246,7 +246,7 @@ int virtio_gpu_fbdev_init(struct virtio_gpu_device *vgdev);
+ void virtio_gpu_fbdev_fini(struct virtio_gpu_device *vgdev);
+ int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *qfb,
+ 			     struct drm_clip_rect *clips,
+-			     unsigned num_clips);
++			     unsigned int num_clips);
+ /* virtio vg */
+ int virtio_gpu_alloc_vbufs(struct virtio_gpu_device *vgdev);
+ void virtio_gpu_free_vbufs(struct virtio_gpu_device *vgdev);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
+index b933cbba0685..8af69ab58b89 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_fb.c
++++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
+@@ -118,7 +118,7 @@ static int virtio_gpu_dirty_update(struct virtio_gpu_framebuffer *fb,
  
--	if (ap->ioaddr.bmdma_addr = NULL)
-+	if (!ap->ioaddr.bmdma_addr)
- 		return 0;
- 
- 	/* Allocate space for the DBDMA commands.
-@@ -717,7 +717,7 @@ static int pata_macio_port_start(struct ata_port *ap)
- 		dmam_alloc_coherent(priv->dev,
- 				    (MAX_DCMDS + 2) * sizeof(struct dbdma_cmd),
- 				    &priv->dma_table_dma, GFP_KERNEL);
--	if (priv->dma_table_cpu = NULL) {
-+	if (!priv->dma_table_cpu) {
- 		dev_err(priv->dev, "Unable to allocate DMA command list\n");
- 		ap->ioaddr.bmdma_addr = NULL;
- 		ap->mwdma_mask = 0;
-@@ -1055,7 +1055,7 @@ static int pata_macio_common_init(struct pata_macio_priv *priv,
- 	pinfo.private_data	= priv;
- 
- 	priv->host = ata_host_alloc_pinfo(priv->dev, ppi, 1);
--	if (priv->host = NULL) {
-+	if (!priv->host) {
- 		dev_err(priv->dev, "Failed to allocate ATA port structure\n");
- 		return -ENOMEM;
+ int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *vgfb,
+ 			     struct drm_clip_rect *clips,
+-			     unsigned num_clips)
++			     unsigned int num_clips)
+ {
+ 	struct virtio_gpu_device *vgdev = vgfb->base.dev->dev_private;
+ 	struct virtio_gpu_object *obj = gem_to_virtio_gpu_obj(vgfb->obj);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+index cd4a17a1409a..580323ceeb8a 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+@@ -224,7 +224,7 @@ static int virtio_gpu_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
+ 		man->default_caching = TTM_PL_FLAG_CACHED;
+ 		break;
+ 	default:
+-		DRM_ERROR("Unsupported memory type %u\n", (unsigned)type);
++		DRM_ERROR("Unsupported memory type %u\n", (unsigned int)type);
+ 		return -EINVAL;
  	}
-@@ -1065,7 +1065,7 @@ static int pata_macio_common_init(struct pata_macio_priv *priv,
- 
- 	/* Map base registers */
- 	priv->tfregs = devm_ioremap(priv->dev, tfregs, 0x100);
--	if (priv->tfregs = NULL) {
-+	if (!priv->tfregs) {
- 		dev_err(priv->dev, "Failed to map ATA ports\n");
- 		return -ENOMEM;
- 	}
-@@ -1075,14 +1075,14 @@ static int pata_macio_common_init(struct pata_macio_priv *priv,
- 	if (dmaregs != 0) {
- 		dma_regs = devm_ioremap(priv->dev, dmaregs,
- 					sizeof(struct dbdma_regs));
--		if (dma_regs = NULL)
-+		if (!dma_regs)
- 			dev_warn(priv->dev, "Failed to map ATA DMA registers\n");
- 	}
- 
- 	/* If chip has local feature control, map those regs too */
- 	if (fcregs != 0) {
- 		priv->kauai_fcr = devm_ioremap(priv->dev, fcregs, 4);
--		if (priv->kauai_fcr = NULL) {
-+		if (!priv->kauai_fcr) {
- 			dev_err(priv->dev, "Failed to map ATA FCR register\n");
- 			return -ENOMEM;
- 		}
-@@ -1258,7 +1258,7 @@ static int pata_macio_pci_attach(struct pci_dev *pdev,
- 
- 	/* We cannot use a MacIO controller without its OF device node */
- 	np = pci_device_to_OF_node(pdev);
--	if (np = NULL) {
-+	if (!np) {
- 		dev_err(&pdev->dev,
- 			"Cannot find OF device node for controller\n");
- 		return -ENODEV;
+ 	return 0;
 -- 
-2.16.1
+2.16.2
 
