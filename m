@@ -1,7 +1,7 @@
 From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Fri, 23 Feb 2018 00:00:17 +0000
-Subject: [PATCH 3/7] drm/virtio: Add */ in block comments to separate line
-Message-Id: <f0bd4104a7d26bf7561c3a2b4632041c5411f1f2.1519343668.git.rodrigosiqueiramelo@gmail.com>
+Date: Fri, 23 Feb 2018 00:01:10 +0000
+Subject: [PATCH 7/7] drm/virtio: Add spaces around operators
+Message-Id: <8402b55696b44483ba2e1f6aaeb53bf709ffbfe7.1519343668.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
@@ -11,61 +11,90 @@ Content-Transfer-Encoding: 7bit
 To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-This patch fixes the checkpatch.pl warning:
+This patch fixes the checkpatch.pl check:
 
-virtgpu_ioctl.c:551: WARNING: Block comments use a trailing */ on a
-separate line
+virtgpu_ioctl.c:535: CHECK: spaces preferred around that '|' (ctx:VxV)
+virtgpu_vq.c:277: CHECK: spaces preferred around that '+' (ctx:VxV)
 ...
 
 Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_ioctl.c | 3 ++-
- drivers/gpu/drm/virtio/virtgpu_prime.c | 3 ++-
- drivers/gpu/drm/virtio/virtgpu_vq.c    | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 18 +++++++++---------
+ drivers/gpu/drm/virtio/virtgpu_vq.c    |  6 +++---
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 86243f131fc1..d52a86eaa884 100644
+index d52a86eaa884..04e09fc56f66 100644
 --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
 +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -548,7 +548,8 @@ struct drm_ioctl_desc virtio_gpu_ioctls[DRM_VIRTIO_NUM_IOCTLS] = {
- 			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
+@@ -532,34 +532,34 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 
+ struct drm_ioctl_desc virtio_gpu_ioctls[DRM_VIRTIO_NUM_IOCTLS] = {
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_MAP, virtio_gpu_map_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
+ 
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_EXECBUFFER, virtio_gpu_execbuffer_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
+ 
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_GETPARAM, virtio_gpu_getparam_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
+ 
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_RESOURCE_CREATE,
+ 			  virtio_gpu_resource_create_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
+ 
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_RESOURCE_INFO, virtio_gpu_resource_info_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
  
  	/* make transfer async to the main ring? - no sure, can we
--	   thread these in the underlying GL */
-+	 * thread these in the underlying GL
-+	 */
+ 	 * thread these in the underlying GL
+ 	 */
  	DRM_IOCTL_DEF_DRV(VIRTGPU_TRANSFER_FROM_HOST,
  			  virtio_gpu_transfer_from_host_ioctl,
- 			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
-diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
-index 385e0eb9826a..6c6e9dbab096 100644
---- a/drivers/gpu/drm/virtio/virtgpu_prime.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
-@@ -25,7 +25,8 @@
- #include "virtgpu_drv.h"
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_TRANSFER_TO_HOST,
+ 			  virtio_gpu_transfer_to_host_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
  
- /* Empty Implementations as there should not be any other driver for a virtual
-- * device that might share buffers with virtgpu */
-+ * device that might share buffers with virtgpu
-+ */
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_WAIT, virtio_gpu_wait_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
  
- int virtgpu_gem_prime_pin(struct drm_gem_object *obj)
- {
+ 	DRM_IOCTL_DEF_DRV(VIRTGPU_GET_CAPS, virtio_gpu_get_caps_ioctl,
+-			  DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW),
++			  DRM_AUTH | DRM_UNLOCKED | DRM_RENDER_ALLOW),
+ };
 diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 16c05bc34bef..809d20eb6571 100644
+index 18c78a7fa044..48e4f1df6e5d 100644
 --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
 +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -383,7 +383,8 @@ static int virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
+@@ -274,7 +274,7 @@ static int virtio_gpu_queue_ctrl_buffer_locked(struct virtio_gpu_device *vgdev,
+ 		return -ENODEV;
+ 
+ 	sg_init_one(&vcmd, vbuf->buf, vbuf->size);
+-	sgs[outcnt+incnt] = &vcmd;
++	sgs[outcnt + incnt] = &vcmd;
+ 	outcnt++;
+ 
+ 	if (vbuf->data_size) {
+@@ -709,8 +709,8 @@ void virtio_gpu_cmd_context_create(struct virtio_gpu_device *vgdev, uint32_t id,
+ 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_CTX_CREATE);
+ 	cmd_p->hdr.ctx_id = cpu_to_le32(id);
+ 	cmd_p->nlen = cpu_to_le32(nlen);
+-	strncpy(cmd_p->debug_name, name, sizeof(cmd_p->debug_name)-1);
+-	cmd_p->debug_name[sizeof(cmd_p->debug_name)-1] = 0;
++	strncpy(cmd_p->debug_name, name, sizeof(cmd_p->debug_name) - 1);
++	cmd_p->debug_name[sizeof(cmd_p->debug_name) - 1] = 0;
+ 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
  }
  
- /* just create gem objects for userspace and long lived objects,
--   just use dma_alloced pages for the queue objects? */
-+ * just use dma_alloced pages for the queue objects?
-+ */
- 
- /* create a basic resource */
- void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
 -- 
 2.16.2
 
