@@ -1,29 +1,36 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 28 Feb 2018 21:14:05 +0000
-Subject: Re: [PATCH 1/3] RDMA/iwpm: Delete an error message for a failed memory allocation in iwpm_create_nlm
-Message-Id: <20180228211405.GB13394@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 14:37:38 +0000
+Subject: [PATCH] ASoC: pxa: remove duplicated bit-wise or of SNDRV_PCM_FMTBIT_S24_LE
+Message-Id: <20180223143738.29600-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
- <ac5f9bdd-4924-2613-f074-0dd285427604@users.sourceforge.net>
-In-Reply-To: <ac5f9bdd-4924-2613-f074-0dd285427604@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>, Doug Ledford <dledford@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Johannes Berg <johannes.berg@intel.com>, Leon Romanovsky <leonro@mellanox.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jan 27, 2018 at 10:19:05PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 27 Jan 2018 21:48:01 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->  drivers/infiniband/core/iwpm_util.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-applied to for-next
+Bit pattern SNDRV_PCM_FMTBIT_S24_LE is being bit-wise or'd twice; remove
+the redundant 2nd SNDRV_PCM_FMTBIT_S24_LE
 
-Jason
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/pxa/mmp-sspa.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
+index 64b85e30c1f8..7c998ea4ebee 100644
+--- a/sound/soc/pxa/mmp-sspa.c
++++ b/sound/soc/pxa/mmp-sspa.c
+@@ -377,7 +377,6 @@ static int mmp_sspa_probe(struct snd_soc_dai *dai)
+ #define MMP_SSPA_FORMATS (SNDRV_PCM_FMTBIT_S8 | \
+ 		SNDRV_PCM_FMTBIT_S16_LE | \
+ 		SNDRV_PCM_FMTBIT_S24_LE | \
+-		SNDRV_PCM_FMTBIT_S24_LE | \
+ 		SNDRV_PCM_FMTBIT_S32_LE)
+ 
+ static const struct snd_soc_dai_ops mmp_sspa_dai_ops = {
+-- 
+2.15.1
+
