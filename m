@@ -1,39 +1,54 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 09 Feb 2018 12:13:41 +0000
-Subject: NAK: [PATCH] CIFS: SMBD: fix spelling mistake: "faield" -> "failed"
-Message-Id: <280fa85a-a5f8-bc89-447b-c97886f3bc23@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 16:48:52 +0000
+Subject: [PATCH][mm-next] mm, swap: make bool enable_vma_readahead and function swap_vma_readahead static
+Message-Id: <20180223164852.5159-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180209115936.32569-1-colin.king@canonical.com>
-In-Reply-To: <20180209115936.32569-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+To: Andrew Morton <akpm@linux-foundation.org>, Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/02/18 11:59, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in log_rdma_mr message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smbdirect.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-> index 91710eb571fb..5405856a4c8e 100644
-> --- a/fs/cifs/smbdirect.c
-> +++ b/fs/cifs/smbdirect.c
-> @@ -2295,7 +2295,7 @@ static void smbd_mr_recovery_work(struct work_struct *work)
->  				rc = ib_dereg_mr(smbdirect_mr->mr);
->  				if (rc) {
->  					log_rdma_mr(ERR,
-> -						"ib_dereg_mr faield rc=%x\n",
-> +						"ib_dereg_mr failed rc=%x\n",
->  						rc);
->  					smbd_disconnect_rdma_connection(info);
->  				}
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Ignore this, I found another typo in the source, will re-send a V2.
+The bool enable_vma_readahead and function swap_vma_readahead are local
+to the source and do not need to be in global scope, so make them static.
+
+Cleans up sparse warnings:
+mm/swap_state.c:41:6: warning: symbol 'enable_vma_readahead' was not
+declared. Should it be static?
+mm/swap_state.c:742:13: warning: symbol 'swap_vma_readahead' was not
+declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/swap_state.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 8dde719e973c..f3952138f01d 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -38,7 +38,7 @@ static const struct address_space_operations swap_aops = {
+ 
+ struct address_space *swapper_spaces[MAX_SWAPFILES] __read_mostly;
+ static unsigned int nr_swapper_spaces[MAX_SWAPFILES] __read_mostly;
+-bool enable_vma_readahead __read_mostly = true;
++static bool enable_vma_readahead __read_mostly = true;
+ 
+ #define SWAP_RA_WIN_SHIFT	(PAGE_SHIFT / 2)
+ #define SWAP_RA_HITS_MASK	((1UL << SWAP_RA_WIN_SHIFT) - 1)
+@@ -739,8 +739,8 @@ static void swap_ra_info(struct vm_fault *vmf,
+ 	pte_unmap(orig_pte);
+ }
+ 
+-struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
+-				    struct vm_fault *vmf)
++static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
++				       struct vm_fault *vmf)
+ {
+ 	struct blk_plug plug;
+ 	struct vm_area_struct *vma = vmf->vma;
+-- 
+2.15.1
+
