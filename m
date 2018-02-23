@@ -1,59 +1,36 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Date: Tue, 27 Feb 2018 07:44:55 +0000
-Subject: Re: [PATCH] i2c-stm32f4: remove redundant initialization of pointer reg
-Message-Id: <25b0397b-5df3-2f5c-a18f-238db83205da@st.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 14:00:56 +0000
+Subject: [PATCH] sfc: falcon: remove duplicated bit-wise or of LOOPBACK_SGMII
+Message-Id: <20180223140056.27219-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180116174404.19464-1-colin.king@canonical.com>
- <20180226200639.tfll2y4efepm2sos@ninjato>
-In-Reply-To: <20180226200639.tfll2y4efepm2sos@ninjato>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Solarflare linux maintainers <linux-net-drivers@solarflare.com>, Edward Cree <ecree@solarflare.com>, Bert Kenward <bkenward@solarflare.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 02/26/2018 09:06 PM, Wolfram Sang wrote:
-> On Tue, Jan 16, 2018 at 05:44:04PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The pointer reg is assigned a value that is never read, it is later
->> overwritten with a new value, hence the redundant initialization can
->> be removed.
->>
->> Cleans up clang warning:
->> drivers/i2c/busses/i2c-stm32f4.c:352:16: warning: Value stored to 'reg'
->> during its initialization is never read
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Maxime? Alexandre? Are you OK with this patch?
+Bit pattern LOOPBACK_SGMII is being bit-wise or'd twice; remove the
+redundant 2nd LOOPBACK_SGMII
 
-Sorry for delay.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/sfc/falcon/enum.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+diff --git a/drivers/net/ethernet/sfc/falcon/enum.h b/drivers/net/ethernet/sfc/falcon/enum.h
+index 30a1136fc909..4824fcf5c3d4 100644
+--- a/drivers/net/ethernet/sfc/falcon/enum.h
++++ b/drivers/net/ethernet/sfc/falcon/enum.h
+@@ -81,7 +81,6 @@ enum ef4_loopback_mode {
+ 			    (1 << LOOPBACK_XAUI) |		\
+ 			    (1 << LOOPBACK_GMII) |		\
+ 			    (1 << LOOPBACK_SGMII) |		\
+-			    (1 << LOOPBACK_SGMII) |		\
+ 			    (1 << LOOPBACK_XGBR) |		\
+ 			    (1 << LOOPBACK_XFI) |		\
+ 			    (1 << LOOPBACK_XAUI_FAR) |		\
+-- 
+2.15.1
 
-regards
-alex
-
-> 
->> ---
->>   drivers/i2c/busses/i2c-stm32f4.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-stm32f4.c b/drivers/i2c/busses/i2c-stm32f4.c
->> index 47c8d00de53f..ba600d77a3f8 100644
->> --- a/drivers/i2c/busses/i2c-stm32f4.c
->> +++ b/drivers/i2c/busses/i2c-stm32f4.c
->> @@ -349,7 +349,7 @@ static void stm32f4_i2c_read_msg(struct stm32f4_i2c_dev *i2c_dev)
->>   static void stm32f4_i2c_terminate_xfer(struct stm32f4_i2c_dev *i2c_dev)
->>   {
->>   	struct stm32f4_i2c_msg *msg = &i2c_dev->msg;
->> -	void __iomem *reg = i2c_dev->base + STM32F4_I2C_CR2;
->> +	void __iomem *reg;
->>   
->>   	stm32f4_i2c_disable_irq(i2c_dev);
->>   
->> -- 
->> 2.15.1
->>
