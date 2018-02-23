@@ -1,31 +1,33 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Mon, 19 Feb 2018 03:56:10 +0000
-Subject: Re: [PATCH 1/2] cpufreq: powernow-k8: Delete an error message for a failed memory allocation in thre
-Message-Id: <20180219034410.GJ28462@vireshk-i7>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Feb 2018 12:33:00 +0000
+Subject: [PATCH] usb: host: ohci-pxa27x: Fix and & vs | typo
+Message-Id: <20180223123300.GA1062@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4dd36236-fc39-19e6-c1a7-a094cf13469c@users.sourceforge.net>
- <895a6088-5266-0be7-90f6-b1f838eb58c1@users.sourceforge.net>
-In-Reply-To: <895a6088-5266-0be7-90f6-b1f838eb58c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 15-02-18, 20:29, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 15 Feb 2018 20:00:23 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/cpufreq/powernow-k8.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
+The code is supposed to clear the RH_A_NPS and RH_A_PSM bits, but it's
+a no-op because of the & vs | typo.  This bug predates git and it was
+only discovered using static analysis so it must not affect too many
+people in real life.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
--- 
-viresh
+diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
+index 3e2474959735..7679fb583e41 100644
+--- a/drivers/usb/host/ohci-pxa27x.c
++++ b/drivers/usb/host/ohci-pxa27x.c
+@@ -148,7 +148,7 @@ static int pxa27x_ohci_select_pmm(struct pxa27x_ohci *pxa_ohci, int mode)
+ 		uhcrhda |= RH_A_NPS;
+ 		break;
+ 	case PMM_GLOBAL_MODE:
+-		uhcrhda &= ~(RH_A_NPS & RH_A_PSM);
++		uhcrhda &= ~(RH_A_NPS | RH_A_PSM);
+ 		break;
+ 	case PMM_PERPORT_MODE:
+ 		uhcrhda &= ~(RH_A_NPS);
