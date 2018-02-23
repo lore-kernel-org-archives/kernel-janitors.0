@@ -1,36 +1,38 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Tue, 13 Feb 2018 20:54:10 +0000
-Subject: RE: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C7E574C@ORSMSX103.amr.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 23 Feb 2018 08:19:28 +0000
+Subject: Re: [0/8] target-iSCSI: Adjustments for several function implementations
+Message-Id: <da62858f-37f5-1396-c561-ab68ba20c811@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
+References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
+ <c9a822a4-248e-c479-9118-4b8ffb1033b1@users.sourceforge.net>
+ <20180222143624.7c7241a1@suse.de>
+In-Reply-To: <20180222143624.7c7241a1@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: David Disseldorp <ddiss@suse.de>, target-devel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Dan Carpenter <dan.carpenter@oracle.com>, Hannes Reinecke <hare@suse.com>, Ingo Molnar <mingo@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Jiang Yi <jiangyilism@gmail.com>, Kees Cook <keescook@chromium.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Russell King <rmk+kernel@armlinux.org.uk>, Tang Wenji <tang.wenji@zte.com.cn>, Theodore Ts'o <tytso@mit.edu>, Varun Prakash <varun@chelsio.com>
 
-PiBGcm9tOiBuZXRkZXYtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bmV0ZGV2LQ0KPiBv
-d25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBDaHJpc3RvcGhlIEpBSUxMRVQNCj4g
-U2VudDogVHVlc2RheSwgRmVicnVhcnkgNiwgMjAxOCAxMTo0OCBBTQ0KPiBUbzogS2lyc2hlciwg
-SmVmZnJleSBUIDxqZWZmcmV5LnQua2lyc2hlckBpbnRlbC5jb20+DQo+IENjOiBpbnRlbC13aXJl
-ZC1sYW5AbGlzdHMub3N1b3NsLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+
-IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7
-IENocmlzdG9waGUNCj4gSkFJTExFVCA8Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI+DQo+
-IFN1YmplY3Q6IFtQQVRDSF0gaWdiOiBGaXggYSB0ZXN0IHdpdGggSFdUU1RBTVBfVFhfT04NCj4g
-DQo+ICdIV1RTVEFNUF9UWF9PTicgc2hvdWxkIGJlIGhhbmRsZWQgYXMgYSB2YWx1ZSwgbm90IGFz
-IGEgYml0IG1hc2suDQo+IFRoZSBtb2RpZmllZCBjb2RlIHNob3VsZCBiZWhhdmUgdGhlIHNhbWUs
-IGJlY2F1c2UgSFdUU1RBTVBfVFhfT04gaXMNCj4gMQ0KPiBhbmQgbm8gb3RoZXIgcG9zc2libGUg
-dmFsdWVzIG9mICd0eF90eXBlJyB3b3VsZCBtYXRjaCB0aGUgdGVzdC4NCj4gSG93ZXZlciwgdGhp
-cyBpcyBtb3JlIGZ1dHVyZS1wcm9vZiwgc2hvdWxkIG90aGVyIHZhbHVlcyBiZSBhbGxvd2VkIG9u
-ZSBkYXkuDQo+IA0KPiBTZWUgJ3N0cnVjdCBod3RzdGFtcF9jb25maWcnIGluICdpbmNsdWRlL3Vh
-cGkvbGludXgvbmV0X3RzdGFtcC5oJw0KPiANCj4gVGhpcyBmaXhlcyBhIHdhcm5pbmcgcmVwb3J0
-ZWQgYnkgc21hdGNoOg0KPiAgICBpZ2JfeG1pdF9mcmFtZV9yaW5nKCkgd2FybjogYml0IHNoaWZ0
-ZXIgJ0hXVFNUQU1QX1RYX09OJyB1c2VkIGZvcg0KPiBsb2dpY2FsICcmJw0KPiANCj4gRml4ZXM6
-IDI2YmQ0ZTJkYjA2YmUgKCJpZ2I6IHByb3RlY3QgVFggdGltZXN0YW1waW5nIGZyb20gQVBJIG1p
-c3VzZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waGUgSkFJTExFVCA8Y2hyaXN0b3BoZS5q
-YWlsbGV0QHdhbmFkb28uZnI+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwv
-aWdiL2lnYl9tYWluLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
-IDEgZGVsZXRpb24oLSkNCj4gDQoNClRlc3RlZC1ieTogQWFyb24gQnJvd24gPGFhcm9uLmYuYnJv
-d25AaW50ZWwuY29tPg0K
+> You're 1/8 patch had an actual bug fix hidden amongst the style churn.
+
+It showed the general possibility to adjust the source code structure
+for the function “chap_server_compute_md5” also because of the usage
+of the single jump label “out” before.
+
+
+> I don't see any such fixes in the other patches.
+
+This view is appropriate.
+
+Further update steps show different transformation possibilities.
+
+
+> My opinion from https://www.spinics.net/lists/target-devel/msg16342.html
+> hasn't changed. FWIW, I'd prefer to see LIO adopt a policy similar to:
+> https://btrfs.wiki.kernel.org/index.php/Developer%27s_FAQ#How_not_to_start
+
+It seems that you express a few aspects for general change resistance.
+Will the circumstances evolve for similar software improvements?
+
+Regards,
+Markus
