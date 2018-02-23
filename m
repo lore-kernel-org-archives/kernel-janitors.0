@@ -1,45 +1,59 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Date: Thu, 22 Feb 2018 18:10:30 +0000
+From: James Hogan <jhogan@kernel.org>
+Date: Fri, 23 Feb 2018 09:53:02 +0000
 Subject: Re: [PATCH] MIPS: OCTEON: irq: check for null return on kzalloc allocation
-Message-Id: <dba1d5b6-d568-c1a1-5e6c-7a00da3d1e01@caviumnetworks.com>
+Message-Id: <20180223095301.GL6245@saruman>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="yQDbd2FCF2Yhw41T"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180222180853.11505-1-colin.king@canonical.com>
-In-Reply-To: <20180222180853.11505-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>, "Steven J . Hill" <Steven.Hill@cavium.com>, David Daney <david.daney@cavium.com>, linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-
-On 02/22/2018 10:08 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The allocation of host_data is not null checked, leading to a
-> null pointer dereference if the allocation fails. Fix this by
-> adding a null check and return with -ENOMEM.
-> 
-> Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Acked-by: David Daney <david.daney@cavium.com>
+ <dba1d5b6-d568-c1a1-5e6c-7a00da3d1e01@caviumnetworks.com>
+In-Reply-To: <dba1d5b6-d568-c1a1-5e6c-7a00da3d1e01@caviumnetworks.com>
+To: David Daney <ddaney@caviumnetworks.com>
+Cc: Colin King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, "Steven J . Hill" <Steven.Hill@cavium.com>, David Daney <david.daney@cavium.com>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
-> ---
->   arch/mips/cavium-octeon/octeon-irq.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
-> index b993d9f2c9b9..203e1d2a56d5 100644
-> --- a/arch/mips/cavium-octeon/octeon-irq.c
-> +++ b/arch/mips/cavium-octeon/octeon-irq.c
-> @@ -2277,6 +2277,8 @@ static int __init octeon_irq_init_cib(struct device_node *ciu_node,
->   	}
->   
->   	host_data = kzalloc(sizeof(*host_data), GFP_KERNEL);
-> +	if (!host_data)
-> +		return -ENOMEM;
->   	raw_spin_lock_init(&host_data->lock);
->   
->   	addr = of_get_address(ciu_node, 0, NULL, NULL);
-> 
+--yQDbd2FCF2Yhw41T
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Feb 22, 2018 at 10:10:30AM -0800, David Daney wrote:
+> On 02/22/2018 10:08 AM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >=20
+> > The allocation of host_data is not null checked, leading to a
+> > null pointer dereference if the allocation fails. Fix this by
+> > adding a null check and return with -ENOMEM.
+> >=20
+> > Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>=20
+> Acked-by: David Daney <david.daney@cavium.com>
+
+Applied to my fixes branch with 4.0+ stable tag.
+
+Thanks
+James
+
+--yQDbd2FCF2Yhw41T
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqP5H0ACgkQbAtpk944
+dnquzw//VizcEzcb175yh9w/aAkX32RslfjWvO87s8+78qDYNkW5MECM1iJ1RqKX
+MMnyBu1tUC+rwnmCA4Rug8JgufRQZ2WHcfCYDZW6Bh+TBHFzR0ZmY61Qrmpnyrni
+lia4pM1uOz7DFOKby7l9jYyi//9TeAK+gjDGWgu2dVYbmVKnppZkcEGnN5MJNSzl
+u5zFi3DHCJJnBmgyXxOr/p6LGRCU+Asgn70ry2EV6Swjn56fmGKCdlKRl9O4KTbF
+WnHRaQ/gobmLbS6tRrzvQtYzxTof73Yqu2pG8k8AImWFZKIYNbx1yNnoEOIQ72GT
+jE/lUdbhmT4okPMBKTvN6lTJ2GJZ63XKu/EyhM7GeUtbeuIrl+2toTgBf7E5hf1U
+YdwXjHgTmUlm6ctqPKffNAlpYGzT5SVxgzZOlvqOcsmc8TSuOzw8s1IRMDvfuFeZ
+O8qP+UG0reVvJ/jpo9CsxpwIbCQX18yE8smcRJKz3urx62IAzyW+IsBUPtXpHRkT
+NQl2wP4NUPF7ZIhpG/SGpWxrbPOLiJn95Ug8QNZkcjrM8t36U3zRjCtxskfgI9Wd
+nVVy/L26d7Q7oxJd0wZNzz4XMvDVo3ynlVW91AYdkklXrrT5p759G1S2h94SjrTP
+AH89bDl4FDBfNYp6tgKxsnjq9ESRJYTDl6WfWlJbBa9SF0xA3aI=
+=j8OB
+-----END PGP SIGNATURE-----
+
+--yQDbd2FCF2Yhw41T--
