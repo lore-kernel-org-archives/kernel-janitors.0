@@ -1,39 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Feb 2018 17:38:57 +0000
-Subject: [PATCH 2/6] hid-prodikeys: Delete an unnecessary variable initialisation in pk_probe()
-Message-Id: <fce3ae0c-3467-f6be-519b-79b592691153@users.sourceforge.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 23 Feb 2018 18:26:55 +0000
+Subject: [PATCH 4.4 182/193] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
+Message-Id: <20180223170354.686167921@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
-In-Reply-To: <c388b4d8-fa43-1bf2-e27d-1a3a8d636118@users.sourceforge.net>
+References: <20180223170325.997716448@linuxfoundation.org>
+In-Reply-To: <20180223170325.997716448@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>, kernel-janitors@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, Jack Wang <jinpu.wang@profitbricks.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Feb 2018 14:45:24 +0100
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-The local variable "pm" will eventually be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+------------------
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
+
+(cherry picked from commit e698dcdfcda41efd0984de539767b4cddd235f1e)
+
+Trivial fix to spelling mistake in pr_err error message text.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+[jwang: cherry pick to 4.4]
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-prodikeys.c | 2 +-
+ arch/x86/kernel/cpu/bugs.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
-index 9cad4973a67b..2e79dfc92162 100644
---- a/drivers/hid/hid-prodikeys.c
-+++ b/drivers/hid/hid-prodikeys.c
-@@ -798,6 +798,6 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	unsigned short ifnum = intf->cur_altsetting->desc.bInterfaceNumber;
- 	unsigned long quirks = id->driver_data;
- 	struct pk_device *pk;
--	struct pcmidi_snd *pm = NULL;
-+	struct pcmidi_snd *pm;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -103,7 +103,7 @@ bool retpoline_module_ok(bool has_retpol
+ 	if (spectre_v2_enabled = SPECTRE_V2_NONE || has_retpoline)
+ 		return true;
  
- 	pk = kzalloc(sizeof(*pk), GFP_KERNEL);
--- 
-2.16.1
+-	pr_err("System may be vunerable to spectre v2\n");
++	pr_err("System may be vulnerable to spectre v2\n");
+ 	spectre_v2_bad_module = true;
+ 	return false;
+ }
+
 
