@@ -1,40 +1,152 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 14:21:32 +0000
-Subject: [PATCH 1/2] i2c-sh7760: Delete an error message for a failed memory allocation in sh7760_i2c_probe()
-Message-Id: <737fe7c8-9ae3-7e19-100a-f2f3d9f2b83a@users.sourceforge.net>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Fri, 23 Feb 2018 00:00:00 +0000
+Subject: [PATCH 2/7] drm/virtio: Add blank line after variable declarations
+Message-Id: <41767852ff9dc584c825e32db6222b9a311603b9.1519343668.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
-In-Reply-To: <3f4a9053-5518-61ab-2cdf-e400f6b35ce3@users.sourceforge.net>
+References: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1519343668.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 11:46:02 +0100
+This patch fixes the checkpatch.pl warnings:
 
-Omit an extra message for a memory allocation failure in this function.
+virtgpu_drv.c:57: WARNING: Missing a blank line after declarations
+virtgpu_display.c:99: WARNING: Missing a blank line after declarations
+...
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- drivers/i2c/busses/i2c-sh7760.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/virtio/virtgpu_display.c | 1 +
+ drivers/gpu/drm/virtio/virtgpu_drv.c     | 1 +
+ drivers/gpu/drm/virtio/virtgpu_fb.c      | 4 ++++
+ drivers/gpu/drm/virtio/virtgpu_gem.c     | 1 +
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c   | 2 ++
+ drivers/gpu/drm/virtio/virtgpu_vq.c      | 3 +++
+ 6 files changed, 12 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-sh7760.c b/drivers/i2c/busses/i2c-sh7760.c
-index c2005c789d2b..4d2e4d10600b 100644
---- a/drivers/i2c/busses/i2c-sh7760.c
-+++ b/drivers/i2c/busses/i2c-sh7760.c
-@@ -445,7 +445,6 @@ static int sh7760_i2c_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+index 22513d7f895c..2d1b25630c0e 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_display.c
++++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+@@ -96,6 +96,7 @@ virtio_gpu_framebuffer_init(struct drm_device *dev,
+ {
+ 	int ret;
+ 	struct virtio_gpu_object *bo;
++
+ 	vgfb->obj = obj;
  
- 	id = kzalloc(sizeof(struct cami2c), GFP_KERNEL);
- 	if (!id) {
--		dev_err(&pdev->dev, "no mem for private data\n");
- 		ret = -ENOMEM;
- 		goto out0;
- 	}
+ 	bo = gem_to_virtio_gpu_obj(obj);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+index 49a3d8d5a249..5d21433b1cdf 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.c
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+@@ -54,6 +54,7 @@ static int virtio_gpu_probe(struct virtio_device *vdev)
+ static void virtio_gpu_remove(struct virtio_device *vdev)
+ {
+ 	struct drm_device *dev = vdev->priv;
++
+ 	drm_put_dev(dev);
+ }
+ 
+diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
+index 15d18fd0c64b..b933cbba0685 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_fb.c
++++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
+@@ -127,6 +127,7 @@ int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *vgfb,
+ 	int left, right, top, bottom;
+ 	int i;
+ 	int inc = 1;
++
+ 	if (!num_clips) {
+ 		num_clips = 1;
+ 		clips = &norect;
+@@ -172,6 +173,7 @@ static void virtio_gpu_3d_fillrect(struct fb_info *info,
+ 				   const struct fb_fillrect *rect)
+ {
+ 	struct virtio_gpu_fbdev *vfbdev = info->par;
++
+ 	drm_fb_helper_sys_fillrect(info, rect);
+ 	virtio_gpu_dirty_update(&vfbdev->vgfb, true, rect->dx, rect->dy,
+ 			     rect->width, rect->height);
+@@ -182,6 +184,7 @@ static void virtio_gpu_3d_copyarea(struct fb_info *info,
+ 				   const struct fb_copyarea *area)
+ {
+ 	struct virtio_gpu_fbdev *vfbdev = info->par;
++
+ 	drm_fb_helper_sys_copyarea(info, area);
+ 	virtio_gpu_dirty_update(&vfbdev->vgfb, true, area->dx, area->dy,
+ 			   area->width, area->height);
+@@ -192,6 +195,7 @@ static void virtio_gpu_3d_imageblit(struct fb_info *info,
+ 				    const struct fb_image *image)
+ {
+ 	struct virtio_gpu_fbdev *vfbdev = info->par;
++
+ 	drm_fb_helper_sys_imageblit(info, image);
+ 	virtio_gpu_dirty_update(&vfbdev->vgfb, true, image->dx, image->dy,
+ 			     image->width, image->height);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
+index 92fb27753b9e..0f2768eacaee 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_gem.c
++++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
+@@ -124,6 +124,7 @@ int virtio_gpu_mode_dumb_mmap(struct drm_file *file_priv,
+ {
+ 	struct drm_gem_object *gobj;
+ 	struct virtio_gpu_object *obj;
++
+ 	BUG_ON(!offset_p);
+ 	gobj = drm_gem_object_lookup(file_priv, handle);
+ 	if (gobj = NULL)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index 5720a0d4ac0a..86243f131fc1 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -83,6 +83,7 @@ static void virtio_gpu_unref_list(struct list_head *head)
+ 	struct ttm_validate_buffer *buf;
+ 	struct ttm_buffer_object *bo;
+ 	struct virtio_gpu_object *qobj;
++
+ 	list_for_each_entry(buf, head, head) {
+ 		bo = buf->bo;
+ 		qobj = container_of(bo, struct virtio_gpu_object, tbo);
+@@ -478,6 +479,7 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 	int ret;
+ 	struct virtio_gpu_drv_cap_cache *cache_ent;
+ 	void *ptr;
++
+ 	if (vgdev->num_capsets = 0)
+ 		return -ENOSYS;
+ 
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 9eb96fb2c147..16c05bc34bef 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -62,6 +62,7 @@ void virtio_gpu_ctrl_ack(struct virtqueue *vq)
+ {
+ 	struct drm_device *dev = vq->vdev->priv;
+ 	struct virtio_gpu_device *vgdev = dev->dev_private;
++
+ 	schedule_work(&vgdev->ctrlq.dequeue_work);
+ }
+ 
+@@ -69,6 +70,7 @@ void virtio_gpu_cursor_ack(struct virtqueue *vq)
+ {
+ 	struct drm_device *dev = vq->vdev->priv;
+ 	struct virtio_gpu_device *vgdev = dev->dev_private;
++
+ 	schedule_work(&vgdev->cursorq.dequeue_work);
+ }
+ 
+@@ -852,6 +854,7 @@ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
+ 
+ 	if (!obj->pages) {
+ 		int ret;
++
+ 		ret = virtio_gpu_object_get_sg_table(vgdev, obj);
+ 		if (ret)
+ 			return ret;
 -- 
-2.16.1
+2.16.2
 
