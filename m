@@ -1,42 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Feb 2018 11:50:50 +0000
-Subject: Re: [0/8] target-iSCSI: Adjustments for several function implementations
-Message-Id: <866a1802-0cd8-48fd-e04f-7dc676ab58a6@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 12:29:49 +0000
+Subject: [PATCH] PCI: rcar-gen2: remove duplicated bit-wise or of RCAR_PCI_INT_SIGRETABORT
+Message-Id: <20180223122949.24291-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6163538d-a406-2f60-11a2-88b4694e9975@users.sourceforge.net>
- <c9a822a4-248e-c479-9118-4b8ffb1033b1@users.sourceforge.net>
- <20180222143624.7c7241a1@suse.de> <20180222135600.5vv7vzw7sa5metcb@mwanda>
- <145b88b1-bd1e-a417-8dce-ff19e35a00fc@users.sourceforge.net>
- <20180223101715.xv5dscdaeszqxoyk@mwanda>
-In-Reply-To: <20180223101715.xv5dscdaeszqxoyk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, target-devel@vger.kernel.org
-Cc: David Disseldorp <ddiss@suse.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> Can a passed null pointer really work in this function?
->>
->> https://elixir.bootlin.com/linux/v4.16-rc2/source/include/crypto/hash.h#L684
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/crypto/hash.h?id9da844d87796ac31b04e81ee95e155e9043132#n751
->>
->> static inline struct crypto_tfm *crypto_shash_tfm(struct crypto_shash *tfm)
->> {
->> 	return &tfm->base;
->> }
-> 
-> Yes.  It's not a dereference,
+From: Colin Ian King <colin.king@canonical.com>
 
-Do any processors treat the zero address still special there?
+Bit pattern RCAR_PCI_INT_SIGRETABORT is being bit-wise or'd twice;
+remove the redundant 2nd RCAR_PCI_INT_SIGRETABORT.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/host/pci-rcar-gen2.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> it's just doing pointer math to get the address.
+diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+index a28370bb2b2a..dd4f1a6b57c5 100644
+--- a/drivers/pci/host/pci-rcar-gen2.c
++++ b/drivers/pci/host/pci-rcar-gen2.c
+@@ -52,7 +52,6 @@
+ #define RCAR_PCI_INT_B			(1 << 17)
+ #define RCAR_PCI_INT_PME		(1 << 19)
+ #define RCAR_PCI_INT_ALLERRORS (RCAR_PCI_INT_SIGTABORT		| \
+-				RCAR_PCI_INT_SIGRETABORT	| \
+ 				RCAR_PCI_INT_SIGRETABORT	| \
+ 				RCAR_PCI_INT_REMABORT		| \
+ 				RCAR_PCI_INT_PERR		| \
+-- 
+2.15.1
 
-Can eventually happen anything unexpected?
-
-
-Can it be nicer to avoid such a software behaviour concern generally
-just by adjusting a few jump labels (as I proposed it)?
-
-Regards,
-Markus
