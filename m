@@ -1,45 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Feb 2018 18:30:15 +0000
-Subject: =?UTF-8?Q?Re:_Software_evolution_around_=e2=80=9ccheckpatch.pl?= =?UTF-8?B?4oCdPw==?=
-Message-Id: <a988eca2-36d4-19bd-e92c-1a92e497e0da@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 17:16:57 +0000
+Subject: [PATCH][next] xen-netback: make function xenvif_rx_skb static
+Message-Id: <20180223171657.5748-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0406765c-bdd1-1a82-cf66-1c248063ae4f@users.sourceforge.net>
- <20180204112346.0977e938@archlinux>
- <9420fc82-1a37-3601-bafe-f57ef953bfcd@users.sourceforge.net>
- <87DF341A-1356-4B1B-8D25-14D5B0AAB01D@jic23.retrosnub.co.uk>
- <f008911b-c595-6e0f-d85f-076e994ae7db@users.sourceforge.net>
- <20180210145336.233c721d@archlinux> <1518274783.6579.2.camel@perches.com>
- <20180210155734.708d01b6@archlinux> <1518284577.16865.8.camel@perches.com>
-In-Reply-To: <1518284577.16865.8.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Joe Perches <joe@perches.com>, Jonathan Cameron <jic23@jic23.retrosnub.co.uk>, linux-iio@vger.kernel.org, linux-input@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Jiri Kosina <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wei Liu <wei.liu2@citrix.com>, Paul Durrant <paul.durrant@citrix.com>, xen-devel@lists.xenproject.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Pj4gU28gSSB0aGluayBjaGVja3BhdGNoIGlzIHN0cmlraW5nIHRoZSByaWdodCBiYWxhbmNlIGhl
-cmUgaW4KPj4gaG93IGl0IHdhcm5zLiAgT2J2aW91c2x5IGlmIGl0IGNvdWxkIGFzc2VzcyB0aGUg
-dGV4dAo+PiBhbmQgY29tZSB0byBhbiBpbmZvcm1lZCBkZWNpc2lvbiB0aGF0IHdvdWxkIGJlIGdy
-ZWF0IGJ1dAo+PiB3ZSBhcmUgc29tZSB3YXkgZnJvbSB0aGF0IDspCj4gCj4gVGhlICdpbmZvcm1l
-ZCcgYml0IGlzIGRpZmZpY3VsdCBhcyBpdCBpcyBtb3N0bHkgYSBwb2xpdGljYWwgcHJvYmxlbS4K
-CkkgZmluZCBzdWNoIGEgdmlldyB2ZXJ5IGludGVyZXN0aW5nLgoKCj4gSSBqdXN0IHdpc2ggTWFy
-a3VzIHdvdWxkIGltcHJvdmUgaGlzIGNvbnNpc3RlbnRseSB0ZXJyaWJsZSBjb21taXQgbWVzc2Fn
-ZXMKCkkgdHJpZWQgdG8gYWNoaWV2ZSBhbm90aGVyIGNsYXJpZmljYXRpb24gYSBmZXcgdGltZXMu
-CgoKPiB0aGF0IGp1c3QgcmVzdGF0ZSB0aGUgYWN0aW9uIGJlaW5nIGRvbmUgYW5kIGRldGFpbAo+
-IF93aHlfIGEgcGFydGljdWxhciB0aGluZyBfc2hvdWxkXyBiZSBkb25lLgoKVW5mb3J0dW5hdGVs
-eSwgaXQgc2VlbXMgdGhhdCBubyBvdGhlciBjb250cmlidXRvcnMgcGlja2VkCmNvcnJlc3BvbmRp
-bmcgb3Bwb3J0dW5pdGllcyB1cCBzbyBmYXIuCgpZb3UgaW5kaWNhdGVkIGFsc28gc3BlY2lhbCBz
-b2Z0d2FyZSBkZXZlbG9wbWVudCBjaGFsbGVuZ2VzIGluIHlvdXIgY29tbWl0CuKAnGNoZWNrcGF0
-Y2g6IGF0dGVtcHQgdG8gZmluZCB1bm5lY2Vzc2FyeSAnb3V0IG9mIG1lbW9yeScgbWVzc2FnZXPi
-gJ0uCgpodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC82LzEwLzM4MgpodHRwczovL2dpdC5rZXJu
-ZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvY29tbWl0
-Lz9pZOtmZGM0MDk2OWYyNGZjMGNkZDEzNDk4MzVkMzZlOGViYWUwNTM3NAoKCj4gSGlzIGFjY2Vw
-dGFuY2UgcmF0ZSB3b3VsZCBpbXByb3ZlIGFzIG1hbnkgb2YgdGhlc2UgYmFjayBhbmQgZm9ydGgK
-PiByZXBsaWVzIGZvciB3aGF0IHRyaXZpYWxpdGllcyBoZSBwb3N0cyBhcyBwYXRjaGVzIHdvdWxk
-IGJlIG1pbmltaXplZC4KCk15IHNlbGVjdGlvbiBvZiBjaGFuZ2UgcG9zc2liaWxpdGllcyBsZWFk
-cyB0byBtaXhlZCBpbnRlZ3JhdGlvbiByZXN1bHRzLgoKSSBzdHVtYmxlZCBvbiB2YXJpYXRpb25z
-IGZvciBnZW5lcmFsIGNoYW5nZSByZXNpc3RhbmNlLgoKUmVnYXJkcywKTWFya3VzCi0tClRvIHVu
-c3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJu
-ZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5r
-ZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcv
-bWFqb3Jkb21vLWluZm8uaHRtbA==
+From: Colin Ian King <colin.king@canonical.com>
+
+The function xenvif_rx_skb is local to the source and does not need
+to be in global scope, so make it static.
+
+Cleans up sparse warning:
+drivers/net/xen-netback/rx.c:422:6: warning: symbol 'xenvif_rx_skb'
+was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/xen-netback/rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/xen-netback/rx.c b/drivers/net/xen-netback/rx.c
+index b1cf7c6f407a..ef5887037b22 100644
+--- a/drivers/net/xen-netback/rx.c
++++ b/drivers/net/xen-netback/rx.c
+@@ -419,7 +419,7 @@ static void xenvif_rx_extra_slot(struct xenvif_queue *queue,
+ 	BUG();
+ }
+ 
+-void xenvif_rx_skb(struct xenvif_queue *queue)
++static void xenvif_rx_skb(struct xenvif_queue *queue)
+ {
+ 	struct xenvif_pkt_state pkt;
+ 
+-- 
+2.15.1
+
