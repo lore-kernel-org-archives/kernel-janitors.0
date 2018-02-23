@@ -1,43 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 17:22:21 +0000
-Subject: [PATCH 2/2] i2c-davinci: Improve a size determination in davinci_i2c_probe()
-Message-Id: <e16ba754-078a-097a-7333-076f43718645@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 14:14:51 +0000
+Subject: [PATCH] serial: mvebu-uart: remove duplicated bit-wise or of STAT_FRM_ERR
+Message-Id: <20180223141451.28957-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
-In-Reply-To: <4e668c87-65f5-8a00-132a-0184779faa08@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 18:02:49 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Bit pattern STAT_FRM_ERR is being bit-wise or'd twice; remove the
+redundant 2nd STAT_FRM_ERR
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/i2c/busses/i2c-davinci.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/mvebu-uart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-index 71a9c29b3981..1702b1d1b000 100644
---- a/drivers/i2c/busses/i2c-davinci.c
-+++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -782,8 +782,7 @@ static int davinci_i2c_probe(struct platform_device *pdev)
- 		return irq;
- 	}
+diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
+index a100e98259d7..ec3d4e3dab29 100644
+--- a/drivers/tty/serial/mvebu-uart.c
++++ b/drivers/tty/serial/mvebu-uart.c
+@@ -65,7 +65,7 @@
+ #define  STAT_FRM_ERR		BIT(2)
+ #define  STAT_PAR_ERR		BIT(1)
+ #define  STAT_OVR_ERR		BIT(0)
+-#define  STAT_BRK_ERR		(STAT_BRK_DET | STAT_FRM_ERR | STAT_FRM_ERR\
++#define  STAT_BRK_ERR		(STAT_BRK_DET | STAT_FRM_ERR \
+ 				 | STAT_PAR_ERR | STAT_OVR_ERR)
  
--	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_i2c_dev),
--			GFP_KERNEL);
-+	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
- 		return -ENOMEM;
- 
+ #define UART_BRDV		0x10
 -- 
-2.16.1
+2.15.1
 
