@@ -1,42 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 16:33:25 +0000
-Subject: [PATCH] efi: Delete an error message for a failed memory allocation in efivar_init()
-Message-Id: <13c1274c-cff4-5056-cd06-353663af58e1@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 16:32:55 +0000
+Subject: [PATCH][ACPI-next] ACPI: battery: make function __battery_hook_unregister static
+Message-Id: <20180223163255.3899-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-efi@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Rafael J . Wysock" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 17:28:22 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The function __battery_hook_unregister is local to the source and does
+not need to be in global scope, so make it static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warning:
+drivers/acpi/battery.c:654:6: warning: symbol '__battery_hook_unregister'
+was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/firmware/efi/vars.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/acpi/battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
-index 9336ffdf6e2c..ffdbc5bc3c56 100644
---- a/drivers/firmware/efi/vars.c
-+++ b/drivers/firmware/efi/vars.c
-@@ -437,10 +437,8 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
- 	int err = 0;
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index cfdef4c1d097..b4580b2e8706 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -651,7 +651,7 @@ static LIST_HEAD(acpi_battery_list);
+ static LIST_HEAD(battery_hook_list);
+ static DEFINE_MUTEX(hook_mutex);
  
- 	variable_name = kzalloc(variable_name_size, GFP_KERNEL);
--	if (!variable_name) {
--		printk(KERN_ERR "efivars: Memory allocation failed.\n");
-+	if (!variable_name)
- 		return -ENOMEM;
--	}
- 
- 	if (down_interruptible(&efivars_lock)) {
- 		err = -EINTR;
+-void __battery_hook_unregister(struct acpi_battery_hook *hook, int lock)
++static void __battery_hook_unregister(struct acpi_battery_hook *hook, int lock)
+ {
+ 	struct acpi_battery *battery;
+ 	/*
 -- 
-2.16.1
+2.15.1
 
