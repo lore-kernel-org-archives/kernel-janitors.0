@@ -1,44 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 18:13:19 +0000
-Subject: [PATCH 2/2] i2c-bfin-twi: Improve a size determination in i2c_bfin_twi_probe()
-Message-Id: <3a856fe7-5217-adcb-1da9-192a578b0422@users.sourceforge.net>
+From: "Cristian Evans" <f24@wastmail.com>
+Date: Sun, 25 Feb 2018 02:21:15 +0000
+Subject: very urgent Please
+Message-Id: <eee4d327b19b3ee477bad27b1973ebfd.squirrel@webmail.wastmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <740e31b4-79dd-a4bf-a2f5-001c44864b79@users.sourceforge.net>
-In-Reply-To: <740e31b4-79dd-a4bf-a2f5-001c44864b79@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 19:01:14 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
 
-This issue was detected by using the Coccinelle software.
+PEACE BE WITH YOU,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/busses/i2c-bfin-twi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Receiving this message might sound as a surprise to you, please do accept
+it as a blessing from God made possible through a woman with a good and
+sincere heart towards the poor orphans. Through these projects millions
+will be positively touched as with God nothing is impossible. I have this
+strong desire to help the poor orphans suffering each day, but this dream
+cannot be realised as a result of my health, which does not improve, hence
+I do not know whether I will survive having undergone different surgical
+operations, which has kept me hospitalized. Right now, life gives me no
+choice, but to answer the call (death); my prayers each day is to have a
+place in Heaven. I have suffered a lot as a result of this incurable
+sickness (terminal cancer)! Above all, I do not have a child as a result
+of my sterility.
 
-diff --git a/drivers/i2c/busses/i2c-bfin-twi.c b/drivers/i2c/busses/i2c-bfin-twi.c
-index ed596fd56b8b..f57e3247f717 100644
---- a/drivers/i2c/busses/i2c-bfin-twi.c
-+++ b/drivers/i2c/busses/i2c-bfin-twi.c
-@@ -619,8 +619,7 @@ static int i2c_bfin_twi_probe(struct platform_device *pdev)
- 	int rc;
- 	unsigned int clkhilow;
- 
--	iface = devm_kzalloc(&pdev->dev, sizeof(struct bfin_twi_iface),
--			GFP_KERNEL);
-+	iface = devm_kzalloc(&pdev->dev, sizeof(*iface), GFP_KERNEL);
- 	if (!iface)
- 		return -ENOMEM;
- 
--- 
-2.16.1
+The only help I need from you at this point is to be in constant prayers
+with me as I believe you have an open heart towards the poor orphans and
+do believe in GOD. I would be so much happy to see that my funds (Ten
+million EUROS) are properly used to help the less privileged etc before
+leaving this world as this will be a great relieve for me and my soul.
+This is a huge responsibility, but I pray that God gives you the strength
+to handle it. You will also be highly recompensated.
+
+Once I get your reply, I will put you in contact with the institution in
+charge of the transaction in order to start all necessary procedures so as
+to enable you to have possession of my funds as soon as possible before my
+next surgical operations.
+
+I looking forward to reading from you.
+
+Mrs. Cristian Evans
+
 
