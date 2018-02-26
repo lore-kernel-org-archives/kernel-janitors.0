@@ -1,51 +1,71 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 05 Feb 2018 18:23:17 +0000
-Subject: [PATCH 4.15 44/60] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
-Message-Id: <20180205182215.788719112@linuxfoundation.org>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 26 Feb 2018 11:17:31 +0000
+Subject: Applied "ASoC: sirf: remove duplicated bit-wise or of USP_RXFIFO_THD_INT" to the asoc tree
+Message-Id: <E1eqGmh-0005VX-8k@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180205182213.902626065@linuxfoundation.org>
-In-Reply-To: <20180205182213.902626065@linuxfoundation.org>
+References: <20180223124117.24686-1-colin.king@canonical.com>
+In-Reply-To: <20180223124117.24686-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>, kernel-janitors@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Barry Song <baohua@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
+The patch
 
-------------------
+   ASoC: sirf: remove duplicated bit-wise or of USP_RXFIFO_THD_INT
 
-From: Colin Ian King colin.king@canonical.com
+has been applied to the asoc tree at
 
-commit e698dcdfcda41efd0984de539767b4cddd235f1e
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Trivial fix to spelling mistake in pr_err error message text.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f49f49aa1541615f1f77bf2c62f184459825ed92 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 23 Feb 2018 12:41:17 +0000
+Subject: [PATCH] ASoC: sirf: remove duplicated bit-wise or of
+ USP_RXFIFO_THD_INT
+
+Bit pattern USP_RXFIFO_THD_INT is being bit-wise or'd twice;
+remove the redundant 2nd USP_RXFIFO_THD_INT
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
+ sound/soc/sirf/sirf-usp.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -103,7 +103,7 @@ bool retpoline_module_ok(bool has_retpol
- 	if (spectre_v2_enabled = SPECTRE_V2_NONE || has_retpoline)
- 		return true;
+diff --git a/sound/soc/sirf/sirf-usp.h b/sound/soc/sirf/sirf-usp.h
+index bf0201cb15bc..e22e13a619e8 100644
+--- a/sound/soc/sirf/sirf-usp.h
++++ b/sound/soc/sirf/sirf-usp.h
+@@ -154,7 +154,7 @@
+ 					USP_RX_IO_DMA_INT|\
+ 					USP_RXFIFO_FULL_INT|\
+ 					USP_RXFIFO_THD_INT|\
+-					USP_RXFIFO_THD_INT|USP_RX_TIMEOUT_INT)
++					USP_RX_TIMEOUT_INT)
  
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
- }
-
+ #define USP_INT_ALL        0x1FFF
+ 
+-- 
+2.16.1
 
