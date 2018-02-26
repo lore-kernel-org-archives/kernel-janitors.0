@@ -1,29 +1,61 @@
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 26 Feb 2018 12:43:27 +0000
-Subject: Re: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than or equal zero
-Message-Id: <CAOMZO5DriLRHgwD3rn562UM5WtwTmb-owZ+OTTmfCONvmGNG8A@mail.gmail.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+Date: Mon, 26 Feb 2018 13:14:59 +0000
+Subject: RE: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than or equal zero
+Message-Id: <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180226120418.3589-1-colin.king@canonical.com>
 In-Reply-To: <20180226120418.3589-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, inus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, inus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 9:04 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The unsigned integer nfuncs is being error checked with a value less
-> or equal to zero; this is always false if of_get_child_count returns
-> a -ve for an error condition since nfuncs is not signed. Fix this by
-> making variables nfuncs and i signed integers.
->
-> Detected with Coccinelle:
-> drivers/pinctrl/freescale/pinctrl-imx.c:620:6-12: WARNING: Unsigned
-> expression compared with zero: nfuncs <= 0
->
-> Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86
+Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBNb25kYXksIEZlYnJ1YXJ5IDI2LCAy
+MDE4IDg6MDQgUE0NCj4gVG86IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBGYWJp
+byBFc3RldmFtDQo+IDxmZXN0ZXZhbUBnbWFpbC5jb20+OyBTaGF3biBHdW8gPHNoYXduZ3VvQGtl
+cm5lbC5vcmc+OyBTdGVmYW4NCj4gQWduZXIgPHN0ZWZhbkBhZ25lci5jaD47IGludXMgV2FsbGVp
+aiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgbGludXgtDQo+IGdwaW9Admdlci5rZXJuZWwu
+b3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF0gcGluY3RybDogaW14OiBmaXggdW5z
+aWduZWQgY2hlY2sgaWYgbmZ1bmNzIHdpdGggbGVzcyB0aGFuIG9yDQo+IGVxdWFsIHplcm8NCj4g
+DQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0K
+PiBUaGUgdW5zaWduZWQgaW50ZWdlciBuZnVuY3MgaXMgYmVpbmcgZXJyb3IgY2hlY2tlZCB3aXRo
+IGEgdmFsdWUgbGVzcyBvciBlcXVhbA0KPiB0byB6ZXJvOyB0aGlzIGlzIGFsd2F5cyBmYWxzZSBp
+ZiBvZl9nZXRfY2hpbGRfY291bnQgcmV0dXJucyBhIC12ZSBmb3IgYW4gZXJyb3INCj4gY29uZGl0
+aW9uIHNpbmNlIG5mdW5jcyBpcyBub3Qgc2lnbmVkLiBGaXggdGhpcyBieSBtYWtpbmcgdmFyaWFi
+bGVzIG5mdW5jcyBhbmQgaQ0KPiBzaWduZWQgaW50ZWdlcnMuDQo+IA0KPiBEZXRlY3RlZCB3aXRo
+IENvY2NpbmVsbGU6DQo+IGRyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYzo2
+MjA6Ni0xMjogV0FSTklORzogVW5zaWduZWQNCj4gZXhwcmVzc2lvbiBjb21wYXJlZCB3aXRoIHpl
+cm86IG5mdW5jcyA8PSAwDQo+IA0KPiBGaXhlczogYWU3NWZmODE0NTM4ICgicGluY3RybDogcGlu
+Y3RybC1pbXg6IGFkZCBpbXggcGluY3RybCBjb3JlIGRyaXZlciIpDQo+IFNpZ25lZC1vZmYtYnk6
+IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJp
+dmVycy9waW5jdHJsL2ZyZWVzY2FsZS9waW5jdHJsLWlteC5jIHwgNCArKy0tDQo+ICAxIGZpbGUg
+Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYw0KPiBiL2RyaXZlcnMv
+cGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYw0KPiBpbmRleCAyNGFhZGRkNzYwYTAuLjFl
+OGNhODMzNTJkMCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL2ZyZWVzY2FsZS9waW5j
+dHJsLWlteC5jDQo+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXgu
+Yw0KPiBAQCAtNjA1LDggKzYwNSw4IEBAIHN0YXRpYyBpbnQgaW14X3BpbmN0cmxfcHJvYmVfZHQo
+c3RydWN0DQo+IHBsYXRmb3JtX2RldmljZSAqcGRldiwNCj4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUg
+Km5wID0gcGRldi0+ZGV2Lm9mX25vZGU7DQo+ICAJc3RydWN0IGRldmljZV9ub2RlICpjaGlsZDsN
+Cj4gIAlzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGwgPSBpcGN0bC0+cGN0bDsNCj4gLQl1MzIgbmZ1
+bmNzID0gMDsNCj4gLQl1MzIgaSA9IDA7DQo+ICsJaW50IG5mdW5jcyA9IDA7DQo+ICsJaW50IGkg
+PSAwOw0KPiAgCWJvb2wgZmxhdF9mdW5jczsNCj4gDQoNCkkgc2F3ICdpJywgbGF0ZXIgdXNlZCwg
+aXMgY29udmVydGVkIHRvIHUzMiB1bmNvbmRpdGlvbmFsbHkuIChHQ0MgZGlkIG5vdCBjb21wbGFp
+bikNCmUuZy4NCnJhZGl4X3RyZWVfaW5zZXJ0DQppbXhfcGluY3RybF9wYXJzZV9mdW5jdGlvbnMN
+Cg0KQW5kIG9mX2dldF9jaGlsZF9jb3VudCBzZWVtcyBjYW4ndCAgcmV0dXJuIGEgbWlub3IgdmFs
+dWUuDQoNClNvIGRvZXMgc29tZXRoaW5nIGxpa2UgYmVsb3cgbG9vayBiZXR0ZXI/DQoNCmRpZmYg
+LS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMgYi9kcml2ZXJz
+L3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMNCmluZGV4IGM5NzZmZmUuLjQyNTkyMDkg
+MTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMNCisr
+KyBiL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYw0KQEAgLTYxMiw3ICs2
+MTIsNyBAQCBzdGF0aWMgaW50IGlteF9waW5jdHJsX3Byb2JlX2R0KHN0cnVjdCBwbGF0Zm9ybV9k
+ZXZpY2UgKnBkZXYsDQogICAgICAgICAgICAgICAgbmZ1bmNzID0gMTsNCiAgICAgICAgfSBlbHNl
+IHsNCiAgICAgICAgICAgICAgICBuZnVuY3MgPSBvZl9nZXRfY2hpbGRfY291bnQobnApOw0KLSAg
+ICAgICAgICAgICAgIGlmIChuZnVuY3MgPD0gMCkgew0KKyAgICAgICAgICAgICAgIGlmIChuZnVu
+Y3MgPT0gMCkgew0KICAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycigmcGRldi0+ZGV2LCAi
+bm8gZnVuY3Rpb25zIGRlZmluZWRcbiIpOw0KICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJu
+IC1FSU5WQUw7DQogICAgICAgICAgICAgICAgfQ0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg0K
+PiAgCWlmICghbnApDQo+IC0tDQo+IDIuMTUuMQ0KDQo
