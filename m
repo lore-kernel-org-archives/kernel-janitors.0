@@ -1,41 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 20:11:20 +0000
-Subject: [PATCH 2/2] HSI: ssi_protocol: Fix a typo in two comment lines
-Message-Id: <74402fa6-dab4-e542-f49e-c20487580ca0@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Feb 2018 11:36:14 +0000
+Subject: [PATCH] clocksource/drivers/fsl_ftm_timer: fix error return checking
+Message-Id: <20180226113614.3092-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
-In-Reply-To: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>, Sebastian Reichel <sre@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, trivial@kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 20:57:23 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Adjust two words in this description.
+The error checks on freq for a negative error return always fails because
+freq is unsigned and can never be negative. Fix this by making freq a
+signed long.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Detected with Coccinelle:
+drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+
+Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hsi/clients/ssi_protocol.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clocksource/fsl_ftm_timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_protocol.c
-index 0bccea2fa119..6dbead863d07 100644
---- a/drivers/hsi/clients/ssi_protocol.c
-+++ b/drivers/hsi/clients/ssi_protocol.c
-@@ -993,8 +993,8 @@ static int ssip_pn_xmit(struct sk_buff *skb, struct net_device *dev)
- 		goto inc_dropped;
+diff --git a/drivers/clocksource/fsl_ftm_timer.c b/drivers/clocksource/fsl_ftm_timer.c
+index 3ee7e6fea621..846d18daf893 100644
+--- a/drivers/clocksource/fsl_ftm_timer.c
++++ b/drivers/clocksource/fsl_ftm_timer.c
+@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct device_node *np, char *cnt_name,
  
- 	/*
--	 * Modem sends Phonet messages over SSI with its own endianess...
--	 * Assume that modem has the same endianess as we do.
-+	 * Modem sends Phonet messages over SSI with its own endianness.
-+	 * Assume that modem has the same endianness as we do.
- 	 */
- 	if (skb_cow_head(skb, 0))
- 		goto drop;
+ static unsigned long __init ftm_clk_init(struct device_node *np)
+ {
+-	unsigned long freq;
++	long freq;
+ 
+ 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
+ 	if (freq <= 0)
 -- 
-2.16.1
+2.15.1
 
