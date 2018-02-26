@@ -1,26 +1,46 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Thu, 08 Feb 2018 10:05:41 +0000
-Subject: Re: [PATCH -next] cpufreq: scpi: fix error return code in scpi_cpufreq_init()
-Message-Id: <2101717.6379XIZ7aP@aspire.rjw.lan>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Feb 2018 12:04:18 +0000
+Subject: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than or equal zero
+Message-Id: <20180226120418.3589-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516673342-170261-1-git-send-email-weiyongjun1@huawei.com>
- <15661228-4bb6-233e-b81b-8f51f4579616@arm.com>
-In-Reply-To: <15661228-4bb6-233e-b81b-8f51f4579616@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, inus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday, January 23, 2018 11:14:41 AM CET Sudeep Holla wrote:
-> 
-> On 23/01/18 02:09, Wei Yongjun wrote:
-> > Fix to return a negative error code from the clk_get() error handling
-> > case instead of 0, as done elsewhere in this function.
-> > 
-> 
-> Thanks for catching this.
-> 
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied, thanks!
+The unsigned integer nfuncs is being error checked with a value less
+or equal to zero; this is always false if of_get_child_count returns
+a -ve for an error condition since nfuncs is not signed. Fix this by
+making variables nfuncs and i signed integers.
+
+Detected with Coccinelle:
+drivers/pinctrl/freescale/pinctrl-imx.c:620:6-12: WARNING: Unsigned
+expression compared with zero: nfuncs <= 0
+
+Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 24aaddd760a0..1e8ca83352d0 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -605,8 +605,8 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device_node *child;
+ 	struct pinctrl_dev *pctl = ipctl->pctl;
+-	u32 nfuncs = 0;
+-	u32 i = 0;
++	int nfuncs = 0;
++	int i = 0;
+ 	bool flat_funcs;
+ 
+ 	if (!np)
+-- 
+2.15.1
 
