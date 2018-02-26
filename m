@@ -1,38 +1,29 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Wed, 14 Feb 2018 07:52:42 +0000
-Subject: Re: [PATCH] rtc: ds1302: remove redundant initializations of pointer bp
-Message-Id: <20180214075242.GA8219@piout.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 26 Feb 2018 14:53:53 +0000
+Subject: Re: [next] wil6210: fix spelling mistake: "preperation"-> "preparation"
+Message-Id: <20180226145353.1DECA60592@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180123101727.31028-1-colin.king@canonical.com>
-In-Reply-To: <20180123101727.31028-1-colin.king@canonical.com>
+References: <20180130192737.8986-1-colin.king@canonical.com>
+In-Reply-To: <20180130192737.8986-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Maya Erez <merez@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 23/01/2018 at 10:17:27 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointe bp is being initialized and this value is never read, it
-> is being updated to the same value later just before it is going to
-> be used. Remove the initialization as it is never read and keep
-> the setting of bp closer to the use of bp.
-> 
-> Cleans up clang warnings:
-> drivers/rtc/rtc-ds1302.c:115:7: warning: Value stored to 'bp' during
-> its initialization is never read
-> drivers/rtc/rtc-ds1302.c:46:7: warning: Value stored to 'bp' during
-> its initialization is never read
+Colin Ian King <colin.king@canonical.com> wrote:
+
+> Trivial fix to spelling mistake in debug error message text.
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-ds1302.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-Applied, thanks.
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+77b83829ebf6 wil6210: fix spelling mistake: "preperation"-> "preparation"
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+https://patchwork.kernel.org/patch/10192357/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
