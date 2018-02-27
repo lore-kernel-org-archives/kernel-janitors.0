@@ -1,76 +1,59 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Mon, 26 Feb 2018 20:06:39 +0000
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Date: Tue, 27 Feb 2018 07:44:55 +0000
 Subject: Re: [PATCH] i2c-stm32f4: remove redundant initialization of pointer reg
-Message-Id: <20180226200639.tfll2y4efepm2sos@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="gaftrawcsqg2fuwf"
+Message-Id: <25b0397b-5df3-2f5c-a18f-238db83205da@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180116174404.19464-1-colin.king@canonical.com>
-In-Reply-To: <20180116174404.19464-1-colin.king@canonical.com>
+ <20180226200639.tfll2y4efepm2sos@ninjato>
+In-Reply-To: <20180226200639.tfll2y4efepm2sos@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
+Hi,
 
---gaftrawcsqg2fuwf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 02/26/2018 09:06 PM, Wolfram Sang wrote:
+> On Tue, Jan 16, 2018 at 05:44:04PM +0000, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The pointer reg is assigned a value that is never read, it is later
+>> overwritten with a new value, hence the redundant initialization can
+>> be removed.
+>>
+>> Cleans up clang warning:
+>> drivers/i2c/busses/i2c-stm32f4.c:352:16: warning: Value stored to 'reg'
+>> during its initialization is never read
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Maxime? Alexandre? Are you OK with this patch?
 
-On Tue, Jan 16, 2018 at 05:44:04PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The pointer reg is assigned a value that is never read, it is later
-> overwritten with a new value, hence the redundant initialization can
-> be removed.
->=20
-> Cleans up clang warning:
-> drivers/i2c/busses/i2c-stm32f4.c:352:16: warning: Value stored to 'reg'
-> during its initialization is never read
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Sorry for delay.
 
-Maxime? Alexandre? Are you OK with this patch?
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
-> ---
->  drivers/i2c/busses/i2c-stm32f4.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-stm32f4.c b/drivers/i2c/busses/i2c-st=
-m32f4.c
-> index 47c8d00de53f..ba600d77a3f8 100644
-> --- a/drivers/i2c/busses/i2c-stm32f4.c
-> +++ b/drivers/i2c/busses/i2c-stm32f4.c
-> @@ -349,7 +349,7 @@ static void stm32f4_i2c_read_msg(struct stm32f4_i2c_d=
-ev *i2c_dev)
->  static void stm32f4_i2c_terminate_xfer(struct stm32f4_i2c_dev *i2c_dev)
->  {
->  	struct stm32f4_i2c_msg *msg =3D &i2c_dev->msg;
-> -	void __iomem *reg =3D i2c_dev->base + STM32F4_I2C_CR2;
-> +	void __iomem *reg;
-> =20
->  	stm32f4_i2c_disable_irq(i2c_dev);
-> =20
-> --=20
-> 2.15.1
->=20
+regards
+alex
 
---gaftrawcsqg2fuwf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqUaM8ACgkQFA3kzBSg
-KbY3Jw//QM2G4a6D4QNOxRGDhRKPIh9hajC5jWNaWm+Kf0UdcCVQsO2QMWE2A1AM
-N1rVUqoVXXnI9pxXfylMIER68eNwuZ/LskzJqKhv5DRjIZS5ctYGWt20e/GzslWB
-Ox2gchqdtgVsEWglDKE4/eEAurUD7QHUfrl4RjSjGUJLCwYiUzEz7BNik20iFcDQ
-XxadpIWmtt+rp9wCwVKucX6mYV3uIi/VpPVpjuU0tThGx27M3/IRh+FklGX5sKBd
-pNoIGyrJggnC+1hnz8eXdbH2kQpmu3oLxNnjc2K0kR1P3PeR4njw0ESLs/WUmsib
-qfLWhYRapUdgFs8NLjYtxHJ7T6aZwRM7bMSD+FOX7NrnxelwR+YA37a4qZJqxgyf
-MvwLaTTJUJbquOgPG+xLEO5AyAcneJGb8cflSZw6WccmoC76xYX4Alxsr5YFeguJ
-UA28r2/UR/Vch3ve/JWiazfQLGpKX4b3qxyMF3bQaJPPdxQ1LraMSI8ZcmIedIiJ
-NJm8aewhUQNCIFUzhKgnmrnBjY6p/NmpoboZTkiNNfCOBzBee+8M7kyxuilzmUbr
-qJFoMlr2LlCvET0/3NyOjbhxX5r0sD0+onjcm8r0MuMYBxdzw7YJ3bLVI7eJNyzM
-bTZz6sJshSqlhkGc3sfC8MNpZwH9SlrVIDO0pivViimnI9V9pRg=
-=7mwh
------END PGP SIGNATURE-----
-
---gaftrawcsqg2fuwf--
+> 
+>> ---
+>>   drivers/i2c/busses/i2c-stm32f4.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-stm32f4.c b/drivers/i2c/busses/i2c-stm32f4.c
+>> index 47c8d00de53f..ba600d77a3f8 100644
+>> --- a/drivers/i2c/busses/i2c-stm32f4.c
+>> +++ b/drivers/i2c/busses/i2c-stm32f4.c
+>> @@ -349,7 +349,7 @@ static void stm32f4_i2c_read_msg(struct stm32f4_i2c_dev *i2c_dev)
+>>   static void stm32f4_i2c_terminate_xfer(struct stm32f4_i2c_dev *i2c_dev)
+>>   {
+>>   	struct stm32f4_i2c_msg *msg = &i2c_dev->msg;
+>> -	void __iomem *reg = i2c_dev->base + STM32F4_I2C_CR2;
+>> +	void __iomem *reg;
+>>   
+>>   	stm32f4_i2c_disable_irq(i2c_dev);
+>>   
+>> -- 
+>> 2.15.1
+>>
