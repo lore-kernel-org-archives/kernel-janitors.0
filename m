@@ -1,35 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 08:21:00 +0000
-Subject: Re: efi/apple-properties: Checking error handling in unmarshal_devices()
-Message-Id: <af278523-44af-3483-8503-10ec93f7a6c6@users.sourceforge.net>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Tue, 27 Feb 2018 13:46:51 +0000
+Subject: [PATCH v2 1/2] iio: dummy: Add correct tabs and spaces to Kconfig
+Message-Id: <fc453a92429d06d769aa71072c5c0cbaa1c8d57a.1519738995.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <145f8fac-9297-b362-d89f-886632e2507f@users.sourceforge.net>
- <20180213184033.GA24299@wunner.de>
-In-Reply-To: <20180213184033.GA24299@wunner.de>
+References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Wunner <lukas@wunner.de>, linux-efi@vger.kernel.org
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> While the allocator does print an error when allocations fail,
-> it may not be immediately apparent to the user what the
-> *consequences* are.  In this case, the consequence is that the
-> device properties will not be available for consumption by
-> drivers and they may fail to probe or behave in entirely
-> unexpected ways.
+Kconfig from iio/dummy does not follow the coding style recommendations.
+According to the coding-style, Lines under a config definition are
+indented with one tab, while help text is indented an additional two
+spaces. This patch adds the proper tabulation and space.
 
-Would it make sense to indicate such a questionable software situation
-be any return code?
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/dummy/Kconfig | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
+index 5a29fbd3c531..85e13b2e35bf 100644
+--- a/drivers/iio/dummy/Kconfig
++++ b/drivers/iio/dummy/Kconfig
+@@ -9,20 +9,20 @@ config IIO_DUMMY_EVGEN
+ 	tristate
+ 
+ config IIO_SIMPLE_DUMMY
+-       tristate "An example driver with no hardware requirements"
+-       depends on IIO_SW_DEVICE
+-       help
+-	 Driver intended mainly as documentation for how to write
+-	 a driver. May also be useful for testing userspace code
+-	 without hardware.
++	tristate "An example driver with no hardware requirements"
++	depends on IIO_SW_DEVICE
++	help
++	  Driver intended mainly as documentation for how to write
++	  a driver. May also be useful for testing userspace code
++	  without hardware.
+ 
+ if IIO_SIMPLE_DUMMY
+ 
+ config IIO_SIMPLE_DUMMY_EVENTS
+-       bool "Event generation support"
+-       select IIO_DUMMY_EVGEN
+-       help
+-         Add some dummy events to the simple dummy driver.
++	bool "Event generation support"
++	select IIO_DUMMY_EVGEN
++	help
++	  Add some dummy events to the simple dummy driver.
+ 
+ config IIO_SIMPLE_DUMMY_BUFFER
+ 	bool "Buffered capture support"
+-- 
+2.16.2
 
-> Hence I deliberately printed an error message here so that the user
-> can make the connection between erratic behavior of drivers later on
-> and the memory allocation error here.
-
-Do you find this terse message really sufficient?
-
-Can the mentioned properties be required for the desired system configuration?
-
-Regards,
-Markus
