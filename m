@@ -1,41 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 07 Feb 2018 11:27:54 +0000
-Subject: [PATCH] NFS: make struct nlmclnt_fl_close_lock_ops static
-Message-Id: <20180207112754.30821-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 27 Feb 2018 16:46:14 +0000
+Subject: Re: ath5k: remove duplicated re-assignment to pointer 'tq'
+Message-Id: <20180227164614.323FE60285@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180201180327.23435-1-colin.king@canonical.com>
+In-Reply-To: <20180201180327.23435-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Jiri Slaby <jirislaby@gmail.com>, Nick Kossifidis <mickflemm@gmail.com>, "Luis R . Rodriguez" <mcgrof@do-not-panic.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-The structure nlmclnt_fl_close_lock_ops s local to the source and does
-not need to be in global scope, so make it static.
+> Pointer tq is initialized with &ah->ah_txq[queue] and then a few
+> lines later is re-assigned the same value, hence this duplicate
+> assignment is redundant and can be removed.
+> 
+> Cleans up clang warning:
+> drivers/net/wireless/ath/ath5k/qcu.c:326:25: warning: Value stored
+> to 'tq' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Cleans up sparse warning:
-fs/nfs/nfs3proc.c:876:33: warning: symbol 'nlmclnt_fl_close_lock_ops' was not
-declared. Should it be static?
+Patch applied to ath-next branch of ath.git, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/nfs/nfs3proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+2571c081cb43 ath5k: remove duplicated re-assignment to pointer 'tq'
 
-diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
-index 49f848fd1f04..7327930ad970 100644
---- a/fs/nfs/nfs3proc.c
-+++ b/fs/nfs/nfs3proc.c
-@@ -873,7 +873,7 @@ static void nfs3_nlm_release_call(void *data)
- 	}
- }
- 
--const struct nlmclnt_operations nlmclnt_fl_close_lock_ops = {
-+static const struct nlmclnt_operations nlmclnt_fl_close_lock_ops = {
- 	.nlmclnt_alloc_call = nfs3_nlm_alloc_call,
- 	.nlmclnt_unlock_prepare = nfs3_nlm_unlock_prepare,
- 	.nlmclnt_release_call = nfs3_nlm_release_call,
 -- 
-2.15.1
+https://patchwork.kernel.org/patch/10195805/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
