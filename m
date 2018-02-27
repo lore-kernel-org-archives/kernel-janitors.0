@@ -1,20 +1,37 @@
-From: jiangyiwen <jiangyiwen@huawei.com>
-Date: Fri, 02 Feb 2018 13:31:37 +0000
-Subject: [V9fs-developer] [RFC] why set SB_NOATIME in v9fs_fill_super by default
-Message-Id: <5A746839.9020602@huawei.com>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Tue, 27 Feb 2018 14:47:55 +0000
+Subject: [PATCH] iio:magnetometer: Replace magic number 0 by IIO_CHAN_INFO_RAW
+Message-Id: <20180227144755.ifbzn5gekm345nk5@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Eduard Shishkin <Eduard.Shishkin@huawei.com>, "Wangguoli (Andy)" <andy.wangguoli@huawei.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+The function magn_3d_read_raw has a switch statement handling multiple
+cases per channel. The first case statement uses the magic number 0,
+which means IIO_CHAN_INFO_RAW. Additionally, the iio_chan_spec for
+magn_3d_channels is configured to be IIO_CHAN_INFO_RAW. Therefore, this
+patch replaces the magic number 0 for the appropriate IIO_CHAN_INFO_RAW.
 
-I found v9fs always set SB_NOATIME into sb->s_flags in v9fs_fill_super,
-even if user use mount option relatime, I am very curious about this
-thing, can anyone tell me?
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/magnetometer/hid-sensor-magn-3d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Yiwen Jiang.
+diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+index a1fd9d591818..d55c4885211a 100644
+--- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
++++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+@@ -167,7 +167,7 @@ static int magn_3d_read_raw(struct iio_dev *indio_dev,
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&magn_state->magn_flux_attributes, true);
+ 		report_id  			magn_state->magn[chan->address].report_id;
+-- 
+2.16.2
 
