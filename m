@@ -1,61 +1,35 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Tue, 27 Feb 2018 13:46:51 +0000
-Subject: [PATCH v2 1/2] iio: dummy: Add correct tabs and spaces to Kconfig
-Message-Id: <fc453a92429d06d769aa71072c5c0cbaa1c8d57a.1519738995.git.rodrigosiqueiramelo@gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 27 Feb 2018 16:17:02 +0000
+Subject: Re: wireless: zd1211rw: remove redundant assignment of pointer 'q'
+Message-Id: <20180227161702.81FE4607E5@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+References: <20180130182537.5580-1-colin.king@canonical.com>
+In-Reply-To: <20180130182537.5580-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Daniel Drake <dsd@gentoo.org>, Ulrich Kunitz <kune@deine-taler.de>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Kconfig from iio/dummy does not follow the coding style recommendations.
-According to the coding-style, Lines under a config definition are
-indented with one tab, while help text is indented an additional two
-spaces. This patch adds the proper tabulation and space.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/iio/dummy/Kconfig | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer q is initialized and then almost immediately afterwards being
+> re-assigned the same value. Remove the second redundant assignment.
+> 
+> Cleans up clang warning:
+> drivers/net/wireless/zydas/zd1211rw/zd_mac.c:503:23: warning: Value
+> stored to 'q' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
-index 5a29fbd3c531..85e13b2e35bf 100644
---- a/drivers/iio/dummy/Kconfig
-+++ b/drivers/iio/dummy/Kconfig
-@@ -9,20 +9,20 @@ config IIO_DUMMY_EVGEN
- 	tristate
- 
- config IIO_SIMPLE_DUMMY
--       tristate "An example driver with no hardware requirements"
--       depends on IIO_SW_DEVICE
--       help
--	 Driver intended mainly as documentation for how to write
--	 a driver. May also be useful for testing userspace code
--	 without hardware.
-+	tristate "An example driver with no hardware requirements"
-+	depends on IIO_SW_DEVICE
-+	help
-+	  Driver intended mainly as documentation for how to write
-+	  a driver. May also be useful for testing userspace code
-+	  without hardware.
- 
- if IIO_SIMPLE_DUMMY
- 
- config IIO_SIMPLE_DUMMY_EVENTS
--       bool "Event generation support"
--       select IIO_DUMMY_EVGEN
--       help
--         Add some dummy events to the simple dummy driver.
-+	bool "Event generation support"
-+	select IIO_DUMMY_EVGEN
-+	help
-+	  Add some dummy events to the simple dummy driver.
- 
- config IIO_SIMPLE_DUMMY_BUFFER
- 	bool "Buffered capture support"
+Patch applied to wireless-drivers-next.git, thanks.
+
+76d1f95983a0 wireless: zd1211rw: remove redundant assignment of pointer 'q'
+
 -- 
-2.16.2
+https://patchwork.kernel.org/patch/10192195/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
