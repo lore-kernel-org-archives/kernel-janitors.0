@@ -1,29 +1,58 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 26 Feb 2018 14:53:53 +0000
-Subject: Re: [next] wil6210: fix spelling mistake: "preperation"-> "preparation"
-Message-Id: <20180226145353.1DECA60592@smtp.codeaurora.org>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Tue, 27 Feb 2018 13:47:06 +0000
+Subject: [PATCH v2 2/2] iio:dummy: Add extra paragraphs on Kconfig
+Message-Id: <7cfd9fd93e76fede44d328045e7885cd78324a78.1519738995.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180130192737.8986-1-colin.king@canonical.com>
-In-Reply-To: <20180130192737.8986-1-colin.king@canonical.com>
+References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Maya Erez <merez@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+This patch fixes the checkpatch.pl warning:
 
-> Trivial fix to spelling mistake in debug error message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+drivers/iio/dummy/Kconfig:21: WARNING: please write a paragraph that
+describes the config symbol fully
+drivers/iio/dummy/Kconfig:27: WARNING: please write a paragraph that
+describes the config symbol fully
 
-Patch applied to ath-next branch of ath.git, thanks.
+This patch expands the explanation about IIO_DUMMY_EVGEN by using the
+code documentation found in iio/dummy/iio_dummy_evgen.c. In the same
+way, the information related to IIO_SIMPLE_DUMMY_BUFFER was extracted
+from file iio_simple_dummy_buffer.c.
 
-77b83829ebf6 wil6210: fix spelling mistake: "preperation"-> "preparation"
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/dummy/Kconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
+index 85e13b2e35bf..c4fd108e91d3 100644
+--- a/drivers/iio/dummy/Kconfig
++++ b/drivers/iio/dummy/Kconfig
+@@ -24,6 +24,10 @@ config IIO_SIMPLE_DUMMY_EVENTS
+ 	help
+ 	  Add some dummy events to the simple dummy driver.
+ 
++	  The purpose of this is to generate 'fake' event interrupts thus
++	  allowing that driver's code to be as close as possible to that
++	  a normal driver talking to hardware.
++
+ config IIO_SIMPLE_DUMMY_BUFFER
+ 	bool "Buffered capture support"
+ 	select IIO_BUFFER
+@@ -32,6 +36,9 @@ config IIO_SIMPLE_DUMMY_BUFFER
+ 	help
+ 	  Add buffered data capture to the simple dummy driver.
+ 
++	  Buffer handling elements of industrial I/O reference driver.
++	  Uses the kfifo buffer.
++
+ endif # IIO_SIMPLE_DUMMY
+ 
+ endmenu
 -- 
-https://patchwork.kernel.org/patch/10192357/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.16.2
 
