@@ -1,27 +1,26 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Tue, 27 Feb 2018 13:46:27 +0000
-Subject: [PATCH v2 0/2] iio:dummy: Rework Kconfig
-Message-Id: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 27 Feb 2018 14:26:09 +0000
+Subject: Re: [PATCH v2 0/2] iio:dummy: Rework Kconfig
+Message-Id: <CAEnQRZD4RcZbQgOC-Zj2io0piYCHywKVUmgF1AptxxfWxtXmWw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Daniel Baluta <daniel.baluta@nxp.com>, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-This series adds extra documentation inside iio/dummy/Kconfig, and
-applies the coding-style to it.
+On Tue, Feb 27, 2018 at 3:46 PM, Rodrigo Siqueira
+<rodrigosiqueiramelo@gmail.com> wrote:
+> This series adds extra documentation inside iio/dummy/Kconfig, and
+> applies the coding-style to it.
+>
+> Changes v2:
+> - Separates single patch in a short series.
+>
+> Rodrigo Siqueira (2):
+>   iio: dummy: Add correct tabs and spaces to Kconfig
+>   iio:dummy: Add extra paragraphs on Kconfig
 
-Changes v2:
-- Separates single patch in a short series.
-
-Rodrigo Siqueira (2):
-  iio: dummy: Add correct tabs and spaces to Kconfig
-  iio:dummy: Add extra paragraphs on Kconfig
-
- drivers/iio/dummy/Kconfig | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
-
--- 
-2.16.2
-
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
