@@ -1,27 +1,31 @@
-From: Michael Brown <info@ukcontactdb.com>
-Date: Fri, 09 Feb 2018 10:01:32 +0000
-Subject: Re: Contact
-Message-Id: <20180209_100132_057265.info@ukcontactdb.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 27 Feb 2018 16:25:52 +0000
+Subject: Re: brcmsmac: remove duplicated bit-wise or of IEEE80211_CHAN_NO_IR
+Message-Id: <20180227162552.B676C607E5@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180223133622.25700-1-colin.king@canonical.com>
+In-Reply-To: <20180223133622.25700-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-After visiting your website, we want to offer you products that will signif=
-icantly increase the sales of your products and services. Our database of U=
-K companies will help you reach the target audience of the right people for=
- your products.=20
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Bit pattern IEEE80211_CHAN_NO_IR is being bit-wise or'd twice;
+> remove the redundant 2nd IEEE80211_CHAN_NO_IR
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-http://www.ukbusinesscontacts.com/?page=CAtalog
+Patch applied to wireless-drivers-next.git, thanks.
 
-Best Regards.
-Michael Brown
+47c8a3956a60 brcmsmac: remove duplicated bit-wise or of IEEE80211_CHAN_NO_IR
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+https://patchwork.kernel.org/patch/10237695/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
