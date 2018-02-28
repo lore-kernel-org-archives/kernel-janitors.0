@@ -1,27 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 20:08:42 +0000
-Subject: [PATCH 0/2] HSI: ssi_protocol: Adjustments for two function implementations
-Message-Id: <14dd4865-f983-ba7d-3068-f6450a8de7ea@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Feb 2018 11:28:49 +0000
+Subject: [PATCH] staging: rtl8192u: return -ENOMEM on failed allocation of priv->oldaddr
+Message-Id: <20180228112849.16327-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>, Sebastian Reichel <sre@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 21:03:45 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Currently the allocation of priv->oldaddr is not null checked which will
+lead to subsequent errors when accessing priv->oldaddr.  Fix this with
+a null pointer check and a return of -ENOMEM on allocation failure.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in ssi_protocol_probe()
-  Fix a typo in two comment lines
+Detected with Coccinelle:
+drivers/staging/rtl8192u/r8192U_core.c:1708:2-15: alloc with no test,
+possible model on line 1723
 
- drivers/hsi/clients/ssi_protocol.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8192u/r8192U_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 3c300f7b6a62..d607c59761cf 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -1706,6 +1706,8 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
+ 
+ 		priv->rx_urb[16] = usb_alloc_urb(0, GFP_KERNEL);
+ 		priv->oldaddr = kmalloc(16, GFP_KERNEL);
++		if (!priv->oldaddr)
++			return -ENOMEM;
+ 		oldaddr = priv->oldaddr;
+ 		align = ((long)oldaddr) & 3;
+ 		if (align) {
 -- 
-2.16.1
+2.15.1
 
