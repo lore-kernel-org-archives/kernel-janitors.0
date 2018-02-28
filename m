@@ -1,44 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 02 Feb 2018 18:12:27 +0000
-Subject: [PATCH 1/2] i2c-bfin-twi: Delete an error message for a failed memory allocation in i2c_bfin_twi_pro
-Message-Id: <cfd1ee7e-6f4d-7d05-b857-a509887a6bc4@users.sourceforge.net>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Wed, 28 Feb 2018 21:13:47 +0000
+Subject: Re: [PATCH] IB/usnic: Delete an error message for a failed memory allocation in usnic_transport_init
+Message-Id: <20180228211347.GA13394@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <740e31b4-79dd-a4bf-a2f5-001c44864b79@users.sourceforge.net>
-In-Reply-To: <740e31b4-79dd-a4bf-a2f5-001c44864b79@users.sourceforge.net>
+References: <d9b22086-13d0-b519-3126-937a531d93d2@users.sourceforge.net>
+In-Reply-To: <d9b22086-13d0-b519-3126-937a531d93d2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-rdma@vger.kernel.org, Christian Benvenuti <benve@cisco.com>, Dave Goodell <dgoodell@cisco.com>, Doug Ledford <dledford@redhat.com>, Roland Dreier <roland@purestorage.com>, Upinder Malhi <umalhi@cisco.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Feb 2018 18:55:04 +0100
+On Sat, Jan 27, 2018 at 08:15:17PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 27 Jan 2018 20:06:59 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>  drivers/infiniband/hw/usnic/usnic_transport.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-Omit an extra message for a memory allocation failure in this function.
+Applied to for-next
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/i2c/busses/i2c-bfin-twi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-bfin-twi.c b/drivers/i2c/busses/i2c-bfin-twi.c
-index ff3343186a82..ed596fd56b8b 100644
---- a/drivers/i2c/busses/i2c-bfin-twi.c
-+++ b/drivers/i2c/busses/i2c-bfin-twi.c
-@@ -621,10 +621,8 @@ static int i2c_bfin_twi_probe(struct platform_device *pdev)
- 
- 	iface = devm_kzalloc(&pdev->dev, sizeof(struct bfin_twi_iface),
- 			GFP_KERNEL);
--	if (!iface) {
--		dev_err(&pdev->dev, "Cannot allocate memory\n");
-+	if (!iface)
- 		return -ENOMEM;
--	}
- 
- 	spin_lock_init(&(iface->lock));
- 
--- 
-2.16.1
-
+Jason
