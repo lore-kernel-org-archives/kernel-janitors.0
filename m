@@ -1,28 +1,35 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 28 Feb 2018 21:13:47 +0000
-Subject: Re: [PATCH] IB/usnic: Delete an error message for a failed memory allocation in usnic_transport_init
-Message-Id: <20180228211347.GA13394@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Feb 2018 17:38:23 +0000
+Subject: [PATCH] ARM: iop13xx: Remove duplicated bit-wise or of PCI_STATUS_REC_TARGET_ABORT
+Message-Id: <20180228173823.4074-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d9b22086-13d0-b519-3126-937a531d93d2@users.sourceforge.net>
-In-Reply-To: <d9b22086-13d0-b519-3126-937a531d93d2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Christian Benvenuti <benve@cisco.com>, Dave Goodell <dgoodell@cisco.com>, Doug Ledford <dledford@redhat.com>, Roland Dreier <roland@purestorage.com>, Upinder Malhi <umalhi@cisco.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, Jan 27, 2018 at 08:15:17PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 27 Jan 2018 20:06:59 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->  drivers/infiniband/hw/usnic/usnic_transport.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next
+Bit pattern PCI_STATUS_REC_TARGET_ABORT is being bit-wise or'd twice;
+remove the redundant 2nd PCI_STATUS_REC_TARGET_ABORT
 
-Jason
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/arm/mach-iop13xx/pci.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/mach-iop13xx/pci.h b/arch/arm/mach-iop13xx/pci.h
+index 736168d8c7ac..c6a0678c1741 100644
+--- a/arch/arm/mach-iop13xx/pci.h
++++ b/arch/arm/mach-iop13xx/pci.h
+@@ -23,7 +23,6 @@ void iop13xx_map_pci_memory(void);
+ #define IOP_PCI_STATUS_ERROR (PCI_STATUS_PARITY |	     \
+ 			       PCI_STATUS_SIG_TARGET_ABORT | \
+ 			       PCI_STATUS_REC_TARGET_ABORT | \
+-			       PCI_STATUS_REC_TARGET_ABORT | \
+ 			       PCI_STATUS_REC_MASTER_ABORT | \
+ 			       PCI_STATUS_SIG_SYSTEM_ERROR | \
+ 	 		       PCI_STATUS_DETECTED_PARITY)
+-- 
+2.15.1
+
