@@ -1,30 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 01 Feb 2018 14:43:17 +0000
-Subject: Re: [PATCH] be2net: remove redundant initialization of 'head' and pointer txq
-Message-Id: <20180201.094317.1226307518693749272.davem@davemloft.net>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Wed, 28 Feb 2018 21:14:05 +0000
+Subject: Re: [PATCH 1/3] RDMA/iwpm: Delete an error message for a failed memory allocation in iwpm_create_nlm
+Message-Id: <20180228211405.GB13394@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180131161425.15011-1-colin.king@canonical.com>
-In-Reply-To: <20180131161425.15011-1-colin.king@canonical.com>
+References: <b1df0889-b967-97ae-3a3d-0dde0d7258cd@users.sourceforge.net>
+ <ac5f9bdd-4924-2613-f074-0dd285427604@users.sourceforge.net>
+In-Reply-To: <ac5f9bdd-4924-2613-f074-0dd285427604@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: sathya.perla@broadcom.com, ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-rdma@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>, Doug Ledford <dledford@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Johannes Berg <johannes.berg@intel.com>, Leon Romanovsky <leonro@mellanox.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Jan 2018 16:14:25 +0000
+On Sat, Jan 27, 2018 at 10:19:05PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 27 Jan 2018 21:48:01 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>  drivers/infiniband/core/iwpm_util.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable head is initialized to a value that is never read and is
-> being updated to a new value a few lines later, hence this
-> initialization is redundant and can be safely removed as well
-> as the now unused pointer txq.
-> 
-> Cleans up clang warning:
-> drivers/net/ethernet/emulex/benet/be_main.c:996:6: warning: Value
-> stored to 'head' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+applied to for-next
 
-Applied, thank you.
+Jason
