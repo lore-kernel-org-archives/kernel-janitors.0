@@ -1,30 +1,75 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 15 Feb 2018 15:52:34 +0000
-Subject: Re: [PATCH] crypto: ccp - Make function ccp_get_dma_chan_attr static
-Message-Id: <20180215155234.GO7352@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 28 Feb 2018 08:45:21 +0000
+Subject: Re: [v2] [media] Use common error handling code in 20 functions
+Message-Id: <783e7eff-2028-72be-b83c-77fc4340484e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180206232001.14102-1-colin.king@canonical.com>
-In-Reply-To: <20180206232001.14102-1-colin.king@canonical.com>
+References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
+ <3895609.4O6dNuP5Wm@avalon>
+In-Reply-To: <3895609.4O6dNuP5Wm@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Andrey Utkin <andrey_utkin@fastmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Brian Johnson <brijohn@gmail.com>, =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= <christoph@boehmwalder.at>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, Daniele Nicolodi <daniele@grinta.net>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Devendra Sharma <devendra.sharma9091@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Hans Verkuil <hans.verkuil@cisco.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Mike Isely <isely@pobox.com>, Philippe Ombredanne <pombredanne@nexb.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Satendra Singh Thakur <satendra.t@samsung.com>, Sean Young <sean@mess.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Shyam Saini <mayhs11saini@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Todor Tomov <todor.tomov@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 11:20:01PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+>> +put_isp:
+>> +	omap3isp_put(video->isp);
+>> +delete_fh:
+>> +	v4l2_fh_del(&handle->vfh);
+>> +	v4l2_fh_exit(&handle->vfh);
+>> +	kfree(handle);
 > 
-> Function ccp_get_dma_chan_attr is local to the source and does not
-> need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/crypto/ccp/ccp-dmaengine.c:41:14: warning: symbol
-> 'ccp_get_dma_chan_attr' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Please prefix the error labels with error_.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+How often do you really need such an extra prefix?
+
+
+>> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+>> @@ -994,10 +994,8 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file,
+>> void *fh, struct v4l2_queryctrl qc = { .id = ctrl->id };
+>>
+>>  			ret = uvc_query_v4l2_ctrl(chain, &qc);
+>> -			if (ret < 0) {
+>> -				ctrls->error_idx = i;
+>> -				return ret;
+>> -			}
+>> +			if (ret < 0)
+>> +				goto set_index;
+>>
+>>  			ctrl->value = qc.default_value;
+>>  		}
+>> @@ -1013,14 +1011,17 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file,
+>> void *fh, ret = uvc_ctrl_get(chain, ctrl);
+>>  		if (ret < 0) {
+>>  			uvc_ctrl_rollback(handle);
+>> -			ctrls->error_idx = i;
+>> -			return ret;
+>> +			goto set_index;
+>>  		}
+>>  	}
+>>
+>>  	ctrls->error_idx = 0;
+>>
+>>  	return uvc_ctrl_rollback(handle);
+>> +
+>> +set_index:
+>> +	ctrls->error_idx = i;
+>> +	return ret;
+>>  }
+> 
+> For uvcvideo I find this to hinder readability
+
+I got an other development view.
+
+
+> without adding much added value.
+
+There can be a small effect for such a function implementation.
+
+
+> Please drop the uvcvideo change from this patch.
+
+Would it be nice if this source code adjustment could be integrated also?
+
+Regards,
+Markus
