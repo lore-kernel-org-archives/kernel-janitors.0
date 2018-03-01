@@ -1,54 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 12:39:35 +0000
-Subject: [PATCH 2/3] pata_macio: Improve a size determination in two functions
-Message-Id: <44765718-d832-c58b-6055-91c7c9b11b73@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Mar 2018 14:40:19 +0000
+Subject: [PATCH][next] ieee802154: remove unused variable 'val'
+Message-Id: <20180301144019.14321-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e87cf7d-eda2-12d9-af01-17f6619cda72@users.sourceforge.net>
-In-Reply-To: <1e87cf7d-eda2-12d9-af01-17f6619cda72@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Xue Liu <liuxuenetmail@gmail.com>, Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 13:08:14 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Variable 'val' is not being initialized and is later being logically
+or'd with DAR_PHY_CTRL4_PROMISCUOUS. Considering this variable is never
+being read anyway we may as well remove val altogether.
 
-This issue was detected by using the Coccinelle software.
+Cleans up error detected by cppcheck:
+drivers/net/ieee802154/mcr20a.c:732: (error) Uninitialized variable: val
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/ata/pata_macio.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ieee802154/mcr20a.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index 9588e685d994..dc40af4c615c 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -1129,8 +1129,7 @@ static int pata_macio_attach(struct macio_dev *mdev,
- 	macio_enable_devres(mdev);
+diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
+index d9eb22a52551..55a22c761808 100644
+--- a/drivers/net/ieee802154/mcr20a.c
++++ b/drivers/net/ieee802154/mcr20a.c
+@@ -723,13 +723,11 @@ mcr20a_set_promiscuous_mode(struct ieee802154_hw *hw, const bool on)
+ 	struct mcr20a_local *lp = hw->priv;
+ 	int ret;
+ 	u8 rx_frame_filter_reg = 0x0;
+-	u8 val;
  
- 	/* Allocate and init private data structure */
--	priv = devm_kzalloc(&mdev->ofdev.dev,
--			    sizeof(struct pata_macio_priv), GFP_KERNEL);
-+	priv = devm_kzalloc(&mdev->ofdev.dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
+ 	dev_dbg(printdev(lp), "%s(%d)\n", __func__, on);
  
-@@ -1273,8 +1272,7 @@ static int pata_macio_pci_attach(struct pci_dev *pdev,
- 	}
- 
- 	/* Allocate and init private data structure */
--	priv = devm_kzalloc(&pdev->dev,
--			    sizeof(struct pata_macio_priv), GFP_KERNEL);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
+ 	if (on) {
+ 		/* All frame types accepted*/
+-		val |= DAR_PHY_CTRL4_PROMISCUOUS;
+ 		rx_frame_filter_reg &= ~(IAR_RX_FRAME_FLT_FRM_VER);
+ 		rx_frame_filter_reg |= (IAR_RX_FRAME_FLT_ACK_FT |
+ 				  IAR_RX_FRAME_FLT_NS_FT);
 -- 
-2.16.1
+2.15.1
 
