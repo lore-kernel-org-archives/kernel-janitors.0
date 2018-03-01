@@ -1,40 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 12 Mar 2018 15:12:57 +0000
-Subject: Re: [PATCH][next] lan743x: remove some redundant variables and assignments
-Message-Id: <20180312.111257.2221362853661035214.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Mar 2018 16:23:54 +0000
+Subject: [PATCH] infiniband: remove redundant assignment to pointer 'rdi'
+Message-Id: <20180301162354.17420-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180311164233.27139-1-colin.king@canonical.com>
-In-Reply-To: <20180311164233.27139-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 11 Mar 2018 17:42:33 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Function lan743x_phy_init assigns pointer 'netdev' but this is never read
-> and hence it can be removed. The return error code handling can also be
-> cleaned up to remove the variable 'ret'.
-> 
-> Function lan743x_phy_link_status_change assigns pointer 'phy' twice and
-> this is never read, so it also can be removed.
-> 
-> Finally, function lan743x_tx_napi_poll initializes pointer 'adapter'
-> and then re-assigns the same value into this pointer a little later on
-> so this second assignment is redundant and can be also removed.
-> 
-> Cleans up clang warnings:
-> drivers/net/ethernet/microchip/lan743x_main.c:951:2: warning: Value
-> stored to 'netdev' is never read
-> drivers/net/ethernet/microchip/lan743x_main.c:971:3: warning: Value
-> stored to 'phy' is never read
-> drivers/net/ethernet/microchip/lan743x_main.c:1583:26: warning: Value
-> stored to 'adapter' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The pointer rdi is being initialized with a value that is never read
+and re-assigned immediately after, hence the initialization is redundant
+and can be removed.
 
-Applied.
+Cleans up clang warning:
+drivers/infiniband/sw/rdmavt/vt.c:94:23: warning: Value stored to 'rdi'
+during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/sw/rdmavt/vt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/sw/rdmavt/vt.c b/drivers/infiniband/sw/rdmavt/vt.c
+index a4553b2b3696..a67b0ddc2230 100644
+--- a/drivers/infiniband/sw/rdmavt/vt.c
++++ b/drivers/infiniband/sw/rdmavt/vt.c
+@@ -91,7 +91,7 @@ module_exit(rvt_cleanup);
+  */
+ struct rvt_dev_info *rvt_alloc_device(size_t size, int nports)
+ {
+-	struct rvt_dev_info *rdi = ERR_PTR(-ENOMEM);
++	struct rvt_dev_info *rdi;
+ 
+ 	rdi = (struct rvt_dev_info *)ib_alloc_device(size);
+ 	if (!rdi)
+-- 
+2.15.1
+
