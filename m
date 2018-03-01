@@ -1,76 +1,42 @@
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Date: Mon, 12 Mar 2018 19:32:07 +0000
-Subject: Re: [PATCH] net/mlx4_en: Fix a memory leak in case of error in 'mlx4_en_init_netdev()'
-Message-Id: <9cd5ab7d-15c1-7ebf-1bf1-3fcd79525fa8@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Mar 2018 16:42:40 +0000
+Subject: [PATCH] net: amd8111e: remove redundant assignment to 'tx_index'
+Message-Id: <20180301164240.18014-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180311224529.4427-1-christophe.jaillet@wanadoo.fr>
- <a61ed690-7df1-7292-4074-3f7d66c0b490@mellanox.com>
-In-Reply-To: <a61ed690-7df1-7292-4074-3f7d66c0b490@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Tariq Toukan <tariqt@mellanox.com>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 12/03/2018 à 09:42, Tariq Toukan a écrit :
- >
- >
- > On 12/03/2018 12:45 AM, Christophe JAILLET wrote:
- >> If 'kzalloc' fails, we must free some memory before returning.
- >>
- >> Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings
- >> scheme")
- >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
- >> ---
- >>   drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
- >>   1 file changed, 1 insertion(+), 1 deletion(-)
- >>
- >> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
- >> b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
- >> index 8fc51bc29003..f9db018e858f 100644
- >> --- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
- >> +++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
- >> @@ -3327,7 +3327,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev
- >> *mdev, int port,
- >>           if (!priv->tx_cq[t]) {
- >>               kfree(priv->tx_ring[t]);
- >>               err = -ENOMEM;
- >> -            goto out;
- >> +            goto err_free_tx;
- >>           }
- >>       }
- >>       priv->rx_ring_num = prof->rx_ring_num;
- >>
- >
- > Hi Christophe, thanks for spotting this.
- >
- > However, I think these err_free_tx label and loop are redundant.
- > Both tx_ring/tx_cq flows should just goto out, as resources are freed
- > later in mlx4_en_destroy_netdev() -> mlx4_en_free_resources().
- >
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi,
+The variable tx_index is being initialized with a value that is never
+read and re-assigned a little later, hence the initialization is redundant
+and can be removed.
 
-I do not agree with you and I think that the patch is relevant.
+Cleans up clang warning:
+drivers/net/ethernet/amd/amd8111e.c:652:6: warning: Value stored to
+'tx_index' during its initialization is never read
 
-If 'mlx4_en_init_netdev' fails, the only caller, 'mlx4_en_activate()', 
-will set:
-	mdev->pndev[i] = NULL
-(see 
-https://elixir.bootlin.com/linux/v4.16-rc5/source/drivers/net/ethernet/mellanox/mlx4/en_main.c#L254)
-
-and 'mlx4_en_destroy_netdev()' is not called in this case.
-(see 
-https://elixir.bootlin.com/linux/v4.16-rc5/source/drivers/net/ethernet/mellanox/mlx4/en_main.c#L232)
-
-My understanding is that 'mlx4_en_destroy_netdev()' will free resources 
-in the normal case but that resources should be freed at allocation time 
-if it does not fully succeed.
-
-Best regards,
-CJ
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+ drivers/net/ethernet/amd/amd8111e.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/amd/amd8111e.c b/drivers/net/ethernet/amd/amd8111e.c
+index 358f7ab77c70..c99e3e845ac0 100644
+--- a/drivers/net/ethernet/amd/amd8111e.c
++++ b/drivers/net/ethernet/amd/amd8111e.c
+@@ -649,7 +649,7 @@ static void amd8111e_free_ring(struct amd8111e_priv *lp)
+ static int amd8111e_tx(struct net_device *dev)
+ {
+ 	struct amd8111e_priv *lp = netdev_priv(dev);
+-	int tx_index = lp->tx_complete_idx & TX_RING_DR_MOD_MASK;
++	int tx_index;
+ 	int status;
+ 	/* Complete all the transmit packet */
+ 	while (lp->tx_complete_idx != lp->tx_idx){
+-- 
+2.15.1
 
