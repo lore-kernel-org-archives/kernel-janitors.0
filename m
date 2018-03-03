@@ -1,86 +1,70 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Mar 2018 15:21:44 +0000
-Subject: [PATCH 6/9] um/drivers/vector_user: Less checks in user_init_socket_fds() after error detection
-Message-Id: <a47f1d9b-f917-bb98-9872-fcae70e67ac3@users.sourceforge.net>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sat, 03 Mar 2018 15:21:03 +0000
+Subject: Re: [PATCH v2 1/2] iio: dummy: Add correct tabs and spaces to Kconfig
+Message-Id: <20180303152103.5b7061af@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
-In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+        <fc453a92429d06d769aa71072c5c0cbaa1c8d57a.1519738995.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <fc453a92429d06d769aa71072c5c0cbaa1c8d57a.1519738995.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Mar 2018 14:56:38 +0100
+On Tue, 27 Feb 2018 10:46:51 -0300
+Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
 
-Two checks could be repeated by the user_init_socket_fds() function
-during error handling even if the relevant properties can be determined
-for the involved variables before by source code analysis.
+> Kconfig from iio/dummy does not follow the coding style recommendations.
+> According to the coding-style, Lines under a config definition are
+> indented with one tab, while help text is indented an additional two
+> spaces. This patch adds the proper tabulation and space.
+> 
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
 
-* Adjust jump targets.
+Thanks,
 
-* Delete two sanity checks and a call of the function "kfree"
-  which became unnecessary with this refactoring.
+Jonathan
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/um/drivers/vector_user.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-index 2dee1e183387..4c265262a369 100644
---- a/arch/um/drivers/vector_user.c
-+++ b/arch/um/drivers/vector_user.c
-@@ -375,13 +375,13 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
- 			"socket_open : could not open socket, error = %d",
- 			-errno
- 		);
--		goto cleanup;
-+		goto free_info;
- 	}
- 	if (bind(fd,
- 		(struct sockaddr *) gairesult->ai_addr,
- 		gairesult->ai_addrlen)) {
- 		printk(UM_KERN_ERR L2TPV3_BIND_FAIL, errno);
--		goto cleanup;
-+		goto close_file;
- 	}
- 
- 	freeaddrinfo(gairesult);
-@@ -403,7 +403,8 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
- 		result->remote_addr = uml_kmalloc(
- 			gairesult->ai_addrlen, UM_GFP_KERNEL);
- 		if (result->remote_addr = NULL)
--			goto cleanup;
-+			goto free_result;
-+
- 		result->remote_addr_size = gairesult->ai_addrlen;
- 		memcpy(
- 			result->remote_addr,
-@@ -413,16 +414,13 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
- 	}
- 	freeaddrinfo(gairesult);
- 	return result;
--cleanup:
--	freeaddrinfo(gairesult);
--
--	if (fd >= 0)
--		os_close_file(fd);
--	if (result != NULL) {
--		kfree(result->remote_addr);
--		kfree(result);
--	}
- 
-+free_result:
-+	kfree(result);
-+close_file:
-+	os_close_file(fd);
-+free_info:
-+	freeaddrinfo(gairesult);
- 	printk(UM_KERN_ERR "%s: init failed: %d", __func__, -ENOMEM);
- 	return NULL;
- }
--- 
-2.16.2
+> ---
+>  drivers/iio/dummy/Kconfig | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
+> index 5a29fbd3c531..85e13b2e35bf 100644
+> --- a/drivers/iio/dummy/Kconfig
+> +++ b/drivers/iio/dummy/Kconfig
+> @@ -9,20 +9,20 @@ config IIO_DUMMY_EVGEN
+>  	tristate
+>  
+>  config IIO_SIMPLE_DUMMY
+> -       tristate "An example driver with no hardware requirements"
+> -       depends on IIO_SW_DEVICE
+> -       help
+> -	 Driver intended mainly as documentation for how to write
+> -	 a driver. May also be useful for testing userspace code
+> -	 without hardware.
+> +	tristate "An example driver with no hardware requirements"
+> +	depends on IIO_SW_DEVICE
+> +	help
+> +	  Driver intended mainly as documentation for how to write
+> +	  a driver. May also be useful for testing userspace code
+> +	  without hardware.
+>  
+>  if IIO_SIMPLE_DUMMY
+>  
+>  config IIO_SIMPLE_DUMMY_EVENTS
+> -       bool "Event generation support"
+> -       select IIO_DUMMY_EVGEN
+> -       help
+> -         Add some dummy events to the simple dummy driver.
+> +	bool "Event generation support"
+> +	select IIO_DUMMY_EVGEN
+> +	help
+> +	  Add some dummy events to the simple dummy driver.
+>  
+>  config IIO_SIMPLE_DUMMY_BUFFER
+>  	bool "Buffered capture support"
 
