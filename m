@@ -1,37 +1,67 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 26 Mar 2018 14:43:09 +0000
-Subject: [PATCH -next] powerpc: Fix error return code in ppc4xx_msi_probe()
-Message-Id: <1522075389-23511-1-git-send-email-weiyongjun1@huawei.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sat, 03 Mar 2018 15:21:37 +0000
+Subject: Re: [PATCH v2 2/2] iio:dummy: Add extra paragraphs on Kconfig
+Message-Id: <20180303152137.780533f0@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
+        <7cfd9fd93e76fede44d328045e7885cd78324a78.1519738995.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <7cfd9fd93e76fede44d328045e7885cd78324a78.1519738995.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Rob Herring <robh@kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, Tyrel
- Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix to return a negative error code from the error handling
-case instead of 0, as done elsewhere in this function.
+On Tue, 27 Feb 2018 10:47:06 -0300
+Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- arch/powerpc/platforms/4xx/msi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> This patch fixes the checkpatch.pl warning:
+> 
+> drivers/iio/dummy/Kconfig:21: WARNING: please write a paragraph that
+> describes the config symbol fully
+> drivers/iio/dummy/Kconfig:27: WARNING: please write a paragraph that
+> describes the config symbol fully
+> 
+> This patch expands the explanation about IIO_DUMMY_EVGEN by using the
+> code documentation found in iio/dummy/iio_dummy_evgen.c. In the same
+> way, the information related to IIO_SIMPLE_DUMMY_BUFFER was extracted
+> from file iio_simple_dummy_buffer.c.
+> 
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it,
 
-diff --git a/arch/powerpc/platforms/4xx/msi.c b/arch/powerpc/platforms/4xx/msi.c
-index 4b859c8..0b71c52 100644
---- a/arch/powerpc/platforms/4xx/msi.c
-+++ b/arch/powerpc/platforms/4xx/msi.c
-@@ -241,7 +241,8 @@ static int ppc4xx_msi_probe(struct platform_device *dev)
- 	if (!msi_irqs)
- 		return -ENODEV;
- 
--	if (ppc4xx_setup_pcieh_hw(dev, res, msi))
-+	err = ppc4xx_setup_pcieh_hw(dev, res, msi)
-+	if (err)
- 		goto error_out;
- 
- 	err = ppc4xx_msi_init_allocator(dev, msi);
+Thanks,
 
+Jonathan
 
+> ---
+>  drivers/iio/dummy/Kconfig | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
+> index 85e13b2e35bf..c4fd108e91d3 100644
+> --- a/drivers/iio/dummy/Kconfig
+> +++ b/drivers/iio/dummy/Kconfig
+> @@ -24,6 +24,10 @@ config IIO_SIMPLE_DUMMY_EVENTS
+>  	help
+>  	  Add some dummy events to the simple dummy driver.
+>  
+> +	  The purpose of this is to generate 'fake' event interrupts thus
+> +	  allowing that driver's code to be as close as possible to that
+> +	  a normal driver talking to hardware.
+> +
+>  config IIO_SIMPLE_DUMMY_BUFFER
+>  	bool "Buffered capture support"
+>  	select IIO_BUFFER
+> @@ -32,6 +36,9 @@ config IIO_SIMPLE_DUMMY_BUFFER
+>  	help
+>  	  Add buffered data capture to the simple dummy driver.
+>  
+> +	  Buffer handling elements of industrial I/O reference driver.
+> +	  Uses the kfifo buffer.
+> +
+>  endif # IIO_SIMPLE_DUMMY
+>  
+>  endmenu
 
