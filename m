@@ -1,39 +1,55 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 18 Mar 2018 22:48:09 +0000
-Subject: [PATCH 1/2] drm/sun4i: hdmi: Fix an error handling path in 'sun4i_hdmi_bind()'
-Message-Id: <14c42391e1b562c7495bda6ad6fa1d24ec8dc052.1521413031.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Mar 2018 08:31:35 +0000
+Subject: [PATCH 1/4] scsi: hpsa: Use memdup_user() rather than duplicating its implementation
+Message-Id: <1feebb55-05f4-a4f7-b478-efa57639c431@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
+References: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
+In-Reply-To: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maxime.ripard@free-electrons.com, airlied@linux.ie, wens@csie.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com, Don Brace <don.brace@microsemi.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If we can not allocate the HDMI encoder regmap, we still need to free some
-resources before returning.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Mar 2018 21:19:52 +0100
 
-Fixes: 4b1c924b1fc1 ("drm/sun4i: hdmi: create a regmap for later use")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+* Reuse existing functionality from memdup_user() instead of keeping
+  duplicate source code.
+
+  This issue was detected by using the Coccinelle software.
+
+* Return directly after this function call failed at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/hpsa.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 500b6fb3e028..d2839727bb0b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -538,7 +538,8 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 					     &sun4i_hdmi_regmap_config);
- 	if (IS_ERR(hdmi->regmap)) {
- 		dev_err(dev, "Couldn't create HDMI encoder regmap\n");
--		return PTR_ERR(hdmi->regmap);
-+		ret = PTR_ERR(hdmi->regmap);
-+		goto err_disable_mod_clk;
- 	}
- 
- 	ret = sun4i_tmds_create(hdmi);
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 5293e6827ce5..b35248becef9 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -6390,15 +6390,10 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
+ 		return -EINVAL;
+ 	if (!capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
+-	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
+-	if (!ioc) {
+-		status = -ENOMEM;
+-		goto cleanup1;
+-	}
+-	if (copy_from_user(ioc, argp, sizeof(*ioc))) {
+-		status = -EFAULT;
+-		goto cleanup1;
+-	}
++	ioc = memdup_user(argp, sizeof(*ioc));
++	if (IS_ERR(ioc))
++		return PTR_ERR(ioc);
++
+ 	if ((ioc->buf_size < 1) &&
+ 	    (ioc->Request.Type.Direction != XFER_NONE)) {
+ 		status = -EINVAL;
 -- 
-2.14.1
+2.16.2
 
