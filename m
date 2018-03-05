@@ -1,27 +1,41 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Sat, 10 Mar 2018 19:17:44 +0000
-Subject: Re: [PATCH 0/2] net/usb/ax88179_178a: Adjustments for ax88179_chk_eee()
-Message-Id: <20180310191744.GN27783@lunn.ch>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 05 Mar 2018 13:18:00 +0000
+Subject: [PATCH][next] crypto: x86/des3_ede: make array des3_ede_skciphers static
+Message-Id: <20180305131800.26647-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b92bebdb-c1dc-a9d3-2e3a-845d8dc4998f@users.sourceforge.net>
-In-Reply-To: <b92bebdb-c1dc-a9d3-2e3a-845d8dc4998f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>, "David S. Miller" <davem@davemloft.net>, Philippe Reynes <tremyfr@gmail.com>, Yuval Shaia <yuval.shaia@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 07:22:55PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Mar 2018 19:05:45 +0100
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Markus
+The array des3_ede_skciphers is local to the source and does not need
+to be in global scope, so make it static.
 
-How about re-writing this driver to use phylib. The whole of
-ax88179_chk_eee() would then go away, since it is a duplication of
-phy_init_eee().
+Cleans up sparse warning:
+arch/x86/crypto/des3_ede_glue.c:407:21: warning: symbol
+'des3_ede_skciphers' was not declared. Should it be static?
 
-	Andrew
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/crypto/des3_ede_glue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/crypto/des3_ede_glue.c b/arch/x86/crypto/des3_ede_glue.c
+index f9c7bdc5be5a..5c610d4ef9fc 100644
+--- a/arch/x86/crypto/des3_ede_glue.c
++++ b/arch/x86/crypto/des3_ede_glue.c
+@@ -404,7 +404,7 @@ static struct crypto_alg des3_ede_cipher = {
+ 	}
+ };
+ 
+-struct skcipher_alg des3_ede_skciphers[] = {
++static struct skcipher_alg des3_ede_skciphers[] = {
+ 	{
+ 		.base.cra_name		= "ecb(des3_ede)",
+ 		.base.cra_driver_name	= "ecb-des3_ede-asm",
+-- 
+2.15.1
+
