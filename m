@@ -1,66 +1,35 @@
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Date: Fri, 30 Mar 2018 05:51:55 +0000
-Subject: [PATCH v4 2/2] staging: vt6655: add handling memory leak on vnt_start()
-Message-Id: <1522389115-1124-2-git-send-email-ji_hun.kim@samsung.com>
+From: Thomas Avery <tavery321@gmail.com>
+Date: Mon, 05 Mar 2018 19:33:49 +0000
+Subject: [PATCH] staging: lustre: Remove yield() call
+Message-Id: <20180305193349.nqygghai7mz72rbr@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1522389115-1124-1-git-send-email-ji_hun.kim@samsung.com>
- <CGME20180330055211epcas2p1a75c707cdf600cfd5027e253ef440861@epcas2p1.samsung.com>
-In-Reply-To: <1522389115-1124-1-git-send-email-ji_hun.kim@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, baijiaju1990@gmail.com, forest@alittletooquiet.net
-Cc: devel@driverdev.osuosl.org, y.k.oh@samsung.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, ji_hun.kim@samsung.com, santhameena13@gmail.com
+To: kernel-janitors@vger.kernel.org
 
-There was no code for handling memory leaks of device_init_rings() and
-request_irq(). It needs to free allocated memory in the device_init_rings()
-, when request_irq() is failed. Add freeing sequences of irq and device
-init rings.
+Remove yield() call. In this case it's use is considered broken, since
+it is being assumed that yield() will let another process run that will
+make the event true. 
 
-Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+Signed-off-by: Thomas Avery <tavery321@gmail.com>
 ---
-It's additional memory leak handling patch from
-[PATCH v4 1/2] staging: vt6655: check for memory allocation failures
+ drivers/staging/lustre/lustre/obdclass/obd_config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/staging/vt6655/device_main.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
-index c9752df..3604f2d 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -1194,14 +1194,17 @@ static int vnt_start(struct ieee80211_hw *hw)
- 	int ret;
+diff --git a/drivers/staging/lustre/lustre/obdclass/obd_config.c b/drivers/staging/lustre/lustre/obdclass/obd_config.c
+index 997c0f9aafb5..277576b586db 100644
+--- a/drivers/staging/lustre/lustre/obdclass/obd_config.c
++++ b/drivers/staging/lustre/lustre/obdclass/obd_config.c
+@@ -455,7 +455,7 @@ static int class_cleanup(struct obd_device *obd, struct lustre_cfg *lcfg)
+ 	spin_unlock(&obd->obd_dev_lock);
  
- 	priv->rx_buf_sz = PKT_BUF_SZ;
--	if (!device_init_rings(priv))
--		return -ENOMEM;
-+	ret = (int)device_init_rings(priv);
-+	if (!ret) {
-+		ret = -ENOMEM;
-+		goto err_init_rings;
-+	}
+ 	while (obd->obd_conn_inprogress > 0)
+-		yield();
++		cond_resched();
+ 	smp_rmb();
  
- 	ret = request_irq(priv->pcid->irq, vnt_interrupt,
- 			  IRQF_SHARED, "vt6655", priv);
- 	if (ret) {
- 		dev_dbg(&priv->pcid->dev, "failed to start irq\n");
--		return ret;
-+		goto err_irq;
- 	}
- 
- 	dev_dbg(&priv->pcid->dev, "call device init rd0 ring\n");
-@@ -1234,6 +1237,10 @@ static int vnt_start(struct ieee80211_hw *hw)
- err_init_rd1_ring:
- 	device_free_rd0_ring(priv);
- err_init_rd0_ring:
-+	free_irq(priv->pcid->irq, priv);
-+err_irq:
-+	device_free_rings(priv);
-+err_init_rings:
- 	return ret;
- }
- 
+ 	if (lcfg->lcfg_bufcount >= 2 && LUSTRE_CFG_BUFLEN(lcfg, 1) > 0) {
 -- 
-1.9.1
+2.11.0
 
