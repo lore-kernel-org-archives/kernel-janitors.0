@@ -1,34 +1,28 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 13:42:44 +0000
-Subject: Re: [PATCH v2 1/2] video: udlfb: Return an error code only as a constant in dlfb_realloc_framebuffer
-Message-Id: <60893411.8iluP6siGW@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Mar 2018 16:19:23 +0000
+Subject: [PATCH 0/2] VMCI: Adjustments for three function implementations
+Message-Id: <66411a1a-fd12-dc31-fc2e-800ff6cea1ed@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
- <25aee051-12fb-de5f-c806-f419fa4c0ef1@users.sourceforge.net>
- <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
-In-Reply-To: <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Bernie Thompson <bernie@plugable.com>, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, George Zhang <georgezhang@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andy King <acking@vmware.com>, Dmitry Torokhov <dtor@vmware.com>
 
-On Sunday, January 07, 2018 02:34:51 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 Jan 2018 14:02:36 +0100
-> 
-> * Return an error code without storing it in an intermediate variable.
-> 
-> * Delete the label "error" and local variable "retval"
->   which became unnecessary with this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Mar 2018 17:12:34 +0100
 
-Patch queued for 4.17, thanks.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Markus Elfring (2):
+  Use memdup_user() rather than duplicating its implementation
+  Improve a size determination in two functions
+
+ drivers/misc/vmw_vmci/vmci_context.c |  2 +-
+ drivers/misc/vmw_vmci/vmci_host.c    | 21 +++++----------------
+ 2 files changed, 6 insertions(+), 17 deletions(-)
+
+-- 
+2.16.2
 
