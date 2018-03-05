@@ -1,35 +1,57 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 16 Mar 2018 07:32:14 +0000
-Subject: [PATCH -next] ASoC: da7210: Use devm_snd_soc_register_component()
-Message-Id: <1521185534-164511-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Mar 2018 16:21:52 +0000
+Subject: [PATCH 2/2] VMCI: Improve a size determination in two functions
+Message-Id: <06589ca3-cab3-a71e-fbd2-cecf473ab9ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <66411a1a-fd12-dc31-fc2e-800ff6cea1ed@users.sourceforge.net>
+In-Reply-To: <66411a1a-fd12-dc31-fc2e-800ff6cea1ed@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Support Opensource <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, George Zhang <georgezhang@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andy King <acking@vmware.com>, Dmitry Torokhov <dtor@vmware.com>
 
-Since the remove callback is removed, the snd_soc_unregister_component()
-is missing when remove device. Using devm_snd_soc_register_component()
-instead of snd_soc_register_component().
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Mar 2018 17:00:19 +0100
 
-Fixes: d06f33aed85c ("ASoC: da7210: replace codec to component")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/da7210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/vmw_vmci/vmci_context.c | 2 +-
+ drivers/misc/vmw_vmci/vmci_host.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/da7210.c b/sound/soc/codecs/da7210.c
-index 07153be..a664111 100644
---- a/sound/soc/codecs/da7210.c
-+++ b/sound/soc/codecs/da7210.c
-@@ -1233,7 +1233,7 @@ static int da7210_i2c_probe(struct i2c_client *i2c,
- 	if (ret != 0)
- 		dev_warn(&i2c->dev, "Failed to apply regmap patch: %d\n", ret);
+diff --git a/drivers/misc/vmw_vmci/vmci_context.c b/drivers/misc/vmw_vmci/vmci_context.c
+index 21d0fa592145..18404318dd71 100644
+--- a/drivers/misc/vmw_vmci/vmci_context.c
++++ b/drivers/misc/vmw_vmci/vmci_context.c
+@@ -620,7 +620,7 @@ int vmci_ctx_add_notification(u32 context_id, u32 remote_cid)
+ 		goto out;
+ 	}
  
--	ret =  snd_soc_register_component(&i2c->dev,
-+	ret =  devm_snd_soc_register_component(&i2c->dev,
- 			&soc_component_dev_da7210, &da7210_dai, 1);
- 	if (ret < 0)
- 		dev_err(&i2c->dev, "Failed to register component: %d\n", ret);
+-	notifier = kmalloc(sizeof(struct vmci_handle_list), GFP_KERNEL);
++	notifier = kmalloc(sizeof(*notifier), GFP_KERNEL);
+ 	if (!notifier) {
+ 		result = VMCI_ERROR_NO_MEM;
+ 		goto out;
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index fb3d92a21afa..12419f97681d 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -124,7 +124,7 @@ static int vmci_host_open(struct inode *inode, struct file *filp)
+ {
+ 	struct vmci_host_dev *vmci_host_dev;
+ 
+-	vmci_host_dev = kzalloc(sizeof(struct vmci_host_dev), GFP_KERNEL);
++	vmci_host_dev = kzalloc(sizeof(*vmci_host_dev), GFP_KERNEL);
+ 	if (vmci_host_dev = NULL)
+ 		return -ENOMEM;
+ 
+-- 
+2.16.2
 
