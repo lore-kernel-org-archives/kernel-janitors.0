@@ -1,32 +1,69 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 14:08:40 +0000
-Subject: Re: [PATCH] video: matroxfb: Delete an error message for a failed memory allocation in matroxfb_crtc
-Message-Id: <6216878.7tvrGbX39k@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Mar 2018 16:20:47 +0000
+Subject: [PATCH 1/2] VMCI: Use memdup_user() rather than duplicating its implementation
+Message-Id: <7c97d2aa-7d3e-468f-cdb7-795a50d437c3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171126213211epcas5p16bb3e55e1ca996b6ee57286abf39ce44@epcas5p1.samsung.com>
- <f903f284-bdba-7eb7-c666-301577fcfa94@users.sourceforge.net>
-In-Reply-To: <f903f284-bdba-7eb7-c666-301577fcfa94@users.sourceforge.net>
+References: <66411a1a-fd12-dc31-fc2e-800ff6cea1ed@users.sourceforge.net>
+In-Reply-To: <66411a1a-fd12-dc31-fc2e-800ff6cea1ed@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, George Zhang <georgezhang@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andy King <acking@vmware.com>, Dmitry Torokhov <dtor@vmware.com>
 
-On Sunday, November 26, 2017 10:32:06 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Nov 2017 22:13:55 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Mar 2018 16:40:29 +0100
 
-Patch queued for 4.17, thanks.
+* Reuse existing functionality from memdup_user() instead of keeping
+  duplicate source code.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+  This issue was detected by using the Coccinelle software.
+
+* Return directly after this function call failed at the beginning.
+
+* Delete the label "out" which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/vmw_vmci/vmci_host.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index 83e0c95d20a4..fb3d92a21afa 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -754,27 +754,16 @@ static int vmci_host_do_ctx_set_cpt_state(struct vmci_host_dev *vmci_host_dev,
+ 	if (copy_from_user(&set_info, uptr, sizeof(set_info)))
+ 		return -EFAULT;
+ 
+-	cpt_buf = kmalloc(set_info.buf_size, GFP_KERNEL);
+-	if (!cpt_buf) {
+-		vmci_ioctl_err(
+-			"cannot allocate memory to set cpt state (type=%d)\n",
+-			set_info.cpt_type);
+-		return -ENOMEM;
+-	}
+-
+-	if (copy_from_user(cpt_buf, (void __user *)(uintptr_t)set_info.cpt_buf,
+-			   set_info.buf_size)) {
+-		retval = -EFAULT;
+-		goto out;
+-	}
++	cpt_buf = memdup_user((void __user *)(uintptr_t)set_info.cpt_buf,
++			      set_info.buf_size);
++	if (IS_ERR(cpt_buf))
++		return PTR_ERR(cpt_buf);
+ 
+ 	cid = vmci_ctx_get_id(vmci_host_dev->context);
+ 	set_info.result = vmci_ctx_set_chkpt_state(cid, set_info.cpt_type,
+ 						   set_info.buf_size, cpt_buf);
+ 
+ 	retval = copy_to_user(uptr, &set_info, sizeof(set_info)) ? -EFAULT : 0;
+-
+-out:
+ 	kfree(cpt_buf);
+ 	return retval;
+ }
+-- 
+2.16.2
 
