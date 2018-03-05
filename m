@@ -1,34 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Mar 2018 11:26:27 +0000
-Subject: Re: [PATCH] rtc: mxc_v2: unlock on error in mxc_rtc_set_alarm()
-Message-Id: <20180315112627.35f3gmvmho5mb2fb@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Mar 2018 12:08:03 +0000
+Subject: [PATCH] mmc/core/block: Use memdup_user() rather than duplicating its implementation
+Message-Id: <4eca7388-cb2d-31e0-b64d-afb30818f53e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180314073719.GA2470@mwanda>
- <3BB206AB2B1BD448954845CE6FF69A8E01F81FD198@nt-mail04>
-In-Reply-To: <3BB206AB2B1BD448954845CE6FF69A8E01F81FD198@nt-mail04>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Patrick =?iso-8859-1?Q?Br=FCnn?= <P.Bruenn@beckhoff.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 11:12:04AM +0000, Patrick Br=FCnn wrote:
-> >From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> >Sent: Mittwoch, 14. M=E4rz 2018 08:37
-> >
-> >We need to unlock if time is more than U32_MAX.
-> >
-> you are right, that's a bug.
-> But I would move the mxc_rtc_lock() entirely behind the (time > U32_MAX) =
-check.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Mar 2018 11:33:21 +0100
 
-Yes, of course.  I will resend.
+Reuse existing functionality from memdup_user() instead of keeping
+duplicate source code.
 
-regards,
-dan carpenter
-=20
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/core/block.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index 20135a5de748..4b09c7380e70 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -375,22 +375,15 @@ static struct mmc_blk_ioc_data *mmc_blk_ioctl_copy_from_user(
+ 		return idata;
+ 	}
+ 
+-	idata->buf = kmalloc(idata->buf_bytes, GFP_KERNEL);
+-	if (!idata->buf) {
+-		err = -ENOMEM;
++	idata->buf = memdup_user((void __user *)(unsigned long)
++				 idata->ic.data_ptr, idata->buf_bytes);
++	if (IS_ERR(idata->buf)) {
++		err = PTR_ERR(idata->buf);
+ 		goto idata_err;
+ 	}
+ 
+-	if (copy_from_user(idata->buf, (void __user *)(unsigned long)
+-					idata->ic.data_ptr, idata->buf_bytes)) {
+-		err = -EFAULT;
+-		goto copy_err;
+-	}
+-
+ 	return idata;
+ 
+-copy_err:
+-	kfree(idata->buf);
+ idata_err:
+ 	kfree(idata);
+ out:
+-- 
+2.16.2
+
