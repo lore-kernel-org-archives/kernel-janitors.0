@@ -1,23 +1,121 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Date: Mon, 12 Mar 2018 07:35:26 +0000
-Subject: Re: [PATCH] drm: zte: Fix an error handling path in 'zx_crtc_bind()'
-Message-Id: <20180312073524.GM3217@dragon>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Tue, 06 Mar 2018 12:00:11 +0000
+Subject: [PATCH] iio:magnetometer: Remove duplications in iio_chan_spec
+Message-Id: <20180306120011.pbnymd7izt2yxljl@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Daniel Vetter <daniel.vetter@intel.com>
-Cc: airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-+ Daniel
+The magn_3d_channels array has multiple declarations of iio_chan_spec.
+Most of the iio_chan_spec are very similar, changing only by the .type
+and .channel2 field. This patch reduces the code duplication by adding a
+macro that can replace the iio_chan_spec  repetitions in the
+magn_3d_channels array.
 
-On Sun, Mar 11, 2018 at 11:32:03PM +0100, Christophe JAILLET wrote:
-> 'ret' is known to be 0 at this point. It must be updated by the value
-> returned by 'clk_prepare_enable()'.
-> 
-> Fixes: 0a886f59528a ("drm: zte: add initial vou drm driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/magnetometer/hid-sensor-magn-3d.c | 83 ++++++---------------------
+ 1 file changed, 19 insertions(+), 64 deletions(-)
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+index a1fd9d591818..fff64711a6c8 100644
+--- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
++++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+@@ -74,72 +74,27 @@ static const u32 magn_3d_addresses[MAGN_3D_CHANNEL_MAX] = {
+ 	HID_USAGE_SENSOR_ORIENT_TRUE_NORTH,
+ };
+ 
++#define HID_SENSOR_MAGN_3D_AXIS_CHANNEL(channel_type, characteristic)	\
++	{								\
++		.type = channel_type,					\
++		.modified = 1,						\
++		.channel2 = characteristic,				\
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
++		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) | \
++					BIT(IIO_CHAN_INFO_SCALE) |	\
++					BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
++					BIT(IIO_CHAN_INFO_HYSTERESIS),	\
++	}								\
++
+ /* Channel definitions */
+ static const struct iio_chan_spec magn_3d_channels[] = {
+-	{
+-		.type = IIO_MAGN,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_X,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_MAGN,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_Y,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_MAGN,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_Z,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_MAGN_TILT_COMP,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_TRUE_TILT_COMP,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_MAGN,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_TRUE,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_X),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Y),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Z),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN_TILT_COMP),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE_TILT_COMP),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
+ };
+ 
+ /* Adjust channel real bits based on report descriptor */
+-- 
+2.16.2
+
