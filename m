@@ -1,38 +1,25 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Date: Tue, 20 Mar 2018 13:21:48 +0000
-Subject: Re: [PATCH -next] phy: stm32: fix using 0 as NULL pointer warnings
-Message-Id: <3d799714-6e2c-658e-b1f2-def58584c356@st.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Mar 2018 17:08:25 +0000
+Subject: Re: [v2] [media] Use common error handling code in 20 functions
+Message-Id: <809fdf67-70a1-0977-4008-62a3824fecd0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521551982-154471-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521551982-154471-1-git-send-email-weiyongjun1@huawei.com>
+References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
+In-Reply-To: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-DQoNCk9uIDAzLzIwLzIwMTggMDI6MTkgUE0sIFdlaSBZb25nanVuIHdyb3RlOg0KPiBGaXhlcyB0
-aGUgZm9sbG93aW5nIHNwYXJzZSB3YXJuaW5nczoNCj4gDQo+IGRyaXZlcnMvcGh5L3N0L3BoeS1z
-dG0zMi11c2JwaHljLmM6MzMxOjQyOiB3YXJuaW5nOg0KPiAgIFVzaW5nIHBsYWluIGludGVnZXIg
-YXMgTlVMTCBwb2ludGVyDQo+IGRyaXZlcnMvcGh5L3N0L3BoeS1zdG0zMi11c2JwaHljLmM6MzQ0
-OjUyOiB3YXJuaW5nOg0KPiAgIFVzaW5nIHBsYWluIGludGVnZXIgYXMgTlVMTCBwb2ludGVyDQo+
-IA0KPiBTaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVhd2VpLmNvbT4N
-Cj4gLS0tDQo+ICAgZHJpdmVycy9waHkvc3QvcGh5LXN0bTMyLXVzYnBoeWMuYyB8IDQgKystLQ0K
-PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waHkvc3QvcGh5LXN0bTMyLXVzYnBoeWMuYyBiL2RyaXZl
-cnMvcGh5L3N0L3BoeS1zdG0zMi11c2JwaHljLmMNCj4gaW5kZXggYmM0ZTc4YS4uNDhkNDA4NiAx
-MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9waHkvc3QvcGh5LXN0bTMyLXVzYnBoeWMuYw0KPiArKysg
-Yi9kcml2ZXJzL3BoeS9zdC9waHktc3RtMzItdXNicGh5Yy5jDQo+IEBAIC0zMjgsNyArMzI4LDcg
-QEAgc3RhdGljIGludCBzdG0zMl91c2JwaHljX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
-KnBkZXYpDQo+ICAgCWlmIChJU19FUlIodXNicGh5Yy0+YmFzZSkpDQo+ICAgCQlyZXR1cm4gUFRS
-X0VSUih1c2JwaHljLT5iYXNlKTsNCj4gICANCj4gLQl1c2JwaHljLT5jbGsgPSBkZXZtX2Nsa19n
-ZXQoZGV2LCAwKTsNCj4gKwl1c2JwaHljLT5jbGsgPSBkZXZtX2Nsa19nZXQoZGV2LCBOVUxMKTsN
-Cj4gICAJaWYgKElTX0VSUih1c2JwaHljLT5jbGspKSB7DQo+ICAgCQlyZXQgPSBQVFJfRVJSKHVz
-YnBoeWMtPmNsayk7DQo+ICAgCQlkZXZfZXJyKGRldiwgImNsayBnZXQgZmFpbGVkOiAlZFxuIiwg
-cmV0KTsNCj4gQEAgLTM0MSw3ICszNDEsNyBAQCBzdGF0aWMgaW50IHN0bTMyX3VzYnBoeWNfcHJv
-YmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gICAJCXJldHVybiByZXQ7DQo+ICAg
-CX0NCj4gICANCj4gLQl1c2JwaHljLT5yc3QgPSBkZXZtX3Jlc2V0X2NvbnRyb2xfZ2V0KGRldiwg
-MCk7DQo+ICsJdXNicGh5Yy0+cnN0ID0gZGV2bV9yZXNldF9jb250cm9sX2dldChkZXYsIE5VTEwp
-Ow0KPiAgIAlpZiAoIUlTX0VSUih1c2JwaHljLT5yc3QpKSB7DQo+ICAgCQlyZXNldF9jb250cm9s
-X2Fzc2VydCh1c2JwaHljLT5yc3QpOw0KPiAgIAkJdWRlbGF5KDIpOw0KPiANCg0KUmV2aWV3ZWQt
-Ynk6IEFtZWxpZSBEZWxhdW5heSA8YW1lbGllLmRlbGF1bmF5QHN0LmNvbT4NCg0KVGhhbmtzLA0K
-QW1lbGll
+I got the following notification.
+
+     - http://patchwork.linuxtv.org/patch/47270/
+     - for: Linux Media kernel patches
+    was: New
+    now: Rejected
+
+
+Would you like to clarify still any other variant for this change proposal?
+
+Regards,
+Markus
