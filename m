@@ -1,125 +1,45 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Tue, 13 Mar 2018 01:37:09 +0000
-Subject: [PATCH v2] iio:magnetometer: Remove duplications in iio_chan_spec
-Message-Id: <20180313013709.ca7hxb5q56rbghch@smtp.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 06 Mar 2018 10:03:56 +0000
+Subject: [PATCH] staging: emxx_udc: Remove unnecessary NULL checks
+Message-Id: <20180306100356.GC10474@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Pandruvada <srinivas.pandruvada@intel.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The magn_3d_channels array has multiple declarations of iio_chan_spec.
-Most of the iio_chan_spec are very similar, changing only by the .type
-and .channel2 field. This patch reduces the code duplication by adding a
-macro that can replace the iio_chan_spec  repetitions in the
-magn_3d_channels array.
+These pointers can't be NULL so I have removed the checks.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
-Changes in v2:
- - Change IIO_MOD_NORTH_MAGN in the last element of iio_chan_info for
-   IIO_MOD_NORTH_TRUE in the last parameter.
+The checking was sort of problematic as well because it didn't make
+sense.  In _nbu2ss_read_request_data() the && should have been ||.  In
+nbu2ss_gad_get_frame() we know that "pgadget" is non-NULL and "udc" is
+an offset from "pgadget" so it can't be NULL.
 
- drivers/iio/magnetometer/hid-sensor-magn-3d.c | 83 ++++++---------------------
- 1 file changed, 19 insertions(+), 64 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-index d55c4885211a..cdbcfc61a180 100644
---- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-+++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-@@ -74,72 +74,27 @@ static const u32 magn_3d_addresses[MAGN_3D_CHANNEL_MAX] = {
- 	HID_USAGE_SENSOR_ORIENT_TRUE_NORTH,
- };
+diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
+index ad69a1e536a7..3e51476a7045 100644
+--- a/drivers/staging/emxx_udc/emxx_udc.c
++++ b/drivers/staging/emxx_udc/emxx_udc.c
+@@ -1672,9 +1672,6 @@ static int std_req_set_configuration(struct nbu2ss_udc *udc)
+ /*-------------------------------------------------------------------------*/
+ static inline void _nbu2ss_read_request_data(struct nbu2ss_udc *udc, u32 *pdata)
+ {
+-	if ((!udc) && (!pdata))
+-		return;
+-
+ 	*pdata = _nbu2ss_readl(&udc->p_regs->SETUP_DATA0);
+ 	pdata++;
+ 	*pdata = _nbu2ss_readl(&udc->p_regs->SETUP_DATA1);
+@@ -2941,11 +2938,6 @@ static int nbu2ss_gad_get_frame(struct usb_gadget *pgadget)
+ 	}
  
-+#define HID_SENSOR_MAGN_3D_AXIS_CHANNEL(channel_type, characteristic)	\
-+	{								\
-+		.type = channel_type,					\
-+		.modified = 1,						\
-+		.channel2 = characteristic,				\
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-+		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) | \
-+					BIT(IIO_CHAN_INFO_SCALE) |	\
-+					BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
-+					BIT(IIO_CHAN_INFO_HYSTERESIS),	\
-+	}								\
-+
- /* Channel definitions */
- static const struct iio_chan_spec magn_3d_channels[] = {
--	{
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_X,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_Y,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_Z,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_MAGN_TILT_COMP,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_TRUE_TILT_COMP,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_MAGN,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_TRUE,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
+ 	udc = container_of(pgadget, struct nbu2ss_udc, gadget);
+-	if (!udc) {
+-		dev_err(&pgadget->dev, "%s, udc = NULL\n", __func__);
+-		return -EINVAL;
 -	}
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_X),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Y),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Z),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN_TILT_COMP),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE_TILT_COMP),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE),
- };
- 
- /* Adjust channel real bits based on report descriptor */
--- 
-2.16.2
-
+-
+ 	data = gpio_get_value(VBUS_VALUE);
+ 	if (data = 0)
+ 		return -EINVAL;
