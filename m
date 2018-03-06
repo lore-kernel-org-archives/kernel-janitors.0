@@ -1,25 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 06 Mar 2018 17:08:25 +0000
-Subject: Re: [v2] [media] Use common error handling code in 20 functions
-Message-Id: <809fdf67-70a1-0977-4008-62a3824fecd0@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Mar 2018 15:25:17 +0000
+Subject: [PATCH][net-next] net: mvpp2: make function mvpp2_check_hw_buf_num static
+Message-Id: <20180306152517.2770-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
-In-Reply-To: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: "David S . Miller" <davem@davemloft.net>, Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I got the following notification.
+From: Colin Ian King <colin.king@canonical.com>
 
-     - http://patchwork.linuxtv.org/patch/47270/
-     - for: Linux Media kernel patches
-    was: New
-    now: Rejected
+The function mvpp2_check_hw_buf_num is local to the source and does
+not need to be in global scope, so make it static.
 
+Cleans up sparse warning:
+drivers/net/ethernet/marvell/mvpp2.c:4298:5: warning: symbol
+'mvpp2_check_hw_buf_num' was not declared. Should it be static?
 
-Would you like to clarify still any other variant for this change proposal?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/mvpp2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index ac0a0dc8f157..61c6896d0d62 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -4295,7 +4295,8 @@ static void mvpp2_bm_bufs_free(struct device *dev, struct mvpp2 *priv,
+ }
+ 
+ /* Check number of buffers in BM pool */
+-int mvpp2_check_hw_buf_num(struct mvpp2 *priv, struct mvpp2_bm_pool *bm_pool)
++static int mvpp2_check_hw_buf_num(struct mvpp2 *priv,
++				  struct mvpp2_bm_pool *bm_pool)
+ {
+ 	int buf_num = 0;
+ 
+-- 
+2.15.1
+
