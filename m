@@ -1,23 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 13 Mar 2018 14:55:01 +0000
-Subject: Re: [PATCH net] qed: Use after free in qed_rdma_free()
-Message-Id: <20180313.105501.1782065500332609196.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 06 Mar 2018 09:58:03 +0000
+Subject: [PATCH] ipmi: missing error code in try_smi_init()
+Message-Id: <20180306095803.GA10474@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180313090938.GA17609@mwanda>
-In-Reply-To: <20180313090938.GA17609@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Ariel.Elior@cavium.com, Michal.Kalderon@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 13 Mar 2018 12:09:38 +0300
+If platform_device_alloc() then we should return -ENOMEM instead of
+returning success.
 
-> We're dereferencing "p_hwfn->p_rdma_info" but that is freed on the line
-> before in qed_rdma_resc_free(p_hwfn).
-> 
-> Fixes: 9de506a547c0 ("qed: Free RoCE ILT Memory on rmmod qedr")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thank you.
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index f2a294f78892..ff870aa91cfe 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -2071,6 +2071,7 @@ static int try_smi_init(struct smi_info *new_smi)
+ 						      new_smi->intf_num);
+ 		if (!new_smi->pdev) {
+ 			pr_err(PFX "Unable to allocate platform device\n");
++			rv = -ENOMEM;
+ 			goto out_err;
+ 		}
+ 		new_smi->io.dev = &new_smi->pdev->dev;
