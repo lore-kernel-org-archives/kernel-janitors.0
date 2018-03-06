@@ -1,90 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 13 Mar 2018 20:33:11 +0000
-Subject: [PATCH] regulator: gpio: Fix some error handling paths in 'gpio_regulator_probe()'
-Message-Id: <20180313203311.11378-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 06 Mar 2018 10:06:19 +0000
+Subject: [PATCH] parisc: silence uninitialized variable warning in dbl_to_sgl_fcnvff()
+Message-Id: <20180306100619.GD10474@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: broonie@kernel.org, lgirdwood@gmail.com, rf@opensource.wolfsonmicro.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-Re-order error handling code and gotos to avoid leaks in error handling
-paths.
+Smatch warns that is_tiny can be used uninitialized:
 
-Fixes: 9f946099fe19 ("regulator: gpio: fix parsing of gpio list")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/regulator/gpio-regulator.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+    arch/parisc/math-emu/fcnvff.c:297 dbl_to_sgl_fcnvff()
+    error: uninitialized symbol 'is_tiny'.
 
-diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
-index 0fce06acfaec..a2eb50719c7b 100644
---- a/drivers/regulator/gpio-regulator.c
-+++ b/drivers/regulator/gpio-regulator.c
-@@ -271,8 +271,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
- 	if (drvdata->desc.name = NULL) {
- 		dev_err(&pdev->dev, "Failed to allocate supply name\n");
--		ret = -ENOMEM;
--		goto err;
-+		return -ENOMEM;
- 	}
- 
- 	if (config->nr_gpios != 0) {
-@@ -292,7 +291,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 				dev_err(&pdev->dev,
- 					"Could not obtain regulator setting GPIOs: %d\n",
- 					ret);
--			goto err_memstate;
-+			goto err_memgpio;
- 		}
- 	}
- 
-@@ -303,7 +302,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	if (drvdata->states = NULL) {
- 		dev_err(&pdev->dev, "Failed to allocate state data\n");
- 		ret = -ENOMEM;
--		goto err_memgpio;
-+		goto err_stategpio;
- 	}
- 	drvdata->nr_states = config->nr_states;
- 
-@@ -324,7 +323,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	default:
- 		dev_err(&pdev->dev, "No regulator type set\n");
- 		ret = -EINVAL;
--		goto err_memgpio;
-+		goto err_memstate;
- 	}
- 
- 	/* build initial state from gpio init data. */
-@@ -361,22 +360,21 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	if (IS_ERR(drvdata->dev)) {
- 		ret = PTR_ERR(drvdata->dev);
- 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
--		goto err_stategpio;
-+		goto err_memstate;
- 	}
- 
- 	platform_set_drvdata(pdev, drvdata);
- 
- 	return 0;
- 
--err_stategpio:
--	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
- err_memstate:
- 	kfree(drvdata->states);
-+err_stategpio:
-+	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
- err_memgpio:
- 	kfree(drvdata->gpios);
- err_name:
- 	kfree(drvdata->desc.name);
--err:
- 	return ret;
- }
- 
--- 
-2.14.1
+This code is very old so that suggests the bug doesn't have a huge
+affect in real life.  But I've read the code and it seems like a
+reasonable warning.  Either way it should be harmless to initialize it
+to false and silence the static checker warning.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/parisc/math-emu/fcnvff.c b/arch/parisc/math-emu/fcnvff.c
+index 76c063f7d17c..f9357d9d4cb1 100644
+--- a/arch/parisc/math-emu/fcnvff.c
++++ b/arch/parisc/math-emu/fcnvff.c
+@@ -148,7 +148,7 @@ dbl_to_sgl_fcnvff(
+         register int src_exponent, dest_exponent, dest_mantissa;
+         register boolean inexact = FALSE, guardbit = FALSE, stickybit = FALSE;
+ 	register boolean lsb_odd = FALSE;
+-	boolean is_tiny;
++	boolean is_tiny = FALSE;
+ 
+ 	Dbl_copyfromptr(srcptr,srcp1,srcp2);
+         src_exponent = Dbl_exponent(srcp1);
