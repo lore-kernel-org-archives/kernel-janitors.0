@@ -1,56 +1,32 @@
-From: Stefan Schmidt <stefan@osg.samsung.com>
-Date: Fri, 02 Mar 2018 10:41:00 +0000
-Subject: Re: [PATCH][next] ieee802154: remove unused variable 'val'
-Message-Id: <dc14d4c6-e58a-ab13-ad75-efc71ff454e8@osg.samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 06 Mar 2018 10:00:31 +0000
+Subject: [PATCH] IB/mlx5: Fix an error code in __mlx5_ib_modify_qp()
+Message-Id: <20180306100031.GB10474@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180301144019.14321-1-colin.king@canonical.com>
-In-Reply-To: <20180301144019.14321-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Xue Liu <liuxuenetmail@gmail.com>, Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hello.
+"err" is either zero or possibly uninitialized here.  It should be
+-EINVAL.
 
+Fixes: 427c1e7bcd7e ("{IB, net}/mlx5: Move the modify QP operation table to mlx5_ib")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 03/01/2018 03:40 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable 'val' is not being initialized and is later being logically
-> or'd with DAR_PHY_CTRL4_PROMISCUOUS. Considering this variable is never
-> being read anyway we may as well remove val altogether.
->
-> Cleans up error detected by cppcheck:
-> drivers/net/ieee802154/mcr20a.c:732: (error) Uninitialized variable: val
->
-> Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ieee802154/mcr20a.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
-> index d9eb22a52551..55a22c761808 100644
-> --- a/drivers/net/ieee802154/mcr20a.c
-> +++ b/drivers/net/ieee802154/mcr20a.c
-> @@ -723,13 +723,11 @@ mcr20a_set_promiscuous_mode(struct ieee802154_hw *hw, const bool on)
->  	struct mcr20a_local *lp = hw->priv;
->  	int ret;
->  	u8 rx_frame_filter_reg = 0x0;
-> -	u8 val;
->  
->  	dev_dbg(printdev(lp), "%s(%d)\n", __func__, on);
->  
->  	if (on) {
->  		/* All frame types accepted*/
-> -		val |= DAR_PHY_CTRL4_PROMISCUOUS;
->  		rx_frame_filter_reg &= ~(IAR_RX_FRAME_FLT_FRM_VER);
->  		rx_frame_filter_reg |= (IAR_RX_FRAME_FLT_ACK_FT |
->  				  IAR_RX_FRAME_FLT_NS_FT);
-
-This patch has been applied to the wpan-next tree and will be
-part of the next pull request to net-next. Thanks!
-
-regards
-Stefan Schmidt
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index 90bb96292fc4..f9a1174ad7fa 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -3118,8 +3118,10 @@ static int __mlx5_ib_modify_qp(struct ib_qp *ibqp,
+ 	mlx5_new = to_mlx5_state(new_state);
+ 
+ 	if (mlx5_cur >= MLX5_QP_NUM_STATE || mlx5_new >= MLX5_QP_NUM_STATE ||
+-	    !optab[mlx5_cur][mlx5_new])
++	    !optab[mlx5_cur][mlx5_new]) {
++		err = -EINVAL;
+ 		goto out;
++	}
+ 
+ 	op = optab[mlx5_cur][mlx5_new];
+ 	optpar = ib_mask_to_mlx5_opt(attr_mask);
