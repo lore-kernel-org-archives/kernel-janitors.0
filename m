@@ -1,33 +1,60 @@
-From: Comodo <c1-support@comodo.com>
-Date: Tue, 20 Mar 2018 02:19:02 +0000
-Subject: [#DME-408-11514]: 960155766781461206              =?utf-8?Q?=E6=B0=B8=E5=88=A955?=
-Message-Id: <34f4c2349f1e88fd8ec9862ec7354e06@swift.generated>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Thu, 08 Mar 2018 02:03:23 +0000
+Subject: [PATCH 4/5] drm/vgem: Add space around operators
+Message-Id: <524f1d4f3c4b5834d8210ae3476550dba8f02f27.1520474055.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-kernel-janitors@vger.kernel.org,
+This patch fixes the checkpatch.pl check and warning:
 
-Thank you for contacting us. This is an automated response confirming the receipt of your ticket. Our team will get back to you as soon as possible. When replying, please make sure that the ticket ID is kept in the subject so that we can track your replies.
+vgem_fence.c:28: CHECK: spaces preferred around that '*' (ctx:VxV)
+vgem_drv.c:255: CHECK: spaces preferred around that '|' (ctx:VxV)
+vgem_drv.c:256: WARNING: line over 80 characters
 
-	Ticket ID: DME-408-11514
-	Subject: 960155766781461206              永利553248点COM邀您注冊嶺⑤8赢5⒏0提,专员Q 361269598嶺
-	Department: C1-Support
-	Type: Issue
-	Status: Open
-	Priority: Default
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/gpu/drm/vgem/vgem_drv.c   | 8 ++++++--
+ drivers/gpu/drm/vgem/vgem_fence.c | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-You can check the status of or update this ticket online at: https://support.comodo.com/index.php?/Tickets/Ticket/View/DME-408-11514
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index bf704ed51da4..6e6084e3204a 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -252,8 +252,12 @@ static int vgem_gem_dumb_map(struct drm_file *file, struct drm_device *dev,
+ }
+ 
+ static struct drm_ioctl_desc vgem_ioctls[] = {
+-	DRM_IOCTL_DEF_DRV(VGEM_FENCE_ATTACH, vgem_fence_attach_ioctl, DRM_AUTH|DRM_RENDER_ALLOW),
+-	DRM_IOCTL_DEF_DRV(VGEM_FENCE_SIGNAL, vgem_fence_signal_ioctl, DRM_AUTH|DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(VGEM_FENCE_ATTACH,
++			  vgem_fence_attach_ioctl,
++			  DRM_AUTH | DRM_RENDER_ALLOW),
++	DRM_IOCTL_DEF_DRV(VGEM_FENCE_SIGNAL,
++			  vgem_fence_signal_ioctl,
++			  DRM_AUTH | DRM_RENDER_ALLOW),
+ };
+ 
+ static int vgem_mmap(struct file *filp, struct vm_area_struct *vma)
+diff --git a/drivers/gpu/drm/vgem/vgem_fence.c b/drivers/gpu/drm/vgem/vgem_fence.c
+index f5b659463b00..d0bcb5fb33d1 100644
+--- a/drivers/gpu/drm/vgem/vgem_fence.c
++++ b/drivers/gpu/drm/vgem/vgem_fence.c
+@@ -25,7 +25,7 @@
+ 
+ #include "vgem_drv.h"
+ 
+-#define VGEM_FENCE_TIMEOUT (10*HZ)
++#define VGEM_FENCE_TIMEOUT (10 * HZ)
+ 
+ struct vgem_fence {
+ 	struct dma_fence base;
+-- 
+2.16.2
 
-Kind regards,
-Comodo
-
-Comodo Technical Support Team
---
-
-
-
-------------------------------------------------------
-Helpdesk: https://support.comodo.com/index.php?
