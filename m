@@ -1,58 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 17 Mar 2018 04:33:15 +0000
-Subject: Re: [PATCH v2] platform/x86: Fix memory leaks in build_tokens_sysfs()
-Message-Id: <20180317043315.cahfrmy63pztquhz@mwanda>
+Date: Thu, 08 Mar 2018 09:31:53 +0000
+Subject: [PATCH] iio: adc: meson-saradc: unlock on error in meson_sar_adc_lock()
+Message-Id: <20180308093153.GB16525@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180316121015.GA14282@mwanda>
-In-Reply-To: <20180316121015.GA14282@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>, Paolo Cretaro <paolocretaro@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 08:35:44PM +0200, Andy Shevchenko wrote:
-> On Fri, Mar 16, 2018 at 2:10 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > We're freeing "value_name" which is NULL, so that's a no-op, but we
-> > intended to free "location_name" instead.  And then we don't free the
-> > names in token_location_attrs[0] and token_value_attrs[0].
-> >
-> > Fixes: 33b9ca1e53b4 ("platform/x86: dell-smbios: Add a sysfs interface for SMBIOS tokens")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: style changes (move from a for loop to a while loop) and this driver
-> >     has been renamed.
-> >
-> > diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
-> > index 2485c80a9fdd..ec31d149f82e 100644
-> > --- a/drivers/platform/x86/dell-smbios-base.c
-> > +++ b/drivers/platform/x86/dell-smbios-base.c
-> > @@ -514,7 +514,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
-> >                 continue;
-> >
-> >  loop_fail_create_value:
-> > -               kfree(value_name);
-> > +               kfree(location_name);
-> >                 goto out_unwind_strings;
-> >         }
-> >         smbios_attribute_group.attrs = token_attrs;
-> > @@ -525,7 +525,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
-> >         return 0;
-> >
-> >  out_unwind_strings:
-> > -       for (i = i-1; i > 0; i--) {
-> > +       while (--i >= 0) {
-> 
-> Simple
-> 
-> while (i--) {
-> 
-> please.
-> 
-> Darren or me can fix this when apply, if you agree on the change.
-> 
+The meson_sar_adc_lock() function is not supposed to hold the
+"indio_dev->mlock" on the error path.
 
-Yes, please fix it yourself when you apply it.
+Fixes: 3adbf3427330 ("iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
+index 29fa7736d80c..ede955d9b2a4 100644
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -462,8 +462,10 @@ static int meson_sar_adc_lock(struct iio_dev *indio_dev)
+ 			regmap_read(priv->regmap, MESON_SAR_ADC_DELAY, &val);
+ 		} while (val & MESON_SAR_ADC_DELAY_BL30_BUSY && timeout--);
+ 
+-		if (timeout < 0)
++		if (timeout < 0) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return -ETIMEDOUT;
++		}
+ 	}
+ 
+ 	return 0;
