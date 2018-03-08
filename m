@@ -1,22 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 20 Mar 2018 03:09:11 +0000
-Subject: Re: [PATCH 2/2] scsi: dpt_i2o: use after free in __adpt_reset()
-Message-Id: <yq1r2of1m08.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Mar 2018 09:36:28 +0000
+Subject: [PATCH 2/2 net-next] net/ncsi: unlock on error in ncsi_set_interface_nl()
+Message-Id: <20180308093628.GD16525@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180319103401.GB8543@mwanda>
-In-Reply-To: <20180319103401.GB8543@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Samuel Mendoza-Jonas <sam@mendozajonas.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+There are two error paths which are missing unlocks in this function.
 
-Dan,
+Fixes: 955dc68cb9b2 ("net/ncsi: Add generic netlink family")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> In __adpt_reset() the problem is that adpt_hba_reset() frees "pHba" on
-> error but we dereference it to print the name in the error message.
-
-Applied to 4.17/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/net/ncsi/ncsi-netlink.c b/net/ncsi/ncsi-netlink.c
+index b73239b76349..05fcfb4fbe1d 100644
+--- a/net/ncsi/ncsi-netlink.c
++++ b/net/ncsi/ncsi-netlink.c
+@@ -299,6 +299,7 @@ static int ncsi_set_interface_nl(struct sk_buff *msg, struct genl_info *info)
+ 			package = np;
+ 	if (!package) {
+ 		/* The user has set a package that does not exist */
++		spin_unlock_irqrestore(&ndp->lock, flags);
+ 		return -ERANGE;
+ 	}
+ 
+@@ -317,6 +318,7 @@ static int ncsi_set_interface_nl(struct sk_buff *msg, struct genl_info *info)
+ 		/* The user has set a channel that does not exist on this
+ 		 * package
+ 		 */
++		spin_unlock_irqrestore(&ndp->lock, flags);
+ 		netdev_info(ndp->ndev.dev, "NCSI: Channel %u does not exist!\n",
+ 			    channel_id);
+ 		return -ERANGE;
