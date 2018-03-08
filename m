@@ -1,35 +1,43 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 27 Mar 2018 08:53:39 +0000
-Subject: Re: [next] rsi: remove redundant duplicate assignment of buffer_size
-Message-Id: <20180327085340.1059260251@smtp.codeaurora.org>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Thu, 08 Mar 2018 02:03:34 +0000
+Subject: [PATCH 5/5] drm/vgem: Remove '(' from the end of line
+Message-Id: <58bfa1f547c18bf8d145b1a8500f3a5f6df3704e.1520474055.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180314141239.8321-1-colin.king@canonical.com>
-In-Reply-To: <20180314141239.8321-1-colin.king@canonical.com>
+References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+This patch fixes the checkpatch.pl check:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable buffer_size is re-assigned the same value, this duplicated
-> assignment is redundant and can be removed.
-> 
-> Cleans up clang warning:
-> drivers/net/wireless/rsi/rsi_91x_usb.c:140:4: warning: Value stored
-> to 'buffer_size' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+vgem_drv.c:91: CHECK: Lines should not end with a '('
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/gpu/drm/vgem/vgem_drv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-a31f9314114c rsi: remove redundant duplicate assignment of buffer_size
-
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 6e6084e3204a..4ddf3b8c3875 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -87,10 +87,10 @@ static int vgem_gem_fault(struct vm_fault *vmf)
+ 	mutex_unlock(&obj->pages_lock);
+ 	if (ret) {
+ 		struct page *page;
++		struct address_space *mapping;
+ 
+-		page = shmem_read_mapping_page(
+-					file_inode(obj->base.filp)->i_mapping,
+-					page_offset);
++		mapping = file_inode(obj->base.filp)->i_mapping;
++		page = shmem_read_mapping_page(mapping, page_offset);
+ 		if (!IS_ERR(page)) {
+ 			vmf->page = page;
+ 			ret = 0;
 -- 
-https://patchwork.kernel.org/patch/10282247/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.16.2
 
