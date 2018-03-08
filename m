@@ -1,36 +1,30 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Sat, 24 Mar 2018 00:42:08 +0000
-Subject: Re: [PATCH] apparmor: signedness bug in aa_xattrs_match()
-Message-Id: <b642be4a-6717-9c42-1cd9-588144503347@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Mar 2018 09:31:00 +0000
+Subject: [PATCH] media: em28xx-cards: fix em28xx_duplicate_dev()
+Message-Id: <20180308093100.GA16525@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180319103444.GC8543@mwanda>
-In-Reply-To: <20180319103444.GC8543@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Brad Love <brad@nextdimension.cc>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 03/19/2018 03:34 AM, Dan Carpenter wrote:
-> The "size" variable needs to be signed ssize_t so that the error
-> handling works correctly.
-> 
-> Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-yep thanks I have pulled this in to apparmor-next
+There is a double sizeof() typo here so we don't duplicate the struct
+properly.
 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 57cc892e05a2..590b7e8cd21c 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
->  			   struct aa_profile *profile, unsigned int state)
->  {
->  	int i;
-> -	size_t size;
-> +	ssize_t size;
->  	struct dentry *d;
->  	char *value = NULL;
->  	int value_size = 0, ret = profile->xattr_count;
-> 
+Fixes: be7fd3c3a8c5 ("media: em28xx: Hauppauge DualHD second tuner functionality")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/media/usb/em28xx/em28xx-cards.c b/drivers/media/usb/em28xx/em28xx-cards.c
+index 6e8247849c4f..6e0e67d23876 100644
+--- a/drivers/media/usb/em28xx/em28xx-cards.c
++++ b/drivers/media/usb/em28xx/em28xx-cards.c
+@@ -3515,7 +3515,7 @@ static int em28xx_duplicate_dev(struct em28xx *dev)
+ 		dev->dev_next = NULL;
+ 		return -ENOMEM;
+ 	}
+-	memcpy(sec_dev, dev, sizeof(sizeof(*sec_dev)));
++	memcpy(sec_dev, dev, sizeof(*sec_dev));
+ 	/* Check to see next free device and mark as used */
+ 	do {
+ 		nr = find_first_zero_bit(em28xx_devused, EM28XX_MAXBOARDS);
