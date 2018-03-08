@@ -1,50 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:28:56 +0000
-Subject: [PATCH v2 11/17] mfd: tps65910: Delete an error message for a failed memory allocation in tps65910_p
-Message-Id: <88eea608-0242-ebcc-5542-8ab9375242d2@users.sourceforge.net>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Thu, 08 Mar 2018 02:02:48 +0000
+Subject: [PATCH 1/5] drm/vgem: Indent switch and case at the same level
+Message-Id: <c67b45979965cb1f1e80c3baa06814d14a0662bf.1520474055.git.rodrigosiqueiramelo@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
-In-Reply-To: <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
+References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 09:00:59 +0100
+This patch fixes the checkpatch.pl errors:
 
-Omit an extra message for a memory allocation failure in this function.
+vgem_drv.c:97: ERROR: switch and case should be at the same indent
+vgem_drv.c:97: ERROR: trailing statements should be on next line
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
+ drivers/gpu/drm/vgem/vgem_drv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/tps65910.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index 8263605f6d2f..555bd394efc3 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -395,10 +395,8 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
- 
- 	board_info = devm_kzalloc(&client->dev, sizeof(*board_info),
- 			GFP_KERNEL);
--	if (!board_info) {
--		dev_err(&client->dev, "Failed to allocate pdata\n");
-+	if (!board_info)
- 		return NULL;
--	}
- 
- 	ret = of_property_read_u32(np, "ti,vmbch-threshold", &prop);
- 	if (!ret)
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 2524ff116f00..5767030d04a8 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -94,7 +94,8 @@ static int vgem_gem_fault(struct vm_fault *vmf)
+ 		if (!IS_ERR(page)) {
+ 			vmf->page = page;
+ 			ret = 0;
+-		} else switch (PTR_ERR(page)) {
++		} else {
++			switch (PTR_ERR(page)) {
+ 			case -ENOSPC:
+ 			case -ENOMEM:
+ 				ret = VM_FAULT_OOM;
+@@ -110,8 +111,8 @@ static int vgem_gem_fault(struct vm_fault *vmf)
+ 				WARN_ON(PTR_ERR(page));
+ 				ret = VM_FAULT_SIGBUS;
+ 				break;
++			}
+ 		}
+-
+ 	}
+ 	return ret;
+ }
 -- 
 2.16.2
 
