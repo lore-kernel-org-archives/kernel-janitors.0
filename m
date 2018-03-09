@@ -1,33 +1,57 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 14:19:31 +0000
-Subject: Re: [PATCH] video/console/sticore: Delete an error message for a failed memory allocation in sti_try
-Message-Id: <1899328.6kM0nNg5W5@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:02:34 +0000
+Subject: [PATCH v2 02/17 2/3] mfd: abx500-core: Improve two size determinations in abx500_register_ops()
+Message-Id: <f91a55b5-c915-2fa2-6aba-b24c3950092e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171205180033epcas4p3cb5142e079695c72736e1f27489466d3@epcas4p3.samsung.com>
- <6b8dde60-0550-5fb3-c7a5-5f6282259186@users.sourceforge.net>
-In-Reply-To: <6b8dde60-0550-5fb3-c7a5-5f6282259186@users.sourceforge.net>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+ <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
+In-Reply-To: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org, Helge Deller <deller@gmx.de>, kernel-janitors@vger.kernel.org, "James E. J.
- Bottomley" <jejb@parisc-linux.org>, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Tuesday, December 05, 2017 07:00:22 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Dec 2017 18:45:42 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Mar 2018 12:46:47 +0100
 
-Patch queued for 4.17, thanks.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/abx500-core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
+index c8c9d41abcaa..17176e91cbd0 100644
+--- a/drivers/mfd/abx500-core.c
++++ b/drivers/mfd/abx500-core.c
+@@ -37,14 +37,12 @@ int abx500_register_ops(struct device *dev, struct abx500_ops *ops)
+ {
+ 	struct abx500_device_entry *dev_entry;
+ 
+-	dev_entry = devm_kzalloc(dev,
+-				 sizeof(struct abx500_device_entry),
+-				 GFP_KERNEL);
++	dev_entry = devm_kzalloc(dev, sizeof(*dev_entry), GFP_KERNEL);
+ 	if (!dev_entry)
+ 		return -ENOMEM;
+ 
+ 	dev_entry->dev = dev;
+-	memcpy(&dev_entry->ops, ops, sizeof(struct abx500_ops));
++	memcpy(&dev_entry->ops, ops, sizeof(*ops));
+ 
+ 	list_add_tail(&dev_entry->list, &abx500_list);
+ 	return 0;
+-- 
+2.16.2
 
