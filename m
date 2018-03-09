@@ -1,57 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 25 Mar 2018 17:05:21 +0000
-Subject: [PATCH][V3] staging: r8822be: fix typos in header guard macros
-Message-Id: <20180325170521.10141-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:24:36 +0000
+Subject: [PATCH v2 0/4] mfd/tps65910: Adjustments for four function implementations
+Message-Id: <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-The macros for __PHYDMKFREE_H__ and __PHYDM_FEATURES_H__ contain
-typos and don't match the #if guard check. Defined them correctly.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Cleans up clang warnings:
-warning: '__PHYDMKFREE_H__' is used as a header guard here, followed
-by #define of a different macro [-Wheader-guard]
-warning: '__PHYDM_FEATURES_H__' is used as a header guard here, followed
-by #define of a different macro [-Wheader-guard]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation in tps65910_parse_dt()
+  Delete an unnecessary variable initialisation in four functions
+  Delete an unnecessary variable initialisation in tps65910_sleepinit()
+  Move an assignment in tps65910_sleepinit()
 ---
- drivers/staging/rtlwifi/phydm/phydm_features.h | 2 +-
- drivers/staging/rtlwifi/phydm/phydm_kfree.h    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtlwifi/phydm/phydm_features.h b/drivers/staging/rtlwifi/phydm/phydm_features.h
-index 37f6f0cd7235..a12361c6a1a0 100644
---- a/drivers/staging/rtlwifi/phydm/phydm_features.h
-+++ b/drivers/staging/rtlwifi/phydm/phydm_features.h
-@@ -24,7 +24,7 @@
-  *****************************************************************************/
- 
- #ifndef __PHYDM_FEATURES_H__
--#define __PHYDM_FEATURES
-+#define __PHYDM_FEATURES_H__
- 
- /*phydm debyg report & tools*/
- 
-diff --git a/drivers/staging/rtlwifi/phydm/phydm_kfree.h b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
-index 1ee60059afc1..2c6b0a48e76e 100644
---- a/drivers/staging/rtlwifi/phydm/phydm_kfree.h
-+++ b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
-@@ -24,7 +24,7 @@
-  *****************************************************************************/
- 
- #ifndef __PHYDMKFREE_H__
--#define __PHYDKFREE_H__
-+#define __PHYDMKFREE_H__
- 
- #define KFREE_VERSION "1.0"
- 
+v2:
+Lee Jones requested a resend for these patches. The changes were rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/tps65910.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
 -- 
 2.15.1
 
