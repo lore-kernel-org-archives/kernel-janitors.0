@@ -1,48 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Mar 2018 15:22:36 +0000
-Subject: [PATCH 7/9] um/drivers/vector_user: Adjust an error message in user_init_tap_fds()
-Message-Id: <04d337d2-a2db-a5c8-e056-4eb51a3882b3@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:18:54 +0000
+Subject: [PATCH v2 08/17] mfd: ti_am335x_tscadc: Delete an error message for a failed memory allocation in ti
+Message-Id: <f65cc95b-00c5-98b3-e316-372783749a8e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
-In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Mar 2018 15:10:05 +0100
+Date: Thu, 8 Mar 2018 15:15:51 +0100
 
-Adjust an error message at the end of this function so that its name
-will be automatically determined as a parameter.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/um/drivers/vector_user.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-index 4c265262a369..5e78723c34d4 100644
---- a/arch/um/drivers/vector_user.c
-+++ b/arch/um/drivers/vector_user.c
-@@ -192,7 +192,6 @@ static struct vector_fds *user_init_tap_fds(struct arglist *ifspec)
- 	}
- 	return result;
- tap_cleanup:
--	printk(UM_KERN_ERR "user_init_tap: init failed, error %d", err);
- 	if (result != NULL) {
- 		if (result->rx_fd >= 0)
- 			os_close_file(result->rx_fd);
-@@ -200,6 +199,8 @@ static struct vector_fds *user_init_tap_fds(struct arglist *ifspec)
- 			os_close_file(result->tx_fd);
- 		kfree(result);
- 	}
-+
-+	printk(UM_KERN_ERR "%s: init failed: %d", __func__, err);
- 	return NULL;
- }
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/ti_am335x_tscadc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index 3cd958a31f36..47012c0899cd 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -169,10 +169,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
  
+ 	/* Allocate memory for device */
+ 	tscadc = devm_kzalloc(&pdev->dev, sizeof(*tscadc), GFP_KERNEL);
+-	if (!tscadc) {
+-		dev_err(&pdev->dev, "failed to allocate memory.\n");
++	if (!tscadc)
+ 		return -ENOMEM;
+-	}
++
+ 	tscadc->dev = &pdev->dev;
+ 
+ 	err = platform_get_irq(pdev, 0);
 -- 
 2.16.2
 
