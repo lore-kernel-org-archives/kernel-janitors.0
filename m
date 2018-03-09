@@ -1,35 +1,33 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 29 Mar 2018 02:14:03 +0000
-Subject: [PATCH -next] ASoC: amd: acp-da7219-max98357: Make symbol da7219_dai_clk static
-Message-Id: <1522289643-61304-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:10:36 +0000
+Subject: [PATCH v2 0/2] mfd/sm501: Adjustments for five function implementations
+Message-Id: <5271ab9f-3be1-035c-90c1-8faba2e119b8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Dylan Reid <dgreid@chromium.org>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Fixes the following sparse warning:
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-sound/soc/amd/acp-da7219-max98357a.c:46:12: warning:
- symbol 'da7219_dai_clk' was not declared. Should it be static?
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Markus Elfring (2):
+  Improve a size determination in two functions
+  Adjust 12 checks for null pointers
 ---
- sound/soc/amd/acp-da7219-max98357a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index b205c78..f41560e 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -43,7 +43,7 @@
- #define DUAL_CHANNEL		2
- 
- static struct snd_soc_jack cz_jack;
--struct clk *da7219_dai_clk;
-+static struct clk *da7219_dai_clk;
- 
- static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
- {
+v2:
+Lee Jones requested a resend for these patches. The changes were rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/sm501.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+-- 
+2.15.1
 
