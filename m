@@ -1,35 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Mar 2018 10:06:19 +0000
-Subject: [PATCH] parisc: silence uninitialized variable warning in dbl_to_sgl_fcnvff()
-Message-Id: <20180306100619.GD10474@mwanda>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 09 Mar 2018 15:17:34 +0000
+Subject: Re: [PATCH] hwrng: cavium: make two functions static
+Message-Id: <20180309151734.GB13567@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Smatch warns that is_tiny can be used uninitialized:
+On Mon, Feb 26, 2018 at 02:51:19PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Functions cavium_rng_remove and cavium_rng_remove_vf are local to the
+> source and do not need to be in global scope, so make them static.
+> 
+> Cleans up sparse warnings:
+> drivers/char/hw_random/cavium-rng-vf.c:80:7: warning: symbol
+> 'cavium_rng_remove_vf' was not declared. Should it be static?
+> drivers/char/hw_random/cavium-rng.c:65:7: warning: symbol
+> 'cavium_rng_remove' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-    arch/parisc/math-emu/fcnvff.c:297 dbl_to_sgl_fcnvff()
-    error: uninitialized symbol 'is_tiny'.
-
-This code is very old so that suggests the bug doesn't have a huge
-affect in real life.  But I've read the code and it seems like a
-reasonable warning.  Either way it should be harmless to initialize it
-to false and silence the static checker warning.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/arch/parisc/math-emu/fcnvff.c b/arch/parisc/math-emu/fcnvff.c
-index 76c063f7d17c..f9357d9d4cb1 100644
---- a/arch/parisc/math-emu/fcnvff.c
-+++ b/arch/parisc/math-emu/fcnvff.c
-@@ -148,7 +148,7 @@ dbl_to_sgl_fcnvff(
-         register int src_exponent, dest_exponent, dest_mantissa;
-         register boolean inexact = FALSE, guardbit = FALSE, stickybit = FALSE;
- 	register boolean lsb_odd = FALSE;
--	boolean is_tiny;
-+	boolean is_tiny = FALSE;
- 
- 	Dbl_copyfromptr(srcptr,srcp1,srcp2);
-         src_exponent = Dbl_exponent(srcp1);
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
