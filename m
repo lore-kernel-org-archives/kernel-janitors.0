@@ -1,46 +1,49 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Thu, 08 Mar 2018 02:03:01 +0000
-Subject: [PATCH 2/5] drm/vgem: Remove assignment in if condition
-Message-Id: <092e934559446abe0aa381c0390d49caa1c42062.1520474055.git.rodrigosiqueiramelo@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:46:45 +0000
+Subject: [PATCH v2 15/17] mfd: tps80031: Delete an error message for a failed memory allocation in tps80031_p
+Message-Id: <25f40839-22b0-26de-591d-cfbbf4b28547@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-This patch fixes the checkpatch.pl error:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 9 Mar 2018 09:45:13 +0100
 
-vgem_fence.c:196: ERROR: do not use assignment in if condition
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/vgem/vgem_fence.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_fence.c b/drivers/gpu/drm/vgem/vgem_fence.c
-index b28876c222b4..f5b659463b00 100644
---- a/drivers/gpu/drm/vgem/vgem_fence.c
-+++ b/drivers/gpu/drm/vgem/vgem_fence.c
-@@ -191,10 +191,13 @@ int vgem_fence_attach_ioctl(struct drm_device *dev,
- 	/* Expose the fence via the dma-buf */
- 	ret = 0;
- 	reservation_object_lock(resv, NULL);
--	if (arg->flags & VGEM_FENCE_WRITE)
-+	if (arg->flags & VGEM_FENCE_WRITE) {
- 		reservation_object_add_excl_fence(resv, fence);
--	else if ((ret = reservation_object_reserve_shared(resv)) = 0)
--		reservation_object_add_shared_fence(resv, fence);
-+	} else {
-+		ret = reservation_object_reserve_shared(resv);
-+		if (!ret)
-+			reservation_object_add_shared_fence(resv, fence);
-+	}
- 	reservation_object_unlock(resv);
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/tps80031.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/tps80031.c b/drivers/mfd/tps80031.c
+index 0812df3b0d47..608c7f77830e 100644
+--- a/drivers/mfd/tps80031.c
++++ b/drivers/mfd/tps80031.c
+@@ -431,10 +431,8 @@ static int tps80031_probe(struct i2c_client *client,
+ 	}
  
- 	/* Record the fence in our idr for later signaling */
+ 	tps80031 = devm_kzalloc(&client->dev, sizeof(*tps80031), GFP_KERNEL);
+-	if (!tps80031) {
+-		dev_err(&client->dev, "Malloc failed for tps80031\n");
++	if (!tps80031)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (i = 0; i < TPS80031_NUM_SLAVES; i++) {
+ 		if (tps80031_slave_address[i] = client->addr)
 -- 
 2.16.2
 
