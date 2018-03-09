@@ -1,58 +1,103 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:12:38 +0000
-Subject: [PATCH v2 05/17 1/2] mfd: sm501: Improve a size determination in two functions
-Message-Id: <8141262d-a76d-3085-5502-647f9fd3edfc@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:03:26 +0000
+Subject: [PATCH v2 03/17 3/3] mfd: abx500-core: Adjust 14 checks for null pointers
+Message-Id: <2f3c512b-cd17-beb3-152a-23513f13279f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <5271ab9f-3be1-035c-90c1-8faba2e119b8@users.sourceforge.net>
-In-Reply-To: <5271ab9f-3be1-035c-90c1-8faba2e119b8@users.sourceforge.net>
+ <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
+In-Reply-To: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Mar 2018 14:05:41 +0100
+Date: Thu, 8 Mar 2018 12:50:12 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 
 v2:
-Lee Jones requested a different source code layout for this transformation.
-The change was rebased on source files from Linux next-20180308.
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
 
- drivers/mfd/sm501.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mfd/abx500-core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
-index 7298d6b571a1..4f4957ea8fa3 100644
---- a/drivers/mfd/sm501.c
-+++ b/drivers/mfd/sm501.c
-@@ -1383,7 +1383,7 @@ static int sm501_plat_probe(struct platform_device *dev)
- 	struct sm501_devdata *sm;
- 	int ret;
+diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
+index 17176e91cbd0..f282d39a5917 100644
+--- a/drivers/mfd/abx500-core.c
++++ b/drivers/mfd/abx500-core.c
+@@ -65,7 +65,7 @@ int abx500_set_register_interruptible(struct device *dev, u8 bank, u8 reg,
+ 	struct abx500_ops *ops;
  
--	sm = kzalloc(sizeof(struct sm501_devdata), GFP_KERNEL);
-+	sm = kzalloc(sizeof(*sm), GFP_KERNEL);
- 	if (sm = NULL) {
- 		ret = -ENOMEM;
- 		goto err1;
-@@ -1572,7 +1572,7 @@ static int sm501_pci_probe(struct pci_dev *dev,
- 	struct sm501_devdata *sm;
- 	int err;
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->set_register != NULL))
++	if (ops && ops->set_register)
+ 		return ops->set_register(dev, bank, reg, value);
+ 	else
+ 		return -ENOTSUPP;
+@@ -78,7 +78,7 @@ int abx500_get_register_interruptible(struct device *dev, u8 bank, u8 reg,
+ 	struct abx500_ops *ops;
  
--	sm = kzalloc(sizeof(struct sm501_devdata), GFP_KERNEL);
-+	sm = kzalloc(sizeof(*sm), GFP_KERNEL);
- 	if (sm = NULL) {
- 		err = -ENOMEM;
- 		goto err1;
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->get_register != NULL))
++	if (ops && ops->get_register)
+ 		return ops->get_register(dev, bank, reg, value);
+ 	else
+ 		return -ENOTSUPP;
+@@ -91,7 +91,7 @@ int abx500_get_register_page_interruptible(struct device *dev, u8 bank,
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->get_register_page != NULL))
++	if (ops && ops->get_register_page)
+ 		return ops->get_register_page(dev, bank,
+ 			first_reg, regvals, numregs);
+ 	else
+@@ -105,7 +105,7 @@ int abx500_mask_and_set_register_interruptible(struct device *dev, u8 bank,
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->mask_and_set_register != NULL))
++	if (ops && ops->mask_and_set_register)
+ 		return ops->mask_and_set_register(dev, bank,
+ 			reg, bitmask, bitvalues);
+ 	else
+@@ -118,7 +118,7 @@ int abx500_get_chip_id(struct device *dev)
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->get_chip_id != NULL))
++	if (ops && ops->get_chip_id)
+ 		return ops->get_chip_id(dev);
+ 	else
+ 		return -ENOTSUPP;
+@@ -130,7 +130,7 @@ int abx500_event_registers_startup_state_get(struct device *dev, u8 *event)
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->event_registers_startup_state_get != NULL))
++	if (ops && ops->event_registers_startup_state_get)
+ 		return ops->event_registers_startup_state_get(dev, event);
+ 	else
+ 		return -ENOTSUPP;
+@@ -142,7 +142,7 @@ int abx500_startup_irq_enabled(struct device *dev, unsigned int irq)
+ 	struct abx500_ops *ops;
+ 
+ 	lookup_ops(dev->parent, &ops);
+-	if ((ops != NULL) && (ops->startup_irq_enabled != NULL))
++	if (ops && ops->startup_irq_enabled)
+ 		return ops->startup_irq_enabled(dev, irq);
+ 	else
+ 		return -ENOTSUPP;
 -- 
 2.16.2
 
