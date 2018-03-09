@@ -1,40 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Mar 2018 21:31:38 +0000
-Subject: [PATCH 1/3] wlcore: Delete an unnecessary variable initialisation in wl1271_acx_sta_rate_policies()
-Message-Id: <76c402d0-e8eb-9b05-20c1-33db7e5325c2@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:39:51 +0000
+Subject: [PATCH v2 13/17 3/4] mfd: tps65910: Delete an unnecessary variable initialisation in tps65910_sleepi
+Message-Id: <4b909856-0197-43ca-50c4-2e592bf7514c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
-In-Reply-To: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+ <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
+In-Reply-To: <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Mar 2018 21:51:17 +0100
+Date: Fri, 9 Mar 2018 09:10:09 +0100
 
-The local variable "ret" will be set to an appropriate value a bit later.
+The local variable "dev" will be reassigned by a following statement.
 Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/ti/wlcore/acx.c | 2 +-
+
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/tps65910.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
-index 3ca9167d6146..6991fee8fe61 100644
---- a/drivers/net/wireless/ti/wlcore/acx.c
-+++ b/drivers/net/wireless/ti/wlcore/acx.c
-@@ -738,7 +738,7 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 80ea1474c654..7e7d3d1642c6 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -312,7 +312,7 @@ static int tps65910_ck32k_init(struct tps65910 *tps65910,
+ static int tps65910_sleepinit(struct tps65910 *tps65910,
+ 		struct tps65910_board *pmic_pdata)
  {
- 	struct acx_rate_policy *acx;
- 	struct conf_tx_rate_class *c = &wl->conf.tx.sta_rc_conf;
--	int ret = 0;
-+	int ret;
+-	struct device *dev = NULL;
++	struct device *dev;
+ 	int ret;
  
- 	wl1271_debug(DEBUG_ACX, "acx rate policies");
- 
+ 	dev = tps65910->dev;
 -- 
 2.16.2
 
