@@ -1,45 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Mar 2018 16:00:47 +0000
-Subject: [PATCH] drm/amd/display: fix spelling mistake: "Usupported" -> "Unsupported"
-Message-Id: <20180330160047.7368-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 15:55:34 +0000
+Subject: [PATCH v2 00/17] MFD: Adjustments for several function implementations
+Message-Id: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Harry Wentland <harry.wentland@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 9 Mar 2018 10:24:42 +0100
 
-Trivial fix to spelling mistake in DRM_ERROR error message text
+Several update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Markus Elfring (17):
+  abx500-core: Adjustments for eight function implementations
+  si476x-i2c: Delete an error message for a failed memory allocation
+    in si476x_core_probe()
+  sm501: Adjustments for five function implementations
+  smsc-ece1099: Improve a size determination in smsc_i2c_probe()
+  ti_am335x_tscadc: Delete an error message for a failed memory allocation
+    in ti_tscadc_probe()
+  tps65090: Delete an error message for a failed memory allocation
+    in tps65090_i2c_probe()
+  tps6586x: Delete an error message for a failed memory allocation
+    in tps6586x_parse_dt()
+  tps65910: Adjustments for four function implementations
+  tps80031: Delete an error message for a failed memory allocation
+    in tps80031_probe()
+  twl6030-irq: Delete an error message for a failed memory allocation
+    in twl6030_init_irq()
+  viperboard: Delete an error message for a failed memory allocation
+    in vprbrd_probe()
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index e42a28e3adc5..1df1c91b6ae5 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -1521,7 +1521,7 @@ static int amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
- 		break;
- #endif
- 	default:
--		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
-+		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
- 		goto fail;
- 	}
- 
-@@ -1715,7 +1715,7 @@ static int dm_early_init(void *handle)
- 		break;
- #endif
- 	default:
--		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
-+		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
- 		return -EINVAL;
- 	}
- 
+v2:
+Lee Jones requested a resend for some of these patches. Thus several changes
+were rebased on source files from Linux next-20180308.
+
+ drivers/mfd/abx500-core.c      | 25 +++++++++++--------------
+ drivers/mfd/si476x-i2c.c       |  6 ++----
+ drivers/mfd/sm501.c            | 30 +++++++++++++-----------------
+ drivers/mfd/smsc-ece1099.c     |  3 +--
+ drivers/mfd/ti_am335x_tscadc.c |  5 ++---
+ drivers/mfd/tps65090.c         |  4 +---
+ drivers/mfd/tps6586x.c         |  4 +---
+ drivers/mfd/tps65910.c         | 18 ++++++++----------
+ drivers/mfd/tps80031.c         |  4 +---
+ drivers/mfd/twl6030-irq.c      |  4 +---
+ drivers/mfd/viperboard.c       |  4 +---
+ 11 files changed, 42 insertions(+), 65 deletions(-)
+
 -- 
-2.15.1
+2.16.2
 
