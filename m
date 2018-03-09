@@ -1,48 +1,49 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Mon, 12 Mar 2018 03:03:34 +0000
-Subject: [PATCH 3.2 090/104] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
-Message-Id: <lsq.1520823814.368865130@decadent.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:20:22 +0000
+Subject: [PATCH v2 09/17] mfd: tps65090: Delete an error message for a failed memory allocation in tps65090_i
+Message-Id: <7d7253de-7bc9-93a5-9e6b-a0ebf66fb2d0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Andi Kleen <ak@linux.intel.com>, David Woodhouse <dwmw@amazon.co.uk>, kernel-janitors@vger.kernel.org, Borislav Petkov <bp@suse.de>, Andy Lutomirski <luto@kernel.org>, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-3.2.101-rc1 review patch.  If anyone has any objections, please let me know.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Mar 2018 15:25:58 +0100
 
-------------------
+Omit an extra message for a memory allocation failure in this function.
 
-From: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
 
-commit e698dcdfcda41efd0984de539767b4cddd235f1e upstream.
-
-Trivial fix to spelling mistake in pr_err error message text.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/cpu/bugs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -245,7 +245,7 @@ bool retpoline_module_ok(bool has_retpol
- 	if (spectre_v2_enabled = SPECTRE_V2_NONE || has_retpoline)
- 		return true;
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/tps65090.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+index d7ec318c40c3..f13e4cd06e89 100644
+--- a/drivers/mfd/tps65090.c
++++ b/drivers/mfd/tps65090.c
+@@ -192,10 +192,8 @@ static int tps65090_i2c_probe(struct i2c_client *client,
+ 		irq_base = pdata->irq_base;
  
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
- }
+ 	tps65090 = devm_kzalloc(&client->dev, sizeof(*tps65090), GFP_KERNEL);
+-	if (!tps65090) {
+-		dev_err(&client->dev, "mem alloc for tps65090 failed\n");
++	if (!tps65090)
+ 		return -ENOMEM;
+-	}
+ 
+ 	tps65090->dev = &client->dev;
+ 	i2c_set_clientdata(client, tps65090);
+-- 
+2.16.2
 
