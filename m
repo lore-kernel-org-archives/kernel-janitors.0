@@ -1,72 +1,36 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Date: Wed, 21 Mar 2018 03:04:13 +0000
-Subject: Re: [PATCH -next] phy: phy-mtk-tphy: fix missing clk_disable_unprepare() on error in mtk_phy_init()
-Message-Id: <1521601453.3717.117.camel@mhfsdcap03>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:00:19 +0000
+Subject: [PATCH v2 0/3] mfd/abx500-core: Adjustments for eight function implementations
+Message-Id: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521551999-154546-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521551999-154546-1-git-send-email-weiyongjun1@huawei.com>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Tue, 2018-03-20 at 13:19 +0000, Wei Yongjun wrote:
-> Fix the missing clk_disable_unprepare() before return
-> from mtk_phy_init() in the error handling case.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/phy/mediatek/phy-mtk-tphy.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/mediatek/phy-mtk-tphy.c b/drivers/phy/mediatek/phy-mtk-tphy.c
-> index 38c281b..3ff9020 100644
-> --- a/drivers/phy/mediatek/phy-mtk-tphy.c
-> +++ b/drivers/phy/mediatek/phy-mtk-tphy.c
-> @@ -841,7 +841,7 @@ static int mtk_phy_init(struct phy *phy)
->  	ret = clk_prepare_enable(instance->ref_clk);
->  	if (ret) {
->  		dev_err(tphy->dev, "failed to enable ref_clk\n");
-> -		return ret;
-> +		goto disable_u3phya_ref;
-@u3phya_ref and @ref_clk clocks are mutually exclusive, that means one
-of them must be NULL; so if failed to enable @ref_clk, then @u3phya_ref
-should be NULL, and no need to disable it in fact.
-But it's also no problem to disable it.
->  	}
+From: Markus Elfring <elfring@users.sourceforge.net>
 
+Three update suggestions were taken into account
+from static source code analysis.
 
->  
->  	switch (instance->type) {
-> @@ -859,10 +859,17 @@ static int mtk_phy_init(struct phy *phy)
->  		break;
->  	default:
->  		dev_err(tphy->dev, "incompatible PHY type\n");
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto disable_ref_clk;
-mtk_phy_xlate() has already checked supported type,so usually doesn't
-comes here, otherwise there will be a serious problem about system.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+    in abx500_register_ops()
+  Improve two size determinations in abx500_register_ops()
+  Adjust 14 checks for null pointers
 
-Anyway, it's better to disable these clocks when fail.
->  	}
->  
->  	return 0;
-> +
-> +disable_ref_clk:
-> +	clk_disable_unprepare(instance->ref_clk);
-> +disable_u3phya_ref:
-> +	clk_disable_unprepare(tphy->u3phya_ref);
-> +	return ret;
->  }
->  
->  static int mtk_phy_power_on(struct phy *phy)
-> 
-Tested-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Acked-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
 
-Thanks a lot
-> 
-> 
+v2:
+Lee Jones requested a resend for these patches. The changes were rebased
+on source files from Linux next-20180308.
 
+ drivers/mfd/abx500-core.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
+
+-- 
+2.15.1
 
