@@ -1,35 +1,51 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 13:53:38 +0000
-Subject: Re: [PATCH v2] video: ssd1307fb: Improve a size determination in ssd1307fb_probe()
-Message-Id: <3926941.Nf8LXND9kI@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Mar 2018 16:01:35 +0000
+Subject: [PATCH v2 01/17 1/3] mfd: abx500-core: Delete an error message for a failed memory allocation in abx
+Message-Id: <4948c6d9-af42-8c95-af38-fc448a8e25a2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171125160425epcas5p43b2d94fbcc74745017c4c91ff08de685@epcas5p4.samsung.com>
-        <2091464.qzRHS0Wsad@amdc3058>
-        <c2fc8e5c-e4d3-51da-451c-be70e0d3fef0@users.sourceforge.net>
-In-Reply-To: <c2fc8e5c-e4d3-51da-451c-be70e0d3fef0@users.sourceforge.net>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+ <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
+In-Reply-To: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bastian Stender <bst@pengutronix.de>, Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sunday, January 07, 2018 07:34:44 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 Jan 2018 19:27:28 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Mar 2018 11:44:33 +0100
 
-Patch queued for 4.17, thanks.
+Omit an extra message for a memory allocation failure in this function.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/abx500-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
+index 0d3846a4767c..c8c9d41abcaa 100644
+--- a/drivers/mfd/abx500-core.c
++++ b/drivers/mfd/abx500-core.c
+@@ -40,10 +40,9 @@ int abx500_register_ops(struct device *dev, struct abx500_ops *ops)
+ 	dev_entry = devm_kzalloc(dev,
+ 				 sizeof(struct abx500_device_entry),
+ 				 GFP_KERNEL);
+-	if (!dev_entry) {
+-		dev_err(dev, "register_ops kzalloc failed");
++	if (!dev_entry)
+ 		return -ENOMEM;
+-	}
++
+ 	dev_entry->dev = dev;
+ 	memcpy(&dev_entry->ops, ops, sizeof(struct abx500_ops));
+ 
+-- 
+2.16.2
 
