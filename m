@@ -1,46 +1,56 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Sat, 24 Mar 2018 00:23:14 +0000
-Subject: Re: [PATCH][next] apparmor: fix error returns checks by making size a ssize_t
-Message-Id: <e0117644-3bed-5374-6697-3fa2734b379d@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 18:26:16 +0000
+Subject: [PATCH 2/2] net/usb/ax88179_178a: Delete three unnecessary variables in ax88179_chk_eee()
+Message-Id: <019cc24b-d9c0-d782-35e8-f9f8be0534db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323233422.7856-1-colin.king@canonical.com>
-In-Reply-To: <20180323233422.7856-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: linux-usb@vger.kernel.org, netdev@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>, "David S. Miller" <davem@davemloft.net>, Philippe Reynes <tremyfr@gmail.com>, Yuval Shaia <yuval.shaia@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 03/23/2018 04:34 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently variable size is a unsigned size_t, hence comparisons to
-> see if it is less than zero (for error checking) will always be
-> false.  Fix this by making size a ssize_t
-> 
-> Detected by CoverityScan, CID#1466080 ("Unsigned compared against 0")
-> 
-> Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 18:53:28 +0100
 
-and pulled into apparmor-next
+Use three values directly for a condition check without assigning them
+to intermediate variables.
 
-> ---
->  security/apparmor/domain.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 57cc892e05a2..590b7e8cd21c 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
->  			   struct aa_profile *profile, unsigned int state)
->  {
->  	int i;
-> -	size_t size;
-> +	ssize_t size;
->  	struct dentry *d;
->  	char *value = NULL;
->  	int value_size = 0, ret = profile->xattr_count;
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/usb/ax88179_178a.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+index e4b0baa98e9a..3e83be232504 100644
+--- a/drivers/net/usb/ax88179_178a.c
++++ b/drivers/net/usb/ax88179_178a.c
+@@ -684,7 +684,7 @@ static int ax88179_chk_eee(struct usbnet *dev)
+ 
+ 	if (ecmd.duplex & DUPLEX_FULL) {
+ 		int eee_lp, eee_cap, eee_adv;
+-		u32 lp, cap, adv, supported = 0;
++		u32 cap;
+ 
+ 		eee_cap = ax88179_phy_read_mmd_indirect(dev,
+ 							MDIO_PCS_EEE_ABLE,
+@@ -708,12 +708,11 @@ static int ax88179_chk_eee(struct usbnet *dev)
+ 		if (eee_adv < 0)
+ 			goto set_inactive;
+ 
+-		adv = mmd_eee_adv_to_ethtool_adv_t(eee_adv);
+-		lp = mmd_eee_adv_to_ethtool_adv_t(eee_lp);
+-		supported = (ecmd.speed = SPEED_1000) ?
+-			     SUPPORTED_1000baseT_Full :
+-			     SUPPORTED_100baseT_Full;
+-		if (!(lp & adv & supported))
++		if (!(mmd_eee_adv_to_ethtool_adv_t(eee_lp) &
++		      mmd_eee_adv_to_ethtool_adv_t(eee_adv) &
++		      ((ecmd.speed = SPEED_1000)
++		       ? SUPPORTED_1000baseT_Full
++		       : SUPPORTED_100baseT_Full)))
+ 			goto set_inactive;
+ 
+ 		priv->eee_active = 1;
+-- 
+2.16.2
 
