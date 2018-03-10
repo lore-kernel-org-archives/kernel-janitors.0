@@ -1,41 +1,92 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 29 Mar 2018 04:53:25 +0000
-Subject: Re: [PATCH][next] wil6210: fix potential null dereference of ndev before null check
-Message-Id: <87bmf7mqii.fsf@kamboji.qca.qualcomm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 18:24:21 +0000
+Subject: [PATCH 1/2] net/usb/ax88179_178a: Use common code in ax88179_chk_eee()
+Message-Id: <a7fff45f-4426-ec33-8b8d-caf1e3a9f0be@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180328174027.31551-1-colin.king@canonical.com>
-        <49ef31bc36217349a4801dc2eba4735c@codeaurora.org>
-In-Reply-To: <49ef31bc36217349a4801dc2eba4735c@codeaurora.org>
-        (merez@codeaurora.org's message of "Wed, 28 Mar 2018 20:46:44 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: merez@codeaurora.org
-Cc: Colin King <colin.king@canonical.com>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-usb@vger.kernel.org, netdev@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>, "David S. Miller" <davem@davemloft.net>, Philippe Reynes <tremyfr@gmail.com>, Yuval Shaia <yuval.shaia@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-merez@codeaurora.org writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 18:22:43 +0100
 
-> On 2018-03-28 20:40, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The pointer ndev is being dereferenced before it is being null checked,
->> hence there is a potential null pointer deference. Fix this by only
->> dereferencing ndev after it has been null checked
->>
->> Detected by CoverityScan, CID#1467010 ("Dereference before null check")
->>
->> Fixes: e00243fab84b ("wil6210: infrastructure for multiple virtual
->> interfaces")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Adjust a jump target so that a bit of common code can be better reused
+at the end of this function.
 
-[...]
+This issue was detected by using the Coccinelle software.
 
-> Reviewed-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/usb/ax88179_178a.c | 34 +++++++++++-----------------------
+ 1 file changed, 11 insertions(+), 23 deletions(-)
 
-Maya, as you are the wil6210 maintainer you can actually use Acked-by
-instead of Reviewed-by. Not that it really matters which one you use,
-both of them indicate me that you have checked and agree the patch, but
-wanted to point out this anyway :)
-
+diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+index f32261ecd215..e4b0baa98e9a 100644
+--- a/drivers/net/usb/ax88179_178a.c
++++ b/drivers/net/usb/ax88179_178a.c
+@@ -689,49 +689,37 @@ static int ax88179_chk_eee(struct usbnet *dev)
+ 		eee_cap = ax88179_phy_read_mmd_indirect(dev,
+ 							MDIO_PCS_EEE_ABLE,
+ 							MDIO_MMD_PCS);
+-		if (eee_cap < 0) {
+-			priv->eee_active = 0;
+-			return false;
+-		}
++		if (eee_cap < 0)
++			goto set_inactive;
+ 
+ 		cap = mmd_eee_cap_to_ethtool_sup_t(eee_cap);
+-		if (!cap) {
+-			priv->eee_active = 0;
+-			return false;
+-		}
++		if (!cap)
++			goto set_inactive;
+ 
+ 		eee_lp = ax88179_phy_read_mmd_indirect(dev,
+ 						       MDIO_AN_EEE_LPABLE,
+ 						       MDIO_MMD_AN);
+-		if (eee_lp < 0) {
+-			priv->eee_active = 0;
+-			return false;
+-		}
++		if (eee_lp < 0)
++			goto set_inactive;
+ 
+ 		eee_adv = ax88179_phy_read_mmd_indirect(dev,
+ 							MDIO_AN_EEE_ADV,
+ 							MDIO_MMD_AN);
+-
+-		if (eee_adv < 0) {
+-			priv->eee_active = 0;
+-			return false;
+-		}
++		if (eee_adv < 0)
++			goto set_inactive;
+ 
+ 		adv = mmd_eee_adv_to_ethtool_adv_t(eee_adv);
+ 		lp = mmd_eee_adv_to_ethtool_adv_t(eee_lp);
+ 		supported = (ecmd.speed = SPEED_1000) ?
+ 			     SUPPORTED_1000baseT_Full :
+ 			     SUPPORTED_100baseT_Full;
+-
+-		if (!(lp & adv & supported)) {
+-			priv->eee_active = 0;
+-			return false;
+-		}
++		if (!(lp & adv & supported))
++			goto set_inactive;
+ 
+ 		priv->eee_active = 1;
+ 		return true;
+ 	}
+-
++set_inactive:
+ 	priv->eee_active = 0;
+ 	return false;
+ }
 -- 
-Kalle Valo
+2.16.2
+
