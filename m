@@ -1,48 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Mar 2018 13:22:17 +0000
-Subject: [PATCH][next] drm/amd/pp: remove redundant pointer internal_buf
-Message-Id: <20180313132217.31025-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 21:32:43 +0000
+Subject: [PATCH 2/3] wlcore: Return directly after a failed kzalloc() in wl1271_acx_sta_rate_policies()
+Message-Id: <8ef461f4-5103-9181-b68d-e31720206ee3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
+In-Reply-To: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 22:00:31 +0100
 
-The pointer internal_buf is assigned a value but the pointer is never
-read, hence it is redundant and can be removed.
+Return directly after a call of the function "kzalloc" failed
+at the beginning.
 
-Cleans up clang warning:
-drivers/gpu/drm/amd/amdgpu/../powerplay/smumgr/smu7_smumgr.c:630:2:
-warning: Value stored to 'internal_buf' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wireless/ti/wlcore/acx.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c
-index 7394bb46b8b2..dcb151cabc00 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c
-@@ -585,7 +585,6 @@ int smu7_setup_pwr_virus(struct pp_hwmgr *hwmgr)
- int smu7_init(struct pp_hwmgr *hwmgr)
- {
- 	struct smu7_smumgr *smu_data;
--	uint8_t *internal_buf;
- 	uint64_t mc_addr = 0;
- 	int r;
- 	/* Allocate memory for backend private data */
-@@ -627,7 +626,6 @@ int smu7_init(struct pp_hwmgr *hwmgr)
- 					&smu_data->header_buffer.kaddr);
- 		return -EINVAL;
- 	}
--	internal_buf = smu_data->smu_buffer.kaddr;
- 	smu_data->smu_buffer.mc_addr = mc_addr;
+diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
+index 6991fee8fe61..1cc5bba670e1 100644
+--- a/drivers/net/wireless/ti/wlcore/acx.c
++++ b/drivers/net/wireless/ti/wlcore/acx.c
+@@ -743,11 +743,8 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+ 	wl1271_debug(DEBUG_ACX, "acx rate policies");
  
- 	if (smum_is_hw_avfs_present(hwmgr))
+ 	acx = kzalloc(sizeof(*acx), GFP_KERNEL);
+-
+-	if (!acx) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!acx)
++		return -ENOMEM;
+ 
+ 	wl1271_debug(DEBUG_ACX, "basic_rate: 0x%x, full_rate: 0x%x",
+ 		wlvif->basic_rate, wlvif->rate_set);
 -- 
-2.15.1
+2.16.2
 
