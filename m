@@ -1,50 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:01:35 +0000
-Subject: [PATCH v2 01/17 1/3] mfd: abx500-core: Delete an error message for a failed memory allocation in abx
-Message-Id: <4948c6d9-af42-8c95-af38-fc448a8e25a2@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 21:31:38 +0000
+Subject: [PATCH 1/3] wlcore: Delete an unnecessary variable initialisation in wl1271_acx_sta_rate_policies()
+Message-Id: <76c402d0-e8eb-9b05-20c1-33db7e5325c2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
-In-Reply-To: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
+References: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
+In-Reply-To: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Mar 2018 11:44:33 +0100
+Date: Sat, 10 Mar 2018 21:51:17 +0100
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
+ drivers/net/wireless/ti/wlcore/acx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/abx500-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
-index 0d3846a4767c..c8c9d41abcaa 100644
---- a/drivers/mfd/abx500-core.c
-+++ b/drivers/mfd/abx500-core.c
-@@ -40,10 +40,9 @@ int abx500_register_ops(struct device *dev, struct abx500_ops *ops)
- 	dev_entry = devm_kzalloc(dev,
- 				 sizeof(struct abx500_device_entry),
- 				 GFP_KERNEL);
--	if (!dev_entry) {
--		dev_err(dev, "register_ops kzalloc failed");
-+	if (!dev_entry)
- 		return -ENOMEM;
--	}
-+
- 	dev_entry->dev = dev;
- 	memcpy(&dev_entry->ops, ops, sizeof(struct abx500_ops));
+diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
+index 3ca9167d6146..6991fee8fe61 100644
+--- a/drivers/net/wireless/ti/wlcore/acx.c
++++ b/drivers/net/wireless/ti/wlcore/acx.c
+@@ -738,7 +738,7 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+ {
+ 	struct acx_rate_policy *acx;
+ 	struct conf_tx_rate_class *c = &wl->conf.tx.sta_rc_conf;
+-	int ret = 0;
++	int ret;
+ 
+ 	wl1271_debug(DEBUG_ACX, "acx rate policies");
  
 -- 
 2.16.2
