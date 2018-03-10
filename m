@@ -1,42 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Mar 2018 20:53:26 +0000
-Subject: [PATCH 1/4] HID: alps: Report an error if we receive invalid data in 't4_read_write_register()'
-Message-Id: <c59e5f62dd36950a027eb629a7780e714cb8766f.1521492069.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 21:30:13 +0000
+Subject: [PATCH 0/3] wlcore: Adjustments for wl1271_acx_sta_rate_policies()
+Message-Id: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If the data received is not what is expected, we should return an error.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 22:25:45 +0100
 
-Otherwise, we return 0 or a positive value which will be interpreted as
-success, but '*read_val' has not been updated.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Fixes: 73196ebe134d ("HID: alps: add support for Alps T4 Touchpad device")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Untested
----
- drivers/hid/hid-alps.c | 2 ++
- 1 file changed, 2 insertions(+)
+Markus Elfring (3):
+  Delete an unnecessary variable initialisation
+  Return directly after a failed kzalloc()
+  Use common error handling code
 
-diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
-index b1eeb4839bfc..925396fdf0d9 100644
---- a/drivers/hid/hid-alps.c
-+++ b/drivers/hid/hid-alps.c
-@@ -219,6 +219,8 @@ static int t4_read_write_register(struct hid_device *hdev, u32 address,
- 			goto exit_readbuf;
- 		}
- 
-+		ret = -EINVAL;
-+
- 		if (*(u32 *)&readbuf[6] != address) {
- 			dev_err(&hdev->dev, "read register address error (%x,%x)\n",
- 			*(u32 *)&readbuf[6], address);
+ drivers/net/wireless/ti/wlcore/acx.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
+
 -- 
-2.14.1
+2.16.2
 
