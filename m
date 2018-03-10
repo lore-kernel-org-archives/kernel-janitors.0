@@ -1,47 +1,81 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Mar 2018 14:25:20 +0000
-Subject: Re: [bug report] tracing: Rewrite filter logic to be simpler and faster
-Message-Id: <20180327142520.gippcw3oy2zw2kin@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 21:33:39 +0000
+Subject: [PATCH 3/3] wlcore: Use common error handling code in wl1271_acx_sta_rate_policies()
+Message-Id: <7d5cc7b4-f0ce-192a-3e5e-c2944c1e3e3d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180327073036.GA20734@mwanda>
-In-Reply-To: <20180327073036.GA20734@mwanda>
+References: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
+In-Reply-To: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 09:59:16AM -0400, Steven Rostedt wrote:
-> On Tue, 27 Mar 2018 10:30:36 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > Hello Steven Rostedt (VMware),
-> > 
-> > The patch 80765597bc58: "tracing: Rewrite filter logic to be simpler
-> > and faster" from Mar 9, 2018, leads to the following static checker
-> > warning:
-> > 
-> >     kernel/trace/trace_events_filter.c:1794 apply_event_filter()
-> >     error: uninitialized symbol 'filter'.
-> > 
-> >     kernel/trace/trace_events_filter.c:2052 ftrace_profile_set_filter()
-> >     error: uninitialized symbol 'filter'.
-> > 
-> > kernel/trace/trace_events_filter.c
-> >   1686  /**
-> >   1687   * create_filter - create a filter for a trace_event_call
-> >   1688   * @call: trace_event_call to create a filter for
-> >   1689   * @filter_str: filter string
-> >   1690   * @set_str: remember @filter_str and enable detailed error in filter
-> >   1691   * @filterp: out param for created filter (always updated on return)
-> >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > filterp is supposed to get updated.
-> 
-> Wow, your static analyzer reads comments?
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 22:18:45 +0100
 
-At first I complained to Tejun by mistake and he was like, "read the
-comments"...
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/ti/wlcore/acx.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
+index 1cc5bba670e1..7d37a417c756 100644
+--- a/drivers/net/wireless/ti/wlcore/acx.c
++++ b/drivers/net/wireless/ti/wlcore/acx.c
+@@ -757,10 +757,8 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+ 	acx->rate_policy.aflags = c->aflags;
+ 
+ 	ret = wl1271_cmd_configure(wl, ACX_RATE_POLICY, acx, sizeof(*acx));
+-	if (ret < 0) {
+-		wl1271_warning("Setting of rate policies failed: %d", ret);
+-		goto out;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	/* configure one AP supported rate class */
+ 	acx->rate_policy_idx = cpu_to_le32(wlvif->sta.ap_rate_idx);
+@@ -773,10 +771,8 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+ 	acx->rate_policy.aflags = c->aflags;
+ 
+ 	ret = wl1271_cmd_configure(wl, ACX_RATE_POLICY, acx, sizeof(*acx));
+-	if (ret < 0) {
+-		wl1271_warning("Setting of rate policies failed: %d", ret);
+-		goto out;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	/*
+ 	 * configure one rate class for basic p2p operations.
+@@ -791,14 +787,16 @@ int wl1271_acx_sta_rate_policies(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+ 	acx->rate_policy.aflags = c->aflags;
+ 
+ 	ret = wl1271_cmd_configure(wl, ACX_RATE_POLICY, acx, sizeof(*acx));
+-	if (ret < 0) {
+-		wl1271_warning("Setting of rate policies failed: %d", ret);
+-		goto out;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+-out:
++free_acx:
+ 	kfree(acx);
+ 	return ret;
++
++report_failure:
++	wl1271_warning("Setting of rate policies failed: %d", ret);
++	goto free_acx;
+ }
+ 
+ int wl1271_acx_ap_rate_policy(struct wl1271 *wl, struct conf_tx_rate_class *c,
+-- 
+2.16.2
 
