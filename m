@@ -1,51 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 21 Mar 2018 08:49:29 +0000
-Subject: Re: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than or equal zero
-Message-Id: <CACRpkdZYn8Ke2cXWt63LukTMa-zohToaK-UcrR3mvbCgL_M_yw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:16:20 +0000
+Subject: [PATCH 1/9] um/drivers/vector_user: Delete unnecessary code in user_init_raw_fds()
+Message-Id: <a8ec6fce-df95-10a9-6dd7-3604fd403d0d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180226120418.3589-1-colin.king@canonical.com> <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
-In-Reply-To: <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Colin King <colin.king@canonical.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 2:14 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 11:36:18 +0100
 
->> -     u32 nfuncs = 0;
->> -     u32 i = 0;
->> +     int nfuncs = 0;
->> +     int i = 0;
->>       bool flat_funcs;
->>
->
-> I saw 'i', later used, is converted to u32 unconditionally. (GCC did not complain)
-> e.g.
-> radix_tree_insert
-> imx_pinctrl_parse_functions
->
-> And of_get_child_count seems can't  return a minor value.
->
-> So does something like below look better?
->
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index c976ffe..4259209 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -612,7 +612,7 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
->                 nfuncs = 1;
->         } else {
->                 nfuncs = of_get_child_count(np);
-> -               if (nfuncs <= 0) {
-> +               if (nfuncs = 0) {
+* One condition check could never be reached with a non-null pointer
+  at the end of this function. Thus remove the corresponding statement.
 
-This makes more sense to me.
+* Delete an initialisation for the local variable "result"
+  which became unnecessary with this refactoring.
 
-You can have zero functions but not negative number of functions.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/um/drivers/vector_user.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Aisheng, can you send a patch like this? (Or is it already somewhere in
-my inbox?)
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index 4291f1a5d342..d6a6207d4061 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -211,7 +211,7 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
+ 	struct sockaddr_ll sock;
+ 	int err = -ENOMEM;
+ 	char *iface;
+-	struct vector_fds *result = NULL;
++	struct vector_fds *result;
+ 	int optval = 1;
+ 
+ 
+@@ -276,8 +276,6 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
+ 		os_close_file(rxfd);
+ 	if (txfd >= 0)
+ 		os_close_file(txfd);
+-	if (result != NULL)
+-		kfree(result);
+ 	return NULL;
+ }
+ 
+-- 
+2.16.2
 
-Yours,
-Linus Walleij
