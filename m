@@ -1,40 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Mar 2018 08:33:36 +0000
-Subject: [PATCH 3/4] scsi: hpsa: Delete an unnecessary initialisation in hpsa_big_passthru_ioctl()
-Message-Id: <c8183b17-d228-5bac-938f-16e751726d81@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:19:08 +0000
+Subject: [PATCH 4/9] um/drivers/vector_user: Delete an unnecessary check before kfree() in user_init_socket_f
+Message-Id: <16c0e64e-01f1-4275-51cc-b56401f6f91d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
-In-Reply-To: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com, Don Brace <don.brace@microsemi.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 4 Mar 2018 22:02:10 +0100
+Date: Sun, 11 Mar 2018 14:00:09 +0100
 
-The variable "status" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/hpsa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/um/drivers/vector_user.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 45177ead811f..86d371ab39e7 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -6381,7 +6381,7 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
- 	int *buff_size;
- 	u64 temp64;
- 	BYTE sg_used = 0;
--	int status = 0;
-+	int status;
- 	u32 left;
- 	u32 sz;
- 	BYTE __user *data_ptr;
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index 9cc4651990e3..e831bd85cad4 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -422,8 +422,7 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
+ 	if (fd >= 0)
+ 		os_close_file(fd);
+ 	if (result != NULL) {
+-		if (result->remote_addr != NULL)
+-			kfree(result->remote_addr);
++		kfree(result->remote_addr);
+ 		kfree(result);
+ 	}
+ 
 -- 
 2.16.2
 
