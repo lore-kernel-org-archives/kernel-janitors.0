@@ -1,51 +1,48 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Mar 2018 20:53:29 +0000
-Subject: [PATCH 4/4] HID: alps: Fix some style in 't4_read_write_register()'
-Message-Id: <50b54e595830cc86edfb977e045f5a7b2b1b726a.1521492069.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:22:36 +0000
+Subject: [PATCH 7/9] um/drivers/vector_user: Adjust an error message in user_init_tap_fds()
+Message-Id: <04d337d2-a2db-a5c8-e056-4eb51a3882b3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Better indent the code to improve readability.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:10:05 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Adjust an error message at the end of this function so that its name
+will be automatically determined as a parameter.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-alps.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/um/drivers/vector_user.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
-index 137b963779c6..60d3950692d9 100644
---- a/drivers/hid/hid-alps.c
-+++ b/drivers/hid/hid-alps.c
-@@ -223,20 +223,20 @@ static int t4_read_write_register(struct hid_device *hdev, u32 address,
- 
- 		if (*(u32 *)&readbuf[6] != address) {
- 			dev_err(&hdev->dev, "read register address error (%x,%x)\n",
--			*(u32 *)&readbuf[6], address);
-+				*(u32 *)&readbuf[6], address);
- 			goto exit_readbuf;
- 		}
- 
- 		if (*(u16 *)&readbuf[10] != 1) {
- 			dev_err(&hdev->dev, "read register size error (%x)\n",
--			*(u16 *)&readbuf[10]);
-+				*(u16 *)&readbuf[10]);
- 			goto exit_readbuf;
- 		}
- 
- 		check_sum = t4_calc_check_sum(readbuf, 6, 7);
- 		if (*(u16 *)&readbuf[13] != check_sum) {
- 			dev_err(&hdev->dev, "read register checksum error (%x,%x)\n",
--			*(u16 *)&readbuf[13], check_sum);
-+				*(u16 *)&readbuf[13], check_sum);
- 			goto exit_readbuf;
- 		}
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index 4c265262a369..5e78723c34d4 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -192,7 +192,6 @@ static struct vector_fds *user_init_tap_fds(struct arglist *ifspec)
+ 	}
+ 	return result;
+ tap_cleanup:
+-	printk(UM_KERN_ERR "user_init_tap: init failed, error %d", err);
+ 	if (result != NULL) {
+ 		if (result->rx_fd >= 0)
+ 			os_close_file(result->rx_fd);
+@@ -200,6 +199,8 @@ static struct vector_fds *user_init_tap_fds(struct arglist *ifspec)
+ 			os_close_file(result->tx_fd);
+ 		kfree(result);
+ 	}
++
++	printk(UM_KERN_ERR "%s: init failed: %d", __func__, err);
+ 	return NULL;
+ }
  
 -- 
-2.14.1
+2.16.2
 
