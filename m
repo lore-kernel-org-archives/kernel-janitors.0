@@ -1,51 +1,52 @@
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
-Date: Wed, 14 Mar 2018 09:00:15 +0000
-Subject: Re: [PATCH][usb-next] usb: dwc2: ix spelling mistake: "genereted" -> "generated"
-Message-Id: <87muzbrq00.fsf@linux.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Mar 2018 23:19:09 +0000
+Subject: [PATCH] drm/sun4i: Fix an error handling path in 'sun4i_drv_bind()'
+Message-Id: <20180311231909.5381-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180313155024.1195-1-colin.king@canonical.com>
-In-Reply-To: <20180313155024.1195-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, John Youn <johnyoun@synopsys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: maxime.ripard@free-electrons.com, airlied@linux.ie, wens@csie.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Commit 070badfab767 ("drm/sun4i: call drm_vblank_init with correct number
+of crtcs") has moved some code without updating the error handling gotos
+accordingly.
+
+Branch to the correct label and remove a now unused lablel.
+
+Fixes: 070badfab767 ("drm/sun4i: call drm_vblank_init with correct number of crtcs")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 4570da0227b4..d9a71f361b14 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -111,7 +111,7 @@ static int sun4i_drv_bind(struct device *dev)
+ 	/* drm_vblank_init calls kcalloc, which can fail */
+ 	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
+ 	if (ret)
+-		goto free_mem_region;
++		goto cleanup_mode_config;
+ 
+ 	drm->irq_enabled = true;
+ 
+@@ -139,7 +139,6 @@ static int sun4i_drv_bind(struct device *dev)
+ 	sun4i_framebuffer_free(drm);
+ cleanup_mode_config:
+ 	drm_mode_config_cleanup(drm);
+-free_mem_region:
+ 	of_reserved_mem_device_release(dev);
+ free_drm:
+ 	drm_dev_unref(drm);
+-- 
+2.14.1
 
 
-Hi,
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
-Colin King <colin.king@canonical.com> writes:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in dev_warn warning message text.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-seems like we need a patch to fix your subject ;-) I'll fix it when applying
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqo5J8ACgkQzL64meEa
-mQaMGRAAgBXFw43h4TsG4zIyVGBDijgGcKPOybeklrTbbM8LT1mrOuIH7BVqAj0G
-m5HXsd/nM0whm+wp1yBcHTPqqhBX/JaZfCESN2WJo2xumHZiy/xpdYCWcayQlOjK
-SK8kGkBFY4nw2MGxPKkHjMsMaOoERKf44MpIpapnppoo9lb5mqVOteANUM75nBZj
-lj/PeoXEg52xE9/ifjImHpIqf1t5KPU9yyNwkjXRuzpyAZhuYSrHaAZuQXiTyngk
-VjqxKWhnPBvmWIS6cJW/ZYR1xrz4Z9Zk759JQJ/6jY9w1mhGpjqcHDuL4+MtfKMb
-MEzJKHc8jUORnEzfgc9fWS7jJ+p1eZ3eil69W78C8diNOY7eI6eiHNr0oEp5kgTo
-bjLxBHNqIhRSTm1Ihs8F/dmW0oik3ILej2LHddHM7tbju06TrZW2jralb23exIqP
-vJ2hQMLtcVB1N6u+wBfjUfYOFo0iZp2frK4pbOk2xSXc/yseApBggfS1X6B+H8O+
-9j5qtwwvKqBegSyKzPPwnDaf1p4pzN95QNyyBWr3uhjaivIGR4V343/XInDIQKJR
-oZtcQtK3/XIGDBLF2puMbFPguyxmvvsI1bapmN77XQ029b8AouUsDZpCc/Vtjntf
-VMVHsX+lJV2nllmDDOdghJJMtHRGSsPx2X54xy9Qm5+v1jhyjwk=
-=+EXf
------END PGP SIGNATURE-----
---=-=-=--
