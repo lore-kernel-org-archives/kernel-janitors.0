@@ -1,49 +1,86 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:22:31 +0000
-Subject: [PATCH v2 10/17] mfd: tps6586x: Delete an error message for a failed memory allocation in tps6586x_p
-Message-Id: <a0adebd4-4efc-3f0e-a4c5-6adb9c3c263e@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:21:44 +0000
+Subject: [PATCH 6/9] um/drivers/vector_user: Less checks in user_init_socket_fds() after error detection
+Message-Id: <a47f1d9b-f917-bb98-9872-fcae70e67ac3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
-In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Mar 2018 15:30:54 +0100
+Date: Sun, 11 Mar 2018 14:56:38 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two checks could be repeated by the user_init_socket_fds() function
+during error handling even if the relevant properties can be determined
+for the involved variables before by source code analysis.
 
-This issue was detected by using the Coccinelle software.
+* Adjust jump targets.
+
+* Delete two sanity checks and a call of the function "kfree"
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ arch/um/drivers/vector_user.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/tps6586x.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index 5628a6b5b19b..b89379782741 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -423,10 +423,8 @@ static struct tps6586x_platform_data *tps6586x_parse_dt(struct i2c_client *clien
- 	struct tps6586x_platform_data *pdata;
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index 2dee1e183387..4c265262a369 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -375,13 +375,13 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
+ 			"socket_open : could not open socket, error = %d",
+ 			-errno
+ 		);
+-		goto cleanup;
++		goto free_info;
+ 	}
+ 	if (bind(fd,
+ 		(struct sockaddr *) gairesult->ai_addr,
+ 		gairesult->ai_addrlen)) {
+ 		printk(UM_KERN_ERR L2TPV3_BIND_FAIL, errno);
+-		goto cleanup;
++		goto close_file;
+ 	}
  
- 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(&client->dev, "Memory allocation failed\n");
-+	if (!pdata)
- 		return NULL;
+ 	freeaddrinfo(gairesult);
+@@ -403,7 +403,8 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
+ 		result->remote_addr = uml_kmalloc(
+ 			gairesult->ai_addrlen, UM_GFP_KERNEL);
+ 		if (result->remote_addr = NULL)
+-			goto cleanup;
++			goto free_result;
++
+ 		result->remote_addr_size = gairesult->ai_addrlen;
+ 		memcpy(
+ 			result->remote_addr,
+@@ -413,16 +414,13 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
+ 	}
+ 	freeaddrinfo(gairesult);
+ 	return result;
+-cleanup:
+-	freeaddrinfo(gairesult);
+-
+-	if (fd >= 0)
+-		os_close_file(fd);
+-	if (result != NULL) {
+-		kfree(result->remote_addr);
+-		kfree(result);
 -	}
  
- 	pdata->num_subdevs = 0;
- 	pdata->subdevs = NULL;
++free_result:
++	kfree(result);
++close_file:
++	os_close_file(fd);
++free_info:
++	freeaddrinfo(gairesult);
+ 	printk(UM_KERN_ERR "%s: init failed: %d", __func__, -ENOMEM);
+ 	return NULL;
+ }
 -- 
 2.16.2
 
