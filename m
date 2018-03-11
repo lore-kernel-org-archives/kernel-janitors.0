@@ -1,28 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 26 Mar 2018 16:11:45 +0000
-Subject: Re: [PATCH] net: qualcomm: rmnet: check for null ep to avoid null pointer dereference
-Message-Id: <20180326.121145.136604200411684413.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Mar 2018 22:45:29 +0000
+Subject: [PATCH] net/mlx4_en: Fix a memory leak in case of error in 'mlx4_en_init_netdev()'
+Message-Id: <20180311224529.4427-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323235157.8129-1-colin.king@canonical.com>
-In-Reply-To: <20180323235157.8129-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: subashab@codeaurora.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: tariqt@mellanox.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Mar 2018 23:51:57 +0000
+If 'kzalloc' fails, we must free some memory before returning.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to rmnet_get_endpoint can potentially return NULL so check
-> for this to avoid any subsequent null pointer dereferences on a NULL
-> ep.
-> 
-> Detected by CoverityScan, CID#1465385 ("Dereference null return value")
-> 
-> Fixes: 23790ef12082 ("net: qualcomm: rmnet: Allow to configure flags for existing devices")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings scheme")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to net-next, thanks.
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+index 8fc51bc29003..f9db018e858f 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -3327,7 +3327,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+ 		if (!priv->tx_cq[t]) {
+ 			kfree(priv->tx_ring[t]);
+ 			err = -ENOMEM;
+-			goto out;
++			goto err_free_tx;
+ 		}
+ 	}
+ 	priv->rx_ring_num = prof->rx_ring_num;
+-- 
+2.14.1
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
