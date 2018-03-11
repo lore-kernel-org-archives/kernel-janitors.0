@@ -1,70 +1,47 @@
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Date: Sun, 11 Mar 2018 23:00:27 +0000
-Subject: Re: [PATCH 3/3] wlcore: Use common error handling code in wl1271_acx_sta_rate_policies()
-Message-Id: <5AA5B50B.6000101@broadcom.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 11 Mar 2018 16:27:56 +0000
+Subject: [PATCH][rds-next] rds: remove redundant variable 'sg_off'
+Message-Id: <20180311162756.26950-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
- <7d5cc7b4-f0ce-192a-3e5e-c2944c1e3e3d@users.sourceforge.net>
-In-Reply-To: <7d5cc7b4-f0ce-192a-3e5e-c2944c1e3e3d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 3/10/2018 10:33 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Mar 2018 22:18:45 +0100
->
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
->
-> This issue was detected by using the Coccinelle software.
+From: Colin Ian King <colin.king@canonical.com>
 
-You call this an issue?
+Variable sg_off is assigned a value but it is never read, hence it is
+redundant and can be removed.
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/net/wireless/ti/wlcore/acx.c | 24 +++++++++++-------------
->   1 file changed, 11 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
-> index 1cc5bba670e1..7d37a417c756 100644
-> --- a/drivers/net/wireless/ti/wlcore/acx.c
-> +++ b/drivers/net/wireless/ti/wlcore/acx.c
+Cleans up clang warning:
+net/rds/message.c:373:2: warning: Value stored to 'sg_off' is never read
 
-[...]
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rds/message.c | 2 --
+ 1 file changed, 2 deletions(-)
 
->   	ret = wl1271_cmd_configure(wl, ACX_RATE_POLICY, acx, sizeof(*acx));
-> -	if (ret < 0) {
-> -		wl1271_warning("Setting of rate policies failed: %d", ret);
-> -		goto out;
-> -	}
-> +	if (ret < 0)
-> +		goto report_failure;
->
-> -out:
-> +free_acx:
->   	kfree(acx);
->   	return ret;
-> +
-> +report_failure:
-> +	wl1271_warning("Setting of rate policies failed: %d", ret);
-> +	goto free_acx;
-
-In my opinion you are introducing a new issue. I don't call this 
-"common" in any way. It is leaning more towards "spaghetti code" [1]. 
-Jumping over a label to return to it with another jump. They are not 
-long jumps, but it sure does not make thing more readable. Always aim 
-for simple top-to-bottom.
-
-Regards,
-Arend
-
-[1] https://en.wikipedia.org/wiki/Spaghetti_code
-
->   }
->
->   int wl1271_acx_ap_rate_policy(struct wl1271 *wl, struct conf_tx_rate_class *c,
->
+diff --git a/net/rds/message.c b/net/rds/message.c
+index 90dcdcfe9f62..9c41bdd9e444 100644
+--- a/net/rds/message.c
++++ b/net/rds/message.c
+@@ -357,7 +357,6 @@ struct rds_message *rds_message_map_pages(unsigned long *page_addrs, unsigned in
+ 
+ int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *from)
+ {
+-	unsigned long sg_off;
+ 	struct scatterlist *sg;
+ 	int ret = 0;
+ 	int length = iov_iter_count(from);
+@@ -370,7 +369,6 @@ int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *from)
+ 	 * now allocate and copy in the data payload.
+ 	 */
+ 	sg = rm->data.op_sg;
+-	sg_off = 0; /* Dear gcc, sg->page will be null from kzalloc. */
+ 
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+-- 
+2.15.1
 
