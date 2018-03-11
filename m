@@ -1,57 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:02:34 +0000
-Subject: [PATCH v2 02/17 2/3] mfd: abx500-core: Improve two size determinations in abx500_register_ops()
-Message-Id: <f91a55b5-c915-2fa2-6aba-b24c3950092e@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:20:24 +0000
+Subject: [PATCH 5/9] um/drivers/vector_user: Delete two unnecessary checks before freeaddrinfo() in user_init
+Message-Id: <cccfbd35-ddea-dd71-2538-7230d5f2b543@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
-In-Reply-To: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Mar 2018 12:46:47 +0100
+Date: Sun, 11 Mar 2018 14:20:46 +0100
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
+The implementation returns from this function if a null pointer
+was detected in the local variable "gairesult". Thus the check
+before two calls of the function "freeaddrinfo" is not needed.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
+ arch/um/drivers/vector_user.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/abx500-core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
-index c8c9d41abcaa..17176e91cbd0 100644
---- a/drivers/mfd/abx500-core.c
-+++ b/drivers/mfd/abx500-core.c
-@@ -37,14 +37,12 @@ int abx500_register_ops(struct device *dev, struct abx500_ops *ops)
- {
- 	struct abx500_device_entry *dev_entry;
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index e831bd85cad4..2dee1e183387 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -384,9 +384,7 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
+ 		goto cleanup;
+ 	}
  
--	dev_entry = devm_kzalloc(dev,
--				 sizeof(struct abx500_device_entry),
--				 GFP_KERNEL);
-+	dev_entry = devm_kzalloc(dev, sizeof(*dev_entry), GFP_KERNEL);
- 	if (!dev_entry)
- 		return -ENOMEM;
+-	if (gairesult != NULL)
+-		freeaddrinfo(gairesult);
+-
++	freeaddrinfo(gairesult);
+ 	gairesult = NULL;
  
- 	dev_entry->dev = dev;
--	memcpy(&dev_entry->ops, ops, sizeof(struct abx500_ops));
-+	memcpy(&dev_entry->ops, ops, sizeof(*ops));
+ 	gairet = getaddrinfo(dst, dstport, &dsthints, &gairesult);
+@@ -416,8 +414,7 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
+ 	freeaddrinfo(gairesult);
+ 	return result;
+ cleanup:
+-	if (gairesult != NULL)
+-		freeaddrinfo(gairesult);
++	freeaddrinfo(gairesult);
  
- 	list_add_tail(&dev_entry->list, &abx500_list);
- 	return 0;
+ 	if (fd >= 0)
+ 		os_close_file(fd);
 -- 
 2.16.2
 
