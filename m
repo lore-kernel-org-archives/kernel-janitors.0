@@ -1,171 +1,55 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Mon, 12 Mar 2018 16:34:26 +0000
-Subject: Re: [PATCH] iio:magnetometer: Remove duplications in iio_chan_spec
-Message-Id: <20180312163426.djfdfzjtmni33bdq@smtp.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 11 Mar 2018 17:03:40 +0000
+Subject: [PATCH][rds-next] rds: make functions rds_info_from_znotifier and rds_message_zcopy_from_user static
+Message-Id: <20180311170340.27696-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180306120011.pbnymd7izt2yxljl@smtp.gmail.com>
- <20180307202044.1d6e66f2@archlinux>
- <1520871676.15766.205.camel@intel.com>
-In-Reply-To: <1520871676.15766.205.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
-Cc: "jic23@kernel.org" <jic23@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "knaack.h@gmx.de" <knaack.h@gmx.de>, "lars@metafoo.de" <lars@metafoo.de>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "daniel.baluta@nxp.com" <daniel.baluta@nxp.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/12, Pandruvada, Srinivas wrote:
-> On Wed, 2018-03-07 at 20:20 +0000, Jonathan Cameron wrote:
-> > On Tue, 6 Mar 2018 09:00:11 -0300
-> > Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
-> > 
-> > > The magn_3d_channels array has multiple declarations of
-> > > iio_chan_spec.
-> > > Most of the iio_chan_spec are very similar, changing only by the
-> > > .type
-> > > and .channel2 field. This patch reduces the code duplication by
-> > > adding a
-> > > macro that can replace the iio_chan_spec  repetitions in the
-> > > magn_3d_channels array.
-> 
-> I don't think it was tested otherwise channel registration would have
-> failed. See below.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi,
+Functions rds_info_from_znotifier and rds_message_zcopy_from_user are
+local to the source and do not need to be in global scope, so make them
+static.
 
-Sorry for the mistake, I did not test it because I don't have the
-hardware. I'll be more cautious.
+Cleans up sparse warnins:
+net/rds/message.c:70:27: warning: symbol 'rds_info_from_znotifier' was
+not declared. Should it be static?
+net/rds/message.c:358:5: warning: symbol 'rds_message_zcopy_from_user'
+was not declared. Should it be static?
 
-Thanks for your review. I will send a v2.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rds/message.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/net/rds/message.c b/net/rds/message.c
+index 9c41bdd9e444..7448fa192543 100644
+--- a/net/rds/message.c
++++ b/net/rds/message.c
+@@ -67,7 +67,8 @@ static inline bool rds_zcookie_add(struct rds_msg_zcopy_info *info, u32 cookie)
+ 	return true;
+ }
  
-> > > 
-> > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > 
-> > Whilst this looks fine to me, I'd like Srinivas to take a look before
-> > I apply it as this is his driver.  Please do make sure to cc the
-> > author.
-> > Whilst many such email addresses bounce as they have moved on they
-> > don't always.
-> > 
-> > Jonathan
-> > 
-> > > ---
-> > >  drivers/iio/magnetometer/hid-sensor-magn-3d.c | 83 ++++++---------
-> > > ------------
-> > >  1 file changed, 19 insertions(+), 64 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-> > > b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-> > > index a1fd9d591818..fff64711a6c8 100644
-> > > --- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-> > > +++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-> > > @@ -74,72 +74,27 @@ static const u32
-> > > magn_3d_addresses[MAGN_3D_CHANNEL_MAX] = {
-> > >  	HID_USAGE_SENSOR_ORIENT_TRUE_NORTH,
-> > >  };
-> > >  
-> > > +#define HID_SENSOR_MAGN_3D_AXIS_CHANNEL(channel_type,
-> > > characteristic)	\
-> > > +	{								
-> > > \
-> > > +		.type = channel_type,				
-> > > 	\
-> > > +		.modified = 1,					
-> > > 	\
-> > > +		.channel2 = characteristic,			
-> > > 	\
-> > > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	
-> > > 	\
-> > > +		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) | \
-> > > +					BIT(IIO_CHAN_INFO_SCALE) |
-> > > 	\
-> > > +					BIT(IIO_CHAN_INFO_SAMP_FRE
-> > > Q) |	\
-> > > +					BIT(IIO_CHAN_INFO_HYSTERES
-> > > IS),	\
-> > > +	}								
-> > > \
-> > > +
-> > >  /* Channel definitions */
-> > >  static const struct iio_chan_spec magn_3d_channels[] = {
-> > > -	{
-> > > -		.type = IIO_MAGN,
-> > > -		.modified = 1,
-> > > -		.channel2 = IIO_MOD_X,
-> > > -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > > -		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) |
-> > > -		BIT(IIO_CHAN_INFO_SCALE) |
-> > > -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> > > -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> > > -	}, {
-> > > -		.type = IIO_MAGN,
-> > > -		.modified = 1,
-> > > -		.channel2 = IIO_MOD_Y,
-> > > -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > > -		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) |
-> > > -		BIT(IIO_CHAN_INFO_SCALE) |
-> > > -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> > > -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> > > -	}, {
-> > > -		.type = IIO_MAGN,
-> > > -		.modified = 1,
-> > > -		.channel2 = IIO_MOD_Z,
-> > > -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > > -		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) |
-> > > -		BIT(IIO_CHAN_INFO_SCALE) |
-> > > -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> > > -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> > > -	}, {
-> > > -		.type = IIO_ROT,
-> > > -		.modified = 1,
-> > > -		.channel2 = IIO_MOD_NORTH_MAGN_TILT_COMP,
-> > > -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > > -		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) |
-> > > -		BIT(IIO_CHAN_INFO_SCALE) |
-> > > -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> > > -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> > > -	}, {
-> > > -		.type = IIO_ROT,
-> > > -		.modified = 1,
-> > > -		.channel2 = IIO_MOD_NORTH_TRUE_TILT_COMP,
-> > > -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > > -		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) |
-> > > -		BIT(IIO_CHAN_INFO_SCALE) |
-> > > -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> > > -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> > > -	}, {
-> > > -		.type = IIO_ROT,
-> > > -		.modified = 1,
-> > > -		.channel2 = IIO_MOD_NORTH_MAGN,
-> > > -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > > -		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) |
-> > > -		BIT(IIO_CHAN_INFO_SCALE) |
-> > > -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> > > -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> > > -	}, {
-> > > -		.type = IIO_ROT,
-> > > -		.modified = 1,
-> > > -		.channel2 = IIO_MOD_NORTH_TRUE,
-> > > -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > > -		.info_mask_shared_by_type > > > BIT(IIO_CHAN_INFO_OFFSET) |
-> > > -		BIT(IIO_CHAN_INFO_SCALE) |
-> > > -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> > > -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> > > -	}
-> > > +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_X),
-> > > +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Y),
-> > > +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Z),
-> > > +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT,
-> > > IIO_MOD_NORTH_MAGN_TILT_COMP),
-> > > +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT,
-> > > IIO_MOD_NORTH_TRUE_TILT_COMP),
-> > > +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT,
-> > > IIO_MOD_NORTH_MAGN),
-> > > +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT,
-> > > IIO_MOD_NORTH_MAGN),
-> It should be 
-> HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE)
-> 
-> Thanks,
-> Srinivas
-
+-struct rds_msg_zcopy_info *rds_info_from_znotifier(struct rds_znotifier *znotif)
++static struct rds_msg_zcopy_info *
++rds_info_from_znotifier(struct rds_znotifier *znotif)
+ {
+ 	return container_of(znotif, struct rds_msg_zcopy_info, znotif);
+ }
+@@ -355,7 +356,8 @@ struct rds_message *rds_message_map_pages(unsigned long *page_addrs, unsigned in
+ 	return rm;
+ }
+ 
+-int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *from)
++static int rds_message_zcopy_from_user(struct rds_message *rm,
++				       struct iov_iter *from)
+ {
+ 	struct scatterlist *sg;
+ 	int ret = 0;
+-- 
+2.15.1
 
