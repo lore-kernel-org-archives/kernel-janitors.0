@@ -1,50 +1,42 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Thu, 08 Mar 2018 02:02:48 +0000
-Subject: [PATCH 1/5] drm/vgem: Indent switch and case at the same level
-Message-Id: <c67b45979965cb1f1e80c3baa06814d14a0662bf.1520474055.git.rodrigosiqueiramelo@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:24:58 +0000
+Subject: [PATCH 9/9] um/drivers/vector_user: Delete an unnecessary variable initialisation in user_init_tap_f
+Message-Id: <ed22974c-5c72-9a56-f67a-1ffab61f0646@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-This patch fixes the checkpatch.pl errors:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:50:29 +0100
 
-vgem_drv.c:97: ERROR: switch and case should be at the same indent
-vgem_drv.c:97: ERROR: trailing statements should be on next line
+The local variable "fd" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/um/drivers/vector_user.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 2524ff116f00..5767030d04a8 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -94,7 +94,8 @@ static int vgem_gem_fault(struct vm_fault *vmf)
- 		if (!IS_ERR(page)) {
- 			vmf->page = page;
- 			ret = 0;
--		} else switch (PTR_ERR(page)) {
-+		} else {
-+			switch (PTR_ERR(page)) {
- 			case -ENOSPC:
- 			case -ENOMEM:
- 				ret = VM_FAULT_OOM;
-@@ -110,8 +111,8 @@ static int vgem_gem_fault(struct vm_fault *vmf)
- 				WARN_ON(PTR_ERR(page));
- 				ret = VM_FAULT_SIGBUS;
- 				break;
-+			}
- 		}
--
- 	}
- 	return ret;
- }
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index bd625034a0f0..3bd510eded58 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -119,9 +119,8 @@ struct arglist *uml_parse_vector_ifspec(char *arg)
+ static struct vector_fds *user_init_tap_fds(struct arglist *ifspec)
+ {
+ 	struct ifreq ifr;
+-	int fd = -1;
+ 	struct sockaddr_ll sock;
+-	int err = -ENOMEM, offload;
++	int err = -ENOMEM, fd, offload;
+ 	char *iface;
+ 	struct vector_fds *result;
+ 
 -- 
 2.16.2
 
