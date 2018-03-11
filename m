@@ -1,34 +1,34 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 13:48:55 +0000
-Subject: Re: [PATCH v3 2/3] video: smscufx: Return an error code only as a constant in ufx_realloc_framebuffe
-Message-Id: <8231980.bzy6TRmRmS@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:15:19 +0000
+Subject: [PATCH 0/9] UML vector network driver: Adjustments for three function implementations
+Message-Id: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171125204312epcas2p149d6487ac83e886f95aefe0b35aef1b0@epcas2p1.samsung.com>
- <a36fa112-40a1-703c-c2ac-ce7e88bb8609@users.sourceforge.net>
- <31ecfef4-a193-dea0-0ff3-0d5a108a14f3@users.sourceforge.net>
-In-Reply-To: <31ecfef4-a193-dea0-0ff3-0d5a108a14f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Steve Glendinning <steve.glendinning@shawell.net>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sunday, January 07, 2018 05:04:04 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 Jan 2018 16:07:11 +0100
-> 
-> * Return an error code without storing it in an intermediate variable.
-> 
-> * Delete the label "error" and local variable "retval"
->   which became unnecessary with this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 16:06:16 +0100
 
-Patch queued for 4.17, thanks.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Markus Elfring (9):
+  Delete unnecessary code in user_init_raw_fds()
+  Less checks in user_init_raw_fds() after error detection
+  Adjust an error message in user_init_socket_fds()
+  Delete an unnecessary check before kfree() in user_init_socket_fds()
+  Delete two unnecessary checks before freeaddrinfo() in user_init_socket_fds()
+  Less checks in user_init_socket_fds() after error detection
+  Adjust an error message in user_init_tap_fds()
+  Less checks in user_init_tap_fds() after error detection
+  Delete an unnecessary variable initialisation in user_init_tap_fds()
+
+ arch/um/drivers/vector_user.c | 133 +++++++++++++++++++-----------------------
+ 1 file changed, 60 insertions(+), 73 deletions(-)
+
+-- 
+2.16.2
 
