@@ -1,46 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 28 Mar 2018 18:17:25 +0000
-Subject: [PATCH][next] ASoC: topology: fix memory leak on se when kstrdup fails
-Message-Id: <20180328181725.17226-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 14:40:23 +0000
+Subject: Re: dmaengine: edma: Use common error handling code in three functions
+Message-Id: <3c00002a-4d95-0caf-ef6f-68a2a094b8c0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cb8f32ef-14c1-35cb-39aa-d3efa265dccf@users.sourceforge.net>
+In-Reply-To: <cb8f32ef-14c1-35cb-39aa-d3efa265dccf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> Date: Sun, 22 Oct 2017 16:46:34 +0200
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of these functions.
 
-In the case when kstrdup fails to allocation memory for kc[i].name
-the error exit path does not free up 'se' leading to a small leak.
-Fix this by kfree'ing 'se' before jumping to err_se and since
-kc[i].private_value is zero we end up avoiding kfree'ing the
-rest of the unallocated objects in se.
+How are the chances to integrate such a change into another Linux repository?
+https://lkml.org/lkml/2017/10/22/78
+https://patchwork.kernel.org/patch/10021725/
+https://lkml.kernel.org/r/<cb8f32ef-14c1-35cb-39aa-d3efa265dccf@users.sourceforge.net>
 
-Detected by CoverityScan, CID#1466991 ("Reseource leak")
-
-Fixes: 267e2c6fd7ca ("ASoC: topology: Fix kcontrol name string handling")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/soc-topology.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index fa27d0fca6dc..71b20d795b51 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1325,8 +1325,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 			ec->hdr.name);
- 
- 		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
--		if (kc[i].name = NULL)
-+		if (kc[i].name = NULL) {
-+			kfree(se);
- 			goto err_se;
-+		}
- 		kc[i].private_value = (long)se;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = ec->hdr.access;
--- 
-2.15.1
-
+Regards,
+Markus
