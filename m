@@ -1,35 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Mar 2018 09:40:40 +0000
-Subject: [PATCH] staging: mt7621-eth: fix spelling mistake: "devictree" -> "devicetree"
-Message-Id: <20180322094040.12258-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 13:30:28 +0000
+Subject: [PATCH 0/2] crypto/talitos: Adjustments for talitos_edesc_alloc()
+Message-Id: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-crypto@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 14:24:34 +0100
 
-Trivial fix to spelling mistake in dev_err message text
+Two update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/mt7621-eth/mtk_eth_soc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Markus Elfring (2):
+  Use common error handling code
+  Delete an error message for a failed memory allocation
 
-diff --git a/drivers/staging/mt7621-eth/mtk_eth_soc.c b/drivers/staging/mt7621-eth/mtk_eth_soc.c
-index 98b44629bc1d..eb3e14ae2929 100644
---- a/drivers/staging/mt7621-eth/mtk_eth_soc.c
-+++ b/drivers/staging/mt7621-eth/mtk_eth_soc.c
-@@ -2096,7 +2096,7 @@ static int mtk_probe(struct platform_device *pdev)
- 	sysclk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(sysclk)) {
- 		dev_err(&pdev->dev,
--			"the clock is not defined in the devictree\n");
-+			"the clock is not defined in the devicetree\n");
- 		return -ENXIO;
- 	}
- 	eth->sysclk = clk_get_rate(sysclk);
+ drivers/crypto/talitos.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
 -- 
-2.15.1
+2.16.2
 
