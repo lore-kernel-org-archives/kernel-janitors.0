@@ -1,81 +1,36 @@
-From: Emil Goode <emil.fsw@goode.io>
-Date: Mon, 26 Mar 2018 15:47:54 +0000
-Subject: Re: [PATCH] gpu: host1x: Fix compiler errors
-Message-Id: <20180326154753.akbdpxlstb4mr3ne@lianli>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 12 Mar 2018 11:43:58 +0000
+Subject: [PATCH][drm-next] drm/i915/gvt: fix spelling mistake: "destoried" -> "destroyed"
+Message-Id: <20180312114358.24456-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180326144314.xeuocqp5fjpfjm3q@lianli>
- <20180326145734.GA8016@ulmo>
-In-Reply-To: <20180326145734.GA8016@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Mar 26, 2018 at 04:57:34PM +0200, Thierry Reding wrote:
-> On Mon, Mar 26, 2018 at 04:44:14PM +0200, Emil Goode wrote:
-> > The compiler is complaining with the following errors:
-> > 
-> > drivers/gpu/host1x/cdma.c:94:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > drivers/gpu/host1x/cdma.c:113:48: error:
-> > 	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-> > 	[-Werror=incompatible-pointer-types]
-> > 
-> > The expected pointer type of the third argument to dma_alloc_wc() is
-> > dma_addr_t but phys_addr_t is passed. Fix this by adding casts to the
-> > expected pointer type.
-> > 
-> > Signed-off-by: Emil Goode <emil.fsw@goode.io>
-> > ---
-> >  drivers/gpu/host1x/cdma.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> What compiler do you use? I do regular builds and check for warnings and
-> errors, and this one is new to me.
-> 
-> Thierry
->
+Trivial fix to spelling mistake in gvt_err error message text.
 
-I use gcc version 6.3.0 cross compiler for armhf supplied with Debian Stretch.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gvt/gtt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-
-Emil
-
-> > 
-> > diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-> > index 28541b280739..5e8b321a751e 100644
-> > --- a/drivers/gpu/host1x/cdma.c
-> > +++ b/drivers/gpu/host1x/cdma.c
-> > @@ -91,8 +91,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  
-> >  		size = iova_align(&host1x->iova, size);
-> >  
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
-> > @@ -110,8 +110,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
-> >  		if (err)
-> >  			goto iommu_free_iova;
-> >  	} else {
-> > -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
-> > -					  GFP_KERNEL);
-> > +		pb->mapped = dma_alloc_wc(host1x->dev, size,
-> > +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
-> >  		if (!pb->mapped)
-> >  			return -ENOMEM;
-> >  
-> > -- 
-> > 2.11.0
-> > 
-
+diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gtt.c
+index 0a100a288e6d..8eb76becd676 100644
+--- a/drivers/gpu/drm/i915/gvt/gtt.c
++++ b/drivers/gpu/drm/i915/gvt/gtt.c
+@@ -2046,7 +2046,7 @@ static void intel_vgpu_destroy_all_ppgtt_mm(struct intel_vgpu *vgpu)
+ 	}
+ 
+ 	if (GEM_WARN_ON(!list_empty(&vgpu->gtt.ppgtt_mm_list_head)))
+-		gvt_err("vgpu ppgtt mm is not fully destoried\n");
++		gvt_err("vgpu ppgtt mm is not fully destroyed\n");
+ 
+ 	if (GEM_WARN_ON(!radix_tree_empty(&vgpu->gtt.spt_tree))) {
+ 		gvt_err("Why we still has spt not freed?\n");
+-- 
+2.15.1
 
