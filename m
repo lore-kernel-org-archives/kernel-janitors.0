@@ -1,58 +1,128 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 25 Mar 2018 11:38:37 +0000
-Subject: Re: [PATCH][next][V2] staging: r8822be: fix typos in header guard macros
-Message-Id: <20180325113837.GA28090@kroah.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 11:33:26 +0000
+Subject: [PATCH 3/5] Bluetooth: btmrvl: One check less in btmrvl_sdio_card_to_host() after error detection
+Message-Id: <a988a80d-12c0-a414-ab81-ff4ab075855c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323180018.21737-1-colin.king@canonical.com>
-In-Reply-To: <20180323180018.21737-1-colin.king@canonical.com>
+References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+In-Reply-To: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
+To: linux-bluetooth@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 06:00:18PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The macros for __PHYDMKFREE_H__ and __PHYDM_FEATURES_H__ contain
-> typos and don't match the #if guard check. Defined them correctly.
-> 
-> Cleans up clang warnings:
-> warning: '__PHYDMKFREE_H__' is used as a header guard here, followed
-> by #define of a different macro [-Wheader-guard]
-> warning: '__PHYDM_FEATURES_H__' is used as a header guard here, followed
-> by #define of a different macro [-Wheader-guard]
-> 
-> Fixes: 9ce99b04b5b8 ("staging: r8822be: Add phydm mini driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/rtlwifi/phydm/phydm_features.h | 2 +-
->  drivers/staging/rtlwifi/phydm/phydm_kfree.h    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtlwifi/phydm/phydm_features.h b/drivers/staging/rtlwifi/phydm/phydm_features.h
-> index 37f6f0cd7235..a12361c6a1a0 100644
-> --- a/drivers/staging/rtlwifi/phydm/phydm_features.h
-> +++ b/drivers/staging/rtlwifi/phydm/phydm_features.h
-> @@ -24,7 +24,7 @@
->   *****************************************************************************/
->  
->  #ifndef __PHYDM_FEATURES_H__
-> -#define __PHYDM_FEATURES
-> +#define __PHYDM_FEATURES_H__
->  
->  /*phydm debyg report & tools*/
->  
-> diff --git a/drivers/staging/rtlwifi/phydm/phydm_kfree.h b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
-> index 1ee60059afc1..2c6b0a48e76e 100644
-> --- a/drivers/staging/rtlwifi/phydm/phydm_kfree.h
-> +++ b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
-> @@ -24,7 +24,7 @@
->   *****************************************************************************/
->  
->  #ifndef __PHYDMKFREE_H__
-> -#define __PHYDKFREE_H__
-> +#define __PHYDKKFREE_H__
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 11:13:00 +0100
 
-Close, but not quite :(
+One check could be repeated by the btmrvl_sdio_card_to_host() function
+during error handling even if the relevant properties can be determined
+for the involved variables before by source code analysis.
+
+* Adjust jump targets so that an extra check can be omitted at the end.
+
+* Reuse a bit of exception handling better.
+
+* Delete an initialisation for the local variable "skb"
+  which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/bluetooth/btmrvl_sdio.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+index 84c222abf0f7..9854addc8e96 100644
+--- a/drivers/bluetooth/btmrvl_sdio.c
++++ b/drivers/bluetooth/btmrvl_sdio.c
+@@ -687,5 +687,5 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ {
+ 	u16 buf_len = 0;
+ 	int ret, num_blocks, blksz;
+-	struct sk_buff *skb = NULL;
++	struct sk_buff *skb;
+ 	u32 type;
+@@ -695,16 +695,14 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ 
+ 	if (!card || !card->func) {
+ 		BT_ERR("card or function is NULL!");
+-		ret = -EINVAL;
+-		goto exit;
++		goto e_inval;
+ 	}
+ 
+ 	/* Read the length of data to be transferred */
+ 	ret = btmrvl_sdio_read_rx_len(card, &buf_len);
+ 	if (ret < 0) {
+ 		BT_ERR("read rx_len failed");
+-		ret = -EIO;
+-		goto exit;
++		goto e_io;
+ 	}
+ 
+ 	blksz = SDIO_BLOCK_SIZE;
+@@ -713,8 +711,7 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ 	if (buf_len <= SDIO_HEADER_LEN
+ 	    || (num_blocks * blksz) > ALLOC_BUF_SIZE) {
+ 		BT_ERR("invalid packet length: %d", buf_len);
+-		ret = -EINVAL;
+-		goto exit;
++		goto e_inval;
+ 	}
+ 
+ 	/* Allocate buffer */
+@@ -722,7 +719,7 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ 	if (!skb) {
+ 		BT_ERR("No free skb");
+ 		ret = -ENOMEM;
+-		goto exit;
++		goto increment_counter;
+ 	}
+ 
+ 	if ((unsigned long) skb->data & (BTSDIO_DMA_ALIGN - 1)) {
+@@ -738,8 +735,7 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ 			  num_blocks * blksz);
+ 	if (ret < 0) {
+ 		BT_ERR("readsb failed: %d", ret);
+-		ret = -EIO;
+-		goto exit;
++		goto free_skb;
+ 	}
+ 
+ 	/* This is SDIO specific header length: byte[2][1][0], type: byte[3]
+@@ -753,8 +749,7 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ 	if (buf_len > blksz * num_blocks) {
+ 		BT_ERR("Skip incorrect packet: hdrlen %d buffer %d",
+ 		       buf_len, blksz * num_blocks);
+-		ret = -EIO;
+-		goto exit;
++		goto free_skb;
+ 	}
+ 
+ 	type = payload[3];
+@@ -797,12 +792,18 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ 		break;
+ 	}
+ 
+-exit:
+-	if (ret) {
+-		hdev->stat.err_rx++;
+-		kfree_skb(skb);
+-	}
++	return 0;
++
++free_skb:
++	kfree_skb(skb);
++e_io:
++	ret = -EIO;
++	goto increment_counter;
+ 
++e_inval:
++	ret = -EINVAL;
++increment_counter:
++	hdev->stat.err_rx++;
+ 	return ret;
+ }
+ 
+-- 
+2.16.2
 
