@@ -1,45 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 19 Mar 2018 10:50:21 +0000
-Subject: [PATCH] test_rhashtable: fix spelling mistake: "existant" -> "existent"
-Message-Id: <20180319105021.327-1-colin.king@canonical.com>
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Mon, 12 Mar 2018 03:03:34 +0000
+Subject: [PATCH 3.2 097/104] x86/spectre: Fix an error message
+Message-Id: <lsq.1520823814.143503038@decadent.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Florian Westphal <fw@strlen.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: akpm@linux-foundation.org, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>
 
-From: Colin Ian King <colin.king@canonical.com>
+3.2.101-rc1 review patch.  If anyone has any objections, please let me know.
 
-Trivial fix to spelling mistake in warning message text
+------------------
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+
+commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
+
+If i = ARRAY_SIZE(mitigation_options) then we accidentally print
+garbage from one space beyond the end of the mitigation_options[] array.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
+Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.2: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- lib/test_rhashtable.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
-index f4000c137dbe..32d964cbac8c 100644
---- a/lib/test_rhashtable.c
-+++ b/lib/test_rhashtable.c
-@@ -396,7 +396,7 @@ static int __init test_rhltable(unsigned int entries)
- 			if (WARN(err, "cannot remove element at slot %d", i))
- 				continue;
- 		} else {
--			if (WARN(err != -ENOENT, "removed non-existant element %d, error %d not %d",
-+			if (WARN(err != -ENOENT, "removed non-existent element %d, error %d not %d",
- 			     i, err, -ENOENT))
- 				continue;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -317,8 +317,7 @@ static enum spectre_v2_mitigation_cmd __
  		}
-@@ -441,7 +441,7 @@ static int __init test_rhltable(unsigned int entries)
- 			if (WARN(err, "cannot remove element at slot %d", i))
- 				continue;
- 		} else {
--			if (WARN(err != -ENOENT, "removed non-existant element, error %d not %d",
-+			if (WARN(err != -ENOENT, "removed non-existent element, error %d not %d",
- 				 err, -ENOENT))
- 			continue;
+ 
+ 		if (i >= ARRAY_SIZE(mitigation_options)) {
+-			pr_err("unknown option (%s). Switching to AUTO select\n",
+-			       mitigation_options[i].option);
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
+ 			return SPECTRE_V2_CMD_AUTO;
  		}
--- 
-2.15.1
+ 	}
 
