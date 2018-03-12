@@ -1,41 +1,23 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 11 Mar 2018 22:32:03 +0000
-Subject: [PATCH] drm: zte: Fix an error handling path in 'zx_crtc_bind()'
-Message-Id: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
+From: Shawn Guo <shawnguo@kernel.org>
+Date: Mon, 12 Mar 2018 07:35:26 +0000
+Subject: Re: [PATCH] drm: zte: Fix an error handling path in 'zx_crtc_bind()'
+Message-Id: <20180312073524.GM3217@dragon>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: shawnguo@kernel.org, airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Daniel Vetter <daniel.vetter@intel.com>
+Cc: airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-'ret' is known to be 0 at this point. It must be updated by the value
-returned by 'clk_prepare_enable()'.
++ Daniel
 
-Fixes: 0a886f59528a ("drm: zte: add initial vou drm driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/zte/zx_vou.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, Mar 11, 2018 at 11:32:03PM +0100, Christophe JAILLET wrote:
+> 'ret' is known to be 0 at this point. It must be updated by the value
+> returned by 'clk_prepare_enable()'.
+> 
+> Fixes: 0a886f59528a ("drm: zte: add initial vou drm driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/drivers/gpu/drm/zte/zx_vou.c b/drivers/gpu/drm/zte/zx_vou.c
-index 7491813131f3..3351b258ed7a 100644
---- a/drivers/gpu/drm/zte/zx_vou.c
-+++ b/drivers/gpu/drm/zte/zx_vou.c
-@@ -838,7 +838,7 @@ static int zx_crtc_bind(struct device *dev, struct device *master, void *data)
- 		return ret;
- 	}
- 
--	clk_prepare_enable(vou->ppu_clk);
-+	ret = clk_prepare_enable(vou->ppu_clk);
- 	if (ret) {
- 		DRM_DEV_ERROR(dev, "failed to enable ppu_clk: %d\n", ret);
- 		goto disable_axi_clk;
--- 
-2.14.1
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
-
+Acked-by: Shawn Guo <shawnguo@kernel.org>
