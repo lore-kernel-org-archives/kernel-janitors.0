@@ -1,33 +1,119 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 13:19:05 +0000
-Subject: Re: [PATCH] fbdev: aty: fix missing indentation in if statement
-Message-Id: <3386391.UTD4dglipH@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 11:31:44 +0000
+Subject: [PATCH 1/5] Bluetooth: btmrvl: Use common error handling code in btmrvl_sdio_register_dev()
+Message-Id: <5c3361c6-ef1d-b919-8817-05c2c98fb2ef@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180315181633epcas2p19407707285ccc33c3fcd2c8c0d071a57@epcas2p1.samsung.com>
- <20180315181624.18684-1-colin.king@canonical.com>
-In-Reply-To: <20180315181624.18684-1-colin.king@canonical.com>
+References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+In-Reply-To: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-bluetooth@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thursday, March 15, 2018 06:16:24 PM Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a missing indentation following an if statement, fix this.
-> 
-> Detected by Coccinelle:
-> drivers/video/fbdev/aty/mach64_ct.c:183:2-15: code aligned with
-> following code on line 184
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 10:15:17 +0100
 
-Patch queued for 4.17, thanks.
+Adjust a jump target so that a bit of exception handling can be better
+reused at the end of this function.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/bluetooth/btmrvl_sdio.c | 50 ++++++++++++++++-------------------------
+ 1 file changed, 19 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+index 0f020254fd39..df2a04bd8428 100644
+--- a/drivers/bluetooth/btmrvl_sdio.c
++++ b/drivers/bluetooth/btmrvl_sdio.c
+@@ -949,31 +949,24 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+ 	ret = sdio_set_block_size(card->func, SDIO_BLOCK_SIZE);
+ 	if (ret) {
+ 		BT_ERR("cannot set SDIO block size");
+-		ret = -EIO;
+-		goto release_irq;
++		goto release_with_eio;
+ 	}
+ 
+ 	reg = sdio_readb(func, card->reg->io_port_0, &ret);
+-	if (ret < 0) {
+-		ret = -EIO;
+-		goto release_irq;
+-	}
++	if (ret < 0)
++		goto release_with_eio;
+ 
+ 	card->ioport = reg;
+ 
+ 	reg = sdio_readb(func, card->reg->io_port_1, &ret);
+-	if (ret < 0) {
+-		ret = -EIO;
+-		goto release_irq;
+-	}
++	if (ret < 0)
++		goto release_with_eio;
+ 
+ 	card->ioport |= (reg << 8);
+ 
+ 	reg = sdio_readb(func, card->reg->io_port_2, &ret);
+-	if (ret < 0) {
+-		ret = -EIO;
+-		goto release_irq;
+-	}
++	if (ret < 0)
++		goto release_with_eio;
+ 
+ 	card->ioport |= (reg << 16);
+ 
+@@ -981,26 +974,20 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+ 
+ 	if (card->reg->int_read_to_clear) {
+ 		reg = sdio_readb(func, card->reg->host_int_rsr, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
++
+ 		sdio_writeb(func, reg | 0x3f, card->reg->host_int_rsr, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
+ 
+ 		reg = sdio_readb(func, card->reg->card_misc_cfg, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
++
+ 		sdio_writeb(func, reg | 0x10, card->reg->card_misc_cfg, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
+ 	}
+ 
+ 	sdio_set_drvdata(func, card);
+@@ -1009,7 +996,8 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+ 
+ 	return 0;
+ 
+-release_irq:
++release_with_eio:
++	ret = -EIO;
+ 	sdio_release_irq(func);
+ 
+ disable_func:
+-- 
+2.16.2
 
