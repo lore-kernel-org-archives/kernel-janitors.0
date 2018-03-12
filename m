@@ -1,33 +1,51 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 16 Mar 2018 15:35:38 +0000
-Subject: Re: [PATCH][next] crypto: x86/des3_ede: make array des3_ede_skciphers static
-Message-Id: <20180316153538.GA6781@gondor.apana.org.au>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 12 Mar 2018 12:16:04 +0000
+Subject: [PATCH net-next] sctp: fix error return code in sctp_sendmsg_new_asoc()
+Message-Id: <1520856964-132516-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180305131800.26647-1-colin.king@canonical.com>
-In-Reply-To: <20180305131800.26647-1-colin.king@canonical.com>
+References: <1509456496-93944-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1509456496-93944-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vlad Yasevich <vyasevich@gmail.com>, Neil Horman <nhorman@tuxdriver.com>, Xin Long <lucien.xin@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 02:18:00PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The array des3_ede_skciphers is local to the source and does not need
-> to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> arch/x86/crypto/des3_ede_glue.c:407:21: warning: symbol
-> 'des3_ede_skciphers' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Return error code -EINVAL in the address len check error handling
+case since 'err' can be overwrite to 0 by 'err = sctp_verify_addr()'
+in the for loop.
 
-This patch no longer applies because it's already been merged
-from someone else.
+Fixes: 2c0dbaa0c43d ("sctp: add support for SCTP_DSTADDRV4/6 Information for sendmsg")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/sctp/socket.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index 7d3476a..5e7bfc2 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -1761,16 +1761,20 @@ static int sctp_sendmsg_new_asoc(struct sock *sk, __u16 sflags,
+ 		memset(daddr, 0, sizeof(*daddr));
+ 		dlen = cmsg->cmsg_len - sizeof(struct cmsghdr);
+ 		if (cmsg->cmsg_type = SCTP_DSTADDRV4) {
+-			if (dlen < sizeof(struct in_addr))
++			if (dlen < sizeof(struct in_addr)) {
++				err = -EINVAL;
+ 				goto free;
++			}
+ 
+ 			dlen = sizeof(struct in_addr);
+ 			daddr->v4.sin_family = AF_INET;
+ 			daddr->v4.sin_port = htons(asoc->peer.port);
+ 			memcpy(&daddr->v4.sin_addr, CMSG_DATA(cmsg), dlen);
+ 		} else {
+-			if (dlen < sizeof(struct in6_addr))
++			if (dlen < sizeof(struct in6_addr)) {
++				err = -EINVAL;
+ 				goto free;
++			}
+ 
+ 			dlen = sizeof(struct in6_addr);
+ 			daddr->v6.sin6_family = AF_INET6;
+
