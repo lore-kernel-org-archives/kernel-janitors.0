@@ -1,34 +1,70 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Mar 2018 15:15:19 +0000
-Subject: [PATCH 0/9] UML vector network driver: Adjustments for three function implementations
-Message-Id: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 15:31:04 +0000
+Subject: [PATCH] altera_edac: Use common error handling code in altr_sdram_probe()
+Message-Id: <f2f6b789-f262-f6cc-743f-244d4870c70e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-edac@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thor Thayer <thor.thayer@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Mar 2018 16:06:16 +0100
+Date: Mon, 12 Mar 2018 16:23:53 +0100
 
-Some update suggestions were taken into account
-from static source code analysis.
+Add a jump target so that a specific error code is assigned to the
+local variable "res" at the end of this function.
 
-Markus Elfring (9):
-  Delete unnecessary code in user_init_raw_fds()
-  Less checks in user_init_raw_fds() after error detection
-  Adjust an error message in user_init_socket_fds()
-  Delete an unnecessary check before kfree() in user_init_socket_fds()
-  Delete two unnecessary checks before freeaddrinfo() in user_init_socket_fds()
-  Less checks in user_init_socket_fds() after error detection
-  Adjust an error message in user_init_tap_fds()
-  Less checks in user_init_tap_fds() after error detection
-  Delete an unnecessary variable initialisation in user_init_tap_fds()
+This issue was detected by using the Coccinelle software.
 
- arch/um/drivers/vector_user.c | 133 +++++++++++++++++++-----------------------
- 1 file changed, 60 insertions(+), 73 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/edac/altera_edac.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index 11d6419788c2..d5c15b27d520 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -419,8 +419,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
+ 		if (res < 0) {
+ 			edac_mc_printk(mci, KERN_ERR,
+ 				       "Unable to request irq %d\n", irq2);
+-			res = -ENODEV;
+-			goto err2;
++			goto e_nodev;
+ 		}
+ 
+ 		res = a10_unmask_irq(pdev, A10_DDR0_IRQ_MASK);
+@@ -435,8 +434,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
+ 	if (res < 0) {
+ 		edac_mc_printk(mci, KERN_ERR,
+ 			       "Unable to request irq %d\n", irq);
+-		res = -ENODEV;
+-		goto err2;
++		goto e_nodev;
+ 	}
+ 
+ 	/* Infrastructure ready - enable the IRQ */
+@@ -444,8 +442,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
+ 			       priv->ecc_irq_en_mask, priv->ecc_irq_en_mask)) {
+ 		edac_mc_printk(mci, KERN_ERR,
+ 			       "Error enabling SDRAM ECC IRQ\n");
+-		res = -ENODEV;
+-		goto err2;
++		goto e_nodev;
+ 	}
+ 
+ 	altr_sdr_mc_create_debugfs_nodes(mci);
+@@ -454,6 +451,8 @@ static int altr_sdram_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++e_nodev:
++	res = -ENODEV;
+ err2:
+ 	edac_mc_del_mc(&pdev->dev);
+ err:
 -- 
 2.16.2
 
