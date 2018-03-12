@@ -1,38 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 16 Mar 2018 14:23:40 +0000
-Subject: [PATCH][next] selftests: fix spelling mistake: "desciptor" -> "descriptor"
-Message-Id: <20180316142340.11346-1-colin.king@canonical.com>
+From: Jiri Pirko <jiri@resnulli.us>
+Date: Mon, 12 Mar 2018 12:24:59 +0000
+Subject: Re: [PATCH net-next] mlxsw: spectrum_kvdl: Make some functions static
+Message-Id: <20180312122459.GC2111@nanopsycho>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1520857524-163487-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1520857524-163487-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, rkadi Sharshevsky <arkadis@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Mon, Mar 12, 2018 at 01:25:24PM CET, weiyongjun1@huawei.com wrote:
+>Fixes the following sparse warnings:
+>
+>drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c:371:5: warning:
+> symbol 'mlxsw_sp_kvdl_single_occ_get' was not declared. Should it be static?
+>drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c:384:5: warning:
+> symbol 'mlxsw_sp_kvdl_chunks_occ_get' was not declared. Should it be static?
+>drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c:397:5: warning:
+> symbol 'mlxsw_sp_kvdl_large_chunks_occ_get' was not declared. Should it be static?
+>
+>Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Trivial fix to spelling mistake in error message text and re-adjust
-break in literal string to fit into 80 char wide format.
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/testing/selftests/filesystems/devpts_pts.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
-index b9055e974289..32addb696150 100644
---- a/tools/testing/selftests/filesystems/devpts_pts.c
-+++ b/tools/testing/selftests/filesystems/devpts_pts.c
-@@ -279,8 +279,8 @@ int main(int argc, char *argv[])
- 	int ret;
- 
- 	if (!isatty(STDIN_FILENO)) {
--		fprintf(stderr, "Standard input file desciptor is not attached "
--				"to a terminal. Skipping test\n");
-+		fprintf(stderr, "Standard input file descriptor is not "
-+				"attached to a terminal. Skipping test\n");
- 		exit(EXIT_FAILURE);
- 	}
- 
--- 
-2.15.1
-
+Thanks!
