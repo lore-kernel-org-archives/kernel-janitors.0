@@ -1,26 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Mar 2018 08:47:12 +0000
-Subject: Re: [PATCH -next] ASoC: mediatek: mt2701: drop unnessary snd_soc_unregister_component()
-Message-Id: <20180316084712.hh4ll7hfsncqqsos@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 11:34:15 +0000
+Subject: [PATCH 4/5] Bluetooth: btmrvl: Delete an unnecessary variable initialisation in btmrvl_sdio_card_to_
+Message-Id: <2c2f8733-c5c0-cb2f-62eb-4fa360ee271e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521185516-164333-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521185516-164333-1-git-send-email-weiyongjun1@huawei.com>
+References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+In-Reply-To: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: alsa-devel@alsa-project.org, Ryder Lee <ryder.lee@mediatek.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: linux-bluetooth@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 07:31:56AM +0000, Wei Yongjun wrote:
-> It's not necessary to unregister a component registered
-> with devm_snd_soc_register_component().
-> 
-> Fixes: f1b5bf07365d ("ASoC: mt2701/mt8173: replace platform to componen")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 11:15:59 +0100
 
+The variable "payload" will eventually be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-This fixes a double free on unload, right?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/bluetooth/btmrvl_sdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+index 9854addc8e96..05c78fcc13ff 100644
+--- a/drivers/bluetooth/btmrvl_sdio.c
++++ b/drivers/bluetooth/btmrvl_sdio.c
+@@ -691,5 +691,5 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+ 	u32 type;
+-	u8 *payload = NULL;
++	u8 *payload;
+ 	struct hci_dev *hdev = priv->btmrvl_dev.hcidev;
+ 	struct btmrvl_sdio_card *card = priv->btmrvl_dev.card;
+ 
+-- 
+2.16.2
 
