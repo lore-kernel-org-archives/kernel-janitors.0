@@ -1,22 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 09 Mar 2018 02:50:15 +0000
-Subject: Re: [PATCH 1/2 net-next] net/ncsi: use kfree_skb() instead of kfree()
-Message-Id: <20180308.215015.1257788036813023220.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 12 Mar 2018 20:15:07 +0000
+Subject: [PATCH 0/3] Fix some error handling paths in 'meson_drv_bind_master()'
+Message-Id: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180308093604.GC16525@mwanda>
-In-Reply-To: <20180308093604.GC16525@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sam@mendozajonas.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: narmstrong@baylibre.com, airlied@linux.ie, carlo@caione.org, khilman@baylibre.com
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 8 Mar 2018 12:36:04 +0300
+Patch 1 and 3 are fixes.
+Patch 2 is just a kind of clean-up noticed while patching this driver.
 
-> We're supposed to use kfree_skb() to free these sk_buffs.
-> 
-> Fixes: 955dc68cb9b2 ("net/ncsi: Add generic netlink family")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If patch 2 is considered as useless, patch 3 can be applied on top of 
+patch 1, it does nor depend on the 2nd patch.
 
-Applied.
+Christophe JAILLET (3):
+  drm/meson: Fix an un-handled error path in 'meson_drv_bind_master()'
+  drm/meson: Use drm_dev_put() instead of drm_dev_unref()
+  drm/meson: Fix some error handling paths in 'meson_drv_bind_master()'
+
+ drivers/gpu/drm/meson/meson_drv.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
+
+-- 
+2.14.1
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
