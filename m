@@ -1,39 +1,80 @@
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Date: Thu, 29 Mar 2018 01:56:37 +0000
-Subject: Re: [PATCH] staging: vt6655: check for memory allocation failures
-Message-Id: <20180329015637.GA9416@ubuntu>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 13:31:54 +0000
+Subject: [PATCH 1/2] crypto: talitos: Use common error handling code in talitos_edesc_alloc()
+Message-Id: <330e4ffc-64dc-5474-4c84-916561cf0783@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180328063144epcas1p305216b582520b884b09c93a7ad591660@epcas1p3.samsung.com>
- <1522218691-7917-1-git-send-email-ji_hun.kim@samsung.com>
- <fc4cd041-f8b4-f799-916d-9df790efbba7@gmail.com>
-In-Reply-To: <fc4cd041-f8b4-f799-916d-9df790efbba7@gmail.com>
+References: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
+In-Reply-To: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: baijiaju1990@gmail.com, gregkh@linuxfoundation.org, forest@alittletooquiet.net
-Cc: devel@driverdev.osuosl.org, y.k.oh@samsung.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, santhameena13@gmail.com
+To: linux-crypto@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 05:55:57PM +0800, Jia-Ju Bai wrote:
-> >@@ -646,7 +649,8 @@ static void device_init_td1_ring(struct vnt_private *priv)
-> >  	     i++, curr += sizeof(struct vnt_tx_desc)) {
-> >  		desc = &priv->apTD1Rings[i];
-> >  		desc->td_info = kzalloc(sizeof(*desc->td_info), GFP_KERNEL);
-> >-
-> >+		if (WARN_ON(!desc->td_info))
-> >+			return;
-> >  		desc->td_info->buf = priv->tx1_bufs + i * PKT_BUF_SZ;
-> >  		desc->td_info->buf_dma = priv->tx_bufs_dma1 + i * PKT_BUF_SZ;
-> 
-> I think the bugs you found are right.
-> But your patch is not correct, because it is dangerous to return directly.
-> I think you should return an error and then implement error handling
-> code for these functions.
-> 
-Yes, it needs to free previous allocated values in the for loop. Directly
-return could make memory leaks. I am going to make patch v2. 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 14:08:55 +0100
 
-- Delete WARN_ON which could make crashes on some machines.
-- Add freeing sequences for previously allocated memory when kzalloc()
-  failed instead of returning directly.
+Add jump targets so that an error message and the setting of a specific
+error code is stored only once at the end of this function.
 
-Does these changes would be fine on this bug?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/talitos.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index 6882fa2f8bad..a2271322db34 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1352,29 +1352,24 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ 	if (!dst || dst = src) {
+ 		src_len = assoclen + cryptlen + authsize;
+ 		src_nents = sg_nents_for_len(src, src_len);
+-		if (src_nents < 0) {
+-			dev_err(dev, "Invalid number of src SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
+-		}
++		if (src_nents < 0)
++			goto report_failure;
++
+ 		src_nents = (src_nents = 1) ? 0 : src_nents;
+ 		dst_nents = dst ? src_nents : 0;
+ 		dst_len = 0;
+ 	} else { /* dst && dst != src*/
+ 		src_len = assoclen + cryptlen + (encrypt ? 0 : authsize);
+ 		src_nents = sg_nents_for_len(src, src_len);
+-		if (src_nents < 0) {
+-			dev_err(dev, "Invalid number of src SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
+-		}
++		if (src_nents < 0)
++			goto report_failure;
++
+ 		src_nents = (src_nents = 1) ? 0 : src_nents;
+ 		dst_len = assoclen + cryptlen + (encrypt ? authsize : 0);
+ 		dst_nents = sg_nents_for_len(dst, dst_len);
+ 		if (dst_nents < 0) {
+ 			dev_err(dev, "Invalid number of dst SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
++			goto set_error_code;
+ 		}
+ 		dst_nents = (dst_nents = 1) ? 0 : dst_nents;
+ 	}
+@@ -1424,6 +1419,11 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ 						     DMA_BIDIRECTIONAL);
+ 	}
+ 	return edesc;
++
++report_failure:
++	dev_err(dev, "Invalid number of src SG.\n");
++set_error_code:
++	err = ERR_PTR(-EINVAL);
+ error_sg:
+ 	if (iv_dma)
+ 		dma_unmap_single(dev, iv_dma, ivsize, DMA_TO_DEVICE);
+-- 
+2.16.2
+
