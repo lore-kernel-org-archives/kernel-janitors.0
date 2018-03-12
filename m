@@ -1,23 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Mar 2018 18:31:04 +0000
-Subject: Re: [PATCH] macsec: missing dev_put() on error in macsec_newlink()
-Message-Id: <20180322.143104.2174553329772161672.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 13:32:58 +0000
+Subject: [PATCH 2/2] crypto: talitos: Delete an error message for a failed memory allocation in talitos_edesc
+Message-Id: <13bfdc03-1dee-2f1c-da8d-1e452f10c850@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180321080900.GA9826@mwanda>
-In-Reply-To: <20180321080900.GA9826@mwanda>
+References: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
+In-Reply-To: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sd@queasysnail.net, dsahern@gmail.com, dwindsor@gmail.com, elena.reshetova@intel.com, Jason@zx2c4.com, mschiffer@universe-factory.net, johannes.berg@intel.com, felix.walter@cloudandheat.com, girish.moodalbail@oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-crypto@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Mar 2018 11:09:01 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 14:18:23 +0100
 
-> We moved the dev_hold(real_dev); call earlier in the function but forgot
-> to update the error paths.
-> 
-> Fixes: 0759e552bce7 ("macsec: fix negative refcnt on parent link")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Applied and queued up for -stable, thanks Dan.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/talitos.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index a2271322db34..4c7318981d28 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1399,7 +1399,6 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ 
+ 	edesc = kmalloc(alloc_len, GFP_DMA | flags);
+ 	if (!edesc) {
+-		dev_err(dev, "could not allocate edescriptor\n");
+ 		err = ERR_PTR(-ENOMEM);
+ 		goto error_sg;
+ 	}
+-- 
+2.16.2
+
