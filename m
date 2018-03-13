@@ -1,31 +1,44 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 10 Mar 2018 18:48:21 +0000
-Subject: Re: [PATCH 1/2] net/usb/ax88179_178a: Use common code in ax88179_chk_eee()
-Message-Id: <CAHp75VfJQPUsfJ14MvoJiN4S72EaNXdf1K+ahdZ8pX3qOFMkEw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Mar 2018 13:36:26 +0000
+Subject: [PATCH][next] ASoC: samsung: remove redundant pointer cpu_dai
+Message-Id: <20180313133626.31286-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a7fff45f-4426-ec33-8b8d-caf1e3a9f0be@users.sourceforge.net>
-In-Reply-To: <a7fff45f-4426-ec33-8b8d-caf1e3a9f0be@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, USB <linux-usb@vger.kernel.org>, netdev <netdev@vger.kernel.org>, "Andrew F. Davis" <afd@ti.com>, =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>, "David S. Miller" <davem@davemloft.net>, Philippe Reynes <tremyfr@gmail.com>, Yuval Shaia <yuval.shaia@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 8:41 PM, Joe Perches <joe@perches.com> wrote:
-> On Sat, 2018-03-10 at 19:24 +0100, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sat, 10 Mar 2018 18:22:43 +0100
->>
->> Adjust a jump target so that a bit of common code can be better reused
->> at the end of this function.
->
-> Please stop mindlessly sending patching Markus.
->
-> How about looking at the code being modified and
-> thinking about what it does?
+From: Colin Ian King <colin.king@canonical.com>
 
-You have a strong nerve, I gave up on him and would rather simple ban.
+The pointer cpu_dai is assigned a value but the pointer is never
+read, hence it is redundant and can be removed.
 
+Cleans up clang warning:
+sound/soc/samsung/snow.c:45:2: warning: Value stored to 'cpu_dai' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/samsung/snow.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+index fc62110f500f..47b904e2b8c3 100644
+--- a/sound/soc/samsung/snow.c
++++ b/sound/soc/samsung/snow.c
+@@ -37,12 +37,10 @@ static int snow_late_probe(struct snd_soc_card *card)
+ {
+ 	struct snd_soc_pcm_runtime *rtd;
+ 	struct snd_soc_dai *codec_dai;
+-	struct snd_soc_dai *cpu_dai;
+ 	int ret;
+ 
+ 	rtd = snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
+ 	codec_dai = rtd->codec_dai;
+-	cpu_dai = rtd->cpu_dai;
+ 
+ 	/* Set the MCLK rate for the codec */
+ 	ret = snd_soc_dai_set_sysclk(codec_dai, 0,
 -- 
-With Best Regards,
-Andy Shevchenko
+2.15.1
+
