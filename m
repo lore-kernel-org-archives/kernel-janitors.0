@@ -1,23 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 30 Mar 2018 13:52:37 +0000
-Subject: Re: [PATCH net-next] cxgb4: fix error return code in adap_init0()
-Message-Id: <20180330.095237.1631646121610643762.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 07:46:33 +0000
+Subject: Re: [3/5] Bluetooth: btmrvl: One check less in btmrvl_sdio_card_to_host()
+Message-Id: <09cd7314-d053-3a6d-a9e1-d666a00ddb55@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1522241469-77623-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1522241469-77623-1-git-send-email-weiyongjun1@huawei.com>
+References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+ <a988a80d-12c0-a414-ab81-ff4ab075855c@users.sourceforge.net>
+ <609D1B28-2B75-4AB5-B707-FDB5D0500F1A@holtmann.org>
+In-Reply-To: <609D1B28-2B75-4AB5-B707-FDB5D0500F1A@holtmann.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: ganeshgr@chelsio.com, kumaras@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org
+Cc: Johan Hedberg <johan.hedberg@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 28 Mar 2018 12:51:09 +0000
-
-> Fix to return a negative error code from the hash filter init error
-> handling case instead of 0, as done elsewhere in this function.
+>> @@ -797,12 +792,18 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
+>> 		break;
+>> 	}
+>>
+>> -exit:
+>> -	if (ret) {
+>> -		hdev->stat.err_rx++;
+>> -		kfree_skb(skb);
+>> -	}
+>> +	return 0;
+>> +
+>> +free_skb:
+>> +	kfree_skb(skb);
+>> +e_io:
+>> +	ret = -EIO;
+>> +	goto increment_counter;
+>>
+>> +e_inval:
+>> +	ret = -EINVAL;
+>> +increment_counter:
+>> +	hdev->stat.err_rx++;
+>> 	return ret;
 > 
-> Fixes: 5c31254e35a8 ("cxgb4: initialize hash-filter configuration")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Nope!
+> 
+> This is not easier to read for me. This goto exit jumping and I hate that.
 
-Applied, thanks Wei.
+Can the software design direction become feasible to omit the repeated check
+for the variable “ret” (and further initialisations)?
+
+Regards,
+Markus
