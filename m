@@ -1,56 +1,68 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Fri, 02 Mar 2018 15:56:34 +0000
-Subject: Re: [PATCH] efi: make const array 'apple' static
-Message-Id: <CAKv+Gu9+hBnu9BF1MrwD7PWn9uqpbQqcwZVq9LdxhBUJC+9vDg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 19:56:25 +0000
+Subject: [PATCH] iio/adc/nau7802: Improve unlocking of a mutex in nau7802_read_raw()
+Message-Id: <f2874cab-329b-297f-2b4a-bfc72755123d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180302143530.1713-1-colin.king@canonical.com>
-In-Reply-To: <20180302143530.1713-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, the arch/x86 maintainers <x86@kernel.org>, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 2 March 2018 at 14:35, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the const read-only array 'buf' on the stack but instead
-> make it static. Makes the object code smaller by 64 bytes:
->
-> Before:
->    text    data     bss     dec     hex filename
->    9264       1      16    9281    2441 arch/x86/boot/compressed/eboot.o
->
-> After:
->    text    data     bss     dec     hex filename
->    9200       1      16    9217    2401 arch/x86/boot/compressed/eboot.o
->
-> (gcc version 7.2.0 x86_64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 20:52:26 +0100
 
-Thanks Colin
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only once in this function implementation.
 
-Queued in efi-next.
+* Replace two calls by goto statements.
 
+This issue was detected by using the Coccinelle software.
 
-> ---
->  arch/x86/boot/compressed/eboot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-> index 886a9115af62..f2251c1c9853 100644
-> --- a/arch/x86/boot/compressed/eboot.c
-> +++ b/arch/x86/boot/compressed/eboot.c
-> @@ -423,7 +423,7 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
->
->  static void setup_quirks(struct boot_params *boot_params)
->  {
-> -       efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
-> +       static efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
->         efi_char16_t *fw_vendor = (efi_char16_t *)(unsigned long)
->                 efi_table_attr(efi_system_table, fw_vendor, sys_table);
->
-> --
-> 2.15.1
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/adc/nau7802.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/iio/adc/nau7802.c b/drivers/iio/adc/nau7802.c
+index 8997e74a8847..68d06a492760 100644
+--- a/drivers/iio/adc/nau7802.c
++++ b/drivers/iio/adc/nau7802.c
+@@ -303,10 +303,8 @@ static int nau7802_read_raw(struct iio_dev *indio_dev,
+ 		 *   - Channel 2 is value 1 in the CHS register
+ 		 */
+ 		ret = i2c_smbus_read_byte_data(st->client, NAU7802_REG_CTRL2);
+-		if (ret < 0) {
+-			mutex_unlock(&st->lock);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto unlock;
+ 
+ 		if (((ret & NAU7802_CTRL2_CHS_BIT) && !chan->channel) ||
+ 				(!(ret & NAU7802_CTRL2_CHS_BIT) &&
+@@ -316,18 +314,15 @@ static int nau7802_read_raw(struct iio_dev *indio_dev,
+ 					NAU7802_REG_CTRL2,
+ 					NAU7802_CTRL2_CHS(chan->channel) |
+ 					NAU7802_CTRL2_CRS(st->sample_rate));
+-
+-			if (ret < 0) {
+-				mutex_unlock(&st->lock);
+-				return ret;
+-			}
++			if (ret < 0)
++				goto unlock;
+ 		}
+ 
+ 		if (st->client->irq)
+ 			ret = nau7802_read_irq(indio_dev, chan, val);
+ 		else
+ 			ret = nau7802_read_poll(indio_dev, chan, val);
+-
++unlock:
+ 		mutex_unlock(&st->lock);
+ 		return ret;
+ 
+-- 
+2.16.2
+
