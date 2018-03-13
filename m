@@ -1,23 +1,31 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 28 Mar 2018 22:06:52 +0000
-Subject: Re: [PATCH] scsi: fnic: fix spelling mistake: "abord" -> "abort"
-Message-Id: <yq1po3nhn2b.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Mar 2018 09:09:38 +0000
+Subject: [PATCH net] qed: Use after free in qed_rdma_free()
+Message-Id: <20180313090938.GA17609@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180328100137.13009-1-colin.king@canonical.com>
-In-Reply-To: <20180328100137.13009-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 28 Mar 2018 11:01:37 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ariel Elior <Ariel.Elior@cavium.com>, Michal Kalderon <Michal.Kalderon@cavium.com>
+Cc: everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We're dereferencing "p_hwfn->p_rdma_info" but that is freed on the line
+before in qed_rdma_resc_free(p_hwfn).
 
-Colin,
+Fixes: 9de506a547c0 ("qed: Free RoCE ILT Memory on rmmod qedr")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Trivial fix to spelling mistake in message text
-
-Applied to 4.17/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_rdma.c b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
+index f3ee6538b553..a411f9c702a1 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_rdma.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
+@@ -379,8 +379,8 @@ static void qed_rdma_free(struct qed_hwfn *p_hwfn)
+ 	DP_VERBOSE(p_hwfn, QED_MSG_RDMA, "Freeing RDMA\n");
+ 
+ 	qed_rdma_free_reserved_lkey(p_hwfn);
+-	qed_rdma_resc_free(p_hwfn);
+ 	qed_cxt_free_proto_ilt(p_hwfn, p_hwfn->p_rdma_info->proto);
++	qed_rdma_resc_free(p_hwfn);
+ }
+ 
+ static void qed_rdma_get_guid(struct qed_hwfn *p_hwfn, u8 *guid)
