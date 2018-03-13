@@ -1,31 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 27 Mar 2018 09:03:39 +0000
-Subject: Re: rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
-Message-Id: <20180327090339.7DB3060588@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Mar 2018 10:30:48 +0000
+Subject: [PATCH][next] lib: make function test_ubsan_misaligned_access static
+Message-Id: <20180313103048.28513-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180319104054.32564-1-colin.king@canonical.com>
-In-Reply-To: <20180319104054.32564-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Tsang-Shian Lin <thlin@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Jinbum Park <jinb.park7@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in RT_TRACE message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net?
+The function test_ubsan_misaligned_access is local to the source and does
+not need to be in global scope, so make it static.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Cleans up sparse warning:
+lib/test_ubsan.c:91:6: warning: symbol 'test_ubsan_misaligned_access' was
+not declared. Should it be static?
 
-e153292ae4d1 rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/test_ubsan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/lib/test_ubsan.c b/lib/test_ubsan.c
+index 58dedff36b17..280f4979d00e 100644
+--- a/lib/test_ubsan.c
++++ b/lib/test_ubsan.c
+@@ -88,7 +88,7 @@ static void test_ubsan_null_ptr_deref(void)
+ 	val = *ptr;
+ }
+ 
+-void test_ubsan_misaligned_access(void)
++static void test_ubsan_misaligned_access(void)
+ {
+ 	volatile char arr[5] __aligned(4) = {1, 2, 3, 4, 5};
+ 	volatile int *ptr, val = 6;
 -- 
-https://patchwork.kernel.org/patch/10292111/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.15.1
 
