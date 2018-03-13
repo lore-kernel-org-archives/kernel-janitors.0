@@ -1,60 +1,90 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 01 Mar 2018 09:52:16 +0000
-Subject: [bug report] cxgb4: add common api support for configuring filters
-Message-Id: <20180301095216.GA11704@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 13 Mar 2018 20:33:11 +0000
+Subject: [PATCH] regulator: gpio: Fix some error handling paths in 'gpio_regulator_probe()'
+Message-Id: <20180313203311.11378-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: broonie@kernel.org, lgirdwood@gmail.com, rf@opensource.wolfsonmicro.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hello Rahul Lakkireddy,
+Re-order error handling code and gotos to avoid leaks in error handling
+paths.
 
-The patch 578b46b9383c: "cxgb4: add common api support for
-configuring filters" from Sep 20, 2016, leads to the following static
-checker warning:
+Fixes: 9f946099fe19 ("regulator: gpio: fix parsing of gpio list")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/regulator/gpio-regulator.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-	drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c:1341 __cxgb4_set_filter()
-	warn: we tested 'f->valid' before and it was 'false'
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index 0fce06acfaec..a2eb50719c7b 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -271,8 +271,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
+ 	if (drvdata->desc.name = NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate supply name\n");
+-		ret = -ENOMEM;
+-		goto err;
++		return -ENOMEM;
+ 	}
+ 
+ 	if (config->nr_gpios != 0) {
+@@ -292,7 +291,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 				dev_err(&pdev->dev,
+ 					"Could not obtain regulator setting GPIOs: %d\n",
+ 					ret);
+-			goto err_memstate;
++			goto err_memgpio;
+ 		}
+ 	}
+ 
+@@ -303,7 +302,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	if (drvdata->states = NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate state data\n");
+ 		ret = -ENOMEM;
+-		goto err_memgpio;
++		goto err_stategpio;
+ 	}
+ 	drvdata->nr_states = config->nr_states;
+ 
+@@ -324,7 +323,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	default:
+ 		dev_err(&pdev->dev, "No regulator type set\n");
+ 		ret = -EINVAL;
+-		goto err_memgpio;
++		goto err_memstate;
+ 	}
+ 
+ 	/* build initial state from gpio init data. */
+@@ -361,22 +360,21 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+ 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+-		goto err_stategpio;
++		goto err_memstate;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, drvdata);
+ 
+ 	return 0;
+ 
+-err_stategpio:
+-	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+ err_memstate:
+ 	kfree(drvdata->states);
++err_stategpio:
++	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+ err_memgpio:
+ 	kfree(drvdata->gpios);
+ err_name:
+ 	kfree(drvdata->desc.name);
+-err:
+ 	return ret;
+ }
+ 
+-- 
+2.14.1
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c
-  1313  
-  1314          /* Check to make sure that provided filter index is not
-  1315           * already in use by someone else
-  1316           */
-  1317          f = &adapter->tids.ftid_tab[filter_id];
-  1318          if (f->valid)
-                    ^^^^^^^^
-Checked.
-
-  1319                  return -EBUSY;
-  1320  
-  1321          fidx = filter_id + adapter->tids.ftid_base;
-  1322          ret = cxgb4_set_ftid(&adapter->tids, filter_id,
-  1323                               fs->type ? PF_INET6 : PF_INET,
-  1324                               chip_ver);
-  1325          if (ret)
-  1326                  return ret;
-  1327  
-  1328          /* Check t  make sure the filter requested is writable ... */
-  1329          ret = writable_filter(f);
-  1330          if (ret) {
-  1331                  /* Clear the bits we have set above */
-  1332                  cxgb4_clear_ftid(&adapter->tids, filter_id,
-  1333                                   fs->type ? PF_INET6 : PF_INET,
-  1334                                   chip_ver);
-  1335                  return ret;
-  1336          }
-  1337  
-  1338          /* Clear out any old resources being used by the filter before
-  1339           * we start constructing the new filter.
-  1340           */
-  1341          if (f->valid)
-                    ^^^^^^^^
-I don't think this can be true.
-
-  1342                  clear_filter(adapter, f);
-  1343  
-
-regards,
-dan carpenter
