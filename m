@@ -1,115 +1,61 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Tue, 13 Mar 2018 08:52:57 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 09:30:32 +0000
 Subject: Re: hwmon/sch5627: Use common error handling code in sch5627_probe()
-Message-Id: <e8a45f50-b625-ccb5-88cc-b888f57d1ca1@redhat.com>
+Message-Id: <4e0856d8-3b2c-35f0-50a5-bfbe34615dfa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d08248a2-46d8-6f73-81f4-84ad21b7e640@users.sourceforge.net>
  <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
  <17810b74-7b72-074e-5fef-b614fcfed738@users.sourceforge.net>
-In-Reply-To: <17810b74-7b72-074e-5fef-b614fcfed738@users.sourceforge.net>
+ <e8a45f50-b625-ccb5-88cc-b888f57d1ca1@redhat.com>
+In-Reply-To: <e8a45f50-b625-ccb5-88cc-b888f57d1ca1@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-hwmon@vger.kernel.org
-Cc: =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Hans de Goede <hdegoede@redhat.com>, linux-hwmon@vger.kernel.org
+Cc: =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, Jonathan Cameron <jic23@kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi,
+>  1 file changed, 29 insertions(+), 31 deletions(-)
+> 
+> So you are asking people to review 60 changed lines to save 2,
 
-On 13-03-18 09:25, SF Markus Elfring wrote:
->>> Adjust jump targets so that a bit of exception handling can be better
->>> reused at the end of this function.
-> =E2=80=A6
->> goto-s going to a label calling another goto is completely unreadable.
->=20
-> I got an other software development view.
->=20
->=20
->> I really do not see any reason for the proposed changes,
->=20
-> I suggest to look once more.
->=20
->=20
->> they may remove a small amount of code duplication,
->=20
-> This was my software design goal in this case.
+A bit of object code reduction might become useful also in this case.
 
-The diffstat of your patch is:
 
-  1 file changed, 29 insertions(+), 31 deletions(-)
+> that alone should be the point where you stop yourself from
+> *even* sending this patch.
 
-So you are asking people to review 60 changed lines to save 2,
-that alone should be the point where you stop yourself from
-*even* sending this patch. Review time is not an endless free
-resource and this patch is wasting it for very little gain.
+I proposed just another collateral evolution.
 
-I see in the kernel git log that you've e.g. also send a lot
-of patches removing pr_err / dev_err calls from memory
-allocation failures. Those are good patches to have, they are
-easy to review and significantly shrink the compiled kernel
-size because of all the text strings you are removing.
 
-This patch however will likely result in a binary which is
-hardly smaller at all (if at all, the compiler does common
-code elimination itself) while it is a complex patch to
-review so comes with a large review cost.
+> Next time before you send a patch please carefully think if the
+> saving is worth the combination of reviewers time + the risk of
+> regressions (and keep in mind that both the reviewers time and
+> the risk of regressions cost increase for more complex changes).
 
-Next time before you send a patch please carefully think if the
-saving is worth the combination of reviewers time + the risk of
-regressions (and keep in mind that both the reviewers time and
-the risk of regressions cost increase for more complex changes).
+Source code transformations were integrated in other software areas
+according to such a change pattern.
 
->> but at a hugh cost wrt readability.
->=20
-> I proposed a different trade-off here.
 
-<sigh> not this again. Cleanup patches are appreciated, but there
-always is a cost to making changes to perfectly working good code.
+> As for this specific discussion, there are certain "design-patterns"
+> in the kernel, goto style error handling is one of them, the pattern
+> there ALWAYS is:
+…
+> Notice the fall-thoughs those are ALWAYS there, never, ever is
+> there a goto after a cleanup label.
 
-You've had this same discussion with Jonathan Cameron, the IIO
-subsys maintainer at the end of 2017, it would be nice if you
-were to actually listen to what people are saying about this.
+It seems that I present an unusual update suggestion as a software
+design variant.
 
-As for this specific discussion, there are certain "design-patterns"
-in the kernel, goto style error handling is one of them, the pattern
-there ALWAYS is:
 
-error_cleanup4:
-	cleanup4();
-	/* fall through to next cleanup */
-error_cleanup3:
-	cleanup3();
-	/* fall through to next cleanup */
-error_cleanup2:
-	cleanup2();
-	/* fall through to next cleanup */
-error_cleanup1:
-	cleanup1();
-	/* fall through to next cleanup */
-	return error;
+> Your patches black goto magic completely messes this up
 
-Notice the fall-thoughs those are ALWAYS there, never, ever is
-there a goto after a cleanup label. The idea is that resources
-are allocated in the order of resource1 (cleaned by cleanup1())
-then resource2, etc. and the goto + fallthrough will cleanup
-all resources which have been allocated at the time of the goto
-in *reverse* order of allocation. The whole point of this design-
-pattern to be able to a) do partial cleanup if we fail halfway
-through; b) do it in reverse order. Your patches black goto magic
-completely messes this up and clearly falls under the CS101
-rule: never use goto.
+You can view the proposal in such a way.
 
-Your proposed changes break how every experienced kernel developer
-is expecting the code to be / work, causing your proposed changes
-to have a HUGE cost wrt maintainability and readability, which
-means the trade-off you're suggesting is anything but worth-while.
 
-TL;DR: still NACK.
+> and clearly falls under the CS101 rule: never use goto.
+
+There might a target conflict with information from the section
+“7) Centralized exiting of functions” in the document “coding-style.rst”.
 
 Regards,
-
-Hans
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Markus
