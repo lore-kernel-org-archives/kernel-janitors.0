@@ -1,57 +1,36 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Tue, 13 Mar 2018 10:35:29 +0000
-Subject: Re: [PATCH] staging: comedi: adl_pci6208: remove redundant initialization of 'val'
-Message-Id: <f3155983-cf67-2f78-f0f5-7a3acb041ab2@mev.co.uk>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 13 Mar 2018 14:54:03 +0000
+Subject: [PATCH -next] crypto: fix missing unlock on error in safexcel_ahash_send_req()
+Message-Id: <1520952843-68436-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180312233605.8643-1-colin.king@canonical.com>
-In-Reply-To: <20180312233605.8643-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 12/03/18 23:36, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable 'val' is initialized with a value that is never read, it is
-> updated with a new value again after intitialization. Remove the
-> redundant initialization and move the declaration and assignment into
-> the scope of the for-loop.
-> 
-> Cleans up clang warning:
-> drivers/staging/comedi/drivers/adl_pci6208.c:61:15: warning: Value
-> stored to 'val' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/adl_pci6208.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/adl_pci6208.c b/drivers/staging/comedi/drivers/adl_pci6208.c
-> index d39b4eabce8d..e21840e9002d 100644
-> --- a/drivers/staging/comedi/drivers/adl_pci6208.c
-> +++ b/drivers/staging/comedi/drivers/adl_pci6208.c
-> @@ -58,12 +58,11 @@ static int pci6208_ao_insn_write(struct comedi_device *dev,
->   				 unsigned int *data)
->   {
->   	unsigned int chan = CR_CHAN(insn->chanspec);
-> -	unsigned int val = s->readback[chan];
->   	int ret;
->   	int i;
->   
->   	for (i = 0; i < insn->n; i++) {
-> -		val = data[i];
-> +		unsigned int val = data[i];
->   
->   		/* D/A transfer rate is 2.2us */
->   		ret = comedi_timeout(dev, s, insn, pci6208_ao_eoc, 0);
-> 
+Add the missing unlock before return from function
+safexcel_ahash_send_req() in the error handling case.
 
-Looks good, thanks!
+Fixes: cff9a17545a3 ("crypto: inside-secure - move cache result dma mapping to request")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/crypto/inside-secure/safexcel_hash.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
+index 77268c9..6e9eb9b 100644
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -236,8 +236,10 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
+ 	if (cache_len) {
+ 		req->cache_dma = dma_map_single(priv->dev, req->cache,
+ 						cache_len, DMA_TO_DEVICE);
+-		if (dma_mapping_error(priv->dev, req->cache_dma))
++		if (dma_mapping_error(priv->dev, req->cache_dma)) {
++			spin_unlock_bh(&priv->ring[ring].egress_lock);
+ 			return -EINVAL;
++		}
+ 
+ 		req->cache_sz = cache_len;
+ 		first_cdesc = safexcel_add_cdesc(priv, ring, 1,
 
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk> )=-
--=(                          Web: http://www.mev.co.uk/  )=-
