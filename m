@@ -1,48 +1,36 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 14 Mar 2018 19:56:38 +0000
-Subject: [PATCH 2/3] remoteproc: imx_rproc: Re-use existing error handling path in 'imx_rproc_probe()'
-Message-Id: <2b1b1c3ebd6798ac456affb0bb6580016f17afe8.1521057013.git.christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Mar 2018 15:47:09 +0000
+Subject: [PATCH][next] x86/tme: fix spelling mistake: "configuation" -> "configuration"
+Message-Id: <20180313154709.1015-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Avoid some code ducplication and be more future-proof.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Trivial fix to spelling mistake in pr_err_once error message text.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/remoteproc/imx_rproc.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 05bcbce2013a..6d02ef62a626 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -361,8 +361,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	priv->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(priv->clk)) {
- 		dev_err(dev, "Failed to get clock\n");
--		rproc_free(rproc);
--		return PTR_ERR(priv->clk);
-+		ret = PTR_ERR(priv->clk);
-+		goto err_put_rproc;
- 	}
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index b862067bb33c..e86d622592f5 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -541,7 +541,7 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 	if (mktme_status != MKTME_UNINITIALIZED) {
+ 		if (tme_activate != tme_activate_cpu0) {
+ 			/* Broken BIOS? */
+-			pr_err_once("x86/tme: configuation is inconsistent between CPUs\n");
++			pr_err_once("x86/tme: configuration is inconsistent between CPUs\n");
+ 			pr_err_once("x86/tme: MKTME is not usable\n");
+ 			mktme_status = MKTME_DISABLED;
  
- 	/*
-@@ -372,8 +372,7 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	ret = clk_prepare_enable(priv->clk);
- 	if (ret) {
- 		dev_err(&rproc->dev, "Failed to enable clock\n");
--		rproc_free(rproc);
--		return ret;
-+		goto err_put_rproc;
- 	}
- 
- 	ret = rproc_add(rproc);
 -- 
-2.14.1
+2.15.1
 
