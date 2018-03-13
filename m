@@ -1,23 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 26 Mar 2018 01:14:17 +0000
-Subject: Re: [PATCH net-next] ibmvnic: Potential NULL dereference in clean_one_tx_pool()
-Message-Id: <20180325.211417.809927177270425883.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 08:25:51 +0000
+Subject: Re: hwmon/sch5627: Use common error handling code in sch5627_probe()
+Message-Id: <17810b74-7b72-074e-5fef-b614fcfed738@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323113615.GA28518@mwanda>
-In-Reply-To: <20180323113615.GA28518@mwanda>
+References: <d08248a2-46d8-6f73-81f4-84ad21b7e640@users.sourceforge.net>
+ <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
+In-Reply-To: <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: benh@kernel.crashing.org, tlfalcon@linux.vnet.ibm.com, jallen@linux.vnet.ibm.com, paulus@samba.org, mpe@ellerman.id.au, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Hans de Goede <hdegoede@redhat.com>, linux-hwmon@vger.kernel.org
+Cc: =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Mar 2018 14:36:15 +0300
+>> Adjust jump targets so that a bit of exception handling can be better
+>> reused at the end of this function.
+=E2=80=A6
+> goto-s going to a label calling another goto is completely unreadable.
 
-> There is an && vs || typo here, which potentially leads to a NULL
-> dereference.
-> 
-> Fixes: e9e1e97884b7 ("ibmvnic: Update TX pool cleaning routine")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I got an other software development view.
 
-Applied, thanks Dan.
+
+> I really do not see any reason for the proposed changes,
+
+I suggest to look once more.
+
+
+> they may remove a small amount of code duplication,
+
+This was my software design goal in this case.
+
+
+> but at a hugh cost wrt readability.
+
+I proposed a different trade-off here.
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
