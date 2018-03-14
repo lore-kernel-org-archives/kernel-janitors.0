@@ -1,69 +1,256 @@
-From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Date: Sun, 11 Mar 2018 18:08:22 +0000
-Subject: Re: [PATCH 1/9] um/drivers/vector_user: Delete unnecessary code in user_init_raw_fds()
-Message-Id: <33ff08e8-39cd-8558-152f-dac474fb0b5b@cambridgegreys.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Mar 2018 15:15:32 +0000
+Subject: [PATCH] iio/gyro/bmg160_core: Improve unlocking of a mutex in five functions
+Message-Id: <16623de4-351d-135b-f3ff-701a465c5d92@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
- <a8ec6fce-df95-10a9-6dd7-3604fd403d0d@users.sourceforge.net>
-In-Reply-To: <a8ec6fce-df95-10a9-6dd7-3604fd403d0d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, user-mode-linux-devel@lists.sourceforge.net, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-iio@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Pravin Shedge <pravin.shedge4linux@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Thanks, well noted.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Mar 2018 16:06:49 +0100
 
-It still does not fix it completely though.
+* Add jump targets so that a call of the function "mutex_unlock" is stored
+  only once in these function implementations.
 
-Re-reading the code it will leak a fd if the malloc for result fails. 
-That return result; there should be inside the conditional falling back 
-to cleanup if the alloc fails.
+* Replace 19 calls by goto statements.
 
-A.
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/gyro/bmg160_core.c | 103 ++++++++++++++++++-----------------------
+ 1 file changed, 45 insertions(+), 58 deletions(-)
 
-On 03/11/18 15:16, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Mar 2018 11:36:18 +0100
->
-> * One condition check could never be reached with a non-null pointer
->    at the end of this function. Thus remove the corresponding statement.
->
-> * Delete an initialisation for the local variable "result"
->    which became unnecessary with this refactoring.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   arch/um/drivers/vector_user.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-> index 4291f1a5d342..d6a6207d4061 100644
-> --- a/arch/um/drivers/vector_user.c
-> +++ b/arch/um/drivers/vector_user.c
-> @@ -211,7 +211,7 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
->   	struct sockaddr_ll sock;
->   	int err = -ENOMEM;
->   	char *iface;
-> -	struct vector_fds *result = NULL;
-> +	struct vector_fds *result;
->   	int optval = 1;
->   
->   
-> @@ -276,8 +276,6 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
->   		os_close_file(rxfd);
->   	if (txfd >= 0)
->   		os_close_file(txfd);
-> -	if (result != NULL)
-> -		kfree(result);
->   	return NULL;
->   }
->   
-
+diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
+index 63ca31628a93..fa367fd7bc8c 100644
+--- a/drivers/iio/gyro/bmg160_core.c
++++ b/drivers/iio/gyro/bmg160_core.c
+@@ -499,21 +499,19 @@ static int bmg160_get_temp(struct bmg160_data *data, int *val)
+ 
+ 	mutex_lock(&data->mutex);
+ 	ret = bmg160_set_power_state(data, true);
+-	if (ret < 0) {
+-		mutex_unlock(&data->mutex);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	ret = regmap_read(data->regmap, BMG160_REG_TEMP, &raw_val);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Error reading reg_temp\n");
+ 		bmg160_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	*val = sign_extend32(raw_val, 7);
+ 	ret = bmg160_set_power_state(data, false);
++unlock:
+ 	mutex_unlock(&data->mutex);
+ 	if (ret < 0)
+ 		return ret;
+@@ -529,22 +527,20 @@ static int bmg160_get_axis(struct bmg160_data *data, int axis, int *val)
+ 
+ 	mutex_lock(&data->mutex);
+ 	ret = bmg160_set_power_state(data, true);
+-	if (ret < 0) {
+-		mutex_unlock(&data->mutex);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	ret = regmap_bulk_read(data->regmap, BMG160_AXIS_TO_REG(axis), &raw_val,
+ 			       sizeof(raw_val));
+ 	if (ret < 0) {
+ 		dev_err(dev, "Error reading axis %d\n", axis);
+ 		bmg160_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	*val = sign_extend32(le16_to_cpu(raw_val), 15);
+ 	ret = bmg160_set_power_state(data, false);
++unlock:
+ 	mutex_unlock(&data->mutex);
+ 	if (ret < 0)
+ 		return ret;
+@@ -632,19 +628,16 @@ static int bmg160_write_raw(struct iio_dev *indio_dev,
+ 		 * mode to power on for other writes.
+ 		 */
+ 		ret = bmg160_set_power_state(data, true);
+-		if (ret < 0) {
+-			mutex_unlock(&data->mutex);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto unlock;
++
+ 		ret = bmg160_set_bw(data, val);
+ 		if (ret < 0) {
+ 			bmg160_set_power_state(data, false);
+-			mutex_unlock(&data->mutex);
+-			return ret;
++			goto unlock;
+ 		}
+-		ret = bmg160_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++
++		goto set_power_state;
+ 	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+ 		if (val2)
+ 			return -EINVAL;
+@@ -653,18 +646,15 @@ static int bmg160_write_raw(struct iio_dev *indio_dev,
+ 		ret = bmg160_set_power_state(data, true);
+ 		if (ret < 0) {
+ 			bmg160_set_power_state(data, false);
+-			mutex_unlock(&data->mutex);
+-			return ret;
++			goto unlock;
+ 		}
+ 		ret = bmg160_set_filter(data, val);
+ 		if (ret < 0) {
+ 			bmg160_set_power_state(data, false);
+-			mutex_unlock(&data->mutex);
+-			return ret;
++			goto unlock;
+ 		}
+-		ret = bmg160_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++
++		goto set_power_state;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		if (val)
+ 			return -EINVAL;
+@@ -672,24 +662,27 @@ static int bmg160_write_raw(struct iio_dev *indio_dev,
+ 		mutex_lock(&data->mutex);
+ 		/* Refer to comments above for the suspend mode ops */
+ 		ret = bmg160_set_power_state(data, true);
+-		if (ret < 0) {
+-			mutex_unlock(&data->mutex);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto unlock;
++
+ 		ret = bmg160_set_scale(data, val2);
+ 		if (ret < 0) {
+ 			bmg160_set_power_state(data, false);
+-			mutex_unlock(&data->mutex);
+-			return ret;
++			goto unlock;
+ 		}
+-		ret = bmg160_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++
++		goto set_power_state;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+ 	return -EINVAL;
++
++set_power_state:
++	ret = bmg160_set_power_state(data, false);
++unlock:
++	mutex_unlock(&data->mutex);
++	return ret;
+ }
+ 
+ static int bmg160_read_event(struct iio_dev *indio_dev,
+@@ -763,8 +756,8 @@ static int bmg160_write_event_config(struct iio_dev *indio_dev,
+ 
+ 	if (!state && data->motion_trigger_on) {
+ 		data->ev_enable_state = 0;
+-		mutex_unlock(&data->mutex);
+-		return 0;
++		ret = 0;
++		goto unlock;
+ 	}
+ 	/*
+ 	 * We will expect the enable and disable to do operation in
+@@ -776,22 +769,19 @@ static int bmg160_write_event_config(struct iio_dev *indio_dev,
+ 	 * is always on so sequence doesn't matter
+ 	 */
+ 	ret = bmg160_set_power_state(data, state);
+-	if (ret < 0) {
+-		mutex_unlock(&data->mutex);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	ret =  bmg160_setup_any_motion_interrupt(data, state);
+ 	if (ret < 0) {
+ 		bmg160_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	data->ev_enable_state = state;
++unlock:
+ 	mutex_unlock(&data->mutex);
+-
+-	return 0;
++	return ret;
+ }
+ 
+ static IIO_CONST_ATTR_SAMP_FREQ_AVAIL("100 200 400 1000 2000");
+@@ -919,8 +909,8 @@ static int bmg160_data_rdy_trigger_set_state(struct iio_trigger *trig,
+ 
+ 	if (!state && data->ev_enable_state && data->motion_trigger_on) {
+ 		data->motion_trigger_on = false;
+-		mutex_unlock(&data->mutex);
+-		return 0;
++		ret = 0;
++		goto unlock;
+ 	}
+ 
+ 	/*
+@@ -928,27 +918,24 @@ static int bmg160_data_rdy_trigger_set_state(struct iio_trigger *trig,
+ 	 * enable/disable operation order
+ 	 */
+ 	ret = bmg160_set_power_state(data, state);
+-	if (ret < 0) {
+-		mutex_unlock(&data->mutex);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
++
+ 	if (data->motion_trig = trig)
+ 		ret =  bmg160_setup_any_motion_interrupt(data, state);
+ 	else
+ 		ret = bmg160_setup_new_data_interrupt(data, state);
+ 	if (ret < 0) {
+ 		bmg160_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 	if (data->motion_trig = trig)
+ 		data->motion_trigger_on = state;
+ 	else
+ 		data->dready_trigger_on = state;
+-
++unlock:
+ 	mutex_unlock(&data->mutex);
+-
+-	return 0;
++	return ret;
+ }
+ 
+ static const struct iio_trigger_ops bmg160_trigger_ops = {
 -- 
-Anton R. Ivanov
-
-Cambridge Greys Limited, England and Wales company No 10273661
-http://www.cambridgegreys.com/
+2.16.2
 
