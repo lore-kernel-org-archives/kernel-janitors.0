@@ -1,36 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Mar 2018 15:38:18 +0000
-Subject: [PATCH] cw1200: fix spelling mistake: "Mailformed" -> "Malformed"
-Message-Id: <20180329153818.29538-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 14 Mar 2018 19:56:38 +0000
+Subject: [PATCH 2/3] remoteproc: imx_rproc: Re-use existing error handling path in 'imx_rproc_probe()'
+Message-Id: <2b1b1c3ebd6798ac456affb0bb6580016f17afe8.1521057013.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Solomon Peachy <pizza@shaftnet.org>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Avoid some code ducplication and be more future-proof.
 
-Trivial fix to spelling mistake in wiphy_warn warning message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/wireless/st/cw1200/txrx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/remoteproc/imx_rproc.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/st/cw1200/txrx.c b/drivers/net/wireless/st/cw1200/txrx.c
-index e9050b41157a..f7b1b0062db3 100644
---- a/drivers/net/wireless/st/cw1200/txrx.c
-+++ b/drivers/net/wireless/st/cw1200/txrx.c
-@@ -1069,7 +1069,7 @@ void cw1200_rx_cb(struct cw1200_common *priv,
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 05bcbce2013a..6d02ef62a626 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -361,8 +361,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	priv->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(priv->clk)) {
+ 		dev_err(dev, "Failed to get clock\n");
+-		rproc_free(rproc);
+-		return PTR_ERR(priv->clk);
++		ret = PTR_ERR(priv->clk);
++		goto err_put_rproc;
  	}
  
- 	if (skb->len < sizeof(struct ieee80211_pspoll)) {
--		wiphy_warn(priv->hw->wiphy, "Mailformed SDU rx'ed. Size is lesser than IEEE header.\n");
-+		wiphy_warn(priv->hw->wiphy, "Malformed SDU rx'ed. Size is lesser than IEEE header.\n");
- 		goto drop;
+ 	/*
+@@ -372,8 +372,7 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	ret = clk_prepare_enable(priv->clk);
+ 	if (ret) {
+ 		dev_err(&rproc->dev, "Failed to enable clock\n");
+-		rproc_free(rproc);
+-		return ret;
++		goto err_put_rproc;
  	}
  
+ 	ret = rproc_add(rproc);
 -- 
-2.15.1
+2.14.1
 
