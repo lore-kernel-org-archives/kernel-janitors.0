@@ -1,36 +1,92 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 28 Mar 2018 18:42:12 +0000
-Subject: [PATCH] drm/nouveau/bios/init: fix spelling mistake: "CONDITON" -> "CONDITION"
-Message-Id: <20180328184212.24841-1-colin.king@canonical.com>
+From: YOUNGKEUN OH <y.k.oh@samsung.com>
+Date: Wed, 14 Mar 2018 02:17:05 +0000
+Subject: [PATCH] serial: samsung: macros with complex values should be enclosed in parentheses
+Message-Id: <1520993825-8605-1-git-send-email-y.k.oh@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20180314021710epcas1p3766602fe312f87d916cab69af2acf203@epcas1p3.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh@linuxfoundation.org
+Cc: jslaby@suse.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, YOUNGKEUN OH <y.k.oh@samsung.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Cleanup checkpatch error:
+ERROR: Macros with complex values should be enclosed in parentheses
 
-Trivial fix to spelling mistake in warning message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YOUNGKEUN OH <y.k.oh@samsung.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/samsung.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-index 9cc10e438b3d..003dc8edf1c3 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-@@ -831,7 +831,7 @@ init_generic_condition(struct nvbios_init *init)
- 			init_exec_set(init, false);
- 		break;
- 	default:
--		warn("INIT_GENERIC_CONDITON: unknown 0x%02x\n", cond);
-+		warn("INIT_GENERIC_CONDITION: unknown 0x%02x\n", cond);
- 		init->offset += size;
- 		break;
- 	}
--- 
-2.15.1
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 3f2f8c1..da9bddb1 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1455,7 +1455,7 @@ static int __init s3c24xx_serial_console_init(void)
+ }
+ console_initcall(s3c24xx_serial_console_init);
+
+-#define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
++#define S3C24XX_SERIAL_CONSOLE (&s3c24xx_serial_console)
+ #else
+ #define S3C24XX_SERIAL_CONSOLE NULL
+ #endif
+@@ -2198,7 +2198,7 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ };
+ #define S3C2410_SERIAL_DRV_DATA ((kernel_ulong_t)&s3c2410_serial_drv_data)
+ #else
+-#define S3C2410_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define S3C2410_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #endif
+
+ #ifdef CONFIG_CPU_S3C2412
+@@ -2226,7 +2226,7 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ };
+ #define S3C2412_SERIAL_DRV_DATA ((kernel_ulong_t)&s3c2412_serial_drv_data)
+ #else
+-#define S3C2412_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define S3C2412_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #endif
+
+ #if defined(CONFIG_CPU_S3C2440) || defined(CONFIG_CPU_S3C2416) || \
+@@ -2255,7 +2255,7 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ };
+ #define S3C2440_SERIAL_DRV_DATA ((kernel_ulong_t)&s3c2440_serial_drv_data)
+ #else
+-#define S3C2440_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define S3C2440_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #endif
+
+ #if defined(CONFIG_CPU_S3C6400) || defined(CONFIG_CPU_S3C6410)
+@@ -2283,7 +2283,7 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ };
+ #define S3C6400_SERIAL_DRV_DATA ((kernel_ulong_t)&s3c6400_serial_drv_data)
+ #else
+-#define S3C6400_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define S3C6400_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #endif
+
+ #ifdef CONFIG_CPU_S5PV210
+@@ -2311,7 +2311,7 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ };
+ #define S5PV210_SERIAL_DRV_DATA ((kernel_ulong_t)&s5pv210_serial_drv_data)
+ #else
+-#define S5PV210_SERIAL_DRV_DATA	(kernel_ulong_t)NULL
++#define S5PV210_SERIAL_DRV_DATA	((kernel_ulong_t)NULL)
+ #endif
+
+ #if defined(CONFIG_ARCH_EXYNOS)
+@@ -2350,8 +2350,8 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ #define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos4210_serial_drv_data)
+ #define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos5433_serial_drv_data)
+ #else
+-#define EXYNOS4210_SERIAL_DRV_DATA (kernel_ulong_t)NULL
+-#define EXYNOS5433_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
++#define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #endif
+
+ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
+--
+1.9.1
 
