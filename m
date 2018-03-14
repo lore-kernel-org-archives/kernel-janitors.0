@@ -1,39 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 14 Mar 2018 14:12:39 +0000
-Subject: [PATCH][next] rsi: remove redundant duplicate assignment of buffer_size
-Message-Id: <20180314141239.8321-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 14 Mar 2018 19:56:37 +0000
+Subject: [PATCH 1/3] remoteproc: imx_rproc: Fix an error handling path in 'imx_rproc_probe()'
+Message-Id: <f944d560ce1b1573be00697d66c4a49b14680af9.1521057013.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+If 'of_device_get_match_data()' fails, we must undo the previous
+'rproc_alloc()' call.
 
-Variable buffer_size is re-assigned the same value, this duplicated
-assignment is redundant and can be removed.
-
-Cleans up clang warning:
-drivers/net/wireless/rsi/rsi_91x_usb.c:140:4: warning: Value stored
-to 'buffer_size' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/wireless/rsi/rsi_91x_usb.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/remoteproc/imx_rproc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
-index be8236f404b5..7b8bae313aa9 100644
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -140,7 +140,6 @@ static int rsi_find_bulk_in_and_out_endpoints(struct usb_interface *interface,
- 			buffer_size = endpoint->wMaxPacketSize;
- 			dev->bulkout_endpoint_addr[bout_found]  				endpoint->bEndpointAddress;
--			buffer_size = endpoint->wMaxPacketSize;
- 			dev->bulkout_size[bout_found] = buffer_size;
- 			bout_found++;
- 		}
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 633268e9d550..05bcbce2013a 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -339,8 +339,10 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	dcfg = of_device_get_match_data(dev);
+-	if (!dcfg)
+-		return -EINVAL;
++	if (!dcfg) {
++		ret = -EINVAL;
++		goto err_put_rproc;
++	}
+ 
+ 	priv = rproc->priv;
+ 	priv->rproc = rproc;
 -- 
-2.15.1
+2.14.1
 
