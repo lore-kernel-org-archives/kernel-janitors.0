@@ -1,34 +1,39 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 22 Mar 2018 02:09:25 +0000
-Subject: [PATCH -next] staging: mt7621-gpio: mt7621: make symbol gc_map static
-Message-Id: <1521684565-76447-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 14 Mar 2018 14:12:39 +0000
+Subject: [PATCH][next] rsi: remove redundant duplicate assignment of buffer_size
+Message-Id: <20180314141239.8321-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Kalle Valo <kvalo@codeaurora.org>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes the following sparse warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/staging/mt7621-gpio/gpio-mt7621.c:47:3: warning:
- symbol 'gc_map' was not declared. Should it be static?
+Variable buffer_size is re-assigned the same value, this duplicated
+assignment is redundant and can be removed.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Cleans up clang warning:
+drivers/net/wireless/rsi/rsi_91x_usb.c:140:4: warning: Value stored
+to 'buffer_size' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/mt7621-gpio/gpio-mt7621.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_usb.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/mt7621-gpio/gpio-mt7621.c b/drivers/staging/mt7621-gpio/gpio-mt7621.c
-index 5c57abe..d00c1cd 100644
---- a/drivers/staging/mt7621-gpio/gpio-mt7621.c
-+++ b/drivers/staging/mt7621-gpio/gpio-mt7621.c
-@@ -38,7 +38,7 @@ enum mediatek_gpio_reg {
- static int mediatek_gpio_irq;
- static struct irq_domain *mediatek_gpio_irq_domain;
- 
--struct mtk_gc {
-+static struct mtk_gc {
- 	struct gpio_chip chip;
- 	spinlock_t lock;
- 	int bank;
+diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
+index be8236f404b5..7b8bae313aa9 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -140,7 +140,6 @@ static int rsi_find_bulk_in_and_out_endpoints(struct usb_interface *interface,
+ 			buffer_size = endpoint->wMaxPacketSize;
+ 			dev->bulkout_endpoint_addr[bout_found]  				endpoint->bEndpointAddress;
+-			buffer_size = endpoint->wMaxPacketSize;
+ 			dev->bulkout_size[bout_found] = buffer_size;
+ 			bout_found++;
+ 		}
+-- 
+2.15.1
 
