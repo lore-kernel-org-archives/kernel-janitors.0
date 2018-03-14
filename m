@@ -1,61 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Mar 2018 09:30:32 +0000
-Subject: Re: hwmon/sch5627: Use common error handling code in sch5627_probe()
-Message-Id: <4e0856d8-3b2c-35f0-50a5-bfbe34615dfa@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 14 Mar 2018 17:33:54 +0000
+Subject: [PATCH][next] perf tests: fix out of bounds access on array fd when cnt is 100
+Message-Id: <20180314173354.11250-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d08248a2-46d8-6f73-81f4-84ad21b7e640@users.sourceforge.net>
- <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
- <17810b74-7b72-074e-5fef-b614fcfed738@users.sourceforge.net>
- <e8a45f50-b625-ccb5-88cc-b888f57d1ca1@redhat.com>
-In-Reply-To: <e8a45f50-b625-ccb5-88cc-b888f57d1ca1@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Hans de Goede <hdegoede@redhat.com>, linux-hwmon@vger.kernel.org
-Cc: =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, Jonathan Cameron <jic23@kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->  1 file changed, 29 insertions(+), 31 deletions(-)
-> 
-> So you are asking people to review 60 changed lines to save 2,
+From: Colin Ian King <colin.king@canonical.com>
 
-A bit of object code reduction might become useful also in this case.
+Currently when cnt is 100 an array bounds overflow occurs on the assignment
+of fd[cnt]. Fix this by performing the bounds check on cnt before writing
+to fd.
 
+Detected by cppcheck:
+tools/perf/tests/bp_account.c:115: (warning) Either the condition
+'cnt=100' is redundant or the array 'fd[100]' is accessed at index 100,
+which is out of bounds.
 
-> that alone should be the point where you stop yourself from
-> *even* sending this patch.
+Fixes: 032db28e5fa3 ("perf tests: Add breakpoint accounting/modify test")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/perf/tests/bp_account.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-I proposed just another collateral evolution.
+diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
+index 2f75fa0c4fef..9e88d7608951 100644
+--- a/tools/perf/tests/bp_account.c
++++ b/tools/perf/tests/bp_account.c
+@@ -107,16 +107,14 @@ static int detect_cnt(bool is_x)
+ 	int fd[100], cnt = 0, i;
+ 
+ 	while (1) {
+-		fd[cnt] = __event(is_x, addr, &attr);
+-
+-		if (fd[cnt] < 0)
+-			break;
+-
+ 		if (cnt = 100) {
+ 			pr_debug("way too many debug registers, fix the test\n");
+ 			return 0;
+ 		}
++		fd[cnt] = __event(is_x, addr, &attr);
+ 
++		if (fd[cnt] < 0)
++			break;
+ 		cnt++;
+ 	}
+ 
+-- 
+2.15.1
 
-
-> Next time before you send a patch please carefully think if the
-> saving is worth the combination of reviewers time + the risk of
-> regressions (and keep in mind that both the reviewers time and
-> the risk of regressions cost increase for more complex changes).
-
-Source code transformations were integrated in other software areas
-according to such a change pattern.
-
-
-> As for this specific discussion, there are certain "design-patterns"
-> in the kernel, goto style error handling is one of them, the pattern
-> there ALWAYS is:
-…
-> Notice the fall-thoughs those are ALWAYS there, never, ever is
-> there a goto after a cleanup label.
-
-It seems that I present an unusual update suggestion as a software
-design variant.
-
-
-> Your patches black goto magic completely messes this up
-
-You can view the proposal in such a way.
-
-
-> and clearly falls under the CS101 rule: never use goto.
-
-There might a target conflict with information from the section
-“7) Centralized exiting of functions” in the document “coding-style.rst”.
-
-Regards,
-Markus
