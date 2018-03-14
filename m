@@ -1,43 +1,125 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Thu, 08 Mar 2018 02:03:34 +0000
-Subject: [PATCH 5/5] drm/vgem: Remove '(' from the end of line
-Message-Id: <58bfa1f547c18bf8d145b1a8500f3a5f6df3704e.1520474055.git.rodrigosiqueiramelo@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 14 Mar 2018 16:39:56 +0000
+Subject: Applied "regulator: gpio: Fix some error handling paths in 'gpio_regulator_probe()'" to the regulato
+Message-Id: <20180314163956.4981B440079@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
+In-Reply-To: <20180313203311.11378-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, lgirdwood@gmail.com, rf@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl check:
+The patch
 
-vgem_drv.c:91: CHECK: Lines should not end with a '('
+   regulator: gpio: Fix some error handling paths in 'gpio_regulator_probe()'
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From ed8cffda27dea6fd3dafb3ee881c5a786edac9ca Mon Sep 17 00:00:00 2001
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Tue, 13 Mar 2018 21:33:11 +0100
+Subject: [PATCH] regulator: gpio: Fix some error handling paths in
+ 'gpio_regulator_probe()'
+
+Re-order error handling code and gotos to avoid leaks in error handling
+paths.
+
+Fixes: 9f946099fe19 ("regulator: gpio: fix parsing of gpio list")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/regulator/gpio-regulator.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 6e6084e3204a..4ddf3b8c3875 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -87,10 +87,10 @@ static int vgem_gem_fault(struct vm_fault *vmf)
- 	mutex_unlock(&obj->pages_lock);
- 	if (ret) {
- 		struct page *page;
-+		struct address_space *mapping;
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index 0fce06acfaec..a2eb50719c7b 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -271,8 +271,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
+ 	if (drvdata->desc.name = NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate supply name\n");
+-		ret = -ENOMEM;
+-		goto err;
++		return -ENOMEM;
+ 	}
  
--		page = shmem_read_mapping_page(
--					file_inode(obj->base.filp)->i_mapping,
--					page_offset);
-+		mapping = file_inode(obj->base.filp)->i_mapping;
-+		page = shmem_read_mapping_page(mapping, page_offset);
- 		if (!IS_ERR(page)) {
- 			vmf->page = page;
- 			ret = 0;
+ 	if (config->nr_gpios != 0) {
+@@ -292,7 +291,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 				dev_err(&pdev->dev,
+ 					"Could not obtain regulator setting GPIOs: %d\n",
+ 					ret);
+-			goto err_memstate;
++			goto err_memgpio;
+ 		}
+ 	}
+ 
+@@ -303,7 +302,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	if (drvdata->states = NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate state data\n");
+ 		ret = -ENOMEM;
+-		goto err_memgpio;
++		goto err_stategpio;
+ 	}
+ 	drvdata->nr_states = config->nr_states;
+ 
+@@ -324,7 +323,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	default:
+ 		dev_err(&pdev->dev, "No regulator type set\n");
+ 		ret = -EINVAL;
+-		goto err_memgpio;
++		goto err_memstate;
+ 	}
+ 
+ 	/* build initial state from gpio init data. */
+@@ -361,22 +360,21 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+ 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+-		goto err_stategpio;
++		goto err_memstate;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, drvdata);
+ 
+ 	return 0;
+ 
+-err_stategpio:
+-	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+ err_memstate:
+ 	kfree(drvdata->states);
++err_stategpio:
++	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+ err_memgpio:
+ 	kfree(drvdata->gpios);
+ err_name:
+ 	kfree(drvdata->desc.name);
+-err:
+ 	return ret;
+ }
+ 
 -- 
 2.16.2
 
