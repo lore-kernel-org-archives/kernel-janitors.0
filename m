@@ -1,37 +1,58 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 28 Mar 2018 12:50:45 +0000
-Subject: [PATCH net-next] ice: Fix error return code in ice_init_hw()
-Message-Id: <1522241445-77090-1-git-send-email-weiyongjun1@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 14 Mar 2018 19:56:39 +0000
+Subject: [PATCH 3/3] remoteproc: imx_rproc: Slightly simplify code in 'imx_rproc_probe()'
+Message-Id: <fbc1425293b6540a6fc835264fba2b71f2b63444.1521057013.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fix to return error code ICE_ERR_NO_MEMORY from the alloc error
-handling case instead of 0, as done elsewhere in this function.
+We can return directly at the beginning of the function and save the 'err'
+label.
+We can also explicitly return 0 when the probe succeed.
 
-Fixes: dc49c7723676 ("ice: Get MAC/PHY/link info and scheduler topology")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/intel/ice/ice_common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/remoteproc/imx_rproc.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
-index 385f5d4..21977ec 100644
---- a/drivers/net/ethernet/intel/ice/ice_common.c
-+++ b/drivers/net/ethernet/intel/ice/ice_common.c
-@@ -468,8 +468,10 @@ enum ice_status ice_init_hw(struct ice_hw *hw)
- 	mac_buf_len = sizeof(struct ice_aqc_manage_mac_read_resp);
- 	mac_buf = devm_kzalloc(ice_hw_to_dev(hw), mac_buf_len, GFP_KERNEL);
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 6d02ef62a626..54c07fd3f204 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -333,10 +333,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	/* set some other name then imx */
+ 	rproc = rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
+ 			    NULL, sizeof(*priv));
+-	if (!rproc) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!rproc)
++		return -ENOMEM;
  
--	if (!mac_buf)
-+	if (!mac_buf) {
-+		status = ICE_ERR_NO_MEMORY;
- 		goto err_unroll_fltr_mgmt_struct;
-+	}
+ 	dcfg = of_device_get_match_data(dev);
+ 	if (!dcfg) {
+@@ -381,13 +379,13 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 		goto err_put_clk;
+ 	}
  
- 	status = ice_aq_manage_mac_read(hw, mac_buf, mac_buf_len, NULL);
- 	devm_kfree(ice_hw_to_dev(hw), mac_buf);
+-	return ret;
++	return 0;
+ 
+ err_put_clk:
+ 	clk_disable_unprepare(priv->clk);
+ err_put_rproc:
+ 	rproc_free(rproc);
+-err:
++
+ 	return ret;
+ }
+ 
+-- 
+2.14.1
 
