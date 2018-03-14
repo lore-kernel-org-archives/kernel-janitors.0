@@ -1,59 +1,36 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 12 Mar 2018 12:25:24 +0000
-Subject: [PATCH net-next] mlxsw: spectrum_kvdl: Make some functions static
-Message-Id: <1520857524-163487-1-git-send-email-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Mar 2018 07:37:19 +0000
+Subject: [PATCH] rtc: mxc_v2: unlock on error in mxc_rtc_set_alarm()
+Message-Id: <20180314073719.GA2470@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180312122459.GC2111@nanopsycho>
-In-Reply-To: <20180312122459.GC2111@nanopsycho>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, rkadi Sharshevsky <arkadis@mellanox.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Patrick Bruenn <p.bruenn@beckhoff.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warnings:
+We need to unlock if time is more than U32_MAX.
 
-drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c:371:5: warning:
- symbol 'mlxsw_sp_kvdl_single_occ_get' was not declared. Should it be static?
-drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c:384:5: warning:
- symbol 'mlxsw_sp_kvdl_chunks_occ_get' was not declared. Should it be static?
-drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c:397:5: warning:
- symbol 'mlxsw_sp_kvdl_large_chunks_occ_get' was not declared. Should it be static?
+Fixes: 83c880f79e88 ("rtc: add mxc driver for i.MX53 SRTC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
-index 059eb32..4c9bff2 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_kvdl.c
-@@ -368,7 +368,7 @@ u64 mlxsw_sp_kvdl_occ_get(const struct mlxsw_sp *mlxsw_sp)
- 	return occ;
- }
- 
--u64 mlxsw_sp_kvdl_single_occ_get(struct devlink *devlink)
-+static u64 mlxsw_sp_kvdl_single_occ_get(struct devlink *devlink)
+diff --git a/drivers/rtc/rtc-mxc_v2.c b/drivers/rtc/rtc-mxc_v2.c
+index 9e14efb990b2..90c9ab68688f 100644
+--- a/drivers/rtc/rtc-mxc_v2.c
++++ b/drivers/rtc/rtc-mxc_v2.c
+@@ -243,12 +243,14 @@ static int mxc_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
  {
- 	struct mlxsw_core *mlxsw_core = devlink_priv(devlink);
- 	struct mlxsw_sp *mlxsw_sp = mlxsw_core_driver_priv(mlxsw_core);
-@@ -381,7 +381,7 @@ u64 mlxsw_sp_kvdl_single_occ_get(struct devlink *devlink)
- 	return mlxsw_sp_kvdl_part_occ(part);
- }
+ 	const time64_t time = rtc_tm_to_time64(&alrm->time);
+ 	struct mxc_rtc_data *pdata = dev_get_drvdata(dev);
+-	int ret = mxc_rtc_lock(pdata);
++	int ret;
  
--u64 mlxsw_sp_kvdl_chunks_occ_get(struct devlink *devlink)
-+static u64 mlxsw_sp_kvdl_chunks_occ_get(struct devlink *devlink)
- {
- 	struct mlxsw_core *mlxsw_core = devlink_priv(devlink);
- 	struct mlxsw_sp *mlxsw_sp = mlxsw_core_driver_priv(mlxsw_core);
-@@ -394,7 +394,7 @@ u64 mlxsw_sp_kvdl_chunks_occ_get(struct devlink *devlink)
- 	return mlxsw_sp_kvdl_part_occ(part);
- }
++	ret = mxc_rtc_lock(pdata);
+ 	if (ret)
+ 		return ret;
  
--u64 mlxsw_sp_kvdl_large_chunks_occ_get(struct devlink *devlink)
-+static u64 mlxsw_sp_kvdl_large_chunks_occ_get(struct devlink *devlink)
- {
- 	struct mlxsw_core *mlxsw_core = devlink_priv(devlink);
- 	struct mlxsw_sp *mlxsw_sp = mlxsw_core_driver_priv(mlxsw_core);
-
+ 	if (time > U32_MAX) {
++		mxc_rtc_unlock(pdata);
+ 		dev_err(dev, "Hopefully I am out of service by then :-(\n");
+ 		return -EINVAL;
+ 	}
