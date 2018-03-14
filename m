@@ -1,49 +1,47 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Sat, 31 Mar 2018 04:12:30 +0000
-Subject: Re: [PATCH][next] apparmor: fix memory leak on buffer on error exit path
-Message-Id: <5ddbfd4d-12f3-1cde-c080-8fde508c664f@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 14 Mar 2018 21:47:55 +0000
+Subject: [PATCH] mfd: pcf50633: Fix some memory leaks in the error handling path of 'pcf50633_probe()'
+Message-Id: <20180314214755.25853-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180327133558.13072-1-colin.king@canonical.com>
-In-Reply-To: <20180327133558.13072-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 03/27/2018 06:35 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently on the error exit path the allocated buffer is not free'd
-> causing a memory leak. Fix this by kfree'ing it.
-> 
-> Detected by CoverityScan, CID#1466876 ("Resource leaks")
-> 
-> Fixes: 1180b4c757aa ("apparmor: fix dangling symlinks to policy rawdata after replacement")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+If a 'platform_device_alloc()' call fails, we still need to release the
+resources that have already been allocated before returning.
 
-thanks Colin
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mfd/pcf50633-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-I've pulled it into apparmor-next
-
-> ---
->  security/apparmor/apparmorfs.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 96bb6b73af65..949dd8a48164 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -1497,8 +1497,10 @@ static char *gen_symlink_name(int depth, const char *dirname, const char *fname)
->  	}
->  
->  	error = snprintf(s, size, "raw_data/%s/%s", dirname, fname);
-> -	if (error >= size || error < 0)
-> +	if (error >= size || error < 0) {
-> +		kfree(buffer);
->  		return ERR_PTR(-ENAMETOOLONG);
-> +	}
->  
->  	return buffer;
->  }
-> 
+diff --git a/drivers/mfd/pcf50633-core.c b/drivers/mfd/pcf50633-core.c
+index f952dff6765f..0d2a88d53eed 100644
+--- a/drivers/mfd/pcf50633-core.c
++++ b/drivers/mfd/pcf50633-core.c
+@@ -242,8 +242,10 @@ static int pcf50633_probe(struct i2c_client *client,
+ 
+ 	for (i = 0; i < PCF50633_NUM_REGULATORS; i++) {
+ 		pdev = platform_device_alloc("pcf50633-regulator", i);
+-		if (!pdev)
+-			return -ENOMEM;
++		if (!pdev) {
++			ret = -ENOMEM;
++			goto err2;
++		}
+ 
+ 		pdev->dev.parent = pcf->dev;
+ 		ret = platform_device_add_data(pdev, &pdata->reg_init_data[i],
+@@ -269,6 +271,7 @@ static int pcf50633_probe(struct i2c_client *client,
+ 
+ err:
+ 	platform_device_put(pdev);
++err2:
+ 	for (j = 0; j < i; j++)
+ 		platform_device_put(pcf->regulator_pdev[j]);
+ 
+-- 
+2.14.1
 
