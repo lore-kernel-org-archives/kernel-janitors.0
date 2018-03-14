@@ -1,103 +1,83 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:03:26 +0000
-Subject: [PATCH v2 03/17 3/3] mfd: abx500-core: Adjust 14 checks for null pointers
-Message-Id: <2f3c512b-cd17-beb3-152a-23513f13279f@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 14 Mar 2018 16:40:06 +0000
+Subject: Applied "spi: bcm-qspi: fIX some error handling paths" to the spi tree
+Message-Id: <20180314164006.89AF3440079@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
-In-Reply-To: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
+References: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, f.fainelli@gmail.com, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Mar 2018 12:50:12 +0100
+The patch
 
-The script “checkpatch.pl” pointed information out like the following.
+   spi: bcm-qspi: fIX some error handling paths
 
-Comparison to NULL could be written …
+has been applied to the spi tree at
 
-Thus fix the affected source code places.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From bc3cc75281b3c2b1c5355d88d147b66a753bb9a5 Mon Sep 17 00:00:00 2001
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Tue, 13 Mar 2018 19:36:58 +0100
+Subject: [PATCH] spi: bcm-qspi: fIX some error handling paths
+
+For some reason, commit c0368e4db4a3 ("spi: bcm-qspi: Fix use after free
+in bcm_qspi_probe() in error path") has updated some gotos, but not all of
+them.
+
+This looks spurious, so fix it.
+
+Fixes: fa236a7ef240 ("spi: bcm-qspi: Add Broadcom MSPI driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ drivers/spi/spi-bcm-qspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/abx500-core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mfd/abx500-core.c b/drivers/mfd/abx500-core.c
-index 17176e91cbd0..f282d39a5917 100644
---- a/drivers/mfd/abx500-core.c
-+++ b/drivers/mfd/abx500-core.c
-@@ -65,7 +65,7 @@ int abx500_set_register_interruptible(struct device *dev, u8 bank, u8 reg,
- 	struct abx500_ops *ops;
- 
- 	lookup_ops(dev->parent, &ops);
--	if ((ops != NULL) && (ops->set_register != NULL))
-+	if (ops && ops->set_register)
- 		return ops->set_register(dev, bank, reg, value);
- 	else
- 		return -ENOTSUPP;
-@@ -78,7 +78,7 @@ int abx500_get_register_interruptible(struct device *dev, u8 bank, u8 reg,
- 	struct abx500_ops *ops;
- 
- 	lookup_ops(dev->parent, &ops);
--	if ((ops != NULL) && (ops->get_register != NULL))
-+	if (ops && ops->get_register)
- 		return ops->get_register(dev, bank, reg, value);
- 	else
- 		return -ENOTSUPP;
-@@ -91,7 +91,7 @@ int abx500_get_register_page_interruptible(struct device *dev, u8 bank,
- 	struct abx500_ops *ops;
- 
- 	lookup_ops(dev->parent, &ops);
--	if ((ops != NULL) && (ops->get_register_page != NULL))
-+	if (ops && ops->get_register_page)
- 		return ops->get_register_page(dev, bank,
- 			first_reg, regvals, numregs);
- 	else
-@@ -105,7 +105,7 @@ int abx500_mask_and_set_register_interruptible(struct device *dev, u8 bank,
- 	struct abx500_ops *ops;
- 
- 	lookup_ops(dev->parent, &ops);
--	if ((ops != NULL) && (ops->mask_and_set_register != NULL))
-+	if (ops && ops->mask_and_set_register)
- 		return ops->mask_and_set_register(dev, bank,
- 			reg, bitmask, bitvalues);
- 	else
-@@ -118,7 +118,7 @@ int abx500_get_chip_id(struct device *dev)
- 	struct abx500_ops *ops;
- 
- 	lookup_ops(dev->parent, &ops);
--	if ((ops != NULL) && (ops->get_chip_id != NULL))
-+	if (ops && ops->get_chip_id)
- 		return ops->get_chip_id(dev);
- 	else
- 		return -ENOTSUPP;
-@@ -130,7 +130,7 @@ int abx500_event_registers_startup_state_get(struct device *dev, u8 *event)
- 	struct abx500_ops *ops;
- 
- 	lookup_ops(dev->parent, &ops);
--	if ((ops != NULL) && (ops->event_registers_startup_state_get != NULL))
-+	if (ops && ops->event_registers_startup_state_get)
- 		return ops->event_registers_startup_state_get(dev, event);
- 	else
- 		return -ENOTSUPP;
-@@ -142,7 +142,7 @@ int abx500_startup_irq_enabled(struct device *dev, unsigned int irq)
- 	struct abx500_ops *ops;
- 
- 	lookup_ops(dev->parent, &ops);
--	if ((ops != NULL) && (ops->startup_irq_enabled != NULL))
-+	if (ops && ops->startup_irq_enabled)
- 		return ops->startup_irq_enabled(dev, irq);
- 	else
- 		return -ENOTSUPP;
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index a172ab299e80..1596d35498c5 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -1247,7 +1247,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
+ 		qspi->base[MSPI]  = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(qspi->base[MSPI])) {
+ 			ret = PTR_ERR(qspi->base[MSPI]);
+-			goto qspi_probe_err;
++			goto qspi_resource_err;
+ 		}
+ 	} else {
+ 		goto qspi_resource_err;
+@@ -1258,7 +1258,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
+ 		qspi->base[BSPI]  = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(qspi->base[BSPI])) {
+ 			ret = PTR_ERR(qspi->base[BSPI]);
+-			goto qspi_probe_err;
++			goto qspi_resource_err;
+ 		}
+ 		qspi->bspi_mode = true;
+ 	} else {
 -- 
 2.16.2
 
