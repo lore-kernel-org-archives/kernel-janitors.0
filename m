@@ -1,37 +1,81 @@
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Date: Wed, 28 Mar 2018 13:07:21 +0000
-Subject: RE: [PATCH -next] efi/libstub/tpm: efi_retrieve_tpm2_eventlog_1_2() can be static
-Message-Id: <6AADFAC011213A4C87B956458587ADB4013BC898@dggemi507-mbx.china.huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Mar 2018 13:36:56 +0000
+Subject: [net:master 128/139] drivers/net/can/cc770/cc770.c:712 cc770_tx_interrupt() error: dereferencing fre
+Message-Id: <20180315133656.a5scx5uizlotiifm@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAKv+Gu8VFYEjo_Uy44QARj3j3WEtayyh92+Db=np=ig-z+PZ2g@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8VFYEjo_Uy44QARj3j3WEtayyh92+Db=np=ig-z+PZ2g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PiANCj4gT24gMjggTWFyY2ggMjAxOCBhdCAxNDo1MiwgV2VpIFlvbmdqdW4gPHdlaXlvbmdqdW4x
-QGh1YXdlaS5jb20+IHdyb3RlOg0KPiA+IEZpeGVzIHRoZSBmb2xsb3dpbmcgc3BhcnNlIHdhcm5p
-bmc6DQo+ID4NCj4gPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3RwbS5jOjYyOjY6IHdh
-cm5pbmc6DQo+ID4gIHN5bWJvbCAnZWZpX3JldHJpZXZlX3RwbTJfZXZlbnRsb2dfMV8yJyB3YXMg
-bm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUNCj4gc3RhdGljPw0KPiA+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogV2VpIFlvbmdqdW4gPHdlaXlvbmdqdW4xQGh1YXdlaS5jb20+DQo+ID4gLS0tDQo+ID4g
-IGRyaXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIvdHBtLmMgfCAyICstDQo+ID4gIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIvdHBtLmMNCj4gYi9kcml2ZXJzL2Zpcm13
-YXJlL2VmaS9saWJzdHViL3RwbS5jDQo+ID4gaW5kZXggOWQwOGNlYS4uY2FhMzdhNiAxMDA2NDQN
-Cj4gPiAtLS0gYS9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3RwbS5jDQo+ID4gKysrIGIv
-ZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi90cG0uYw0KPiA+IEBAIC01OSw3ICs1OSw3IEBA
-IHZvaWQNCj4gZWZpX2VuYWJsZV9yZXNldF9hdHRhY2tfbWl0aWdhdGlvbihlZmlfc3lzdGVtX3Rh
-YmxlX3QgKnN5c190YWJsZV9hcmcpDQo+ID4NCj4gPiAgI2VuZGlmDQo+ID4NCj4gPiAtdm9pZCBl
-ZmlfcmV0cmlldmVfdHBtMl9ldmVudGxvZ18xXzIoZWZpX3N5c3RlbV90YWJsZV90DQo+ICpzeXNf
-dGFibGVfYXJnKQ0KPiA+ICtzdGF0aWMgdm9pZCBlZmlfcmV0cmlldmVfdHBtMl9ldmVudGxvZ18x
-XzIoZWZpX3N5c3RlbV90YWJsZV90DQo+ICpzeXNfdGFibGVfYXJnKQ0KPiA+ICB7DQo+ID4gICAg
-ICAgICBlZmlfZ3VpZF90IHRjZzJfZ3VpZCA9IEVGSV9UQ0cyX1BST1RPQ09MX0dVSUQ7DQo+ID4g
-ICAgICAgICBlZmlfZ3VpZF90IGxpbnV4X2V2ZW50bG9nX2d1aWQgPSBMSU5VWF9FRklfVFBNX0VW
-RU5UX0xPR19HVUlEOw0KPiA+DQo+IA0KPiBQbGVhc2UgYmUgcGF0aWVudCBhbmQgZG9uJ3Qgc2Vu
-ZCB0aGUgZXhhY3Qgc2FtZSBwYXRjaCB0d2ljZSB3aXRob3V0DQo+IGFueSBtZW50aW9uIG9mIGl0
-IGluIHRoZSBjb21taXQgbG9nLg0KPiANCj4gVGhpcyB3aWxsIGJlIHBpY2tlZCB1cCBhZnRlciB0
-aGUgbmV4dCBtZXJnZSB3aW5kb3cgY2xvc2VzLg0KDQoNClNvcnJ5LCB0aGlzIG1haWwgd2FzIHNl
-bnQgYnkgbXkgbWlzdGFrZSwgSSB3aWxsIHBheSBtb3JlIGF0dGVudGlvbiBsYXRlci4NCg0KUmVn
-YXJkcw0KDQo
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git master
+head:   cf55612a945039476abfd73e39064b2e721c3272
+commit: 746201235b3f876792099079f4c6fea941d76183 [128/139] can: cc770: Fix queue stall & dropped RTR reply
+
+New smatch warnings:
+drivers/net/can/cc770/cc770.c:712 cc770_tx_interrupt() error: dereferencing freed memory 'priv->tx_skb'
+
+# https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?idt6201235b3f876792099079f4c6fea941d76183
+git remote add net https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git
+git remote update net
+git checkout 746201235b3f876792099079f4c6fea941d76183
+vim +712 drivers/net/can/cc770/cc770.c
+
+2a367c3a Wolfgang Grandegger 2011-11-30  671  
+2a367c3a Wolfgang Grandegger 2011-11-30  672  static void cc770_tx_interrupt(struct net_device *dev, unsigned int o)
+2a367c3a Wolfgang Grandegger 2011-11-30  673  {
+2a367c3a Wolfgang Grandegger 2011-11-30  674  	struct cc770_priv *priv = netdev_priv(dev);
+2a367c3a Wolfgang Grandegger 2011-11-30  675  	struct net_device_stats *stats = &dev->stats;
+2a367c3a Wolfgang Grandegger 2011-11-30  676  	unsigned int mo = obj2msgobj(o);
+74620123 Andri Yngvason      2018-03-14  677  	struct can_frame *cf;
+74620123 Andri Yngvason      2018-03-14  678  	u8 ctrl1;
+74620123 Andri Yngvason      2018-03-14  679  
+74620123 Andri Yngvason      2018-03-14  680  	ctrl1 = cc770_read_reg(priv, msgobj[mo].ctrl1);
+2a367c3a Wolfgang Grandegger 2011-11-30  681  
+2a367c3a Wolfgang Grandegger 2011-11-30  682  	cc770_write_reg(priv, msgobj[mo].ctrl0,
+2a367c3a Wolfgang Grandegger 2011-11-30  683  			MSGVAL_RES | TXIE_RES | RXIE_RES | INTPND_RES);
+74620123 Andri Yngvason      2018-03-14  684  	cc770_write_reg(priv, msgobj[mo].ctrl1,
+74620123 Andri Yngvason      2018-03-14  685  			RMTPND_RES | TXRQST_RES | MSGLST_RES | NEWDAT_RES);
+2a367c3a Wolfgang Grandegger 2011-11-30  686  
+74620123 Andri Yngvason      2018-03-14  687  	if (unlikely(!priv->tx_skb)) {
+74620123 Andri Yngvason      2018-03-14  688  		netdev_err(dev, "missing tx skb in tx interrupt\n");
+74620123 Andri Yngvason      2018-03-14  689  		return;
+74620123 Andri Yngvason      2018-03-14  690  	}
+74620123 Andri Yngvason      2018-03-14  691  
+74620123 Andri Yngvason      2018-03-14  692  	if (unlikely(ctrl1 & MSGLST_SET)) {
+74620123 Andri Yngvason      2018-03-14  693  		stats->rx_over_errors++;
+74620123 Andri Yngvason      2018-03-14  694  		stats->rx_errors++;
+74620123 Andri Yngvason      2018-03-14  695  	}
+74620123 Andri Yngvason      2018-03-14  696  
+74620123 Andri Yngvason      2018-03-14  697  	/* When the CC770 is sending an RTR message and it receives a regular
+74620123 Andri Yngvason      2018-03-14  698  	 * message that matches the id of the RTR message, it will overwrite the
+74620123 Andri Yngvason      2018-03-14  699  	 * outgoing message in the TX register. When this happens we must
+74620123 Andri Yngvason      2018-03-14  700  	 * process the received message and try to transmit the outgoing skb
+74620123 Andri Yngvason      2018-03-14  701  	 * again.
+74620123 Andri Yngvason      2018-03-14  702  	 */
+74620123 Andri Yngvason      2018-03-14  703  	if (unlikely(ctrl1 & NEWDAT_SET)) {
+74620123 Andri Yngvason      2018-03-14  704  		cc770_rx(dev, mo, ctrl1);
+74620123 Andri Yngvason      2018-03-14  705  		cc770_tx(dev, mo);
+74620123 Andri Yngvason      2018-03-14  706  		return;
+74620123 Andri Yngvason      2018-03-14  707  	}
+74620123 Andri Yngvason      2018-03-14  708  
+74620123 Andri Yngvason      2018-03-14  709  	can_put_echo_skb(priv->tx_skb, dev, 0);
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This frees priv->tx_skb on a couple error paths.  We should just do the
+accounting earlier.
+
+2a367c3a Wolfgang Grandegger 2011-11-30  710  	can_get_echo_skb(dev, 0);
+74620123 Andri Yngvason      2018-03-14  711  
+74620123 Andri Yngvason      2018-03-14 @712  	cf = (struct can_frame *)priv->tx_skb->data;
+74620123 Andri Yngvason      2018-03-14  713  	stats->tx_bytes += cf->can_dlc;
+74620123 Andri Yngvason      2018-03-14  714  	stats->tx_packets++;
+74620123 Andri Yngvason      2018-03-14  715  
+74620123 Andri Yngvason      2018-03-14  716  	priv->tx_skb = NULL;
+74620123 Andri Yngvason      2018-03-14  717  
+2a367c3a Wolfgang Grandegger 2011-11-30  718  	netif_wake_queue(dev);
+2a367c3a Wolfgang Grandegger 2011-11-30  719  }
+2a367c3a Wolfgang Grandegger 2011-11-30  720  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
