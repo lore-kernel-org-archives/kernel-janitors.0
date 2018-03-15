@@ -1,41 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 05 Mar 2018 12:38:53 +0000
-Subject: [PATCH][next] regulator: core: use NULL rather than 0 for cells_name argument
-Message-Id: <20180305123853.25750-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Mar 2018 11:07:56 +0000
+Subject: Re: [PATCH] scsi: cxgb4i: potential array overflow in t4_uld_rx_handler()
+Message-Id: <20180315110756.4arue7bak54vef7k@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+What happened to this one?
 
-The 3rd paramater is a pointer type and should be NULL rather than a
-zero, clean up spare warning:
+regards,
+dan carpenter
 
-drivers/regulator/of_regulator.c:424:75: warning: Using plain integer
-as NULL pointer
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/of_regulator.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index cf3210c3fae6..4dfa2aca7c73 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -421,7 +421,8 @@ int of_get_n_coupled(struct regulator_dev *rdev)
- 	int n_phandles;
- 
- 	n_phandles = of_count_phandle_with_args(node,
--						"regulator-coupled-with", 0);
-+						"regulator-coupled-with",
-+						NULL);
- 
- 	return (n_phandles > 0) ? n_phandles : 0;
- }
--- 
-2.15.1
-
+On Wed, Nov 29, 2017 at 02:42:20PM +0300, Dan Carpenter wrote:
+> The story is that Smatch marks skb->data as untrusted and so it
+> complains about this code:
+> 
+> 	drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2111 t4_uld_rx_handler()
+> 	error: buffer overflow 'cxgb4i_cplhandlers' 239 <= 255.
+> 
+> I don't know the code very well, but it looks like a reasonable warning
+> message.  Let's address it by adding a sanity check to make sure "opc"
+> is within bounds.
+> 
+> Fixes: bbc02c7e9d34 ("cxgb4: Add register, message, and FW definitions")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+> index 266eddf17a99..94b2d5660a07 100644
+> --- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+> +++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+> @@ -2108,12 +2108,12 @@ static int t4_uld_rx_handler(void *handle, const __be64 *rsp,
+>  	log_debug(1 << CXGBI_DBG_TOE,
+>  		"cdev %p, opcode 0x%x(0x%x,0x%x), skb %p.\n",
+>  		 cdev, opc, rpl->ot.opcode_tid, ntohl(rpl->ot.opcode_tid), skb);
+> -	if (cxgb4i_cplhandlers[opc])
+> -		cxgb4i_cplhandlers[opc](cdev, skb);
+> -	else {
+> +	if (opc >= ARRAY_SIZE(cxgb4i_cplhandlers) || !cxgb4i_cplhandlers[opc]) {
+>  		pr_err("No handler for opcode 0x%x.\n", opc);
+>  		__kfree_skb(skb);
+> +		return 0;
+>  	}
+> +	cxgb4i_cplhandlers[opc](cdev, skb);
+>  	return 0;
+>  nomem:
+>  	log_debug(1 << CXGBI_DBG_TOE, "OOM bailing out.\n");
