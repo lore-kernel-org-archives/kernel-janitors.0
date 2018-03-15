@@ -1,45 +1,38 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Tue, 13 Mar 2018 09:36:26 +0000
-Subject: Re: [PATCH 1/3] drm/meson: Fix an un-handled error path in 'meson_drv_bind_master()'
-Message-Id: <48544583-2bf9-0904-b848-ec4194200af6@baylibre.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Mar 2018 09:03:46 +0000
+Subject: [bug report] perf/x86/intel: Add INST_RETIRED.ALL workarounds
+Message-Id: <20180315090346.GA23080@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
- <6cbf3d70ac3904489c7194c895225c4103aebb96.1520885192.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6cbf3d70ac3904489c7194c895225c4103aebb96.1520885192.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, airlied@linux.ie, carlo@caione.org, khilman@baylibre.com
-Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 12/03/2018 21:15, Christophe JAILLET wrote:
-> 'drm_vblank_init()' can fail. So handle this (unlikely) error.
-> 
-> Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpu/drm/meson/meson_drv.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-> index f9ad0e960263..02b0886debc0 100644
-> --- a/drivers/gpu/drm/meson/meson_drv.c
-> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -222,7 +222,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->  
->  	priv->vsync_irq = platform_get_irq(pdev, 0);
->  
-> -	drm_vblank_init(drm, 1);
-> +	ret = drm_vblank_init(drm, 1);
-> +	if (ret)
-> +		goto free_drm;
-> +
->  	drm_mode_config_init(drm);
->  	drm->mode_config.max_width = 3840;
->  	drm->mode_config.max_height = 2160;
-> 
+Hello Andi Kleen,
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+The patch 294fe0f52a44: "perf/x86/intel: Add INST_RETIRED.ALL
+workarounds" from Feb 17, 2015, leads to the following static checker
+warning:
 
-Thanks,
-Neil
+	arch/x86/events/intel/core.c:3213 bdw_limit_period()
+	warn: was expecting a 64 bit value instead of '63'
+
+arch/x86/events/intel/core.c
+  3207  static u64 bdw_limit_period(struct perf_event *event, u64 left)
+                                                              ^^^^^^^^
+  3208  {
+  3209          if ((event->hw.config & INTEL_ARCH_EVENT_MASK) =
+  3210                          X86_CONFIG(.event=0xc0, .umask=0x01)) {
+  3211                  if (left < 128)
+  3212                          left = 128;
+  3213                  left &= ~0x3fu;
+                        ^^^^^^^^^^^^^^
+You're clearing the high 32 bits as well as the low 6.  It should be
+~0x3full.
+
+  3214          }
+  3215          return left;
+  3216  }
+
+regards,
+dan carpenter
