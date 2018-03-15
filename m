@@ -1,36 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Mar 2018 07:37:19 +0000
-Subject: [PATCH] rtc: mxc_v2: unlock on error in mxc_rtc_set_alarm()
-Message-Id: <20180314073719.GA2470@mwanda>
+From: =?iso-8859-1?Q?Patrick_Br=FCnn?= <P.Bruenn@beckhoff.com>
+Date: Thu, 15 Mar 2018 11:12:04 +0000
+Subject: RE: [PATCH] rtc: mxc_v2: unlock on error in mxc_rtc_set_alarm()
+Message-Id: <3BB206AB2B1BD448954845CE6FF69A8E01F81FD198@nt-mail04>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180314073719.GA2470@mwanda>
+In-Reply-To: <20180314073719.GA2470@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Patrick Bruenn <p.bruenn@beckhoff.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>, Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We need to unlock if time is more than U32_MAX.
+>From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+>Sent: Mittwoch, 14. M=E4rz 2018 08:37
+>
+>We need to unlock if time is more than U32_MAX.
+>
+you are right, that's a bug.
+But I would move the mxc_rtc_lock() entirely behind the (time > U32_MAX) ch=
+eck. IMHO that would make the code even cleaner. sorry for broken patch:
 
-Fixes: 83c880f79e88 ("rtc: add mxc driver for i.MX53 SRTC")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>       const time64_t time =3D rtc_tm_to_time64(&alrm->time);
+>       struct mxc_rtc_data *pdata =3D dev_get_drvdata(dev);
+>-      int ret =3D mxc_rtc_lock(pdata);
+>+      int ret;
+>-
+>-      if (ret)
+>-              return ret;
+>
+>       if (time > U32_MAX) {
+>               dev_err(dev, "Hopefully I am out of service by then :-(\n");
+>               return -EINVAL;
+>       }
+>+
+>+      ret =3D mxc_rtc_lock(pdata);
+>+      if (ret)
+>+              return ret;
 
-diff --git a/drivers/rtc/rtc-mxc_v2.c b/drivers/rtc/rtc-mxc_v2.c
-index 9e14efb990b2..90c9ab68688f 100644
---- a/drivers/rtc/rtc-mxc_v2.c
-+++ b/drivers/rtc/rtc-mxc_v2.c
-@@ -243,12 +243,14 @@ static int mxc_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- {
- 	const time64_t time = rtc_tm_to_time64(&alrm->time);
- 	struct mxc_rtc_data *pdata = dev_get_drvdata(dev);
--	int ret = mxc_rtc_lock(pdata);
-+	int ret;
- 
-+	ret = mxc_rtc_lock(pdata);
- 	if (ret)
- 		return ret;
- 
- 	if (time > U32_MAX) {
-+		mxc_rtc_unlock(pdata);
- 		dev_err(dev, "Hopefully I am out of service by then :-(\n");
- 		return -EINVAL;
- 	}
+---
+Beckhoff Automation GmbH & Co. KG | Managing Director: Dipl. Phys. Hans Bec=
+khoff
+Registered office: Verl, Germany | Register court: Guetersloh HRA 7075
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
