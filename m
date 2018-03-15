@@ -1,72 +1,79 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 19 Mar 2018 01:03:20 +0000
-Subject: Applied "ASoC: wm8400: Use devm_snd_soc_register_component()" to the asoc tree
-Message-Id: <20180319010320.46B5E440079@finisterre.ee.mobilebroadband>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Mar 2018 09:34:55 +0000
+Subject: Re: [media] ov5645: Move an error code assignment in ov5645_probe()
+Message-Id: <21b0f618-4f54-633a-6411-0790628d6498@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
+References: <4efad917-ca08-f257-e9a1-b5bcb7df2df2@users.sourceforge.net>
+ <20180314221702.5rtdttyqjcpysjkd@kekkonen.localdomain>
+In-Reply-To: <20180314221702.5rtdttyqjcpysjkd@kekkonen.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, kernel-janitors@vger.kernel.org, patches@opensource.cirrus.com, alsa-devel@alsa-project.orgWeiYongjunweiyongjun1@huawei.com@alsa-project.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
+Cc: Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Todor Tomov <todor.tomov@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+>> Move an assignment for a specific error code so that it is stored only once
+>> in this function implementation.
+>>
+>> This issue was detected by using the Coccinelle software.
+> 
+> How?
 
-   ASoC: wm8400: Use devm_snd_soc_register_component()
+Would you like to experiment a bit more with the following approach
+for the semantic patch language?
 
-has been applied to the asoc tree at
+show_same_statements3.cocci:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 822e70a8210b7038e1f54c43ca6c76c3b9f89803 Mon Sep 17 00:00:00 2001
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Date: Fri, 16 Mar 2018 07:32:07 +0000
-Subject: [PATCH] ASoC: wm8400: Use devm_snd_soc_register_component()
-
-Since the remove callback is removed, the snd_soc_unregister_component()
-is missing when remove device. Using devm_snd_soc_register_component()
-instead of snd_soc_register_component().
-
-Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/wm8400.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/wm8400.c b/sound/soc/codecs/wm8400.c
-index c237365d1184..57b22065a45d 100644
---- a/sound/soc/codecs/wm8400.c
-+++ b/sound/soc/codecs/wm8400.c
-@@ -1343,7 +1343,7 @@ static const struct snd_soc_component_driver soc_component_dev_wm8400 = {
- 
- static int wm8400_probe(struct platform_device *pdev)
+@duplicated_code@
+identifier work;
+statement s1, s2;
+type T;
+@@
+ T work(...)
  {
--	return snd_soc_register_component(&pdev->dev,
-+	return devm_snd_soc_register_component(&pdev->dev,
- 			&soc_component_dev_wm8400,
- 			&wm8400_dai, 1);
+ ... when any
+*if ((...) < 0)
+*{
+    ...
+*   s1
+*   s2
+*}
+ ... when any
+*if ((...) < 0)
+*{
+    ...
+*   s1
+*   s2
+*}
+ ... when any
  }
--- 
-2.16.2
 
+
+>> @@ -1334,6 +1329,7 @@ static int ov5645_probe(struct i2c_client *client,
+>>  
+>>  power_down:
+>>  	ov5645_s_power(&ov5645->sd, false);
+>> +	ret = -ENODEV;
+> 
+> I don't think this is where people would expect you to set the error code
+> in general.
+
+This can be. - The view depends on some factors.
+
+
+> It should rather take place before goto, not after it.
+
+I proposed another software design direction.
+
+
+> That'd mean another variable,
+
+To which detail do you refer here?
+
+
+> and I'm not convinced the result would improve the driver.
+
+Can you see the relevance of a small code reduction in this function?
+
+Regards,
+Markus
