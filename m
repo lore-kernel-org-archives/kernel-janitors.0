@@ -1,28 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 27 Mar 2018 08:03:22 +0000
-Subject: Re: [PATCH v2 00/17] MFD: Adjustments for several function implementations
-Message-Id: <20180327080322.eofyszx6vxxulcsz@dell>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 16 Mar 2018 07:32:07 +0000
+Subject: [PATCH -next] ASoC: wm8400: Use devm_snd_soc_register_component()
+Message-Id: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
-In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: kernel-janitors@vger.kernel.org, patches@opensource.cirrus.com, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
-On Fri, 09 Mar 2018, SF Markus Elfring wrote:
+Since the remove callback is removed, the snd_soc_unregister_component()
+is missing when remove device. Using devm_snd_soc_register_component()
+instead of snd_soc_register_component().
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 9 Mar 2018 10:24:42 +0100
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
+Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/codecs/wm8400.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All applied, thanks.
+diff --git a/sound/soc/codecs/wm8400.c b/sound/soc/codecs/wm8400.c
+index c237365..57b2206 100644
+--- a/sound/soc/codecs/wm8400.c
++++ b/sound/soc/codecs/wm8400.c
+@@ -1343,7 +1343,7 @@ static void  wm8400_component_remove(struct snd_soc_component *component)
+ 
+ static int wm8400_probe(struct platform_device *pdev)
+ {
+-	return snd_soc_register_component(&pdev->dev,
++	return devm_snd_soc_register_component(&pdev->dev,
+ 			&soc_component_dev_wm8400,
+ 			&wm8400_dai, 1);
+ }
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
