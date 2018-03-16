@@ -1,35 +1,28 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 16 Mar 2018 07:32:07 +0000
-Subject: [PATCH -next] ASoC: wm8400: Use devm_snd_soc_register_component()
-Message-Id: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Date: Fri, 16 Mar 2018 09:21:50 +0000
+Subject: Re: [PATCH -next] ASoC: wm8400: Use devm_snd_soc_register_component()
+Message-Id: <20180316092150.osexp6amtg3utvhm@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: kernel-janitors@vger.kernel.org, patches@opensource.cirrus.com, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 
-Since the remove callback is removed, the snd_soc_unregister_component()
-is missing when remove device. Using devm_snd_soc_register_component()
-instead of snd_soc_register_component().
+On Fri, Mar 16, 2018 at 07:32:07AM +0000, Wei Yongjun wrote:
+> Since the remove callback is removed, the snd_soc_unregister_component()
+> is missing when remove device. Using devm_snd_soc_register_component()
+> instead of snd_soc_register_component().
+> 
+> Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- sound/soc/codecs/wm8400.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for spotting this.
 
-diff --git a/sound/soc/codecs/wm8400.c b/sound/soc/codecs/wm8400.c
-index c237365..57b2206 100644
---- a/sound/soc/codecs/wm8400.c
-+++ b/sound/soc/codecs/wm8400.c
-@@ -1343,7 +1343,7 @@ static void  wm8400_component_remove(struct snd_soc_component *component)
- 
- static int wm8400_probe(struct platform_device *pdev)
- {
--	return snd_soc_register_component(&pdev->dev,
-+	return devm_snd_soc_register_component(&pdev->dev,
- 			&soc_component_dev_wm8400,
- 			&wm8400_dai, 1);
- }
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
+Thanks,
+Charles
