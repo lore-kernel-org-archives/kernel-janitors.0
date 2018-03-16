@@ -1,39 +1,33 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 14 Mar 2018 21:09:34 +0000
-Subject: [PATCH] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
-Message-Id: <7fd57a4e7f7a41dccf55430cbc43de3b0a7f7826.1521061530.git.christophe.jaillet@wanadoo.fr>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 16 Mar 2018 19:27:12 +0000
+Subject: Re: [PATCH] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
+Message-Id: <20180316.152712.1584177628223195375.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7fd57a4e7f7a41dccf55430cbc43de3b0a7f7826.1521061530.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7fd57a4e7f7a41dccf55430cbc43de3b0a7f7826.1521061530.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-If the optional regulator is deferrred, we must release some resources.
-They will be re-allocated when the probe function will be called again.
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 14 Mar 2018 22:09:34 +0100
 
-Fixes: 6eacf31139bf ("ethernet: arc: Add support for Rockchip SoC layer device tree bindings")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/arc/emac_rockchip.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
+> index 16f9bee992fe..8ee9dfd0e363 100644
+> --- a/drivers/net/ethernet/arc/emac_rockchip.c
+> +++ b/drivers/net/ethernet/arc/emac_rockchip.c
+> @@ -169,8 +169,10 @@ static int emac_rockchip_probe(struct platform_device *pdev)
+>  	/* Optional regulator for PHY */
+>  	priv->regulator = devm_regulator_get_optional(dev, "phy");
+>  	if (IS_ERR(priv->regulator)) {
+> -		if (PTR_ERR(priv->regulator) = -EPROBE_DEFER)
+> -			return -EPROBE_DEFER;
+> +		if (PTR_ERR(priv->regulator) = -EPROBE_DEFER) {
+> +			ret = -EPROBE_DEFER;
+> +			goto out_clk_disable;
+> +		}
 
-diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
-index 16f9bee992fe..8ee9dfd0e363 100644
---- a/drivers/net/ethernet/arc/emac_rockchip.c
-+++ b/drivers/net/ethernet/arc/emac_rockchip.c
-@@ -169,8 +169,10 @@ static int emac_rockchip_probe(struct platform_device *pdev)
- 	/* Optional regulator for PHY */
- 	priv->regulator = devm_regulator_get_optional(dev, "phy");
- 	if (IS_ERR(priv->regulator)) {
--		if (PTR_ERR(priv->regulator) = -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(priv->regulator) = -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto out_clk_disable;
-+		}
- 		dev_err(dev, "no regulator found\n");
- 		priv->regulator = NULL;
- 	}
--- 
-2.14.1
+Please build test your changes.
 
+There is no 'ret' variable in this function, perhaps you meant 'err'.
