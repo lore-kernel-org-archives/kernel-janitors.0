@@ -1,7 +1,7 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Thu, 15 Mar 2018 09:30:08 +0000
+From: Andi Kleen <ak@linux.intel.com>
+Date: Fri, 16 Mar 2018 14:54:19 +0000
 Subject: Re: [bug report] perf/x86/intel: Add INST_RETIRED.ALL workarounds
-Message-Id: <530597929.71266.1521106208780@ox-groupware.bfs.de>
+Message-Id: <20180316145419.GK13724@tassilo.jf.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180315090346.GA23080@mwanda>
 In-Reply-To: <20180315090346.GA23080@mwanda>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Am 15.03.2018 10:03, schrieb Dan Carpenter:
+On Thu, Mar 15, 2018 at 12:03:46PM +0300, Dan Carpenter wrote:
 > Hello Andi Kleen,
 > 
 > The patch 294fe0f52a44: "perf/x86/intel: Add INST_RETIRED.ALL
@@ -33,19 +33,9 @@ Am 15.03.2018 10:03, schrieb Dan Carpenter:
 > You're clearing the high 32 bits as well as the low 6.  It should be
 > ~0x3full.
 
-please use 0x3fULL
-i tend to read 0x3full as 0x3"full" i guess others will have the same problem
-and it is common practise to use uppercase characters.
+Thanks. Looks good.
 
-just my 2 cents,
+Please submit the patch. I don't think it will make much difference
+in practice though because periods are rarely >32bit.
 
-re
- wh 
-
-> 
->   3214          }
->   3215          return left;
->   3216  }
-> 
-> regards,
-> dan carpenter
+-Andi
