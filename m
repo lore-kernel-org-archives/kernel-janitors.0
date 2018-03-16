@@ -1,26 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 24 Mar 2018 14:25:02 +0000
-Subject: Re: [PATCH v2 0/3] mfd/abx500-core: Adjustments for eight function implementations
-Message-Id: <CACRpkdaGNJX7vHXHEBSqgZJx0CnB=SpLnnmt9k7zbRrnO2+cAA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Mar 2018 12:10:15 +0000
+Subject: [PATCH v2] platform/x86: Fix memory leaks in build_tokens_sysfs()
+Message-Id: <20180316121015.GA14282@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
-In-Reply-To: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 5:00 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+We're freeing "value_name" which is NULL, so that's a no-op, but we
+intended to free "location_name" instead.  And then we don't free the
+names in token_location_attrs[0] and token_value_attrs[0].
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
->
-> Three update suggestions were taken into account
-> from static source code analysis.
+Fixes: 33b9ca1e53b4 ("platform/x86: dell-smbios: Add a sysfs interface for SMBIOS tokens")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: style changes (move from a for loop to a while loop) and this driver
+    has been renamed.
 
-The series:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+index 2485c80a9fdd..ec31d149f82e 100644
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -514,7 +514,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
+ 		continue;
+ 
+ loop_fail_create_value:
+-		kfree(value_name);
++		kfree(location_name);
+ 		goto out_unwind_strings;
+ 	}
+ 	smbios_attribute_group.attrs = token_attrs;
+@@ -525,7 +525,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
+ 	return 0;
+ 
+ out_unwind_strings:
+-	for (i = i-1; i > 0; i--) {
++	while (--i >= 0) {
+ 		kfree(token_location_attrs[i].attr.name);
+ 		kfree(token_value_attrs[i].attr.name);
+ 	}
