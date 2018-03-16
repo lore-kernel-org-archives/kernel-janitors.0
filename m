@@ -1,54 +1,45 @@
-From: James Williams <johnsonmakuofficeuba@gmail.com>
-Date: Thu, 08 Mar 2018 06:51:28 +0000
-Subject: Urgent response
-Message-Id: <CAF94_XpU7nf5E0bGSLZN-2W+G1cPYrcAswpznWNnJ=vpjmdMGg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Mar 2018 14:33:01 +0000
+Subject: [PATCH] HSI: ssi_protocol: fix spelling mistake: "trigerred" -> "triggered"
+Message-Id: <20180316143301.11599-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Attn: Beneficiary,
+From: Colin Ian King <colin.king@canonical.com>
 
-We have contacted the Federal Ministry of Finance on your Behalf and
-they have brought a solution to your problem by coordinating your
-payment in total (10,000,000.00) Ten Million Dollars in an atm card
-which you can use to withdraw money from any ATM MACHINE CENTER
-anywhere in the world with a maximum of 10000 Dollars daily. You now
-have the lawful right to claim your fund in an atm card. Since the
-Federal Bureau of Investigation is involved in this transaction, you
-have to be rest assured for this is 100% risk free it is our duty to
-protect the American Citizens, European Citizens, Asian Citizen. All I
-want you to do is to contact the atm card CENTER Via email or call the
-office telephone number one of the Consultant will assist you for
-their requirements to proceed and procure your Approval Slip on your
-behalf.
+Trivial fix to spelling mistake in dev_err error message text.
 
-CONTACT INFORMATION
-NAME: James  Williams
-EMAIL: paymasterofficedesk@gmail.com
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hsi/clients/ssi_protocol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_protocol.c
+index 9b167bc6eee4..0dba737327c6 100644
+--- a/drivers/hsi/clients/ssi_protocol.c
++++ b/drivers/hsi/clients/ssi_protocol.c
+@@ -495,7 +495,7 @@ static void ssip_rx_wd(struct timer_list *t)
+ 	struct ssi_protocol *ssi = from_timer(ssi, t, rx_wd);
+ 	struct hsi_client *cl = ssi->cl;
+ 
+-	dev_err(&cl->device, "Watchdog trigerred\n");
++	dev_err(&cl->device, "Watchdog triggered\n");
+ 	ssip_error(cl);
+ }
+ 
+@@ -504,7 +504,7 @@ static void ssip_tx_wd(struct timer_list *t)
+ 	struct ssi_protocol *ssi = from_timer(ssi, t, tx_wd);
+ 	struct hsi_client *cl = ssi->cl;
+ 
+-	dev_err(&cl->device, "Watchdog trigerred\n");
++	dev_err(&cl->device, "Watchdog triggered\n");
+ 	ssip_error(cl);
+ }
+ 
+-- 
+2.15.1
 
-Do contact us with your details:
-
-Full name//
-Address// Age//
- Telephone Numbers//
-Occupation//
- Your Country//
-Bank Details//
-
-So your files would be updated after which the Delivery of your
-atm card will be affected to your designated home Address without any
-further delay and the bank will transfer your funds in total
-(10,000,000.00) Ten Million Dollars to your Bank account. We
-will reply you with the secret code (1600 atm card). We advice you get
-back to the payment office after you have contacted the ATM SWIFT CARD
-CENTER and we do await your response so we can move on with our
-Investigation and make sure your ATM SWIFT CARD gets to you.
-
-
-Best Regards
-James Williams
-Paymaster General
-Federal Republic Of Nigeri
