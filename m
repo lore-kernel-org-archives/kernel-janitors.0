@@ -1,7 +1,7 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Fri, 16 Mar 2018 21:52:38 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Mar 2018 04:33:15 +0000
 Subject: Re: [PATCH v2] platform/x86: Fix memory leaks in build_tokens_sysfs()
-Message-Id: <20180316215238.GA41192@localhost.localdomain>
+Message-Id: <20180317043315.cahfrmy63pztquhz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180316121015.GA14282@mwanda>
 In-Reply-To: <20180316121015.GA14282@mwanda>
@@ -45,10 +45,14 @@ On Fri, Mar 16, 2018 at 08:35:44PM +0200, Andy Shevchenko wrote:
 > Simple
 > 
 > while (i--) {
+> 
+> please.
+> 
+> Darren or me can fix this when apply, if you agree on the change.
+> 
 
-Yeah, i starts at 0 and is not decremented anywhere but here, so i--
-seems sufficient to me.
+Yes, please fix it yourself when you apply it.
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+regards,
+dan carpenter
+
