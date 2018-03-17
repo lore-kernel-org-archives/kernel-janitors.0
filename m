@@ -1,25 +1,30 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 19 Mar 2018 13:44:45 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
-Message-Id: <8d8709d0-2d82-36c8-5809-6347460ee298@lwfinger.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Mar 2018 11:52:16 +0000
+Subject: [PATCH] perf/x86/intel: Don't accidentally clear high bits in bdw_limit_period()
+Message-Id: <20180317115216.GB4035@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180319104054.32564-1-colin.king@canonical.com>
-In-Reply-To: <20180319104054.32564-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, Tsang-Shian Lin <thlin@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 03/19/2018 05:40 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in RT_TRACE message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
+We intended to clear the lowest 6 bits but because of a type bug we
+clear the high 32 bits as well.  Andi says that periods are rarely more
+than U32_MAX so this bug probably doesn't have a huge runtime impact.
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net?
+Fixes: 294fe0f52a44 ("perf/x86/intel: Add INST_RETIRED.ALL workarounds")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 41c68d337e84..f23f52b9de8e 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3210,7 +3210,7 @@ static u64 bdw_limit_period(struct perf_event *event, u64 left)
+ 			X86_CONFIG(.event=0xc0, .umask=0x01)) {
+ 		if (left < 128)
+ 			left = 128;
+-		left &= ~0x3fu;
++		left &= ~0x3fULL;
+ 	}
+ 	return left;
+ }
