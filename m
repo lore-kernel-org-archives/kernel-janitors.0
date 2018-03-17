@@ -1,47 +1,72 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Date: Thu, 22 Mar 2018 15:43:09 +0000
-Subject: Re: [PATCH][next] drm/amdgpu: fix spelling mistake: "asssert" -> "assert"
-Message-Id: <0ddcfc5a-e15c-5b01-bce3-17d0673bb4fb@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Mar 2018 11:48:27 +0000
+Subject: [PATCH] kvm: x86: hyperv: delete dead code in kvm_hv_hypercall()
+Message-Id: <20180317114827.GA4035@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180322154144.31363-1-colin.king@canonical.com>
-In-Reply-To: <20180322154144.31363-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Alex Deucher <alexander.deucher@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "monk.liu" <monk.liu@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Am 22.03.2018 um 16:41 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in pr_err error message text
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+"rep_done" is always zero so the "(((u64)rep_done & 0xfff) << 32)"
+expression is just zero.  We can remove the "res" temporary variable as
+well and just use "ret" directly.
 
-Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->   drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c b/drivers/gpu/drm/amd/=
-amdgpu/mxgpu_ai.c
-> index 8fb933c62cf5..493348672475 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
-> @@ -129,7 +129,7 @@ static void xgpu_ai_mailbox_trans_msg (struct amdgpu_=
-device *adev,
->   		xgpu_ai_mailbox_set_valid(adev, false);
->   		trn =3D xgpu_ai_peek_ack(adev);
->   		if (trn) {
-> -			pr_err("trn=3D%x ACK should not asssert! wait again !\n", trn);
-> +			pr_err("trn=3D%x ACK should not assert! wait again !\n", trn);
->   			msleep(1);
->   		}
->   	} while(trn);
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 53bd1913b6fd..80c34c83f882 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1266,8 +1266,8 @@ static u16 kvm_hvcall_signal_event(struct kvm_vcpu *vcpu, bool fast, u64 param)
+ 
+ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+ {
+-	u64 param, ingpa, outgpa, ret;
+-	uint16_t code, rep_idx, rep_cnt, res = HV_STATUS_SUCCESS, rep_done = 0;
++	u64 param, ingpa, outgpa, ret = HV_STATUS_SUCCESS;
++	uint16_t code, rep_idx, rep_cnt;
+ 	bool fast, longmode;
+ 
+ 	/*
+@@ -1306,7 +1306,7 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+ 
+ 	/* Hypercall continuation is not supported yet */
+ 	if (rep_cnt || rep_idx) {
+-		res = HV_STATUS_INVALID_HYPERCALL_CODE;
++		ret = HV_STATUS_INVALID_HYPERCALL_CODE;
+ 		goto set_result;
+ 	}
+ 
+@@ -1315,14 +1315,14 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+ 		kvm_vcpu_on_spin(vcpu, true);
+ 		break;
+ 	case HVCALL_SIGNAL_EVENT:
+-		res = kvm_hvcall_signal_event(vcpu, fast, ingpa);
+-		if (res != HV_STATUS_INVALID_PORT_ID)
++		ret = kvm_hvcall_signal_event(vcpu, fast, ingpa);
++		if (ret != HV_STATUS_INVALID_PORT_ID)
+ 			break;
+ 		/* maybe userspace knows this conn_id: fall through */
+ 	case HVCALL_POST_MESSAGE:
+ 		/* don't bother userspace if it has no way to handle it */
+ 		if (!vcpu_to_synic(vcpu)->active) {
+-			res = HV_STATUS_INVALID_HYPERCALL_CODE;
++			ret = HV_STATUS_INVALID_HYPERCALL_CODE;
+ 			break;
+ 		}
+ 		vcpu->run->exit_reason = KVM_EXIT_HYPERV;
+@@ -1334,12 +1334,11 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+ 				kvm_hv_hypercall_complete_userspace;
+ 		return 0;
+ 	default:
+-		res = HV_STATUS_INVALID_HYPERCALL_CODE;
++		ret = HV_STATUS_INVALID_HYPERCALL_CODE;
+ 		break;
+ 	}
+ 
+ set_result:
+-	ret = res | (((u64)rep_done & 0xfff) << 32);
+ 	kvm_hv_hypercall_set_result(vcpu, ret);
+ 	return 1;
+ }
