@@ -1,99 +1,41 @@
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Fri, 30 Mar 2018 03:50:08 +0000
-Subject: Re: [PATCH v3] staging: vt6655: check for memory allocation failures
-Message-Id: <b66f4737-f66b-7104-ddec-2da292d1c5ef@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 18 Mar 2018 22:59:36 +0000
+Subject: [PATCH v2] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
+Message-Id: <7fd57a4e79da41dccf55430cbc43de340a7f1826.1521061530.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf@epcas2p2.samsung.com>
- <1522377844-23591-1-git-send-email-ji_hun.kim@samsung.com>
- <be23acda-38c0-dce3-9c79-8672113f6960@gmail.com>
- <20180330033933.GA26489@ubuntu>
-In-Reply-To: <20180330033933.GA26489@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Cc: devel@driverdev.osuosl.org, y.k.oh@samsung.com, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, forest@alittletooquiet.net, santhameena13@gmail.com
+To: linux-arm-kernel@lists.infradead.org
 
+If the optional regulator is deferred, we must release some resources.
+They will be re-allocated when the probe function will be called again.
 
+Fixes: 6eacf31139bf ("ethernet: arc: Add support for Rockchip SoC layer device tree bindings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: v1 did not compile because of an erroneous variable name. s/ret/err/
+---
+ drivers/net/ethernet/arc/emac_rockchip.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-On 2018/3/30 11:39, Ji-Hun Kim wrote:
-> On Fri, Mar 30, 2018 at 11:15:03AM +0800, Jia-Ju Bai wrote:
->>
->> On 2018/3/30 10:44, Ji-Hun Kim wrote:
->>> @@ -1165,10 +1205,18 @@ static int vnt_start(struct ieee80211_hw *hw)
->>>   	}
->>>   	dev_dbg(&priv->pcid->dev, "call device init rd0 ring\n");
->>> -	device_init_rd0_ring(priv);
->>> -	device_init_rd1_ring(priv);
->>> -	device_init_td0_ring(priv);
->>> -	device_init_td1_ring(priv);
->>> +	ret = device_init_rd0_ring(priv);
->>> +	if (ret)
->>> +		goto error;
->>> +	ret = device_init_rd1_ring(priv);
->>> +	if (ret)
->>> +		goto error;
->>> +	ret = device_init_td0_ring(priv);
->>> +	if (ret)
->>> +		goto error;
->>> +	ret = device_init_td1_ring(priv);
->>> +	if (ret)
->>> +		goto error;
->>>   	device_init_registers(priv);
->>> @@ -1178,6 +1226,8 @@ static int vnt_start(struct ieee80211_hw *hw)
->>>   	ieee80211_wake_queues(hw);
->>>   	return 0;
->>> +error:
->>> +	return ret;
->>>   }
->> This code will lead to memory leaks when device_init_rd1_ring()
->> fails, because the memory allocated by device_init_rd0_ring() is not
->> freed.
->>
->> I think this one will be better:
->>      ret = device_init_rd0_ring(priv);
->>      if (ret)
->>          goto error_init_rd0_ring;
->>      ret = device_init_rd1_ring(priv);
->>      if (ret)
->>          goto error_init_rd1_ring;
->>      ret = device_init_td0_ring(priv);
->>      if (ret)
->>          goto error_init_td0_ring;
->>      ret = device_init_td1_ring(priv);
->>      if (ret)
->>          goto error_init_td1_ring;
->>      ......
->> error_init_td1_ring:
->>      device_free_td0_ring(priv);
->> error_init_td0_ring:
->>      device_free_rd1_ring(priv);
->> error_init_rd1_ring:
->>      device_free_rd0_ring(priv);
->> error_init_rd0_ring:
->>      return ret;
->>
->>
->> Best wishes,
->> Jia-Ju Bai
->>
->>
-> But, those freeing function are already placed in the each device_init
-> functions for allocation fail like below.
+diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
+index 16f9bee992fe..8ee9dfd0e363 100644
+--- a/drivers/net/ethernet/arc/emac_rockchip.c
++++ b/drivers/net/ethernet/arc/emac_rockchip.c
+@@ -169,8 +169,10 @@ static int emac_rockchip_probe(struct platform_device *pdev)
+ 	/* Optional regulator for PHY */
+ 	priv->regulator = devm_regulator_get_optional(dev, "phy");
+ 	if (IS_ERR(priv->regulator)) {
+-		if (PTR_ERR(priv->regulator) = -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++		if (PTR_ERR(priv->regulator) = -EPROBE_DEFER) {
++			err = -EPROBE_DEFER;
++			goto out_clk_disable;
++		}
+ 		dev_err(dev, "no regulator found\n");
+ 		priv->regulator = NULL;
+ 	}
+-- 
+2.14.1
 
-I think it is okay.
-I suppose that, for each device_init function, you only free the 
-resources allocated in this function, and do not handle the resources in 
-other functions.
-
-> @@ -550,20 +554,29 @@ static void device_init_rd0_ring(struct vnt_private *priv)
-> +       return 0;
-> +error:
-> +       device_free_rd0_ring(priv);
-> +       return ret;
-
-This code is needed to free the resources allocated in this function.
-
-
-Best wishes,
-Jia-Ju Bai
