@@ -1,48 +1,65 @@
-From: Karthik Ramasubramanian <kramasub@codeaurora.org>
-Date: Thu, 22 Mar 2018 21:57:24 +0000
-Subject: Re: [PATCH -next] tty: serial: msm_geni_serial: Fix return value check in qcom_geni_serial_probe()
-Message-Id: <4516531e-2f93-48a4-33c2-c9bab446b16f@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Mar 2018 08:19:47 +0000
+Subject: Re: iio/gyro/bmg160_core: Improve unlocking of a mutex in five functions
+Message-Id: <73f0a187-57d1-c877-ba9f-3b15f6a61640@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521685507-92087-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521685507-92087-1-git-send-email-weiyongjun1@huawei.com>
+References: <16623de4-351d-135b-f3ff-701a465c5d92@users.sourceforge.net>
+ <20180317195422.037a8b57@archlinux>
+In-Reply-To: <20180317195422.037a8b57@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Pravin Shedge <pravin.shedge4linux@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 
 
-On 3/21/2018 8:25 PM, Wei Yongjun wrote:
-> In case of error, the function platform_get_resource() returns NULL
-> pointer not ERR_PTR(). The IS_ERR() test in the return value check
-> should be replaced with NULL test.
+Am 17.03.2018 um 20:54 schrieb Jonathan Cameron:
+> On Wed, 14 Mar 2018 16:15:32 +0100
+> SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 > 
-> Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/tty/serial/qcom_geni_serial.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Wed, 14 Mar 2018 16:06:49 +0100
+>>
+>> * Add jump targets so that a call of the function "mutex_unlock" is stored
+>>   only once in these function implementations.
+>>
+>> * Replace 19 calls by goto statements.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 1442777..65ff669 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -1053,8 +1053,8 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
->  	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (IS_ERR(res))
-> -		return PTR_ERR(res);
-> +	if (!res)
-> +		return -EINVAL;
->  	uport->mapbase = res->start;
->  
->  	port->tx_fifo_depth = DEF_FIFO_DEPTH_WORDS;
+> Hi Markus,
 > 
-Reviewed-by: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+> Some of these are good and sensible changes
 
-Thanks and Regards,
-Karthik.
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Such feedback is nice.
+
+
+> - others break the code.
+
+Which concrete places do you find questionable here?
+
+
+>> -		return ret;
+>> +
+>> +		goto set_power_state;
+>>  	default:
+>>  		return -EINVAL;
+> We exit with the mutex locked now and it should not be.
+
+I wonder about your source code interpretation here.
+The mutex was (and is still only) locked within case branches, isn't it?
+
+
+> 
+>>  	}
+>>  
+>>  	return -EINVAL;
+> Mutex is still locked here and the return is wrong.
+
+Should this statement get any more software development attention?
+
+Regards,
+Markus
