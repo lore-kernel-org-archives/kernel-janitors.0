@@ -1,83 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 14 Mar 2018 16:40:06 +0000
-Subject: Applied "spi: bcm-qspi: fIX some error handling paths" to the spi tree
-Message-Id: <20180314164006.89AF3440079@finisterre.ee.mobilebroadband>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 18 Mar 2018 22:48:09 +0000
+Subject: [PATCH 1/2] drm/sun4i: hdmi: Fix an error handling path in 'sun4i_hdmi_bind()'
+Message-Id: <14c42391e1b562c7495bda6ad6fa1d24ec8dc052.1521413031.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
+References: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, f.fainelli@gmail.com, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+To: maxime.ripard@free-electrons.com, airlied@linux.ie, wens@csie.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The patch
+If we can not allocate the HDMI encoder regmap, we still need to free some
+resources before returning.
 
-   spi: bcm-qspi: fIX some error handling paths
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From bc3cc75281b3c2b1c5355d88d147b66a753bb9a5 Mon Sep 17 00:00:00 2001
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Date: Tue, 13 Mar 2018 19:36:58 +0100
-Subject: [PATCH] spi: bcm-qspi: fIX some error handling paths
-
-For some reason, commit c0368e4db4a3 ("spi: bcm-qspi: Fix use after free
-in bcm_qspi_probe() in error path") has updated some gotos, but not all of
-them.
-
-This looks spurious, so fix it.
-
-Fixes: fa236a7ef240 ("spi: bcm-qspi: Add Broadcom MSPI driver")
+Fixes: 4b1c924b1fc1 ("drm/sun4i: hdmi: create a regmap for later use")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-bcm-qspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
-index a172ab299e80..1596d35498c5 100644
---- a/drivers/spi/spi-bcm-qspi.c
-+++ b/drivers/spi/spi-bcm-qspi.c
-@@ -1247,7 +1247,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[MSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[MSPI])) {
- 			ret = PTR_ERR(qspi->base[MSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 	} else {
- 		goto qspi_resource_err;
-@@ -1258,7 +1258,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[BSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[BSPI])) {
- 			ret = PTR_ERR(qspi->base[BSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 		qspi->bspi_mode = true;
- 	} else {
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 500b6fb3e028..d2839727bb0b 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -538,7 +538,8 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 					     &sun4i_hdmi_regmap_config);
+ 	if (IS_ERR(hdmi->regmap)) {
+ 		dev_err(dev, "Couldn't create HDMI encoder regmap\n");
+-		return PTR_ERR(hdmi->regmap);
++		ret = PTR_ERR(hdmi->regmap);
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	ret = sun4i_tmds_create(hdmi);
 -- 
-2.16.2
+2.14.1
 
