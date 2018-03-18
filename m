@@ -1,38 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Mar 2018 20:08:28 +0000
-Subject: [PATCH] of: unittest: fix an error code in of_unittest_apply_overlay()
-Message-Id: <20180314200828.GA10588@mwanda>
+From: Rob Herring <robh@kernel.org>
+Date: Sun, 18 Mar 2018 12:52:01 +0000
+Subject: Re: [PATCH] of: unittest: fix an error code in of_unittest_apply_overlay()
+Message-Id: <20180318125201.aezip6bgycmvgbqa@rob-hp-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180314200828.GA10588@mwanda>
+In-Reply-To: <20180314200828.GA10588@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We accidentally return zero on failure instead of a negative error code.
+On Wed, Mar 14, 2018 at 11:08:28PM +0300, Dan Carpenter wrote:
+> We accidentally return zero on failure instead of a negative error code.
+> 
+> Fixes: 39a751a4cb7e ("of: change overlay apply input data from unflattened to FDT")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 39a751a4cb7e ("of: change overlay apply input data from unflattened to FDT")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied.
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index dede77a79820..bc03902693b7 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -1417,15 +1417,13 @@ static int __init of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
- 		int *overlay_id)
- {
- 	const char *overlay_name;
--	int ret;
- 
- 	overlay_name = overlay_name_from_nr(overlay_nr);
- 
--	ret = overlay_data_apply(overlay_name, overlay_id);
--	if (!ret) {
-+	if (!overlay_data_apply(overlay_name, overlay_id)) {
- 		unittest(0, "could not apply overlay \"%s\"\n",
- 				overlay_name);
--		return ret;
-+		return -EFAULT;
- 	}
- 	of_unittest_track_overlay(*overlay_id);
- 
+Rob
