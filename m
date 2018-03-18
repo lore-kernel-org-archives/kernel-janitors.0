@@ -1,32 +1,39 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 14:28:59 +0000
-Subject: Re: [PATCH 3/3] video: au1100fb: Delete an unnecessary variable initialisation in au1100fb_drv_probe
-Message-Id: <2275639.QNQijrIxQE@amdc3058>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 18 Mar 2018 22:48:10 +0000
+Subject: [PATCH 2/2] drm/sun4i: hdmi: Fix another error handling path in 'sun4i_hdmi_bind()'
+Message-Id: <5e0084af4ad57e9eea3bca5bd8e2e95970cd6714.1521413031.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
- <CGME20171127180150epcas2p28b2fc98c549029837356af0fc6b1244c@epcas2p2.samsung.com>
- <37b97970-6cd7-5c85-a613-8c558b8d4fa0@users.sourceforge.net>
-In-Reply-To: <37b97970-6cd7-5c85-a613-8c558b8d4fa0@users.sourceforge.net>
+References: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: maxime.ripard@free-electrons.com, airlied@linux.ie, wens@csie.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Monday, November 27, 2017 07:01:14 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 27 Nov 2017 18:40:23 +0100
-> 
-> The local variable "fbdev" will be reassigned by a following statement.
-> Thus omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+If we can not get the HDMI DDC clock, we still need to free some
+resources before returning.
 
-Patch queued for 4.17, thanks.
+Fixes: 939d749ad664 ("drm/sun4i: hdmi: Add support for controller hardware variants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index d2839727bb0b..fa4bcd092eaf 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -552,7 +552,8 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 		hdmi->ddc_parent_clk = devm_clk_get(dev, "ddc");
+ 		if (IS_ERR(hdmi->ddc_parent_clk)) {
+ 			dev_err(dev, "Couldn't get the HDMI DDC clock\n");
+-			return PTR_ERR(hdmi->ddc_parent_clk);
++			ret = PTR_ERR(hdmi->ddc_parent_clk);
++			goto err_disable_mod_clk;
+ 		}
+ 	} else {
+ 		hdmi->ddc_parent_clk = hdmi->tmds_clk;
+-- 
+2.14.1
 
