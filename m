@@ -1,56 +1,68 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 13 Mar 2018 18:36:58 +0000
-Subject: [PATCH] spi: bcm-qspi: fIX some error handling paths
-Message-Id: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Mar 2018 20:53:28 +0000
+Subject: [PATCH 3/4] HID: alps: Check errors returned by 't4_read_write_register()'
+Message-Id: <c66533ec775540b7f1da48611a7e45bda28cead5.1521492069.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: broonie@kernel.org, f.fainelli@gmail.com
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-For some reason, commit c0368e4db4a3 ("spi: bcm-qspi: Fix use after free
-in bcm_qspi_probe() in error path") has updated some gotos, but not all of
-them.
+If only the first 't4_read_write_register()' call fails, the error code
+will be overwritten and lost.
+Directly report the error instead.
 
-This looks spurious, so fix it.
+While at it, log some errors if 't4_read_write_register()' fails, as done
+in the rest of the driver.
 
-Fixes: fa236a7ef240 ("spi: bcm-qspi: Add Broadcom MSPI driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I've added the same Fixes: tag as in commit c0368e4db4a3 even if the patch
-would not cleanly apply on top of it.
-At least commit 4e3b2d236fe0 ("spi: bcm-qspi: Add BSPI spi-nor flash
-controller driver") would also be needed.
+ drivers/hid/hid-alps.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Also the label names could be improved. But this goes beyond the scope of
-this patch.
----
- drivers/spi/spi-bcm-qspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
-index a172ab299e80..1596d35498c5 100644
---- a/drivers/spi/spi-bcm-qspi.c
-+++ b/drivers/spi/spi-bcm-qspi.c
-@@ -1247,7 +1247,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[MSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[MSPI])) {
- 			ret = PTR_ERR(qspi->base[MSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 	} else {
- 		goto qspi_resource_err;
-@@ -1258,7 +1258,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[BSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[BSPI])) {
- 			ret = PTR_ERR(qspi->base[BSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 		qspi->bspi_mode = true;
- 	} else {
+diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+index fe8a0624d5e4..137b963779c6 100644
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -460,17 +460,35 @@ static int __maybe_unused alps_post_reset(struct hid_device *hdev)
+ 	case T4:
+ 		ret = t4_read_write_register(hdev, T4_PRM_FEED_CONFIG_1,
+ 			NULL, T4_I2C_ABS, false);
++		if (ret < 0) {
++			dev_err(&hdev->dev, "failed T4_PRM_FEED_CONFIG_1 (%d)\n",
++				ret);
++			goto exit;
++		}
++
+ 		ret = t4_read_write_register(hdev, T4_PRM_FEED_CONFIG_4,
+ 			NULL, T4_FEEDCFG4_ADVANCED_ABS_ENABLE, false);
++		if (ret < 0) {
++			dev_err(&hdev->dev, "failed T4_PRM_FEED_CONFIG_4 (%d)\n",
++				ret);
++			goto exit;
++		}
+ 		break;
+ 	case U1:
+ 		ret = u1_read_write_register(hdev,
+ 			ADDRESS_U1_DEV_CTRL_1, NULL,
+ 			U1_TP_ABS_MODE | U1_SP_ABS_MODE, false);
++		if (ret < 0) {
++			dev_err(&hdev->dev, "failed to change TP mode (%d)\n",
++				ret);
++			goto exit;
++		}
+ 		break;
+ 	default:
+ 		break;
+ 	}
++
++exit:
+ 	return ret;
+ }
+ 
 -- 
 2.14.1
 
