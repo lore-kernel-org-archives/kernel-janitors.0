@@ -1,41 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Mar 2018 10:54:06 +0000
-Subject: [PATCH][next] power: reset: make function sc27xx_poweroff_shutdown static
-Message-Id: <20180313105406.28841-1-colin.king@canonical.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 19 Mar 2018 01:50:29 +0000
+Subject: Re: [alsa-devel] [PATCH -next] ASoC: wm8400: Use       devm_snd_soc_register_component()
+Message-Id: <87k1u8u97z.wl%kuninori.morimoto.gx@renesas.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, patches@opensource.cirrus.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The function sc27xx_poweroff_shutdown is local to the source and does
-not need to be in global scope, so make it static.
+Hi Wei
 
-Cleans up sparse warning:
-drivers/power/reset/sc27xx-poweroff.c:28:6: warning: symbol
-'sc27xx_poweroff_shutdown' was not declared. Should it be static?
+> Since the remove callback is removed, the snd_soc_unregister_component()
+> is missing when remove device. Using devm_snd_soc_register_component()
+> instead of snd_soc_register_component().
+> 
+> Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Thank you for your patch
+
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+
+Best regards
 ---
- drivers/power/reset/sc27xx-poweroff.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/power/reset/sc27xx-poweroff.c b/drivers/power/reset/sc27xx-poweroff.c
-index 65c477eee559..29fb08b8faa0 100644
---- a/drivers/power/reset/sc27xx-poweroff.c
-+++ b/drivers/power/reset/sc27xx-poweroff.c
-@@ -25,7 +25,7 @@ static struct regmap *regmap;
-  * taking cpus down to avoid racing regmap or spi mutex lock when poweroff
-  * system through PMIC.
-  */
--void sc27xx_poweroff_shutdown(void)
-+static void sc27xx_poweroff_shutdown(void)
- {
- #ifdef CONFIG_PM_SLEEP_SMP
- 	int cpu = smp_processor_id();
--- 
-2.15.1
-
+Kuninori Morimoto
