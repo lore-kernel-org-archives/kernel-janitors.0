@@ -1,29 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 04 Mar 2018 23:18:51 +0000
-Subject: Re: [PATCH] net: amd8111e: remove redundant assignment to 'tx_index'
-Message-Id: <20180304.181851.613090020932353342.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Mar 2018 10:34:44 +0000
+Subject: [PATCH] apparmor: signedness bug in aa_xattrs_match()
+Message-Id: <20180319103444.GC8543@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180301164240.18014-1-colin.king@canonical.com>
-In-Reply-To: <20180301164240.18014-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  1 Mar 2018 16:42:40 +0000
+The "size" variable needs to be signed ssize_t so that the error
+handling works correctly.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable tx_index is being initialized with a value that is never
-> read and re-assigned a little later, hence the initialization is redundant
-> and can be removed.
-> 
-> Cleans up clang warning:
-> drivers/net/ethernet/amd/amd8111e.c:652:6: warning: Value stored to
-> 'tx_index' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next.
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 57cc892e05a2..590b7e8cd21c 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+ 			   struct aa_profile *profile, unsigned int state)
+ {
+ 	int i;
+-	size_t size;
++	ssize_t size;
+ 	struct dentry *d;
+ 	char *value = NULL;
+ 	int value_size = 0, ret = profile->xattr_count;
