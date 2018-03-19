@@ -1,176 +1,36 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 13 Mar 2018 16:00:47 +0000
-Subject: Re: [PATCH] hwmon/sch5627: Use common error handling code in sch5627_probe()
-Message-Id: <20180313160047.GA8834@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Mar 2018 13:41:16 +0000
+Subject: [PATCH] drm/i915/gvt: fix spelling mistake: "registeration" -> "registration"
+Message-Id: <20180319134116.4478-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d08248a2-46d8-6f73-81f4-84ad21b7e640@users.sourceforge.net>
- <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
-In-Reply-To: <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 09:19:22AM +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 12-03-18 22:23, SF Markus Elfring wrote:
-> >From: Markus Elfring <elfring@users.sourceforge.net>
-> >Date: Mon, 12 Mar 2018 22:15:59 +0100
-> >
-> >Adjust jump targets so that a bit of exception handling can be better
-> >reused at the end of this function.
-> >
-> >This issue was detected by using the Coccinelle software.
-> >
-> >Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> So now we have a goto set_error_code with the code at the set_error_code
-> doing something and then doing another goto. No, just no. goto-s going to
-> a label calling another goto is completely unreadable.
-> 
-> I really do not see any reason for the proposed changes, they may remove
-> a small amount of code duplication, but at a hugh cost wrt readability.
->
-> TL;DR: NACK
-> 
-Fully agree. NACK confirmed.
+From: Colin Ian King <colin.king@canonical.com>
 
-Guenter
+Trivial fix to spelling mistake in gvt_err error message text
 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> >---
-> >  drivers/hwmon/sch5627.c | 60 ++++++++++++++++++++++++-------------------------
-> >  1 file changed, 29 insertions(+), 31 deletions(-)
-> >
-> >diff --git a/drivers/hwmon/sch5627.c b/drivers/hwmon/sch5627.c
-> >index 91544f2312e6..e7a2a974ab74 100644
-> >--- a/drivers/hwmon/sch5627.c
-> >+++ b/drivers/hwmon/sch5627.c
-> >@@ -480,72 +480,64 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	platform_set_drvdata(pdev, data);
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_HWMON_ID);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	if (val != SCH5627_HWMON_ID) {
-> >  		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "hwmon",
-> >  		       val, SCH5627_HWMON_ID);
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_COMPANY_ID);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	if (val != SCH5627_COMPANY_ID) {
-> >  		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "company",
-> >  		       val, SCH5627_COMPANY_ID);
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_PRIMARY_ID);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	if (val != SCH5627_PRIMARY_ID) {
-> >  		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "primary",
-> >  		       val, SCH5627_PRIMARY_ID);
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	build_code = sch56xx_read_virtual_reg(data->addr,
-> >  					      SCH5627_REG_BUILD_CODE);
-> >  	if (build_code < 0) {
-> >  		err = build_code;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	build_id = sch56xx_read_virtual_reg16(data->addr,
-> >  					      SCH5627_REG_BUILD_ID);
-> >  	if (build_id < 0) {
-> >  		err = build_id;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	hwmon_rev = sch56xx_read_virtual_reg(data->addr,
-> >  					     SCH5627_REG_HWMON_REV);
-> >  	if (hwmon_rev < 0) {
-> >  		err = hwmon_rev;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_CTRL);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	data->control = val;
-> >  	if (!(data->control & 0x01)) {
-> >  		pr_err("hardware monitoring not enabled\n");
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	/* Trigger a Vbat voltage measurement, so that we get a valid reading
-> >  	   the first time we read Vbat */
-> >@@ -559,7 +551,7 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	 */
-> >  	err = sch5627_read_limits(data);
-> >  	if (err)
-> >-		goto error;
-> >+		goto remove_device;
-> >  	pr_info("found %s chip at %#hx\n", DEVNAME, data->addr);
-> >  	pr_info("firmware build: code 0x%02X, id 0x%04X, hwmon: rev 0x%02X\n",
-> >@@ -568,13 +560,13 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	/* Register sysfs interface files */
-> >  	err = sysfs_create_group(&pdev->dev.kobj, &sch5627_group);
-> >  	if (err)
-> >-		goto error;
-> >+		goto remove_device;
-> >  	data->hwmon_dev = hwmon_device_register(&pdev->dev);
-> >  	if (IS_ERR(data->hwmon_dev)) {
-> >  		err = PTR_ERR(data->hwmon_dev);
-> >  		data->hwmon_dev = NULL;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	/* Note failing to register the watchdog is not a fatal error */
-> >@@ -584,7 +576,13 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	return 0;
-> >-error:
-> >+set_error_code:
-> >+	err = val;
-> >+	goto remove_device;
-> >+
-> >+e_nodev:
-> >+	err = -ENODEV;
-> >+remove_device:
-> >  	sch5627_remove(pdev);
-> >  	return err;
-> >  }
-> >
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gvt/gvt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/gvt.c b/drivers/gpu/drm/i915/gvt/gvt.c
+index 61bd14fcb649..8c3422578cc4 100644
+--- a/drivers/gpu/drm/i915/gvt/gvt.c
++++ b/drivers/gpu/drm/i915/gvt/gvt.c
+@@ -444,7 +444,7 @@ int intel_gvt_init_device(struct drm_i915_private *dev_priv)
+ 
+ 	ret = intel_gvt_debugfs_init(gvt);
+ 	if (ret)
+-		gvt_err("debugfs registeration failed, go on.\n");
++		gvt_err("debugfs registration failed, go on.\n");
+ 
+ 	gvt_dbg_core("gvt device initialization is done\n");
+ 	dev_priv->gvt = gvt;
+-- 
+2.15.1
+
