@@ -1,41 +1,99 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 18 Mar 2018 18:25:53 +0000
-Subject: Re: coccinelle & linux-kernel: unindent blocks by reversing tests?
-Message-Id: <1521397553.27411.38.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Mar 2018 10:40:54 +0000
+Subject: [PATCH] rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
+Message-Id: <20180319104054.32564-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521391861.27411.27.camel@perches.com>
- <alpine.DEB.2.20.1803181848370.2420@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1803181848370.2420@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, Tsang-Shian Lin <thlin@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2018-03-18 at 18:50 +0100, Julia Lawall wrote:
-> 
-> On Sun, 18 Mar 2018, Joe Perches wrote:
-> 
-> > There are many blocks of code that could be
-> > unindented and so neatened by reversing tests.
-[]
-> > Which often saves many vertical lines by reducing
-> > now unnecessary line-wrapping done at 80-columns.
-> 
-> I tried it.  One can't easily make the transformation when there is a
-> variable declaration in the block.  And Coccinelle doesn't move leading
-> comments over to the left.  Most of the examples I found seemed to have
-> only one level of opportunity.  I don't know if the churn is worth it in
-> that case.  On a more complex example, the pretty printer crashes, so I'll
-> have to look into that.
+From: Colin Ian King <colin.king@canonical.com>
 
-[]
+Trivial fix to spelling mistake in RT_TRACE message text.
 
-> > A trivial hand-produced example selected randomly:
-[]
-> > ---
-> >  .../broadcom/brcm80211/brcmsmac/phy/phy_n.c        | 455 +++++++++------------
-> >  1 file changed, 201 insertions(+), 254 deletions(-)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Dunno about the churn, but converting many lines of badly
-wrapped simple statements and reducing line count seems
-somewhat worthwhile.
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
+index b11365a5ee1f..9111ba7ff0a1 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
+@@ -1475,7 +1475,7 @@ void rtl8812ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
+ 		}
+ 	} else if (method = MIX_MODE) {
+ 		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-			 "pDM_Odm->DefaultOfdmIndex=%d, pDM_Odm->Aboslute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
++			 "pDM_Odm->DefaultOfdmIndex=%d, pDM_Odm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
+ 			 rtldm->default_ofdm_index,
+ 			 rtldm->absolute_ofdm_swing_idx[rf_path],
+ 			 rf_path);
+@@ -1750,7 +1750,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
+ 
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 			rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
+ 
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -1766,7 +1766,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
+ 
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
++				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_B]);
+ 		} else {
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -1782,7 +1782,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 				-1 * delta_swing_table_idx_tdown_a[delta];
+ 			/* Record delta swing for mix mode power tracking*/
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
+ 
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -1799,7 +1799,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
+ 
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
++				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_B] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_B]);
+ 		}
+ 
+@@ -2115,7 +2115,7 @@ void rtl8821ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
+ 		}
+ 	} else if (method = MIX_MODE) {
+ 		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-			 "pDM_Odm->DefaultOfdmIndex=%d,pDM_Odm->Aboslute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
++			 "pDM_Odm->DefaultOfdmIndex=%d,pDM_Odm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
+ 			 rtldm->default_ofdm_index,
+ 			 rtldm->absolute_ofdm_swing_idx[rf_path],
+ 			 rf_path);
+@@ -2329,7 +2329,7 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
+ 			/*Record delta swing for mix mode power tracking*/
+ 
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is higher and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is higher and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
+ 		} else {
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+@@ -2345,7 +2345,7 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
+ 				-1 * delta_swing_table_idx_tdown_a[delta];
+ 			/* Record delta swing for mix mode power tracking*/
+ 			RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
+-				 "******Temp is lower and pDM_Odm->Aboslute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
++				 "******Temp is lower and pDM_Odm->Absolute_OFDMSwingIdx[ODM_RF_PATH_A] = %d\n",
+ 				 rtldm->absolute_ofdm_swing_idx[RF90_PATH_A]);
+ 		}
+ 
+-- 
+2.15.1
+
