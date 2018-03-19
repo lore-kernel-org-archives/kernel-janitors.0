@@ -1,30 +1,38 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Fri, 30 Mar 2018 15:51:21 +0000
-Subject: Re: [PATCH] selftests/ftrace: fix spelling mistake: "tiggers" -> "triggers"
-Message-Id: <583c21dd-2ffc-4375-af8a-aa721ffb4594@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Mar 2018 10:53:41 +0000
+Subject: [PATCH] scsi: qla2xxx: fix spelling mistake: "existant" -> "existent"
+Message-Id: <20180319105341.487-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180329172431.8171-1-colin.king@canonical.com>
- <20180329133102.6061ba66@gandalf.local.home>
- <48be730c-2a15-d3ad-d1aa-7d57fe7db6ca@canonical.com>
- <56713d51-0954-e7a8-cf7a-7a6bfedf58f3@kernel.org>
- <20180329140409.1311baac@gandalf.local.home>
-In-Reply-To: <20180329140409.1311baac@gandalf.local.home>
+References: <20170816085120.10136-1-colin.king@canonical.com>
+In-Reply-To: <20170816085120.10136-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/29/2018 12:04 PM, Steven Rostedt wrote:
-> On Thu, 29 Mar 2018 11:54:28 -0600
-> Shuah Khan <shuah@kernel.org> wrote:
-> 
->> I will pick this up with your Ack Steve, unless you want include
->> it in your pull request.
-> 
-> You or Janitors can take it.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Okay we can leave it to the Janitors then.
+Trivial fix to spelling mistake in debug message text
 
-thanks,
--- Shuah
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qla2xxx/qla_target.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 245005f1e93e..e002dd61e110 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -2023,7 +2023,7 @@ static void qlt_24xx_handle_abts(struct scsi_qla_host *vha,
+ 	sess = ha->tgt.tgt_ops->find_sess_by_s_id(vha, s_id);
+ 	if (!sess) {
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf012,
+-		    "qla_target(%d): task abort for non-existant session\n",
++		    "qla_target(%d): task abort for non-existent session\n",
+ 		    vha->vp_idx);
+ 		spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
+ 
+-- 
+2.15.1
+
