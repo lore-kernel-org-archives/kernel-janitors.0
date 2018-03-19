@@ -1,36 +1,72 @@
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Date: Tue, 13 Mar 2018 06:09:15 +0000
-Subject: [PATCH] staging: rtl8723bs: core: rtw_cmd: remove unnecessary initialization
-Message-Id: <1520921355-31348-1-git-send-email-ji_hun.kim@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 19 Mar 2018 01:03:20 +0000
+Subject: Applied "ASoC: wm8400: Use devm_snd_soc_register_component()" to the asoc tree
+Message-Id: <20180319010320.46B5E440079@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180313060927epcas1p4a11e5ed88c7760b5a54b5c2bdf753b66@epcas1p4.samsung.com>
+References: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: julia.lawall@lip6.fr, shreeya.patel23498@gmail.com, arnd@arndb.de, himanshujha199640@gmail.com, joe@perches.com, hdegoede@redhat.com, srishtishar@gmail.com, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ji-Hun Kim <ji_hun.kim@samsung.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, kernel-janitors@vger.kernel.org, patches@opensource.cirrus.com, alsa-devel@alsa-project.orgWeiYongjunweiyongjun1@huawei.com@alsa-project.org
 
-Clean up checkpatch error:
-ERROR: do not initialise globals to 0
+The patch
 
-Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+   ASoC: wm8400: Use devm_snd_soc_register_component()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 822e70a8210b7038e1f54c43ca6c76c3b9f89803 Mon Sep 17 00:00:00 2001
+From: "weiyongjun (A)" <weiyongjun1@huawei.com>
+Date: Fri, 16 Mar 2018 07:32:07 +0000
+Subject: [PATCH] ASoC: wm8400: Use devm_snd_soc_register_component()
+
+Since the remove callback is removed, the snd_soc_unregister_component()
+is missing when remove device. Using devm_snd_soc_register_component()
+instead of snd_soc_register_component().
+
+Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/staging/rtl8723bs/core/rtw_cmd.c | 2 +-
+ sound/soc/codecs/wm8400.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-index af0a9e0..9e132f9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-@@ -1742,7 +1742,7 @@ u8 rtw_ps_cmd(struct adapter *padapter)
- 	return res;
- }
+diff --git a/sound/soc/codecs/wm8400.c b/sound/soc/codecs/wm8400.c
+index c237365d1184..57b22065a45d 100644
+--- a/sound/soc/codecs/wm8400.c
++++ b/sound/soc/codecs/wm8400.c
+@@ -1343,7 +1343,7 @@ static const struct snd_soc_component_driver soc_component_dev_wm8400 = {
  
--u32 g_wait_hiq_empty = 0;
-+u32 g_wait_hiq_empty;
- 
- static void rtw_chk_hi_queue_hdl(struct adapter *padapter)
+ static int wm8400_probe(struct platform_device *pdev)
  {
+-	return snd_soc_register_component(&pdev->dev,
++	return devm_snd_soc_register_component(&pdev->dev,
+ 			&soc_component_dev_wm8400,
+ 			&wm8400_dai, 1);
+ }
 -- 
-1.9.1
+2.16.2
 
