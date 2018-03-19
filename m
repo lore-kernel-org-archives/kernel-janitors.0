@@ -1,58 +1,36 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sat, 10 Mar 2018 00:18:32 +0000
-Subject: [PATCH 4.4 16/36] x86/spectre: Fix an error message
-Message-Id: <20180310001808.223312534@linuxfoundation.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Mar 2018 11:41:01 +0000
+Subject: [PATCH] ocfs2: fix spelling mistake: "Migrateable" -> "Migratable"
+Message-Id: <20180319114101.2051-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180310001807.213987241@linuxfoundation.org>
-In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@suse.de>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+From: Colin Ian King <colin.king@canonical.com>
 
-------------------
+Trivial fix to spelling mistake in mlog message text
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
-
-If i = ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/kernel/cpu/bugs.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ocfs2/dlm/dlmmaster.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -175,8 +175,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
- 
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n",
--			       mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 03766fb41dbe..81d500211f43 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -2543,7 +2543,7 @@ static int dlm_is_lockres_migrateable(struct dlm_ctxt *dlm,
+ 			return 0;
  	}
-
+ 
+-	mlog(0, "%s: res %.*s, Migrateable\n", dlm->name, res->lockname.len,
++	mlog(0, "%s: res %.*s, Migratable\n", dlm->name, res->lockname.len,
+ 	     res->lockname.name);
+ 
+ 	return 1;
+-- 
+2.15.1
 
