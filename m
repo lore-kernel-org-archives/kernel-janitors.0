@@ -1,71 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 19 Mar 2018 01:03:11 +0000
-Subject: Applied "ASoC: da7210: Use devm_snd_soc_register_component()" to the asoc tree
-Message-Id: <20180319010311.B5EED440079@finisterre.ee.mobilebroadband>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Mar 2018 20:53:26 +0000
+Subject: [PATCH 1/4] HID: alps: Report an error if we receive invalid data in 't4_read_write_register()'
+Message-Id: <c59e5f62dd36950a027eb629a7780e714cb8766f.1521492069.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521185534-164511-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521185534-164511-1-git-send-email-weiyongjun1@huawei.com>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: alsa-devel@alsa-project.org, Support Opensource <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The patch
+If the data received is not what is expected, we should return an error.
 
-   ASoC: da7210: Use devm_snd_soc_register_component()
+Otherwise, we return 0 or a positive value which will be interpreted as
+success, but '*read_val' has not been updated.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c0153b126cc6e14335b142a799c9aa8990e28669 Mon Sep 17 00:00:00 2001
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Date: Fri, 16 Mar 2018 07:32:14 +0000
-Subject: [PATCH] ASoC: da7210: Use devm_snd_soc_register_component()
-
-Since the remove callback is removed, the snd_soc_unregister_component()
-is missing when remove device. Using devm_snd_soc_register_component()
-instead of snd_soc_register_component().
-
-Fixes: d06f33aed85c ("ASoC: da7210: replace codec to component")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 73196ebe134d ("HID: alps: add support for Alps T4 Touchpad device")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/codecs/da7210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Untested
+---
+ drivers/hid/hid-alps.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/codecs/da7210.c b/sound/soc/codecs/da7210.c
-index 07153be52c52..a664111b7184 100644
---- a/sound/soc/codecs/da7210.c
-+++ b/sound/soc/codecs/da7210.c
-@@ -1233,7 +1233,7 @@ static int da7210_i2c_probe(struct i2c_client *i2c,
- 	if (ret != 0)
- 		dev_warn(&i2c->dev, "Failed to apply regmap patch: %d\n", ret);
+diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+index b1eeb4839bfc..925396fdf0d9 100644
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -219,6 +219,8 @@ static int t4_read_write_register(struct hid_device *hdev, u32 address,
+ 			goto exit_readbuf;
+ 		}
  
--	ret =  snd_soc_register_component(&i2c->dev,
-+	ret =  devm_snd_soc_register_component(&i2c->dev,
- 			&soc_component_dev_da7210, &da7210_dai, 1);
- 	if (ret < 0)
- 		dev_err(&i2c->dev, "Failed to register component: %d\n", ret);
++		ret = -EINVAL;
++
+ 		if (*(u32 *)&readbuf[6] != address) {
+ 			dev_err(&hdev->dev, "read register address error (%x,%x)\n",
+ 			*(u32 *)&readbuf[6], address);
 -- 
-2.16.2
+2.14.1
 
