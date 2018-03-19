@@ -1,36 +1,45 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 27 Mar 2018 08:32:57 +0000
-Subject: [PATCH][next] drm/amd/pp: Fix spelling mistake: "suppported" -> "supported"
-Message-Id: <20180327083257.28777-1-colin.king@canonical.com>
+Date: Mon, 19 Mar 2018 10:50:21 +0000
+Subject: [PATCH] test_rhashtable: fix spelling mistake: "existant" -> "existent"
+Message-Id: <20180319105021.327-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, Evan Quan <evan.quan@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: "David S . Miller" <davem@davemloft.net>, Florian Westphal <fw@strlen.de>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in pr_warn warning message text
+Trivial fix to spelling mistake in warning message text
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_rhashtable.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c b/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
-index 0f2851b5b368..308bff2b5d1d 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
-@@ -46,7 +46,7 @@ int psm_init_power_state_table(struct pp_hwmgr *hwmgr)
- 					  sizeof(struct pp_power_state);
- 
- 	if (table_entries = 0 || size = 0) {
--		pr_warn("Please check whether power state management is suppported on this asic\n");
-+		pr_warn("Please check whether power state management is supported on this asic\n");
- 		return 0;
- 	}
- 
+diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
+index f4000c137dbe..32d964cbac8c 100644
+--- a/lib/test_rhashtable.c
++++ b/lib/test_rhashtable.c
+@@ -396,7 +396,7 @@ static int __init test_rhltable(unsigned int entries)
+ 			if (WARN(err, "cannot remove element at slot %d", i))
+ 				continue;
+ 		} else {
+-			if (WARN(err != -ENOENT, "removed non-existant element %d, error %d not %d",
++			if (WARN(err != -ENOENT, "removed non-existent element %d, error %d not %d",
+ 			     i, err, -ENOENT))
+ 				continue;
+ 		}
+@@ -441,7 +441,7 @@ static int __init test_rhltable(unsigned int entries)
+ 			if (WARN(err, "cannot remove element at slot %d", i))
+ 				continue;
+ 		} else {
+-			if (WARN(err != -ENOENT, "removed non-existant element, error %d not %d",
++			if (WARN(err != -ENOENT, "removed non-existent element, error %d not %d",
+ 				 err, -ENOENT))
+ 			continue;
+ 		}
 -- 
 2.15.1
 
