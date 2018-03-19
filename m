@@ -1,47 +1,31 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Fri, 23 Mar 2018 18:50:13 +0000
-Subject: Re: [PATCH] nfsd: tidy return values in nfs4_delegation_exists()
-Message-Id: <20180323185013.GT4288@fieldses.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Mar 2018 20:53:25 +0000
+Subject: [PATCH 0/4] HID: alps: Fix some bugs and improve code around  't4_read_write_register()'
+Message-Id: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323113705.GB28518@mwanda>
-In-Reply-To: <20180323113705.GB28518@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Mar 23, 2018 at 02:37:05PM +0300, Dan Carpenter wrote:
-> We made nfs4_delegation_exists() return a bool in 68b18f52947b ("nfsd:
-> make nfs4_get_existing_delegation less confusing"), but it's still
-> returning -EINVAL.  That's fine, because it -EINVAL becomes true which
-> is what we want, but it's not very tidy.
+All is said in the subject and below.
 
-Oops, I fixed this a couple days ago when Fengguang Wu complained about
-the 0/false thing, but forgot to push it out.  Added a Reported-by: for
-you and pushed it out now to
+These patches are untested. Especially, patch 1 slightly changes the behavior
+of 't4_read_write_register()'.
+This looks logical to me, but please, review it carefully.
 
-	git://linux-nfs.org/~bfields/linux.git nfsd-next
+Christophe JAILLET (4):
+  HID: alps: Report an error if we receive invalid data in
+    't4_read_write_register()'
+  HID: alps: Save a memory allocation in 't4_read_write_register()' when
+    writing data
+  HID: alps: Check errors returned by 't4_read_write_register()'
+  HID: alps: Fix some style in 't4_read_write_register()'
 
---b.
+ drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index a64ee08aadb2..f0b5af3ca8f7 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -935,10 +935,10 @@ nfs4_delegation_exists(struct nfs4_client *clp, struct nfs4_file *fp)
->  	list_for_each_entry(searchdp, &fp->fi_delegations, dl_perfile) {
->  		searchclp = searchdp->dl_stid.sc_client;
->  		if (clp = searchclp) {
-> -			return -EAGAIN;
-> +			return true;
->  		}
->  	}
-> -	return 0;
-> +	return false;
->  }
->  
->  /**
+-- 
+2.14.1
+
