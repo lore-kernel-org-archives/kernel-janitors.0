@@ -1,42 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Mar 2018 09:01:07 +0000
-Subject: Re: [2/4] scsi: hpsa: Less function calls in hpsa_big_passthru_ioctl() after error detection
-Message-Id: <a1e4dcf0-22fa-0b9b-a111-56beac441b24@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Mar 2018 20:53:27 +0000
+Subject: [PATCH 2/4] HID: alps: Save a memory allocation in 't4_read_write_register()' when writing data
+Message-Id: <8b54f1506a54fdb1e7ea94c53a3104366e3aaccd.1521492069.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
- <e53f792c-0062-1b7a-a914-fa5f62b9a5c9@users.sourceforge.net>
- <1dc030776c924626b97594a18537f59c@microsemi.com>
-In-Reply-To: <1dc030776c924626b97594a18537f59c@microsemi.com>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Don Brace <don.brace@microsemi.com>, linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com
-Cc: "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
->> @@ -6501,14 +6501,16 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info
->> *h, void __user *argp)
->>  cleanup0:
->>         cmd_free(h, c);
->>  cleanup1:
->> -       if (buff) {
->> +       {
->>                 int i;
->>
->>                 for (i = 0; i < sg_used; i++)
->>                         kfree(buff[i]);
->>                 kfree(buff);
->>         }
-> 
-> Thanks for looking at the hpsa driver.
-> 
-> This HUNK ends up with an unnamed block.
+if 'read_flag' is false, there is no need to allocate and free memory.
+We can simply avoid the memory allocation and pass NULL to kfree.
 
-Which identifier would you like to use there?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/hid-alps.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+index 925396fdf0d9..fe8a0624d5e4 100644
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -171,7 +171,7 @@ static int t4_read_write_register(struct hid_device *hdev, u32 address,
+ 	int ret;
+ 	u16 check_sum;
+ 	u8 *input;
+-	u8 *readbuf;
++	u8 *readbuf = NULL;
+ 
+ 	input = kzalloc(T4_FEATURE_REPORT_LEN, GFP_KERNEL);
+ 	if (!input)
+@@ -204,8 +204,8 @@ static int t4_read_write_register(struct hid_device *hdev, u32 address,
+ 		goto exit;
+ 	}
+ 
+-	readbuf = kzalloc(T4_FEATURE_REPORT_LEN, GFP_KERNEL);
+ 	if (read_flag) {
++		readbuf = kzalloc(T4_FEATURE_REPORT_LEN, GFP_KERNEL);
+ 		if (!readbuf) {
+ 			ret = -ENOMEM;
+ 			goto exit;
+-- 
+2.14.1
 
-> I would prefer to not have it structured like this.
-
-Would you like to show a source code layout alternative?
-
-Regards,
-Markus
