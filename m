@@ -1,25 +1,26 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 18 Mar 2018 22:48:08 +0000
-Subject: [PATCH 0/2] drm/sun4i: Fix some error handling paths in 'sun4i_hdmi_bind()'
-Message-Id: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 19 Mar 2018 02:17:04 +0000
+Subject: Re: [PATCH 0/2] drm/sun4i: Fix some error handling paths in 'sun4i_hdmi_bind()'
+Message-Id: <CAGb2v67bxV4kseYRnN1kkVBFtLyscEqHNtu970VH-nRWkYfiuQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maxime.ripard@free-electrons.com, airlied@linux.ie, wens@csie.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-I've splitted these fixes into 2 patches becasue they do not fixe the same
-commit.
+On Mon, Mar 19, 2018 at 6:48 AM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> I've splitted these fixes into 2 patches becasue they do not fixe the same
+> commit.
+>
+> Christophe JAILLET (2):
+>   drm/sun4i: hdmi: Fix an error handling path in 'sun4i_hdmi_bind()'
+>   drm/sun4i: hdmi: Fix another error handling path in
+>     'sun4i_hdmi_bind()'
 
-Christophe JAILLET (2):
-  drm/sun4i: hdmi: Fix an error handling path in 'sun4i_hdmi_bind()'
-  drm/sun4i: hdmi: Fix another error handling path in
-    'sun4i_hdmi_bind()'
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
--- 
-2.14.1
-
+for both patches.
