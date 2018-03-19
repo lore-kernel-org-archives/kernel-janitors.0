@@ -1,23 +1,35 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Sat, 31 Mar 2018 14:04:08 +0000
-Subject: Re: [-next] powerpc: Fix error return code in ppc4xx_msi_probe()
-Message-Id: <40D0bD5FH1z9s3q@ozlabs.org>
+From: Thomas Avery <tavery321@gmail.com>
+Date: Mon, 19 Mar 2018 22:11:00 +0000
+Subject: [PATCH] staging: rtl8723bs: Replace yield() call with cond_resched()
+Message-Id: <20180319221100.rxs2n54ch53tukje@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1522075389-23511-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2018-03-26 at 14:43:09 UTC, Wei Yongjun wrote:
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Remove yield() call. yield() does not guarantee progress, and should not
+be used. cond_resched or wait_event are a safe alternative.
 
-Applied to powerpc next, thanks.
+Signed-off-by: Thomas Avery <tavery321@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://git.kernel.org/powerpc/c/9a2c1d31e6910b9d5e0205f9167d0b
+diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+index 4a6af72013fa..85f7769ecc2d 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
++++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+@@ -701,7 +701,7 @@ void LPS_Leave_check(
+ 	bReady = false;
+ 	start_time = jiffies;
+ 
+-	yield();
++	cond_resched();
+ 
+ 	while (1) {
+ 		down(&pwrpriv->lock);
+-- 
+2.11.0
 
-cheers
