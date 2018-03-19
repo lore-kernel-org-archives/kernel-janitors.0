@@ -1,73 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Mar 2018 14:05:20 +0000
-Subject: [PATCH] cxgb4/cudbg_lib: Use common error handling code in cudbg_collect_tid()
-Message-Id: <caaea20d-7f22-a315-4fa0-9370a9743a2f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Mar 2018 20:53:29 +0000
+Subject: [PATCH 4/4] HID: alps: Fix some style in 't4_read_write_register()'
+Message-Id: <50b54e595830cc86edfb977e045f5a7b2b1b726a.1521492069.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Ganesh Goudar <ganeshgr@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Mar 2018 14:56:10 +0100
+Better indent the code to improve readability.
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/hid/hid-alps.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-index 9da6f57901a9..d5b5b6221d1f 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-@@ -1660,11 +1660,9 @@ int cudbg_collect_tid(struct cudbg_init *pdbg_init,
- 	para[0] = FW_PARAM_PFVF_A(ETHOFLD_START);
- 	para[1] = FW_PARAM_PFVF_A(ETHOFLD_END);
- 	rc = t4_query_params(padap, padap->mbox, padap->pf, 0, 2, para, val);
--	if (rc <  0) {
--		cudbg_err->sys_err = rc;
--		cudbg_put_buff(pdbg_init, &temp_buff);
--		return rc;
--	}
-+	if (rc < 0)
-+		goto put_buffer;
-+
- 	tid->uotid_base = val[0];
- 	tid->nuotids = val[1] - val[0] + 1;
+diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+index 137b963779c6..60d3950692d9 100644
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -223,20 +223,20 @@ static int t4_read_write_register(struct hid_device *hdev, u32 address,
  
-@@ -1679,11 +1677,9 @@ int cudbg_collect_tid(struct cudbg_init *pdbg_init,
- 		para[1] = FW_PARAM_PFVF_A(HPFILTER_END);
- 		rc = t4_query_params(padap, padap->mbox, padap->pf, 0, 2,
- 				     para, val);
--		if (rc < 0) {
--			cudbg_err->sys_err = rc;
--			cudbg_put_buff(pdbg_init, &temp_buff);
--			return rc;
--		}
-+		if (rc < 0)
-+			goto put_buffer;
-+
- 		tid->hpftid_base = val[0];
- 		tid->nhpftids = val[1] - val[0] + 1;
- 	}
-@@ -1711,6 +1707,11 @@ int cudbg_collect_tid(struct cudbg_init *pdbg_init,
- 	tid->ipv6_users = t4_read_reg(padap, LE_DB_ACT_CNT_IPV6_A);
+ 		if (*(u32 *)&readbuf[6] != address) {
+ 			dev_err(&hdev->dev, "read register address error (%x,%x)\n",
+-			*(u32 *)&readbuf[6], address);
++				*(u32 *)&readbuf[6], address);
+ 			goto exit_readbuf;
+ 		}
  
- 	return cudbg_write_and_release_buff(pdbg_init, &temp_buff, dbg_buff);
-+
-+put_buffer:
-+	cudbg_put_buff(pdbg_init, &temp_buff);
-+	cudbg_err->sys_err = rc;
-+	return rc;
- }
+ 		if (*(u16 *)&readbuf[10] != 1) {
+ 			dev_err(&hdev->dev, "read register size error (%x)\n",
+-			*(u16 *)&readbuf[10]);
++				*(u16 *)&readbuf[10]);
+ 			goto exit_readbuf;
+ 		}
  
- int cudbg_collect_pcie_config(struct cudbg_init *pdbg_init,
+ 		check_sum = t4_calc_check_sum(readbuf, 6, 7);
+ 		if (*(u16 *)&readbuf[13] != check_sum) {
+ 			dev_err(&hdev->dev, "read register checksum error (%x,%x)\n",
+-			*(u16 *)&readbuf[13], check_sum);
++				*(u16 *)&readbuf[13], check_sum);
+ 			goto exit_readbuf;
+ 		}
+ 
 -- 
-2.16.2
+2.14.1
 
