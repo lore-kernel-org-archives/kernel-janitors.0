@@ -1,30 +1,34 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Mon, 12 Mar 2018 16:11:25 +0000
-Subject: Re: [PATCH 4/5] Bluetooth: btmrvl: Delete an unnecessary variable initialisation in btmrvl_sdio_card
-Message-Id: <4A308847-949D-4805-9508-4D016B105A64@holtmann.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 20 Mar 2018 14:17:58 +0000
+Subject: [PATCH -next] efi/libstub/tpm: Make function efi_retrieve_tpm2_eventlog_1_2() static
+Message-Id: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
- <2c2f8733-c5c0-cb2f-62eb-4fa360ee271e@users.sourceforge.net>
-In-Reply-To: <2c2f8733-c5c0-cb2f-62eb-4fa360ee271e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-bluetooth@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Markus,
+Fixes the following sparse warning:
 
-> The variable "payload" will eventually be set to an appropriate pointer
-> a bit later. Thus omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> drivers/bluetooth/btmrvl_sdio.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+drivers/firmware/efi/libstub/tpm.c:62:6: warning:
+ symbol 'efi_retrieve_tpm2_eventlog_1_2' was not declared. Should it be static?
 
-patch has been applied to bluetooth-next tree.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/firmware/efi/libstub/tpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards
-
-Marcel
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index 9d08cea..caa37a6 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
+ 
+ #endif
+ 
+-void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
++static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ {
+ 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+ 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
 
