@@ -1,23 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 27 Mar 2018 14:50:46 +0000
-Subject: Re: [PATCH net-next] tipc: fix error handling in tipc_udp_enable()
-Message-Id: <20180327.105046.391878908613679018.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 20 Mar 2018 13:19:59 +0000
+Subject: [PATCH -next] phy: phy-mtk-tphy: fix missing clk_disable_unprepare() on error in mtk_phy_init()
+Message-Id: <1521551999-154546-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1522074764-22678-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1522074764-22678-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jon.maloy@ericsson.com, ying.xue@windriver.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 26 Mar 2018 14:32:44 +0000
+Fix the missing clk_disable_unprepare() before return
+from mtk_phy_init() in the error handling case.
 
-> Release alloced resource before return from the error handling
-> case in tipc_udp_enable(), otherwise will cause memory leak.
-> 
-> Fixes: 52dfae5c85a4 ("tipc: obtain node identity from interface by default")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/phy/mediatek/phy-mtk-tphy.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/phy/mediatek/phy-mtk-tphy.c b/drivers/phy/mediatek/phy-mtk-tphy.c
+index 38c281b..3ff9020 100644
+--- a/drivers/phy/mediatek/phy-mtk-tphy.c
++++ b/drivers/phy/mediatek/phy-mtk-tphy.c
+@@ -841,7 +841,7 @@ static int mtk_phy_init(struct phy *phy)
+ 	ret = clk_prepare_enable(instance->ref_clk);
+ 	if (ret) {
+ 		dev_err(tphy->dev, "failed to enable ref_clk\n");
+-		return ret;
++		goto disable_u3phya_ref;
+ 	}
+ 
+ 	switch (instance->type) {
+@@ -859,10 +859,17 @@ static int mtk_phy_init(struct phy *phy)
+ 		break;
+ 	default:
+ 		dev_err(tphy->dev, "incompatible PHY type\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto disable_ref_clk;
+ 	}
+ 
+ 	return 0;
++
++disable_ref_clk:
++	clk_disable_unprepare(instance->ref_clk);
++disable_u3phya_ref:
++	clk_disable_unprepare(tphy->u3phya_ref);
++	return ret;
+ }
+ 
+ static int mtk_phy_power_on(struct phy *phy)
+
+
+
