@@ -1,49 +1,55 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Wed, 21 Mar 2018 09:03:20 +0000
-Subject: Re: [PATCH] mtd: nand: fix return value in nand_erase_nand()
-Message-Id: <20180321100320.70d14c17@bbrezillon>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 20 Mar 2018 14:20:30 +0000
+Subject: [PATCH -next] drm/meson: Fix potential NULL dereference in meson_drv_bind_master()
+Message-Id: <1521555630-29284-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180321081014.GC9826@mwanda>
-In-Reply-To: <20180321081014.GC9826@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+platform_get_resource_byname() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-On Wed, 21 Mar 2018 11:10:14 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+This is detected by Coccinelle semantic patch.
 
-> The problem is that "ret" isn't initialized on the success path.
-> 
-> Fixes: cc4ac09da649 ("mtd: Stop updating erase_info->state and calling mtd_erase_callback()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
 
-I squashed those changes into the offending commit.
+res = platform_get_resource_byname(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap(e1, res->start, e2);
 
-As usual, thanks for this report (and fix).
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/meson/meson_drv.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Boris
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 3baceb7..32b1a6c 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -197,6 +197,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	priv->io_base = regs;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
++	if (!res)
++		return -EINVAL;
+ 	/* Simply ioremap since it may be a shared register zone */
+ 	regs = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!regs) {
+@@ -213,6 +215,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
++	if (!res)
++		return -EINVAL;
+ 	/* Simply ioremap since it may be a shared register zone */
+ 	regs = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!regs) {
 
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 13dd67106859..87b72bf626ae 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -4653,6 +4653,7 @@ int nand_erase_nand(struct mtd_info *mtd, struct erase_info *instr,
->  		}
->  	}
->  
-> +	ret = 0;
->  erase_exit:
->  
->  	/* Deselect and wake up anyone waiting on the device */
-
-
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
