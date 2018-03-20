@@ -1,35 +1,33 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 14:27:01 +0000
-Subject: Re: [PATCH 2/3] video: au1100fb: Improve a size determination in au1100fb_drv_probe()
-Message-Id: <2447043.1duYbrvBpc@amdc3058>
+From: Comodo <c1-support@comodo.com>
+Date: Tue, 20 Mar 2018 02:19:02 +0000
+Subject: [#DME-408-11514]: 960155766781461206              =?utf-8?Q?=E6=B0=B8=E5=88=A955?=
+Message-Id: <34f4c2349f1e88fd8ec9862ec7354e06@swift.generated>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
- <CGME20171127180003epcas3p1a6c7cbe1be9bee79555a0e7f05b28024@epcas3p1.samsung.com>
- <231de972-f0bf-18ce-e681-a29767c086ea@users.sourceforge.net>
-In-Reply-To: <231de972-f0bf-18ce-e681-a29767c086ea@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Monday, November 27, 2017 06:59:57 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 27 Nov 2017 18:18:34 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+kernel-janitors@vger.kernel.org,
 
-Patch queued for 4.17, thanks.
+Thank you for contacting us. This is an automated response confirming the receipt of your ticket. Our team will get back to you as soon as possible. When replying, please make sure that the ticket ID is kept in the subject so that we can track your replies.
 
-Best regards,
+	Ticket ID: DME-408-11514
+	Subject: 960155766781461206              永利553248点COM邀您注冊嶺⑤8赢5⒏0提,专员Q 361269598嶺
+	Department: C1-Support
+	Type: Issue
+	Status: Open
+	Priority: Default
+
+You can check the status of or update this ticket online at: https://support.comodo.com/index.php?/Tickets/Ticket/View/DME-408-11514
+
+Kind regards,
+Comodo
+
+Comodo Technical Support Team
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
 
+
+
+------------------------------------------------------
+Helpdesk: https://support.comodo.com/index.php?
