@@ -1,72 +1,56 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Tue, 20 Mar 2018 16:16:41 +0000
-Subject: Re: [PATCH -next] drm/meson: Fix potential NULL dereference in meson_drv_bind_master()
-Message-Id: <1772626e-c521-a072-76e4-64e3b4883f2e@baylibre.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Mar 2018 19:06:53 +0000
+Subject: [PATCH] drm/i915/gvt: don't dereference 'workload' before null checking it
+Message-Id: <20180321190653.3829-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521555630-29284-1-git-send-email-weiyongjun1@huawei.com>
- <4cad8099-dbb8-d12c-9ce8-b64688222bd7@baylibre.com>
-In-Reply-To: <4cad8099-dbb8-d12c-9ce8-b64688222bd7@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, David Airlie <airlied@linux.ie>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 20/03/2018 16:04, Neil Armstrong wrote:
-> On 20/03/2018 15:20, Wei Yongjun wrote:
->> platform_get_resource_byname() may fail and return NULL, so we should
->> better check it's return value to avoid a NULL pointer dereference
->> a bit later in the code.
->>
->> This is detected by Coccinelle semantic patch.
->>
->> @@
->> expression pdev, res, n, t, e, e1, e2;
->> @@
->>
->> res = platform_get_resource_byname(pdev, t, n);
->> + if (!res)
->> +   return -EINVAL;
->> ... when != res = NULL
->> e = devm_ioremap(e1, res->start, e2);
->>
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->> ---
->>  drivers/gpu/drm/meson/meson_drv.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
->> index 3baceb7..32b1a6c 100644
->> --- a/drivers/gpu/drm/meson/meson_drv.c
->> +++ b/drivers/gpu/drm/meson/meson_drv.c
->> @@ -197,6 +197,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->>  	priv->io_base = regs;
->>  
->>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
->> +	if (!res)
->> +		return -EINVAL;
->>  	/* Simply ioremap since it may be a shared register zone */
->>  	regs = devm_ioremap(dev, res->start, resource_size(res));
->>  	if (!regs) {
->> @@ -213,6 +215,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->>  	}
->>  
->>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
->> +	if (!res)
->> +		return -EINVAL;
->>  	/* Simply ioremap since it may be a shared register zone */
->>  	regs = devm_ioremap(dev, res->start, resource_size(res));
->>  	if (!regs) {
->>
->>
->> _______________________________________________
->> linux-amlogic mailing list
->> linux-amlogic@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-amlogic
->>
-> Thanks,
-> 
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to drm-misc-next
+The pointer workload is dereferenced before it is null checked, hence
+there is a potential for a null pointer dereference on workload. Fix
+this by only dereferencing workload after it is null checked.
+
+Detected by CoverityScan, CID#1466017 ("Dereference before null check")
+
+Fixes: fa3dd623e559 ("drm/i915/gvt: keep oa config in shadow ctx")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gvt/scheduler.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/scheduler.c b/drivers/gpu/drm/i915/gvt/scheduler.c
+index 068126404151..f3010e365a48 100644
+--- a/drivers/gpu/drm/i915/gvt/scheduler.c
++++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+@@ -60,9 +60,9 @@ static void set_context_pdp_root_pointer(
+ static void sr_oa_regs(struct intel_vgpu_workload *workload,
+ 		u32 *reg_state, bool save)
+ {
+-	struct drm_i915_private *dev_priv = workload->vgpu->gvt->dev_priv;
+-	u32 ctx_oactxctrl = dev_priv->perf.oa.ctx_oactxctrl_offset;
+-	u32 ctx_flexeu0 = dev_priv->perf.oa.ctx_flexeu0_offset;
++	struct drm_i915_private *dev_priv;
++	u32 ctx_oactxctrl;
++	u32 ctx_flexeu0;
+ 	int i = 0;
+ 	u32 flex_mmio[] = {
+ 		i915_mmio_reg_offset(EU_PERF_CNTL0),
+@@ -77,6 +77,10 @@ static void sr_oa_regs(struct intel_vgpu_workload *workload,
+ 	if (!workload || !reg_state || workload->ring_id != RCS)
+ 		return;
+ 
++	dev_priv = workload->vgpu->gvt->dev_priv;
++	ctx_oactxctrl = dev_priv->perf.oa.ctx_oactxctrl_offset;
++	ctx_flexeu0 = dev_priv->perf.oa.ctx_flexeu0_offset;
++
+ 	if (save) {
+ 		workload->oactxctrl = reg_state[ctx_oactxctrl + 1];
+ 
+-- 
+2.15.1
+
