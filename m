@@ -1,37 +1,41 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 29 Mar 2018 02:20:10 +0000
-Subject: [PATCH -next] usb: dwc3: gadget: dwc3_gadget_del_and_unmap_request() can be static
-Message-Id: <1522290010-64022-1-git-send-email-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Mar 2018 08:09:42 +0000
+Subject: [PATCH] scsi: dpt_i2o: Use after free in I2ORESETCMD ioctl
+Message-Id: <20180321080941.GB9826@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warning:
+Here is another use after free if we reset the card.  The adpt_hba_reset()
+function frees "pHba" on error.
 
-drivers/usb/dwc3/gadget.c:169:6: warning:
- symbol 'dwc3_gadget_del_and_unmap_request' was not declared. Should it be static?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/usb/dwc3/gadget.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 8796a5ee..206ecc7 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -166,7 +166,7 @@ static void dwc3_ep_inc_deq(struct dwc3_ep *dep)
- 	dwc3_ep_inc_trb(&dep->trb_dequeue);
- }
- 
--void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
-+static void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
- 		struct dwc3_request *req, int status)
- {
- 	struct dwc3			*dwc = dep->dwc;
-
-
-
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index 3c667b23a801..359e0acfbc7c 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -2046,13 +2046,16 @@ static int adpt_ioctl(struct inode *inode, struct file *file, uint cmd, ulong ar
+ 		}
+ 		break;
+ 		}
+-	case I2ORESETCMD:
+-		if(pHba->host)
+-			spin_lock_irqsave(pHba->host->host_lock, flags);
++	case I2ORESETCMD: {
++		struct Scsi_Host *shost = pHba->host;
++
++		if (shost)
++			spin_lock_irqsave(shost->host_lock, flags);
+ 		adpt_hba_reset(pHba);
+-		if(pHba->host)
+-			spin_unlock_irqrestore(pHba->host->host_lock, flags);
++		if (shost)
++			spin_unlock_irqrestore(shost->host_lock, flags);
+ 		break;
++	}
+ 	case I2ORESCANCMD:
+ 		adpt_rescan(pHba);
+ 		break;
