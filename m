@@ -1,49 +1,80 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 21 Mar 2018 18:26:53 +0000
-Subject: [PATCH] drm/amd/pp: use mlck_table.count for array loop index limit
-Message-Id: <20180321182653.3150-1-colin.king@canonical.com>
+From: Joe Perches <joe@perches.com>
+Date: Wed, 21 Mar 2018 19:02:10 +0000
+Subject: Re: [PATCH] drm/amd/pp: use mlck_table.count for array loop index limit
+Message-Id: <1521658930.7999.25.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180321182653.3150-1-colin.king@canonical.com>
+In-Reply-To: <20180321182653.3150-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Colin King <colin.king@canonical.com>, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 2018-03-21 at 18:26 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The for-loops process data in the mclk_table but use slck_table.count
+> as the loop index limit.  I believe these are cut-n-paste errors from
+> the previous almost identical loops as indicated by static analysis.
+> Fix these.
 
-The for-loops process data in the mclk_table but use slck_table.count
-as the loop index limit.  I believe these are cut-n-paste errors from
-the previous almost identical loops as indicated by static analysis.
-Fix these.
+Nice tool.
 
-Detected by CoverityScan, CID#1466001 ("Copy-paste error")
+> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+[]
+> @@ -855,7 +855,7 @@ static int smu7_odn_initial_default_setting(struct pp_hwmgr *hwmgr)
+>  
+>  	odn_table->odn_memory_clock_dpm_levels.num_of_pl >  						data->golden_dpm_table.mclk_table.count;
+> -	for (i=0; i<data->golden_dpm_table.sclk_table.count; i++) {
+> +	for (i=0; i<data->golden_dpm_table.mclk_table.count; i++) {
+>  		odn_table->odn_memory_clock_dpm_levels.entries[i].clock >  					data->golden_dpm_table.mclk_table.dpm_levels[i].value;
+>  		odn_table->odn_memory_clock_dpm_levels.entries[i].enabled = true;
 
-Fixes: 5d97cf39ff24 ("drm/amd/pp: Add and initialize OD_dpm_table for CI/VI.")
-Fixes: 5e4d4fbea557 ("drm/amd/pp: Implement edit_dpm_table on smu7")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Probably more sensible to use temporaries too.
+Maybe something like the below (also trivially reduces object size)
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-index df2a312ca6c9..d1983273ec7c 100644
+index df2a312ca6c9..339b897146af 100644
 --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
 +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-@@ -855,7 +855,7 @@ static int smu7_odn_initial_default_setting(struct pp_hwmgr *hwmgr)
+@@ -834,6 +834,7 @@ static int smu7_odn_initial_default_setting(struct pp_hwmgr *hwmgr)
+ 
+ 	struct phm_ppt_v1_clock_voltage_dependency_table *dep_sclk_table;
+ 	struct phm_ppt_v1_clock_voltage_dependency_table *dep_mclk_table;
++	struct phm_odn_performance_level *entries;
+ 
+ 	if (table_info = NULL)
+ 		return -EINVAL;
+@@ -843,11 +844,11 @@ static int smu7_odn_initial_default_setting(struct pp_hwmgr *hwmgr)
+ 
+ 	odn_table->odn_core_clock_dpm_levels.num_of_pl  						data->golden_dpm_table.sclk_table.count;
++	entries = odn_table->odn_core_clock_dpm_levels.entries;
+ 	for (i=0; i<data->golden_dpm_table.sclk_table.count; i++) {
+-		odn_table->odn_core_clock_dpm_levels.entries[i].clock -					data->golden_dpm_table.sclk_table.dpm_levels[i].value;
+-		odn_table->odn_core_clock_dpm_levels.entries[i].enabled = true;
+-		odn_table->odn_core_clock_dpm_levels.entries[i].vddc = dep_sclk_table->entries[i].vddc;
++		entries[i].clock = data->golden_dpm_table.sclk_table.dpm_levels[i].value;
++		entries[i].enabled = true;
++		entries[i].vddc = dep_sclk_table->entries[i].vddc;
+ 	}
+ 
+ 	smu7_get_voltage_dependency_table(dep_sclk_table,
+@@ -855,11 +856,11 @@ static int smu7_odn_initial_default_setting(struct pp_hwmgr *hwmgr)
  
  	odn_table->odn_memory_clock_dpm_levels.num_of_pl  						data->golden_dpm_table.mclk_table.count;
 -	for (i=0; i<data->golden_dpm_table.sclk_table.count; i++) {
+-		odn_table->odn_memory_clock_dpm_levels.entries[i].clock -					data->golden_dpm_table.mclk_table.dpm_levels[i].value;
+-		odn_table->odn_memory_clock_dpm_levels.entries[i].enabled = true;
+-		odn_table->odn_memory_clock_dpm_levels.entries[i].vddc = dep_mclk_table->entries[i].vddc;
++	entries = odn_table->odn_memory_clock_dpm_levels.entries;
 +	for (i=0; i<data->golden_dpm_table.mclk_table.count; i++) {
- 		odn_table->odn_memory_clock_dpm_levels.entries[i].clock  					data->golden_dpm_table.mclk_table.dpm_levels[i].value;
- 		odn_table->odn_memory_clock_dpm_levels.entries[i].enabled = true;
-@@ -4735,7 +4735,7 @@ static void smu7_check_dpm_table_updated(struct pp_hwmgr *hwmgr)
- 		}
++		entries[i].clock = data->golden_dpm_table.mclk_table.dpm_levels[i].value;
++		entries[i].enabled = true;
++		entries[i].vddc = dep_mclk_table->entries[i].vddc;
  	}
  
--	for (i=0; i<data->dpm_table.sclk_table.count; i++) {
-+	for (i=0; i<data->dpm_table.mclk_table.count; i++) {
- 		if (odn_table->odn_memory_clock_dpm_levels.entries[i].clock ! 					data->dpm_table.mclk_table.dpm_levels[i].value) {
- 			data->need_update_smu7_dpm_table |= DPMTABLE_OD_UPDATE_MCLK;
--- 
-2.15.1
-
+ 	smu7_get_voltage_dependency_table(dep_mclk_table,
