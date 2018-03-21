@@ -1,39 +1,38 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 14:05:30 +0000
-Subject: Re: [PATCH 2/2] video: s3c-fb: Improve a size determination in s3c_fb_probe()
-Message-Id: <2206589.7tfjgjbFvn@amdc3058>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Mar 2018 18:01:58 +0000
+Subject: [PATCH][next] firmware: arm_scmi: remove redundant null check on array
+Message-Id: <20180321180158.2507-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2c837da0-6b0f-12e7-4d76-960b660a8911@users.sourceforge.net>
- <CGME20171127180721epcas2p1549ab6d72f7d83ff7eb5276079037b26@epcas2p1.samsung.com>
- <000301d367aa$8efbbc40$acf334c0$@gmail.com>
-In-Reply-To: <000301d367aa$8efbbc40$acf334c0$@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jingoo Han <jingoohan1@gmail.com>, 'SF Markus Elfring' <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, 'LKML' <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Monday, November 27, 2017 01:07:15 PM Jingoo Han wrote:
-> On Sunday, November 26, 2017 9:18 AM, SF Markus Elfring wrote:
-> > 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sun, 26 Nov 2017 15:03:03 +0100
-> > 
-> > Replace the specification of a data structure by a pointer dereference
-> > as the parameter for the operator "sizeof" to make the corresponding size
-> > determination a bit safer according to the Linux coding style convention.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Acked-by: Jingoo Han <jingoohan1@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.17, thanks.
+The null check on clk->name is redundant since name is a char array
+and can never be null, so the check is always true.  Remove it.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Detected by CoverityScan, CID#1466117 ("Array compared against 0")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/firmware/arm_scmi/clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index e8ffad33a0ff..0aabffc88599 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -283,7 +283,7 @@ scmi_clock_info_get(const struct scmi_handle *handle, u32 clk_id)
+ 	struct clock_info *ci = handle->clk_priv;
+ 	struct scmi_clock_info *clk = ci->clk + clk_id;
+ 
+-	if (!clk->name || !clk->name[0])
++	if (!clk->name[0])
+ 		return NULL;
+ 
+ 	return clk;
+-- 
+2.15.1
 
