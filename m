@@ -1,29 +1,51 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 28 Mar 2018 11:39:51 +0000
-Subject: Re: [PATCH] staging: wilc1000: replace kmalloc + memcpy with kmemdup
-Message-Id: <20180328113951.GA11213@kroah.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 21 Mar 2018 08:49:29 +0000
+Subject: Re: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than or equal zero
+Message-Id: <CACRpkdZYn8Ke2cXWt63LukTMa-zohToaK-UcrR3mvbCgL_M_yw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180326171629.28700-1-colin.king@canonical.com>
-In-Reply-To: <20180326171629.28700-1-colin.king@canonical.com>
+References: <20180226120418.3589-1-colin.king@canonical.com> <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
+In-Reply-To: <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Colin King <colin.king@canonical.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Mar 26, 2018 at 06:16:29PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Replace several allocation and memcpys with kmemdup and add in some
-> missing memory allocation failure checks.  Also fix an incorrect 
-> -EFAULT return with -ENOMEM.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/wilc1000/host_interface.c | 75 +++++++++++++++++++------------
->  1 file changed, 46 insertions(+), 29 deletions(-)
+On Mon, Feb 26, 2018 at 2:14 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-Doesn't apply to my tree anymore, due to patches submitted before yours
-:(
+>> -     u32 nfuncs = 0;
+>> -     u32 i = 0;
+>> +     int nfuncs = 0;
+>> +     int i = 0;
+>>       bool flat_funcs;
+>>
+>
+> I saw 'i', later used, is converted to u32 unconditionally. (GCC did not complain)
+> e.g.
+> radix_tree_insert
+> imx_pinctrl_parse_functions
+>
+> And of_get_child_count seems can't  return a minor value.
+>
+> So does something like below look better?
+>
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+> index c976ffe..4259209 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -612,7 +612,7 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
+>                 nfuncs = 1;
+>         } else {
+>                 nfuncs = of_get_child_count(np);
+> -               if (nfuncs <= 0) {
+> +               if (nfuncs = 0) {
 
-greg k-h
+This makes more sense to me.
+
+You can have zero functions but not negative number of functions.
+
+Aisheng, can you send a patch like this? (Or is it already somewhere in
+my inbox?)
+
+Yours,
+Linus Walleij
