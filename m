@@ -1,55 +1,28 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Tue, 13 Mar 2018 09:34:43 +0000
-Subject: Re: [PATCH 2/3] drm/meson: Use drm_dev_put() instead of drm_dev_unref()
-Message-Id: <0f801ea3-79e0-9942-2c18-6294e2c769cb@baylibre.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Mar 2018 08:10:14 +0000
+Subject: [PATCH] mtd: nand: fix return value in nand_erase_nand()
+Message-Id: <20180321081014.GC9826@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
- <d4ce46077d3ada7149c4555acfdda8ade4a6cf50.1520885192.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d4ce46077d3ada7149c4555acfdda8ade4a6cf50.1520885192.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, airlied@linux.ie, carlo@caione.org, khilman@baylibre.com
-Cc: linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On 12/03/2018 21:15, Christophe JAILLET wrote:
-> According to 'drivers/gpu/drm/drm_drv.c', 'drm_dev_unref()' is just a
-> compatibility alias for 'drm_dev_put()'. So use the latter instead.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpu/drm/meson/meson_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-> index 02b0886debc0..6ee3dd7fa450 100644
-> --- a/drivers/gpu/drm/meson/meson_drv.c
-> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -284,7 +284,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->  	return 0;
->  
->  free_drm:
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return ret;
->  }
-> @@ -303,7 +303,7 @@ static void meson_drv_unbind(struct device *dev)
->  	drm_kms_helper_poll_fini(drm);
->  	drm_fbdev_cma_fini(priv->fbdev);
->  	drm_mode_config_cleanup(drm);
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  }
->  
-> 
+The problem is that "ret" isn't initialized on the success path.
 
-It's not useless, there is a clear statement :
- * This is a compatibility alias for drm_dev_put() and should not be used by new
- * code.
+Fixes: cc4ac09da649 ("mtd: Stop updating erase_info->state and calling mtd_erase_callback()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-
-Thanks,
-Neil
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 13dd67106859..87b72bf626ae 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -4653,6 +4653,7 @@ int nand_erase_nand(struct mtd_info *mtd, struct erase_info *instr,
+ 		}
+ 	}
+ 
++	ret = 0;
+ erase_exit:
+ 
+ 	/* Deselect and wake up anyone waiting on the device */
