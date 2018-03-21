@@ -1,28 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Mar 2018 18:53:06 +0000
-Subject: Re: [PATCH][next] gre: fix TUNNEL_SEQ bit check on sequence numbering
-Message-Id: <20180322.145306.435067580111338677.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Mar 2018 10:24:13 +0000
+Subject: [PATCH][next] dmaengine: dw-axi-dmac: fix spelling mistake: "catched" -> "caught"
+Message-Id: <20180321102413.29621-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180321193458.4451-1-colin.king@canonical.com>
-In-Reply-To: <20180321193458.4451-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 21 Mar 2018 19:34:58 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current logic of flags | TUNNEL_SEQ is always non-zero and hence
-> sequence numbers are always incremented no matter the setting of the
-> TUNNEL_SEQ bit.  Fix this by using & instead of |.
-> 
-> Detected by CoverityScan, CID#1466039 ("Operands don't affect result")
-> 
-> Fixes: 77a5196a804e ("gre: add sequence number for collect md mode.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in dev_err error message text
 
-Applied, thanks Colin.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+index dbe7312c15c6..c4eb55e3011c 100644
+--- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
++++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+@@ -574,7 +574,7 @@ static void axi_chan_block_xfer_complete(struct axi_dma_chan *chan)
+ 
+ 	spin_lock_irqsave(&chan->vc.lock, flags);
+ 	if (unlikely(axi_chan_is_hw_enable(chan))) {
+-		dev_err(chan2dev(chan), "BUG: %s catched DWAXIDMAC_IRQ_DMA_TRF, but channel not idle!\n",
++		dev_err(chan2dev(chan), "BUG: %s caught DWAXIDMAC_IRQ_DMA_TRF, but channel not idle!\n",
+ 			axi_chan_name(chan));
+ 		axi_chan_disable(chan);
+ 	}
+-- 
+2.15.1
+
