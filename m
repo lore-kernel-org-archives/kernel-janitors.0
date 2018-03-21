@@ -1,31 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 27 Mar 2018 15:45:46 +0000
-Subject: Re: [PATCH] ALSA: usb-audio: fix memory leak on cval
-Message-Id: <s5hfu4l8qtx.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Mar 2018 17:45:38 +0000
+Subject: [PATCH][next] phy: qcom-qusb2: fix missing assignment to an error return code
+Message-Id: <20180321174538.2194-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180327143001.13870-1-colin.king@canonical.com>
-In-Reply-To: <20180327143001.13870-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Andrew Chant <achant@google.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, Manu Gautam <mgautam@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018 16:30:01 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> With the current exit return path of the ctl_info allocation failure
-> cval is not being freed resulting in a memory leak. Fix this by kfree'ing
-> it on the return.
-> 
-> Detected by CoverityScan, CID#1466878 ("Resource Leak")
-> 
-> Fixes: 21e9b3e931f7 ("ALSA: usb-audio: fix uac control query argument")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied now.
+The error return code is not being assigned to ret from the call
+to clk_prepare_enable and consequently the current check on ret
+picks up the previous error return. Fix this by adding in the
+missing assignment to ret.
 
+Detected by CoverityScan, CID#166020 ("Logically Dead code")
 
-Takashi
+Fixes: 891a96f65ac3 ("phy: qcom-qusb2: Add support for runtime PM)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/phy/qualcomm/phy-qcom-qusb2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+index 94afeac1a19e..6f5689a40884 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
++++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+@@ -439,7 +439,7 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
+ 	}
+ 
+ 	if (!qphy->has_se_clk_scheme) {
+-		clk_prepare_enable(qphy->ref_clk);
++		ret = clk_prepare_enable(qphy->ref_clk);
+ 		if (ret) {
+ 			dev_err(dev, "failed to enable ref clk, %d\n", ret);
+ 			goto disable_ahb_clk;
+-- 
+2.15.1
+
