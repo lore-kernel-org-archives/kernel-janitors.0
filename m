@@ -1,37 +1,23 @@
-From: "Kalluru, Sudarsana" <Sudarsana.Kalluru@cavium.com>
-Date: Tue, 20 Mar 2018 05:11:37 +0000
-Subject: RE: [PATCH] bnx2x: fix spelling mistake: "registeration" -> "registration"
-Message-Id: <MW2PR07MB41394233EBB630C3EADB36C58AAB0@MW2PR07MB4139.namprd07.prod.outlook.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 21 Mar 2018 22:10:16 +0000
+Subject: Re: [PATCH] bnx2x: fix spelling mistake: "registeration" -> "registration"
+Message-Id: <20180321.181016.686108222158074171.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180319143259.5796-1-colin.king@canonical.com>
 In-Reply-To: <20180319143259.5796-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Elior, Ariel" <Ariel.Elior@cavium.com>, Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: colin.king@canonical.com
+Cc: ariel.elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IENvbGluIEtpbmcgW21haWx0bzpjb2xp
-bi5raW5nQGNhbm9uaWNhbC5jb21dIA0KU2VudDogMTkgTWFyY2ggMjAxOCAyMDowMw0KVG86IEVs
-aW9yLCBBcmllbCA8QXJpZWwuRWxpb3JAY2F2aXVtLmNvbT47IERlcHQtRW5nIEV2ZXJlc3QgTGlu
-dXggTDIgPERlcHQtRW5nRXZlcmVzdExpbnV4TDJAY2F2aXVtLmNvbT47IG5ldGRldkB2Z2VyLmtl
-cm5lbC5vcmcNCkNjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBbUEFUQ0hdIGJueDJ4OiBmaXggc3BlbGxpbmcg
-bWlzdGFrZTogInJlZ2lzdGVyYXRpb24iIC0+ICJyZWdpc3RyYXRpb24iDQoNCkZyb206IENvbGlu
-IElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQoNClRyaXZpYWwgZml4IHRvIHNw
-ZWxsaW5nIG1pc3Rha2UgaW4gQk5YMlhfRVJSIGVycm9yIG1lc3NhZ2UgdGV4dA0KDQpTaWduZWQt
-b2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KLS0tDQog
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvYnJvYWRjb20vYm54MngvYm54MnhfbWFpbi5jIHwgMiArLQ0K
-IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvYnJvYWRjb20vYm54MngvYm54MnhfbWFpbi5jIGIv
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvYnJvYWRjb20vYm54MngvYm54MnhfbWFpbi5jDQppbmRleCA3
-NGZjOWFmNGFhZGIuLmI4Mzg4ZTkzNTIwYSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvbmV0L2V0aGVy
-bmV0L2Jyb2FkY29tL2JueDJ4L2JueDJ4X21haW4uYw0KKysrIGIvZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvYnJvYWRjb20vYm54MngvYm54MnhfbWFpbi5jDQpAQCAtMTM5MTMsNyArMTM5MTMsNyBAQCBz
-dGF0aWMgdm9pZCBibngyeF9yZWdpc3Rlcl9waGMoc3RydWN0IGJueDJ4ICpicCkNCiAJYnAtPnB0
-cF9jbG9jayA9IHB0cF9jbG9ja19yZWdpc3RlcigmYnAtPnB0cF9jbG9ja19pbmZvLCAmYnAtPnBk
-ZXYtPmRldik7DQogCWlmIChJU19FUlIoYnAtPnB0cF9jbG9jaykpIHsNCiAJCWJwLT5wdHBfY2xv
-Y2sgPSBOVUxMOw0KLQkJQk5YMlhfRVJSKCJQVFAgY2xvY2sgcmVnaXN0ZXJhdGlvbiBmYWlsZWRc
-biIpOw0KKwkJQk5YMlhfRVJSKCJQVFAgY2xvY2sgcmVnaXN0cmF0aW9uIGZhaWxlZFxuIik7DQog
-CX0NCiB9DQogDQotLSANCjIuMTUuMQ0KDQpBY2tlZC1ieTogU3VkYXJzYW5hIEthbGx1cnUgPFN1
-ZGFyc2FuYS5LYWxsdXJ1QGNhdml1bS5jb20+DQo
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Mar 2018 14:32:59 +0000
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in BNX2X_ERR error message text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied.
