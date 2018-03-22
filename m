@@ -1,45 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Mar 2018 10:03:56 +0000
-Subject: [PATCH] staging: emxx_udc: Remove unnecessary NULL checks
-Message-Id: <20180306100356.GC10474@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Mar 2018 23:12:39 +0000
+Subject: [PATCH][next] drm/amd/pp: don't dereference hwmgr until after it is null checked
+Message-Id: <20180322231239.16935-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These pointers can't be NULL so I have removed the checks.
+From: Colin Ian King <colin.king@canonical.com>
 
-The checking was sort of problematic as well because it didn't make
-sense.  In _nbu2ss_read_request_data() the && should have been ||.  In
-nbu2ss_gad_get_frame() we know that "pgadget" is non-NULL and "udc" is
-an offset from "pgadget" so it can't be NULL.
+Pointer hwmgr is dereferenced before it is null checked, hence there
+is a possibility of a null pointer dereference.  Fix this by only
+dereferencing hwmgr once it is null checked.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Detected by CoverityScan, CID#1466428 ("Dereference before null check")
 
-diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
-index ad69a1e536a7..3e51476a7045 100644
---- a/drivers/staging/emxx_udc/emxx_udc.c
-+++ b/drivers/staging/emxx_udc/emxx_udc.c
-@@ -1672,9 +1672,6 @@ static int std_req_set_configuration(struct nbu2ss_udc *udc)
- /*-------------------------------------------------------------------------*/
- static inline void _nbu2ss_read_request_data(struct nbu2ss_udc *udc, u32 *pdata)
+Fixes: 59156faf810e ("drm/amd/pp: Remove the cgs wrapper for notify smu version on APU")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
+index 8c49704b81af..6e88ed67e291 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
+@@ -698,18 +698,18 @@ static int smu8_start_smu(struct pp_hwmgr *hwmgr)
  {
--	if ((!udc) && (!pdata))
--		return;
--
- 	*pdata = _nbu2ss_readl(&udc->p_regs->SETUP_DATA0);
- 	pdata++;
- 	*pdata = _nbu2ss_readl(&udc->p_regs->SETUP_DATA1);
-@@ -2941,11 +2938,6 @@ static int nbu2ss_gad_get_frame(struct usb_gadget *pgadget)
- 	}
+ 	int ret = 0;
+ 	uint32_t fw_to_check = 0;
+-	struct amdgpu_device *adev = hwmgr->adev;
++	struct amdgpu_device *adev;
  
- 	udc = container_of(pgadget, struct nbu2ss_udc, gadget);
--	if (!udc) {
--		dev_err(&pgadget->dev, "%s, udc = NULL\n", __func__);
--		return -EINVAL;
--	}
+ 	uint32_t index = SMN_MP1_SRAM_START_ADDR +
+ 			 SMU8_FIRMWARE_HEADER_LOCATION +
+ 			 offsetof(struct SMU8_Firmware_Header, Version);
+ 
 -
- 	data = gpio_get_value(VBUS_VALUE);
- 	if (data = 0)
+ 	if (hwmgr = NULL || hwmgr->device = NULL)
  		return -EINVAL;
+ 
+ 	cgs_write_register(hwmgr->device, mmMP0PUB_IND_INDEX, index);
+ 	hwmgr->smu_version = cgs_read_register(hwmgr->device, mmMP0PUB_IND_DATA);
++	adev = hwmgr->adev;
+ 	adev->pm.fw_version = hwmgr->smu_version >> 8;
+ 
+ 	fw_to_check = UCODE_ID_RLC_G_MASK |
+-- 
+2.15.1
+
