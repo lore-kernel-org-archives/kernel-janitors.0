@@ -1,68 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Mar 2018 20:53:28 +0000
-Subject: [PATCH 3/4] HID: alps: Check errors returned by 't4_read_write_register()'
-Message-Id: <c66533ec775540b7f1da48611a7e45bda28cead5.1521492069.git.christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Mar 2018 09:40:40 +0000
+Subject: [PATCH] staging: mt7621-eth: fix spelling mistake: "devictree" -> "devicetree"
+Message-Id: <20180322094040.12258-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-If only the first 't4_read_write_register()' call fails, the error code
-will be overwritten and lost.
-Directly report the error instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-While at it, log some errors if 't4_read_write_register()' fails, as done
-in the rest of the driver.
+Trivial fix to spelling mistake in dev_err message text
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hid/hid-alps.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/staging/mt7621-eth/mtk_eth_soc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
-index fe8a0624d5e4..137b963779c6 100644
---- a/drivers/hid/hid-alps.c
-+++ b/drivers/hid/hid-alps.c
-@@ -460,17 +460,35 @@ static int __maybe_unused alps_post_reset(struct hid_device *hdev)
- 	case T4:
- 		ret = t4_read_write_register(hdev, T4_PRM_FEED_CONFIG_1,
- 			NULL, T4_I2C_ABS, false);
-+		if (ret < 0) {
-+			dev_err(&hdev->dev, "failed T4_PRM_FEED_CONFIG_1 (%d)\n",
-+				ret);
-+			goto exit;
-+		}
-+
- 		ret = t4_read_write_register(hdev, T4_PRM_FEED_CONFIG_4,
- 			NULL, T4_FEEDCFG4_ADVANCED_ABS_ENABLE, false);
-+		if (ret < 0) {
-+			dev_err(&hdev->dev, "failed T4_PRM_FEED_CONFIG_4 (%d)\n",
-+				ret);
-+			goto exit;
-+		}
- 		break;
- 	case U1:
- 		ret = u1_read_write_register(hdev,
- 			ADDRESS_U1_DEV_CTRL_1, NULL,
- 			U1_TP_ABS_MODE | U1_SP_ABS_MODE, false);
-+		if (ret < 0) {
-+			dev_err(&hdev->dev, "failed to change TP mode (%d)\n",
-+				ret);
-+			goto exit;
-+		}
- 		break;
- 	default:
- 		break;
+diff --git a/drivers/staging/mt7621-eth/mtk_eth_soc.c b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+index 98b44629bc1d..eb3e14ae2929 100644
+--- a/drivers/staging/mt7621-eth/mtk_eth_soc.c
++++ b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+@@ -2096,7 +2096,7 @@ static int mtk_probe(struct platform_device *pdev)
+ 	sysclk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(sysclk)) {
+ 		dev_err(&pdev->dev,
+-			"the clock is not defined in the devictree\n");
++			"the clock is not defined in the devicetree\n");
+ 		return -ENXIO;
  	}
-+
-+exit:
- 	return ret;
- }
- 
+ 	eth->sysclk = clk_get_rate(sysclk);
 -- 
-2.14.1
+2.15.1
 
