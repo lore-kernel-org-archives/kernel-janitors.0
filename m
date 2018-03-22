@@ -1,41 +1,36 @@
-From: Andi Kleen <ak@linux.intel.com>
-Date: Fri, 16 Mar 2018 14:54:19 +0000
-Subject: Re: [bug report] perf/x86/intel: Add INST_RETIRED.ALL workarounds
-Message-Id: <20180316145419.GK13724@tassilo.jf.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Mar 2018 15:41:44 +0000
+Subject: [PATCH][next] drm/amdgpu: fix spelling mistake: "asssert" -> "assert"
+Message-Id: <20180322154144.31363-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180315090346.GA23080@mwanda>
-In-Reply-To: <20180315090346.GA23080@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 12:03:46PM +0300, Dan Carpenter wrote:
-> Hello Andi Kleen,
-> 
-> The patch 294fe0f52a44: "perf/x86/intel: Add INST_RETIRED.ALL
-> workarounds" from Feb 17, 2015, leads to the following static checker
-> warning:
-> 
-> 	arch/x86/events/intel/core.c:3213 bdw_limit_period()
-> 	warn: was expecting a 64 bit value instead of '63'
-> 
-> arch/x86/events/intel/core.c
->   3207  static u64 bdw_limit_period(struct perf_event *event, u64 left)
->                                                               ^^^^^^^^
->   3208  {
->   3209          if ((event->hw.config & INTEL_ARCH_EVENT_MASK) =
->   3210                          X86_CONFIG(.event=0xc0, .umask=0x01)) {
->   3211                  if (left < 128)
->   3212                          left = 128;
->   3213                  left &= ~0x3fu;
->                         ^^^^^^^^^^^^^^
-> You're clearing the high 32 bits as well as the low 6.  It should be
-> ~0x3full.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks. Looks good.
+Trivial fix to spelling mistake in pr_err error message text
 
-Please submit the patch. I don't think it will make much difference
-in practice though because periods are rarely >32bit.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Andi
+diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+index 8fb933c62cf5..493348672475 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
++++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+@@ -129,7 +129,7 @@ static void xgpu_ai_mailbox_trans_msg (struct amdgpu_device *adev,
+ 		xgpu_ai_mailbox_set_valid(adev, false);
+ 		trn = xgpu_ai_peek_ack(adev);
+ 		if (trn) {
+-			pr_err("trn=%x ACK should not asssert! wait again !\n", trn);
++			pr_err("trn=%x ACK should not assert! wait again !\n", trn);
+ 			msleep(1);
+ 		}
+ 	} while(trn);
+-- 
+2.15.1
+
