@@ -1,27 +1,36 @@
-From: Xin Long <lucien.xin@gmail.com>
-Date: Mon, 12 Mar 2018 17:34:18 +0000
-Subject: Re: [PATCH net-next] sctp: fix error return code in sctp_sendmsg_new_asoc()
-Message-Id: <CADvbK_c2riQ4Tqne=q7v-n5kCcYqw5j+duppKWbuf9+TqZPFjQ@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 22 Mar 2018 02:25:07 +0000
+Subject: [PATCH -next] tty: serial: msm_geni_serial: Fix return value check in qcom_geni_serial_probe()
+Message-Id: <1521685507-92087-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1520856964-132516-1-git-send-email-weiyongjun1@huawei.com> <20180312.111903.1047457001442236332.davem@davemloft.net>
-In-Reply-To: <20180312.111903.1047457001442236332.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Vlad Yasevich <vyasevich@gmail.com>, Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 11:19 PM, David Miller <davem@davemloft.net> wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> Date: Mon, 12 Mar 2018 12:16:04 +0000
->
->> Return error code -EINVAL in the address len check error handling
->> case since 'err' can be overwrite to 0 by 'err = sctp_verify_addr()'
->> in the for loop.
->>
->> Fixes: 2c0dbaa0c43d ("sctp: add support for SCTP_DSTADDRV4/6 Information for sendmsg")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->
-> Xin, I do not want to have a bug fix like this blocked because of that
-> SCTP options merge nightmare which is of no fault of our own.
-Okay, sorry, I was over worried recently, thank you.
+In case of error, the function platform_get_resource() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
+
+Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/tty/serial/qcom_geni_serial.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 1442777..65ff669 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -1053,8 +1053,8 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (IS_ERR(res))
+-		return PTR_ERR(res);
++	if (!res)
++		return -EINVAL;
+ 	uport->mapbase = res->start;
+ 
+ 	port->tx_fifo_depth = DEF_FIFO_DEPTH_WORDS;
+
