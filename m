@@ -1,7 +1,7 @@
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Thu, 22 Mar 2018 14:06:27 +0000
+Date: Thu, 22 Mar 2018 14:09:49 +0000
 Subject: Re: [PATCH -next] efi/libstub/tpm: Make function efi_retrieve_tpm2_eventlog_1_2() static
-Message-Id: <fe665fc510d63fbc2d7b83ef7085d1e1ae5eec0b.camel@linux.intel.com>
+Message-Id: <572beb72b2236507c14bf16c6c89f03055856c4c.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
 In-Reply-To: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
@@ -10,35 +10,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 2018-03-20 at 14:17 +0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
+On Thu, 2018-03-22 at 16:06 +0200, Jarkko Sakkinen wrote:
+> On Tue, 2018-03-20 at 14:17 +0000, Wei Yongjun wrote:
+> > Fixes the following sparse warning:
+> > 
+> > drivers/firmware/efi/libstub/tpm.c:62:6: warning:
+> >  symbol 'efi_retrieve_tpm2_eventlog_1_2' was not declared. Should it be
+> > static?
+> > 
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > ---
+> >  drivers/firmware/efi/libstub/tpm.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/firmware/efi/libstub/tpm.c
+> > b/drivers/firmware/efi/libstub/tpm.c
+> > index 9d08cea..caa37a6 100644
+> > --- a/drivers/firmware/efi/libstub/tpm.c
+> > +++ b/drivers/firmware/efi/libstub/tpm.c
+> > @@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t
+> > *sys_table_arg)
+> >  
+> >  #endif
+> >  
+> > -void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+> > +static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t
+> > *sys_table_arg)
+> >  {
+> >  	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+> >  	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+> > 
 > 
-> drivers/firmware/efi/libstub/tpm.c:62:6: warning:
->  symbol 'efi_retrieve_tpm2_eventlog_1_2' was not declared. Should it be
-> static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/firmware/efi/libstub/tpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/efi/libstub/tpm.c
-> b/drivers/firmware/efi/libstub/tpm.c
-> index 9d08cea..caa37a6 100644
-> --- a/drivers/firmware/efi/libstub/tpm.c
-> +++ b/drivers/firmware/efi/libstub/tpm.c
-> @@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t
-> *sys_table_arg)
->  
->  #endif
->  
-> -void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> +static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->  {
->  	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
->  	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
-> 
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Applied.
 
 /Jarkko
