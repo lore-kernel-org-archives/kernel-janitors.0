@@ -1,45 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Mar 2018 13:49:28 +0000
-Subject: Re: [PATCH] rxrpc: remove redundant initialization of variable 'len'
-Message-Id: <20180316.094928.699803274284942791.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 22 Mar 2018 02:09:39 +0000
+Subject: [PATCH -next] staging: mt7621-eth: fix return value check in mtk_probe()
+Message-Id: <1521684579-76660-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180312172538.31707-1-colin.king@canonical.com>
-In-Reply-To: <20180312172538.31707-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dhowells@redhat.com, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 12 Mar 2018 17:25:38 +0000
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable 'len' is being initialized with a value that is never
-> read and it is re-assigned later, hence the initialization is redundant
-> and can be removed.
-> 
-> Cleans up clang warning:
-> net/rxrpc/recvmsg.c:275:15: warning: Value stored to 'len' during its
-> initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: e3cbf478f846 ("staging: mt7621-eth: add the drivers core files")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/staging/mt7621-eth/mtk_eth_soc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hehe, if the diff provided just 2 more lines of context at the bottom
-we'd be able to see the overriding assignment :-)
+diff --git a/drivers/staging/mt7621-eth/mtk_eth_soc.c b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+index 98b4462..dea4270 100644
+--- a/drivers/staging/mt7621-eth/mtk_eth_soc.c
++++ b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+@@ -2077,8 +2077,8 @@ static int mtk_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	eth->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!eth->base)
+-		return -EADDRNOTAVAIL;
++	if (IS_ERR(eth->base))
++		return PTR_ERR(eth->base);
+ 
+ 	spin_lock_init(&eth->page_lock);
 
-> @@ -272,7 +272,7 @@ static int rxrpc_locate_data(struct rxrpc_call *call, struct sk_buff *skb,
->  			     unsigned int *_offset, unsigned int *_len)
->  {
->  	unsigned int offset = sizeof(struct rxrpc_wire_header);
-> -	unsigned int len = *_len;
-> +	unsigned int len;
->  	int ret;
->  	u8 annotation = *_annotation;
->  
-> -- 
-> 2.15.1
-> 
-
-Applied, thanks Colin.
