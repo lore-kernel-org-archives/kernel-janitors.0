@@ -1,46 +1,60 @@
-From: Brad Love <brad@nextdimension.cc>
-Date: Thu, 08 Mar 2018 14:11:24 +0000
-Subject: Re: [PATCH] media: em28xx-cards: fix em28xx_duplicate_dev()
-Message-Id: <269c6f7b-323f-97e0-8c34-bd25c3dbabfc@nextdimension.cc>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 22 Mar 2018 01:12:00 +0000
+Subject: Re: [PATCH] scsi: cxgb4i: potential array overflow in t4_uld_rx_handler()
+Message-Id: <yq18takrk0v.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180308093100.GA16525@mwanda>
-In-Reply-To: <20180308093100.GA16525@mwanda>
+References: <20171129114220.3qbwryxjnol6zmsk@mwanda>
+In-Reply-To: <20171129114220.3qbwryxjnol6zmsk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Brad Love <brad@nextdimension.cc>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-Hi Dan,
+To: kernel-janitors@vger.kernel.org
 
 
-On 2018-03-08 03:31, Dan Carpenter wrote:
-> There is a double sizeof() typo here so we don't duplicate the struct
-> properly.
+Varun: Please look at this. Thanks!
+
+> What happened to this one?
 >
-> Fixes: be7fd3c3a8c5 ("media: em28xx: Hauppauge DualHD second tuner functionality")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> regards,
+> dan carpenter
 >
-> diff --git a/drivers/media/usb/em28xx/em28xx-cards.c b/drivers/media/usb/em28xx/em28xx-cards.c
-> index 6e8247849c4f..6e0e67d23876 100644
-> --- a/drivers/media/usb/em28xx/em28xx-cards.c
-> +++ b/drivers/media/usb/em28xx/em28xx-cards.c
-> @@ -3515,7 +3515,7 @@ static int em28xx_duplicate_dev(struct em28xx *dev)
->  		dev->dev_next = NULL;
->  		return -ENOMEM;
->  	}
-> -	memcpy(sec_dev, dev, sizeof(sizeof(*sec_dev)));
-> +	memcpy(sec_dev, dev, sizeof(*sec_dev));
->  	/* Check to see next free device and mark as used */
->  	do {
->  		nr = find_first_zero_bit(em28xx_devused, EM28XX_MAXBOARDS);
+>
+> On Wed, Nov 29, 2017 at 02:42:20PM +0300, Dan Carpenter wrote:
+>> The story is that Smatch marks skb->data as untrusted and so it
+>> complains about this code:
+>> 
+>> 	drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2111 t4_uld_rx_handler()
+>> 	error: buffer overflow 'cxgb4i_cplhandlers' 239 <= 255.
+>> 
+>> I don't know the code very well, but it looks like a reasonable warning
+>> message.  Let's address it by adding a sanity check to make sure "opc"
+>> is within bounds.
+>> 
+>> Fixes: bbc02c7e9d34 ("cxgb4: Add register, message, and FW definitions")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> 
+>> diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+>> index 266eddf17a99..94b2d5660a07 100644
+>> --- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+>> +++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+>> @@ -2108,12 +2108,12 @@ static int t4_uld_rx_handler(void *handle, const __be64 *rsp,
+>>  	log_debug(1 << CXGBI_DBG_TOE,
+>>  		"cdev %p, opcode 0x%x(0x%x,0x%x), skb %p.\n",
+>>  		 cdev, opc, rpl->ot.opcode_tid, ntohl(rpl->ot.opcode_tid), skb);
+>> -	if (cxgb4i_cplhandlers[opc])
+>> -		cxgb4i_cplhandlers[opc](cdev, skb);
+>> -	else {
+>> +	if (opc >= ARRAY_SIZE(cxgb4i_cplhandlers) || !cxgb4i_cplhandlers[opc]) {
+>>  		pr_err("No handler for opcode 0x%x.\n", opc);
+>>  		__kfree_skb(skb);
+>> +		return 0;
+>>  	}
+>> +	cxgb4i_cplhandlers[opc](cdev, skb);
+>>  	return 0;
+>>  nomem:
+>>  	log_debug(1 << CXGBI_DBG_TOE, "OOM bailing out.\n");
+>
+>
 
-
-Ouch, good catch. Strangely everything still worked in 64bit builds, and
-I've had no reports of wonky behaviour elsewhere.
-
-Cheers,
-
-Brad
-
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
