@@ -1,41 +1,38 @@
 From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 22 Mar 2018 02:09:51 +0000
-Subject: [PATCH -next] staging: mt7621-eth: fix return value check in mtk_connect_phy_node()
-Message-Id: <1521684591-77182-1-git-send-email-weiyongjun1@huawei.com>
+Date: Thu, 22 Mar 2018 02:10:07 +0000
+Subject: [PATCH -next] staging: mt7621-eth: fix return value check in mt7621_gsw_probe()
+Message-Id: <1521684607-77277-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1521684579-76660-1-git-send-email-weiyongjun1@huawei.com>
 In-Reply-To: <1521684579-76660-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Crispin <blogic@openwrt.org>, Michael Lee <igvtee@gmail.com>, NeilBrown <neil@brown.name>, Felix Fietkau <nbd@openwrt.org>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-In case of error, the function of_phy_connect() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Fixes: e3cbf478f846 ("staging: mt7621-eth: add the drivers core files")
+Fixes: f079b6406348 ("staging: mt7621-eth: add gigabit switch driver (GSW)")
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/staging/mt7621-eth/mdio.c | 4 ++--
+ drivers/staging/mt7621-eth/gsw_mt7621.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/mt7621-eth/mdio.c b/drivers/staging/mt7621-eth/mdio.c
-index 96ecda9..9d71307 100644
---- a/drivers/staging/mt7621-eth/mdio.c
-+++ b/drivers/staging/mt7621-eth/mdio.c
-@@ -82,10 +82,10 @@ int mtk_connect_phy_node(struct mtk_eth *eth, struct mtk_mac *mac,
+diff --git a/drivers/staging/mt7621-eth/gsw_mt7621.c b/drivers/staging/mt7621-eth/gsw_mt7621.c
+index b49ee94..ce8d7d7 100644
+--- a/drivers/staging/mt7621-eth/gsw_mt7621.c
++++ b/drivers/staging/mt7621-eth/gsw_mt7621.c
+@@ -263,8 +263,8 @@ static int mt7621_gsw_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 	phydev = of_phy_connect(eth->netdev[mac->id], phy_node,
- 				mtk_phy_link_adjust, 0, phy_mode);
--	if (IS_ERR(phydev)) {
-+	if (!phydev) {
- 		dev_err(eth->dev, "could not connect to PHY\n");
- 		eth->phy->phy_node[port] = NULL;
--		return PTR_ERR(phydev);
-+		return -ENODEV;
- 	}
+ 	gsw->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!gsw->base)
+-		return -EADDRNOTAVAIL;
++	if (IS_ERR(gsw->base))
++		return PTR_ERR(gsw->base);
  
- 	phydev->supported &= PHY_GBIT_FEATURES;
+ 	gsw->dev = &pdev->dev;
+ 	gsw->irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
 
