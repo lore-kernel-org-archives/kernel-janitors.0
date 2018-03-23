@@ -1,55 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Mar 2018 08:31:35 +0000
-Subject: [PATCH 1/4] scsi: hpsa: Use memdup_user() rather than duplicating its implementation
-Message-Id: <1feebb55-05f4-a4f7-b478-efa57639c431@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Mar 2018 09:48:24 +0000
+Subject: [PATCH][next] ASoC: amd: make pointer da7219_dai_clk static
+Message-Id: <20180323094824.26028-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
-In-Reply-To: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com, Don Brace <don.brace@microsemi.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal <akshu.agrawal@amd.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 4 Mar 2018 21:19:52 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-* Reuse existing functionality from memdup_user() instead of keeping
-  duplicate source code.
+The pointer da7219_dai_clk  is local to the source and does not need to
+be in global scope, so make it static.
 
-  This issue was detected by using the Coccinelle software.
+Cleans up sparse warning:
+sound/soc/amd/acp-da7219-max98357a.c:46:12: warning: symbol 'da7219_dai_clk'
+was not declared. Should it be static?
 
-* Return directly after this function call failed at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/hpsa.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ sound/soc/amd/acp-da7219-max98357a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 5293e6827ce5..b35248becef9 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -6390,15 +6390,10 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
- 		return -EINVAL;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
--	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
--	if (!ioc) {
--		status = -ENOMEM;
--		goto cleanup1;
--	}
--	if (copy_from_user(ioc, argp, sizeof(*ioc))) {
--		status = -EFAULT;
--		goto cleanup1;
--	}
-+	ioc = memdup_user(argp, sizeof(*ioc));
-+	if (IS_ERR(ioc))
-+		return PTR_ERR(ioc);
-+
- 	if ((ioc->buf_size < 1) &&
- 	    (ioc->Request.Type.Direction != XFER_NONE)) {
- 		status = -EINVAL;
+diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+index 99c6b5ce5c6c..af458bd36c72 100644
+--- a/sound/soc/amd/acp-da7219-max98357a.c
++++ b/sound/soc/amd/acp-da7219-max98357a.c
+@@ -43,7 +43,7 @@
+ #define DUAL_CHANNEL		2
+ 
+ static struct snd_soc_jack cz_jack;
+-struct clk *da7219_dai_clk;
++static struct clk *da7219_dai_clk;
+ 
+ static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
+ {
 -- 
-2.16.2
+2.15.1
 
