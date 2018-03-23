@@ -1,40 +1,39 @@
-From: Martijn Coenen <maco@android.com>
-Date: Thu, 29 Mar 2018 12:19:19 +0000
-Subject: Re: [PATCH] ANDROID: binder: re-order some conditions
-Message-Id: <CAB0TPYFSgVgKB2dW0dfMOiYqCSCWDDxW9oHpRc9HxSE=Me2hcQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Mar 2018 11:39:03 +0000
+Subject: [PATCH] drm/amd/pp: silence a static checker warning
+Message-Id: <20180323113903.GD28518@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180329091440.GC17927@mwanda>
-In-Reply-To: <20180329091440.GC17927@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: Tom St Denis <tom.stdenis@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Evan Quan <evan.quan@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On Thu, Mar 29, 2018 at 11:14 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> It doesn't make any difference to runtime but I've switched these two
-> checks to make my static checker happy.
->
-> The problem is that "buffer->data_size" is user controlled and if it's
-> less than "sizeo(*hdr)" then that means "offset" can be more than
-> "buffer->data_size".  It's just cleaner to check it in the other order.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Martijn Coenen <maco@android.com>
+This has a static checker warning because "frev" and "crev" can be
+uninitialized if "info" is NULL.  I just changed the order of the checks
+so that we check "info" first.
 
->
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index 764b63a5aade..00322b146469 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -2058,8 +2058,8 @@ static size_t binder_validate_object(struct binder_buffer *buffer, u64 offset)
->         struct binder_object_header *hdr;
->         size_t object_size = 0;
->
-> -       if (offset > buffer->data_size - sizeof(*hdr) ||
-> -           buffer->data_size < sizeof(*hdr) ||
-> +       if (buffer->data_size < sizeof(*hdr) ||
-> +           offset > buffer->data_size - sizeof(*hdr) ||
->             !IS_ALIGNED(offset, sizeof(u32)))
->                 return 0;
->
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
+index 75a465f771f0..7b26607c646a 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
+@@ -319,13 +319,13 @@ static int smu8_get_system_info_data(struct pp_hwmgr *hwmgr)
+ 			GetIndexIntoMasterTable(DATA, IntegratedSystemInfo),
+ 			&size, &frev, &crev);
+ 
+-	if (crev != 9) {
+-		pr_err("Unsupported IGP table: %d %d\n", frev, crev);
++	if (info = NULL) {
++		pr_err("Could not retrieve the Integrated System Info Table!\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	if (info = NULL) {
+-		pr_err("Could not retrieve the Integrated System Info Table!\n");
++	if (crev != 9) {
++		pr_err("Unsupported IGP table: %d %d\n", frev, crev);
+ 		return -EINVAL;
+ 	}
+ 
