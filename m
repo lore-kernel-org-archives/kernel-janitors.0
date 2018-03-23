@@ -1,20 +1,18 @@
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Date: Mon, 12 Mar 2018 14:13:04 +0000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 23 Mar 2018 15:58:04 +0000
 Subject: Re: [PATCH 2/2] crypto: talitos: Delete an error message for a failed memory allocation in talitos_e
-Message-Id: <1dcf05e3-1552-68b6-96cf-c5b57cd68e03@c-s.fr>
+Message-Id: <20180323155804.GA2186@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
  <13bfdc03-1dee-2f1c-da8d-1e452f10c850@users.sourceforge.net>
 In-Reply-To: <13bfdc03-1dee-2f1c-da8d-1e452f10c850@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-crypto@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-
-
-Le 12/03/2018 à 14:32, SF Markus Elfring a écrit :
+On Mon, Mar 12, 2018 at 02:32:58PM +0100, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Mon, 12 Mar 2018 14:18:23 +0100
 > 
@@ -24,22 +22,8 @@ Le 12/03/2018 à 14:32, SF Markus Elfring a écrit :
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-> ---
->   drivers/crypto/talitos.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-> index a2271322db34..4c7318981d28 100644
-> --- a/drivers/crypto/talitos.c
-> +++ b/drivers/crypto/talitos.c
-> @@ -1399,7 +1399,6 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
->   
->   	edesc = kmalloc(alloc_len, GFP_DMA | flags);
->   	if (!edesc) {
-> -		dev_err(dev, "could not allocate edescriptor\n");
->   		err = ERR_PTR(-ENOMEM);
->   		goto error_sg;
->   	}
-> 
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
