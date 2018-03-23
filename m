@@ -1,65 +1,42 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Mon, 19 Mar 2018 19:01:24 +0000
-Subject: [PATCH 02/14] perf tests: Fix out of bounds access on array fd when cnt is 100
-Message-Id: <20180319190136.7441-3-acme@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Mar 2018 17:36:06 +0000
+Subject: [PATCH][next] staging: r8822be: fix type in guard macro __PHYDMKFREE_H__
+Message-Id: <20180323173606.21119-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180319190136.7441-1-acme@kernel.org>
-In-Reply-To: <20180319190136.7441-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently when cnt is 100 an array bounds overflow occurs on the
-assignment of fd[cnt]. Fix this by performing the bounds check on cnt
-before writing to fd.
+The #define for __PHYDMKFREE_H__ is missing a character and is not
+the same as the guard check.  Defined this correctly.
 
-Detected by cppcheck:
+Cleans up clang warning:
+warning: '__PHYDMKFREE_H__' is used as a header guard here, followed
+by #define of a different macro [-Wheader-guard]
 
-tools/perf/tests/bp_account.c:115: (warning) Either the condition
-'cnt=100' is redundant or the array 'fd[100]' is accessed at index 100,
-which is out of bounds.
-
-Signed-off-by: Colin King <colin.king@canonical.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 032db28e5fa3 ("perf tests: Add breakpoint accounting/modify test")
-Link: http://lkml.kernel.org/r/20180314173354.11250-1-colin.king@canonical.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 9ce99b04b5b8 ("staging: r8822be: Add phydm mini driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/perf/tests/bp_account.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/staging/rtlwifi/phydm/phydm_kfree.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
-index 2f75fa0c4fef..9e88d7608951 100644
---- a/tools/perf/tests/bp_account.c
-+++ b/tools/perf/tests/bp_account.c
-@@ -107,16 +107,14 @@ static int detect_cnt(bool is_x)
- 	int fd[100], cnt = 0, i;
+diff --git a/drivers/staging/rtlwifi/phydm/phydm_kfree.h b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
+index 1ee60059afc1..2c6b0a48e76e 100644
+--- a/drivers/staging/rtlwifi/phydm/phydm_kfree.h
++++ b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
+@@ -24,7 +24,7 @@
+  *****************************************************************************/
  
- 	while (1) {
--		fd[cnt] = __event(is_x, addr, &attr);
--
--		if (fd[cnt] < 0)
--			break;
--
- 		if (cnt = 100) {
- 			pr_debug("way too many debug registers, fix the test\n");
- 			return 0;
- 		}
-+		fd[cnt] = __event(is_x, addr, &attr);
+ #ifndef __PHYDMKFREE_H__
+-#define __PHYDKFREE_H__
++#define __PHYDKKFREE_H__
  
-+		if (fd[cnt] < 0)
-+			break;
- 		cnt++;
- 	}
+ #define KFREE_VERSION "1.0"
  
 -- 
-2.14.3
+2.15.1
 
