@@ -1,51 +1,71 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 19 Mar 2018 07:14:35 +0000
-Subject: Re: Re: [PATCH] staging: media: davinci_vpfe: add error handling on kmalloc failure
-Message-Id: <20180319071435.svpg72uomxfc6hoj@mwanda>
+Date: Fri, 23 Mar 2018 08:46:12 +0000
+Subject: [bug report] tracing: Factorize filter creation
+Message-Id: <20180323084612.GA23928@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180316045841epcas2p34dc11231c65e2032e88ac7138db2daee@epcas2p3.samsung.com>
- <1521176303-17546-1-git-send-email-ji_hun.kim@samsung.com>
- <20180316083234.yq7a4rx6w35amflu@mwanda>
- <20180319042457.GB2915@ubuntu>
-In-Reply-To: <20180319042457.GB2915@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Cc: mchehab@kernel.org, gregkh@linuxfoundation.org, arvind.yadav.cs@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 01:24:57PM +0900, Ji-Hun Kim wrote:
-> >   1294                          } else if (to && !from && size) {
-> >   1295                                  rval = module_if->set(ipipe, NULL);
-> >   1296                                  if (rval)
-> >   1297                                          goto error;
-> > 
-> > And here again goto free_params.
-> > 
-> >   1298                          }
-> >   1299                          kfree(params);
-> >   1300                  }
-> >   1301          }
-> >   1302  error:
-> >   1303          return rval;
-> > 
-> > 
-> > Change this to:
-> > 
-> > 	return 0;
-> Instead of returning rval, returning 0 would be fine? It looks that should
-> return rval in normal case.
-> 
+Hello Tejun Heo,
 
-In the proposed code, the errors all do a return or a goto so "rval"
-would be zero here.  Then the error path would look like:
+The patch 38b78eb85540: "tracing: Factorize filter creation" from Dec
+15, 2011, leads to the following static checker warning:
 
-err_free_params:
-	kfree(params);
-	return rval;
-}
+	kernel/trace/trace_events_filter.c:1794 apply_event_filter()
+	error: uninitialized symbol 'filter'.
+
+kernel/trace/trace_events_filter.c
+  1764  int apply_event_filter(struct trace_event_file *file, char *filter_string)
+  1765  {
+  1766          struct trace_event_call *call = file->event_call;
+  1767          struct event_filter *filter;
+                                    ^^^^^^^
+  1768          int err;
+  1769  
+  1770          if (!strcmp(strstrip(filter_string), "0")) {
+  1771                  filter_disable(file);
+  1772                  filter = event_filter(file);
+  1773  
+  1774                  if (!filter)
+  1775                          return 0;
+  1776  
+  1777                  event_clear_filter(file);
+  1778  
+  1779                  /* Make sure the filter is not being used */
+  1780                  synchronize_sched();
+  1781                  __free_filter(filter);
+  1782  
+  1783                  return 0;
+  1784          }
+  1785  
+  1786          err = create_filter(call, filter_string, true, &filter);
+                                                               ^^^^^^^
+  1787  
+  1788          /*
+  1789           * Always swap the call filter with the new filter
+  1790           * even if there was an error. If there was an error
+  1791           * in the filter, we disable the filter and show the error
+  1792           * string
+  1793           */
+  1794          if (filter) {
+                    ^^^^^^
+I guess the fix is probably to set filter to NULL in create_filter()?
+
+  1795                  struct event_filter *tmp;
+  1796  
+  1797                  tmp = event_filter(file);
+  1798                  if (!err)
+  1799                          event_set_filtered_flag(file);
+  1800                  else
+  1801                          filter_disable(file);
+  1802  
+  1803                  event_set_filter(file, filter);
+  1804  
+  1805                  if (tmp) {
+  1806                          /* Make sure the call is done with the filter */
+  1807                          synchronize_sched();
 
 regards,
 dan carpenter
-
-
