@@ -1,28 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 13 Mar 2018 14:45:31 +0000
-Subject: Re: [PATCH net-next v2] sctp: fix error return code in sctp_sendmsg_new_asoc()
-Message-Id: <20180313.104531.1477288497157051834.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Mar 2018 11:37:36 +0000
+Subject: [PATCH] tracing: Fix a potential NULL dereference
+Message-Id: <20180323113735.GC28518@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1520856964-132516-1-git-send-email-weiyongjun1@huawei.com>
-        <1520910210-147500-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1520910210-147500-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, lucien.xin@gmail.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 13 Mar 2018 03:03:30 +0000
+We forgot to set the error code on this path so we return ERR_PTR(0)
+which is NULL.  It results in a NULL dereference in the caller.
 
-> Return error code -EINVAL in the address len check error handling
-> case since 'err' can be overwrite to 0 by 'err = sctp_verify_addr()'
-> in the for loop.
-> 
-> Fixes: 2c0dbaa0c43d ("sctp: add support for SCTP_DSTADDRV4/6 Information for sendmsg")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> ---
-> v1 -> v2: remove the 'err' initialization
+Fixes: 100719dcef44 ("tracing: Add simple expression support to hist triggers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thank you.
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 4f027642ceef..a02bc09d765a 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -2776,6 +2776,7 @@ static struct hist_field *parse_expr(struct hist_trigger_data *hist_data,
+ 		expr->fn = hist_field_plus;
+ 		break;
+ 	default:
++		ret = -EINVAL;
+ 		goto free;
+ 	}
+ 
