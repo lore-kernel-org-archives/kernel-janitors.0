@@ -1,40 +1,40 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 20 Mar 2018 17:18:55 +0000
-Subject: Re: [PATCH -next] clk: hisilicon: fix potential NULL dereference in hisi_clk_alloc()
-Message-Id: <152156633511.183971.8534897713854322596@swboyd.mtv.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Mar 2018 23:34:22 +0000
+Subject: [PATCH][next] apparmor: fix error returns checks by making size a ssize_t
+Message-Id: <20180323233422.7856-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521555574-29189-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521555574-29189-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>, Markus Elfring <elfring@users.sourceforge.net>, Michael Turquette <mturquette@baylibre.com>, Shawn Guo <shawn.guo@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, tianshuliang <tianshuliang@hisilicon.com>
-Cc: linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Quoting Wei Yongjun (2018-03-20 07:19:34)
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> 
-> res = platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res = NULL
-> e = devm_ioremap(e1, res->start, e2);
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Please add Fixes: tags.
+Currently variable size is a unsigned size_t, hence comparisons to
+see if it is less than zero (for error checking) will always be
+false.  Fix this by making size a ssize_t
 
-This is an old one.
+Detected by CoverityScan, CID#1466080 ("Unsigned compared against 0")
 
-Fixes: 322269163a36 ("clk: hisilicon: add hisi_clk_alloc function.")
+Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/apparmor/domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to clk-next.
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 57cc892e05a2..590b7e8cd21c 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+ 			   struct aa_profile *profile, unsigned int state)
+ {
+ 	int i;
+-	size_t size;
++	ssize_t size;
+ 	struct dentry *d;
+ 	char *value = NULL;
+ 	int value_size = 0, ret = profile->xattr_count;
+-- 
+2.15.1
+
