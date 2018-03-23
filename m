@@ -1,33 +1,44 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 28 Mar 2018 14:13:50 +0000
-Subject: Re: [PATCH 1/2] video: ARM CLCD: Delete an error message for a failed memory allocation in clcdfb_pr
-Message-Id: <3142281.EDeMi996z3@amdc3058>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 23 Mar 2018 17:38:05 +0000
+Subject: NACK: [PATCH][next] staging: r8822be: fix type in guard macro __PHYDMKFREE_H__
+Message-Id: <ef81a7ea-50b7-b296-e46c-186c54a54127@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
-        <CGME20171205171236epcas4p33d714ae79a5b69676eec15c84985576a@epcas4p3.samsung.com>
-        <0ad85d10-a18f-ff02-f1f4-95452e54d32d@users.sourceforge.net>
-In-Reply-To: <0ad85d10-a18f-ff02-f1f4-95452e54d32d@users.sourceforge.net>
+References: <20180323173606.21119-1-colin.king@canonical.com>
+In-Reply-To: <20180323173606.21119-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Russell King <linux@armlinux.org.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday, December 05, 2017 06:12:30 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Dec 2017 17:50:11 +0100
+On 23/03/18 17:36, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Omit an extra message for a memory allocation failure in this function.
+> The #define for __PHYDMKFREE_H__ is missing a character and is not
+> the same as the guard check.  Defined this correctly.
 > 
-> This issue was detected by using the Coccinelle software.
+> Cleans up clang warning:
+> warning: '__PHYDMKFREE_H__' is used as a header guard here, followed
+> by #define of a different macro [-Wheader-guard]
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Patch queued for 4.17, thanks.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+> Fixes: 9ce99b04b5b8 ("staging: r8822be: Add phydm mini driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/rtlwifi/phydm/phydm_kfree.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtlwifi/phydm/phydm_kfree.h b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
+> index 1ee60059afc1..2c6b0a48e76e 100644
+> --- a/drivers/staging/rtlwifi/phydm/phydm_kfree.h
+> +++ b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
+> @@ -24,7 +24,7 @@
+>   *****************************************************************************/
+>  
+>  #ifndef __PHYDMKFREE_H__
+> -#define __PHYDKFREE_H__
+> +#define __PHYDKKFREE_H__
+>  
+>  #define KFREE_VERSION "1.0"
+>  
+> 
+Scrub that, I'll send a V2 of this.
