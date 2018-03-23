@@ -1,38 +1,31 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 29 Mar 2018 12:05:34 +0000
-Subject: NAK: [PATCH] qed: fix spelling mistake: "checksumed" -> "checksummed"
-Message-Id: <f3346ea5-acd5-99e2-1f02-bbb1f5b700aa@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Mar 2018 11:44:29 +0000
+Subject: [PATCH] drm/gma500: simplify a condition in psbfb_mmap()
+Message-Id: <20180323114429.GE28518@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180329115947.26920-1-colin.king@canonical.com>
-In-Reply-To: <20180329115947.26920-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 29/03/18 12:59, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in DP_INFO message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/qlogic/qed/qed_ll2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> index c4f14fdc4e77..0c50ed1955c4 100644
-> --- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> +++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> @@ -2383,7 +2383,7 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb)
->  	u8 flags = 0;
->  
->  	if (unlikely(skb->ip_summed != CHECKSUM_NONE)) {
-> -		DP_INFO(cdev, "Cannot transmit a checksumed packet\n");
-> +		DP_INFO(cdev, "Cannot transmit a checksummed packet\n");
->  		return -EINVAL;
->  	}
->  
-> 
-Found some more issues, I'll send an updated fix in a while
+Since we enforce that "vma->vm_pgoff" has to be zero it means we don't
+need an additional cap on the upper bound.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index cb0a2ae916e0..a6732bffb2e2 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -166,9 +166,7 @@ static int psbfb_mmap(struct fb_info *info, struct vm_area_struct *vma)
+ 	struct psb_fbdev *fbdev = info->par;
+ 	struct psb_framebuffer *psbfb = &fbdev->pfb;
+ 
+-	if (vma->vm_pgoff != 0)
+-		return -EINVAL;
+-	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
++	if (vma->vm_pgoff)
+ 		return -EINVAL;
+ 
+ 	if (!psbfb->addr_space)
