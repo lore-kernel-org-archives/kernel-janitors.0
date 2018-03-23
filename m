@@ -1,76 +1,30 @@
-From: YOUNGKEUN OH <y.k.oh@samsung.com>
-Date: Thu, 22 Mar 2018 09:04:50 +0000
-Subject: Re: [PATCH] serial: samsung: macros with complex values should be enclosed in parentheses
-Message-Id: <48d2c42a-dd04-23fd-feaa-0d90d62b0626@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Mar 2018 11:36:15 +0000
+Subject: [PATCH net-next] ibmvnic: Potential NULL dereference in clean_one_tx_pool()
+Message-Id: <20180323113615.GA28518@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180314021710epcas1p3766602fe312f87d916cab69af2acf203@epcas1p3.samsung.com>
-        <1520993825-8605-1-git-send-email-y.k.oh@samsung.com>
-        <20180314135804.GA21350@kroah.com>
-        <2f2dcf3c-2432-3dc7-5fd4-f9326ef48455@samsung.com>
-        <20180322084511.GA6211@kroah.com>
-In-Reply-To: <20180322084511.GA6211@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: jslaby@suse.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Cc: John Allen <jallen@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
+There is an && vs || typo here, which potentially leads to a NULL
+dereference.
 
+Fixes: e9e1e97884b7 ("ibmvnic: Update TX pool cleaning routine")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 03/22/2018 05:45 PM, Greg KH wrote:
-> On Thu, Mar 22, 2018 at 01:37:45PM +0900, y.k.oh wrote:
->>
->>
->> On 03/14/2018 10:58 PM, Greg KH wrote:
->>> On Wed, Mar 14, 2018 at 11:17:05AM +0900, YOUNGKEUN OH wrote:
->>>> Cleanup checkpatch error:
->>>> ERROR: Macros with complex values should be enclosed in parentheses
->>>>
->>>> Signed-off-by: YOUNGKEUN OH <y.k.oh@samsung.com>
->>>> ---
->>>>  drivers/tty/serial/samsung.c | 16 ++++++++--------
->>>>  1 file changed, 8 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
->>>> index 3f2f8c1..da9bddb1 100644
->>>> --- a/drivers/tty/serial/samsung.c
->>>> +++ b/drivers/tty/serial/samsung.c
->>>> @@ -1455,7 +1455,7 @@ static int __init s3c24xx_serial_console_init(void)
->>>>  }
->>>>  console_initcall(s3c24xx_serial_console_init);
->>>>
->>>> -#define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
->>>> +#define S3C24XX_SERIAL_CONSOLE (&s3c24xx_serial_console)
->>>
->>> That's not a complex macro!
->>>
->>> Please use checkpatch as a hint, not the "truth".
->>>
->>> thanks,
->>>
->>> greg k-h
->>>
->> Dear Greg.
->>
->> Yes! Of course that's not a pretty complex macro. However, I think it is
->> important to make a small effort to modify the minimum standard,
->> Checkpatch ERROR, to ensure consistency in the Linux code.
->> Starting with this Checkpatch error of samsung.c, I would like to start
->> my efforts on contribution from a small point.  Please review it again.
-> 
-> Why would I review something again that is not correct?
-> 
-> If you wish to start out in kernel development, please start in
-> drivers/staging/*/TODO, not in "core" kernel code.  That is what the
-> drivers/staging/ code is there for.
-> 
-> good luck!
-> 
-> greg k-h
-> 
-Dear Greg.
-
-Thank you for your comment. I'll see you soon with a good patch.
-
-Sincerely,
-Youngkeun Oh
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 5632c030811b..0389a7a52152 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1135,7 +1135,7 @@ static void clean_one_tx_pool(struct ibmvnic_adapter *adapter,
+ 	u64 tx_entries;
+ 	int i;
+ 
+-	if (!tx_pool && !tx_pool->tx_buff)
++	if (!tx_pool || !tx_pool->tx_buff)
+ 		return;
+ 
+ 	tx_entries = tx_pool->num_buffers;
