@@ -1,29 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 19 Mar 2018 10:34:44 +0000
-Subject: [PATCH] apparmor: signedness bug in aa_xattrs_match()
-Message-Id: <20180319103444.GC8543@mwanda>
+From: John Johansen <john.johansen@canonical.com>
+Date: Sat, 24 Mar 2018 00:42:08 +0000
+Subject: Re: [PATCH] apparmor: signedness bug in aa_xattrs_match()
+Message-Id: <b642be4a-6717-9c42-1cd9-588144503347@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180319103444.GC8543@mwanda>
+In-Reply-To: <20180319103444.GC8543@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-The "size" variable needs to be signed ssize_t so that the error
-handling works correctly.
+On 03/19/2018 03:34 AM, Dan Carpenter wrote:
+> The "size" variable needs to be signed ssize_t so that the error
+> handling works correctly.
+> 
+> Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+yep thanks I have pulled this in to apparmor-next
 
-Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 57cc892e05a2..590b7e8cd21c 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+>  			   struct aa_profile *profile, unsigned int state)
+>  {
+>  	int i;
+> -	size_t size;
+> +	ssize_t size;
+>  	struct dentry *d;
+>  	char *value = NULL;
+>  	int value_size = 0, ret = profile->xattr_count;
+> 
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 57cc892e05a2..590b7e8cd21c 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
- 			   struct aa_profile *profile, unsigned int state)
- {
- 	int i;
--	size_t size;
-+	ssize_t size;
- 	struct dentry *d;
- 	char *value = NULL;
- 	int value_size = 0, ret = profile->xattr_count;
