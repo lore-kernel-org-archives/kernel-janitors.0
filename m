@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Mar 2018 09:51:43 +0000
+Date: Sat, 24 Mar 2018 09:08:34 +0000
 Subject: Re: iio/gyro/bmg160_core: Improve unlocking of a mutex in five functions
-Message-Id: <4f0c5eb0-e7c2-9c27-387a-e62b19f0578a@users.sourceforge.net>
+Message-Id: <7faecfbc-0fea-b262-a81e-578615358081@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <16623de4-351d-135b-f3ff-701a465c5d92@users.sourceforge.net>
  <20180317195422.037a8b57@archlinux>
@@ -19,27 +19,7 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gm
 > You are correct, this does however reflect the issue with the resulting
 > lack of balance here.
 
-I suggest to reconsider affected software aspects a bit more.
-
-
-> I saw the mutex was getting unlocked outside the local scope and so assumed
-> that it was also take outside the local scope.
-
-Assumptions and corresponding expectations might need further clarifications.
-
-
-> That isn't true, so we have hurt readability.
-
-Does your conclusion need any adjustment?
-
-
-> I read it quickly and got the wrong idea which generally implies it is not
-> as clear as we would like.
-> 
-> Hence this change isn't going anywhere I'm afraid.
-
-I imagine that more time will be needed then to get used to additional adjustments
-of implementation details in these functions.
+Do you find changes for the other function implementations easier to integrate?
 
 Regards,
 Markus
