@@ -1,36 +1,57 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Mar 2018 16:53:04 +0000
-Subject: [PATCH] ath6kl: fix spelling mistake: "chache" -> "cache"
-Message-Id: <20180329165304.26504-1-colin.king@canonical.com>
+Date: Sun, 25 Mar 2018 17:05:21 +0000
+Subject: [PATCH][V3] staging: r8822be: fix typos in header guard macros
+Message-Id: <20180325170521.10141-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@qca.qualcomm.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in message text
+The macros for __PHYDMKFREE_H__ and __PHYDM_FEATURES_H__ contain
+typos and don't match the #if guard check. Defined them correctly.
+
+Cleans up clang warnings:
+warning: '__PHYDMKFREE_H__' is used as a header guard here, followed
+by #define of a different macro [-Wheader-guard]
+warning: '__PHYDM_FEATURES_H__' is used as a header guard here, followed
+by #define of a different macro [-Wheader-guard]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ath/ath6kl/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtlwifi/phydm/phydm_features.h | 2 +-
+ drivers/staging/rtlwifi/phydm/phydm_kfree.h    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
-index 0f965e9f38a4..4e94b22eaada 100644
---- a/drivers/net/wireless/ath/ath6kl/debug.c
-+++ b/drivers/net/wireless/ath/ath6kl/debug.c
-@@ -645,7 +645,7 @@ static ssize_t read_file_tgt_stats(struct file *file, char __user *user_buf,
- 	len += scnprintf(buf + len, buf_len - len, "%20s %10llu\n",
- 			 "CRC Err", tgt_stats->rx_crc_err);
- 	len += scnprintf(buf + len, buf_len - len, "%20s %10llu\n",
--			 "Key chache miss", tgt_stats->rx_key_cache_miss);
-+			 "Key cache miss", tgt_stats->rx_key_cache_miss);
- 	len += scnprintf(buf + len, buf_len - len, "%20s %10llu\n",
- 			 "Decrypt Err", tgt_stats->rx_decrypt_err);
- 	len += scnprintf(buf + len, buf_len - len, "%20s %10llu\n",
+diff --git a/drivers/staging/rtlwifi/phydm/phydm_features.h b/drivers/staging/rtlwifi/phydm/phydm_features.h
+index 37f6f0cd7235..a12361c6a1a0 100644
+--- a/drivers/staging/rtlwifi/phydm/phydm_features.h
++++ b/drivers/staging/rtlwifi/phydm/phydm_features.h
+@@ -24,7 +24,7 @@
+  *****************************************************************************/
+ 
+ #ifndef __PHYDM_FEATURES_H__
+-#define __PHYDM_FEATURES
++#define __PHYDM_FEATURES_H__
+ 
+ /*phydm debyg report & tools*/
+ 
+diff --git a/drivers/staging/rtlwifi/phydm/phydm_kfree.h b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
+index 1ee60059afc1..2c6b0a48e76e 100644
+--- a/drivers/staging/rtlwifi/phydm/phydm_kfree.h
++++ b/drivers/staging/rtlwifi/phydm/phydm_kfree.h
+@@ -24,7 +24,7 @@
+  *****************************************************************************/
+ 
+ #ifndef __PHYDMKFREE_H__
+-#define __PHYDKFREE_H__
++#define __PHYDMKFREE_H__
+ 
+ #define KFREE_VERSION "1.0"
+ 
 -- 
 2.15.1
 
