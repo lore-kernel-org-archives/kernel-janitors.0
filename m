@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Mar 2018 08:49:32 +0000
+From: Tejun Heo <tj@kernel.org>
+Date: Mon, 26 Mar 2018 14:32:26 +0000
 Subject: Re: [bug report] tracing: Factorize filter creation
-Message-Id: <20180323084932.myn2dy2hodsyesul@mwanda>
+Message-Id: <20180326143226.GK2149215@devbig577.frc2.facebook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180323084612.GA23928@mwanda>
 In-Reply-To: <20180323084612.GA23928@mwanda>
@@ -10,38 +10,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hm...  No.  I get a second warning:
+On Fri, Mar 23, 2018 at 11:46:12AM +0300, Dan Carpenter wrote:
+> Hello Tejun Heo,
+> 
+> The patch 38b78eb85540: "tracing: Factorize filter creation" from Dec
+> 15, 2011, leads to the following static checker warning:
+> 
+> 	kernel/trace/trace_events_filter.c:1794 apply_event_filter()
+> 	error: uninitialized symbol 'filter'.
+> 
+> kernel/trace/trace_events_filter.c
+>   1764  int apply_event_filter(struct trace_event_file *file, char *filter_string)
+...
+>   1785  
+>   1786          err = create_filter(call, filter_string, true, &filter);
+>                                                                ^^^^^^^
+>   1787  
+>   1788          /*
+>   1789           * Always swap the call filter with the new filter
+>   1790           * even if there was an error. If there was an error
+>   1791           * in the filter, we disable the filter and show the error
+>   1792           * string
+>   1793           */
+>   1794          if (filter) {
+>                     ^^^^^^
+> I guess the fix is probably to set filter to NULL in create_filter()?
 
-kernel/trace/trace_events_filter.c:2052 ftrace_profile_set_filter()
-error: uninitialized symbol 'filter'.
+@filterp is the outparam and create_filter() always sets it, so the
+code doesn't look wrong to me.
 
-kernel/trace/trace_events_filter.c
-  2036  
-  2037          err = -EEXIST;
-  2038          if (event->filter)
-  2039                  goto out_unlock;
-  2040  
-  2041          err = create_filter(call, filter_str, false, &filter);
-  2042          if (err)
-  2043                  goto free_filter;
-                             ^^^^^^^^^^^
-filter is uninitialized.  What are we supposed to be freeing?
+Thanks.
 
-  2044  
-  2045          if (ftrace_event_is_function(call))
-  2046                  err = ftrace_function_set_filter(event, filter);
-  2047          else
-  2048                  event->filter = filter;
-  2049  
-  2050  free_filter:
-  2051          if (err || ftrace_event_is_function(call))
-  2052                  __free_filter(filter);
-  2053  
-  2054  out_unlock:
-  2055          mutex_unlock(&event_mutex);
-  2056  
-  2057          return err;
-  2058  }
-
-regards,
-dan carpenter
+-- 
+tejun
