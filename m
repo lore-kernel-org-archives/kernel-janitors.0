@@ -1,70 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Mar 2018 15:31:04 +0000
-Subject: [PATCH] altera_edac: Use common error handling code in altr_sdram_probe()
-Message-Id: <f2f6b789-f262-f6cc-743f-244d4870c70e@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Mar 2018 14:13:54 +0000
+Subject: [PATCH][next] drm/amd/pp: fix logical or'ing of garbage in result by initializing result to zero
+Message-Id: <20180326141354.31247-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-edac@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thor Thayer <thor.thayer@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Tom St Denis <tom.stdenis@amd.com>, Huang Rui <ray.huang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Mar 2018 16:23:53 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a specific error code is assigned to the
-local variable "res" at the end of this function.
+Currently result is not initialized, so it contains a garbage value and
+this is or'd with data from vega10_program_didt_config_registers() which
+can end up with a non-zero value when the result should be zero.  Fix
+this by ensuring result is initialized to zero.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1466088 ("Uninitialized scalar variable")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/edac/altera_edac.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 11d6419788c2..d5c15b27d520 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -419,8 +419,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
- 		if (res < 0) {
- 			edac_mc_printk(mci, KERN_ERR,
- 				       "Unable to request irq %d\n", irq2);
--			res = -ENODEV;
--			goto err2;
-+			goto e_nodev;
- 		}
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
+index b1f74c7f0943..49822ea3ddd5 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
+@@ -1091,7 +1091,7 @@ static int vega10_disable_se_edc_config(struct pp_hwmgr *hwmgr)
  
- 		res = a10_unmask_irq(pdev, A10_DDR0_IRQ_MASK);
-@@ -435,8 +434,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
- 	if (res < 0) {
- 		edac_mc_printk(mci, KERN_ERR,
- 			       "Unable to request irq %d\n", irq);
--		res = -ENODEV;
--		goto err2;
-+		goto e_nodev;
- 	}
- 
- 	/* Infrastructure ready - enable the IRQ */
-@@ -444,8 +442,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
- 			       priv->ecc_irq_en_mask, priv->ecc_irq_en_mask)) {
- 		edac_mc_printk(mci, KERN_ERR,
- 			       "Error enabling SDRAM ECC IRQ\n");
--		res = -ENODEV;
--		goto err2;
-+		goto e_nodev;
- 	}
- 
- 	altr_sdr_mc_create_debugfs_nodes(mci);
-@@ -454,6 +451,8 @@ static int altr_sdram_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+e_nodev:
-+	res = -ENODEV;
- err2:
- 	edac_mc_del_mc(&pdev->dev);
- err:
+ static int vega10_enable_psm_gc_edc_config(struct pp_hwmgr *hwmgr)
+ {
+-	int result;
++	int result = 0;
+ 	uint32_t num_se = 0;
+ 	uint32_t count, data;
+ 	struct amdgpu_device *adev = hwmgr->adev;
 -- 
-2.16.2
+2.15.1
 
