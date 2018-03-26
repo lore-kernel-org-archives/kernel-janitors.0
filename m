@@ -1,28 +1,59 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Fri, 16 Mar 2018 09:21:50 +0000
-Subject: Re: [PATCH -next] ASoC: wm8400: Use devm_snd_soc_register_component()
-Message-Id: <20180316092150.osexp6amtg3utvhm@localhost.localdomain>
+From: Emil Goode <emil.fsw@goode.io>
+Date: Mon, 26 Mar 2018 14:44:14 +0000
+Subject: [PATCH] gpu: host1x: Fix compiler errors
+Message-Id: <20180326144314.xeuocqp5fjpfjm3q@lianli>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521185527-164406-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 07:32:07AM +0000, Wei Yongjun wrote:
-> Since the remove callback is removed, the snd_soc_unregister_component()
-> is missing when remove device. Using devm_snd_soc_register_component()
-> instead of snd_soc_register_component().
-> 
-> Fixes: 10dc44c6462d ("ASoC: wm8400: replace codec to component")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
+The compiler is complaining with the following errors:
 
-Thanks for spotting this.
+drivers/gpu/host1x/cdma.c:94:48: error:
+	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
+	[-Werror=incompatible-pointer-types]
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+drivers/gpu/host1x/cdma.c:113:48: error:
+	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
+	[-Werror=incompatible-pointer-types]
 
-Thanks,
-Charles
+The expected pointer type of the third argument to dma_alloc_wc() is
+dma_addr_t but phys_addr_t is passed. Fix this by adding casts to the
+expected pointer type.
+
+Signed-off-by: Emil Goode <emil.fsw@goode.io>
+---
+ drivers/gpu/host1x/cdma.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index 28541b280739..5e8b321a751e 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -91,8 +91,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+ 
+ 		size = iova_align(&host1x->iova, size);
+ 
+-		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
+-					  GFP_KERNEL);
++		pb->mapped = dma_alloc_wc(host1x->dev, size,
++					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
+ 		if (!pb->mapped)
+ 			return -ENOMEM;
+ 
+@@ -110,8 +110,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+ 		if (err)
+ 			goto iommu_free_iova;
+ 	} else {
+-		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
+-					  GFP_KERNEL);
++		pb->mapped = dma_alloc_wc(host1x->dev, size,
++					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
+ 		if (!pb->mapped)
+ 			return -ENOMEM;
+ 
+-- 
+2.11.0
+
