@@ -1,41 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Mar 2018 10:30:48 +0000
-Subject: [PATCH][next] lib: make function test_ubsan_misaligned_access static
-Message-Id: <20180313103048.28513-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 26 Mar 2018 06:47:02 +0000
+Subject: [PATCH -next] afs: Make symbol 'afs_cell_gc_delay' static
+Message-Id: <1522046822-20276-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Jinbum Park <jinb.park7@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes the following sparse warnings:
 
-The function test_ubsan_misaligned_access is local to the source and does
-not need to be in global scope, so make it static.
+fs/afs/cell.c:21:24: warning:
+ symbol 'afs_cell_gc_delay' was not declared. Should it be static?
 
-Cleans up sparse warning:
-lib/test_ubsan.c:91:6: warning: symbol 'test_ubsan_misaligned_access' was
-not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- lib/test_ubsan.c | 2 +-
+ fs/afs/cell.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/test_ubsan.c b/lib/test_ubsan.c
-index 58dedff36b17..280f4979d00e 100644
---- a/lib/test_ubsan.c
-+++ b/lib/test_ubsan.c
-@@ -88,7 +88,7 @@ static void test_ubsan_null_ptr_deref(void)
- 	val = *ptr;
- }
+diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+index 3d2c5e0..c17e03b 100644
+--- a/fs/afs/cell.c
++++ b/fs/afs/cell.c
+@@ -18,7 +18,7 @@
+ #include <keys/rxrpc-type.h>
+ #include "internal.h"
  
--void test_ubsan_misaligned_access(void)
-+static void test_ubsan_misaligned_access(void)
- {
- 	volatile char arr[5] __aligned(4) = {1, 2, 3, 4, 5};
- 	volatile int *ptr, val = 6;
--- 
-2.15.1
+-unsigned __read_mostly afs_cell_gc_delay = 10;
++static unsigned __read_mostly afs_cell_gc_delay = 10;
+ 
+ static void afs_manage_cell(struct work_struct *);
 
