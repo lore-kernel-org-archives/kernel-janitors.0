@@ -1,26 +1,40 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Fri, 23 Mar 2018 15:14:54 +0000
-Subject: Re: [PATCH] tracing: Fix a potential NULL dereference
-Message-Id: <20180323111454.0fe97917@gandalf.local.home>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Mar 2018 15:10:18 +0000
+Subject: [PATCH] RDMA/hns: ensure for-loop actually iterates and free's buffers
+Message-Id: <20180326151018.21066-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323113735.GC28518@mwanda>
-        <1521811393.27781.2.camel@tzanussi-mobl.amr.corp.intel.com>
-In-Reply-To: <1521811393.27781.2.camel@tzanussi-mobl.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 23 Mar 2018 08:23:13 -0500
-Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
+The current for-loop zeros variable i and only loops once, hence
+not all the buffers are free'd.  Fix this by setting i correctly.
 
-> Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> 
-> Thanks for catching this!
+Detected by CoverityScan, CID#1463415 ("Operands don't affect result")
 
+Fixes: a5073d6054f7 ("RDMA/hns: Add eq support of hip08")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks Dan, applied.
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 684c2d1a0ed0..8b84ab7800d8 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -4391,7 +4391,7 @@ static int hns_roce_mhop_alloc_eq(struct hns_roce_dev *hr_dev,
+ 	eq->l0_dma = 0;
+ 
+ 	if (mhop_num = 1)
+-		for (i -= i; i >= 0; i--)
++		for (i -= 1; i >= 0; i--)
+ 			dma_free_coherent(dev, buf_chk_sz, eq->buf[i],
+ 					  eq->buf_dma[i]);
+ 	else if (mhop_num = 2) {
+-- 
+2.15.1
 
--- Steve
