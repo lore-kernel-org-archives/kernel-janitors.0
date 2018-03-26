@@ -1,20 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Mar 2018 06:48:29 +0000
-Subject: Re: [PATCH v3 2/2] staging: media: davinci_vpfe: add kfree() on goto err statement
-Message-Id: <20180321064829.v57e5alrmywsjz24@mwanda>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 26 Mar 2018 14:32:27 +0000
+Subject: [PATCH net-next] net: aquantia: Make function hw_atl_utils_mpi_set_speed() static
+Message-Id: <1522074747-22610-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521607150-31307-1-git-send-email-ji_hun.kim@samsung.com>
- <CGME20180321043918epcas2p3d7cc4cf4c6377171c53af63ff3aa2a9a@epcas2p3.samsung.com>
- <1521607150-31307-2-git-send-email-ji_hun.kim@samsung.com>
-In-Reply-To: <1521607150-31307-2-git-send-email-ji_hun.kim@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Cc: mchehab@kernel.org, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, arvind.yadav.cs@gmail.com, linux-media@vger.kernel.org
+To: Igor Russkikh <igor.russkikh@aquantia.com>, Pavel Belous <pavel.belous@aquantia.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Looks good.  Thanks!
+Fixes the following sparse warning:
 
-regards,
-dan carpenter
+drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:508:5: warning:
+ symbol 'hw_atl_utils_mpi_set_speed' was not declared. Should it be static?
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+index d3b847e..84d7f4d 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+@@ -505,7 +505,7 @@ void hw_atl_utils_mpi_read_stats(struct aq_hw_s *self,
+ err_exit:;
+ }
+ 
+-int hw_atl_utils_mpi_set_speed(struct aq_hw_s *self, u32 speed)
++static int hw_atl_utils_mpi_set_speed(struct aq_hw_s *self, u32 speed)
+ {
+ 	u32 val = aq_hw_read_reg(self, HW_ATL_MPI_CONTROL_ADR);
 
