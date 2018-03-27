@@ -1,44 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 26 Mar 2018 11:27:12 +0000
-Subject: [PATCH] net/ncsi: check for null return from call to nla_nest_start
-Message-Id: <20180326112712.31165-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 27 Mar 2018 14:39:11 +0000
+Subject: Re: [PATCH] net/ncsi: check for null return from call to nla_nest_start
+Message-Id: <20180327.103911.924179090835764688.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180326112712.31165-1-colin.king@canonical.com>
+In-Reply-To: <20180326112712.31165-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Dan Carpenter <dan.carpenter@oracle.com>, Samuel Mendoza-Jonas <sam@mendozajonas.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: dan.carpenter@oracle.com, sam@mendozajonas.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Mar 2018 12:27:12 +0100
 
-The call to nla_nest_start calls nla_put which can lead to a NULL
-return so it's possible for attr to become NULL and we can potentially
-get a NULL pointer dereference on attr.  Fix this by checking for
-a NULL return.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The call to nla_nest_start calls nla_put which can lead to a NULL
+> return so it's possible for attr to become NULL and we can potentially
+> get a NULL pointer dereference on attr.  Fix this by checking for
+> a NULL return.
+> 
+> Detected by CoverityScan, CID#1466125 ("Dereference null return")
+> 
+> Fixes: 955dc68cb9b2 ("net/ncsi: Add generic netlink family")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Detected by CoverityScan, CID#1466125 ("Dereference null return")
+Applied, but...
 
-Fixes: 955dc68cb9b2 ("net/ncsi: Add generic netlink family")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/ncsi/ncsi-netlink.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Colin, please start marking your Subject lines properly with "[PATCH
+net-next]" for patches targetting net-next as opposed to net.
 
-diff --git a/net/ncsi/ncsi-netlink.c b/net/ncsi/ncsi-netlink.c
-index 05fcfb4fbe1d..8d7e849d4825 100644
---- a/net/ncsi/ncsi-netlink.c
-+++ b/net/ncsi/ncsi-netlink.c
-@@ -190,6 +190,10 @@ static int ncsi_pkg_info_nl(struct sk_buff *msg, struct genl_info *info)
- 	package_id = nla_get_u32(info->attrs[NCSI_ATTR_PACKAGE_ID]);
- 
- 	attr = nla_nest_start(skb, NCSI_ATTR_PACKAGE_LIST);
-+	if (!attr) {
-+		kfree_skb(skb);
-+		return -EMSGSIZE;
-+	}
- 	rc = ncsi_write_package_info(skb, ndp, package_id);
- 
- 	if (rc) {
--- 
-2.15.1
-
+Thank you.
