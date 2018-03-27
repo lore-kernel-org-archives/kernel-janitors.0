@@ -1,43 +1,36 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 27 Mar 2018 14:21:48 +0000
-Subject: [PATCH][next] ixgbevf: ensure xdp_ring resources are free'd on error exit
-Message-Id: <20180327142148.13603-1-colin.king@canonical.com>
+Date: Tue, 27 Mar 2018 08:32:57 +0000
+Subject: [PATCH][next] drm/amd/pp: Fix spelling mistake: "suppported" -> "supported"
+Message-Id: <20180327083257.28777-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, Evan Quan <evan.quan@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The current error handling for failed resource setup for xdp_ring
-data is a break out of the loop and returning 0 indicated everying
-was OK, when in fact it is not.  Fix this by exiting via the
-error exit label err_setup_tx that will clean up the resources
-correctly and return and error status.
+Trivial fix to spelling mistake in pr_warn warning message text
 
-Detected by CoverityScan, CID#1466879 ("Logically dead code")
-
-Fixes: 21092e9ce8b1 ("ixgbevf: Add support for XDP_TX action")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
+ drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 3d9033f26eff..e3d04f226d57 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -3420,7 +3420,7 @@ static int ixgbevf_setup_all_tx_resources(struct ixgbevf_adapter *adapter)
- 		if (!err)
- 			continue;
- 		hw_dbg(&adapter->hw, "Allocation for XDP Queue %u failed\n", j);
--		break;
-+		goto err_setup_tx;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c b/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
+index 0f2851b5b368..308bff2b5d1d 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
+@@ -46,7 +46,7 @@ int psm_init_power_state_table(struct pp_hwmgr *hwmgr)
+ 					  sizeof(struct pp_power_state);
+ 
+ 	if (table_entries = 0 || size = 0) {
+-		pr_warn("Please check whether power state management is suppported on this asic\n");
++		pr_warn("Please check whether power state management is supported on this asic\n");
+ 		return 0;
  	}
  
- 	return 0;
 -- 
 2.15.1
 
