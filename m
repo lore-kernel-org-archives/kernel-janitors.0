@@ -1,41 +1,43 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Mar 2018 09:48:24 +0000
-Subject: [PATCH][next] ASoC: amd: make pointer da7219_dai_clk static
-Message-Id: <20180323094824.26028-1-colin.king@canonical.com>
+Date: Tue, 27 Mar 2018 14:21:48 +0000
+Subject: [PATCH][next] ixgbevf: ensure xdp_ring resources are free'd on error exit
+Message-Id: <20180327142148.13603-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal <akshu.agrawal@amd.com>, alsa-devel@alsa-project.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The pointer da7219_dai_clk  is local to the source and does not need to
-be in global scope, so make it static.
+The current error handling for failed resource setup for xdp_ring
+data is a break out of the loop and returning 0 indicated everying
+was OK, when in fact it is not.  Fix this by exiting via the
+error exit label err_setup_tx that will clean up the resources
+correctly and return and error status.
 
-Cleans up sparse warning:
-sound/soc/amd/acp-da7219-max98357a.c:46:12: warning: symbol 'da7219_dai_clk'
-was not declared. Should it be static?
+Detected by CoverityScan, CID#1466879 ("Logically dead code")
 
+Fixes: 21092e9ce8b1 ("ixgbevf: Add support for XDP_TX action")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/amd/acp-da7219-max98357a.c | 2 +-
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index 99c6b5ce5c6c..af458bd36c72 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -43,7 +43,7 @@
- #define DUAL_CHANNEL		2
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 3d9033f26eff..e3d04f226d57 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -3420,7 +3420,7 @@ static int ixgbevf_setup_all_tx_resources(struct ixgbevf_adapter *adapter)
+ 		if (!err)
+ 			continue;
+ 		hw_dbg(&adapter->hw, "Allocation for XDP Queue %u failed\n", j);
+-		break;
++		goto err_setup_tx;
+ 	}
  
- static struct snd_soc_jack cz_jack;
--struct clk *da7219_dai_clk;
-+static struct clk *da7219_dai_clk;
- 
- static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
- {
+ 	return 0;
 -- 
 2.15.1
 
