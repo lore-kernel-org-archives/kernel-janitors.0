@@ -1,31 +1,55 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 27 Mar 2018 21:08:03 +0000
-Subject: Re: [PATCH] RDMA/hns: ensure for-loop actually iterates and free's buffers
-Message-Id: <20180327210803.GA26189@ziepe.ca>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 27 Mar 2018 21:29:34 +0000
+Subject: Re: [PATCH] pwm: atmel-tcb: Delete an error message for a failed memory allocation in atmel_tcb_pwm_
+Message-Id: <20180327212933.GC28058@mithrandir>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="UPT3ojh+0CqEDtpF"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180326151018.21066-1-colin.king@canonical.com>
-In-Reply-To: <20180326151018.21066-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <8274c498-1d1b-2ece-365c-98ded714a53c@users.sourceforge.net>
+In-Reply-To: <8274c498-1d1b-2ece-365c-98ded714a53c@users.sourceforge.net>
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Mar 26, 2018 at 04:10:18PM +0100, Colin Ian King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current for-loop zeros variable i and only loops once, hence
-> not all the buffers are free'd.  Fix this by setting i correctly.
-> 
-> Detected by CoverityScan, CID#1463415 ("Operands don't affect result")
-> 
-> Fixes: a5073d6054f7 ("RDMA/hns: Add eq support of hip08")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Yixian Liu <liuyixian@huawei.com>
+
+--UPT3ojh+0CqEDtpF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Dec 15, 2017 at 07:00:46PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 15 Dec 2017 18:55:11 +0100
+>=20
+> Omit an extra message for a memory allocation failure in this function.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pwm/pwm-atmel-tcb.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-Applied to for-rc, thanks
+Applied, thanks.
 
-Jason
+Thierry
+
+--UPT3ojh+0CqEDtpF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6t70ACgkQ3SOs138+
+s6EYthAAqpm2v1uDdRs/8YnXECLx3IcjduNSPvg0BXG9jzfNC2tdNZJhlrt0z5Y4
+HpHPnZlf6xJVAtNA3S8bXesKffSViEGGTCxrNNBSYRCdeBy9n/Ud7AOf3omNv8Bm
+Gy/sjIezzrcHcCc1foamaeJt1c0nevpkzn3/Oxe60yhsrffhgpTno4S8tDPpmwEi
+lCZ5QeQmSDvv8/GYLCzIEzS2PczCu5JFuEQcdC6VYUw/V14QltK64m+Hic9M9oaw
+r7AiruTbGxFHq1A82DVxlyC1QIhBTBsu8ulSUBCp3dNHNSIMOF34rRyy1LEH9EtK
+6e8Jx6zrHBZtshtR3GYo8YchYcnZ0NLfDxaUAXO2xWoHgnr2llcU3MN4DdAEO4dB
+3tXfNkl9HzFF92RmYnlSJTAIcVHSRgdNHqYLBDySN+XIAvmdLbTT+6xxc+8B3JsF
+IzednF9QDQg88jDxmFYe9kRMC5azmdxv9tsbEvulw43a6PUZjREprhaKENhLVaaf
+CMpv65VQog5FnfVg0MXhF+gnKfw7T0Y2Ld8lJ1Y9Is3T66CmfzO13dN7zhIOJwZI
+yu4N6Xal7YtngHxH3jjEhCLlxG2d17Xtxj9k83bMz9j7EgjBBKSL5iMPOa7OxIyV
+rX7sCmWSV4AoRw2rFq2ML/FIuWumx0KFS8eaVYZKRl9RIi9ToXA=
+=U3k1
+-----END PGP SIGNATURE-----
+
+--UPT3ojh+0CqEDtpF--
