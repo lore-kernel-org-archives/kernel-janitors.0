@@ -1,32 +1,44 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Thu, 22 Mar 2018 17:16:49 +0000
-Subject: Re: [PATCH] staging: rtl8723bs/core/rtw_mlme_ext.c: Replace yield() call with cond_resched
-Message-Id: <20180322171649.GA28191@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Mar 2018 14:30:01 +0000
+Subject: [PATCH] ALSA: usb-audio: fix memory leak on cval
+Message-Id: <20180327143001.13870-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180320214541.cknrcuercnhfrx2a@debian>
-In-Reply-To: <20180320214541.cknrcuercnhfrx2a@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Avery <tavery321@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Andrew Chant <achant@google.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 05:45:41PM -0400, Thomas Avery wrote:
-> Remove yield() call, yield() does not guarantee progress, and should not
-> be used. Cond_resched() is a safer alternative
-> 
-> Signed-off-by: Thomas Avery <tavery321@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-You sent me 3 patches in 2 days with almost the same subject for the
-same driver.  Please resend them as a patch series so I know what order
-to apply them in.
+With the current exit return path of the ctl_info allocation failure
+cval is not being freed resulting in a memory leak. Fix this by kfree'ing
+it on the return.
 
-Also, always use scripts/get_maintainer.pl to find the proper people and
-mailing lists to cc:
+Detected by CoverityScan, CID#1466878 ("Resource Leak")
 
-thanks,
+Fixes: 21e9b3e931f7 ("ALSA: usb-audio: fix uac control query argument")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/usb/mixer.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-greg k-h
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 04dab6f65535..301ad61ed426 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1365,8 +1365,10 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 	cval->cmask = ctl_mask;
+ 
+ 	ctl_info = get_feature_control_info(control);
+-	if (!ctl_info)
++	if (!ctl_info) {
++		kfree(cval);
+ 		return;
++	}
+ 	if (state->mixer->protocol = UAC_VERSION_1)
+ 		cval->val_type = ctl_info->type;
+ 	else /* UAC_VERSION_2 */
+-- 
+2.15.1
+
