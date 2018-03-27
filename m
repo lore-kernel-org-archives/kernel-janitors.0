@@ -1,19 +1,19 @@
-From: Ajay Singh <ajay.kathat@microchip.com>
-Date: Tue, 27 Mar 2018 05:22:54 +0000
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Date: Tue, 27 Mar 2018 08:44:18 +0000
 Subject: Re: [PATCH] staging: wilc1000: replace kmalloc + memcpy with kmemdup
-Message-Id: <20180327104054.69479b47@ajaysk-VirtualBox>
+Message-Id: <f674c9e0-e67f-885f-cdd8-ce5da1fcc262@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180326171629.28700-1-colin.king@canonical.com>
 In-Reply-To: <20180326171629.28700-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018 18:16:29 +0100
-Colin King <colin.king@canonical.com> wrote:
 
+
+On 26.03.2018 20:16, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Replace several allocation and memcpys with kmemdup and add in some
@@ -37,12 +37,6 @@ Colin King <colin.king@canonical.com> wrote:
 > +		result = -ENOMEM;
 > +		goto error;
 > +	}
-
-Please do not apply this changes. It will change the code
-flow differently. Check for NULl value in '(wid_list[index].val)' is 
-already presented.  It has to proceed with the below flow instead of
-returning from there.
-
 >  	wid_list[index].val = hdn_ntwk_wid_val;
 >  	if (wid_list[index].val) {
 >  		buffer = wid_list[index].val;
@@ -50,6 +44,8 @@ returning from there.
 >  	}
 >  
 >  	if (conn_attr->bssid) {
+
+These:
 > -		hif_drv->usr_conn_req.bssid = kmalloc(6, GFP_KERNEL);
 > +		hif_drv->usr_conn_req.bssid = kmemdup(conn_attr->bssid, 6,
 > +						      GFP_KERNEL);
@@ -66,14 +62,6 @@ returning from there.
 > +		hif_drv->usr_conn_req.ssid = kmemdup(conn_attr->ssid,
 > +						     conn_attr->ssid_len + 1,
 >  						     GFP_KERNEL);
-
-Sorry, I too missed to see that scenario. As suggested, kmemdup can not be
-used directly to replace kmalloc & memcpy in this case. The size used for
-kmalloc is not equal to size of data copy in memcpy i.e kmalloc is done
-for 1 byte extra to keep the NULL character. The direct replacement of
-kmalloc with kmemdup is not applicable here.
-
-
 >  		if (!hif_drv->usr_conn_req.ssid) {
 >  			result = -ENOMEM;
 >  			goto error;
@@ -86,10 +74,17 @@ kmalloc with kmemdup is not applicable here.
 >  
 >  	hif_drv->usr_conn_req.ies_len = conn_attr->ies_len;
 >  	if (conn_attr->ies) {
+
+and these:
 > -		hif_drv->usr_conn_req.ies = kmalloc(conn_attr->ies_len,
 > +		hif_drv->usr_conn_req.ies = kmemdup(conn_attr->ies,
 > +						    conn_attr->ies_len,
 >  						    GFP_KERNEL);
+
+were already done in [1]. I don't know which was the first...
+
+[1] https://patchwork.kernel.org/patch/10308575/
+
 >  		if (!hif_drv->usr_conn_req.ies) {
 >  			result = -ENOMEM;
 >  			goto error;
@@ -114,13 +109,104 @@ kmalloc with kmemdup is not applicable here.
 > +			goto error;
 > +		}
 >  	}
-
-"info_element" variable was removed in my previous submitted patchset.
-Those changes are still not included in Greg's staging repo. Few changes
-in this patch are already included in previous patchset,which might give
-conflict. But few changes are not present which can be applied like
-returning -ENOMEM in case of allocation failure.
-
-
-Regards,
-Ajay
+>  	wid_list[wid_cnt].id = (u16)WID_11I_MODE;
+>  	wid_list[wid_cnt].type = WID_CHAR;
+> @@ -1039,9 +1042,13 @@ static s32 handle_connect(struct wilc_vif *vif,
+>  	if (memcmp("DIRECT-", conn_attr->ssid, 7)) {
+>  		join_req_size = wid_list[wid_cnt].size;
+>  		join_req = kmalloc(join_req_size, GFP_KERNEL);
+> +		if (!join_req) {
+> +			result = -ENOMEM;
+> +			goto error;
+> +		}
+>  	}
+>  	if (!wid_list[wid_cnt].val) {
+> -		result = -EFAULT;
+> +		result = -ENOMEM;
+>  		goto error;
+>  	}
+>  
+> @@ -1166,11 +1173,13 @@ static s32 handle_connect(struct wilc_vif *vif,
+>  
+>  			if (conn_attr->ies) {
+>  				conn_info.req_ies_len = conn_attr->ies_len;
+> -				conn_info.req_ies = kmalloc(conn_attr->ies_len,
+> +				conn_info.req_ies = kmemdup(conn_attr->ies,
+> +							    conn_attr->ies_len,
+>  							    GFP_KERNEL);
+> -				memcpy(conn_info.req_ies,
+> -				       conn_attr->ies,
+> -				       conn_attr->ies_len);
+> +				if (!conn_info.req_ies) {
+> +					result = -ENOMEM;
+> +					goto error_free;
+> +				}
+>  			}
+>  
+>  			conn_attr->result(CONN_DISCONN_EVENT_CONN_RESP,
+> @@ -1187,6 +1196,7 @@ static s32 handle_connect(struct wilc_vif *vif,
+>  		}
+>  	}
+>  
+> +error_free:
+>  	kfree(conn_attr->bssid);
+>  	conn_attr->bssid = NULL;
+>  
+> @@ -1227,10 +1237,9 @@ static s32 handle_connect_timeout(struct wilc_vif *vif)
+>  
+>  		if (hif_drv->usr_conn_req.ies) {
+>  			info.req_ies_len = hif_drv->usr_conn_req.ies_len;
+> -			info.req_ies = kmalloc(hif_drv->usr_conn_req.ies_len, GFP_KERNEL);
+> -			memcpy(info.req_ies,
+> -			       hif_drv->usr_conn_req.ies,
+> -			       hif_drv->usr_conn_req.ies_len);
+> +			info.req_ies = kmemdup(hif_drv->usr_conn_req.ies,
+> +					       hif_drv->usr_conn_req.ies_len,
+> +					       GFP_KERNEL);
+>  		}
+>  
+>  		hif_drv->usr_conn_req.conn_result(CONN_DISCONN_EVENT_CONN_RESP,
+> @@ -1421,9 +1430,11 @@ static s32 handle_rcvd_gnrl_async_info(struct wilc_vif *vif,
+>  
+>  						if (conn_info.status = SUCCESSFUL_STATUSCODE && connect_resp_info->ies) {
+>  							conn_info.resp_ies_len = connect_resp_info->ies_len;
+> -							conn_info.resp_ies = kmalloc(connect_resp_info->ies_len, GFP_KERNEL);
+> -							memcpy(conn_info.resp_ies, connect_resp_info->ies,
+> -							       connect_resp_info->ies_len);
+> +							conn_info.resp_ies = kmemdup(connect_resp_info->ies,
+> +										     connect_resp_info->ies_len,
+> +										     GFP_KERNEL);
+> +							if (!conn_info.resp_ies)
+> +								return -ENOMEM;
+>  						}
+>  
+>  						if (connect_resp_info) {
+> @@ -3524,8 +3535,11 @@ void wilc_network_info_received(struct wilc *wilc, u8 *buffer, u32 length)
+>  	msg.vif = vif;
+>  
+>  	msg.body.net_info.len = length;
+> -	msg.body.net_info.buffer = kmalloc(length, GFP_KERNEL);
+> -	memcpy(msg.body.net_info.buffer, buffer, length);
+> +	msg.body.net_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
+> +	if (!msg.body.net_info.buffer) {
+> +		netdev_err(vif->ndev, "message buffer allocation failed\n");
+> +		return;
+> +	}
+>  
+>  	result = wilc_enqueue_cmd(&msg);
+>  	if (result)
+> @@ -3571,8 +3585,11 @@ void wilc_gnrl_async_info_received(struct wilc *wilc, u8 *buffer, u32 length)
+>  	msg.vif = vif;
+>  
+>  	msg.body.async_info.len = length;
+> -	msg.body.async_info.buffer = kmalloc(length, GFP_KERNEL);
+> -	memcpy(msg.body.async_info.buffer, buffer, length);
+> +	msg.body.async_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
+> +	if (!msg.body.async_info.buffer) {
+> +		netdev_err(vif->ndev, "message buffer allocation failed\n");
+> +		return;
+> +	}
+>  
+>  	result = wilc_enqueue_cmd(&msg);
+>  	if (result)
+> 
