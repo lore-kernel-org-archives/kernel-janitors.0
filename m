@@ -1,98 +1,68 @@
-From: Todor Tomov <todor.tomov@linaro.org>
-Date: Thu, 15 Mar 2018 08:57:58 +0000
-Subject: Re: [PATCH] [media] ov5645: Move an error code assignment in ov5645_probe()
-Message-Id: <1da1eeff-b566-e7a4-c1ef-a90ff635c846@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Mar 2018 07:30:36 +0000
+Subject: [bug report] tracing: Rewrite filter logic to be simpler and faster
+Message-Id: <20180327073036.GA20734@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4efad917-ca08-f257-e9a1-b5bcb7df2df2@users.sourceforge.net>
- <20180314221702.5rtdttyqjcpysjkd@kekkonen.localdomain>
-In-Reply-To: <20180314221702.5rtdttyqjcpysjkd@kekkonen.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi,
+Hello Steven Rostedt (VMware),
 
-On 15.03.2018 00:17, Sakari Ailus wrote:
-> On Wed, Mar 14, 2018 at 10:15:43PM +0100, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Wed, 14 Mar 2018 22:02:52 +0100
->>
->> Move an assignment for a specific error code so that it is stored only once
->> in this function implementation.
->>
->> This issue was detected by using the Coccinelle software.
-> 
-> How?
-> 
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/media/i2c/ov5645.c | 6 +-----
->>  1 file changed, 1 insertion(+), 5 deletions(-)
->>
->> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
->> index d28845f7356f..374576380fd4 100644
->> --- a/drivers/media/i2c/ov5645.c
->> +++ b/drivers/media/i2c/ov5645.c
->> @@ -1284,13 +1284,11 @@ static int ov5645_probe(struct i2c_client *client,
->>  	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_HIGH, &chip_id_high);
->>  	if (ret < 0 || chip_id_high != OV5645_CHIP_ID_HIGH_BYTE) {
->>  		dev_err(dev, "could not read ID high\n");
->> -		ret = -ENODEV;
->>  		goto power_down;
->>  	}
->>  	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_LOW, &chip_id_low);
->>  	if (ret < 0 || chip_id_low != OV5645_CHIP_ID_LOW_BYTE) {
->>  		dev_err(dev, "could not read ID low\n");
->> -		ret = -ENODEV;
->>  		goto power_down;
->>  	}
->>  
->> @@ -1300,7 +1298,6 @@ static int ov5645_probe(struct i2c_client *client,
->>  			      &ov5645->aec_pk_manual);
->>  	if (ret < 0) {
->>  		dev_err(dev, "could not read AEC/AGC mode\n");
->> -		ret = -ENODEV;
->>  		goto power_down;
->>  	}
->>  
->> @@ -1308,7 +1305,6 @@ static int ov5645_probe(struct i2c_client *client,
->>  			      &ov5645->timing_tc_reg20);
->>  	if (ret < 0) {
->>  		dev_err(dev, "could not read vflip value\n");
->> -		ret = -ENODEV;
->>  		goto power_down;
->>  	}
->>  
->> @@ -1316,7 +1312,6 @@ static int ov5645_probe(struct i2c_client *client,
->>  			      &ov5645->timing_tc_reg21);
->>  	if (ret < 0) {
->>  		dev_err(dev, "could not read hflip value\n");
->> -		ret = -ENODEV;
->>  		goto power_down;
->>  	}
->>  
->> @@ -1334,6 +1329,7 @@ static int ov5645_probe(struct i2c_client *client,
->>  
->>  power_down:
->>  	ov5645_s_power(&ov5645->sd, false);
->> +	ret = -ENODEV;
-> 
-> I don't think this is where people would expect you to set the error code
-> in general. It should rather take place before goto, not after it. That'd
-> mean another variable, and I'm not convinced the result would improve the
-> driver.
+The patch 80765597bc58: "tracing: Rewrite filter logic to be simpler
+and faster" from Mar 9, 2018, leads to the following static checker
+warning:
 
-I agree with Sakari.
+    kernel/trace/trace_events_filter.c:1794 apply_event_filter()
+    error: uninitialized symbol 'filter'.
 
-> 
->>  free_entity:
->>  	media_entity_cleanup(&ov5645->sd.entity);
->>  free_ctrl:
-> 
+    kernel/trace/trace_events_filter.c:2052 ftrace_profile_set_filter()
+    error: uninitialized symbol 'filter'.
 
--- 
-Best regards,
-Todor Tomov
+kernel/trace/trace_events_filter.c
+  1686  /**
+  1687   * create_filter - create a filter for a trace_event_call
+  1688   * @call: trace_event_call to create a filter for
+  1689   * @filter_str: filter string
+  1690   * @set_str: remember @filter_str and enable detailed error in filter
+  1691   * @filterp: out param for created filter (always updated on return)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+filterp is supposed to get updated.
+
+  1692   *
+  1693   * Creates a filter for @call with @filter_str.  If @set_str is %true,
+  1694   * @filter_str is copied and recorded in the new filter.
+  1695   *
+  1696   * On success, returns 0 and *@filterp points to the new filter.  On
+  1697   * failure, returns -errno and *@filterp may point to %NULL or to a new
+  1698   * filter.  In the latter case, the returned filter contains error
+  1699   * information if @set_str is %true and the caller is responsible for
+  1700   * freeing it.
+  1701   */
+  1702  static int create_filter(struct trace_event_call *call,
+  1703                           char *filter_string, bool set_str,
+  1704                           struct event_filter **filterp)
+  1705  {
+  1706          struct filter_parse_error *pe = NULL;
+  1707          struct event_filter *filter = NULL;
+  1708          int err;
+  1709  
+  1710          err = create_filter_start(filter_string, set_str, &pe, &filter);
+  1711          if (err)
+  1712                  return err;
+                        ^^^^^^^^^^^
+But it's not on this new error path.
+
+  1713  
+  1714          err = process_preds(call, filter_string, filter, pe);
+  1715          if (err && set_str)
+  1716                  append_filter_err(pe, filter);
+  1717  
+  1718          *filterp = filter;
+  1719          return err;
+  1720  }
+
+
+regards,
+dan carpenter
