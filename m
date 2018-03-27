@@ -1,31 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Mar 2018 20:53:25 +0000
-Subject: [PATCH 0/4] HID: alps: Fix some bugs and improve code around  't4_read_write_register()'
-Message-Id: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Tue, 27 Mar 2018 12:05:59 +0000
+Subject: Re: [PATCH 0/4] HID: alps: Fix some bugs and improve code around  't4_read_write_register()'
+Message-Id: <nycvar.YFH.7.76.1803271405420.15778@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: masaki.ota@jp.alps.com, jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: masaki.ota@jp.alps.com, benjamin.tissoires@redhat.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-All is said in the subject and below.
+On Mon, 19 Mar 2018, Christophe JAILLET wrote:
 
-These patches are untested. Especially, patch 1 slightly changes the behavior
-of 't4_read_write_register()'.
-This looks logical to me, but please, review it carefully.
+> All is said in the subject and below.
+> 
+> These patches are untested. Especially, patch 1 slightly changes the behavior
+> of 't4_read_write_register()'.
+> This looks logical to me, but please, review it carefully.
+> 
+> Christophe JAILLET (4):
+>   HID: alps: Report an error if we receive invalid data in
+>     't4_read_write_register()'
+>   HID: alps: Save a memory allocation in 't4_read_write_register()' when
+>     writing data
+>   HID: alps: Check errors returned by 't4_read_write_register()'
+>   HID: alps: Fix some style in 't4_read_write_register()'
+> 
+>  drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 5 deletions(-)
 
-Christophe JAILLET (4):
-  HID: alps: Report an error if we receive invalid data in
-    't4_read_write_register()'
-  HID: alps: Save a memory allocation in 't4_read_write_register()' when
-    writing data
-  HID: alps: Check errors returned by 't4_read_write_register()'
-  HID: alps: Fix some style in 't4_read_write_register()'
+Masaki-san,
 
- drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+do you have any comments to Christophe's patchset please?
+
+Thanks,
 
 -- 
-2.14.1
+Jiri Kosina
+SUSE Labs
 
