@@ -1,29 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Mar 2018 08:30:15 +0000
-Subject: [PATCH 0/4] SCSI-HPSA: Adjustments for hpsa_big_passthru_ioctl()
-Message-Id: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 27 Mar 2018 21:28:01 +0000
+Subject: Re: [PATCH] pwm-puv3: Delete an error message for a failed memory allocation in pwm_probe()
+Message-Id: <20180327212800.GB28058@mithrandir>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8P1HSweYDcXXzwPJ"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com, Don Brace <don.brace@microsemi.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <93e81e95-01e0-1493-5b4a-92f36f998dac@users.sourceforge.net>
+In-Reply-To: <93e81e95-01e0-1493-5b4a-92f36f998dac@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pwm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Mar 2018 09:14:32 +0100
 
-A few update suggestions were taken into account
-from static source code analysis.
+--8P1HSweYDcXXzwPJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Markus Elfring (4):
-  Use memdup_user() rather than duplicating its implementation
-  Less function calls in hpsa_big_passthru_ioctl() after error detection
-  Delete an unnecessary initialisation
-  Move a variable assignment
+On Fri, Dec 15, 2017 at 06:33:49PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 15 Dec 2017 18:29:49 +0100
+>=20
+> Omit an extra message for a memory allocation failure in this function.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/pwm/pwm-puv3.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/scsi/hpsa.c | 44 +++++++++++++++++++++-----------------------
- 1 file changed, 21 insertions(+), 23 deletions(-)
+Applied, thanks.
 
--- 
-2.16.2
+Thierry
 
+--8P1HSweYDcXXzwPJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6t2AACgkQ3SOs138+
+s6HBJA/9EEEWSz0ll4MuRhBseuY0eeF6Y4jEa4hWORg3Cq51w0rpIgwm7ma6f3pD
+PP3/lt285NUloke/CwEsLoSvajFfOGAh/ejDTOAFaC2cJI1HNOYOFuP//ULSymbv
+x054kIVqU8/TDy0tvl/LCJIIh33z4I5AEnibkagRNuyWd3Z4qWz5XpRxlRK85l0r
+iZFG+xram3u71sFaDr2U+FBI620SVSzzPeusW7yn0S3ngJ3AyFbdGEUfjj3dtxYC
+pixvjAAWMxBjy4oNCa9es8+WXCGOVqOkhkBvT1SIVwLQMbP5Mh5NkYIsvb8I9/Xj
+agAYuAhjvgPwYTXp9KFw3MG99jqQgrKPR7igiMtlnoAFGLieQCYUFXx/D9zNOTQX
+Vh8puizdORcRH2I91pFygVsSJ3eEZ0uMROlT9GddWR6T62TNjCOJlyJoFQss3BfT
+z8zti0JtDY10U+acApjCCy/HyT7p0ZpBVwzv3JNL5zA4OH0ZXbZ6JsRL9PDhcXdl
+M+pFVKOgx6KR3mMm1THOhsLk1rjy/eizIaSVoJFQOD0l4TWigOmgwpkNTCsVbg9G
+/r2Rw3Zzo+l+pW/qOw2hRyAAKy6Xw59uwXxuHML8XhY4MBMtq3+Cxif7b6zPYDvp
+26E1Ha9kOtel4T8DQcVpnOzeNurkqnF6hlzFvfaAIxwcGL2Mdrc=
+=GraV
+-----END PGP SIGNATURE-----
+
+--8P1HSweYDcXXzwPJ--
