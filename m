@@ -1,33 +1,49 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 12 Mar 2018 15:06:58 +0000
-Subject: Re: [PATCH] echoaudio: remove redundant initialization of pointer 'pipe'
-Message-Id: <s5h8tax49kd.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Mar 2018 13:26:01 +0000
+Subject: [PATCH][next] libata: ensure host is free'd on error exit paths
+Message-Id: <20180327132601.12749-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180312150100.8089-1-colin.king@canonical.com>
-In-Reply-To: <20180312150100.8089-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018 16:01:00 +0100,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer 'pipe' is being initialized with a value that is never
-> read and it is re-assigned later, hence the initialization is redundant
-> and can be removed. Also remove pointer 'runtime' as it is no longer
-> required.
-> 
-> Cleans up clang warning:
-> sound/pci/echoaudio/echoaudio.c:740:20: warning: Value stored to 'pipe'
-> during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+The host structure is not being kfree'd on two error exit paths
+leading to memory leaks. Add in new err_free label and kfree host.
 
+Detected by CoverityScan, CID#1466103 ("Resource leak")
 
-Takashi
+Fixes: 2623c7a5f279 ("libata: add refcounting to ata_host")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/ata/libata-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index dc2c48b8ae45..8bc71ca61e7f 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -6108,7 +6108,7 @@ struct ata_host *ata_host_alloc(struct device *dev, int max_ports)
+ 		return NULL;
+ 
+ 	if (!devres_open_group(dev, NULL, GFP_KERNEL))
+-		return NULL;
++		goto err_free;
+ 
+ 	dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
+ 	if (!dr)
+@@ -6140,6 +6140,8 @@ struct ata_host *ata_host_alloc(struct device *dev, int max_ports)
+ 
+  err_out:
+ 	devres_release_group(dev, NULL);
++ err_free:
++	kfree(host);
+ 	return NULL;
+ }
+ 
+-- 
+2.15.1
+
