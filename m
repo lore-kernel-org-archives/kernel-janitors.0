@@ -1,24 +1,39 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 28 Mar 2018 22:10:31 +0000
-Subject: Re: [PATCH][scsi-next] scsi: core: remove redundant assignment to shost->use_blk_mq
-Message-Id: <yq1lgebhmw8.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Mar 2018 13:07:52 +0000
+Subject: [PATCH] ALSA: pcm: potential uninitialized return values
+Message-Id: <20180327130752.GA31841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180328164142.27201-1-colin.king@canonical.com>
-In-Reply-To: <20180328164142.27201-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 28 Mar 2018 17:41:42 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Smatch complains that "tmp" can be uninitialized if we do a zero size
+write.
 
-Colin,
+Fixes: 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS ioctls and read/write")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> The first assignment to shost->use_blk_mq is redundant as it is
-> overwritten by the following statement. Remove this redundant code.
-
-Applied to 4.16/scsi-fixes. Thank you!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/sound/core/oss/pcm_oss.c b/sound/core/oss/pcm_oss.c
+index a9082f219561..40852c595453 100644
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -1364,7 +1364,7 @@ static ssize_t snd_pcm_oss_write2(struct snd_pcm_substream *substream, const cha
+ static ssize_t snd_pcm_oss_write1(struct snd_pcm_substream *substream, const char __user *buf, size_t bytes)
+ {
+ 	size_t xfer = 0;
+-	ssize_t tmp;
++	ssize_t tmp = 0;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 
+ 	if (atomic_read(&substream->mmap_count))
+@@ -1474,7 +1474,7 @@ static ssize_t snd_pcm_oss_read2(struct snd_pcm_substream *substream, char *buf,
+ static ssize_t snd_pcm_oss_read1(struct snd_pcm_substream *substream, char __user *buf, size_t bytes)
+ {
+ 	size_t xfer = 0;
+-	ssize_t tmp;
++	ssize_t tmp = 0;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 
+ 	if (atomic_read(&substream->mmap_count))
