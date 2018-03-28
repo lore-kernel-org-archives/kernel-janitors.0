@@ -1,52 +1,37 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Mon, 12 Mar 2018 03:03:34 +0000
-Subject: [PATCH 3.2 097/104] x86/spectre: Fix an error message
-Message-Id: <lsq.1520823814.143503038@decadent.org.uk>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 28 Mar 2018 12:50:45 +0000
+Subject: [PATCH net-next] ice: Fix error return code in ice_init_hw()
+Message-Id: <1522241445-77090-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-3.2.101-rc1 review patch.  If anyone has any objections, please let me know.
+Fix to return error code ICE_ERR_NO_MEMORY from the alloc error
+handling case instead of 0, as done elsewhere in this function.
 
-------------------
-
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
-
-If i = ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.2: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: dc49c7723676 ("ice: Get MAC/PHY/link info and scheduler topology")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -317,8 +317,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
+ drivers/net/ethernet/intel/ice/ice_common.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
+index 385f5d4..21977ec 100644
+--- a/drivers/net/ethernet/intel/ice/ice_common.c
++++ b/drivers/net/ethernet/intel/ice/ice_common.c
+@@ -468,8 +468,10 @@ enum ice_status ice_init_hw(struct ice_hw *hw)
+ 	mac_buf_len = sizeof(struct ice_aqc_manage_mac_read_resp);
+ 	mac_buf = devm_kzalloc(ice_hw_to_dev(hw), mac_buf_len, GFP_KERNEL);
  
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n",
--			       mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
+-	if (!mac_buf)
++	if (!mac_buf) {
++		status = ICE_ERR_NO_MEMORY;
+ 		goto err_unroll_fltr_mgmt_struct;
++	}
+ 
+ 	status = ice_aq_manage_mac_read(hw, mac_buf, mac_buf_len, NULL);
+ 	devm_kfree(ice_hw_to_dev(hw), mac_buf);
 
