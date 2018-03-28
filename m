@@ -1,28 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 07 Mar 2018 18:25:51 +0000
-Subject: Re: [PATCH][net-next] net: mvpp2: make function mvpp2_check_hw_buf_num static
-Message-Id: <20180307.132551.1339524852801277076.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Mar 2018 11:48:15 +0000
+Subject: [PATCH] tracing: Uninitialized variable in create_tracing_map_fields()
+Message-Id: <20180328114815.GC29050@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180306152517.2770-1-colin.king@canonical.com>
-In-Reply-To: <20180306152517.2770-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: antoine.tenart@bootlin.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue,  6 Mar 2018 16:25:17 +0100
+Smatch complains that idx can be used uninitialized when we check if
+(idx < 0).  It has to be the first iteration through the loop and the
+HIST_FIELD_FL_STACKTRACE bit has to be clear and the HIST_FIELD_FL_VAR
+bit has to be set to reach the bug.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function mvpp2_check_hw_buf_num is local to the source and does
-> not need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/net/ethernet/marvell/mvpp2.c:4298:5: warning: symbol
-> 'mvpp2_check_hw_buf_num' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 30350d65ac56 ("tracing: Add variable support to hist triggers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Someone else submitted this already, but thanks for the submission.
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 4f027642ceef..6aceee287d07 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -4411,7 +4411,7 @@ static int create_tracing_map_fields(struct hist_trigger_data *hist_data)
+ 	struct tracing_map *map = hist_data->map;
+ 	struct ftrace_event_field *field;
+ 	struct hist_field *hist_field;
+-	int i, idx;
++	int i, idx = 0;
+ 
+ 	for_each_hist_field(i, hist_data) {
+ 		hist_field = hist_data->fields[i];
