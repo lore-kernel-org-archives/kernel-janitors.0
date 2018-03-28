@@ -1,50 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Mar 2018 11:07:56 +0000
-Subject: Re: [PATCH] scsi: cxgb4i: potential array overflow in t4_uld_rx_handler()
-Message-Id: <20180315110756.4arue7bak54vef7k@mwanda>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 13:42:44 +0000
+Subject: Re: [PATCH v2 1/2] video: udlfb: Return an error code only as a constant in dlfb_realloc_framebuffer
+Message-Id: <60893411.8iluP6siGW@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
+ <25aee051-12fb-de5f-c806-f419fa4c0ef1@users.sourceforge.net>
+ <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
+In-Reply-To: <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Bernie Thompson <bernie@plugable.com>, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
 
-What happened to this one?
+On Sunday, January 07, 2018 02:34:51 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 7 Jan 2018 14:02:36 +0100
+> 
+> * Return an error code without storing it in an intermediate variable.
+> 
+> * Delete the label "error" and local variable "retval"
+>   which became unnecessary with this refactoring.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-regards,
-dan carpenter
+Patch queued for 4.17, thanks.
 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-On Wed, Nov 29, 2017 at 02:42:20PM +0300, Dan Carpenter wrote:
-> The story is that Smatch marks skb->data as untrusted and so it
-> complains about this code:
-> 
-> 	drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2111 t4_uld_rx_handler()
-> 	error: buffer overflow 'cxgb4i_cplhandlers' 239 <= 255.
-> 
-> I don't know the code very well, but it looks like a reasonable warning
-> message.  Let's address it by adding a sanity check to make sure "opc"
-> is within bounds.
-> 
-> Fixes: bbc02c7e9d34 ("cxgb4: Add register, message, and FW definitions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-> index 266eddf17a99..94b2d5660a07 100644
-> --- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-> +++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-> @@ -2108,12 +2108,12 @@ static int t4_uld_rx_handler(void *handle, const __be64 *rsp,
->  	log_debug(1 << CXGBI_DBG_TOE,
->  		"cdev %p, opcode 0x%x(0x%x,0x%x), skb %p.\n",
->  		 cdev, opc, rpl->ot.opcode_tid, ntohl(rpl->ot.opcode_tid), skb);
-> -	if (cxgb4i_cplhandlers[opc])
-> -		cxgb4i_cplhandlers[opc](cdev, skb);
-> -	else {
-> +	if (opc >= ARRAY_SIZE(cxgb4i_cplhandlers) || !cxgb4i_cplhandlers[opc]) {
->  		pr_err("No handler for opcode 0x%x.\n", opc);
->  		__kfree_skb(skb);
-> +		return 0;
->  	}
-> +	cxgb4i_cplhandlers[opc](cdev, skb);
->  	return 0;
->  nomem:
->  	log_debug(1 << CXGBI_DBG_TOE, "OOM bailing out.\n");
