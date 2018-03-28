@@ -1,42 +1,37 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 29 Mar 2018 13:18:36 +0000
-Subject: Re: [PATCH] qed: fix a bunch of spelling mistakes/typos
-Message-Id: <1522329516.2210.32.camel@perches.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 14:02:34 +0000
+Subject: Re: [PATCH 1/2] video: s3c-fb: Delete an error message for a failed memory allocation in s3c_fb_prob
+Message-Id: <1678266.t0IYzbM4So@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180329124144.27841-1-colin.king@canonical.com>
-         <1522328485.2210.30.camel@perches.com>
-         <96d001c9-9e14-9b5a-b0ca-a2e402840351@canonical.com>
-In-Reply-To: <96d001c9-9e14-9b5a-b0ca-a2e402840351@canonical.com>
+References: <2c837da0-6b0f-12e7-4d76-960b660a8911@users.sourceforge.net>
+ <CGME20171127180636epcas1p4bc1c2fa2bc445e6ae4527782c6d2c987@epcas1p4.samsung.com>
+ <000201d367aa$74511b10$5cf35130$@gmail.com>
+In-Reply-To: <000201d367aa$74511b10$5cf35130$@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>, Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jingoo Han <jingoohan1@gmail.com>, 'SF Markus Elfring' <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, 'LKML' <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-On Thu, 2018-03-29 at 14:13 +0100, Colin Ian King wrote:
-> On 29/03/18 14:01, Joe Perches wrote:
-> > On Thu, 2018-03-29 at 13:41 +0100, Colin King wrote:
-> > > Trivial fix to spelling mistakes/typos in various DP_* messages.
+On Monday, November 27, 2017 01:06:30 PM Jingoo Han wrote:
+> On Sunday, November 26, 2017 9:17 AM, SF Markus Elfring wrote:
 > > 
-> > []
-> > > diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Sun, 26 Nov 2017 15:00:16 +0100
 > > 
-> > []
-> > > @@ -231,7 +231,7 @@ static void qed_vf_pf_acquire_reduce_resc(struct qed_hwfn *p_hwfn,
-> > >  {
-> > >  	DP_VERBOSE(p_hwfn,
-> > >  		   QED_MSG_IOV,
-> > > -		   "PF unwilling to fullill resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
-> > > +		   "PF unwilling to fulfil resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
+> > Omit an extra message for a memory allocation failure in this function.
 > > 
-> > Substituting one typo for another
+> > This issue was detected by using the Coccinelle software.
 > > 
-> > fulfil->fulfill
-> > 
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > 
-> Ah, US english vs non-US english issue. I can resend if required.
+> Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-Thanks.
+Patch queued for 4.17, thanks.
 
-OK, nevermind then.  It's not sensible to convert valid spellings.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
