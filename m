@@ -1,67 +1,32 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 03 Mar 2018 15:21:37 +0000
-Subject: Re: [PATCH v2 2/2] iio:dummy: Add extra paragraphs on Kconfig
-Message-Id: <20180303152137.780533f0@archlinux>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 14:08:40 +0000
+Subject: Re: [PATCH] video: matroxfb: Delete an error message for a failed memory allocation in matroxfb_crtc
+Message-Id: <6216878.7tvrGbX39k@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
-        <7cfd9fd93e76fede44d328045e7885cd78324a78.1519738995.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <7cfd9fd93e76fede44d328045e7885cd78324a78.1519738995.git.rodrigosiqueiramelo@gmail.com>
+References: <CGME20171126213211epcas5p16bb3e55e1ca996b6ee57286abf39ce44@epcas5p1.samsung.com>
+ <f903f284-bdba-7eb7-c666-301577fcfa94@users.sourceforge.net>
+In-Reply-To: <f903f284-bdba-7eb7-c666-301577fcfa94@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-On Tue, 27 Feb 2018 10:47:06 -0300
-Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
-
-> This patch fixes the checkpatch.pl warning:
+On Sunday, November 26, 2017 10:32:06 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 26 Nov 2017 22:13:55 +0100
 > 
-> drivers/iio/dummy/Kconfig:21: WARNING: please write a paragraph that
-> describes the config symbol fully
-> drivers/iio/dummy/Kconfig:27: WARNING: please write a paragraph that
-> describes the config symbol fully
+> Omit an extra message for a memory allocation failure in this function.
 > 
-> This patch expands the explanation about IIO_DUMMY_EVGEN by using the
-> code documentation found in iio/dummy/iio_dummy_evgen.c. In the same
-> way, the information related to IIO_SIMPLE_DUMMY_BUFFER was extracted
-> from file iio_simple_dummy_buffer.c.
+> This issue was detected by using the Coccinelle software.
 > 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it,
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Thanks,
+Patch queued for 4.17, thanks.
 
-Jonathan
-
-> ---
->  drivers/iio/dummy/Kconfig | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
-> index 85e13b2e35bf..c4fd108e91d3 100644
-> --- a/drivers/iio/dummy/Kconfig
-> +++ b/drivers/iio/dummy/Kconfig
-> @@ -24,6 +24,10 @@ config IIO_SIMPLE_DUMMY_EVENTS
->  	help
->  	  Add some dummy events to the simple dummy driver.
->  
-> +	  The purpose of this is to generate 'fake' event interrupts thus
-> +	  allowing that driver's code to be as close as possible to that
-> +	  a normal driver talking to hardware.
-> +
->  config IIO_SIMPLE_DUMMY_BUFFER
->  	bool "Buffered capture support"
->  	select IIO_BUFFER
-> @@ -32,6 +36,9 @@ config IIO_SIMPLE_DUMMY_BUFFER
->  	help
->  	  Add buffered data capture to the simple dummy driver.
->  
-> +	  Buffer handling elements of industrial I/O reference driver.
-> +	  Uses the kfifo buffer.
-> +
->  endif # IIO_SIMPLE_DUMMY
->  
->  endmenu
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
