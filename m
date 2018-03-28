@@ -1,21 +1,36 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Wed, 28 Mar 2018 13:38:54 +0000
-Subject: Re: [PATCH] samples/bpf: fix spelling mistake: "revieve" -> "receive"
-Message-Id: <d258fe2a-ddbc-8225-2dec-e49372d7b129@iogearbox.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Mar 2018 10:01:37 +0000
+Subject: [PATCH] scsi: fnic: fix spelling mistake: "abord" -> "abort"
+Message-Id: <20180328100137.13009-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180328100701.13289-1-colin.king@canonical.com>
-In-Reply-To: <20180328100701.13289-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org
+To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/28/2018 12:07 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in error message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to bpf-next, thanks Colin!
+Trivial fix to spelling mistake in message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/fnic/fnic_trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+index abddde11982b..98597b59c12a 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -296,7 +296,7 @@ int fnic_get_stats_data(struct stats_debug_info *debug,
+ 		  "Number of Abort FW Timeouts: %lld\n"
+ 		  "Number of Abort IO NOT Found: %lld\n"
+ 
+-		  "Abord issued times: \n"
++		  "Abort issued times: \n"
+ 		  "            < 6 sec : %lld\n"
+ 		  "     6 sec - 20 sec : %lld\n"
+ 		  "    20 sec - 30 sec : %lld\n"
+-- 
+2.15.1
+
