@@ -1,7 +1,7 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 28 Mar 2018 12:52:22 +0000
-Subject: [PATCH -next] efi/libstub/tpm: efi_retrieve_tpm2_eventlog_1_2() can be static
-Message-Id: <1522241542-77900-1-git-send-email-weiyongjun1@huawei.com>
+From: "weiyongjun (A)" <weiyongjun1@huawei.com>
+Date: Wed, 28 Mar 2018 13:07:21 +0000
+Subject: RE: [PATCH -next] efi/libstub/tpm: efi_retrieve_tpm2_eventlog_1_2() can be static
+Message-Id: <6AADFAC011213A4C87B956458587ADB4013BC898@dggemi507-mbx.china.huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAKv+Gu8VFYEjo_Uy44QARj3j3WEtayyh92+Db=np=ig-z+PZ2g@mail.gmail.com>
 In-Reply-To: <CAKv+Gu8VFYEjo_Uy44QARj3j3WEtayyh92+Db=np=ig-z+PZ2g@mail.gmail.com>
@@ -10,27 +10,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warning:
-
-drivers/firmware/efi/libstub/tpm.c:62:6: warning:
- symbol 'efi_retrieve_tpm2_eventlog_1_2' was not declared. Should it be static?
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/firmware/efi/libstub/tpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index 9d08cea..caa37a6 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
- 
- #endif
- 
--void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-+static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- {
- 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
-
+PiANCj4gT24gMjggTWFyY2ggMjAxOCBhdCAxNDo1MiwgV2VpIFlvbmdqdW4gPHdlaXlvbmdqdW4x
+QGh1YXdlaS5jb20+IHdyb3RlOg0KPiA+IEZpeGVzIHRoZSBmb2xsb3dpbmcgc3BhcnNlIHdhcm5p
+bmc6DQo+ID4NCj4gPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3RwbS5jOjYyOjY6IHdh
+cm5pbmc6DQo+ID4gIHN5bWJvbCAnZWZpX3JldHJpZXZlX3RwbTJfZXZlbnRsb2dfMV8yJyB3YXMg
+bm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUNCj4gc3RhdGljPw0KPiA+DQo+ID4gU2lnbmVkLW9m
+Zi1ieTogV2VpIFlvbmdqdW4gPHdlaXlvbmdqdW4xQGh1YXdlaS5jb20+DQo+ID4gLS0tDQo+ID4g
+IGRyaXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIvdHBtLmMgfCAyICstDQo+ID4gIDEgZmlsZSBj
+aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIvdHBtLmMNCj4gYi9kcml2ZXJzL2Zpcm13
+YXJlL2VmaS9saWJzdHViL3RwbS5jDQo+ID4gaW5kZXggOWQwOGNlYS4uY2FhMzdhNiAxMDA2NDQN
+Cj4gPiAtLS0gYS9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3RwbS5jDQo+ID4gKysrIGIv
+ZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi90cG0uYw0KPiA+IEBAIC01OSw3ICs1OSw3IEBA
+IHZvaWQNCj4gZWZpX2VuYWJsZV9yZXNldF9hdHRhY2tfbWl0aWdhdGlvbihlZmlfc3lzdGVtX3Rh
+YmxlX3QgKnN5c190YWJsZV9hcmcpDQo+ID4NCj4gPiAgI2VuZGlmDQo+ID4NCj4gPiAtdm9pZCBl
+ZmlfcmV0cmlldmVfdHBtMl9ldmVudGxvZ18xXzIoZWZpX3N5c3RlbV90YWJsZV90DQo+ICpzeXNf
+dGFibGVfYXJnKQ0KPiA+ICtzdGF0aWMgdm9pZCBlZmlfcmV0cmlldmVfdHBtMl9ldmVudGxvZ18x
+XzIoZWZpX3N5c3RlbV90YWJsZV90DQo+ICpzeXNfdGFibGVfYXJnKQ0KPiA+ICB7DQo+ID4gICAg
+ICAgICBlZmlfZ3VpZF90IHRjZzJfZ3VpZCA9IEVGSV9UQ0cyX1BST1RPQ09MX0dVSUQ7DQo+ID4g
+ICAgICAgICBlZmlfZ3VpZF90IGxpbnV4X2V2ZW50bG9nX2d1aWQgPSBMSU5VWF9FRklfVFBNX0VW
+RU5UX0xPR19HVUlEOw0KPiA+DQo+IA0KPiBQbGVhc2UgYmUgcGF0aWVudCBhbmQgZG9uJ3Qgc2Vu
+ZCB0aGUgZXhhY3Qgc2FtZSBwYXRjaCB0d2ljZSB3aXRob3V0DQo+IGFueSBtZW50aW9uIG9mIGl0
+IGluIHRoZSBjb21taXQgbG9nLg0KPiANCj4gVGhpcyB3aWxsIGJlIHBpY2tlZCB1cCBhZnRlciB0
+aGUgbmV4dCBtZXJnZSB3aW5kb3cgY2xvc2VzLg0KDQoNClNvcnJ5LCB0aGlzIG1haWwgd2FzIHNl
+bnQgYnkgbXkgbWlzdGFrZSwgSSB3aWxsIHBheSBtb3JlIGF0dGVudGlvbiBsYXRlci4NCg0KUmVn
+YXJkcw0KDQo
