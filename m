@@ -1,60 +1,39 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Thu, 08 Mar 2018 02:03:23 +0000
-Subject: [PATCH 4/5] drm/vgem: Add space around operators
-Message-Id: <524f1d4f3c4b5834d8210ae3476550dba8f02f27.1520474055.git.rodrigosiqueiramelo@gmail.com>
+From: Joe Perches <joe@perches.com>
+Date: Wed, 28 Mar 2018 23:21:14 +0000
+Subject: Re: [PATCH] ore: fix spelling mistake: "Multples" -> "multiples"
+Message-Id: <1522279274.2210.15.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
+References: <20180328230705.28145-1-colin.king@canonical.com>
+In-Reply-To: <20180328230705.28145-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Colin King <colin.king@canonical.com>, Boaz Harrosh <ooo@electrozaur.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl check and warning:
+On Thu, 2018-03-29 at 00:07 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in ORE_ERR error message text and
+> make it all lowercase.
 
-vgem_fence.c:28: CHECK: spaces preferred around that '*' (ctx:VxV)
-vgem_drv.c:255: CHECK: spaces preferred around that '|' (ctx:VxV)
-vgem_drv.c:256: WARNING: line over 80 characters
+thanks and more trivially:
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/gpu/drm/vgem/vgem_drv.c   | 8 ++++++--
- drivers/gpu/drm/vgem/vgem_fence.c | 2 +-
- 2 files changed, 7 insertions(+), 3 deletions(-)
+> diff --git a/fs/exofs/ore.c b/fs/exofs/ore.c
+[]
+> @@ -68,7 +68,7 @@ int ore_verify_layout(unsigned total_comps, struct ore_layout *layout)
+>  	}
+>  	if (0 != (layout->stripe_unit & ~PAGE_MASK)) {
+>  		ORE_ERR("Stripe Unit(0x%llx)"
+> -			  " must be Multples of PAGE_SIZE(0x%lx)\n",
+> +			  " must be multiples of PAGE_SIZE(0x%lx)\n",
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index bf704ed51da4..6e6084e3204a 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -252,8 +252,12 @@ static int vgem_gem_dumb_map(struct drm_file *file, struct drm_device *dev,
- }
- 
- static struct drm_ioctl_desc vgem_ioctls[] = {
--	DRM_IOCTL_DEF_DRV(VGEM_FENCE_ATTACH, vgem_fence_attach_ioctl, DRM_AUTH|DRM_RENDER_ALLOW),
--	DRM_IOCTL_DEF_DRV(VGEM_FENCE_SIGNAL, vgem_fence_signal_ioctl, DRM_AUTH|DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(VGEM_FENCE_ATTACH,
-+			  vgem_fence_attach_ioctl,
-+			  DRM_AUTH | DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(VGEM_FENCE_SIGNAL,
-+			  vgem_fence_signal_ioctl,
-+			  DRM_AUTH | DRM_RENDER_ALLOW),
- };
- 
- static int vgem_mmap(struct file *filp, struct vm_area_struct *vma)
-diff --git a/drivers/gpu/drm/vgem/vgem_fence.c b/drivers/gpu/drm/vgem/vgem_fence.c
-index f5b659463b00..d0bcb5fb33d1 100644
---- a/drivers/gpu/drm/vgem/vgem_fence.c
-+++ b/drivers/gpu/drm/vgem/vgem_fence.c
-@@ -25,7 +25,7 @@
- 
- #include "vgem_drv.h"
- 
--#define VGEM_FENCE_TIMEOUT (10*HZ)
-+#define VGEM_FENCE_TIMEOUT (10 * HZ)
- 
- struct vgem_fence {
- 	struct dma_fence base;
--- 
-2.16.2
+"a multiple" might be more intelligible than "multiples"
+
+It would be a more common usage too.
+
+$ git grep -i "\".*multiples" | wc -l
+10
+$ git grep -i "\".*a multiple" | wc -l
+62
 
