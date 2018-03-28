@@ -1,24 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 20 Mar 2018 16:07:28 +0000
-Subject: Re: [PATCH v2] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
-Message-Id: <20180320.120728.1961514582193776638.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Mar 2018 11:48:36 +0000
+Subject: [PATCH] test_bpf: Fix NULL vs IS_ERR() check in test_skb_segment()
+Message-Id: <20180328114836.GD29050@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7fd57a4e79da41dccf55430cbc43de340a7f1826.1521061530.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7fd57a4e79da41dccf55430cbc43de340a7f1826.1521061530.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 18 Mar 2018 23:59:36 +0100
+The skb_segment() function returns error pointers on error.  It never
+returns NULL.
 
-> If the optional regulator is deferred, we must release some resources.
-> They will be re-allocated when the probe function will be called again.
-> 
-> Fixes: 6eacf31139bf ("ethernet: arc: Add support for Rockchip SoC layer device tree bindings")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: v1 did not compile because of an erroneous variable name. s/ret/err/
+Fixes: 76db8087c4c9 ("net: bpf: add a test for skb_segment in test_bpf module")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied and queued up for -stable, thanks.
+diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+index b2badf6b23cd..8e157806df7a 100644
+--- a/lib/test_bpf.c
++++ b/lib/test_bpf.c
+@@ -6649,7 +6649,7 @@ static __init int test_skb_segment(void)
+ 	}
+ 
+ 	segs = skb_segment(skb, features);
+-	if (segs) {
++	if (!IS_ERR(segs)) {
+ 		kfree_skb_list(segs);
+ 		ret = 0;
+ 		pr_info("%s: success in skb_segment!", __func__);
