@@ -1,49 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:49:05 +0000
-Subject: [PATCH v2 16/17] mfd: twl6030-irq: Delete an error message for a failed memory allocation in twl6030
-Message-Id: <575d5e65-381d-c12c-8d75-eadae7a92566@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Mar 2018 11:46:40 +0000
+Subject: [PATCH] media: dvb-core: Check for allocation failure in dvb_module_probe()
+Message-Id: <20180328114640.GA29050@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
-In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 09:49:32 +0100
+We should check if kzalloc() fails.
 
-Omit an extra message for a memory allocation failure in this function.
+Fixes: 8f569c0b4e6b ("media: dvb-core: add helper functions for I2C binding")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
-
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/twl6030-irq.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/twl6030-irq.c b/drivers/mfd/twl6030-irq.c
-index e3ec8dfa9f1e..e939431ed10c 100644
---- a/drivers/mfd/twl6030-irq.c
-+++ b/drivers/mfd/twl6030-irq.c
-@@ -392,10 +392,8 @@ int twl6030_init_irq(struct device *dev, int irq_num)
- 	nr_irqs = TWL6030_NR_IRQS;
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+index cf747d753a79..787fe06df217 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -953,6 +953,8 @@ struct i2c_client *dvb_module_probe(const char *module_name,
+ 	struct i2c_board_info *board_info;
  
- 	twl6030_irq = devm_kzalloc(dev, sizeof(*twl6030_irq), GFP_KERNEL);
--	if (!twl6030_irq) {
--		dev_err(dev, "twl6030_irq: Memory allocation failed\n");
-+	if (!twl6030_irq)
- 		return -ENOMEM;
--	}
+ 	board_info = kzalloc(sizeof(*board_info), GFP_KERNEL);
++	if (!board_info)
++		return NULL;
  
- 	mask[0] = 0xFF;
- 	mask[1] = 0xFF;
--- 
-2.16.2
-
+ 	if (name)
+ 		strlcpy(board_info->type, name, I2C_NAME_SIZE);
