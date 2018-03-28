@@ -1,46 +1,35 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 18 Mar 2018 10:05:15 +0000
-Subject: Re: [PATCH] iio/gyro/bmg160_core: Improve unlocking of a mutex in five functions
-Message-Id: <20180318100515.GA13276@kroah.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 28 Mar 2018 12:51:19 +0000
+Subject: [PATCH net-next] net: bcmgenet: return NULL instead of plain integer
+Message-Id: <1522241479-77691-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <16623de4-351d-135b-f3ff-701a465c5d92@users.sourceforge.net>
- <20180317195422.037a8b57@archlinux>
-In-Reply-To: <20180317195422.037a8b57@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Pravin Shedge <pravin.shedge4linux@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Doug Berger <opendmb@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Mar 17, 2018 at 07:54:22PM +0000, Jonathan Cameron wrote:
-> On Wed, 14 Mar 2018 16:15:32 +0100
-> SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Wed, 14 Mar 2018 16:06:49 +0100
-> > 
-> > * Add jump targets so that a call of the function "mutex_unlock" is stored
-> >   only once in these function implementations.
-> > 
-> > * Replace 19 calls by goto statements.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Hi Markus,
-> 
-> Some of these are good and sensible changes - others break the code.
-> Please be careful to fully check all the resulting paths and ensure
-> we don't change wether the lock is still held in all exit paths.
-> Note a function that isn't lockdep annotated should not be holding
-> any locks, that it took, upon exit.
+Fixes the following sparse warning:
 
-Please note that you are dealing with someone who is on many kernel
-maintainer's email-blacklist, including my own.  I've found it's just
-not worth the time and energy in responding to these emails, it's a
-time-sink you will never find your way out of.
+drivers/net/ethernet/broadcom/genet/bcmgenet.c:1351:16: warning:
+ Using plain integer as NULL pointer
 
-good luck!
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index 7db8edc..2f4cb5c 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -1348,7 +1348,7 @@ static struct sk_buff *bcmgenet_free_tx_cb(struct device *dev,
+ 		dma_unmap_addr_set(cb, dma_addr, 0);
+ 	}
+ 
+-	return 0;
++	return NULL;
+ }
+ 
+ /* Simple helper to free a receive control block's resources */
+
