@@ -1,27 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Mar 2018 07:08:04 +0000
-Subject: Re: [2/9] um/drivers/vector_user: Less checks in user_init_raw_fds() after error detection
-Message-Id: <fa32bc3f-b860-aab1-1e84-262add39e24c@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Mar 2018 22:48:50 +0000
+Subject: [PATCH] power: supply: ab8500_fg: fix spelling mistake: "Disharge" -> "Discharge"
+Message-Id: <20180328224850.27833-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
- <d68574df-868c-3a9a-b1fb-2e95b1a452a4@users.sourceforge.net>
-In-Reply-To: <d68574df-868c-3a9a-b1fb-2e95b1a452a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> +set_error_code:
-> +	err = -errno;
-> +	os_close_file(rxfd);
+From: Colin Ian King <colin.king@canonical.com>
 
-I have taken another look at this change idea.
-Now I notice that I should have preserved a sanity check there.
+Trivial fix to spelling mistake in dev_dbg message text
 
-	if (rxfd >= 0)
-		os_close_file(rxfd);
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/power/supply/ab8500_fg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab8500_fg.c
+index c569f82a0071..993898d1712f 100644
+--- a/drivers/power/supply/ab8500_fg.c
++++ b/drivers/power/supply/ab8500_fg.c
+@@ -1408,7 +1408,7 @@ static void ab8500_fg_charge_state_to(struct ab8500_fg *di,
+ static void ab8500_fg_discharge_state_to(struct ab8500_fg *di,
+ 	enum ab8500_fg_discharge_state new_state)
+ {
+-	dev_dbg(di->dev, "Disharge state from %d [%s] to %d [%s]\n",
++	dev_dbg(di->dev, "Discharge state from %d [%s] to %d [%s]\n",
+ 		di->discharge_state,
+ 		discharge_state[di->discharge_state],
+ 		new_state,
+-- 
+2.15.1
 
-Regards,
-Markus
