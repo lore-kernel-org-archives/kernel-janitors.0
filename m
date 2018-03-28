@@ -1,35 +1,35 @@
-From: Thomas Avery <tavery321@gmail.com>
-Date: Mon, 19 Mar 2018 22:11:00 +0000
-Subject: [PATCH] staging: rtl8723bs: Replace yield() call with cond_resched()
-Message-Id: <20180319221100.rxs2n54ch53tukje@debian>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 14:16:58 +0000
+Subject: Re: [PATCH 2/2] video: ARM CLCD: Improve a size determination in clcdfb_probe()
+Message-Id: <3181596.jONtYT21fI@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
+ <CGME20171205171416epcas5p170833154061d837027c6dccfee0ccc6c@epcas5p1.samsung.com>
+ <3656de6d-53cc-f6a4-1950-71fc989c79a4@users.sourceforge.net>
+In-Reply-To: <3656de6d-53cc-f6a4-1950-71fc989c79a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
 
-Remove yield() call. yield() does not guarantee progress, and should not
-be used. cond_resched or wait_event are a safe alternative.
+On Tuesday, December 05, 2017 06:13:33 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 5 Dec 2017 17:53:19 +0100
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Thomas Avery <tavery321@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch queued for 4.17, thanks.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-index 4a6af72013fa..85f7769ecc2d 100644
---- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-@@ -701,7 +701,7 @@ void LPS_Leave_check(
- 	bReady = false;
- 	start_time = jiffies;
- 
--	yield();
-+	cond_resched();
- 
- 	while (1) {
- 		down(&pwrpriv->lock);
--- 
-2.11.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
