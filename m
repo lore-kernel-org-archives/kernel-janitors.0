@@ -1,24 +1,30 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Wed, 28 Mar 2018 11:57:20 +0000
+From: Joao Martins <joao.m.martins@oracle.com>
+Date: Wed, 28 Mar 2018 12:08:51 +0000
 Subject: Re: [PATCH] xen/acpi: off by one in read_acpi_id()
-Message-Id: <12f59a38-ac39-d62a-6951-bd8393d45f12@suse.com>
+Message-Id: <b8a2f028-8bbe-ae14-41ff-26c99850cba8@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180328114747.GB29050@mwanda>
 In-Reply-To: <20180328114747.GB29050@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: xen-devel@lists.xenproject.org, Joao Martins <joao.m.martins@oracle.com>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, kernel-janitors@vger.kernel.org
 
-On 28/03/18 13:47, Dan Carpenter wrote:
+On 03/28/2018 12:47 PM, Dan Carpenter wrote:
 > If acpi_id is = nr_acpi_bits, then we access one element beyond the end
 > of the acpi_psd[] array or we set one bit beyond the end of the bit map
 > when we do __set_bit(acpi_id, acpi_id_cst_present);
 > 
+... or even acpi_id_present (which comes right after the condition you're fixing).
+
 > Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
+FWIW,
+
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+
 > diff --git a/drivers/xen/xen-acpi-processor.c b/drivers/xen/xen-acpi-processor.c
 > index c80195e8fbd1..d23c9c150199 100644
 > --- a/drivers/xen/xen-acpi-processor.c
@@ -31,15 +37,5 @@ On 28/03/18 13:47, Dan Carpenter wrote:
 > +	if (acpi_id >= nr_acpi_bits) {
 >  		pr_debug("We only have %u, trying to set %u\n",
 >  			 nr_acpi_bits, acpi_id);
-
-Can you please modify this message, too? E.g. something like:
-
-pr_debug("max acpi id %u, trying to set %u\n",
-         nr_acpi_bits - 1, acpi_id);
-
-With that:
-
-Reviewed-by: Juergen Gross <jgross@suse.com>
-
-
-Juergen
+>  		return AE_OK;
+> 
