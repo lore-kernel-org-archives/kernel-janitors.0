@@ -1,51 +1,31 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Tue, 20 Mar 2018 10:53:33 +0000
-Subject: Re: [PATCH 0/2] drm/sun4i: Fix some error handling paths in 'sun4i_hdmi_bind()'
-Message-Id: <20180320105333.56uhos4rarqyyhas@flea>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="azndqhggqixbtuj6"
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 28 Mar 2018 13:22:14 +0000
+Subject: [PATCH -next] Bluetooth: btrsi: remove unused including <linux/version.h>
+Message-Id: <1522243334-94150-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521413031.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, wens@csie.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Remove including <linux/version.h> that don't need it.
 
---azndqhggqixbtuj6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/bluetooth/btrsi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Sun, Mar 18, 2018 at 11:48:08PM +0100, Christophe JAILLET wrote:
-> I've splitted these fixes into 2 patches becasue they do not fixe the same
-> commit.
+diff --git a/drivers/bluetooth/btrsi.c b/drivers/bluetooth/btrsi.c
+index 5034325..60d1419 100644
+--- a/drivers/bluetooth/btrsi.c
++++ b/drivers/bluetooth/btrsi.c
+@@ -13,7 +13,6 @@
+  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+-#include <linux/version.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <net/bluetooth/bluetooth.h>
 
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---azndqhggqixbtuj6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqw6CwACgkQ0rTAlCFN
-r3SCQQ//d7BzyskRYf0iRiV3nQGFg7yQReUV/95kpLvdLvMnfmThlF2D5zo+KeqP
-xJJEa2lmX4rp7RTBUX/My6oh757jupCZABVMwxZglXs2ybA3Zj7QR2IWRe867Dmq
-EC6m/Z97szMFXA2ViNWi+BXcBmniZcFQGp3kMmdQo24V6bN8/b7IKx4z6M2QVoFJ
-hPIjBEx6c5dyZLthnKDdP0fH35TvBBgjnLW0SyWnsKl40yL9oVclNV1BKhDh5mhV
-Rb7JkgdTNuH2GpYT7hlMjIt3AIFvuGIYoBdpiZCXaf0deZCB1BG3T47lUO6A6klC
-Ivxiv/5UQqeiw8cSw/Rxp2K782mTHahWkPLOf84g1Ipx56QBNPR24Ec+JfehB5S7
-JkmMN84W3MT4yCPabfMn1fBU2W39N8CGP9qmv9/E3AZEI2KglQvrTpyxKY2yzfwb
-stB0IEtCzyUvHgrLf0dgTw4mxDNaLXBEgVYztKjpIyK4adWZBjTz/3AzqjOhvtn0
-QEcM5tateLOcohnz7cNgilZmomC01RhyEGT8/GAaG0/4M6Vy+akK4TcZZl4+q7vC
-ElbFaLI12RgiepvBNanmc5V3o0aGabcWEDNNRifUG4+cBlu6V/KljMj22uy6HJWC
-GJ87SudZZUYuW/61jGqdaHLTQ2QXg8qgB+uN8ejoZdiWGfD/FfA=
-=SZeJ
------END PGP SIGNATURE-----
-
---azndqhggqixbtuj6--
