@@ -1,70 +1,33 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 03 Mar 2018 15:21:03 +0000
-Subject: Re: [PATCH v2 1/2] iio: dummy: Add correct tabs and spaces to Kconfig
-Message-Id: <20180303152103.5b7061af@archlinux>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 14:25:15 +0000
+Subject: Re: [PATCH 1/3] video: au1100fb: Delete an error message for a failed memory allocation in au1100fb_
+Message-Id: <3174977.dCR0SWXXyp@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1519738995.git.rodrigosiqueiramelo@gmail.com>
-        <fc453a92429d06d769aa71072c5c0cbaa1c8d57a.1519738995.git.rodrigosiqueiramelo@gmail.com>
-In-Reply-To: <fc453a92429d06d769aa71072c5c0cbaa1c8d57a.1519738995.git.rodrigosiqueiramelo@gmail.com>
+References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
+ <CGME20171127214358epcas1p35be7cd2052b40ab61f798701b67d25cd@epcas1p3.samsung.com>
+ <f2ad18dd-2525-d8d9-10a8-c12b345cb509@users.sourceforge.net>
+In-Reply-To: <f2ad18dd-2525-d8d9-10a8-c12b345cb509@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-On Tue, 27 Feb 2018 10:46:51 -0300
-Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
-
-> Kconfig from iio/dummy does not follow the coding style recommendations.
-> According to the coding-style, Lines under a config definition are
-> indented with one tab, while help text is indented an additional two
-> spaces. This patch adds the proper tabulation and space.
+On Monday, November 27, 2017 06:58:22 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 27 Nov 2017 18:14:41 +0100
 > 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/dummy/Kconfig | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+> Omit an extra message for a memory allocation failure in this function.
 > 
-> diff --git a/drivers/iio/dummy/Kconfig b/drivers/iio/dummy/Kconfig
-> index 5a29fbd3c531..85e13b2e35bf 100644
-> --- a/drivers/iio/dummy/Kconfig
-> +++ b/drivers/iio/dummy/Kconfig
-> @@ -9,20 +9,20 @@ config IIO_DUMMY_EVGEN
->  	tristate
->  
->  config IIO_SIMPLE_DUMMY
-> -       tristate "An example driver with no hardware requirements"
-> -       depends on IIO_SW_DEVICE
-> -       help
-> -	 Driver intended mainly as documentation for how to write
-> -	 a driver. May also be useful for testing userspace code
-> -	 without hardware.
-> +	tristate "An example driver with no hardware requirements"
-> +	depends on IIO_SW_DEVICE
-> +	help
-> +	  Driver intended mainly as documentation for how to write
-> +	  a driver. May also be useful for testing userspace code
-> +	  without hardware.
->  
->  if IIO_SIMPLE_DUMMY
->  
->  config IIO_SIMPLE_DUMMY_EVENTS
-> -       bool "Event generation support"
-> -       select IIO_DUMMY_EVGEN
-> -       help
-> -         Add some dummy events to the simple dummy driver.
-> +	bool "Event generation support"
-> +	select IIO_DUMMY_EVGEN
-> +	help
-> +	  Add some dummy events to the simple dummy driver.
->  
->  config IIO_SIMPLE_DUMMY_BUFFER
->  	bool "Buffered capture support"
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Patch queued for 4.17, thanks.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
