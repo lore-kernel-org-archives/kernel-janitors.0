@@ -1,48 +1,46 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Mon, 12 Mar 2018 03:06:12 +0000
-Subject: [PATCH 3.16 60/76] x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
-Message-Id: <lsq.1520823972.477750558@decadent.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Mar 2018 18:17:25 +0000
+Subject: [PATCH][next] ASoC: topology: fix memory leak on se when kstrdup fails
+Message-Id: <20180328181725.17226-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Andi Kleen <ak@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Colin Ian King <colin.king@canonical.com>, Borislav Petkov <bp@suse.de>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>
-
-3.16.56-rc1 review patch.  If anyone has any objections, please let me know.
-
-------------------
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-commit e698dcdfcda41efd0984de539767b4cddd235f1e upstream.
+In the case when kstrdup fails to allocation memory for kc[i].name
+the error exit path does not free up 'se' leading to a small leak.
+Fix this by kfree'ing 'se' before jumping to err_se and since
+kc[i].private_value is zero we end up avoiding kfree'ing the
+rest of the unallocated objects in se.
 
-Trivial fix to spelling mistake in pr_err error message text.
+Detected by CoverityScan, CID#1466991 ("Reseource leak")
 
+Fixes: 267e2c6fd7ca ("ASoC: topology: Fix kcontrol name string handling")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/soc-topology.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -165,7 +165,7 @@ bool retpoline_module_ok(bool has_retpol
- 	if (spectre_v2_enabled = SPECTRE_V2_NONE || has_retpoline)
- 		return true;
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index fa27d0fca6dc..71b20d795b51 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1325,8 +1325,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
+ 			ec->hdr.name);
  
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
- }
+ 		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
+-		if (kc[i].name = NULL)
++		if (kc[i].name = NULL) {
++			kfree(se);
+ 			goto err_se;
++		}
+ 		kc[i].private_value = (long)se;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = ec->hdr.access;
+-- 
+2.15.1
 
