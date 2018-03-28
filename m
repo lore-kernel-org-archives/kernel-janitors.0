@@ -1,102 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Mar 2018 08:32:31 +0000
-Subject: [PATCH 2/4] scsi: hpsa: Less function calls in hpsa_big_passthru_ioctl() after error detection
-Message-Id: <e53f792c-0062-1b7a-a914-fa5f62b9a5c9@users.sourceforge.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 28 Mar 2018 13:20:56 +0000
+Subject: [PATCH -next] drm/amdgpu: fix error return code in amdgpu_amdkfd_gpuvm_create_process_vm()
+Message-Id: <1522243256-94061-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
-In-Reply-To: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com, Don Brace <don.brace@microsemi.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: oded.gabbay@gmail.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 4 Mar 2018 22:00:19 +0100
+Fix to return error code -ENOMEM from the eviction fence create fail
+error handling case instead of 0, as done elsewhere in this function.
 
-The function "kfree" was called in a few cases by
-the hpsa_big_passthru_ioctl() function during error handling
-even if the passed variable contained a null pointer.
-
-* Adjust jump targets.
-
-* Delete two initialisations and a check (for the local variable "buff")
-  which became unnecessary with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: a46a2cd103a8 ("drm/amdgpu: Add GPUVM memory management functions for KFD")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/scsi/hpsa.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index b35248becef9..45177ead811f 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -6377,8 +6377,8 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
- {
- 	BIG_IOCTL_Command_struct *ioc;
- 	struct CommandList *c;
--	unsigned char **buff = NULL;
--	int *buff_size = NULL;
-+	unsigned char **buff;
-+	int *buff_size;
- 	u64 temp64;
- 	BYTE sg_used = 0;
- 	int status = 0;
-@@ -6397,26 +6397,26 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
- 	if ((ioc->buf_size < 1) &&
- 	    (ioc->Request.Type.Direction != XFER_NONE)) {
- 		status = -EINVAL;
--		goto cleanup1;
-+		goto free_ioc;
- 	}
- 	/* Check kmalloc limits  using all SGs */
- 	if (ioc->malloc_size > MAX_KMALLOC_SIZE) {
- 		status = -EINVAL;
--		goto cleanup1;
-+		goto free_ioc;
- 	}
- 	if (ioc->buf_size > ioc->malloc_size * SG_ENTRIES_IN_CMD) {
- 		status = -EINVAL;
--		goto cleanup1;
--	}
--	buff = kzalloc(SG_ENTRIES_IN_CMD * sizeof(char *), GFP_KERNEL);
--	if (!buff) {
--		status = -ENOMEM;
--		goto cleanup1;
-+		goto free_ioc;
- 	}
- 	buff_size = kmalloc(SG_ENTRIES_IN_CMD * sizeof(int), GFP_KERNEL);
- 	if (!buff_size) {
- 		status = -ENOMEM;
--		goto cleanup1;
-+		goto free_ioc;
-+	}
-+	buff = kzalloc(SG_ENTRIES_IN_CMD * sizeof(char *), GFP_KERNEL);
-+	if (!buff) {
-+		status = -ENOMEM;
-+		goto free_buff_size;
- 	}
- 	left = ioc->buf_size;
- 	data_ptr = ioc->buf;
-@@ -6501,14 +6501,16 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
- cleanup0:
- 	cmd_free(h, c);
- cleanup1:
--	if (buff) {
-+	{
- 		int i;
- 
- 		for (i = 0; i < sg_used; i++)
- 			kfree(buff[i]);
- 		kfree(buff);
- 	}
-+free_buff_size:
- 	kfree(buff_size);
-+free_ioc:
- 	kfree(ioc);
- 	return status;
- }
--- 
-2.16.2
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+index a12a165..c5c9c6f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+@@ -846,6 +846,7 @@ int amdgpu_amdkfd_gpuvm_create_process_vm(struct kgd_dev *kgd, void **vm,
+ 						   current->mm);
+ 		if (!info->eviction_fence) {
+ 			pr_err("Failed to create eviction fence\n");
++			ret = -ENOMEM;
+ 			goto create_evict_fence_fail;
+ 		}
 
