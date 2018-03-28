@@ -1,47 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Mar 2018 07:46:33 +0000
-Subject: Re: [3/5] Bluetooth: btmrvl: One check less in btmrvl_sdio_card_to_host()
-Message-Id: <09cd7314-d053-3a6d-a9e1-d666a00ddb55@users.sourceforge.net>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 13:36:15 +0000
+Subject: Re: [PATCH v2 2/2] video/fbdev/stifb: Delete an error message for a failed memory allocation in stif
+Message-Id: <1633440.9F4sjlxLYt@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
- <a988a80d-12c0-a414-ab81-ff4ab075855c@users.sourceforge.net>
- <609D1B28-2B75-4AB5-B707-FDB5D0500F1A@holtmann.org>
-In-Reply-To: <609D1B28-2B75-4AB5-B707-FDB5D0500F1A@holtmann.org>
+References: <7dcd32b6-9691-14a1-29cf-3a746ef5adfc@users.sourceforge.net>
+ <889131fe-199c-3bef-0781-00761b807426@users.sourceforge.net>
+ <f92f41b1-d4fa-4ffa-8c19-af4eb0d2d8cf@users.sourceforge.net>
+ <CGME20180328133621epcas2p2865976351cf3dc28ac258d2c9530ffcd@epcas2p2.samsung.com>
+In-Reply-To: <f92f41b1-d4fa-4ffa-8c19-af4eb0d2d8cf@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org, Helge Deller <deller@gmx.de>, kernel-janitors@vger.kernel.org, "James E. J.
+ Bottomley" <jejb@parisc-linux.org>, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, Rolf Eike Beer <eike-kernel@sf-tec.de>
 
->> @@ -797,12 +792,18 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
->> 		break;
->> 	}
->>
->> -exit:
->> -	if (ret) {
->> -		hdev->stat.err_rx++;
->> -		kfree_skb(skb);
->> -	}
->> +	return 0;
->> +
->> +free_skb:
->> +	kfree_skb(skb);
->> +e_io:
->> +	ret = -EIO;
->> +	goto increment_counter;
->>
->> +e_inval:
->> +	ret = -EINVAL;
->> +increment_counter:
->> +	hdev->stat.err_rx++;
->> 	return ret;
+On Sunday, January 07, 2018 12:58:47 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 7 Jan 2018 12:34:22 +0100
 > 
-> Nope!
+> Omit an extra message for a memory allocation failure in this function.
 > 
-> This is not easier to read for me. This goto exit jumping and I hate that.
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Can the software design direction become feasible to omit the repeated check
-for the variable “ret” (and further initialisations)?
+Patch queued for 4.17, thanks.
 
-Regards,
-Markus
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
