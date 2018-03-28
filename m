@@ -1,46 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Mar 2018 16:39:51 +0000
-Subject: [PATCH v2 13/17 3/4] mfd: tps65910: Delete an unnecessary variable initialisation in tps65910_sleepi
-Message-Id: <4b909856-0197-43ca-50c4-2e592bf7514c@users.sourceforge.net>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 13:34:08 +0000
+Subject: Re: [PATCH v2 1/2] video/fbdev/stifb: Return -ENOMEM after a failed kzalloc() in stifb_init_fb()
+Message-Id: <2557729.Jl5E8iEh4q@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
-In-Reply-To: <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
+References: <7dcd32b6-9691-14a1-29cf-3a746ef5adfc@users.sourceforge.net>
+ <889131fe-199c-3bef-0781-00761b807426@users.sourceforge.net>
+ <6341951e-df28-0b40-974e-dedd890b5228@users.sourceforge.net>
+ <CGME20180328133411epcas2p442e8f8a85d6c6e72ec5a5122519fe5eb@epcas2p4.samsung.com>
+In-Reply-To: <6341951e-df28-0b40-974e-dedd890b5228@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org, Helge Deller <deller@gmx.de>, kernel-janitors@vger.kernel.org, "James E. J.
+ Bottomley" <jejb@parisc-linux.org>, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, Rolf Eike Beer <eike-kernel@sf-tec.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 09:10:09 +0100
+On Sunday, January 07, 2018 12:56:45 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 7 Jan 2018 11:33:59 +0100
+> 
+> Replace an error code for the indication of a memory allocation failure
+> in this function.
+> 
+> Fixes: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac ("Linux-2.6.12-rc2: Initial git repository build")
+> Suggested-by: Rolf Eike Beer <eike-kernel@sf-tec.de>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The local variable "dev" will be reassigned by a following statement.
-Thus omit the explicit initialisation at the beginning.
+Patch queued for 4.17, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
-
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/tps65910.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index 80ea1474c654..7e7d3d1642c6 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -312,7 +312,7 @@ static int tps65910_ck32k_init(struct tps65910 *tps65910,
- static int tps65910_sleepinit(struct tps65910 *tps65910,
- 		struct tps65910_board *pmic_pdata)
- {
--	struct device *dev = NULL;
-+	struct device *dev;
- 	int ret;
- 
- 	dev = tps65910->dev;
--- 
-2.16.2
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
