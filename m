@@ -1,36 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 28 Mar 2018 22:48:50 +0000
-Subject: [PATCH] power: supply: ab8500_fg: fix spelling mistake: "Disharge" -> "Discharge"
-Message-Id: <20180328224850.27833-1-colin.king@canonical.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 14:13:50 +0000
+Subject: Re: [PATCH 1/2] video: ARM CLCD: Delete an error message for a failed memory allocation in clcdfb_pr
+Message-Id: <3142281.EDeMi996z3@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
+        <CGME20171205171236epcas4p33d714ae79a5b69676eec15c84985576a@epcas4p3.samsung.com>
+        <0ad85d10-a18f-ff02-f1f4-95452e54d32d@users.sourceforge.net>
+In-Reply-To: <0ad85d10-a18f-ff02-f1f4-95452e54d32d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Russell King <linux@armlinux.org.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tuesday, December 05, 2017 06:12:30 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 5 Dec 2017 17:50:11 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Trivial fix to spelling mistake in dev_dbg message text
+Patch queued for 4.17, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/ab8500_fg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab8500_fg.c
-index c569f82a0071..993898d1712f 100644
---- a/drivers/power/supply/ab8500_fg.c
-+++ b/drivers/power/supply/ab8500_fg.c
-@@ -1408,7 +1408,7 @@ static void ab8500_fg_charge_state_to(struct ab8500_fg *di,
- static void ab8500_fg_discharge_state_to(struct ab8500_fg *di,
- 	enum ab8500_fg_discharge_state new_state)
- {
--	dev_dbg(di->dev, "Disharge state from %d [%s] to %d [%s]\n",
-+	dev_dbg(di->dev, "Discharge state from %d [%s] to %d [%s]\n",
- 		di->discharge_state,
- 		discharge_state[di->discharge_state],
- 		new_state,
--- 
-2.15.1
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
