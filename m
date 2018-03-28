@@ -1,18 +1,21 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 20 Mar 2018 10:15:29 +0000
-Subject: Re: [3/3] powernv/pci: Improve a size determination in pnv_pci_init_ioda_phb()
-Message-Id: <40582V075Xz9sZC@ozlabs.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 28 Mar 2018 14:27:01 +0000
+Subject: Re: [PATCH 2/3] video: au1100fb: Improve a size determination in au1100fb_drv_probe()
+Message-Id: <2447043.1duYbrvBpc@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <03b68902-629e-65ab-a5e8-d90a3613f596@users.sourceforge.net>
+References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
+ <CGME20171127180003epcas3p1a6c7cbe1be9bee79555a0e7f05b28024@epcas3p1.samsung.com>
+ <231de972-f0bf-18ce-e681-a29767c086ea@users.sourceforge.net>
+In-Reply-To: <231de972-f0bf-18ce-e681-a29767c086ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Alexey Kardashevskiy <aik@ozlabs.ru>, Alistair Popple <alistair@popple.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Russell Currey <ruscur@russell.cc>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-On Tue, 2017-10-17 at 15:40:17 UTC, SF Markus Elfring wrote:
+On Monday, November 27, 2017 06:59:57 PM SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 17 Oct 2017 17:18:10 +0200
+> Date: Mon, 27 Nov 2017 18:18:34 +0100
 > 
 > Replace the specification of a data structure by a pointer dereference
 > as the parameter for the operator "sizeof" to make the corresponding size
@@ -21,10 +24,12 @@ On Tue, 2017-10-17 at 15:40:17 UTC, SF Markus Elfring wrote:
 > This issue was detected by using the Coccinelle software.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-Applied to powerpc next, thanks.
+Patch queued for 4.17, thanks.
 
-https://git.kernel.org/powerpc/c/a0828cf57acce9bf941539e1f633e9
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-cheers
