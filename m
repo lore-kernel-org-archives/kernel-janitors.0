@@ -1,47 +1,36 @@
-From: Scott Branden <scott.branden@broadcom.com>
-Date: Thu, 08 Mar 2018 20:15:22 +0000
-Subject: Re: [PATCH] ASoC: cygnus: remove redundant assignment to pointer 'res'
-Message-Id: <576fbe04-bef0-171d-a1eb-40c6cbb2874e@broadcom.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Mar 2018 11:59:47 +0000
+Subject: [PATCH] qed: fix spelling mistake: "checksumed" -> "checksummed"
+Message-Id: <20180329115947.26920-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180308133249.22032-1-colin.king@canonical.com>
-In-Reply-To: <20180308133249.22032-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Lori Hikichi <lori.hikichi@broadcom.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Looks good.
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistake in DP_INFO message text
 
-On 18-03-08 05:32 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer res is being initialized with a value that is never read
-> and re-assigned immediately after, hence the initialization is redundant
-> and can be removed.
->
-> Cleans up clang warning:
-> sound/soc/bcm/cygnus-ssp.c:1284:19: warning: Value stored to 'res'
-> during its initialization is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Scott Branden <scott.branden@broadcom.com>
-> ---
->   sound/soc/bcm/cygnus-ssp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/sound/soc/bcm/cygnus-ssp.c b/sound/soc/bcm/cygnus-ssp.c
-> index abafadc0b534..b733f1446353 100644
-> --- a/sound/soc/bcm/cygnus-ssp.c
-> +++ b/sound/soc/bcm/cygnus-ssp.c
-> @@ -1281,7 +1281,7 @@ static int cygnus_ssp_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct device_node *child_node;
-> -	struct resource *res = pdev->resource;
-> +	struct resource *res;
->   	struct cygnus_audio *cygaud;
->   	int err = -EINVAL;
->   	int node_count;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index c4f14fdc4e77..0c50ed1955c4 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -2383,7 +2383,7 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb)
+ 	u8 flags = 0;
+ 
+ 	if (unlikely(skb->ip_summed != CHECKSUM_NONE)) {
+-		DP_INFO(cdev, "Cannot transmit a checksumed packet\n");
++		DP_INFO(cdev, "Cannot transmit a checksummed packet\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.15.1
 
