@@ -1,34 +1,35 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 30 Mar 2018 02:25:27 +0000
-Subject: [PATCH -next] drm/amdkfd: Make function kfd_dev_is_large_bar() static
-Message-Id: <1522376727-136554-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Mar 2018 17:24:31 +0000
+Subject: [PATCH] selftests/ftrace: fix spelling mistake: "tiggers" -> "triggers"
+Message-Id: <20180329172431.8171-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oded.gabbay@gmail.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Felix Kuehling <Felix.Kuehling@amd.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/gpu/drm/amd/amdkfd/kfd_chardev.c:1150:6: warning:
- symbol 'kfd_dev_is_large_bar' was not declared. Should it be static?
+Trivial fix to spelling mistake in message text
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 2 +-
+ tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-index cd679cf..fb5d997 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-@@ -1147,7 +1147,7 @@ static int kfd_ioctl_acquire_vm(struct file *filep, struct kfd_process *p,
- 	return ret;
- }
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
+index c5ef8b9d02b3..1b8faf4c318c 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
+@@ -35,7 +35,7 @@ do_reset
  
--bool kfd_dev_is_large_bar(struct kfd_dev *dev)
-+static bool kfd_dev_is_large_bar(struct kfd_dev *dev)
- {
- 	struct kfd_local_mem_info mem_info;
+ reset_trigger
+ 
+-echo "Test histogram multiple tiggers"
++echo "Test histogram multiple triggers"
+ 
+ echo 'hist:keys=parent_pid:vals=child_pid' > events/sched/sched_process_fork/trigger
+ echo 'hist:keys=parent_comm:vals=child_pid' >> events/sched/sched_process_fork/trigger
+-- 
+2.15.1
 
