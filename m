@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Mar 2018 17:30:37 +0000
+From: Varun Prakash <varun@chelsio.com>
+Date: Thu, 29 Mar 2018 15:24:21 +0000
 Subject: Re: [PATCH] scsi: cxgb4i: potential array overflow in t4_uld_rx_handler()
-Message-Id: <20180328173037.lfjvbbpbwzhstl2m@mwanda>
+Message-Id: <20180329151220.GA1773@chelsio.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171129114220.3qbwryxjnol6zmsk@mwanda>
 In-Reply-To: <20171129114220.3qbwryxjnol6zmsk@mwanda>
@@ -10,67 +10,67 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 09:14:25PM +0530, Varun Prakash wrote:
-> On Wed, Mar 21, 2018 at 09:12:00PM -0400, Martin K. Petersen wrote:
+On Wed, Mar 28, 2018 at 08:30:37PM +0300, Dan Carpenter wrote:
+> On Wed, Mar 28, 2018 at 09:14:25PM +0530, Varun Prakash wrote:
+> > On Wed, Mar 21, 2018 at 09:12:00PM -0400, Martin K. Petersen wrote:
+> > > 
+
+> > > >
+> > > > On Wed, Nov 29, 2017 at 02:42:20PM +0300, Dan Carpenter wrote:
+> > > >> The story is that Smatch marks skb->data as untrusted and so it
+> > > >> complains about this code:
+> > > >> 
+> > > >> 	drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2111 t4_uld_rx_handler()
+> > > >> 	error: buffer overflow 'cxgb4i_cplhandlers' 239 <= 255.
+> > > >> 
+> > > >> I don't know the code very well, but it looks like a reasonable warning
+> > > >> message.  Let's address it by adding a sanity check to make sure "opc"
+> > > >> is within bounds.
+> > > >> 
+> > > >> Fixes: bbc02c7e9d34 ("cxgb4: Add register, message, and FW definitions")
+> > > >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > >> 
+> > > >> diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+> > > >> index 266eddf17a99..94b2d5660a07 100644
+> > > >> --- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+> > > >> +++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+> > > >> @@ -2108,12 +2108,12 @@ static int t4_uld_rx_handler(void *handle, const __be64 *rsp,
+> > > >>  	log_debug(1 << CXGBI_DBG_TOE,
+> > > >>  		"cdev %p, opcode 0x%x(0x%x,0x%x), skb %p.\n",
+> > > >>  		 cdev, opc, rpl->ot.opcode_tid, ntohl(rpl->ot.opcode_tid), skb);
+> > > >> -	if (cxgb4i_cplhandlers[opc])
+> > > >> -		cxgb4i_cplhandlers[opc](cdev, skb);
+> > > >> -	else {
+> > > >> +	if (opc >= ARRAY_SIZE(cxgb4i_cplhandlers) || !cxgb4i_cplhandlers[opc]) {
+> > > >>  		pr_err("No handler for opcode 0x%x.\n", opc);
+> > > >>  		__kfree_skb(skb);
+> > > >> +		return 0;
+> > > >>  	}
+> > > >> +	cxgb4i_cplhandlers[opc](cdev, skb);
+> > > >>  	return 0;
+> > > >>  nomem:
+> > > >>  	log_debug(1 << CXGBI_DBG_TOE, "OOM bailing out.\n");
+> > > >
+> > > >
 > > 
-> > Varun: Please look at this. Thanks!
-> > 
-> > > What happened to this one?
-> > >
-> > > regards,
-> > > dan carpenter
-> > >
-> > >
-> > > On Wed, Nov 29, 2017 at 02:42:20PM +0300, Dan Carpenter wrote:
-> > >> The story is that Smatch marks skb->data as untrusted and so it
-> > >> complains about this code:
-> > >> 
-> > >> 	drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2111 t4_uld_rx_handler()
-> > >> 	error: buffer overflow 'cxgb4i_cplhandlers' 239 <= 255.
-> > >> 
-> > >> I don't know the code very well, but it looks like a reasonable warning
-> > >> message.  Let's address it by adding a sanity check to make sure "opc"
-> > >> is within bounds.
-> > >> 
-> > >> Fixes: bbc02c7e9d34 ("cxgb4: Add register, message, and FW definitions")
-> > >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >> 
-> > >> diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-> > >> index 266eddf17a99..94b2d5660a07 100644
-> > >> --- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-> > >> +++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-> > >> @@ -2108,12 +2108,12 @@ static int t4_uld_rx_handler(void *handle, const __be64 *rsp,
-> > >>  	log_debug(1 << CXGBI_DBG_TOE,
-> > >>  		"cdev %p, opcode 0x%x(0x%x,0x%x), skb %p.\n",
-> > >>  		 cdev, opc, rpl->ot.opcode_tid, ntohl(rpl->ot.opcode_tid), skb);
-> > >> -	if (cxgb4i_cplhandlers[opc])
-> > >> -		cxgb4i_cplhandlers[opc](cdev, skb);
-> > >> -	else {
-> > >> +	if (opc >= ARRAY_SIZE(cxgb4i_cplhandlers) || !cxgb4i_cplhandlers[opc]) {
-> > >>  		pr_err("No handler for opcode 0x%x.\n", opc);
-> > >>  		__kfree_skb(skb);
-> > >> +		return 0;
-> > >>  	}
-> > >> +	cxgb4i_cplhandlers[opc](cdev, skb);
-> > >>  	return 0;
-> > >>  nomem:
-> > >>  	log_debug(1 << CXGBI_DBG_TOE, "OOM bailing out.\n");
-> > >
-> > >
+> > This check is not necessary but we can add it to avoid warning.
 > 
-> This check is not necessary but we can add it to avoid warning.
+> Is the reason it's not necessary, because the skb->data comes from the
+> firmware and we trust it?
 
-Is the reason it's not necessary, because the skb->data comes from the
-firmware and we trust it?  The v5 declares the array as having 256
-elements which also solves this warning.  And cxgbit_uld_lro_rx_handler()
-has a bounds check.  So it seems pretty normal to prevent the array
-overflow by force as well as by trust.
+Yes, opc is an opcode of a cpl cmd which is generated by hardware or firmware,
+driver should never get opc >= ARRAY_SIZE(cxgb4i_cplhandler) or NUM_CPL_CMDS(239).
 
-> The commit mentioned in "Fixes" is not correct, this code was added in commit 
-> "7b36b6e [SCSI] cxgb4i v5: iscsi driver"
-
-Yeah.  You're right.  I can resend with an updated commit message.
-
-regards,
-dan carpenter
-
+> The v5 declares the array as having 256
+> elements which also solves this warning.  And cxgbit_uld_lro_rx_handler()
+> has a bounds check.  So it seems pretty normal to prevent the array
+> overflow by force as well as by trust.
+> 
+> > The commit mentioned in "Fixes" is not correct, this code was added in commit 
+> > "7b36b6e [SCSI] cxgb4i v5: iscsi driver"
+> 
+> Yeah.  You're right.  I can resend with an updated commit message.
+> 
+> regards,
+> dan carpenter
+> 
