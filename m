@@ -1,55 +1,39 @@
-From: rezhu <rezhu@amd.com>
-Date: Tue, 27 Mar 2018 08:59:44 +0000
-Subject: Re: [PATCH] drm/amd/pp: silence a static checker warning
-Message-Id: <d09148ee-c7d7-7248-d1e5-08d349a58199@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Mar 2018 09:01:53 +0000
+Subject: [PATCH v2] xen/acpi: off by one in read_acpi_id()
+Message-Id: <20180329090153.GA17927@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323113903.GD28518@mwanda> <20180326033024.GC27239@hr-amur2>
-In-Reply-To: <20180326033024.GC27239@hr-amur2>
+References: <b8a2f028-8bbe-ae14-41ff-26c99850cba8@oracle.com>
+In-Reply-To: <b8a2f028-8bbe-ae14-41ff-26c99850cba8@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Tom St Denis <tom.stdenis-5C7GfCeVMHo@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Evan Quan <evan.quan-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=ef=bf=bdnig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org, Joao Martins <joao.m.martins@oracle.com>, kernel-janitors@vger.kernel.org
 
-Applied. Thanks.
+If acpi_id is = nr_acpi_bits, then we access one element beyond the end
+of the acpi_psd[] array or we set one bit beyond the end of the bit map
+when we do __set_bit(acpi_id, acpi_id_present);
 
-Best Regards
+Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Rex
-
-On 2018年03月26日 11:30, Huang Rui wrote:
-> On Fri, Mar 23, 2018 at 02:39:03PM +0300, Dan Carpenter wrote:
->> This has a static checker warning because "frev" and "crev" can be
->> uninitialized if "info" is NULL.  I just changed the order of the checks
->> so that we check "info" first.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Huang Rui <ray.huang@amd.com>
->
->> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
->> index 75a465f771f0..7b26607c646a 100644
->> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
->> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
->> @@ -319,13 +319,13 @@ static int smu8_get_system_info_data(struct pp_hwmgr *hwmgr)
->>   			GetIndexIntoMasterTable(DATA, IntegratedSystemInfo),
->>   			&size, &frev, &crev);
->>   
->> -	if (crev != 9) {
->> -		pr_err("Unsupported IGP table: %d %d\n", frev, crev);
->> +	if (info = NULL) {
->> +		pr_err("Could not retrieve the Integrated System Info Table!\n");
->>   		return -EINVAL;
->>   	}
->>   
->> -	if (info = NULL) {
->> -		pr_err("Could not retrieve the Integrated System Info Table!\n");
->> +	if (crev != 9) {
->> +		pr_err("Unsupported IGP table: %d %d\n", frev, crev);
->>   		return -EINVAL;
->>   	}
->>   
->> _______________________________________________
->> amd-gfx mailing list
->> amd-gfx@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
-
+diff --git a/drivers/xen/xen-acpi-processor.c b/drivers/xen/xen-acpi-processor.c
+index c80195e8fbd1..b29f4e40851f 100644
+--- a/drivers/xen/xen-acpi-processor.c
++++ b/drivers/xen/xen-acpi-processor.c
+@@ -364,9 +364,9 @@ read_acpi_id(acpi_handle handle, u32 lvl, void *context, void **rv)
+ 	}
+ 	/* There are more ACPI Processor objects than in x2APIC or MADT.
+ 	 * This can happen with incorrect ACPI SSDT declerations. */
+-	if (acpi_id > nr_acpi_bits) {
+-		pr_debug("We only have %u, trying to set %u\n",
+-			 nr_acpi_bits, acpi_id);
++	if (acpi_id >= nr_acpi_bits) {
++		pr_debug("max acpi id %u, trying to set %u\n",
++			 nr_acpi_bits - 1, acpi_id);
+ 		return AE_OK;
+ 	}
+ 	/* OK, There is a ACPI Processor object */
