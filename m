@@ -1,26 +1,31 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 15 Mar 2018 03:37:21 +0000
-Subject: Re: [PATCH][next] scsi: lpfc: make several unions static, fix non-ANSI prototype
-Message-Id: <yq1o9jq9fgu.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Mar 2018 09:03:19 +0000
+Subject: [PATCH] ALSA: usb-audio: silence a static checker warning
+Message-Id: <20180329090319.GB17927@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180313120849.30128-1-colin.king@canonical.com>
-In-Reply-To: <20180313120849.30128-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 13 Mar 2018 12:08:49 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
+We recently made "format" a u64 variable so now static checkers complain
+that this shift will wrap around if format is more than 31.  I don't
+think it makes a difference for runtime, but it's simple to silence the
+warning.
 
-Colin,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> There are several unions that are local to the source and do not need
-> to be in global scope, so make them static. Also add in a missing void
-> parameter to functions lpfc_nvme_cmd_template and
-> lpfc_nvmet_cmd_template to clean up non-ANSI warning.
-
-Applied to 4.17/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/sound/usb/format.c b/sound/usb/format.c
+index edbe67eeddfa..49e7ec6d2399 100644
+--- a/sound/usb/format.c
++++ b/sound/usb/format.c
+@@ -55,7 +55,7 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
+ 		struct uac_format_type_i_discrete_descriptor *fmt = _fmt;
+ 		sample_width = fmt->bBitResolution;
+ 		sample_bytes = fmt->bSubframeSize;
+-		format = 1 << format;
++		format = 1ULL << format;
+ 		break;
+ 	}
+ 
