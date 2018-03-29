@@ -1,24 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 21 Mar 2018 22:10:22 +0000
-Subject: Re: [PATCH] qede: fix spelling mistake: "registeration" -> "registration"
-Message-Id: <20180321.181022.103649218081895440.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 29 Mar 2018 02:20:10 +0000
+Subject: [PATCH -next] usb: dwc3: gadget: dwc3_gadget_del_and_unmap_request() can be static
+Message-Id: <1522290010-64022-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180319145711.6591-1-colin.king@canonical.com>
-In-Reply-To: <20180319145711.6591-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 19 Mar 2018 14:57:11 +0000
+Fixes the following sparse warning:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistakes in DP_ERR error message text and
-> comments
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/usb/dwc3/gadget.c:169:6: warning:
+ symbol 'dwc3_gadget_del_and_unmap_request' was not declared. Should it be static?
 
-Applied.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/dwc3/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 8796a5ee..206ecc7 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -166,7 +166,7 @@ static void dwc3_ep_inc_deq(struct dwc3_ep *dep)
+ 	dwc3_ep_inc_trb(&dep->trb_dequeue);
+ }
+ 
+-void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
++static void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
+ 		struct dwc3_request *req, int status)
+ {
+ 	struct dwc3			*dwc = dep->dwc;
+
+
+
