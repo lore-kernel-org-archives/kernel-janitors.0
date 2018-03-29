@@ -1,36 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Mar 2018 15:55:53 +0000
-Subject: [PATCH] powerpc: fix spelling mistake: "Usupported" -> "Unsupported"
-Message-Id: <20180330155553.7170-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 29 Mar 2018 19:51:55 +0000
+Subject: Re: [0/9] UML vector network driver: Adjustments for three function implementations
+Message-Id: <4286effd-df51-78c7-3e65-b8a90e1733f0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: user-mode-linux-devel@lists.sourceforge.net, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+> Date: Sun, 11 Mar 2018 16:06:16 +0100
+> 
+> Some update suggestions were taken into account
+> from static source code analysis.
+…
+>   Delete unnecessary code in user_init_raw_fds()
+>   Less checks in user_init_raw_fds() after error detection
+>   Adjust an error message in user_init_socket_fds()
+>   Delete an unnecessary check before kfree() in user_init_socket_fds()
+>   Delete two unnecessary checks before freeaddrinfo() in user_init_socket_fds()
+>   Less checks in user_init_socket_fds() after error detection
+>   Adjust an error message in user_init_tap_fds()
+>   Less checks in user_init_tap_fds() after error detection
+>   Delete an unnecessary variable initialisation in user_init_tap_fds()
+…
 
-Trivial fix to spelling mistake in bootx_printf message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/powerpc/platforms/powermac/bootx_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/platforms/powermac/bootx_init.c b/arch/powerpc/platforms/powermac/bootx_init.c
-index c3c9bbb3573a..ca60f3ef7ef6 100644
---- a/arch/powerpc/platforms/powermac/bootx_init.c
-+++ b/arch/powerpc/platforms/powermac/bootx_init.c
-@@ -519,7 +519,7 @@ void __init bootx_init(unsigned long r3, unsigned long r4)
- 			;
- 	}
- 	if (bi->architecture != BOOT_ARCH_PCI) {
--		bootx_printf(" !!! WARNING - Usupported machine"
-+		bootx_printf(" !!! WARNING - Unsupported machine"
- 			     " architecture !\n");
- 		for (;;)
- 			;
--- 
-2.15.1
-
+Would you like to pick any idea up from this patch series?
+	
+Regards,
+Markus
