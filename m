@@ -1,30 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 01 Mar 2018 10:07:14 +0000
-Subject: [PATCH] media: ov5695: Off by one in ov5695_enum_frame_sizes()
-Message-Id: <20180301100714.GA14140@mwanda>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 29 Mar 2018 02:14:03 +0000
+Subject: [PATCH -next] ASoC: amd: acp-da7219-max98357: Make symbol da7219_dai_clk static
+Message-Id: <1522289643-61304-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shunqian Zheng <zhengsq@rock-chips.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Dylan Reid <dgreid@chromium.org>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
-The ">" should be ">=" so that we don't read one element beyond the end
-of the array.
+Fixes the following sparse warning:
 
-Fixes: 8a77009be4be ("media: ov5695: add support for OV5695 sensor")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+sound/soc/amd/acp-da7219-max98357a.c:46:12: warning:
+ symbol 'da7219_dai_clk' was not declared. Should it be static?
 
-diff --git a/drivers/media/i2c/ov5695.c b/drivers/media/i2c/ov5695.c
-index a4985a4715f5..9be38a0a2046 100644
---- a/drivers/media/i2c/ov5695.c
-+++ b/drivers/media/i2c/ov5695.c
-@@ -884,7 +884,7 @@ static int ov5695_enum_frame_sizes(struct v4l2_subdev *sd,
- 				   struct v4l2_subdev_pad_config *cfg,
- 				   struct v4l2_subdev_frame_size_enum *fse)
- {
--	if (fse->index > ARRAY_SIZE(supported_modes))
-+	if (fse->index >= ARRAY_SIZE(supported_modes))
- 		return -EINVAL;
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/amd/acp-da7219-max98357a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+index b205c78..f41560e 100644
+--- a/sound/soc/amd/acp-da7219-max98357a.c
++++ b/sound/soc/amd/acp-da7219-max98357a.c
+@@ -43,7 +43,7 @@
+ #define DUAL_CHANNEL		2
  
- 	if (fse->code != MEDIA_BUS_FMT_SBGGR10_1X10)
+ static struct snd_soc_jack cz_jack;
+-struct clk *da7219_dai_clk;
++static struct clk *da7219_dai_clk;
+ 
+ static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
+ {
+
