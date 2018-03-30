@@ -1,7 +1,7 @@
 From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Date: Fri, 30 Mar 2018 03:39:33 +0000
+Date: Fri, 30 Mar 2018 03:50:03 +0000
 Subject: Re: [PATCH v3] staging: vt6655: check for memory allocation failures
-Message-Id: <20180330033933.GA26489@ubuntu>
+Message-Id: <20180330035003.GA27619@ubuntu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CGME20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf@epcas2p2.samsung.com>
 	<1522377844-23591-1-git-send-email-ji_hun.kim@samsung.com>
@@ -76,17 +76,7 @@ On Fri, Mar 30, 2018 at 11:15:03AM +0800, Jia-Ju Bai wrote:
 > Jia-Ju Bai
 > 
 > 
-But, those freeing function are already placed in the each device_init
-functions for allocation fail like below. 
-
-@@ -550,20 +554,29 @@ static void device_init_rd0_ring(struct vnt_private *priv)
-+       return 0;
-+error:
-+       device_free_rd0_ring(priv);
-+       return ret;
-
-Would freeing in the vnt_start() be better instead of freeing in
-device_init_rd0_ring function?
+Oh, sorry, I got what you said. Yes, you are right. I am going to make patch v4. Thanks!
 
 Best regards,
 Ji-Hun
