@@ -1,30 +1,36 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Sat, 31 Mar 2018 18:07:17 +0000
-Subject: Re: [PATCH v2] xen/acpi: off by one in read_acpi_id()
-Message-Id: <739884bb-f780-2b85-c3d7-074342f9b957@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Mar 2018 15:44:20 +0000
+Subject: [PATCH] ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"
+Message-Id: <20180330154420.6903-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180329090153.GA17927@mwanda>
-In-Reply-To: <20180329090153.GA17927@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org, Joao Martins <joao.m.martins@oracle.com>, kernel-janitors@vger.kernel.org
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistake in pr_debug message text
 
-On 03/29/2018 05:01 AM, Dan Carpenter wrote:
-> If acpi_id is = nr_acpi_bits, then we access one element beyond the end
-> of the acpi_psd[] array or we set one bit beyond the end of the bit map
-> when we do __set_bit(acpi_id, acpi_id_present);
-> 
-> Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
-> Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/atmel/atmel_ssc_dai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Applied to for-linus-4.17
-
--boris
+diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+index a1e2c5682dcd..1c7af0ca98ec 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.c
++++ b/sound/soc/atmel/atmel_ssc_dai.c
+@@ -820,7 +820,7 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
+ 		if (ret < 0) {
+ 			printk(KERN_WARNING
+ 					"atmel_ssc_dai: request_irq failure\n");
+-			pr_debug("Atmel_ssc_dai: Stoping clock\n");
++			pr_debug("Atmel_ssc_dai: Stopping clock\n");
+ 			clk_disable(ssc_p->ssc->clk);
+ 			return ret;
+ 		}
+-- 
+2.15.1
 
