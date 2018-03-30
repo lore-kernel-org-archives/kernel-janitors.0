@@ -1,28 +1,35 @@
-From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-Date: Fri, 09 Mar 2018 01:03:09 +0000
-Subject: Re: [PATCH] ASoC: TSCS42xx: make const array norm_addrs static, reduces object code size
-Message-Id: <20180309010308.GA19046@t7-ThinkPad-E560>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 30 Mar 2018 02:07:05 +0000
+Subject: [PATCH net-next] cfg80211: fix possible memory leak in regdb_query_country()
+Message-Id: <1522375625-135679-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180214172153.5749-1-colin.king@canonical.com>
-In-Reply-To: <20180214172153.5749-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 05:21:53PM +0000, Colin King wrote:
+'wmm_ptrs' is malloced in regdb_query_country() and should be freed
+before leaving from the error handling cases, otherwise it will cause
+memory leak.
 
-> Don't populate the const array norm_addrs on the stack, instead make it
-> static.  Makes the object code smaller by over 230 bytes.  Also re-format
-> array data as the insertion of the static keywork made the first line
-> overly long.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/wireless/reg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I have tested this on our HAT and it works well. You can add:
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 16c7e4e..ac3e12c 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -1026,6 +1026,7 @@ static int regdb_query_country(const struct fwdb_header *db,
+ 
+ 			if (!tmp_rd) {
+ 				kfree(regdom);
++				kfree(wmm_ptrs);
+ 				return -ENOMEM;
+ 			}
+ 			regdom = tmp_rd;
 
-Reviewed-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-Tested-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
 
-Regards,
 
-Steven
