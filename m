@@ -1,36 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Mar 2018 16:59:49 +0000
-Subject: [PATCH] ath10k: fix spelling mistake: "tiggers" -> "triggers"
-Message-Id: <20180329165949.29155-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 30 Mar 2018 16:43:44 +0000
+Subject: [PATCH] debugfs_simple_attr.cocci: add clarifying information
+Message-Id: <1522428224-20192-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Colin Ian King <colin.king@canonical.com>
+The referenced commit gives some information about the overhead
+reduced by this change.
 
-Trivial fix to spelling mistake in message text
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ath/ath10k/wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index 9649bb752bbd..2f991f79a90f 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -7719,7 +7719,7 @@ ath10k_wmi_fw_pdev_tx_stats_fill(const struct ath10k_fw_stats_pdev *pdev,
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
- 			 "HW rate", pdev->data_rc);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
--			 "Sched self tiggers", pdev->self_triggers);
-+			 "Sched self triggers", pdev->self_triggers);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
- 			 "Dropped due to SW retries",
- 			 pdev->sw_retry_failure);
--- 
-2.15.1
+diff --git a/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci b/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
+index 7c31231..6ff97e2 100644
+--- a/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
++++ b/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
+@@ -5,6 +5,8 @@
+ //# Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+ //# imposes some significant overhead as compared to
+ //# DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
++//# See commit c64688081490 ("debugfs: add support for self-protecting
++//# attribute file fops") for further information.
+ //
+ // Copyright (C): 2016 Nicolai Stange
+ // Options: --no-includes
 
