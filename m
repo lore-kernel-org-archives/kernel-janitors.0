@@ -1,31 +1,24 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 30 Apr 2018 10:35:41 +0000
-Subject: Re: rt2x00: fix spelling mistake in various macros, UKNOWN -> UNKNOWN
-Message-Id: <20180430103541.C860C60556@smtp.codeaurora.org>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 01 Apr 2018 03:21:10 +0000
+Subject: Re: [PATCH net-next] vlan: vlan_hw_filter_capable() can be static
+Message-Id: <20180331.232110.214944125061454087.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180418114750.1978-1-colin.king@canonical.com>
-In-Reply-To: <20180418114750.1978-1-colin.king@canonical.com>
+References: <1522476701-93237-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1522476701-93237-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: weiyongjun1@huawei.com
+Cc: Vishakha.Narvekar@dell.com, makita.toshiaki@lab.ntt.co.jp, kstewart@linuxfoundation.org, tariqt@mellanox.com, galp@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 31 Mar 2018 06:11:41 +0000
 
-> From: Colin Ian King <colin.king@canonical.com>
+> Fixes the following sparse warning:
 > 
-> Rename several macros that contain mispellings of UNKNOWN
+> net/8021q/vlan_core.c:168:6: warning:
+>  symbol 'vlan_hw_filter_capable' was not declared. Should it be static?
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-cc282a0c5f08 rt2x00: fix spelling mistake in various macros, UKNOWN -> UNKNOWN
-
--- 
-https://patchwork.kernel.org/patch/10348023/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Applied, thank you.
