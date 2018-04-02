@@ -1,82 +1,25 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Date: Fri, 20 Apr 2018 07:24:04 +0000
-Subject: Re: [PATCH 46/61] spi: simplify getting .drvdata
-Message-Id: <80e6c822-094e-fded-d8bd-28f4cb7d14ad@xilinx.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Date: Mon, 02 Apr 2018 15:52:32 +0000
+Subject: Re: [PATCH] tracing: Uninitialized variable in create_tracing_map_fields()
+Message-Id: <20180402115232.2319bcef@gandalf.local.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-47-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-47-wsa+renesas@sang-engineering.com>
+References: <20180328114815.GC29050@mwanda>
+        <1522245880.520.1.camel@tzanussi-mobl.amr.corp.intel.com>
+In-Reply-To: <1522245880.520.1.camel@tzanussi-mobl.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 19.4.2018 16:06, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/spi/spi-cadence.c      | 6 ++----
->  drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
->  2 files changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
-> index 5c9516ae4942..de394422b611 100644
-> --- a/drivers/spi/spi-cadence.c
-> +++ b/drivers/spi/spi-cadence.c
-> @@ -686,8 +686,7 @@ static int cdns_spi_remove(struct platform_device *pdev)
->   */
->  static int __maybe_unused cdns_spi_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct spi_master *master = platform_get_drvdata(pdev);
-> +	struct spi_master *master = dev_get_drvdata(dev);
->  
->  	return spi_master_suspend(master);
->  }
-> @@ -702,8 +701,7 @@ static int __maybe_unused cdns_spi_suspend(struct device *dev)
->   */
->  static int __maybe_unused cdns_spi_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct spi_master *master = platform_get_drvdata(pdev);
-> +	struct spi_master *master = dev_get_drvdata(dev);
->  	struct cdns_spi *xspi = spi_master_get_devdata(master);
->  
->  	cdns_spi_init_hw(xspi);
-> diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-> index 18aeaceee286..3608db4ff368 100644
-> --- a/drivers/spi/spi-zynqmp-gqspi.c
-> +++ b/drivers/spi/spi-zynqmp-gqspi.c
-> @@ -918,8 +918,7 @@ static int zynqmp_qspi_start_transfer(struct spi_master *master,
->   */
->  static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct spi_master *master = platform_get_drvdata(pdev);
-> +	struct spi_master *master = dev_get_drvdata(dev);
->  
->  	spi_master_suspend(master);
->  
-> @@ -939,8 +938,7 @@ static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
->   */
->  static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct spi_master *master = platform_get_drvdata(pdev);
-> +	struct spi_master *master = dev_get_drvdata(dev);
->  	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
->  	int ret = 0;
->  
-> 
+On Wed, 28 Mar 2018 09:04:40 -0500
+Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
 
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+> Yes, this should definitely be initialized to 0, thanks for the patch!
+> 
+> Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Thanks,
-Michal
+Thanks, I applied it and will push to git after it has succeeded in
+testing.
 
-
+-- Steve
