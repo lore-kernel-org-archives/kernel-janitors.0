@@ -1,60 +1,41 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 24 Apr 2018 06:39:09 +0000
-Subject: Re: [PATCH -next] efi/libstub/tpm: Make function efi_retrieve_tpm2_eventlog_1_2() static
-Message-Id: <CAKv+Gu_7NVGkHBbj2e5WZ2vptzyj1+i7HPF9ABXb3QALN6DFug@mail.gmail.com>
+From: Felix Kuehling <felix.kuehling@amd.com>
+Date: Mon, 02 Apr 2018 18:03:33 +0000
+Subject: Re: [PATCH -next] drm/amdkfd: Make function kfd_dev_is_large_bar() static
+Message-Id: <623cef28-530e-21af-e90c-64905f5c84b5@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
+References: <1522376727-136554-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1522376727-136554-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>, oded.gabbay@gmail.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 23 April 2018 at 21:38, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> On Mon, Apr 16, 2018 at 01:05:24PM +0200, Ard Biesheuvel wrote:
->> On 22 March 2018 at 15:09, Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com> wrote:
->> > On Thu, 2018-03-22 at 16:06 +0200, Jarkko Sakkinen wrote:
->> >> On Tue, 2018-03-20 at 14:17 +0000, Wei Yongjun wrote:
->> >> > Fixes the following sparse warning:
->> >> >
->> >> > drivers/firmware/efi/libstub/tpm.c:62:6: warning:
->> >> >  symbol 'efi_retrieve_tpm2_eventlog_1_2' was not declared. Should it be
->> >> > static?
->> >> >
->> >> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->> >> > ---
->> >> >  drivers/firmware/efi/libstub/tpm.c | 2 +-
->> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >> >
->> >> > diff --git a/drivers/firmware/efi/libstub/tpm.c
->> >> > b/drivers/firmware/efi/libstub/tpm.c
->> >> > index 9d08cea..caa37a6 100644
->> >> > --- a/drivers/firmware/efi/libstub/tpm.c
->> >> > +++ b/drivers/firmware/efi/libstub/tpm.c
->> >> > @@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t
->> >> > *sys_table_arg)
->> >> >
->> >> >  #endif
->> >> >
->> >> > -void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->> >> > +static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t
->> >> > *sys_table_arg)
->> >> >  {
->> >> >     efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
->> >> >     efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
->> >> >
->> >>
->> >> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> >
->> > Applied.
->> >
->>
->> Applied to?
+This patch is Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+
+
+On 2018-03-29 10:25 PM, Wei Yongjun wrote:
+> Fixes the following sparse warning:
 >
-> Mistake, efi maintainers should pick this one up. Sorry (my reviewed tag
-> still holds).
+> drivers/gpu/drm/amd/amdkfd/kfd_chardev.c:1150:6: warning:
+>  symbol 'kfd_dev_is_large_bar' was not declared. Should it be static?
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> index cd679cf..fb5d997 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> @@ -1147,7 +1147,7 @@ static int kfd_ioctl_acquire_vm(struct file *filep, struct kfd_process *p,
+>  	return ret;
+>  }
+>  
+> -bool kfd_dev_is_large_bar(struct kfd_dev *dev)
+> +static bool kfd_dev_is_large_bar(struct kfd_dev *dev)
+>  {
+>  	struct kfd_local_mem_info mem_info;
 >
 
-Thanks. I have queued this up in efi/next
