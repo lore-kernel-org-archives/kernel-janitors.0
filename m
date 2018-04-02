@@ -1,20 +1,54 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Date: Wed, 18 Apr 2018 11:55:22 +0000
-Subject: Re: [PATCH] rt2x00: fix spelling mistake in various macros, UKNOWN -> UNKNOWN
-Message-Id: <20180418115521.GA21136@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 02 Apr 2018 15:30:34 +0000
+Subject: Re: [PATCH v2] platform/x86: Fix memory leaks in build_tokens_sysfs()
+Message-Id: <CAHp75Vcw=d_8Zj17j0ciz-ziMXB_uxaHG__aj-G1ZovS-woKOw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180418114750.1978-1-colin.king@canonical.com>
-In-Reply-To: <20180418114750.1978-1-colin.king@canonical.com>
+References: <20180316121015.GA14282@mwanda>
+In-Reply-To: <20180316121015.GA14282@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 12:47:50PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Rename several macros that contain mispellings of UNKNOWN
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+On Fri, Mar 16, 2018 at 2:10 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> We're freeing "value_name" which is NULL, so that's a no-op, but we
+> intended to free "location_name" instead.  And then we don't free the
+> names in token_location_attrs[0] and token_value_attrs[0].
+>
+
+Pushed to my reviewing and testing queue, thanks!
+
+> Fixes: 33b9ca1e53b4 ("platform/x86: dell-smbios: Add a sysfs interface for SMBIOS tokens")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: style changes (move from a for loop to a while loop) and this driver
+>     has been renamed.
+>
+> diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+> index 2485c80a9fdd..ec31d149f82e 100644
+> --- a/drivers/platform/x86/dell-smbios-base.c
+> +++ b/drivers/platform/x86/dell-smbios-base.c
+> @@ -514,7 +514,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
+>                 continue;
+>
+>  loop_fail_create_value:
+> -               kfree(value_name);
+> +               kfree(location_name);
+>                 goto out_unwind_strings;
+>         }
+>         smbios_attribute_group.attrs = token_attrs;
+> @@ -525,7 +525,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
+>         return 0;
+>
+>  out_unwind_strings:
+> -       for (i = i-1; i > 0; i--) {
+> +       while (--i >= 0) {
+>                 kfree(token_location_attrs[i].attr.name);
+>                 kfree(token_value_attrs[i].attr.name);
+>         }
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
