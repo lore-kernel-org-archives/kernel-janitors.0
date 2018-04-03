@@ -1,50 +1,67 @@
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Date: Tue, 24 Apr 2018 10:55:14 +0000
-Subject: Re: [PATCH] staging: media: use relevant lock
-Message-Id: <b8a26008-f8d5-43d6-b93d-0f3d20074ac0@ideasonboard.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Apr 2018 11:18:33 +0000
+Subject: Re: [PATCH v4 2/2] staging: vt6655: add handling memory leak on vnt_start()
+Message-Id: <20180403111833.r6o3xf4go5gfwyj6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501763212-1394-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501763212-1394-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1522389115-1124-1-git-send-email-ji_hun.kim@samsung.com>
+ <CGME20180330055211epcas2p1a75c707cdf600cfd5027e253ef440861@epcas2p1.samsung.com>
+ <1522389115-1124-2-git-send-email-ji_hun.kim@samsung.com>
+In-Reply-To: <1522389115-1124-2-git-send-email-ji_hun.kim@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Ji-Hun Kim <ji_hun.kim@samsung.com>
+Cc: devel@driverdev.osuosl.org, y.k.oh@samsung.com, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, baijiaju1990@gmail.com, forest@alittletooquiet.net, santhameena13@gmail.com
 
-Hi Julia
-
-Thank you for the patch.
-
-On 03/08/17 13:26, Julia Lawall wrote:
-> The data protected is video_out2 and the lock that is released is
-> &video_out2->dma_queue_lock, so it seems that that lock should be
-> taken as well.
-
-I agree - this certainly looks like there was a copy/paste error perhaps and is
-locking the wrong video.
-
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-
-
-
+On Fri, Mar 30, 2018 at 02:51:55PM +0900, Ji-Hun Kim wrote:
+> There was no code for handling memory leaks of device_init_rings() and
+> request_irq(). It needs to free allocated memory in the device_init_rings()
+> , when request_irq() is failed. Add freeing sequences of irq and device
+> init rings.
+> 
+> Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
 > ---
->  drivers/staging/media/davinci_vpfe/dm365_resizer.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> It's additional memory leak handling patch from
+> [PATCH v4 1/2] staging: vt6655: check for memory allocation failures
 > 
-> diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-> index 857b0e8..4910cb7 100644
-> --- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-> +++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-> @@ -1059,7 +1059,7 @@ static void resizer_ss_isr(struct vpfe_resizer_device *resizer)
->  	/* If resizer B is enabled */
->  	if (pipe->output_num > 1 && resizer->resizer_b.output =
->  	    RESIZER_OUTPUT_MEMORY) {
-> -		spin_lock(&video_out->dma_queue_lock);
-> +		spin_lock(&video_out2->dma_queue_lock);
->  		vpfe_video_process_buffer_complete(video_out2);
->  		video_out2->state = VPFE_VIDEO_BUFFER_NOT_QUEUED;
->  		vpfe_video_schedule_next_buffer(video_out2);
+>  drivers/staging/vt6655/device_main.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 > 
+> diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
+> index c9752df..3604f2d 100644
+> --- a/drivers/staging/vt6655/device_main.c
+> +++ b/drivers/staging/vt6655/device_main.c
+> @@ -1194,14 +1194,17 @@ static int vnt_start(struct ieee80211_hw *hw)
+>  	int ret;
+>  
+>  	priv->rx_buf_sz = PKT_BUF_SZ;
+> -	if (!device_init_rings(priv))
+> -		return -ENOMEM;
+> +	ret = (int)device_init_rings(priv);
+
+There is only one call site.  Just change device_init_rings() to return
+negative error codes or zero.
+
+> +	if (!ret) {
+> +		ret = -ENOMEM;
+> +		goto err_init_rings;
+
+Just return directly since there is nothing to clean up.
+
+		return -ENOMEM;
+
+> +	}
+>  
+>  	ret = request_irq(priv->pcid->irq, vnt_interrupt,
+>  			  IRQF_SHARED, "vt6655", priv);
+>  	if (ret) {
+>  		dev_dbg(&priv->pcid->dev, "failed to start irq\n");
+> -		return ret;
+> +		goto err_irq;
+
+This is a "come from" label name.  It's better if the goto says what the
+goto does like "goto err_free_rings;" here.
+
+regards,
+dan carpenter
+
