@@ -1,51 +1,47 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 08 Apr 2018 16:32:20 +0000
-Subject: Re: [PATCH 1/2] iio: sca3000: Fix an error handling path in 'sca3000_probe()'
-Message-Id: <20180408173220.7f2483c7@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Apr 2018 12:00:12 +0000
+Subject: [PATCH] gpio: 104-dio-48e: make array 'ports' static, shrinks object size
+Message-Id: <20180405120012.7671-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180402165942.9056-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180402165942.9056-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, nfarnesi4@gmail.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon,  2 Apr 2018 18:59:42 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> In case of error, we must undo the previous 'sca3000_configure_ring()' call
-> in order to free some memory.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Perhaps we can simplify this by using devm_iio_kfifo_allocate in
-the ring configure function?
+Don't populate the const read-only array 'ports' on the stack but instead
+make it static. Makes the object code smaller by over 100 buytes:
 
-> ---
->  drivers/iio/accel/sca3000.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-> index f33dadf7b262..dae4c594c170 100644
-> --- a/drivers/iio/accel/sca3000.c
-> +++ b/drivers/iio/accel/sca3000.c
-> @@ -1496,7 +1496,7 @@ static int sca3000_probe(struct spi_device *spi)
->  					   "sca3000",
->  					   indio_dev);
->  		if (ret)
-> -			return ret;
-> +			goto error_unconfigure_ring;
->  	}
->  	indio_dev->setup_ops = &sca3000_ring_setup_ops;
->  	ret = sca3000_clean_setup(st);
-> @@ -1513,6 +1513,9 @@ static int sca3000_probe(struct spi_device *spi)
->  	if (spi->irq)
->  		free_irq(spi->irq, indio_dev);
->  
-> +error_unconfigure_ring:
-> +	sca3000_unconfigure_ring(indio_dev);
-> +
->  	return ret;
->  }
->  
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  10959	   4952	    832	  16743	   4167	drivers/gpio/gpio-104-dio-48e.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  10790	   5008	    832	  16630	   40f6	drivers/gpio/gpio-104-dio-48e.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-104-dio-48e.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index 31e22c93e844..9c4e07fcb74b 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -188,7 +188,7 @@ static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ {
+ 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+ 	size_t i;
+-	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
++	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
+ 	const unsigned int gpio_reg_size = 8;
+ 	unsigned int bits_offset;
+ 	size_t word_index;
+-- 
+2.15.1
 
