@@ -1,51 +1,41 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:26 +0000
-Subject: [PATCH 56/61] usb: phy: simplify getting .drvdata
-Message-Id: <20180419140641.27926-57-wsa+renesas@sang-engineering.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Apr 2018 10:50:10 +0000
+Subject: [PATCH] orangefs: make struct orangefs_file_vm_ops static
+Message-Id: <20180405105010.11210-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The struct orangefs_file_vm_ops is local to the source and does not need
+to be in global scope, so make it static.
+
+Cleans up sparse warning:
+fs/orangefs/file.c:547:35: warning: symbol 'orangefs_file_vm_ops' was not
+declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ fs/orangefs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/usb/phy/phy-am335x.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/usb/phy/phy-am335x.c b/drivers/usb/phy/phy-am335x.c
-index b36fa8b953d0..27bdb7222527 100644
---- a/drivers/usb/phy/phy-am335x.c
-+++ b/drivers/usb/phy/phy-am335x.c
-@@ -96,8 +96,7 @@ static int am335x_phy_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int am335x_phy_suspend(struct device *dev)
- {
--	struct platform_device	*pdev = to_platform_device(dev);
--	struct am335x_phy *am_phy = platform_get_drvdata(pdev);
-+	struct am335x_phy *am_phy = dev_get_drvdata(dev);
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index 26358efbf794..84f44365bfb3 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -544,7 +544,7 @@ static int orangefs_fault(struct vm_fault *vmf)
+ 	return filemap_fault(vmf);
+ }
  
- 	/*
- 	 * Enable phy wakeup only if dev->power.can_wakeup is true.
-@@ -117,8 +116,7 @@ static int am335x_phy_suspend(struct device *dev)
- 
- static int am335x_phy_resume(struct device *dev)
- {
--	struct platform_device	*pdev = to_platform_device(dev);
--	struct am335x_phy	*am_phy = platform_get_drvdata(pdev);
-+	struct am335x_phy	*am_phy = dev_get_drvdata(dev);
- 
- 	phy_ctrl_power(am_phy->phy_ctrl, am_phy->id, am_phy->dr_mode, true);
- 
+-const struct vm_operations_struct orangefs_file_vm_ops = {
++static const struct vm_operations_struct orangefs_file_vm_ops = {
+ 	.fault = orangefs_fault,
+ 	.map_pages = filemap_map_pages,
+ 	.page_mkwrite = filemap_page_mkwrite,
 -- 
-2.11.0
+2.15.1
 
