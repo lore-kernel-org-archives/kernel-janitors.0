@@ -1,32 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Apr 2018 14:29:37 +0000
-Subject: [PATCH] drm: omapdrm: silence unititialized variable warning
-Message-Id: <20180418142937.GA13828@mwanda>
+Date: Thu, 05 Apr 2018 11:19:11 +0000
+Subject: [PATCH] swiotlb: remove an unecessary NULL check
+Message-Id: <20180405111911.GC4218@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Konrad Rzeszutek Wilk <konrad.wilk-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Smatch complains that "area_free" could be used without being
-initialized.  This code is several years old and premusably works fine
-so this can't be a very serious bug.  But it's easy enough to silence
-the warning.  If "area_free" is false at the end of the function then
-we return -ENOMEM.
+Smatch complains here:
+
+    lib/swiotlb.c:730 swiotlb_alloc_buffer()
+    warn: variable dereferenced before check 'dev' (see line 716)
+
+"dev" isn't ever NULL in this function so we can just remove the check.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpu/drm/omapdrm/tcm-sita.c b/drivers/gpu/drm/omapdrm/tcm-sita.c
-index d7f7bc9f061a..817be3c41863 100644
---- a/drivers/gpu/drm/omapdrm/tcm-sita.c
-+++ b/drivers/gpu/drm/omapdrm/tcm-sita.c
-@@ -90,7 +90,7 @@ static int l2r_t2b(u16 w, u16 h, u16 a, s16 offset,
- {
- 	int i;
- 	unsigned long index;
--	bool area_free;
-+	bool area_free = false;
- 	unsigned long slots_per_band = PAGE_SIZE / slot_bytes;
- 	unsigned long bit_offset = (offset > 0) ? offset / slot_bytes : 0;
- 	unsigned long curr_bit = bit_offset;
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index 47aeb04c1997..51dde88e50a3 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -727,7 +727,7 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
+ 
+ out_unmap:
+ 	dev_warn(dev, "hwdev DMA mask = 0x%016Lx, dev_addr = 0x%016Lx\n",
+-		(unsigned long long)(dev ? dev->coherent_dma_mask : 0),
++		(unsigned long long)dev->coherent_dma_mask,
+ 		(unsigned long long)*dma_handle);
+ 
+ 	/*
