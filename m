@@ -1,24 +1,38 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 23 Apr 2018 19:49:01 +0000
-Subject: Re: [PATCH] tpm/st33zp24: Fix spelling mistake in macro ST33ZP24_TISREGISTER_UKNOWN
-Message-Id: <20180423194849.GC7653@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Apr 2018 16:58:47 +0000
+Subject: [PATCH][next] crypto: chtls: remove redundant assignment to cdev->ports
+Message-Id: <20180406165847.29310-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180418112105.894-1-colin.king@canonical.com>
-In-Reply-To: <20180418112105.894-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-integrity@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Atul Gupta <atul.gupta@chelsio.com>, Michael Werner <werner@chelsio.com>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 12:21:05PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Fix spelling mistake, rename ST33ZP24_TISREGISTER_UKNOWN to
-> ST33ZP24_TISREGISTER_UNKNOWN
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+There is a double assignment to cdev->ports, the first is redundant
+as it is over-written so remove it.
 
-/Jarkko
+Detected by CoverityScan, CID#1467432 ("Unused value")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/chelsio/chtls/chtls_main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
+index 007c45c38fc7..984a53f19f8b 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_main.c
++++ b/drivers/crypto/chelsio/chtls/chtls_main.c
+@@ -216,7 +216,6 @@ static void *chtls_uld_add(const struct cxgb4_lld_info *info)
+ 	cdev->lldi = lldi;
+ 	cdev->pdev = lldi->pdev;
+ 	cdev->tids = lldi->tids;
+-	cdev->ports = (struct net_device **)(cdev + 1);
+ 	cdev->ports = lldi->ports;
+ 	cdev->mtus = lldi->mtus;
+ 	cdev->tids = lldi->tids;
+-- 
+2.15.1
+
