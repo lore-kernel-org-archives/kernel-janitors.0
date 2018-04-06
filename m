@@ -1,26 +1,46 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 27 Apr 2018 19:26:31 +0000
-Subject: Re: [PATCH] ALSA: cs46xx: fix spelling mistake: "amplifer" -> "amplifier"
-Message-Id: <s5hbme4sb6g.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Apr 2018 16:21:44 +0000
+Subject: [PATCH] tpm: st33zp24: remove redundant null check on chip
+Message-Id: <20180406162144.14717-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180427190245.16861-1-colin.king@canonical.com>
-In-Reply-To: <20180427190245.16861-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 27 Apr 2018 21:02:45 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in module parameter description text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Currently chip is being dereferenced by the call to dev_get_drvdata
+before it is being null checked, however, chip can never be null, so
+this check is misleading and redundant. Remove it.
 
+Detected by CoverityScan, CID#1357806 ("Dereference before null check")
 
-Takashi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+---
+
+V2: don't check for null, just remove redundant null check,
+    thanks to Jason Gunthorpe for spotting that.
+
+---
+ drivers/char/tpm/st33zp24/st33zp24.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index f95b9c75175b..abd675bec88c 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+ 	int ret;
+ 	u8 data;
+ 
+-	if (!chip)
+-		return -EBUSY;
+ 	if (len < TPM_HEADER_SIZE)
+ 		return -EBUSY;
+ 
+-- 
+2.15.1
+
