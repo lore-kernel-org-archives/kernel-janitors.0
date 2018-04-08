@@ -1,28 +1,39 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 12 Apr 2018 15:20:31 +0000
-Subject: Re: [PATCH][next] staging: ks7010: fix null pointer dereference on priv on error exit
-Message-Id: <3e2e4562-ca52-945a-bbdd-7e22b89a3842@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 08 Apr 2018 19:44:15 +0000
+Subject: [PATCH v2 2/2] iio: sca3000: Handle errors returned by 'sca3000_configure_ring()' in 'sca3000_probe(
+Message-Id: <20180408194415.18399-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180412145756.24949-1-colin.king@canonical.com>
- <20180412151229.7san3ynhl5lbqgs4@mwanda>
-In-Reply-To: <20180412151229.7san3ynhl5lbqgs4@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sergio Paracuellos <sergio.paracuellos@gmail.com>, Quytelda Kahja <quytelda@tamalin.org>
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, nfarnesi4@gmail.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 12/04/18 16:12, Dan Carpenter wrote:
-> This isn't right.  It introduces a leak.
+'sca3000_configure_ring()' can fail, so test its return value and
+propagate it if needed.
 
-Yup, and I see Gustavo is working on a correct fix, I'll leave that to him.
-> 
-> regards,
-> dan carpenter
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Same as v1
+---
+ drivers/iio/accel/sca3000.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+index 562f125235db..4dceb75e3586 100644
+--- a/drivers/iio/accel/sca3000.c
++++ b/drivers/iio/accel/sca3000.c
+@@ -1481,7 +1481,9 @@ static int sca3000_probe(struct spi_device *spi)
+ 	}
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 
+-	sca3000_configure_ring(indio_dev);
++	ret = sca3000_configure_ring(indio_dev);
++	if (ret)
++		return ret;
+ 
+ 	if (spi->irq) {
+ 		ret = request_threaded_irq(spi->irq,
+-- 
+2.14.1
 
