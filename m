@@ -1,56 +1,60 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 30 Apr 2018 09:28:17 +0000
-Subject: Re: [PATCH 43/61] pwm: simplify getting .drvdata
-Message-Id: <20180430092817.GB2270@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lEGEL1/lMxI0MVQ2"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 08 Apr 2018 19:44:01 +0000
+Subject: [PATCH v2 1/2] iio: sca3000: Fix an error handling path in 'sca3000_probe()'
+Message-Id: <20180408194401.18348-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
-To: linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, nfarnesi4@gmail.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Use 'devm_iio_kfifo_allocate()' instead of 'iio_kfifo_allocate()' in order
+to simplify code and avoid a memory leak in an error path in
+'sca3000_probe()'. A call to 'sca3000_unconfigure_ring()' was missing.
 
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: Use a devm_ function to fix the leak reported in v1.
+    This makes 'sca3000_unconfigure_ring()' useless and simplify code.
+---
+ drivers/iio/accel/sca3000.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-On Thu, Apr 19, 2018 at 04:06:13PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> Build tested only. buildbot is happy. Please apply individually.
->=20
->  drivers/pwm/pwm-atmel-tcb.c | 6 ++----
->  drivers/pwm/pwm-rcar.c      | 3 +--
->  2 files changed, 3 insertions(+), 6 deletions(-)
+diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+index f33dadf7b262..562f125235db 100644
+--- a/drivers/iio/accel/sca3000.c
++++ b/drivers/iio/accel/sca3000.c
+@@ -1277,7 +1277,7 @@ static int sca3000_configure_ring(struct iio_dev *indio_dev)
+ {
+ 	struct iio_buffer *buffer;
+ 
+-	buffer = iio_kfifo_allocate();
++	buffer = devm_iio_kfifo_allocate(&indio_dev->dev);
+ 	if (!buffer)
+ 		return -ENOMEM;
+ 
+@@ -1287,11 +1287,6 @@ static int sca3000_configure_ring(struct iio_dev *indio_dev)
+ 	return 0;
+ }
+ 
+-static void sca3000_unconfigure_ring(struct iio_dev *indio_dev)
+-{
+-	iio_kfifo_free(indio_dev->buffer);
+-}
+-
+ static inline
+ int __sca3000_hw_ring_state_set(struct iio_dev *indio_dev, bool state)
+ {
+@@ -1546,8 +1541,6 @@ static int sca3000_remove(struct spi_device *spi)
+ 	if (spi->irq)
+ 		free_irq(spi->irq, indio_dev);
+ 
+-	sca3000_unconfigure_ring(indio_dev);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.14.1
 
-Applied, thanks.
-
-Thierry
-
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4bEACgkQ3SOs138+
-s6Hr0g//XBCtOzuvmEltFaOwqj2kf7ee6IoPhckcA9MCgONUrlwUYpwJPDXjkmNw
-ADxKNgEc4IpySGMSdvI9xo/kVPOyX3EHw3RC9RxsZbuOVCTfY007pbsUUtDSJjZT
-Z9QljEOcfP0QuCY2AOyU3SkGzMy9vvh/acMLvqdYYtYLbYkZuhxtqDd5rrUw3s/t
-SifMTmxY2/Z8TBhFXBSarPFpnXNiGvnutwSZYuqKhMFEiGxWbac6P9tgy+hgSg6t
-iA6ACNOrJLmxo60NegWqRNmRof5XUQN/V0Zh52GgsIsVjx/vQTRRKoTqwwLM3xmn
-5rqE5uHCfZ6JJNyrB2LlhUdGI7VrOjrqQIkvxjIz79Avj2rC47Oku0FKU+PQ7Nxj
-2mI1p1Xye+CXecW+IdtYB/NT0OgRaYHGd+FjH6RjwgwmCRQIrA0wWcA2QNqA4iV8
-Z4EAZhYUcMXXShA1t1a8vld1lP1na4FWhUhe32F5GhM//jx5klaGImx2STfy8BQg
-lyguqB7Brthsm0Ue1gdZvmqZDulqzxGajR0/c1/eQxYhgRLc13BwggCXBkV4Ugba
-q3VrGLbB+2NGP3HnO1k9DPxHjvl+bFaxHF0Q1BvaViqL0bzjl8SYasePtf45UUTn
-j4Oxz/nhpzCpHvJ5sgnkO1KSysjeAEXCzSRbCSkLM1D6/UPhkRc=
-=YVQV
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
