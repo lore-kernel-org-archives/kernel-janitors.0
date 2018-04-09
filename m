@@ -1,39 +1,48 @@
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Date: Fri, 06 Apr 2018 04:57:20 +0000
-Subject: [PATCH] staging: ks7010: replace kmalloc() + memcpy() with kmemdup()
-Message-Id: <1522990640-30706-1-git-send-email-ji_hun.kim@samsung.com>
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+Date: Mon, 09 Apr 2018 00:35:48 +0000
+Subject: [PATCH AUTOSEL for 3.18 039/101] x86/nmi: Fix timeout test in test_nmi_ipi()
+Message-Id: <20180409003505.164715-39-alexander.levin@microsoft.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180406045742epcas1p22ad1bad680b9526a81c7371b75ac1f1e@epcas1p2.samsung.com>
+References: <20180409003505.164715-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180409003505.164715-1-alexander.levin@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: me@tobin.cc, sergio.paracuellos@gmail.com, quytelda@tamalin.org, dan.carpenter@oracle.com, y.k.oh@samsung.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ji-Hun Kim <ji_hun.kim@samsung.com>
+To: "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>, Sasha Levin <Alexander.Levin@microsoft.com>
 
-Use kmemdup rather than duplicating its implementation.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+[ Upstream commit c133c7615751008f6c32ccae7cdfc5ff6e989c35 ]
+
+We're supposed to exit the loop with "timeout" set to zero.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Don Zickus <dzickus@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 99e8b9ca90d6 ("x86, NMI: Add NMI IPI selftest")
+Link: http://lkml.kernel.org/r/20170619105304.GA23995@elgon.mountain
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/staging/ks7010/ks7010_sdio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/kernel/nmi_selftest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index b8f55a1..c8eb55b 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -589,11 +589,10 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
- 	int ret;
- 	unsigned char *data_buf;
+diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
+index 6d9582ec0324..d27f8d84c4ff 100644
+--- a/arch/x86/kernel/nmi_selftest.c
++++ b/arch/x86/kernel/nmi_selftest.c
+@@ -78,7 +78,7 @@ static void __init test_nmi_ipi(struct cpumask *mask)
  
--	data_buf = kmalloc(sizeof(u32), GFP_KERNEL);
-+	data_buf = kmemdup(&index, sizeof(u32), GFP_KERNEL);
- 	if (!data_buf)
- 		return -ENOMEM;
+ 	/* Don't wait longer than a second */
+ 	timeout = USEC_PER_SEC;
+-	while (!cpumask_empty(mask) && timeout--)
++	while (!cpumask_empty(mask) && --timeout)
+ 	        udelay(1);
  
--	memcpy(data_buf, &index, sizeof(index));
- 	ret = ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index));
- 	if (ret)
- 		goto err_free_data_buf;
+ 	/* What happens if we timeout, do we still unregister?? */
 -- 
-1.9.1
-
+2.15.1
