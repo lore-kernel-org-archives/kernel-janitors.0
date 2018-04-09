@@ -1,51 +1,48 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:55 +0000
-Subject: [PATCH 25/61] media: platform: am437x: simplify getting .drvdata
-Message-Id: <20180419140641.27926-26-wsa+renesas@sang-engineering.com>
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+Date: Mon, 09 Apr 2018 00:28:20 +0000
+Subject: [PATCH AUTOSEL for 4.4 053/162] x86/nmi: Fix timeout test in test_nmi_ipi()
+Message-Id: <20180409002738.163941-53-alexander.levin@microsoft.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180409002738.163941-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>, Sasha Levin <Alexander.Levin@microsoft.com>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[ Upstream commit c133c7615751008f6c32ccae7cdfc5ff6e989c35 ]
+
+We're supposed to exit the loop with "timeout" set to zero.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Don Zickus <dzickus@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 99e8b9ca90d6 ("x86, NMI: Add NMI IPI selftest")
+Link: http://lkml.kernel.org/r/20170619105304.GA23995@elgon.mountain
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
+ arch/x86/kernel/nmi_selftest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/media/platform/am437x/am437x-vpfe.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-index 601ae6487617..58ebc2220d0e 100644
---- a/drivers/media/platform/am437x/am437x-vpfe.c
-+++ b/drivers/media/platform/am437x/am437x-vpfe.c
-@@ -2662,8 +2662,7 @@ static void vpfe_save_context(struct vpfe_ccdc *ccdc)
+diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
+index 6d9582ec0324..d27f8d84c4ff 100644
+--- a/arch/x86/kernel/nmi_selftest.c
++++ b/arch/x86/kernel/nmi_selftest.c
+@@ -78,7 +78,7 @@ static void __init test_nmi_ipi(struct cpumask *mask)
  
- static int vpfe_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct vpfe_device *vpfe = platform_get_drvdata(pdev);
-+	struct vpfe_device *vpfe = dev_get_drvdata(dev);
- 	struct vpfe_ccdc *ccdc = &vpfe->ccdc;
+ 	/* Don't wait longer than a second */
+ 	timeout = USEC_PER_SEC;
+-	while (!cpumask_empty(mask) && timeout--)
++	while (!cpumask_empty(mask) && --timeout)
+ 	        udelay(1);
  
- 	/* if streaming has not started we don't care */
-@@ -2720,8 +2719,7 @@ static void vpfe_restore_context(struct vpfe_ccdc *ccdc)
- 
- static int vpfe_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct vpfe_device *vpfe = platform_get_drvdata(pdev);
-+	struct vpfe_device *vpfe = dev_get_drvdata(dev);
- 	struct vpfe_ccdc *ccdc = &vpfe->ccdc;
- 
- 	/* if streaming has not started we don't care */
+ 	/* What happens if we timeout, do we still unregister?? */
 -- 
-2.11.0
-
+2.15.1
