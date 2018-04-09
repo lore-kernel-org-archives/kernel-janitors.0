@@ -1,60 +1,68 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Sun, 22 Apr 2018 17:29:21 +0000
-Subject: Re: [PATCH 30/61] mtd: nand: onenand: simplify getting .drvdata
-Message-Id: <20180422192921.61a6b28b@bbrezillon>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 09 Apr 2018 12:43:36 +0000
+Subject: [PATCH] net/mlx5: remove some extraneous spaces in indentations
+Message-Id: <20180409124336.29274-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-31-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-31-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>
+To: Saeed Mahameed <saeedm@mellanox.com>, Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018 16:06:00 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+There are several lines where there is an extraneous space causing
+indentation misalignment. Remove them.
 
-Applied to nand/next.
+Cleans up Cocconelle warnings:
 
-Thanks,
+./drivers/net/ethernet/mellanox/mlx5/core/qp.c:409:3-18: code aligned
+with following code on line 410
+./drivers/net/ethernet/mellanox/mlx5/core/qp.c:415:3-18: code aligned
+with following code on line 416
+./drivers/net/ethernet/mellanox/mlx5/core/qp.c:421:3-18: code aligned
+with following code on line 422
 
-Boris
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/qp.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/mtd/nand/onenand/samsung.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/onenand/samsung.c b/drivers/mtd/nand/onenand/samsung.c
-> index 2e9d076e445a..4cce4c0311ca 100644
-> --- a/drivers/mtd/nand/onenand/samsung.c
-> +++ b/drivers/mtd/nand/onenand/samsung.c
-> @@ -958,8 +958,7 @@ static int s3c_onenand_remove(struct platform_device *pdev)
->  
->  static int s3c_pm_ops_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct mtd_info *mtd = platform_get_drvdata(pdev);
-> +	struct mtd_info *mtd = dev_get_drvdata(dev);
->  	struct onenand_chip *this = mtd->priv;
->  
->  	this->wait(mtd, FL_PM_SUSPENDED);
-> @@ -968,8 +967,7 @@ static int s3c_pm_ops_suspend(struct device *dev)
->  
->  static  int s3c_pm_ops_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct mtd_info *mtd = platform_get_drvdata(pdev);
-> +	struct mtd_info *mtd = dev_get_drvdata(dev);
->  	struct onenand_chip *this = mtd->priv;
->  
->  	this->unlock_all(mtd);
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/qp.c b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
+index 02d6c5b5d502..4ca07bfb6b14 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
+@@ -407,21 +407,21 @@ static int modify_qp_mbox_alloc(struct mlx5_core_dev *dev, u16 opcode, int qpn,
+ 	case MLX5_CMD_OP_RST2INIT_QP:
+ 		if (MBOX_ALLOC(mbox, rst2init_qp))
+ 			return -ENOMEM;
+-		 MOD_QP_IN_SET_QPC(rst2init_qp, mbox->in, opcode, qpn,
+-				   opt_param_mask, qpc);
+-		 break;
++		MOD_QP_IN_SET_QPC(rst2init_qp, mbox->in, opcode, qpn,
++				  opt_param_mask, qpc);
++		break;
+ 	case MLX5_CMD_OP_INIT2RTR_QP:
+ 		if (MBOX_ALLOC(mbox, init2rtr_qp))
+ 			return -ENOMEM;
+-		 MOD_QP_IN_SET_QPC(init2rtr_qp, mbox->in, opcode, qpn,
+-				   opt_param_mask, qpc);
+-		 break;
++		MOD_QP_IN_SET_QPC(init2rtr_qp, mbox->in, opcode, qpn,
++				  opt_param_mask, qpc);
++		break;
+ 	case MLX5_CMD_OP_RTR2RTS_QP:
+ 		if (MBOX_ALLOC(mbox, rtr2rts_qp))
+ 			return -ENOMEM;
+-		 MOD_QP_IN_SET_QPC(rtr2rts_qp, mbox->in, opcode, qpn,
+-				   opt_param_mask, qpc);
+-		 break;
++		MOD_QP_IN_SET_QPC(rtr2rts_qp, mbox->in, opcode, qpn,
++				  opt_param_mask, qpc);
++		break;
+ 	case MLX5_CMD_OP_RTS2RTS_QP:
+ 		if (MBOX_ALLOC(mbox, rts2rts_qp))
+ 			return -ENOMEM;
+-- 
+2.15.1
 
