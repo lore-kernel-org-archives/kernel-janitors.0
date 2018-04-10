@@ -1,37 +1,58 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Fri, 27 Apr 2018 13:45:51 +0000
-Subject: Re: [PATCH] rsi: fix a bug in rsi_hal_key_config()
-Message-Id: <620e9073-5a26-ce77-6e7d-cf7dfcecab79@embeddedor.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 10 Apr 2018 12:38:56 +0000
+Subject: [PATCH][next] kvm: selftests: fix spelling mistake: "divisable" and "divisible"
+Message-Id: <20180410123856.24869-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180427112130.GA27655@mwanda>
- <87o9i46g1n.fsf@kamboji.qca.qualcomm.com>
- <20180427114449.pil7fgddcvpapgrq@mwanda>
-In-Reply-To: <20180427114449.pil7fgddcvpapgrq@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Karun Eagalapati <karun256@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 04/27/2018 06:44 AM, Dan Carpenter wrote:
-> On Fri, Apr 27, 2018 at 02:32:20PM +0300, Kalle Valo wrote:
->>
->> Gustavo submitted an identical patch also for this one :)
->>
->> https://patchwork.kernel.org/patch/10365997/
->>
-> 
-> Hey Gustavo,
-> 
-> We keep on sending duplicate patches.  Most of the static checker people
-> CC kernel-janitors@vger.kernel.org so we can see what's already been
-> sent.
-> 
+Trivial fix to spelling mistakes in comment and message text
 
-Oh, I didn't know that.  I'll start CCing that list then.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/kvm/lib/kvm_util.c  | 2 +-
+ tools/testing/selftests/kvm/lib/sparsebit.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks for letting me know.
---
-Gustavo
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 7ca1bb40c498..e213d513dc61 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -1435,7 +1435,7 @@ vm_paddr_t vm_phy_page_alloc(struct kvm_vm *vm,
+ 	sparsebit_idx_t pg;
+ 
+ 	TEST_ASSERT((paddr_min % vm->page_size) = 0, "Min physical address "
+-		"not divisable by page size.\n"
++		"not divisible by page size.\n"
+ 		"  paddr_min: 0x%lx page_size: 0x%x",
+ 		paddr_min, vm->page_size);
+ 
+diff --git a/tools/testing/selftests/kvm/lib/sparsebit.c b/tools/testing/selftests/kvm/lib/sparsebit.c
+index 0c5cf3e0cb6f..b132bc95d183 100644
+--- a/tools/testing/selftests/kvm/lib/sparsebit.c
++++ b/tools/testing/selftests/kvm/lib/sparsebit.c
+@@ -121,7 +121,7 @@
+  *     avoided by moving the setting of the nodes mask bits into
+  *     the previous nodes num_after setting.
+  *
+- *   + Node starting index is evenly divisable by the number of bits
++ *   + Node starting index is evenly divisible by the number of bits
+  *     within a nodes mask member.
+  *
+  *   + Nodes never represent a range of bits that wrap around the
+@@ -1741,7 +1741,7 @@ void sparsebit_validate_internal(struct sparsebit *s)
+ 
+ 		/* Validate node index is divisible by the mask size */
+ 		if (nodep->idx % MASK_BITS) {
+-			fprintf(stderr, "Node index not divisable by "
++			fprintf(stderr, "Node index not divisible by "
+ 				"mask size,\n"
+ 				"  nodep: %p nodep->idx: 0x%lx "
+ 				"MASK_BITS: %lu\n",
+-- 
+2.15.1
+
