@@ -1,21 +1,20 @@
-From: PPMC OFFSHORE <maria.barba@06d01.mspz3.gob.ec>
-Date: Fri, 20 Apr 2018 22:22:35 +0000
-Subject: Re: Representative Needed.
-Message-Id: <20180420223413.549A72382715@06d01.mspz3.gob.ec>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 10 Apr 2018 02:06:05 +0000
+Subject: Re: [PATCH] scsi: dpt_i2o: Use after free in I2ORESETCMD ioctl
+Message-Id: <yq11sfn3jea.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good day,
 
-  I am seeking your concept with great gratitude to present you as a representative to carry out business transactions with a reasonable share upon your interest and cooperation to work with us in trust. If interested please get back.
+Dan,
 
-Regards
-Kingsley
+> Here is another use after free if we reset the card.  The adpt_hba_reset()
+> function frees "pHba" on error.
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+Applied to 4.17/scsi-fixes. Thank you!
 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
