@@ -1,30 +1,58 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Date: Fri, 20 Apr 2018 07:23:00 +0000
-Subject: Re: [PATCH 59/61] watchdog: simplify getting .drvdata
-Message-Id: <c8156dd1-5081-7ab6-6dce-fde367190ae9@xilinx.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Apr 2018 13:26:13 +0000
+Subject: [PATCH][next] afs: fix integer overflow when shifting 1 more than 32 places
+Message-Id: <20180411132613.18974-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-60-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-60-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 19.4.2018 16:06, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/watchdog/cadence_wdt.c   | 6 ++----
->  drivers/watchdog/of_xilinx_wdt.c | 6 ++----
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+Shifting 1 (a 32 bit signed int) more than 32 places will overflow
+the int, so explicitly use 1ULL to avoid this overflow.
 
-Thanks,
-Michal
+Detected by CoverityScan, CID#1467808 ("Uninitentional integer overflow")
+
+Fixes: 63a4681ff39c ("afs: Locally edit directory data for mkdir/create/unlink/...")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/afs/dir_edit.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
+index 8b400f5aead5..42a63f9467c5 100644
+--- a/fs/afs/dir_edit.c
++++ b/fs/afs/dir_edit.c
+@@ -40,7 +40,7 @@ static int afs_find_contig_bits(union afs_xdr_dir_block *block, unsigned int nr_
+ 	bitmap |= (u64)block->hdr.bitmap[7] << 7 * 8;
+ 	bitmap >>= 1; /* The first entry is metadata */
+ 	bit = 1;
+-	mask = (1 << nr_slots) - 1;
++	mask = (1ULL << nr_slots) - 1;
+ 
+ 	do {
+ 		if (sizeof(unsigned long) = 8)
+@@ -74,7 +74,7 @@ static void afs_set_contig_bits(union afs_xdr_dir_block *block,
+ {
+ 	u64 mask, before, after;
+ 
+-	mask = (1 << nr_slots) - 1;
++	mask = (1ULL << nr_slots) - 1;
+ 	mask <<= bit;
+ 
+ 	before = *(u64 *)block->hdr.bitmap;
+@@ -99,7 +99,7 @@ static void afs_clear_contig_bits(union afs_xdr_dir_block *block,
+ {
+ 	u64 mask, before, after;
+ 
+-	mask = (1 << nr_slots) - 1;
++	mask = (1ULL << nr_slots) - 1;
+ 	mask <<= bit;
+ 
+ 	before = *(u64 *)block->hdr.bitmap;
+-- 
+2.17.0
 
