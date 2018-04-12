@@ -1,38 +1,42 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Thu, 26 Apr 2018 12:34:59 +0000
-Subject: Re: [PATCH 0/4] HID: alps: Fix some bugs and improve code around  't4_read_write_register()'
-Message-Id: <nycvar.YFH.7.76.1804261434520.28147@cbobk.fhfr.pm>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Apr 2018 14:57:56 +0000
+Subject: [PATCH][next] staging: ks7010: fix null pointer dereference on priv on error exit
+Message-Id: <20180412145756.24949-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: masaki.ota@jp.alps.com, benjamin.tissoires@redhat.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Tobin C . Harding" <me@tobin.cc>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 19 Mar 2018, Christophe JAILLET wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> All is said in the subject and below.
-> 
-> These patches are untested. Especially, patch 1 slightly changes the behavior
-> of 't4_read_write_register()'.
-> This looks logical to me, but please, review it carefully.
-> 
-> Christophe JAILLET (4):
->   HID: alps: Report an error if we receive invalid data in
->     't4_read_write_register()'
->   HID: alps: Save a memory allocation in 't4_read_write_register()' when
->     writing data
->   HID: alps: Check errors returned by 't4_read_write_register()'
->   HID: alps: Fix some style in 't4_read_write_register()'
-> 
->  drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
->  1 file changed, 22 insertions(+), 5 deletions(-)
+In the case where the call to dev_alloc_name fails the current exit
+path is via err_free_netdev and this calls free_netdev on a null priv
+pointer, hence causing a null pointer dereference.  Fix this by instead
+exiting via err_release_irq.
 
-Queued for 4.18, thanks.
+Detected by CoverityScan, CID#1467844 ("Explitic null dereferenced")
 
+Fixes: 13a9930d15b4 ("staging: ks7010: add driver from Nanonote extra-repository")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/ks7010/ks7010_sdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index b8f55a11ee1c..cb0e11d79e32 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -895,7 +895,7 @@ static int ks7010_sdio_probe(struct sdio_func *func,
+ 		netdev_err(priv->net_dev,
+ 			   "ks7010: firmware load failed !! return code = %d\n",
+ 			   ret);
+-		goto err_free_netdev;
++		goto err_release_irq;
+ 	}
+ 
+ 	/* interrupt setting */
 -- 
-Jiri Kosina
-SUSE Labs
+2.17.0
 
