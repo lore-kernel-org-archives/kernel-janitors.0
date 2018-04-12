@@ -1,28 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 24 Apr 2018 20:02:25 +0000
-Subject: Re: [PATCH] net/tls: remove redundant second null check on sgout
-Message-Id: <20180424.160225.1434022836243113911.davem@davemloft.net>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Thu, 12 Apr 2018 13:11:02 +0000
+Subject: Re: [PATCH 0/4] HID: alps: Fix some bugs and improve code around  't4_read_write_register()'
+Message-Id: <nycvar.YFH.7.76.1804121510340.28129@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180424123658.6541-1-colin.king@canonical.com>
-In-Reply-To: <20180424123658.6541-1-colin.king@canonical.com>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr> <nycvar.YFH.7.76.1803271405420.15778@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1803271405420.15778@cbobk.fhfr.pm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: ilyal@mellanox.com, aviadye@mellanox.com, davejwatson@fb.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: masaki.ota@jp.alps.com, benjamin.tissoires@redhat.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 24 Apr 2018 13:36:58 +0100
+On Tue, 27 Mar 2018, Jiri Kosina wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> > These patches are untested. Especially, patch 1 slightly changes the behavior
+> > of 't4_read_write_register()'.
+> > This looks logical to me, but please, review it carefully.
+> > 
+> > Christophe JAILLET (4):
+> >   HID: alps: Report an error if we receive invalid data in
+> >     't4_read_write_register()'
+> >   HID: alps: Save a memory allocation in 't4_read_write_register()' when
+> >     writing data
+> >   HID: alps: Check errors returned by 't4_read_write_register()'
+> >   HID: alps: Fix some style in 't4_read_write_register()'
+> > 
+> >  drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
+> >  1 file changed, 22 insertions(+), 5 deletions(-)
 > 
-> A duplicated null check on sgout is redundant as it is known to be
-> already true because of the identical earlier check. Remove it.
-> Detected by cppcheck:
+> Masaki-san,
 > 
-> net/tls/tls_sw.c:696: (warning) Identical inner 'if' condition is always
-> true.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> do you have any comments to Christophe's patchset please?
 
-Applied to net-next, thank you.
+If there is no feedback, I'll queue the set for 4.18.
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
