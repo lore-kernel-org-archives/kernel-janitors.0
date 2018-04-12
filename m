@@ -1,23 +1,26 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 11 Apr 2018 18:43:27 +0000
+From: Saeed Mahameed <saeedm@mellanox.com>
+Date: Thu, 12 Apr 2018 22:39:26 +0000
 Subject: Re: [PATCH] net/mlx5: remove some extraneous spaces in indentations
-Message-Id: <20180411.144327.652687327492518064.davem@davemloft.net>
+Message-Id: <1523572761.3587.45.camel@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180410232254.mg7stooh5tytv6m2@ziepe.ca>
-        <20180410232719.qzaltu7hu57aqps3@ziepe.ca>
-        <1523471018.3402.42.camel@mellanox.com>
-In-Reply-To: <1523471018.3402.42.camel@mellanox.com>
+References: <20180409124336.29274-1-colin.king@canonical.com>
+In-Reply-To: <20180409124336.29274-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: saeedm@mellanox.com
-Cc: colin.king@canonical.com, jgg@ziepe.ca, matanb@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, leon@kernel.org, kernel-janitors@vger.kernel.org
+To: "colin.king@canonical.com" <colin.king@canonical.com>, Matan Barak <matanb@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "leon@kernel.org" <leon@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Wed, 11 Apr 2018 18:23:41 +0000
-
-> Dave, if it is ok with you I would like to apply this into mlx5-next
-> branch so it won't cause any issues with our next pull requests to rdma
-> and netdev.
-
-Ok.
+T24gTW9uLCAyMDE4LTA0LTA5IGF0IDEzOjQzICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhl
+cmUgYXJlIHNldmVyYWwgbGluZXMgd2hlcmUgdGhlcmUgaXMgYW4gZXh0cmFuZW91cyBzcGFjZSBj
+YXVzaW5nDQo+IGluZGVudGF0aW9uIG1pc2FsaWdubWVudC4gUmVtb3ZlIHRoZW0uDQo+IA0KPiBD
+bGVhbnMgdXAgQ29jY29uZWxsZSB3YXJuaW5nczoNCj4gDQo+IC4vZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvbWVsbGFub3gvbWx4NS9jb3JlL3FwLmM6NDA5OjMtMTg6IGNvZGUgYWxpZ25lZA0KPiB3aXRo
+IGZvbGxvd2luZyBjb2RlIG9uIGxpbmUgNDEwDQo+IC4vZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVs
+bGFub3gvbWx4NS9jb3JlL3FwLmM6NDE1OjMtMTg6IGNvZGUgYWxpZ25lZA0KPiB3aXRoIGZvbGxv
+d2luZyBjb2RlIG9uIGxpbmUgNDE2DQo+IC4vZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gv
+bWx4NS9jb3JlL3FwLmM6NDIxOjMtMTg6IGNvZGUgYWxpZ25lZA0KPiB3aXRoIGZvbGxvd2luZyBj
+b2RlIG9uIGxpbmUgNDIyDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29s
+aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCg0KQXBwbGllZCB0byBtbHg1LW5leHQsIFRoYW5r
+cyBDb2xpbiENCg0K
