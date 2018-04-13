@@ -1,36 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Apr 2018 07:36:49 +0000
-Subject: [PATCH][next] scsi: fnic: fix spelling mistake in fnic stats "Abord" -> "Abort"
-Message-Id: <20180411073649.21529-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 13 Apr 2018 02:39:10 +0000
+Subject: Re: [PATCH][next] scsi: fnic: fix spelling mistake in fnic stats "Abord" -> "Abort"
+Message-Id: <yq1r2nju8xd.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180411073649.21529-1-colin.king@canonical.com>
+In-Reply-To: <20180411073649.21529-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 11 Apr 2018 08:36:49 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in fnic stats message text
+Colin,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/fnic/fnic_trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Trivial fix to spelling mistake in fnic stats message text
 
-diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
-index abddde11982b..98597b59c12a 100644
---- a/drivers/scsi/fnic/fnic_trace.c
-+++ b/drivers/scsi/fnic/fnic_trace.c
-@@ -296,7 +296,7 @@ int fnic_get_stats_data(struct stats_debug_info *debug,
- 		  "Number of Abort FW Timeouts: %lld\n"
- 		  "Number of Abort IO NOT Found: %lld\n"
- 
--		  "Abord issued times: \n"
-+		  "Abort issued times: \n"
- 		  "            < 6 sec : %lld\n"
- 		  "     6 sec - 20 sec : %lld\n"
- 		  "    20 sec - 30 sec : %lld\n"
+Applied to 4.17/scsi-fixes. Thanks!
+
 -- 
-2.15.1
-
+Martin K. Petersen	Oracle Linux Engineering
