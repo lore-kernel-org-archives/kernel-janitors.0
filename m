@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 12 Apr 2018 16:16:59 +0000
+Date: Fri, 13 Apr 2018 10:56:48 +0000
 Subject: Applied "ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"" to the asoc tree
-Message-Id: <E1f6euB-0008IF-Vw@debutante>
+Message-Id: <E1f6wNs-0007Ig-K7@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180330154420.6903-1-colin.king@canonical.com>
 In-Reply-To: <20180330154420.6903-1-colin.king@canonical.com>
