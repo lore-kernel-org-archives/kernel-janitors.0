@@ -1,58 +1,51 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 05 Apr 2018 12:23:06 +0000
-Subject: Re: [PATCH] rsi: Free the unaligned pointer
-Message-Id: <87woxletat.fsf@kamboji.qca.qualcomm.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Mon, 16 Apr 2018 11:05:24 +0000
+Subject: Re: [PATCH -next] efi/libstub/tpm: Make function efi_retrieve_tpm2_eventlog_1_2() static
+Message-Id: <CAKv+Gu8HaOBw6tYts3YwhBp2Fke8iHEsSayMu7F=Cbg6+zJpcQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180405112311.GD4218@mwanda>
-        <1522927835.7140.8.camel@sipsolutions.net>
-        <20180405113931.n6q6ix47quuvklyp@mwanda>
-        <20180405114124.v2cgo36uuniirby2@mwanda>
-        <1522928804.7140.10.camel@sipsolutions.net>
-In-Reply-To: <1522928804.7140.10.camel@sipsolutions.net> (Johannes Berg's
-        message of "Thu, 05 Apr 2018 13:46:44 +0200")
+References: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Karun Eagalapati <karun256@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Johannes Berg <johannes@sipsolutions.net> writes:
-
-> On Thu, 2018-04-05 at 14:41 +0300, Dan Carpenter wrote:
->> On Thu, Apr 05, 2018 at 02:39:31PM +0300, Dan Carpenter wrote:
->> > On Thu, Apr 05, 2018 at 01:30:35PM +0200, Johannes Berg wrote:
->> > > On Thu, 2018-04-05 at 14:23 +0300, Dan Carpenter wrote:
->> > > > The problem here is that we allocate "data".  Then we do
->> > > > "data = PTR_ALIGN(data, 8);" and then we free the aligned pointer and
->> > > > not the one we allocated.
->> > > 
->> > > That seems pretty pointless, since kmalloc guarantees such alignment for
->> > > sure. Better to just remove PTR_ALIGN()?
->> > 
->> > Yeah.  You're probably right.  I was thinking that maybe
->> > ARCH_SLAB_MINALIGN was smaller than 8 somewhere but look it it now, I
->> > think it's always 8 or more.
->> > 
->> 
->> Perhaps on certain xtensa variants?
->> 
->> arch/xtensa/include/asm/processor.h:#define ARCH_SLAB_MINALIGN  XCHAL_DATA_WIDTH
->> arch/xtensa/variants/fsf/include/variant/core.h:#define
->> XCHAL_DATA_WIDTH 4 /* data width in bytes */
+On 22 March 2018 at 15:09, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Thu, 2018-03-22 at 16:06 +0200, Jarkko Sakkinen wrote:
+>> On Tue, 2018-03-20 at 14:17 +0000, Wei Yongjun wrote:
+>> > Fixes the following sparse warning:
+>> >
+>> > drivers/firmware/efi/libstub/tpm.c:62:6: warning:
+>> >  symbol 'efi_retrieve_tpm2_eventlog_1_2' was not declared. Should it be
+>> > static?
+>> >
+>> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>> > ---
+>> >  drivers/firmware/efi/libstub/tpm.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/firmware/efi/libstub/tpm.c
+>> > b/drivers/firmware/efi/libstub/tpm.c
+>> > index 9d08cea..caa37a6 100644
+>> > --- a/drivers/firmware/efi/libstub/tpm.c
+>> > +++ b/drivers/firmware/efi/libstub/tpm.c
+>> > @@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t
+>> > *sys_table_arg)
+>> >
+>> >  #endif
+>> >
+>> > -void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>> > +static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t
+>> > *sys_table_arg)
+>> >  {
+>> >     efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+>> >     efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+>> >
+>>
+>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 >
-> That's ... interesting. The comment on the original of this says it's
-> supposed to be used for "better alignment" (more zero bits), and I'd
-> think that there's lots of code making such assumptions...
+> Applied.
 >
-> I'd argue it's an xtensa bug, if we need to deal with this everywhere
-> then it might get messy. Mostly we don't have to care, since pointer
-> alignment is sufficient in many cases, but still...
->
-> Hmm. Dunno what to do here then.
 
-IMHO let's just get rid of the ugly PTR_ALIGN(), I strongly doubt it was
-added because of this xtensa "feature" :) If we ever get a bug report
-about this we can then talk with the xtensa folks.
-
--- 
-Kalle Valo
+Applied to?
