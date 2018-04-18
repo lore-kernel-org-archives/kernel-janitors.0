@@ -1,46 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 26 Apr 2018 23:03:12 +0000
-Subject: Re: [PATCH] gpio: make several const arrays static, shrinks object size
-Message-Id: <CACRpkdYq-xLFXi8vLkbSsnaAboJjS5rDVWPHeNRdo=FrmsagaQ@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 18 Apr 2018 13:57:22 +0000
+Subject: [PATCH -next] m68k: fix return value check in mcf_pci_init()
+Message-Id: <1524059842-22099-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180418172634.14734-1-colin.king@canonical.com>
-In-Reply-To: <20180418172634.14734-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg Ungerer <gerg@linux-m68k.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 7:26 PM, Colin King <colin.king@canonical.com> wrote:
+In case of error, the function ioremap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the const read-only arrays 'port' on the stack but
-> instead make them static. Makes the object code smaller:
->
-> Before:
->   text    data     bss     dec    hex filename
->   8542    4088     672   13302   33f6 drivers/gpio/gpio-gpio-mm.o
->  10959    4952     832   16743   4167 drivers/gpio/gpio-104-dio-48e.o
->   9022    5064    1408   15494   3c86 drivers/gpio/gpio-104-idi-48.o
->
-> After:
->   text    data     bss     dec    hex filename
->   8372    4144     672   13188   3384 drivers/gpio/gpio-gpio-mm.o
->  10790    5008     832   16630   40f6 drivers/gpio/gpio-104-dio-48e.o
->   8853    5152    1408   15413   3c35 linux/drivers/gpio/gpio-104-idi-48.o
->
-> (gcc version 7.2.0 x86_64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: bf114d773167 ("m68k: force use of __raw_read/__raw_write address to be iomem")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ arch/m68k/coldfire/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I had already applied some part of the patch.
+diff --git a/arch/m68k/coldfire/pci.c b/arch/m68k/coldfire/pci.c
+index 9d6342c..a7c2332 100644
+--- a/arch/m68k/coldfire/pci.c
++++ b/arch/m68k/coldfire/pci.c
+@@ -218,7 +218,7 @@ static int __init mcf_pci_init(void)
+ 
+ 	/* Keep a virtual mapping to IO/config space active */
+ 	iospace = ioremap(PCI_IO_PA, PCI_IO_SIZE);
+-	if (IS_ERR(iospace))
++	if (!iospace)
+ 		return -ENODEV;
+ 	pr_info("Coldfire: PCI IO/config window mapped to 0x%p\n", iospace);
 
-Dropped patches to one file for this reason.
-
-Please check the result.
-
-Patch applied!
-
-Yours,
-Linus Walleij
