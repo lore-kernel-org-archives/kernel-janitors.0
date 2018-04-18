@@ -1,26 +1,32 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Thu, 12 Apr 2018 22:39:26 +0000
-Subject: Re: [PATCH] net/mlx5: remove some extraneous spaces in indentations
-Message-Id: <1523572761.3587.45.camel@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 18 Apr 2018 14:29:37 +0000
+Subject: [PATCH] drm: omapdrm: silence unititialized variable warning
+Message-Id: <20180418142937.GA13828@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180409124336.29274-1-colin.king@canonical.com>
-In-Reply-To: <20180409124336.29274-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "colin.king@canonical.com" <colin.king@canonical.com>, Matan Barak <matanb@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "leon@kernel.org" <leon@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-T24gTW9uLCAyMDE4LTA0LTA5IGF0IDEzOjQzICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhl
-cmUgYXJlIHNldmVyYWwgbGluZXMgd2hlcmUgdGhlcmUgaXMgYW4gZXh0cmFuZW91cyBzcGFjZSBj
-YXVzaW5nDQo+IGluZGVudGF0aW9uIG1pc2FsaWdubWVudC4gUmVtb3ZlIHRoZW0uDQo+IA0KPiBD
-bGVhbnMgdXAgQ29jY29uZWxsZSB3YXJuaW5nczoNCj4gDQo+IC4vZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvbWVsbGFub3gvbWx4NS9jb3JlL3FwLmM6NDA5OjMtMTg6IGNvZGUgYWxpZ25lZA0KPiB3aXRo
-IGZvbGxvd2luZyBjb2RlIG9uIGxpbmUgNDEwDQo+IC4vZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVs
-bGFub3gvbWx4NS9jb3JlL3FwLmM6NDE1OjMtMTg6IGNvZGUgYWxpZ25lZA0KPiB3aXRoIGZvbGxv
-d2luZyBjb2RlIG9uIGxpbmUgNDE2DQo+IC4vZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gv
-bWx4NS9jb3JlL3FwLmM6NDIxOjMtMTg6IGNvZGUgYWxpZ25lZA0KPiB3aXRoIGZvbGxvd2luZyBj
-b2RlIG9uIGxpbmUgNDIyDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCg0KQXBwbGllZCB0byBtbHg1LW5leHQsIFRoYW5r
-cyBDb2xpbiENCg0K
+Smatch complains that "area_free" could be used without being
+initialized.  This code is several years old and premusably works fine
+so this can't be a very serious bug.  But it's easy enough to silence
+the warning.  If "area_free" is false at the end of the function then
+we return -ENOMEM.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/omapdrm/tcm-sita.c b/drivers/gpu/drm/omapdrm/tcm-sita.c
+index d7f7bc9f061a..817be3c41863 100644
+--- a/drivers/gpu/drm/omapdrm/tcm-sita.c
++++ b/drivers/gpu/drm/omapdrm/tcm-sita.c
+@@ -90,7 +90,7 @@ static int l2r_t2b(u16 w, u16 h, u16 a, s16 offset,
+ {
+ 	int i;
+ 	unsigned long index;
+-	bool area_free;
++	bool area_free = false;
+ 	unsigned long slots_per_band = PAGE_SIZE / slot_bytes;
+ 	unsigned long bit_offset = (offset > 0) ? offset / slot_bytes : 0;
+ 	unsigned long curr_bit = bit_offset;
