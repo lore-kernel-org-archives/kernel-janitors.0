@@ -1,36 +1,39 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Apr 2018 19:15:52 +0000
-Subject: [PATCH] scsi: esas2r: fix spelling mistake: "asynchromous" -> "asynchronous"
-Message-Id: <20180427191552.17502-1-colin.king@canonical.com>
+Date: Wed, 18 Apr 2018 15:06:17 +0000
+Subject: [PATCH] [media] include/media: fix missing | operator when setting cfg
+Message-Id: <20180418150617.22489-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bradley Grove <linuxdrivers@attotech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in module description text
+The value from a readl is being masked with ITE_REG_CIOCAN_MASK however
+this is not being used and cfg is being re-assigned.  I believe the
+assignment operator should actually be instead the |= operator.
+
+Detected by CoverityScan, CID#1467987 ("Unused value")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/esas2r/esas2r_main.c | 2 +-
+ drivers/media/platform/exynos4-is/fimc-lite-reg.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/esas2r/esas2r_main.c b/drivers/scsi/esas2r/esas2r_main.c
-index e07eac5be087..c07118617d89 100644
---- a/drivers/scsi/esas2r/esas2r_main.c
-+++ b/drivers/scsi/esas2r/esas2r_main.c
-@@ -283,7 +283,7 @@ MODULE_PARM_DESC(num_requests,
- int num_ae_requests = 4;
- module_param(num_ae_requests, int, 0);
- MODULE_PARM_DESC(num_ae_requests,
--		 "Number of VDA asynchromous event requests.  Default 4.");
-+		 "Number of VDA asynchronous event requests.  Default 4.");
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite-reg.c b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+index f0acc550d065..16565a0b4bf1 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite-reg.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+@@ -254,7 +254,7 @@ void flite_hw_set_dma_window(struct fimc_lite *dev, struct flite_frame *f)
+ 	/* Maximum output pixel size */
+ 	cfg = readl(dev->regs + FLITE_REG_CIOCAN);
+ 	cfg &= ~FLITE_REG_CIOCAN_MASK;
+-	cfg = (f->f_height << 16) | f->f_width;
++	cfg |= (f->f_height << 16) | f->f_width;
+ 	writel(cfg, dev->regs + FLITE_REG_CIOCAN);
  
- int cmd_per_lun = ESAS2R_DEFAULT_CMD_PER_LUN;
- module_param(cmd_per_lun, int, 0);
+ 	/* DMA offsets */
 -- 
 2.17.0
 
