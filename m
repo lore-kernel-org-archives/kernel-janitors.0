@@ -1,69 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 30 Apr 2018 09:29:47 +0000
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-Id: <20180430092947.GC2270@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="9Ek0hoCL9XbhcSqy"
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Apr 2018 11:30:38 +0000
+Subject: [PATCH] scsi: mptfc: fix spelling mistake in macro names
+Message-Id: <20180418113038.1239-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
-In-Reply-To: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
-To: linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, Philippe Ombredanne <pombredanne@nexb.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Rename macros MPI_FCPORTPAGE0_SUPPORT_SPEED_UKNOWN and
+MPI_FCPORTPAGE0_CURRENT_SPEED_UKNOWN to add in missing N in UNKNOWN
 
-On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
-> On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
-> >>
-> >> We should get drvdata from struct device directly. Going via
-> >> platform_device is an unneeded step back and forth.
-> >>
-> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> ---
-> >>
-> >> Build tested only. buildbot is happy. Please apply individually.
-> >
-> >
-> > for gpio-omap.c:
-> > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
->=20
-> Hm I only see the responses not the actual patch, I guess I will find it
-> sooner or later.
->=20
-> Wolfram: if I don't find it, poke me with something sharp so I get to app=
-ly it.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/message/fusion/lsi/mpi_cnfg.h | 4 ++--
+ drivers/message/fusion/mptfc.c        | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-I had the same problem, turned out this got classified as spam by Google
-for some reason. Maybe try your spam folder?
+diff --git a/drivers/message/fusion/lsi/mpi_cnfg.h b/drivers/message/fusion/lsi/mpi_cnfg.h
+index 4e9c0ce94f27..059997f8ebce 100644
+--- a/drivers/message/fusion/lsi/mpi_cnfg.h
++++ b/drivers/message/fusion/lsi/mpi_cnfg.h
+@@ -1802,13 +1802,13 @@ typedef struct _CONFIG_PAGE_FC_PORT_0
+ #define MPI_FCPORTPAGE0_SUPPORT_CLASS_2                 (0x00000002)
+ #define MPI_FCPORTPAGE0_SUPPORT_CLASS_3                 (0x00000004)
+ 
+-#define MPI_FCPORTPAGE0_SUPPORT_SPEED_UKNOWN            (0x00000000) /* (SNIA)HBA_PORTSPEED_UNKNOWN 0   Unknown - transceiver incapable of reporting */
++#define MPI_FCPORTPAGE0_SUPPORT_SPEED_UNKNOWN           (0x00000000) /* (SNIA)HBA_PORTSPEED_UNKNOWN 0   Unknown - transceiver incapable of reporting */
+ #define MPI_FCPORTPAGE0_SUPPORT_1GBIT_SPEED             (0x00000001) /* (SNIA)HBA_PORTSPEED_1GBIT   1   1 GBit/sec */
+ #define MPI_FCPORTPAGE0_SUPPORT_2GBIT_SPEED             (0x00000002) /* (SNIA)HBA_PORTSPEED_2GBIT   2   2 GBit/sec */
+ #define MPI_FCPORTPAGE0_SUPPORT_10GBIT_SPEED            (0x00000004) /* (SNIA)HBA_PORTSPEED_10GBIT  4  10 GBit/sec */
+ #define MPI_FCPORTPAGE0_SUPPORT_4GBIT_SPEED             (0x00000008) /* (SNIA)HBA_PORTSPEED_4GBIT   8   4 GBit/sec */
+ 
+-#define MPI_FCPORTPAGE0_CURRENT_SPEED_UKNOWN            MPI_FCPORTPAGE0_SUPPORT_SPEED_UKNOWN
++#define MPI_FCPORTPAGE0_CURRENT_SPEED_UNKNOWN           MPI_FCPORTPAGE0_SUPPORT_SPEED_UNKNOWN
+ #define MPI_FCPORTPAGE0_CURRENT_SPEED_1GBIT             MPI_FCPORTPAGE0_SUPPORT_1GBIT_SPEED
+ #define MPI_FCPORTPAGE0_CURRENT_SPEED_2GBIT             MPI_FCPORTPAGE0_SUPPORT_2GBIT_SPEED
+ #define MPI_FCPORTPAGE0_CURRENT_SPEED_10GBIT            MPI_FCPORTPAGE0_SUPPORT_10GBIT_SPEED
+diff --git a/drivers/message/fusion/mptfc.c b/drivers/message/fusion/mptfc.c
+index 6d461ca97150..06b175420be9 100644
+--- a/drivers/message/fusion/mptfc.c
++++ b/drivers/message/fusion/mptfc.c
+@@ -693,7 +693,7 @@ mptfc_display_port_link_speed(MPT_ADAPTER *ioc, int portnum, FCPortPage0_t *pp0d
+ 	state = pp0dest->PortState;
+ 
+ 	if (state != MPI_FCPORTPAGE0_PORTSTATE_OFFLINE &&
+-	    new_speed != MPI_FCPORTPAGE0_CURRENT_SPEED_UKNOWN) {
++	    new_speed != MPI_FCPORTPAGE0_CURRENT_SPEED_UNKNOWN) {
+ 
+ 		old = old_speed = MPI_FCPORTPAGE0_CURRENT_SPEED_1GBIT ? "1 Gbps" :
+ 		       old_speed = MPI_FCPORTPAGE0_CURRENT_SPEED_2GBIT ? "2 Gbps" :
+-- 
+2.17.0
 
-Thierry
-
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4gsACgkQ3SOs138+
-s6E+/Q/9EjphqdxUrnsFSD+/mR1PWKT+wgaYut4Zt8pP0aPfTRABNwbDutpCoz/w
-PTdquuAzoziVhHWLZFYyqEfug3/gB/4rHfl9UspVMirZlLjL/CJCGag79Df2oENl
-C6Q43ql8C5GfosbgL17xjZ5YkboZbPWmbaiODae3XOTRc3EDwCPiw1yn5xFiQxRG
-h16gu6kwhXDoipAXN5ljenWF2QkL1av5/7lY01n6NVtIOMg5ercIfx50NofCPpoi
-eniMXrWziPcryMq2u8e6rZKERXq+iZAMfZSr9s+NDsVrESPDkRM2PiCtRtCKH34g
-UYKK1pG7BikpaQmZKmBllMQ3fPKzsWVdhirioYwv5igTBJ4egwgmnjdjhHq8MOOd
-TV1YAjxFen0gAUTCo2MPUEvN3khqUY3xi0dnOgZOF64Q6D+ZHGltdCZcB5PdL2xE
-qLJ2CDGPxCk9fWI2oCVsZXjzc9T4l06baKF2dcxLdTyoCgB4ru3R4eV7V2CuRnnu
-/0IqZ1wRTWH9GW2VrmD+/CWJqSgknhWRwBVPQaZT87hfWMZC7xmRqAC+cK/OdBX/
-uadYQvwvLJBc3BsjtljiqzvvV8FwoXlhkVt0OPIARKCnBJtenbJfOMwewdVKjvVW
-42PBcd6qBelFBrohpOO3eQ967KJG+Z8c/NkrZ6t0JF8i4GaBT4o=
-=odoW
------END PGP SIGNATURE-----
-
---9Ek0hoCL9XbhcSqy--
