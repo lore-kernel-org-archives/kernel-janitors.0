@@ -1,35 +1,36 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 26 Apr 2018 10:10:43 +0000
-Subject: Re: [PATCH 2/2] video: fbdev-MMP: Improve a size determination in path_init()
-Message-Id: <2229029.HUmMdrHkAV@amdc3058>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Apr 2018 11:35:28 +0000
+Subject: [PATCH] tty: nozomi: fix spelling mistake in macro NOZOMI_STATE_UKNOWN
+Message-Id: <20180418113528.1468-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
- <CGME20171126204359epcas2p46af86788c6717a9d1392cd693f524987@epcas2p4.samsung.com>
- <293fb9cb-3020-bded-b1bd-67bbb2820aa2@users.sourceforge.net>
-In-Reply-To: <293fb9cb-3020-bded-b1bd-67bbb2820aa2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sunday, November 26, 2017 09:43:52 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Nov 2017 21:21:33 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.18, thanks.
+Rename NOZOMI_STATE_UKNOWN to NOZOMI_STATE_UNKNOWN (add missing N)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/tty/nozomi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
+index b57b35066ebe..bf05946d80a1 100644
+--- a/drivers/tty/nozomi.c
++++ b/drivers/tty/nozomi.c
+@@ -155,7 +155,7 @@ enum card_type {
+ 
+ /* Initialization states a card can be in */
+ enum card_state {
+-	NOZOMI_STATE_UKNOWN	= 0,
++	NOZOMI_STATE_UNKNOWN	= 0,
+ 	NOZOMI_STATE_ENABLED	= 1,	/* pci device enabled */
+ 	NOZOMI_STATE_ALLOCATED	= 2,	/* config setup done */
+ 	NOZOMI_STATE_READY	= 3,	/* flowcontrols received */
+-- 
+2.17.0
 
