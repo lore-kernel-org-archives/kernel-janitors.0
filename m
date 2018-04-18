@@ -1,40 +1,57 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 06 Apr 2018 09:01:40 +0000
-Subject: Re: [PATCH v2] rsi: remove unecessary PTR_ALIGN()s
-Message-Id: <87woxkd7yj.fsf@kamboji.qca.qualcomm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Apr 2018 11:47:50 +0000
+Subject: [PATCH] rt2x00: fix spelling mistake in various macros, UKNOWN -> UNKNOWN
+Message-Id: <20180418114750.1978-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180406083717.GA21857@mwanda> <5AC7338C.3000307@broadcom.com>
-In-Reply-To: <5AC7338C.3000307@broadcom.com> (Arend van Spriel's message of
-        "Fri, 6 Apr 2018 10:45:00 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Karun Eagalapati <karun256@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Arend van Spriel <arend.vanspriel@broadcom.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On 4/6/2018 10:37 AM, Dan Carpenter wrote:
->> The issue here is that we allocate "data" and then set
->> "data = PTR_ALIGN(data, 8);" and then we free the aligned pointer
->> instead of the original pointer.
->>
->> kmalloc() pointers are already ARCH_SLAB_MINALIGN aligned which is 8 or
->> more on everything except certain Xtensa variants.  We decided that if
->> the Xtensa people ever notice a bug here then we'll tell them the bug is
->> on their side.  ;)
->
-> I am not sure if it was decided to be a xtensa bug, but just to ignore
-> the issue until it would arise.
+Rename several macros that contain mispellings of UNKNOWN
 
-IIRC on other architectures the allocation is already aligned properly
-so there shouldn't be any functional changes with this patch, expect on
-xtensa of course.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ralink/rt2x00/rt2800.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> Anyway, not sure if the last sentence is useful in the commit message.
-
-IMHO it is useful as it gives a summary of our discussion, just with a
-humorous tone :)
-
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800.h b/drivers/net/wireless/ralink/rt2x00/rt2800.h
+index 6a8c93fb6a43..8eccfbb5d6f8 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800.h
+@@ -1193,10 +1193,10 @@
+ #define TX_PWR_CFG_3_MCS13		FIELD32(0x000000f0)
+ #define TX_PWR_CFG_3_MCS14		FIELD32(0x00000f00)
+ #define TX_PWR_CFG_3_MCS15		FIELD32(0x0000f000)
+-#define TX_PWR_CFG_3_UKNOWN1		FIELD32(0x000f0000)
+-#define TX_PWR_CFG_3_UKNOWN2		FIELD32(0x00f00000)
+-#define TX_PWR_CFG_3_UKNOWN3		FIELD32(0x0f000000)
+-#define TX_PWR_CFG_3_UKNOWN4		FIELD32(0xf0000000)
++#define TX_PWR_CFG_3_UNKNOWN1		FIELD32(0x000f0000)
++#define TX_PWR_CFG_3_UNKNOWN2		FIELD32(0x00f00000)
++#define TX_PWR_CFG_3_UNKNOWN3		FIELD32(0x0f000000)
++#define TX_PWR_CFG_3_UNKNOWN4		FIELD32(0xf0000000)
+ /* bits for 3T devices */
+ #define TX_PWR_CFG_3_MCS12_CH0		FIELD32(0x0000000f)
+ #define TX_PWR_CFG_3_MCS12_CH1		FIELD32(0x000000f0)
+@@ -1216,10 +1216,10 @@
+  * TX_PWR_CFG_4:
+  */
+ #define TX_PWR_CFG_4			0x1324
+-#define TX_PWR_CFG_4_UKNOWN5		FIELD32(0x0000000f)
+-#define TX_PWR_CFG_4_UKNOWN6		FIELD32(0x000000f0)
+-#define TX_PWR_CFG_4_UKNOWN7		FIELD32(0x00000f00)
+-#define TX_PWR_CFG_4_UKNOWN8		FIELD32(0x0000f000)
++#define TX_PWR_CFG_4_UNKNOWN5		FIELD32(0x0000000f)
++#define TX_PWR_CFG_4_UNKNOWN6		FIELD32(0x000000f0)
++#define TX_PWR_CFG_4_UNKNOWN7		FIELD32(0x00000f00)
++#define TX_PWR_CFG_4_UNKNOWN8		FIELD32(0x0000f000)
+ /* bits for 3T devices */
+ #define TX_PWR_CFG_4_STBC4_CH0		FIELD32(0x0000000f)
+ #define TX_PWR_CFG_4_STBC4_CH1		FIELD32(0x000000f0)
 -- 
-Kalle Valo
+2.17.0
+
