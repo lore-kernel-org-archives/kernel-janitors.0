@@ -1,52 +1,70 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 09 Apr 2018 11:11:08 +0000
-Subject: Re: [PATCH] tpm: st33zp24: remove redundant null check on chip
-Message-Id: <4ea103c15998af56813fb870ac9a27a34a694f49.camel@linux.intel.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:34 +0000
+Subject: [PATCH 04/61] bus: simplify getting .drvdata
+Message-Id: <20180419140641.27926-5-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180406162144.14717-1-colin.king@canonical.com>
-In-Reply-To: <20180406162144.14717-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-integrity@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 2018-04-06 at 17:21 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently chip is being dereferenced by the call to dev_get_drvdata
-> before it is being null checked, however, chip can never be null, so
-> this check is misleading and redundant. Remove it.
-> 
-> Detected by CoverityScan, CID#1357806 ("Dereference before null check")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> ---
-> 
-> V2: don't check for null, just remove redundant null check,
->     thanks to Jason Gunthorpe for spotting that.
-> 
-> ---
->  drivers/char/tpm/st33zp24/st33zp24.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/st33zp24/st33zp24.c
-> b/drivers/char/tpm/st33zp24/st33zp24.c
-> index f95b9c75175b..abd675bec88c 100644
-> --- a/drivers/char/tpm/st33zp24/st33zp24.c
-> +++ b/drivers/char/tpm/st33zp24/st33zp24.c
-> @@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned
-> char *buf,
->  	int ret;
->  	u8 data;
->  
-> -	if (!chip)
-> -		return -EBUSY;
->  	if (len < TPM_HEADER_SIZE)
->  		return -EBUSY;
->  
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Reviewed-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-/Jarkko
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/bus/brcmstb_gisb.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/bus/brcmstb_gisb.c b/drivers/bus/brcmstb_gisb.c
+index 68ac3e93b600..f58ff67e97ac 100644
+--- a/drivers/bus/brcmstb_gisb.c
++++ b/drivers/bus/brcmstb_gisb.c
+@@ -150,8 +150,7 @@ static ssize_t gisb_arb_get_timeout(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 	u32 timeout;
+ 
+ 	mutex_lock(&gdev->lock);
+@@ -165,8 +164,7 @@ static ssize_t gisb_arb_set_timeout(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 	int val, ret;
+ 
+ 	ret = kstrtoint(buf, 10, &val);
+@@ -418,8 +416,7 @@ static int __init brcmstb_gisb_arb_probe(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int brcmstb_gisb_arb_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 
+ 	gdev->saved_timeout = gisb_read(gdev, ARB_TIMER);
+ 
+@@ -431,8 +428,7 @@ static int brcmstb_gisb_arb_suspend(struct device *dev)
+  */
+ static int brcmstb_gisb_arb_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 
+ 	gisb_write(gdev, gdev->saved_timeout, ARB_TIMER);
+ 
+-- 
+2.11.0
+
