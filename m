@@ -1,34 +1,65 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Fri, 27 Apr 2018 14:11:20 +0000
-Subject: Re: [PATCH] drm/i915/selftests: Potential uninitialized return in live_reset_whitelist()
-Message-Id: <152483828060.7427.10753497461857414868@mail.alporthouse.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:13 +0000
+Subject: [PATCH 43/61] pwm: simplify getting .drvdata
+Message-Id: <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180427140616.GC19583@mwanda>
-In-Reply-To: <20180427140616.GC19583@mwanda>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: linux-arm-kernel@lists.infradead.org
 
-Quoting Dan Carpenter (2018-04-27 15:06:16)
-> Smatch complains that "err" could be uninitialized at the end.  I don't
-> know the code well but that seems like a reasonable warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Thanks for the report, Gustavo Silva already submitted the same fixup.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-commit a3997159133d56e444f0c0f56ab1ae59863912a8
-Author: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Date:   Tue Apr 24 08:15:45 2018 -0500
+Build tested only. buildbot is happy. Please apply individually.
 
-    drm/i915/selftests: Fix uninitialized variable
-    
-    There is a potential execution path in which variable err is
-    returned without being properly initialized previously.
-    
-    Fix this by initializing variable err to 0.
+ drivers/pwm/pwm-atmel-tcb.c | 6 ++----
+ drivers/pwm/pwm-rcar.c      | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-Ta,
--Chris
+diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
+index 4fb1be246c44..0d0f8376bc35 100644
+--- a/drivers/pwm/pwm-atmel-tcb.c
++++ b/drivers/pwm/pwm-atmel-tcb.c
+@@ -460,8 +460,7 @@ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
+ #ifdef CONFIG_PM_SLEEP
+ static int atmel_tcb_pwm_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
++	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
+ 	void __iomem *base = tcbpwm->tc->regs;
+ 	int i;
+ 
+@@ -478,8 +477,7 @@ static int atmel_tcb_pwm_suspend(struct device *dev)
+ 
+ static int atmel_tcb_pwm_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
++	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
+ 	void __iomem *base = tcbpwm->tc->regs;
+ 	int i;
+ 
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 91d11f2e2fef..748f614d5375 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -261,8 +261,7 @@ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
+ #ifdef CONFIG_PM_SLEEP
+ static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
++	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
+ 	struct pwm_chip *chip = &rcar_pwm->chip;
+ 
+ 	return &chip->pwms[0];
+-- 
+2.11.0
+
