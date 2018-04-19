@@ -1,35 +1,51 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 10 Apr 2018 14:30:03 +0000
-Subject: Re: [next] wil6210: fix potential null dereference of ndev before null check
-Message-Id: <20180410143003.A40E460AFB@smtp.codeaurora.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:06 +0000
+Subject: [PATCH 36/61] net: ethernet: wiznet: simplify getting .drvdata
+Message-Id: <20180419140641.27926-37-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180328174027.31551-1-colin.king@canonical.com>
-In-Reply-To: <20180328174027.31551-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Maya Erez <merez@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, netdev@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-> The pointer ndev is being dereferenced before it is being null checked,
-> hence there is a potential null pointer deference. Fix this by only
-> dereferencing ndev after it has been null checked
-> 
-> Detected by CoverityScan, CID#1467010 ("Dereference before null check")
-> 
-> Fixes: e00243fab84b ("wil6210: infrastructure for multiple virtual interfaces")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Maya Erez <merez@codeaurora.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Patch applied to ath-next branch of ath.git, thanks.
+Build tested only. buildbot is happy. Please apply individually.
 
-db5a4d5e1073 wil6210: fix potential null dereference of ndev before null check
+ drivers/net/ethernet/wiznet/w5300.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/net/ethernet/wiznet/w5300.c b/drivers/net/ethernet/wiznet/w5300.c
+index 56ae573001e8..692fc71d904d 100644
+--- a/drivers/net/ethernet/wiznet/w5300.c
++++ b/drivers/net/ethernet/wiznet/w5300.c
+@@ -661,8 +661,7 @@ static int w5300_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int w5300_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct w5300_priv *priv = netdev_priv(ndev);
+ 
+ 	if (netif_running(ndev)) {
+@@ -676,8 +675,7 @@ static int w5300_suspend(struct device *dev)
+ 
+ static int w5300_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct w5300_priv *priv = netdev_priv(ndev);
+ 
+ 	if (!netif_running(ndev)) {
 -- 
-https://patchwork.kernel.org/patch/10313705/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
