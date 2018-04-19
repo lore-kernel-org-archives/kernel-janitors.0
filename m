@@ -1,54 +1,61 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 02 Apr 2018 15:30:34 +0000
-Subject: Re: [PATCH v2] platform/x86: Fix memory leaks in build_tokens_sysfs()
-Message-Id: <CAHp75Vcw=d_8Zj17j0ciz-ziMXB_uxaHG__aj-G1ZovS-woKOw@mail.gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:49 +0000
+Subject: [PATCH 19/61] iio: common: hid-sensors: simplify getting .drvdata
+Message-Id: <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180316121015.GA14282@mwanda>
-In-Reply-To: <20180316121015.GA14282@mwanda>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 2:10 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We're freeing "value_name" which is NULL, so that's a no-op, but we
-> intended to free "location_name" instead.  And then we don't free the
-> names in token_location_attrs[0] and token_value_attrs[0].
->
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Pushed to my reviewing and testing queue, thanks!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-> Fixes: 33b9ca1e53b4 ("platform/x86: dell-smbios: Add a sysfs interface for SMBIOS tokens")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: style changes (move from a for loop to a while loop) and this driver
->     has been renamed.
->
-> diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
-> index 2485c80a9fdd..ec31d149f82e 100644
-> --- a/drivers/platform/x86/dell-smbios-base.c
-> +++ b/drivers/platform/x86/dell-smbios-base.c
-> @@ -514,7 +514,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
->                 continue;
->
->  loop_fail_create_value:
-> -               kfree(value_name);
-> +               kfree(location_name);
->                 goto out_unwind_strings;
->         }
->         smbios_attribute_group.attrs = token_attrs;
-> @@ -525,7 +525,7 @@ static int build_tokens_sysfs(struct platform_device *dev)
->         return 0;
->
->  out_unwind_strings:
-> -       for (i = i-1; i > 0; i--) {
-> +       while (--i >= 0) {
->                 kfree(token_location_attrs[i].attr.name);
->                 kfree(token_value_attrs[i].attr.name);
->         }
+Build tested only. buildbot is happy. Please apply individually.
 
+ drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-
+diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+index cfb6588565ba..2ce0efd98cc0 100644
+--- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
++++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+@@ -304,8 +304,7 @@ EXPORT_SYMBOL(hid_sensor_setup_trigger);
+ 
+ static int __maybe_unused hid_sensor_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+ 
+ 	return _hid_sensor_power_state(attrb, false);
+@@ -313,8 +312,7 @@ static int __maybe_unused hid_sensor_suspend(struct device *dev)
+ 
+ static int __maybe_unused hid_sensor_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+ 	schedule_work(&attrb->work);
+ 	return 0;
+@@ -322,8 +320,7 @@ static int __maybe_unused hid_sensor_resume(struct device *dev)
+ 
+ static int __maybe_unused hid_sensor_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+ 	return _hid_sensor_power_state(attrb, true);
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
