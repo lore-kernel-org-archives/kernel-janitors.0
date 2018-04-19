@@ -1,37 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 28 Apr 2018 22:03:52 +0000
-Subject: [PATCH][V2] dmaengine: stm32-mdma: fix spelling mistake: "avalaible" -> "available"
-Message-Id: <20180428220352.19601-1-colin.king@canonical.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:03 +0000
+Subject: [PATCH 33/61] net: ethernet: davicom: simplify getting .drvdata
+Message-Id: <20180419140641.27926-34-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, netdev@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Trivial fix to spelling mistake in dev_err error message text and make
-channel plural.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/dma/stm32-mdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
-index 1ac775f93d9e..90d9f6bd905b 100644
---- a/drivers/dma/stm32-mdma.c
-+++ b/drivers/dma/stm32-mdma.c
-@@ -1521,7 +1521,7 @@ static struct dma_chan *stm32_mdma_of_xlate(struct of_phandle_args *dma_spec,
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/net/ethernet/davicom/dm9000.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
+index 50222b7b81f3..0a82fcf16d35 100644
+--- a/drivers/net/ethernet/davicom/dm9000.c
++++ b/drivers/net/ethernet/davicom/dm9000.c
+@@ -1722,8 +1722,7 @@ dm9000_probe(struct platform_device *pdev)
+ static int
+ dm9000_drv_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct board_info *db;
  
- 	c = dma_get_any_slave_channel(&dmadev->ddev);
- 	if (!c) {
--		dev_err(mdma2dev(dmadev), "No more channel avalaible\n");
-+		dev_err(mdma2dev(dmadev), "No more channels available\n");
- 		return NULL;
- 	}
+ 	if (ndev) {
+@@ -1745,8 +1744,7 @@ dm9000_drv_suspend(struct device *dev)
+ static int
+ dm9000_drv_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct board_info *db = netdev_priv(ndev);
  
+ 	if (ndev) {
 -- 
-2.17.0
+2.11.0
 
