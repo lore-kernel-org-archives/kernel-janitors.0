@@ -1,14 +1,15 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:08 +0000
-Subject: [PATCH 38/61] pinctrl: simplify getting .drvdata
-Message-Id: <20180419140641.27926-39-wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:43 +0000
+Subject: [PATCH 13/61] gpu: drm: msm: disp: mdp5: simplify getting .drvdata
+Message-Id: <20180419140641.27926-14-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
 
 We should get drvdata from struct device directly. Going via
 platform_device is an unneeded step back and forth.
@@ -18,58 +19,33 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/pinctrl/pinctrl-amd.c       | 6 ++----
- drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 04ae139671c8..c2c7067b0660 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -777,8 +777,7 @@ static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+index 6d8e3a9a6fc0..d50927f00c6f 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+@@ -1014,8 +1014,7 @@ static int mdp5_dev_remove(struct platform_device *pdev)
  
- static int amd_gpio_suspend(struct device *dev)
+ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
- 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
- 	int i;
+-	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
++	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
  
-@@ -796,8 +795,7 @@ static int amd_gpio_suspend(struct device *dev)
+ 	DBG("");
  
- static int amd_gpio_resume(struct device *dev)
+@@ -1024,8 +1023,7 @@ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
+ 
+ static __maybe_unused int mdp5_runtime_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
- 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
- 	int i;
+-	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
++	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
  
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 4b57a13758a4..7065068f73f5 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -831,8 +831,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
+ 	DBG("");
  
- static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-+	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
- 	int i, j;
- 
- 	/*
-@@ -860,8 +859,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
- 
- static int __maybe_unused atmel_pctrl_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-+	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
- 	int i, j;
- 
- 	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
 -- 
 2.11.0
 
