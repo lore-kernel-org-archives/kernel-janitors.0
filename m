@@ -1,61 +1,100 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Mon, 30 Apr 2018 13:52:04 +0000
-Subject: Re: [PATCH][next][V2] pinctrl: actions: fix missing break in PIN_CONFIG_DRIVE_STRENGTH case.
-Message-Id: <20180430135149.mn4ywt6i73ocoobk@linaro.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:29 +0000
+Subject: [PATCH 59/61] watchdog: simplify getting .drvdata
+Message-Id: <20180419140641.27926-60-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430132259.9938-1-colin.king@canonical.com>
-In-Reply-To: <20180430132259.9938-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Apr 30, 2018 at 02:22:59PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
-> a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
-> checks against *arg. This looks like an unintentional missing break so
-> add in the break.
-> 
-> Detected by CoverityScan, CID#1468456, 1468459 ("Missing break in switch")
->
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Thanks for fixing!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/watchdog/cadence_wdt.c   | 6 ++----
+ drivers/watchdog/of_xilinx_wdt.c | 6 ++----
+ drivers/watchdog/wdat_wdt.c      | 6 ++----
+ 3 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/watchdog/cadence_wdt.c b/drivers/watchdog/cadence_wdt.c
+index 3ec1f418837d..c3924356d173 100644
+--- a/drivers/watchdog/cadence_wdt.c
++++ b/drivers/watchdog/cadence_wdt.c
+@@ -418,8 +418,7 @@ static void cdns_wdt_shutdown(struct platform_device *pdev)
+  */
+ static int __maybe_unused cdns_wdt_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct cdns_wdt *wdt = platform_get_drvdata(pdev);
++	struct cdns_wdt *wdt = dev_get_drvdata(dev);
  
-> Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+ 	if (watchdog_active(&wdt->cdns_wdt_device)) {
+ 		cdns_wdt_stop(&wdt->cdns_wdt_device);
+@@ -438,8 +437,7 @@ static int __maybe_unused cdns_wdt_suspend(struct device *dev)
+ static int __maybe_unused cdns_wdt_resume(struct device *dev)
+ {
+ 	int ret;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct cdns_wdt *wdt = platform_get_drvdata(pdev);
++	struct cdns_wdt *wdt = dev_get_drvdata(dev);
+ 
+ 	if (watchdog_active(&wdt->cdns_wdt_device)) {
+ 		ret = clk_prepare_enable(wdt->clk);
+diff --git a/drivers/watchdog/of_xilinx_wdt.c b/drivers/watchdog/of_xilinx_wdt.c
+index 4acbe05e27bb..d3f7eb046678 100644
+--- a/drivers/watchdog/of_xilinx_wdt.c
++++ b/drivers/watchdog/of_xilinx_wdt.c
+@@ -268,8 +268,7 @@ static int xwdt_remove(struct platform_device *pdev)
+  */
+ static int __maybe_unused xwdt_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct xwdt_device *xdev = platform_get_drvdata(pdev);
++	struct xwdt_device *xdev = dev_get_drvdata(dev);
+ 
+ 	if (watchdog_active(&xdev->xilinx_wdt_wdd))
+ 		xilinx_wdt_stop(&xdev->xilinx_wdt_wdd);
+@@ -285,8 +284,7 @@ static int __maybe_unused xwdt_suspend(struct device *dev)
+  */
+ static int __maybe_unused xwdt_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct xwdt_device *xdev = platform_get_drvdata(pdev);
++	struct xwdt_device *xdev = dev_get_drvdata(dev);
+ 	int ret = 0;
+ 
+ 	if (watchdog_active(&xdev->xilinx_wdt_wdd))
+diff --git a/drivers/watchdog/wdat_wdt.c b/drivers/watchdog/wdat_wdt.c
+index 0da9943d405f..56ad19608a9b 100644
+--- a/drivers/watchdog/wdat_wdt.c
++++ b/drivers/watchdog/wdat_wdt.c
+@@ -447,8 +447,7 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int wdat_wdt_suspend_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct wdat_wdt *wdat = platform_get_drvdata(pdev);
++	struct wdat_wdt *wdat = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	if (!watchdog_active(&wdat->wdd))
+@@ -475,8 +474,7 @@ static int wdat_wdt_suspend_noirq(struct device *dev)
+ 
+ static int wdat_wdt_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct wdat_wdt *wdat = platform_get_drvdata(pdev);
++	struct wdat_wdt *wdat = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	if (!watchdog_active(&wdat->wdd))
+-- 
+2.11.0
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
-
-Thanks,
-Mani
-
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index 928b40f71a3c..ee090697b1e9 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -406,6 +406,7 @@ static int owl_group_pinconf_arg2val(const struct owl_pingroup *g,
->  		default:
->  			return -EINVAL;
->  		}
-> +		break;
->  	case PIN_CONFIG_SLEW_RATE:
->  		if (*arg)
->  			*arg = OWL_PINCONF_SLEW_FAST;
-> @@ -441,6 +442,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
->  		default:
->  			return -EINVAL;
->  		}
-> +		break;
->  	case PIN_CONFIG_SLEW_RATE:
->  		if (*arg)
->  			*arg = 1;
-> -- 
-> 2.17.0
-> 
