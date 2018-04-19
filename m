@@ -1,28 +1,71 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 24 Apr 2018 20:01:11 +0000
-Subject: Re: [PATCH] fsl/fman_port: remove redundant check on port->rev_info.major
-Message-Id: <20180424.160111.115150071933075757.davem@davemloft.net>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:10 +0000
+Subject: [PATCH 40/61] platform: x86: simplify getting .drvdata
+Message-Id: <20180419140641.27926-41-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180424113945.16371-1-colin.king@canonical.com>
-In-Reply-To: <20180424113945.16371-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: madalin.bucur@nxp.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Corentin Chary <corentin.chary@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 24 Apr 2018 12:39:45 +0100
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check port->rev_info.major >= 6 is being performed twice, thus
-> the inner second check is always true and is redundant, hence it
-> can be removed. Detected by cppcheck.
-> 
-> drivers/net/ethernet/freescale/fman/fman_port.c:1394]: (warning)
-> Identical inner 'if' condition is always true.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Applied to net-next, thank you.
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/platform/x86/asus-laptop.c    | 3 +--
+ drivers/platform/x86/asus-wmi.c       | 3 +--
+ drivers/platform/x86/samsung-laptop.c | 3 +--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
+index c4768be24ba9..700c48ddfa7c 100644
+--- a/drivers/platform/x86/asus-laptop.c
++++ b/drivers/platform/x86/asus-laptop.c
+@@ -1593,8 +1593,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
+ 				    int idx)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct asus_laptop *asus = platform_get_drvdata(pdev);
++	struct asus_laptop *asus = dev_get_drvdata(dev);
+ 	acpi_handle handle = asus->handle;
+ 	bool supported;
+ 
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index a32c5c00e0e7..ef87e78ca772 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -1862,8 +1862,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
+ 				    struct attribute *attr, int idx)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct asus_wmi *asus = platform_get_drvdata(pdev);
++	struct asus_wmi *asus = dev_get_drvdata(dev);
+ 	bool ok = true;
+ 	int devid = -1;
+ 
+diff --git a/drivers/platform/x86/samsung-laptop.c b/drivers/platform/x86/samsung-laptop.c
+index 03305e0b89ff..7b160ee98115 100644
+--- a/drivers/platform/x86/samsung-laptop.c
++++ b/drivers/platform/x86/samsung-laptop.c
+@@ -1216,8 +1216,7 @@ static umode_t samsung_sysfs_is_visible(struct kobject *kobj,
+ 					struct attribute *attr, int idx)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct samsung_laptop *samsung = platform_get_drvdata(pdev);
++	struct samsung_laptop *samsung = dev_get_drvdata(dev);
+ 	bool ok = true;
+ 
+ 	if (attr = &dev_attr_performance_level.attr)
+-- 
+2.11.0
+
