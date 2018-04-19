@@ -1,23 +1,91 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 13 Apr 2018 02:39:10 +0000
-Subject: Re: [PATCH][next] scsi: fnic: fix spelling mistake in fnic stats "Abord" -> "Abort"
-Message-Id: <yq1r2nju8xd.fsf@oracle.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:28 +0000
+Subject: [PATCH 58/61] video: fbdev: omap2: omapfb: displays: simplify getting .drvdata
+Message-Id: <20180419140641.27926-59-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180411073649.21529-1-colin.king@canonical.com>
-In-Reply-To: <20180411073649.21529-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 11 Apr 2018 08:36:49 +0100")
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
 
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Colin,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-> Trivial fix to spelling mistake in fnic stats message text
+Build tested only. buildbot is happy. Please apply individually.
 
-Applied to 4.17/scsi-fixes. Thanks!
+ .../video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c   | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
+index bef431530090..87497a00241f 100644
+--- a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
++++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
+@@ -387,8 +387,7 @@ static void dsicm_get_resolution(struct omap_dss_device *dssdev,
+ static ssize_t dsicm_num_errors_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	u8 errors = 0;
+ 	int r;
+@@ -419,8 +418,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
+ static ssize_t dsicm_hw_revision_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	u8 id1, id2, id3;
+ 	int r;
+@@ -451,8 +449,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
+ 		struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	unsigned long t;
+ 	int r;
+@@ -486,8 +483,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
+ 		struct device_attribute *attr,
+ 		char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	unsigned t;
+ 
+ 	mutex_lock(&ddata->lock);
+@@ -501,8 +497,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
+ 		struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	unsigned long t;
+ 	int r;
+@@ -533,8 +528,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
+ 		struct device_attribute *attr,
+ 		char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	unsigned t;
+ 
+ 	mutex_lock(&ddata->lock);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
