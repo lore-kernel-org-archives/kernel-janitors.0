@@ -1,78 +1,100 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Wed, 25 Apr 2018 21:16:25 +0000
-Subject: Re: [PATCH 41/61] power: supply: simplify getting .drvdata
-Message-Id: <20180425211625.apqz3aoegibwxpke@earth.universe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="hdfuevzedlzhdz2e"
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:58 +0000
+Subject: [PATCH 28/61] mmc: host: simplify getting .drvdata
+Message-Id: <20180419140641.27926-29-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-42-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-42-wsa+renesas@sang-engineering.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
---hdfuevzedlzhdz2e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Hi,
+Build tested only. buildbot is happy. Please apply individually.
 
-On Thu, Apr 19, 2018 at 04:06:11PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
+ drivers/mmc/host/davinci_mmc.c     | 6 ++----
+ drivers/mmc/host/sdhci-of-arasan.c | 6 ++----
+ drivers/mmc/host/wmt-sdmmc.c       | 6 ++----
+ 3 files changed, 6 insertions(+), 12 deletions(-)
 
-Thanks, queued.
+diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
+index 8e363174f9d6..9e68c3645e22 100644
+--- a/drivers/mmc/host/davinci_mmc.c
++++ b/drivers/mmc/host/davinci_mmc.c
+@@ -1377,8 +1377,7 @@ static int __exit davinci_mmcsd_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM
+ static int davinci_mmcsd_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mmc_davinci_host *host = platform_get_drvdata(pdev);
++	struct mmc_davinci_host *host = dev_get_drvdata(dev);
+ 
+ 	writel(0, host->base + DAVINCI_MMCIM);
+ 	mmc_davinci_reset_ctrl(host, 1);
+@@ -1389,8 +1388,7 @@ static int davinci_mmcsd_suspend(struct device *dev)
+ 
+ static int davinci_mmcsd_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mmc_davinci_host *host = platform_get_drvdata(pdev);
++	struct mmc_davinci_host *host = dev_get_drvdata(dev);
+ 
+ 	clk_enable(host->clk);
+ 	mmc_davinci_reset_ctrl(host, 0);
+diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+index c33a5f7393bd..bed3612247b0 100644
+--- a/drivers/mmc/host/sdhci-of-arasan.c
++++ b/drivers/mmc/host/sdhci-of-arasan.c
+@@ -359,8 +359,7 @@ static const struct sdhci_pltfm_data sdhci_arasan_cqe_pdata = {
+  */
+ static int sdhci_arasan_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct sdhci_host *host = dev_get_drvdata(dev);
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
+ 	int ret;
+@@ -403,8 +402,7 @@ static int sdhci_arasan_suspend(struct device *dev)
+  */
+ static int sdhci_arasan_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct sdhci_host *host = dev_get_drvdata(dev);
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
+ 	int ret;
+diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
+index fd30ac7da5e5..3ba42f508014 100644
+--- a/drivers/mmc/host/wmt-sdmmc.c
++++ b/drivers/mmc/host/wmt-sdmmc.c
+@@ -928,8 +928,7 @@ static int wmt_mci_remove(struct platform_device *pdev)
+ static int wmt_mci_suspend(struct device *dev)
+ {
+ 	u32 reg_tmp;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mmc_host *mmc = platform_get_drvdata(pdev);
++	struct mmc_host *mmc = dev_get_drvdata(dev);
+ 	struct wmt_mci_priv *priv;
+ 
+ 	if (!mmc)
+@@ -953,8 +952,7 @@ static int wmt_mci_suspend(struct device *dev)
+ static int wmt_mci_resume(struct device *dev)
+ {
+ 	u32 reg_tmp;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mmc_host *mmc = platform_get_drvdata(pdev);
++	struct mmc_host *mmc = dev_get_drvdata(dev);
+ 	struct wmt_mci_priv *priv;
+ 
+ 	if (mmc) {
+-- 
+2.11.0
 
--- Sebastian
-
->=20
-> Build tested only. buildbot is happy. Please apply individually.
->=20
->  drivers/power/supply/gpio-charger.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/g=
-pio-charger.c
-> index bd2468ca6b63..c3f2a9479468 100644
-> --- a/drivers/power/supply/gpio-charger.c
-> +++ b/drivers/power/supply/gpio-charger.c
-> @@ -212,8 +212,7 @@ static int gpio_charger_suspend(struct device *dev)
-> =20
->  static int gpio_charger_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev =3D to_platform_device(dev);
-> -	struct gpio_charger *gpio_charger =3D platform_get_drvdata(pdev);
-> +	struct gpio_charger *gpio_charger =3D dev_get_drvdata(dev);
-> =20
->  	if (device_may_wakeup(dev) && gpio_charger->wakeup_enabled)
->  		disable_irq_wake(gpio_charger->irq);
-> --=20
-> 2.11.0
->=20
-
---hdfuevzedlzhdz2e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrg8CkACgkQ2O7X88g7
-+pos8w/+LPzF0jjgCKRohR1rdnk267wj4AeOG2Ij++r4e4BM2/J8dHfwaUAU6D42
-jspj4tqz3y7Fay/ACJ9FgeaSdgh2sLFm2topv2xmU9AMGeU8o6HpgXRNTQLEVye/
-gR19HxSYo4q8GNanNIaphxiDjkp5GU9PD11sjX4uobPCD/wG46wEOf2LhVg/C6Ng
-ZoSnbmqTBNTzWBXFOfVvfSjyk9MuAlKrOgBkHuEfe3hwsbiIqJwYJyBIhSRjcDOP
-l3Gz1oQo91l43COx2Z8klNckBQYRRy/awXbSW6uQHTQLSyJf39BRHwXYj91xYg7K
-DxyFYGmaiCUTD6m6mvO9zEwgVE/sIJhdPpkVQek5wQlrrmafv420uaxPXflMP469
-zy127NBz+tjl9FA7eGVcTkfEMO4E0RTnqR24Dbb3OIy+wwmWJugkryktBhqHZr1k
-gvHLzn5Ky1XN4lz+sAWEl4+N8xzBeFS+encWF/M0eyTKDn+L6EXMrPsx+y4ULkQu
-zApGZ0/zoEY98+FAd7R29TIicXONHDGgSOyCUg4fqh9zofRyyw80w3lETabYnaYS
-DNoJNamWS/96Xm05c9hyCfRVC1rw+ypcoddg+bvkjwfazAKZPPNOkpQEajCUvhWu
-dPu1vgdbyp44WY3PvlXlZFy2jCZe5w7bfkiMr5JhBxbKU5adjL8=
-=E8j1
------END PGP SIGNATURE-----
-
---hdfuevzedlzhdz2e--
