@@ -1,35 +1,51 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 26 Apr 2018 09:55:21 +0000
-Subject: Re: [PATCH] video: sh_mobile_meram: Delete an error message for a failed memory allocation in sh_mob
-Message-Id: <5653552.NjqMPzOcdg@amdc3058>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:44 +0000
+Subject: [PATCH 14/61] gpu: drm: msm: dsi: simplify getting .drvdata
+Message-Id: <20180419140641.27926-15-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171126121927epcas1p458cb7728927507525b54a47a9dfc6529@epcas1p4.samsung.com>
- <1feb3cf8-77e6-367e-5f5c-23fdd96339ec@users.sourceforge.net>
-In-Reply-To: <1feb3cf8-77e6-367e-5f5c-23fdd96339ec@users.sourceforge.net>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 
-On Sunday, November 26, 2017 01:19:17 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Nov 2017 13:08:43 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-I've done requested audit regarding multiple fb devices support
-myself now and it is okay to apply this patch.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Patch queued for 4.18, thanks.
+Build tested only. buildbot is happy. Please apply individually.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+ drivers/gpu/drm/msm/dsi/dsi_host.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index 7a03a9489708..10ed20736072 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -471,8 +471,7 @@ static void dsi_bus_clk_disable(struct msm_dsi_host *msm_host)
+ 
+ int msm_dsi_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
++	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+ 
+@@ -486,8 +485,7 @@ int msm_dsi_runtime_suspend(struct device *dev)
+ 
+ int msm_dsi_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
++	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+ 
+-- 
+2.11.0
 
