@@ -1,32 +1,50 @@
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-Date: Tue, 10 Apr 2018 13:50:40 +0000
-Subject: Re: [PATCH] tpm: st33zp24: check if chip is null before dereferencing
-Message-Id: <DM5PR2101MB10327A765FB1588EA7700E58FBBE0@DM5PR2101MB1032.namprd21.prod.outlook.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:35 +0000
+Subject: [PATCH 05/61] clk: samsung: simplify getting .drvdata
+Message-Id: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180406160541.8188-1-colin.king@canonical.com>
-In-Reply-To: <20180406160541.8188-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sasha Levin <Alexander.Levin@microsoft.com>, Colin King <colin.king@canonical.com>Colin Ian King <colin.king@canonical.com>, Peter Huewe <peterhuewe@gmx.de>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-Hi,
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-[This is an automated email]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-This commit has been processed because it contains a "Fixes:" tag,
-fixing commit: 9e0d39d8a6a0 tpm: Remove useless priv field in struct tpm_vendor_specific.
+Build tested only. buildbot is happy. Please apply individually.
 
-The bot has also determined it's probably a bug fixing patch. (score: 19.6716)
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-The bot has tested the following trees: v4.16.1, v4.15.16, v4.14.33, v4.9.93.
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index 077df3e539a7..f41d89cef0f1 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
+ #ifdef CONFIG_PM_SLEEP
+ static int s3c24xx_dclk_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
++	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+ 
+ 	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
+ 	return 0;
+@@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
+ 
+ static int s3c24xx_dclk_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
++	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+ 
+ 	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
+ 	return 0;
+-- 
+2.11.0
 
-v4.16.1: Build OK!
-v4.15.16: Build OK!
-v4.14.33: Build OK!
-v4.9.93: Build OK!
-
---
-Thanks,
-Sasha
