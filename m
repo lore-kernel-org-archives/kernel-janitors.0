@@ -1,21 +1,40 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Sun, 22 Apr 2018 06:33:59 +0000
-Subject: Re: [PATCH 09/61] dmaengine: qcom: simplify getting .drvdata
-Message-Id: <20180422062158.GV6014@localhost>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:31 +0000
+Subject: [PATCH 01/61] ARM: plat-samsung: simplify getting .drvdata
+Message-Id: <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-10-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-10-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Dan Williams <dan.j.williams@intel.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, dmaengine@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Apr 19, 2018 at 04:05:39PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Applied, thanks
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
+Build tested only. buildbot is happy. Please apply individually.
+
+ arch/arm/plat-samsung/adc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+index 42bac8d5ab5d..2da35735fa38 100644
+--- a/arch/arm/plat-samsung/adc.c
++++ b/arch/arm/plat-samsung/adc.c
+@@ -413,8 +413,7 @@ static int s3c_adc_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM
+ static int s3c_adc_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct adc_device *adc = platform_get_drvdata(pdev);
++	struct adc_device *adc = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	u32 con;
+ 
 -- 
-~Vinod
+2.11.0
+
