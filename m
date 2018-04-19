@@ -1,50 +1,75 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 20 Apr 2018 07:14:21 +0000
-Subject: Re: [PATCH 40/61] platform: x86: simplify getting .drvdata
-Message-Id: <20180420071421.ex6gcegotzjdswbg@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3khbrrzjm7np76wh"
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:36 +0000
+Subject: [PATCH 06/61] crypto: simplify getting .drvdata
+Message-Id: <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-41-wsa+renesas@sang-engineering.com>
- <20180419235651.GC11546@fury>
-In-Reply-To: <20180419235651.GC11546@fury>
-To: Darren Hart <dvhart@infradead.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Corentin Chary <corentin.chary@gmail.com>, Andy Shevchenko <andy@infradead.org>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
---3khbrrzjm7np76wh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
+Build tested only. buildbot is happy. Please apply individually.
 
-> (I'm not sure what you mean by "Please apply individually")
+ drivers/crypto/exynos-rng.c       | 6 ++----
+ drivers/crypto/picoxcell_crypto.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-Right, that is not very precise. "Individually" as "per subsystem
-individually". I.e. I don't want to collect tags and push it upstream as
-one huge pull-request.
+diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
+index 86f5f459762e..2cfabb99cb6e 100644
+--- a/drivers/crypto/exynos-rng.c
++++ b/drivers/crypto/exynos-rng.c
+@@ -319,8 +319,7 @@ static int exynos_rng_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused exynos_rng_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct exynos_rng_dev *rng = platform_get_drvdata(pdev);
++	struct exynos_rng_dev *rng = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	/* If we were never seeded then after resume it will be the same */
+@@ -350,8 +349,7 @@ static int __maybe_unused exynos_rng_suspend(struct device *dev)
+ 
+ static int __maybe_unused exynos_rng_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct exynos_rng_dev *rng = platform_get_drvdata(pdev);
++	struct exynos_rng_dev *rng = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	/* Never seeded so nothing to do */
+diff --git a/drivers/crypto/picoxcell_crypto.c b/drivers/crypto/picoxcell_crypto.c
+index a4df966adbf6..321d5e2ac833 100644
+--- a/drivers/crypto/picoxcell_crypto.c
++++ b/drivers/crypto/picoxcell_crypto.c
+@@ -1169,8 +1169,7 @@ static void spacc_spacc_complete(unsigned long data)
+ #ifdef CONFIG_PM
+ static int spacc_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spacc_engine *engine = platform_get_drvdata(pdev);
++	struct spacc_engine *engine = dev_get_drvdata(dev);
+ 
+ 	/*
+ 	 * We only support standby mode. All we have to do is gate the clock to
+@@ -1184,8 +1183,7 @@ static int spacc_suspend(struct device *dev)
+ 
+ static int spacc_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spacc_engine *engine = platform_get_drvdata(pdev);
++	struct spacc_engine *engine = dev_get_drvdata(dev);
+ 
+ 	return clk_enable(engine->clk);
+ }
+-- 
+2.11.0
 
-Thanks!
-
-
---3khbrrzjm7np76wh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrZk0kACgkQFA3kzBSg
-KbZT3w//afpRm3RefDNQ2Ysr5+0YF5JxKxGDkxsQbgVVAlWAjt4qsFsM1Y32PcWb
-/uT7lJyE4mNSJie4OFT5X5Hcf9K2wWCO8cOtyDqysNdL7/+eJ/6vvjwjqIwYG6Jh
-eGiq1H7hXI8m3f0xudQFjdKFdMkvQYYWs3VQ2U9wwlOP1AzJqTna7QzNk0hCN7jL
-jyenIY2MsYK059MyE/qgDM0l913/O+3P4mOa5cA4OYGgX84MBc3i4DRrnhnEhLV0
-StzkjAbHQKvVHNip802HC4ML6lDUlrlj3XUutlX78aSKZPs8V6NE3H7GvumcBV7T
-WkH2Jv84jWt+IcF1cwPk5+T6c3rRXvRuRY01LpbsDenbxXPG4dQ0nSqQDvtdyo/e
-6xT2Dk1fQ1PVIOPRyMqUJotg6Fy1+JklLVh8PMXpcEQuLbuy9wBmLFsC88U3AyMi
-tUHbKGfArcITKQmpVacecTI44jff4Eyp77hWOjgujNC92Cj/PT0LPON/vHh6yYyi
-ZcY/Bg6jAxZeHcroJmeVlph0vp6VU3GG7Cx6YJhcGYUWpBBo6HnKQCjOzlaIuvN5
-NMWd5B0ZrjUJ/Awi8AOb0qzI7iyDJtZQ8O60wxPuwfG+4SZXL2KndwsdlZecrxGN
-T5dEJRmA0oq1gSmtpMX3YznXDLwIxz7w3AYiIn2bXFHH/xWeOho=
-=fyhZ
------END PGP SIGNATURE-----
-
---3khbrrzjm7np76wh--
