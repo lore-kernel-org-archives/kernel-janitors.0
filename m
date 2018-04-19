@@ -1,50 +1,39 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 08 Apr 2018 16:33:36 +0000
-Subject: Re: [PATCH 2/2] iio: sca3000: Handle errors returned by 'sca3000_configure_ring()' in 'sca3000_probe
-Message-Id: <20180408173336.7be562f3@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 19 Apr 2018 14:34:31 +0000
+Subject: [PATCH][next] ASoC: rt5668: fix incorrect 'and' operator
+Message-Id: <20180419143431.13173-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180402165953.9110-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180402165953.9110-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, nfarnesi4@gmail.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon,  2 Apr 2018 18:59:53 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> 'sca3000_configure_ring()' can fail, so test its return value and
-> propagate it if needed.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Un-tested and not 100% sure that we should bail-out if it fails.
-Good catch - and yes we should bail out on error here.
+Currently logical and is being used instead of bitwise and. Fix this.
 
-I'll pick this one up when we finish discussion of patch 1.
-(or possibly in v2 if you agree with my suggestion there).
+Detected by CoverityScan, CID#1468008 ("Logical vs bitwise operator")
 
-Thanks,
+Fixes: d59fb2856223 ("ASoC: rt5668: add rt5668B codec driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/rt5668.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jonathan
-> ---
->  drivers/iio/accel/sca3000.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-> index dae4c594c170..45285edd216f 100644
-> --- a/drivers/iio/accel/sca3000.c
-> +++ b/drivers/iio/accel/sca3000.c
-> @@ -1486,7 +1486,9 @@ static int sca3000_probe(struct spi_device *spi)
->  	}
->  	indio_dev->modes = INDIO_DIRECT_MODE;
->  
-> -	sca3000_configure_ring(indio_dev);
-> +	ret = sca3000_configure_ring(indio_dev);
-> +	if (ret)
-> +		return ret;
->  
->  	if (spi->irq) {
->  		ret = request_threaded_irq(spi->irq,
+diff --git a/sound/soc/codecs/rt5668.c b/sound/soc/codecs/rt5668.c
+index 52a343f96eb2..3c19d03f2446 100644
+--- a/sound/soc/codecs/rt5668.c
++++ b/sound/soc/codecs/rt5668.c
+@@ -1194,7 +1194,7 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
+ 	int ref, val, reg, idx = -EINVAL;
+ 	static const int div[] = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48};
+ 
+-	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &&
++	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &
+ 		RT5668_GP4_PIN_MASK;
+ 	if (w->shift = RT5668_PWR_ADC_S1F_BIT &&
+ 		val = RT5668_GP4_PIN_ADCDAT2)
+-- 
+2.17.0
 
