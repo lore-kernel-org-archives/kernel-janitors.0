@@ -1,29 +1,75 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 27 Apr 2018 11:39:11 +0000
-Subject: Re: [next] ath10k: fix spelling mistake: "servive" -> "service"
-Message-Id: <20180427113911.1640460213@smtp.codeaurora.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:08 +0000
+Subject: [PATCH 38/61] pinctrl: simplify getting .drvdata
+Message-Id: <20180419140641.27926-39-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180426091244.9160-1-colin.king@canonical.com>
-In-Reply-To: <20180426091244.9160-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-> Trivial fix to spelling mistake in ath10k_warn warning message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Patch applied to ath-next branch of ath.git, thanks.
+Build tested only. buildbot is happy. Please apply individually.
 
-785281342d0c ath10k: fix spelling mistake: "servive" -> "service"
+ drivers/pinctrl/pinctrl-amd.c       | 6 ++----
+ drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 04ae139671c8..c2c7067b0660 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -777,8 +777,7 @@ static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
+ 
+ static int amd_gpio_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
++	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
+ 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
+ 	int i;
+ 
+@@ -796,8 +795,7 @@ static int amd_gpio_suspend(struct device *dev)
+ 
+ static int amd_gpio_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
++	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
+ 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
+ 	int i;
+ 
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 4b57a13758a4..7065068f73f5 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -831,8 +831,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
+ 
+ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
++	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+ 	int i, j;
+ 
+ 	/*
+@@ -860,8 +859,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+ 
+ static int __maybe_unused atmel_pctrl_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
++	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+ 	int i, j;
+ 
+ 	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
 -- 
-https://patchwork.kernel.org/patch/10365081/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
