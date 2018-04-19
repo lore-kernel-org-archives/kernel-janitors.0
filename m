@@ -1,31 +1,49 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 20 Apr 2018 16:51:19 +0000
-Subject: Re: [PATCH][next] crypto: chtls: don't leak information from the stack to userspace
-Message-Id: <20180420165119.3dn67xpcyxglhi22@gondor.apana.org.au>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:07 +0000
+Subject: [PATCH 37/61] perf: simplify getting .drvdata
+Message-Id: <20180419140641.27926-38-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180405164403.4412-1-colin.king@canonical.com>
-In-Reply-To: <20180405164403.4412-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Harsh Jain <harsh@chelsio.com>, "David S . Miller" <davem@davemloft.net>, Michael Werner <werner@chelsio.com>, Atul Gupta <atul.gupta@chelsio.com>, Casey Leedom <leedom@chelsio.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Apr 05, 2018 at 05:44:03PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure crypto_info contains fields that are not initialized and
-> only .version is set.  The copy_to_user call is hence leaking information
-> from the stack to userspace which must be avoided. Fix this by zero'ing
-> all the unused fields.
-> 
-> Detected by CoverityScan, CID#1467421 ("Uninitialized scalar variable")
-> 
-> Fixes: a08943947873 ("crypto: chtls - Register chtls with net tls")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Patch applied.  Thanks.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/perf/arm_spe_pmu.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 28bb642af18b..54ec278d2fc4 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -131,8 +131,7 @@ static ssize_t arm_spe_pmu_cap_show(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct arm_spe_pmu *spe_pmu = platform_get_drvdata(pdev);
++	struct arm_spe_pmu *spe_pmu = dev_get_drvdata(dev);
+ 	struct dev_ext_attribute *ea  		container_of(attr, struct dev_ext_attribute, attr);
+ 	int cap = (long)ea->var;
+@@ -247,8 +246,7 @@ static ssize_t arm_spe_pmu_get_attr_cpumask(struct device *dev,
+ 					    struct device_attribute *attr,
+ 					    char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct arm_spe_pmu *spe_pmu = platform_get_drvdata(pdev);
++	struct arm_spe_pmu *spe_pmu = dev_get_drvdata(dev);
+ 
+ 	return cpumap_print_to_pagebuf(true, buf, &spe_pmu->supported_cpus);
+ }
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.11.0
+
