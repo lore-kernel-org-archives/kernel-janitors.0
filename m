@@ -1,45 +1,34 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Mon, 23 Apr 2018 18:26:56 +0000
-Subject: Re: [PATCH 16/61] gpu: drm: vc4: simplify getting .drvdata
-Message-Id: <87vachhj7z.fsf@anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Apr 2018 13:46:34 +0000
+Subject: [PATCH] mfd: tps65911-comparator: Fix an off by one bug
+Message-Id: <20180419134634.GA19793@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-17-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-17-wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>, Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+The tps_comparators[] array is used in two places.  We only access the
+COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
+wrong elements and also one element beyond the end of the array.  There
+was supposed to be a zero element at the start of the array which is
+isn't accessed but makes the math work out nicely.
 
-Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
+Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I can't actually compile this code...
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Applied to drm-misc-next.  Thanks!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlreJXAACgkQtdYpNtH8
-nuhrfRAAtsGa94ThjB3penHE1ORa0TEnWyCvBzCk80ZZVXTyBXHL1l1vl0AIBFxD
-oHoWFooZYxH0FwpBqFPO1J/y4mVtbkbdOVd9AQZ8yccBiTtuehFMGhCW8RAKSYku
-NAgS3GPxx3QOk0Nn/eIQ1stlJi9PbJByUEwUuJwjMxzDcl18/wIrflzR6yjiaIbo
-c8XhcTao5yy2oHRfQPwSWPdgzaJaQLCQhFcPgoD4ioCNGdtfzQjWV3stHdIcvKwo
-BLlqFyar1+2ReUPNu7TZXpQWeZnP2aW9TAwY14S7/MZzRANcd7HkbMb8ceaUMQHs
-+TmhRNtJ//L4jSDhXE7/EZfRGbFyPhx2FZyXvI/UYtU7ZObkUYkW5yC7X7ha47E5
-uSLEaR6eTqnM/fuHOlEcubp7xpT2lOA2QKvcnUCp0UeNGp01f5BQkfWhbBqYndNb
-CgcaUNhKv7SOEvaIapDtuj/SlTtYEQiFzFcA7725Wfxt57iZusM0XwkzpJtfkDSF
-z1ZJmffQVskT+ioUClr8X/5R5yC7f3KMLJQ0L4kYjDnWx4D5qcaWmSavfmhgWG4t
-5QI8WrxWcNaMbPTkKxOqYxzN1XFE+oaFww68aCySBaFtBIbWASSjNYN4l1aC3P5y
-ZVyIoyN9EhmsHdbCLmBrwQJJSBCnfax8aN2zoMEhwiwawthxJG8=
-=v5Lv
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
+index c0789f81a1c5..35d7380f6fad 100644
+--- a/drivers/mfd/tps65911-comparator.c
++++ b/drivers/mfd/tps65911-comparator.c
+@@ -42,6 +42,7 @@ struct comparator {
+ };
+ 
+ static struct comparator tps_comparators[] = {
++	{	.name = "COMP", },
+ 	{
+ 		.name = "COMP1",
+ 		.reg = TPS65911_VMBCH,
