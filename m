@@ -1,23 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 30 Apr 2018 13:30:13 +0000
-Subject: Re: [PATCH] net: ethernet: ucc: fix spelling mistake: "tx-late-collsion" -> "tx-late-collision"
-Message-Id: <20180430.093013.1145501356576833835.davem@davemloft.net>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:32 +0000
+Subject: [PATCH 02/61] ata: simplify getting .drvdata
+Message-Id: <20180419140641.27926-3-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180428095707.7424-1-colin.king@canonical.com>
-In-Reply-To: <20180428095707.7424-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: leoyang.li@nxp.com, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 28 Apr 2018 10:57:07 +0100
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in tx_fw_stat_gstrings text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Applied.
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/ata/pata_samsung_cf.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+index bb96dc35950d..00602988bee9 100644
+--- a/drivers/ata/pata_samsung_cf.c
++++ b/drivers/ata/pata_samsung_cf.c
+@@ -608,17 +608,15 @@ static int __exit pata_s3c_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int pata_s3c_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ata_host *host = platform_get_drvdata(pdev);
++	struct ata_host *host = dev_get_drvdata(dev);
+ 
+ 	return ata_host_suspend(host, PMSG_SUSPEND);
+ }
+ 
+ static int pata_s3c_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ata_host *host = platform_get_drvdata(pdev);
+-	struct s3c_ide_platdata *pdata = dev_get_platdata(&pdev->dev);
++	struct ata_host *host = dev_get_drvdata(dev);
++	struct s3c_ide_platdata *pdata = dev_get_platdata(dev);
+ 	struct s3c_ide_info *info = host->private_data;
+ 
+ 	pata_s3c_hwinit(info, pdata);
+-- 
+2.11.0
+
