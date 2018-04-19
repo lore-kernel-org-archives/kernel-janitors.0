@@ -1,48 +1,51 @@
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-Date: Mon, 09 Apr 2018 00:28:20 +0000
-Subject: [PATCH AUTOSEL for 4.4 053/162] x86/nmi: Fix timeout test in test_nmi_ipi()
-Message-Id: <20180409002738.163941-53-alexander.levin@microsoft.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:30 +0000
+Subject: [PATCH 60/61] net: dsa: simplify getting .drvdata
+Message-Id: <20180419140641.27926-61-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180409002738.163941-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180409002738.163941-1-alexander.levin@microsoft.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-[ Upstream commit c133c7615751008f6c32ccae7cdfc5ff6e989c35 ]
-
-We're supposed to exit the loop with "timeout" set to zero.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Don Zickus <dzickus@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 99e8b9ca90d6 ("x86, NMI: Add NMI IPI selftest")
-Link: http://lkml.kernel.org/r/20170619105304.GA23995@elgon.mountain
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/x86/kernel/nmi_selftest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
-index 6d9582ec0324..d27f8d84c4ff 100644
---- a/arch/x86/kernel/nmi_selftest.c
-+++ b/arch/x86/kernel/nmi_selftest.c
-@@ -78,7 +78,7 @@ static void __init test_nmi_ipi(struct cpumask *mask)
+Build tested only. buildbot is happy. Please apply individually.
+
+ net/dsa/legacy.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/net/dsa/legacy.c b/net/dsa/legacy.c
+index 42a7b85b84e1..f8d6b212328f 100644
+--- a/net/dsa/legacy.c
++++ b/net/dsa/legacy.c
+@@ -687,8 +687,7 @@ static void dsa_shutdown(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int dsa_suspend(struct device *d)
+ {
+-	struct platform_device *pdev = to_platform_device(d);
+-	struct dsa_switch_tree *dst = platform_get_drvdata(pdev);
++	struct dsa_switch_tree *dst = dev_get_drvdata(d);
+ 	int i, ret = 0;
  
- 	/* Don't wait longer than a second */
- 	timeout = USEC_PER_SEC;
--	while (!cpumask_empty(mask) && timeout--)
-+	while (!cpumask_empty(mask) && --timeout)
- 	        udelay(1);
+ 	for (i = 0; i < dst->pd->nr_chips; i++) {
+@@ -703,8 +702,7 @@ static int dsa_suspend(struct device *d)
  
- 	/* What happens if we timeout, do we still unregister?? */
+ static int dsa_resume(struct device *d)
+ {
+-	struct platform_device *pdev = to_platform_device(d);
+-	struct dsa_switch_tree *dst = platform_get_drvdata(pdev);
++	struct dsa_switch_tree *dst = dev_get_drvdata(d);
+ 	int i, ret = 0;
+ 
+ 	for (i = 0; i < dst->pd->nr_chips; i++) {
 -- 
-2.15.1
+2.11.0
+
