@@ -1,74 +1,216 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Mon, 30 Apr 2018 13:38:04 +0000
-Subject: Re: [PATCH][next] pinctrl: actions: make s900_functions, s900_padinfo and s900_pads static
-Message-Id: <20180430132604.bgcstndvverw766w@linaro.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:37 +0000
+Subject: [PATCH 07/61] dma: simplify getting .drvdata
+Message-Id: <20180419140641.27926-8-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430130434.1361-1-colin.king@canonical.com>
-In-Reply-To: <20180430130434.1361-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Li Yang <leoyang.li@nxp.com>, Zhang Wei <zw@zh-kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 
-On Mon, Apr 30, 2018 at 02:04:34PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> s900_functions, s900_padinfo and s900_pads are local to the source and do
-> not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> drivers/pinctrl/actions/pinctrl-s900.c:1445:30: warning: symbol
-> 's900_functions' was not declared. Should it be static?
-> drivers/pinctrl/actions/pinctrl-s900.c:1664:20: warning: symbol
-> 's900_padinfo' was not declared. Should it be static?
-> drivers/pinctrl/actions/pinctrl-s900.c:207:31: warning: symbol
-> 's900_pads' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Looks good.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
+Build tested only. buildbot is happy. Please apply individually.
 
-Thanks,
-Mani
+ drivers/dma/at_hdmac.c  |  9 +++------
+ drivers/dma/at_xdmac.c  |  9 +++------
+ drivers/dma/fsldma.c    |  6 ++----
+ drivers/dma/idma64.c    |  6 ++----
+ drivers/dma/ste_dma40.c | 12 ++++--------
+ drivers/dma/txx9dmac.c  |  8 +++-----
+ 6 files changed, 17 insertions(+), 33 deletions(-)
 
-> ---
->  drivers/pinctrl/actions/pinctrl-s900.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
-> index 49a04e224ee6..08d93f8fc086 100644
-> --- a/drivers/pinctrl/actions/pinctrl-s900.c
-> +++ b/drivers/pinctrl/actions/pinctrl-s900.c
-> @@ -204,7 +204,7 @@
->  #define NUM_PADS		(_PIN(3) + 1)
->  
->  /* Pad names as specified in datasheet */
-> -const struct pinctrl_pin_desc s900_pads[] = {
-> +static const struct pinctrl_pin_desc s900_pads[] = {
->  	PINCTRL_PIN(ETH_TXD0, "eth_txd0"),
->  	PINCTRL_PIN(ETH_TXD1, "eth_txd1"),
->  	PINCTRL_PIN(ETH_TXEN, "eth_txen"),
-> @@ -1442,7 +1442,7 @@ static const char * const sirq2_groups[] = {
->  		.ngroups = ARRAY_SIZE(fname##_groups),	\
->  	}
->  
-> -const struct owl_pinmux_func s900_functions[] = {
-> +static const struct owl_pinmux_func s900_functions[] = {
->  	[S900_MUX_ERAM] = FUNCTION(eram),
->  	[S900_MUX_ETH_RMII] = FUNCTION(eth_rmii),
->  	[S900_MUX_ETH_SMII] = FUNCTION(eth_smii),
-> @@ -1661,7 +1661,7 @@ static PAD_ST_CONF(I2S_MCLK0, 1, 0, 1);
->  	}
->  
->  /* Pad info table */
-> -struct owl_padinfo s900_padinfo[NUM_PADS] = {
-> +static struct owl_padinfo s900_padinfo[NUM_PADS] = {
->  	[ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
->  	[ETH_TXD1] = PAD_INFO_ST(ETH_TXD1),
->  	[ETH_TXEN] = PAD_INFO_ST(ETH_TXEN),
-> -- 
-> 2.17.0
-> 
+diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
+index a861b5b4d443..75f38d19fcbe 100644
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -2041,8 +2041,7 @@ static void at_dma_shutdown(struct platform_device *pdev)
+ 
+ static int at_dma_prepare(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct at_dma *atdma = platform_get_drvdata(pdev);
++	struct at_dma *atdma = dev_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+ 
+ 	list_for_each_entry_safe(chan, _chan, &atdma->dma_common.channels,
+@@ -2076,8 +2075,7 @@ static void atc_suspend_cyclic(struct at_dma_chan *atchan)
+ 
+ static int at_dma_suspend_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct at_dma *atdma = platform_get_drvdata(pdev);
++	struct at_dma *atdma = dev_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+ 
+ 	/* preserve data */
+@@ -2118,8 +2116,7 @@ static void atc_resume_cyclic(struct at_dma_chan *atchan)
+ 
+ static int at_dma_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct at_dma *atdma = platform_get_drvdata(pdev);
++	struct at_dma *atdma = dev_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+ 
+ 	/* bring back DMA controller */
+diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
+index 94236ec9d410..4bf72561667c 100644
+--- a/drivers/dma/at_xdmac.c
++++ b/drivers/dma/at_xdmac.c
+@@ -1833,8 +1833,7 @@ static void at_xdmac_free_chan_resources(struct dma_chan *chan)
+ #ifdef CONFIG_PM
+ static int atmel_xdmac_prepare(struct device *dev)
+ {
+-	struct platform_device	*pdev = to_platform_device(dev);
+-	struct at_xdmac		*atxdmac = platform_get_drvdata(pdev);
++	struct at_xdmac		*atxdmac = dev_get_drvdata(dev);
+ 	struct dma_chan		*chan, *_chan;
+ 
+ 	list_for_each_entry_safe(chan, _chan, &atxdmac->dma.channels, device_node) {
+@@ -1853,8 +1852,7 @@ static int atmel_xdmac_prepare(struct device *dev)
+ #ifdef CONFIG_PM_SLEEP
+ static int atmel_xdmac_suspend(struct device *dev)
+ {
+-	struct platform_device	*pdev = to_platform_device(dev);
+-	struct at_xdmac		*atxdmac = platform_get_drvdata(pdev);
++	struct at_xdmac		*atxdmac = dev_get_drvdata(dev);
+ 	struct dma_chan		*chan, *_chan;
+ 
+ 	list_for_each_entry_safe(chan, _chan, &atxdmac->dma.channels, device_node) {
+@@ -1878,8 +1876,7 @@ static int atmel_xdmac_suspend(struct device *dev)
+ 
+ static int atmel_xdmac_resume(struct device *dev)
+ {
+-	struct platform_device	*pdev = to_platform_device(dev);
+-	struct at_xdmac		*atxdmac = platform_get_drvdata(pdev);
++	struct at_xdmac		*atxdmac = dev_get_drvdata(dev);
+ 	struct at_xdmac_chan	*atchan;
+ 	struct dma_chan		*chan, *_chan;
+ 	int			i;
+diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
+index 3eaece888e75..1117b5123a6f 100644
+--- a/drivers/dma/fsldma.c
++++ b/drivers/dma/fsldma.c
+@@ -1328,8 +1328,7 @@ static int fsldma_of_remove(struct platform_device *op)
+ #ifdef CONFIG_PM
+ static int fsldma_suspend_late(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct fsldma_device *fdev = platform_get_drvdata(pdev);
++	struct fsldma_device *fdev = dev_get_drvdata(dev);
+ 	struct fsldma_chan *chan;
+ 	int i;
+ 
+@@ -1360,8 +1359,7 @@ static int fsldma_suspend_late(struct device *dev)
+ 
+ static int fsldma_resume_early(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct fsldma_device *fdev = platform_get_drvdata(pdev);
++	struct fsldma_device *fdev = dev_get_drvdata(dev);
+ 	struct fsldma_chan *chan;
+ 	u32 mode;
+ 	int i;
+diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
+index 1953e57505f4..e5c911200bdb 100644
+--- a/drivers/dma/idma64.c
++++ b/drivers/dma/idma64.c
+@@ -670,8 +670,7 @@ static int idma64_platform_remove(struct platform_device *pdev)
+ 
+ static int idma64_pm_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct idma64_chip *chip = platform_get_drvdata(pdev);
++	struct idma64_chip *chip = dev_get_drvdata(dev);
+ 
+ 	idma64_off(chip->idma64);
+ 	return 0;
+@@ -679,8 +678,7 @@ static int idma64_pm_suspend(struct device *dev)
+ 
+ static int idma64_pm_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct idma64_chip *chip = platform_get_drvdata(pdev);
++	struct idma64_chip *chip = dev_get_drvdata(dev);
+ 
+ 	idma64_on(chip->idma64);
+ 	return 0;
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index c2b089af0420..1bc149af990e 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2889,8 +2889,7 @@ static int __init d40_dmaengine_init(struct d40_base *base,
+ #ifdef CONFIG_PM_SLEEP
+ static int dma40_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	ret = pm_runtime_force_suspend(dev);
+@@ -2904,8 +2903,7 @@ static int dma40_suspend(struct device *dev)
+ 
+ static int dma40_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 	int ret = 0;
+ 
+ 	if (base->lcpa_regulator) {
+@@ -2970,8 +2968,7 @@ static void d40_save_restore_registers(struct d40_base *base, bool save)
+ 
+ static int dma40_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 
+ 	d40_save_restore_registers(base, true);
+ 
+@@ -2985,8 +2982,7 @@ static int dma40_runtime_suspend(struct device *dev)
+ 
+ static int dma40_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 
+ 	d40_save_restore_registers(base, false);
+ 
+diff --git a/drivers/dma/txx9dmac.c b/drivers/dma/txx9dmac.c
+index 4d8c7b9078fd..eb45af71d3a3 100644
+--- a/drivers/dma/txx9dmac.c
++++ b/drivers/dma/txx9dmac.c
+@@ -1244,8 +1244,7 @@ static void txx9dmac_shutdown(struct platform_device *pdev)
+ 
+ static int txx9dmac_suspend_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
++	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
+ 
+ 	txx9dmac_off(ddev);
+ 	return 0;
+@@ -1253,9 +1252,8 @@ static int txx9dmac_suspend_noirq(struct device *dev)
+ 
+ static int txx9dmac_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
+-	struct txx9dmac_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
++	struct txx9dmac_platform_data *pdata = dev_get_platdata(dev);
+ 	u32 mcr;
+ 
+ 	mcr = TXX9_DMA_MCR_MSTEN | MCR_LE;
+-- 
+2.11.0
+
