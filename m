@@ -1,35 +1,51 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 26 Apr 2018 09:55:43 +0000
-Subject: Re: [PATCH] video: sh_mobile_lcdcfb: Delete an error message for a failed memory allocation in two f
-Message-Id: <4464673.qDa0qndI0l@amdc3058>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:02 +0000
+Subject: [PATCH 32/61] net: ethernet: cadence: simplify getting .drvdata
+Message-Id: <20180419140641.27926-33-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171126130035epcas1p3facfaae6b81c00dc4c9d255e5b8b8bc0@epcas1p3.samsung.com>
- <478c51ab-b4ef-47e1-0b53-8b4e1f3b931a@users.sourceforge.net>
-In-Reply-To: <478c51ab-b4ef-47e1-0b53-8b4e1f3b931a@users.sourceforge.net>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, Kees Cook <keescook@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Wei Yongjun <weiyongjun1@huawei.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, netdev@vger.kernel.org
 
-On Sunday, November 26, 2017 02:00:16 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Nov 2017 13:48:55 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-I've done requested audit regarding multiple fb devices support
-myself now and it is okay to apply this patch.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Patch queued for 4.18, thanks.
+Build tested only. buildbot is happy. Please apply individually.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+ drivers/net/ethernet/cadence/macb_main.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index b4c9268100bb..136bfd5d0be9 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -4056,8 +4056,7 @@ static int macb_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused macb_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct net_device *netdev = platform_get_drvdata(pdev);
++	struct net_device *netdev = dev_get_drvdata(dev);
+ 	struct macb *bp = netdev_priv(netdev);
+ 
+ 	netif_carrier_off(netdev);
+@@ -4079,8 +4078,7 @@ static int __maybe_unused macb_suspend(struct device *dev)
+ 
+ static int __maybe_unused macb_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct net_device *netdev = platform_get_drvdata(pdev);
++	struct net_device *netdev = dev_get_drvdata(dev);
+ 	struct macb *bp = netdev_priv(netdev);
+ 
+ 	if (bp->wol & MACB_WOL_ENABLED) {
+-- 
+2.11.0
 
