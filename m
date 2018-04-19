@@ -1,25 +1,75 @@
-From: Jeremy Kerr <jk@ozlabs.org>
-Date: Thu, 26 Apr 2018 21:38:08 +0000
-Subject: Re: [PATCH] serial/aspeed-vuart: fix a couple mod_timer() calls
-Message-Id: <5a454ea3-9a5c-349c-f094-0f3eecf9cba2@ozlabs.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:16 +0000
+Subject: [PATCH 46/61] spi: simplify getting .drvdata
+Message-Id: <20180419140641.27926-47-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180426055055.GA9742@mwanda>
-In-Reply-To: <20180426055055.GA9742@mwanda>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Dan,
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-> The "unthrottle_timeout" is HZ/10 but mod_timer() takes a the actual
-> jiffie where you want it to timeout, not an offset.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Ah, of course.
+Build tested only. buildbot is happy. Please apply individually.
 
-Acked-by: Jeremy Kerr <jk@ozlabs.org>
+ drivers/spi/spi-cadence.c      | 6 ++----
+ drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-Cheers,
+diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
+index 5c9516ae4942..de394422b611 100644
+--- a/drivers/spi/spi-cadence.c
++++ b/drivers/spi/spi-cadence.c
+@@ -686,8 +686,7 @@ static int cdns_spi_remove(struct platform_device *pdev)
+  */
+ static int __maybe_unused cdns_spi_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 
+ 	return spi_master_suspend(master);
+ }
+@@ -702,8 +701,7 @@ static int __maybe_unused cdns_spi_suspend(struct device *dev)
+  */
+ static int __maybe_unused cdns_spi_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct cdns_spi *xspi = spi_master_get_devdata(master);
+ 
+ 	cdns_spi_init_hw(xspi);
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 18aeaceee286..3608db4ff368 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -918,8 +918,7 @@ static int zynqmp_qspi_start_transfer(struct spi_master *master,
+  */
+ static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 
+ 	spi_master_suspend(master);
+ 
+@@ -939,8 +938,7 @@ static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
+  */
+ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 	int ret = 0;
+ 
+-- 
+2.11.0
 
-
-Jeremy
