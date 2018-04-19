@@ -1,44 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 20 Apr 2018 13:15:19 +0000
-Subject: [PATCH][next] cifs: ensure full_path is free'd on error exit path
-Message-Id: <20180420131519.30510-1-colin.king@canonical.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:47 +0000
+Subject: [PATCH 17/61] hid: simplify getting .drvdata
+Message-Id: <20180419140641.27926-18-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>, samba-technical@lists.samba.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Currently the check on the mode flags that returns -EPERM is leaking
-full_path on the error exit return. Fix this by kfree'ing it before
-the return.
-
-Detected by CoverityScan, CID#1468029 ("Resource Leak")
-
-Fixes: 49162bfde140 ("cifs: do not allow creating sockets except with SMB1 posix exensions")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- fs/cifs/dir.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index f0a759dd6817..207883b39362 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -684,8 +684,10 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 		goto mknod_out;
- 	}
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/hid/hid-sensor-custom.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/hid/hid-sensor-custom.c b/drivers/hid/hid-sensor-custom.c
+index e8a114157f87..cd0c2a7c8003 100644
+--- a/drivers/hid/hid-sensor-custom.c
++++ b/drivers/hid/hid-sensor-custom.c
+@@ -157,8 +157,7 @@ static int usage_id_cmp(const void *p1, const void *p2)
+ static ssize_t enable_sensor_show(struct device *dev,
+ 				  struct device_attribute *attr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
  
--	if (!S_ISCHR(mode) && !S_ISBLK(mode))
-+	if (!S_ISCHR(mode) && !S_ISBLK(mode)) {
-+		kfree(full_path);
- 		return -EPERM;
-+	}
+ 	return sprintf(buf, "%d\n", sensor_inst->enable);
+ }
+@@ -237,8 +236,7 @@ static ssize_t enable_sensor_store(struct device *dev,
+ 				   struct device_attribute *attr,
+ 				   const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
+ 	int value;
+ 	int ret = -EINVAL;
  
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
- 		goto mknod_out;
+@@ -283,8 +281,7 @@ static const struct attribute_group enable_sensor_attr_group = {
+ static ssize_t show_value(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
+ 	struct hid_sensor_hub_attribute_info *attribute;
+ 	int index, usage, field_index;
+ 	char name[HID_CUSTOM_NAME_LENGTH];
+@@ -392,8 +389,7 @@ static ssize_t show_value(struct device *dev, struct device_attribute *attr,
+ static ssize_t store_value(struct device *dev, struct device_attribute *attr,
+ 			   const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
+ 	int index, field_index, usage;
+ 	char name[HID_CUSTOM_NAME_LENGTH];
+ 	int value;
 -- 
-2.17.0
+2.11.0
 
