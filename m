@@ -1,63 +1,51 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 27 Apr 2018 18:23:33 +0000
-Subject: Re: [PATCH] RDMA/iwpm: fix memory leak on map_info
-Message-Id: <1524853413.11756.71.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-2v4Z2yp12xzBYoiqvhCn"
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:19 +0000
+Subject: [PATCH 49/61] staging: nvec: simplify getting .drvdata
+Message-Id: <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180425162404.28625-1-colin.king@canonical.com>
-In-Reply-To: <20180425162404.28625-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-
-
---=-2v4Z2yp12xzBYoiqvhCn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2018-04-25 at 17:24 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> In the cases where iwpm_hash_bucket is NULL and where function
-> get_mapinfo_hash_bucket returns NULL then the map_info is never added
-> to hash_bucket_head and hence there is a leak of map_info. Fix this
-> by nullifying hash_bucket_head and if that is null we know that
-> that map_info was not added to hash_bucket_head and hence map_info
-> should be free'd.
->=20
-> Detected by CoverityScan, CID#1222481 ("Resource Leak")
->=20
-> Fixes: 30dc5e63d6a5 ("RDMA/core: Add support for iWARP Port Mapper user s=
-pace service")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks, applied to for-rc.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-2v4Z2yp12xzBYoiqvhCn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
 
------BEGIN PGP SIGNATURE-----
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrjaqUACgkQuCajMw5X
-L93FUg/+K2La2SGLcWy0/0smPST/DIwfhF9jqpZ9yYrgGzBtZD7ZtQR1XPvRQxrC
-9pR5YOf6MwdEpTUKI9xb6utIQ53jG/fE7X0LvgpHFPQWNxm5KwVQ9eG7nfOBxFGr
-74UvZoK76eBGnWTPCDxdNHFSh8NZ+071TFXvSrZcTGsOTacp5/az8Z5c1GYqKyXL
-Jvz3eork1eS5vHa2YBQ3+3ynrnHqjRFU664KIXUyBXlJZEaCM+KTLRqyeqonPKPn
-UREHFtzEjD5CX3IEunE5+BinI8fv/dCfzD+pKLrzELapcMr2BQA+1hVHQuPHm2t6
-fECcHGVh0Qo2wNmQhJ+yGY01snkEO6pkNDSny1UJf+Wjt9zOp/PfV5RSTVnaqkXT
-Va8uYhwx6e5TZC851YpC1D5sLdxqcadTzUTolGH81RC3a04Vlvpx7jJOrWBT4yZa
-cYfeh/a/MPn/6uA520JqAjfdv7P37RXAmaHN6M+Hq+9NDUzY1e6mmwqTKj80BKJR
-ardIfFBVjfpWRVUSocwul6zRllGuA+c+DxVeH3ezp/b87V92UVedCYa1SvpKqLYO
-rozn76Py1cxNj0kOqocRKMDo9K8Zh7A519xr27bIR2xgPgfDlKb/fTc0pAdaG5Za
-+d/WIfQSPhtNbtWHWlRoR2o3/hFWKld1xulDF+JrkG8fkrOHfLE=
-=+d5T
------END PGP SIGNATURE-----
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
---=-2v4Z2yp12xzBYoiqvhCn--
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/staging/nvec/nvec.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 52054a528723..2a5e0dcf4162 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -925,8 +925,7 @@ static int tegra_nvec_remove(struct platform_device *pdev)
+ static int nvec_suspend(struct device *dev)
+ {
+ 	int err;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct nvec_chip *nvec = platform_get_drvdata(pdev);
++	struct nvec_chip *nvec = dev_get_drvdata(dev);
+ 	struct nvec_msg *msg;
+ 	char ap_suspend[] = { NVEC_SLEEP, AP_SUSPEND };
+ 
+@@ -946,8 +945,7 @@ static int nvec_suspend(struct device *dev)
+ 
+ static int nvec_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct nvec_chip *nvec = platform_get_drvdata(pdev);
++	struct nvec_chip *nvec = dev_get_drvdata(dev);
+ 
+ 	dev_dbg(nvec->dev, "resuming\n");
+ 	tegra_init_i2c_slave(nvec);
+-- 
+2.11.0
 
