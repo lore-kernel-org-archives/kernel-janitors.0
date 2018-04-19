@@ -1,72 +1,50 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Sun, 29 Apr 2018 16:26:51 +0000
-Subject: Re: [PATCH] can: cc770: fix spelling mistake: "comptibility" -> "compatibility"
-Message-Id: <68f69d7c-b437-831e-b466-6d699c0000ee@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lmPQESVjH3ez8IxUCxopcQu78NJMGezfp"
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:25 +0000
+Subject: [PATCH 55/61] usb: mtu3: simplify getting .drvdata
+Message-Id: <20180419140641.27926-56-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180428221600.20039-1-colin.king@canonical.com>
-In-Reply-To: <20180428221600.20039-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, Wolfgang Grandegger <wg@grandegger.com>, Andri Yngvason <andri.yngvason@marel.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---lmPQESVjH3ez8IxUCxopcQu78NJMGezfp
-Content-Type: multipart/mixed; boundary="lovmR6k3y1lLUeXXVsgLT1ligOlx6Ojsn";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Colin King <colin.king@canonical.com>,
- Wolfgang Grandegger <wg@grandegger.com>,
- Andri Yngvason <andri.yngvason@marel.com>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <68f69d7c-b437-831e-b466-6d699c0000ee@pengutronix.de>
-Subject: Re: [PATCH] can: cc770: fix spelling mistake: "comptibility" ->
- "compatibility"
-References: <20180428221600.20039-1-colin.king@canonical.com>
-In-Reply-To: <20180428221600.20039-1-colin.king@canonical.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
---lovmR6k3y1lLUeXXVsgLT1ligOlx6Ojsn
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On 04/29/2018 12:16 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in module parameter description text
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Build tested only. buildbot is happy. Please apply individually.
 
-Added to linux-can-next.
+ drivers/usb/mtu3/mtu3_plat.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thnx,
-Marc
+diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
+index 628d5ce356ca..46551f6d16fd 100644
+--- a/drivers/usb/mtu3/mtu3_plat.c
++++ b/drivers/usb/mtu3/mtu3_plat.c
+@@ -447,8 +447,7 @@ static int mtu3_remove(struct platform_device *pdev)
+  */
+ static int __maybe_unused mtu3_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ssusb_mtk *ssusb = platform_get_drvdata(pdev);
++	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+@@ -466,8 +465,7 @@ static int __maybe_unused mtu3_suspend(struct device *dev)
+ 
+ static int __maybe_unused mtu3_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ssusb_mtk *ssusb = platform_get_drvdata(pdev);
++	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+-- 
+2.11.0
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---lovmR6k3y1lLUeXXVsgLT1ligOlx6Ojsn--
-
---lmPQESVjH3ez8IxUCxopcQu78NJMGezfp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlrl8kwACgkQk9IU1zQo
-ZfF7KQgAnMzozpwBqRFqe6cA73ufgvrk6aZZ2JOiy/405yQUBJnZAKXwpchTgH+N
-jwHHZMVcua5ku5vDuaK/ZvoQvditXqc+tX4uYk4T2XJtv8tqZkNh/5QmRn6g0N7I
-vZwuUXKOi4PvtwaI0Lg09VEPHPPQ3C+a9gI6EUUOTiqx23HOcc/UhKjk8hfIeUNP
-Ur8StQLIQdhsQc0mmjfSAlzrFfaBtDEVeNZ+s7Ru+U5eyg8AcDYaYTNfS2xHGVld
-VdDDnVfmLhNgvSTUSgBbuxprU37xe+LBJeHBzGE5pONhOqg5GrT2MxIx1heMD98+
-VqXRgH9bg2gDK42/hu/7GIQWKGOB5Q==
-=mn+N
------END PGP SIGNATURE-----
-
---lmPQESVjH3ez8IxUCxopcQu78NJMGezfp--
