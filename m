@@ -1,15 +1,15 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:42 +0000
-Subject: [PATCH 12/61] gpu: drm: msm: adreno: simplify getting .drvdata
-Message-Id: <20180419140641.27926-13-wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:52 +0000
+Subject: [PATCH 22/61] input: mouse: simplify getting .drvdata
+Message-Id: <20180419140641.27926-23-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
 
 We should get drvdata from struct device directly. Going via
 platform_device is an unneeded step back and forth.
@@ -19,32 +19,33 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/gpu/drm/msm/adreno/adreno_device.c | 6 ++----
+ drivers/input/mouse/navpoint.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-index 8e0cb161754b..125c115c7ab4 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-@@ -301,16 +301,14 @@ static const struct of_device_id dt_match[] = {
- #ifdef CONFIG_PM
- static int adreno_resume(struct device *dev)
+diff --git a/drivers/input/mouse/navpoint.c b/drivers/input/mouse/navpoint.c
+index d6e8f58a1de3..3d83a79e14d9 100644
+--- a/drivers/input/mouse/navpoint.c
++++ b/drivers/input/mouse/navpoint.c
+@@ -320,8 +320,7 @@ static int navpoint_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused navpoint_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_gpu *gpu = platform_get_drvdata(pdev);
-+	struct msm_gpu *gpu = dev_get_drvdata(dev);
+-	struct navpoint *navpoint = platform_get_drvdata(pdev);
++	struct navpoint *navpoint = dev_get_drvdata(dev);
+ 	struct input_dev *input = navpoint->input;
  
- 	return gpu->funcs->pm_resume(gpu);
- }
+ 	mutex_lock(&input->mutex);
+@@ -334,8 +333,7 @@ static int __maybe_unused navpoint_suspend(struct device *dev)
  
- static int adreno_suspend(struct device *dev)
+ static int __maybe_unused navpoint_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_gpu *gpu = platform_get_drvdata(pdev);
-+	struct msm_gpu *gpu = dev_get_drvdata(dev);
+-	struct navpoint *navpoint = platform_get_drvdata(pdev);
++	struct navpoint *navpoint = dev_get_drvdata(dev);
+ 	struct input_dev *input = navpoint->input;
  
- 	return gpu->funcs->pm_suspend(gpu);
- }
+ 	mutex_lock(&input->mutex);
 -- 
 2.11.0
 
