@@ -1,48 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Apr 2018 11:19:16 +0000
-Subject: [bug report] net/ipv6: separate handling of FIB entries from dst based routes
-Message-Id: <20180420111916.GA18520@mwanda>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:12 +0000
+Subject: [PATCH 42/61] ptp: simplify getting .drvdata
+Message-Id: <20180419140641.27926-43-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org
 
-Hello David Ahern,
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-The patch 93531c674315: "net/ipv6: separate handling of FIB entries 
-from dst based routes" from Apr 17, 2018, leads to the following 
-Smatch complaint:
+Build tested only. buildbot is happy. Please apply individually.
 
-    net/ipv6/route.c:2128 fib6_check()
-    error: we previously assumed 'f6i' could be null (see line 2124)
+ drivers/ptp/ptp_dte.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-net/ipv6/route.c
-  2123	/*
-  2124	 *	Destination cache support functions
-  2125	 */
-  2126	
-  2127	static bool fib6_check(struct fib6_info *f6i, u32 cookie)
-  2128	{
-  2129		u32 rt_cookie = 0;
-  2130	
-  2131          if ((f6i && !rt6_get_cookie_safe(f6i, &rt_cookie)) ||
-                     ^^^
-Check
+diff --git a/drivers/ptp/ptp_dte.c b/drivers/ptp/ptp_dte.c
+index 6edd3b9c7f01..5481a27d4fec 100644
+--- a/drivers/ptp/ptp_dte.c
++++ b/drivers/ptp/ptp_dte.c
+@@ -287,8 +287,7 @@ static int ptp_dte_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int ptp_dte_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ptp_dte *ptp_dte = platform_get_drvdata(pdev);
++	struct ptp_dte *ptp_dte = dev_get_drvdata(dev);
+ 	u8 i;
+ 
+ 	for (i = 0; i < DTE_NUM_REGS_TO_RESTORE; i++) {
+@@ -304,8 +303,7 @@ static int ptp_dte_suspend(struct device *dev)
+ 
+ static int ptp_dte_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ptp_dte *ptp_dte = platform_get_drvdata(pdev);
++	struct ptp_dte *ptp_dte = dev_get_drvdata(dev);
+ 	u8 i;
+ 
+ 	for (i = 0; i < DTE_NUM_REGS_TO_RESTORE; i++) {
+-- 
+2.11.0
 
-  2132               rt_cookie != cookie)
-  2133                  return false;
-  2134  
-  2135          if (fib6_check_expired(f6i))
-                                       ^^^
-Unchecked dereference inside function.
-
-  2136                  return false;
-  2137  
-  2138          return true;
-  2139  }
-
-regards,
-dan carpenter
