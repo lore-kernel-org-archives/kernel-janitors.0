@@ -1,7 +1,7 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:09 +0000
-Subject: [PATCH 39/61] pinctrl: intel: simplify getting .drvdata
-Message-Id: <20180419140641.27926-40-wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:05:54 +0000
+Subject: [PATCH 24/61] iommu: simplify getting .drvdata
+Message-Id: <20180419140641.27926-25-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, linux-arm-msm@vger.kernel.org
 
 We should get drvdata from struct device directly. Going via
 platform_device is an unneeded step back and forth.
@@ -19,83 +19,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/pinctrl/intel/pinctrl-baytrail.c   | 6 ++----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 6 ++----
- drivers/pinctrl/intel/pinctrl-intel.c      | 6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/iommu/qcom_iommu.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 6b52ea1440a6..71dadf8081af 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1848,8 +1848,7 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int byt_gpio_suspend(struct device *dev)
+diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
+index 65b9c99707f8..fe88a4880d3a 100644
+--- a/drivers/iommu/qcom_iommu.c
++++ b/drivers/iommu/qcom_iommu.c
+@@ -885,16 +885,14 @@ static int qcom_iommu_device_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused qcom_iommu_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
- 	int i;
+-	struct qcom_iommu_dev *qcom_iommu = platform_get_drvdata(pdev);
++	struct qcom_iommu_dev *qcom_iommu = dev_get_drvdata(dev);
  
- 	for (i = 0; i < vg->soc_data->npins; i++) {
-@@ -1877,8 +1876,7 @@ static int byt_gpio_suspend(struct device *dev)
+ 	return qcom_iommu_enable_clocks(qcom_iommu);
+ }
  
- static int byt_gpio_resume(struct device *dev)
+ static int __maybe_unused qcom_iommu_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
- 	int i;
+-	struct qcom_iommu_dev *qcom_iommu = platform_get_drvdata(pdev);
++	struct qcom_iommu_dev *qcom_iommu = dev_get_drvdata(dev);
  
- 	for (i = 0; i < vg->soc_data->npins; i++) {
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index b1ae1618fefe..dd9b2554548f 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1752,8 +1752,7 @@ static int chv_pinctrl_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int chv_pinctrl_suspend_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct chv_pinctrl *pctrl = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	int i;
+ 	qcom_iommu_disable_clocks(qcom_iommu);
  
-@@ -1786,8 +1785,7 @@ static int chv_pinctrl_suspend_noirq(struct device *dev)
- 
- static int chv_pinctrl_resume_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct chv_pinctrl *pctrl = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	int i;
- 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 1e24a6b8a64e..04a052292619 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1409,8 +1409,7 @@ static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned pin)
- 
- int intel_pinctrl_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct intel_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
- 	struct intel_community_context *communities;
- 	struct intel_pad_context *pads;
- 	int i;
-@@ -1471,8 +1470,7 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
- 
- int intel_pinctrl_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct intel_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
- 	const struct intel_community_context *communities;
- 	const struct intel_pad_context *pads;
- 	int i;
 -- 
 2.11.0
 
