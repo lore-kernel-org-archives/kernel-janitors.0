@@ -1,55 +1,51 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Mon, 30 Apr 2018 13:31:08 +0000
-Subject: Re: [PATCH][next] pinctrl: actions: fix missing break in PIN_CONFIG_DRIVE_STRENGTH case.
-Message-Id: <20180430131908.gaah7bkt4htjibbs@linaro.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:31 +0000
+Subject: [PATCH 61/61] ASoC: atmel: simplify getting .drvdata
+Message-Id: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430131420.6155-1-colin.king@canonical.com>
-In-Reply-To: <20180430131420.6155-1-colin.king@canonical.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Hi Colin,
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-On Mon, Apr 30, 2018 at 02:14:20PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
-> a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
-> checks against *arg. This looks like an unintentional missing break so
-> add in the break.
-> 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Yes, break has been left out by mistake. Thanks for fixing!
+Build tested only. buildbot is happy. Please apply individually.
 
-> Detected by CoverityScan, CID#1468459 ("Missing break in switch")
-> 
-> Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+ sound/soc/atmel/atmel_ssc_dai.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
+diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+index a1e2c5682dcd..4a0275a6505d 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.c
++++ b/sound/soc/atmel/atmel_ssc_dai.c
+@@ -1002,8 +1002,7 @@ static const struct snd_soc_component_driver atmel_ssc_component = {
+ 
+ static int asoc_ssc_init(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ssc_device *ssc = platform_get_drvdata(pdev);
++	struct ssc_device *ssc = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	ret = snd_soc_register_component(dev, &atmel_ssc_component,
+@@ -1033,8 +1032,7 @@ static int asoc_ssc_init(struct device *dev)
+ 
+ static void asoc_ssc_exit(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ssc_device *ssc = platform_get_drvdata(pdev);
++	struct ssc_device *ssc = dev_get_drvdata(dev);
+ 
+ 	if (ssc->pdata->use_dma)
+ 		atmel_pcm_dma_platform_unregister(dev);
+-- 
+2.11.0
 
-Thanks,
-Mani
-
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index 928b40f71a3c..d15abb97821e 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -441,6 +441,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
->  		default:
->  			return -EINVAL;
->  		}
-> +		break;
->  	case PIN_CONFIG_SLEW_RATE:
->  		if (*arg)
->  			*arg = 1;
-> -- 
-> 2.17.0
-> 
