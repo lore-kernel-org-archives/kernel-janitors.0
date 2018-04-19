@@ -1,24 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 01 Apr 2018 03:21:10 +0000
-Subject: Re: [PATCH net-next] vlan: vlan_hw_filter_capable() can be static
-Message-Id: <20180331.232110.214944125061454087.davem@davemloft.net>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:15 +0000
+Subject: [PATCH 45/61] slimbus: simplify getting .drvdata
+Message-Id: <20180419140641.27926-46-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1522476701-93237-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1522476701-93237-1-git-send-email-weiyongjun1@huawei.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: Vishakha.Narvekar@dell.com, makita.toshiaki@lab.ntt.co.jp, kstewart@linuxfoundation.org, tariqt@mellanox.com, galp@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Sat, 31 Mar 2018 06:11:41 +0000
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-> Fixes the following sparse warning:
-> 
-> net/8021q/vlan_core.c:168:6: warning:
->  symbol 'vlan_hw_filter_capable' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Applied, thank you.
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/slimbus/qcom-ctrl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index ffb46f915334..45c38fff15d2 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -655,8 +655,7 @@ static int qcom_slim_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM
+ static int qcom_slim_runtime_suspend(struct device *device)
+ {
+-	struct platform_device *pdev = to_platform_device(device);
+-	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
++	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
+ 	int ret;
+ 
+ 	dev_dbg(device, "pm_runtime: suspending...\n");
+@@ -673,8 +672,7 @@ static int qcom_slim_runtime_suspend(struct device *device)
+ 
+ static int qcom_slim_runtime_resume(struct device *device)
+ {
+-	struct platform_device *pdev = to_platform_device(device);
+-	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
++	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
+ 	int ret = 0;
+ 
+ 	dev_dbg(device, "pm_runtime: resuming...\n");
+-- 
+2.11.0
+
