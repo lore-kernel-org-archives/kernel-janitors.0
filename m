@@ -1,41 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 18 Apr 2018 16:23:15 +0000
-Subject: Re: [PATCH][next] spi: pxa2xx: make function pxa2xx_spi_transfer_one static
-Message-Id: <20180418162315.GF10061@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="QXO0/MSS4VvK6f+D"
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:11 +0000
+Subject: [PATCH 41/61] power: supply: simplify getting .drvdata
+Message-Id: <20180419140641.27926-42-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180418161842.19846-1-colin.king@canonical.com>
-In-Reply-To: <20180418161842.19846-1-colin.king@canonical.com>
-To: linux-arm-kernel@lists.infradead.org
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
 
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
---QXO0/MSS4VvK6f+D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Wed, Apr 18, 2018 at 05:18:42PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The function pxa2xx_spi_transfer_one is local to the source and
-> do not need to be in global scope, so make it static.
+Build tested only. buildbot is happy. Please apply individually.
 
-Someone already sent a patch for this which I applied earlier today.
+ drivers/power/supply/gpio-charger.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---QXO0/MSS4VvK6f+D
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
+index bd2468ca6b63..c3f2a9479468 100644
+--- a/drivers/power/supply/gpio-charger.c
++++ b/drivers/power/supply/gpio-charger.c
+@@ -212,8 +212,7 @@ static int gpio_charger_suspend(struct device *dev)
+ 
+ static int gpio_charger_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct gpio_charger *gpio_charger = platform_get_drvdata(pdev);
++	struct gpio_charger *gpio_charger = dev_get_drvdata(dev);
+ 
+ 	if (device_may_wakeup(dev) && gpio_charger->wakeup_enabled)
+ 		disable_irq_wake(gpio_charger->irq);
+-- 
+2.11.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrXcPIACgkQJNaLcl1U
-h9CCIAf/eF+L52UsAb/zYblEOaMrc+d+LbuwcYm8vq8Z6QXi/ASvHx/Yi/mkbc2g
-zFmKpjzK+a3cm2eUBSGOqOxyF2SqUmoZYMZjHs5V4eJtK379G9B/Ok+tksj2R6Ir
-TsYnt6xbUoGwnTGozSQ7kyb/Girjqpd9uq/tx7bNF7dg6BVCyk9fCbvsYGFJlyLE
-rPvfl/avZTlByWLmGYKIxbJtV0h206PtJHvI5I9klxMx3dAfSmxwHd5d+k9qeb10
-BzI16/pCmih6dewa+p0sfhiBB+Y0qPbjOzdmZYJ/qk1YZ+kyJ3LnhQEf21GuuaCt
-5DHAFxRc1x1Z+2ZFO2FvvTvOCcgsNw==
-=Mul6
------END PGP SIGNATURE-----
-
---QXO0/MSS4VvK6f+D--
