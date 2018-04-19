@@ -1,29 +1,51 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Tue, 24 Apr 2018 16:02:11 +0000
-Subject: Re: [PATCH 58/61] video: fbdev: omap2: omapfb: displays: simplify getting .drvdata
-Message-Id: <1726457.eauaWiscAe@amdc3058>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 14:06:18 +0000
+Subject: [PATCH 48/61] staging: iio: adc: simplify getting .drvdata
+Message-Id: <20180419140641.27926-49-wsa+renesas@sang-engineering.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <CGME20180419140716epcas2p3dd25b3be301017affaef3908823c5ace@epcas2p3.samsung.com>
- <20180419140641.27926-59-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-59-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org
 
-On Thursday, April 19, 2018 04:06:28 PM Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Patch queued for 4.18, thanks.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/staging/iio/adc/ad7606_par.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/iio/adc/ad7606_par.c b/drivers/staging/iio/adc/ad7606_par.c
+index 3eb6f8f312dd..a34c2a1d5373 100644
+--- a/drivers/staging/iio/adc/ad7606_par.c
++++ b/drivers/staging/iio/adc/ad7606_par.c
+@@ -18,8 +18,7 @@
+ static int ad7606_par16_read_block(struct device *dev,
+ 				   int count, void *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct ad7606_state *st = iio_priv(indio_dev);
+ 
+ 	insw((unsigned long)st->base_address, buf, count);
+@@ -34,8 +33,7 @@ static const struct ad7606_bus_ops ad7606_par16_bops = {
+ static int ad7606_par8_read_block(struct device *dev,
+ 				  int count, void *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct ad7606_state *st = iio_priv(indio_dev);
+ 
+ 	insb((unsigned long)st->base_address, buf, count * 2);
+-- 
+2.11.0
 
