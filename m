@@ -1,35 +1,21 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 26 Apr 2018 10:22:48 +0000
-Subject: Re: [PATCH 2/3] video: omap: Improve a size determination in omapfb_do_probe()
-Message-Id: <6664625.Vrlhroeaex@amdc3058>
+From: PPMC OFFSHORE <maria.barba@06d01.mspz3.gob.ec>
+Date: Fri, 20 Apr 2018 22:22:35 +0000
+Subject: Re: Representative Needed.
+Message-Id: <20180420223413.549A72382715@06d01.mspz3.gob.ec>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
- <CGME20171126174230epcas2p263bbe1e8888487b01b51550c24b5c0d4@epcas2p2.samsung.com>
- <3e367b91-a7ae-fc2e-f145-d62cfee14c77@users.sourceforge.net>
-In-Reply-To: <3e367b91-a7ae-fc2e-f145-d62cfee14c77@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sunday, November 26, 2017 06:42:23 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Nov 2017 18:16:20 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Good day,
 
-Patch queued for 4.18, thanks.
+  I am seeking your concept with great gratitude to present you as a representative to carry out business transactions with a reasonable share upon your interest and cooperation to work with us in trust. If interested please get back.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Regards
+Kingsley
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
 
