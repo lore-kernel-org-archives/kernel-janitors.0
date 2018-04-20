@@ -1,40 +1,81 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Tue, 24 Apr 2018 09:10:28 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: fix error return code in amdgpu_amdkfd_gpuvm_create_process_vm()
-Message-Id: <CAFCwf12e_JS3qOfq22isPpwy-Hs3mwpv0iLB9NDMxPr=wgYGWw@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 20 Apr 2018 17:04:03 +0000
+Subject: Applied "ASoC: atmel: simplify getting .drvdata" to the asoc tree
+Message-Id: <E1f9ZS7-0004VB-By@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1522243256-94061-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1522243256-94061-1-git-send-email-weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+References: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Felix Kuehling <Felix.Kuehling-5C7GfCeVMHo@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-renesas-soc@vger.kernel.orgMarkBrownbroonie@kernel.org@alsa-project.org
 
-On Wed, Mar 28, 2018 at 4:20 PM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> Fix to return error code -ENOMEM from the eviction fence create fail
-> error handling case instead of 0, as done elsewhere in this function.
->
-> Fixes: a46a2cd103a8 ("drm/amdgpu: Add GPUVM memory management functions for KFD")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> index a12a165..c5c9c6f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> @@ -846,6 +846,7 @@ int amdgpu_amdkfd_gpuvm_create_process_vm(struct kgd_dev *kgd, void **vm,
->                                                    current->mm);
->                 if (!info->eviction_fence) {
->                         pr_err("Failed to create eviction fence\n");
-> +                       ret = -ENOMEM;
->                         goto create_evict_fence_fail;
->                 }
->
+The patch
 
-Thanks, but not relevant as the code moved to a different function and
-it already contains the line you added.
+   ASoC: atmel: simplify getting .drvdata
 
-Oded
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c0380478139fce887b948b35dc0dcee0b40bdf09 Mon Sep 17 00:00:00 2001
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Thu, 19 Apr 2018 16:06:31 +0200
+Subject: [PATCH] ASoC: atmel: simplify getting .drvdata
+
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/atmel/atmel_ssc_dai.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+index 1c7af0ca98ec..d3b69682d9c2 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.c
++++ b/sound/soc/atmel/atmel_ssc_dai.c
+@@ -1002,8 +1002,7 @@ static const struct snd_soc_component_driver atmel_ssc_component = {
+ 
+ static int asoc_ssc_init(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ssc_device *ssc = platform_get_drvdata(pdev);
++	struct ssc_device *ssc = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	ret = snd_soc_register_component(dev, &atmel_ssc_component,
+@@ -1033,8 +1032,7 @@ static int asoc_ssc_init(struct device *dev)
+ 
+ static void asoc_ssc_exit(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ssc_device *ssc = platform_get_drvdata(pdev);
++	struct ssc_device *ssc = dev_get_drvdata(dev);
+ 
+ 	if (ssc->pdata->use_dma)
+ 		atmel_pcm_dma_platform_unregister(dev);
+-- 
+2.17.0
+
