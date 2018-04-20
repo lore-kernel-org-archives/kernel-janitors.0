@@ -1,48 +1,51 @@
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-Date: Mon, 09 Apr 2018 00:35:48 +0000
-Subject: [PATCH AUTOSEL for 3.18 039/101] x86/nmi: Fix timeout test in test_nmi_ipi()
-Message-Id: <20180409003505.164715-39-alexander.levin@microsoft.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Apr 2018 10:09:27 +0000
+Subject: [PATCH] media: davinci_vpfe: fix some potential overflows
+Message-Id: <20180420100927.GA30237@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180409003505.164715-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180409003505.164715-1-alexander.levin@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+We check "lutdpc->dpc_size" in ipipe_validate_lutdpc_params() but if
+it's invalid then we would have corrupted memory already when we do
+the memcpy() before calling it.
 
-[ Upstream commit c133c7615751008f6c32ccae7cdfc5ff6e989c35 ]
-
-We're supposed to exit the loop with "timeout" set to zero.
+We don't ever check "gamma->tbl_size" but we should since they come from
+the user.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Don Zickus <dzickus@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 99e8b9ca90d6 ("x86, NMI: Add NMI IPI selftest")
-Link: http://lkml.kernel.org/r/20170619105304.GA23995@elgon.mountain
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- arch/x86/kernel/nmi_selftest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
-index 6d9582ec0324..d27f8d84c4ff 100644
---- a/arch/x86/kernel/nmi_selftest.c
-+++ b/arch/x86/kernel/nmi_selftest.c
-@@ -78,7 +78,7 @@ static void __init test_nmi_ipi(struct cpumask *mask)
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+index 95942768639c..068b3333e224 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -82,6 +82,8 @@ static int ipipe_set_lutdpc_params(struct vpfe_ipipe_device *ipipe, void *param)
+ 	lutdpc->en = dpc_param->en;
+ 	lutdpc->repl_white = dpc_param->repl_white;
+ 	lutdpc->dpc_size = dpc_param->dpc_size;
++	if (dpc_param->dpc_size > LUT_DPC_MAX_SIZE)
++		return -EINVAL;
+ 	memcpy(&lutdpc->table, &dpc_param->table,
+ 	       (dpc_param->dpc_size * sizeof(struct vpfe_ipipe_lutdpc_entry)));
+ 	if (ipipe_validate_lutdpc_params(lutdpc) < 0)
+@@ -591,7 +593,7 @@ ipipe_validate_gamma_entry(struct vpfe_ipipe_gamma_entry *table, int size)
+ static int
+ ipipe_validate_gamma_params(struct vpfe_ipipe_gamma *gamma, struct device *dev)
+ {
+-	int table_size;
++	unsigned int table_size;
+ 	int err;
  
- 	/* Don't wait longer than a second */
- 	timeout = USEC_PER_SEC;
--	while (!cpumask_empty(mask) && timeout--)
-+	while (!cpumask_empty(mask) && --timeout)
- 	        udelay(1);
+ 	if (gamma->bypass_r > 1 ||
+@@ -603,6 +605,8 @@ ipipe_validate_gamma_params(struct vpfe_ipipe_gamma *gamma, struct device *dev)
+ 		return 0;
  
- 	/* What happens if we timeout, do we still unregister?? */
--- 
-2.15.1
+ 	table_size = gamma->tbl_size;
++	if (table_size > VPFE_IPIPE_MAX_SIZE_GAMMA)
++		return -EINVAL;
+ 	if (!gamma->bypass_r) {
+ 		err = ipipe_validate_gamma_entry(gamma->table_r, table_size);
+ 		if (err) {
