@@ -1,65 +1,72 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:13 +0000
-Subject: [PATCH 43/61] pwm: simplify getting .drvdata
-Message-Id: <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Date: Fri, 20 Apr 2018 08:17:47 +0000
+Subject: Re: [PATCH 43/61] pwm: simplify getting .drvdata
+Message-Id: <e7d16777-6a31-2657-0ce9-463f6d908ee9@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On 19/04/2018 at 16:06, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Build tested only. buildbot is happy. Please apply individually.
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>   drivers/pwm/pwm-atmel-tcb.c | 6 ++----
+>   drivers/pwm/pwm-rcar.c      | 3 +--
+>   2 files changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
+> index 4fb1be246c44..0d0f8376bc35 100644
+> --- a/drivers/pwm/pwm-atmel-tcb.c
+> +++ b/drivers/pwm/pwm-atmel-tcb.c
+> @@ -460,8 +460,7 @@ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
+>   #ifdef CONFIG_PM_SLEEP
+>   static int atmel_tcb_pwm_suspend(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
+> +	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
+>   	void __iomem *base = tcbpwm->tc->regs;
+>   	int i;
+>   
+> @@ -478,8 +477,7 @@ static int atmel_tcb_pwm_suspend(struct device *dev)
+>   
+>   static int atmel_tcb_pwm_resume(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
+> +	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
+>   	void __iomem *base = tcbpwm->tc->regs;
+>   	int i;
+>   
+> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+> index 91d11f2e2fef..748f614d5375 100644
+> --- a/drivers/pwm/pwm-rcar.c
+> +++ b/drivers/pwm/pwm-rcar.c
+> @@ -261,8 +261,7 @@ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
+>   #ifdef CONFIG_PM_SLEEP
+>   static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
+> +	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
+>   	struct pwm_chip *chip = &rcar_pwm->chip;
+>   
+>   	return &chip->pwms[0];
+> 
 
- drivers/pwm/pwm-atmel-tcb.c | 6 ++----
- drivers/pwm/pwm-rcar.c      | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
-index 4fb1be246c44..0d0f8376bc35 100644
---- a/drivers/pwm/pwm-atmel-tcb.c
-+++ b/drivers/pwm/pwm-atmel-tcb.c
-@@ -460,8 +460,7 @@ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
- #ifdef CONFIG_PM_SLEEP
- static int atmel_tcb_pwm_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
- 	void __iomem *base = tcbpwm->tc->regs;
- 	int i;
- 
-@@ -478,8 +477,7 @@ static int atmel_tcb_pwm_suspend(struct device *dev)
- 
- static int atmel_tcb_pwm_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
- 	void __iomem *base = tcbpwm->tc->regs;
- 	int i;
- 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 91d11f2e2fef..748f614d5375 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -261,8 +261,7 @@ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
- #ifdef CONFIG_PM_SLEEP
- static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
-+	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
- 	struct pwm_chip *chip = &rcar_pwm->chip;
- 
- 	return &chip->pwms[0];
 -- 
-2.11.0
-
+Nicolas Ferre
