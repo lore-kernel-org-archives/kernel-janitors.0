@@ -1,46 +1,33 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Fri, 20 Apr 2018 08:09:43 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Apr 2018 08:21:50 +0000
 Subject: Re: [PATCH] mfd: tps65911-comparator: Fix an off by one bug
-Message-Id: <20180420080943.jdbf7vtnkc33vbvd@dell>
+Message-Id: <20180420082150.u2oovqr4b4fd6vrq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419134634.GA19793@mwanda>
-In-Reply-To: <20180419134634.GA19793@mwanda>
+ <20180420080943.jdbf7vtnkc33vbvd@dell>
+In-Reply-To: <20180420080943.jdbf7vtnkc33vbvd@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>
 Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 19 Apr 2018, Dan Carpenter wrote:
-
-> The tps_comparators[] array is used in two places.  We only access the
-> COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
-> wrong elements and also one element beyond the end of the array.  There
-> was supposed to be a zero element at the start of the array which is
-> isn't accessed but makes the math work out nicely.
-
-I normally just apply patches from you, but this is a hack, right?
-
-> Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I can't actually compile this code...
+On Fri, Apr 20, 2018 at 09:09:43AM +0100, Lee Jones wrote:
+> On Thu, 19 Apr 2018, Dan Carpenter wrote:
 > 
-> diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
-> index c0789f81a1c5..35d7380f6fad 100644
-> --- a/drivers/mfd/tps65911-comparator.c
-> +++ b/drivers/mfd/tps65911-comparator.c
-> @@ -42,6 +42,7 @@ struct comparator {
->  };
->  
->  static struct comparator tps_comparators[] = {
-> +	{	.name = "COMP", },
->  	{
->  		.name = "COMP1",
->  		.reg = TPS65911_VMBCH,
+> > The tps_comparators[] array is used in two places.  We only access the
+> > COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
+> > wrong elements and also one element beyond the end of the array.  There
+> > was supposed to be a zero element at the start of the array which is
+> > isn't accessed but makes the math work out nicely.
+> 
+> I normally just apply patches from you, but this is a hack, right?
+> 
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I liked it, I thought it was nice.  It uses 32 bytes but any fix was
+going to use *some* memory.  I don't have strong feelings about it
+though, if you want to write a different patch I can do that instead.
+
+regards,
+dan carpenter
+
