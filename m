@@ -1,38 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 06 Apr 2018 16:58:47 +0000
-Subject: [PATCH][next] crypto: chtls: remove redundant assignment to cdev->ports
-Message-Id: <20180406165847.29310-1-colin.king@canonical.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 20 Apr 2018 16:51:27 +0000
+Subject: Re: [PATCH][next] crypto: chtls: remove redundant assignment to cdev->ports
+Message-Id: <20180420165127.5lpk4covlw2zkzdn@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180406165847.29310-1-colin.king@canonical.com>
+In-Reply-To: <20180406165847.29310-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Atul Gupta <atul.gupta@chelsio.com>, Michael Werner <werner@chelsio.com>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Harsh Jain <harsh@chelsio.com>, "David S . Miller" <davem@davemloft.net>, Atul Gupta <atul.gupta@chelsio.com>, Michael Werner <werner@chelsio.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Apr 06, 2018 at 05:58:47PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a double assignment to cdev->ports, the first is redundant
+> as it is over-written so remove it.
+> 
+> Detected by CoverityScan, CID#1467432 ("Unused value")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-There is a double assignment to cdev->ports, the first is redundant
-as it is over-written so remove it.
-
-Detected by CoverityScan, CID#1467432 ("Unused value")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/chelsio/chtls/chtls_main.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
-index 007c45c38fc7..984a53f19f8b 100644
---- a/drivers/crypto/chelsio/chtls/chtls_main.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_main.c
-@@ -216,7 +216,6 @@ static void *chtls_uld_add(const struct cxgb4_lld_info *info)
- 	cdev->lldi = lldi;
- 	cdev->pdev = lldi->pdev;
- 	cdev->tids = lldi->tids;
--	cdev->ports = (struct net_device **)(cdev + 1);
- 	cdev->ports = lldi->ports;
- 	cdev->mtus = lldi->mtus;
- 	cdev->tids = lldi->tids;
+Patch applied.  Thanks.
 -- 
-2.15.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
