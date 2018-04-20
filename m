@@ -1,39 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 19 Apr 2018 14:34:31 +0000
-Subject: [PATCH][next] ASoC: rt5668: fix incorrect 'and' operator
-Message-Id: <20180419143431.13173-1-colin.king@canonical.com>
+From: Bard Liao <bardliao@realtek.com>
+Date: Fri, 20 Apr 2018 06:08:29 +0000
+Subject: RE: [PATCH][next] ASoC: rt5668: fix incorrect 'and' operator
+Message-Id: <ABFD875FF5FB574BA706497D987D48D7027C9E45@RTITMBSV02.realtek.com.tw>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180419143431.13173-1-colin.king@canonical.com>
+In-Reply-To: <20180419143431.13173-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently logical and is being used instead of bitwise and. Fix this.
-
-Detected by CoverityScan, CID#1468008 ("Logical vs bitwise operator")
-
-Fixes: d59fb2856223 ("ASoC: rt5668: add rt5668B codec driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/rt5668.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/rt5668.c b/sound/soc/codecs/rt5668.c
-index 52a343f96eb2..3c19d03f2446 100644
---- a/sound/soc/codecs/rt5668.c
-+++ b/sound/soc/codecs/rt5668.c
-@@ -1194,7 +1194,7 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
- 	int ref, val, reg, idx = -EINVAL;
- 	static const int div[] = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48};
- 
--	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &&
-+	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &
- 		RT5668_GP4_PIN_MASK;
- 	if (w->shift = RT5668_PWR_ADC_S1F_BIT &&
- 		val = RT5668_GP4_PIN_ADCDAT2)
--- 
-2.17.0
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86
+Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwgQXByaWwgMTksIDIw
+MTggMTA6MzUgUE0NCj4gVG86IEJhcmQgTGlhbzsgT2RlciBDaGlvdTsgTGlhbSBHaXJkd29vZDsg
+TWFyayBCcm93bjsgSmFyb3NsYXYgS3lzZWxhOw0KPiBUYWthc2hpIEl3YWk7IGFsc2EtZGV2ZWxA
+YWxzYS1wcm9qZWN0Lm9yZw0KPiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsg
+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdW25leHRdIEFT
+b0M6IHJ0NTY2ODogZml4IGluY29ycmVjdCAnYW5kJyBvcGVyYXRvcg0KPiANCj4gRnJvbTogQ29s
+aW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IEN1cnJlbnRseSBs
+b2dpY2FsIGFuZCBpcyBiZWluZyB1c2VkIGluc3RlYWQgb2YgYml0d2lzZSBhbmQuIEZpeCB0aGlz
+Lg0KPiANCj4gRGV0ZWN0ZWQgYnkgQ292ZXJpdHlTY2FuLCBDSUQjMTQ2ODAwOCAoIkxvZ2ljYWwg
+dnMgYml0d2lzZSBvcGVyYXRvciIpDQo+IA0KPiBGaXhlczogZDU5ZmIyODU2MjIzICgiQVNvQzog
+cnQ1NjY4OiBhZGQgcnQ1NjY4QiBjb2RlYyBkcml2ZXIiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xp
+biBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpBY2tlZC1CeTogQmFyZCBM
+aWFvIDxiYXJkbGlhb0ByZWFsdGVrLmNvbT4NCg0KPiAtLS0NCj4gIHNvdW5kL3NvYy9jb2RlY3Mv
+cnQ1NjY4LmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
+ZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2MvY29kZWNzL3J0NTY2OC5jIGIv
+c291bmQvc29jL2NvZGVjcy9ydDU2NjguYw0KPiBpbmRleCA1MmEzNDNmOTZlYjIuLjNjMTlkMDNm
+MjQ0NiAxMDA2NDQNCj4gLS0tIGEvc291bmQvc29jL2NvZGVjcy9ydDU2NjguYw0KPiArKysgYi9z
+b3VuZC9zb2MvY29kZWNzL3J0NTY2OC5jDQo+IEBAIC0xMTk0LDcgKzExOTQsNyBAQCBzdGF0aWMg
+aW50IHNldF9maWx0ZXJfY2xrKHN0cnVjdCBzbmRfc29jX2RhcG1fd2lkZ2V0DQo+ICp3LA0KPiAg
+CWludCByZWYsIHZhbCwgcmVnLCBpZHggPSAtRUlOVkFMOw0KPiAgCXN0YXRpYyBjb25zdCBpbnQg
+ZGl2W10gPSB7MSwgMiwgMywgNCwgNiwgOCwgMTIsIDE2LCAyNCwgMzIsIDQ4fTsNCj4gDQo+IC0J
+dmFsID0gc25kX3NvY19jb21wb25lbnRfcmVhZDMyKGNvbXBvbmVudCwgUlQ1NjY4X0dQSU9fQ1RS
+TF8xKQ0KPiAmJg0KPiArCXZhbCA9IHNuZF9zb2NfY29tcG9uZW50X3JlYWQzMihjb21wb25lbnQs
+IFJUNTY2OF9HUElPX0NUUkxfMSkgJg0KPiAgCQlSVDU2NjhfR1A0X1BJTl9NQVNLOw0KPiAgCWlm
+ICh3LT5zaGlmdCA9PSBSVDU2NjhfUFdSX0FEQ19TMUZfQklUICYmDQo+ICAJCXZhbCA9PSBSVDU2
+NjhfR1A0X1BJTl9BRENEQVQyKQ0KPiAtLQ0KPiAyLjE3LjANCj4gDQo+IA0KPiAtLS0tLS1QbGVh
+c2UgY29uc2lkZXIgdGhlIGVudmlyb25tZW50IGJlZm9yZSBwcmludGluZyB0aGlzIGUtbWFpbC4N
+Cg=
