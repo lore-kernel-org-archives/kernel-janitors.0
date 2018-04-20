@@ -1,42 +1,32 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Thu, 19 Apr 2018 16:23:24 +0000
+From: Michal Simek <michal.simek@xilinx.com>
+Date: Fri, 20 Apr 2018 07:23:41 +0000
 Subject: Re: [PATCH 53/61] tty: serial: simplify getting .drvdata
-Message-Id: <20180419162324.f46tsdomp4vi67cb@pengutronix.de>
+Message-Id: <ce3c4fa9-c6bc-a529-3c91-9f353d017720@xilinx.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-54-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20180419140641.27926-54-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Hello Wolfram,
-
-On Thu, Apr 19, 2018 at 04:06:23PM +0200, Wolfram Sang wrote:
+On 19.4.2018 16:06, Wolfram Sang wrote:
 > We should get drvdata from struct device directly. Going via
 > platform_device is an unneeded step back and forth.
->=20
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->=20
+> 
 > Build tested only. buildbot is happy. Please apply individually.
->=20
+> 
 >  drivers/tty/serial/imx.c              | 18 ++++++------------
+>  drivers/tty/serial/qcom_geni_serial.c |  6 ++----
+>  drivers/tty/serial/st-asc.c           |  6 ++----
+>  drivers/tty/serial/xilinx_uartps.c    |  6 ++----
 
-for serial/imx.c:
+Acked-by: Michal Simek <michal.simek@xilinx.com> (for xilinx)
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Thanks,
+Michal
 
-Thanks Wolfram for going through this
-Uwe
-
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
