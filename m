@@ -1,51 +1,48 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:52 +0000
-Subject: [PATCH 22/61] input: mouse: simplify getting .drvdata
-Message-Id: <20180419140641.27926-23-wsa+renesas@sang-engineering.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Apr 2018 11:19:16 +0000
+Subject: [bug report] net/ipv6: separate handling of FIB entries from dst based routes
+Message-Id: <20180420111916.GA18520@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Hello David Ahern,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+This is a semi-automatic email about new static checker warnings.
 
-Build tested only. buildbot is happy. Please apply individually.
+The patch 93531c674315: "net/ipv6: separate handling of FIB entries 
+from dst based routes" from Apr 17, 2018, leads to the following 
+Smatch complaint:
 
- drivers/input/mouse/navpoint.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+    net/ipv6/route.c:2128 fib6_check()
+    error: we previously assumed 'f6i' could be null (see line 2124)
 
-diff --git a/drivers/input/mouse/navpoint.c b/drivers/input/mouse/navpoint.c
-index d6e8f58a1de3..3d83a79e14d9 100644
---- a/drivers/input/mouse/navpoint.c
-+++ b/drivers/input/mouse/navpoint.c
-@@ -320,8 +320,7 @@ static int navpoint_remove(struct platform_device *pdev)
- 
- static int __maybe_unused navpoint_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct navpoint *navpoint = platform_get_drvdata(pdev);
-+	struct navpoint *navpoint = dev_get_drvdata(dev);
- 	struct input_dev *input = navpoint->input;
- 
- 	mutex_lock(&input->mutex);
-@@ -334,8 +333,7 @@ static int __maybe_unused navpoint_suspend(struct device *dev)
- 
- static int __maybe_unused navpoint_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct navpoint *navpoint = platform_get_drvdata(pdev);
-+	struct navpoint *navpoint = dev_get_drvdata(dev);
- 	struct input_dev *input = navpoint->input;
- 
- 	mutex_lock(&input->mutex);
--- 
-2.11.0
+net/ipv6/route.c
+  2123	/*
+  2124	 *	Destination cache support functions
+  2125	 */
+  2126	
+  2127	static bool fib6_check(struct fib6_info *f6i, u32 cookie)
+  2128	{
+  2129		u32 rt_cookie = 0;
+  2130	
+  2131          if ((f6i && !rt6_get_cookie_safe(f6i, &rt_cookie)) ||
+                     ^^^
+Check
 
+  2132               rt_cookie != cookie)
+  2133                  return false;
+  2134  
+  2135          if (fib6_check_expired(f6i))
+                                       ^^^
+Unchecked dereference inside function.
+
+  2136                  return false;
+  2137  
+  2138          return true;
+  2139  }
+
+regards,
+dan carpenter
