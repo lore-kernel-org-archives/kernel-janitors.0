@@ -1,61 +1,67 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:49 +0000
-Subject: [PATCH 19/61] iio: common: hid-sensors: simplify getting .drvdata
-Message-Id: <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sat, 21 Apr 2018 16:09:16 +0000
+Subject: Re: [PATCH 19/61] iio: common: hid-sensors: simplify getting .drvdata
+Message-Id: <20180421170916.6af36c05@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Thu, 19 Apr 2018 16:05:49 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Applied, thanks,
 
-Build tested only. buildbot is happy. Please apply individually.
+Jonathan
 
- drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-index cfb6588565ba..2ce0efd98cc0 100644
---- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-+++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-@@ -304,8 +304,7 @@ EXPORT_SYMBOL(hid_sensor_setup_trigger);
- 
- static int __maybe_unused hid_sensor_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
- 
- 	return _hid_sensor_power_state(attrb, false);
-@@ -313,8 +312,7 @@ static int __maybe_unused hid_sensor_suspend(struct device *dev)
- 
- static int __maybe_unused hid_sensor_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
- 	schedule_work(&attrb->work);
- 	return 0;
-@@ -322,8 +320,7 @@ static int __maybe_unused hid_sensor_resume(struct device *dev)
- 
- static int __maybe_unused hid_sensor_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
- 	return _hid_sensor_power_state(attrb, true);
- }
--- 
-2.11.0
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> index cfb6588565ba..2ce0efd98cc0 100644
+> --- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> +++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> @@ -304,8 +304,7 @@ EXPORT_SYMBOL(hid_sensor_setup_trigger);
+>  
+>  static int __maybe_unused hid_sensor_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+>  
+>  	return _hid_sensor_power_state(attrb, false);
+> @@ -313,8 +312,7 @@ static int __maybe_unused hid_sensor_suspend(struct device *dev)
+>  
+>  static int __maybe_unused hid_sensor_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+>  	schedule_work(&attrb->work);
+>  	return 0;
+> @@ -322,8 +320,7 @@ static int __maybe_unused hid_sensor_resume(struct device *dev)
+>  
+>  static int __maybe_unused hid_sensor_runtime_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+>  	return _hid_sensor_power_state(attrb, true);
+>  }
 
