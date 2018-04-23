@@ -1,51 +1,70 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:24 +0000
-Subject: [PATCH 54/61] uio: simplify getting .drvdata
-Message-Id: <20180419140641.27926-55-wsa+renesas@sang-engineering.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 23 Apr 2018 18:05:18 +0000
+Subject: Applied "regulator: wm8350: fix missing increment of loop index i" to the regulator tree
+Message-Id: <E1fAfq2-0004Hf-Qw@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180420092623.1327-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+The patch
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+   regulator: wm8350: fix missing increment of loop index i
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f97a236801b29f6a8e2ba3957789c3932a908966 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 20 Apr 2018 10:26:23 +0100
+Subject: [PATCH] regulator: wm8350: fix missing increment of loop index i
+
+It seems that the loop index i is not being incremented and hence
+potentially the while loop could spin forever. Fortunately with the
+data being used this does not appear to happen at the moment.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ drivers/regulator/wm8350-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/uio/uio_fsl_elbc_gpcm.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
-index b46323d9dc18..50b460c540f7 100644
---- a/drivers/uio/uio_fsl_elbc_gpcm.c
-+++ b/drivers/uio/uio_fsl_elbc_gpcm.c
-@@ -73,8 +73,7 @@ DEVICE_ATTR(reg_or, S_IRUGO|S_IWUSR|S_IWGRP, reg_show, reg_store);
- static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
- 			char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uio_info *info = platform_get_drvdata(pdev);
-+	struct uio_info *info = dev_get_drvdata(dev);
- 	struct fsl_elbc_gpcm *priv = info->priv;
- 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
- 
-@@ -93,8 +92,7 @@ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
- static ssize_t reg_store(struct device *dev, struct device_attribute *attr,
- 			 const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uio_info *info = platform_get_drvdata(pdev);
-+	struct uio_info *info = dev_get_drvdata(dev);
- 	struct fsl_elbc_gpcm *priv = info->priv;
- 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
- 	unsigned long val;
+diff --git a/drivers/regulator/wm8350-regulator.c b/drivers/regulator/wm8350-regulator.c
+index da9106bd2109..8ad11b074b49 100644
+--- a/drivers/regulator/wm8350-regulator.c
++++ b/drivers/regulator/wm8350-regulator.c
+@@ -911,6 +911,7 @@ static unsigned int get_mode(int uA, const struct wm8350_dcdc_efficiency *eff)
+ 	while (eff[i].uA_load_min != -1) {
+ 		if (uA >= eff[i].uA_load_min && uA <= eff[i].uA_load_max)
+ 			return eff[i].mode;
++		i++;
+ 	}
+ 	return REGULATOR_MODE_NORMAL;
+ }
 -- 
-2.11.0
+2.17.0
 
