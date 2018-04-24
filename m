@@ -1,56 +1,49 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Date: Fri, 20 Apr 2018 08:45:42 +0000
-Subject: Re: [PATCH 49/61] staging: nvec: simplify getting .drvdata
-Message-Id: <1534139.KRlJX3jJQi@ax5200p>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 24 Apr 2018 11:51:39 +0000
+Subject: [PATCH] mlxsw: spectrum_switchdev: remove duplicated check on multicast_enable
+Message-Id: <20180424115139.21134-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
+To: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Donnerstag, 19. April 2018, 16:06:19 CEST schrieb Wolfram Sang:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Marc Dietrich <marvin24@gmx.de>
+The check on bridge_port->bridge_device->multicast_enable is performed
+twice in two nested if statements. I can't see any reason for this, the
+second check is redundant and can be removed.
 
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/staging/nvec/nvec.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 52054a528723..2a5e0dcf4162 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -925,8 +925,7 @@ static int tegra_nvec_remove(struct platform_device
-> *pdev) static int nvec_suspend(struct device *dev)
->  {
->  	int err;
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct nvec_chip *nvec = platform_get_drvdata(pdev);
-> +	struct nvec_chip *nvec = dev_get_drvdata(dev);
->  	struct nvec_msg *msg;
->  	char ap_suspend[] = { NVEC_SLEEP, AP_SUSPEND };
-> 
-> @@ -946,8 +945,7 @@ static int nvec_suspend(struct device *dev)
-> 
->  static int nvec_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct nvec_chip *nvec = platform_get_drvdata(pdev);
-> +	struct nvec_chip *nvec = dev_get_drvdata(dev);
-> 
->  	dev_dbg(nvec->dev, "resuming\n");
->  	tegra_init_i2c_slave(nvec);
+Detected by cppcheck:
+drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:1722]:
+(warning) Identical inner 'if' condition is always true.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index c11c9a635866..989ed19e25c9 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -1719,12 +1719,9 @@ __mlxsw_sp_port_mdb_del(struct mlxsw_sp_port *mlxsw_sp_port,
+ 	int err;
+ 
+ 	if (bridge_port->bridge_device->multicast_enabled) {
+-		if (bridge_port->bridge_device->multicast_enabled) {
+-			err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid,
+-						     false);
+-			if (err)
+-				netdev_err(dev, "Unable to remove port from SMID\n");
+-		}
++		err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid, false);
++		if (err)
++			netdev_err(dev, "Unable to remove port from SMID\n");
+ 	}
+ 
+ 	err = mlxsw_sp_port_remove_from_mid(mlxsw_sp_port, mid);
+-- 
+2.17.0
 
