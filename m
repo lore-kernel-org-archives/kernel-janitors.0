@@ -1,58 +1,48 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Date: Fri, 20 Apr 2018 07:46:24 +0000
-Subject: Re: [PATCH 55/61] usb: mtu3: simplify getting .drvdata
-Message-Id: <1524210384.25162.1.camel@mhfsdcap03>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 24 Apr 2018 11:39:45 +0000
+Subject: [PATCH] fsl/fman_port: remove redundant check on port->rev_info.major
+Message-Id: <20180424113945.16371-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-56-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-56-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-hi,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Thu, 2018-04-19 at 16:06 +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/usb/mtu3/mtu3_plat.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
-> index 628d5ce356ca..46551f6d16fd 100644
-> --- a/drivers/usb/mtu3/mtu3_plat.c
-> +++ b/drivers/usb/mtu3/mtu3_plat.c
-> @@ -447,8 +447,7 @@ static int mtu3_remove(struct platform_device *pdev)
->   */
->  static int __maybe_unused mtu3_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct ssusb_mtk *ssusb = platform_get_drvdata(pdev);
-> +	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
->  
->  	dev_dbg(dev, "%s\n", __func__);
->  
-> @@ -466,8 +465,7 @@ static int __maybe_unused mtu3_suspend(struct device *dev)
->  
->  static int __maybe_unused mtu3_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct ssusb_mtk *ssusb = platform_get_drvdata(pdev);
-> +	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
->  	int ret;
->  
->  	dev_dbg(dev, "%s\n", __func__);
+The check port->rev_info.major >= 6 is being performed twice, thus
+the inner second check is always true and is redundant, hence it
+can be removed. Detected by cppcheck.
 
-Acked-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+drivers/net/ethernet/freescale/fman/fman_port.c:1394]: (warning)
+Identical inner 'if' condition is always true.
 
-Thanks
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/freescale/fman/fman_port.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-
+diff --git a/drivers/net/ethernet/freescale/fman/fman_port.c b/drivers/net/ethernet/freescale/fman/fman_port.c
+index 6552d68ea6e1..ce6e24c74978 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_port.c
++++ b/drivers/net/ethernet/freescale/fman/fman_port.c
+@@ -1391,12 +1391,10 @@ int fman_port_config(struct fman_port *port, struct fman_port_params *params)
+ 		/* FM_WRONG_RESET_VALUES_ERRATA_FMAN_A005127 Errata
+ 		 * workaround
+ 		 */
+-		if (port->rev_info.major >= 6) {
+-			u32 reg;
++		u32 reg;
+ 
+-			reg = 0x00001013;
+-			iowrite32be(reg, &port->bmi_regs->tx.fmbm_tfp);
+-		}
++		reg = 0x00001013;
++		iowrite32be(reg, &port->bmi_regs->tx.fmbm_tfp);
+ 	}
+ 
+ 	return 0;
+-- 
+2.17.0
 
