@@ -1,21 +1,44 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 20 Apr 2018 07:23:18 +0000
-Subject: Re: [PATCH 47/61] staging: greybus: simplify getting .drvdata
-Message-Id: <20180420072318.GM9198@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Apr 2018 13:35:49 +0000
+Subject: [PATCH] drm/amdkfd: Integer overflows in ioctl
+Message-Id: <20180424133549.GB10167@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-48-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-48-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Vaibhav Hiremath <hvaibhav.linux@gmail.com>, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org
+To: Oded Gabbay <oded.gabbay-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felix Kuehling <Felix.Kuehling-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-On Thu, Apr 19, 2018 at 04:06:17PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+args->n_devices is a u32 that comes from the user.  The multiplication
+could overflow on 32 bit systems possibly leading to privilege
+escalation.
 
-Acked-by: Johan Hovold <johan@kernel.org>
+Fixes: 5ec7e02854b3 ("drm/amdkfd: Add ioctls for GPUVM memory management")
+Signed-off-by: Dan Carpenter dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+index cd679cf1fd30..ce36e556da38 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+@@ -1295,8 +1295,8 @@ static int kfd_ioctl_map_memory_to_gpu(struct file *filep,
+ 		return -EINVAL;
+ 	}
+ 
+-	devices_arr = kmalloc(args->n_devices * sizeof(*devices_arr),
+-			      GFP_KERNEL);
++	devices_arr = kmalloc_array(args->n_devices, sizeof(*devices_arr),
++				    GFP_KERNEL);
+ 	if (!devices_arr)
+ 		return -ENOMEM;
+ 
+@@ -1404,8 +1404,8 @@ static int kfd_ioctl_unmap_memory_from_gpu(struct file *filep,
+ 		return -EINVAL;
+ 	}
+ 
+-	devices_arr = kmalloc(args->n_devices * sizeof(*devices_arr),
+-			      GFP_KERNEL);
++	devices_arr = kmalloc_array(args->n_devices, sizeof(*devices_arr),
++				    GFP_KERNEL);
+ 	if (!devices_arr)
+ 		return -ENOMEM;
+ 
