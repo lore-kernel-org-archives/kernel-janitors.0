@@ -1,77 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 30 Apr 2018 15:53:47 +0000
-Subject: [PATCH][staging-next][V2] staging: rtl8723bs: fix spelling mistakes: "dismatch" and "Inviation"
-Message-Id: <20180430155347.22571-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 24 Apr 2018 17:24:47 +0000
+Subject: Re: [v2] rsi: remove unecessary PTR_ALIGN()s
+Message-Id: <20180424172447.D1A0360131@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180406083717.GA21857@mwanda>
+In-Reply-To: <20180406083717.GA21857@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bastien Nocera <hadess@hadess.net>, Justin Vreeland <justin@jvreeland.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Karun Eagalapati <karun256@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Trivial fix to spelling mistakes in message text and comments
+> The issue here is that we allocate "data" and then set
+> "data = PTR_ALIGN(data, 8);" and then we free the aligned pointer
+> instead of the original pointer.
+> 
+> kmalloc() pointers are already ARCH_SLAB_MINALIGN aligned which is 8 or
+> more on everything except certain Xtensa variants.  We decided that if
+> the Xtensa people ever notice a bug here then we'll tell them the bug is
+> on their side.  ;)
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-"dismatch" -> "mismatch"
-"Inviation" -> "Invitation"
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
+350fcdb83457 rsi: remove unecessary PTR_ALIGN()s
 
-V2: Add Inviation fix as noted by Bastien Nocera
----
- drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c |  2 +-
- drivers/staging/rtl8723bs/include/wifi.h        | 12 ++++++------
- 2 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
-index 33610d39333f..828bc0d045a0 100644
---- a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
-+++ b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
-@@ -2198,7 +2198,7 @@ static void halbtc8723b2ant_TdmaDurationAdjust(
- 			BTC_MSG_ALGORITHM,
- 			ALGO_TRACE_FW_DETAIL,
- 			(
--				"[BTCoex], PsTdma type dismatch!!!, curPsTdma =%d, recordPsTdma =%d\n",
-+				"[BTCoex], PsTdma type mismatch!!!, curPsTdma =%d, recordPsTdma =%d\n",
- 				pCoexDm->curPsTdma,
- 				pCoexDm->psTdmaDuAdjType
- 			)
-diff --git a/drivers/staging/rtl8723bs/include/wifi.h b/drivers/staging/rtl8723bs/include/wifi.h
-index 530d698f50d9..d53a4483ea9f 100644
---- a/drivers/staging/rtl8723bs/include/wifi.h
-+++ b/drivers/staging/rtl8723bs/include/wifi.h
-@@ -976,7 +976,7 @@ enum HT_CAP_AMPDU_FACTOR {
- #define	P2P_STATUS_FAIL_INCOMPATIBLE_PROVSION	0x0A
- #define	P2P_STATUS_FAIL_USER_REJECT				0x0B
- 
--/* 	Value of Inviation Flags Attribute */
-+/* 	Value of Invitation Flags Attribute */
- #define	P2P_INVITATION_FLAGS_PERSISTENT			BIT(0)
- 
- #define	DMP_P2P_DEVCAP_SUPPORT	(P2P_DEVCAP_SERVICE_DISCOVERY | \
-@@ -1082,15 +1082,15 @@ enum P2P_STATE {
- 	P2P_STATE_GONEGO_ING = 9,						/* 	Doing the group owner negoitation handshake */
- 	P2P_STATE_GONEGO_OK = 10,						/* 	finish the group negoitation handshake with success */
- 	P2P_STATE_GONEGO_FAIL = 11,					/* 	finish the group negoitation handshake with failure */
--	P2P_STATE_RECV_INVITE_REQ_MATCH = 12,		/* 	receiving the P2P Inviation request and match with the profile. */
-+	P2P_STATE_RECV_INVITE_REQ_MATCH = 12,		/* 	receiving the P2P Invitation request and match with the profile. */
- 	P2P_STATE_PROVISIONING_ING = 13,				/* 	Doing the P2P WPS */
- 	P2P_STATE_PROVISIONING_DONE = 14,			/* 	Finish the P2P WPS */
- 	P2P_STATE_TX_INVITE_REQ = 15,					/* 	Transmit the P2P Invitation request */
- 	P2P_STATE_RX_INVITE_RESP_OK = 16,				/* 	Receiving the P2P Invitation response */
--	P2P_STATE_RECV_INVITE_REQ_DISMATCH = 17,	/* 	receiving the P2P Inviation request and dismatch with the profile. */
--	P2P_STATE_RECV_INVITE_REQ_GO = 18,			/* 	receiving the P2P Inviation request and this wifi is GO. */
--	P2P_STATE_RECV_INVITE_REQ_JOIN = 19,			/* 	receiving the P2P Inviation request to join an existing P2P Group. */
--	P2P_STATE_RX_INVITE_RESP_FAIL = 20,			/* 	recveing the P2P Inviation response with failure */
-+	P2P_STATE_RECV_INVITE_REQ_DISMATCH = 17,	/* 	receiving the P2P Invitation request and mismatch with the profile. */
-+	P2P_STATE_RECV_INVITE_REQ_GO = 18,			/* 	receiving the P2P Invitation request and this wifi is GO. */
-+	P2P_STATE_RECV_INVITE_REQ_JOIN = 19,			/* 	receiving the P2P Invitation request to join an existing P2P Group. */
-+	P2P_STATE_RX_INVITE_RESP_FAIL = 20,			/* 	recveing the P2P Invitation response with failure */
- 	P2P_STATE_RX_INFOR_NOREADY = 21,			/*  receiving p2p negoitation response with information is not available */
- 	P2P_STATE_TX_INFOR_NOREADY = 22,			/*  sending p2p negoitation response with information is not available */
- };
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10325781/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
