@@ -1,51 +1,30 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:15 +0000
-Subject: [PATCH 45/61] slimbus: simplify getting .drvdata
-Message-Id: <20180419140641.27926-46-wsa+renesas@sang-engineering.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 24 Apr 2018 17:23:30 +0000
+Subject: Re: cw1200: fix spelling mistake: "Mailformed" -> "Malformed"
+Message-Id: <20180424172330.0FA6460881@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180329153818.29538-1-colin.king@canonical.com>
+In-Reply-To: <20180329153818.29538-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Solomon Peachy <pizza@shaftnet.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in wiphy_warn warning message text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Build tested only. buildbot is happy. Please apply individually.
+Patch applied to wireless-drivers-next.git, thanks.
 
- drivers/slimbus/qcom-ctrl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+0fb1abc3a0b8 cw1200: fix spelling mistake: "Mailformed" -> "Malformed"
 
-diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-index ffb46f915334..45c38fff15d2 100644
---- a/drivers/slimbus/qcom-ctrl.c
-+++ b/drivers/slimbus/qcom-ctrl.c
-@@ -655,8 +655,7 @@ static int qcom_slim_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int qcom_slim_runtime_suspend(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret;
- 
- 	dev_dbg(device, "pm_runtime: suspending...\n");
-@@ -673,8 +672,7 @@ static int qcom_slim_runtime_suspend(struct device *device)
- 
- static int qcom_slim_runtime_resume(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret = 0;
- 
- 	dev_dbg(device, "pm_runtime: resuming...\n");
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/10315587/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
