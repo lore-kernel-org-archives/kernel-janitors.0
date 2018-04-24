@@ -1,37 +1,42 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 24 Apr 2018 05:45:29 +0000
-Subject: Re: [PATCH v2] mfd: tps65911-comparator: Fix an off by one bug
-Message-Id: <20180424054529.2gv2l24muxzh2n6b@dell>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 24 Apr 2018 12:36:58 +0000
+Subject: [PATCH] net/tls: remove redundant second null check on sgout
+Message-Id: <20180424123658.6541-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180420083909.66a6t63s5q6vpwp7@dell>
- <20180420090910.GA26071@mwanda>
- <20180423064417.2e2ng3su23w4i7hx@dell>
- <20180423102717.tmx7mlk2yzovnpkh@mwanda>
-In-Reply-To: <20180423102717.tmx7mlk2yzovnpkh@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ilya Lesokhin <ilyal@mellanox.com>, Aviad Yehezkel <aviadye@mellanox.com>, Dave Watson <davejwatson@fb.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> I really don't want authorship credit for a patch that does:
-> 
-> #define COMP1 0
-> #define COMP2 1
-> 
-> It just makes me itch to look at it...
+A duplicated null check on sgout is redundant as it is known to be
+already true because of the identical earlier check. Remove it.
+Detected by cppcheck:
 
-As I say, I get where you're coming from, but it was the decision made
-by the H/W engineers.  Doesn't mean it's not the correct thing to do
-from a S/W POV.
+net/tls/tls_sw.c:696: (warning) Identical inner 'if' condition is always
+true.
 
-If you're not happy putting your SOB on the patch, I'll draft it and
-sign it off.  /me has no shame!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/tls/tls_sw.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index 71e79597f940..6ed1c02cfc94 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -693,8 +693,7 @@ static int decrypt_skb(struct sock *sk, struct sk_buff *skb,
+ 	if (!sgout) {
+ 		nsg = skb_cow_data(skb, 0, &unused) + 1;
+ 		sgin = kmalloc_array(nsg, sizeof(*sgin), sk->sk_allocation);
+-		if (!sgout)
+-			sgout = sgin;
++		sgout = sgin;
+ 	}
+ 
+ 	sg_init_table(sgin, nsg);
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.0
+
