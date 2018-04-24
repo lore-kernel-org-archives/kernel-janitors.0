@@ -1,49 +1,25 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:07 +0000
-Subject: [PATCH 37/61] perf: simplify getting .drvdata
-Message-Id: <20180419140641.27926-38-wsa+renesas@sang-engineering.com>
+From: Will Deacon <will.deacon@arm.com>
+Date: Tue, 24 Apr 2018 16:08:39 +0000
+Subject: Re: [PATCH 37/61] perf: simplify getting .drvdata
+Message-Id: <20180424160839.GD25964@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-38-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-38-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Thu, Apr 19, 2018 at 04:06:07PM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks, Wolfram. I'll pick this up via the arm perf tree.
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/perf/arm_spe_pmu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-index 28bb642af18b..54ec278d2fc4 100644
---- a/drivers/perf/arm_spe_pmu.c
-+++ b/drivers/perf/arm_spe_pmu.c
-@@ -131,8 +131,7 @@ static ssize_t arm_spe_pmu_cap_show(struct device *dev,
- 				    struct device_attribute *attr,
- 				    char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct arm_spe_pmu *spe_pmu = platform_get_drvdata(pdev);
-+	struct arm_spe_pmu *spe_pmu = dev_get_drvdata(dev);
- 	struct dev_ext_attribute *ea  		container_of(attr, struct dev_ext_attribute, attr);
- 	int cap = (long)ea->var;
-@@ -247,8 +246,7 @@ static ssize_t arm_spe_pmu_get_attr_cpumask(struct device *dev,
- 					    struct device_attribute *attr,
- 					    char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct arm_spe_pmu *spe_pmu = platform_get_drvdata(pdev);
-+	struct arm_spe_pmu *spe_pmu = dev_get_drvdata(dev);
- 
- 	return cpumap_print_to_pagebuf(true, buf, &spe_pmu->supported_cpus);
- }
--- 
-2.11.0
-
+Will
