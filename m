@@ -1,20 +1,54 @@
-From: Bastien Nocera <hadess@hadess.net>
-Date: Mon, 30 Apr 2018 15:34:42 +0000
-Subject: Re: [PATCH][staging-next] staging: rtl8723bs: spelling mistake: "dismatch" -> "mismatch"
-Message-Id: <4e727467119e92364a9be63af80e7d671de984d0.camel@hadess.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Apr 2018 16:24:04 +0000
+Subject: [PATCH] RDMA/iwpm: fix memory leak on map_info
+Message-Id: <20180425162404.28625-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430141946.12186-1-colin.king@canonical.com>
-In-Reply-To: <20180430141946.12186-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Justin Vreeland <justin@jvreeland.com>, devel@driverdev.osuosl.org
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-30 at 15:19 +0100, Colin King wrote:
-> +       P2P_STATE_RECV_INVITE_REQ_DISMATCH > 17,        /*      receiving the P2P Inviation request and mismatch
-> with the profile. */
+From: Colin Ian King <colin.king@canonical.com>
 
-Might as well fix the "inviation" as well, no? :)
+In the cases where iwpm_hash_bucket is NULL and where function
+get_mapinfo_hash_bucket returns NULL then the map_info is never added
+to hash_bucket_head and hence there is a leak of map_info. Fix this
+by nullifying hash_bucket_head and if that is null we know that
+that map_info was not added to hash_bucket_head and hence map_info
+should be free'd.
 
-Thanks
+Detected by CoverityScan, CID#1222481 ("Resource Leak")
+
+Fixes: 30dc5e63d6a5 ("RDMA/core: Add support for iWARP Port Mapper user space service")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/core/iwpm_util.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/core/iwpm_util.c b/drivers/infiniband/core/iwpm_util.c
+index 9821ae900f6d..da12da1c36f6 100644
+--- a/drivers/infiniband/core/iwpm_util.c
++++ b/drivers/infiniband/core/iwpm_util.c
+@@ -114,7 +114,7 @@ int iwpm_create_mapinfo(struct sockaddr_storage *local_sockaddr,
+ 			struct sockaddr_storage *mapped_sockaddr,
+ 			u8 nl_client)
+ {
+-	struct hlist_head *hash_bucket_head;
++	struct hlist_head *hash_bucket_head = NULL;
+ 	struct iwpm_mapping_info *map_info;
+ 	unsigned long flags;
+ 	int ret = -EINVAL;
+@@ -142,6 +142,9 @@ int iwpm_create_mapinfo(struct sockaddr_storage *local_sockaddr,
+ 		}
+ 	}
+ 	spin_unlock_irqrestore(&iwpm_mapinfo_lock, flags);
++
++	if (!hash_bucket_head)
++		kfree(map_info);
+ 	return ret;
+ }
+ 
+-- 
+2.17.0
+
