@@ -1,31 +1,75 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Apr 2018 08:18:00 +0000
-Subject: [PATCH] cpuidle: menu: tidy up some indenting
-Message-Id: <20180411081800.GA4625@mwanda>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Wed, 25 Apr 2018 21:46:47 +0000
+Subject: Re: [PATCH] power: supply: ab8500_fg: fix spelling mistake: "Disharge" -> "Discharge"
+Message-Id: <20180425214647.j3tdfp7laldwmvjg@earth.universe>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nqieznofvqczycrd"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Ramesh Thomas <ramesh.thomas@intel.com>, "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20180328224850.27833-1-colin.king@canonical.com>
+In-Reply-To: <20180328224850.27833-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These lines were indented 4 spaces less than they should have been.  It
-was a little confusing.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--nqieznofvqczycrd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index 1bfe03ceb236..b733dc6aa42b 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -426,8 +426,8 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 			 * tick, so try to correct that.
- 			 */
- 			for (i = idx - 1; i >= 0; i--) {
--			    if (drv->states[i].disabled ||
--			        dev->states_usage[i].disable)
-+				if (drv->states[i].disabled ||
-+				    dev->states_usage[i].disable)
- 					continue;
- 
- 				idx = i;
+Hi,
+
+On Wed, Mar 28, 2018 at 11:48:50PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Trivial fix to spelling mistake in dev_dbg message text
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+
+Thanks, queued.
+
+-- Sebastian
+
+>  drivers/power/supply/ab8500_fg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab85=
+00_fg.c
+> index c569f82a0071..993898d1712f 100644
+> --- a/drivers/power/supply/ab8500_fg.c
+> +++ b/drivers/power/supply/ab8500_fg.c
+> @@ -1408,7 +1408,7 @@ static void ab8500_fg_charge_state_to(struct ab8500=
+_fg *di,
+>  static void ab8500_fg_discharge_state_to(struct ab8500_fg *di,
+>  	enum ab8500_fg_discharge_state new_state)
+>  {
+> -	dev_dbg(di->dev, "Disharge state from %d [%s] to %d [%s]\n",
+> +	dev_dbg(di->dev, "Discharge state from %d [%s] to %d [%s]\n",
+>  		di->discharge_state,
+>  		discharge_state[di->discharge_state],
+>  		new_state,
+> --=20
+> 2.15.1
+>=20
+
+--nqieznofvqczycrd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrg90cACgkQ2O7X88g7
++poyXQ/8CXKowDm6+l8mBUMC8euFuirokrsyYJeRSiVILoIa7OKR+4h4oAe7HDmA
+1Wzdj8N25l0qAN+RTcF9FfqVRjUWSXnpi/amnLSrXXxtoCMtuaSXl7XwL4BJoeTk
+XKfdk3s93N1mi+5L1FDvjzo6zgqw3LgWeRqo5XC6f95AA5E+G5WbhTDle2bo1r7J
+HYHPGExrhDm/YSruxh2KqPm2ty2pqSI72mxsBRnudhBIey9b3T91KEcYQz9cZ2Wi
+dQPWx39W6gvDovk6whnOMMF7Il0MvD0UzXoQskUdgkXGBs+REvm3SiVSgkkx6Qui
+Ze7kMC/ARKbczHEjP/s8akmOrvfuAykyuEd92NKQqgGofxwfQfXqN0DMqzI/rK+B
+wtRplb9jiy/2/zcFTCrCjH5R/mTF62N0dEyuFR5rMUNkpXkv88TD0CVV3JyjWU34
+DLU2cfgm+xCyPODdQkVKqx2XOogYBvYNHDoPDBDjDC2J9ugcxEGN1AQVgPcznZiS
+5netb80ejQAAAumyw58TuvhRPbY82bhMIsYaDY5gttwQ2/GqEuWAwmXeoAJj/kdw
+9Qd4nzVDKDVcmat6UVbhrPmbMhumMsoETeQVvI1jNDUq1qSY4jX8jvwVxoGzRNLs
+B5Q77bT1r2T6cMs3PCj+1Alc65G1ok4Ci14K1jHbe8DGRzCU7Aw=
+=wJue
+-----END PGP SIGNATURE-----
+
+--nqieznofvqczycrd--
