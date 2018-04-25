@@ -1,64 +1,42 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 30 Apr 2018 13:41:02 +0000
-Subject: [PATCH] rtlwifi: fix spelling mistake: "dismatch" -> "mismatch"
-Message-Id: <20180430134102.11171-1-colin.king@canonical.com>
+Date: Wed, 25 Apr 2018 10:58:43 +0000
+Subject: [PATCH] scsi: isci: remove redundant check on in_connection_align_insertion_frequency
+Message-Id: <20180425105843.8607-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in RT_TRACE message text.
+The sanity check on u->in_connection_align_insertion_frequency is being
+performed twice and hence the first check can be removed since it is
+redundant. Cleans up cppcheck warning:
+
+drivers/scsi/ibmvscsi/ibmvscsi.c:1711: (warning) Identical inner 'if'
+condition is always true.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c    | 2 +-
- .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c    | 2 +-
- .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/isci/init.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-index 8fce371749d3..f22fec093f1d 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-@@ -1783,7 +1783,7 @@ static void btc8192e2ant_tdma_duration_adjust(struct btc_coexist *btcoexist,
- 		bool scan = false, link = false, roam = false;
+diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
+index 922e3e56c90d..05cf4daf8788 100644
+--- a/drivers/scsi/isci/init.c
++++ b/drivers/scsi/isci/init.c
+@@ -433,9 +433,6 @@ static enum sci_status sci_user_parameters_set(struct isci_host *ihost,
+ 		      (u->max_speed_generation > SCIC_SDS_PARM_NO_SPEED)))
+ 			return SCI_FAILURE_INVALID_PARAMETER_VALUE;
  
- 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
--			 "[BTCoex], PsTdma type dismatch!!!, ");
-+			 "[BTCoex], PsTdma type mismatch!!!, ");
- 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
- 			 "curPsTdma=%d, recordPsTdma=%d\n",
- 			 coex_dm->cur_ps_tdma, coex_dm->tdma_adj_type);
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-index 73ec31972944..279fe01bb55e 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-@@ -2766,7 +2766,7 @@ static void btc8723b2ant_tdma_duration_adjust(struct btc_coexist *btcoexist,
- 	if (coex_dm->cur_ps_tdma != coex_dm->ps_tdma_du_adj_type) {
- 		bool scan = false, link = false, roam = false;
- 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
--			 "[BTCoex], PsTdma type dismatch!!!, curPsTdma=%d, recordPsTdma=%d\n",
-+			 "[BTCoex], PsTdma type mismatch!!!, curPsTdma=%d, recordPsTdma=%d\n",
- 			 coex_dm->cur_ps_tdma, coex_dm->ps_tdma_du_adj_type);
- 
- 		btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_SCAN, &scan);
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
-index 2202d5e18977..01a9d303603b 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
-@@ -2614,7 +2614,7 @@ static void btc8821a2ant_tdma_duration_adjust(struct btc_coexist *btcoexist,
- 		bool scan = false, link = false, roam = false;
- 
- 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
--			 "[BTCoex], PsTdma type dismatch!!!, cur_ps_tdma = %d, recordPsTdma = %d\n",
-+			 "[BTCoex], PsTdma type mismatch!!!, cur_ps_tdma = %d, recordPsTdma = %d\n",
- 			 coex_dm->cur_ps_tdma, coex_dm->ps_tdma_du_adj_type);
- 
- 		btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_SCAN, &scan);
+-		if (u->in_connection_align_insertion_frequency < 3)
+-			return SCI_FAILURE_INVALID_PARAMETER_VALUE;
+-
+ 		if ((u->in_connection_align_insertion_frequency < 3) ||
+ 		    (u->align_insertion_frequency = 0) ||
+ 		    (u->notify_enable_spin_up_insertion_frequency = 0))
 -- 
 2.17.0
 
