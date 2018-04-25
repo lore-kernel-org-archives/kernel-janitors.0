@@ -1,51 +1,45 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:30 +0000
-Subject: [PATCH 60/61] net: dsa: simplify getting .drvdata
-Message-Id: <20180419140641.27926-61-wsa+renesas@sang-engineering.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 25 Apr 2018 08:21:09 +0000
+Subject: Re: mwifiex: pcie: tighten a check in mwifiex_pcie_process_event_ready()
+Message-Id: <20180425082109.78ED5607E5@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180405111719.GB4218@mwanda>
+In-Reply-To: <20180405111719.GB4218@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> If "evt_len" is 1 then we try to memcpy() negative 3 bytes and it would
+> cause memory corruption.
+> 
+> Fixes: d930faee141b ("mwifiex: add support for Marvell pcie8766 chipset")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/pcie.c b/drivers/net/wireless/marvell/mwifiex/pcie.c
+> index 97a6199692ab..7538543d46fa 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/pcie.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
+> @@ -1881,7 +1881,8 @@ static int mwifiex_pcie_process_event_ready(struct mwifiex_adapter *adapter)
+>  		mwifiex_dbg(adapter, EVENT,
+>  			    "info: Event length: %d\n", evt_len);
+>  
+> -		if ((evt_len > 0) && (evt_len  < MAX_EVENT_SIZE))
+> +		if (evt_len > MWIFIEX_EVENT_HEADER_LEN &&
+> +		    evt_len < MAX_EVENT_SIZE)
+>  			memcpy(adapter->event_body, skb_cmd->data +
+>  			       MWIFIEX_EVENT_HEADER_LEN, evt_len -
+>  			       MWIFIEX_EVENT_HEADER_LEN);
 
-Build tested only. buildbot is happy. Please apply individually.
+Patch applied to wireless-drivers-next.git, thanks.
 
- net/dsa/legacy.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+01eca2842874 mwifiex: pcie: tighten a check in mwifiex_pcie_process_event_ready()
 
-diff --git a/net/dsa/legacy.c b/net/dsa/legacy.c
-index 42a7b85b84e1..f8d6b212328f 100644
---- a/net/dsa/legacy.c
-+++ b/net/dsa/legacy.c
-@@ -687,8 +687,7 @@ static void dsa_shutdown(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int dsa_suspend(struct device *d)
- {
--	struct platform_device *pdev = to_platform_device(d);
--	struct dsa_switch_tree *dst = platform_get_drvdata(pdev);
-+	struct dsa_switch_tree *dst = dev_get_drvdata(d);
- 	int i, ret = 0;
- 
- 	for (i = 0; i < dst->pd->nr_chips; i++) {
-@@ -703,8 +702,7 @@ static int dsa_suspend(struct device *d)
- 
- static int dsa_resume(struct device *d)
- {
--	struct platform_device *pdev = to_platform_device(d);
--	struct dsa_switch_tree *dst = platform_get_drvdata(pdev);
-+	struct dsa_switch_tree *dst = dev_get_drvdata(d);
- 	int i, ret = 0;
- 
- 	for (i = 0; i < dst->pd->nr_chips; i++) {
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/10324435/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
