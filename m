@@ -1,29 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 25 Apr 2018 18:12:42 +0000
-Subject: Re: [PATCH] mkiss: remove redundant check for len > 0
-Message-Id: <20180425.141242.356107204003495124.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Apr 2018 05:50:55 +0000
+Subject: [PATCH] serial/aspeed-vuart: fix a couple mod_timer() calls
+Message-Id: <20180426055055.GA9742@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180425104307.8310-1-colin.king@canonical.com>
-In-Reply-To: <20180425104307.8310-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: johannes.berg@intel.com, stephen@networkplumber.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 25 Apr 2018 11:43:07 +0100
+The "unthrottle_timeout" is HZ/10 but mod_timer() takes a the actual
+jiffie where you want it to timeout, not an offset.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check for len > 0 is always true and hence is redundant as
-> this check is already being made to execute the code inside the
-> while-loop. Hence it is redundant and can be removed.
-> 
-> Cleans up cppcheck warning:
-> drivers/net/hamradio/mkiss.c:220: (warning) Identical inner 'if'
-> condition is always true.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 5909c0bf9c7a ("serial/aspeed-vuart: Implement quick throttle mechanism")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/tty/serial/8250/8250_aspeed_vuart.c b/drivers/tty/serial/8250/8250_aspeed_vuart.c
+index 023db3266757..435bec40dee6 100644
+--- a/drivers/tty/serial/8250/8250_aspeed_vuart.c
++++ b/drivers/tty/serial/8250/8250_aspeed_vuart.c
+@@ -226,7 +226,8 @@ static void aspeed_vuart_unthrottle_exp(struct timer_list *timer)
+ 	struct uart_8250_port *up = vuart->port;
+ 
+ 	if (!tty_buffer_space_avail(&up->port.state->port)) {
+-		mod_timer(&vuart->unthrottle_timer, unthrottle_timeout);
++		mod_timer(&vuart->unthrottle_timer,
++			  jiffies + unthrottle_timeout);
+ 		return;
+ 	}
+ 
+@@ -271,7 +272,7 @@ static int aspeed_vuart_handle_irq(struct uart_port *port)
+ 			if (!timer_pending(&vuart->unthrottle_timer)) {
+ 				vuart->port = up;
+ 				mod_timer(&vuart->unthrottle_timer,
+-						unthrottle_timeout);
++					  jiffies + unthrottle_timeout);
+ 			}
+ 
+ 		} else {
