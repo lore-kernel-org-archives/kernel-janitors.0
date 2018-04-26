@@ -1,46 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 27 Apr 2018 14:07:33 +0000
-Subject: [PATCH] staging: fsl-mc/dpio: Fix the error handling in probe()
-Message-Id: <20180427140733.GE19583@mwanda>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 26 Apr 2018 10:08:12 +0000
+Subject: Re: [PATCH 1/2] video: fbdev-MMP: Delete an error message for a failed memory allocation in two func
+Message-Id: <1981428.zQfQG5i5U7@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
+ <CGME20171126204255epcas3p19d6324568d821993e2a4beb971907de6@epcas3p1.samsung.com>
+ <9aa9c376-22a3-f682-d9a4-5ee95cfd75a0@users.sourceforge.net>
+In-Reply-To: <9aa9c376-22a3-f682-d9a4-5ee95cfd75a0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-First of all devm_memremap() function returns an error pointer, it
-doesn't return NULL.  And second we need to set the error code on these
-paths.
+On Sunday, November 26, 2017 09:42:49 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 26 Nov 2017 21:16:30 +0100
+> 
+> Omit an extra message for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I've done requested audit regarding multiple fb devices support
+myself now and it is okay to apply this patch.
 
-diff --git a/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c b/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c
-index 9e125769a4e7..11a90a90d827 100644
---- a/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c
-+++ b/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c
-@@ -150,14 +150,16 @@ static int dpaa2_dpio_probe(struct fsl_mc_device *dpio_dev)
- 	desc.regs_cena = devm_memremap(dev, dpio_dev->regions[1].start,
- 				       resource_size(&dpio_dev->regions[1]),
- 				       MEMREMAP_WC);
--	if (!desc.regs_cena) {
-+	if (IS_ERR(desc.regs_cena)) {
- 		dev_err(dev, "devm_memremap failed\n");
-+		err = PTR_ERR(desc.regs_cena);
- 		goto err_allocate_irqs;
- 	}
- 
- 	desc.regs_cinh = devm_ioremap(dev, dpio_dev->regions[1].start,
- 				      resource_size(&dpio_dev->regions[1]));
- 	if (!desc.regs_cinh) {
-+		err = -ENOMEM;
- 		dev_err(dev, "devm_ioremap failed\n");
- 		goto err_allocate_irqs;
- 	}
-@@ -175,6 +177,7 @@ static int dpaa2_dpio_probe(struct fsl_mc_device *dpio_dev)
- 	priv->io = dpaa2_io_create(&desc);
- 	if (!priv->io) {
- 		dev_err(dev, "dpaa2_io_create failed\n");
-+		err = -ENOMEM;
- 		goto err_dpaa2_io_create;
- 	}
- 
+Patch queued for 4.18, thanks.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
