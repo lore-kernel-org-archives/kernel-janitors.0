@@ -1,41 +1,36 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:41 +0000
-Subject: [PATCH 11/61] gpu: drm: msm: simplify getting .drvdata
-Message-Id: <20180419140641.27926-12-wsa+renesas@sang-engineering.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 26 Apr 2018 09:12:44 +0000
+Subject: [PATCH][next] ath10k: fix spelling mistake: "servive" -> "service"
+Message-Id: <20180426091244.9160-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Trivial fix to spelling mistake in ath10k_warn warning message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/wireless/ath/ath10k/wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/gpu/drm/msm/msm_drv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 30cd514d8f7c..5fdd6cf6bf42 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -203,8 +203,7 @@ static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index df2e92a6c9bd..622e026ae940 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -5280,7 +5280,7 @@ void ath10k_wmi_event_service_available(struct ath10k *ar, struct sk_buff *skb)
  
- static int msm_drm_uninit(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct drm_device *ddev = platform_get_drvdata(pdev);
-+	struct drm_device *ddev = dev_get_drvdata(dev);
- 	struct msm_drm_private *priv = ddev->dev_private;
- 	struct msm_kms *kms = priv->kms;
- 	struct msm_vblank_ctrl *vbl_ctrl = &priv->vblank_ctrl;
+ 	ret = ath10k_wmi_pull_svc_avail(ar, skb, &arg);
+ 	if (ret) {
+-		ath10k_warn(ar, "failed to parse servive available event: %d\n",
++		ath10k_warn(ar, "failed to parse service available event: %d\n",
+ 			    ret);
+ 	}
+ 
 -- 
-2.11.0
+2.17.0
 
