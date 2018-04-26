@@ -1,71 +1,35 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:47 +0000
-Subject: [PATCH 17/61] hid: simplify getting .drvdata
-Message-Id: <20180419140641.27926-18-wsa+renesas@sang-engineering.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 26 Apr 2018 10:15:38 +0000
+Subject: Re: [PATCH 2/4] video: sm501fb: Improve a size determination in sm501fb_probe()
+Message-Id: <1859038.Xq2p7m02WJ@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
+ <CGME20171126101848epcas2p3725dcc0b645cf4d4d9730f8f8edbad70@epcas2p3.samsung.com>
+ <08ed1e90-5714-04b7-b3dc-067a3d9bc38b@users.sourceforge.net>
+In-Reply-To: <08ed1e90-5714-04b7-b3dc-067a3d9bc38b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Colin Ian King <colin.king@canonical.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Sunday, November 26, 2017 11:18:26 AM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 26 Nov 2017 10:22:37 +0100
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Hand applied and queued for 4.18, thanks.
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/hid/hid-sensor-custom.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/hid/hid-sensor-custom.c b/drivers/hid/hid-sensor-custom.c
-index e8a114157f87..cd0c2a7c8003 100644
---- a/drivers/hid/hid-sensor-custom.c
-+++ b/drivers/hid/hid-sensor-custom.c
-@@ -157,8 +157,7 @@ static int usage_id_cmp(const void *p1, const void *p2)
- static ssize_t enable_sensor_show(struct device *dev,
- 				  struct device_attribute *attr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
-+	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
- 
- 	return sprintf(buf, "%d\n", sensor_inst->enable);
- }
-@@ -237,8 +236,7 @@ static ssize_t enable_sensor_store(struct device *dev,
- 				   struct device_attribute *attr,
- 				   const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
-+	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
- 	int value;
- 	int ret = -EINVAL;
- 
-@@ -283,8 +281,7 @@ static const struct attribute_group enable_sensor_attr_group = {
- static ssize_t show_value(struct device *dev, struct device_attribute *attr,
- 			  char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
-+	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
- 	struct hid_sensor_hub_attribute_info *attribute;
- 	int index, usage, field_index;
- 	char name[HID_CUSTOM_NAME_LENGTH];
-@@ -392,8 +389,7 @@ static ssize_t show_value(struct device *dev, struct device_attribute *attr,
- static ssize_t store_value(struct device *dev, struct device_attribute *attr,
- 			   const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
-+	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
- 	int index, field_index, usage;
- 	char name[HID_CUSTOM_NAME_LENGTH];
- 	int value;
--- 
-2.11.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
