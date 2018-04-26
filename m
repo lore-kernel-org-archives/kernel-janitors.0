@@ -1,49 +1,35 @@
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Mon, 30 Apr 2018 14:44:31 +0000
-Subject: RE: [PATCH] typec: tcpm: Fix incorrect 'and' operator
-Message-Id: <2E89032DDAA8B9408CB92943514A0337014C1E9323@SW-EX-MBX01.diasemi.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 26 Apr 2018 11:21:08 +0000
+Subject: [PATCH -next] clk: npcm7xx: fix return value check in npcm7xx_clk_init()
+Message-Id: <1524741668-158135-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430132305.GA20092@embeddedor.com>
-In-Reply-To: <20180430132305.GA20092@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Tali Perry <tali.perry1@gmail.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 30 April 2018 14:23, Gustavo A. R. Silva wrote:
+In case of error, the function ioremap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-> Currently, logical and is being used instead of *bitwise* and.
-> 
-> Fix this by using a proper bitwise and operator.
-> 
-> Addresses-Coverity-ID: 1468455 ("Logical vs. bitwise operator")
-> Fixes: 64f7c494a3c0 ("typec: tcpm: Add support for sink PPS related
-> messages")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
+Fixes: fcfd14369856 ("clk: npcm7xx: add clock controller")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/clk-npcm7xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Good spot. :(
+diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+index dba5384..740af90 100644
+--- a/drivers/clk/clk-npcm7xx.c
++++ b/drivers/clk/clk-npcm7xx.c
+@@ -555,7 +555,7 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
+ 	}
+ 
+ 	clk_base = ioremap(res.start, resource_size(&res));
+-	if (IS_ERR(clk_base))
++	if (!clk_base)
+ 		goto npcm7xx_init_error;
+ 
+ 	npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
 
-Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-
->  drivers/usb/typec/tcpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index 1ee259b..7ee417a 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -1772,7 +1772,7 @@ static void tcpm_pd_ext_msg_request(struct tcpm_port
-> *port,
->  	enum pd_ext_msg_type type = pd_header_type_le(msg->header);
->  	unsigned int data_size = pd_ext_header_data_size_le(msg-
-> >ext_msg.header);
-> 
-> -	if (!(msg->ext_msg.header && PD_EXT_HDR_CHUNKED)) {
-> +	if (!(msg->ext_msg.header & PD_EXT_HDR_CHUNKED)) {
->  		tcpm_log(port, "Unchunked extended messages unsupported");
->  		return;
->  	}
-> --
-> 2.7.4
