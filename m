@@ -1,40 +1,36 @@
 From: Jiri Kosina <jikos@kernel.org>
-Date: Thu, 12 Apr 2018 13:11:02 +0000
+Date: Thu, 26 Apr 2018 12:34:59 +0000
 Subject: Re: [PATCH 0/4] HID: alps: Fix some bugs and improve code around  't4_read_write_register()'
-Message-Id: <nycvar.YFH.7.76.1804121510340.28129@cbobk.fhfr.pm>
+Message-Id: <nycvar.YFH.7.76.1804261434520.28147@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr> <nycvar.YFH.7.76.1803271405420.15778@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1803271405420.15778@cbobk.fhfr.pm>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: masaki.ota@jp.alps.com, benjamin.tissoires@redhat.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 27 Mar 2018, Jiri Kosina wrote:
+On Mon, 19 Mar 2018, Christophe JAILLET wrote:
 
-> > These patches are untested. Especially, patch 1 slightly changes the behavior
-> > of 't4_read_write_register()'.
-> > This looks logical to me, but please, review it carefully.
-> > 
-> > Christophe JAILLET (4):
-> >   HID: alps: Report an error if we receive invalid data in
-> >     't4_read_write_register()'
-> >   HID: alps: Save a memory allocation in 't4_read_write_register()' when
-> >     writing data
-> >   HID: alps: Check errors returned by 't4_read_write_register()'
-> >   HID: alps: Fix some style in 't4_read_write_register()'
-> > 
-> >  drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
-> >  1 file changed, 22 insertions(+), 5 deletions(-)
+> All is said in the subject and below.
 > 
-> Masaki-san,
+> These patches are untested. Especially, patch 1 slightly changes the behavior
+> of 't4_read_write_register()'.
+> This looks logical to me, but please, review it carefully.
 > 
-> do you have any comments to Christophe's patchset please?
+> Christophe JAILLET (4):
+>   HID: alps: Report an error if we receive invalid data in
+>     't4_read_write_register()'
+>   HID: alps: Save a memory allocation in 't4_read_write_register()' when
+>     writing data
+>   HID: alps: Check errors returned by 't4_read_write_register()'
+>   HID: alps: Fix some style in 't4_read_write_register()'
+> 
+>  drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 5 deletions(-)
 
-If there is no feedback, I'll queue the set for 4.18.
-
-Thanks,
+Queued for 4.18, thanks.
 
 -- 
 Jiri Kosina
