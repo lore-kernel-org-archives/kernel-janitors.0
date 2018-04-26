@@ -1,36 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 30 Apr 2018 16:04:50 +0000
-Subject: [PATCH] power: supply: ab8500_charger: fix spelling mistake: "faile" -> "failed"
-Message-Id: <20180430160450.29264-1-colin.king@canonical.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 26 Apr 2018 10:10:43 +0000
+Subject: Re: [PATCH 2/2] video: fbdev-MMP: Improve a size determination in path_init()
+Message-Id: <2229029.HUmMdrHkAV@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
+ <CGME20171126204359epcas2p46af86788c6717a9d1392cd693f524987@epcas2p4.samsung.com>
+ <293fb9cb-3020-bded-b1bd-67bbb2820aa2@users.sourceforge.net>
+In-Reply-To: <293fb9cb-3020-bded-b1bd-67bbb2820aa2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sunday, November 26, 2017 09:43:52 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 26 Nov 2017 21:21:33 +0100
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-trivial fix to spelling mistake in dev_error message.
+Patch queued for 4.18, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/ab8500_charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply/ab8500_charger.c
-index ba0e97284ae5..98b335042ba6 100644
---- a/drivers/power/supply/ab8500_charger.c
-+++ b/drivers/power/supply/ab8500_charger.c
-@@ -3066,7 +3066,7 @@ static int ab8500_charger_init_hw_registers(struct ab8500_charger *di)
- 		AB8500_SYS_CTRL2_BLOCK,
- 		AB8500_MAIN_WDOG_CTRL_REG, MAIN_WDOG_ENA);
- 	if (ret) {
--		dev_err(di->dev, "faile to enable main watchdog\n");
-+		dev_err(di->dev, "failed to enable main watchdog\n");
- 		goto out;
- 	}
- 
--- 
-2.17.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
