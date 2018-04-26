@@ -1,36 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 29 Apr 2018 12:06:47 +0000
-Subject: [PATCH] media: atomisp: fix spelling mistake: "diregard" -> "disregard"
-Message-Id: <20180429120647.10194-1-colin.king@canonical.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 26 Apr 2018 09:58:13 +0000
+Subject: Re: [PATCH] video: auo_k190x: Delete an error message for a failed memory allocation in auok190x_com
+Message-Id: <12927877.qfyOtgPPrp@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20171127170150epcas3p2bd5a7ba3a64c7a4f03ab823cf3707ebe@epcas3p2.samsung.com>
+ <757f0d7c-e356-2e69-46e6-0bf5067877e1@users.sourceforge.net>
+In-Reply-To: <757f0d7c-e356-2e69-46e6-0bf5067877e1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Monday, November 27, 2017 06:01:41 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 27 Nov 2017 17:53:05 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Trivial fix to spelling mistake in ia_css_print message text
+I've done requested audit regarding multiple fb devices support
+myself now and it is okay to apply this patch.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../css2400/css_2401_csi2p_system/host/csi_rx_private.h         | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch queued for 4.18, thanks.
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h b/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h
-index 9c0cb4a63862..4fa74e7a96e6 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h
-@@ -202,7 +202,7 @@ static inline void csi_rx_be_ctrl_dump_state(
- 		ia_css_print("CSI RX BE STATE Controller %d PEC ID %d custom pec 0x%x \n", ID, i, state->pec[i]);
- 	}
- #endif
--	ia_css_print("CSI RX BE STATE Controller %d Global LUT diregard reg 0x%x \n", ID, state->global_lut_disregard_reg);
-+	ia_css_print("CSI RX BE STATE Controller %d Global LUT disregard reg 0x%x \n", ID, state->global_lut_disregard_reg);
- 	ia_css_print("CSI RX BE STATE Controller %d packet stall reg 0x%x \n", ID, state->packet_status_stall);
- 	/*
- 	 * Get the values of the register-set per
--- 
-2.17.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
