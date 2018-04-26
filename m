@@ -1,51 +1,35 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:44 +0000
-Subject: [PATCH 14/61] gpu: drm: msm: dsi: simplify getting .drvdata
-Message-Id: <20180419140641.27926-15-wsa+renesas@sang-engineering.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 26 Apr 2018 10:22:48 +0000
+Subject: Re: [PATCH 2/3] video: omap: Improve a size determination in omapfb_do_probe()
+Message-Id: <6664625.Vrlhroeaex@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
+References: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
+ <CGME20171126174230epcas2p263bbe1e8888487b01b51550c24b5c0d4@epcas2p2.samsung.com>
+ <3e367b91-a7ae-fc2e-f145-d62cfee14c77@users.sourceforge.net>
+In-Reply-To: <3e367b91-a7ae-fc2e-f145-d62cfee14c77@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Sunday, November 26, 2017 06:42:23 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 26 Nov 2017 18:16:20 +0100
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Patch queued for 4.18, thanks.
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/gpu/drm/msm/dsi/dsi_host.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-index 7a03a9489708..10ed20736072 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -471,8 +471,7 @@ static void dsi_bus_clk_disable(struct msm_dsi_host *msm_host)
- 
- int msm_dsi_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
-+	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
- 	struct mipi_dsi_host *host = msm_dsi->host;
- 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
- 
-@@ -486,8 +485,7 @@ int msm_dsi_runtime_suspend(struct device *dev)
- 
- int msm_dsi_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
-+	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
- 	struct mipi_dsi_host *host = msm_dsi->host;
- 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
- 
--- 
-2.11.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
