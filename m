@@ -1,67 +1,34 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 21 Apr 2018 16:09:16 +0000
-Subject: Re: [PATCH 19/61] iio: common: hid-sensors: simplify getting .drvdata
-Message-Id: <20180421170916.6af36c05@archlinux>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Apr 2018 14:42:35 +0000
+Subject: [PATCH] rsi: Uninitialized return value in rsi_reset_card()
+Message-Id: <20180426144235.GA25897@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Amitkumar Karwar <amit.karwar@redpinesignals.com>
+Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, Karun Eagalapati <karun256@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 19 Apr 2018 16:05:49 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+If rsi_usb_master_reg_write() fails then "ret" hasn't been initialized.
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Applied, thanks,
+Fixes: 16d3bb7b2f37 ("rsi: disable fw watchdog timer during reset")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Jonathan
-
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> index cfb6588565ba..2ce0efd98cc0 100644
-> --- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> +++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> @@ -304,8 +304,7 @@ EXPORT_SYMBOL(hid_sensor_setup_trigger);
->  
->  static int __maybe_unused hid_sensor_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
->  
->  	return _hid_sensor_power_state(attrb, false);
-> @@ -313,8 +312,7 @@ static int __maybe_unused hid_sensor_suspend(struct device *dev)
->  
->  static int __maybe_unused hid_sensor_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
->  	schedule_work(&attrb->work);
->  	return 0;
-> @@ -322,8 +320,7 @@ static int __maybe_unused hid_sensor_resume(struct device *dev)
->  
->  static int __maybe_unused hid_sensor_runtime_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
->  	return _hid_sensor_power_state(attrb, true);
->  }
-
+diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
+index b065438f51b2..6ce6b754df12 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -687,9 +687,10 @@ static int rsi_reset_card(struct rsi_hw *adapter)
+ 	 */
+ 	msleep(100);
+ 
+-	if (rsi_usb_master_reg_write(adapter, SWBL_REGOUT,
+-				     RSI_FW_WDT_DISABLE_REQ,
+-				     RSI_COMMON_REG_SIZE) < 0) {
++	ret = rsi_usb_master_reg_write(adapter, SWBL_REGOUT,
++				       RSI_FW_WDT_DISABLE_REQ,
++				       RSI_COMMON_REG_SIZE);
++	if (ret < 0) {
+ 		rsi_dbg(ERR_ZONE, "Disabling firmware watchdog timer failed\n");
+ 		goto fail;
+ 	}
