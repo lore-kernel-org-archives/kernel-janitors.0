@@ -1,31 +1,44 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Sat, 21 Apr 2018 17:05:14 +0000
-Subject: Re: [PATCH 01/61] ARM: plat-samsung: simplify getting .drvdata
-Message-Id: <20180421170514.qmklysbjrnkatns5@kozik-lap>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 27 Apr 2018 11:21:30 +0000
+Subject: [PATCH] rsi: fix a bug in rsi_hal_key_config()
+Message-Id: <20180427112130.GA27655@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Kalle Valo <kvalo@codeaurora.org>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>, Karun Eagalapati <karun256@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 04:05:31PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  arch/arm/plat-samsung/adc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
+Smatch complains that the end of this function is dead code.  I'm pretty
+sure that this return needs to be changed to only return on error.
 
-Thanks, applied.
+Fixes: 4fd6c4762f37 ("rsi: roaming enhancements")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Best regards,
-Krzysztof
-
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index 766d874cc6e2..80e7f4f4f188 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -911,14 +911,14 @@ static int rsi_hal_key_config(struct ieee80211_hw *hw,
+ 		}
+ 	}
+ 
+-	return rsi_hal_load_key(adapter->priv,
+-				key->key,
+-				key->keylen,
+-				key_type,
+-				key->keyidx,
+-				key->cipher,
+-				sta_id,
+-				vif);
++	status = rsi_hal_load_key(adapter->priv,
++				  key->key,
++				  key->keylen,
++				  key_type,
++				  key->keyidx,
++				  key->cipher,
++				  sta_id,
++				  vif);
+ 	if (status)
+ 		return status;
+ 
