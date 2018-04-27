@@ -1,42 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 25 Apr 2018 10:58:43 +0000
-Subject: [PATCH] scsi: isci: remove redundant check on in_connection_align_insertion_frequency
-Message-Id: <20180425105843.8607-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 27 Apr 2018 14:07:33 +0000
+Subject: [PATCH] staging: fsl-mc/dpio: Fix the error handling in probe()
+Message-Id: <20180427140733.GE19583@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+First of all devm_memremap() function returns an error pointer, it
+doesn't return NULL.  And second we need to set the error code on these
+paths.
 
-The sanity check on u->in_connection_align_insertion_frequency is being
-performed twice and hence the first check can be removed since it is
-redundant. Cleans up cppcheck warning:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-drivers/scsi/ibmvscsi/ibmvscsi.c:1711: (warning) Identical inner 'if'
-condition is always true.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/isci/init.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index 922e3e56c90d..05cf4daf8788 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -433,9 +433,6 @@ static enum sci_status sci_user_parameters_set(struct isci_host *ihost,
- 		      (u->max_speed_generation > SCIC_SDS_PARM_NO_SPEED)))
- 			return SCI_FAILURE_INVALID_PARAMETER_VALUE;
+diff --git a/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c b/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c
+index 9e125769a4e7..11a90a90d827 100644
+--- a/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c
++++ b/drivers/staging/fsl-mc/bus/dpio/dpio-driver.c
+@@ -150,14 +150,16 @@ static int dpaa2_dpio_probe(struct fsl_mc_device *dpio_dev)
+ 	desc.regs_cena = devm_memremap(dev, dpio_dev->regions[1].start,
+ 				       resource_size(&dpio_dev->regions[1]),
+ 				       MEMREMAP_WC);
+-	if (!desc.regs_cena) {
++	if (IS_ERR(desc.regs_cena)) {
+ 		dev_err(dev, "devm_memremap failed\n");
++		err = PTR_ERR(desc.regs_cena);
+ 		goto err_allocate_irqs;
+ 	}
  
--		if (u->in_connection_align_insertion_frequency < 3)
--			return SCI_FAILURE_INVALID_PARAMETER_VALUE;
--
- 		if ((u->in_connection_align_insertion_frequency < 3) ||
- 		    (u->align_insertion_frequency = 0) ||
- 		    (u->notify_enable_spin_up_insertion_frequency = 0))
--- 
-2.17.0
-
+ 	desc.regs_cinh = devm_ioremap(dev, dpio_dev->regions[1].start,
+ 				      resource_size(&dpio_dev->regions[1]));
+ 	if (!desc.regs_cinh) {
++		err = -ENOMEM;
+ 		dev_err(dev, "devm_ioremap failed\n");
+ 		goto err_allocate_irqs;
+ 	}
+@@ -175,6 +177,7 @@ static int dpaa2_dpio_probe(struct fsl_mc_device *dpio_dev)
+ 	priv->io = dpaa2_io_create(&desc);
+ 	if (!priv->io) {
+ 		dev_err(dev, "dpaa2_io_create failed\n");
++		err = -ENOMEM;
+ 		goto err_dpaa2_io_create;
+ 	}
+ 
