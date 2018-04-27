@@ -1,34 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Apr 2018 18:08:05 +0000
-Subject: [PATCH] crypto: ghash-clmulni: fix spelling mistake: "acclerated" -> "accelerated"
-Message-Id: <20180427180805.15536-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 27 Apr 2018 11:39:11 +0000
+Subject: Re: [next] ath10k: fix spelling mistake: "servive" -> "service"
+Message-Id: <20180427113911.1640460213@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180426091244.9160-1-colin.king@canonical.com>
+In-Reply-To: <20180426091244.9160-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Trivial fix to spelling mistake in module description text
+> Trivial fix to spelling mistake in ath10k_warn warning message text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/crypto/ghash-clmulni-intel_glue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/arch/x86/crypto/ghash-clmulni-intel_glue.c b/arch/x86/crypto/ghash-clmulni-intel_glue.c
-index 0420bab19efb..2ddbe3a1868b 100644
---- a/arch/x86/crypto/ghash-clmulni-intel_glue.c
-+++ b/arch/x86/crypto/ghash-clmulni-intel_glue.c
-@@ -364,5 +364,5 @@ module_exit(ghash_pclmulqdqni_mod_exit);
- 
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("GHASH Message Digest Algorithm, "
--		   "acclerated by PCLMULQDQ-NI");
-+		   "accelerated by PCLMULQDQ-NI");
- MODULE_ALIAS_CRYPTO("ghash");
+785281342d0c ath10k: fix spelling mistake: "servive" -> "service"
+
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10365081/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
