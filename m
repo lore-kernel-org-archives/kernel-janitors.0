@@ -1,91 +1,50 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:45 +0000
-Subject: [PATCH 15/61] gpu: drm: omapdrm: displays: simplify getting .drvdata
-Message-Id: <20180419140641.27926-16-wsa+renesas@sang-engineering.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 28 Apr 2018 22:31:08 +0000
+Subject: [PATCH] wireless: ipw2100: fix spelling mistake: "decsribed" -> "described"
+Message-Id: <20180428223108.20458-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Trivial fix to spelling mistake in comment and in the ord_data text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c | 2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2100.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-index 428de90fced1..8f8573a00e07 100644
---- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-+++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-@@ -412,8 +412,7 @@ static const struct backlight_ops dsicm_bl_ops = {
- static ssize_t dsicm_num_errors_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *in = ddata->in;
- 	u8 errors = 0;
- 	int r;
-@@ -444,8 +443,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
- static ssize_t dsicm_hw_revision_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *in = ddata->in;
- 	u8 id1, id2, id3;
- 	int r;
-@@ -476,8 +474,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
- 		struct device_attribute *attr,
- 		const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *in = ddata->in;
- 	unsigned long t;
- 	int r;
-@@ -511,8 +508,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
- 		struct device_attribute *attr,
- 		char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	unsigned int t;
- 
- 	mutex_lock(&ddata->lock);
-@@ -526,8 +522,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
- 		struct device_attribute *attr,
- 		const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *in = ddata->in;
- 	unsigned long t;
- 	int r;
-@@ -558,8 +553,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
- 		struct device_attribute *attr,
- 		char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	unsigned int t;
- 
- 	mutex_lock(&ddata->lock);
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index 236b52423506..7c4f550a1475 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -3732,7 +3732,7 @@ IPW2100_ORD(STAT_TX_HOST_REQUESTS, "requested Host Tx's (MSDU)"),
+ 	    IPW2100_ORD(ASSOCIATED_AP_PTR,
+ 				"0 if not associated, else pointer to AP table entry"),
+ 	    IPW2100_ORD(AVAILABLE_AP_CNT,
+-				"AP's decsribed in the AP table"),
++				"AP's described in the AP table"),
+ 	    IPW2100_ORD(AP_LIST_PTR, "Ptr to list of available APs"),
+ 	    IPW2100_ORD(STAT_AP_ASSNS, "associations"),
+ 	    IPW2100_ORD(STAT_ASSN_FAIL, "association failures"),
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.h b/drivers/net/wireless/intel/ipw2x00/ipw2100.h
+index 193947865efd..ce3e35f6b60f 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.h
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.h
+@@ -1009,7 +1009,7 @@ typedef enum _ORDINAL_TABLE_1 {	// NS - means Not Supported by FW
+ 	IPW_ORD_STAT_PERCENT_RETRIES,	// current calculation of % missed tx retries
+ 	IPW_ORD_ASSOCIATED_AP_PTR,	// If associated, this is ptr to the associated
+ 	// AP table entry. set to 0 if not associated
+-	IPW_ORD_AVAILABLE_AP_CNT,	// # of AP's decsribed in the AP table
++	IPW_ORD_AVAILABLE_AP_CNT,	// # of AP's described in the AP table
+ 	IPW_ORD_AP_LIST_PTR,	// Ptr to list of available APs
+ 	IPW_ORD_STAT_AP_ASSNS,	// # of associations
+ 	IPW_ORD_STAT_ASSN_FAIL,	// # of association failures
 -- 
-2.11.0
+2.17.0
 
