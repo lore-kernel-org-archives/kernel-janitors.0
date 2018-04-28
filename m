@@ -1,61 +1,92 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:21 +0000
-Subject: [PATCH 51/61] thermal: int340x_thermal: simplify getting .drvdata
-Message-Id: <20180419140641.27926-52-wsa+renesas@sang-engineering.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 28 Apr 2018 09:36:21 +0000
+Subject: [PATCH] mwifiex: fix spelling mistake: "capabilties" -> "capabilities"
+Message-Id: <20180428093621.6806-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Trivial fix to spelling mistake in function names and text strings
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/wireless/marvell/mwifiex/sta_event.c | 10 +++++-----
+ drivers/net/wireless/marvell/mwifiex/uap_event.c |  8 ++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/thermal/int340x_thermal/int3400_thermal.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
-index e26b01c05e82..61ca7ce3624e 100644
---- a/drivers/thermal/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
-@@ -48,8 +48,7 @@ static ssize_t available_uuids_show(struct device *dev,
- 				    struct device_attribute *attr,
- 				    char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
-+	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
- 	int i;
- 	int length = 0;
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_event.c b/drivers/net/wireless/marvell/mwifiex/sta_event.c
+index 93dfb76cd8a6..01636c1b7447 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_event.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_event.c
+@@ -27,9 +27,9 @@
  
-@@ -68,8 +67,7 @@ static ssize_t available_uuids_show(struct device *dev,
- static ssize_t current_uuid_show(struct device *dev,
- 				 struct device_attribute *devattr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
-+	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
+ #define MWIFIEX_IBSS_CONNECT_EVT_FIX_SIZE    12
  
- 	if (priv->uuid_bitmap & (1 << priv->current_uuid_index))
- 		return sprintf(buf, "%s\n",
-@@ -82,8 +80,7 @@ static ssize_t current_uuid_store(struct device *dev,
- 				  struct device_attribute *attr,
- 				  const char *buf, size_t count)
+-static int mwifiex_check_ibss_peer_capabilties(struct mwifiex_private *priv,
+-					       struct mwifiex_sta_node *sta_ptr,
+-					       struct sk_buff *event)
++static int mwifiex_check_ibss_peer_capabilities(struct mwifiex_private *priv,
++						struct mwifiex_sta_node *sta_ptr,
++						struct sk_buff *event)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
-+	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
- 	int i;
+ 	int evt_len, ele_len;
+ 	u8 *curr;
+@@ -42,7 +42,7 @@ static int mwifiex_check_ibss_peer_capabilties(struct mwifiex_private *priv,
+ 	evt_len = event->len;
+ 	curr = event->data;
  
- 	for (i = 0; i < INT3400_THERMAL_MAXIMUM_UUID; ++i) {
+-	mwifiex_dbg_dump(priv->adapter, EVT_D, "ibss peer capabilties:",
++	mwifiex_dbg_dump(priv->adapter, EVT_D, "ibss peer capabilities:",
+ 			 event->data, event->len);
+ 
+ 	skb_push(event, MWIFIEX_IBSS_CONNECT_EVT_FIX_SIZE);
+@@ -933,7 +933,7 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
+ 			    ibss_sta_addr);
+ 		sta_ptr = mwifiex_add_sta_entry(priv, ibss_sta_addr);
+ 		if (sta_ptr && adapter->adhoc_11n_enabled) {
+-			mwifiex_check_ibss_peer_capabilties(priv, sta_ptr,
++			mwifiex_check_ibss_peer_capabilities(priv, sta_ptr,
+ 							     adapter->event_skb);
+ 			if (sta_ptr->is_11n_enabled)
+ 				for (i = 0; i < MAX_NUM_TID; i++)
+diff --git a/drivers/net/wireless/marvell/mwifiex/uap_event.c b/drivers/net/wireless/marvell/mwifiex/uap_event.c
+index e8c8728db15a..5c57efe24f6a 100644
+--- a/drivers/net/wireless/marvell/mwifiex/uap_event.c
++++ b/drivers/net/wireless/marvell/mwifiex/uap_event.c
+@@ -23,8 +23,8 @@
+ 
+ #define MWIFIEX_BSS_START_EVT_FIX_SIZE    12
+ 
+-static int mwifiex_check_uap_capabilties(struct mwifiex_private *priv,
+-					 struct sk_buff *event)
++static int mwifiex_check_uap_capabilities(struct mwifiex_private *priv,
++					  struct sk_buff *event)
+ {
+ 	int evt_len;
+ 	u8 *curr;
+@@ -38,7 +38,7 @@ static int mwifiex_check_uap_capabilties(struct mwifiex_private *priv,
+ 	evt_len = event->len;
+ 	curr = event->data;
+ 
+-	mwifiex_dbg_dump(priv->adapter, EVT_D, "uap capabilties:",
++	mwifiex_dbg_dump(priv->adapter, EVT_D, "uap capabilities:",
+ 			 event->data, event->len);
+ 
+ 	skb_push(event, MWIFIEX_BSS_START_EVT_FIX_SIZE);
+@@ -194,7 +194,7 @@ int mwifiex_process_uap_event(struct mwifiex_private *priv)
+ 		       ETH_ALEN);
+ 		if (priv->hist_data)
+ 			mwifiex_hist_data_reset(priv);
+-		mwifiex_check_uap_capabilties(priv, adapter->event_skb);
++		mwifiex_check_uap_capabilities(priv, adapter->event_skb);
+ 		break;
+ 	case EVENT_UAP_MIC_COUNTERMEASURES:
+ 		/* For future development */
 -- 
-2.11.0
+2.17.0
 
