@@ -1,92 +1,37 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 28 Apr 2018 09:36:21 +0000
-Subject: [PATCH] mwifiex: fix spelling mistake: "capabilties" -> "capabilities"
-Message-Id: <20180428093621.6806-1-colin.king@canonical.com>
+Date: Sat, 28 Apr 2018 22:03:52 +0000
+Subject: [PATCH][V2] dmaengine: stm32-mdma: fix spelling mistake: "avalaible" -> "available"
+Message-Id: <20180428220352.19601-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in function names and text strings
+Trivial fix to spelling mistake in dev_err error message text and make
+channel plural.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/marvell/mwifiex/sta_event.c | 10 +++++-----
- drivers/net/wireless/marvell/mwifiex/uap_event.c |  8 ++++----
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/dma/stm32-mdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_event.c b/drivers/net/wireless/marvell/mwifiex/sta_event.c
-index 93dfb76cd8a6..01636c1b7447 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_event.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_event.c
-@@ -27,9 +27,9 @@
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index 1ac775f93d9e..90d9f6bd905b 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -1521,7 +1521,7 @@ static struct dma_chan *stm32_mdma_of_xlate(struct of_phandle_args *dma_spec,
  
- #define MWIFIEX_IBSS_CONNECT_EVT_FIX_SIZE    12
+ 	c = dma_get_any_slave_channel(&dmadev->ddev);
+ 	if (!c) {
+-		dev_err(mdma2dev(dmadev), "No more channel avalaible\n");
++		dev_err(mdma2dev(dmadev), "No more channels available\n");
+ 		return NULL;
+ 	}
  
--static int mwifiex_check_ibss_peer_capabilties(struct mwifiex_private *priv,
--					       struct mwifiex_sta_node *sta_ptr,
--					       struct sk_buff *event)
-+static int mwifiex_check_ibss_peer_capabilities(struct mwifiex_private *priv,
-+						struct mwifiex_sta_node *sta_ptr,
-+						struct sk_buff *event)
- {
- 	int evt_len, ele_len;
- 	u8 *curr;
-@@ -42,7 +42,7 @@ static int mwifiex_check_ibss_peer_capabilties(struct mwifiex_private *priv,
- 	evt_len = event->len;
- 	curr = event->data;
- 
--	mwifiex_dbg_dump(priv->adapter, EVT_D, "ibss peer capabilties:",
-+	mwifiex_dbg_dump(priv->adapter, EVT_D, "ibss peer capabilities:",
- 			 event->data, event->len);
- 
- 	skb_push(event, MWIFIEX_IBSS_CONNECT_EVT_FIX_SIZE);
-@@ -933,7 +933,7 @@ int mwifiex_process_sta_event(struct mwifiex_private *priv)
- 			    ibss_sta_addr);
- 		sta_ptr = mwifiex_add_sta_entry(priv, ibss_sta_addr);
- 		if (sta_ptr && adapter->adhoc_11n_enabled) {
--			mwifiex_check_ibss_peer_capabilties(priv, sta_ptr,
-+			mwifiex_check_ibss_peer_capabilities(priv, sta_ptr,
- 							     adapter->event_skb);
- 			if (sta_ptr->is_11n_enabled)
- 				for (i = 0; i < MAX_NUM_TID; i++)
-diff --git a/drivers/net/wireless/marvell/mwifiex/uap_event.c b/drivers/net/wireless/marvell/mwifiex/uap_event.c
-index e8c8728db15a..5c57efe24f6a 100644
---- a/drivers/net/wireless/marvell/mwifiex/uap_event.c
-+++ b/drivers/net/wireless/marvell/mwifiex/uap_event.c
-@@ -23,8 +23,8 @@
- 
- #define MWIFIEX_BSS_START_EVT_FIX_SIZE    12
- 
--static int mwifiex_check_uap_capabilties(struct mwifiex_private *priv,
--					 struct sk_buff *event)
-+static int mwifiex_check_uap_capabilities(struct mwifiex_private *priv,
-+					  struct sk_buff *event)
- {
- 	int evt_len;
- 	u8 *curr;
-@@ -38,7 +38,7 @@ static int mwifiex_check_uap_capabilties(struct mwifiex_private *priv,
- 	evt_len = event->len;
- 	curr = event->data;
- 
--	mwifiex_dbg_dump(priv->adapter, EVT_D, "uap capabilties:",
-+	mwifiex_dbg_dump(priv->adapter, EVT_D, "uap capabilities:",
- 			 event->data, event->len);
- 
- 	skb_push(event, MWIFIEX_BSS_START_EVT_FIX_SIZE);
-@@ -194,7 +194,7 @@ int mwifiex_process_uap_event(struct mwifiex_private *priv)
- 		       ETH_ALEN);
- 		if (priv->hist_data)
- 			mwifiex_hist_data_reset(priv);
--		mwifiex_check_uap_capabilties(priv, adapter->event_skb);
-+		mwifiex_check_uap_capabilities(priv, adapter->event_skb);
- 		break;
- 	case EVENT_UAP_MIC_COUNTERMEASURES:
- 		/* For future development */
 -- 
 2.17.0
 
