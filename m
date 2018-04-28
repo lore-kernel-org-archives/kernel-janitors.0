@@ -1,50 +1,36 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Wed, 04 Apr 2018 13:44:43 +0000
-Subject: Re: [bug report] lib: Add generic PIO mapping method
-Message-Id: <CAErSpo5mK891nhsGgabLS5c4YjPD-sUhs7Y_fiYrTwBmMsVRZg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 28 Apr 2018 09:52:16 +0000
+Subject: [PATCH] liquidio: fix spelling mistake: "mac_tx_multi_collison" -> "mac_tx_multi_collision"
+Message-Id: <20180428095216.7236-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180404124152.GA3567@mwanda>
-In-Reply-To: <20180404124152.GA3567@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 7:42 AM Dan Carpenter <dan.carpenter@oracle.com>
-wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Hello Zhichang Yuan,
+Trivial fix to spelling mistake in oct_stats_strings text
 
-> This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cavium/liquidio/lio_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The patch 07a1cb330513: "lib: Add generic PIO mapping method" from
-> Mar 15, 2018, leads to the following Smatch complaint:
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
+index 9926a12dd805..000e7d40e2ad 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
+@@ -120,7 +120,7 @@ static const char oct_stats_strings[][ETH_GSTRING_LEN] = {
+ 	"mac_tx_ctl_packets",
+ 	"mac_tx_total_collisions",
+ 	"mac_tx_one_collision",
+-	"mac_tx_multi_collison",
++	"mac_tx_multi_collision",
+ 	"mac_tx_max_collision_fail",
+ 	"mac_tx_max_deferal_fail",
+ 	"mac_tx_fifo_err",
+-- 
+2.17.0
 
->      lib/logic_pio.c:42 logic_pio_register_range()
->      warn: variable dereferenced before check 'new_range' (see line 36)
-
-Thanks, I folded in Gustavo A. R. Silva's fix for this.
-
-> lib/logic_pio.c
->      35          struct logic_pio_hwaddr *range;
->      36          resource_size_t start = new_range->hw_start;
->                                          ^^^^^^^^^^^^^^^^^^^^
->      37          resource_size_t end = new_range->hw_start +
-new_range->size;
->                                        ^^^^^^^^^^^^^^^^^^^
-^^^^^^^^^^^^^^^
-> Dereference.
-
->      38          resource_size_t mmio_sz = 0;
->      39          resource_size_t iio_sz = MMIO_UPPER_LIMIT;
->      40          int ret = 0;
->      41
->      42          if (!new_range || !new_range->fwnode || !new_range->size)
->                       ^^^^^^^^^
-> Check for NULL.
-
->      43                  return -EINVAL;
->      44
-
-> regards,
-> dan carpenter
