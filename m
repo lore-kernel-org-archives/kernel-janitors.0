@@ -1,33 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Apr 2018 11:19:11 +0000
-Subject: [PATCH] swiotlb: remove an unecessary NULL check
-Message-Id: <20180405111911.GC4218@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 28 Apr 2018 09:24:48 +0000
+Subject: [PATCH] x86: apm: fix spelling mistake: "caculate" -> "calculate"
+Message-Id: <20180428092448.6493-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jiri Kosina <jikos@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Smatch complains here:
+From: Colin Ian King <colin.king@canonical.com>
 
-    lib/swiotlb.c:730 swiotlb_alloc_buffer()
-    warn: variable dereferenced before check 'dev' (see line 716)
+Trivial fix to spelling mistake in module parameter description text
 
-"dev" isn't ever NULL in this function so we can just remove the check.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kernel/apm_32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
+index dfcbe6924eaf..6b345f35f023 100644
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -2446,7 +2446,7 @@ MODULE_PARM_DESC(idle_threshold,
+ 	"System idle percentage above which to make APM BIOS idle calls");
+ module_param(idle_period, int, 0444);
+ MODULE_PARM_DESC(idle_period,
+-	"Period (in sec/100) over which to caculate the idle percentage");
++	"Period (in sec/100) over which to calculate the idle percentage");
+ module_param(smp, bool, 0444);
+ MODULE_PARM_DESC(smp,
+ 	"Set this to enable APM use on an SMP platform. Use with caution on older systems");
+-- 
+2.17.0
 
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index 47aeb04c1997..51dde88e50a3 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -727,7 +727,7 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 
- out_unmap:
- 	dev_warn(dev, "hwdev DMA mask = 0x%016Lx, dev_addr = 0x%016Lx\n",
--		(unsigned long long)(dev ? dev->coherent_dma_mask : 0),
-+		(unsigned long long)dev->coherent_dma_mask,
- 		(unsigned long long)*dma_handle);
- 
- 	/*
