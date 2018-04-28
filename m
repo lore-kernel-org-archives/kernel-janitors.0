@@ -1,22 +1,36 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Wed, 25 Apr 2018 12:49:52 +0000
-Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
-Message-Id: <215c52b1-3044-8dd9-c021-dc2b8ff78afe@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 28 Apr 2018 22:16:00 +0000
+Subject: [PATCH] can: cc770: fix spelling mistake: "comptibility" -> "compatibility"
+Message-Id: <20180428221600.20039-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <CGME20180419140651epcas5p22119a061c760dd54c0c3e630b053ec1b@epcas5p2.samsung.com>
- <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, Andri Yngvason <andri.yngvason@marel.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/19/2018 04:05 PM, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied, thanks!
+Trivial fix to spelling mistake in module parameter description text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/can/cc770/cc770.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/cc770/cc770.c b/drivers/net/can/cc770/cc770.c
+index d4dd4da23997..da636a22c542 100644
+--- a/drivers/net/can/cc770/cc770.c
++++ b/drivers/net/can/cc770/cc770.c
+@@ -73,7 +73,7 @@ MODULE_PARM_DESC(msgobj15_eff, "Extended 29-bit frames for message object 15 "
+ 
+ static int i82527_compat;
+ module_param(i82527_compat, int, 0444);
+-MODULE_PARM_DESC(i82527_compat, "Strict Intel 82527 comptibility mode "
++MODULE_PARM_DESC(i82527_compat, "Strict Intel 82527 compatibility mode "
+ 		 "without using additional functions");
+ 
+ /*
+-- 
+2.17.0
 
