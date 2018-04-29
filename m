@@ -1,28 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 24 Apr 2018 01:03:02 +0000
-Subject: Re: [PATCH] dca: make function dca_common_get_tag static
-Message-Id: <20180423.210302.2026905592349874072.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 29 Apr 2018 11:54:25 +0000
+Subject: [PATCH] selftests: fix spelling mistake: "desciptor" -> "descriptor"
+Message-Id: <20180429115425.9378-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180423124938.26070-1-colin.king@canonical.com>
-In-Reply-To: <20180423124938.26070-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 23 Apr 2018 13:49:38 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Function dca_common_get_tag is local to the source and does not need to be
-> in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/dca/dca-core.c:273:4: warning: symbol 'dca_common_get_tag' was
-> not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in message text
 
-Applied to net-next, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/filesystems/devpts_pts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
+index b9055e974289..ea5de8271521 100644
+--- a/tools/testing/selftests/filesystems/devpts_pts.c
++++ b/tools/testing/selftests/filesystems/devpts_pts.c
+@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
+ 	int ret;
+ 
+ 	if (!isatty(STDIN_FILENO)) {
+-		fprintf(stderr, "Standard input file desciptor is not attached "
++		fprintf(stderr, "Standard input file descriptor is not attached "
+ 				"to a terminal. Skipping test\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+-- 
+2.17.0
+
