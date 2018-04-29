@@ -1,53 +1,36 @@
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-Date: Wed, 04 Apr 2018 11:58:59 +0000
-Subject: Re: [PATCH -next] usb: dwc2: pci: Fix error return code in dwc2_pci_probe()
-Message-Id: <410670D7E743164D87FA6160E7907A560113AE3A0C@am04wembxb.internal.synopsys.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 29 Apr 2018 12:31:49 +0000
+Subject: [PATCH] scsi: mpt3sas: fix spelling mistake: "disbale" -> "disable"
+Message-Id: <20180429123149.11077-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1522244473-103213-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1522244473-103213-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grigor Tovmasyan <Grigor.Tovmasyan@synopsys.com>, Wei Yongjun <weiyongjun1@huawei.com>, Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vardan Mikayelyan <mvardan@synopsys.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 3/30/2018 11:35 AM, Grigor Tovmasyan wrote:
-> On 3/28/2018 5:36 PM, Wei Yongjun wrote:
->> Fix to return error code -ENOMEM from the alloc fail error handling
->> case instead of 0, as done elsewhere in this function.
->>
->> Fixes: ecd29dabb2ba ("usb: dwc2: pci: Handle error cleanup in probe")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> Reviewed-by: Grigor Tovmasyan <tovmasya@synopsys.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-> 
->> ---
->>    drivers/usb/dwc2/pci.c | 4 +++-
->>    1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/usb/dwc2/pci.c b/drivers/usb/dwc2/pci.c
->> index 7f21747..bea2e8e 100644
->> --- a/drivers/usb/dwc2/pci.c
->> +++ b/drivers/usb/dwc2/pci.c
->> @@ -141,8 +141,10 @@ static int dwc2_pci_probe(struct pci_dev *pci,
->>    		goto err;
->>    
->>    	glue = devm_kzalloc(dev, sizeof(*glue), GFP_KERNEL);
->> -	if (!glue)
->> +	if (!glue) {
->> +		ret = -ENOMEM;
->>    		goto err;
->> +	}
->>    
->>    	ret = platform_device_add(dwc2);
->>    	if (ret) {
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  https://urldefense.proofpoint.com/v2/url?u=http-3A__vger.kernel.org_majordomo-2Dinfo.html&d=DwICAw&c=DPL6_X_6JkXFx7AXWqB0tg&r=K1ULVL1slpLXpMJJlAXSOxws4tRq0IkTBqxDkyW2hUQ&m=6vLEHiNG2gKkx9F-l1Yy77Kde75g7qA8Aw3fKXaQgCI&s=rFkdkzcIhy-tbIL8_skjqNXbFvj1Iolbh9CZ4-LNt4U&e>>
-> 
-> 
+Trivial fix to spelling mistake in module parameter description text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 61f93a134956..4edf1fc0e80c 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -87,7 +87,7 @@ MODULE_PARM_DESC(msix_disable, " disable msix routed interrupts (default=0)");
+ 
+ static int smp_affinity_enable = 1;
+ module_param(smp_affinity_enable, int, S_IRUGO);
+-MODULE_PARM_DESC(smp_affinity_enable, "SMP affinity feature enable/disbale Default: enable(1)");
++MODULE_PARM_DESC(smp_affinity_enable, "SMP affinity feature enable/disable Default: enable(1)");
+ 
+ static int max_msix_vectors = -1;
+ module_param(max_msix_vectors, int, 0);
+-- 
+2.17.0
 
