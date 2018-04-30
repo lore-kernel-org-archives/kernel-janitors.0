@@ -1,50 +1,39 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 03 Apr 2018 12:02:46 +0000
-Subject: Re: [PATCH] selftests/ftrace: fix spelling mistake: "tiggers" -> "triggers"
-Message-Id: <alpine.DEB.2.20.1804031402131.3630@hadrien>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Mon, 30 Apr 2018 13:23:06 +0000
+Subject: [PATCH] typec: tcpm: Fix incorrect 'and' operator
+Message-Id: <20180430132305.GA20092@embeddedor.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180329172431.8171-1-colin.king@canonical.com>
- <20180329133102.6061ba66@gandalf.local.home>
- <48be730c-2a15-d3ad-d1aa-7d57fe7db6ca@canonical.com>
- <56713d51-0954-e7a8-cf7a-7a6bfedf58f3@kernel.org> 
- <20180329140409.1311baac@gandalf.local.home>
- <583c21dd-2ffc-4375-af8a-aa721ffb4594@kernel.org>
- <20180403100704.hwdugt2piatcngqw@mwanda>
- <20180403075944.0fd44f82@gandalf.local.home>
-In-Reply-To: <20180403075944.0fd44f82@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
+Currently, logical and is being used instead of *bitwise* and.
 
+Fix this by using a proper bitwise and operator.
 
-On Tue, 3 Apr 2018, Steven Rostedt wrote:
+Addresses-Coverity-ID: 1468455 ("Logical vs. bitwise operator")
+Fixes: 64f7c494a3c0 ("typec: tcpm: Add support for sink PPS related
+messages")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/typec/tcpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Tue, 3 Apr 2018 13:07:05 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> > On Fri, Mar 30, 2018 at 09:51:21AM -0600, Shuah Khan wrote:
-> > > On 03/29/2018 12:04 PM, Steven Rostedt wrote:
-> > > > On Thu, 29 Mar 2018 11:54:28 -0600
-> > > > Shuah Khan <shuah@kernel.org> wrote:
-> > > >
-> > > >> I will pick this up with your Ack Steve, unless you want include
-> > > >> it in your pull request.
-> > > >
-> > > > You or Janitors can take it.
-> > > >
-> > >
-> > > Okay we can leave it to the Janitors then.
-> > >
-> >
-> > There isn't a Janitor tree...
-> >
->
-> But there is a trivial tree. I guess the confusion was that
-> kernel-janitors@vger.kernel.org was Cc'd. Where do their work go?
+diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+index 1ee259b..7ee417a 100644
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -1772,7 +1772,7 @@ static void tcpm_pd_ext_msg_request(struct tcpm_port *port,
+ 	enum pd_ext_msg_type type = pd_header_type_le(msg->header);
+ 	unsigned int data_size = pd_ext_header_data_size_le(msg->ext_msg.header);
+ 
+-	if (!(msg->ext_msg.header && PD_EXT_HDR_CHUNKED)) {
++	if (!(msg->ext_msg.header & PD_EXT_HDR_CHUNKED)) {
+ 		tcpm_log(port, "Unchunked extended messages unsupported");
+ 		return;
+ 	}
+-- 
+2.7.4
 
-kernel-janitors@vger.kernel.org is just a mailing list that lets people
-see what other people are doing.
-
-julia
