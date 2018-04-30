@@ -1,39 +1,37 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Date: Mon, 23 Apr 2018 06:04:48 +0000
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 30 Apr 2018 09:03:25 +0000
 Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-Id: <19e48035-917c-7bb0-eef3-a7d6db4c1db2@xilinx.com>
+Message-Id: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
- <20180421162333.d4jtidmbxrx76k4x@ninjato>
-In-Reply-To: <20180421162333.d4jtidmbxrx76k4x@ninjato>
+ <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
+In-Reply-To: <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Hi Wolfram,
+On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 04/19/2018 09:05 AM, Wolfram Sang wrote:
+>>
+>> We should get drvdata from struct device directly. Going via
+>> platform_device is an unneeded step back and forth.
+>>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
+>>
+>> Build tested only. buildbot is happy. Please apply individually.
+>
+>
+> for gpio-omap.c:
+> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-On 21.4.2018 18:23, Wolfram Sang wrote:
-> Hi Michal,
-> 
-> Thanks for the reviews!
-> 
->> There are two more occurences in this gpio-zynq driver.
->> zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
->> two lines are not together. But the same change can be applied for them too.
-> 
-> Not really. The rule would have matched if there was just "something"
-> inbetween. It did not match because the "something" involves the
-> variable 'pdev', so we can't remove it. And just changing towards
-> 'dev_get_drvdata' and keeping 'pdev' was not worth the hazzle in my
-> book. Especially since I think the code should probably get refactored.
-> Calling platform_get_irq() in suspend/resume paths in order to get the
-> irq_data looks a little expensive to me, but I haven't tested it.
-> 
+Hm I only see the responses not the actual patch, I guess I will find it
+sooner or later.
 
-ok. Thanks. I have overlooked that.
+Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
 
-Thanks,
-Michal
+Yours,
+Linus Walleij
