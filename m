@@ -1,72 +1,56 @@
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Date: Fri, 20 Apr 2018 08:17:47 +0000
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Mon, 30 Apr 2018 09:28:17 +0000
 Subject: Re: [PATCH 43/61] pwm: simplify getting .drvdata
-Message-Id: <e7d16777-6a31-2657-0ce9-463f6d908ee9@microchip.com>
+Message-Id: <20180430092817.GB2270@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="lEGEL1/lMxI0MVQ2"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On 19/04/2018 at 16:06, Wolfram Sang wrote:
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 19, 2018 at 04:06:13PM +0200, Wolfram Sang wrote:
 > We should get drvdata from struct device directly. Going via
 > platform_device is an unneeded step back and forth.
-> 
+>=20
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
 > ---
-> 
+>=20
 > Build tested only. buildbot is happy. Please apply individually.
-> 
->   drivers/pwm/pwm-atmel-tcb.c | 6 ++----
->   drivers/pwm/pwm-rcar.c      | 3 +--
->   2 files changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
-> index 4fb1be246c44..0d0f8376bc35 100644
-> --- a/drivers/pwm/pwm-atmel-tcb.c
-> +++ b/drivers/pwm/pwm-atmel-tcb.c
-> @@ -460,8 +460,7 @@ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
->   #ifdef CONFIG_PM_SLEEP
->   static int atmel_tcb_pwm_suspend(struct device *dev)
->   {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-> +	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
->   	void __iomem *base = tcbpwm->tc->regs;
->   	int i;
->   
-> @@ -478,8 +477,7 @@ static int atmel_tcb_pwm_suspend(struct device *dev)
->   
->   static int atmel_tcb_pwm_resume(struct device *dev)
->   {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-> +	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
->   	void __iomem *base = tcbpwm->tc->regs;
->   	int i;
->   
-> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-> index 91d11f2e2fef..748f614d5375 100644
-> --- a/drivers/pwm/pwm-rcar.c
-> +++ b/drivers/pwm/pwm-rcar.c
-> @@ -261,8 +261,7 @@ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
->   #ifdef CONFIG_PM_SLEEP
->   static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
->   {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
-> +	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
->   	struct pwm_chip *chip = &rcar_pwm->chip;
->   
->   	return &chip->pwms[0];
-> 
+>=20
+>  drivers/pwm/pwm-atmel-tcb.c | 6 ++----
+>  drivers/pwm/pwm-rcar.c      | 3 +--
+>  2 files changed, 3 insertions(+), 6 deletions(-)
 
+Applied, thanks.
 
--- 
-Nicolas Ferre
+Thierry
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4bEACgkQ3SOs138+
+s6Hr0g//XBCtOzuvmEltFaOwqj2kf7ee6IoPhckcA9MCgONUrlwUYpwJPDXjkmNw
+ADxKNgEc4IpySGMSdvI9xo/kVPOyX3EHw3RC9RxsZbuOVCTfY007pbsUUtDSJjZT
+Z9QljEOcfP0QuCY2AOyU3SkGzMy9vvh/acMLvqdYYtYLbYkZuhxtqDd5rrUw3s/t
+SifMTmxY2/Z8TBhFXBSarPFpnXNiGvnutwSZYuqKhMFEiGxWbac6P9tgy+hgSg6t
+iA6ACNOrJLmxo60NegWqRNmRof5XUQN/V0Zh52GgsIsVjx/vQTRRKoTqwwLM3xmn
+5rqE5uHCfZ6JJNyrB2LlhUdGI7VrOjrqQIkvxjIz79Avj2rC47Oku0FKU+PQ7Nxj
+2mI1p1Xye+CXecW+IdtYB/NT0OgRaYHGd+FjH6RjwgwmCRQIrA0wWcA2QNqA4iV8
+Z4EAZhYUcMXXShA1t1a8vld1lP1na4FWhUhe32F5GhM//jx5klaGImx2STfy8BQg
+lyguqB7Brthsm0Ue1gdZvmqZDulqzxGajR0/c1/eQxYhgRLc13BwggCXBkV4Ugba
+q3VrGLbB+2NGP3HnO1k9DPxHjvl+bFaxHF0Q1BvaViqL0bzjl8SYasePtf45UUTn
+j4Oxz/nhpzCpHvJ5sgnkO1KSysjeAEXCzSRbCSkLM1D6/UPhkRc=
+=YVQV
+-----END PGP SIGNATURE-----
+
+--lEGEL1/lMxI0MVQ2--
