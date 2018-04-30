@@ -1,95 +1,50 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Mar 2018 23:31:25 +0000
-Subject: [PATCH] drm/amd/display: don't pass large struct stream_res by value
-Message-Id: <20180322233125.17251-1-colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 14:19:46 +0000
+Subject: [PATCH][staging-next] staging: rtl8723bs: spelling mistake: "dismatch" -> "mismatch"
+Message-Id: <20180430141946.12186-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Harry Wentland <harry.wentland@amd.com>, Tony Cheng <tony.cheng@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Justin Vreeland <justin@jvreeland.com>, Bastien Nocera <hadess@hadess.net>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Passing stream_res by value is inefficient as it requires a large copy
-of 320 bytes.  Instead, pass it by reference and also use a pointer to
-stream_res->tg and also stream_res->abm to clean up the code a little.
-
-Detected by CoverityScan, CID#1466432 ("Big parameter passed by value")
+Trivial fix to spelling mistake in message text and comment
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c  | 30 +++++++++++-----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c | 2 +-
+ drivers/staging/rtl8723bs/include/wifi.h        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index 8b0f6b8a5627..222d78fc733d 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -1812,32 +1812,32 @@ static void update_dchubp_dpp(
- 
- static void dcn10_otg_blank(
- 		struct dc *dc,
--		struct stream_resource stream_res,
-+		struct stream_resource *stream_res,
- 		struct dc_stream_state *stream,
- 		bool blank)
- {
- 	enum dc_color_space color_space;
- 	struct tg_color black_color = {0};
-+	struct timing_generator *tg = stream_res->tg;
-+	struct abm *abm = stream_res->abm;
- 
- 	/* program otg blank color */
- 	color_space = stream->output_color_space;
- 	color_space_to_black_color(dc, color_space, &black_color);
- 
--	if (stream_res.tg->funcs->set_blank_color)
--		stream_res.tg->funcs->set_blank_color(
--				stream_res.tg,
--				&black_color);
-+	if (tg->funcs->set_blank_color)
-+		tg->funcs->set_blank_color(tg, &black_color);
- 
- 	if (!blank) {
--		if (stream_res.tg->funcs->set_blank)
--			stream_res.tg->funcs->set_blank(stream_res.tg, blank);
--		if (stream_res.abm)
--			stream_res.abm->funcs->set_abm_level(stream_res.abm, stream->abm_level);
-+		if (tg->funcs->set_blank)
-+			tg->funcs->set_blank(tg, blank);
-+		if (abm)
-+			abm->funcs->set_abm_level(abm, stream->abm_level);
- 	} else if (blank) {
--		if (stream_res.abm)
--			stream_res.abm->funcs->set_abm_immediate_disable(stream_res.abm);
--		if (stream_res.tg->funcs->set_blank)
--			stream_res.tg->funcs->set_blank(stream_res.tg, blank);
-+		if (abm)
-+			abm->funcs->set_abm_immediate_disable(abm);
-+		if (tg->funcs->set_blank)
-+			tg->funcs->set_blank(tg, blank);
- 	}
- }
- 
-@@ -1876,7 +1876,7 @@ static void program_all_pipe_in_tree(
- 		pipe_ctx->stream_res.tg->funcs->program_global_sync(
- 				pipe_ctx->stream_res.tg);
- 
--		dcn10_otg_blank(dc, pipe_ctx->stream_res,
-+		dcn10_otg_blank(dc, &pipe_ctx->stream_res,
- 				pipe_ctx->stream, blank);
- 	}
- 
-@@ -1996,7 +1996,7 @@ static void dcn10_apply_ctx_for_surface(
- 
- 	if (num_planes = 0) {
- 		/* OTG blank before remove all front end */
--		dcn10_otg_blank(dc, top_pipe_to_program->stream_res, top_pipe_to_program->stream, true);
-+		dcn10_otg_blank(dc, &top_pipe_to_program->stream_res, top_pipe_to_program->stream, true);
- 	}
- 
- 	/* Disconnect unused mpcc */
+diff --git a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
+index 33610d39333f..828bc0d045a0 100644
+--- a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
++++ b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
+@@ -2198,7 +2198,7 @@ static void halbtc8723b2ant_TdmaDurationAdjust(
+ 			BTC_MSG_ALGORITHM,
+ 			ALGO_TRACE_FW_DETAIL,
+ 			(
+-				"[BTCoex], PsTdma type dismatch!!!, curPsTdma =%d, recordPsTdma =%d\n",
++				"[BTCoex], PsTdma type mismatch!!!, curPsTdma =%d, recordPsTdma =%d\n",
+ 				pCoexDm->curPsTdma,
+ 				pCoexDm->psTdmaDuAdjType
+ 			)
+diff --git a/drivers/staging/rtl8723bs/include/wifi.h b/drivers/staging/rtl8723bs/include/wifi.h
+index 530d698f50d9..c56f887df101 100644
+--- a/drivers/staging/rtl8723bs/include/wifi.h
++++ b/drivers/staging/rtl8723bs/include/wifi.h
+@@ -1087,7 +1087,7 @@ enum P2P_STATE {
+ 	P2P_STATE_PROVISIONING_DONE = 14,			/* 	Finish the P2P WPS */
+ 	P2P_STATE_TX_INVITE_REQ = 15,					/* 	Transmit the P2P Invitation request */
+ 	P2P_STATE_RX_INVITE_RESP_OK = 16,				/* 	Receiving the P2P Invitation response */
+-	P2P_STATE_RECV_INVITE_REQ_DISMATCH = 17,	/* 	receiving the P2P Inviation request and dismatch with the profile. */
++	P2P_STATE_RECV_INVITE_REQ_DISMATCH = 17,	/* 	receiving the P2P Inviation request and mismatch with the profile. */
+ 	P2P_STATE_RECV_INVITE_REQ_GO = 18,			/* 	receiving the P2P Inviation request and this wifi is GO. */
+ 	P2P_STATE_RECV_INVITE_REQ_JOIN = 19,			/* 	receiving the P2P Inviation request to join an existing P2P Group. */
+ 	P2P_STATE_RX_INVITE_RESP_FAIL = 20,			/* 	recveing the P2P Inviation response with failure */
 -- 
-2.15.1
+2.17.0
 
