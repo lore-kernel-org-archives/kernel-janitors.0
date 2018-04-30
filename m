@@ -1,51 +1,77 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:43 +0000
-Subject: [PATCH 13/61] gpu: drm: msm: disp: mdp5: simplify getting .drvdata
-Message-Id: <20180419140641.27926-14-wsa+renesas@sang-engineering.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 15:53:47 +0000
+Subject: [PATCH][staging-next][V2] staging: rtl8723bs: fix spelling mistakes: "dismatch" and "Inviation"
+Message-Id: <20180430155347.22571-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bastien Nocera <hadess@hadess.net>, Justin Vreeland <justin@jvreeland.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Trivial fix to spelling mistakes in message text and comments
+
+"dismatch" -> "mismatch"
+"Inviation" -> "Invitation"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
 
-Build tested only. buildbot is happy. Please apply individually.
+V2: Add Inviation fix as noted by Bastien Nocera
+---
+ drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c |  2 +-
+ drivers/staging/rtl8723bs/include/wifi.h        | 12 ++++++------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index 6d8e3a9a6fc0..d50927f00c6f 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -1014,8 +1014,7 @@ static int mdp5_dev_remove(struct platform_device *pdev)
+diff --git a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
+index 33610d39333f..828bc0d045a0 100644
+--- a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
++++ b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
+@@ -2198,7 +2198,7 @@ static void halbtc8723b2ant_TdmaDurationAdjust(
+ 			BTC_MSG_ALGORITHM,
+ 			ALGO_TRACE_FW_DETAIL,
+ 			(
+-				"[BTCoex], PsTdma type dismatch!!!, curPsTdma =%d, recordPsTdma =%d\n",
++				"[BTCoex], PsTdma type mismatch!!!, curPsTdma =%d, recordPsTdma =%d\n",
+ 				pCoexDm->curPsTdma,
+ 				pCoexDm->psTdmaDuAdjType
+ 			)
+diff --git a/drivers/staging/rtl8723bs/include/wifi.h b/drivers/staging/rtl8723bs/include/wifi.h
+index 530d698f50d9..d53a4483ea9f 100644
+--- a/drivers/staging/rtl8723bs/include/wifi.h
++++ b/drivers/staging/rtl8723bs/include/wifi.h
+@@ -976,7 +976,7 @@ enum HT_CAP_AMPDU_FACTOR {
+ #define	P2P_STATUS_FAIL_INCOMPATIBLE_PROVSION	0x0A
+ #define	P2P_STATUS_FAIL_USER_REJECT				0x0B
  
- static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
-+	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
+-/* 	Value of Inviation Flags Attribute */
++/* 	Value of Invitation Flags Attribute */
+ #define	P2P_INVITATION_FLAGS_PERSISTENT			BIT(0)
  
- 	DBG("");
- 
-@@ -1024,8 +1023,7 @@ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
- 
- static __maybe_unused int mdp5_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
-+	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
- 
- 	DBG("");
- 
+ #define	DMP_P2P_DEVCAP_SUPPORT	(P2P_DEVCAP_SERVICE_DISCOVERY | \
+@@ -1082,15 +1082,15 @@ enum P2P_STATE {
+ 	P2P_STATE_GONEGO_ING = 9,						/* 	Doing the group owner negoitation handshake */
+ 	P2P_STATE_GONEGO_OK = 10,						/* 	finish the group negoitation handshake with success */
+ 	P2P_STATE_GONEGO_FAIL = 11,					/* 	finish the group negoitation handshake with failure */
+-	P2P_STATE_RECV_INVITE_REQ_MATCH = 12,		/* 	receiving the P2P Inviation request and match with the profile. */
++	P2P_STATE_RECV_INVITE_REQ_MATCH = 12,		/* 	receiving the P2P Invitation request and match with the profile. */
+ 	P2P_STATE_PROVISIONING_ING = 13,				/* 	Doing the P2P WPS */
+ 	P2P_STATE_PROVISIONING_DONE = 14,			/* 	Finish the P2P WPS */
+ 	P2P_STATE_TX_INVITE_REQ = 15,					/* 	Transmit the P2P Invitation request */
+ 	P2P_STATE_RX_INVITE_RESP_OK = 16,				/* 	Receiving the P2P Invitation response */
+-	P2P_STATE_RECV_INVITE_REQ_DISMATCH = 17,	/* 	receiving the P2P Inviation request and dismatch with the profile. */
+-	P2P_STATE_RECV_INVITE_REQ_GO = 18,			/* 	receiving the P2P Inviation request and this wifi is GO. */
+-	P2P_STATE_RECV_INVITE_REQ_JOIN = 19,			/* 	receiving the P2P Inviation request to join an existing P2P Group. */
+-	P2P_STATE_RX_INVITE_RESP_FAIL = 20,			/* 	recveing the P2P Inviation response with failure */
++	P2P_STATE_RECV_INVITE_REQ_DISMATCH = 17,	/* 	receiving the P2P Invitation request and mismatch with the profile. */
++	P2P_STATE_RECV_INVITE_REQ_GO = 18,			/* 	receiving the P2P Invitation request and this wifi is GO. */
++	P2P_STATE_RECV_INVITE_REQ_JOIN = 19,			/* 	receiving the P2P Invitation request to join an existing P2P Group. */
++	P2P_STATE_RX_INVITE_RESP_FAIL = 20,			/* 	recveing the P2P Invitation response with failure */
+ 	P2P_STATE_RX_INFOR_NOREADY = 21,			/*  receiving p2p negoitation response with information is not available */
+ 	P2P_STATE_TX_INFOR_NOREADY = 22,			/*  sending p2p negoitation response with information is not available */
+ };
 -- 
-2.11.0
+2.17.0
 
