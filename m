@@ -1,28 +1,41 @@
-From: "MS Zeliha Omer Faruk" <berengere@glvt-cnrs.fr>
-Date: Mon, 16 Apr 2018 21:15:33 +0000
-Subject: Proposal
-Message-Id: <0a03720c73b55e0482980df5185eab90.squirrel@www.glvt-cnrs.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 13:14:20 +0000
+Subject: [PATCH][next] pinctrl: actions: fix missing break in PIN_CONFIG_DRIVE_STRENGTH case.
+Message-Id: <20180430131420.6155-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a8116aa1-13f3-4e49-beab-6b824acbf363@CNCH01WVP.core-res.rootcore.local>
-In-Reply-To: <a8116aa1-13f3-4e49-beab-6b824acbf363@CNCH01WVP.core-res.rootcore.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
+a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
+checks against *arg. This looks like an unintentional missing break so
+add in the break.
 
+Detected by CoverityScan, CID#1468459 ("Missing break in switch")
 
-Hello
+Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/actions/pinctrl-owl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Greeetings to you please did you get my previous email regarding my
-investment proposal last week friday ?
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 928b40f71a3c..d15abb97821e 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -441,6 +441,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+ 		default:
+ 			return -EINVAL;
+ 		}
++		break;
+ 	case PIN_CONFIG_SLEW_RATE:
+ 		if (*arg)
+ 			*arg = 1;
+-- 
+2.17.0
 
-MS.Zeliha =C3=B6mer faruk
-zeliha.omer.faruk@gmail.com
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
