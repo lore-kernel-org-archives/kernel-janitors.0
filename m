@@ -1,36 +1,49 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Mon, 30 Apr 2018 21:04:23 +0000
-Subject: Re: [PATCH] PCI: ibmphp: fix get_max_bus_speed()
-Message-Id: <20180430210423.GF95643@bhelgaas-glaptop.roam.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 13:22:59 +0000
+Subject: [PATCH][next][V2] pinctrl: actions: fix missing break in PIN_CONFIG_DRIVE_STRENGTH case.
+Message-Id: <20180430132259.9938-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419100549.GA10672@mwanda>
-In-Reply-To: <20180419100549.GA10672@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Matthew Wilcox <matthew@wil.cx>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Sinan Kaya <okaya@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 01:05:49PM +0300, Dan Carpenter wrote:
-> The "rc" variable is only initialized on the error path.  The caller
-> doesn't check the return but, if "rc" is non-zero, then this function is
-> basically a no-op.
-> 
-> Fixes: 3749c51ac6c1 ("PCI: Make current and maximum bus speeds part of the PCI core")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to pci/hotplug for v4.18, thanks!
+There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
+a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
+checks against *arg. This looks like an unintentional missing break so
+add in the break.
 
-> diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
-> index b81ca3fa0e84..1869b0411ce0 100644
-> --- a/drivers/pci/hotplug/ibmphp_core.c
-> +++ b/drivers/pci/hotplug/ibmphp_core.c
-> @@ -379,7 +379,7 @@ static int get_adapter_present(struct hotplug_slot *hotplug_slot, u8 *value)
->  
->  static int get_max_bus_speed(struct slot *slot)
->  {
-> -	int rc;
-> +	int rc = 0;
->  	u8 mode = 0;
->  	enum pci_bus_speed speed;
->  	struct pci_bus *bus = slot->hotplug_slot->pci_slot->bus;
+Detected by CoverityScan, CID#1468456, 1468459 ("Missing break in switch")
+
+Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/actions/pinctrl-owl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 928b40f71a3c..ee090697b1e9 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -406,6 +406,7 @@ static int owl_group_pinconf_arg2val(const struct owl_pingroup *g,
+ 		default:
+ 			return -EINVAL;
+ 		}
++		break;
+ 	case PIN_CONFIG_SLEW_RATE:
+ 		if (*arg)
+ 			*arg = OWL_PINCONF_SLEW_FAST;
+@@ -441,6 +442,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+ 		default:
+ 			return -EINVAL;
+ 		}
++		break;
+ 	case PIN_CONFIG_SLEW_RATE:
+ 		if (*arg)
+ 			*arg = 1;
+-- 
+2.17.0
+
