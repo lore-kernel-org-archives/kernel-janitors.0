@@ -1,50 +1,63 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Sun, 22 Apr 2018 17:13:34 +0000
-Subject: Re: [PATCH 29/61] mtd: devices: simplify getting .drvdata
-Message-Id: <20180422191334.784f7723@bbrezillon>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 13:04:34 +0000
+Subject: [PATCH][next] pinctrl: actions: make s900_functions, s900_padinfo and s900_pads static
+Message-Id: <20180430130434.1361-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018 16:05:59 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+s900_functions, s900_padinfo and s900_pads are local to the source and do
+not need to be in global scope, so make them static.
 
-Applied to mtd/next.
+Cleans up sparse warnings:
+drivers/pinctrl/actions/pinctrl-s900.c:1445:30: warning: symbol
+'s900_functions' was not declared. Should it be static?
+drivers/pinctrl/actions/pinctrl-s900.c:1664:20: warning: symbol
+'s900_padinfo' was not declared. Should it be static?
+drivers/pinctrl/actions/pinctrl-s900.c:207:31: warning: symbol
+'s900_pads' was not declared. Should it be static?
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/actions/pinctrl-s900.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Boris
-
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/mtd/devices/docg3.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
-> index c594fe5eac08..802d8f159e90 100644
-> --- a/drivers/mtd/devices/docg3.c
-> +++ b/drivers/mtd/devices/docg3.c
-> @@ -1470,8 +1470,7 @@ static struct docg3 *sysfs_dev2docg3(struct device *dev,
->  				     struct device_attribute *attr)
->  {
->  	int floor;
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct mtd_info **docg3_floors = platform_get_drvdata(pdev);
-> +	struct mtd_info **docg3_floors = dev_get_drvdata(dev);
->  
->  	floor = attr->attr.name[1] - '0';
->  	if (floor < 0 || floor >= DOC_MAX_NBFLOORS)
+diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
+index 49a04e224ee6..08d93f8fc086 100644
+--- a/drivers/pinctrl/actions/pinctrl-s900.c
++++ b/drivers/pinctrl/actions/pinctrl-s900.c
+@@ -204,7 +204,7 @@
+ #define NUM_PADS		(_PIN(3) + 1)
+ 
+ /* Pad names as specified in datasheet */
+-const struct pinctrl_pin_desc s900_pads[] = {
++static const struct pinctrl_pin_desc s900_pads[] = {
+ 	PINCTRL_PIN(ETH_TXD0, "eth_txd0"),
+ 	PINCTRL_PIN(ETH_TXD1, "eth_txd1"),
+ 	PINCTRL_PIN(ETH_TXEN, "eth_txen"),
+@@ -1442,7 +1442,7 @@ static const char * const sirq2_groups[] = {
+ 		.ngroups = ARRAY_SIZE(fname##_groups),	\
+ 	}
+ 
+-const struct owl_pinmux_func s900_functions[] = {
++static const struct owl_pinmux_func s900_functions[] = {
+ 	[S900_MUX_ERAM] = FUNCTION(eram),
+ 	[S900_MUX_ETH_RMII] = FUNCTION(eth_rmii),
+ 	[S900_MUX_ETH_SMII] = FUNCTION(eth_smii),
+@@ -1661,7 +1661,7 @@ static PAD_ST_CONF(I2S_MCLK0, 1, 0, 1);
+ 	}
+ 
+ /* Pad info table */
+-struct owl_padinfo s900_padinfo[NUM_PADS] = {
++static struct owl_padinfo s900_padinfo[NUM_PADS] = {
+ 	[ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
+ 	[ETH_TXD1] = PAD_INFO_ST(ETH_TXD1),
+ 	[ETH_TXEN] = PAD_INFO_ST(ETH_TXEN),
+-- 
+2.17.0
 
