@@ -1,51 +1,30 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:05:53 +0000
-Subject: [PATCH 23/61] input: touchscreen: simplify getting .drvdata
-Message-Id: <20180419140641.27926-24-wsa+renesas@sang-engineering.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 30 Apr 2018 10:38:29 +0000
+Subject: Re: ipw2100: fix spelling mistake: "decsribed" -> "described"
+Message-Id: <20180430103829.F2B87607F5@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180428223108.20458-1-colin.king@canonical.com>
+In-Reply-To: <20180428223108.20458-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in comment and in the ord_data text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Build tested only. buildbot is happy. Please apply individually.
+Patch applied to wireless-drivers-next.git, thanks.
 
- drivers/input/touchscreen/imx6ul_tsc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+3ea0a58cf9cf ipw2100: fix spelling mistake: "decsribed" -> "described"
 
-diff --git a/drivers/input/touchscreen/imx6ul_tsc.c b/drivers/input/touchscreen/imx6ul_tsc.c
-index ee82a975bfd2..da9e0a774e4b 100644
---- a/drivers/input/touchscreen/imx6ul_tsc.c
-+++ b/drivers/input/touchscreen/imx6ul_tsc.c
-@@ -515,8 +515,7 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
- 
- static int __maybe_unused imx6ul_tsc_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx6ul_tsc *tsc = platform_get_drvdata(pdev);
-+	struct imx6ul_tsc *tsc = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = tsc->input;
- 
- 	mutex_lock(&input_dev->mutex);
-@@ -535,8 +534,7 @@ static int __maybe_unused imx6ul_tsc_suspend(struct device *dev)
- 
- static int __maybe_unused imx6ul_tsc_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx6ul_tsc *tsc = platform_get_drvdata(pdev);
-+	struct imx6ul_tsc *tsc = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = tsc->input;
- 	int retval = 0;
- 
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/10370407/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
