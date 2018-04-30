@@ -1,39 +1,38 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Tue, 03 Apr 2018 10:04:22 +0000
-Subject: Re: [PATCH] drm/amd/display: fix spelling mistake: "Usupported" -> "Unsupported"
-Message-Id: <87o9j0a9nd.fsf@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 16:29:45 +0000
+Subject: [PATCH] net/mlx4: fix spelling mistake: "failedi" -> "failed"
+Message-Id: <20180430162945.5274-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180330160047.7368-1-colin.king@canonical.com>
- <87tvssaawl.fsf@intel.com> <alpine.DEB.2.20.1804031139110.3630@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1804031139110.3630@hadrien>
+References: <20170816090511.10463-1-colin.king@canonical.com>
+In-Reply-To: <20170816090511.10463-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: David Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>, Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Tariq Toukan <tariqt@mellanox.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 03 Apr 2018, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> On Tue, 3 Apr 2018, Jani Nikula wrote:
->> Please do consider limiting the distribution in the future,
->> though. There's no need to include lkml or even dri-devel for trivial
->> patches like this.
->
-> It's complex to have to remember the preferences for every subsystem.
-> Preferences should be expressed in the MAINTAINERS file in some way.
+From: Colin Ian King <colin.king@canonical.com>
 
-They are; it's just that get_maintainer.pl has silly defaults. There's
-no reason it should include the full chain from the leaf driver to the
-subsystem to the LKML by default, with a bunch of authors and commit
-signers on top. Especially so for supported drivers. I'm surprised it
-doesn't include Linus by default.
+trivial fix to spelling mistake in mlx4_warn message.
 
-> Also, since no one reads lkml, does it hurt to have even trivial patches?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx4/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Heh. Let's just say I care more about dri-devel.
-
-
-BR,
-Jani.
-
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index bfef69235d71..211578ffc70d 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -1317,7 +1317,7 @@ static int mlx4_mf_unbond(struct mlx4_dev *dev)
+ 
+ 	ret = mlx4_unbond_fs_rules(dev);
+ 	if (ret)
+-		mlx4_warn(dev, "multifunction unbond for flow rules failedi (%d)\n", ret);
++		mlx4_warn(dev, "multifunction unbond for flow rules failed (%d)\n", ret);
+ 	ret1 = mlx4_unbond_mac_table(dev);
+ 	if (ret1) {
+ 		mlx4_warn(dev, "multifunction unbond for MAC table failed (%d)\n", ret1);
 -- 
-Jani Nikula, Intel Open Source Technology Center
+2.17.0
+
