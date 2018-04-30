@@ -1,49 +1,64 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Date: Fri, 27 Apr 2018 14:10:07 +0000
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/selftests: Potential uninitialized return in live_reset_whitelist()
-Message-Id: <20180427141007.GY23723@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 13:41:02 +0000
+Subject: [PATCH] rtlwifi: fix spelling mistake: "dismatch" -> "mismatch"
+Message-Id: <20180430134102.11171-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180427140616.GC19583@mwanda>
-In-Reply-To: <20180427140616.GC19583@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 05:06:16PM +0300, Dan Carpenter wrote:
-> Smatch complains that "err" could be uninitialized at the end.  I don't
-> know the code well but that seems like a reasonable warning.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/gpu/drm/i915/selftests/intel_workarounds.c b/drivers=
-/gpu/drm/i915/selftests/intel_workarounds.c
-> index 5455b2626627..17444a3abbb9 100644
-> --- a/drivers/gpu/drm/i915/selftests/intel_workarounds.c
-> +++ b/drivers/gpu/drm/i915/selftests/intel_workarounds.c
-> @@ -239,7 +239,7 @@ static int live_reset_whitelist(void *arg)
->  	struct intel_engine_cs *engine =3D i915->engine[RCS];
->  	struct i915_gpu_error *error =3D &i915->gpu_error;
->  	struct whitelist w;
-> -	int err;
-> +	int err =3D 0;
-> =20
->  	/* If we reset the gpu, we should not lose the RING_NONPRIV */
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks like this is already fixed.
+Trivial fix to spelling mistake in RT_TRACE message text.
 
-commit a3997159133d56e444f0c0f56ab1ae59863912a8
-Author: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Date:   Tue Apr 24 08:15:45 2018 -0500
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c    | 2 +-
+ .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c    | 2 +-
+ .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-    drm/i915/selftests: Fix uninitialized variable
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
+index 8fce371749d3..f22fec093f1d 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
+@@ -1783,7 +1783,7 @@ static void btc8192e2ant_tdma_duration_adjust(struct btc_coexist *btcoexist,
+ 		bool scan = false, link = false, roam = false;
+ 
+ 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+-			 "[BTCoex], PsTdma type dismatch!!!, ");
++			 "[BTCoex], PsTdma type mismatch!!!, ");
+ 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+ 			 "curPsTdma=%d, recordPsTdma=%d\n",
+ 			 coex_dm->cur_ps_tdma, coex_dm->tdma_adj_type);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+index 73ec31972944..279fe01bb55e 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+@@ -2766,7 +2766,7 @@ static void btc8723b2ant_tdma_duration_adjust(struct btc_coexist *btcoexist,
+ 	if (coex_dm->cur_ps_tdma != coex_dm->ps_tdma_du_adj_type) {
+ 		bool scan = false, link = false, roam = false;
+ 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+-			 "[BTCoex], PsTdma type dismatch!!!, curPsTdma=%d, recordPsTdma=%d\n",
++			 "[BTCoex], PsTdma type mismatch!!!, curPsTdma=%d, recordPsTdma=%d\n",
+ 			 coex_dm->cur_ps_tdma, coex_dm->ps_tdma_du_adj_type);
+ 
+ 		btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_SCAN, &scan);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
+index 2202d5e18977..01a9d303603b 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
+@@ -2614,7 +2614,7 @@ static void btc8821a2ant_tdma_duration_adjust(struct btc_coexist *btcoexist,
+ 		bool scan = false, link = false, roam = false;
+ 
+ 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+-			 "[BTCoex], PsTdma type dismatch!!!, cur_ps_tdma = %d, recordPsTdma = %d\n",
++			 "[BTCoex], PsTdma type mismatch!!!, cur_ps_tdma = %d, recordPsTdma = %d\n",
+ 			 coex_dm->cur_ps_tdma, coex_dm->ps_tdma_du_adj_type);
+ 
+ 		btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_SCAN, &scan);
+-- 
+2.17.0
 
---=20
-Ville Syrj=E4l=E4
-Intel
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
