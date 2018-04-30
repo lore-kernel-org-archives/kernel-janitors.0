@@ -1,51 +1,43 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 14:06:12 +0000
-Subject: [PATCH 42/61] ptp: simplify getting .drvdata
-Message-Id: <20180419140641.27926-43-wsa+renesas@sang-engineering.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Apr 2018 15:27:44 +0000
+Subject: [PATCH] f2fs: fix spelling mistake: "extenstion" -> "extension"
+Message-Id: <20180430152744.9927-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Trivial fix to spelling mistake in extension list text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ fs/f2fs/sysfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/ptp/ptp_dte.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/ptp/ptp_dte.c b/drivers/ptp/ptp_dte.c
-index 6edd3b9c7f01..5481a27d4fec 100644
---- a/drivers/ptp/ptp_dte.c
-+++ b/drivers/ptp/ptp_dte.c
-@@ -287,8 +287,7 @@ static int ptp_dte_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int ptp_dte_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ptp_dte *ptp_dte = platform_get_drvdata(pdev);
-+	struct ptp_dte *ptp_dte = dev_get_drvdata(dev);
- 	u8 i;
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index f33a56d6e6dd..d9050caff80c 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -147,13 +147,13 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 		int len = 0, i;
  
- 	for (i = 0; i < DTE_NUM_REGS_TO_RESTORE; i++) {
-@@ -304,8 +303,7 @@ static int ptp_dte_suspend(struct device *dev)
+ 		len += snprintf(buf + len, PAGE_SIZE - len,
+-						"cold file extenstion:\n");
++						"cold file extension:\n");
+ 		for (i = 0; i < cold_count; i++)
+ 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
+ 								extlist[i]);
  
- static int ptp_dte_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ptp_dte *ptp_dte = platform_get_drvdata(pdev);
-+	struct ptp_dte *ptp_dte = dev_get_drvdata(dev);
- 	u8 i;
- 
- 	for (i = 0; i < DTE_NUM_REGS_TO_RESTORE; i++) {
+ 		len += snprintf(buf + len, PAGE_SIZE - len,
+-						"hot file extenstion:\n");
++						"hot file extension:\n");
+ 		for (i = cold_count; i < cold_count + hot_count; i++)
+ 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
+ 								extlist[i]);
 -- 
-2.11.0
+2.17.0
 
