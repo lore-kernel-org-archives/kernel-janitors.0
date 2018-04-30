@@ -1,25 +1,23 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Fri, 27 Apr 2018 19:12:04 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 30 Apr 2018 02:49:22 +0000
 Subject: Re: [PATCH] net: systemport: fix spelling mistake: "asymetric" -> "asymmetric"
-Message-Id: <6f73781f-7859-363a-e2df-7ff9e4cb28cd@gmail.com>
+Message-Id: <20180429.224922.1887543160882776421.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180427190925.17097-1-colin.king@canonical.com>
 In-Reply-To: <20180427190925.17097-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/27/2018 12:09 PM, Colin King wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Apr 2018 20:09:25 +0100
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Trivial fix to spelling mistake in netdev_warn warning message
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-
-Thanks Colin!
--- 
-Florian
+Applied, thank you.
