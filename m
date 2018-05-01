@@ -1,47 +1,29 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date: Wed, 02 May 2018 14:07:12 +0000
-Subject: Re: [PATCH] typec: tcpm: Fix incorrect 'and' operator
-Message-Id: <20180502140712.GH12870@kuha.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 May 2018 07:36:39 +0000
+Subject: [patch] gpiolib: fix gpiochip_machine_hog()
+Message-Id: <20180501073638.GA6126@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430132305.GA20092@embeddedor.com>
-In-Reply-To: <20180430132305.GA20092@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 08:23:06AM -0500, Gustavo A. R. Silva wrote:
-> Currently, logical and is being used instead of *bitwise* and.
-> 
-> Fix this by using a proper bitwise and operator.
-> 
-> Addresses-Coverity-ID: 1468455 ("Logical vs. bitwise operator")
-> Fixes: 64f7c494a3c0 ("typec: tcpm: Add support for sink PPS related
-> messages")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+There is a shifter vs vanilla mask bug here.  We want to test if 1 << 11
+is set but we're testing if 0xb is set.
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Fixes: 9a6c505f7df1 ("gpiolib: add hogs support for machine code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  drivers/usb/typec/tcpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index 1ee259b..7ee417a 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -1772,7 +1772,7 @@ static void tcpm_pd_ext_msg_request(struct tcpm_port *port,
->  	enum pd_ext_msg_type type = pd_header_type_le(msg->header);
->  	unsigned int data_size = pd_ext_header_data_size_le(msg->ext_msg.header);
->  
-> -	if (!(msg->ext_msg.header && PD_EXT_HDR_CHUNKED)) {
-> +	if (!(msg->ext_msg.header & PD_EXT_HDR_CHUNKED)) {
->  		tcpm_log(port, "Unchunked extended messages unsupported");
->  		return;
->  	}
-
-Thanks,
-
--- 
-heikki
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 2716c9e65131..c6cb63e43eda 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1187,7 +1187,7 @@ static void gpiochip_machine_hog(struct gpio_chip *chip, struct gpiod_hog *hog)
+ 		return;
+ 	}
+ 
+-	if (desc->flags & FLAG_IS_HOGGED)
++	if (test_bit(FLAG_IS_HOGGED, &desc->flags))
+ 		return;
+ 
+ 	rv = gpiod_hog(desc, hog->line_name, hog->lflags, hog->dflags);
