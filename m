@@ -1,35 +1,65 @@
-From: Aaron Lu <aaron.lu@intel.com>
-Date: Wed, 30 May 2018 06:20:39 +0000
-Subject: Re: [PATCH] libata: zpodd: small read overflow in eject_tray()
-Message-Id: <20180530062038.GE14785@intel.com>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date: Tue, 01 May 2018 11:41:28 +0000
+Subject: Re: [PATCH -next] efi/libstub/tpm: Make function efi_retrieve_tpm2_eventlog_1_2() static
+Message-Id: <20180501114128.GA20978@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180529091320.axeryttqycdexzm5@kili.mountain>
-In-Reply-To: <20180529091320.axeryttqycdexzm5@kili.mountain>
+References: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1521555478-29097-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:13:24PM +0300, Dan Carpenter wrote:
-> We read from the cdb[] buffer in ata_exec_internal_sg().  It has to be
-> ATAPI_CDB_LEN (16) bytes long, but this buffer is only 12 bytes.
-
-Thanks for the fix!
-
+On Tue, Apr 24, 2018 at 08:39:09AM +0200, Ard Biesheuvel wrote:
+> On 23 April 2018 at 21:38, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > On Mon, Apr 16, 2018 at 01:05:24PM +0200, Ard Biesheuvel wrote:
+> >> On 22 March 2018 at 15:09, Jarkko Sakkinen
+> >> <jarkko.sakkinen@linux.intel.com> wrote:
+> >> > On Thu, 2018-03-22 at 16:06 +0200, Jarkko Sakkinen wrote:
+> >> >> On Tue, 2018-03-20 at 14:17 +0000, Wei Yongjun wrote:
+> >> >> > Fixes the following sparse warning:
+> >> >> >
+> >> >> > drivers/firmware/efi/libstub/tpm.c:62:6: warning:
+> >> >> >  symbol 'efi_retrieve_tpm2_eventlog_1_2' was not declared. Should it be
+> >> >> > static?
+> >> >> >
+> >> >> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> >> >> > ---
+> >> >> >  drivers/firmware/efi/libstub/tpm.c | 2 +-
+> >> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> >> >
+> >> >> > diff --git a/drivers/firmware/efi/libstub/tpm.c
+> >> >> > b/drivers/firmware/efi/libstub/tpm.c
+> >> >> > index 9d08cea..caa37a6 100644
+> >> >> > --- a/drivers/firmware/efi/libstub/tpm.c
+> >> >> > +++ b/drivers/firmware/efi/libstub/tpm.c
+> >> >> > @@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t
+> >> >> > *sys_table_arg)
+> >> >> >
+> >> >> >  #endif
+> >> >> >
+> >> >> > -void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+> >> >> > +static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t
+> >> >> > *sys_table_arg)
+> >> >> >  {
+> >> >> >     efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+> >> >> >     efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+> >> >> >
+> >> >>
+> >> >> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> >> >
+> >> > Applied.
+> >> >
+> >>
+> >> Applied to?
+> >
+> > Mistake, efi maintainers should pick this one up. Sorry (my reviewed tag
+> > still holds).
+> >
 > 
-> Fixes: 213342053db5 ("libata: handle power transition of ODD")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
-> index de4ddd0e8550..b3ed8f9953a8 100644
-> --- a/drivers/ata/libata-zpodd.c
-> +++ b/drivers/ata/libata-zpodd.c
-> @@ -35,7 +35,7 @@ struct zpodd {
->  static int eject_tray(struct ata_device *dev)
->  {
->  	struct ata_taskfile tf;
-> -	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
-> +	static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_START_STOP_UNIT,
->  		0, 0, 0,
->  		0x02,     /* LoEj */
->  		0, 0, 0, 0, 0, 0, 0,
+> Thanks. I have queued this up in efi/next
+
+And sorry for the confusion! Had a lot of traffic that point..
+
+/Jarkko
