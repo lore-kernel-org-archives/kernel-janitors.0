@@ -1,25 +1,32 @@
-From: Peter Rosin <peda@axentia.se>
-Date: Thu, 24 May 2018 11:53:28 +0000
-Subject: Re: [PATCH 1/3] i2c: mux: pca954x: merge calls to of_match_device and of_device_get_match_data
-Message-Id: <7b1eed5f-a43b-b254-8f88-cfbe8bd04bf5@axentia.se>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 May 2018 07:22:50 +0000
+Subject: [PATCH] PCI: qcom: fix a bitwise vs logical NOT typo
+Message-Id: <20180501072250.GA4269@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
- <1526896150-27134-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1526896150-27134-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Himanshu Jha <himanshujha199640@gmail.com>
+To: Stanimir Varbanov <svarbanov@mm-sol.com>, John Crispin <john@phrozen.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2018-05-21 11:49, Julia Lawall wrote:
-> Drop call to of_match_device, which is subsumed by the subsequent
-> call to of_device_get_match_data.  The code becomes simpler, and a
-> temporary variable can be dropped.
+There is a typo here so we accidentally set "val" to zero when we
+intended just to clear BIT(0).
 
-Thanks for your patch!
+Fixes: 90d52d57ccac ("PCI: qcom: Add support for IPQ4019 PCIe controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
-Applied to i2c-mux/for-next
-
-Cheers,
-Peter
+diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+index 5897af7d3355..b65bbf7c284e 100644
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
+@@ -869,7 +869,7 @@ static int qcom_pcie_init_2_4_0(struct qcom_pcie *pcie)
+ 
+ 	/* enable PCIe clocks and resets */
+ 	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
+-	val &= !BIT(0);
++	val &= ~BIT(0);
+ 	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
+ 
+ 	/* change DBI base address */
