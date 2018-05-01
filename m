@@ -1,64 +1,50 @@
-From: YU Bo <tsu.yubo@gmail.com>
-Date: Thu, 03 May 2018 01:16:50 +0000
-Subject: Re: [PATCH] NET/netlink: optimize output of seq_puts in af_netlink.c
-Message-Id: <20180503011649.ketiwvm7cmwqlbq7@debian.debian>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 01 May 2018 08:37:42 +0000
+Subject: [PATCH] video: fbdev: fix spelling mistake: "frambuffer" -> "framebuffer"
+Message-Id: <20180501083742.22565-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180502095421.GA15014@yubo-2>
- <20180502.101943.1124614050601030061.davem@davemloft.net>
-In-Reply-To: <20180502.101943.1124614050601030061.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: xiyou.wangcong@gmail.com, yuzibode@126.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Elfring <elfring@users.sourceforge.net>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-On Wed, May 02, 2018 at 10:19:43AM -0400, David Miller wrote:
->From: Bo YU <tsu.yubo@gmail.com>
->Date: Wed, 2 May 2018 05:54:24 -0400
->
->> Optimization of command output: `cat /proc/net/netlink`
->>
->> After the patch, we will get:
->>
->> https://clbin.com/lnu4L
->>
->> Signed-off-by: Bo YU <tsu.yubo@gmail.com>
->> ---
->>  net/netlink/af_netlink.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
->> index 55342c4d5cec..2e2dd88fc79f 100644
->> --- a/net/netlink/af_netlink.c
->> +++ b/net/netlink/af_netlink.c
->> @@ -2606,13 +2606,13 @@ static int netlink_seq_show(struct seq_file
->> *seq, void *v)
->>  {
->>  	if (v = SEQ_START_TOKEN) {
->>  		seq_puts(seq,
->> -			 "sk       Eth Pid    Groups   "
->> -			 "Rmem     Wmem     Dump     Locks     Drops     Inode\n");
->> +			 "sk               Eth Pid        Groups   "
->> + "Rmem Wmem Dump Locks Drops Inode\n");
->
->Please do not break the indentation of the code like this.
-Sorry, i am shame to do like it.There are something happened in my different
-version vim.Because checkpatch tell me only
-"WARNING: quoted string split across lines"
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank you, i will fix it.
+Trivial fix to spelling mistake in error messages
 
->
->I wish to unfortunately say, that generally speaking, your patch
->submissions are not of the best quality, and take up a lot of reviewer
->time and resources as a result.
->
->If you do not improve the quality of your submissions, I am giving
->you a kind warning that the amount of care and review your patches
->will receive will become lower.  Your submissions might even get to
->the point wheere they are effectively ignored.
->
->So please put more care into your work.
->
->Thank you.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/au1100fb.c | 2 +-
+ drivers/video/fbdev/au1200fb.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/au1100fb.c b/drivers/video/fbdev/au1100fb.c
+index 7c9a672e9811..5e0491861439 100644
+--- a/drivers/video/fbdev/au1100fb.c
++++ b/drivers/video/fbdev/au1100fb.c
+@@ -464,7 +464,7 @@ static int au1100fb_drv_probe(struct platform_device *dev)
+ 					    PAGE_ALIGN(fbdev->fb_len),
+ 					    &fbdev->fb_phys, GFP_KERNEL);
+ 	if (!fbdev->fb_mem) {
+-		print_err("fail to allocate frambuffer (size: %dK))",
++		print_err("fail to allocate framebuffer (size: %dK))",
+ 			  fbdev->fb_len / 1024);
+ 		return -ENOMEM;
+ 	}
+diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
+index 87d5a62bf6ca..3872ccef4cb2 100644
+--- a/drivers/video/fbdev/au1200fb.c
++++ b/drivers/video/fbdev/au1200fb.c
+@@ -1696,7 +1696,7 @@ static int au1200fb_drv_probe(struct platform_device *dev)
+ 				&fbdev->fb_phys, GFP_KERNEL,
+ 				DMA_ATTR_NON_CONSISTENT);
+ 		if (!fbdev->fb_mem) {
+-			print_err("fail to allocate frambuffer (size: %dK))",
++			print_err("fail to allocate framebuffer (size: %dK))",
+ 				  fbdev->fb_len / 1024);
+ 			ret = -ENOMEM;
+ 			goto failed;
+-- 
+2.17.0
+
