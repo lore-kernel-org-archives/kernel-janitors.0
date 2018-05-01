@@ -1,23 +1,36 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Fri, 04 May 2018 19:09:41 +0000
-Subject: Re: [PATCH] net/mlx5: fix spelling mistake: "modfiy" -> "modify"
-Message-Id: <1525460978.2882.0.camel@mellanox.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 01 May 2018 09:36:43 +0000
+Subject: [PATCH] wireless: ipw2200:  fix spelling mistake: "functionalitis" -> "functionalities"
+Message-Id: <20180501093643.23318-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503133503.14508-1-colin.king@canonical.com>
-         <20180503.144440.629738993491549851.davem@davemloft.net>
-In-Reply-To: <20180503.144440.629738993491549851.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "davem@davemloft.net" <davem@davemloft.net>, "colin.king@canonical.com" <colin.king@canonical.com>
-Cc: Matan Barak <matanb@mellanox.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "leon@kernel.org" <leon@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA1LTAzIGF0IDE0OjQ0IC0wNDAwLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+
-IEZyb206IENvbGluIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gRGF0ZTogVGh1
-LCAgMyBNYXkgMjAxOCAxNDozNTowMyArMDEwMA0KPiANCj4gPiBGcm9tOiBDb2xpbiBJYW4gS2lu
-ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiA+IA0KPiA+IFRyaXZpYWwgZml4IHRvIHNw
-ZWxsaW5nIG1pc3Rha2UgaW4gbmV0ZGV2X3dhcm4gd2FybmluZyBtZXNzYWdlDQo+ID4gDQo+ID4g
-U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4N
-Cj4gDQo+IFNhZWVkLCBwbGVhc2Ugc2VuZCB0aGlzIHRvIG1lIGluIHlvdXIgbmV4dCBwdWxsIHJl
-cXVlc3QuDQo+IA0KDQpBcHBsaWVkIHRvIG1seDUtbmV4dCwgVGhhbmtzIENvbGluIGFuZCBEYXZl
-ICENCg0K
+From: Colin Ian King <colin.king@canonical.com>
+
+Trivial fix to spelling mistake in module parameter description text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index 87a5e414c2f7..ba3fb1d2ddb4 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -12012,7 +12012,7 @@ MODULE_PARM_DESC(rtap_iface, "create the rtap interface (1 - create, default 0)"
+ 
+ #ifdef CONFIG_IPW2200_QOS
+ module_param(qos_enable, int, 0444);
+-MODULE_PARM_DESC(qos_enable, "enable all QoS functionalitis");
++MODULE_PARM_DESC(qos_enable, "enable all QoS functionalities");
+ 
+ module_param(qos_burst_enable, int, 0444);
+ MODULE_PARM_DESC(qos_burst_enable, "enable QoS burst mode");
+-- 
+2.17.0
+
