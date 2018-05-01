@@ -1,56 +1,75 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 28 May 2018 10:01:25 +0000
-Subject: [PATCH 4.4 111/268] clocksource/drivers/fsl_ftm_timer: Fix error return checking
-Message-Id: <20180528100214.738500256@linuxfoundation.org>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Tue, 01 May 2018 11:32:22 +0000
+Subject: Re: [PATCH] power: supply: ab8500_charger: fix spelling mistake: "faile" -> "failed"
+Message-Id: <20180501113222.ypvixxzxkfvwzyhv@earth.universe>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="kjdsvpdyaqzdb4cz"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-janitors@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>
-
-4.4-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Colin Ian King <colin.king@canonical.com>
-
-[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
-
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
-
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clocksource/fsl_ftm_timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct
- 
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
- 
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
+References: <20180430160450.29264-1-colin.king@canonical.com>
+In-Reply-To: <20180430160450.29264-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+--kjdsvpdyaqzdb4cz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, Apr 30, 2018 at 05:04:50PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> trivial fix to spelling mistake in dev_error message.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+
+Thanks, queued.
+
+-- Sebastian
+
+>  drivers/power/supply/ab8500_charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply=
+/ab8500_charger.c
+> index ba0e97284ae5..98b335042ba6 100644
+> --- a/drivers/power/supply/ab8500_charger.c
+> +++ b/drivers/power/supply/ab8500_charger.c
+> @@ -3066,7 +3066,7 @@ static int ab8500_charger_init_hw_registers(struct =
+ab8500_charger *di)
+>  		AB8500_SYS_CTRL2_BLOCK,
+>  		AB8500_MAIN_WDOG_CTRL_REG, MAIN_WDOG_ENA);
+>  	if (ret) {
+> -		dev_err(di->dev, "faile to enable main watchdog\n");
+> +		dev_err(di->dev, "failed to enable main watchdog\n");
+>  		goto out;
+>  	}
+> =20
+> --=20
+> 2.17.0
+>=20
+
+--kjdsvpdyaqzdb4cz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlroUDoACgkQ2O7X88g7
++pr7Rw//YujoTpOj0i0REUCoiDK1zbDjRlQImL24dMpV0vNAXOyQmdKuqdxoR4N1
+DtydHjjAzuoQz9Ud44ywecA/AtUBcYus/8sZ+0Q8/UHY6fMH1qwlyHxK/JqxFlDZ
+/Js86liVfItqYFOfFufFb/3N7RsqcQUOnKq9uPiR9dkOsHWVKZ8YlL+cbZX18RSS
+UyL7xaeBJRSdOQ2LECIQythFt9b8fr7sIQKRxYx7idbWU1HwIkjzwvpO4h4XrcS0
+D742RuibWNgVc06X81fMYfbnRkmeNv5anDjpDCYEhqS+VPDb5fM6LoC2x1cpPlD6
+7aaS8/N+QEoBeZeaCqCkF8ToN12HH2PRO+zAqH5wGFN6CjXtyviOFHZFjK+Q4YXJ
+euIBPF4iDfA5kjBkmA/hlHl2n0kAt4g8d7AKxWPWBMPN5C072oH2EJ7xgaGk54Wy
+lyb7hM4TU98rYt3ICOqcmZQOastKbUm+W0rtRZENMjBuVkEQSO/N6Gf1TKOONIk1
+FW+2EiiClsPhCNQC0SDd6Gn+N1ANfZlRZgJTN+D6uiJH8GY1wQ/YFKQwG8x4Al2G
+aYq8LQErFTtdQwUXxrZQSFjZcS6q7MP81CBQY2PDpXCYLjgshI1v6V79L0IaPZOQ
+ApxN47NM0HLDEbNjNjqHBPXaCM1LN2ozMLgelLk79bDSUIMlnsk=
+=xPX8
+-----END PGP SIGNATURE-----
+
+--kjdsvpdyaqzdb4cz--
