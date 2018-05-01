@@ -1,20 +1,36 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 28 May 2018 22:37:33 +0000
-Subject: Re: [PATCH net-next] netfilter: nat: make symbol nat_hook static
-Message-Id: <20180528223733.36krgmqzuyjk5h5g@salvia>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 01 May 2018 08:25:49 +0000
+Subject: [PATCH] RDMA/qedr: fix spelling mistake: "failes" -> "fails"
+Message-Id: <20180501082549.22215-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527328133-86305-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1527328133-86305-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michal Kalderon <Michal.Kalderon@cavium.com>, Ariel Elior <Ariel.Elior@cavium.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 09:48:53AM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
-> 
-> net/netfilter/nf_nat_core.c:1039:20: warning:
->  symbol 'nat_hook' was not declared. Should it be static?
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Trivial fix to spelling mistake in DP_ERR error message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/qedr/verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
+index 7d3763b2e01c..35f3b6f8fd45 100644
+--- a/drivers/infiniband/hw/qedr/verbs.c
++++ b/drivers/infiniband/hw/qedr/verbs.c
+@@ -2579,7 +2579,7 @@ static int qedr_set_page(struct ib_mr *ibmr, u64 addr)
+ 	u32 pbes_in_page;
+ 
+ 	if (unlikely(mr->npages = mr->info.pbl_info.num_pbes)) {
+-		DP_ERR(mr->dev, "qedr_set_page failes when %d\n", mr->npages);
++		DP_ERR(mr->dev, "qedr_set_page fails when %d\n", mr->npages);
+ 		return -ENOMEM;
+ 	}
+ 
+-- 
+2.17.0
+
