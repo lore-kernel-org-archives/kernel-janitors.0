@@ -1,36 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 09 May 2018 09:07:31 +0000
-Subject: [PATCH] [media] cx231xx: Fix spelling mistake: "senario" -> "scenario"
-Message-Id: <20180509090731.11275-1-colin.king@canonical.com>
+From: Tejun Heo <tj@kernel.org>
+Date: Tue, 01 May 2018 17:40:37 +0000
+Subject: Re: [PATCH] ata: fix spelling mistake: "directon" -> "direction"
+Message-Id: <20180501174037.GB2368884@devbig577.frc2.facebook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180429120111.9948-1-colin.king@canonical.com>
+In-Reply-To: <20180429120111.9948-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Apr 29, 2018 at 01:01:11PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in sil24_cerr_info message text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in dev_err message.
+Applied to libata/for-4.17-fixes.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c
-index 5bc74149fcb9..746c34ab0ec8 100644
---- a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c
-@@ -769,7 +769,7 @@ int initialize_cx231xx(struct cx231xx *dev)
- 			break;
- 		default:
- 			dev_err(dev->dev,
--				"bad senario!!!!!\nconfig_info=%x\n",
-+				"bad scenario!!!!!\nconfig_info=%x\n",
- 				config_info & SELFPOWER_MASK);
- 			return -ENODEV;
- 		}
 -- 
-2.17.0
-
+tejun
