@@ -1,127 +1,65 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 22 May 2018 14:23:10 +0000
-Subject: Re: [PATCH] coccinelle: deref_null: improve performance
-Message-Id: <CAK7LNATYEGuBvDDyFG98dZPb2nT+Us1w0_Y6dDjG17SK9XyLCA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 02 May 2018 09:16:58 +0000
+Subject: [PATCH][media-next] media: davinci_vpfe: fix memory leaks of params
+Message-Id: <20180502091658.17110-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1526885939-1741-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1526885939-1741-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2018-05-21 15:58 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> Move rules looking for some special cases of safe dereferences before
-> the collection of NULL-tested values.  The special cases are fairly
-> rare, but somewhat costly to find, because isomorphisms create many
-> variants of the rules.  There is thus no need to search for them over
-> and over for each NULL tested expression.  Collecting them just once
-> is sufficient and more efficient.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  scripts/coccinelle/null/deref_null.cocci |   40 +++++++++++++++----------------
->  1 file changed, 20 insertions(+), 20 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
+There are memory leaks of params; when copy_to_user fails and also
+the exit via the label 'error'.  Fix this by kfree'ing params in
+error exit path and jumping to this on the copy_to_user failure path.
 
-Applied to linux-kbuild. Thanks!
+Detected by CoverityScan, CID#1467966 ("Resource leak")
 
+Fixes: da43b6ccadcf ("[media] davinci: vpfe: dm365: add IPIPE support for media controller driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> diff --git a/scripts/coccinelle/null/deref_null.cocci b/scripts/coccinelle/null/deref_null.cocci
-> index b16ccb7..cbc6184 100644
-> --- a/scripts/coccinelle/null/deref_null.cocci
-> +++ b/scripts/coccinelle/null/deref_null.cocci
-> @@ -14,18 +14,10 @@ virtual context
->  virtual org
->  virtual report
->
-> -@ifm@
-> -expression *E;
-> -statement S1,S2;
-> -position p1;
-> -@@
-> -
-> -if@p1 ((E = NULL && ...) || ...) S1 else S2
-> -
->  // The following two rules are separate, because both can match a single
->  // expression in different ways
->  @pr1 expression@
-> -expression *ifm.E;
-> +expression E;
->  identifier f;
->  position p1;
->  @@
-> @@ -33,7 +25,7 @@ position p1;
->   (E != NULL && ...) ? <+...E->f@p1...+> : ...
->
->  @pr2 expression@
-> -expression *ifm.E;
-> +expression E;
->  identifier f;
->  position p2;
->  @@
-> @@ -46,6 +38,14 @@ position p2;
->   sizeof(<+...E->f@p2...+>)
->  )
->
-> +@ifm@
-> +expression *E;
-> +statement S1,S2;
-> +position p1;
-> +@@
-> +
-> +if@p1 ((E = NULL && ...) || ...) S1 else S2
-> +
->  // For org and report modes
->
->  @r depends on !context && (org || report) exists@
-> @@ -212,16 +212,8 @@ else S3
->  // The following three rules are duplicates of ifm, pr1 and pr2 respectively.
->  // It is need because the previous rule as already made a "change".
->
-> -@ifm1 depends on context && !org && !report@
-> -expression *E;
-> -statement S1,S2;
-> -position p1;
-> -@@
-> -
-> -if@p1 ((E = NULL && ...) || ...) S1 else S2
-> -
->  @pr11 depends on context && !org && !report expression@
-> -expression *ifm1.E;
-> +expression E;
->  identifier f;
->  position p1;
->  @@
-> @@ -229,7 +221,7 @@ position p1;
->   (E != NULL && ...) ? <+...E->f@p1...+> : ...
->
->  @pr12 depends on context && !org && !report expression@
-> -expression *ifm1.E;
-> +expression E;
->  identifier f;
->  position p2;
->  @@
-> @@ -242,6 +234,14 @@ position p2;
->   sizeof(<+...E->f@p2...+>)
->  )
->
-> +@ifm1 depends on context && !org && !report@
-> +expression *E;
-> +statement S1,S2;
-> +position p1;
-> +@@
-> +
-> +if@p1 ((E = NULL && ...) || ...) S1 else S2
-> +
->  @depends on context && !org && !report exists@
->  expression subE <= ifm1.E;
->  expression *ifm1.E;
->
-
-
-
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+index 95942768639c..3e67ee6e92f9 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -1252,12 +1252,12 @@ static const struct ipipe_module_if ipipe_modules[VPFE_IPIPE_MAX_MODULES] = {
+ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ {
+ 	struct vpfe_ipipe_device *ipipe = v4l2_get_subdevdata(sd);
++	struct ipipe_module_params *params;
+ 	unsigned int i;
+ 	int rval = 0;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ipipe_modules); i++) {
+ 		const struct ipipe_module_if *module_if;
+-		struct ipipe_module_params *params;
+ 		void *from, *to;
+ 		size_t size;
+ 
+@@ -1275,7 +1275,7 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ 		if (to && from && size) {
+ 			if (copy_from_user(to, (void __user *)from, size)) {
+ 				rval = -EFAULT;
+-				break;
++				goto error;
+ 			}
+ 			rval = module_if->set(ipipe, to);
+ 			if (rval)
+@@ -1287,7 +1287,9 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ 		}
+ 		kfree(params);
+ 	}
++	return rval;
+ error:
++	kfree(params);
+ 	return rval;
+ }
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.17.0
+
