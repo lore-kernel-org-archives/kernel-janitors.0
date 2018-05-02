@@ -1,30 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 29 May 2018 07:21:50 +0000
-Subject: Re: rsi: fix spelling mistake "Uknown" -> "Unknown"
-Message-Id: <20180529072150.D61E660242@smtp.codeaurora.org>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Wed, 02 May 2018 15:19:41 +0000
+Subject: [PATCH 51/52] perf tools: Fix spelling mistake: "builid" -> "buildid"
+Message-Id: <20180502151942.20542-52-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180526150019.10288-1-colin.king@canonical.com>
-In-Reply-To: <20180526150019.10288-1-colin.king@canonical.com>
+References: <20180502151942.20542-1-acme@kernel.org>
+In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in rsi_dbg message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in error message text
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin King <colin.king@canonical.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180427193158.17932-1-colin.king@canonical.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/genelf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-a53e8f3edaa0 rsi: fix spelling mistake "Uknown" -> "Unknown"
-
+diff --git a/tools/perf/util/genelf.c b/tools/perf/util/genelf.c
+index c540d47583e7..aafbe54fd3fa 100644
+--- a/tools/perf/util/genelf.c
++++ b/tools/perf/util/genelf.c
+@@ -114,7 +114,7 @@ gen_build_id(struct buildid_note *note,
+ 
+ 	fd = open("/dev/urandom", O_RDONLY);
+ 	if (fd = -1)
+-		err(1, "cannot access /dev/urandom for builid");
++		err(1, "cannot access /dev/urandom for buildid");
+ 
+ 	sret = read(fd, note->build_id, sz);
+ 
 -- 
-https://patchwork.kernel.org/patch/10429003/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.3
 
