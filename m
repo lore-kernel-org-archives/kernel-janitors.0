@@ -1,69 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 May 2018 14:15:11 +0000
-Subject: [PATCH][next] apparmor: fix error return check with a u32 being less than zero
-Message-Id: <20180504141511.19793-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 02 May 2018 03:32:42 +0000
+Subject: Re: [PATCH] scsi: esas2r: fix spelling mistake: "asynchromous" -> "asynchronous"
+Message-Id: <yq1zi1i68bp.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180323233422.7856-1-colin.king@canonical.com>
-In-Reply-To: <20180323233422.7856-1-colin.king@canonical.com>
+References: <20180427191552.17502-1-colin.king@canonical.com>
+In-Reply-To: <20180427191552.17502-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 27 Apr 2018 20:15:52 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Bradley Grove <linuxdrivers@attotech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The check for *seclen being less than zero for an error condtion check
-is never true as it is a u32 and hence cannot be less than zero. Fix
-this by using an int ret for error return checking and assigning *seclen
-to this.
+Colin,
 
-Detected by CoverityScan, CID#1468514 ("Unsigned comparison against 0")
+> Trivial fix to spelling mistake in module description text
 
-Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/apparmor/secid.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+Applied to 4.18/scsi-queue.
 
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 502924853986..9c431e9a9836 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- {
- 	/* TODO: cache secctx and ref count so we don't have to recreate */
- 	struct aa_label *label = aa_secid_to_label(secid);
-+	int ret;
- 
- 	AA_BUG(!secdata);
- 	AA_BUG(!seclen);
-@@ -150,16 +151,17 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- 		return -EINVAL;
- 
- 	if (secdata)
--		*seclen = aa_label_asxprint(secdata, root_ns, label,
--					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--					    FLAG_HIDDEN_UNCONFINED |
--					    FLAG_ABS_ROOT, GFP_ATOMIC);
-+		ret = aa_label_asxprint(secdata, root_ns, label,
-+					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
-+					FLAG_HIDDEN_UNCONFINED |
-+					FLAG_ABS_ROOT, GFP_ATOMIC);
- 	else
--		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
--					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--					    FLAG_HIDDEN_UNCONFINED |
--					    FLAG_ABS_ROOT);
--	if (*seclen < 0)
-+		ret = aa_label_snxprint(NULL, 0, root_ns, label,
-+					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
-+					FLAG_HIDDEN_UNCONFINED |
-+					FLAG_ABS_ROOT);
-+	*seclen = ret;
-+	if (ret < 0)
- 		return -ENOMEM;
- 
- 	return 0;
 -- 
-2.17.0
-
+Martin K. Petersen	Oracle Linux Engineering
