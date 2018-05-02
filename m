@@ -1,76 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 23 May 2018 19:07:13 +0000
-Subject: [PATCH 2/5] phy: add missing of_node_put
-Message-Id: <1527102436-13447-3-git-send-email-Julia.Lawall@lip6.fr>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 02 May 2018 03:32:08 +0000
+Subject: Re: [PATCH] scsi: isci: remove redundant check on in_connection_align_insertion_frequency
+Message-Id: <yq14ljq7mx3.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20180425105843.8607-1-colin.king@canonical.com>
+In-Reply-To: <20180425105843.8607-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 25 Apr 2018 11:58:43 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The device node iterators perform an of_node_get on each iteration, so a
-jump out of the loop requires an of_node_put.
 
-The semantic patch that fixes this problem in the break case is as follows
-(http://coccinelle.lip6.fr):
+Colin,
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
+> The sanity check on u->in_connection_align_insertion_frequency is
+> being performed twice and hence the first check can be removed since
+> it is redundant. Cleans up cppcheck warning:
+>
+> drivers/scsi/ibmvscsi/ibmvscsi.c:1711: (warning) Identical inner 'if'
+> condition is always true.
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
-// </smpl>
+Applied to 4.18/scsi-queue. Thanks.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/phy/hisilicon/phy-hisi-inno-usb2.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/hisilicon/phy-hisi-inno-usb2.c b/drivers/phy/hisilicon/phy-hisi-inno-usb2.c
-index 5243812..0da14b6 100644
---- a/drivers/phy/hisilicon/phy-hisi-inno-usb2.c
-+++ b/drivers/phy/hisilicon/phy-hisi-inno-usb2.c
-@@ -154,14 +154,18 @@ static int hisi_inno_phy_probe(struct platform_device *pdev)
- 		struct phy *phy;
- 
- 		rst = of_reset_control_get_exclusive(child, NULL);
--		if (IS_ERR(rst))
-+		if (IS_ERR(rst)) {
-+			of_node_put(child);
- 			return PTR_ERR(rst);
-+		}
- 		priv->ports[i].utmi_rst = rst;
- 		priv->ports[i].priv = priv;
- 
- 		phy = devm_phy_create(dev, child, &hisi_inno_phy_ops);
--		if (IS_ERR(phy))
-+		if (IS_ERR(phy)) {
-+			of_node_put(child);
- 			return PTR_ERR(phy);
-+		}
- 
- 		phy_set_bus_width(phy, 8);
- 		phy_set_drvdata(phy, &priv->ports[i]);
-@@ -169,6 +173,7 @@ static int hisi_inno_phy_probe(struct platform_device *pdev)
- 
- 		if (i > INNO_PHY_PORT_NUM) {
- 			dev_warn(dev, "Support %d ports in maximum\n", i);
-+			of_node_put(child);
- 			break;
- 		}
- 	}
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
