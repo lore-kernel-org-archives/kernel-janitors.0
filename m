@@ -1,24 +1,39 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 09 May 2018 12:32:03 +0000
-Subject: Re: [PATCH] netfilter: nf_tables: fix memory leak on error exit return
-Message-Id: <20180509123203.ppangv6gdzppj3iv@salvia>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 02 May 2018 14:43:16 +0000
+Subject: [PATCH] drm/amd/display: clean up assignment of amdgpu_crtc
+Message-Id: <20180502144316.32056-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180509122256.16859-1-colin.king@canonical.com>
-In-Reply-To: <20180509122256.16859-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Harry Wentland <harry.wentland@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 01:22:56PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the -EBUSY error return path is not free'ing resources
-> allocated earlier, leaving a memory leak. Fix this by exiting via the
-> error exit label err5 that performs the necessary resource clean
-> up.
-> 
-> Detected by CoverityScan, CID#1432975 ("Resource leak")
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+The declaration of pointer amdgpu_crtc has a redundant assignment to
+amdgpu_crtc. Clean this up by removing it.
+
+Detected by CoverityScan, CID#1460299 ("Evaluation order violation")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 1dd1142246c2..2beb8821e19e 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -3773,7 +3773,7 @@ static void remove_stream(struct amdgpu_device *adev,
+ static int get_cursor_position(struct drm_plane *plane, struct drm_crtc *crtc,
+ 			       struct dc_cursor_position *position)
+ {
+-	struct amdgpu_crtc *amdgpu_crtc = amdgpu_crtc = to_amdgpu_crtc(crtc);
++	struct amdgpu_crtc *amdgpu_crtc = to_amdgpu_crtc(crtc);
+ 	int x, y;
+ 	int xorigin = 0, yorigin = 0;
+ 
+-- 
+2.17.0
+
