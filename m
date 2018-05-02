@@ -1,37 +1,45 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Thu, 17 May 2018 22:03:05 +0000
-Subject: Re: [bug report] bus: ti-sysc: Add handling for clkctrl opt clocks
-Message-Id: <20180517220305.GA77025@atomide.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 02 May 2018 13:59:40 +0000
+Subject: [PATCH] ALSA: sc6000: fix spelling mistake: "iomaped" -> "iomapped"
+Message-Id: <20180502135940.30915-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180517124514.GA9149@mwanda>
-In-Reply-To: <20180517124514.GA9149@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [180517 07:03]:
-> * Dan Carpenter <dan.carpenter@oracle.com> [180517 12:47]:
-> >    143          ddata->clocks[index] = devm_clk_get(ddata->dev, name);
-> >    144          if (IS_ERR(ddata->clocks[index])) {
-> >    145                  if (PTR_ERR(ddata->clocks[index]) = -ENOENT)
-> >    146                          return 0;
-> >    147  
-> >    148                  dev_err(ddata->dev, "clock get error for %s: %li\n",
-> >    149                          name, PTR_ERR(ddata->clocks[index]));
-> >    150  
-> > 
-> > Should we set ddata->clocks[index] = NULL on this path?
-> 
-> Maybe yeah. At least if clk_prepare later on fails we want to set it to
-> either to NULL or error to prevent clk_enable() being called on a failed
-> clock.
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks like no need, we're bailing out of the probe anyways on errors.
-And the clock_enable/disable calls do IS_ERR_OR_NULL(ddata->clocks[i]).
+Trivial fix to spelling mistake in KERN_ERR error messages
 
-I'll send out the fix shortly.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/isa/sc6000.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
+diff --git a/sound/isa/sc6000.c b/sound/isa/sc6000.c
+index c09d9b914efe..a985e9183be9 100644
+--- a/sound/isa/sc6000.c
++++ b/sound/isa/sc6000.c
+@@ -592,7 +592,7 @@ static int snd_sc6000_probe(struct device *devptr, unsigned int dev)
+ 	*vport = devm_ioport_map(devptr, port[dev], 0x10);
+ 	if (*vport = NULL) {
+ 		snd_printk(KERN_ERR PFX
+-			   "I/O port cannot be iomaped.\n");
++			   "I/O port cannot be iomapped.\n");
+ 		err = -EBUSY;
+ 		goto err_unmap1;
+ 	}
+@@ -607,7 +607,7 @@ static int snd_sc6000_probe(struct device *devptr, unsigned int dev)
+ 	vmss_port = devm_ioport_map(devptr, mss_port[dev], 4);
+ 	if (!vmss_port) {
+ 		snd_printk(KERN_ERR PFX
+-			   "MSS port I/O cannot be iomaped.\n");
++			   "MSS port I/O cannot be iomapped.\n");
+ 		err = -EBUSY;
+ 		goto err_unmap2;
+ 	}
+-- 
+2.17.0
 
-Tony
