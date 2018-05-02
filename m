@@ -1,75 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 09 May 2018 09:47:40 +0000
-Subject: Applied "ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"" to the asoc tree
-Message-Id: <20180509094740.74B1044007A@finisterre.ee.mobilebroadband>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 02 May 2018 11:46:19 +0000
+Subject: Re: [PATCH][next] pinctrl: actions: make s900_functions, s900_padinfo and s900_pads static
+Message-Id: <CACRpkdac_qa6-pZ3+OjrWw-w3O8ihj_yQBM3XJQxtiOUpryFRQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508224155.26486-1-colin.king@canonical.com>
-In-Reply-To: <20180508224155.26486-1-colin.king@canonical.com>
+References: <20180430130434.1361-1-colin.king@canonical.com>
+In-Reply-To: <20180430130434.1361-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, John Hsu <KCHSU0@nuvoton.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: Colin King <colin.king@canonical.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The patch
+On Mon, Apr 30, 2018 at 3:04 PM, Colin King <colin.king@canonical.com> wrote:
 
-   ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> s900_functions, s900_padinfo and s900_pads are local to the source and do
+> not need to be in global scope, so make them static.
+>
+> Cleans up sparse warnings:
+> drivers/pinctrl/actions/pinctrl-s900.c:1445:30: warning: symbol
+> 's900_functions' was not declared. Should it be static?
+> drivers/pinctrl/actions/pinctrl-s900.c:1664:20: warning: symbol
+> 's900_padinfo' was not declared. Should it be static?
+> drivers/pinctrl/actions/pinctrl-s900.c:207:31: warning: symbol
+> 's900_pads' was not declared. Should it be static?
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-has been applied to the asoc tree at
+Patch applied with Manivannan's ACK, I got the same patch from
+the 0day build robot, but I prefer human contributors to I pick
+this one.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 2ce7eb258999e5c510a1f828123e61df2ece2dd7 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 8 May 2018 23:41:55 +0100
-Subject: [PATCH] ASoC: nau8824: fix spelling mistake: "semaphone" ->
- "semaphore"
-
-Trivial fix to spelling mistake in dev_warn messages
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/nau8824.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
-index 76502c090654..6bd14453f06e 100644
---- a/sound/soc/codecs/nau8824.c
-+++ b/sound/soc/codecs/nau8824.c
-@@ -205,11 +205,11 @@ static int nau8824_sema_acquire(struct nau8824 *nau8824, long timeout)
- 	if (timeout) {
- 		ret = down_timeout(&nau8824->jd_sem, timeout);
- 		if (ret < 0)
--			dev_warn(nau8824->dev, "Acquire semaphone timeout\n");
-+			dev_warn(nau8824->dev, "Acquire semaphore timeout\n");
- 	} else {
- 		ret = down_interruptible(&nau8824->jd_sem);
- 		if (ret < 0)
--			dev_warn(nau8824->dev, "Acquire semaphone fail\n");
-+			dev_warn(nau8824->dev, "Acquire semaphore fail\n");
- 	}
- 
- 	return ret;
--- 
-2.17.0
-
+Yours,
+Linus Walleij
