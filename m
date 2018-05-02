@@ -1,56 +1,105 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 28 May 2018 09:58:57 +0000
-Subject: [PATCH 4.14 152/496] clocksource/drivers/fsl_ftm_timer: Fix error return checking
-Message-Id: <20180528100326.308294732@linuxfoundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 May 2018 12:49:03 +0000
+Subject: [bug report] mwifiex: do le_to_cpu conversion for Rx packet header elements
+Message-Id: <20180502124903.GA24880@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-janitors@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>
+To: akarwar@marvell.com
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Nishant Sarmukadam <nishants@marvell.com>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hello Amitkumar Karwar,
 
-------------------
+The patch ed1ea6f42ece: "mwifiex: do le_to_cpu conversion for Rx
+packet header elements" from Aug 3, 2012, leads to the following
+static checker warning:
 
-From: Colin Ian King <colin.king@canonical.com>
+	drivers/net/wireless/marvell/mwifiex/sta_rx.c:251 mwifiex_process_sta_rx_packet()
+	error: buffer overflow 'priv->rx_seq' 8 <= 255 user_rl='0-255'
 
-[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
+drivers/net/wireless/marvell/mwifiex/sta_rx.c
+   187  int mwifiex_process_sta_rx_packet(struct mwifiex_private *priv,
+   188                                    struct sk_buff *skb)
+   189  {
+   190          struct mwifiex_adapter *adapter = priv->adapter;
+   191          int ret = 0;
+   192          struct rxpd *local_rx_pd;
+   193          struct rx_packet_hdr *rx_pkt_hdr;
+   194          u8 ta[ETH_ALEN];
+   195          u16 rx_pkt_type, rx_pkt_offset, rx_pkt_length, seq_num;
+   196          struct mwifiex_sta_node *sta_ptr;
+   197  
+   198          local_rx_pd = (struct rxpd *) (skb->data);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Smatch distructs skb->data like the plague.
 
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
+   199          rx_pkt_type = le16_to_cpu(local_rx_pd->rx_pkt_type);
+   200          rx_pkt_offset = le16_to_cpu(local_rx_pd->rx_pkt_offset);
+   201          rx_pkt_length = le16_to_cpu(local_rx_pd->rx_pkt_length);
+   202          seq_num = le16_to_cpu(local_rx_pd->seq_num);
+   203  
+   204          rx_pkt_hdr = (void *)local_rx_pd + rx_pkt_offset;
+   205  
+   206          if ((rx_pkt_offset + rx_pkt_length) > (u16) skb->len) {
+   207                  mwifiex_dbg(adapter, ERROR,
+   208                              "wrong rx packet: len=%d, rx_pkt_offset=%d, rx_pkt_length=%d\n",
+   209                              skb->len, rx_pkt_offset, rx_pkt_length);
+   210                  priv->stats.rx_dropped++;
+   211                  dev_kfree_skb_any(skb);
+   212                  return ret;
+   213          }
+   214  
+   215          if (rx_pkt_type = PKT_TYPE_MGMT) {
+   216                  ret = mwifiex_process_mgmt_packet(priv, skb);
+   217                  if (ret)
+   218                          mwifiex_dbg(adapter, DATA, "Rx of mgmt packet failed");
+   219                  dev_kfree_skb_any(skb);
+   220                  return ret;
+   221          }
+   222  
+   223          /*
+   224           * If the packet is not an unicast packet then send the packet
+   225           * directly to os. Don't pass thru rx reordering
+   226           */
+   227          if ((!IS_11N_ENABLED(priv) &&
+   228               !(ISSUPP_TDLS_ENABLED(priv->adapter->fw_cap_info) &&
+   229                 !(local_rx_pd->flags & MWIFIEX_RXPD_FLAGS_TDLS_PACKET))) ||
+   230              !ether_addr_equal_unaligned(priv->curr_addr, rx_pkt_hdr->eth803_hdr.h_dest)) {
+   231                  mwifiex_process_rx_packet(priv, skb);
+   232                  return ret;
+   233          }
+   234  
+   235          if (mwifiex_queuing_ra_based(priv) ||
+   236              (ISSUPP_TDLS_ENABLED(priv->adapter->fw_cap_info) &&
+   237               local_rx_pd->flags & MWIFIEX_RXPD_FLAGS_TDLS_PACKET)) {
+   238                  memcpy(ta, rx_pkt_hdr->eth803_hdr.h_source, ETH_ALEN);
+   239                  if (local_rx_pd->flags & MWIFIEX_RXPD_FLAGS_TDLS_PACKET &&
+   240                      local_rx_pd->priority < MAX_NUM_TID) {
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We check ->priority here.
 
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
+   241                          sta_ptr = mwifiex_get_sta_entry(priv, ta);
+   242                          if (sta_ptr)
+   243                                  sta_ptr->rx_seq[local_rx_pd->priority]    244                                                le16_to_cpu(local_rx_pd->seq_num);
+   245                          mwifiex_auto_tdls_update_peer_signal(priv, ta,
+   246                                                               local_rx_pd->snr,
+   247                                                               local_rx_pd->nf);
+   248                  }
+   249          } else {
+   250                  if (rx_pkt_type != PKT_TYPE_BAR)
+   251                          priv->rx_seq[local_rx_pd->priority] = seq_num;
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+But not on this path.
 
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clocksource/fsl_ftm_timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   252                  memcpy(ta, priv->curr_bss_params.bss_descriptor.mac_address,
+   253                         ETH_ALEN);
+   254          }
+   255  
+   256          /* Reorder and send to OS */
+   257          ret = mwifiex_11n_rx_reorder_pkt(priv, seq_num, local_rx_pd->priority,
+   258                                           ta, (u8) rx_pkt_type, skb);
+   259  
 
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct
- 
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
- 
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
-
-
+regards,
+dan carpenter
