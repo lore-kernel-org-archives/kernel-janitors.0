@@ -1,29 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 10 May 2018 21:47:46 +0000
-Subject: Re: [PATCH v2] net/mlx4_en: Fix an error handling path in 'mlx4_en_init_netdev()'
-Message-Id: <20180510.174746.56190527987284941.davem@davemloft.net>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 02 May 2018 03:36:16 +0000
+Subject: Re: [PATCH] scsi: megaraid_sas: fix spelling mistake: "disbale" -> "disable"
+Message-Id: <yq1vac6685r.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180510070604.19635-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180510070604.19635-1-christophe.jaillet@wanadoo.fr>
+References: <20180429122532.10879-1-colin.king@canonical.com>
+In-Reply-To: <20180429122532.10879-1-colin.king@canonical.com> (Colin King's
+        message of "Sun, 29 Apr 2018 13:25:32 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: tariqt@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Kashyap Desai <kashyap.desai@broadcom.com>, Sumit Saxena <sumit.saxena@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 10 May 2018 09:06:04 +0200
 
-> If an error occurs, 'mlx4_en_destroy_netdev()' is called.
-> It then calls 'mlx4_en_free_resources()' which does the needed resources
-> cleanup.
-> 
-> So, doing some explicit kfree in the error handling path would lead to
-> some double kfree.
-> 
-> Simplify code to avoid such a case.
-> 
-> Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings scheme")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Colin,
 
-Applied and queued up for -stable, thanks.
+> Trivial fix to spelling mistake in module parameter description text
+
+Mangled patch. Applied by hand.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
