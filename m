@@ -1,57 +1,63 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 11 May 2018 15:06:16 +0000
-Subject: [PATCH 1/3] media: staging: atomisp: Return an error code in case of error in 'lm3554_probe()'
-Message-Id: <2eff9a8d6d67b60aed87277ab4f8b48b2251d559.1526048313.git.christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 May 2018 12:41:39 +0000
+Subject: [bug report] [ETH]: Make eth_type_trans set skb->dev like the other *_type_trans
+Message-Id: <20180502124139.GA24433@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alan@linux.intel.com, sakari.ailus@linux.intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, chen.chenchacha@foxmail.com, keescook@chromium.org, arvind.yadav.cs@gmail.com
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-If 'v4l2_ctrl_handler_init()' fails, we go to the error handling path, do
-some clean-up and return err, which is known to be 0 (i.e. success).
+Hi Santosh.  This one is very old...
 
-Axe the 'ret' variable and use 'err' directly in order to return the error
-code instead.
-Also remove the initialization of 'err' which was hiding this issue.
+The patch 4c13eb6657fe: "[ETH]: Make eth_type_trans set skb->dev like
+the other *_type_trans" from Apr 25, 2007, leads to the following
+static checker warning:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/staging/media/atomisp/i2c/atomisp-lm3554.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+	drivers/net/ethernet/chelsio/cxgb3/sge.c:2087 rx_eth()
+	error: buffer overflow 'adap->port' 2 <= 15 user_rl='0-15'
 
-diff --git a/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c b/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
-index 7098bf317f16..723fa74ff815 100644
---- a/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
-+++ b/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
-@@ -852,10 +852,9 @@ static void *lm3554_platform_data_func(struct i2c_client *client)
- 
- static int lm3554_probe(struct i2c_client *client)
- {
--	int err = 0;
-+	int err;
- 	struct lm3554 *flash;
- 	unsigned int i;
--	int ret;
- 
- 	flash = kzalloc(sizeof(*flash), GFP_KERNEL);
- 	if (!flash)
-@@ -868,10 +867,9 @@ static int lm3554_probe(struct i2c_client *client)
- 	flash->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 	flash->mode = ATOMISP_FLASH_MODE_OFF;
- 	flash->timeout = LM3554_MAX_TIMEOUT / LM3554_TIMEOUT_STEPSIZE - 1;
--	ret -	    v4l2_ctrl_handler_init(&flash->ctrl_handler,
--				   ARRAY_SIZE(lm3554_controls));
--	if (ret) {
-+	err = v4l2_ctrl_handler_init(&flash->ctrl_handler,
-+				     ARRAY_SIZE(lm3554_controls));
-+	if (err) {
- 		dev_err(&client->dev, "error initialize a ctrl_handler.\n");
- 		goto fail2;
- 	}
--- 
-2.17.0
+drivers/net/ethernet/chelsio/cxgb3/sge.c
+  2068  /**
+  2069   *      rx_eth - process an ingress ethernet packet
+  2070   *      @adap: the adapter
+  2071   *      @rq: the response queue that received the packet
+  2072   *      @skb: the packet
+  2073   *      @pad: amount of padding at the start of the buffer
+  2074   *
+  2075   *      Process an ingress ethernet pakcet and deliver it to the stack.
+  2076   *      The padding is 2 if the packet was delivered in an Rx buffer and 0
+  2077   *      if it was immediate data in a response.
+  2078   */
+  2079  static void rx_eth(struct adapter *adap, struct sge_rspq *rq,
+  2080                     struct sk_buff *skb, int pad, int lro)
+  2081  {
+  2082          struct cpl_rx_pkt *p = (struct cpl_rx_pkt *)(skb->data + pad);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Smatch always distruts skb->data.
 
+  2083          struct sge_qset *qs = rspq_to_qset(rq);
+  2084          struct port_info *pi;
+  2085  
+  2086          skb_pull(skb, sizeof(*p) + pad);
+  2087          skb->protocol = eth_type_trans(skb, adap->port[p->iff]);
+                                                               ^^^^^^
+How do we know this doesn't is within bounds?
+
+  2088          pi = netdev_priv(skb->dev);
+  2089          if ((skb->dev->features & NETIF_F_RXCSUM) && p->csum_valid &&
+  2090              p->csum = htons(0xffff) && !p->fragment) {
+  2091                  qs->port_stats[SGE_PSTAT_RX_CSUM_GOOD]++;
+  2092                  skb->ip_summed = CHECKSUM_UNNECESSARY;
+  2093          } else
+  2094                  skb_checksum_none_assert(skb);
+  2095          skb_record_rx_queue(skb, qs - &adap->sge.qs[pi->first_qset]);
+  2096  
+  2097          if (p->vlan_valid) {
+  2098                  qs->port_stats[SGE_PSTAT_VLANEX]++;
+  2099                  __vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), ntohs(p->vlan));
+  2100          }
+
+
+regards,
+dan carpenter
