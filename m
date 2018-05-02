@@ -1,36 +1,93 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 02 May 2018 11:46:19 +0000
-Subject: Re: [PATCH][next] pinctrl: actions: make s900_functions, s900_padinfo and s900_pads static
-Message-Id: <CACRpkdac_qa6-pZ3+OjrWw-w3O8ihj_yQBM3XJQxtiOUpryFRQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 02 May 2018 11:48:00 +0000
+Subject: [PATCH][media-next][V2] media: davinci_vpfe: fix memory leaks of params
+Message-Id: <20180502114800.28004-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430130434.1361-1-colin.king@canonical.com>
-In-Reply-To: <20180430130434.1361-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 3:04 PM, Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> s900_functions, s900_padinfo and s900_pads are local to the source and do
-> not need to be in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> drivers/pinctrl/actions/pinctrl-s900.c:1445:30: warning: symbol
-> 's900_functions' was not declared. Should it be static?
-> drivers/pinctrl/actions/pinctrl-s900.c:1664:20: warning: symbol
-> 's900_padinfo' was not declared. Should it be static?
-> drivers/pinctrl/actions/pinctrl-s900.c:207:31: warning: symbol
-> 's900_pads' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There are memory leaks of params; when copy_to_user fails and also
+the exit via the label 'error'. Also, there is a bogos memory allocation
+check on pointer 'to' when memory allocation fails on params.
 
-Patch applied with Manivannan's ACK, I got the same patch from
-the 0day build robot, but I prefer human contributors to I pick
-this one.
+Fix this by kfree'ing params in error exit path and jumping to this on
+the copy_to_user failure path.  Also check the to see if the allocation
+of params fails and remove the bogus null pointer checks on pointer 'to'.
 
-Yours,
-Linus Walleij
+Also explicitly return 0 on success rather than rval.
+
+Detected by CoverityScan, CID#1467966 ("Resource leak")
+
+Fixes: da43b6ccadcf ("[media] davinci: vpfe: dm365: add IPIPE support for media controller driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Add checks on allocation of params.  Remove bogus checks on
+    pointer 'to'. Explicitly return 0 on success. Thanks to
+    Dan Carpenter for the suggested improvements.
+
+---
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+index 95942768639c..b135e38a18b3 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -1252,12 +1252,12 @@ static const struct ipipe_module_if ipipe_modules[VPFE_IPIPE_MAX_MODULES] = {
+ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ {
+ 	struct vpfe_ipipe_device *ipipe = v4l2_get_subdevdata(sd);
++	struct ipipe_module_params *params;
+ 	unsigned int i;
+ 	int rval = 0;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ipipe_modules); i++) {
+ 		const struct ipipe_module_if *module_if;
+-		struct ipipe_module_params *params;
+ 		void *from, *to;
+ 		size_t size;
+ 
+@@ -1269,25 +1269,31 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ 
+ 		params = kmalloc(sizeof(struct ipipe_module_params),
+ 				 GFP_KERNEL);
++		if (!params) {
++			rval = -ENOMEM;
++			goto error;
++		}
+ 		to = (void *)params + module_if->param_offset;
+ 		size = module_if->param_size;
+ 
+-		if (to && from && size) {
++		if (from && size) {
+ 			if (copy_from_user(to, (void __user *)from, size)) {
+ 				rval = -EFAULT;
+-				break;
++				goto error;
+ 			}
+ 			rval = module_if->set(ipipe, to);
+ 			if (rval)
+ 				goto error;
+-		} else if (to && !from && size) {
++		} else if (!from && size) {
+ 			rval = module_if->set(ipipe, NULL);
+ 			if (rval)
+ 				goto error;
+ 		}
+ 		kfree(params);
+ 	}
++	return 0;
+ error:
++	kfree(params);
+ 	return rval;
+ }
+ 
+-- 
+2.17.0
+
