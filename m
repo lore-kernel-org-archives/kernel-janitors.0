@@ -1,42 +1,36 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Thu, 31 May 2018 19:48:23 +0000
-Subject: Re: [PATCH 1/3] staging: rtlwifi: Fix "Trafic"->"Traffic"
-Message-Id: <438a4c2c-5bf8-8149-aaff-1f58493cdc79@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 02 May 2018 10:10:48 +0000
+Subject: [PATCH] gpu: drm: sti: fix spelling mistake: "initialze" -> "initialize"
+Message-Id: <20180502101048.8442-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180531110314.3760-1-sabin.rapan@gmail.com>
- <20180531165747.GA28898@kroah.com>
-In-Reply-To: <20180531165747.GA28898@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Larry.Finger@lwfinger.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In the first patch series I forgot to CC linux-kernel@vger.kernel.org and
-assumed (wrongly) that the patch series will be ignored.
-In an attempt to fix that, I sent the second patch series with proper
-CC added. I should have sent it as a reply to the first one and version
-it.
-I will do as you said and resend the patch series.
+From: Colin Ian King <colin.king@canonical.com>
 
-Sabin.
+Trivial fix to spelling mistake in DRM_ERROR error message
 
-On 05/31/2018 06:57 PM, Greg KH wrote:
-> On Thu, May 31, 2018 at 01:03:12PM +0200, Sabin Mihai Rapan wrote:
->> Trivial fix to spelling mistake in comment text.
->>
->> Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
->> ---
->>  drivers/staging/rtlwifi/phydm/phydm.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> You sent a previous set of 4 patches with these same exact subject lines
-> :(
-> 
-> I've now dropped both of these series from my pending queue, please fix
-> up the subject lines and resend all of them at once.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/sti/sti_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sti/sti_crtc.c b/drivers/gpu/drm/sti/sti_crtc.c
+index 21e50d7b1f86..5824e6aca8f4 100644
+--- a/drivers/gpu/drm/sti/sti_crtc.c
++++ b/drivers/gpu/drm/sti/sti_crtc.c
+@@ -357,7 +357,7 @@ int sti_crtc_init(struct drm_device *drm_dev, struct sti_mixer *mixer,
+ 	res = drm_crtc_init_with_planes(drm_dev, crtc, primary, cursor,
+ 					&sti_crtc_funcs, NULL);
+ 	if (res) {
+-		DRM_ERROR("Can't initialze CRTC\n");
++		DRM_ERROR("Can't initialize CRTC\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.17.0
+
