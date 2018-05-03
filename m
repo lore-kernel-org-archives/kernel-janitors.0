@@ -1,7 +1,7 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Date: Wed, 02 May 2018 08:52:22 +0000
+From: Heiko Stuebner <heiko@sntech.de>
+Date: Thu, 03 May 2018 12:23:07 +0000
 Subject: Re: [PATCH 50/61] thermal: simplify getting .drvdata
-Message-Id: <20180502085221.GH3443@dragon>
+Message-Id: <3499277.H47n29vZV6@phil>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
@@ -11,7 +11,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Apr 19, 2018 at 04:06:20PM +0200, Wolfram Sang wrote:
+Am Donnerstag, 19. April 2018, 16:06:20 CEST schrieb Wolfram Sang:
 > We should get drvdata from struct device directly. Going via
 > platform_device is an unneeded step back and forth.
 > 
@@ -24,7 +24,40 @@ On Thu, Apr 19, 2018 at 04:06:20PM +0200, Wolfram Sang wrote:
 >  drivers/thermal/spear_thermal.c    | 8 +++-----
 >  drivers/thermal/zx2967_thermal.c   | 6 ++----
 >  3 files changed, 8 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index f36375d5a16c..9c7643d62ed7 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -1327,8 +1327,7 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
+>  
+>  static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  
+>  	for (i = 0; i < thermal->chip->chn_num; i++)
+> @@ -1346,8 +1345,7 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  
+>  static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  	int error;
+>  
+> @@ -1376,7 +1374,7 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  					      id, thermal->regs,
+>  					      thermal->tshut_temp);
+>  		if (error)
+> -			dev_err(&pdev->dev, "%s: invalid tshut=%d, error=%d\n",
+> +			dev_err(dev, "%s: invalid tshut=%d, error=%d\n",
+>  				__func__, thermal->tshut_temp, error);
+>  	}
+>  
 
-For zx2967_thermal,
-
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+for the Rockchip-part
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
