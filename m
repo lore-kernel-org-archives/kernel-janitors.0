@@ -1,99 +1,122 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Wed, 23 May 2018 09:32:59 +0000
-Subject: Re: [PATCH 15/61] gpu: drm: omapdrm: displays: simplify getting .drvdata
-Message-Id: <09116562-53e8-a6ca-42af-fcfd15f940ed@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 03 May 2018 14:16:28 +0000
+Subject: [PATCH] staging: r8822be: fix typo in variable name "offest" -> "offset"
+Message-Id: <20180503141628.32330-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-16-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-16-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ping-Ke Shih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 19/04/18 17:05, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> index 428de90fced1..8f8573a00e07 100644
-> --- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> +++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> @@ -412,8 +412,7 @@ static const struct backlight_ops dsicm_bl_ops = {
->  static ssize_t dsicm_num_errors_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	u8 errors = 0;
->  	int r;
-> @@ -444,8 +443,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
->  static ssize_t dsicm_hw_revision_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	u8 id1, id2, id3;
->  	int r;
-> @@ -476,8 +474,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
->  		struct device_attribute *attr,
->  		const char *buf, size_t count)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	unsigned long t;
->  	int r;
-> @@ -511,8 +508,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
->  		struct device_attribute *attr,
->  		char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	unsigned int t;
->  
->  	mutex_lock(&ddata->lock);
-> @@ -526,8 +522,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
->  		struct device_attribute *attr,
->  		const char *buf, size_t count)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	unsigned long t;
->  	int r;
-> @@ -558,8 +553,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
->  		struct device_attribute *attr,
->  		char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	unsigned int t;
->  
->  	mutex_lock(&ddata->lock);
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, I have picked this up.
+There are multiple occurrances of typos of "offest" that should be
+"offset". Fix these.
 
- Tomi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../rtlwifi/phydm/rtl8822b/halphyrf_8822b.c   | 34 +++++++++----------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c b/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c
+index ae3e2278fefd..14c3fb52f5b8 100644
+--- a/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c
++++ b/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c
+@@ -29,7 +29,7 @@
+ static bool
+ get_mix_mode_tx_agc_bb_swing_offset_8822b(void *dm_void,
+ 					  enum pwrtrack_method method,
+-					  u8 rf_path, u8 tx_power_index_offest)
++					  u8 rf_path, u8 tx_power_index_offset)
+ {
+ 	struct phy_dm_struct *dm = (struct phy_dm_struct *)dm_void;
+ 	struct dm_rf_calibration_struct *cali_info = &dm->rf_calibrate_info;
+@@ -42,24 +42,24 @@ get_mix_mode_tx_agc_bb_swing_offset_8822b(void *dm_void,
+ 
+ 	ODM_RT_TRACE(
+ 		dm, ODM_COMP_TX_PWR_TRACK,
+-		"Path_%d cali_info->absolute_ofdm_swing_idx[rf_path]=%d, tx_power_index_offest=%d\n",
++		"Path_%d cali_info->absolute_ofdm_swing_idx[rf_path]=%d, tx_power_index_offset=%d\n",
+ 		rf_path, cali_info->absolute_ofdm_swing_idx[rf_path],
+-		tx_power_index_offest);
++		tx_power_index_offset);
+ 
+-	if (tx_power_index_offest > 0XF)
+-		tx_power_index_offest = 0XF;
++	if (tx_power_index_offset > 0XF)
++		tx_power_index_offset = 0XF;
+ 
+ 	if (cali_info->absolute_ofdm_swing_idx[rf_path] >= 0 &&
+ 	    cali_info->absolute_ofdm_swing_idx[rf_path] <-		    tx_power_index_offest) {
++		    tx_power_index_offset) {
+ 		tx_agc_index = cali_info->absolute_ofdm_swing_idx[rf_path];
+ 		tx_bb_swing_index = cali_info->default_ofdm_index;
+ 	} else if (cali_info->absolute_ofdm_swing_idx[rf_path] >
+-		   tx_power_index_offest) {
+-		tx_agc_index = tx_power_index_offest;
++		   tx_power_index_offset) {
++		tx_agc_index = tx_power_index_offset;
+ 		cali_info->remnant_ofdm_swing_idx[rf_path]  			cali_info->absolute_ofdm_swing_idx[rf_path] -
+-			tx_power_index_offest;
++			tx_power_index_offset;
+ 		tx_bb_swing_index = cali_info->default_ofdm_index +
+ 				    cali_info->remnant_ofdm_swing_idx[rf_path];
+ 
+@@ -85,9 +85,9 @@ get_mix_mode_tx_agc_bb_swing_offset_8822b(void *dm_void,
+ 
+ 	ODM_RT_TRACE(
+ 		dm, ODM_COMP_TX_PWR_TRACK,
+-		"MixMode Offset Path_%d   cali_info->absolute_ofdm_swing_idx[rf_path]=%d   cali_info->bb_swing_idx_ofdm[rf_path]=%d   tx_power_index_offest=%d\n",
++		"MixMode Offset Path_%d   cali_info->absolute_ofdm_swing_idx[rf_path]=%d   cali_info->bb_swing_idx_ofdm[rf_path]=%d   tx_power_index_offset=%d\n",
+ 		rf_path, cali_info->absolute_ofdm_swing_idx[rf_path],
+-		cali_info->bb_swing_idx_ofdm[rf_path], tx_power_index_offest);
++		cali_info->bb_swing_idx_ofdm[rf_path], tx_power_index_offset);
+ 
+ 	return true;
+ }
+@@ -97,7 +97,7 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
+ {
+ 	struct phy_dm_struct *dm = (struct phy_dm_struct *)dm_void;
+ 	struct dm_rf_calibration_struct *cali_info = &dm->rf_calibrate_info;
+-	u8 tx_power_index_offest = 0;
++	u8 tx_power_index_offset = 0;
+ 	u8 tx_power_index = 0;
+ 
+ 	struct rtl_priv *rtlpriv = (struct rtl_priv *)dm->adapter;
+@@ -139,11 +139,11 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
+ 	if (tx_power_index >= 63)
+ 		tx_power_index = 63;
+ 
+-	tx_power_index_offest = 63 - tx_power_index;
++	tx_power_index_offset = 63 - tx_power_index;
+ 
+ 	ODM_RT_TRACE(dm, ODM_COMP_TX_PWR_TRACK,
+-		     "tx_power_index=%d tx_power_index_offest=%d rf_path=%d\n",
+-		     tx_power_index, tx_power_index_offest, rf_path);
++		     "tx_power_index=%d tx_power_index_offset=%d rf_path=%d\n",
++		     tx_power_index, tx_power_index_offset, rf_path);
+ 
+ 	if (method =
+ 	    BBSWING) { /*use for mp driver clean power tracking status*/
+@@ -178,7 +178,7 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
+ 		switch (rf_path) {
+ 		case ODM_RF_PATH_A:
+ 			get_mix_mode_tx_agc_bb_swing_offset_8822b(
+-				dm, method, rf_path, tx_power_index_offest);
++				dm, method, rf_path, tx_power_index_offset);
+ 			odm_set_bb_reg(
+ 				dm, 0xC94, (BIT(29) | BIT(28) | BIT(27) |
+ 					    BIT(26) | BIT(25)),
+@@ -201,7 +201,7 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
+ 
+ 		case ODM_RF_PATH_B:
+ 			get_mix_mode_tx_agc_bb_swing_offset_8822b(
+-				dm, method, rf_path, tx_power_index_offest);
++				dm, method, rf_path, tx_power_index_offset);
+ 			odm_set_bb_reg(
+ 				dm, 0xE94, (BIT(29) | BIT(28) | BIT(27) |
+ 					    BIT(26) | BIT(25)),
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.17.0
+
