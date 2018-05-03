@@ -1,49 +1,50 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 28 May 2018 10:00:44 +0000
-Subject: [PATCH 3.18 003/185] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Message-Id: <20180528100050.899972001@linuxfoundation.org>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 03 May 2018 09:23:08 +0000
+Subject: NAK: [PATCH] scsi: lpfc: fix spelling mistake: "mabilbox" -> "mailbox"
+Message-Id: <4b2d4b38-afff-1576-bc11-3c6d6d4cf5d7@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180503091901.29547-1-colin.king@canonical.com>
+In-Reply-To: <20180503091901.29547-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On 03/05/18 10:19, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in lpfc_printf_log log message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-------------------
+Ignore this, I've found more issues, sending a V2.
 
-From: Colin Ian King <colin.king@canonical.com>
-
-commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
-
-Trivial fix to spelling mistake in debugfs_entries text.
-
-Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org
-Cc: <stable@vger.kernel.org> # 3.10+
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/mips/kvm/mips.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -39,7 +39,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
- 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
- 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
--	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
-+	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
- 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
-
+> ---
+>  drivers/scsi/lpfc/lpfc_init.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+> index 060f0e2f6ff5..dc4334fa41bb 100644
+> --- a/drivers/scsi/lpfc/lpfc_init.c
+> +++ b/drivers/scsi/lpfc/lpfc_init.c
+> @@ -5117,7 +5117,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
+>  		if (rc) {
+>  			lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
+>  					LOG_DISCOVERY,
+> -					"2772 Issue FCF rediscover mabilbox "
+> +					"2772 Issue FCF rediscover mailbox "
+>  					"command failed, fail through to FCF "
+>  					"dead event\n");
+>  			spin_lock_irq(&phba->hbalock);
+> @@ -5209,7 +5209,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
+>  				lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
+>  						LOG_DISCOVERY,
+>  						"2774 Issue FCF rediscover "
+> -						"mabilbox command failed, "
+> +						"mailbox command failed, "
+>  						"through to CVL event\n");
+>  				spin_lock_irq(&phba->hbalock);
+>  				phba->fcf.fcf_flag &= ~FCF_ACVL_DISC;
+> 
 
