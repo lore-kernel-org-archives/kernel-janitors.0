@@ -1,30 +1,82 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 May 2018 07:58:50 +0000
-Subject: [PATCH 2/2] bpf: sockmap, potential uninitialized return in __sock_map_ctx_update_elem()
-Message-Id: <20180518075850.GA28335@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 03 May 2018 01:32:46 +0000
+Subject: Applied "ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val" to the asoc tree
+Message-Id: <20180503013246.84A6744007A@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180502142945.31637-1-colin.king@canonical.com>
+In-Reply-To: <20180502142945.31637-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexei Starovoitov <ast@kernel.org>, John Fastabend <john.fastabend@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Smatch complains that "err" might be uninitialized.  That seems
-possible.  Anyway we can just return zero.
+The patch
 
-Fixes: e5cd3abcb31a ("bpf: sockmap, refactor sockmap routines to work with hashmap")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
 
-diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
-index c6de1393df63..6298adb3162a 100644
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -1821,7 +1821,7 @@ static int __sock_map_ctx_update_elem(struct bpf_map *map,
- 		list_add_tail(&e->list, &psock->maps);
- 	}
- 	write_unlock_bh(&sock->sk_callback_lock);
--	return err;
-+	return 0;
- out_free:
- 	kfree(e);
- 	smap_release_sock(psock, sock);
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From de5afce2a22ef7f92e9e8583a3bdbc10e448cddf Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 2 May 2018 15:29:45 +0100
+Subject: [PATCH] ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
+
+Currently, the check that ret_val is not -ENOENT is always true and
+the quirk bit BYT_RY5651_MCLK_EN is never being cleared because ret_val
+is always zero at this point from a previous assignment earlier on.
+I believe that ret_val should actually be assigned to the return from
+devm_clk_get() as this can return -ENOENT (from a deeper call to
+clk_get_sys) and that was the original intention to check this.
+
+Detected by CoverityScan, CID#1460228 ("Logically dead code")
+
+Fixes: 02c0a3b3047f ("ASoC: Intel: bytcr_rt5651: add MCLK, quirks and cleanups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/boards/bytcr_rt5651.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
+index 1b1997f1d60c..bf59c7caf1d9 100644
+--- a/sound/soc/intel/boards/bytcr_rt5651.c
++++ b/sound/soc/intel/boards/bytcr_rt5651.c
+@@ -856,9 +856,10 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
+ 	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
+ 		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+ 		if (IS_ERR(priv->mclk)) {
++			ret_val = PTR_ERR(priv->mclk);
+ 			dev_err(&pdev->dev,
+-				"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
+-				PTR_ERR(priv->mclk));
++				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
++				ret_val);
+ 			/*
+ 			 * Fall back to bit clock usage for -ENOENT (clock not
+ 			 * available likely due to missing dependencies), bail
+-- 
+2.17.0
+
