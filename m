@@ -1,26 +1,31 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 17 May 2018 08:06:23 +0000
-Subject: Re: [PATCH] ALSA: emu10k1: fix spelling mistake: "Caputre" -> "Capture"
-Message-Id: <s5hzi0y7lkw.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 May 2018 10:56:55 +0000
+Subject: [PATCH] staging: wilc1000: allocate less memory
+Message-Id: <20180503105655.GC5315@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180517080420.23020-1-colin.king@canonical.com>
-In-Reply-To: <20180517080420.23020-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 17 May 2018 10:04:20 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistakes in audigy_outs arrays.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We should be allocating space for hidden_network_info structs.  They are
+slightly smaller than hidden_network structs.  This bug doesn't cause a
+runtime issue beyond the very small ammount of extra memory used.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
+diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+index 3ca0c97b0627..92322d6f061d 100644
+--- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
++++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+@@ -581,8 +581,8 @@ wilc_wfi_cfg_alloc_fill_ssid(struct cfg80211_scan_request *request,
+ 	int i;
+ 	int slot_id = 0;
+ 
+-	ntwk->net_info = kcalloc(request->n_ssids,
+-				 sizeof(struct hidden_network), GFP_KERNEL);
++	ntwk->net_info = kcalloc(request->n_ssids, sizeof(*ntwk->net_info),
++				 GFP_KERNEL);
+ 	if (!ntwk->net_info)
+ 		goto out;
+ 
