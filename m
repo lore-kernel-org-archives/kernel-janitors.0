@@ -1,23 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 10 May 2018 19:24:22 +0000
-Subject: Re: [PATCH] sctp: fix spelling mistake: "max_retans" -> "max_retrans"
-Message-Id: <20180510.152422.212583347430066949.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 03 May 2018 09:12:53 +0000
+Subject: [PATCH] net/mlx5e: fix spelling mistake: "loobpack" -> "loopback"
+Message-Id: <20180503091253.29324-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508222428.24874-1-colin.king@canonical.com>
-In-Reply-To: <20180508222428.24874-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, marcelo.leitner@gmail.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue,  8 May 2018 23:24:28 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in error string
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in netdev_err error message
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_selftest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_selftest.c b/drivers/net/ethernet/mellanox/mlx5/core/en_selftest.c
+index 707976482c09..027f54ac1ca2 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_selftest.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_selftest.c
+@@ -290,7 +290,7 @@ static int mlx5e_test_loopback(struct mlx5e_priv *priv)
+ 
+ 	if (!test_bit(MLX5E_STATE_OPENED, &priv->state)) {
+ 		netdev_err(priv->netdev,
+-			   "\tCan't perform loobpack test while device is down\n");
++			   "\tCan't perform loopback test while device is down\n");
+ 		return -ENODEV;
+ 	}
+ 
+-- 
+2.17.0
+
