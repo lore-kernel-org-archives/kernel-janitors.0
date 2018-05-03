@@ -1,51 +1,36 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 20 May 2018 12:41:58 +0000
-Subject: Re: [PATCH 1/5] staging: lustre: Fix inclusion of local headers
-Message-Id: <20180520124158.GC10031@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 03 May 2018 15:45:10 +0000
+Subject: [PATCH] drm/i915/selftests: fix spelling mistake: "parmaters" -> "parameters"
+Message-Id: <20180503154510.708-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180516182636.5137-1-sabin.rapan@gmail.com>
-In-Reply-To: <20180516182636.5137-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Cc: jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Chris Wilson <chris@chris-wilson.co.uk>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 08:26:36PM +0200, Sabin Mihai Rapan wrote:
-> This patch fixes the checkpatch.pl error:
-> 
-> ERROR:UAPI_INCLUDE: No #include in ...include/uapi/... should use a uapi/ path
-> prefix
-> 
-> Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-> ---
->  drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h     | 4 ++--
->  drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h      | 2 +-
->  drivers/staging/lustre/include/uapi/linux/lnet/nidstr.h       | 2 +-
->  drivers/staging/lustre/include/uapi/linux/lustre/lustre_cfg.h | 2 +-
->  drivers/staging/lustre/include/uapi/linux/lustre/lustre_fid.h | 2 +-
->  drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h | 4 ++--
->  .../staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h   | 2 +-
->  .../staging/lustre/include/uapi/linux/lustre/lustre_ostid.h   | 2 +-
->  .../staging/lustre/include/uapi/linux/lustre/lustre_user.h    | 2 +-
->  9 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
-> index c1619f411d81..1530ac26b449 100644
-> --- a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
-> +++ b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
-> @@ -29,8 +29,8 @@
->  #ifndef LNET_DLC_H
->  #define LNET_DLC_H
->  
-> -#include <uapi/linux/lnet/libcfs_ioctl.h>
-> -#include <uapi/linux/lnet/lnet-types.h>
-> +#include "libcfs_ioctl.h"
-> +#include "lnet-types.h"
+From: Colin Ian King <colin.king@canonical.com>
 
-Ick, no, please leave as-is, the uapi "rules" are a bit different for
-staging drivers.
+Trivial fix to spelling mistake in pr_err error message
 
-thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/selftests/i915_vma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/gpu/drm/i915/selftests/i915_vma.c b/drivers/gpu/drm/i915/selftests/i915_vma.c
+index eb89e301b602..e90f97236e50 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_vma.c
++++ b/drivers/gpu/drm/i915/selftests/i915_vma.c
+@@ -81,7 +81,7 @@ checked_vma_instance(struct drm_i915_gem_object *obj,
+ 	}
+ 
+ 	if (i915_vma_compare(vma, vm, view)) {
+-		pr_err("i915_vma_compare failed with create parmaters!\n");
++		pr_err("i915_vma_compare failed with create parameters!\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-- 
+2.17.0
+
