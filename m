@@ -1,46 +1,138 @@
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Date: Tue, 08 May 2018 11:49:22 +0000
-Subject: Re: [PATCH 3/3] drm/xen-front: Fix loop timeout
-Message-Id: <5cf5883a-9fd2-6ccf-b2a3-28dc928a9d69@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 03 May 2018 09:26:12 +0000
+Subject: [PATCH][V2] scsi: lpfc: fix spelling mistakes: "mabilbox" and "maibox"
+Message-Id: <20180503092612.30007-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508092829.GC661@mwanda>
- <46af16e5-4b59-6071-9f78-95fd4d46f5ed@gmail.com>
-In-Reply-To: <46af16e5-4b59-6071-9f78-95fd4d46f5ed@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/08/2018 12:37 PM, Oleksandr Andrushchenko wrote:
-> On 05/08/2018 12:28 PM, Dan Carpenter wrote:
->> If the loop times out then we want to exit with "to" set to zero, but in
->> the current code it's set to -1.
->>
->> Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display 
->> frontend")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Thank you,
-> Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Applied to drm-misc-next,
-Thank you
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c 
->> b/drivers/gpu/drm/xen/xen_drm_front.c
->> index 378cb7ce0db5..3345ac71b391 100644
->> --- a/drivers/gpu/drm/xen/xen_drm_front.c
->> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
->> @@ -778,7 +778,7 @@ static int xen_drv_remove(struct xenbus_device *dev)
->>        */
->>       while ((xenbus_read_unsigned(front_info->xb_dev->otherend, 
->> "state",
->>                        XenbusStateUnknown) != XenbusStateInitWait) &&
->> -                     to--)
->> +                     --to)
->>           msleep(10);
->>         if (!to) {
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+From: Colin Ian King <colin.king@canonical.com>
+
+Trivial fix to spelling mistakes in lpfc_printf_log log message
+
+"mabilbox" -> "mailbox"
+"maibox" -> "mailbox"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Add maibox fixes
+
+---
+ drivers/scsi/lpfc/lpfc_bsg.c  | 20 ++++++++++----------
+ drivers/scsi/lpfc/lpfc_init.c |  4 ++--
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+index 0f174ca80f67..edb1a18a6414 100644
+--- a/drivers/scsi/lpfc/lpfc_bsg.c
++++ b/drivers/scsi/lpfc/lpfc_bsg.c
+@@ -3621,7 +3621,7 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
+ 		bsg_reply->result = 0;
+ 
+ 		lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+-				"2937 SLI_CONFIG ext-buffer maibox command "
++				"2937 SLI_CONFIG ext-buffer mailbox command "
+ 				"(x%x/x%x) complete bsg job done, bsize:%d\n",
+ 				phba->mbox_ext_buf_ctx.nembType,
+ 				phba->mbox_ext_buf_ctx.mboxType, size);
+@@ -3632,7 +3632,7 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
+ 					phba->mbox_ext_buf_ctx.mbx_dmabuf, 0);
+ 	} else {
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
+-				"2938 SLI_CONFIG ext-buffer maibox "
++				"2938 SLI_CONFIG ext-buffer mailbox "
+ 				"command (x%x/x%x) failure, rc:x%x\n",
+ 				phba->mbox_ext_buf_ctx.nembType,
+ 				phba->mbox_ext_buf_ctx.mboxType, rc);
+@@ -3666,7 +3666,7 @@ lpfc_bsg_issue_read_mbox_ext_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
+ 		pmboxq->u.mb.mbxStatus = MBXERR_ERROR;
+ 
+ 	lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+-			"2939 SLI_CONFIG ext-buffer rd maibox command "
++			"2939 SLI_CONFIG ext-buffer rd mailbox command "
+ 			"complete, ctxState:x%x, mbxStatus:x%x\n",
+ 			phba->mbox_ext_buf_ctx.state, pmboxq->u.mb.mbxStatus);
+ 
+@@ -3706,7 +3706,7 @@ lpfc_bsg_issue_write_mbox_ext_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
+ 		pmboxq->u.mb.mbxStatus = MBXERR_ERROR;
+ 
+ 	lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+-			"2940 SLI_CONFIG ext-buffer wr maibox command "
++			"2940 SLI_CONFIG ext-buffer wr mailbox command "
+ 			"complete, ctxState:x%x, mbxStatus:x%x\n",
+ 			phba->mbox_ext_buf_ctx.state, pmboxq->u.mb.mbxStatus);
+ 
+@@ -3988,12 +3988,12 @@ lpfc_bsg_sli_cfg_read_cmd_ext(struct lpfc_hba *phba, struct bsg_job *job,
+ 	if ((rc = MBX_SUCCESS) || (rc = MBX_BUSY)) {
+ 		lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+ 				"2947 Issued SLI_CONFIG ext-buffer "
+-				"maibox command, rc:x%x\n", rc);
++				"mailbox command, rc:x%x\n", rc);
+ 		return SLI_CONFIG_HANDLED;
+ 	}
+ 	lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
+ 			"2948 Failed to issue SLI_CONFIG ext-buffer "
+-			"maibox command, rc:x%x\n", rc);
++			"mailbox command, rc:x%x\n", rc);
+ 	rc = -EPIPE;
+ 
+ job_error:
+@@ -4147,12 +4147,12 @@ lpfc_bsg_sli_cfg_write_cmd_ext(struct lpfc_hba *phba, struct bsg_job *job,
+ 		if ((rc = MBX_SUCCESS) || (rc = MBX_BUSY)) {
+ 			lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+ 					"2955 Issued SLI_CONFIG ext-buffer "
+-					"maibox command, rc:x%x\n", rc);
++					"mailbox command, rc:x%x\n", rc);
+ 			return SLI_CONFIG_HANDLED;
+ 		}
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
+ 				"2956 Failed to issue SLI_CONFIG ext-buffer "
+-				"maibox command, rc:x%x\n", rc);
++				"mailbox command, rc:x%x\n", rc);
+ 		rc = -EPIPE;
+ 		goto job_error;
+ 	}
+@@ -4492,12 +4492,12 @@ lpfc_bsg_write_ebuf_set(struct lpfc_hba *phba, struct bsg_job *job,
+ 		if ((rc = MBX_SUCCESS) || (rc = MBX_BUSY)) {
+ 			lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
+ 					"2969 Issued SLI_CONFIG ext-buffer "
+-					"maibox command, rc:x%x\n", rc);
++					"mailbox command, rc:x%x\n", rc);
+ 			return SLI_CONFIG_HANDLED;
+ 		}
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
+ 				"2970 Failed to issue SLI_CONFIG ext-buffer "
+-				"maibox command, rc:x%x\n", rc);
++				"mailbox command, rc:x%x\n", rc);
+ 		rc = -EPIPE;
+ 		goto job_error;
+ 	}
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 060f0e2f6ff5..dc4334fa41bb 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -5117,7 +5117,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
+ 		if (rc) {
+ 			lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
+ 					LOG_DISCOVERY,
+-					"2772 Issue FCF rediscover mabilbox "
++					"2772 Issue FCF rediscover mailbox "
+ 					"command failed, fail through to FCF "
+ 					"dead event\n");
+ 			spin_lock_irq(&phba->hbalock);
+@@ -5209,7 +5209,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
+ 				lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
+ 						LOG_DISCOVERY,
+ 						"2774 Issue FCF rediscover "
+-						"mabilbox command failed, "
++						"mailbox command failed, "
+ 						"through to CVL event\n");
+ 				spin_lock_irq(&phba->hbalock);
+ 				phba->fcf.fcf_flag &= ~FCF_ACVL_DISC;
+-- 
+2.17.0
 
