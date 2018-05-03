@@ -1,36 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 22 May 2018 09:05:05 +0000
-Subject: [PATCH] usb: gadget: tcm: fix spelling mistake: "Manufactor" -> "Manufacturer"
-Message-Id: <20180522090505.14953-1-colin.king@canonical.com>
+From: Joerg Roedel <joro@8bytes.org>
+Date: Thu, 03 May 2018 13:19:02 +0000
+Subject: Re: [PATCH 24/61] iommu: simplify getting .drvdata
+Message-Id: <20180503131901.c5vm4w3mskcnef4s@8bytes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+	<20180419140641.27926-25-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-25-wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
+Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Apr 19, 2018 at 04:05:54PM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/iommu/qcom_iommu.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Trivial fix to spelling mistake in usbg_us_strings array
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/gadget/legacy/tcm_usb_gadget.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/gadget/legacy/tcm_usb_gadget.c b/drivers/usb/gadget/legacy/tcm_usb_gadget.c
-index 682bf99dcf76..40870227999a 100644
---- a/drivers/usb/gadget/legacy/tcm_usb_gadget.c
-+++ b/drivers/usb/gadget/legacy/tcm_usb_gadget.c
-@@ -41,7 +41,7 @@ static struct usb_device_descriptor usbg_device_desc = {
- #define USB_G_STR_CONFIG USB_GADGET_FIRST_AVAIL_IDX
- 
- static struct usb_string	usbg_us_strings[] = {
--	[USB_GADGET_MANUFACTURER_IDX].s	= "Target Manufactor",
-+	[USB_GADGET_MANUFACTURER_IDX].s	= "Target Manufacturer",
- 	[USB_GADGET_PRODUCT_IDX].s	= "Target Product",
- 	[USB_GADGET_SERIAL_IDX].s	= "000000000001",
- 	[USB_G_STR_CONFIG].s		= "default config",
--- 
-2.17.0
-
+Applied, thanks.
