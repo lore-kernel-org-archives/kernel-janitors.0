@@ -1,29 +1,40 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Fri, 11 May 2018 15:31:11 +0000
-Subject: Re: [PATCH 2/3] media: staging: atomisp: Fix an error handling path in 'lm3554_probe()'
-Message-Id: <1526052671.26291.58.camel@linux.intel.com>
+From: Shuah Khan <shuah@kernel.org>
+Date: Fri, 04 May 2018 19:45:59 +0000
+Subject: Re: [PATCH] selftests: fix spelling mistake: "desciptor" -> "descriptor"
+Message-Id: <55d4fa6c-2870-afd4-2506-b7a3d721e711@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
-         <f762630a681c08d9903cf73243dd98416ae96a7c.1526048313.git.christophe.jaillet@wanadoo.fr>
-         <alpine.DEB.2.20.1805111709390.20118@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1805111709390.20118@hadrien>
+References: <20180429115425.9378-1-colin.king@canonical.com>
+In-Reply-To: <20180429115425.9378-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: sakari.ailus@linux.intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, chen.chenchacha@foxmail.com, keescook@chromium.org, arvind.yadav.cs@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2018-05-11 at 17:09 +0200, Julia Lawall wrote:
+On 04/29/2018 05:54 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> On Fri, 11 May 2018, Christophe JAILLET wrote:
+> Trivial fix to spelling mistake in message text
 > 
-> > The use of 'fail1' and 'fail2' is not correct. Reorder these calls
-> > to
-> > branch at the right place of the error handling path.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  tools/testing/selftests/filesystems/devpts_pts.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Maybe it would be good to improve the names at the same time?
+> diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
+> index b9055e974289..ea5de8271521 100644
+> --- a/tools/testing/selftests/filesystems/devpts_pts.c
+> +++ b/tools/testing/selftests/filesystems/devpts_pts.c
+> @@ -279,7 +279,7 @@ int main(int argc, char *argv[])
+>  	int ret;
+>  
+>  	if (!isatty(STDIN_FILENO)) {
+> -		fprintf(stderr, "Standard input file desciptor is not attached "
+> +		fprintf(stderr, "Standard input file descriptor is not attached "
+>  				"to a terminal. Skipping test\n");
+>  		exit(EXIT_FAILURE);
+>  	}
+> 
 
-Its scheduled for deletion - please don't bother.
+Thanks. I will queue this up for 4.18-rc1
 
-Alan
-
+-- Shuah
