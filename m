@@ -1,26 +1,62 @@
-From: "Fridman M. M" <info@charity.com>
-Date: Tue, 15 May 2018 01:41:42 +0000
-Subject: Re: Charity Support
-Message-Id: <a6515e696150bbd0608fea03005eb918.squirrel@webmail.iafe.uba.ar>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Fri, 04 May 2018 13:39:32 +0000
+Subject: [PATCH] apparmor: secid: fix error return value in error handling path
+Message-Id: <20180504133932.GA15968@embeddedor.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
+Currently, function apparmor_secid_to_secctx returns always zero,
+no matter if the value returned by aa_label_asxprint is negative
+(which implies that an error has occurred).
 
+Fix this by temporarily storing the value returned by aa_label_asxprint
+into a variable of type int (signed) for its further evaluation.
 
+Addresses-Coverity-ID: 1468514 ("Unsigned compared against 0")
+Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ security/apparmor/secid.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I Mikhail Fridman. has selected you specially as one of my beneficiaries
-for my Charitable Donation, Just as I have declared on May 23, 2016 to give
-my fortune as charity.
-
-Check the link below for confirmation:
-
-http://www.ibtimes.co.uk/russias-second-wealthiest-man-mikhail-fridman-plans-leaving-14-2bn-fortune-charity-1561604
-
-Reply as soon as possible with further directives.
-
-Best Regards,
-Mikhail Fridman.
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index 5029248..4b902ed 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ {
+ 	/* TODO: cache secctx and ref count so we don't have to recreate */
+ 	struct aa_label *label = aa_secid_to_label(secid);
++	int seclen_tmp;
+ 
+ 	AA_BUG(!secdata);
+ 	AA_BUG(!seclen);
+@@ -150,17 +151,19 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 		return -EINVAL;
+ 
+ 	if (secdata)
+-		*seclen = aa_label_asxprint(secdata, root_ns, label,
++		seclen_tmp = aa_label_asxprint(secdata, root_ns, label,
+ 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+ 					    FLAG_HIDDEN_UNCONFINED |
+ 					    FLAG_ABS_ROOT, GFP_ATOMIC);
+ 	else
+-		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
++		seclen_tmp = aa_label_snxprint(NULL, 0, root_ns, label,
+ 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+ 					    FLAG_HIDDEN_UNCONFINED |
+ 					    FLAG_ABS_ROOT);
+-	if (*seclen < 0)
++	if (seclen_tmp < 0)
+ 		return -ENOMEM;
++	else
++		*seclen = seclen_tmp;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
 
