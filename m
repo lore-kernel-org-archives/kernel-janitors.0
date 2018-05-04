@@ -1,38 +1,69 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 22 May 2018 08:29:22 +0000
-Subject: [PATCH] staging: mt7621-mmc: fix spelling mistake: "Illgal" -> "Illegal"
-Message-Id: <20180522082922.5538-1-colin.king@canonical.com>
+Date: Fri, 04 May 2018 14:15:11 +0000
+Subject: [PATCH][next] apparmor: fix error return check with a u32 being less than zero
+Message-Id: <20180504141511.19793-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180518100359.28036-1-colin.king@canonical.com>
-In-Reply-To: <20180518100359.28036-1-colin.king@canonical.com>
+References: <20180323233422.7856-1-colin.king@canonical.com>
+In-Reply-To: <20180323233422.7856-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?q?Christian=20L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>, NeilBrown <neil@brown.name>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to another spelling mistake in N_MSG message text
+The check for *seclen being less than zero for an error condtion check
+is never true as it is a u32 and hence cannot be less than zero. Fix
+this by using an int ret for error return checking and assigning *seclen
+to this.
 
+Detected by CoverityScan, CID#1468514 ("Unsigned comparison against 0")
+
+Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/mt7621-mmc/sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/apparmor/secid.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 11bf4b4c3403..648a2dd1436e 100644
---- a/drivers/staging/mt7621-mmc/sd.c
-+++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -388,7 +388,7 @@ static void msdc_dump_io_resp(struct msdc_host *host, u32 resp)
- 	if (flags & (1 << 7))
- 		N_MSG(RSP, "[IO] COM_CRC_ERR");
- 	if (flags & (1 << 6))
--		N_MSG(RSP, "[IO] Illgal command");
-+		N_MSG(RSP, "[IO] Illegal command");
- 	if (flags & (1 << 3))
- 		N_MSG(RSP, "[IO] Error");
- 	if (flags & (1 << 2))
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index 502924853986..9c431e9a9836 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ {
+ 	/* TODO: cache secctx and ref count so we don't have to recreate */
+ 	struct aa_label *label = aa_secid_to_label(secid);
++	int ret;
+ 
+ 	AA_BUG(!secdata);
+ 	AA_BUG(!seclen);
+@@ -150,16 +151,17 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 		return -EINVAL;
+ 
+ 	if (secdata)
+-		*seclen = aa_label_asxprint(secdata, root_ns, label,
+-					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+-					    FLAG_HIDDEN_UNCONFINED |
+-					    FLAG_ABS_ROOT, GFP_ATOMIC);
++		ret = aa_label_asxprint(secdata, root_ns, label,
++					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
++					FLAG_HIDDEN_UNCONFINED |
++					FLAG_ABS_ROOT, GFP_ATOMIC);
+ 	else
+-		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
+-					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+-					    FLAG_HIDDEN_UNCONFINED |
+-					    FLAG_ABS_ROOT);
+-	if (*seclen < 0)
++		ret = aa_label_snxprint(NULL, 0, root_ns, label,
++					FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
++					FLAG_HIDDEN_UNCONFINED |
++					FLAG_ABS_ROOT);
++	*seclen = ret;
++	if (ret < 0)
+ 		return -ENOMEM;
+ 
+ 	return 0;
 -- 
 2.17.0
 
