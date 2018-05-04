@@ -1,23 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 10 May 2018 19:24:43 +0000
-Subject: Re: [PATCH] net/9p: fix spelling mistake: "suspsend" -> "suspend"
-Message-Id: <20180510.152443.349906738351045257.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 04 May 2018 16:08:59 +0000
+Subject: Re: [v3] [media] Use common error handling code in 19 functions
+Message-Id: <9e766f52-b09e-c61e-8d9f-23542d83f6b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180509094833.15871-1-colin.king@canonical.com>
-In-Reply-To: <20180509094833.15871-1-colin.king@canonical.com>
+References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
+ <57ef3a56-2578-1d5f-1268-348b49b0c573@users.sourceforge.net>
+In-Reply-To: <57ef3a56-2578-1d5f-1268-348b49b0c573@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net, v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Andrey Utkin <andrey_utkin@fastmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Brian Johnson <brijohn@gmail.com>, =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= <christoph@boehmwalder.at>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, Daniele Nicolodi <daniele@grinta.net>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Devendra Sharma <devendra.sharma9091@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Max Kellermann <max.kellermann@gmail.com>, Mike Isely <isely@pobox.com>, Philippe Ombredanne <pombredanne@nexb.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Satendra Singh Thakur <satendra.t@samsung.com>, Sean Young <sean@mess.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Shyam Saini <mayhs11saini@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Todor Tomov <todor.tomov@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  9 May 2018 10:48:33 +0100
+> Adjust jump targets so that a bit of exception handling can be better
+> reused at the end of these functions.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_warn message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Why was this update suggestion rejected once more a moment ago?
 
-Applied.
+https://patchwork.linuxtv.org/patch/47827/
+lkml.kernel.org/r/<57ef3a56-2578-1d5f-1268-348b49b0c573@users.sourceforge.net>
+https://lkml.org/lkml/2018/3/9/823
+
+Would you like to integrate such a source code transformation after any further adjustments?
+
+Regards,
+Markus
