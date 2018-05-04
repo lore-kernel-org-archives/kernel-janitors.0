@@ -1,36 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 30 May 2018 10:50:05 +0000
-Subject: [PATCH][next] crypto: aegis: fix indentation of a statement
-Message-Id: <20180530105005.13116-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 04 May 2018 12:36:20 +0000
+Subject: Re: rtlwifi: fix spelling mistake: "dismatch" -> "mismatch"
+Message-Id: <20180504123620.EC99C607E5@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180430134102.11171-1-colin.king@canonical.com>
+In-Reply-To: <20180430134102.11171-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Trival fix to correct the indentation of a single statement
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in RT_TRACE message text.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- crypto/aegis128l.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/crypto/aegis128l.c b/crypto/aegis128l.c
-index 0cc1a7525c85..64dc2654b863 100644
---- a/crypto/aegis128l.c
-+++ b/crypto/aegis128l.c
-@@ -121,7 +121,7 @@ static void crypto_aegis128l_ad(struct aegis_state *state,
- 				(const union aegis_chunk *)src;
- 
- 		while (size >= AEGIS128L_CHUNK_SIZE) {
--                    crypto_aegis128l_update_a(state, src_chunk);
-+			crypto_aegis128l_update_a(state, src_chunk);
- 
- 			size -= AEGIS128L_CHUNK_SIZE;
- 			src_chunk += 1;
+070fc356e21a rtlwifi: fix spelling mistake: "dismatch" -> "mismatch"
+
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10371799/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
