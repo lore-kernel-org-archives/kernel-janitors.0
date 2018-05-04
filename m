@@ -1,24 +1,78 @@
-From: Igor Russkikh <igor.russkikh@aquantia.com>
-Date: Fri, 11 May 2018 12:40:43 +0000
-Subject: Re: [PATCH][next] net: aquantia: fix unsigned numvecs comparison with less than zero
-Message-Id: <a6f112f6-d3f3-4294-0b3a-5f8e440d474c@aquantia.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Fri, 04 May 2018 14:09:14 +0000
+Subject: [PATCH v2] apparmor: secid: fix error return value in error handling path
+Message-Id: <20180504140914.GA16787@embeddedor.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180510125201.19707-1-colin.king@canonical.com>
- <20180510.175358.1296757435086922873.davem@davemloft.net>
-In-Reply-To: <20180510.175358.1296757435086922873.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, colin.king@canonical.com
-Cc: pavel.belous@aquantia.com, weiyongjun1@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
+Currently, function apparmor_secid_to_secctx returns always zero,
+no matter if the value returned by aa_label_asxprint is negative
+(which implies that an error has occurred).
 
->> Fixes: a09bd81b5413 ("net: aquantia: Limit number of vectors to actually allocated irqs")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> This doesn't apply to net-next.
-> 
+Notice that *seclen* is of type u32 (32 bits, unsigned), and a
+less-than-zero comparison of an unsigned value is never true.
 
-Colin, believe thats because you should target to net, not net-next.
+Fix this by temporarily storing the value returned by aa_label_asxprint
+into a variable of type int (signed) for its further evaluation.
 
-BR, Igor
+Addresses-Coverity-ID: 1468514 ("Unsigned compared against 0")
+Fixes: c092921219d2 ("apparmor: add support for mapping secids and using
+secctxes")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes is v2:
+ - Update changelog.
+ - Fix misaligned lines.
+
+ security/apparmor/secid.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index 5029248..efaa0d9 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ {
+ 	/* TODO: cache secctx and ref count so we don't have to recreate */
+ 	struct aa_label *label = aa_secid_to_label(secid);
++	int seclen_tmp;
+ 
+ 	AA_BUG(!secdata);
+ 	AA_BUG(!seclen);
+@@ -150,17 +151,21 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 		return -EINVAL;
+ 
+ 	if (secdata)
+-		*seclen = aa_label_asxprint(secdata, root_ns, label,
+-					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+-					    FLAG_HIDDEN_UNCONFINED |
+-					    FLAG_ABS_ROOT, GFP_ATOMIC);
++		seclen_tmp = aa_label_asxprint(secdata, root_ns, label,
++					       FLAG_SHOW_MODE |
++					       FLAG_VIEW_SUBNS |
++					       FLAG_HIDDEN_UNCONFINED |
++					       FLAG_ABS_ROOT, GFP_ATOMIC);
+ 	else
+-		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
+-					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+-					    FLAG_HIDDEN_UNCONFINED |
+-					    FLAG_ABS_ROOT);
+-	if (*seclen < 0)
++		seclen_tmp = aa_label_snxprint(NULL, 0, root_ns, label,
++					       FLAG_SHOW_MODE |
++					       FLAG_VIEW_SUBNS |
++					       FLAG_HIDDEN_UNCONFINED |
++					       FLAG_ABS_ROOT);
++	if (seclen_tmp < 0)
+ 		return -ENOMEM;
++	else
++		*seclen = seclen_tmp;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
+
