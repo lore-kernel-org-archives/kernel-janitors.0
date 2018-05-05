@@ -1,37 +1,25 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 31 May 2018 02:31:12 +0000
-Subject: [PATCH net-next] net/mlx5: Make function mlx5_fpga_tls_send_teardown_cmd() static
-Message-Id: <1527733872-149077-1-git-send-email-weiyongjun1@huawei.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Sat, 05 May 2018 07:17:51 +0000
+Subject: Re: [PATCH] crypto: ghash-clmulni: fix spelling mistake: "acclerated" -> "accelerated"
+Message-Id: <20180505071751.ixjtky4c3ym7jotf@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180427180805.15536-1-colin.king@canonical.com>
+In-Reply-To: <20180427180805.15536-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Pismenny <borisp@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, Ilya Lesokhin <ilyal@mellanox.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes the following sparse warning:
+On Fri, Apr 27, 2018 at 07:08:05PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in module description text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c:199:6: warning:
- symbol 'mlx5_fpga_tls_send_teardown_cmd' was not declared. Should it be static?
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c
-index 2104801..c973623 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c
-@@ -196,8 +196,8 @@ static void mlx5_fpga_tls_flow_to_cmd(void *flow, void *cmd)
- 		 MLX5_GET(tls_flow, flow, direction_sx));
- }
- 
--void mlx5_fpga_tls_send_teardown_cmd(struct mlx5_core_dev *mdev, void *flow,
--				     u32 swid, gfp_t flags)
-+static void mlx5_fpga_tls_send_teardown_cmd(struct mlx5_core_dev *mdev,
-+					    void *flow, u32 swid, gfp_t flags)
- {
- 	struct mlx5_teardown_stream_context *ctx;
- 	struct mlx5_fpga_dma_buf *buf;
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
