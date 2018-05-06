@@ -1,37 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 May 2018 10:36:55 +0000
-Subject: [PATCH] ALSA: xen-front: freeing an error pointer
-Message-Id: <20180530103655.bnjzq2jpfrjjwvvj@kili.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 May 2018 07:58:58 +0000
+Subject: [PATCH] [media] media: delete unneeded include
+Message-Id: <1525593538-11340-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Cc: xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Mike Isely <isely@pobox.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-kfree() doesn't accept error pointers so I've set "str" to NULL on these
-paths.
+pvrusb2-video-v4l.h only declares pvr2_saa7115_subdev_update and
+includes pvrusb2-hdw-internal.h.  pvrusb2-cx2584x-v4l.c does not
+use pvr2_saa7115_subdev_update and it explicitly includes
+pvrusb2-hdw-internal.h.
 
-Fixes: fd3b36045c2c ("ALSA: xen-front: Read sound driver configuration from Xen store")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/sound/xen/xen_snd_front_cfg.c b/sound/xen/xen_snd_front_cfg.c
-index 38c7e1eefbb9..68dcd7d1f09e 100644
---- a/sound/xen/xen_snd_front_cfg.c
-+++ b/sound/xen/xen_snd_front_cfg.c
-@@ -306,6 +306,7 @@ static int cfg_get_stream_type(const char *path, int index,
- 	str = xenbus_read(XBT_NIL, stream_path, XENSND_FIELD_TYPE, NULL);
- 	if (IS_ERR(str)) {
- 		ret = PTR_ERR(str);
-+		str = NULL;
- 		goto fail;
- 	}
+---
+ drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c b/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
+index 242b213..d5bec0f 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
+@@ -23,7 +23,6 @@
+ */
  
-@@ -347,6 +348,7 @@ static int cfg_stream(struct xen_snd_front_info *front_info,
- 	str = xenbus_read(XBT_NIL, stream_path, XENSND_FIELD_TYPE, NULL);
- 	if (IS_ERR(str)) {
- 		ret = PTR_ERR(str);
-+		str = NULL;
- 		goto fail;
- 	}
+ #include "pvrusb2-cx2584x-v4l.h"
+-#include "pvrusb2-video-v4l.h"
  
+ 
+ #include "pvrusb2-hdw-internal.h"
+
