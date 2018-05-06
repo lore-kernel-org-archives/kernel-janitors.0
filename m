@@ -1,26 +1,25 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 26 May 2018 22:00:01 +0000
-Subject: Re: [PATCH] ALSA: seq: fix spelling mistake "Unamed" -> "Unnamed"
-Message-Id: <s5hh8mum61q.wl-tiwai@suse.de>
+From: rudi@ithb.ac.id
+Date: Sun, 06 May 2018 03:05:04 +0000
+Subject: =?utf-8?b?V29obHTDpHRpZ2tlaXRzc3BlbmRlIGluIEjDtmhlIHZvbiDigqwgMi4wMDAu?= =?utf-8?q?000=2C00?=
+Message-Id: <20180506030144.EDC34842B6D@mail.ithb.ac.id>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180526151100.10774-1-colin.king@canonical.com>
-In-Reply-To: <20180526151100.10774-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Sat, 26 May 2018 17:11:00 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in string
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Applied, thanks.
-
-
-Takashi
+Lieber Freund,
+ 
+Ich bin Herr Richard Wahl der Mega-Gewinner von $ 533M In Mega Millions Jackpot spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt. Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt. Ich habe mich freiwillig dazu entschieden, Ihnen den Betrag von € 2.000.000,00 EUR zu spenden
+eine der ausgewählten 5, um meine Gewinne zu überprüfen, finden Sie auf meiner You Tube Seite unten.
+ 
+UHR MICH HIER: https://www.youtube.com/watch?v=tne02ExNDrw
+ 
+Das ist dein Spendencode: [DF00430342018]
+ 
+Antworten Sie mit dem Spendencode auf diese E-Mail: richardwahlfunds@gmail.com
+ 
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+ 
+Grüße
+Herr Richard Wahl
