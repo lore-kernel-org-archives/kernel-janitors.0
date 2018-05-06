@@ -1,50 +1,42 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 03 May 2018 09:23:08 +0000
-Subject: NAK: [PATCH] scsi: lpfc: fix spelling mistake: "mabilbox" -> "mailbox"
-Message-Id: <4b2d4b38-afff-1576-bc11-3c6d6d4cf5d7@canonical.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sun, 06 May 2018 08:33:14 +0000
+Subject: [PATCH v2] [media] pvrusb2: delete unneeded include
+Message-Id: <alpine.DEB.2.20.1805061032120.3435@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503091901.29547-1-colin.king@canonical.com>
-In-Reply-To: <20180503091901.29547-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Isely <isely@pobox.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/05/18 10:19, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in lpfc_printf_log log message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+pvrusb2-video-v4l.h only declares pvr2_saa7115_subdev_update and
+includes pvrusb2-hdw-internal.h.  pvrusb2-cx2584x-v4l.c does not
+use pvr2_saa7115_subdev_update and it explicitly includes
+pvrusb2-hdw-internal.h.
 
-Ignore this, I've found more issues, sending a V2.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> ---
->  drivers/scsi/lpfc/lpfc_init.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-> index 060f0e2f6ff5..dc4334fa41bb 100644
-> --- a/drivers/scsi/lpfc/lpfc_init.c
-> +++ b/drivers/scsi/lpfc/lpfc_init.c
-> @@ -5117,7 +5117,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
->  		if (rc) {
->  			lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
->  					LOG_DISCOVERY,
-> -					"2772 Issue FCF rediscover mabilbox "
-> +					"2772 Issue FCF rediscover mailbox "
->  					"command failed, fail through to FCF "
->  					"dead event\n");
->  			spin_lock_irq(&phba->hbalock);
-> @@ -5209,7 +5209,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
->  				lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
->  						LOG_DISCOVERY,
->  						"2774 Issue FCF rediscover "
-> -						"mabilbox command failed, "
-> +						"mailbox command failed, "
->  						"through to CVL event\n");
->  				spin_lock_irq(&phba->hbalock);
->  				phba->fcf.fcf_flag &= ~FCF_ACVL_DISC;
-> 
+---
 
+v2: Make the subject line a bit less generic
+
+ drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c b/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
+index 242b213..d5bec0f 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
+@@ -23,7 +23,6 @@
+ */
+
+ #include "pvrusb2-cx2584x-v4l.h"
+-#include "pvrusb2-video-v4l.h"
+
+
+ #include "pvrusb2-hdw-internal.h"
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
