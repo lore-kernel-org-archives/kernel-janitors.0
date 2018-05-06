@@ -1,36 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 30 May 2018 09:15:40 +0000
-Subject: [PATCH] powerpc/powermac: fix spelling mistake "Usupported" -> "Unsupported"
-Message-Id: <20180530091540.10264-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 May 2018 07:53:53 +0000
+Subject: [PATCH] mwifiex: delete unneeded include
+Message-Id: <1525593233-10968-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Nothing that is defined in 11ac.h is referenced in cmdevt.c.
 
-Trivial fix to spelling mistake in bootx_printf message text.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/powerpc/platforms/powermac/bootx_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/marvell/mwifiex/cmdevt.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/powermac/bootx_init.c b/arch/powerpc/platforms/powermac/bootx_init.c
-index ba0964c17620..3b3b0b9b3577 100644
---- a/arch/powerpc/platforms/powermac/bootx_init.c
-+++ b/arch/powerpc/platforms/powermac/bootx_init.c
-@@ -519,7 +519,7 @@ void __init bootx_init(unsigned long r3, unsigned long r4)
- 			;
- 	}
- 	if (bi->architecture != BOOT_ARCH_PCI) {
--		bootx_printf(" !!! WARNING - Usupported machine"
-+		bootx_printf(" !!! WARNING - Unsupported machine"
- 			     " architecture !\n");
- 		for (;;)
- 			;
--- 
-2.17.0
+diff --git a/drivers/net/wireless/marvell/mwifiex/cmdevt.c b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+index 7014f44..9cfcdf6 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cmdevt.c
++++ b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+@@ -25,7 +25,6 @@
+ #include "main.h"
+ #include "wmm.h"
+ #include "11n.h"
+-#include "11ac.h"
+ 
+ static void mwifiex_cancel_pending_ioctl(struct mwifiex_adapter *adapter);
+ 
 
