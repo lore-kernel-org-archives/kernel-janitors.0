@@ -1,56 +1,47 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 09 May 2018 15:09:37 +0000
-Subject: Re: [PATCH] iw_cxgb4: Fix an error handling path in 'c4iw_get_dma_mr()'
-Message-Id: <1525878577.11756.380.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-tu8UbiFGbtEvy150MBQD"
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 07 May 2018 01:40:34 +0000
+Subject: [PATCH -next] dmaengine: sprd: Fix potential NULL dereference in sprd_dma_probe()
+Message-Id: <1525657234-88256-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508054427.10697-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180508054427.10697-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, swise@chelsio.com, jgg@ziepe.ca
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---=-tu8UbiFGbtEvy150MBQD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 2018-05-08 at 07:44 +0200, Christophe JAILLET wrote:
-> The error handling path of 'c4iw_get_dma_mr()' does not free resources
-> in the correct order.
-> If an error occures, it can leak 'mhp->wr_waitp'.
->=20
-> Fixes: a3f12da0e99a ("iw_cxgb4: allocate wait object for each memory obje=
-ct")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Applied to for-rc, thanks.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-tu8UbiFGbtEvy150MBQD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrzDzEACgkQuCajMw5X
-L93N1RAAndYlgYvHUI1z7oeyyb3p1oaay0oX1mDBohcOYRUAG3vkmvtPl4/pXyXY
-9ZpNIzqiTmAAM3xDQHsbPeRJA7CjA2cFDUiT8/jlQWBH1r1iqC/LL7GH4ix47tLS
-fsJkl1j1NgSzPCdA0R5cqiA1XkNjUSknexKPKF487ngfFFISaycy2BrzlGY+M03O
-isCuGq0fRK3XjpVJfwgyv7+xG5SVf+plnUszsXtIf1BwhXlmLLCARAUmQx1W4bue
-D+Y469uI5eVo6bqi1ng8trp6UeiUhl4GFvua/CQs6+uoMB6IqZ6MpBrF6FVWhrWU
-G7bRSbu5MHdxyrWxv9z2kqYtMQ5Boa7jOV/9CQH/pY/4MHrGghFv87MMd77bckUY
-hHYUEmdntuqhIdKTj8SHZXcH7MfmwpNS0i3f6Wbm0GWvN0y9nJH9iAHEXXLnBflR
-eoSLC9Dmgwm3SpyMZzQRK34PjwYNwXgskrl6Z/A+B8JUfs+YXXiCoSqk9S4mTdX5
-duZSAoeu2OceSZ0kVL+6ILzZ3xi2ntFegZreoA3LuytT+m4cAyU6Z6R4AmcSBlnj
-blMmwUeRGQHedjKqoRrZH8IFzclfSfy5VnKemvt1TEeANUiF0JMjnz4q9/PvTxyV
-rpp8cZKKoooz8TNtIGbr50dlCZ9+oRR/IciXd/MiCyrLUTNsyPI=
-=KOUl
------END PGP SIGNATURE-----
+This is detected by Coccinelle semantic patch.
 
---=-tu8UbiFGbtEvy150MBQD--
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
+
+res = platform_get_resource(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap_nocache(e1, res->start, e2);
+
+Fixes: 9b3b8171f7f4 ("dmaengine: sprd: Add Spreadtrum DMA driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/dma/sprd-dma.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index ccdeb8f..dba7a17 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -807,6 +807,8 @@ static int sprd_dma_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -EINVAL;
+ 	sdev->glb_base = devm_ioremap_nocache(&pdev->dev, res->start,
+ 					      resource_size(res));
+ 	if (!sdev->glb_base)
 
