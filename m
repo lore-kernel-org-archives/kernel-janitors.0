@@ -1,48 +1,40 @@
-From: Inki Dae <inki.dae@samsung.com>
-Date: Wed, 23 May 2018 00:33:18 +0000
-Subject: Re: [PATCH] drm/exynos: fimc: signedness bug in fimc_setup_clocks()
-Message-Id: <5B04B6CE.2010004@samsung.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 07 May 2018 06:25:56 +0000
+Subject: [PATCH -next v2] gpio: owl: Fix return value check in owl_gpio_probe()
+Message-Id: <1525674356-39189-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180518080527epcas1p293dfaa13795c92f9239e8c9bd95af9ad@epcas1p2.samsung.com>
- <20180518080445.GB28335@mwanda>
-In-Reply-To: <20180518080445.GB28335@mwanda>
+References: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+In case of error, the function of_iomap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
+Fixes: d3654d38809c ("gpio: Add gpio driver for Actions OWL S900 SoC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 -> v2: return -ENXIO instead of -ENOMEM
+---
+ drivers/gpio/gpio-owl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-2018년 05월 18일 17:04에 Dan Carpenter 이(가) 쓴 글:
-> "id" needs to be signed for the error handling to work.
+diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
+index 3546362..f35e80f 100644
+--- a/drivers/gpio/gpio-owl.c
++++ b/drivers/gpio/gpio-owl.c
+@@ -128,8 +128,8 @@ static int owl_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	gpio->base = of_iomap(dev->of_node, 0);
+-	if (IS_ERR(gpio->base))
+-		return PTR_ERR(gpio->base);
++	if (!gpio->base)
++		return -ENXIO;
+ 
+ 	/*
+ 	 * Get the number of gpio's for this bank. If none specified,
 
-Applied to exynos-drm-fixes-v4.18-rc1.
-
-Thanks,
-Inki Dae
-
-> 
-> Fixes: 7a2d5c77c558 ("drm/exynos: fimc: Convert driver to IPP v2 core API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> index 4dfbfc7f3b84..5ce84025d1cb 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -1200,7 +1200,7 @@ static int fimc_setup_clocks(struct fimc_context *ctx)
->  
->  int exynos_drm_check_fimc_device(struct device *dev)
->  {
-> -	unsigned int id = of_alias_get_id(dev->of_node, "fimc");
-> +	int id = of_alias_get_id(dev->of_node, "fimc");
->  
->  	if (id >= 0 && (BIT(id) & fimc_mask))
->  		return 0;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
