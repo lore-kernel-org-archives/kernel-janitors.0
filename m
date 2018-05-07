@@ -1,36 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 26 May 2018 13:56:06 +0000
-Subject: [PATCH] power: supply: max1721x: fix spelling mistake "RSenese" -> "RSense"
-Message-Id: <20180526135606.1153-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 07 May 2018 01:39:45 +0000
+Subject: [PATCH -next] ASoC: fix return value check in mt6351_codec_driver_probe()
+Message-Id: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In case of error, the function dev_get_regmap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-Trivial fix to spelling mistake in dev_warn message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/power/supply/max1721x_battery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/mt6351.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/max1721x_battery.c b/drivers/power/supply/max1721x_battery.c
-index 9ee601a03d9b..9ca895b0dabb 100644
---- a/drivers/power/supply/max1721x_battery.c
-+++ b/drivers/power/supply/max1721x_battery.c
-@@ -372,7 +372,7 @@ static int devm_w1_max1721x_add_device(struct w1_slave *sl)
- 	}
+diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
+index e739f07..f73dcd7 100644
+--- a/sound/soc/codecs/mt6351.c
++++ b/sound/soc/codecs/mt6351.c
+@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
+ 	priv->dev = &pdev->dev;
  
- 	if (!info->rsense) {
--		dev_warn(info->w1_dev, "RSenese not calibrated, set 10 mOhms!\n");
-+		dev_warn(info->w1_dev, "RSense not calibrated, set 10 mOhms!\n");
- 		info->rsense = 1000; /* in regs in 10^-5 */
- 	}
- 	dev_info(info->w1_dev, "RSense: %d mOhms.\n", info->rsense / 100);
--- 
-2.17.0
+ 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+-	if (IS_ERR(priv->regmap))
+-		return PTR_ERR(priv->regmap);
++	if (!priv->regmap)
++		return -ENODEV;
+ 
+ 	dev_dbg(priv->dev, "%s(), dev name %s\n",
+ 		__func__, dev_name(&pdev->dev));
+
+
 
