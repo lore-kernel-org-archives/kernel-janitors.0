@@ -1,70 +1,47 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 31 May 2018 08:14:26 +0000
-Subject: Re: [PATCH][next] bpf: devmap: remove redundant assignment of dev = dev
-Message-Id: <alpine.DEB.2.20.1805311011310.2416@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 May 2018 12:57:32 +0000
+Subject: [PATCH] mac80211: ethtool: avoid 32 bit multiplication overflow
+Message-Id: <20180508125732.5153-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180530150916.16808-1-colin.king@canonical.com> <20180530210713.v4cf4wjniwyobfmm@ast-mbp.dhcp.thefacebook.com> <20180531070518.obnfw5tv23sbpfys@mwanda>
-In-Reply-To: <20180531070518.obnfw5tv23sbpfys@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The multiplication of 100000 * cfg80211_calculate_bitrate() is a 32 bit
+operation and can overflow if cfg80211_calculate_bitrate is greater
+than 42949. Although I don't believe this is occurring at present, it
+would be safer to avoid the potential overflow by making the constant
+100000 an ULL to ensure a 64 multiplication occurs.
 
-On Thu, 31 May 2018, Dan Carpenter wrote:
+Detected by CoverityScan, CID#1468643 ("Unintentional integer overflow")
 
-> On Wed, May 30, 2018 at 05:07:15PM -0400, Alexei Starovoitov wrote:
-> > On Wed, May 30, 2018 at 04:09:16PM +0100, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > The assignment dev =3D dev is redundant and should be removed.
-> > >
-> > > Detected by CoverityScan, CID#1469486 ("Evaluation order violation")
-> > >
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >
-> > Applied, Thanks.
-> >
-> > Please use [PATCH bpf-next] in the subject next time.
-> > See Documentation/bpf/bpf_devel_QA.rst
->
-> Guys, be reasonable...
->
-> git log --author=CArpenter | \
-> 	grep -A1 "Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>" | \
-> 	grep -v Carpenter | grep Signed | cut -d '<' -f 1 | sort -u | wc -l
->
-> I have sent patches to 206 maintainers.  It doesn't scale for everyone
-> to have their own special document for sending patches.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/mac80211/ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks Dan, I support this point of view completely.  Special information
-has to be in one place and in a machine readable manner.  Maybe
-get_maintainers can produce this information in some way, if it is
-essential.
+diff --git a/net/mac80211/ethtool.c b/net/mac80211/ethtool.c
+index 08408520c3f8..2ba5686cbcab 100644
+--- a/net/mac80211/ethtool.c
++++ b/net/mac80211/ethtool.c
+@@ -117,11 +117,11 @@ static void ieee80211_get_stats(struct net_device *dev,
+ 
+ 
+ 		if (sinfo.filled & BIT(NL80211_STA_INFO_TX_BITRATE))
+-			data[i] = 100000 *
++			data[i] = 100000ULL *
+ 				cfg80211_calculate_bitrate(&sinfo.txrate);
+ 		i++;
+ 		if (sinfo.filled & BIT(NL80211_STA_INFO_RX_BITRATE))
+-			data[i] = 100000 *
++			data[i] = 100000ULL *
+ 				cfg80211_calculate_bitrate(&sinfo.rxrate);
+ 		i++;
+ 
+-- 
+2.17.0
 
-julia
-
->
-> I asked this last time, and I even skimmed your document, but how are
-> people supposed to go from linux-next to the correct bpf-next git tree?
-> It's a pain for me to do this for net, but net is way larger and busier
-> than any other tree.  I know it's a bit rude for me to say that you guys
-> are not as important as net, but that's how I feel.  I'm only going to
-> report bugs instead of writing patches if you guys are going to insist
-> on all sorts of new rules.
->
-> regards,
-> dan carpenter
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
