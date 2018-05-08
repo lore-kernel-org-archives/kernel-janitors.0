@@ -1,26 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 18 May 2018 16:26:29 +0000
-Subject: Re: [PATCH] scsi: snic: fix a couple of spelling mistakes: "COMPLETE"
-Message-Id: <yq18t8hexqi.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 May 2018 22:01:51 +0000
+Subject: [PATCH] [ATM] firestream: fix spelling mistake: "reseverd" -> "reserved"
+Message-Id: <20180508220151.20725-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180517075738.22821-1-colin.king@canonical.com>
-In-Reply-To: <20180517075738.22821-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 17 May 2018 08:57:38 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Karan Tilak Kumar <kartilak@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Trivial fix to spelling mistake in res_strings string array
 
-> Trivial fix to spelling mistakes/typos:
-> "SNIC_IOREQ_ABTS_COMPELTE" -> "SNIC_IOREQ_ABTS_COMPLETE"
-> "SNIC_IOREQ_LR_COMPELTE"   -> "SNIC_IOREQ_LR_COMPLETE"
-> "SNIC_IOREQ_CMD_COMPELTE"  -> "SNIC_IOREQ_CMD_COMPLETE"
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/firestream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.18/scsi-queue. Thanks!
-
+diff --git a/drivers/atm/firestream.c b/drivers/atm/firestream.c
+index d97c05690faa..4e46dc9e41ad 100644
+--- a/drivers/atm/firestream.c
++++ b/drivers/atm/firestream.c
+@@ -191,7 +191,7 @@ static char *res_strings[] = {
+ 	"reserved 37",
+ 	"reserved 38",
+ 	"reserved 39",
+-	"reseverd 40",
++	"reserved 40",
+ 	"reserved 41", 
+ 	"reserved 42", 
+ 	"reserved 43", 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.0
+
