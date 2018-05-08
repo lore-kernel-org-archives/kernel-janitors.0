@@ -1,25 +1,36 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sat, 05 May 2018 07:17:51 +0000
-Subject: Re: [PATCH] crypto: ghash-clmulni: fix spelling mistake: "acclerated" -> "accelerated"
-Message-Id: <20180505071751.ixjtky4c3ym7jotf@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 May 2018 21:49:46 +0000
+Subject: [PATCH] PCI: hv: fix spelling mistake: "reqquest" -> "request"
+Message-Id: <20180508214946.19772-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180427180805.15536-1-colin.king@canonical.com>
-In-Reply-To: <20180427180805.15536-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, devel@linuxdriverproject.org, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 07:08:05PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in module description text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Trivial fix to spelling mistake in dev_err error message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/host/pci-hyperv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
+index 50cdefe3f6d3..7e93b4ffb162 100644
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -2071,7 +2071,7 @@ static int hv_pci_protocol_negotiation(struct hv_device *hdev)
+ 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
+ 		if (ret) {
+ 			dev_err(&hdev->device,
+-				"PCI Pass-through VSP failed sending version reqquest: %#x",
++				"PCI Pass-through VSP failed sending version request: %#x",
+ 				ret);
+ 			goto exit;
+ 		}
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.0
+
