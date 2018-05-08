@@ -1,52 +1,36 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 20 May 2018 12:44:08 +0000
-Subject: Re: [PATCH 2/5] staging: lustre: Fix block comments style
-Message-Id: <20180520124408.GA10692@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 May 2018 22:36:19 +0000
+Subject: [PATCH] video: fbdev: nvidia: fix spelling mistake: "scaleing" -> "scaling"
+Message-Id: <20180508223619.25557-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180516182707.5191-1-sabin.rapan@gmail.com>
-In-Reply-To: <20180516182707.5191-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Cc: jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Antonino Daplas <adaplas@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 08:27:07PM +0200, Sabin Mihai Rapan wrote:
-> This patch fixes the checkpatch.pl warning:
-> 
-> WARNING:BLOCK_COMMENT_STYLE: Block comments use a trailing */ on a separate line
-> 
-> Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-> ---
->  .../staging/lustre/include/uapi/linux/lustre/lustre_idl.h   | 6 ++++--
->  .../staging/lustre/include/uapi/linux/lustre/lustre_user.h  | 6 ++++--
->  2 files changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
-> index e6016a71ad23..f13138972be2 100644
-> --- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
-> +++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
-> @@ -1526,9 +1526,11 @@ struct mdt_rec_setattr {
->  #define MDS_OPEN_HAS_OBJS    020000000000 /* Just set the EA the obj exist */
->  #define MDS_OPEN_NORESTORE  0100000000000ULL /* Do not restore file at open */
->  #define MDS_OPEN_NEWSTRIPE  0200000000000ULL /* New stripe needed (restripe or
-> -					      * hsm restore) */
-> +					      * hsm restore)
-> +					      */
->  #define MDS_OPEN_VOLATILE   0400000000000ULL /* File is volatile = created
-> -						unlinked */
-> +					      * unlinked 
-> +					      */
+From: Colin Ian King <colin.king@canonical.com>
 
-Always run checkpatch.pl on your patches so you do not get grumpy
-maintainers telling you to run checkpatch.pl on your patches :)
+Trivial fix to spelling mistake in module parameter description text
 
-Also, do not create a patch to fix up a checkpatch warning, only to have
-it add another one, unless you want to have an eternal number of changes
-to make over time...
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/nvidia/nvidia.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please fix up and resend the whole series.
+diff --git a/drivers/video/fbdev/nvidia/nvidia.c b/drivers/video/fbdev/nvidia/nvidia.c
+index 418a2d0d06a9..34521f52aa3b 100644
+--- a/drivers/video/fbdev/nvidia/nvidia.c
++++ b/drivers/video/fbdev/nvidia/nvidia.c
+@@ -1548,7 +1548,7 @@ MODULE_PARM_DESC(noaccel,
+ 		 "(default=0)");
+ module_param(noscale, int, 0);
+ MODULE_PARM_DESC(noscale,
+-		 "Disables screen scaleing. (0 or 1=disable) "
++		 "Disables screen scaling. (0 or 1=disable) "
+ 		 "(default=0, do scaling)");
+ module_param(paneltweak, int, 0);
+ MODULE_PARM_DESC(paneltweak,
+-- 
+2.17.0
 
-thanks,
-
-greg k-h
