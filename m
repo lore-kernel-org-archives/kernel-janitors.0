@@ -1,43 +1,38 @@
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Date: Thu, 03 May 2018 16:40:00 +0000
-Subject: Re: [PATCH] drm/i915/dp: silence a static checker warning
-Message-Id: <20180503164000.GJ2054@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 May 2018 22:09:29 +0000
+Subject: [PATCH] drm/i915/gvt: fix spelling mistake: "resseting" -> "resetting"
+Message-Id: <20180508220929.21225-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503105306.GA5315@mwanda>
-In-Reply-To: <20180503105306.GA5315@mwanda>
+References: <20180319134116.4478-1-colin.king@canonical.com>
+In-Reply-To: <20180319134116.4478-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 01:53:22PM +0300, Dan Carpenter wrote:
-> Smatch warns that "n_entries" isn't always set.  It would trigger a
-> some WARN_ON()s on that path so presumably it can't happen but it's
-> simple enough to initialize it to zero just to silence the warning.
+From: Colin Ian King <colin.king@canonical.com>
 
-I usually would just ask if it would be possible to dispositioning
-as false positive or intentional on the tool, but it looks better
-indeed...
+Trivial fix to spelling mistake in gvt_dbg_core debug message
 
-so, why not?!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gvt/vgpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/drivers/gpu/drm/i915/gvt/vgpu.c b/drivers/gpu/drm/i915/gvt/vgpu.c
+index 2e0a02a80fe4..7b856c9b4e07 100644
+--- a/drivers/gpu/drm/i915/gvt/vgpu.c
++++ b/drivers/gpu/drm/i915/gvt/vgpu.c
+@@ -502,7 +502,7 @@ void intel_gvt_reset_vgpu_locked(struct intel_vgpu *vgpu, bool dmlr,
+ 	unsigned int resetting_eng = dmlr ? ALL_ENGINES : engine_mask;
+ 
+ 	gvt_dbg_core("------------------------------------------\n");
+-	gvt_dbg_core("resseting vgpu%d, dmlr %d, engine_mask %08x\n",
++	gvt_dbg_core("resetting vgpu%d, dmlr %d, engine_mask %08x\n",
+ 		     vgpu->id, dmlr, engine_mask);
+ 
+ 	vgpu->resetting_eng = resetting_eng;
+-- 
+2.17.0
 
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_ddi.c b/drivers/gpu/drm/i915/intel_ddi.c
-> index 8225d223f452..f4951ae33ac2 100644
-> --- a/drivers/gpu/drm/i915/intel_ddi.c
-> +++ b/drivers/gpu/drm/i915/intel_ddi.c
-> @@ -2062,7 +2062,7 @@ u8 intel_ddi_dp_voltage_max(struct intel_encoder *encoder)
->  {
->  	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
->  	enum port port = encoder->port;
-> -	int n_entries;
-> +	int n_entries = 0;
->  
->  	if (IS_ICELAKE(dev_priv)) {
->  		if (port = PORT_A || port = PORT_B)
