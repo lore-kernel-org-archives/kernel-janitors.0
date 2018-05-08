@@ -1,38 +1,46 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Wed, 16 May 2018 10:12:58 +0000
-Subject: Re: PATCH v2] PM / OPP: silence an uninitialized variable warning
-Message-Id: <20180516100058.5c5ehayaa7m4urkm@vireshk-i7>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 08 May 2018 09:27:39 +0000
+Subject: [PATCH 2/3] drm/xen-front: fix xen_drm_front_shbuf_alloc() error handling
+Message-Id: <20180508092739.GB661@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180516095241.GA27540@mwanda>
-In-Reply-To: <20180516095241.GA27540@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org
 
-On 16-05-18, 12:52, Dan Carpenter wrote:
-> Smatch complains that it's possible we print "rate" in the debug output
-> when it hasn't been initialized.  It should be zero on that path.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: fix it a different way
-> 
-> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> index 7026e9f484ea..6d15f05bfc28 100644
-> --- a/drivers/opp/of.c
-> +++ b/drivers/opp/of.c
-> @@ -287,7 +287,7 @@ static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
->  			      struct device_node *np)
->  {
->  	struct dev_pm_opp *new_opp;
-> -	u64 rate;
-> +	u64 rate = 0;
->  	u32 val;
->  	int ret;
->  	bool rate_not_available = false;
+The xen_drm_front_shbuf_alloc() function was returning a mix of error
+pointers and NULL and the the caller wasn't checking correctly.  I've
+changed it to always return error pointer consistently.
 
-Applied and added the Fixes tag as well.
+Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display frontend")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-viresh
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+index d5705251a0d6..8099cb343ae3 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+@@ -383,7 +383,7 @@ xen_drm_front_shbuf_alloc(struct xen_drm_front_shbuf_cfg *cfg)
+ 
+ 	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+ 	if (!buf)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	if (cfg->be_alloc)
+ 		buf->ops = &backend_ops;
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
+index 8615e8522c7a..378cb7ce0db5 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.c
++++ b/drivers/gpu/drm/xen/xen_drm_front.c
+@@ -188,8 +188,8 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
+ 	buf_cfg.be_alloc = front_info->cfg.be_alloc;
+ 
+ 	shbuf = xen_drm_front_shbuf_alloc(&buf_cfg);
+-	if (!shbuf)
+-		return -ENOMEM;
++	if (IS_ERR(shbuf))
++		return PTR_ERR(shbuf);
+ 
+ 	ret = dbuf_add_to_list(front_info, shbuf, dbuf_cookie);
+ 	if (ret < 0) {
