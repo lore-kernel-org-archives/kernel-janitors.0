@@ -1,37 +1,41 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 11 May 2018 15:06:15 +0000
-Subject: [PATCH 0/3] media: staging: atomisp:
-Message-Id: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 May 2018 22:41:55 +0000
+Subject: [PATCH] ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"
+Message-Id: <20180508224155.26486-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alan@linux.intel.com, sakari.ailus@linux.intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, chen.chenchacha@foxmail.com, keescook@chromium.org, arvind.yadav.cs@gmail.com
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, John Hsu <KCHSU0@nuvoton.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These 3 patches fixes (at least I hope) some issues found in or around
-'lm3554_probe()'.
+From: Colin Ian King <colin.king@canonical.com>
 
-Please review them carefully. I've only compile tested the changes and
-I propose them because they sound logical to me.
+Trivial fix to spelling mistake in dev_warn messages
 
-The first one, return an error code instead of 0 if the call to an
-initialisation function fails.
-The 2nd one reorders own some label are reached in order to have a logical
-flow (first error goes to last label, last error goes to first label)
-The 3rd one fix the use 'media_entity_cleanup()'. If this one is correct,
-some other drivers will need to be fixed the same way.  
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/nau8824.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Christophe JAILLET (3):
-  media: staging: atomisp: Return an error code in case
-    of error in 'lm3554_probe()'
-  media: staging: atomisp: Fix an error handling path in
-    'lm3554_probe()'
-  media: staging: atomisp: Fix usage of 'media_entity_cleanup()'
-
- .../media/atomisp/i2c/atomisp-lm3554.c        | 20 +++++++++----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
-
+diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
+index 76502c090654..6bd14453f06e 100644
+--- a/sound/soc/codecs/nau8824.c
++++ b/sound/soc/codecs/nau8824.c
+@@ -205,11 +205,11 @@ static int nau8824_sema_acquire(struct nau8824 *nau8824, long timeout)
+ 	if (timeout) {
+ 		ret = down_timeout(&nau8824->jd_sem, timeout);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone timeout\n");
++			dev_warn(nau8824->dev, "Acquire semaphore timeout\n");
+ 	} else {
+ 		ret = down_interruptible(&nau8824->jd_sem);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone fail\n");
++			dev_warn(nau8824->dev, "Acquire semaphore fail\n");
+ 	}
+ 
+ 	return ret;
 -- 
 2.17.0
 
