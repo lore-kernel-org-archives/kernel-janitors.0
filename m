@@ -1,54 +1,41 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Thu, 31 May 2018 18:03:53 +0000
-Subject: Re: [PATCH] RDMA/qedr: fix spelling mistake: "adrresses" -> "addresses"
-Message-Id: <dc29e2b147cae0e13e570c2c6c62a433414b25ac.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-fZQ65AHqLw3T4cI0Jayg"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 08 May 2018 05:44:27 +0000
+Subject: [PATCH] iw_cxgb4: Fix an error handling path in 'c4iw_get_dma_mr()'
+Message-Id: <20180508054427.10697-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180530094029.10747-1-colin.king@canonical.com>
-In-Reply-To: <20180530094029.10747-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, Michal Kalderon <Michal.Kalderon@cavium.com>, Ariel Elior <Ariel.Elior@cavium.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-
-
---=-fZQ65AHqLw3T4cI0Jayg
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2018-05-30 at 10:40 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in DP_ERR error message
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks, applied.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-fZQ65AHqLw3T4cI0Jayg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: swise@chelsio.com, dledford@redhat.com, jgg@ziepe.ca
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
------BEGIN PGP SIGNATURE-----
+The error handling path of 'c4iw_get_dma_mr()' does not free resources
+in the correct order.
+If an error occures, it can leak 'mhp->wr_waitp'.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlsQOQkACgkQuCajMw5X
-L91YzxAAhBw5z7RJNEPHFbcMVhdKm8qDhCcv+N84eMt1ngLnALedIyWisgl3GodM
-Z8d/yE/CQG1JDRbuJlc6qZ0E3iMnkA8h2PMnVGIYI4F/Nf/zNGbNSnd18hwsewjx
-KlAUtv8F9eGM/3xsb8+0F3fTFdqkIKmULbs9WKUsThCSlq+SqOrEZBXK1Zd9KfAq
-aDnAoGzuHgrukTN00yOwwTq3hRxDuA+a1SJ2BGPdiMCDEj7tfDve0ZBpL9orTAwX
-YsoBaGIOJGgJmPlpgCRXhaZw/cOvvlmPoUSB0i+lH42qtGHI2VjzGTWtref9jqFp
-+8ntHWETIEUNDmggVjnrkruogp0LU59zQbFPFV9IiJGK68MVDzM29Vxh0ToG35wl
-/eVhnQ78Im32PmdSvfa8ctmChDEJNeDpXG9XHwPq8mjoXGPkKpDnomA7zZKRDgwR
-2HR6IgN9iHSwn0RCNXNLxGzwJIqxHLbq8eKkDUpCx59H+LLAlywBWp67oxNEqDKx
-SoyP/MSc2tvtEVcRKvsl1VnKN+GbFpI6TqJg3jk/w6Th1oyAwi2PnzuDi/vyGWXq
-LZAeU8mV707db70kOI4P9xyIivUHJllycUD7Bl2rfa0za/colXPZQZvbcwUwXFZf
-CyR4H3oGgvgWm5ByRzZwonqtYd2la1+rPGHVq15cfGkJUHl3fP4=
-=k/CM
------END PGP SIGNATURE-----
+Fixes: a3f12da0e99a ("iw_cxgb4: allocate wait object for each memory object")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/cxgb4/mem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=-fZQ65AHqLw3T4cI0Jayg--
+diff --git a/drivers/infiniband/hw/cxgb4/mem.c b/drivers/infiniband/hw/cxgb4/mem.c
+index e90f2fd8dc16..1445918e3239 100644
+--- a/drivers/infiniband/hw/cxgb4/mem.c
++++ b/drivers/infiniband/hw/cxgb4/mem.c
+@@ -489,10 +489,10 @@ struct ib_mr *c4iw_get_dma_mr(struct ib_pd *pd, int acc)
+ err_dereg_mem:
+ 	dereg_mem(&rhp->rdev, mhp->attr.stag, mhp->attr.pbl_size,
+ 		  mhp->attr.pbl_addr, mhp->dereg_skb, mhp->wr_waitp);
+-err_free_wr_wait:
+-	c4iw_put_wr_wait(mhp->wr_waitp);
+ err_free_skb:
+ 	kfree_skb(mhp->dereg_skb);
++err_free_wr_wait:
++	c4iw_put_wr_wait(mhp->wr_waitp);
+ err_free_mhp:
+ 	kfree(mhp);
+ 	return ERR_PTR(ret);
+-- 
+2.17.0
 
