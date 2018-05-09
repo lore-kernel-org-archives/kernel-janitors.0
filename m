@@ -1,76 +1,75 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Date: Thu, 31 May 2018 16:07:12 +0000
-Subject: Re: [PATCH -next] dm writecache: fix return value check in writecache_ctr()
-Message-Id: <20180531160711.GB11300@redhat.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 09 May 2018 09:32:20 +0000
+Subject: Applied "ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"" to the asoc tree
+Message-Id: <20180509093220.B2DF944007A@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
- <20180531160202.GA11300@redhat.com>
-In-Reply-To: <20180531160202.GA11300@redhat.com>
+References: <20180508224155.26486-1-colin.king@canonical.com>
+In-Reply-To: <20180508224155.26486-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>, dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, John Hsu <KCHSU0@nuvoton.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-On Thu, May 31 2018 at 12:02pm -0400,
-Mike Snitzer <snitzer@redhat.com> wrote:
+The patch
 
-> On Thu, May 31 2018 at  7:53am -0400,
-> Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> 
-> > Function dm_io_client_create() and dm_kcopyd_client_create() return
-> > ERR_PTR() not NULL in case of error. The NULL test in the return value
-> > check should be replaced with IS_ERR()
-> > 
-> > Fixes: 2105231db61b ("dm: add writecache target")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/md/dm-writecache.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-> > index 844c4fb..0b2b436 100644
-> > --- a/drivers/md/dm-writecache.c
-> > +++ b/drivers/md/dm-writecache.c
-> > @@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
-> >  	}
-> >  
-> >  	wc->dm_io = dm_io_client_create();
-> > -	if (!wc->dm_io) {
-> > -		r = -ENOMEM;
-> > +	if (IS_ERR(wc->dm_io)) {
-> > +		r = PTR_ERR(wc->dm_io);
-> >  		ti->error = "Unable to allocate dm-io client";
-> > +		wc->dm_io = NULL;
-> >  		goto bad;
-> >  	}
-> >  
-> > @@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
-> >  		}
-> >  
-> >  		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
-> > -		if (!wc->dm_kcopyd) {
-> > -			r = -ENOMEM;
-> > +		if (IS_ERR(wc->dm_kcopyd)) {
-> > +			r = PTR_ERR(wc->dm_kcopyd);
-> >  			ti->error = "Unable to allocate dm-kcopyd client";
-> > +			wc->dm_kcopyd = NULL;
-> >  			goto bad;
-> >  		}
-> > 
-> 
-> 
-> Yes, I forgot to pull this in.. it got lost in the shuffle.  Mikulas had
-> provided this same change (folded into a larger patch) yesterday, see:
-> https://patchwork.kernel.org/patch/10439345/
-> 
-> I'll get this folded in ASAP.
+   ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"
 
-Turns out I already did fold it in.  My push to linux-next just missed
-today's tree.
+has been applied to the asoc tree at
 
-So already taken care of.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Thanks for sending the patch though.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Mike
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 2ce7eb258999e5c510a1f828123e61df2ece2dd7 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 8 May 2018 23:41:55 +0100
+Subject: [PATCH] ASoC: nau8824: fix spelling mistake: "semaphone" ->
+ "semaphore"
+
+Trivial fix to spelling mistake in dev_warn messages
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/nau8824.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
+index 76502c090654..6bd14453f06e 100644
+--- a/sound/soc/codecs/nau8824.c
++++ b/sound/soc/codecs/nau8824.c
+@@ -205,11 +205,11 @@ static int nau8824_sema_acquire(struct nau8824 *nau8824, long timeout)
+ 	if (timeout) {
+ 		ret = down_timeout(&nau8824->jd_sem, timeout);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone timeout\n");
++			dev_warn(nau8824->dev, "Acquire semaphore timeout\n");
+ 	} else {
+ 		ret = down_interruptible(&nau8824->jd_sem);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone fail\n");
++			dev_warn(nau8824->dev, "Acquire semaphore fail\n");
+ 	}
+ 
+ 	return ret;
+-- 
+2.17.0
+
