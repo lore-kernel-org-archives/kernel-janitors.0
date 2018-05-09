@@ -1,25 +1,43 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 18 May 2018 16:25:46 +0000
-Subject: Re: [PATCH] scsi: qlogicpti: Fix an error handling path in 'qpti_sbus_probe()'
-Message-Id: <yq1h8n5exrp.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 May 2018 13:58:48 +0000
+Subject: [PATCH] ixgbe: fix memory leak on ipsec allocation
+Message-Id: <20180509135848.20530-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180510114558.20769-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180510114558.20769-1-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Thu, 10 May 2018 13:45:58 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Christophe,
+The error clean up path kfree's adapter->ipsec and should be
+instead kfree'ing ipsec. Fix this.  Also, the err1 error exit path
+does not need to kfree ipsec because this failure path was for
+the failed allocation of ipsec.
 
-> The 'free_irq()' call is not at the right place in the error handling
-> path.  The changed order has been introduced in commit 3d4253d9afab
-> ("[SCSI] qlogicpti: Convert to new SBUS device framework.")
+Detected by CoverityScan, CID#146424 ("Resource Leak")
 
-Applied to 4.18/scsi-queue. Thanks!
+Fixes: 63a67fe229ea ("ixgbe: add ipsec offload add and remove SA")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+index 41af2b81e960..195c0b65eee2 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+@@ -919,8 +919,8 @@ void ixgbe_init_ipsec_offload(struct ixgbe_adapter *adapter)
+ 	kfree(ipsec->ip_tbl);
+ 	kfree(ipsec->rx_tbl);
+ 	kfree(ipsec->tx_tbl);
++	kfree(ipsec);
+ err1:
+-	kfree(adapter->ipsec);
+ 	netdev_err(adapter->netdev, "Unable to allocate memory for SA tables");
+ }
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.0
+
