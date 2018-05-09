@@ -1,39 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 18 May 2018 17:43:28 +0000
-Subject: Re: [PATCH] net/atheros: fix spelling mistake: "Ddescription" -> "Description"
-Message-Id: <20180518.134328.1416789269338865823.davem@davemloft.net>
+From: Ji-Hun Kim <ji_hun.kim@samsung.com>
+Date: Wed, 09 May 2018 00:12:36 +0000
+Subject: [PATCH 1/2] tpm: replace kmalloc() + memcpy() with kmemdup()
+Message-Id: <1525824757-21835-1-git-send-email-ji_hun.kim@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180518092206.21635-1-colin.king@canonical.com>
-In-Reply-To: <20180518092206.21635-1-colin.king@canonical.com>
+References: <CGME20180509001258epcas1p4e8db163d8babd90284dd6afb6a96eb0f@epcas1p4.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: peterhuewe@gmx.de, tweek@google.com
+Cc: jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org, javierm@redhat.com, sonnyrao@chromium.org, ji_hun.kim@samsung.com, enric.balletbo@collabora.com, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 18 May 2018 10:22:06 +0100
+Use kmemdup rather than duplicating its implementation.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistakes in name field text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/atheros/atl1e/atl1e_param.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/atheros/atl1e/atl1e_param.c b/drivers/net/ethernet/atheros/atl1e/atl1e_param.c
-> index fa314282c9ad..6a375f4bd054 100644
-> --- a/drivers/net/ethernet/atheros/atl1e/atl1e_param.c
-> +++ b/drivers/net/ethernet/atheros/atl1e/atl1e_param.c
-> @@ -192,7 +192,7 @@ void atl1e_check_options(struct atl1e_adapter *adapter)
->  	{ 		/* Transmit Ring Size */
->  		struct atl1e_option opt = {
->  			.type = range_option,
-> -			.name = "Transmit Ddescription Count",
-> +			.name = "Transmit Description Count",
+Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+---
+ drivers/char/tpm/eventlog/of.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-In this context, "Descriptor" would be the most appropriate word.
+diff --git a/drivers/char/tpm/eventlog/of.c b/drivers/char/tpm/eventlog/of.c
+index b7cac47..bba5fba 100644
+--- a/drivers/char/tpm/eventlog/of.c
++++ b/drivers/char/tpm/eventlog/of.c
+@@ -69,14 +69,12 @@ int tpm_read_log_of(struct tpm_chip *chip)
+ 		return -EIO;
+ 	}
+ 
+-	log->bios_event_log = kmalloc(size, GFP_KERNEL);
++	log->bios_event_log = kmemdup(__va(base), size, GFP_KERNEL);
+ 	if (!log->bios_event_log)
+ 		return -ENOMEM;
+ 
+ 	log->bios_event_log_end = log->bios_event_log + size;
+ 
+-	memcpy(log->bios_event_log, __va(base), size);
+-
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		return EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
+ 	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+-- 
+1.9.1
 
-Thank you.
