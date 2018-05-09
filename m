@@ -1,44 +1,68 @@
-From: Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Date: Wed, 23 May 2018 04:15:51 +0000
-Subject: Re: [PATCH] staging: greybus: fix spelling mistake: "Inavlid" -> "Invalid"
-Message-Id: <CAAs364-Yp6d=VNiaykvGNgsGFMb20SfjvgALFXnTKAYTLSY6-w@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 May 2018 13:40:31 +0000
+Subject: [PATCH] clk: boston: fix memory leak of 'onecell' on error return paths
+Message-Id: <20180509134031.11611-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180522083342.5722-1-colin.king@canonical.com>
-In-Reply-To: <20180522083342.5722-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Burton <paul.burton@mips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 2:03 PM Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
+There are several error return paths that don't free up onecell
+and hence we have some memory leaks. Add an error exit path that
+kfree's onecell to fix the leaks.
 
-> Trivial fix to spelling mistake in dev_err error message
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/greybus/audio_topology.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index 15af423cc0c9..d6bc468ff551 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+ 
+ 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
+-	if (err)
++	if (err) {
+ 		pr_err("failed to add DT provider: %d\n", err);
++		goto error;
++	}
++	return;
++
++error:
++	kfree(onecell);
++	return;
+ }
+ 
+ /*
+-- 
+2.17.0
 
-> diff --git a/drivers/staging/greybus/audio_topology.c
-b/drivers/staging/greybus/audio_topology.c
-> index de4b1b2b12f3..15e57f701630 100644
-> --- a/drivers/staging/greybus/audio_topology.c
-> +++ b/drivers/staging/greybus/audio_topology.c
-> @@ -996,7 +996,7 @@ static int gbaudio_tplg_create_widget(struct
-gbaudio_module_info *module,
-
->          ret = gbaudio_validate_kcontrol_count(w);
->          if (ret) {
-> -               dev_err(module->dev, "Inavlid kcontrol count=%d for %s\n",
-> +               dev_err(module->dev, "Invalid kcontrol count=%d for %s\n",
->                          w->ncontrols, w->name);
->                  return ret;
->          }
-> --
-> 2.17.0
-
-
-Acked-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
