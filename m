@@ -1,32 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 26 May 2018 13:45:07 +0000
-Subject: [PATCH] media: mtk-vpu:  fix spelling mistake: "Prosessor" -> "Processor"
-Message-Id: <20180526134507.28919-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 09 May 2018 10:25:56 +0000
+Subject: Re: mwifiex: delete unneeded include
+Message-Id: <20180509102556.9EB8260F92@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1525593233-10968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1525593233-10968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>, kernel-janitors@vger.kernel.org, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-Trivial fix to spelling mistake in module description text.
+> Nothing that is defined in 11ac.h is referenced in cmdevt.c.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/mtk-vpu/mtk_vpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/media/platform/mtk-vpu/mtk_vpu.c b/drivers/media/platform/mtk-vpu/mtk_vpu.c
-index 1ff6a93262b7..f8d35e3ac1dc 100644
---- a/drivers/media/platform/mtk-vpu/mtk_vpu.c
-+++ b/drivers/media/platform/mtk-vpu/mtk_vpu.c
-@@ -960,4 +960,4 @@ static struct platform_driver mtk_vpu_driver = {
- module_platform_driver(mtk_vpu_driver);
- 
- MODULE_LICENSE("GPL v2");
--MODULE_DESCRIPTION("Mediatek Video Prosessor Unit driver");
-+MODULE_DESCRIPTION("Mediatek Video Processor Unit driver");
+4793e5a954fa mwifiex: delete unneeded include
+
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10382667/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
