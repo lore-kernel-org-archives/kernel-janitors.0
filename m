@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Wed, 09 May 2018 09:32:38 +0000
+Date: Wed, 09 May 2018 09:47:58 +0000
 Subject: Applied "ASoC: fix return value check in mt6351_codec_driver_probe()" to the asoc tree
-Message-Id: <20180509093238.98F9244007A@finisterre.ee.mobilebroadband>
+Message-Id: <20180509094758.E29A044007A@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
 In-Reply-To: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, Kai Chieh Chuang <kaichieh.chuang@mediatek.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org@alsa-project.org
 
 The patch
 
