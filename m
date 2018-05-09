@@ -1,56 +1,36 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 31 May 2018 11:51:07 +0000
-Subject: Re: [PATCH] autofs: small cleanup in autofs_getpath()
-Message-Id: <878t80f3h0.fsf@xmission.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 May 2018 09:19:08 +0000
+Subject: [PATCH] drm/i915/dp: fix spelling mistake: "seqeuncer" -> "sequencer"
+Message-Id: <20180509091908.13804-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180531064736.lnisb55eajwjynvk@kili.mountain>
-In-Reply-To: <20180531064736.lnisb55eajwjynvk@kili.mountain> (Dan Carpenter's
-        message of "Thu, 31 May 2018 09:47:36 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ian Kent <raven@themaw.net>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Ingo Molnar <mingo@kernel.org>, NeilBrown <neilb@suse.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> We don't set "*name" so it's slightly nicer to just pass "name" instead
-> of "&name".
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Trivial fix to spelling mistake in WARN warning message text
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/intel_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This seems like an obvious and reasonable cleanup.
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index dde92e4af5d3..914389f67458 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -513,7 +513,7 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
+ 	uint32_t DP;
+ 
+ 	if (WARN(I915_READ(intel_dp->output_reg) & DP_PORT_EN,
+-		 "skipping pipe %c power seqeuncer kick due to port %c being active\n",
++		 "skipping pipe %c power sequencer kick due to port %c being active\n",
+ 		 pipe_name(pipe), port_name(intel_dig_port->base.port)))
+ 		return;
+ 
+-- 
+2.17.0
 
-> diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
-> index 8c858126c751..f6385c6ef0a5 100644
-> --- a/fs/autofs/waitq.c
-> +++ b/fs/autofs/waitq.c
-> @@ -179,7 +179,7 @@ static void autofs_notify_daemon(struct autofs_sb_info *sbi,
->  }
->  
->  static int autofs_getpath(struct autofs_sb_info *sbi,
-> -			  struct dentry *dentry, char **name)
-> +			  struct dentry *dentry, char *name)
->  {
->  	struct dentry *root = sbi->sb->s_root;
->  	struct dentry *tmp;
-> @@ -189,7 +189,7 @@ static int autofs_getpath(struct autofs_sb_info *sbi,
->  	unsigned seq;
->  
->  rename_retry:
-> -	buf = *name;
-> +	buf = name;
->  	len = 0;
->  
->  	seq = read_seqbegin(&rename_lock);
-> @@ -395,7 +395,7 @@ int autofs_wait(struct autofs_sb_info *sbi,
->  	if (IS_ROOT(dentry) && autofs_type_trigger(sbi->type))
->  		qstr.len = sprintf(name, "%p", dentry);
->  	else {
-> -		qstr.len = autofs_getpath(sbi, dentry, &name);
-> +		qstr.len = autofs_getpath(sbi, dentry, name);
->  		if (!qstr.len) {
->  			kfree(name);
->  			return -ENOENT;
