@@ -1,46 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 May 2018 08:45:03 +0000
-Subject: Re: [PATCH] vfio/pci: remove a bogus cast in vfio_msi_set_block()
-Message-Id: <20180529084502.hltdpojgnkjieaaj@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 May 2018 12:22:56 +0000
+Subject: [PATCH] netfilter: nf_tables: fix memory leak on error exit return
+Message-Id: <20180509122256.16859-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180528074756.bgl5fxvn7foe5uhn@kili.mountain>
- <8df5c218-cc97-3dbc-e820-f8bdc710ac17@redhat.com>
-In-Reply-To: <8df5c218-cc97-3dbc-e820-f8bdc710ac17@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 09:27:18PM +0200, Auger Eric wrote:
-> Hi Dan,
-> 
-> On 05/28/2018 09:47 AM, Dan Carpenter wrote:
-> > This cast is confusing...  The "start" variable is an unsigned int.  We
-> > absolutely do not want to cast it to a negative int so why is the cast
-> > there?  It turns out, when you look at the context, it's a no-op and we
-> > can just remove it.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-> > index 1c46045b0e7f..2724fed62129 100644
-> > --- a/drivers/vfio/pci/vfio_pci_intrs.c
-> > +++ b/drivers/vfio/pci/vfio_pci_intrs.c
-> > @@ -368,7 +368,7 @@ static int vfio_msi_set_block(struct vfio_pci_device *vdev, unsigned start,
-> >  	}
-> >  
-> >  	if (ret) {
-> > -		for (--j; j >= (int)start; j--)
-> > +		for (--j; j >= start; j--)
-> I think this was done one purpose as j can be -1 while start is an
-> unsigned.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Oh, wow...  Yeah.  Sorry.  I didn't think that through.  I will create
-a static checker warning so this particular bug doesn't happen to me
-again.
+Currently the -EBUSY error return path is not free'ing resources
+allocated earlier, leaving a memory leak. Fix this by exiting via the
+error exit label err5 that performs the necessary resource clean
+up.
 
-regards,
-dan carpenter
+Detected by CoverityScan, CID#1432975 ("Resource leak")
+
+Fixes: 9744a6fcefcb ("netfilter: nf_tables: check if same extensions are set when adding elements")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netfilter/nf_tables_api.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 6422eba367cf..a3d77aa0f752 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4098,8 +4098,10 @@ static int nft_add_set_elem(struct nft_ctx *ctx, struct nft_set *set,
+ 			if (nft_set_ext_exists(ext, NFT_SET_EXT_DATA) ^
+ 			    nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) ||
+ 			    nft_set_ext_exists(ext, NFT_SET_EXT_OBJREF) ^
+-			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF))
+-				return -EBUSY;
++			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF)) {
++				err = -EBUSY;
++				goto err5;
++			}
+ 			if ((nft_set_ext_exists(ext, NFT_SET_EXT_DATA) &&
+ 			     nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) &&
+ 			     memcmp(nft_set_ext_data(ext),
+-- 
+2.17.0
 
