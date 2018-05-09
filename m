@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Wed, 09 May 2018 09:32:20 +0000
+Date: Wed, 09 May 2018 09:47:40 +0000
 Subject: Applied "ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"" to the asoc tree
-Message-Id: <20180509093220.B2DF944007A@finisterre.ee.mobilebroadband>
+Message-Id: <20180509094740.74B1044007A@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180508224155.26486-1-colin.king@canonical.com>
 In-Reply-To: <20180508224155.26486-1-colin.king@canonical.com>
