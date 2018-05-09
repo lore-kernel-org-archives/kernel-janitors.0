@@ -1,30 +1,36 @@
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-Date: Wed, 16 May 2018 09:25:07 +0000
-Subject: Re: [PATCH] cfg80211: Use correct GFP_ mask in cfg80211_del_sta_sinfo()
-Message-Id: <87lgckymto.fsf@toke.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 May 2018 09:16:36 +0000
+Subject: [PATCH] crypto: nx: fix spelling mistake: "seqeunce" -> "sequence"
+Message-Id: <20180509091636.13589-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180516084836.GB23043@mwanda>
-In-Reply-To: <20180516084836.GB23043@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Haren Myneni <haren@us.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Smatch complains that we should use the passed in "gfp" instead of hard
-> coding GFP_KERNEL.  I looked at some of the callers and this would
-> probably be a bug for rtw_cfg80211_indicate_sta_disassoc() which uses
-> GFP_ATOMIC and a NULL "sinfo".
->
-> Fixes: 52539ca89f36 ("cfg80211: Expose TXQ stats and parameters to userspace")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Trivial fix to spelling mistake in CSB_ERR error message text
 
-Ah, right, didn't notice that that was supposed to be a gfp value.
-Thanks for the fix :)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/nx/nx-842-powernv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
+diff --git a/drivers/crypto/nx/nx-842-powernv.c b/drivers/crypto/nx/nx-842-powernv.c
+index 1e87637c412d..36afd6d8753c 100644
+--- a/drivers/crypto/nx/nx-842-powernv.c
++++ b/drivers/crypto/nx/nx-842-powernv.c
+@@ -334,7 +334,7 @@ static int wait_for_csb(struct nx842_workmem *wmem,
+ 		return -EPROTO;
+ 	case CSB_CC_SEQUENCE:
+ 		/* should not happen, we don't use chained CRBs */
+-		CSB_ERR(csb, "CRB seqeunce number error");
++		CSB_ERR(csb, "CRB sequence number error");
+ 		return -EPROTO;
+ 	case CSB_CC_UNKNOWN_CODE:
+ 		CSB_ERR(csb, "Unknown subfunction code");
+-- 
+2.17.0
 
-
--Toke
