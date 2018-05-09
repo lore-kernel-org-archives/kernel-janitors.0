@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Wed, 09 May 2018 08:36:55 +0000
+Date: Wed, 09 May 2018 09:11:50 +0000
 Subject: Applied "ASoC: fix return value check in mt6351_codec_driver_probe()" to the asoc tree
-Message-Id: <20180509083655.E44CF44007A@finisterre.ee.mobilebroadband>
+Message-Id: <20180509091150.77D5C44007A@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
 In-Reply-To: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
