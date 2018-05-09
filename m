@@ -1,67 +1,62 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 28 May 2018 09:30:55 +0000
-Subject: Re: [PATCH][next] ALSA: xen-front: fix unsigned error check on return from to_sndif_format
-Message-Id: <s5h8t84unxs.wl-tiwai@suse.de>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 09 May 2018 19:49:05 +0000
+Subject: Re: [PATCH] drm/amd/powerplay: fix spelling mistake: "contruct" -> "construct"
+Message-Id: <CADnq5_MUEPZpZswjr+0B8M5NSfWJdqCAgKZ1qgrT2aD98FPsCA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180527213219.24182-1-colin.king@canonical.com>
- <e1312bb5-35c6-7954-c87d-2d72b15d99c5@sakamocchi.jp>
-In-Reply-To: <e1312bb5-35c6-7954-c87d-2d72b15d99c5@sakamocchi.jp>
+References: <20180428222155.20242-1-colin.king@canonical.com>
+In-Reply-To: <20180428222155.20242-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: alsa-devel@alsa-project.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org, Colin King <colin.king@canonical.com>
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: David Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-On Mon, 28 May 2018 00:49:03 +0200,
-Takashi Sakamoto wrote:
-> 
-> Hi,
-> 
-> On May 28 2018 06:32, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The negative error return from the call to to_sndif_format is being
-> > assigned to an unsigned 8 bit integer and hence the check for a negative
-> > value is always going to be false.  Fix this by using ret as the error
-> > return and hence the negative error can be detected and assign
-> > the u8 sndif_format to ret if there is no error.
-> >
-> > Detected by CoverityScan, CID#1469385 ("Unsigned compared against 0")
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   sound/xen/xen_snd_front_alsa.c | 7 ++++---
-> >   1 file changed, 4 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
-> > index 5041f83e98d2..5a2bd70a2fa1 100644
-> > --- a/sound/xen/xen_snd_front_alsa.c
-> > +++ b/sound/xen/xen_snd_front_alsa.c
-> > @@ -466,13 +466,14 @@ static int alsa_prepare(struct snd_pcm_substream *substream)
-> >   		u8 sndif_format;
-> >   		int ret;
-> >   -		sndif_format = to_sndif_format(runtime->format);
-> > -		if (sndif_format < 0) {
-> > +		ret = to_sndif_format(runtime->format);
-> > +		if (ret < 0) {
-> >   			dev_err(&stream->front_info->xb_dev->dev,
-> >   				"Unsupported sample format: %d\n",
-> >   				runtime->format);
-> > -			return sndif_format;
-> > +			return ret;
-> >   		}
-> > +		sndif_format = ret;
-> >     		ret > > xen_snd_front_stream_prepare(&stream->evt_pair->req,
-> >   						   &stream->sh_buf,
-> 
-> Indeed. A typical assignment mistake. Instead, we could change the
-> type of 'sndif_format' to signed int, however in this case it's not
-> the same as the third argument of xen_snd_front_stream_prepare()
-> because it is 'u8'. This patch looks good to me.
-> 
-> Reviewed-by: Takashi Sakamoto <o-takashi@sakamoccchi.jp>
+On Sat, Apr 28, 2018 at 6:21 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in PP_ASSERT_WITH_CODE message text
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Applied.  thanks!
 
+Alex
 
-Takashi
+> ---
+>  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c   | 2 +-
+>  drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+> index 26fbeafc3c96..726994cf03ea 100644
+> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+> @@ -1229,7 +1229,7 @@ static int smu7_enable_dpm_tasks(struct pp_hwmgr *hwmgr)
+>
+>                 tmp_result = smu7_construct_voltage_tables(hwmgr);
+>                 PP_ASSERT_WITH_CODE((0 = tmp_result),
+> -                               "Failed to contruct voltage tables!",
+> +                               "Failed to construct voltage tables!",
+>                                 result = tmp_result);
+>         }
+>         smum_initialize_mc_reg_table(hwmgr);
+> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+> index 7cbb56ba6fab..ced1c2aab7a9 100644
+> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+> @@ -2829,7 +2829,7 @@ static int vega10_enable_dpm_tasks(struct pp_hwmgr *hwmgr)
+>
+>         tmp_result = vega10_construct_voltage_tables(hwmgr);
+>         PP_ASSERT_WITH_CODE(!tmp_result,
+> -                       "Failed to contruct voltage tables!",
+> +                       "Failed to construct voltage tables!",
+>                         result = tmp_result);
+>
+>         tmp_result = vega10_init_smc_table(hwmgr);
+> --
+> 2.17.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
