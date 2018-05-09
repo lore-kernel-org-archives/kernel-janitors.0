@@ -1,68 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 09 May 2018 13:40:31 +0000
-Subject: [PATCH] clk: boston: fix memory leak of 'onecell' on error return paths
-Message-Id: <20180509134031.11611-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 May 2018 14:01:35 +0000
+Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error return paths
+Message-Id: <20180509140135.4dndt3baomtxups5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180509134031.11611-1-colin.king@canonical.com>
+In-Reply-To: <20180509134031.11611-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Burton <paul.burton@mips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Paul Burton <paul.burton@mips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-mips@linux-mips.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, May 09, 2018 at 02:40:31PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are several error return paths that don't free up onecell
+> and hence we have some memory leaks. Add an error exit path that
+> kfree's onecell to fix the leaks.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+> index 15af423cc0c9..d6bc468ff551 100644
+> --- a/drivers/clk/imgtec/clk-boston.c
+> +++ b/drivers/clk/imgtec/clk-boston.c
+> @@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
+>  	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+>  	if (IS_ERR(hw)) {
+>  		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+> -		return;
+> +		goto error;
 
-There are several error return paths that don't free up onecell
-and hence we have some memory leaks. Add an error exit path that
-kfree's onecell to fix the leaks.
+I hate vague label names like "error" and "out"...
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+There are a bunch of other resources that we should free if we decide
+it's worth freeing things.  Can this even boot without the clk?  When
+the label names says what is freed, then you mentally only have to keep
+track of the most recently allocated resource.  So if
 
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index 15af423cc0c9..d6bc468ff551 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
--	if (err)
-+	if (err) {
- 		pr_err("failed to add DT provider: %d\n", err);
-+		goto error;
-+	}
-+	return;
-+
-+error:
-+	kfree(onecell);
-+	return;
- }
- 
- /*
--- 
-2.17.0
+	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+
+succeeds then the next goto is going to "goto free_clk_input;".
+
+regards,
+dan carpenter
 
