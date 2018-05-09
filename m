@@ -1,32 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 11 May 2018 15:57:13 +0000
-Subject: Re: [PATCH] mlxsw: core: Fix an error handling path in 'mlxsw_core_bus_device_register()'
-Message-Id: <20180511.115713.2289767709982338990.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 May 2018 07:22:49 +0000
+Subject: [PATCH] drm/dumb-buffers: Integer overflow in drm_mode_create_ioctl()
+Message-Id: <20180509072249.GA12754@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180510112616.20508-1-christophe.jaillet@wanadoo.fr>
-        <20180510115821.GA10270@splinter.mtl.com>
-In-Reply-To: <20180510115821.GA10270@splinter.mtl.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: idosch@idosch.org
-Cc: christophe.jaillet@wanadoo.fr, jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, David Herrmann <dh.herrmann@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Ido Schimmel <idosch@idosch.org>
-Date: Thu, 10 May 2018 14:58:21 +0300
+There is a comment here which says that DIV_ROUND_UP() and that's where
+the problem comes from.  Say you pick:
 
-> On Thu, May 10, 2018 at 01:26:16PM +0200, Christophe JAILLET wrote:
->> Resources are not freed in the reverse order of the allocation.
->> Labels are also mixed-up.
->> 
->> Fix it and reorder code and labels in the error handling path of
->> 'mlxsw_core_bus_device_register()'
->> 
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> For net:
-> 
-> Fixes: ef3116e5403e ("mlxsw: spectrum: Register KVD resources with devlink")
-> Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+	args->bpp = UINT_MAX - 7;
+	args->width = 4;
+	args->height = 1;
 
-Applied and queued up for -stable, thanks.
+The integer overflow in DIV_ROUND_UP() means "cpp" is UINT_MAX / 8 and
+because of how we picked args->width that means cpp < UINT_MAX / 4.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Btw, DIV_ROUND_UP() integer overflows have been a recurring source of
+bugs so I have an unreleased static checker warning specific for that.
+This line triggers three warnings for me on my unreleased code:
+
+drivers/gpu/drm/drm_dumb_buffers.c:69 drm_mode_create_dumb_ioctl() warn: negative user subtract: 0-u32max - 1
+drivers/gpu/drm/drm_dumb_buffers.c:69 drm_mode_create_dumb_ioctl() warn: potential integer overflow from user '(args->bpp) + (8)'
+drivers/gpu/drm/drm_dumb_buffers.c:69 drm_mode_create_dumb_ioctl() warn: potential integer overflow in 'DIV_ROUND_UP'
+
+It's a pretty common idiom in the kernel to overflow and then test for
+it later so I'm not able to release this code because of the number of
+false positives that this idiom causes...
+
+diff --git a/drivers/gpu/drm/drm_dumb_buffers.c b/drivers/gpu/drm/drm_dumb_buffers.c
+index 39ac15ce4702..45b0b5bbb5f8 100644
+--- a/drivers/gpu/drm/drm_dumb_buffers.c
++++ b/drivers/gpu/drm/drm_dumb_buffers.c
+@@ -65,7 +65,8 @@ int drm_mode_create_dumb_ioctl(struct drm_device *dev,
+ 		return -EINVAL;
+ 
+ 	/* overflow checks for 32bit size calculations */
+-	/* NOTE: DIV_ROUND_UP() can overflow */
++	if (args->bpp > UINT_MAX - 8)
++		return -EINVAL;
+ 	cpp = DIV_ROUND_UP(args->bpp, 8);
+ 	if (!cpp || cpp > 0xffffffffU / args->width)
+ 		return -EINVAL;
