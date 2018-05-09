@@ -1,61 +1,84 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Fri, 25 May 2018 09:06:33 +0000
-Subject: Re: [PATCH] media: v4l2-ioctl: prevent underflow in v4l_enumoutput()
-Message-Id: <054ede38-b194-d1f9-7961-851c8b1acd5f@xs4all.nl>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 May 2018 10:16:06 +0000
+Subject: [PATCH][V2] drm/i915/dp: fix spelling mistakes: "seqeuncer" and "seqeuencer"
+Message-Id: <20180509101606.17483-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180517090550.GB4250@mwanda>
-In-Reply-To: <20180517090550.GB4250@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Manjunath Hadli <manjunath.hadli@ti.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tim Harvey <tharvey@gateworks.com>, Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, Smitha T Murthy <smitha.t@samsung.com>, Sami Tolvanen <samitolvanen@google.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17/05/18 11:05, Dan Carpenter wrote:
-> My Smatch allmodconfig build only detects one function implementing
-> vpbe_device_ops->enum_outputs and that's vpbe_enum_outputs().  The
-> problem really happens in that function when we do:
-> 
-> 	int temp_index = output->index;
-> 
-> 	if (temp_index >= cfg->num_outputs)
-> 		return -EINVAL;
-> 
-> Unfortunately, both temp_index and cfg->num_outputs are type int so we
-> have a potential read before the start of the array if "temp_index" is
-> negative.
+From: Colin Ian King <colin.king@canonical.com>
 
-Why not fix it in this driver? Make num_outputs unsigned, as it should be.
+Trivial fix to spelling mistakes in WARN warning message text and
+in comments:
 
-I really don't like having a random index check in the core. If we ever
-want to do such things in the core, then it needs to be implemented
-consistently for all ioctls that do something similar.
+"seqeuncer", "seqeuencer" -> "sequencer"
 
-Regards,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-	Hans
+V2: Also fix seqeuencer in comments
 
-> 
-> I could have fixed the bug in that function but it's more secure and
-> future proof to block that bug earlier in a central place.  There is no
-> one who need p->index to be more than INT_MAX.
-> 
-> Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index a40dbec271f1..115757ab8bc0 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1099,6 +1099,9 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
->  	if (is_valid_ioctl(vfd, VIDIOC_S_STD))
->  		p->capabilities |= V4L2_OUT_CAP_STD;
->  
-> +	if (p->index > INT_MAX)
-> +		return -EINVAL;
-> +
->  	return ops->vidioc_enum_output(file, fh, p);
->  }
->  
-> 
+---
+ drivers/gpu/drm/i915/intel_dp.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index dde92e4af5d3..2cc58596ff5a 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -513,7 +513,7 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
+ 	uint32_t DP;
+ 
+ 	if (WARN(I915_READ(intel_dp->output_reg) & DP_PORT_EN,
+-		 "skipping pipe %c power seqeuncer kick due to port %c being active\n",
++		 "skipping pipe %c power sequencer kick due to port %c being active\n",
+ 		 pipe_name(pipe), port_name(intel_dig_port->base.port)))
+ 		return;
+ 
+@@ -554,7 +554,7 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
+ 	/*
+ 	 * Similar magic as in intel_dp_enable_port().
+ 	 * We _must_ do this port enable + disable trick
+-	 * to make this power seqeuencer lock onto the port.
++	 * to make this power sequencer lock onto the port.
+ 	 * Otherwise even VDD force bit won't work.
+ 	 */
+ 	I915_WRITE(intel_dp->output_reg, DP);
+@@ -3066,11 +3066,11 @@ static void vlv_detach_power_sequencer(struct intel_dp *intel_dp)
+ 	edp_panel_vdd_off_sync(intel_dp);
+ 
+ 	/*
+-	 * VLV seems to get confused when multiple power seqeuencers
++	 * VLV seems to get confused when multiple power sequencers
+ 	 * have the same port selected (even if only one has power/vdd
+ 	 * enabled). The failure manifests as vlv_wait_port_ready() failing
+ 	 * CHV on the other hand doesn't seem to mind having the same port
+-	 * selected in multiple power seqeuencers, but let's clear the
++	 * selected in multiple power sequencers, but let's clear the
+ 	 * port select always when logically disconnecting a power sequencer
+ 	 * from a port.
+ 	 */
+@@ -5698,7 +5698,7 @@ intel_dp_init_panel_power_sequencer_registers(struct intel_dp *intel_dp,
+ 
+ 	/*
+ 	 * On some VLV machines the BIOS can leave the VDD
+-	 * enabled even on power seqeuencers which aren't
++	 * enabled even on power sequencers which aren't
+ 	 * hooked up to any port. This would mess up the
+ 	 * power domain tracking the first time we pick
+ 	 * one of these power sequencers for use since
+@@ -5706,7 +5706,7 @@ intel_dp_init_panel_power_sequencer_registers(struct intel_dp *intel_dp,
+ 	 * already on and therefore wouldn't grab the power
+ 	 * domain reference. Disable VDD first to avoid this.
+ 	 * This also avoids spuriously turning the VDD on as
+-	 * soon as the new power seqeuencer gets initialized.
++	 * soon as the new power sequencer gets initialized.
+ 	 */
+ 	if (force_disable_vdd) {
+ 		u32 pp = ironlake_get_pp_control(intel_dp);
+-- 
+2.17.0
 
