@@ -1,29 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 May 2018 13:21:57 +0000
-Subject: Re: [PATCH v2] media: davinci vpbe: array underflow in vpbe_enum_outputs()
-Message-Id: <20180525132157.rx3fuvzytpsuysft@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 09 May 2018 08:36:55 +0000
+Subject: Applied "ASoC: fix return value check in mt6351_codec_driver_probe()" to the asoc tree
+Message-Id: <20180509083655.E44CF44007A@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180525131239.45exrwgxr2f3kb57@kili.mountain>
- <a322043a-5b45-b695-4302-173c5111896b@xs4all.nl>
-In-Reply-To: <a322043a-5b45-b695-4302-173c5111896b@xs4all.nl>
+References: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, Kai Chieh Chuang <kaichieh.chuang@mediatek.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org@alsa-project.org
 
-On Fri, May 25, 2018 at 03:16:21PM +0200, Hans Verkuil wrote:
-> On 25/05/18 15:12, Dan Carpenter wrote:
-> > In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
-> > the problem is that temp_index can be negative.  I've made
-> > cgf->num_outputs unsigned to fix this issue.
-> 
-> Shouldn't temp_index also be made unsigned? It certainly would make a lot of
-> sense to do that.
+The patch
 
-Yeah, sure.  It doesn't make any difference in terms of runtime but it's
-probably cleaner.
+   ASoC: fix return value check in mt6351_codec_driver_probe()
 
-regards,
-dan carpenter
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From aaa730ca3f88f535dc12e2f0ff575f70f516841b Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 7 May 2018 01:39:45 +0000
+Subject: [PATCH] ASoC: fix return value check in mt6351_codec_driver_probe()
+
+In case of error, the function dev_get_regmap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/mt6351.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
+index e739f078fec5..f73dcd753584 100644
+--- a/sound/soc/codecs/mt6351.c
++++ b/sound/soc/codecs/mt6351.c
+@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
+ 	priv->dev = &pdev->dev;
+ 
+ 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+-	if (IS_ERR(priv->regmap))
+-		return PTR_ERR(priv->regmap);
++	if (!priv->regmap)
++		return -ENODEV;
+ 
+ 	dev_dbg(priv->dev, "%s(), dev name %s\n",
+ 		__func__, dev_name(&pdev->dev));
+-- 
+2.17.0
 
