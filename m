@@ -1,61 +1,64 @@
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Date: Tue, 08 May 2018 11:50:04 +0000
-Subject: Re: [PATCH 2/3] drm/xen-front: fix xen_drm_front_shbuf_alloc() error handling
-Message-Id: <07be77e8-a5bb-6b90-c017-fda7ef29a09d@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 10 May 2018 07:06:04 +0000
+Subject: [PATCH v2] net/mlx4_en: Fix an error handling path in 'mlx4_en_init_netdev()'
+Message-Id: <20180510070604.19635-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508092739.GB661@mwanda>
- <6eeed19a-f4ad-530d-bee5-926032f4d10f@gmail.com>
-In-Reply-To: <6eeed19a-f4ad-530d-bee5-926032f4d10f@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davem@davemloft.net, tariqt@mellanox.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 05/08/2018 12:37 PM, Oleksandr Andrushchenko wrote:
-> On 05/08/2018 12:27 PM, Dan Carpenter wrote:
->> The xen_drm_front_shbuf_alloc() function was returning a mix of error
->> pointers and NULL and the the caller wasn't checking correctly. I've
->> changed it to always return error pointer consistently.
->>
->> Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display 
->> frontend")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Thank you,
-> Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Applied to drm-misc-next,
-Thank you
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c 
->> b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
->> index d5705251a0d6..8099cb343ae3 100644
->> --- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
->> +++ b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
->> @@ -383,7 +383,7 @@ xen_drm_front_shbuf_alloc(struct 
->> xen_drm_front_shbuf_cfg *cfg)
->>         buf = kzalloc(sizeof(*buf), GFP_KERNEL);
->>       if (!buf)
->> -        return NULL;
->> +        return ERR_PTR(-ENOMEM);
->>         if (cfg->be_alloc)
->>           buf->ops = &backend_ops;
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c 
->> b/drivers/gpu/drm/xen/xen_drm_front.c
->> index 8615e8522c7a..378cb7ce0db5 100644
->> --- a/drivers/gpu/drm/xen/xen_drm_front.c
->> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
->> @@ -188,8 +188,8 @@ int xen_drm_front_dbuf_create(struct 
->> xen_drm_front_info *front_info,
->>       buf_cfg.be_alloc = front_info->cfg.be_alloc;
->>         shbuf = xen_drm_front_shbuf_alloc(&buf_cfg);
->> -    if (!shbuf)
->> -        return -ENOMEM;
->> +    if (IS_ERR(shbuf))
->> +        return PTR_ERR(shbuf);
->>         ret = dbuf_add_to_list(front_info, shbuf, dbuf_cookie);
->>       if (ret < 0) {
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+If an error occurs, 'mlx4_en_destroy_netdev()' is called.
+It then calls 'mlx4_en_free_resources()' which does the needed resources
+cleanup.
+
+So, doing some explicit kfree in the error handling path would lead to
+some double kfree.
+
+Simplify code to avoid such a case.
+
+Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings scheme")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v1 -> v2 : rewrite the fix as explained by Tariq Toukan
+           (this 2nd version may have been posted twice, once without the
+           v2 tag. PLease ignore the first one)
+---
+
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+index e0adac4a9a19..9670b33fc9b1 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -3324,12 +3324,11 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+ 					   MAX_TX_RINGS, GFP_KERNEL);
+ 		if (!priv->tx_ring[t]) {
+ 			err = -ENOMEM;
+-			goto err_free_tx;
++			goto out;
+ 		}
+ 		priv->tx_cq[t] = kzalloc(sizeof(struct mlx4_en_cq *) *
+ 					 MAX_TX_RINGS, GFP_KERNEL);
+ 		if (!priv->tx_cq[t]) {
+-			kfree(priv->tx_ring[t]);
+ 			err = -ENOMEM;
+ 			goto out;
+ 		}
+@@ -3582,11 +3581,6 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+ 
+ 	return 0;
+ 
+-err_free_tx:
+-	while (t--) {
+-		kfree(priv->tx_ring[t]);
+-		kfree(priv->tx_cq[t]);
+-	}
+ out:
+ 	mlx4_en_destroy_netdev(dev);
+ 	return err;
+-- 
+2.17.0
 
