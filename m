@@ -1,43 +1,36 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 27 May 2018 21:42:55 +0000
-Subject: [PATCH][next] drm/i2c: tda9950: fix timeout counter check
-Message-Id: <20180527214255.24473-1-colin.king@canonical.com>
+Date: Thu, 10 May 2018 14:58:38 +0000
+Subject: [PATCH] ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"
+Message-Id: <20180510145838.3907-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Russell King <rmk+kernel@armlinux.org.uk>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org
+To: Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the check to see if the timeout has reached zero is incorrect
-and the check is instead checking if the timeout is non-zero and not
-zero, hence it will break out of the loop on the first iteration and
-the msleep is never executed.  Fix this by breaking from the loop when
-timeout is zero.
+Trivial fix to spelling mistake in dev_err message text
 
-Detected by CoverityScan, CID#1469404 ("Logically Dead Code")
-
-Fixes: f0316f93897c ("drm/i2c: tda9950: add CEC driver")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/i2c/tda9950.c | 2 +-
+ sound/soc/zte/zx-i2s.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-index 3f7396caad48..f2186409f0cf 100644
---- a/drivers/gpu/drm/i2c/tda9950.c
-+++ b/drivers/gpu/drm/i2c/tda9950.c
-@@ -307,7 +307,7 @@ static void tda9950_release(struct tda9950_priv *priv)
- 	/* Wait up to .5s for it to signal non-busy */
- 	do {
- 		csr = tda9950_read(client, REG_CSR);
--		if (!(csr & CSR_BUSY) || --timeout)
-+		if (!(csr & CSR_BUSY) || !--timeout)
- 			break;
- 		msleep(10);
- 	} while (1);
+diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
+index 9a0565937d1f..b6b056c607fa 100644
+--- a/sound/soc/zte/zx-i2s.c
++++ b/sound/soc/zte/zx-i2s.c
+@@ -197,7 +197,7 @@ static int zx_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
+ 		val |= (ZX_I2S_TIMING_I2S | ZX_I2S_TIMING_LSB_JUSTIF);
+ 		break;
+ 	default:
+-		dev_err(cpu_dai->dev, "Unknown i2s timeing\n");
++		dev_err(cpu_dai->dev, "Unknown i2s timing\n");
+ 		return -EINVAL;
+ 	}
+ 
 -- 
 2.17.0
 
