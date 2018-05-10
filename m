@@ -1,66 +1,34 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 10 May 2018 11:26:16 +0000
-Subject: [PATCH] mlxsw: core: Fix an error handling path in 'mlxsw_core_bus_device_register()'
-Message-Id: <20180510112616.20508-1-christophe.jaillet@wanadoo.fr>
+From: Ido Schimmel <idosch@idosch.org>
+Date: Thu, 10 May 2018 11:58:21 +0000
+Subject: Re: [PATCH] mlxsw: core: Fix an error handling path in 'mlxsw_core_bus_device_register()'
+Message-Id: <20180510115821.GA10270@splinter.mtl.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180510112616.20508-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20180510112616.20508-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jiri@mellanox.com, idosch@mellanox.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: jiri@mellanox.com, idosch@mellanox.com, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Resources are not freed in the reverse order of the allocation.
-Labels are also mixed-up.
+On Thu, May 10, 2018 at 01:26:16PM +0200, Christophe JAILLET wrote:
+> Resources are not freed in the reverse order of the allocation.
+> Labels are also mixed-up.
+> 
+> Fix it and reorder code and labels in the error handling path of
+> 'mlxsw_core_bus_device_register()'
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fix it and reorder code and labels in the error handling path of
-'mlxsw_core_bus_device_register()'
+For net:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Please review carefully. This patch is proposed because it triggers one of
-my coccinelle scripts. I'm not 100% sure if correct.
+Fixes: ef3116e5403e ("mlxsw: spectrum: Register KVD resources with devlink")
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
 
-The script tries to spot wrongly ordered error handling path. It is:
-@@
-identifier l1, l2;
-@@
+Next time, please indicate the tree you're targeting as explained here:
+https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
 
-   if (...) {
-      ...
-*     goto l1;
-   }
-   ...
-   if (...) {
-      ...
-*     goto l2;
-   }
-   ...
-*l1:
-   ...
-*l2:
-   ...
----
- drivers/net/ethernet/mellanox/mlxsw/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+And include a Fixes line as explained here:
+https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
-index 93ea56620a24..e13ac3b8dff7 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
-@@ -1100,11 +1100,11 @@ int mlxsw_core_bus_device_register(const struct mlxsw_bus_info *mlxsw_bus_info,
- err_alloc_lag_mapping:
- 	mlxsw_ports_fini(mlxsw_core);
- err_ports_init:
--	mlxsw_bus->fini(bus_priv);
--err_bus_init:
- 	if (!reload)
- 		devlink_resources_unregister(devlink, NULL);
- err_register_resources:
-+	mlxsw_bus->fini(bus_priv);
-+err_bus_init:
- 	if (!reload)
- 		devlink_free(devlink);
- err_devlink_alloc:
--- 
-2.17.0
-
+Thanks!
