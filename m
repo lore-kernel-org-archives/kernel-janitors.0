@@ -1,123 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 May 2018 09:49:10 +0000
-Subject: [PATCH 3/3] iio: potentiometer: merge calls to of_match_device and of_device_get_match_data
-Message-Id: <1526896150-27134-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 10 May 2018 12:52:01 +0000
+Subject: [PATCH][next] net: aquantia: fix unsigned numvecs comparison with less than zero
+Message-Id: <20180510125201.19707-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Peter Rosin <peda@axentia.se>, Himanshu Jha <himanshujha199640@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>, Igor Russkikh <igor.russkikh@aquantia.com>, Pavel Belous <pavel.belous@aquantia.com>, Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop call to of_match_device, which is subsumed by the subsequent
-call to of_device_get_match_data.  The code becomes simpler, and a
-temporary variable can be dropped.
+From: Colin Ian King <colin.king@canonical.com>
 
-The semantic match that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The comparison of numvecs < 0 is always false because numvecs is a u32
+and hence the error return from a failed call to pci_alloc_irq_vectores
+is never detected.  Fix this by using the signed int ret to handle the
+error return and assign numvecs to err.
 
-// <smpl>
-@r@
-local idexpression match;
-identifier i;
-expression x, dev, e, e1;
-@@
--        match@i = of_match_device(x, dev);
--        if (match) e = of_device_get_match_data(dev);
--        else e = e1;
-+        e = of_device_get_match_data(dev);
-+        if (!e) e = e1;
+Detected by CoverityScan, CID#1468650 ("Unsigned compared against 0")
 
-@@
-identifier r.i;
-@@
-- const struct of_device_id *i;
-... when != i
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: a09bd81b5413 ("net: aquantia: Limit number of vectors to actually allocated irqs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iio/potentiometer/max5481.c |    7 ++-----
- drivers/iio/potentiometer/mcp4018.c |    7 ++-----
- drivers/iio/potentiometer/mcp4531.c |    7 ++-----
- 3 files changed, 6 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iio/potentiometer/mcp4018.c b/drivers/iio/potentiometer/mcp4018.c
-index 320a7c9..c051ee0 100644
---- a/drivers/iio/potentiometer/mcp4018.c
-+++ b/drivers/iio/potentiometer/mcp4018.c
-@@ -147,7 +147,6 @@ static int mcp4018_probe(struct i2c_client *client)
- 	struct device *dev = &client->dev;
- 	struct mcp4018_data *data;
- 	struct iio_dev *indio_dev;
--	const struct of_device_id *match;
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+index a50e08bb4748..750007513f9d 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+@@ -267,14 +267,13 @@ static int aq_pci_probe(struct pci_dev *pdev,
+ 	numvecs = min(numvecs, num_online_cpus());
+ 	/*enable interrupts */
+ #if !AQ_CFG_FORCE_LEGACY_INT
+-	numvecs = pci_alloc_irq_vectors(self->pdev, 1, numvecs,
+-					PCI_IRQ_MSIX | PCI_IRQ_MSI |
+-					PCI_IRQ_LEGACY);
++	err = pci_alloc_irq_vectors(self->pdev, 1, numvecs,
++				    PCI_IRQ_MSIX | PCI_IRQ_MSI |
++				    PCI_IRQ_LEGACY);
  
- 	if (!i2c_check_functionality(client->adapter,
- 				     I2C_FUNC_SMBUS_BYTE)) {
-@@ -162,10 +161,8 @@ static int mcp4018_probe(struct i2c_client *client)
- 	i2c_set_clientdata(client, indio_dev);
- 	data->client = client;
+-	if (numvecs < 0) {
+-		err = numvecs;
++	if (err < 0)
+ 		goto err_hwinit;
+-	}
++	numvecs = err;
+ #endif
+ 	self->irqvecs = numvecs;
  
--	match = of_match_device(of_match_ptr(mcp4018_of_match), dev);
--	if (match)
--		data->cfg = of_device_get_match_data(dev);
--	else
-+	data->cfg = of_device_get_match_data(dev);
-+	if (!data->cfg)
- 		data->cfg = &mcp4018_cfg[i2c_match_id(mcp4018_id, client)->driver_data];
- 
- 	indio_dev->dev.parent = dev;
-diff --git a/drivers/iio/potentiometer/mcp4531.c b/drivers/iio/potentiometer/mcp4531.c
-index df894af..d87ca85 100644
---- a/drivers/iio/potentiometer/mcp4531.c
-+++ b/drivers/iio/potentiometer/mcp4531.c
-@@ -360,7 +360,6 @@ static int mcp4531_probe(struct i2c_client *client)
- 	struct device *dev = &client->dev;
- 	struct mcp4531_data *data;
- 	struct iio_dev *indio_dev;
--	const struct of_device_id *match;
- 
- 	if (!i2c_check_functionality(client->adapter,
- 				     I2C_FUNC_SMBUS_WORD_DATA)) {
-@@ -375,10 +374,8 @@ static int mcp4531_probe(struct i2c_client *client)
- 	i2c_set_clientdata(client, indio_dev);
- 	data->client = client;
- 
--	match = of_match_device(of_match_ptr(mcp4531_of_match), dev);
--	if (match)
--		data->cfg = of_device_get_match_data(dev);
--	else
-+	data->cfg = of_device_get_match_data(dev);
-+	if (!data->cfg)
- 		data->cfg = &mcp4531_cfg[i2c_match_id(mcp4531_id, client)->driver_data];
- 
- 	indio_dev->dev.parent = dev;
-diff --git a/drivers/iio/potentiometer/max5481.c b/drivers/iio/potentiometer/max5481.c
-index ffe2761..6d2f13f 100644
---- a/drivers/iio/potentiometer/max5481.c
-+++ b/drivers/iio/potentiometer/max5481.c
-@@ -137,7 +137,6 @@ static int max5481_probe(struct spi_device *spi)
- 	struct iio_dev *indio_dev;
- 	struct max5481_data *data;
- 	const struct spi_device_id *id = spi_get_device_id(spi);
--	const struct of_device_id *match;
- 	int ret;
- 
- 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*data));
-@@ -149,10 +148,8 @@ static int max5481_probe(struct spi_device *spi)
- 
- 	data->spi = spi;
- 
--	match = of_match_device(of_match_ptr(max5481_match), &spi->dev);
--	if (match)
--		data->cfg = of_device_get_match_data(&spi->dev);
--	else
-+	data->cfg = of_device_get_match_data(&spi->dev);
-+	if (!data->cfg)
- 		data->cfg = &max5481_cfg[id->driver_data];
- 
- 	indio_dev->name = id->name;
+-- 
+2.17.0
 
