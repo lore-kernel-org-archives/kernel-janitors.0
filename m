@@ -1,35 +1,22 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 10 May 2018 07:27:31 +0000
-Subject: [PATCH] mtip32xx: Fix an error handling path in 'mtip_pci_probe()'
-Message-Id: <20180510072731.19956-1-christophe.jaillet@wanadoo.fr>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Thu, 10 May 2018 14:21:33 +0000
+Subject: Re: [PATCH] mtip32xx: Fix an error handling path in 'mtip_pci_probe()'
+Message-Id: <1c91e861-9f38-4c77-d7ac-1a1499932c1a@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180510072731.19956-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20180510072731.19956-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk, ming.lei@redhat.com, martin.petersen@oracle.com, sagi@grimberg.me, chris.gekas@gmail.com, bart.vanassche@wdc.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, ming.lei@redhat.com, martin.petersen@oracle.com, sagi@grimberg.me, chris.gekas@gmail.com, bart.vanassche@wdc.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Branch to the right label in the error handling path in order to keep it
-logical.
+On 5/10/18 1:27 AM, Christophe JAILLET wrote:
+> Branch to the right label in the error handling path in order to keep it
+> logical.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/block/mtip32xx/mtip32xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good, applied.
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index 769c551e3d71..06257b872a7d 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -4273,7 +4273,7 @@ static int mtip_pci_probe(struct pci_dev *pdev,
- 	if (!dd->isr_workq) {
- 		dev_warn(&pdev->dev, "Can't create wq %d\n", dd->instance);
- 		rv = -ENOMEM;
--		goto block_initialize_err;
-+		goto setmask_err;
- 	}
- 
- 	memset(cpu_list, 0, sizeof(cpu_list));
 -- 
-2.17.0
+Jens Axboe
 
