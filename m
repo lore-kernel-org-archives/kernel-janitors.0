@@ -1,21 +1,36 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 02 May 2018 04:41:10 +0000
-Subject: Re: [PATCH][V2] dmaengine: stm32-mdma: fix spelling mistake: "avalaible" -> "available"
-Message-Id: <20180502042910.GP6014@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 May 2018 13:28:18 +0000
+Subject: [PATCH] ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
+Message-Id: <20180511132818.16728-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 11:03:52PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err error message text and make
-> channel plural.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+Trivial fix to spelling mistake in dev_err message text
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/hisilicon/hi6210-i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/hisilicon/hi6210-i2s.c b/sound/soc/hisilicon/hi6210-i2s.c
+index 07a57209e055..53344a3b7a60 100644
+--- a/sound/soc/hisilicon/hi6210-i2s.c
++++ b/sound/soc/hisilicon/hi6210-i2s.c
+@@ -498,7 +498,7 @@ static int hi6210_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 			hi6210_i2s_txctrl(cpu_dai, 0);
+ 		break;
+ 	default:
+-		dev_err(cpu_dai->dev, "uknown cmd\n");
++		dev_err(cpu_dai->dev, "unknown cmd\n");
+ 		return -EINVAL;
+ 	}
+ 	return 0;
 -- 
-~Vinod
+2.17.0
+
