@@ -1,41 +1,54 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Tue, 15 May 2018 14:41:40 +0000
-Subject: Re: [PATCH v2] apparmor: secid: fix error return value in error handling path
-Message-Id: <03eb44c5-ee46-f402-7ae9-5d11a233c1f8@embeddedor.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 11 May 2018 15:06:17 +0000
+Subject: [PATCH 2/3] media: staging: atomisp: Fix an error handling path in 'lm3554_probe()'
+Message-Id: <f762630a681c08d9903cf73243dd98416ae96a7c.1526048313.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180504140914.GA16787@embeddedor.com>
-	<1f4a965f-a245-a5a9-f815-9915df9b3a9d@canonical.com>
-In-Reply-To: <1f4a965f-a245-a5a9-f815-9915df9b3a9d@canonical.com>
+References: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: alan@linux.intel.com, sakari.ailus@linux.intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, chen.chenchacha@foxmail.com, keescook@chromium.org, arvind.yadav.cs@gmail.com
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Colin,
+The use of 'fail1' and 'fail2' is not correct. Reorder these calls to
+branch at the right place of the error handling path.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/staging/media/atomisp/i2c/atomisp-lm3554.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Sorry for the late response. I've been on the road for the last 12 days 
-and I'm just back.
+diff --git a/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c b/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
+index 723fa74ff815..1e5f516f6e50 100644
+--- a/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
++++ b/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
+@@ -871,7 +871,7 @@ static int lm3554_probe(struct i2c_client *client)
+ 				     ARRAY_SIZE(lm3554_controls));
+ 	if (err) {
+ 		dev_err(&client->dev, "error initialize a ctrl_handler.\n");
+-		goto fail2;
++		goto fail1;
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lm3554_controls); i++)
+@@ -879,7 +879,6 @@ static int lm3554_probe(struct i2c_client *client)
+ 				     NULL);
+ 
+ 	if (flash->ctrl_handler.error) {
+-
+ 		dev_err(&client->dev, "ctrl_handler error.\n");
+ 		goto fail2;
+ 	}
+@@ -888,7 +887,7 @@ static int lm3554_probe(struct i2c_client *client)
+ 	err = media_entity_pads_init(&flash->sd.entity, 0, NULL);
+ 	if (err) {
+ 		dev_err(&client->dev, "error initialize a media entity.\n");
+-		goto fail1;
++		goto fail2;
+ 	}
+ 
+ 	flash->sd.entity.function = MEDIA_ENT_F_FLASH;
+-- 
+2.17.0
 
-On 05/04/2018 09:36 AM, Colin Ian King wrote:
-> Hi Gustavo,
-> 
-> if you are using the coverity scan bug tracking, please can you mark a
-> bug as being worked on by yourself so I don't work on it at the same
-> time as we're duplicating work here.
-> 
-
-Yeah, I've noticed that. I actually do that very often, and in some 
-cases I've also noticed you have made changes to the same bug regardless 
-of that.
-
-The problem is that the Coverity dashboard doesn't refresh itself, so 
-anyone using it should refresh it at all times in order to keep track of 
-the bugs that have already been taken by somebody else.
-
-So I think this kind of "collisions" will continue to happen unless 
-people add the auto-refresh feature to the Coverity dashboard. :/
-
-Thanks
---
-Gustavo
