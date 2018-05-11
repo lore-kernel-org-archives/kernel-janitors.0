@@ -1,30 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sat, 12 May 2018 08:55:07 +0000
-Subject: Re: rsi: fix spelling mistake: "thead" -> "thread"
-Message-Id: <20180512085508.173276019F@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 May 2018 14:18:13 +0000
+Subject: [PATCH] media: dvb_frontends: fix spelling mistake: "unexpcted" -> "unexpected"
+Message-Id: <20180511141813.26739-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180510143217.23488-1-colin.king@canonical.com>
-In-Reply-To: <20180510143217.23488-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in rsi_dbg debug message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in dprintk message text
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/l64781.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-b41c39367669 rsi: fix spelling mistake: "thead" -> "thread"
-
+diff --git a/drivers/media/dvb-frontends/l64781.c b/drivers/media/dvb-frontends/l64781.c
+index e056f36e6f0c..249c18761e6e 100644
+--- a/drivers/media/dvb-frontends/l64781.c
++++ b/drivers/media/dvb-frontends/l64781.c
+@@ -546,7 +546,7 @@ struct dvb_frontend* l64781_attach(const struct l64781_config* config,
+ 
+ 	/* Responds to all reads with 0 */
+ 	if (l64781_readreg(state, 0x1a) != 0) {
+-		dprintk("Read 1 returned unexpcted value\n");
++		dprintk("Read 1 returned unexpected value\n");
+ 		goto error;
+ 	}
+ 
+@@ -555,7 +555,7 @@ struct dvb_frontend* l64781_attach(const struct l64781_config* config,
+ 
+ 	/* Responds with register default value */
+ 	if (l64781_readreg(state, 0x1a) != 0xa1) {
+-		dprintk("Read 2 returned unexpcted value\n");
++		dprintk("Read 2 returned unexpected value\n");
+ 		goto error;
+ 	}
+ 
 -- 
-https://patchwork.kernel.org/patch/10391879/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.0
 
