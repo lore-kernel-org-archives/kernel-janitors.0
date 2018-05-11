@@ -1,36 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 10 May 2018 16:59:00 +0000
-Subject: [PATCH] MIPS: VPE: fix spelling mistake: "uneeded" -> "unneeded"
-Message-Id: <20180510165900.13733-1-colin.king@canonical.com>
+From: James Hogan <jhogan@kernel.org>
+Date: Fri, 11 May 2018 12:47:53 +0000
+Subject: Re: [PATCH] MIPS: VPE: fix spelling mistake: "uneeded" -> "unneeded"
+Message-Id: <20180511124752.GA9014@jamesdev>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="oyUTqETQ0mS9luUI"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180510165900.13733-1-colin.king@canonical.com>
+In-Reply-To: <20180510165900.13733-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in pr_warn message text
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/mips/kernel/vpe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, May 10, 2018 at 05:59:00PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Trivial fix to spelling mistake in pr_warn message text
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
-index 544ea21bfef9..0bef238d2c0c 100644
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -872,7 +872,7 @@ static ssize_t vpe_write(struct file *file, const char __user *buffer,
- 		return -ENODEV;
- 
- 	if ((count + v->len) > v->plen) {
--		pr_warn("VPE loader: elf size too big. Perhaps strip uneeded symbols\n");
-+		pr_warn("VPE loader: elf size too big. Perhaps strip unneeded symbols\n");
- 		return -ENOMEM;
- 	}
- 
--- 
-2.17.0
+> -		pr_warn("VPE loader: elf size too big. Perhaps strip uneeded symbols\n=
+");
+> +		pr_warn("VPE loader: elf size too big. Perhaps strip unneeded symbols\=
+n");
 
+Applied for 4.18
+
+thanks
+James
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvWQ9wAKCRA1zuSGKxAj
+8hZHAPwOzorxqzdhC0mAmwifelQKD5g4nHGCxd6ieKGXdNWW+wEAwuNvsZ5g325T
+Soc3Jo1u4U5SIZr1VuYiu/RHB85Vegw=
+=kRJ6
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
