@@ -1,41 +1,36 @@
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Date: Tue, 15 May 2018 09:12:01 +0000
-Subject: Re: [PATCH][next] drm/xen-front: fix spelling mistake: "conector" -> "connector"
-Message-Id: <3d506835-80af-e18d-bf53-b159caa8c0a3@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 May 2018 13:38:59 +0000
+Subject: [PATCH] staging: lustre: fix spelling mistake: "req_ulinked" -> "req_unlinked"
+Message-Id: <20180511133859.18733-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180515085433.8245-1-colin.king@canonical.com>
-In-Reply-To: <20180515085433.8245-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org
+To: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, NeilBrown <neilb@suse.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/15/2018 11:54 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in DRM_INFO message.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Thank you,
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Will apply to drm-misc-next
-> ---
->   drivers/gpu/drm/xen/xen_drm_front.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
-> index 0e486cb1c10c..3725de4c4da8 100644
-> --- a/drivers/gpu/drm/xen/xen_drm_front.c
-> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
-> @@ -623,7 +623,7 @@ static int displback_initwait(struct xen_drm_front_info *front_info)
->   	if (ret < 0)
->   		return ret;
->   
-> -	DRM_INFO("Have %d conector(s)\n", cfg->num_connectors);
-> +	DRM_INFO("Have %d connector(s)\n", cfg->num_connectors);
->   	/* Create event channels for all connectors and publish */
->   	ret = xen_drm_front_evtchnl_create_all(front_info);
->   	if (ret < 0)
+Trivial fix to spelling mistake in DEBUG_REQ message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/lustre/lustre/ptlrpc/client.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
+index eeb281266413..a51feaeb7734 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/client.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
+@@ -2514,7 +2514,7 @@ static int ptlrpc_unregister_reply(struct ptlrpc_request *request, int async)
+ 		}
+ 
+ 		DEBUG_REQ(D_WARNING, request,
+-			  "Unexpectedly long timeout receiving_reply=%d req_ulinked=%d reply_unlinked=%d",
++			  "Unexpectedly long timeout receiving_reply=%d req_unlinked=%d reply_unlinked=%d",
+ 			  request->rq_receiving_reply,
+ 			  request->rq_req_unlinked,
+ 			  request->rq_reply_unlinked);
+-- 
+2.17.0
 
