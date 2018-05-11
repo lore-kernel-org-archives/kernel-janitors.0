@@ -1,36 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 22 May 2018 16:49:05 +0000
-Subject: [PATCH] staging: wilc1000: fix spelling mistake: "Preamle" -> "Preamble"
-Message-Id: <20180522164905.10874-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 11 May 2018 15:06:15 +0000
+Subject: [PATCH 0/3] media: staging: atomisp:
+Message-Id: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alan@linux.intel.com, sakari.ailus@linux.intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, chen.chenchacha@foxmail.com, keescook@chromium.org, arvind.yadav.cs@gmail.com
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+These 3 patches fixes (at least I hope) some issues found in or around
+'lm3554_probe()'.
 
-Trivial fix to spelling mistake in netdev_err error message
+Please review them carefully. I've only compile tested the changes and
+I propose them because they sound logical to me.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wilc1000/host_interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The first one, return an error code instead of 0 if the call to an
+initialisation function fails.
+The 2nd one reorders own some label are reached in order to have a logical
+flow (first error goes to last label, last error goes to first label)
+The 3rd one fix the use 'media_entity_cleanup()'. If this one is correct,
+some other drivers will need to be fixed the same way.  
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index a2f82c885d63..7b613cd72d22 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -577,7 +577,7 @@ static void handle_cfg_param(struct wilc_vif *vif, struct cfg_param_attr *param)
- 			wid_list[i].size = sizeof(char);
- 			hif_drv->cfg_values.preamble_type = preamble_type;
- 		} else {
--			netdev_err(vif->ndev, "Preamle Range(0~2) over\n");
-+			netdev_err(vif->ndev, "Preamble Range(0~2) over\n");
- 			goto unlock;
- 		}
- 		i++;
+Christophe JAILLET (3):
+  media: staging: atomisp: Return an error code in case
+    of error in 'lm3554_probe()'
+  media: staging: atomisp: Fix an error handling path in
+    'lm3554_probe()'
+  media: staging: atomisp: Fix usage of 'media_entity_cleanup()'
+
+ .../media/atomisp/i2c/atomisp-lm3554.c        | 20 +++++++++----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
 -- 
 2.17.0
 
