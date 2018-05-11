@@ -1,58 +1,67 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 18 May 2018 09:13:27 +0000
-Subject: [PATCH] ASoC: wm2200,wm5100: fix spelling mistake: "Coefficeints" -> "Coefficients"
-Message-Id: <20180518091327.17705-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 11 May 2018 02:55:15 +0000
+Subject: Applied "ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"" to the asoc tree
+Message-Id: <20180511025516.0816E440084@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, patches@opensource.cirrus.com, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
 
+The patch
+
+   ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From d165b5a86fcad715aea1f164186224fe0c2f57f3 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 10 May 2018 15:58:38 +0100
+Subject: [PATCH] ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"
 
-Trivial fix to spelling mistakes in SND_SOC_BYTES literal strings
+Trivial fix to spelling mistake in dev_err message text
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm2200.c | 4 ++--
- sound/soc/codecs/wm5100.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ sound/soc/zte/zx-i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm2200.c b/sound/soc/codecs/wm2200.c
-index d5f4bbf27182..3663b9fd4d65 100644
---- a/sound/soc/codecs/wm2200.c
-+++ b/sound/soc/codecs/wm2200.c
-@@ -1155,8 +1155,8 @@ SOC_DOUBLE_R_TLV("IN3 Digital Volume", WM2200_ADC_DIGITAL_VOLUME_3L,
- SND_SOC_BYTES_MASK("EQL Coefficients", WM2200_EQL_1, 20, WM2200_EQL_ENA),
- SND_SOC_BYTES_MASK("EQR Coefficients", WM2200_EQR_1, 20, WM2200_EQR_ENA),
+diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
+index 9a0565937d1f..b6b056c607fa 100644
+--- a/sound/soc/zte/zx-i2s.c
++++ b/sound/soc/zte/zx-i2s.c
+@@ -197,7 +197,7 @@ static int zx_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
+ 		val |= (ZX_I2S_TIMING_I2S | ZX_I2S_TIMING_LSB_JUSTIF);
+ 		break;
+ 	default:
+-		dev_err(cpu_dai->dev, "Unknown i2s timeing\n");
++		dev_err(cpu_dai->dev, "Unknown i2s timing\n");
+ 		return -EINVAL;
+ 	}
  
--SND_SOC_BYTES("LHPF1 Coefficeints", WM2200_HPLPF1_2, 1),
--SND_SOC_BYTES("LHPF2 Coefficeints", WM2200_HPLPF2_2, 1),
-+SND_SOC_BYTES("LHPF1 Coefficients", WM2200_HPLPF1_2, 1),
-+SND_SOC_BYTES("LHPF2 Coefficients", WM2200_HPLPF2_2, 1),
- 
- SOC_SINGLE("OUT1 High Performance Switch", WM2200_DAC_DIGITAL_VOLUME_1L,
- 	   WM2200_OUT1_OSR_SHIFT, 1, 0),
-diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
-index 87f9a99ce978..ba89d9d711f7 100644
---- a/sound/soc/codecs/wm5100.c
-+++ b/sound/soc/codecs/wm5100.c
-@@ -573,10 +573,10 @@ SND_SOC_BYTES_MASK("EQ4 Coefficients", WM5100_EQ4_1, 20, WM5100_EQ4_ENA),
- SND_SOC_BYTES_MASK("DRC Coefficients", WM5100_DRC1_CTRL1, 5,
- 		   WM5100_DRCL_ENA | WM5100_DRCR_ENA),
- 
--SND_SOC_BYTES("LHPF1 Coefficeints", WM5100_HPLPF1_2, 1),
--SND_SOC_BYTES("LHPF2 Coefficeints", WM5100_HPLPF2_2, 1),
--SND_SOC_BYTES("LHPF3 Coefficeints", WM5100_HPLPF3_2, 1),
--SND_SOC_BYTES("LHPF4 Coefficeints", WM5100_HPLPF4_2, 1),
-+SND_SOC_BYTES("LHPF1 Coefficients", WM5100_HPLPF1_2, 1),
-+SND_SOC_BYTES("LHPF2 Coefficients", WM5100_HPLPF2_2, 1),
-+SND_SOC_BYTES("LHPF3 Coefficients", WM5100_HPLPF3_2, 1),
-+SND_SOC_BYTES("LHPF4 Coefficients", WM5100_HPLPF4_2, 1),
- 
- SOC_SINGLE("HPOUT1 High Performance Switch", WM5100_OUT_VOLUME_1L,
- 	   WM5100_OUT1_OSR_SHIFT, 1, 0),
 -- 
 2.17.0
 
