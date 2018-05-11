@@ -1,50 +1,66 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 17 May 2018 15:38:49 +0000
-Subject: Re: [PATCH] drm/amd/pp: missing curly braces in smu7_enable_sclk_mclk_dpm()
-Message-Id: <CADnq5_MBFgrw7p=fpKyA6OL-AVSkuoSDo-EZ=Oy9N-TK+QTy4w@mail.gmail.com>
+From: Oded Gabbay <oded.gabbay@gmail.com>
+Date: Fri, 11 May 2018 20:17:14 +0000
+Subject: Re: [PATCH] drm/amdkfd: Integer overflows in ioctl
+Message-Id: <CAFCwf11bEc=BF=3M=7gzmA6iDJpG0uJnXS5K5EP2i48XEOaesw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180517125604.GA10930@mwanda>
-In-Reply-To: <20180517125604.GA10930@mwanda>
+References: <20180424133549.GB10167@mwanda>
+ <e2b7b3c1-cadb-330f-53a8-57568d4bc877@amd.com>
+In-Reply-To: <e2b7b3c1-cadb-330f-53a8-57568d4bc877@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Eric Huang <JinHuiEric.Huang-5C7GfCeVMHo@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Evan Quan <evan.quan-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Felix Kuehling <felix.kuehling@amd.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-On Thu, May 17, 2018 at 8:56 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We added some more lines of code to this if statement but forgot to add
-> curly braces.
+On Tue, Apr 24, 2018 at 9:58 PM, Felix Kuehling <felix.kuehling@amd.com> wrote:
+> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
 >
-> Fixes: 0c24e7ef233b ("drm/amd/powerplay: add specific changes for VEGAM in smu7_hwmgr.c")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> We could probably add a sanity check for n_devices to avoid user mode
+> causing excessive memory allocations in the kernel. There is no good
+> reason for this to be bigger than the number of GPUs in the system. The
+> maximum number of GPUs supported due to device minor limit in DRM is 128.
+>
+> Regards,
+>   Felix
+>
+>
+> On 2018-04-24 09:35 AM, Dan Carpenter wrote:
+>> args->n_devices is a u32 that comes from the user.  The multiplication
+>> could overflow on 32 bit systems possibly leading to privilege
+>> escalation.
+>>
+>> Fixes: 5ec7e02854b3 ("drm/amdkfd: Add ioctls for GPUVM memory management")
+>> Signed-off-by: Dan Carpenter dan.carpenter@oracle.com>
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+>> index cd679cf1fd30..ce36e556da38 100644
+>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+>> @@ -1295,8 +1295,8 @@ static int kfd_ioctl_map_memory_to_gpu(struct file *filep,
+>>               return -EINVAL;
+>>       }
+>>
+>> -     devices_arr = kmalloc(args->n_devices * sizeof(*devices_arr),
+>> -                           GFP_KERNEL);
+>> +     devices_arr = kmalloc_array(args->n_devices, sizeof(*devices_arr),
+>> +                                 GFP_KERNEL);
+>>       if (!devices_arr)
+>>               return -ENOMEM;
+>>
+>> @@ -1404,8 +1404,8 @@ static int kfd_ioctl_unmap_memory_from_gpu(struct file *filep,
+>>               return -EINVAL;
+>>       }
+>>
+>> -     devices_arr = kmalloc(args->n_devices * sizeof(*devices_arr),
+>> -                           GFP_KERNEL);
+>> +     devices_arr = kmalloc_array(args->n_devices, sizeof(*devices_arr),
+>> +                                 GFP_KERNEL);
+>>       if (!devices_arr)
+>>               return -ENOMEM;
+>>
+>
 
-Applied.  thanks!
+Thanks!
+Patch applied to amdkfd-fixes
 
-Alex
-
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> index 8eb3f5176646..646c9e9bf681 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> @@ -1018,7 +1018,7 @@ static int smu7_enable_sclk_mclk_dpm(struct pp_hwmgr *hwmgr)
->         struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
->
->         /* enable SCLK dpm */
-> -       if (!data->sclk_dpm_key_disabled)
-> +       if (!data->sclk_dpm_key_disabled) {
->                 if (hwmgr->chip_id = CHIP_VEGAM)
->                         smu7_disable_sclk_vce_handshake(hwmgr);
->
-> @@ -1026,6 +1026,7 @@ static int smu7_enable_sclk_mclk_dpm(struct pp_hwmgr *hwmgr)
->                 (0 = smum_send_msg_to_smc(hwmgr, PPSMC_MSG_DPM_Enable)),
->                 "Failed to enable SCLK DPM during DPM Start Function!",
->                 return -EINVAL);
-> +       }
->
->         /* enable MCLK dpm */
->         if (0 = data->mclk_dpm_key_disabled) {
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Oded
