@@ -1,49 +1,44 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Date: Thu, 31 May 2018 14:48:33 +0000
-Subject: RE: [PATCH] gpio: dwapb: fix a signedness bug handling IRQs
-Message-Id: <TY1PR01MB1769FA633588A28A55A54636F5630@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 May 2018 06:33:05 +0000
+Subject: [PATCH] staging: lustre: Fix an error handling path in 'client_common_fill_super()'
+Message-Id: <20180512063305.7339-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180531062424.3pfqikwzxryi6teu@kili.mountain>
-In-Reply-To: <20180531062424.3pfqikwzxryi6teu@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Hoan Tran <hotran@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: oleg.drokin@intel.com, andreas.dilger@intel.com, jsimmons@infradead.org, gregkh@linuxfoundation.org, neilb@suse.com, aastha.gupta4104@gmail.com, santhameena13@gmail.com
+Cc: lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Dan,
+According to error handling path before and after this one, we should go
+to 'out_md_fid' here, instead of 'out_md', if 'obd_connect()' fails.
 
-On 31 May 2018 07:24 Dan Carpenter wrote:
-> Smatch flags a couple bugs here:
-> 
-> drivers/gpio/gpio-dwapb.c:447 dwapb_configure_irqs() warn: always true
-> condition '(pp->irq[i] >= 0) => (0-u32max >= 0)'
-> drivers/gpio/gpio-dwapb.c:627 dwapb_gpio_get_pdata() warn: always true
-> condition '(pp->irq[j] >= 0) => (0-u32max >= 0)'
-> 
-> The problem is that we're storing error codes in pp->irq[] so it needs to be
-> signed for the error handling to work correctly.
-> 
-> Fixes: da069d5d2b81 ("gpio: dwapb: Rework support for 1 interrupt per port
-> A GPIO")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The last goto 'out_lock_cn_cb' looks spurious but is correct.
+In case of error, 'd_make_root()' performs a 'iput()', so skipping it in
+the error handling path lokks fine to me.
+---
+ drivers/staging/lustre/lustre/llite/llite_lib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for the patch, I had already noticed the mistake and sent a patch.
+diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
+index 60dbe888e336..83eb2da2c9ad 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_lib.c
++++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
+@@ -400,11 +400,11 @@ static int client_common_fill_super(struct super_block *sb, char *md, char *dt)
+ 		LCONSOLE_ERROR_MSG(0x150,
+ 				   "An OST (dt %s) is performing recovery, of which this client is not a part.  Please wait for recovery to complete, abort, or time out.\n",
+ 				   dt);
+-		goto out_md;
++		goto out_md_fid;
+ 	} else if (err) {
+ 		CERROR("%s: Cannot connect to %s: rc = %d\n",
+ 		       sbi->ll_dt_exp->exp_obd->obd_name, dt, err);
+-		goto out_md;
++		goto out_md_fid;
+ 	}
+ 
+ 	sbi->ll_dt_exp->exp_connect_data = *data;
+-- 
+2.17.0
 
-Thanks
-Phil
-
-> diff --git a/include/linux/platform_data/gpio-dwapb.h
-> b/include/linux/platform_data/gpio-dwapb.h
-> index 5a52d69c13f3..419cfacb4b42 100644
-> --- a/include/linux/platform_data/gpio-dwapb.h
-> +++ b/include/linux/platform_data/gpio-dwapb.h
-> @@ -19,7 +19,7 @@ struct dwapb_port_property {
->  	unsigned int	idx;
->  	unsigned int	ngpio;
->  	unsigned int	gpio_base;
-> -	unsigned int	irq[32];
-> +	int		irq[32];
->  	bool		has_irq;
->  	bool		irq_shared;
->  };
