@@ -1,40 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 11 May 2018 14:05:32 +0000
-Subject: [PATCH][ocfs2-next] ocfs2: remove redundant check that tmp_oh is not null
-Message-Id: <20180511140532.22552-1-colin.king@canonical.com>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Sat, 12 May 2018 11:01:53 +0000
+Subject: [PATCH 1/2] staging: lustre: Fix spelling mistakes
+Message-Id: <20180512110153.6797-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, leg.drokin@intel.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistakes in TODO and README.txt
 
-There is an earlier check and return if tmp_oh is null, hence the
-finaly check to see if it is not null is redundant and can be
-replaced with return 1 instead.
-
-Detected by CoverityScan, CIK#1468855 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- fs/ocfs2/dlmglue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/lustre/README.txt | 2 +-
+ drivers/staging/lustre/TODO       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index e0a1574314e1..c34fd27a41f3 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -2695,7 +2695,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
- 			return status;
- 		}
- 	}
--	return tmp_oh ? 1 : 0;
-+	return 1;
- }
- 
- void ocfs2_inode_unlock_tracker(struct inode *inode,
+diff --git a/drivers/staging/lustre/README.txt b/drivers/staging/lustre/README.txt
+index 0676243eea9e..783959240490 100644
+--- a/drivers/staging/lustre/README.txt
++++ b/drivers/staging/lustre/README.txt
+@@ -4,7 +4,7 @@ Lustre Parallel Filesystem Client
+ The Lustre file system is an open-source, parallel file system
+ that supports many requirements of leadership class HPC simulation
+ environments.
+-Born from from a research project at Carnegie Mellon University,
++Born from a research project at Carnegie Mellon University,
+ the Lustre file system is a widely-used option in HPC.
+ The Lustre file system provides a POSIX compliant file system interface,
+ can scale to thousands of clients, petabytes of storage and
+diff --git a/drivers/staging/lustre/TODO b/drivers/staging/lustre/TODO
+index 94446487748a..5332cdb19bfa 100644
+--- a/drivers/staging/lustre/TODO
++++ b/drivers/staging/lustre/TODO
+@@ -12,7 +12,7 @@ addressed:
+ * https://jira.hpdd.intel.com/browse/LU-9859
+ *
+ * Track all the cleanups and simplification of the libcfs module. Remove
+-* functions the kernel provides. Possible intergrate some of the functionality
++* functions the kernel provides. Possibly integrate some of the functionality
+ * into the kernel proper.
+ *
+ ******************************************************************************
 -- 
 2.17.0
 
