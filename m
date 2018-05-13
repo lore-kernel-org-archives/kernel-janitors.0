@@ -1,15 +1,55 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 31 May 2018 16:48:48 +0000
-Subject: Re: [PATCH -next] nvmet: fix a typo in nvmet_file_ns_enable()
-Message-Id: <20180531164848.GB31353@lst.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 13 May 2018 11:17:04 +0000
+Subject: [PATCH] clk: stm32mp1: Fix a memory leak in 'clk_stm32_register_gate_ops()'
+Message-Id: <20180513111704.31842-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527731758-142629-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1527731758-142629-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Thanks,
+We allocate some memory which is neither used, nor referenced by anything.
+So axe it.
 
-applied to nvme-4.18.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch as not been compile-tested, I don't have the corresponding arch
+and have not taken time to cross-compile it.
+---
+ drivers/clk/clk-stm32mp1.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index edd3cf451401..dfb9cb5bd0c4 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -579,14 +579,9 @@ clk_stm32_register_gate_ops(struct device *dev,
+ 			    spinlock_t *lock)
+ {
+ 	struct clk_init_data init = { NULL };
+-	struct clk_gate *gate;
+ 	struct clk_hw *hw;
+ 	int ret;
+ 
+-	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-	if (!gate)
+-		return ERR_PTR(-ENOMEM);
+-
+ 	init.name = name;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+@@ -604,10 +599,8 @@ clk_stm32_register_gate_ops(struct device *dev,
+ 	hw->init = &init;
+ 
+ 	ret = clk_hw_register(dev, hw);
+-	if (ret) {
+-		kfree(gate);
++	if (ret)
+ 		hw = ERR_PTR(ret);
+-	}
+ 
+ 	return hw;
+ }
+-- 
+2.17.0
+
