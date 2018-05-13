@@ -1,30 +1,69 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 May 2018 08:58:25 +0000
-Subject: [PATCH] media: vivid: potential integer overflow in vidioc_g_edid()
-Message-Id: <20180517085825.GA4250@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Sun, 13 May 2018 02:32:04 +0000
+Subject: Applied "ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"" to the asoc tree
+Message-Id: <20180513023204.CCAB944007C@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180511132818.16728-1-colin.king@canonical.com>
+In-Reply-To: <20180511132818.16728-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-If we pick a very large "edid->blocks" value then the "edid->start_block
-+ edid->blocks" addition could wrap around.
+The patch
 
-Fixes: ef834f7836ec ("[media] vivid: add the video capture and output parts")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
 
-diff --git a/drivers/media/platform/vivid/vivid-vid-common.c b/drivers/media/platform/vivid/vivid-vid-common.c
-index e5914be0e12d..be531caa2cdf 100644
---- a/drivers/media/platform/vivid/vivid-vid-common.c
-+++ b/drivers/media/platform/vivid/vivid-vid-common.c
-@@ -860,7 +860,7 @@ int vidioc_g_edid(struct file *file, void *_fh,
- 		return -ENODATA;
- 	if (edid->start_block >= dev->edid_blocks)
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 2b8eae795580ca13ce6f035cac599f6a85c81bbf Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 11 May 2018 14:28:18 +0100
+Subject: [PATCH] ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
+
+Trivial fix to spelling mistake in dev_err message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/hisilicon/hi6210-i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/hisilicon/hi6210-i2s.c b/sound/soc/hisilicon/hi6210-i2s.c
+index 07a57209e055..53344a3b7a60 100644
+--- a/sound/soc/hisilicon/hi6210-i2s.c
++++ b/sound/soc/hisilicon/hi6210-i2s.c
+@@ -498,7 +498,7 @@ static int hi6210_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 			hi6210_i2s_txctrl(cpu_dai, 0);
+ 		break;
+ 	default:
+-		dev_err(cpu_dai->dev, "uknown cmd\n");
++		dev_err(cpu_dai->dev, "unknown cmd\n");
  		return -EINVAL;
--	if (edid->start_block + edid->blocks > dev->edid_blocks)
-+	if (edid->blocks > dev->edid_blocks - edid->start_block)
- 		edid->blocks = dev->edid_blocks - edid->start_block;
- 	if (adap)
- 		cec_set_edid_phys_addr(dev->edid, dev->edid_blocks * 128, adap->phys_addr);
+ 	}
+ 	return 0;
+-- 
+2.17.0
+
