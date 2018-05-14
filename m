@@ -1,25 +1,61 @@
-From: Brian Masney <masneyb@onstation.org>
-Date: Thu, 31 May 2018 09:28:01 +0000
-Subject: Re: [PATCH][next] iio: tsl2x7x/tsl2772: avoid potential division by zero
-Message-Id: <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 May 2018 12:45:03 +0000
+Subject: [bug report] rcu: Diagnostics for grace-period hangs
+Message-Id: <20180514124503.GA8398@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180530181936.17902-1-colin.king@canonical.com>
-In-Reply-To: <20180530181936.17902-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, May 30, 2018 at 07:19:36PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> It may be possible for tsl2772_get_lux to return a zero lux value
-> and hence a division by zero can occur when lux_val is zero. Check
-> for this case and return -ERANGE to avoid the division by zero.
-> 
-> Detected by CoverityScan, CID#1469484 ("Division or modulo by zero")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hello Paul E. McKenney,
 
-Acked-by: Brian Masney <masneyb@onstation.org>
+The patch e2ba0f065aec: "rcu: Diagnostics for grace-period hangs"
+from Apr 21, 2018, leads to the following static checker warning:
+
+	kernel/rcu/tree.c:2739 rcu_check_gp_start_stall()
+	error: double lock 'irqsave:flags'
+
+kernel/rcu/tree.c
+  2726  
+  2727          raw_spin_lock_irqsave_rcu_node(rnp, flags);
+  2728          j = jiffies;
+  2729          if (rcu_gp_in_progress(rsp) ||
+  2730              ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed) ||
+  2731              time_before(j, READ_ONCE(rsp->gp_req_activity) + HZ) ||
+  2732              time_before(j, READ_ONCE(rsp->gp_activity) + HZ) ||
+  2733              atomic_read(&warned)) {
+  2734                  raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+  2735                  return;
+  2736          }
+  2737          /* Hold onto the leaf lock to make others see warned=1. */
+  2738  
+  2739          raw_spin_lock_irqsave_rcu_node(rnp_root, flags);
+
+Saving irqsave is not nestable.  The second save overwrites the first so
+that IRQs can't be re-enabled.
+
+  2740          j = jiffies;
+  2741          if (rcu_gp_in_progress(rsp) ||
+  2742              ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed) ||
+  2743              time_before(j, rsp->gp_req_activity + HZ) ||
+  2744              time_before(j, rsp->gp_activity + HZ) ||
+  2745              atomic_xchg(&warned, 1)) {
+  2746                  raw_spin_unlock_irqrestore_rcu_node(rnp_root, flags);
+  2747                  raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+  2748                  return;
+  2749          }
+  2750          pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x %s->state:%#lx\n",
+  2751                   __func__, (long)READ_ONCE(rsp->gp_seq),
+  2752                   (long)READ_ONCE(rnp_root->gp_seq_needed),
+  2753                   j - rsp->gp_req_activity, j - rsp->gp_activity,
+  2754                   rsp->gp_flags, rsp->name,
+  2755                   rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
+  2756          WARN_ON(1);
+  2757          raw_spin_unlock_irqrestore_rcu_node(rnp_root, flags);
+  2758          raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+  2759  }
+
+
+regards,
+dan carpenter
