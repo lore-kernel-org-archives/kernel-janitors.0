@@ -1,33 +1,45 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 31 May 2018 02:31:22 +0000
-Subject: [PATCH net-next] net/smc: fix error return code in smc_setsockopt()
-Message-Id: <1527733882-149144-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 May 2018 17:15:52 +0000
+Subject: [PATCH] i2c: xiic: fix spelling mistake: "unexpexted" -> "unexpected"
+Message-Id: <20180514171552.25094-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ursula Braun <ubraun@linux.ibm.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-s390@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Moritz Fischer <mdf@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-i2c@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix to return error code -EINVAL instead of 0 if optlen is invalid.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 01d2f7e2cdd3 ("net/smc: sockopts TCP_NODELAY and TCP_CORK")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Trivial fix to spelling mistakes in dev_dbg messages
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/smc/af_smc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-xiic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index 2c369d4..973b447 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -1420,7 +1420,7 @@ static int smc_setsockopt(struct socket *sock, int level, int optname,
- 		return rc;
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index c80527816ad0..92def988d3c7 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -415,7 +415,7 @@ static irqreturn_t xiic_process(int irq, void *dev_id)
+ 		clr |= XIIC_INTR_RX_FULL_MASK;
+ 		if (!i2c->rx_msg) {
+ 			dev_dbg(i2c->adap.dev.parent,
+-				"%s unexpexted RX IRQ\n", __func__);
++				"%s unexpected RX IRQ\n", __func__);
+ 			xiic_clear_rx_fifo(i2c);
+ 			goto out;
+ 		}
+@@ -470,7 +470,7 @@ static irqreturn_t xiic_process(int irq, void *dev_id)
  
- 	if (optlen < sizeof(int))
--		return rc;
-+		return -EINVAL;
- 	get_user(val, (int __user *)optval);
+ 		if (!i2c->tx_msg) {
+ 			dev_dbg(i2c->adap.dev.parent,
+-				"%s unexpexted TX IRQ\n", __func__);
++				"%s unexpected TX IRQ\n", __func__);
+ 			goto out;
+ 		}
  
- 	lock_sock(sk);
+-- 
+2.17.0
 
