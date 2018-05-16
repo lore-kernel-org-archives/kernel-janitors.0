@@ -1,62 +1,34 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Fri, 04 May 2018 13:39:32 +0000
-Subject: [PATCH] apparmor: secid: fix error return value in error handling path
-Message-Id: <20180504133932.GA15968@embeddedor.com>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Wed, 16 May 2018 18:27:33 +0000
+Subject: [PATCH 4/5] staging: lustre: Fix "Possible intergrate"->"Possibly integrate"
+Message-Id: <20180516182733.5337-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-Currently, function apparmor_secid_to_secctx returns always zero,
-no matter if the value returned by aa_label_asxprint is negative
-(which implies that an error has occurred).
+Trivial fix to spelling mistake in TODO file.
 
-Fix this by temporarily storing the value returned by aa_label_asxprint
-into a variable of type int (signed) for its further evaluation.
-
-Addresses-Coverity-ID: 1468514 ("Unsigned compared against 0")
-Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- security/apparmor/secid.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/staging/lustre/TODO | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 5029248..4b902ed 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- {
- 	/* TODO: cache secctx and ref count so we don't have to recreate */
- 	struct aa_label *label = aa_secid_to_label(secid);
-+	int seclen_tmp;
- 
- 	AA_BUG(!secdata);
- 	AA_BUG(!seclen);
-@@ -150,17 +151,19 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- 		return -EINVAL;
- 
- 	if (secdata)
--		*seclen = aa_label_asxprint(secdata, root_ns, label,
-+		seclen_tmp = aa_label_asxprint(secdata, root_ns, label,
- 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
- 					    FLAG_HIDDEN_UNCONFINED |
- 					    FLAG_ABS_ROOT, GFP_ATOMIC);
- 	else
--		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
-+		seclen_tmp = aa_label_snxprint(NULL, 0, root_ns, label,
- 					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
- 					    FLAG_HIDDEN_UNCONFINED |
- 					    FLAG_ABS_ROOT);
--	if (*seclen < 0)
-+	if (seclen_tmp < 0)
- 		return -ENOMEM;
-+	else
-+		*seclen = seclen_tmp;
- 
- 	return 0;
- }
+diff --git a/drivers/staging/lustre/TODO b/drivers/staging/lustre/TODO
+index 94446487748a..5332cdb19bfa 100644
+--- a/drivers/staging/lustre/TODO
++++ b/drivers/staging/lustre/TODO
+@@ -12,7 +12,7 @@ addressed:
+ * https://jira.hpdd.intel.com/browse/LU-9859
+ *
+ * Track all the cleanups and simplification of the libcfs module. Remove
+-* functions the kernel provides. Possible intergrate some of the functionality
++* functions the kernel provides. Possibly integrate some of the functionality
+ * into the kernel proper.
+ *
+ ******************************************************************************
 -- 
-2.7.4
+2.17.0
 
