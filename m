@@ -1,22 +1,33 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 14 May 2018 10:58:12 +0000
-Subject: Re: [PATCH 1/2] tpm: replace kmalloc() + memcpy() with kmemdup()
-Message-Id: <20180514105812.GG8228@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 May 2018 08:48:07 +0000
+Subject: [PATCH] dmaengine: sprd: fix an NULL vs IS_ERR() bug
+Message-Id: <20180516084807.GA23043@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180509001258epcas1p4e8db163d8babd90284dd6afb6a96eb0f@epcas1p4.samsung.com>
- <1525824757-21835-1-git-send-email-ji_hun.kim@samsung.com>
-In-Reply-To: <1525824757-21835-1-git-send-email-ji_hun.kim@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Cc: peterhuewe@gmx.de, tweek@google.com, jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org, javierm@redhat.com, sonnyrao@chromium.org, enric.balletbo@collabora.com, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>, Baolin Wang <baolin.wang@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 09, 2018 at 09:12:36AM +0900, Ji-Hun Kim wrote:
-> Use kmemdup rather than duplicating its implementation.
-> 
-> Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+We recently cleaned this code up but we need to update the error
+handling as well.  The devm_ioremap_resource() returns error pointers on
+error, never NULL.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: e7f063ae1a31 ("dmaengine: sprd: Use devm_ioremap_resource() to map memory")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-/Jarkko
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index e715d07aa632..36df3b096bbc 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -808,8 +808,8 @@ static int sprd_dma_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sdev->glb_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!sdev->glb_base)
+-		return -ENOMEM;
++	if (IS_ERR(sdev->glb_base))
++		return PTR_ERR(sdev->glb_base);
+ 
+ 	dma_cap_set(DMA_MEMCPY, sdev->dma_dev.cap_mask);
+ 	sdev->total_chns = chn_count;
