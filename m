@@ -1,80 +1,66 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 09 May 2018 08:23:07 +0000
-Subject: Re: [PATCH] drm/dumb-buffers: Integer overflow in drm_mode_create_ioctl()
-Message-Id: <20180509082307.GS28661@phenom.ffwll.local>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Wed, 16 May 2018 18:27:07 +0000
+Subject: [PATCH 2/5] staging: lustre: Fix block comments style
+Message-Id: <20180516182707.5191-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180509072249.GA12754@mwanda>
-In-Reply-To: <20180509072249.GA12754@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-On Wed, May 09, 2018 at 10:22:49AM +0300, Dan Carpenter wrote:
-> There is a comment here which says that DIV_ROUND_UP() and that's where
-> the problem comes from.  Say you pick:
-> 
-> 	args->bpp = UINT_MAX - 7;
-> 	args->width = 4;
-> 	args->height = 1;
-> 
-> The integer overflow in DIV_ROUND_UP() means "cpp" is UINT_MAX / 8 and
-> because of how we picked args->width that means cpp < UINT_MAX / 4.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Btw, DIV_ROUND_UP() integer overflows have been a recurring source of
-> bugs so I have an unreleased static checker warning specific for that.
-> This line triggers three warnings for me on my unreleased code:
-> 
-> drivers/gpu/drm/drm_dumb_buffers.c:69 drm_mode_create_dumb_ioctl() warn: negative user subtract: 0-u32max - 1
-> drivers/gpu/drm/drm_dumb_buffers.c:69 drm_mode_create_dumb_ioctl() warn: potential integer overflow from user '(args->bpp) + (8)'
-> drivers/gpu/drm/drm_dumb_buffers.c:69 drm_mode_create_dumb_ioctl() warn: potential integer overflow in 'DIV_ROUND_UP'
-> 
-> It's a pretty common idiom in the kernel to overflow and then test for
-> it later so I'm not able to release this code because of the number of
-> false positives that this idiom causes...
-> 
-> diff --git a/drivers/gpu/drm/drm_dumb_buffers.c b/drivers/gpu/drm/drm_dumb_buffers.c
-> index 39ac15ce4702..45b0b5bbb5f8 100644
-> --- a/drivers/gpu/drm/drm_dumb_buffers.c
-> +++ b/drivers/gpu/drm/drm_dumb_buffers.c
-> @@ -65,7 +65,8 @@ int drm_mode_create_dumb_ioctl(struct drm_device *dev,
->  		return -EINVAL;
->  
->  	/* overflow checks for 32bit size calculations */
-> -	/* NOTE: DIV_ROUND_UP() can overflow */
-> +	if (args->bpp > UINT_MAX - 8)
-> +		return -EINVAL;
->  	cpp = DIV_ROUND_UP(args->bpp, 8);
->  	if (!cpp || cpp > 0xffffffffU / args->width)
+This patch fixes the checkpatch.pl warning:
 
-The !cpp check is now redundant, this was our minimal overflow check. Note
-that we only really care for cpp != 0 and that the size calculation doesn't
-overflow. Userspace specifying a completely bogus bpp value is ok
-otherwise (reasonable values only go up to about 128). So I think there's
-no security issue here.
+WARNING:BLOCK_COMMENT_STYLE: Block comments use a trailing */ on a separate line
 
-Anyway, can you pls respin with the !cpp check removed? See also
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+---
+ .../staging/lustre/include/uapi/linux/lustre/lustre_idl.h   | 6 ++++--
+ .../staging/lustre/include/uapi/linux/lustre/lustre_user.h  | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-commit 6a77e80e55cacace60ff03aa717a6d364a401d2b (HEAD -> stuff)
-Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon Apr 30 17:04:10 2018 +0200
-
-    backlight: remove obsolete comment for ->state
-
-for context.
-
-Thanks, Daniel
-
->  		return -EINVAL;
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
+index e6016a71ad23..f13138972be2 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
+@@ -1526,9 +1526,11 @@ struct mdt_rec_setattr {
+ #define MDS_OPEN_HAS_OBJS    020000000000 /* Just set the EA the obj exist */
+ #define MDS_OPEN_NORESTORE  0100000000000ULL /* Do not restore file at open */
+ #define MDS_OPEN_NEWSTRIPE  0200000000000ULL /* New stripe needed (restripe or
+-					      * hsm restore) */
++					      * hsm restore)
++					      */
+ #define MDS_OPEN_VOLATILE   0400000000000ULL /* File is volatile = created
+-						unlinked */
++					      * unlinked 
++					      */
+ #define MDS_OPEN_LEASE	   01000000000000ULL /* Open the file and grant lease
+ 					      * delegation, succeed if it's not
+ 					      * being opened with conflict mode.
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
+index 2fcfe2b2d365..f0fbe3318db6 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
+@@ -405,7 +405,8 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
+ 
+ /* Compile with -D_LARGEFILE64_SOURCE or -D_GNU_SOURCE (or #define) to
+  * use this.  It is unsafe to #define those values in this header as it
+- * is possible the application has already #included <sys/stat.h>. */
++ * is possible the application has already #included <sys/stat.h>.
++ */
+ #ifdef HAVE_LOV_USER_MDS_DATA
+ #define lov_user_mds_data lov_user_mds_data_v1
+ struct lov_user_mds_data_v1 {
+@@ -468,7 +469,8 @@ struct ll_fid {
+ 	__u64 id;	 /* holds object id */
+ 	__u32 generation; /* holds object generation */
+ 	__u32 f_type;     /* holds object type or stripe idx when passing it to
+-			   * OST for saving into EA. */
++			   * OST for saving into EA.
++			   */
+ };
+ 
+ #define UUID_MAX	40
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.17.0
+
