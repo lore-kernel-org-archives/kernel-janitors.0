@@ -1,92 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 31 May 2018 06:44:49 +0000
-Subject: [PATCH -net] net: ethernet: davinci_emac: fix error handling in probe()
-Message-Id: <20180531064449.y2do4kjban2hmatz@kili.mountain>
+Date: Wed, 16 May 2018 09:28:57 +0000
+Subject: [PATCH] sample: vfio/mdev: add a missing error code
+Message-Id: <20180516092857.GA25195@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Cyril Chemparathy <cyril@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>, Lukas Wunner <lukas@wunner.de>, Florian Fainelli <f.fainelli@gmail.com>, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The current error handling code has an issue where it does:
+We forgot to set "ret = -ENOMEM;" here.
 
-	if (priv->txchan)
-		cpdma_chan_destroy(priv->txchan);
-
-The problem is that ->txchan is either valid or an error pointer (which
-would lead to an Oops).  I've changed it to use multiple error labels so
-that the test can be removed.
-
-Also there were some missing calls to netif_napi_del().
-
-Fixes: 3ef0fdb2342c ("net: davinci_emac: switch to new cpdma layer")
+Fixes: 2933b7a9b2fd ("sample: vfio mdev display - guest driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index be0fec17d95d..06d7c9e4dcda 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1873,7 +1873,7 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->txchan)) {
- 		dev_err(&pdev->dev, "error initializing tx dma channel\n");
- 		rc = PTR_ERR(priv->txchan);
--		goto no_cpdma_chan;
-+		goto err_free_dma;
- 	}
+diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+index 2719bb259653..6fe0187f47a2 100644
+--- a/samples/vfio-mdev/mdpy-fb.c
++++ b/samples/vfio-mdev/mdpy-fb.c
+@@ -131,8 +131,10 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
+ 		 width, height);
  
- 	priv->rxchan = cpdma_chan_create(priv->dma, EMAC_DEF_RX_CH,
-@@ -1881,14 +1881,14 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->rxchan)) {
- 		dev_err(&pdev->dev, "error initializing rx dma channel\n");
- 		rc = PTR_ERR(priv->rxchan);
--		goto no_cpdma_chan;
-+		goto err_free_txchan;
- 	}
+ 	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
+-	if (!info)
++	if (!info) {
++		ret = -ENOMEM;
+ 		goto err_release_regions;
++	}
+ 	pci_set_drvdata(pdev, info);
+ 	par = info->par;
  
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "error getting irq res\n");
- 		rc = -ENOENT;
--		goto no_cpdma_chan;
-+		goto err_free_rxchan;
- 	}
- 	ndev->irq = res->start;
- 
-@@ -1914,7 +1914,7 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 		pm_runtime_put_noidle(&pdev->dev);
- 		dev_err(&pdev->dev, "%s: failed to get_sync(%d)\n",
- 			__func__, rc);
--		goto no_cpdma_chan;
-+		goto err_napi_del;
- 	}
- 
- 	/* register the network device */
-@@ -1924,7 +1924,7 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "error in register_netdev\n");
- 		rc = -ENODEV;
- 		pm_runtime_put(&pdev->dev);
--		goto no_cpdma_chan;
-+		goto err_napi_del;
- 	}
- 
- 
-@@ -1937,11 +1937,13 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--no_cpdma_chan:
--	if (priv->txchan)
--		cpdma_chan_destroy(priv->txchan);
--	if (priv->rxchan)
--		cpdma_chan_destroy(priv->rxchan);
-+err_napi_del:
-+	netif_napi_del(&priv->napi);
-+err_free_rxchan:
-+	cpdma_chan_destroy(priv->rxchan);
-+err_free_txchan:
-+	cpdma_chan_destroy(priv->txchan);
-+err_free_dma:
- 	cpdma_ctlr_destroy(priv->dma);
- no_pdata:
- 	if (of_phy_is_fixed_link(np))
