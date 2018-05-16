@@ -1,73 +1,153 @@
-From: NeilBrown <neilb@suse.com>
-Date: Sat, 12 May 2018 21:31:45 +0000
-Subject: Re: [PATCH] staging: lustre: Use 'kvfree()' for memory allocated by 'kvzalloc()'
-Message-Id: <87y3go8sse.fsf@notabene.neil.brown.name>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Wed, 16 May 2018 18:26:36 +0000
+Subject: [PATCH 1/5] staging: lustre: Fix inclusion of local headers
+Message-Id: <20180516182636.5137-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180512121426.22988-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180512121426.22988-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, oleg.drokin@intel.com, andreas.dilger@intel.com, jsimmons@infradead.org, gregkh@linuxfoundation.org, aastha.gupta4104@gmail.com
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, lustre-devel@lists.lustre.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+This patch fixes the checkpatch.pl error:
 
-On Sat, May 12 2018, Christophe JAILLET wrote:
+ERROR:UAPI_INCLUDE: No #include in ...include/uapi/... should use a uapi/ path
+prefix
 
-> 'buf' is allocated with 'kvzalloc()'. 'kvfree()' must be used to free it.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+---
+ drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h     | 4 ++--
+ drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h      | 2 +-
+ drivers/staging/lustre/include/uapi/linux/lnet/nidstr.h       | 2 +-
+ drivers/staging/lustre/include/uapi/linux/lustre/lustre_cfg.h | 2 +-
+ drivers/staging/lustre/include/uapi/linux/lustre/lustre_fid.h | 2 +-
+ drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h | 4 ++--
+ .../staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h   | 2 +-
+ .../staging/lustre/include/uapi/linux/lustre/lustre_ostid.h   | 2 +-
+ .../staging/lustre/include/uapi/linux/lustre/lustre_user.h    | 2 +-
+ 9 files changed, 11 insertions(+), 11 deletions(-)
 
-Reviewed-by: NeilBrown <neilb@suse.com>
+diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
+index c1619f411d81..1530ac26b449 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
++++ b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
+@@ -29,8 +29,8 @@
+ #ifndef LNET_DLC_H
+ #define LNET_DLC_H
+ 
+-#include <uapi/linux/lnet/libcfs_ioctl.h>
+-#include <uapi/linux/lnet/lnet-types.h>
++#include "libcfs_ioctl.h"
++#include "lnet-types.h"
+ 
+ #define MAX_NUM_SHOW_ENTRIES	32
+ #define LNET_MAX_STR_LEN	128
+diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h b/drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h
+index cccb32dd28f2..c7be86610cc0 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h
++++ b/drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h
+@@ -15,7 +15,7 @@
+ #ifndef _LNETCTL_H_
+ #define _LNETCTL_H_
+ 
+-#include <uapi/linux/lnet/lnet-types.h>
++#include "lnet-types.h"
+ 
+ /** \addtogroup lnet_fault_simulation
+  * @{
+diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/nidstr.h b/drivers/staging/lustre/include/uapi/linux/lnet/nidstr.h
+index 882074ed6021..d153c97ea64d 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lnet/nidstr.h
++++ b/drivers/staging/lustre/include/uapi/linux/lnet/nidstr.h
+@@ -28,7 +28,7 @@
+ #ifndef _LNET_NIDSTRINGS_H
+ #define _LNET_NIDSTRINGS_H
+ 
+-#include <uapi/linux/lnet/lnet-types.h>
++#include "lnet-types.h"
+ 
+ /**
+  *  Lustre Network Driver types.
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_cfg.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_cfg.h
+index 11b51d93f64c..a1dc912af960 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_cfg.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_cfg.h
+@@ -35,7 +35,7 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+-#include <uapi/linux/lustre/lustre_user.h>
++#include "lustre_user.h"
+ 
+ /** \defgroup cfg cfg
+  *
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fid.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fid.h
+index 2e7a8d103777..1e347a86427c 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fid.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fid.h
+@@ -37,7 +37,7 @@
+ #ifndef _UAPI_LUSTRE_FID_H_
+ #define _UAPI_LUSTRE_FID_H_
+ 
+-#include <uapi/linux/lustre/lustre_idl.h>
++#include "lustre_idl.h"
+ 
+ /** returns fid object sequence */
+ static inline __u64 fid_seq(const struct lu_fid *fid)
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
+index aac98dbcf6e3..e6016a71ad23 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
+@@ -72,8 +72,8 @@
+ 
+ #include <uapi/linux/lnet/lnet-types.h>
+ /* Defn's shared with user-space. */
+-#include <uapi/linux/lustre/lustre_user.h>
+-#include <uapi/linux/lustre/lustre_ver.h>
++#include "lustre_user.h"
++#include "lustre_ver.h"
+ 
+ /*
+  *  GENERAL STUFF
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h
+index 6e4e109fb874..54e8fbbe98c4 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h
+@@ -31,7 +31,7 @@
+ #include <linux/ioctl.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+-#include <uapi/linux/lustre/lustre_idl.h>
++#include "lustre_idl.h"
+ 
+ #if !defined(__KERNEL__) && !defined(LUSTRE_UTILS)
+ # error This file is for Lustre internal use only.
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ostid.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ostid.h
+index 3343b602219b..9110229b0886 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ostid.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ostid.h
+@@ -35,7 +35,7 @@
+ #define _UAPI_LUSTRE_OSTID_H_
+ 
+ #include <linux/errno.h>
+-#include <uapi/linux/lustre/lustre_fid.h>
++#include "lustre_fid.h"
+ 
+ static inline __u64 lmm_oi_id(const struct ost_id *oi)
+ {
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
+index 5e332e3af68a..2fcfe2b2d365 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
+@@ -55,7 +55,7 @@
+ # include <sys/quota.h>
+ # include <sys/stat.h>
+ #endif /* __KERNEL__ */
+-#include <uapi/linux/lustre/lustre_fiemap.h>
++#include "lustre_fiemap.h"
+ 
+ /*
+  * We need to always use 64bit version because the structure
+-- 
+2.17.0
 
-Thanks.
-We could possible add:
-Fixes: 11c647caf74b ("staging: lustre: obdclass: variable llog chunk size")
-
-just for completeness.
-
-NeilBrown
-
-> ---
->  drivers/staging/lustre/lustre/obdclass/llog.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/lustre/lustre/obdclass/llog.c b/drivers/stag=
-ing/lustre/lustre/obdclass/llog.c
-> index 693e1129f1f9..5e04d133b596 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/llog.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/llog.c
-> @@ -385,7 +385,7 @@ static int llog_process_thread(void *arg)
->  	if (cd)
->  		cd->lpcd_last_idx =3D last_called_index;
->=20=20
-> -	kfree(buf);
-> +	kvfree(buf);
->  	lpi->lpi_rc =3D rc;
->  	return 0;
->  }
-> --=20
-> 2.17.0
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlr3XUIACgkQOeye3VZi
-gbmjwg/+JuSwFsPnPrC23r7O/pDHVq73Y/wJKJJPc67j6iaAJFq3VcL/jCoEzpe1
-2xWs9dYP30JphzA4F2W39gqLURP3xzaFEUZFZYRF/bwYrXiJB9Px+bf0yA+f1yvW
-TWOcYdWvIQCvCECRAo8z9IMCCtSvjf154gmyx/fJLnmk7wAyoI66M7EwOdk1SrJz
-vdtFRX+xxm1giMRR7StG4TiWc7NIGKJIHhsbrU+Xf7QLc1X0e+D4NTEexf0NFKSG
-hVyyFr+N2QOQ2PPYPGfAQBTr9nEGyC1XFQ0KLH0bHS9BofXRQVEX0TW8QIisF9OX
-vp7dTY75AXiKqL0yKp8FbCKAoOu8vIDQtTT3czGilmi8LlWEYCv8WXlz0HNeKl3U
-vpc2Wf9B03bFvQOL5fbVOtliFH54X0a/qx5sy9HsdLgFv/pCiH/gPCSsypZPOuwP
-ON28GmTzNMvc5u4bN+L3dfHJdl/TEH2cd0QfHt8O4afKXEzKrqYb3pj3r4SfB0jh
-ygFosVuKVRR3Xvbunht6IMwqyBqivR5ctr+NYwIEydw7NQgiaIQUKwA4seSXgFMy
-Z1sbjn8YH5I7BBc6sqWjJh1dIevL2CvGntp3EGG3nJAC1f4ikKHDidZLjZbd5y1j
-B8sIFogTlopW9IxnzKfsKLjQiGWlu2lj6ervUIeWw1o0dQc/XGY=
-=M43m
------END PGP SIGNATURE-----
---=-=-=--
