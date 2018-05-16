@@ -1,69 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sun, 13 May 2018 02:32:04 +0000
-Subject: Applied "ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"" to the asoc tree
-Message-Id: <20180513023204.CCAB944007C@finisterre.ee.mobilebroadband>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Wed, 16 May 2018 18:27:17 +0000
+Subject: [PATCH 3/5] staging: lustre: Fix "unsigned"->"unsigned int"
+Message-Id: <20180516182717.5240-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180511132818.16728-1-colin.king@canonical.com>
-In-Reply-To: <20180511132818.16728-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-The patch
+This patch fixes the checkpatch.pl warning:
 
-   ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
+WARNING:UNSPECIFIED_INT: Prefer 'unsigned int' to bare use of 'unsigned'
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 2b8eae795580ca13ce6f035cac599f6a85c81bbf Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 11 May 2018 14:28:18 +0100
-Subject: [PATCH] ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
-
-Trivial fix to spelling mistake in dev_err message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- sound/soc/hisilicon/hi6210-i2s.c | 2 +-
+ .../staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h    | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/hisilicon/hi6210-i2s.c b/sound/soc/hisilicon/hi6210-i2s.c
-index 07a57209e055..53344a3b7a60 100644
---- a/sound/soc/hisilicon/hi6210-i2s.c
-+++ b/sound/soc/hisilicon/hi6210-i2s.c
-@@ -498,7 +498,7 @@ static int hi6210_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 			hi6210_i2s_txctrl(cpu_dai, 0);
- 		break;
- 	default:
--		dev_err(cpu_dai->dev, "uknown cmd\n");
-+		dev_err(cpu_dai->dev, "unknown cmd\n");
- 		return -EINVAL;
- 	}
- 	return 0;
+diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
+index f5214dc33c60..d375a476f5ea 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
++++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
+@@ -51,7 +51,7 @@ static inline size_t fiemap_count_to_size(size_t extent_count)
+ 				       sizeof(struct fiemap_extent);
+ }
+ 
+-static inline unsigned fiemap_size_to_count(size_t array_size)
++static inline unsigned int fiemap_size_to_count(size_t array_size)
+ {
+ 	return (array_size - sizeof(struct fiemap)) /
+ 		sizeof(struct fiemap_extent);
 -- 
 2.17.0
 
