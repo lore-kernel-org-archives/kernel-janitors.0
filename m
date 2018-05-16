@@ -1,25 +1,30 @@
-From: rudi@ithb.ac.id
-Date: Sun, 06 May 2018 03:05:04 +0000
-Subject: =?utf-8?b?V29obHTDpHRpZ2tlaXRzc3BlbmRlIGluIEjDtmhlIHZvbiDigqwgMi4wMDAu?= =?utf-8?q?000=2C00?=
-Message-Id: <20180506030144.EDC34842B6D@mail.ithb.ac.id>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 May 2018 09:52:41 +0000
+Subject: PATCH v2] PM / OPP: silence an uninitialized variable warning
+Message-Id: <20180516095241.GA27540@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Lieber Freund,
- 
-Ich bin Herr Richard Wahl der Mega-Gewinner von $ 533M In Mega Millions Jackpot spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt. Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt. Ich habe mich freiwillig dazu entschieden, Ihnen den Betrag von € 2.000.000,00 EUR zu spenden
-eine der ausgewählten 5, um meine Gewinne zu überprüfen, finden Sie auf meiner You Tube Seite unten.
- 
-UHR MICH HIER: https://www.youtube.com/watch?v=tne02ExNDrw
- 
-Das ist dein Spendencode: [DF00430342018]
- 
-Antworten Sie mit dem Spendencode auf diese E-Mail: richardwahlfunds@gmail.com
- 
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
- 
-Grüße
-Herr Richard Wahl
+Smatch complains that it's possible we print "rate" in the debug output
+when it hasn't been initialized.  It should be zero on that path.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fix it a different way
+
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 7026e9f484ea..6d15f05bfc28 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -287,7 +287,7 @@ static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
+ 			      struct device_node *np)
+ {
+ 	struct dev_pm_opp *new_opp;
+-	u64 rate;
++	u64 rate = 0;
+ 	u32 val;
+ 	int ret;
+ 	bool rate_not_available = false;
