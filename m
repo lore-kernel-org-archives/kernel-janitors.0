@@ -1,45 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 11 May 2018 14:18:13 +0000
-Subject: [PATCH] media: dvb_frontends: fix spelling mistake: "unexpcted" -> "unexpected"
-Message-Id: <20180511141813.26739-1-colin.king@canonical.com>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Wed, 16 May 2018 18:27:43 +0000
+Subject: [PATCH 5/5] staging: lustre: Fix "from from"->"from"
+Message-Id: <20180516182743.5387-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in README.txt
 
-Trivial fix to spelling mistake in dprintk message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- drivers/media/dvb-frontends/l64781.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/README.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/l64781.c b/drivers/media/dvb-frontends/l64781.c
-index e056f36e6f0c..249c18761e6e 100644
---- a/drivers/media/dvb-frontends/l64781.c
-+++ b/drivers/media/dvb-frontends/l64781.c
-@@ -546,7 +546,7 @@ struct dvb_frontend* l64781_attach(const struct l64781_config* config,
- 
- 	/* Responds to all reads with 0 */
- 	if (l64781_readreg(state, 0x1a) != 0) {
--		dprintk("Read 1 returned unexpcted value\n");
-+		dprintk("Read 1 returned unexpected value\n");
- 		goto error;
- 	}
- 
-@@ -555,7 +555,7 @@ struct dvb_frontend* l64781_attach(const struct l64781_config* config,
- 
- 	/* Responds with register default value */
- 	if (l64781_readreg(state, 0x1a) != 0xa1) {
--		dprintk("Read 2 returned unexpcted value\n");
-+		dprintk("Read 2 returned unexpected value\n");
- 		goto error;
- 	}
- 
+diff --git a/drivers/staging/lustre/README.txt b/drivers/staging/lustre/README.txt
+index 0676243eea9e..783959240490 100644
+--- a/drivers/staging/lustre/README.txt
++++ b/drivers/staging/lustre/README.txt
+@@ -4,7 +4,7 @@ Lustre Parallel Filesystem Client
+ The Lustre file system is an open-source, parallel file system
+ that supports many requirements of leadership class HPC simulation
+ environments.
+-Born from from a research project at Carnegie Mellon University,
++Born from a research project at Carnegie Mellon University,
+ the Lustre file system is a widely-used option in HPC.
+ The Lustre file system provides a POSIX compliant file system interface,
+ can scale to thousands of clients, petabytes of storage and
 -- 
 2.17.0
 
