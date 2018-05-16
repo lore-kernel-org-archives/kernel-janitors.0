@@ -1,54 +1,39 @@
-From: John Crispin <john@phrozen.org>
-Date: Wed, 16 May 2018 02:49:00 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Wed, 16 May 2018 11:23:53 +0000
 Subject: Re: [PATCH] PCI: qcom: fix a bitwise vs logical NOT typo
-Message-Id: <732679ef-69e5-a3e6-9cd6-d869d37f0678@phrozen.org>
+Message-Id: <20180516112353.GA14579@e107981-ln.cambridge.arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180501072250.GA4269@mwanda>
- <b0878925-507d-abbd-343f-3917ee60643f@mm-sol.com>
-In-Reply-To: <b0878925-507d-abbd-343f-3917ee60643f@mm-sol.com>
+In-Reply-To: <20180501072250.GA4269@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Stanimir Varbanov <svarbanov@mm-sol.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, John Crispin <john@phrozen.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Tue, May 01, 2018 at 10:22:50AM +0300, Dan Carpenter wrote:
+> There is a typo here so we accidentally set "val" to zero when we
+> intended just to clear BIT(0).
+> 
+> Fixes: 90d52d57ccac ("PCI: qcom: Add support for IPQ4019 PCIe controller")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Not tested.
+> 
+> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+> index 5897af7d3355..b65bbf7c284e 100644
+> --- a/drivers/pci/dwc/pcie-qcom.c
+> +++ b/drivers/pci/dwc/pcie-qcom.c
+> @@ -869,7 +869,7 @@ static int qcom_pcie_init_2_4_0(struct qcom_pcie *pcie)
+>  
+>  	/* enable PCIe clocks and resets */
+>  	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
+> -	val &= !BIT(0);
+> +	val &= ~BIT(0);
+>  	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
+>  
+>  	/* change DBI base address */
 
+Applied to pci/dwc for v4.18, thanks.
 
-On 10/05/18 01:08, Stanimir Varbanov wrote:
-> Hi Dan,
->
-> Thanks for the patch!
->
-> On  1.05.2018 10:22, Dan Carpenter wrote:
->> There is a typo here so we accidentally set "val" to zero when we
->> intended just to clear BIT(0).
->>
->> Fixes: 90d52d57ccac ("PCI: qcom: Add support for IPQ4019 PCIe 
->> controller")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> Not tested.
->>
->> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
->> index 5897af7d3355..b65bbf7c284e 100644
->> --- a/drivers/pci/dwc/pcie-qcom.c
->> +++ b/drivers/pci/dwc/pcie-qcom.c
->> @@ -869,7 +869,7 @@ static int qcom_pcie_init_2_4_0(struct qcom_pcie 
->> *pcie)
->>         /* enable PCIe clocks and resets */
->>       val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
->> -    val &= !BIT(0);
->> +    val &= ~BIT(0);
->>       writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
->>         /* change DBI base address */
->>
->
-> John, can you test that fix?
->
-> Otherwise the fix looks correct:
->
-> Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
->
-> regards,
-> Stan
-Acked-by: John Crispin <john@phrozen.org>
+Lorenzo
