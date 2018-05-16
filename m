@@ -1,56 +1,32 @@
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-Date: Fri, 11 May 2018 19:32:23 +0000
-Subject: Re: [lustre-devel] [PATCH] staging: lustre: fix spelling mistake: "req_ulinked" -> "req_unlinked"
-Message-Id: <C3001646-0A1B-4118-81DF-486D7BAC7208@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 May 2018 08:48:37 +0000
+Subject: [PATCH] cfg80211: Use correct GFP_ mask in cfg80211_del_sta_sinfo()
+Message-Id: <20180516084836.GB23043@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180511133859.18733-1-colin.king@canonical.com>
-In-Reply-To: <20180511133859.18733-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, NeilBrown <neilb@suse.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Drokin,
- Oleg" <oleg.drokin@intel.com>
+To: Johannes Berg <johannes@sipsolutions.net>, Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On May 11, 2018, at 07:38, Colin King <colin.king@canonical.com> wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in DEBUG_REQ message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Smatch complains that we should use the passed in "gfp" instead of hard
+coding GFP_KERNEL.  I looked at some of the callers and this would
+probably be a bug for rtw_cfg80211_indicate_sta_disassoc() which uses
+GFP_ATOMIC and a NULL "sinfo".
 
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+Fixes: 52539ca89f36 ("cfg80211: Expose TXQ stats and parameters to userspace")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
-> drivers/staging/lustre/lustre/ptlrpc/client.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
-> index eeb281266413..a51feaeb7734 100644
-> --- a/drivers/staging/lustre/lustre/ptlrpc/client.c
-> +++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
-> @@ -2514,7 +2514,7 @@ static int ptlrpc_unregister_reply(struct ptlrpc_request *request, int async)
-> 		}
-> 
-> 		DEBUG_REQ(D_WARNING, request,
-> -			  "Unexpectedly long timeout receiving_reply=%d req_ulinked=%d reply_unlinked=%d",
-> +			  "Unexpectedly long timeout receiving_reply=%d req_unlinked=%d reply_unlinked=%d",
-> 			  request->rq_receiving_reply,
-> 			  request->rq_req_unlinked,
-> 			  request->rq_reply_unlinked);
-> -- 
-> 2.17.0
-
-Cheers, Andreas
---
-Andreas Dilger
-Lustre Principal Architect
-Intel Corporation
-
-
-
-
-
-
-
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index afbe5105bf7f..3eb645b81777 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -14644,7 +14644,7 @@ void cfg80211_del_sta_sinfo(struct net_device *dev, const u8 *mac_addr,
+ 	struct station_info *empty_sinfo = NULL;
+ 
+ 	if (!sinfo) {
+-		empty_sinfo = kzalloc(sizeof(*empty_sinfo), GFP_KERNEL);
++		empty_sinfo = kzalloc(sizeof(*empty_sinfo), gfp);
+ 		if (!empty_sinfo)
+ 			return;
+ 		sinfo = empty_sinfo;
