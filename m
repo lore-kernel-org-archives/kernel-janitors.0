@@ -1,69 +1,38 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Thu, 17 May 2018 00:42:33 +0000
-Subject: Re: [PATCH v3] {net, IB}/mlx5: Use 'kvfree()' for memory allocated by 'kvzalloc()'
-Message-Id: <52e933f9bab99e5b04d7faac21ef4371776ed2e9.camel@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 May 2018 12:56:05 +0000
+Subject: [PATCH] drm/amd/pp: missing curly braces in smu7_enable_sclk_mclk_dpm()
+Message-Id: <20180517125604.GA10930@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180516190720.11633-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180516190720.11633-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>, Matan Barak <matanb@mellanox.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "davem@davemloft.net" <davem@davemloft.net>, "leon@kernel.org" <leon@kernel.org>, "dledford@redhat.com" <dledford@redhat.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Eric Huang <JinHuiEric.Huang-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Evan Quan <evan.quan-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-T24gV2VkLCAyMDE4LTA1LTE2IGF0IDIxOjA3ICswMjAwLCBDaHJpc3RvcGhlIEpBSUxMRVQgd3Jv
-dGU6DQo+IFdoZW4gJ2t2emFsbG9jKCknIGlzIHVzZWQgdG8gYWxsb2NhdGUgbWVtb3J5LCAna3Zm
-cmVlKCknIG11c3QgYmUgdXNlZA0KPiB0bw0KPiBmcmVlIGl0Lg0KPiANCj4gRml4ZXM6IDFjYmU2
-ZmM4NmNjZmUgKCJJQi9tbHg1OiBBZGQgc3VwcG9ydCBmb3IgQ1FFIGNvbXByZXNzaW5nIikNCj4g
-Rml4ZXM6IGZlZDljZTIyYmY4YWUgKCJuZXQvbWx4NTogRS1Td2l0Y2gsIEFkZCBBUEkgdG8gY3Jl
-YXRlIHZwb3J0IHJ4DQo+IHJ1bGVzIikNCj4gRml4ZXM6IDllZmE3NTI1NDU5M2QgKCJuZXQvbWx4
-NV9jb3JlOiBJbnRyb2R1Y2UgYWNjZXNzIGZ1bmN0aW9ucyB0bw0KPiBxdWVyeSB2cG9ydCBSb0NF
-IGZpZWxkcyIpDQo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waGUgSkFJTExFVCA8Y2hyaXN0b3Bo
-ZS5qYWlsbGV0QHdhbmFkb28uZnI+DQo+IC0tLQ0KPiB2MSAtPiB2MjogTW9yZSBwbGFjZXMgdG8g
-dXBkYXRlIGhhdmUgYmVlbiBhZGRlZCB0byB0aGUgcGF0Y2gNCj4gdjIgLT4gdjM6IEFkZCBGaXhl
-cyB0YWcNCj4gDQo+IDMgcGF0Y2hlcyB3aXRoIG9uZSBGaXhlcyB0YWcgZWFjaCBzaG91bGQgcHJv
-YmFibHkgYmUgYmV0dGVyLCBidXQNCj4gaG9uZXN0bHksIEkgd29uJ3Qgc2VuZCBhIHY0Lg0KPiBG
-aWxsIGZyZWUgdG8gc3BsaXQgaXQgaWYgbmVlZGVkLg0KDQpBcHBsaWVkIHRvIG1seDUtbmV4dCwg
-dGhhbmtzIENocmlzdG9waGUhDQoNCj4gLS0tDQo+ICBkcml2ZXJzL2luZmluaWJhbmQvaHcvbWx4
-NS9jcS5jICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMiArLQ0KPiAgZHJpdmVycy9uZXQv
-ZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2hfb2ZmbG9hZHMuYyB8IDIgKy0NCj4g
-IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS92cG9ydC5jICAgICAgICAg
-ICAgfCA2ICsrKw0KPiAtLS0NCj4gIDMgZmlsZXMgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCA1
-IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9ody9t
-bHg1L2NxLmMNCj4gYi9kcml2ZXJzL2luZmluaWJhbmQvaHcvbWx4NS9jcS5jDQo+IGluZGV4IDc3
-ZDI1N2VjODk5Yi4uNmQ1MmVhMDM1NzRlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2luZmluaWJh
-bmQvaHcvbWx4NS9jcS5jDQo+ICsrKyBiL2RyaXZlcnMvaW5maW5pYmFuZC9ody9tbHg1L2NxLmMN
-Cj4gQEAgLTg0OSw3ICs4NDksNyBAQCBzdGF0aWMgaW50IGNyZWF0ZV9jcV91c2VyKHN0cnVjdCBt
-bHg1X2liX2Rldg0KPiAqZGV2LCBzdHJ1Y3QgaWJfdWRhdGEgKnVkYXRhLA0KPiAgCXJldHVybiAw
-Ow0KPiAgDQo+ICBlcnJfY3FiOg0KPiAtCWtmcmVlKCpjcWIpOw0KPiArCWt2ZnJlZSgqY3FiKTsN
-Cj4gIA0KPiAgZXJyX2RiOg0KPiAgCW1seDVfaWJfZGJfdW5tYXBfdXNlcih0b19tdWNvbnRleHQo
-Y29udGV4dCksICZjcS0+ZGIpOw0KPiBkaWZmIC0tZ2l0DQo+IGEvZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2hfb2ZmbG9hZHMuYw0KPiBiL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoX29mZmxvYWRzLmMNCj4gaW5kZXgg
-MzVlMjU2ZWIyZjZlLi5iMTIzZjhhNTJhZDggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0
-aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoX29mZmxvYWRzLmMNCj4gKysrIGIvZHJp
-dmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2hfb2ZmbG9hZHMuYw0K
-PiBAQCAtNjYzLDcgKzY2Myw3IEBAIHN0YXRpYyBpbnQgZXN3X2NyZWF0ZV92cG9ydF9yeF9ncm91
-cChzdHJ1Y3QNCj4gbWx4NV9lc3dpdGNoICplc3cpDQo+ICANCj4gIAllc3ctPm9mZmxvYWRzLnZw
-b3J0X3J4X2dyb3VwID0gZzsNCj4gIG91dDoNCj4gLQlrZnJlZShmbG93X2dyb3VwX2luKTsNCj4g
-KwlrdmZyZWUoZmxvd19ncm91cF9pbik7DQo+ICAJcmV0dXJuIGVycjsNCj4gIH0NCj4gIA0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL3Zwb3J0
-LmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvdnBvcnQuYw0K
-PiBpbmRleCAxNzdlMDc2YjhkMTcuLjcxOWNlY2IxODJjNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL3Zwb3J0LmMNCj4gKysrIGIvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL3Zwb3J0LmMNCj4gQEAgLTUxMSw3ICs1
-MTEsNyBAQCBpbnQgbWx4NV9xdWVyeV9uaWNfdnBvcnRfc3lzdGVtX2ltYWdlX2d1aWQoc3RydWN0
-DQo+IG1seDVfY29yZV9kZXYgKm1kZXYsDQo+ICAJKnN5c3RlbV9pbWFnZV9ndWlkID0gTUxYNV9H
-RVQ2NChxdWVyeV9uaWNfdnBvcnRfY29udGV4dF9vdXQsDQo+IG91dCwNCj4gIAkJCQkJbmljX3Zw
-b3J0X2NvbnRleHQuc3lzdGVtX2ltYQ0KPiBnZV9ndWlkKTsNCj4gIA0KPiAtCWtmcmVlKG91dCk7
-DQo+ICsJa3ZmcmVlKG91dCk7DQo+ICANCj4gIAlyZXR1cm4gMDsNCj4gIH0NCj4gQEAgLTUzMSw3
-ICs1MzEsNyBAQCBpbnQgbWx4NV9xdWVyeV9uaWNfdnBvcnRfbm9kZV9ndWlkKHN0cnVjdA0KPiBt
-bHg1X2NvcmVfZGV2ICptZGV2LCB1NjQgKm5vZGVfZ3VpZCkNCj4gIAkqbm9kZV9ndWlkID0gTUxY
-NV9HRVQ2NChxdWVyeV9uaWNfdnBvcnRfY29udGV4dF9vdXQsIG91dCwNCj4gIAkJCQluaWNfdnBv
-cnRfY29udGV4dC5ub2RlX2d1aWQpOw0KPiAgDQo+IC0Ja2ZyZWUob3V0KTsNCj4gKwlrdmZyZWUo
-b3V0KTsNCj4gIA0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiBAQCAtNTg3LDcgKzU4Nyw3IEBAIGlu
-dCBtbHg1X3F1ZXJ5X25pY192cG9ydF9xa2V5X3Zpb2xfY250cihzdHJ1Y3QNCj4gbWx4NV9jb3Jl
-X2RldiAqbWRldiwNCj4gIAkqcWtleV92aW9sX2NudHIgPSBNTFg1X0dFVChxdWVyeV9uaWNfdnBv
-cnRfY29udGV4dF9vdXQsIG91dCwNCj4gIAkJCQkgICBuaWNfdnBvcnRfY29udGV4dC5xa2V5X3Zp
-b2xhdGlvbl8NCj4gY291bnRlcik7DQo+ICANCj4gLQlrZnJlZShvdXQpOw0KPiArCWt2ZnJlZShv
-dXQpOw0KPiAgDQo+ICAJcmV0dXJuIDA7DQo+ICB9
+We added some more lines of code to this if statement but forgot to add
+curly braces.
+
+Fixes: 0c24e7ef233b ("drm/amd/powerplay: add specific changes for VEGAM in smu7_hwmgr.c")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+index 8eb3f5176646..646c9e9bf681 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+@@ -1018,7 +1018,7 @@ static int smu7_enable_sclk_mclk_dpm(struct pp_hwmgr *hwmgr)
+ 	struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
+ 
+ 	/* enable SCLK dpm */
+-	if (!data->sclk_dpm_key_disabled)
++	if (!data->sclk_dpm_key_disabled) {
+ 		if (hwmgr->chip_id = CHIP_VEGAM)
+ 			smu7_disable_sclk_vce_handshake(hwmgr);
+ 
+@@ -1026,6 +1026,7 @@ static int smu7_enable_sclk_mclk_dpm(struct pp_hwmgr *hwmgr)
+ 		(0 = smum_send_msg_to_smc(hwmgr, PPSMC_MSG_DPM_Enable)),
+ 		"Failed to enable SCLK DPM during DPM Start Function!",
+ 		return -EINVAL);
++	}
+ 
+ 	/* enable MCLK dpm */
+ 	if (0 = data->mclk_dpm_key_disabled) {
