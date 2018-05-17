@@ -1,34 +1,45 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 31 May 2018 06:21:48 +0000
-Subject: [PATCH] PCI: endpoint: use after free in pci_epf_unregister_driver()
-Message-Id: <20180531062148.qnhcnnibz2ql6soa@kili.mountain>
+Date: Thu, 17 May 2018 09:05:51 +0000
+Subject: [PATCH] media: v4l2-ioctl: prevent underflow in v4l_enumoutput()
+Message-Id: <20180517090550.GB4250@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Manjunath Hadli <manjunath.hadli@ti.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tim Harvey <tharvey@gateworks.com>, Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, Smitha T Murthy <smitha.t@samsung.com>, Sami Tolvanen <samitolvanen@google.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We need to use list_for_each_entry_safe() because the
-pci_ep_cfs_remove_epf_group() function frees "group".
+My Smatch allmodconfig build only detects one function implementing
+vpbe_device_ops->enum_outputs and that's vpbe_enum_outputs().  The
+problem really happens in that function when we do:
 
-Fixes: ef1433f717a2 ("PCI: endpoint: Create configfs entry for each pci_epf_device_id table entry")
+	int temp_index = output->index;
+
+	if (temp_index >= cfg->num_outputs)
+		return -EINVAL;
+
+Unfortunately, both temp_index and cfg->num_outputs are type int so we
+have a potential read before the start of the array if "temp_index" is
+negative.
+
+I could have fixed the bug in that function but it's more secure and
+future proof to block that bug earlier in a central place.  There is no
+one who need p->index to be more than INT_MAX.
+
+Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index 523a8cab3bfb..bf53fad636a5 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -145,10 +145,10 @@ EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
-  */
- void pci_epf_unregister_driver(struct pci_epf_driver *driver)
- {
--	struct config_group *group;
-+	struct config_group *group, *tmp;
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index a40dbec271f1..115757ab8bc0 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1099,6 +1099,9 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
+ 	if (is_valid_ioctl(vfd, VIDIOC_S_STD))
+ 		p->capabilities |= V4L2_OUT_CAP_STD;
  
- 	mutex_lock(&pci_epf_mutex);
--	list_for_each_entry(group, &driver->epf_group, group_entry)
-+	list_for_each_entry_safe(group, tmp, &driver->epf_group, group_entry)
- 		pci_ep_cfs_remove_epf_group(group);
- 	list_del(&driver->epf_group);
- 	mutex_unlock(&pci_epf_mutex);
++	if (p->index > INT_MAX)
++		return -EINVAL;
++
+ 	return ops->vidioc_enum_output(file, fh, p);
+ }
+ 
