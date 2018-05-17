@@ -1,70 +1,45 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Wed, 23 May 2018 21:50:06 +0000
-Subject: Re: [PATCH 4/5] pci/hotplug/pnv-php: add missing of_node_put
-Message-Id: <20180523215006.GF150632@bhelgaas-glaptop.roam.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 May 2018 12:33:36 +0000
+Subject: [PATCH] net/ncsi: prevent a couple array underflows
+Message-Id: <20180517123336.GB7655@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
- <1527102436-13447-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1527102436-13447-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Bjorn Helgaas <bhelgaas@google.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Samuel Mendoza-Jonas <sam@mendozajonas.com>
+Cc: netdev@vger.kernel.org, Gavin Shan <gwshan@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:07:15PM +0200, Julia Lawall wrote:
-> The device node iterators perform an of_node_get on each iteration, so a
-> jump out of the loop requires an of_node_put.
-> 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> iterator name for_each_child_of_node;
-> @@
-> 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> +  of_node_put(child);
-> ?  break;
->    ...
-> }
-> ... when != child
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We recently refactored this code and introduced a static checker
+warning.  Smatch complains that if cmd->index is zero then we would
+underflow the arrays.  That's obviously true.
 
-Applied to pci/hotplug for v4.18, thanks!
+The question is whether we prevent cmd->index from being zero at a
+different level.  I've looked at the code and I don't immediately see
+a check for that.
 
-> ---
->  drivers/pci/hotplug/pnv_php.c |    8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
-> index d441006..6c2e8d7 100644
-> --- a/drivers/pci/hotplug/pnv_php.c
-> +++ b/drivers/pci/hotplug/pnv_php.c
-> @@ -220,12 +220,16 @@ static int pnv_php_populate_changeset(struct of_changeset *ocs,
->  
->  	for_each_child_of_node(dn, child) {
->  		ret = of_changeset_attach_node(ocs, child);
-> -		if (ret)
-> +		if (ret) {
-> +			of_node_put(child);
->  			break;
-> +		}
->  
->  		ret = pnv_php_populate_changeset(ocs, child);
-> -		if (ret)
-> +		if (ret) {
-> +			of_node_put(child);
->  			break;
-> +		}
->  	}
->  
->  	return ret;
-> 
+Fixes: 062b3e1b6d4f ("net/ncsi: Refactor MAC, VLAN filters")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index ce9497966ebe..a6b7c7d5c829 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -347,7 +347,7 @@ static int ncsi_rsp_handler_svf(struct ncsi_request *nr)
+ 
+ 	cmd = (struct ncsi_cmd_svf_pkt *)skb_network_header(nr->cmd);
+ 	ncf = &nc->vlan_filter;
+-	if (cmd->index > ncf->n_vids)
++	if (cmd->index = 0 || cmd->index > ncf->n_vids)
+ 		return -ERANGE;
+ 
+ 	/* Add or remove the VLAN filter. Remember HW indexes from 1 */
+@@ -445,7 +445,8 @@ static int ncsi_rsp_handler_sma(struct ncsi_request *nr)
+ 	ncf = &nc->mac_filter;
+ 	bitmap = &ncf->bitmap;
+ 
+-	if (cmd->index > ncf->n_uc + ncf->n_mc + ncf->n_mixed)
++	if (cmd->index = 0 ||
++	    cmd->index > ncf->n_uc + ncf->n_mc + ncf->n_mixed)
+ 		return -ERANGE;
+ 
+ 	index = (cmd->index - 1) * ETH_ALEN;
