@@ -1,60 +1,44 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Wed, 23 May 2018 13:42:26 +0000
-Subject: Re: [PATCH -next] slimbus: qcom: fix potential NULL dereference in qcom_slim_prg_slew()
-Message-Id: <5b5c4eb4-0d13-7fa4-c0b6-e9949af4e1e1@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 May 2018 07:57:38 +0000
+Subject: [PATCH] scsi: snic: fix a couple of spelling mistakes: "COMPLETE"
+Message-Id: <20180517075738.22821-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1526989582-139939-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1526989582-139939-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Sagar Dharia <sdharia@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Karan Tilak Kumar <kartilak@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistakes/typos:
+"SNIC_IOREQ_ABTS_COMPELTE" -> "SNIC_IOREQ_ABTS_COMPLETE"
+"SNIC_IOREQ_LR_COMPELTE"   -> "SNIC_IOREQ_LR_COMPLETE"
+"SNIC_IOREQ_CMD_COMPELTE"  -> "SNIC_IOREQ_CMD_COMPLETE"
 
-On 22/05/18 12:46, Wei Yongjun wrote:
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> 
-> res = platform_get_resource_byname(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res = NULL
-> e = devm_ioremap(e1, res->start, e2);
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/snic/snic_scsi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/slimbus/qcom-ctrl.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-> index bb36a8f..caea3b9 100644
-> --- a/drivers/slimbus/qcom-ctrl.c
-> +++ b/drivers/slimbus/qcom-ctrl.c
-> @@ -478,6 +478,8 @@ static void qcom_slim_prg_slew(struct platform_device *pdev,
->   		/* SLEW RATE register for this SLIMbus */
->   		slew_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->   				"slew");
-> +		if (!slew_mem)
-> +			return;
+diff --git a/drivers/scsi/snic/snic_scsi.c b/drivers/scsi/snic/snic_scsi.c
+index d8a376b7882d..d9b2e46424aa 100644
+--- a/drivers/scsi/snic/snic_scsi.c
++++ b/drivers/scsi/snic/snic_scsi.c
+@@ -47,10 +47,10 @@ static const char * const snic_req_state_str[] = {
+ 	[SNIC_IOREQ_NOT_INITED]	= "SNIC_IOREQ_NOT_INITED",
+ 	[SNIC_IOREQ_PENDING]	= "SNIC_IOREQ_PENDING",
+ 	[SNIC_IOREQ_ABTS_PENDING] = "SNIC_IOREQ_ABTS_PENDING",
+-	[SNIC_IOREQ_ABTS_COMPLETE] = "SNIC_IOREQ_ABTS_COMPELTE",
++	[SNIC_IOREQ_ABTS_COMPLETE] = "SNIC_IOREQ_ABTS_COMPLETE",
+ 	[SNIC_IOREQ_LR_PENDING]	= "SNIC_IOREQ_LR_PENDING",
+-	[SNIC_IOREQ_LR_COMPLETE] = "SNIC_IOREQ_LR_COMPELTE",
+-	[SNIC_IOREQ_COMPLETE]	= "SNIC_IOREQ_CMD_COMPELTE",
++	[SNIC_IOREQ_LR_COMPLETE] = "SNIC_IOREQ_LR_COMPLETE",
++	[SNIC_IOREQ_COMPLETE]	= "SNIC_IOREQ_CMD_COMPLETE",
+ };
+ 
+ /* snic cmd status strings */
+-- 
+2.17.0
 
-I think a better fix would be to do a devm_ioremap_resource() instead of 
-  devm_ioremap, which already has this check. This will also be inline 
-with other resource handled in this driver.
-
-thanks,
-srini
->   		ctrl->slew_reg = devm_ioremap(&pdev->dev, slew_mem->start,
->   				resource_size(slew_mem));
->   		if (!ctrl->slew_reg)
-> 
