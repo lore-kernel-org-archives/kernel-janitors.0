@@ -1,68 +1,74 @@
-From: Emil Goode <emil.fsw@goode.io>
-Date: Wed, 16 May 2018 10:22:04 +0000
-Subject: [PATCH v2] gpu: host1x: Fix compiler errors by converting to dma_addr_t
-Message-Id: <20180516102204.stviarlxgrz3k2nh@lianli>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Fri, 18 May 2018 09:22:01 +0000
+Subject: Re: [PATCH v2] gpu: host1x: Fix compiler errors by converting to dma_addr_t
+Message-Id: <20180518092201.GL14500@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="zH41lVBEV8cLJnCl"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20180516102204.stviarlxgrz3k2nh@lianli>
+In-Reply-To: <20180516102204.stviarlxgrz3k2nh@lianli>
+To: Emil Goode <emil.fsw@goode.io>
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-The compiler is complaining with the following errors:
 
-drivers/gpu/host1x/cdma.c:94:48: error:
-	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-	[-Werror=incompatible-pointer-types]
+--zH41lVBEV8cLJnCl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/gpu/host1x/cdma.c:113:48: error:
-	passing argument 3 of ‘dma_alloc_wc’ from incompatible pointer type
-	[-Werror=incompatible-pointer-types]
+On Wed, May 16, 2018 at 12:22:04PM +0200, Emil Goode wrote:
+> The compiler is complaining with the following errors:
+>=20
+> drivers/gpu/host1x/cdma.c:94:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> drivers/gpu/host1x/cdma.c:113:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> The expected pointer type of the third argument to dma_alloc_wc() is
+> dma_addr_t but phys_addr_t is passed.
+>=20
+> Change the phys member of struct push_buffer to be dma_addr_t so that we
+> pass the correct type to dma_alloc_wc().
+> Also check pb->mapped for non-NULL in the destroy function as that is the
+> right way of checking if dma_alloc_wc() was successful.
+>=20
+> Signed-off-by: Emil Goode <emil.fsw@goode.io>
+> ---
+> v2: - Change the phys member type instead of adding casts.
+>     - Check pb->mapped in the destroy function as 0 is a valid value
+>       for dma_addr_t.
+>=20
+>  drivers/gpu/host1x/cdma.c | 2 +-
+>  drivers/gpu/host1x/cdma.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-The expected pointer type of the third argument to dma_alloc_wc() is
-dma_addr_t but phys_addr_t is passed.
+Applied, thanks.
 
-Change the phys member of struct push_buffer to be dma_addr_t so that we
-pass the correct type to dma_alloc_wc().
-Also check pb->mapped for non-NULL in the destroy function as that is the
-right way of checking if dma_alloc_wc() was successful.
+Thierry
 
-Signed-off-by: Emil Goode <emil.fsw@goode.io>
----
-v2: - Change the phys member type instead of adding casts.
-    - Check pb->mapped in the destroy function as 0 is a valid value
-      for dma_addr_t.
+--zH41lVBEV8cLJnCl
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/gpu/host1x/cdma.c | 2 +-
- drivers/gpu/host1x/cdma.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 28541b280739..02a0b61be18f 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -51,7 +51,7 @@ static void host1x_pushbuffer_destroy(struct push_buffer *pb)
- 	struct host1x_cdma *cdma = pb_to_cdma(pb);
- 	struct host1x *host1x = cdma_to_host1x(cdma);
- 
--	if (!pb->phys)
-+	if (!pb->mapped)
- 		return;
- 
- 	if (host1x->domain) {
-diff --git a/drivers/gpu/host1x/cdma.h b/drivers/gpu/host1x/cdma.h
-index 286d49386be9..446ee1a84969 100644
---- a/drivers/gpu/host1x/cdma.h
-+++ b/drivers/gpu/host1x/cdma.h
-@@ -44,7 +44,7 @@ struct host1x_job;
- struct push_buffer {
- 	void *mapped;			/* mapped pushbuffer memory */
- 	dma_addr_t dma;			/* device address of pushbuffer */
--	phys_addr_t phys;		/* physical address of pushbuffer */
-+	dma_addr_t phys;		/* physical address of pushbuffer */
- 	u32 fence;			/* index we've written */
- 	u32 pos;			/* index to write to */
- 	u32 size;
--- 
-2.11.0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+mzkACgkQ3SOs138+
+s6E/pg//bHifSGSSjuLuoGSL2+fTU7b8n8NLFMy43WOwRNaOZWmQ23lGmSrTrSm8
+4EhzWSrEFdKL4YR/n3r6EsaH2IZjPxEM2qd0+V525ZURbkfy/kOqPUGa6lf2THJ1
+nGt7pDOZH6gZzqYfrkZygmrL5KbterkF9V39Mu77xehmP6BVKT2XGlXTbJCcl4cV
+kPwUnTblvQAMstZWLr9WZKV54JSB93l1oiA4mgxIIrlNusu4itOefMyTj5BMKmj2
+YVp8Dnw9cuJ0gJl3cbGpXL51aJzO5dqaBXy/Ws4l2fmR0Cp132DWZl1X5NOx8Bi5
+4JLvc5+V+MdE19Ohntwok1qffUvRZj6xJwLuvCAuDSFiB5TnwsotMFxdMt/UULeg
+qraPDDVJ10QaXchAgfS1w+d1ZdSDeDoWsvurdEfuy7vHV/IeZbOZBqRzoNie0wfX
+jtDxd/dKSpPr9pkPuMuiT3RVSGYIiST8e0hmDlO5nJnx8rw4vyIWExKFNRKcjln6
+o268mMhtRF0/Su0o565/sq99mhdZNJkkm/G/glzCcgFNcWUqsQYHLhHyP8iTD93X
+00IUTlPmY7iJ2yIwq08hvhPkPNjrkZm2HwK1cx+CYB1iH6H1yzcRfUNyb67LeW27
+JstXrXkcLR6LmzshZhloGkqaqCO8kyyfuAgmjbsC2U75j8nyJDk=
+=EXzw
+-----END PGP SIGNATURE-----
 
+--zH41lVBEV8cLJnCl--
