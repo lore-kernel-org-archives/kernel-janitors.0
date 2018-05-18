@@ -1,52 +1,36 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Mon, 07 May 2018 06:33:16 +0000
-Subject: Re: [PATCH -next v2] gpio: owl: Fix return value check in owl_gpio_probe()
-Message-Id: <20180507062116.xddlxqywmqkpkavv@mani>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 May 2018 10:03:59 +0000
+Subject: [PATCH] staging: mt7621-mmc: fix spelling mistake: "Eanable" -> "Enable"
+Message-Id: <20180518100359.28036-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
- <1525674356-39189-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1525674356-39189-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?q?Christian=20L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>, NeilBrown <neil@brown.name>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 06:25:56AM +0000, Wei Yongjun wrote:
-> In case of error, the function of_iomap() returns NULL pointer not
-> ERR_PTR(). The IS_ERR() test in the return value check should be
-> replaced with NULL test.
-> 
-> Fixes: d3654d38809c ("gpio: Add gpio driver for Actions OWL S900 SoC")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
+Trivial fix to spelling mistake in N_MSG message text
 
-Thanks,
-Mani
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/mt7621-mmc/sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
-> v1 -> v2: return -ENXIO instead of -ENOMEM
-> ---
->  drivers/gpio/gpio-owl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
-> index 3546362..f35e80f 100644
-> --- a/drivers/gpio/gpio-owl.c
-> +++ b/drivers/gpio/gpio-owl.c
-> @@ -128,8 +128,8 @@ static int owl_gpio_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	gpio->base = of_iomap(dev->of_node, 0);
-> -	if (IS_ERR(gpio->base))
-> -		return PTR_ERR(gpio->base);
-> +	if (!gpio->base)
-> +		return -ENXIO;
->  
->  	/*
->  	 * Get the number of gpio's for this bank. If none specified,
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
+index ddac4ce6457b..11bf4b4c3403 100644
+--- a/drivers/staging/mt7621-mmc/sd.c
++++ b/drivers/staging/mt7621-mmc/sd.c
+@@ -2032,7 +2032,7 @@ static void msdc_enable_cd_irq(struct msdc_host *host, int enable)
+ 		return;
+ 	}
+ 
+-	N_MSG(CFG, "CD IRQ Eanable(%d)", enable);
++	N_MSG(CFG, "CD IRQ Enable(%d)", enable);
+ 
+ 	if (enable) {
+ 		/* card detection circuit relies on the core power so that the core power
+-- 
+2.17.0
+
