@@ -1,24 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 04 May 2018 16:08:09 +0000
-Subject: Re: [patch] gpiolib: fix gpiochip_machine_hog()
-Message-Id: <CACRpkdbpxUNmKE46e-BMrgCt0opy23tRBjmEHak-2d1ODm-4uA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 May 2018 08:10:41 +0000
+Subject: [PATCH] drm/v3d: Checking for NULL vs IS_ERR()
+Message-Id: <20180518081041.GC28335@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180501073638.GA6126@mwanda>
-In-Reply-To: <20180501073638.GA6126@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Tue, May 1, 2018 at 9:36 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The v3d_fence_create() only returns error pointers on error.  It never
+returns NULL.
 
-> There is a shifter vs vanilla mask bug here.  We want to test if 1 << 11
-> is set but we're testing if 0xb is set.
->
-> Fixes: 9a6c505f7df1 ("gpiolib: add hogs support for machine code")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied with Bartosz review tag.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/gpu/drm/v3d/v3d_sched.c b/drivers/gpu/drm/v3d/v3d_sched.c
+index b07bece9417d..808bc901f567 100644
+--- a/drivers/gpu/drm/v3d/v3d_sched.c
++++ b/drivers/gpu/drm/v3d/v3d_sched.c
+@@ -114,8 +114,8 @@ static struct dma_fence *v3d_job_run(struct drm_sched_job *sched_job)
+ 	v3d_invalidate_caches(v3d);
+ 
+ 	fence = v3d_fence_create(v3d, q);
+-	if (!fence)
+-		return fence;
++	if (IS_ERR(fence))
++		return NULL;
+ 
+ 	if (job->done_fence)
+ 		dma_fence_put(job->done_fence);
