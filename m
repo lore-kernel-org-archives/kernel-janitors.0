@@ -1,29 +1,29 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Tue, 15 May 2018 10:40:08 +0000
-Subject: Re: [PATCH] video: fbdev: fix spelling mistake: "frambuffer" -> "framebuffer"
-Message-Id: <2254363.7hXMTGaTqE@amdc3058>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 May 2018 08:04:45 +0000
+Subject: [PATCH] drm/exynos: fimc: signedness bug in fimc_setup_clocks()
+Message-Id: <20180518080445.GB28335@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180501083748epcas4p15b1437f0c39447e7119c6397f624c0f5@epcas4p1.samsung.com>
- <20180501083742.22565-1-colin.king@canonical.com>
-In-Reply-To: <20180501083742.22565-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Markus Elfring <elfring@users.sourceforge.net>
+To: Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org
 
-On Tuesday, May 01, 2018 09:37:42 AM Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in error messages
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+"id" needs to be signed for the error handling to work.
 
-Patch queued for 4.18, thanks.
+Fixes: 7a2d5c77c558 ("drm/exynos: fimc: Convert driver to IPP v2 core API")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 4dfbfc7f3b84..5ce84025d1cb 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1200,7 +1200,7 @@ static int fimc_setup_clocks(struct fimc_context *ctx)
+ 
+ int exynos_drm_check_fimc_device(struct device *dev)
+ {
+-	unsigned int id = of_alias_get_id(dev->of_node, "fimc");
++	int id = of_alias_get_id(dev->of_node, "fimc");
+ 
+ 	if (id >= 0 && (BIT(id) & fimc_mask))
+ 		return 0;
