@@ -1,30 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 04 May 2018 12:36:20 +0000
-Subject: Re: rtlwifi: fix spelling mistake: "dismatch" -> "mismatch"
-Message-Id: <20180504123620.EC99C607E5@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 May 2018 09:31:17 +0000
+Subject: [PATCH] powerpc: fix spelling mistake: "Discharching" -> "Discharging"
+Message-Id: <20180518093117.25668-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430134102.11171-1-colin.king@canonical.com>
-In-Reply-To: <20180430134102.11171-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in RT_TRACE message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in battery_charging array
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/powerpc/kernel/rtas-proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-070fc356e21a rtlwifi: fix spelling mistake: "dismatch" -> "mismatch"
-
+diff --git a/arch/powerpc/kernel/rtas-proc.c b/arch/powerpc/kernel/rtas-proc.c
+index d49063d0baa4..ed0ed0c9b7b3 100644
+--- a/arch/powerpc/kernel/rtas-proc.c
++++ b/arch/powerpc/kernel/rtas-proc.c
+@@ -504,7 +504,7 @@ static void ppc_rtas_process_sensor(struct seq_file *m,
+ 		"EPOW power off" };
+ 	const char * battery_cyclestate[]  = { "None", "In progress", 
+ 						"Requested" };
+-	const char * battery_charging[]    = { "Charging", "Discharching", 
++	const char * battery_charging[]    = { "Charging", "Discharging",
+ 						"No current flow" };
+ 	const char * ibm_drconnector[]     = { "Empty", "Present", "Unusable", 
+ 						"Exchange" };
 -- 
-https://patchwork.kernel.org/patch/10371799/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.0
 
