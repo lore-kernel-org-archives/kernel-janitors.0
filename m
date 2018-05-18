@@ -1,22 +1,36 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 15 May 2018 21:05:44 +0000
-Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
-Message-Id: <152641834430.237094.6970165334408131900@swboyd.mtv.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 May 2018 09:22:06 +0000
+Subject: [PATCH] net/atheros: fix spelling mistake: "Ddescription" -> "Description"
+Message-Id: <20180518092206.21635-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Wolfram Sang (2018-04-19 07:05:35)
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+Trivial fix to spelling mistakes in name field text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/atheros/atl1e/atl1e_param.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/atheros/atl1e/atl1e_param.c b/drivers/net/ethernet/atheros/atl1e/atl1e_param.c
+index fa314282c9ad..6a375f4bd054 100644
+--- a/drivers/net/ethernet/atheros/atl1e/atl1e_param.c
++++ b/drivers/net/ethernet/atheros/atl1e/atl1e_param.c
+@@ -192,7 +192,7 @@ void atl1e_check_options(struct atl1e_adapter *adapter)
+ 	{ 		/* Transmit Ring Size */
+ 		struct atl1e_option opt = {
+ 			.type = range_option,
+-			.name = "Transmit Ddescription Count",
++			.name = "Transmit Description Count",
+ 			.err  = "using default of "
+ 				__MODULE_STRING(ATL1E_DEFAULT_TX_DESC_CNT),
+ 			.def  = ATL1E_DEFAULT_TX_DESC_CNT,
+-- 
+2.17.0
 
