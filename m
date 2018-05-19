@@ -1,39 +1,39 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Wed, 16 May 2018 11:23:53 +0000
-Subject: Re: [PATCH] PCI: qcom: fix a bitwise vs logical NOT typo
-Message-Id: <20180516112353.GA14579@e107981-ln.cambridge.arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 May 2018 06:37:15 +0000
+Subject: [PATCH] firmware: arm_scmi: remove some unnecessary checks
+Message-Id: <20180519063715.GB4991@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180501072250.GA4269@mwanda>
-In-Reply-To: <20180501072250.GA4269@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, John Crispin <john@phrozen.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue, May 01, 2018 at 10:22:50AM +0300, Dan Carpenter wrote:
-> There is a typo here so we accidentally set "val" to zero when we
-> intended just to clear BIT(0).
-> 
-> Fixes: 90d52d57ccac ("PCI: qcom: Add support for IPQ4019 PCIe controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Not tested.
-> 
-> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-> index 5897af7d3355..b65bbf7c284e 100644
-> --- a/drivers/pci/dwc/pcie-qcom.c
-> +++ b/drivers/pci/dwc/pcie-qcom.c
-> @@ -869,7 +869,7 @@ static int qcom_pcie_init_2_4_0(struct qcom_pcie *pcie)
->  
->  	/* enable PCIe clocks and resets */
->  	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
-> -	val &= !BIT(0);
-> +	val &= ~BIT(0);
->  	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
->  
->  	/* change DBI base address */
+The "pi->dom_info" buffer is allocated in init() and it can't be NULL
+here.  These tests are sort of weird as well because if "pi->dom_info"
+was NULL but "domain" was non-zero then it would lead to an Oops.
 
-Applied to pci/dwc for v4.18, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Lorenzo
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 2a219b1261b1..721e6c57beae 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -363,8 +363,6 @@ static int scmi_dvfs_device_opps_add(const struct scmi_handle *handle,
+ 		return domain;
+ 
+ 	dom = pi->dom_info + domain;
+-	if (!dom)
+-		return -EIO;
+ 
+ 	for (opp = dom->opp, idx = 0; idx < dom->opp_count; idx++, opp++) {
+ 		freq = opp->perf * dom->mult_factor;
+@@ -394,9 +392,6 @@ static int scmi_dvfs_transition_latency_get(const struct scmi_handle *handle,
+ 		return domain;
+ 
+ 	dom = pi->dom_info + domain;
+-	if (!dom)
+-		return -EIO;
+-
+ 	/* uS to nS */
+ 	return dom->opp[dom->opp_count - 1].trans_latency_us * 1000;
+ }
