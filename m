@@ -1,66 +1,52 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Wed, 16 May 2018 18:27:07 +0000
-Subject: [PATCH 2/5] staging: lustre: Fix block comments style
-Message-Id: <20180516182707.5191-1-sabin.rapan@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Sun, 20 May 2018 12:44:08 +0000
+Subject: Re: [PATCH 2/5] staging: lustre: Fix block comments style
+Message-Id: <20180520124408.GA10692@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180516182707.5191-1-sabin.rapan@gmail.com>
+In-Reply-To: <20180516182707.5191-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
+To: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Cc: jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
+On Wed, May 16, 2018 at 08:27:07PM +0200, Sabin Mihai Rapan wrote:
+> This patch fixes the checkpatch.pl warning:
+> 
+> WARNING:BLOCK_COMMENT_STYLE: Block comments use a trailing */ on a separate line
+> 
+> Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+> ---
+>  .../staging/lustre/include/uapi/linux/lustre/lustre_idl.h   | 6 ++++--
+>  .../staging/lustre/include/uapi/linux/lustre/lustre_user.h  | 6 ++++--
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
+> index e6016a71ad23..f13138972be2 100644
+> --- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
+> +++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
+> @@ -1526,9 +1526,11 @@ struct mdt_rec_setattr {
+>  #define MDS_OPEN_HAS_OBJS    020000000000 /* Just set the EA the obj exist */
+>  #define MDS_OPEN_NORESTORE  0100000000000ULL /* Do not restore file at open */
+>  #define MDS_OPEN_NEWSTRIPE  0200000000000ULL /* New stripe needed (restripe or
+> -					      * hsm restore) */
+> +					      * hsm restore)
+> +					      */
+>  #define MDS_OPEN_VOLATILE   0400000000000ULL /* File is volatile = created
+> -						unlinked */
+> +					      * unlinked 
+> +					      */
 
-WARNING:BLOCK_COMMENT_STYLE: Block comments use a trailing */ on a separate line
+Always run checkpatch.pl on your patches so you do not get grumpy
+maintainers telling you to run checkpatch.pl on your patches :)
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
----
- .../staging/lustre/include/uapi/linux/lustre/lustre_idl.h   | 6 ++++--
- .../staging/lustre/include/uapi/linux/lustre/lustre_user.h  | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+Also, do not create a patch to fix up a checkpatch warning, only to have
+it add another one, unless you want to have an eternal number of changes
+to make over time...
 
-diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
-index e6016a71ad23..f13138972be2 100644
---- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
-+++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_idl.h
-@@ -1526,9 +1526,11 @@ struct mdt_rec_setattr {
- #define MDS_OPEN_HAS_OBJS    020000000000 /* Just set the EA the obj exist */
- #define MDS_OPEN_NORESTORE  0100000000000ULL /* Do not restore file at open */
- #define MDS_OPEN_NEWSTRIPE  0200000000000ULL /* New stripe needed (restripe or
--					      * hsm restore) */
-+					      * hsm restore)
-+					      */
- #define MDS_OPEN_VOLATILE   0400000000000ULL /* File is volatile = created
--						unlinked */
-+					      * unlinked 
-+					      */
- #define MDS_OPEN_LEASE	   01000000000000ULL /* Open the file and grant lease
- 					      * delegation, succeed if it's not
- 					      * being opened with conflict mode.
-diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
-index 2fcfe2b2d365..f0fbe3318db6 100644
---- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
-+++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_user.h
-@@ -405,7 +405,8 @@ static inline __u32 lov_user_md_size(__u16 stripes, __u32 lmm_magic)
- 
- /* Compile with -D_LARGEFILE64_SOURCE or -D_GNU_SOURCE (or #define) to
-  * use this.  It is unsafe to #define those values in this header as it
-- * is possible the application has already #included <sys/stat.h>. */
-+ * is possible the application has already #included <sys/stat.h>.
-+ */
- #ifdef HAVE_LOV_USER_MDS_DATA
- #define lov_user_mds_data lov_user_mds_data_v1
- struct lov_user_mds_data_v1 {
-@@ -468,7 +469,8 @@ struct ll_fid {
- 	__u64 id;	 /* holds object id */
- 	__u32 generation; /* holds object generation */
- 	__u32 f_type;     /* holds object type or stripe idx when passing it to
--			   * OST for saving into EA. */
-+			   * OST for saving into EA.
-+			   */
- };
- 
- #define UUID_MAX	40
--- 
-2.17.0
+Please fix up and resend the whole series.
 
+thanks,
+
+greg k-h
