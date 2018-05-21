@@ -1,56 +1,71 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 28 May 2018 09:29:08 +0000
-Subject: Re: [PATCH][next] ALSA: xen-front: remove redundant error check on ret
-Message-Id: <s5ha7skuo0r.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 May 2018 09:49:08 +0000
+Subject: [PATCH 1/3] i2c: mux: pca954x: merge calls to of_match_device and of_device_get_match_data
+Message-Id: <1526896150-27134-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180527212312.23997-1-colin.king@canonical.com>
- <ee539e2d-568e-4bfa-a4aa-4a9b39bc1bd8@sakamocchi.jp>
-In-Reply-To: <ee539e2d-568e-4bfa-a4aa-4a9b39bc1bd8@sakamocchi.jp>
+References: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: alsa-devel@alsa-project.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org, Colin King <colin.king@canonical.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Himanshu Jha <himanshujha199640@gmail.com>
 
-On Mon, 28 May 2018 00:42:12 +0200,
-Takashi Sakamoto wrote:
-> 
-> Hi,
-> 
-> On May 28 2018 06:23, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The error for a -ve value in ret is redundant as all previous
-> > assignments to ret have an associated -ve check and hence it
-> > is impossible for ret to be less that zero at the point of the
-> > check.  Remove this redundant error check.
-> >
-> > Detected by CoveritScan, CID#1469407 ("Logically Dead code")
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   sound/xen/xen_snd_front_evtchnl.c | 2 --
-> >   1 file changed, 2 deletions(-)
-> >
-> > diff --git a/sound/xen/xen_snd_front_evtchnl.c b/sound/xen/xen_snd_front_evtchnl.c
-> > index d70a62e7f910..102d6e096cc8 100644
-> > --- a/sound/xen/xen_snd_front_evtchnl.c
-> > +++ b/sound/xen/xen_snd_front_evtchnl.c
-> > @@ -351,8 +351,6 @@ int xen_snd_front_evtchnl_create_all(struct xen_snd_front_info *front_info,
-> >   			}
-> >   		}
-> >   	}
-> > -	if (ret < 0)
-> > -		goto fail;
-> >     	front_info->num_evt_pairs = num_streams;
-> >   	return 0;
-> 
-> Yep. All branches for error path on the nested for loop have goto
-> statement, thus no need to check error outer the loop.
-> 
-> Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Drop call to of_match_device, which is subsumed by the subsequent
+call to of_device_get_match_data.  The code becomes simpler, and a
+temporary variable can be dropped.
 
-Applied, thanks.
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r@
+local idexpression match;
+identifier i;
+expression x, dev, e, e1;
+@@
+-        match@i = of_match_device(x, dev);
+-        if (match) e = of_device_get_match_data(dev);
+-        else e = e1;
++        e = of_device_get_match_data(dev);
++        if (!e) e = e1;
 
-Takashi
+@@
+identifier r.i;
+@@
+- const struct of_device_id *i;
+... when != i
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/i2c/muxes/i2c-mux-pca954x.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2c-mux-pca954x.c
+index 09bafd3..ced840f 100644
+--- a/drivers/i2c/muxes/i2c-mux-pca954x.c
++++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
+@@ -373,7 +373,6 @@ static int pca954x_probe(struct i2c_client *client,
+ 	int num, force, class;
+ 	struct i2c_mux_core *muxc;
+ 	struct pca954x *data;
+-	const struct of_device_id *match;
+ 	int ret;
+ 
+ 	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_BYTE))
+@@ -394,10 +393,8 @@ static int pca954x_probe(struct i2c_client *client,
+ 	if (IS_ERR(gpio))
+ 		return PTR_ERR(gpio);
+ 
+-	match = of_match_device(of_match_ptr(pca954x_of_match), &client->dev);
+-	if (match)
+-		data->chip = of_device_get_match_data(&client->dev);
+-	else
++	data->chip = of_device_get_match_data(&client->dev);
++	if (!data->chip)
+ 		data->chip = &chips[id->driver_data];
+ 
+ 	if (data->chip->id.manufacturer_id != I2C_DEVICE_ID_NONE) {
+
