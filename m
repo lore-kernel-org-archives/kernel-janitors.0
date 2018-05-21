@@ -1,51 +1,34 @@
-From: Ajay Singh <ajay.kathat@microchip.com>
-Date: Wed, 02 May 2018 09:54:29 +0000
-Subject: Re: [PATCH] staging: wilc1000: fix infinite loop and out-of-bounds access
-Message-Id: <20180502151229.4be29ec8@ajaysk-VirtualBox>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 21 May 2018 09:16:54 +0000
+Subject: [PATCH] iio: adc: fix spelling mistake: "Freeacale" -> "Freescale"
+Message-Id: <20180521091654.17989-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430125040.GA19050@embeddedor.com>
- <20180430195916.596a93eb@ajaysk-VirtualBox>
- <20180430152321.7pq4ol2ed7tzsrl4@mwanda>
- <20180502111735.5a2c6faa@ajaysk-VirtualBox>
- <20180502083935.uw4mxvcgnpayv3h3@mwanda>
-In-Reply-To: <20180502083935.uw4mxvcgnpayv3h3@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2 May 2018 11:39:36 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> We're mainly discussing readability, right?
-> 
-> To me when people use "int" that tells me as a reader that we don't
-> need to think about the type.  It's going to be a small number.
-> 
-> Say you have data which the user can control, then it's super
-> important to focus on the data types.  We don't focus on it
-> enough.  There is some kind of idea that good developers should
-> just be super focused on everything all the time, but I don't think
-> humans can do it.  So to me it's useful when the author tells me,
-> "This an int type.  It's fine. This is not critical."
-> 
-> If you make request->n_ssids a u8 or u16, that isn't going to save
-> any memory because the struct is padded.  You'd also need to audit
-> a bunch of code to make sure that we don't overflow the u16.  If
-> you wanted to overflow the int, you'd need to allocate several gigs
-> of memory but kmalloc() is capped at KMALLOC_MAX_SIZE (4MB) so
-> that's not possible. How many of these structs do we allocate?  Is
-> it really worth optimizing the heck out of it?
-> 
-> There are times where want to be very deliberate with our types
-> because we're dealing the large numbers, or user data or fast
-> paths.  But there are other times where int is fine...
-> 
+Trivial fix to spelling mistake in module description text
 
-As in this case, its fine to be of 'int' type.
-So we can retain the current data type('int') for 'i' and 'slot_id'. 
-Thank you for sharing your insights,it was very helpful.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/adc/imx7d_adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Ajay
+diff --git a/drivers/iio/adc/imx7d_adc.c b/drivers/iio/adc/imx7d_adc.c
+index cfab31162845..ad6764fb2a23 100644
+--- a/drivers/iio/adc/imx7d_adc.c
++++ b/drivers/iio/adc/imx7d_adc.c
+@@ -604,5 +604,5 @@ static struct platform_driver imx7d_adc_driver = {
+ module_platform_driver(imx7d_adc_driver);
+ 
+ MODULE_AUTHOR("Haibo Chen <haibo.chen@freescale.com>");
+-MODULE_DESCRIPTION("Freeacale IMX7D ADC driver");
++MODULE_DESCRIPTION("Freescale IMX7D ADC driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+2.17.0
+
