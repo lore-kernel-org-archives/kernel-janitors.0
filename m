@@ -1,38 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 21 May 2018 09:35:48 +0000
-Subject: [PATCH] ASoC: intel: skylake: fix spelling mistake: "Homogenous" -> "Homogeneous"
-Message-Id: <20180521093548.18491-1-colin.king@canonical.com>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Mon, 21 May 2018 17:34:27 +0000
+Subject: [PATCH 1/4] staging: lustre: Fix "from from"->"from"
+Message-Id: <20180521173430.9759-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180520124408.GA10692@kroah.com>
+In-Reply-To: <20180520124408.GA10692@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in README.txt
 
-Trivial fix to spelling mistake in snprintf literal string
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- sound/soc/intel/skylake/skl-debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/README.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
-index a016455a6ddb..302b40e63e6c 100644
---- a/sound/soc/intel/skylake/skl-debug.c
-+++ b/sound/soc/intel/skylake/skl-debug.c
-@@ -142,8 +142,8 @@ static ssize_t module_read(struct file *file, char __user *user_buf,
- 			mconfig->max_out_queue, ret, false);
- 
- 	ret += snprintf(buf + ret, MOD_BUF - ret,
--			"Other:\n\tDomain %d\n\tHomogenous Input %s\n\t"
--			"Homogenous Output %s\n\tIn Queue Mask %d\n\t"
-+			"Other:\n\tDomain %d\n\tHomogeneous Input %s\n\t"
-+			"Homogeneous Output %s\n\tIn Queue Mask %d\n\t"
- 			"Out Queue Mask %d\n\tDMA ID %d\n\tMem Pages %d\n\t"
- 			"Module Type %d\n\tModule State %d\n",
- 			mconfig->domain,
+diff --git a/drivers/staging/lustre/README.txt b/drivers/staging/lustre/README.txt
+index 0676243eea9e..783959240490 100644
+--- a/drivers/staging/lustre/README.txt
++++ b/drivers/staging/lustre/README.txt
+@@ -4,7 +4,7 @@ Lustre Parallel Filesystem Client
+ The Lustre file system is an open-source, parallel file system
+ that supports many requirements of leadership class HPC simulation
+ environments.
+-Born from from a research project at Carnegie Mellon University,
++Born from a research project at Carnegie Mellon University,
+ the Lustre file system is a widely-used option in HPC.
+ The Lustre file system provides a POSIX compliant file system interface,
+ can scale to thousands of clients, petabytes of storage and
 -- 
 2.17.0
 
