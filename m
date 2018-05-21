@@ -1,105 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 May 2018 12:49:03 +0000
-Subject: [bug report] mwifiex: do le_to_cpu conversion for Rx packet header elements
-Message-Id: <20180502124903.GA24880@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 21 May 2018 15:50:39 +0000
+Subject: Applied "ASoC: intel: skylake: fix spelling mistake: "Homogenous" -> "Homogeneous"" to the asoc tree
+Message-Id: <E1fKn55-0007We-Ju@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180521093548.18491-1-colin.king@canonical.com>
+In-Reply-To: <20180521093548.18491-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akarwar@marvell.com
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Nishant Sarmukadam <nishants@marvell.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-Hello Amitkumar Karwar,
+The patch
 
-The patch ed1ea6f42ece: "mwifiex: do le_to_cpu conversion for Rx
-packet header elements" from Aug 3, 2012, leads to the following
-static checker warning:
+   ASoC: intel: skylake: fix spelling mistake: "Homogenous" -> "Homogeneous"
 
-	drivers/net/wireless/marvell/mwifiex/sta_rx.c:251 mwifiex_process_sta_rx_packet()
-	error: buffer overflow 'priv->rx_seq' 8 <= 255 user_rl='0-255'
+has been applied to the asoc tree at
 
-drivers/net/wireless/marvell/mwifiex/sta_rx.c
-   187  int mwifiex_process_sta_rx_packet(struct mwifiex_private *priv,
-   188                                    struct sk_buff *skb)
-   189  {
-   190          struct mwifiex_adapter *adapter = priv->adapter;
-   191          int ret = 0;
-   192          struct rxpd *local_rx_pd;
-   193          struct rx_packet_hdr *rx_pkt_hdr;
-   194          u8 ta[ETH_ALEN];
-   195          u16 rx_pkt_type, rx_pkt_offset, rx_pkt_length, seq_num;
-   196          struct mwifiex_sta_node *sta_ptr;
-   197  
-   198          local_rx_pd = (struct rxpd *) (skb->data);
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Smatch distructs skb->data like the plague.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-   199          rx_pkt_type = le16_to_cpu(local_rx_pd->rx_pkt_type);
-   200          rx_pkt_offset = le16_to_cpu(local_rx_pd->rx_pkt_offset);
-   201          rx_pkt_length = le16_to_cpu(local_rx_pd->rx_pkt_length);
-   202          seq_num = le16_to_cpu(local_rx_pd->seq_num);
-   203  
-   204          rx_pkt_hdr = (void *)local_rx_pd + rx_pkt_offset;
-   205  
-   206          if ((rx_pkt_offset + rx_pkt_length) > (u16) skb->len) {
-   207                  mwifiex_dbg(adapter, ERROR,
-   208                              "wrong rx packet: len=%d, rx_pkt_offset=%d, rx_pkt_length=%d\n",
-   209                              skb->len, rx_pkt_offset, rx_pkt_length);
-   210                  priv->stats.rx_dropped++;
-   211                  dev_kfree_skb_any(skb);
-   212                  return ret;
-   213          }
-   214  
-   215          if (rx_pkt_type = PKT_TYPE_MGMT) {
-   216                  ret = mwifiex_process_mgmt_packet(priv, skb);
-   217                  if (ret)
-   218                          mwifiex_dbg(adapter, DATA, "Rx of mgmt packet failed");
-   219                  dev_kfree_skb_any(skb);
-   220                  return ret;
-   221          }
-   222  
-   223          /*
-   224           * If the packet is not an unicast packet then send the packet
-   225           * directly to os. Don't pass thru rx reordering
-   226           */
-   227          if ((!IS_11N_ENABLED(priv) &&
-   228               !(ISSUPP_TDLS_ENABLED(priv->adapter->fw_cap_info) &&
-   229                 !(local_rx_pd->flags & MWIFIEX_RXPD_FLAGS_TDLS_PACKET))) ||
-   230              !ether_addr_equal_unaligned(priv->curr_addr, rx_pkt_hdr->eth803_hdr.h_dest)) {
-   231                  mwifiex_process_rx_packet(priv, skb);
-   232                  return ret;
-   233          }
-   234  
-   235          if (mwifiex_queuing_ra_based(priv) ||
-   236              (ISSUPP_TDLS_ENABLED(priv->adapter->fw_cap_info) &&
-   237               local_rx_pd->flags & MWIFIEX_RXPD_FLAGS_TDLS_PACKET)) {
-   238                  memcpy(ta, rx_pkt_hdr->eth803_hdr.h_source, ETH_ALEN);
-   239                  if (local_rx_pd->flags & MWIFIEX_RXPD_FLAGS_TDLS_PACKET &&
-   240                      local_rx_pd->priority < MAX_NUM_TID) {
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-We check ->priority here.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-   241                          sta_ptr = mwifiex_get_sta_entry(priv, ta);
-   242                          if (sta_ptr)
-   243                                  sta_ptr->rx_seq[local_rx_pd->priority]    244                                                le16_to_cpu(local_rx_pd->seq_num);
-   245                          mwifiex_auto_tdls_update_peer_signal(priv, ta,
-   246                                                               local_rx_pd->snr,
-   247                                                               local_rx_pd->nf);
-   248                  }
-   249          } else {
-   250                  if (rx_pkt_type != PKT_TYPE_BAR)
-   251                          priv->rx_seq[local_rx_pd->priority] = seq_num;
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-But not on this path.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-   252                  memcpy(ta, priv->curr_bss_params.bss_descriptor.mac_address,
-   253                         ETH_ALEN);
-   254          }
-   255  
-   256          /* Reorder and send to OS */
-   257          ret = mwifiex_11n_rx_reorder_pkt(priv, seq_num, local_rx_pd->priority,
-   258                                           ta, (u8) rx_pkt_type, skb);
-   259  
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-regards,
-dan carpenter
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7608102ee610cb4a65b38a4e1319e22c7ebeb04b Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 21 May 2018 10:35:48 +0100
+Subject: [PATCH] ASoC: intel: skylake: fix spelling mistake: "Homogenous" ->
+ "Homogeneous"
+
+Trivial fix to spelling mistake in snprintf literal string
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/skylake/skl-debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
+index a016455a6ddb..302b40e63e6c 100644
+--- a/sound/soc/intel/skylake/skl-debug.c
++++ b/sound/soc/intel/skylake/skl-debug.c
+@@ -142,8 +142,8 @@ static ssize_t module_read(struct file *file, char __user *user_buf,
+ 			mconfig->max_out_queue, ret, false);
+ 
+ 	ret += snprintf(buf + ret, MOD_BUF - ret,
+-			"Other:\n\tDomain %d\n\tHomogenous Input %s\n\t"
+-			"Homogenous Output %s\n\tIn Queue Mask %d\n\t"
++			"Other:\n\tDomain %d\n\tHomogeneous Input %s\n\t"
++			"Homogeneous Output %s\n\tIn Queue Mask %d\n\t"
+ 			"Out Queue Mask %d\n\tDMA ID %d\n\tMem Pages %d\n\t"
+ 			"Module Type %d\n\tModule State %d\n",
+ 			mconfig->domain,
+-- 
+2.17.0
+
