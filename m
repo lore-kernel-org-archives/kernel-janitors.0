@@ -1,44 +1,123 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Sun, 13 May 2018 08:45:40 +0000
-Subject: Re: [PATCH] cpufreq: s3c2440: fix spelling mistake: "divsiors" -> "divisors"
-Message-Id: <3819884.ugggRtP9TD@aspire.rjw.lan>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 May 2018 09:49:10 +0000
+Subject: [PATCH 3/3] iio: potentiometer: merge calls to of_match_device and of_device_get_match_data
+Message-Id: <1526896150-27134-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430144801.6727-1-colin.king@canonical.com>
- <20180502053721.5h6jhicjsjss2ixe@vireshk-i7>
-In-Reply-To: <20180502053721.5h6jhicjsjss2ixe@vireshk-i7>
+References: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Peter Rosin <peda@axentia.se>, Himanshu Jha <himanshujha199640@gmail.com>
 
-On Wednesday, May 2, 2018 7:37:21 AM CEST Viresh Kumar wrote:
-> On 30-04-18, 15:48, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Trivial fix to spelling mistake in s3c_freq_dbg debug message text.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/cpufreq/s3c2440-cpufreq.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
-> > index d0d75b65ddd6..d2f67b7a20dd 100644
-> > --- a/drivers/cpufreq/s3c2440-cpufreq.c
-> > +++ b/drivers/cpufreq/s3c2440-cpufreq.c
-> > @@ -143,7 +143,7 @@ static void s3c2440_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
-> >  {
-> >  	unsigned long clkdiv, camdiv;
-> >  
-> > -	s3c_freq_dbg("%s: divsiors: h=%d, p=%d\n", __func__,
-> > +	s3c_freq_dbg("%s: divisors: h=%d, p=%d\n", __func__,
-> >  		     cfg->divs.h_divisor, cfg->divs.p_divisor);
-> >  
-> >  	clkdiv = __raw_readl(S3C2410_CLKDIVN);
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> 
+Drop call to of_match_device, which is subsumed by the subsequent
+call to of_device_get_match_data.  The code becomes simpler, and a
+temporary variable can be dropped.
 
-Applied, thanks!
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+local idexpression match;
+identifier i;
+expression x, dev, e, e1;
+@@
+-        match@i = of_match_device(x, dev);
+-        if (match) e = of_device_get_match_data(dev);
+-        else e = e1;
++        e = of_device_get_match_data(dev);
++        if (!e) e = e1;
+
+@@
+identifier r.i;
+@@
+- const struct of_device_id *i;
+... when != i
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/iio/potentiometer/max5481.c |    7 ++-----
+ drivers/iio/potentiometer/mcp4018.c |    7 ++-----
+ drivers/iio/potentiometer/mcp4531.c |    7 ++-----
+ 3 files changed, 6 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/iio/potentiometer/mcp4018.c b/drivers/iio/potentiometer/mcp4018.c
+index 320a7c9..c051ee0 100644
+--- a/drivers/iio/potentiometer/mcp4018.c
++++ b/drivers/iio/potentiometer/mcp4018.c
+@@ -147,7 +147,6 @@ static int mcp4018_probe(struct i2c_client *client)
+ 	struct device *dev = &client->dev;
+ 	struct mcp4018_data *data;
+ 	struct iio_dev *indio_dev;
+-	const struct of_device_id *match;
+ 
+ 	if (!i2c_check_functionality(client->adapter,
+ 				     I2C_FUNC_SMBUS_BYTE)) {
+@@ -162,10 +161,8 @@ static int mcp4018_probe(struct i2c_client *client)
+ 	i2c_set_clientdata(client, indio_dev);
+ 	data->client = client;
+ 
+-	match = of_match_device(of_match_ptr(mcp4018_of_match), dev);
+-	if (match)
+-		data->cfg = of_device_get_match_data(dev);
+-	else
++	data->cfg = of_device_get_match_data(dev);
++	if (!data->cfg)
+ 		data->cfg = &mcp4018_cfg[i2c_match_id(mcp4018_id, client)->driver_data];
+ 
+ 	indio_dev->dev.parent = dev;
+diff --git a/drivers/iio/potentiometer/mcp4531.c b/drivers/iio/potentiometer/mcp4531.c
+index df894af..d87ca85 100644
+--- a/drivers/iio/potentiometer/mcp4531.c
++++ b/drivers/iio/potentiometer/mcp4531.c
+@@ -360,7 +360,6 @@ static int mcp4531_probe(struct i2c_client *client)
+ 	struct device *dev = &client->dev;
+ 	struct mcp4531_data *data;
+ 	struct iio_dev *indio_dev;
+-	const struct of_device_id *match;
+ 
+ 	if (!i2c_check_functionality(client->adapter,
+ 				     I2C_FUNC_SMBUS_WORD_DATA)) {
+@@ -375,10 +374,8 @@ static int mcp4531_probe(struct i2c_client *client)
+ 	i2c_set_clientdata(client, indio_dev);
+ 	data->client = client;
+ 
+-	match = of_match_device(of_match_ptr(mcp4531_of_match), dev);
+-	if (match)
+-		data->cfg = of_device_get_match_data(dev);
+-	else
++	data->cfg = of_device_get_match_data(dev);
++	if (!data->cfg)
+ 		data->cfg = &mcp4531_cfg[i2c_match_id(mcp4531_id, client)->driver_data];
+ 
+ 	indio_dev->dev.parent = dev;
+diff --git a/drivers/iio/potentiometer/max5481.c b/drivers/iio/potentiometer/max5481.c
+index ffe2761..6d2f13f 100644
+--- a/drivers/iio/potentiometer/max5481.c
++++ b/drivers/iio/potentiometer/max5481.c
+@@ -137,7 +137,6 @@ static int max5481_probe(struct spi_device *spi)
+ 	struct iio_dev *indio_dev;
+ 	struct max5481_data *data;
+ 	const struct spi_device_id *id = spi_get_device_id(spi);
+-	const struct of_device_id *match;
+ 	int ret;
+ 
+ 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*data));
+@@ -149,10 +148,8 @@ static int max5481_probe(struct spi_device *spi)
+ 
+ 	data->spi = spi;
+ 
+-	match = of_match_device(of_match_ptr(max5481_match), &spi->dev);
+-	if (match)
+-		data->cfg = of_device_get_match_data(&spi->dev);
+-	else
++	data->cfg = of_device_get_match_data(&spi->dev);
++	if (!data->cfg)
+ 		data->cfg = &max5481_cfg[id->driver_data];
+ 
+ 	indio_dev->name = id->name;
 
