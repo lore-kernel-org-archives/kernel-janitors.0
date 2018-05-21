@@ -1,36 +1,22 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 02 May 2018 09:39:37 +0000
-Subject: [PATCH] ntfs: fix spelling mistake: "initiailized" -> "initialized"
-Message-Id: <20180502093937.26748-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 May 2018 09:49:07 +0000
+Subject: [PATCH 0/3] merge calls to of_match_device and of_device_get_match_data
+Message-Id: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Altaparmakov <anton@tuxera.com>, linux-ntfs-dev@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+of_device_get_match_data calls of_match_device and fails if the latter
+fails, so both calls aren't needed.
 
-Trivial fix to spelling mistake in ntfs_debug debug message
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ntfs/mft.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
-index 32c523cf5a2d..8e76f64d9784 100644
---- a/fs/ntfs/mft.c
-+++ b/fs/ntfs/mft.c
-@@ -1586,7 +1586,7 @@ static int ntfs_mft_bitmap_extend_initialized_nolock(ntfs_volume *vol)
- 	ATTR_RECORD *a;
- 	int ret;
- 
--	ntfs_debug("Extending mft bitmap initiailized (and data) size.");
-+	ntfs_debug("Extending mft bitmap initialized (and data) size.");
- 	mft_ni = NTFS_I(vol->mft_ino);
- 	mftbmp_vi = vol->mftbmp_ino;
- 	mftbmp_ni = NTFS_I(mftbmp_vi);
--- 
-2.17.0
-
+ drivers/i2c/muxes/i2c-mux-pca954x.c |    7 ++-----
+ drivers/iio/adc/max1363.c           |    8 ++------
+ drivers/iio/potentiometer/max5481.c |    7 ++-----
+ drivers/iio/potentiometer/mcp4018.c |    7 ++-----
+ drivers/iio/potentiometer/mcp4531.c |    7 ++-----
+ 5 files changed, 10 insertions(+), 26 deletions(-)
