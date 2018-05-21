@@ -1,23 +1,42 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 14 May 2018 10:58:39 +0000
-Subject: Re: [PATCH 2/2] tpm: replace kmalloc() + memcpy() with kmemdup()
-Message-Id: <20180514105839.GH8228@linux.intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 May 2018 06:58:48 +0000
+Subject: [PATCH] coccinelle: mini_lock: improve performance
+Message-Id: <1526885928-1712-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1525824757-21835-1-git-send-email-ji_hun.kim@samsung.com>
- <CGME20180509001300epcas2p3971900d48408aef6a80f59b9480aac16@epcas2p3.samsung.com>
- <1525824757-21835-2-git-send-email-ji_hun.kim@samsung.com>
-In-Reply-To: <1525824757-21835-2-git-send-email-ji_hun.kim@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Cc: peterhuewe@gmx.de, tweek@google.com, jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org, javierm@redhat.com, sonnyrao@chromium.org, enric.balletbo@collabora.com, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-On Wed, May 09, 2018 at 09:12:37AM +0900, Ji-Hun Kim wrote:
-> Use kmemdup rather than duplicating its implementation.
-> 
-> Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+Replace <+... ...+> by ... when any.  <+... ...+> is slow, and in some
+obscure cases involving backward jumps it doesn't force the unlock to
+actually come after the end of the if.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-/Jarkko
+---
+ scripts/coccinelle/locks/mini_lock.cocci |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/coccinelle/locks/mini_lock.cocci b/scripts/coccinelle/locks/mini_lock.cocci
+index 47f649b..19c6ee5 100644
+--- a/scripts/coccinelle/locks/mini_lock.cocci
++++ b/scripts/coccinelle/locks/mini_lock.cocci
+@@ -67,12 +67,14 @@ identifier lock,unlock;
+ @@
+ 
+ *lock(E1@p,...);
+-<+... when != E1
++... when != E1
++    when any
+ if (...) {
+   ... when != E1
+ *  return@r ...;
+ }
+-...+>
++... when != E1
++    when any
+ *unlock@up(E1,...);
+ 
+ @script:python depends on org@
+
