@@ -1,35 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 May 2018 07:58:58 +0000
-Subject: [PATCH] [media] media: delete unneeded include
-Message-Id: <1525593538-11340-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Mon, 21 May 2018 17:34:28 +0000
+Subject: [PATCH 2/4] staging: lustre: Fix "Possible intergrate"->"Possibly integrate"
+Message-Id: <20180521173430.9759-2-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180520124408.GA10692@kroah.com>
+In-Reply-To: <20180520124408.GA10692@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Isely <isely@pobox.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-pvrusb2-video-v4l.h only declares pvr2_saa7115_subdev_update and
-includes pvrusb2-hdw-internal.h.  pvrusb2-cx2584x-v4l.c does not
-use pvr2_saa7115_subdev_update and it explicitly includes
-pvrusb2-hdw-internal.h.
+Trivial fix to spelling mistake in TODO file.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/lustre/TODO | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c b/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
-index 242b213..d5bec0f 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c
-@@ -23,7 +23,6 @@
- */
- 
- #include "pvrusb2-cx2584x-v4l.h"
--#include "pvrusb2-video-v4l.h"
- 
- 
- #include "pvrusb2-hdw-internal.h"
+diff --git a/drivers/staging/lustre/TODO b/drivers/staging/lustre/TODO
+index 94446487748a..5332cdb19bfa 100644
+--- a/drivers/staging/lustre/TODO
++++ b/drivers/staging/lustre/TODO
+@@ -12,7 +12,7 @@ addressed:
+ * https://jira.hpdd.intel.com/browse/LU-9859
+ *
+ * Track all the cleanups and simplification of the libcfs module. Remove
+-* functions the kernel provides. Possible intergrate some of the functionality
++* functions the kernel provides. Possibly integrate some of the functionality
+ * into the kernel proper.
+ *
+ ******************************************************************************
+-- 
+2.17.0
 
