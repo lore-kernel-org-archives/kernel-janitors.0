@@ -1,32 +1,36 @@
-From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Date: Mon, 14 May 2018 22:35:41 +0000
-Subject: Re: [PATCH] net/mlx5: Use 'kvfree()' for memory allocated by 'kvzalloc()'
-Message-Id: <CALzJLG9_Yqv96DoRLPZ1641FY5s99vR4Z3_Q=NJHiVMadpnO-A@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 22 May 2018 11:45:56 +0000
+Subject: [PATCH -next] leds: sc27xx: Fix return value check in sc27xx_led_probe()
+Message-Id: <1526989556-139872-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180512170925.23690-1-christophe.jaillet@wanadoo.fr> <20180514.145642.989041199343505570.davem@davemloft.net>
-In-Reply-To: <20180514.145642.989041199343505570.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: christophe.jaillet@wanadoo.fr, Saeed Mahameed <saeedm@mellanox.com>, Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>, Linux Netdev List <netdev@vger.kernel.org>, RDMA mailing list <linux-rdma@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, May 14, 2018 at 11:56 AM, David Miller <davem@davemloft.net> wrote:
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Date: Sat, 12 May 2018 19:09:25 +0200
->
->> 'out' is allocated with 'kvzalloc()'. 'kvfree()' must be used to free it.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->
-> Saeed, I assume I will see this in one of your forthcoming pull
-> requests.
->
-> Thanks.
+In case of error, the function dev_get_regmap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-In case this is for net-next,  I will apply v3 to mlx5-next once
-Christophe adds the "Fixes" tags according to Eric's request.
-if it is for net (RC) then you can go ahead and apply v3 to net branch.
+Fixes: e081c49e30ec ("leds: Add Spreadtrum SC27xx breathing light controller driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/leds/leds-sc27xx-bltc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Saeed.
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index 54a90c8..9d9b7aa 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -176,8 +176,8 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 	mutex_init(&priv->lock);
+ 	priv->base = base;
+ 	priv->regmap = dev_get_regmap(dev->parent, NULL);
+-	if (IS_ERR(priv->regmap)) {
+-		err = PTR_ERR(priv->regmap);
++	if (!priv->regmap) {
++		err = -ENODEV;
+ 		dev_err(dev, "failed to get regmap: %d\n", err);
+ 		return err;
+ 	}
+
