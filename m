@@ -1,7 +1,7 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 22 May 2018 08:49:14 +0000
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: fix spelling mistake: "Inavlid" -> "Invalid"
-Message-Id: <20180522083714.z4gtlfd7adr353fg@vireshk-i7>
+From: Mark Greer <mgreer@animalcreek.com>
+Date: Tue, 22 May 2018 14:39:14 +0000
+Subject: Re: [PATCH] staging: greybus: fix spelling mistake: "Inavlid" -> "Invalid"
+Message-Id: <20180522143914.GA28655@animalcreek.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180522083342.5722-1-colin.king@canonical.com>
 In-Reply-To: <20180522083342.5722-1-colin.king@canonical.com>
@@ -11,7 +11,7 @@ Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
 Cc: Vaibhav Agarwal <vaibhav.sr@gmail.com>, Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 22-05-18, 09:33, Colin King wrote:
+On Tue, May 22, 2018 at 09:33:42AM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Trivial fix to spelling mistake in dev_err error message
@@ -35,7 +35,4 @@ On 22-05-18, 09:33, Colin King wrote:
 >  		return ret;
 >  	}
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+Acked-by: Mark Greer <mgreer@animalcreek.com>
