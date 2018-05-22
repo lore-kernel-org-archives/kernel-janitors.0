@@ -1,55 +1,36 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Wed, 02 May 2018 15:20:26 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
-Message-Id: <81881453-1353-ecd8-c981-d1828738a996@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 22 May 2018 08:33:42 +0000
+Subject: [PATCH] staging: greybus: fix spelling mistake: "Inavlid" -> "Invalid"
+Message-Id: <20180522083342.5722-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180502142945.31637-1-colin.king@canonical.com>
-In-Reply-To: <20180502142945.31637-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, alsa-devel@alsa-project.org
+To: Vaibhav Agarwal <vaibhav.sr@gmail.com>, Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 5/2/18 9:29 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently, the check that ret_val is not -ENOENT is always true and
-> the quirk bit BYT_RY5651_MCLK_EN is never being cleared because ret_val
-> is always zero at this point from a previous assignment earlier on.
-> I believe that ret_val should actually be assigned to the return from
-> devm_clk_get() as this can return -ENOENT (from a deeper call to
-> clk_get_sys) and that was the original intention to check this.
-> 
-> Detected by CoverityScan, CID#1460228 ("Logically dead code")
+From: Colin Ian King <colin.king@canonical.com>
 
-nice catch, the fix is consistent with what is done for rt5640.
+Trivial fix to spelling mistake in dev_err error message
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/greybus/audio_topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Fixes: 02c0a3b3047f ("ASoC: Intel: bytcr_rt5651: add MCLK, quirks and cleanups")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   sound/soc/intel/boards/bytcr_rt5651.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-> index 3c7d93520c52..469e2695d121 100644
-> --- a/sound/soc/intel/boards/bytcr_rt5651.c
-> +++ b/sound/soc/intel/boards/bytcr_rt5651.c
-> @@ -856,9 +856,10 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
->   	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
->   		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
->   		if (IS_ERR(priv->mclk)) {
-> +			ret_val = PTR_ERR(priv->mclk);
->   			dev_err(&pdev->dev,
-> -				"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
-> -				PTR_ERR(priv->mclk));
-> +				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
-> +				ret_val);
->   			/*
->   			 * Fall back to bit clock usage for -ENOENT (clock not
->   			 * available likely due to missing dependencies), bail
-> 
+diff --git a/drivers/staging/greybus/audio_topology.c b/drivers/staging/greybus/audio_topology.c
+index de4b1b2b12f3..15e57f701630 100644
+--- a/drivers/staging/greybus/audio_topology.c
++++ b/drivers/staging/greybus/audio_topology.c
+@@ -996,7 +996,7 @@ static int gbaudio_tplg_create_widget(struct gbaudio_module_info *module,
+ 
+ 	ret = gbaudio_validate_kcontrol_count(w);
+ 	if (ret) {
+-		dev_err(module->dev, "Inavlid kcontrol count=%d for %s\n",
++		dev_err(module->dev, "Invalid kcontrol count=%d for %s\n",
+ 			w->ncontrols, w->name);
+ 		return ret;
+ 	}
+-- 
+2.17.0
 
