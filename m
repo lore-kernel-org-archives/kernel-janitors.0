@@ -1,41 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 05 Apr 2018 10:50:10 +0000
-Subject: [PATCH] orangefs: make struct orangefs_file_vm_ops static
-Message-Id: <20180405105010.11210-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 22 May 2018 11:46:22 +0000
+Subject: [PATCH -next] slimbus: qcom: fix potential NULL dereference in qcom_slim_prg_slew()
+Message-Id: <1526989582-139939-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Sagar Dharia <sdharia@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-The struct orangefs_file_vm_ops is local to the source and does not need
-to be in global scope, so make it static.
+This is detected by Coccinelle semantic patch.
 
-Cleans up sparse warning:
-fs/orangefs/file.c:547:35: warning: symbol 'orangefs_file_vm_ops' was not
-declared. Should it be static?
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+res = platform_get_resource_byname(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap(e1, res->start, e2);
+
+Fixes: ad7fcbc308b0 ("slimbus: qcom: Add Qualcomm Slimbus controller driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- fs/orangefs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/slimbus/qcom-ctrl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-index 26358efbf794..84f44365bfb3 100644
---- a/fs/orangefs/file.c
-+++ b/fs/orangefs/file.c
-@@ -544,7 +544,7 @@ static int orangefs_fault(struct vm_fault *vmf)
- 	return filemap_fault(vmf);
- }
- 
--const struct vm_operations_struct orangefs_file_vm_ops = {
-+static const struct vm_operations_struct orangefs_file_vm_ops = {
- 	.fault = orangefs_fault,
- 	.map_pages = filemap_map_pages,
- 	.page_mkwrite = filemap_page_mkwrite,
--- 
-2.15.1
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index bb36a8f..caea3b9 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -478,6 +478,8 @@ static void qcom_slim_prg_slew(struct platform_device *pdev,
+ 		/* SLEW RATE register for this SLIMbus */
+ 		slew_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+ 				"slew");
++		if (!slew_mem)
++			return;
+ 		ctrl->slew_reg = devm_ioremap(&pdev->dev, slew_mem->start,
+ 				resource_size(slew_mem));
+ 		if (!ctrl->slew_reg)
 
