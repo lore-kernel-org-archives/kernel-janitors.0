@@ -1,49 +1,35 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 28 May 2018 10:00:40 +0000
-Subject: [PATCH 4.16 007/272] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Message-Id: <20180528100240.814377558@linuxfoundation.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 22 May 2018 11:49:55 +0000
+Subject: [PATCH -next] USB: dwc3: make function dwc3_get_extcon() static
+Message-Id: <1526989795-140120-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180528100240.256525891@linuxfoundation.org>
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Fixes the following sparse warnings:
 
-------------------
+drivers/usb/dwc3/drd.c:443:19: warning:
+ symbol 'dwc3_get_extcon' was not declared. Should it be static?
 
-From: Colin Ian King <colin.king@canonical.com>
-
-commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
-
-Trivial fix to spelling mistake in debugfs_entries text.
-
-Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org
-Cc: <stable@vger.kernel.org> # 3.10+
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- arch/mips/kvm/mips.c |    2 +-
+ drivers/usb/dwc3/drd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -45,7 +45,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
- 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
- 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
--	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
-+	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
- 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
-
+diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
+index 2706824..218371f 100644
+--- a/drivers/usb/dwc3/drd.c
++++ b/drivers/usb/dwc3/drd.c
+@@ -440,7 +440,7 @@ static int dwc3_drd_notifier(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
+ }
+ 
+-struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
++static struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
+ {
+ 	struct device *dev = dwc->dev;
+ 	struct device_node *np_phy, *np_conn;
 
