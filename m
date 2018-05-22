@@ -1,48 +1,37 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Thu, 10 May 2018 17:28:20 +0000
-Subject: Re: [PATCH] selftests: media_tests: fix spelling mistake: "iternations" -> "iterations"
-Message-Id: <f990d4dd-ff00-b695-68e6-d8d93a200e57@kernel.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 22 May 2018 11:48:28 +0000
+Subject: [PATCH -next] dmaengine: sprd: Fix return value check in sprd_dma_probe()
+Message-Id: <1526989708-140048-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180502150010.32333-1-colin.king@canonical.com>
- <140c4e71-071f-039a-c883-fc664e696402@kernel.org>
-In-Reply-To: <140c4e71-071f-039a-c883-fc664e696402@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/04/2018 01:42 PM, Shuah Khan wrote:
-> On 05/02/2018 09:00 AM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Trivial fix to spelling mistake in message text
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  tools/testing/selftests/media_tests/media_device_test.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/media_tests/media_device_test.c b/tools/testing/selftests/media_tests/media_device_test.c
->> index 421a367e4bb3..d8bb1e15d1d9 100644
->> --- a/tools/testing/selftests/media_tests/media_device_test.c
->> +++ b/tools/testing/selftests/media_tests/media_device_test.c
->> @@ -88,7 +88,7 @@ int main(int argc, char **argv)
->>  	       "other Oops in the dmesg. Enable KaSan kernel\n"
->>  	       "config option for use-after-free error detection.\n\n");
->>  
->> -	printf("Running test for %d iternations\n", count);
->> +	printf("Running test for %d iterations\n", count);
->>  
->>  	while (count > 0) {
->>  		ret = ioctl(fd, MEDIA_IOC_DEVICE_INFO, &mdi);
->>
-> 
-> Thanks. I will queue this for 4.18-rc1
-> 
-> -- Shuah
-> 
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Applied to linux-kselftest next for 4.18-rc1
+Fixes: e7f063ae1a31 ("dmaengine: sprd: Use devm_ioremap_resource() to map memory")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/dma/sprd-dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index e715d07..36df3b0 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -808,8 +808,8 @@ static int sprd_dma_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sdev->glb_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!sdev->glb_base)
+-		return -ENOMEM;
++	if (IS_ERR(sdev->glb_base))
++		return PTR_ERR(sdev->glb_base);
+ 
+ 	dma_cap_set(DMA_MEMCPY, sdev->dma_dev.cap_mask);
+ 	sdev->total_chns = chn_count;
+
