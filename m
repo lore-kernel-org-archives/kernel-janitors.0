@@ -1,59 +1,66 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 09 May 2018 19:50:26 +0000
-Subject: Re: [PATCH] drm/amd/display: clean up assignment of amdgpu_crtc
-Message-Id: <CADnq5_OEzKSnXWbVaAUDnfK-uinyQGh16K-2iAduYNj6+vXRHA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 23 May 2018 19:07:15 +0000
+Subject: [PATCH 4/5] pci/hotplug/pnv-php: add missing of_node_put
+Message-Id: <1527102436-13447-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180502144316.32056-1-colin.king@canonical.com>
- <fe695f10-eb1b-f6f4-ae02-c2f12225992c@amd.com>
-In-Reply-To: <fe695f10-eb1b-f6f4-ae02-c2f12225992c-5C7GfCeVMHo@public.gmane.org>
+References: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>
-Cc: David Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Bjorn Helgaas <bhelgaas@google.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 11:04 AM, Harry Wentland <harry.wentland@amd.com> wrote:
-> On 2018-05-02 10:43 AM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The declaration of pointer amdgpu_crtc has a redundant assignment to
->> amdgpu_crtc. Clean this up by removing it.
->>
->> Detected by CoverityScan, CID#1460299 ("Evaluation order violation")
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> Looks like i goofed. Thanks for fixing this.
->
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+The device node iterators perform an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Applied.  Thanks!
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
-Alex
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
 
->
-> Harry
->
->> ---
->>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> index 1dd1142246c2..2beb8821e19e 100644
->> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> @@ -3773,7 +3773,7 @@ static void remove_stream(struct amdgpu_device *adev,
->>  static int get_cursor_position(struct drm_plane *plane, struct drm_crtc *crtc,
->>                              struct dc_cursor_position *position)
->>  {
->> -     struct amdgpu_crtc *amdgpu_crtc = amdgpu_crtc = to_amdgpu_crtc(crtc);
->> +     struct amdgpu_crtc *amdgpu_crtc = to_amdgpu_crtc(crtc);
->>       int x, y;
->>       int xorigin = 0, yorigin = 0;
->>
->>
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pci/hotplug/pnv_php.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
+index d441006..6c2e8d7 100644
+--- a/drivers/pci/hotplug/pnv_php.c
++++ b/drivers/pci/hotplug/pnv_php.c
+@@ -220,12 +220,16 @@ static int pnv_php_populate_changeset(struct of_changeset *ocs,
+ 
+ 	for_each_child_of_node(dn, child) {
+ 		ret = of_changeset_attach_node(ocs, child);
+-		if (ret)
++		if (ret) {
++			of_node_put(child);
+ 			break;
++		}
+ 
+ 		ret = pnv_php_populate_changeset(ocs, child);
+-		if (ret)
++		if (ret) {
++			of_node_put(child);
+ 			break;
++		}
+ 	}
+ 
+ 	return ret;
+
