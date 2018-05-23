@@ -1,35 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 10 May 2018 16:02:39 +0000
-Subject: [PATCH] ARM: kprobes: fix spelling mistake: "undefeined" -> "undefined"
-Message-Id: <20180510160239.21091-1-colin.king@canonical.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Date: Wed, 23 May 2018 16:14:07 +0000
+Subject: Re: [PATCH] staging: wilc1000: fix spelling mistake: "Preamle" -> "Preamble"
+Message-Id: <0168c840-e962-53ce-4b30-705a5c80730c@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180522164905.10874-1-colin.king@canonical.com>
+In-Reply-To: <20180522164905.10874-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Colin King <colin.king@canonical.com>, Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/arm/probes/kprobes/test-thumb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 22.05.2018 19:49, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in netdev_err error message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/arch/arm/probes/kprobes/test-thumb.c b/arch/arm/probes/kprobes/test-thumb.c
-index b683b4517458..6841909757cd 100644
---- a/arch/arm/probes/kprobes/test-thumb.c
-+++ b/arch/arm/probes/kprobes/test-thumb.c
-@@ -787,7 +787,7 @@ CONDITION_INSTRUCTIONS(22,
- 
- 	TEST_UNSUPPORTED(__inst_thumb32(0xf7f08000) " @ smc #0")
- 
--	TEST_UNSUPPORTED(__inst_thumb32(0xf7f0a000) " @ undefeined")
-+	TEST_UNSUPPORTED(__inst_thumb32(0xf7f0a000) " @ undefined")
- 
- 	TEST_BF(  "b.w	2f")
- 	TEST_BB(  "b.w	2b")
--- 
-2.17.0
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
+> ---
+>  drivers/staging/wilc1000/host_interface.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+> index a2f82c885d63..7b613cd72d22 100644
+> --- a/drivers/staging/wilc1000/host_interface.c
+> +++ b/drivers/staging/wilc1000/host_interface.c
+> @@ -577,7 +577,7 @@ static void handle_cfg_param(struct wilc_vif *vif, struct cfg_param_attr *param)
+>  			wid_list[i].size = sizeof(char);
+>  			hif_drv->cfg_values.preamble_type = preamble_type;
+>  		} else {
+> -			netdev_err(vif->ndev, "Preamle Range(0~2) over\n");
+> +			netdev_err(vif->ndev, "Preamble Range(0~2) over\n");
+>  			goto unlock;
+>  		}
+>  		i++;
+> 
