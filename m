@@ -1,46 +1,24 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 May 2018 16:58:00 +0000
-Subject: Re: [PATCH V2] net/netlink: optimize seq_puts and seq_printf in af_netlink.c
-Message-Id: <20180503.125800.805006461069190790.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 23 May 2018 19:07:11 +0000
+Subject: [PATCH 0/5] add missing of_node_put
+Message-Id: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503090901.35bxgzs2tjsl7bqr@debian>
-In-Reply-To: <20180503090901.35bxgzs2tjsl7bqr@debian>
+References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tsu.yubo@gmail.com
-Cc: xiyou.wangcong@gmail.com, yuzibode@126.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 
-From: YU Bo <tsu.yubo@gmail.com>
-Date: Thu, 3 May 2018 05:09:04 -0400
+The device node iterators perform an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
-> Before the patch, the command `cat /proc/net/netlink` will output
-> like:
-> 
-> https://clbin.com/BojZv
-> 
-> After the patch:
-> 
-> https://clbin.com/lnu4L
-> 
-> The optimization will make convenience for using `cat
-> /proc/net/netlink`
-> But,The checkpatch will give a warning:
-> 
-> WARNING: quoted string split across lines
-> 
-> Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+---
 
-Please do not reference external web sites for text which explains
-the change in your commit message.
-
-Simply show the /proc/net/netlink headers and then one line of the
-output, before and after, in diff style.
-
-Then it will be clear to the reader that you are not "optimizing"
-anything.  This is not an optimization.
-
-You are just making sure the headers line up properly with the
-actual value output.
-
-Thank you.
+ drivers/gpu/drm/rockchip/rockchip_lvds.c   |    4 +++-
+ drivers/pci/hotplug/pnv_php.c              |    8 ++++++--
+ drivers/phy/hisilicon/phy-hisi-inno-usb2.c |    9 +++++++--
+ drivers/pinctrl/pinctrl-at91-pio4.c        |    4 +++-
+ drivers/soc/ti/knav_dma.c                  |    1 +
+ 5 files changed, 20 insertions(+), 6 deletions(-)
