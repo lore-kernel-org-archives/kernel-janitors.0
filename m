@@ -1,23 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 15 May 2018 02:40:53 +0000
-Subject: Re: [PATCH] scsi: esas2r: fix spelling mistake: "requestss" -> "requests"
-Message-Id: <yq1k1s5myiy.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 May 2018 13:12:39 +0000
+Subject: [PATCH v2] media: davinci vpbe: array underflow in vpbe_enum_outputs()
+Message-Id: <20180525131239.45exrwgxr2f3kb57@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508215435.20190-1-colin.king@canonical.com>
-In-Reply-To: <20180508215435.20190-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 8 May 2018 22:54:35 +0100")
+In-Reply-To: <054ede38-b194-d1f9-7961-851c8b1acd5f@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Bradley Grove <linuxdrivers@attotech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
+the problem is that temp_index can be negative.  I've made
+cgf->num_outputs unsigned to fix this issue.
 
-Colin,
+Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fix it a different way
 
-> Trivial fix to spelling mistake in esas2r_debug message
-
-Applied to 4.18/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/include/media/davinci/vpbe.h b/include/media/davinci/vpbe.h
+index 79a566d7defd..180a05e91497 100644
+--- a/include/media/davinci/vpbe.h
++++ b/include/media/davinci/vpbe.h
+@@ -92,7 +92,7 @@ struct vpbe_config {
+ 	struct encoder_config_info *ext_encoders;
+ 	/* amplifier information goes here */
+ 	struct amp_config_info *amp;
+-	int num_outputs;
++	unsigned int num_outputs;
+ 	/* Order is venc outputs followed by LCD and then external encoders */
+ 	struct vpbe_output *outputs;
+ };
