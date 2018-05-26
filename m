@@ -1,22 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 May 2018 09:49:07 +0000
-Subject: [PATCH 0/3] merge calls to of_match_device and of_device_get_match_data
-Message-Id: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 26 May 2018 13:56:06 +0000
+Subject: [PATCH] power: supply: max1721x: fix spelling mistake "RSenese" -> "RSense"
+Message-Id: <20180526135606.1153-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, Himanshu Jha <himanshujha199640@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-of_device_get_match_data calls of_match_device and fails if the latter
-fails, so both calls aren't needed.
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistake in dev_warn message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/power/supply/max1721x_battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/i2c/muxes/i2c-mux-pca954x.c |    7 ++-----
- drivers/iio/adc/max1363.c           |    8 ++------
- drivers/iio/potentiometer/max5481.c |    7 ++-----
- drivers/iio/potentiometer/mcp4018.c |    7 ++-----
- drivers/iio/potentiometer/mcp4531.c |    7 ++-----
- 5 files changed, 10 insertions(+), 26 deletions(-)
+diff --git a/drivers/power/supply/max1721x_battery.c b/drivers/power/supply/max1721x_battery.c
+index 9ee601a03d9b..9ca895b0dabb 100644
+--- a/drivers/power/supply/max1721x_battery.c
++++ b/drivers/power/supply/max1721x_battery.c
+@@ -372,7 +372,7 @@ static int devm_w1_max1721x_add_device(struct w1_slave *sl)
+ 	}
+ 
+ 	if (!info->rsense) {
+-		dev_warn(info->w1_dev, "RSenese not calibrated, set 10 mOhms!\n");
++		dev_warn(info->w1_dev, "RSense not calibrated, set 10 mOhms!\n");
+ 		info->rsense = 1000; /* in regs in 10^-5 */
+ 	}
+ 	dev_info(info->w1_dev, "RSense: %d mOhms.\n", info->rsense / 100);
+-- 
+2.17.0
+
