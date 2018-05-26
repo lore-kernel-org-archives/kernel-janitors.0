@@ -1,36 +1,36 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 31 May 2018 01:58:12 +0000
-Subject: [PATCH net-next] hv_netvsc: fix error return code in netvsc_probe()
-Message-Id: <1527732283-145530-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 26 May 2018 15:00:19 +0000
+Subject: [PATCH] rsi: fix spelling mistake "Uknown" -> "Unknown"
+Message-Id: <20180526150019.10288-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Sridhar Samudrala <sridhar.samudrala@intel.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@linuxdriverproject.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix to return a negative error code from the failover register fail
-error handling case instead of 0, as done elsewhere in this function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 1ff78076d8dd ("netvsc: refactor notifier/event handling code to use the failover framework")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Trivial fix to spelling mistake in rsi_dbg message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/hyperv/netvsc_drv.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index ebe9642..bef4d55 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2031,8 +2031,10 @@ static int netvsc_probe(struct hv_device *dev,
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index bfa7569c85bb..2ca7464b7fa3 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -1103,7 +1103,7 @@ static int rsi_mac80211_ampdu_action(struct ieee80211_hw *hw,
+ 		break;
+ 
+ 	default:
+-		rsi_dbg(ERR_ZONE, "%s: Uknown AMPDU action\n", __func__);
++		rsi_dbg(ERR_ZONE, "%s: Unknown AMPDU action\n", __func__);
+ 		break;
  	}
  
- 	net_device_ctx->failover = failover_register(net, &netvsc_failover_ops);
--	if (IS_ERR(net_device_ctx->failover))
-+	if (IS_ERR(net_device_ctx->failover)) {
-+		ret = PTR_ERR(net_device_ctx->failover);
- 		goto err_failover;
-+	}
- 
- 	return ret;
+-- 
+2.17.0
 
