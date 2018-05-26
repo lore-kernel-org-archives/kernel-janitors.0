@@ -1,38 +1,32 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Tue, 29 May 2018 10:01:44 +0000
-Subject: Re: [PATCH] mac80211_hwsim: add error check to call to rhashtable_init
-Message-Id: <1527588104.6955.10.camel@sipsolutions.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 26 May 2018 09:34:22 +0000
+Subject: [PATCH -next] scsi: hisi_sas: fix a typo in hisi_sas_task_prep()
+Message-Id: <1527327262-68989-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180529091412.8530-1-colin.king@canonical.com>
-         <1527585428.6955.7.camel@sipsolutions.net>
-         <20180529100049.up6wzjkzmd5a3v2q@mwanda>
-In-Reply-To: <20180529100049.up6wzjkzmd5a3v2q@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Colin King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 2018-05-29 at 13:00 +0300, Dan Carpenter wrote:
-> On Tue, May 29, 2018 at 11:17:08AM +0200, Johannes Berg wrote:
-> > On Tue, 2018-05-29 at 10:14 +0100, Colin King wrote:
-> > > 
-> > > @@ -3573,7 +3573,9 @@ static int __init init_mac80211_hwsim(void)
-> > >  	hwsim_wq = alloc_workqueue("hwsim_wq", 0, 0);
-> > >  	if (!hwsim_wq)
-> > >  		return -ENOMEM;
-> > > -	rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
-> > > +	err = rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
-> > > +	if (err)
-> > > +		return err;
-> > 
-> > That's missing a workqueue free, but I can fix that while applying if
-> > you prefer.
-> > 
-> 
-> And we don't free the hashtable on error either.
+Fix a typo in hisi_sas_task_prep().
 
-Heh. Ok, I guess I'll make a whole new commit to fix up all the things
-here.
+Fixes: 7eee4b921822 ("scsi: hisi_sas: relocate smp sg map")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-johannes
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 39f694e..6d37965 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -390,7 +390,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 			}
+ 			n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
+ 						 1, DMA_FROM_DEVICE);
+-			if (!n_elem_req) {
++			if (!n_elem_resp) {
+ 				rc = -ENOMEM;
+ 				goto err_out_dma_unmap;
+ 			}
+
