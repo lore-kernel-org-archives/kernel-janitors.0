@@ -1,32 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 May 2018 07:53:53 +0000
-Subject: [PATCH] mwifiex: delete unneeded include
-Message-Id: <1525593233-10968-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 26 May 2018 15:06:50 +0000
+Subject: [PATCH] 9p: fix spelling mistake "Uknown" -> "Unknown"
+Message-Id: <20180526150650.10562-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <amitkarwar@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Nothing that is defined in 11ac.h is referenced in cmdevt.c.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Trivial fix to spelling mistake in pr_info message text
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/marvell/mwifiex/cmdevt.c |    1 -
- 1 file changed, 1 deletion(-)
+ fs/9p/v9fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cmdevt.c b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-index 7014f44..9cfcdf6 100644
---- a/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-@@ -25,7 +25,6 @@
- #include "main.h"
- #include "wmm.h"
- #include "11n.h"
--#include "11ac.h"
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 0429c8ee58f1..89bac3d2f05b 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -343,7 +343,7 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 				v9ses->uid = make_kuid(current_user_ns(), uid);
+ 				if (!uid_valid(v9ses->uid)) {
+ 					ret = -EINVAL;
+-					pr_info("Uknown uid %s\n", s);
++					pr_info("Unknown uid %s\n", s);
+ 				}
+ 			}
  
- static void mwifiex_cancel_pending_ioctl(struct mwifiex_adapter *adapter);
- 
+-- 
+2.17.0
 
