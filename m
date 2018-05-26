@@ -1,49 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 28 May 2018 09:59:37 +0000
-Subject: [PATCH 4.4 003/268] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Message-Id: <20180528100202.419352505@linuxfoundation.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 26 May 2018 09:47:26 +0000
+Subject: [PATCH net-next] net: bpfilter: make function bpfilter_mbox_request() static
+Message-Id: <1527328046-84978-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
+To: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Alexei Starovoitov <ast@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Fixes the following sparse warnings:
 
-------------------
+net/ipv4/bpfilter/sockopt.c:13:5: warning:
+ symbol 'bpfilter_mbox_request' was not declared. Should it be static?
 
-From: Colin Ian King <colin.king@canonical.com>
-
-commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
-
-Trivial fix to spelling mistake in debugfs_entries text.
-
-Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org
-Cc: <stable@vger.kernel.org> # 3.10+
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- arch/mips/kvm/mips.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/bpfilter/sockopt.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -40,7 +40,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
- 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
- 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
--	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
-+	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
- 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
-
+diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
+index 42a96d2..5e04ed2 100644
+--- a/net/ipv4/bpfilter/sockopt.c
++++ b/net/ipv4/bpfilter/sockopt.c
+@@ -10,8 +10,9 @@
+ 				unsigned int optlen, bool is_set);
+ EXPORT_SYMBOL_GPL(bpfilter_process_sockopt);
+ 
+-int bpfilter_mbox_request(struct sock *sk, int optname, char __user *optval,
+-			  unsigned int optlen, bool is_set)
++static int bpfilter_mbox_request(struct sock *sk, int optname,
++				 char __user *optval,
++				 unsigned int optlen, bool is_set)
+ {
+ 	if (!bpfilter_process_sockopt) {
+ 		int err = request_module("bpfilter");
 
