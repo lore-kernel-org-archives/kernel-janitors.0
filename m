@@ -1,42 +1,36 @@
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Date: Wed, 23 May 2018 16:14:07 +0000
-Subject: Re: [PATCH] staging: wilc1000: fix spelling mistake: "Preamle" -> "Preamble"
-Message-Id: <0168c840-e962-53ce-4b30-705a5c80730c@microchip.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 26 May 2018 15:15:31 +0000
+Subject: [PATCH] powerpc-opal: fix spelling mistake "Uniterrupted" -> "Uninterrupted"
+Message-Id: <20180526151531.10920-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180522164905.10874-1-colin.king@canonical.com>
-In-Reply-To: <20180522164905.10874-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistake in hmi_error_types text
 
-On 22.05.2018 19:49, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in netdev_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/powerpc/platforms/powernv/opal-hmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+diff --git a/arch/powerpc/platforms/powernv/opal-hmi.c b/arch/powerpc/platforms/powernv/opal-hmi.c
+index 4efc95b4c7d4..586ec71a4e17 100644
+--- a/arch/powerpc/platforms/powernv/opal-hmi.c
++++ b/arch/powerpc/platforms/powernv/opal-hmi.c
+@@ -177,7 +177,7 @@ static void print_hmi_event_info(struct OpalHMIEvent *hmi_evt)
+ 		"Processor recovery occurred for masked error",
+ 		"Timer facility experienced an error",
+ 		"TFMR SPR is corrupted",
+-		"UPS (Uniterrupted Power System) Overflow indication",
++		"UPS (Uninterrupted Power System) Overflow indication",
+ 		"An XSCOM operation failure",
+ 		"An XSCOM operation completed",
+ 		"SCOM has set a reserved FIR bit to cause recovery",
+-- 
+2.17.0
 
-> ---
->  drivers/staging/wilc1000/host_interface.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-> index a2f82c885d63..7b613cd72d22 100644
-> --- a/drivers/staging/wilc1000/host_interface.c
-> +++ b/drivers/staging/wilc1000/host_interface.c
-> @@ -577,7 +577,7 @@ static void handle_cfg_param(struct wilc_vif *vif, struct cfg_param_attr *param)
->  			wid_list[i].size = sizeof(char);
->  			hif_drv->cfg_values.preamble_type = preamble_type;
->  		} else {
-> -			netdev_err(vif->ndev, "Preamle Range(0~2) over\n");
-> +			netdev_err(vif->ndev, "Preamble Range(0~2) over\n");
->  			goto unlock;
->  		}
->  		i++;
-> 
