@@ -1,21 +1,35 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 15 May 2018 20:37:56 +0000
-Subject: Re: [PATCH] clk: stm32mp1: Fix a memory leak in 'clk_stm32_register_gate_ops()'
-Message-Id: <152641667642.237094.1285725983406005947@swboyd.mtv.corp.google.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 26 May 2018 09:45:59 +0000
+Subject: [PATCH -next] misc: ibmvmc: Use GFP_ATOMIC under spin lock
+Message-Id: <1527327959-83701-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180513111704.31842-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180513111704.31842-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>, Steven Royer <seroyer@linux.vnet.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Christophe JAILLET (2018-05-13 04:17:04)
-> We allocate some memory which is neither used, nor referenced by anything.
-> So axe it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+The function alloc_dma_buffer() is called from ibmvmc_add_buffer(),
+in which a spin lock be held here, so we should use GFP_ATOMIC when
+a lock is held.
 
-Applied to clk-next
+Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/misc/ibmvmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/misc/ibmvmc.c b/drivers/misc/ibmvmc.c
+index fb83d13..8f82bb9 100644
+--- a/drivers/misc/ibmvmc.c
++++ b/drivers/misc/ibmvmc.c
+@@ -273,7 +273,7 @@ static void *alloc_dma_buffer(struct vio_dev *vdev, size_t size,
+ 			      dma_addr_t *dma_handle)
+ {
+ 	/* allocate memory */
+-	void *buffer = kzalloc(size, GFP_KERNEL);
++	void *buffer = kzalloc(size, GFP_ATOMIC);
+ 
+ 	if (!buffer) {
+ 		*dma_handle = 0;
 
