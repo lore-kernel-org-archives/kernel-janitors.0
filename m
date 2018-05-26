@@ -1,23 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 08 May 2018 05:27:39 +0000
-Subject: Re: [PATCH] scsi: mptsas: fix spelling mistake: "matchs" -> "matches"
-Message-Id: <yq1zi1awwc4.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 26 May 2018 15:11:00 +0000
+Subject: [PATCH] ALSA: seq: fix spelling mistake "Unamed" -> "Unnamed"
+Message-Id: <20180526151100.10774-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503101807.30482-1-colin.king@canonical.com>
-In-Reply-To: <20180503101807.30482-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 3 May 2018 11:18:07 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Trivial fix to spelling mistake in string
 
-> Trivial fix to spelling mistake in warning message
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/core/seq/seq_ports.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.18/scsi-queue.
-
+diff --git a/sound/core/seq/seq_ports.c b/sound/core/seq/seq_ports.c
+index d21ece9f8d73..24d90abfc64d 100644
+--- a/sound/core/seq/seq_ports.c
++++ b/sound/core/seq/seq_ports.c
+@@ -669,7 +669,7 @@ int snd_seq_event_port_attach(int client,
+ 	/* Set up the port */
+ 	memset(&portinfo, 0, sizeof(portinfo));
+ 	portinfo.addr.client = client;
+-	strlcpy(portinfo.name, portname ? portname : "Unamed port",
++	strlcpy(portinfo.name, portname ? portname : "Unnamed port",
+ 		sizeof(portinfo.name));
+ 
+ 	portinfo.capability = cap;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.0
+
