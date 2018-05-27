@@ -1,75 +1,55 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Tue, 01 May 2018 11:32:22 +0000
-Subject: Re: [PATCH] power: supply: ab8500_charger: fix spelling mistake: "faile" -> "failed"
-Message-Id: <20180501113222.ypvixxzxkfvwzyhv@earth.universe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="kjdsvpdyaqzdb4cz"
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 27 May 2018 21:54:11 +0000
+Subject: [PATCH][next] drm/nouveau/disp: avoid potential overflow on shift of int value
+Message-Id: <20180527215411.24701-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430160450.29264-1-colin.king@canonical.com>
-In-Reply-To: <20180430160450.29264-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---kjdsvpdyaqzdb4cz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The constant values being shifted are 32 bit integers and may potentially
+overflow on the shift.  Avoid this potential overflow by making them
+unsigned long long values before the shift.
 
-Hi,
+Detected by CoverityScan, CID#1469383, 1469400 ("Unintentional
+integer overflow")
 
-On Mon, Apr 30, 2018 at 05:04:50PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> trivial fix to spelling mistake in dev_error message.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c | 2 +-
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks, queued.
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
+index 29e6dd58ac48..99b94802ed63 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
+@@ -52,7 +52,7 @@ void
+ gf119_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
+ {
+ 	struct nvkm_device *device = chan->disp->base.engine.subdev.device;
+-	const u64 mask = 0x00000001 << chan->chid.user;
++	const u64 mask = 0x00000001ULL << chan->chid.user;
+ 	if (!en) {
+ 		nvkm_mask(device, 0x610090, mask, 0x00000000);
+ 		nvkm_mask(device, 0x6100a0, mask, 0x00000000);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+index 57719f675eec..43ae3b092e43 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+@@ -166,7 +166,7 @@ void
+ nv50_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
+ {
+ 	struct nvkm_device *device = chan->disp->base.engine.subdev.device;
+-	const u64 mask = 0x00010001 << chan->chid.user;
++	const u64 mask = 0x00010001ULL << chan->chid.user;
+ 	const u64 data = en ? 0x00010000 : 0x00000000;
+ 	nvkm_mask(device, 0x610028, mask, data);
+ }
+-- 
+2.17.0
 
--- Sebastian
-
->  drivers/power/supply/ab8500_charger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply=
-/ab8500_charger.c
-> index ba0e97284ae5..98b335042ba6 100644
-> --- a/drivers/power/supply/ab8500_charger.c
-> +++ b/drivers/power/supply/ab8500_charger.c
-> @@ -3066,7 +3066,7 @@ static int ab8500_charger_init_hw_registers(struct =
-ab8500_charger *di)
->  		AB8500_SYS_CTRL2_BLOCK,
->  		AB8500_MAIN_WDOG_CTRL_REG, MAIN_WDOG_ENA);
->  	if (ret) {
-> -		dev_err(di->dev, "faile to enable main watchdog\n");
-> +		dev_err(di->dev, "failed to enable main watchdog\n");
->  		goto out;
->  	}
-> =20
-> --=20
-> 2.17.0
->=20
-
---kjdsvpdyaqzdb4cz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlroUDoACgkQ2O7X88g7
-+pr7Rw//YujoTpOj0i0REUCoiDK1zbDjRlQImL24dMpV0vNAXOyQmdKuqdxoR4N1
-DtydHjjAzuoQz9Ud44ywecA/AtUBcYus/8sZ+0Q8/UHY6fMH1qwlyHxK/JqxFlDZ
-/Js86liVfItqYFOfFufFb/3N7RsqcQUOnKq9uPiR9dkOsHWVKZ8YlL+cbZX18RSS
-UyL7xaeBJRSdOQ2LECIQythFt9b8fr7sIQKRxYx7idbWU1HwIkjzwvpO4h4XrcS0
-D742RuibWNgVc06X81fMYfbnRkmeNv5anDjpDCYEhqS+VPDb5fM6LoC2x1cpPlD6
-7aaS8/N+QEoBeZeaCqCkF8ToN12HH2PRO+zAqH5wGFN6CjXtyviOFHZFjK+Q4YXJ
-euIBPF4iDfA5kjBkmA/hlHl2n0kAt4g8d7AKxWPWBMPN5C072oH2EJ7xgaGk54Wy
-lyb7hM4TU98rYt3ICOqcmZQOastKbUm+W0rtRZENMjBuVkEQSO/N6Gf1TKOONIk1
-FW+2EiiClsPhCNQC0SDd6Gn+N1ANfZlRZgJTN+D6uiJH8GY1wQ/YFKQwG8x4Al2G
-aYq8LQErFTtdQwUXxrZQSFjZcS6q7MP81CBQY2PDpXCYLjgshI1v6V79L0IaPZOQ
-ApxN47NM0HLDEbNjNjqHBPXaCM1LN2ozMLgelLk79bDSUIMlnsk=
-=xPX8
------END PGP SIGNATURE-----
-
---kjdsvpdyaqzdb4cz--
