@@ -1,51 +1,65 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 27 May 2018 21:32:19 +0000
-Subject: [PATCH][next] ALSA: xen-front: fix unsigned error check on return from to_sndif_format
-Message-Id: <20180527213219.24182-1-colin.king@canonical.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Date: Sun, 27 May 2018 22:49:03 +0000
+Subject: Re: [PATCH][next] ALSA: xen-front: fix unsigned error check on return from to_sndif_format
+Message-Id: <e1312bb5-35c6-7954-c87d-2d72b15d99c5@sakamocchi.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180527213219.24182-1-colin.king@canonical.com>
+In-Reply-To: <20180527213219.24182-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org
+To: Colin King <colin.king@canonical.com>, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi,
 
-The negative error return from the call to to_sndif_format is being
-assigned to an unsigned 8 bit integer and hence the check for a negative
-value is always going to be false.  Fix this by using ret as the error
-return and hence the negative error can be detected and assign
-the u8 sndif_format to ret if there is no error.
+On May 28 2018 06:32, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The negative error return from the call to to_sndif_format is being
+> assigned to an unsigned 8 bit integer and hence the check for a negative
+> value is always going to be false.  Fix this by using ret as the error
+> return and hence the negative error can be detected and assign
+> the u8 sndif_format to ret if there is no error.
+> 
+> Detected by CoverityScan, CID#1469385 ("Unsigned compared against 0")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   sound/xen/xen_snd_front_alsa.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
+> index 5041f83e98d2..5a2bd70a2fa1 100644
+> --- a/sound/xen/xen_snd_front_alsa.c
+> +++ b/sound/xen/xen_snd_front_alsa.c
+> @@ -466,13 +466,14 @@ static int alsa_prepare(struct snd_pcm_substream *substream)
+>   		u8 sndif_format;
+>   		int ret;
+>   
+> -		sndif_format = to_sndif_format(runtime->format);
+> -		if (sndif_format < 0) {
+> +		ret = to_sndif_format(runtime->format);
+> +		if (ret < 0) {
+>   			dev_err(&stream->front_info->xb_dev->dev,
+>   				"Unsupported sample format: %d\n",
+>   				runtime->format);
+> -			return sndif_format;
+> +			return ret;
+>   		}
+> +		sndif_format = ret;
+>   
+>   		ret = xen_snd_front_stream_prepare(&stream->evt_pair->req,
+>   						   &stream->sh_buf,
 
-Detected by CoverityScan, CID#1469385 ("Unsigned compared against 0")
+Indeed. A typical assignment mistake. Instead, we could change the type 
+of 'sndif_format' to signed int, however in this case it's not the same 
+as the third argument of xen_snd_front_stream_prepare() because it is 
+'u8'. This patch looks good to me.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/xen/xen_snd_front_alsa.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamoccchi.jp>
 
-diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
-index 5041f83e98d2..5a2bd70a2fa1 100644
---- a/sound/xen/xen_snd_front_alsa.c
-+++ b/sound/xen/xen_snd_front_alsa.c
-@@ -466,13 +466,14 @@ static int alsa_prepare(struct snd_pcm_substream *substream)
- 		u8 sndif_format;
- 		int ret;
- 
--		sndif_format = to_sndif_format(runtime->format);
--		if (sndif_format < 0) {
-+		ret = to_sndif_format(runtime->format);
-+		if (ret < 0) {
- 			dev_err(&stream->front_info->xb_dev->dev,
- 				"Unsupported sample format: %d\n",
- 				runtime->format);
--			return sndif_format;
-+			return ret;
- 		}
-+		sndif_format = ret;
- 
- 		ret = xen_snd_front_stream_prepare(&stream->evt_pair->req,
- 						   &stream->sh_buf,
--- 
-2.17.0
 
+Regards
+
+Takashi Sakamoto
