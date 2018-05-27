@@ -1,23 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 May 2018 18:46:30 +0000
-Subject: Re: [PATCH] qed: fix spelling mistake: "offloded" -> "offloaded"
-Message-Id: <20180503.144630.103620163322164.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 27 May 2018 21:32:19 +0000
+Subject: [PATCH][next] ALSA: xen-front: fix unsigned error check on return from to_sndif_format
+Message-Id: <20180527213219.24182-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503151932.22458-1-colin.king@canonical.com>
-In-Reply-To: <20180503151932.22458-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  3 May 2018 16:19:32 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in DP_NOTICE message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The negative error return from the call to to_sndif_format is being
+assigned to an unsigned 8 bit integer and hence the check for a negative
+value is always going to be false.  Fix this by using ret as the error
+return and hence the negative error can be detected and assign
+the u8 sndif_format to ret if there is no error.
 
-Applied.
+Detected by CoverityScan, CID#1469385 ("Unsigned compared against 0")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/xen/xen_snd_front_alsa.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
+index 5041f83e98d2..5a2bd70a2fa1 100644
+--- a/sound/xen/xen_snd_front_alsa.c
++++ b/sound/xen/xen_snd_front_alsa.c
+@@ -466,13 +466,14 @@ static int alsa_prepare(struct snd_pcm_substream *substream)
+ 		u8 sndif_format;
+ 		int ret;
+ 
+-		sndif_format = to_sndif_format(runtime->format);
+-		if (sndif_format < 0) {
++		ret = to_sndif_format(runtime->format);
++		if (ret < 0) {
+ 			dev_err(&stream->front_info->xb_dev->dev,
+ 				"Unsupported sample format: %d\n",
+ 				runtime->format);
+-			return sndif_format;
++			return ret;
+ 		}
++		sndif_format = ret;
+ 
+ 		ret = xen_snd_front_stream_prepare(&stream->evt_pair->req,
+ 						   &stream->sh_buf,
+-- 
+2.17.0
+
