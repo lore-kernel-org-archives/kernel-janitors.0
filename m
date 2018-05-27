@@ -1,23 +1,41 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 29 May 2018 01:32:33 +0000
-Subject: Re: [PATCH] scsi: target: fix spelling mistake "Uknown" -> "Unknown"
-Message-Id: <yq160374572.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 27 May 2018 21:23:12 +0000
+Subject: [PATCH][next] ALSA: xen-front: remove redundant error check on ret
+Message-Id: <20180527212312.23997-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180526150229.10416-1-colin.king@canonical.com>
-In-Reply-To: <20180526150229.10416-1-colin.king@canonical.com> (Colin King's
-        message of "Sat, 26 May 2018 16:02:29 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "Nicholas A . Bellinger" <nab@linux-iscsi.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+The error for a -ve value in ret is redundant as all previous
+assignments to ret have an associated -ve check and hence it
+is impossible for ret to be less that zero at the point of the
+check.  Remove this redundant error check.
 
-> Trivial fix to spelling mistake in pr_err message text
+Detected by CoveritScan, CID#1469407 ("Logically Dead code")
 
-Applied to 4.18/scsi-queue.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/xen/xen_snd_front_evtchnl.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/sound/xen/xen_snd_front_evtchnl.c b/sound/xen/xen_snd_front_evtchnl.c
+index d70a62e7f910..102d6e096cc8 100644
+--- a/sound/xen/xen_snd_front_evtchnl.c
++++ b/sound/xen/xen_snd_front_evtchnl.c
+@@ -351,8 +351,6 @@ int xen_snd_front_evtchnl_create_all(struct xen_snd_front_info *front_info,
+ 			}
+ 		}
+ 	}
+-	if (ret < 0)
+-		goto fail;
+ 
+ 	front_info->num_evt_pairs = num_streams;
+ 	return 0;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.0
+
