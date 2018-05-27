@@ -1,29 +1,42 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Wed, 23 May 2018 16:59:31 +0000
-Subject: Re: [PATCH] firmware: arm_scmi: remove some unnecessary checks
-Message-Id: <a71e8503-0da0-6d5d-83e1-667d7768bfd4@arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 27 May 2018 22:25:12 +0000
+Subject: [PATCH][next] dm writecache: fix missing goto in error handling code
+Message-Id: <20180527222512.25280-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180519063715.GB4991@mwanda>
-In-Reply-To: <20180519063715.GB4991@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently, the -EFBIG error condition when n_bitmaps_bits is
+too large is falling through to the next statement and the
+error assignment to r is potentially being ignored.  The code
+should be exiting to the error path via label 'bad'. Fix
+this by adding the missing goto statement.
 
-On 19/05/18 07:37, Dan Carpenter wrote:
-> The "pi->dom_info" buffer is allocated in init() and it can't be NULL
-> here.  These tests are sort of weird as well because if "pi->dom_info"
-> was NULL but "domain" was non-zero then it would lead to an Oops.
->
+Detected by CoverityScan, CID#1469377 ("Unused value")
 
-Indeed. Thanks for the patch.
+Fixes: bb15b431d650 ("dm: add writecache target")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/dm-writecache.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied.
-
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index 1ef06e738eb6..e61704b6eae1 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -2077,6 +2077,7 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		if (n_bitmap_bits > 1U << 31) {
+ 			r = -EFBIG;
+ 			ti->error = "Invalid device size";
++			goto bad;
+ 		}
+ 
+ 		wc->memory_map = vmalloc(n_metadata_blocks << wc->block_size_bits);
 -- 
-Regards,
-Sudeep
+2.17.0
+
