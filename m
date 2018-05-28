@@ -1,38 +1,49 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Mon, 21 May 2018 17:34:29 +0000
-Subject: [PATCH 3/4] staging: lustre: Fix "unsigned"->"unsigned int"
-Message-Id: <20180521173430.9759-3-sabin.rapan@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Mon, 28 May 2018 09:58:53 +0000
+Subject: [PATCH 4.9 004/329] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
+Message-Id: <20180528100242.363386059@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180520124408.GA10692@kroah.com>
-In-Reply-To: <20180520124408.GA10692@kroah.com>
+References: <20180528100241.796630982@linuxfoundation.org>
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
 
-This patch fixes the checkpatch.pl warning:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-WARNING:UNSPECIFIED_INT: Prefer 'unsigned int' to bare use of 'unsigned'
+------------------
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
+
+commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
+
+Trivial fix to spelling mistake in debugfs_entries text.
+
+Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org
+Cc: <stable@vger.kernel.org> # 3.10+
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h    | 2 +-
+ arch/mips/kvm/mips.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-index f5214dc33c60..d375a476f5ea 100644
---- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-+++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-@@ -51,7 +51,7 @@ static inline size_t fiemap_count_to_size(size_t extent_count)
- 				       sizeof(struct fiemap_extent);
- }
- 
--static inline unsigned fiemap_size_to_count(size_t array_size)
-+static inline unsigned int fiemap_size_to_count(size_t array_size)
- {
- 	return (array_size - sizeof(struct fiemap)) /
- 		sizeof(struct fiemap_extent);
--- 
-2.17.0
+--- a/arch/mips/kvm/mips.c
++++ b/arch/mips/kvm/mips.c
+@@ -42,7 +42,7 @@ struct kvm_stats_debugfs_item debugfs_en
+ 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
+ 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
+ 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
+-	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
++	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
+ 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
+
 
