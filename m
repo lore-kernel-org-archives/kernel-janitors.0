@@ -1,48 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 May 2018 10:17:41 +0000
-Subject: [PATCH] drm/nouveau/core: ERR_PTR vs NULL bug in nvkm_engine_info()
-Message-Id: <20180530101741.yht7j7zupb6btdvn@kili.mountain>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Mon, 28 May 2018 10:00:44 +0000
+Subject: [PATCH 3.18 003/185] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
+Message-Id: <20180528100050.899972001@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180528100050.700971285@linuxfoundation.org>
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
 
-The nvkm_engine_ref() function returns error pointers, not NULL on
-error.  I fixed that but I also had to reverse some of the checks so it
-didn't become too convoluted.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Fixes: c5c9127b25b2 ("drm/nouveau/device: implement a generic method to query device-specific properties")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+------------------
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/core/engine.c b/drivers/gpu/drm/nouveau/nvkm/core/engine.c
-index d0322ce85172..ee3fbee905e6 100644
---- a/drivers/gpu/drm/nouveau/nvkm/core/engine.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/core/engine.c
-@@ -86,14 +86,17 @@ static int
- nvkm_engine_info(struct nvkm_subdev *subdev, u64 mthd, u64 *data)
- {
- 	struct nvkm_engine *engine = nvkm_engine(subdev);
--	if (engine->func->info) {
--		if ((engine = nvkm_engine_ref(engine))) {
--			int ret = engine->func->info(engine, mthd, data);
--			nvkm_engine_unref(&engine);
--			return ret;
--		}
--	}
--	return -ENOSYS;
-+	int ret;
-+
-+	if (!engine->func->info)
-+		return -ENOSYS;
-+
-+	engine = nvkm_engine_ref(engine);
-+	if (IS_ERR(engine))
-+		return PTR_ERR(engine);
-+	ret = engine->func->info(engine, mthd, data);
-+	nvkm_engine_unref(&engine);
-+	return ret;
- }
- 
- static int
+From: Colin Ian King <colin.king@canonical.com>
+
+commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
+
+Trivial fix to spelling mistake in debugfs_entries text.
+
+Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org
+Cc: <stable@vger.kernel.org> # 3.10+
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/mips/kvm/mips.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/kvm/mips.c
++++ b/arch/mips/kvm/mips.c
+@@ -39,7 +39,7 @@ struct kvm_stats_debugfs_item debugfs_en
+ 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
+ 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
+ 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
+-	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
++	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
+ 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
+
+
