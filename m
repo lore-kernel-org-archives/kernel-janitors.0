@@ -1,55 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 27 May 2018 21:54:11 +0000
-Subject: [PATCH][next] drm/nouveau/disp: avoid potential overflow on shift of int value
-Message-Id: <20180527215411.24701-1-colin.king@canonical.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Mon, 28 May 2018 09:59:37 +0000
+Subject: [PATCH 4.4 003/268] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
+Message-Id: <20180528100202.419352505@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
+
+4.4-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The constant values being shifted are 32 bit integers and may potentially
-overflow on the shift.  Avoid this potential overflow by making them
-unsigned long long values before the shift.
+commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
 
-Detected by CoverityScan, CID#1469383, 1469400 ("Unintentional
-integer overflow")
+Trivial fix to spelling mistake in debugfs_entries text.
 
+Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c | 2 +-
- drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org
+Cc: <stable@vger.kernel.org> # 3.10+
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
-index 29e6dd58ac48..99b94802ed63 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
-@@ -52,7 +52,7 @@ void
- gf119_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
- {
- 	struct nvkm_device *device = chan->disp->base.engine.subdev.device;
--	const u64 mask = 0x00000001 << chan->chid.user;
-+	const u64 mask = 0x00000001ULL << chan->chid.user;
- 	if (!en) {
- 		nvkm_mask(device, 0x610090, mask, 0x00000000);
- 		nvkm_mask(device, 0x6100a0, mask, 0x00000000);
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-index 57719f675eec..43ae3b092e43 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-@@ -166,7 +166,7 @@ void
- nv50_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
- {
- 	struct nvkm_device *device = chan->disp->base.engine.subdev.device;
--	const u64 mask = 0x00010001 << chan->chid.user;
-+	const u64 mask = 0x00010001ULL << chan->chid.user;
- 	const u64 data = en ? 0x00010000 : 0x00000000;
- 	nvkm_mask(device, 0x610028, mask, data);
- }
--- 
-2.17.0
+---
+ arch/mips/kvm/mips.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/kvm/mips.c
++++ b/arch/mips/kvm/mips.c
+@@ -40,7 +40,7 @@ struct kvm_stats_debugfs_item debugfs_en
+ 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
+ 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
+ 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
+-	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
++	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
+ 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
+
 
