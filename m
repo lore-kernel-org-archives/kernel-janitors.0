@@ -1,36 +1,56 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Wed, 16 May 2018 18:27:17 +0000
-Subject: [PATCH 3/5] staging: lustre: Fix "unsigned"->"unsigned int"
-Message-Id: <20180516182717.5240-1-sabin.rapan@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Mon, 28 May 2018 10:01:25 +0000
+Subject: [PATCH 4.4 111/268] clocksource/drivers/fsl_ftm_timer: Fix error return checking
+Message-Id: <20180528100214.738500256@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jsimmons@infradead.org, andreas.dilger@intel.com, oleg.drokin@intel.com, lustre-devel@lists.lustre.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-janitors@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>
 
-This patch fixes the checkpatch.pl warning:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-WARNING:UNSPECIFIED_INT: Prefer 'unsigned int' to bare use of 'unsigned'
+------------------
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
+
+[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
+
+The error checks on freq for a negative error return always fails because
+freq is unsigned and can never be negative. Fix this by making freq a
+signed long.
+
+Detected with Coccinelle:
+drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+
+Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- .../staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h    | 2 +-
+ drivers/clocksource/fsl_ftm_timer.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-index f5214dc33c60..d375a476f5ea 100644
---- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-+++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_fiemap.h
-@@ -51,7 +51,7 @@ static inline size_t fiemap_count_to_size(size_t extent_count)
- 				       sizeof(struct fiemap_extent);
- }
+--- a/drivers/clocksource/fsl_ftm_timer.c
++++ b/drivers/clocksource/fsl_ftm_timer.c
+@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct
  
--static inline unsigned fiemap_size_to_count(size_t array_size)
-+static inline unsigned int fiemap_size_to_count(size_t array_size)
+ static unsigned long __init ftm_clk_init(struct device_node *np)
  {
- 	return (array_size - sizeof(struct fiemap)) /
- 		sizeof(struct fiemap_extent);
--- 
-2.17.0
+-	unsigned long freq;
++	long freq;
+ 
+ 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
+ 	if (freq <= 0)
+
 
