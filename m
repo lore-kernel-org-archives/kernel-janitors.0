@@ -1,31 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 02 May 2018 11:47:54 +0000
-Subject: Re: [PATCH][next][V2] pinctrl: actions: fix missing break in PIN_CONFIG_DRIVE_STRENGTH case.
-Message-Id: <CACRpkdZry-jbh=qOP5u+MAWnwqQx5Ek+WDhsNpLq37LQqRXsrw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 28 May 2018 07:47:56 +0000
+Subject: [PATCH] vfio/pci: remove a bogus cast in vfio_msi_set_block()
+Message-Id: <20180528074756.bgl5fxvn7foe5uhn@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180430132259.9938-1-colin.king@canonical.com>
-In-Reply-To: <20180430132259.9938-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 3:22 PM, Colin King <colin.king@canonical.com> wrote:
+This cast is confusing...  The "start" variable is an unsigned int.  We
+absolutely do not want to cast it to a negative int so why is the cast
+there?  It turns out, when you look at the context, it's a no-op and we
+can just remove it.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
-> a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
-> checks against *arg. This looks like an unintentional missing break so
-> add in the break.
->
-> Detected by CoverityScan, CID#1468456, 1468459 ("Missing break in switch")
->
-> Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This v2 applied with Manivannan's ACK.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 1c46045b0e7f..2724fed62129 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -368,7 +368,7 @@ static int vfio_msi_set_block(struct vfio_pci_device *vdev, unsigned start,
+ 	}
+ 
+ 	if (ret) {
+-		for (--j; j >= (int)start; j--)
++		for (--j; j >= start; j--)
+ 			vfio_msi_set_vector_signal(vdev, j, -1, msix);
+ 	}
+ 
