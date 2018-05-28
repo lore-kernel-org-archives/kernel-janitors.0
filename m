@@ -1,50 +1,41 @@
-From: Shannon Nelson <shannon.nelson@oracle.com>
-Date: Wed, 09 May 2018 16:22:10 +0000
-Subject: Re: [PATCH] ixgbe: fix memory leak on ipsec allocation
-Message-Id: <4adefe2d-dcae-f310-18cd-5e3269b8b593@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 28 May 2018 02:08:36 +0000
+Subject: [PATCH -next] integrity: fix the error return code in integrity_load_keys()
+Message-Id: <1527473316-35602-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180509135848.20530-1-colin.king@canonical.com>
-In-Reply-To: <20180509135848.20530-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-On 5/9/2018 6:58 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The error clean up path kfree's adapter->ipsec and should be
-> instead kfree'ing ipsec. Fix this.  Also, the err1 error exit path
-> does not need to kfree ipsec because this failure path was for
-> the failed allocation of ipsec.
-> 
-> Detected by CoverityScan, CID#146424 ("Resource Leak")
-> 
-> Fixes: 63a67fe229ea ("ixgbe: add ipsec offload add and remove SA")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The error return code PTR_ERR(integrity_dir) is always 0 since
+integrity_dir is set to NULL in this error handling case.
 
-Yep, thanks, good catch.
+Fixes: 0c343af8065b ("integrity: Add an integrity directory in securityfs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ security/integrity/iint.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Acked-by: Shannon Nelson <shannon.nelson@oracle.com>
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 149faa8..2dfc9e8 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -217,12 +217,15 @@ void __init integrity_load_keys(void)
+ 
+ static int __init integrity_fs_init(void)
+ {
++	int ret;
++
+ 	integrity_dir = securityfs_create_dir("integrity", NULL);
+ 	if (IS_ERR(integrity_dir)) {
+ 		pr_err("Unable to create integrity sysfs dir: %ld\n",
+ 		       PTR_ERR(integrity_dir));
++		ret = PTR_ERR(integrity_dir);
+ 		integrity_dir = NULL;
+-		return PTR_ERR(integrity_dir);
++		return ret;
+ 	}
+ 
+ 	return 0;
 
-
-> ---
->   drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> index 41af2b81e960..195c0b65eee2 100644
-> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> @@ -919,8 +919,8 @@ void ixgbe_init_ipsec_offload(struct ixgbe_adapter *adapter)
->   	kfree(ipsec->ip_tbl);
->   	kfree(ipsec->rx_tbl);
->   	kfree(ipsec->tx_tbl);
-> +	kfree(ipsec);
->   err1:
-> -	kfree(adapter->ipsec);
->   	netdev_err(adapter->netdev, "Unable to allocate memory for SA tables");
->   }
->   
-> 
