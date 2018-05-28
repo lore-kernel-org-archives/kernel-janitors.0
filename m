@@ -1,36 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 26 May 2018 15:15:31 +0000
-Subject: [PATCH] powerpc-opal: fix spelling mistake "Uniterrupted" -> "Uninterrupted"
-Message-Id: <20180526151531.10920-1-colin.king@canonical.com>
+From: Stewart Smith <stewart@linux.ibm.com>
+Date: Mon, 28 May 2018 02:18:55 +0000
+Subject: Re: [PATCH] powerpc-opal: fix spelling mistake "Uniterrupted" -> "Uninterrupted"
+Message-Id: <8736ycr08g.fsf@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180526151531.10920-1-colin.king@canonical.com>
+In-Reply-To: <20180526151531.10920-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org
+To: Colin King <colin.king@canonical.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> writes:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in hmi_error_types text
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in hmi_error_types text
+Reviewed-by: Stewart Smith <stewart@linux.ibm.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/powerpc/platforms/powernv/opal-hmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/platforms/powernv/opal-hmi.c b/arch/powerpc/platforms/powernv/opal-hmi.c
-index 4efc95b4c7d4..586ec71a4e17 100644
---- a/arch/powerpc/platforms/powernv/opal-hmi.c
-+++ b/arch/powerpc/platforms/powernv/opal-hmi.c
-@@ -177,7 +177,7 @@ static void print_hmi_event_info(struct OpalHMIEvent *hmi_evt)
- 		"Processor recovery occurred for masked error",
- 		"Timer facility experienced an error",
- 		"TFMR SPR is corrupted",
--		"UPS (Uniterrupted Power System) Overflow indication",
-+		"UPS (Uninterrupted Power System) Overflow indication",
- 		"An XSCOM operation failure",
- 		"An XSCOM operation completed",
- 		"SCOM has set a reserved FIR bit to cause recovery",
 -- 
-2.17.0
+Stewart Smith
+OPAL Architect, IBM.
 
