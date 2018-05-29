@@ -1,39 +1,30 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 08 May 2018 06:14:15 +0000
-Subject: [PATCH] media: i2c: tda1997: Fix an error handling path 'tda1997x_probe()'
-Message-Id: <20180508061415.10945-1-christophe.jaillet@wanadoo.fr>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 29 May 2018 07:21:50 +0000
+Subject: Re: rsi: fix spelling mistake "Uknown" -> "Unknown"
+Message-Id: <20180529072150.D61E660242@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180526150019.10288-1-colin.king@canonical.com>
+In-Reply-To: <20180526150019.10288-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tharvey@gateworks.com, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If 'media_entity_pads_init()' fails, we must free the resources allocated
-by 'v4l2_ctrl_handler_init()', as already done in the previous error
-handling path.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-'goto' the right label to fix it.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in rsi_dbg message text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/i2c/tda1997x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
-index 31bdab96f380..039a92c3294a 100644
---- a/drivers/media/i2c/tda1997x.c
-+++ b/drivers/media/i2c/tda1997x.c
-@@ -2723,7 +2723,7 @@ static int tda1997x_probe(struct i2c_client *client,
- 		state->pads);
- 	if (ret) {
- 		v4l_err(client, "failed entity_init: %d", ret);
--		goto err_free_mutex;
-+		goto err_free_handler;
- 	}
- 
- 	ret = v4l2_async_register_subdev(sd);
+a53e8f3edaa0 rsi: fix spelling mistake "Uknown" -> "Unknown"
+
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10429003/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
