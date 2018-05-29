@@ -1,46 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 27 May 2018 22:55:10 +0000
-Subject: [PATCH] EVM: Fix null dereference on xattr when xattr fails to allocate
-Message-Id: <20180527225510.25612-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 May 2018 09:05:04 +0000
+Subject: Re: [PATCH] EVM: Fix null dereference on xattr when xattr fails to allocate
+Message-Id: <20180529090504.6dpdadjyjxo45nu2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180527225510.25612-1-colin.king@canonical.com>
+In-Reply-To: <20180527225510.25612-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Garrett <mjg59@google.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Matthew Garrett <mjg59@google.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Not really related to this patch except I was looking at the function:
 
-In the case where the allocation of xattr fails and xattr is NULL, the
-error exit return path via label 'out' will dereference xattr when
-kfree'ing xattr-name.  Fix this by only kfree'ing xattr->name and xattr
-when xattr is non-null.
+security/integrity/evm/evm_secfs.c
+   191          ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
+   192          if (IS_ERR(ab))
+   193                  return PTR_ERR(ab);
+   194  
+   195          xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
+   196          if (!xattr) {
+   197                  err = -ENOMEM;
+   198                  goto out;
+   199          }
+   200  
+   201          xattr->name = memdup_user_nul(buf, count);
+   202          if (IS_ERR(xattr->name)) {
+   203                  err = PTR_ERR(xattr->name);
+   204                  xattr->name = NULL;
+   205                  goto out;
+   206          }
+   207  
+   208          /* Remove any trailing newline */
+   209          len = strlen(xattr->name);
+   210          if (xattr->name[len-1] = '\n')
 
-Detected by CoverityScan, CID#1469366 ("Dereference after null check")
+strlen() could be zero, leading to a read underflow here.
 
-Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/integrity/evm/evm_secfs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+   211                  xattr->name[len-1] = '\0';
+   212  
+   213          if (strcmp(xattr->name, ".") = 0) {
+   214                  evm_xattrs_locked = 1;
+   215                  newattrs.ia_mode = S_IFREG | 0440;
+   216                  newattrs.ia_valid = ATTR_MODE;
+   217                  inode = evm_xattrs->d_inode;
+   218                  inode_lock(inode);
+   219                  err = simple_setattr(evm_xattrs, &newattrs);
+   220                  inode_unlock(inode);
+   221                  audit_log_format(ab, "locked");
+   222                  if (!err)
+   223                          err = count;
+   224                  goto out;
+   225          }
 
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index fb8bc950aceb..cf5cd303d7c0 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -253,8 +253,10 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
- out:
- 	audit_log_format(ab, " res=%d", err);
- 	audit_log_end(ab);
--	kfree(xattr->name);
--	kfree(xattr);
-+	if (xattr) {
-+		kfree(xattr->name);
-+		kfree(xattr);
-+	}
- 	return err;
- }
- 
--- 
-2.17.0
+regards,
+dan carpenter
 
