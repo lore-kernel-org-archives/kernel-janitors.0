@@ -1,45 +1,29 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Wed, 09 May 2018 09:31:33 +0000
-Subject: Re: [PATCH] drm/i915/dp: fix spelling mistake: "seqeuncer" -> "sequencer"
-Message-Id: <87efil41l6.fsf@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 May 2018 09:13:24 +0000
+Subject: [PATCH] libata: zpodd: small read overflow in eject_tray()
+Message-Id: <20180529091320.axeryttqycdexzm5@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180509091908.13804-1-colin.king@canonical.com>
-In-Reply-To: <20180509091908.13804-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 09 May 2018, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in WARN warning message text
+We read from the cdb[] buffer in ata_exec_internal_sg().  It has to be
+ATAPI_CDB_LEN (16) bytes long, but this buffer is only 12 bytes.
 
-While at it, would you mind fixing the plethora of "seqeuencer" typos in
-the comments in the same file please?
+Fixes: 213342053db5 ("libata: handle power transition of ODD")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-BR,
-Jani.
-
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/i915/intel_dp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index dde92e4af5d3..914389f67458 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -513,7 +513,7 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
->  	uint32_t DP;
->  
->  	if (WARN(I915_READ(intel_dp->output_reg) & DP_PORT_EN,
-> -		 "skipping pipe %c power seqeuncer kick due to port %c being active\n",
-> +		 "skipping pipe %c power sequencer kick due to port %c being active\n",
->  		 pipe_name(pipe), port_name(intel_dig_port->base.port)))
->  		return;
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+index de4ddd0e8550..b3ed8f9953a8 100644
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -35,7 +35,7 @@ struct zpodd {
+ static int eject_tray(struct ata_device *dev)
+ {
+ 	struct ata_taskfile tf;
+-	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
++	static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_START_STOP_UNIT,
+ 		0, 0, 0,
+ 		0x02,     /* LoEj */
+ 		0, 0, 0, 0, 0, 0, 0,
