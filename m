@@ -1,73 +1,57 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 09 May 2018 09:47:58 +0000
-Subject: Applied "ASoC: fix return value check in mt6351_codec_driver_probe()" to the asoc tree
-Message-Id: <20180509094758.E29A044007A@finisterre.ee.mobilebroadband>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 29 May 2018 19:54:51 +0000
+Subject: Re: [PATCH v3] media: davinci vpbe: array underflow in vpbe_enum_outputs()
+Message-Id: <CA+V-a8sAnQ=apqSYMGrG8kQQ92odssu=Rqb9Q-2Fj8ya5ZkyFQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
+References: <a322043a-5b45-b695-4302-173c5111896b@xs4all.nl> <20180525131239.45exrwgxr2f3kb57@kili.mountain>
+In-Reply-To: <20180525131239.45exrwgxr2f3kb57@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, Kai Chieh Chuang <kaichieh.chuang@mediatek.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org@alsa-project.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Manjunath Hadli <manjunath.hadli@ti.com>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+On Mon, May 28, 2018 at 7:26 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
+> the problem is that temp_index can be negative.  I've changed the types
+> to unsigned to fix this issue.
+>
+> Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: fix it a different way
+> v3: change everything to unsigned because that's the right thing to do
+>     and looks nicer.
+>
 
-   ASoC: fix return value check in mt6351_codec_driver_probe()
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 
-has been applied to the asoc tree at
+Regards,
+--Prabhakar Lad
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From aaa730ca3f88f535dc12e2f0ff575f70f516841b Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 7 May 2018 01:39:45 +0000
-Subject: [PATCH] ASoC: fix return value check in mt6351_codec_driver_probe()
-
-In case of error, the function dev_get_regmap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/mt6351.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
-index e739f078fec5..f73dcd753584 100644
---- a/sound/soc/codecs/mt6351.c
-+++ b/sound/soc/codecs/mt6351.c
-@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
- 	priv->dev = &pdev->dev;
- 
- 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
--	if (IS_ERR(priv->regmap))
--		return PTR_ERR(priv->regmap);
-+	if (!priv->regmap)
-+		return -ENODEV;
- 
- 	dev_dbg(priv->dev, "%s(), dev name %s\n",
- 		__func__, dev_name(&pdev->dev));
--- 
-2.17.0
-
+> diff --git a/include/media/davinci/vpbe.h b/include/media/davinci/vpbe.h
+> index 79a566d7defd..180a05e91497 100644
+> --- a/include/media/davinci/vpbe.h
+> +++ b/include/media/davinci/vpbe.h
+> @@ -92,7 +92,7 @@ struct vpbe_config {
+>         struct encoder_config_info *ext_encoders;
+>         /* amplifier information goes here */
+>         struct amp_config_info *amp;
+> -       int num_outputs;
+> +       unsigned int num_outputs;
+>         /* Order is venc outputs followed by LCD and then external encoders */
+>         struct vpbe_output *outputs;
+>  };
+> diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+> index 18c035ef84cf..c6fee53bff4d 100644
+> --- a/drivers/media/platform/davinci/vpbe.c
+> +++ b/drivers/media/platform/davinci/vpbe.c
+> @@ -126,7 +126,7 @@ static int vpbe_enum_outputs(struct vpbe_device *vpbe_dev,
+>                              struct v4l2_output *output)
+>  {
+>         struct vpbe_config *cfg = vpbe_dev->cfg;
+> -       int temp_index = output->index;
+> +       unsigned int temp_index = output->index;
+>
+>         if (temp_index >= cfg->num_outputs)
+>                 return -EINVAL;
