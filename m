@@ -1,7 +1,7 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 08 May 2018 22:09:29 +0000
+Date: Wed, 30 May 2018 09:57:49 +0000
 Subject: [PATCH] drm/i915/gvt: fix spelling mistake: "resseting" -> "resetting"
-Message-Id: <20180508220929.21225-1-colin.king@canonical.com>
+Message-Id: <20180530095749.11113-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180319134116.4478-1-colin.king@canonical.com>
 In-Reply-To: <20180319134116.4478-1-colin.king@canonical.com>
@@ -13,7 +13,7 @@ Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in gvt_dbg_core debug message
+Trivial fix to spelling mistake in gvt_dbg_core message
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
