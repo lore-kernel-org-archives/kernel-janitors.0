@@ -1,64 +1,41 @@
-From: Tariq Toukan <tariqt@mellanox.com>
-Date: Thu, 10 May 2018 15:03:36 +0000
-Subject: Re: [PATCH] net/mlx4_en: Fix an error handling path in 'mlx4_en_init_netdev()'
-Message-Id: <49d89081-95d8-e7ae-2903-372a201ff92c@mellanox.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 May 2018 18:04:15 +0000
+Subject: [PATCH][next] aio: fix missing break in switch statement
+Message-Id: <20180530180415.17572-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180510070226.19575-1-christophe.jaillet@wanadoo.fr>
- <20180510133808.GA10943@lap1> <20180510141836.2qlm676j4675buti@mwanda>
- <f29e851d-c4d7-cd04-dbb7-582adebc2854@mellanox.com>
-In-Reply-To: <f29e851d-c4d7-cd04-dbb7-582adebc2854@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Yuval Shaia <yuval.shaia@oracle.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, davem@davemloft.net, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Benjamin LaHaise <bcrl@kvack.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The addition of the IOCB_CMD_POLL command removed the break
+statement for the IOCM_CMD_FDSYNC. From my understanding, this
+should not have been removed as the fall-through does not seem
+to make sense.  Fix this by adding the break back again.
 
-On 10/05/2018 5:36 PM, Tariq Toukan wrote:
->=20
->=20
-> On 10/05/2018 5:18 PM, Dan Carpenter wrote:
->> On Thu, May 10, 2018 at 04:38:08PM +0300, Yuval Shaia wrote:
->>> On Thu, May 10, 2018 at 09:02:26AM +0200, Christophe JAILLET wrote:
->>>> If an error occurs, 'mlx4_en_destroy_netdev()' is called.
->>>> It then calls 'mlx4_en_free_resources()' which does the needed=20
->>>> resources
->>>> cleanup.
->>>>
->>>> So, doing some explicit kfree in the error handling path would lead to
->>>> some double kfree.
->>>
->>> Patch make sense but what's bothering me is that mlx4_en_free_resources
->>> loops on the entire array, assuming !priv->tx_ring[t] means entry is
->>> allocated but the existing code does not assume that, see [1]. So i=20
->>> looked
->>> to see where tx_ring array is zeroed and didn't find it.
->>>
->>> Am i missing something here.
->>>
->>
->> It's zeroed twice.=C2=A0 alloc_etherdev_mqs() allocates zeroed memory and
->> then we do a memset(priv, 0, sizeof(struct mlx4_en_priv));
->>
->> regards,
->> dan carpenter
->>
->=20
-> We do zero (twice) on init, that's right. But I think Yuval's comment is =
+Detected by CoverityScan, CID#1469469 ("Missing break in switch")
 
-> valid in case of the driver went into configuration change, or down/up,=20
-> that reallocates the rings. I'm double checking this.
+Fixes: 2c14fa838cbe ("aio: implement IOCB_CMD_POLL")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/aio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Well, the flows in which we need to nullify the tx_rings pointer (if=20
-any, I still need to investigate this) is not related to this init function.
+diff --git a/fs/aio.c b/fs/aio.c
+index 8274d09d44a2..e0b2f183fa1c 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1785,6 +1785,7 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+ 		break;
+ 	case IOCB_CMD_FDSYNC:
+ 		ret = aio_fsync(&req->fsync, iocb, true);
++		break;
+ 	case IOCB_CMD_POLL:
+ 		ret = aio_poll(req, iocb);
+ 		break;
+-- 
+2.17.0
 
-Here we're safe.
-
-Anyway, a V2 is already submitted, please use it for your next comments.=20
-I think patch is OK.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
