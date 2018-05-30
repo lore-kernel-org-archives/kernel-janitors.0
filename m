@@ -1,30 +1,42 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Date: Tue, 29 May 2018 18:09:03 +0000
-Subject: Re: [PATCH][next] dm writecache: fix missing goto in error handling code
-Message-Id: <20180529180903.GB32763@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 May 2018 16:41:44 +0000
+Subject: [PATCH][next] drm/amdgpu/df: fix potential array out-of-bounds read
+Message-Id: <20180530164144.21526-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180527222512.25280-1-colin.king@canonical.com>
-In-Reply-To: <20180527222512.25280-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Hawking Zhang <Hawking.Zhang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, May 27 2018 at  6:25pm -0400,
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently, the -EFBIG error condition when n_bitmaps_bits is
-> too large is falling through to the next statement and the
-> error assignment to r is potentially being ignored.  The code
-> should be exiting to the error path via label 'bad'. Fix
-> this by adding the missing goto statement.
-> 
-> Detected by CoverityScan, CID#1469377 ("Unused value")
-> 
-> Fixes: bb15b431d650 ("dm: add writecache target")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The comparison with the number of elements in array df_v3_7_channel_number
+is off-by-one and can produce an array out-of-bounds read if
+fb_channel_number is equal to the number of elements of the array. Fix
+this by changing the comparison to >= instead of >.
 
-Thanks, I've picked this up.
+Detected by CoverityScan, CID#1469489 ("Out-of-bounds read")
+
+Fixes: 13b581502d51 ("drm/amdgpu/df: implement df v3_6 callback functions (v2)")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/df_v3_6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
+index 60608b3df881..d5ebe566809b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
++++ b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
+@@ -64,7 +64,7 @@ static u32 df_v3_6_get_hbm_channel_number(struct amdgpu_device *adev)
+ 	int fb_channel_number;
+ 
+ 	fb_channel_number = adev->df_funcs->get_fb_channel_number(adev);
+-	if (fb_channel_number > ARRAY_SIZE(df_v3_6_channel_number))
++	if (fb_channel_number >= ARRAY_SIZE(df_v3_6_channel_number))
+ 		fb_channel_number = 0;
+ 
+ 	return df_v3_6_channel_number[fb_channel_number];
+-- 
+2.17.0
+
