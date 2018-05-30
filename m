@@ -1,22 +1,41 @@
-From: Vinod <vkoul@kernel.org>
-Date: Thu, 17 May 2018 04:43:05 +0000
-Subject: Re: [PATCH] dmaengine: sprd: fix an NULL vs IS_ERR() bug
-Message-Id: <20180517043105.GR13271@vkoul-mobl>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 May 2018 17:14:29 +0000
+Subject: [PATCH][next] mailbox: PCC: check for negative count for parse failure checking
+Message-Id: <20180530171429.3172-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180516084807.GA23043@mwanda>
-In-Reply-To: <20180516084807.GA23043@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Baolin Wang <baolin.wang@linaro.org>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>, Al Stone <ahs3@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 16-05-18, 11:48, Dan Carpenter wrote:
-> We recently cleaned this code up but we need to update the error
-> handling as well.  The devm_ioremap_resource() returns error pointers on
-> error, never NULL.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+The function acpi_table_parse_enties_array can potentially return a
+negative value if parsing fails. Currently the check on the return
+is not checking for errors, so fix this by adding a -ve check too.
 
+Detected by CoverityScan, CID#1469477 ("Improper use of negative value")
+
+Fixes: 8f8027c5f935 ("mailbox: PCC: erroneous error message when parsing ACPI PCCT")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mailbox/pcc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index fc3c237daef2..87d67922020d 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -461,7 +461,7 @@ static int __init acpi_pcc_probe(void)
+ 	count = acpi_table_parse_entries_array(ACPI_SIG_PCCT,
+ 			sizeof(struct acpi_table_pcct), proc,
+ 			ACPI_PCCT_TYPE_RESERVED, MAX_PCC_SUBSPACES);
+-	if (count = 0 || count > MAX_PCC_SUBSPACES) {
++	if (count <= 0 || count > MAX_PCC_SUBSPACES) {
+ 		pr_warn("Invalid PCCT: %d PCC subspaces\n", count);
+ 		return -EINVAL;
+ 	}
 -- 
-~Vinod
+2.17.0
+
