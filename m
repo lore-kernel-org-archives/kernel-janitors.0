@@ -1,27 +1,37 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Thu, 03 May 2018 13:19:02 +0000
-Subject: Re: [PATCH 24/61] iommu: simplify getting .drvdata
-Message-Id: <20180503131901.c5vm4w3mskcnef4s@8bytes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 May 2018 10:36:55 +0000
+Subject: [PATCH] ALSA: xen-front: freeing an error pointer
+Message-Id: <20180530103655.bnjzq2jpfrjjwvvj@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-	<20180419140641.27926-25-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-25-wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-On Thu, Apr 19, 2018 at 04:05:54PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/iommu/qcom_iommu.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+kfree() doesn't accept error pointers so I've set "str" to NULL on these
+paths.
 
-Applied, thanks.
+Fixes: fd3b36045c2c ("ALSA: xen-front: Read sound driver configuration from Xen store")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/xen/xen_snd_front_cfg.c b/sound/xen/xen_snd_front_cfg.c
+index 38c7e1eefbb9..68dcd7d1f09e 100644
+--- a/sound/xen/xen_snd_front_cfg.c
++++ b/sound/xen/xen_snd_front_cfg.c
+@@ -306,6 +306,7 @@ static int cfg_get_stream_type(const char *path, int index,
+ 	str = xenbus_read(XBT_NIL, stream_path, XENSND_FIELD_TYPE, NULL);
+ 	if (IS_ERR(str)) {
+ 		ret = PTR_ERR(str);
++		str = NULL;
+ 		goto fail;
+ 	}
+ 
+@@ -347,6 +348,7 @@ static int cfg_stream(struct xen_snd_front_info *front_info,
+ 	str = xenbus_read(XBT_NIL, stream_path, XENSND_FIELD_TYPE, NULL);
+ 	if (IS_ERR(str)) {
+ 		ret = PTR_ERR(str);
++		str = NULL;
+ 		goto fail;
+ 	}
+ 
