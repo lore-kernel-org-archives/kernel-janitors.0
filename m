@@ -1,38 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 30 May 2018 09:40:29 +0000
-Subject: [PATCH] RDMA/qedr: fix spelling mistake: "adrresses" -> "addresses"
-Message-Id: <20180530094029.10747-1-colin.king@canonical.com>
+From: Doug Ledford <dledford@redhat.com>
+Date: Thu, 31 May 2018 18:03:53 +0000
+Subject: Re: [PATCH] RDMA/qedr: fix spelling mistake: "adrresses" -> "addresses"
+Message-Id: <dc29e2b147cae0e13e570c2c6c62a433414b25ac.camel@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-fZQ65AHqLw3T4cI0Jayg"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180501082549.22215-1-colin.king@canonical.com>
-In-Reply-To: <20180501082549.22215-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Michal Kalderon <Michal.Kalderon@cavium.com>, Ariel Elior <Ariel.Elior@cavium.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+References: <20180530094029.10747-1-colin.king@canonical.com>
+In-Reply-To: <20180530094029.10747-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>, Michal Kalderon <Michal.Kalderon@cavium.com>, Ariel Elior <Ariel.Elior@cavium.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in DP_ERR error message
+--=-fZQ65AHqLw3T4cI0Jayg
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/qedr/verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 2018-05-30 at 10:40 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Trivial fix to spelling mistake in DP_ERR error message
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
-index 988aace89430..614a954d0757 100644
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -414,7 +414,7 @@ int qedr_mmap(struct ib_ucontext *context, struct vm_area_struct *vma)
- 
- 	if ((vma->vm_start & (PAGE_SIZE - 1)) || (len & (PAGE_SIZE - 1))) {
- 		DP_ERR(dev,
--		       "failed mmap, adrresses must be page aligned: start=0x%pK, end=0x%pK\n",
-+		       "failed mmap, addresses must be page aligned: start=0x%pK, end=0x%pK\n",
- 		       (void *)vma->vm_start, (void *)vma->vm_end);
- 		return -EINVAL;
- 	}
--- 
-2.17.0
+Thanks, applied.
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-fZQ65AHqLw3T4cI0Jayg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlsQOQkACgkQuCajMw5X
+L91YzxAAhBw5z7RJNEPHFbcMVhdKm8qDhCcv+N84eMt1ngLnALedIyWisgl3GodM
+Z8d/yE/CQG1JDRbuJlc6qZ0E3iMnkA8h2PMnVGIYI4F/Nf/zNGbNSnd18hwsewjx
+KlAUtv8F9eGM/3xsb8+0F3fTFdqkIKmULbs9WKUsThCSlq+SqOrEZBXK1Zd9KfAq
+aDnAoGzuHgrukTN00yOwwTq3hRxDuA+a1SJ2BGPdiMCDEj7tfDve0ZBpL9orTAwX
+YsoBaGIOJGgJmPlpgCRXhaZw/cOvvlmPoUSB0i+lH42qtGHI2VjzGTWtref9jqFp
++8ntHWETIEUNDmggVjnrkruogp0LU59zQbFPFV9IiJGK68MVDzM29Vxh0ToG35wl
+/eVhnQ78Im32PmdSvfa8ctmChDEJNeDpXG9XHwPq8mjoXGPkKpDnomA7zZKRDgwR
+2HR6IgN9iHSwn0RCNXNLxGzwJIqxHLbq8eKkDUpCx59H+LLAlywBWp67oxNEqDKx
+SoyP/MSc2tvtEVcRKvsl1VnKN+GbFpI6TqJg3jk/w6Th1oyAwi2PnzuDi/vyGWXq
+LZAeU8mV707db70kOI4P9xyIivUHJllycUD7Bl2rfa0za/colXPZQZvbcwUwXFZf
+CyR4H3oGgvgWm5ByRzZwonqtYd2la1+rPGHVq15cfGkJUHl3fP4=
+=k/CM
+-----END PGP SIGNATURE-----
+
+--=-fZQ65AHqLw3T4cI0Jayg--
 
