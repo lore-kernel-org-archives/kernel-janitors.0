@@ -1,56 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 28 May 2018 10:01:58 +0000
-Subject: [PATCH 3.18 077/185] clocksource/drivers/fsl_ftm_timer: Fix error return checking
-Message-Id: <20180528100057.270284399@linuxfoundation.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 11:39:42 +0000
+Subject: [PATCH -next] pinctrl: mediatek: remove redundant return value check of platform_get_resource()
+Message-Id: <1527766782-72315-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-janitors@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>
+To: linux-arm-kernel@lists.infradead.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+Remove unneeded error handling on the result of a call
+to platform_get_resource() when the value is passed to
+devm_ioremap_resource().
 
-------------------
-
-From: Colin Ian King <colin.king@canonical.com>
-
-[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
-
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
-
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/clocksource/fsl_ftm_timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -282,7 +282,7 @@ static int __init __ftm_clk_init(struct
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index b379969..16ff56f9 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1000,11 +1000,6 @@ static int mtk_eint_init(struct mtk_pinctrl *pctl, struct platform_device *pdev)
+ 		return -ENOMEM;
  
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
- 
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "Unable to get eint resource\n");
+-		return -ENODEV;
+-	}
+-
+ 	pctl->eint->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(pctl->eint->base))
+ 		return PTR_ERR(pctl->eint->base);
+
 
 
