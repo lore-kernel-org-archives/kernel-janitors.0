@@ -1,38 +1,53 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 07 May 2018 01:39:45 +0000
-Subject: [PATCH -next] ASoC: fix return value check in mt6351_codec_driver_probe()
-Message-Id: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 31 May 2018 12:31:17 +0000
+Subject: [PATCH] scsi: aic7xxx: aic79xx: fix potential null pointer dereference on ahd
+Message-Id: <20180531123117.32118-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
+To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In case of error, the function dev_get_regmap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+If AHD_DEBUG is enabled and ahd_platform_alloc fails then ahd is set
+to null and the debug printk dereferences ahd when passing it to
+ahd_name.  Fix this by moving the debug printk to before the call
+to ahd_platform_alloc where ahd is not null at that point.
+
+Detected by CoverityScan, CID#100296 ("Explicit null dereference")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/mt6351.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/aic7xxx/aic79xx_core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
-index e739f07..f73dcd7 100644
---- a/sound/soc/codecs/mt6351.c
-+++ b/sound/soc/codecs/mt6351.c
-@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
- 	priv->dev = &pdev->dev;
+diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
+index 034f4eebb160..3efd4cdc40a0 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_core.c
++++ b/drivers/scsi/aic7xxx/aic79xx_core.c
+@@ -6112,10 +6112,6 @@ ahd_alloc(void *platform_arg, char *name)
+ 	ahd->int_coalescing_stop_threshold  	    AHD_INT_COALESCING_STOP_THRESHOLD_DEFAULT;
  
- 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
--	if (IS_ERR(priv->regmap))
--		return PTR_ERR(priv->regmap);
-+	if (!priv->regmap)
-+		return -ENODEV;
+-	if (ahd_platform_alloc(ahd, platform_arg) != 0) {
+-		ahd_free(ahd);
+-		ahd = NULL;
+-	}
+ #ifdef AHD_DEBUG
+ 	if ((ahd_debug & AHD_SHOW_MEMORY) != 0) {
+ 		printk("%s: scb size = 0x%x, hscb size = 0x%x\n",
+@@ -6123,6 +6119,10 @@ ahd_alloc(void *platform_arg, char *name)
+ 		       (u_int)sizeof(struct hardware_scb));
+ 	}
+ #endif
++	if (ahd_platform_alloc(ahd, platform_arg) != 0) {
++		ahd_free(ahd);
++		ahd = NULL;
++	}
+ 	return (ahd);
+ }
  
- 	dev_dbg(priv->dev, "%s(), dev name %s\n",
- 		__func__, dev_name(&pdev->dev));
-
-
+-- 
+2.17.0
 
