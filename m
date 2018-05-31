@@ -1,7 +1,7 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Wed, 30 May 2018 18:11:17 +0000
+From: Christoph Hellwig <hch@lst.de>
+Date: Thu, 31 May 2018 16:39:19 +0000
 Subject: Re: [PATCH][next] aio: fix missing break in switch statement
-Message-Id: <20180530181117.GA23842@magnolia>
+Message-Id: <20180531163919.GB31181@lst.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180530180415.17572-1-colin.king@canonical.com>
 In-Reply-To: <20180530180415.17572-1-colin.king@canonical.com>
@@ -20,31 +20,6 @@ On Wed, May 30, 2018 at 07:04:15PM +0100, Colin King wrote:
 > to make sense.  Fix this by adding the break back again.
 > 
 > Detected by CoverityScan, CID#1469469 ("Missing break in switch")
-> 
-> Fixes: 2c14fa838cbe ("aio: implement IOCB_CMD_POLL")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Makes sense to me...
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/aio.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 8274d09d44a2..e0b2f183fa1c 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1785,6 +1785,7 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
->  		break;
->  	case IOCB_CMD_FDSYNC:
->  		ret = aio_fsync(&req->fsync, iocb, true);
-> +		break;
->  	case IOCB_CMD_POLL:
->  		ret = aio_poll(req, iocb);
->  		break;
-> -- 
-> 2.17.0
-> 
+Thanks.  I've actually send a fix to Al for this a few days ago
+already.
