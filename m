@@ -1,55 +1,92 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 27 May 2018 21:17:02 +0000
-Subject: [PATCH] ath10k: fix memory leak of tpc_stats
-Message-Id: <20180527211702.23778-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 May 2018 06:44:49 +0000
+Subject: [PATCH -net] net: ethernet: davinci_emac: fix error handling in probe()
+Message-Id: <20180531064449.y2do4kjban2hmatz@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Cyril Chemparathy <cyril@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>, Lukas Wunner <lukas@wunner.de>, Florian Fainelli <f.fainelli@gmail.com>, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The current error handling code has an issue where it does:
 
-Currently tpc_stats is allocated and is leaked on the return
-path if num_tx_chain is greater than WMI_TPC_TX_N_CHAIN. Avoid
-this leak by performing the check on num_tx_chain before the
-allocation of tpc_stats.
+	if (priv->txchan)
+		cpdma_chan_destroy(priv->txchan);
 
-Detected by CoverityScan, CID#1469422 ("Resource Leak")
-Fixes: 4b190675ad06 ("ath10k: fix kernel panic while reading tpc_stats")
+The problem is that ->txchan is either valid or an error pointer (which
+would lead to an Oops).  I've changed it to use multiple error labels so
+that the test can be removed.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath10k/wmi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Also there were some missing calls to netif_napi_del().
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index 46fb96ee5852..694f46fa9e14 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -4470,10 +4470,6 @@ void ath10k_wmi_event_pdev_tpc_config(struct ath10k *ar, struct sk_buff *skb)
- 
- 	ev = (struct wmi_pdev_tpc_config_event *)skb->data;
- 
--	tpc_stats = kzalloc(sizeof(*tpc_stats), GFP_ATOMIC);
--	if (!tpc_stats)
--		return;
--
- 	num_tx_chain = __le32_to_cpu(ev->num_tx_chain);
- 
- 	if (num_tx_chain > WMI_TPC_TX_N_CHAIN) {
-@@ -4482,6 +4478,10 @@ void ath10k_wmi_event_pdev_tpc_config(struct ath10k *ar, struct sk_buff *skb)
- 		return;
+Fixes: 3ef0fdb2342c ("net: davinci_emac: switch to new cpdma layer")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index be0fec17d95d..06d7c9e4dcda 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1873,7 +1873,7 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->txchan)) {
+ 		dev_err(&pdev->dev, "error initializing tx dma channel\n");
+ 		rc = PTR_ERR(priv->txchan);
+-		goto no_cpdma_chan;
++		goto err_free_dma;
  	}
  
-+	tpc_stats = kzalloc(sizeof(*tpc_stats), GFP_ATOMIC);
-+	if (!tpc_stats)
-+		return;
-+
- 	ath10k_wmi_tpc_config_get_rate_code(rate_code, pream_table,
- 					    num_tx_chain);
+ 	priv->rxchan = cpdma_chan_create(priv->dma, EMAC_DEF_RX_CH,
+@@ -1881,14 +1881,14 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->rxchan)) {
+ 		dev_err(&pdev->dev, "error initializing rx dma channel\n");
+ 		rc = PTR_ERR(priv->rxchan);
+-		goto no_cpdma_chan;
++		goto err_free_txchan;
+ 	}
  
--- 
-2.17.0
-
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "error getting irq res\n");
+ 		rc = -ENOENT;
+-		goto no_cpdma_chan;
++		goto err_free_rxchan;
+ 	}
+ 	ndev->irq = res->start;
+ 
+@@ -1914,7 +1914,7 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 		pm_runtime_put_noidle(&pdev->dev);
+ 		dev_err(&pdev->dev, "%s: failed to get_sync(%d)\n",
+ 			__func__, rc);
+-		goto no_cpdma_chan;
++		goto err_napi_del;
+ 	}
+ 
+ 	/* register the network device */
+@@ -1924,7 +1924,7 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "error in register_netdev\n");
+ 		rc = -ENODEV;
+ 		pm_runtime_put(&pdev->dev);
+-		goto no_cpdma_chan;
++		goto err_napi_del;
+ 	}
+ 
+ 
+@@ -1937,11 +1937,13 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-no_cpdma_chan:
+-	if (priv->txchan)
+-		cpdma_chan_destroy(priv->txchan);
+-	if (priv->rxchan)
+-		cpdma_chan_destroy(priv->rxchan);
++err_napi_del:
++	netif_napi_del(&priv->napi);
++err_free_rxchan:
++	cpdma_chan_destroy(priv->rxchan);
++err_free_txchan:
++	cpdma_chan_destroy(priv->txchan);
++err_free_dma:
+ 	cpdma_ctlr_destroy(priv->dma);
+ no_pdata:
+ 	if (of_phy_is_fixed_link(np))
