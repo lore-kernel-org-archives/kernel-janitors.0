@@ -1,36 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 01 May 2018 09:36:43 +0000
-Subject: [PATCH] wireless: ipw2200:  fix spelling mistake: "functionalitis" -> "functionalities"
-Message-Id: <20180501093643.23318-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 02:31:12 +0000
+Subject: [PATCH net-next] net/mlx5: Make function mlx5_fpga_tls_send_teardown_cmd() static
+Message-Id: <1527733872-149077-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Pismenny <borisp@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, Ilya Lesokhin <ilyal@mellanox.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes the following sparse warning:
 
-Trivial fix to spelling mistake in module parameter description text
+drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c:199:6: warning:
+ symbol 'mlx5_fpga_tls_send_teardown_cmd' was not declared. Should it be static?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index 87a5e414c2f7..ba3fb1d2ddb4 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -12012,7 +12012,7 @@ MODULE_PARM_DESC(rtap_iface, "create the rtap interface (1 - create, default 0)"
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c
+index 2104801..c973623 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c
+@@ -196,8 +196,8 @@ static void mlx5_fpga_tls_flow_to_cmd(void *flow, void *cmd)
+ 		 MLX5_GET(tls_flow, flow, direction_sx));
+ }
  
- #ifdef CONFIG_IPW2200_QOS
- module_param(qos_enable, int, 0444);
--MODULE_PARM_DESC(qos_enable, "enable all QoS functionalitis");
-+MODULE_PARM_DESC(qos_enable, "enable all QoS functionalities");
- 
- module_param(qos_burst_enable, int, 0444);
- MODULE_PARM_DESC(qos_burst_enable, "enable QoS burst mode");
--- 
-2.17.0
+-void mlx5_fpga_tls_send_teardown_cmd(struct mlx5_core_dev *mdev, void *flow,
+-				     u32 swid, gfp_t flags)
++static void mlx5_fpga_tls_send_teardown_cmd(struct mlx5_core_dev *mdev,
++					    void *flow, u32 swid, gfp_t flags)
+ {
+ 	struct mlx5_teardown_stream_context *ctx;
+ 	struct mlx5_fpga_dma_buf *buf;
 
