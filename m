@@ -1,51 +1,66 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 31 May 2018 11:53:15 +0000
-Subject: [PATCH -next] dm writecache: fix return value check in writecache_ctr()
-Message-Id: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
+From: Mike Snitzer <snitzer@redhat.com>
+Date: Thu, 31 May 2018 16:02:02 +0000
+Subject: Re: [PATCH -next] dm writecache: fix return value check in writecache_ctr()
+Message-Id: <20180531160202.GA11300@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Alasdair Kergon <agk@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>, dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Function dm_io_client_create() and dm_kcopyd_client_create() return
-ERR_PTR() not NULL in case of error. The NULL test in the return value
-check should be replaced with IS_ERR()
+On Thu, May 31 2018 at  7:53am -0400,
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-Fixes: 2105231db61b ("dm: add writecache target")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/md/dm-writecache.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> Function dm_io_client_create() and dm_kcopyd_client_create() return
+> ERR_PTR() not NULL in case of error. The NULL test in the return value
+> check should be replaced with IS_ERR()
+> 
+> Fixes: 2105231db61b ("dm: add writecache target")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/md/dm-writecache.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+> index 844c4fb..0b2b436 100644
+> --- a/drivers/md/dm-writecache.c
+> +++ b/drivers/md/dm-writecache.c
+> @@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  	}
+>  
+>  	wc->dm_io = dm_io_client_create();
+> -	if (!wc->dm_io) {
+> -		r = -ENOMEM;
+> +	if (IS_ERR(wc->dm_io)) {
+> +		r = PTR_ERR(wc->dm_io);
+>  		ti->error = "Unable to allocate dm-io client";
+> +		wc->dm_io = NULL;
+>  		goto bad;
+>  	}
+>  
+> @@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  		}
+>  
+>  		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+> -		if (!wc->dm_kcopyd) {
+> -			r = -ENOMEM;
+> +		if (IS_ERR(wc->dm_kcopyd)) {
+> +			r = PTR_ERR(wc->dm_kcopyd);
+>  			ti->error = "Unable to allocate dm-kcopyd client";
+> +			wc->dm_kcopyd = NULL;
+>  			goto bad;
+>  		}
+> 
 
-diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-index 844c4fb..0b2b436 100644
---- a/drivers/md/dm-writecache.c
-+++ b/drivers/md/dm-writecache.c
-@@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 	}
- 
- 	wc->dm_io = dm_io_client_create();
--	if (!wc->dm_io) {
--		r = -ENOMEM;
-+	if (IS_ERR(wc->dm_io)) {
-+		r = PTR_ERR(wc->dm_io);
- 		ti->error = "Unable to allocate dm-io client";
-+		wc->dm_io = NULL;
- 		goto bad;
- 	}
- 
-@@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 		}
- 
- 		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
--		if (!wc->dm_kcopyd) {
--			r = -ENOMEM;
-+		if (IS_ERR(wc->dm_kcopyd)) {
-+			r = PTR_ERR(wc->dm_kcopyd);
- 			ti->error = "Unable to allocate dm-kcopyd client";
-+			wc->dm_kcopyd = NULL;
- 			goto bad;
- 		}
 
+Yes, I forgot to pull this in.. it got lost in the shuffle.  Mikulas had
+provided this same change (folded into a larger patch) yesterday, see:
+https://patchwork.kernel.org/patch/10439345/
+
+I'll get this folded in ASAP.
+
+Thanks,
+Mike
