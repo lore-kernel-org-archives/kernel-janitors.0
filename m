@@ -1,56 +1,36 @@
-From: YU Bo <tsu.yubo@gmail.com>
-Date: Thu, 03 May 2018 09:09:04 +0000
-Subject: [PATCH V2] net/netlink: optimize  seq_puts and seq_printf  in af_netlink.c
-Message-Id: <20180503090901.35bxgzs2tjsl7bqr@debian>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Thu, 31 May 2018 11:03:14 +0000
+Subject: [PATCH 3/3] staging: rtlwifi: Fix "Alwyas"->"Always"
+Message-Id: <20180531110314.3760-3-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180531110314.3760-1-sabin.rapan@gmail.com>
+In-Reply-To: <20180531110314.3760-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, xiyou.wangcong@gmail.com, yuzibode@126.com, tsu.yubo@gmail.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-Before the patch, the command `cat /proc/net/netlink` will output like:
+Trivial fix to spelling mistake in comment text.
 
-https://clbin.com/BojZv
-
-After the patch:
-
-https://clbin.com/lnu4L
-
-The optimization will make convenience for using `cat /proc/net/netlink`
-But,The checkpatch will give a warning:
-
-WARNING: quoted string split across lines
-
-Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
-Changes in v2:
-Do not break the indentation of the code line
----
- net/netlink/af_netlink.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtlwifi/rtl8822be/sw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 55342c4d5cec..2e2dd88fc79f 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2606,13 +2606,13 @@ static int netlink_seq_show(struct seq_file *seq, void *v)
- {
- 	if (v = SEQ_START_TOKEN) {
- 		seq_puts(seq,
--			 "sk       Eth Pid    Groups   "
--			 "Rmem     Wmem     Dump     Locks     Drops     Inode\n");
-+			 "sk               Eth Pid        Groups   "
-+			 "Rmem     Wmem     Dump  Locks    Drops    Inode\n");
- 	} else {
- 		struct sock *s = v;
- 		struct netlink_sock *nlk = nlk_sk(s);
-
--		seq_printf(seq, "%pK %-3d %-6u %08x %-8d %-8d %d %-8d %-8d %-8lu\n",
-+		seq_printf(seq, "%pK %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8d %-8lu\n",
- 			   s,
- 			   s->sk_protocol,
- 			   nlk->portid,
---
-2.11.0
+diff --git a/drivers/staging/rtlwifi/rtl8822be/sw.c b/drivers/staging/rtlwifi/rtl8822be/sw.c
+index 91b784b6d1c5..68629728ec4b 100644
+--- a/drivers/staging/rtlwifi/rtl8822be/sw.c
++++ b/drivers/staging/rtlwifi/rtl8822be/sw.c
+@@ -54,7 +54,7 @@ static void rtl8822be_init_aspm_vars(struct ieee80211_hw *hw)
+ 	 * 0 - Disable ASPM,
+ 	 * 1 - Enable ASPM without Clock Req,
+ 	 * 2 - Enable ASPM with Clock Req,
+-	 * 3 - Alwyas Enable ASPM with Clock Req,
++	 * 3 - Always Enable ASPM with Clock Req,
+ 	 * 4 - Always Enable ASPM without Clock Req.
+ 	 * set default to RTL8822BE:3 RTL8822B:2
+ 	 *
+-- 
+2.17.0
 
