@@ -1,34 +1,30 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Thu, 31 May 2018 11:03:12 +0000
-Subject: [PATCH 1/3] staging: rtlwifi: Fix "Trafic"->"Traffic"
-Message-Id: <20180531110314.3760-1-sabin.rapan@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Thu, 31 May 2018 16:57:47 +0000
+Subject: Re: [PATCH 1/3] staging: rtlwifi: Fix "Trafic"->"Traffic"
+Message-Id: <20180531165747.GA28898@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180531110314.3760-1-sabin.rapan@gmail.com>
+In-Reply-To: <20180531110314.3760-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
+To: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Cc: Larry.Finger@lwfinger.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Trivial fix to spelling mistake in comment text.
+On Thu, May 31, 2018 at 01:03:12PM +0200, Sabin Mihai Rapan wrote:
+> Trivial fix to spelling mistake in comment text.
+> 
+> Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+> ---
+>  drivers/staging/rtlwifi/phydm/phydm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
----
- drivers/staging/rtlwifi/phydm/phydm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You sent a previous set of 4 patches with these same exact subject lines
+:(
 
-diff --git a/drivers/staging/rtlwifi/phydm/phydm.c b/drivers/staging/rtlwifi/phydm/phydm.c
-index 8b2a180cc13c..2b61b12e6b21 100644
---- a/drivers/staging/rtlwifi/phydm/phydm.c
-+++ b/drivers/staging/rtlwifi/phydm/phydm.c
-@@ -160,7 +160,7 @@ static void phydm_traffic_load_decision(void *dm_void)
- {
- 	struct phy_dm_struct *dm = (struct phy_dm_struct *)dm_void;
- 
--	/*---TP & Trafic-load calculation---*/
-+	/*---TP & Traffic-load calculation---*/
- 
- 	if (dm->last_tx_ok_cnt > *dm->num_tx_bytes_unicast)
- 		dm->last_tx_ok_cnt = *dm->num_tx_bytes_unicast;
--- 
-2.17.0
+I've now dropped both of these series from my pending queue, please fix
+up the subject lines and resend all of them at once.
 
+thanks,
+
+greg k-h
