@@ -1,59 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 23 May 2018 19:07:16 +0000
-Subject: [PATCH 5/5] drm/rockchip: lvds: add missing of_node_put
-Message-Id: <1527102436-13447-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Thu, 31 May 2018 11:03:13 +0000
+Subject: [PATCH 2/3] staging: rtlwifi: Fix "writen"->"written"
+Message-Id: <20180531110314.3760-2-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1527102436-13447-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20180531110314.3760-1-sabin.rapan@gmail.com>
+In-Reply-To: <20180531110314.3760-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sandy Huang <hjc@rock-chips.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-The device node iterators perform an of_node_get on each iteration, so a
-jump out of the loop requires an of_node_put.
+Trivial fix to spelling mistake in comment text.
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_lvds.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/rtlwifi/rtl8822be/fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-index e67f4ea..051b8be 100644
---- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-@@ -363,8 +363,10 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
- 		of_property_read_u32(endpoint, "reg", &endpoint_id);
- 		ret = drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
- 						  &lvds->panel, &lvds->bridge);
--		if (!ret)
-+		if (!ret) {
-+			of_node_put(endpoint);
- 			break;
-+		}
+diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwifi/rtl8822be/fw.c
+index 483ea85943c3..55b5c9df9d81 100644
+--- a/drivers/staging/rtlwifi/rtl8822be/fw.c
++++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
+@@ -93,7 +93,7 @@ static void _rtl8822be_fill_h2c_command(struct ieee80211_hw *hw, u8 element_id,
  	}
- 	if (!child_count) {
- 		DRM_DEV_ERROR(dev, "lvds port does not have any children\n");
+ 
+ 	while (!bwrite_success) {
+-		/* 2. Find the last BOX number which has been writen. */
++		/* 2. Find the last BOX number which has been written. */
+ 		boxnum = rtlhal->last_hmeboxnum;
+ 		switch (boxnum) {
+ 		case 0:
+-- 
+2.17.0
 
