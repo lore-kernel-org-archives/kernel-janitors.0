@@ -1,44 +1,32 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Thu, 31 May 2018 15:00:39 +0000
-Subject: Re: [PATCH] EVM: prevent array underflow in evm_write_xattrs()
-Message-Id: <1527778839.3427.14.camel@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 May 2018 12:01:25 +0000
+Subject: [PATCH 1/2 net-next] net_failover: fix net_failover_compute_features()
+Message-Id: <20180531120124.pc4txiifxnrslbei@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180529131128.3rkzzv66uy6h5ts7@kili.mountain>
-In-Reply-To: <20180529131128.3rkzzv66uy6h5ts7@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Matthew Garrett <mjg59@google.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Sridhar Samudrala <sridhar.samudrala@intel.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2018-05-29 at 16:11 +0300, Dan Carpenter wrote:
-> If the user sets xattr->name[0] to NUL then we would read one character
-> before the start of the array.  This bug seems harmless as far as I can
-> see but perhaps it would trigger a warning in KASAN.
-> 
-> Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This has an '&' vs '|' typo so it starts with vlan_features set to none.
+Also a u32 type isn't large enough to hold all the feature bits, it
+should be netdev_features_t.
 
-Thanks, this patch is now queued in the next-integrity branch.
+Fixes: cfc80d9a1163 ("net: Introduce net_failover driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Mimi
-
-> ---
-> The user can pass a zeroed buffer to memdup_user_nul() so we can't rely
-> on "count" to test this.
-> 
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index a7a0a1acae99..94c739180a0b 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -207,7 +207,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
-> 
->  	/* Remove any trailing newline */
->  	len = strlen(xattr->name);
-> -	if (xattr->name[len-1] = '\n')
-> +	if (len && xattr->name[len-1] = '\n')
->  		xattr->name[len-1] = '\0';
-> 
->  	if (strcmp(xattr->name, ".") = 0) {
-> 
-
+diff --git a/drivers/net/net_failover.c b/drivers/net/net_failover.c
+index 8b508e2cf29b..ef50158e90a9 100644
+--- a/drivers/net/net_failover.c
++++ b/drivers/net/net_failover.c
+@@ -380,7 +380,8 @@ static rx_handler_result_t net_failover_handle_frame(struct sk_buff **pskb)
+ 
+ static void net_failover_compute_features(struct net_device *dev)
+ {
+-	u32 vlan_features = FAILOVER_VLAN_FEATURES & NETIF_F_ALL_FOR_ALL;
++	netdev_features_t vlan_features = FAILOVER_VLAN_FEATURES |
++					  NETIF_F_ALL_FOR_ALL;
+ 	netdev_features_t enc_features  = FAILOVER_ENC_FEATURES;
+ 	unsigned short max_hard_header_len = ETH_HLEN;
+ 	unsigned int dst_release_flag = IFF_XMIT_DST_RELEASE |
