@@ -1,23 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 10 May 2018 19:24:05 +0000
-Subject: Re: [PATCH] [ATM] firestream: fix spelling mistake: "reseverd" -> "reserved"
-Message-Id: <20180510.152405.349435547895169490.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 May 2018 06:21:11 +0000
+Subject: [PATCH] Btrfs: checking for NULL instead of IS_ERR
+Message-Id: <20180531062111.374pq6lxrmdffun6@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508220151.20725-1-colin.king@canonical.com>
-In-Reply-To: <20180508220151.20725-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Tomohiro Misono <misono.tomohiro@jp.fujitsu.com>
+Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue,  8 May 2018 23:01:51 +0100
+memdup_user() returns error pointers, it doesn't return NULL.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in res_strings string array
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 01141b08dee5 ("btrfs: Add unprivileged ioctl which returns subvolume's ROOT_REF")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index ff5018587bd9..d8dd4504bdab 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -2791,9 +2791,9 @@ static noinline int btrfs_ioctl_get_subvol_rootref(struct file *file,
+ 		return -ENOMEM;
+ 
+ 	rootrefs = memdup_user(argp, sizeof(*rootrefs));
+-	if (!rootrefs) {
++	if (IS_ERR(rootrefs)) {
+ 		btrfs_free_path(path);
+-		return -ENOMEM;
++		return PTR_ERR(rootrefs);
+ 	}
+ 
+ 	inode = file_inode(file);
