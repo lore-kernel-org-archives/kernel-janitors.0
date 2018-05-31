@@ -1,66 +1,51 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Fri, 11 May 2018 20:17:14 +0000
-Subject: Re: [PATCH] drm/amdkfd: Integer overflows in ioctl
-Message-Id: <CAFCwf11bEc=BF=3M=7gzmA6iDJpG0uJnXS5K5EP2i48XEOaesw@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 11:53:15 +0000
+Subject: [PATCH -next] dm writecache: fix return value check in writecache_ctr()
+Message-Id: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180424133549.GB10167@mwanda>
- <e2b7b3c1-cadb-330f-53a8-57568d4bc877@amd.com>
-In-Reply-To: <e2b7b3c1-cadb-330f-53a8-57568d4bc877@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felix Kuehling <felix.kuehling@amd.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 9:58 PM, Felix Kuehling <felix.kuehling@amd.com> wrote:
-> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
->
-> We could probably add a sanity check for n_devices to avoid user mode
-> causing excessive memory allocations in the kernel. There is no good
-> reason for this to be bigger than the number of GPUs in the system. The
-> maximum number of GPUs supported due to device minor limit in DRM is 128.
->
-> Regards,
->   Felix
->
->
-> On 2018-04-24 09:35 AM, Dan Carpenter wrote:
->> args->n_devices is a u32 that comes from the user.  The multiplication
->> could overflow on 32 bit systems possibly leading to privilege
->> escalation.
->>
->> Fixes: 5ec7e02854b3 ("drm/amdkfd: Add ioctls for GPUVM memory management")
->> Signed-off-by: Dan Carpenter dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
->> index cd679cf1fd30..ce36e556da38 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
->> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
->> @@ -1295,8 +1295,8 @@ static int kfd_ioctl_map_memory_to_gpu(struct file *filep,
->>               return -EINVAL;
->>       }
->>
->> -     devices_arr = kmalloc(args->n_devices * sizeof(*devices_arr),
->> -                           GFP_KERNEL);
->> +     devices_arr = kmalloc_array(args->n_devices, sizeof(*devices_arr),
->> +                                 GFP_KERNEL);
->>       if (!devices_arr)
->>               return -ENOMEM;
->>
->> @@ -1404,8 +1404,8 @@ static int kfd_ioctl_unmap_memory_from_gpu(struct file *filep,
->>               return -EINVAL;
->>       }
->>
->> -     devices_arr = kmalloc(args->n_devices * sizeof(*devices_arr),
->> -                           GFP_KERNEL);
->> +     devices_arr = kmalloc_array(args->n_devices, sizeof(*devices_arr),
->> +                                 GFP_KERNEL);
->>       if (!devices_arr)
->>               return -ENOMEM;
->>
->
+Function dm_io_client_create() and dm_kcopyd_client_create() return
+ERR_PTR() not NULL in case of error. The NULL test in the return value
+check should be replaced with IS_ERR()
 
-Thanks!
-Patch applied to amdkfd-fixes
+Fixes: 2105231db61b ("dm: add writecache target")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/md/dm-writecache.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Oded
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index 844c4fb..0b2b436 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	}
+ 
+ 	wc->dm_io = dm_io_client_create();
+-	if (!wc->dm_io) {
+-		r = -ENOMEM;
++	if (IS_ERR(wc->dm_io)) {
++		r = PTR_ERR(wc->dm_io);
+ 		ti->error = "Unable to allocate dm-io client";
++		wc->dm_io = NULL;
+ 		goto bad;
+ 	}
+ 
+@@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		}
+ 
+ 		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+-		if (!wc->dm_kcopyd) {
+-			r = -ENOMEM;
++		if (IS_ERR(wc->dm_kcopyd)) {
++			r = PTR_ERR(wc->dm_kcopyd);
+ 			ti->error = "Unable to allocate dm-kcopyd client";
++			wc->dm_kcopyd = NULL;
+ 			goto bad;
+ 		}
+
