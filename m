@@ -1,23 +1,33 @@
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Date: Sat, 26 May 2018 14:24:01 +0000
-Subject: Re: [PATCH] KVM: X86: prevent integer overflows in KVM_MEMORY_ENCRYPT_REG_REGION
-Message-Id: <20180526142400.GD23390@flask>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 02:31:22 +0000
+Subject: [PATCH net-next] net/smc: fix error return code in smc_setsockopt()
+Message-Id: <1527733882-149144-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180519060135.GA4991@mwanda>
- <f8e3af2e-08d2-bcb2-be09-c93f8b6d6bd6@amd.com>
-In-Reply-To: <f8e3af2e-08d2-bcb2-be09-c93f8b6d6bd6@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brijesh Singh <brijesh.singh@amd.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Joerg Roedel <joro@8bytes.org>, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ursula Braun <ubraun@linux.ibm.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-s390@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2018-05-21 10:52-0500, Brijesh Singh:
-> On 05/19/2018 01:01 AM, Dan Carpenter wrote:
-> > This is a fix from reviewing the code, but it looks like it might be
-> > able to lead to an Oops.  It affects 32bit systems.
-> > 
-> 
-> Please note that SEV is not available on 32bit systems.
+Fix to return error code -EINVAL instead of 0 if optlen is invalid.
 
-Added this note and queued, thanks.
+Fixes: 01d2f7e2cdd3 ("net/smc: sockopts TCP_NODELAY and TCP_CORK")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/smc/af_smc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+index 2c369d4..973b447 100644
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -1420,7 +1420,7 @@ static int smc_setsockopt(struct socket *sock, int level, int optname,
+ 		return rc;
+ 
+ 	if (optlen < sizeof(int))
+-		return rc;
++		return -EINVAL;
+ 	get_user(val, (int __user *)optval);
+ 
+ 	lock_sock(sk);
+
