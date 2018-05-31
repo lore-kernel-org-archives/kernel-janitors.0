@@ -1,26 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 08 May 2018 05:27:01 +0000
-Subject: Re: [PATCH][V2] scsi: lpfc: fix spelling mistakes: "mabilbox" and "maibox"
-Message-Id: <yq14ljiyaxm.fsf@oracle.com>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Thu, 31 May 2018 11:03:12 +0000
+Subject: [PATCH 1/3] staging: rtlwifi: Fix "Trafic"->"Traffic"
+Message-Id: <20180531110314.3760-1-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503092612.30007-1-colin.king@canonical.com>
-In-Reply-To: <20180503092612.30007-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 3 May 2018 10:26:12 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
+Trivial fix to spelling mistake in comment text.
 
-Colin,
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+---
+ drivers/staging/rtlwifi/phydm/phydm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Trivial fix to spelling mistakes in lpfc_printf_log log message
->
-> "mabilbox" -> "mailbox"
-> "maibox" -> "mailbox"
-
-Applied to 4.18/scsi-queue. Thanks!
-
+diff --git a/drivers/staging/rtlwifi/phydm/phydm.c b/drivers/staging/rtlwifi/phydm/phydm.c
+index 8b2a180cc13c..2b61b12e6b21 100644
+--- a/drivers/staging/rtlwifi/phydm/phydm.c
++++ b/drivers/staging/rtlwifi/phydm/phydm.c
+@@ -160,7 +160,7 @@ static void phydm_traffic_load_decision(void *dm_void)
+ {
+ 	struct phy_dm_struct *dm = (struct phy_dm_struct *)dm_void;
+ 
+-	/*---TP & Trafic-load calculation---*/
++	/*---TP & Traffic-load calculation---*/
+ 
+ 	if (dm->last_tx_ok_cnt > *dm->num_tx_bytes_unicast)
+ 		dm->last_tx_ok_cnt = *dm->num_tx_bytes_unicast;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.0
+
