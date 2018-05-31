@@ -1,25 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 May 2018 16:58:42 +0000
-Subject: Re: [PATCH] net/mlx5e: fix spelling mistake: "loobpack" -> "loopback"
-Message-Id: <20180503.125842.794766419877660253.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 01:55:58 +0000
+Subject: [PATCH -next] nvmet: fix a typo in nvmet_file_ns_enable()
+Message-Id: <1527731758-142629-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180503091253.29324-1-colin.king@canonical.com>
-In-Reply-To: <20180503091253.29324-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: saeedm@mellanox.com, matanb@mellanox.com, leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  3 May 2018 10:12:53 +0100
+Fix a typo in nvmet_file_ns_enable().
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in netdev_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d5eff33ee6f8 ("nvmet: add simple file backed ns support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/nvme/target/io-cmd-file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Transposed characters are so annoying ;)
+diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
+index ca1ccf8..9cff553 100644
+--- a/drivers/nvme/target/io-cmd-file.c
++++ b/drivers/nvme/target/io-cmd-file.c
+@@ -34,7 +34,7 @@ int nvmet_file_ns_enable(struct nvmet_ns *ns)
+ 			O_RDWR | O_LARGEFILE | O_DIRECT, 0);
+ 	if (IS_ERR(ns->file)) {
+ 		pr_err("failed to open file %s: (%ld)\n",
+-				ns->device_path, PTR_ERR(ns->bdev));
++				ns->device_path, PTR_ERR(ns->file));
+ 		return PTR_ERR(ns->file);
+ 	}
 
-Applied, thanks Colin.
