@@ -1,38 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 30 May 2018 09:57:49 +0000
-Subject: [PATCH] drm/i915/gvt: fix spelling mistake: "resseting" -> "resetting"
-Message-Id: <20180530095749.11113-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 May 2018 12:04:26 +0000
+Subject: [PATCH 2/2 net-next] net_failover: fix error code in net_failover_create()
+Message-Id: <20180531120425.tqwhhfxqawjuvtws@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180319134116.4478-1-colin.king@canonical.com>
-In-Reply-To: <20180319134116.4478-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Sridhar Samudrala <sridhar.samudrala@intel.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We forgot to set the error code on this path.  This function is supposed
+to return error pointers, so with this bug it accidentally returns NULL
+and the caller doesn't check for that.
 
-Trivial fix to spelling mistake in gvt_dbg_core message
+Fixes: cfc80d9a1163 ("net: Introduce net_failover driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/gvt/vgpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/gvt/vgpu.c b/drivers/gpu/drm/i915/gvt/vgpu.c
-index 2e0a02a80fe4..7b856c9b4e07 100644
---- a/drivers/gpu/drm/i915/gvt/vgpu.c
-+++ b/drivers/gpu/drm/i915/gvt/vgpu.c
-@@ -502,7 +502,7 @@ void intel_gvt_reset_vgpu_locked(struct intel_vgpu *vgpu, bool dmlr,
- 	unsigned int resetting_eng = dmlr ? ALL_ENGINES : engine_mask;
+diff --git a/drivers/net/net_failover.c b/drivers/net/net_failover.c
+index ef50158e90a9..881f3fa13e6b 100644
+--- a/drivers/net/net_failover.c
++++ b/drivers/net/net_failover.c
+@@ -761,8 +761,10 @@ struct failover *net_failover_create(struct net_device *standby_dev)
+ 	netif_carrier_off(failover_dev);
  
- 	gvt_dbg_core("------------------------------------------\n");
--	gvt_dbg_core("resseting vgpu%d, dmlr %d, engine_mask %08x\n",
-+	gvt_dbg_core("resetting vgpu%d, dmlr %d, engine_mask %08x\n",
- 		     vgpu->id, dmlr, engine_mask);
+ 	failover = failover_register(failover_dev, &net_failover_ops);
+-	if (IS_ERR(failover))
++	if (IS_ERR(failover)) {
++		err = PTR_ERR(failover);
+ 		goto err_failover_register;
++	}
  
- 	vgpu->resetting_eng = resetting_eng;
--- 
-2.17.0
-
+ 	return failover;
+ 
