@@ -1,71 +1,46 @@
-From: James Hogan <jhogan@kernel.org>
-Date: Mon, 14 May 2018 22:13:27 +0000
-Subject: Re: [PATCH] KVM: fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Message-Id: <20180514221326.GC29541@jamesdev>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="zCKi3GIZzVBPywwA"
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 02:33:14 +0000
+Subject: [PATCH net-next] ath10k: make some functions static
+Message-Id: <1527733994-149212-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180514172350.26601-1-colin.king@canonical.com>
-In-Reply-To: <20180514172350.26601-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, kvm@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@qca.qualcomm.com>, Govind Singh <govinds@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, ath10k@lists.infradead.org
 
+Fixes the following sparse warnings:
 
---zCKi3GIZzVBPywwA
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/net/wireless/ath/ath10k/snoc.c:823:5: warning:
+ symbol 'ath10k_snoc_get_ce_id_from_irq' was not declared. Should it be static?
+drivers/net/wireless/ath/ath10k/snoc.c:871:6: warning:
+ symbol 'ath10k_snoc_init_napi' was not declared. Should it be static?
 
-On Mon, May 14, 2018 at 06:23:50PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in debugfs_entries text
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/ath/ath10k/snoc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Adding KVM folk. Its a fairly trivial change so I'll just take it as a
-fix via the MIPS tree unless anybody objects.
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index 47a4d2a..c82bc6f 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -820,7 +820,7 @@ static int ath10k_snoc_hif_power_up(struct ath10k *ar)
+ 	.write32	= ath10k_snoc_write32,
+ };
+ 
+-int ath10k_snoc_get_ce_id_from_irq(struct ath10k *ar, int irq)
++static int ath10k_snoc_get_ce_id_from_irq(struct ath10k *ar, int irq)
+ {
+ 	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
+ 	int i;
+@@ -868,7 +868,7 @@ static int ath10k_snoc_napi_poll(struct napi_struct *ctx, int budget)
+ 	return done;
+ }
+ 
+-void ath10k_snoc_init_napi(struct ath10k *ar)
++static void ath10k_snoc_init_napi(struct ath10k *ar)
+ {
+ 	netif_napi_add(&ar->napi_dev, &ar->napi, ath10k_snoc_napi_poll,
+ 		       ATH10K_NAPI_BUDGET);
 
-This does change the name of one of the stats counters debugfs files
-though (which I have no doubt isn't relied upon by anything), so I've
-added:
-
-Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
-Cc: <stable@vger.kernel.org> # 3.10+
-
-Thanks
-James
-
-> ---
->  arch/mips/kvm/mips.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-> index 2549fdd27ee1..0f725e9cee8f 100644
-> --- a/arch/mips/kvm/mips.c
-> +++ b/arch/mips/kvm/mips.c
-> @@ -45,7 +45,7 @@ struct kvm_stats_debugfs_item debugfs_entries[] =3D {
->  	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
->  	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
->  	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
-> -	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
-> +	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
->  	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
->  	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
->  	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
-> --=20
-> 2.17.0
->=20
-
---zCKi3GIZzVBPywwA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvoKBQAKCRA1zuSGKxAj
-8vEWAP0WiOiXuPk1YrXK8FVgnv1SV4ZByfR3S33VjwPpgWy1nQEAumPws9ZYuPRR
-gLEqrdEV6UnTOyGBfqiZ7xxsdXiYsw8=
-=w39k
------END PGP SIGNATURE-----
-
---zCKi3GIZzVBPywwA--
