@@ -1,82 +1,82 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 03 May 2018 01:32:46 +0000
-Subject: Applied "ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val" to the asoc tree
-Message-Id: <20180503013246.84A6744007A@finisterre.ee.mobilebroadband>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 May 2018 12:23:19 +0000
+Subject: [bug report] net: Introduce generic failover module
+Message-Id: <20180531122319.rnvjpdnf4xrujbsw@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180502142945.31637-1-colin.king@canonical.com>
-In-Reply-To: <20180502142945.31637-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kernel-janitors@vger.kernel.org
 
-The patch
+Hello Sridhar Samudrala,
 
-   ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
+This is a semi-automatic email about new static checker warnings.
 
-has been applied to the asoc tree at
+The patch 30c8bd5aa8b2: "net: Introduce generic failover module" from 
+May 24, 2018, leads to the following Smatch complaint:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+    net/core/failover.c:66 failover_slave_register()
+     error: we previously assumed 'fops' could be null (see line 62)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+net/core/failover.c
+    20  static struct net_device *failover_get_bymac(u8 *mac, struct failover_ops **ops)
+    21  {
+    22          struct net_device *failover_dev;
+    23          struct failover *failover;
+    24  
+    25          spin_lock(&failover_lock);
+    26          list_for_each_entry(failover, &failover_list, list) {
+    27                  failover_dev = rtnl_dereference(failover->failover_dev);
+    28                  if (ether_addr_equal(failover_dev->perm_addr, mac)) {
+    29                          *ops = rtnl_dereference(failover->ops);
+                                                        ^^^^^^^^^^^^^
+Can this really be NULL?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+    30                          spin_unlock(&failover_lock);
+    31                          return failover_dev;
+    32                  }
+    33          }
+    34          spin_unlock(&failover_lock);
+    35          return NULL;
+    36  }
+    37  
+    38  /**
+    39   * failover_slave_register - Register a slave netdev
+    40   *
+    41   * @slave_dev: slave netdev that is being registered
+    42   *
+    43   * Registers a slave device to a failover instance. Only ethernet devices
+    44   * are supported.
+    45   */
+    46  static int failover_slave_register(struct net_device *slave_dev)
+    47  {
+    48          struct netdev_lag_upper_info lag_upper_info;
+    49          struct net_device *failover_dev;
+    50          struct failover_ops *fops;
+    51          int err;
+    52  
+    53          if (slave_dev->type != ARPHRD_ETHER)
+    54                  goto done;
+    55  
+    56          ASSERT_RTNL();
+    57  
+    58          failover_dev = failover_get_bymac(slave_dev->perm_addr, &fops);
+    59          if (!failover_dev)
+    60                  goto done;
+    61	
+    62		if (fops && fops->slave_pre_register &&
+                    ^^^^
+Can this be removed?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+    63		    fops->slave_pre_register(slave_dev, failover_dev))
+    64			goto done;
+    65	
+    66		err = netdev_rx_handler_register(slave_dev, fops->slave_handle_frame,
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+Unchecked dereference.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+    67						 failover_dev);
+    68		if (err) {
 
-Thanks,
-Mark
-
-From de5afce2a22ef7f92e9e8583a3bdbc10e448cddf Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 2 May 2018 15:29:45 +0100
-Subject: [PATCH] ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
-
-Currently, the check that ret_val is not -ENOENT is always true and
-the quirk bit BYT_RY5651_MCLK_EN is never being cleared because ret_val
-is always zero at this point from a previous assignment earlier on.
-I believe that ret_val should actually be assigned to the return from
-devm_clk_get() as this can return -ENOENT (from a deeper call to
-clk_get_sys) and that was the original intention to check this.
-
-Detected by CoverityScan, CID#1460228 ("Logically dead code")
-
-Fixes: 02c0a3b3047f ("ASoC: Intel: bytcr_rt5651: add MCLK, quirks and cleanups")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/boards/bytcr_rt5651.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-index 1b1997f1d60c..bf59c7caf1d9 100644
---- a/sound/soc/intel/boards/bytcr_rt5651.c
-+++ b/sound/soc/intel/boards/bytcr_rt5651.c
-@@ -856,9 +856,10 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
- 	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
- 		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
- 		if (IS_ERR(priv->mclk)) {
-+			ret_val = PTR_ERR(priv->mclk);
- 			dev_err(&pdev->dev,
--				"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
--				PTR_ERR(priv->mclk));
-+				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
-+				ret_val);
- 			/*
- 			 * Fall back to bit clock usage for -ENOENT (clock not
- 			 * available likely due to missing dependencies), bail
--- 
-2.17.0
-
+regards,
+dan carpenter
