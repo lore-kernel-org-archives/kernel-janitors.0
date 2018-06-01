@@ -1,34 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Jun 2018 11:08:00 +0000
-Subject: [PATCH] tracing: Fix an off by one in __next()
-Message-Id: <20180620110758.crunhd5bfep7zuiz@kili.mountain>
+Date: Fri, 01 Jun 2018 08:00:05 +0000
+Subject: [PATCH] EVM: unlock on error path in evm_read_xattrs()
+Message-Id: <20180601075946.wpyly2mgmaynfm4c@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Matthew Garrett <mjg59@google.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The > should be >= to prevent an off by one bug.
+We need to unlock before returning on this error path.
 
-From reviewing the code, it seems possible for
-stack_trace_max.nr_entries to be set to .max_entries and in that case we
-would be reading one element beyond the end of the stack_dump_trace[]
-array.  If it's not set to .max_entries then the bug doesn't affect
-runtime.
-
+Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 4237eba4ef20..6e3edd745c68 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -286,7 +286,7 @@ __next(struct seq_file *m, loff_t *pos)
- {
- 	long n = *pos - 1;
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index a7a0a1acae99..6d3b34ae8499 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -147,8 +147,10 @@ static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
+ 		size += strlen(xattr->name) + 1;
  
--	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
-+	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
- 		return NULL;
+ 	temp = kmalloc(size + 1, GFP_KERNEL);
+-	if (!temp)
++	if (!temp) {
++		mutex_unlock(&xattr_list_mutex);
+ 		return -ENOMEM;
++	}
  
- 	m->private = (void *)n;
+ 	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
+ 		sprintf(temp + offset, "%s\n", xattr->name);
