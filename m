@@ -1,19 +1,41 @@
-From: David Howells <dhowells@redhat.com>
-Date: Fri, 22 Jun 2018 13:09:50 +0000
-Subject: Re: [PATCH] cpuset: Fix cpuset_get_tree()
-Message-Id: <31233.1529672990@warthog.procyon.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Jun 2018 13:37:13 +0000
+Subject: [PATCH] hwmon: (k10temp) Make function get_raw_temp static
+Message-Id: <20180601133713.8817-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180619125340.h2supkskfgwmrbtq@kili.mountain>
-In-Reply-To: <20180619125340.h2supkskfgwmrbtq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> There was a reversed NULL test to the function couldn't work.
+The function get_raw_temp is local to the source and does not need to
+be in global scope, so make it static.
 
-I've folded this into the original patch, thanks.
+Cleans up sparse warning:
+drivers/hwmon/k10temp.c:149:14: warning: symbol 'get_raw_temp' was not
+declared. Should it be static?
 
-David
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hwmon/k10temp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+index d3fae5a8e508..17c6460ae351 100644
+--- a/drivers/hwmon/k10temp.c
++++ b/drivers/hwmon/k10temp.c
+@@ -146,7 +146,7 @@ static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
+ 		     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+ }
+ 
+-unsigned int get_raw_temp(struct k10temp_data *data)
++static unsigned int get_raw_temp(struct k10temp_data *data)
+ {
+ 	unsigned int temp;
+ 	u32 regval;
+-- 
+2.17.0
+
