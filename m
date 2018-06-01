@@ -1,42 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 06 Jun 2018 08:06:00 +0000
-Subject: [PATCH][next] staging: vc04_services: make a couple of pointers static
-Message-Id: <20180606080600.29042-1-colin.king@canonical.com>
+Date: Fri, 01 Jun 2018 13:48:56 +0000
+Subject: [PATCH] mailbox: PCC: make struct pcc_mbox_driver static
+Message-Id: <20180601134856.13322-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The pointers vchiq_dbg_dir and vchiq_dbg_clients are local to the
-source and do not need to be in global scope, so make them static.
+The structure pcc_mbox_driver is local to the source and does not
+need to be in global scope, so make it static.
 
-Cleans up sparse warnings:
-warning: symbol 'vchiq_dbg_dir' was not declared. Should it be static?
-warning: symbol 'vchiq_dbg_clients' was not declared. Should it be static?
+Cleans up sparse warning:
+drivers/mailbox/pcc.c:576:24: warning: symbol 'pcc_mbox_driver' was
+not declared. Should it be static?
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mailbox/pcc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-index 38805504d462..6a9e71a61142 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-@@ -52,8 +52,8 @@
- #define VCHIQ_LOG_TRACE_STR   "trace"
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index fc3c237daef2..26976554372b 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -573,7 +573,7 @@ static int pcc_mbox_probe(struct platform_device *pdev)
+ 	return ret;
+ }
  
- /* Global 'vchiq' debugfs and clients entry used by all instances */
--struct dentry *vchiq_dbg_dir;
--struct dentry *vchiq_dbg_clients;
-+static struct dentry *vchiq_dbg_dir;
-+static struct dentry *vchiq_dbg_clients;
- 
- /* Log category debugfs entries */
- struct vchiq_debugfs_log_entry {
+-struct platform_driver pcc_mbox_driver = {
++static struct platform_driver pcc_mbox_driver = {
+ 	.probe = pcc_mbox_probe,
+ 	.driver = {
+ 		.name = "PCCT",
 -- 
 2.17.0
 
