@@ -1,47 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Jun 2018 09:22:18 +0000
-Subject: Re: [PATCH 2/2] WAN: LMC: ensure lmc_trace is reporting return from lmc_proto_type
-Message-Id: <20180613092218.cy3r4ugr2logvs3h@mwanda>
+From: Ursula Braun <ubraun@linux.ibm.com>
+Date: Fri, 01 Jun 2018 07:02:36 +0000
+Subject: Re: [PATCH net-next] net/smc: fix error return code in smc_setsockopt()
+Message-Id: <34306217-624d-2aa0-0e8a-64867711029b@linux.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180613060410.735-1-colin.king@canonical.com>
- <20180613060410.735-2-colin.king@canonical.com>
-In-Reply-To: <20180613060410.735-2-colin.king@canonical.com>
+References: <1527733882-149144-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1527733882-149144-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 07:04:10AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+
+
+On 05/31/2018 04:31 AM, Wei Yongjun wrote:
+> Fix to return error code -EINVAL instead of 0 if optlen is invalid.
 > 
-> Currently the lmc tracing is not reporting the return from function
-> lmc_proto_type and this tracing statement is never executed. Fix
-> this by returning through the end of the function.  Also fix a typo
-> in the function name lmc_proto_type in the trace message.
-> 
-> Detected by CoverityScan, CID#710539 ("Structurally dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Fixes: 01d2f7e2cdd3 ("net/smc: sockopts TCP_NODELAY and TCP_CORK")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
->  drivers/net/wan/lmc/lmc_proto.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+>  net/smc/af_smc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/wan/lmc/lmc_proto.c b/drivers/net/wan/lmc/lmc_proto.c
-> index 5a6c87bce1bf..b98c1ee860de 100644
-> --- a/drivers/net/wan/lmc/lmc_proto.c
-> +++ b/drivers/net/wan/lmc/lmc_proto.c
-> @@ -99,23 +99,27 @@ void lmc_proto_close(lmc_softc_t *sc)
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 2c369d4..973b447 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -1420,7 +1420,7 @@ static int smc_setsockopt(struct socket *sock, int level, int optname,
+>  		return rc;
 >  
->  __be16 lmc_proto_type(lmc_softc_t *sc, struct sk_buff *skb) /*FOLD00*/
->  {
-> +	__be16 ret;
-> +
->  	lmc_trace(sc->lmc_device, "lmc_proto_type in");
+>  	if (optlen < sizeof(int))
+> -		return rc;
+> +		return -EINVAL;
+>  	get_user(val, (int __user *)optval);
+>  
+>  	lock_sock(sk);
+> 
 
-Did you take a look at lmc_trace()?  It's total garbage.  It's better
-to just delete it.
+Thanks for reporting this error. Your fix is fine, but I think we can get rid of
+this check at all, since it is already checked in the tcp-code invoked before with
 
-regards,
-dan carpenter
+   smc->clcsock->ops->setsockopt(smc->clcsock, level, optname, optval, optlen)
 
