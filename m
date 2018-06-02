@@ -1,46 +1,40 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Thu, 28 Jun 2018 17:08:33 +0000
-Subject: Re: [PATCH] PCI: hv: fix spelling mistake: "reqquest" -> "request"
-Message-Id: <20180628170833.GB17808@e107981-ln.cambridge.arm.com>
+From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+Date: Sat, 02 Jun 2018 09:04:13 +0000
+Subject: [PATCH v2 2/3] staging: rtlwifi: Fix "writen"->"written"
+Message-Id: <20180602090414.5208-2-sabin.rapan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180508214946.19772-1-colin.king@canonical.com>
-In-Reply-To: <20180508214946.19772-1-colin.king@canonical.com>
+References: <20180601060740.GA25648@kroah.com>
+ <20180602090414.5208-1-sabin.rapan@gmail.com>
+In-Reply-To: <20180602090414.5208-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Bjorn Helgaas <bhelgaas@google.com>, devel@linuxdriverproject.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
 
-On Tue, May 08, 2018 at 10:49:46PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pci/host/pci-hyperv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Trivial fix to spelling mistake in comment text.
 
-Hi Colin,
+Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+---
+Changes in v2:
+ - Added proper to and cc fields to the patch series.
 
-patch change was superseded, I will drop it from patchwork, thanks
-for sending it anyway.
+ drivers/staging/rtlwifi/rtl8822be/fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Lorenzo
+diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwifi/rtl8822be/fw.c
+index efec7281511c..a40396614814 100644
+--- a/drivers/staging/rtlwifi/rtl8822be/fw.c
++++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
+@@ -82,7 +82,7 @@ static void _rtl8822be_fill_h2c_command(struct ieee80211_hw *hw, u8 element_id,
+ 	}
+ 
+ 	while (!bwrite_success) {
+-		/* 2. Find the last BOX number which has been writen. */
++		/* 2. Find the last BOX number which has been written. */
+ 		boxnum = rtlhal->last_hmeboxnum;
+ 		switch (boxnum) {
+ 		case 0:
+-- 
+2.17.0
 
-> diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-> index 50cdefe3f6d3..7e93b4ffb162 100644
-> --- a/drivers/pci/host/pci-hyperv.c
-> +++ b/drivers/pci/host/pci-hyperv.c
-> @@ -2071,7 +2071,7 @@ static int hv_pci_protocol_negotiation(struct hv_device *hdev)
->  				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
->  		if (ret) {
->  			dev_err(&hdev->device,
-> -				"PCI Pass-through VSP failed sending version reqquest: %#x",
-> +				"PCI Pass-through VSP failed sending version request: %#x",
->  				ret);
->  			goto exit;
->  		}
-> -- 
-> 2.17.0
-> 
