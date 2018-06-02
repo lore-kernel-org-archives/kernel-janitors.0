@@ -1,61 +1,30 @@
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Tue, 12 Jun 2018 07:46:56 +0000
-Subject: Re: [PATCH] ASoC: twl6040: make pointer dmic_codec_dev static
-Message-Id: <d0355575-feb2-a1fe-242a-57acf52bad1e@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 02 Jun 2018 07:52:56 +0000
+Subject: [PATCH] clk: davinci: cfgchip: testing the wrong variable
+Message-Id: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180606093504.30255-1-colin.king@canonical.com>
-In-Reply-To: <20180606093504.30255-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+There is a copy and paste bug here.  We should be testing "usb1" instead
+of "usb0".
 
-On 2018-06-06 12:35, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The pointer dmic_codec_dev is local to the source and does not need
-> to be in global scope, so make it static.
->=20
-> Cleans up sparse warning:
-> warning: symbol 'dmic_codec_dev' was not declared. Should it be static?
+Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clocks")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-can you change the subject to:
-ASoC: omap-abe-twl6040: make pointer dmic_codec_dev static
-
-With that change:
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  sound/soc/omap/omap-abe-twl6040.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-=
-twl6040.c
-> index 15ccbf479c96..d5ae9eb8c756 100644
-> --- a/sound/soc/omap/omap-abe-twl6040.c
-> +++ b/sound/soc/omap/omap-abe-twl6040.c
-> @@ -40,7 +40,7 @@ struct abe_twl6040 {
->  	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
->  };
-> =20
-> -struct platform_device *dmic_codec_dev;
-> +static struct platform_device *dmic_codec_dev;
-> =20
->  static int omap_abe_hw_params(struct snd_pcm_substream *substream,
->  	struct snd_pcm_hw_params *params)
->=20
-
-- P=C3=A9ter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index c971111d2601..20a120aa147e 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -672,7 +672,7 @@ static int of_da8xx_usb_phy_clk_init(struct device *dev, struct regmap *regmap)
+ 
+ 	usb1 = da8xx_cfgchip_register_usb1_clk48(dev, regmap);
+ 	if (IS_ERR(usb1)) {
+-		if (PTR_ERR(usb0) = -EPROBE_DEFER)
++		if (PTR_ERR(usb1) = -EPROBE_DEFER)
+ 			return -EPROBE_DEFER;
+ 
+ 		dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
