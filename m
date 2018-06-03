@@ -1,58 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 10 Jun 2018 14:24:13 +0000
-Subject: [PATCH] omapfb: encoder-tpd12s015: fix error return code
-Message-Id: <1528640655-18948-1-git-send-email-Julia.Lawall@lip6.fr>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 03 Jun 2018 14:36:56 +0000
+Subject: Re: [PATCH net-next] net/mlx5: Make function mlx5_fpga_tls_send_teardown_cmd() static
+Message-Id: <20180603.103656.143543894098036180.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1527733872-149077-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1527733872-149077-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org
+To: weiyongjun1@huawei.com
+Cc: borisp@mellanox.com, saeedm@mellanox.com, leon@kernel.org, ilyal@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Return an error code on failure.
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 02:31:12 +0000
 
-Problem found using Coccinelle.
+> Fixes the following sparse warning:
+> 
+> drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c:199:6: warning:
+>  symbol 'mlx5_fpga_tls_send_teardown_cmd' was not declared. Should it be static?
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c |   12 +++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c b/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c
-index 80dc473..2b58bfc 100644
---- a/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c
-+++ b/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c
-@@ -240,22 +240,28 @@ static int tpd_probe(struct platform_device *pdev)
- 
- 	gpio = devm_gpiod_get_index_optional(&pdev->dev, NULL, 0,
- 		GPIOD_OUT_LOW);
--	if (IS_ERR(gpio))
-+	if (IS_ERR(gpio)) {
-+		r = PTR_ERR(gpio);
- 		goto err_gpio;
-+	}
- 
- 	ddata->ct_cp_hpd_gpio = gpio;
- 
- 	gpio = devm_gpiod_get_index_optional(&pdev->dev, NULL, 1,
- 		GPIOD_OUT_LOW);
--	if (IS_ERR(gpio))
-+	if (IS_ERR(gpio)) {
-+		r = PTR_ERR(gpio);
- 		goto err_gpio;
-+	}
- 
- 	ddata->ls_oe_gpio = gpio;
- 
- 	gpio = devm_gpiod_get_index(&pdev->dev, NULL, 2,
- 		GPIOD_IN);
--	if (IS_ERR(gpio))
-+	if (IS_ERR(gpio)) {
-+		r = PTR_ERR(gpio);
- 		goto err_gpio;
-+	}
- 
- 	ddata->hpd_gpio = gpio;
- 
-
+Applied.
