@@ -1,79 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 30 Jun 2018 11:30:49 +0000
-Subject: [PATCH] crypto: zip: make several functions static
-Message-Id: <20180630113049.4402-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 03 Jun 2018 14:35:53 +0000
+Subject: Re: [PATCH net-next] hv_netvsc: fix error return code in netvsc_probe()
+Message-Id: <20180603.103553.2303446828561829445.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1527732283-145530-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1527732283-145530-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Jan Glauber <jglauber@cavium.com>, Robert Richter <rrichter@cavium.com>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: weiyongjun1@huawei.com
+Cc: kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com, sridhar.samudrala@intel.com, devel@linuxdriverproject.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 31 May 2018 02:04:43 +0000
 
-The functions zip_ctx_exit, zip_compress, zip_decompress and zip_ctx_init
-are local to the source and do not need to be in global scope, so make
-them static.
+> Fix to return a negative error code from the failover register fail
+> error handling case instead of 0, as done elsewhere in this function.
+> 
+> Fixes: 1ff78076d8dd ("netvsc: refactor notifier/event handling code to use the failover framework")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Cleans up sparse warnings:
-symbol 'zip_ctx_exit' was not declared. Should it be static?
-symbol 'zip_compress' was not declared. Should it be static?
-symbol 'zip_decompress' was not declared. Should it be static?
-symbol 'zip_ctx_init' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/cavium/zip/zip_crypto.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/crypto/cavium/zip/zip_crypto.c b/drivers/crypto/cavium/zip/zip_crypto.c
-index b92b6e7e100f..f9e99a15d2a0 100644
---- a/drivers/crypto/cavium/zip/zip_crypto.c
-+++ b/drivers/crypto/cavium/zip/zip_crypto.c
-@@ -69,7 +69,7 @@ static void zip_static_init_zip_ops(struct zip_operation *zip_ops,
- 	zip_ops->csum	      = 1; /* Adler checksum desired */
- }
- 
--int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
-+static int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
- {
- 	struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
- 	struct zip_operation  *decomp_ctx = &zip_ctx->zip_decomp;
-@@ -107,7 +107,7 @@ int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
- 	return -ENOMEM;
- }
- 
--void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
-+static void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
- {
- 	struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
- 	struct zip_operation  *dec_ctx = &zip_ctx->zip_decomp;
-@@ -119,9 +119,9 @@ void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
- 	zip_data_buf_free(dec_ctx->output, MAX_OUTPUT_BUFFER_SIZE);
- }
- 
--int zip_compress(const u8 *src, unsigned int slen,
--		 u8 *dst, unsigned int *dlen,
--		 struct zip_kernel_ctx *zip_ctx)
-+static int zip_compress(const u8 *src, unsigned int slen,
-+			u8 *dst, unsigned int *dlen,
-+			struct zip_kernel_ctx *zip_ctx)
- {
- 	struct zip_operation  *zip_ops   = NULL;
- 	struct zip_state      *zip_state;
-@@ -155,9 +155,9 @@ int zip_compress(const u8 *src, unsigned int slen,
- 	return ret;
- }
- 
--int zip_decompress(const u8 *src, unsigned int slen,
--		   u8 *dst, unsigned int *dlen,
--		   struct zip_kernel_ctx *zip_ctx)
-+static int zip_decompress(const u8 *src, unsigned int slen,
-+			  u8 *dst, unsigned int *dlen,
-+			  struct zip_kernel_ctx *zip_ctx)
- {
- 	struct zip_operation  *zip_ops   = NULL;
- 	struct zip_state      *zip_state;
--- 
-2.17.1
-
+Applied, thank you.
