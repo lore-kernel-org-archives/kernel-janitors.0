@@ -1,23 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 Jun 2018 02:50:50 +0000
-Subject: Re: [PATCH net-next] virtio_net: fix error return code in virtnet_probe()
-Message-Id: <20180531.225050.158410894134322151.davem@davemloft.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 04 Jun 2018 10:27:43 +0000
+Subject: Re: [PATCH net-next] ath10k: make some functions static
+Message-Id: <87a7sazw0w.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527732307-145609-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1527732307-145609-1-git-send-email-weiyongjun1@huawei.com>
+References: <1527733994-149212-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1527733994-149212-1-git-send-email-weiyongjun1@huawei.com> (Wei
+ Yongjun's message of "Thu, 31 May 2018 02:33:14 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: mst@redhat.com, jasowang@redhat.com, sridhar.samudrala@intel.com, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, Govind Singh <govinds@codeaurora.org>, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, bjorn.andersson@linaro.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 31 May 2018 02:05:07 +0000
+Wei Yongjun <weiyongjun1@huawei.com> writes:
 
-> Fix to return a negative error code from the failover create fail error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: ba5e4426e80e ("virtio_net: Extend virtio to use VF datapath when available")
+> Fixes the following sparse warnings:
+>
+> drivers/net/wireless/ath/ath10k/snoc.c:823:5: warning:
+>  symbol 'ath10k_snoc_get_ce_id_from_irq' was not declared. Should it be static?
+> drivers/net/wireless/ath/ath10k/snoc.c:871:6: warning:
+>  symbol 'ath10k_snoc_init_napi' was not declared. Should it be static?
+>
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Applied.
+BTW this goes to my ath.git tree, not to net-next.
+
+I had missed these as I can't enable ATH10K_SNOC on x86 and hence I
+don't test compile snoc.c at all. Bjorn&Govind, is there a way to solve
+that? IIRC we had a similar problem with wcn36xx but I don't remember
+anymore how it was fixed.
+
+-- 
+Kalle Valo
