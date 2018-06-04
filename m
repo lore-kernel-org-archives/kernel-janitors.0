@@ -1,24 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 04 Jun 2018 21:31:05 +0000
-Subject: Re: [PATCH 2/2 net] team: use netdev_features_t instead of u32
-Message-Id: <20180604.173105.1697050772104459175.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 Jun 2018 11:58:42 +0000
+Subject: [PATCH] fsl/qe: ucc: copy and paste bug in ucc_get_tdm_sync_shift()
+Message-Id: <20180604115842.7c4vzge3igjbnblt@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180604.093147.1707102168081704551.davem@davemloft.net>
-        <20180604144601.wo5iqb5irfes4frv@kili.mountain>
-In-Reply-To: <20180604144601.wo5iqb5irfes4frv@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Qiang Zhao <qiang.zhao@nxp.com>
+Cc: Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 4 Jun 2018 17:46:01 +0300
+There is a copy and paste bug so we accidentally use the RX_ shift when
+we're in TX_ mode.
 
-> This code was introduced in 2011 around the same time that we made
-> netdev_features_t a u64 type.  These days a u32 is not big enough to
-> hold all the potential features.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: bb8b2062aff3 ("fsl/qe: setup clock source for TDM mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis work.  Not tested.  This affects the success path, so
+we should probably test it.
 
-Applied and queued up for -stable.
+diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
+index c646d8713861..681f7d4b7724 100644
+--- a/drivers/soc/fsl/qe/ucc.c
++++ b/drivers/soc/fsl/qe/ucc.c
+@@ -626,7 +626,7 @@ static u32 ucc_get_tdm_sync_shift(enum comm_dir mode, u32 tdm_num)
+ {
+ 	u32 shift;
+ 
+-	shift = (mode = COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : RX_SYNC_SHIFT_BASE;
++	shift = (mode = COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : TX_SYNC_SHIFT_BASE;
+ 	shift -= tdm_num * 2;
+ 
+ 	return shift;
