@@ -1,40 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 23 Jun 2018 22:26:54 +0000
-Subject: [PATCH] goldfish_pipe: make tasklet goldfish_interrupt_tasklet static
-Message-Id: <20180623222654.6697-1-colin.king@canonical.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Mon, 04 Jun 2018 04:18:12 +0000
+Subject: Re: [PATCH] NFC: fdp: fix signed less or equal zero check in u8 max_size
+Message-Id: <20180604041812.GB8977@zurbaran.ger.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180130153359.524-1-colin.king@canonical.com>
+In-Reply-To: <20180130153359.524-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-Tasklet goldfish_interrupt_tasklet is local to the source and
-does not need to be in global scope, so make it static.
+On Tue, Jan 30, 2018 at 03:33:59PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The u8 variable max_size is being assigned a return value from the
+> call to nci_conn_max_data_pkt_payload_size that can return a -ve
+> error return. Since max_size is a u8, the -ve check for the error will
+> always be false. Fix this by making max_size an int type.
+> 
+> Detected using Coccinelle:
+> drivers/nfc/fdp/fdp.c:208:5-13: WARNING: Unsigned expression compared
+> with zero: max_size <= 0
+> 
+> Fixes: a06347c04c13 ("NFC: Add Intel Fields Peak NFC solution driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/nfc/fdp/fdp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to nfc-next, thanks.
 
-Cleans up sparse warning:
-symbol 'goldfish_interrupt_tasklet' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/platform/goldfish/goldfish_pipe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 3e32a4c14d5f..4866a8b12e98 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -645,7 +645,7 @@ static void goldfish_interrupt_task(unsigned long unused)
- 		wake_up_interruptible(&pipe->wake_queue);
- 	}
- }
--DECLARE_TASKLET(goldfish_interrupt_tasklet, goldfish_interrupt_task, 0);
-+static DECLARE_TASKLET(goldfish_interrupt_tasklet, goldfish_interrupt_task, 0);
- 
- /*
-  * The general idea of the interrupt handling:
--- 
-2.17.0
-
+Cheers,
+Samuel.
