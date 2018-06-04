@@ -1,61 +1,31 @@
-From: Richard Guy Briggs <rgb@redhat.com>
-Date: Mon, 25 Jun 2018 16:05:03 +0000
-Subject: Re: [bug report] netlink: have netlink per-protocol bind function return an error code.
-Message-Id: <20180625160503.7u3ebabu4tyvpcya@madcap2.tricolour.ca>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 04 Jun 2018 13:31:47 +0000
+Subject: Re: [PATCH 1/2 net-next] net_failover: fix net_failover_compute_features()
+Message-Id: <20180604.093147.1707102168081704551.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180621135054.abihwzh2j6e46zgl@kili.mountain>
-In-Reply-To: <20180621135054.abihwzh2j6e46zgl@kili.mountain>
+References: <20180531120124.pc4txiifxnrslbei@kili.mountain>
+In-Reply-To: <20180531120124.pc4txiifxnrslbei@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: sridhar.samudrala@intel.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2018-06-21 16:50, Dan Carpenter wrote:
-> Hello Richard Guy Briggs,
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 May 2018 15:01:25 +0300
 
-Hi Dan,
+> @@ -380,7 +380,8 @@ static rx_handler_result_t net_failover_handle_frame(struct sk_buff **pskb)
+>  
+>  static void net_failover_compute_features(struct net_device *dev)
+>  {
+> -	u32 vlan_features = FAILOVER_VLAN_FEATURES & NETIF_F_ALL_FOR_ALL;
+> +	netdev_features_t vlan_features = FAILOVER_VLAN_FEATURES |
+> +					  NETIF_F_ALL_FOR_ALL;
 
-> This is a semi-automatic email about new static checker warnings.
+The type does need to be corrected to netdev_features_t, but the
+logical operation is correct.
 
-Thanks for the report.  I'll have a closer look when I've got a chance,
-but I see the point.  I don't know if it is possible off the top of my
-head.
+It's a policy operation that was simply by-hand propagated all
+over the place where these kinds of calculations are performed.
 
-> The patch 4f520900522f: "netlink: have netlink per-protocol bind 
-> function return an error code." from Apr 22, 2014, leads to the 
-> following Smatch complaint:
-> 
->     net/netlink/af_netlink.c:1056 netlink_bind()
->      error: we previously assumed 'nlk->groups' could be null (see line 1049)
-> 
-> net/netlink/af_netlink.c
->   1048	
->   1049		if (!groups && (nlk->groups = NULL || !(u32)nlk->groups[0]))
->                     ^^^^^^^
-> 
->   1050			goto unlock;
->   1051		netlink_unlock_table();
->   1052	
->   1053		netlink_table_grab();
->   1054		netlink_update_subscriptions(sk, nlk->subscriptions +
->   1055						 hweight32(groups) -
->   1056						 hweight32(nlk->groups[0]));
->                                                            ^^^^^^^^^^^^^^
-> Say groups is non-NULL and nlk->groups is NULL then this would be an
-> issue.  Is that possible?  I don't know why Smatch is just now suddenly
-> complaining about a 4 year old patch.
-> 
->   1057		nlk->groups[0] = (nlk->groups[0] & ~0xffffffffUL) | groups;
->   1058		netlink_update_listeners(sk);
-> 
-> regards,
-> dan carpenter
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+So vlan_features is starting with a value of 0 intentionally.
