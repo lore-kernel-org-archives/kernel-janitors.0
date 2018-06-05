@@ -1,51 +1,35 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Thu, 07 Jun 2018 19:46:15 +0000
-Subject: Re: [PATCH] kselftest/cgroup: fix a signedness bug
-Message-Id: <37c8d24c-cfe5-ce86-8973-7b920112f59c@kernel.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 05 Jun 2018 09:15:12 +0000
+Subject: [PATCH -next] lightnvm: pblk: make symbol write_buffer_size static
+Message-Id: <1528190112-15645-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180607083001.m4z4wjev6j3sc423@kili.mountain>
- <20180607125224.GA4302@castle>
-In-Reply-To: <20180607125224.GA4302@castle>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matias Bjorling <mb@lightnvm.io>, Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/07/2018 06:52 AM, Roman Gushchin wrote:
-> On Thu, Jun 07, 2018 at 11:30:02AM +0300, Dan Carpenter wrote:
->> "len" needs to be signed for the error handling to work.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
->> index b69bdeb4b9fe..1e9e3c470561 100644
->> --- a/tools/testing/selftests/cgroup/cgroup_util.c
->> +++ b/tools/testing/selftests/cgroup/cgroup_util.c
->> @@ -35,7 +35,7 @@ static ssize_t read_text(const char *path, char *buf, size_t max_len)
->>  	return len;
->>  }
->>  
->> -static ssize_t write_text(const char *path, char *buf, size_t len)
->> +static ssize_t write_text(const char *path, char *buf, ssize_t len)
->>  {
->>  	int fd;
->>  
->> @@ -140,7 +140,7 @@ long cg_read_key_long(const char *cgroup, const char *control, const char *key)
->>  int cg_write(const char *cgroup, const char *control, char *buf)
->>  {
->>  	char path[PATH_MAX];
->> -	size_t len = strlen(buf);
->> +	ssize_t len = strlen(buf);
->>  
->>  	snprintf(path, sizeof(path), "%s/%s", cgroup, control);
->>  
-> 
-> Looks good to me!
-> 
-> Thanks!
-> 
+Fixes the following sparse warning:
 
-Thanks. Is it now in linux-kselftest next. I will send this up next week
-for second update for 4.18-rc1
+drivers/lightnvm/pblk-init.c:23:14: warning:
+ symbol 'write_buffer_size' was not declared. Should it be static?
 
--- Shuah
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/lightnvm/pblk-init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index ce561f5..491df0f 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -20,7 +20,7 @@
+ 
+ #include "pblk.h"
+ 
+-unsigned int write_buffer_size;
++static unsigned int write_buffer_size;
+ 
+ module_param(write_buffer_size, uint, 0644);
+ MODULE_PARM_DESC(write_buffer_size, "number of entries in a write buffer");
+
