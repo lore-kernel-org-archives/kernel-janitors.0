@@ -1,25 +1,40 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 05 Jun 2018 15:19:34 +0000
-Subject: Re: [-next] ocxl: Fix missing unlock on error in afu_ioctl_enable_p9_wait()
-Message-Id: <410b7r1h68z9s2k@ozlabs.org>
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Tue, 05 Jun 2018 10:06:59 +0000
+Subject: Re: [PATCH] staging: comedi: quatech_daqp_cs: fix no-op loop daqp_ao_insn_write()
+Message-Id: <b17dd99c-2b0f-4fc3-9d82-69367d0e0574@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1528190181-15745-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Frederic Barrat <fbarrat@linux.vnet.ibm.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alastair D'Silva <alastair@d-silva.org>
-Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 2018-06-05 at 09:16:21 UTC, Wei Yongjun wrote:
-> Add the missing unlock before return from function
-> afu_ioctl_enable_p9_wait() in the error handling case.
+On 05/06/18 10:36, Dan Carpenter wrote:
+> There is a '>' vs '<' typo so this loop is a no-op.
 > 
-> Fixes: e948e06fc63a ("ocxl: Expose the thread_id needed for wait on POWER9")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Alastair D'Silva <alastair@d-silva.org>
+> Fixes: d35dcc89fc93 ("staging: comedi: quatech_daqp_cs: fix daqp_ao_insn_write()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/staging/comedi/drivers/quatech_daqp_cs.c b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
+> index ea194aa01a64..257b0daff01f 100644
+> --- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
+> +++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
+> @@ -642,7 +642,7 @@ static int daqp_ao_insn_write(struct comedi_device *dev,
+>   	/* Make sure D/A update mode is direct update */
+>   	outb(0, dev->iobase + DAQP_AUX_REG);
+>   
+> -	for (i = 0; i > insn->n; i++) {
+> +	for (i = 0; i < insn->n; i++) {
+>   		unsigned int val = data[i];
+>   		int ret;
+>   
+> 
 
-Applied to powerpc next, thanks.
+Thanks for catching that bug!
 
-https://git.kernel.org/powerpc/c/2e5c93d6bb2f7bc17eb82748943a1b
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
-cheers
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
