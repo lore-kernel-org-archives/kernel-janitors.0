@@ -1,35 +1,24 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 05 Jun 2018 09:15:12 +0000
-Subject: [PATCH -next] lightnvm: pblk: make symbol write_buffer_size static
-Message-Id: <1528190112-15645-1-git-send-email-weiyongjun1@huawei.com>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Tue, 05 Jun 2018 15:19:19 +0000
+Subject: Re: [PATCH -next] lightnvm: pblk: make symbol write_buffer_size static
+Message-Id: <f961c389-20d6-328e-d263-38f4ec9460dc@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1528190112-15645-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1528190112-15645-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matias Bjorling <mb@lightnvm.io>, Marcin Dziegielewski <marcin.dziegielewski@intel.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>, Matias Bjorling <mb@lightnvm.io>, Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warning:
+On 6/5/18 3:15 AM, Wei Yongjun wrote:
+> Fixes the following sparse warning:
+> 
+> drivers/lightnvm/pblk-init.c:23:14: warning:
+>  symbol 'write_buffer_size' was not declared. Should it be static?
 
-drivers/lightnvm/pblk-init.c:23:14: warning:
- symbol 'write_buffer_size' was not declared. Should it be static?
+Added, thanks.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/lightnvm/pblk-init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index ce561f5..491df0f 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -20,7 +20,7 @@
- 
- #include "pblk.h"
- 
--unsigned int write_buffer_size;
-+static unsigned int write_buffer_size;
- 
- module_param(write_buffer_size, uint, 0644);
- MODULE_PARM_DESC(write_buffer_size, "number of entries in a write buffer");
+-- 
+Jens Axboe
 
