@@ -1,33 +1,38 @@
-From: =?UTF-8?B?6rmA7KSA7ZmY?= <spilit464@gmail.com>
-Date: Sat, 16 Jun 2018 04:18:40 +0000
-Subject: Re: [PATCH 1/2] staging: mt7621-spi: change indentation from space to tab
-Message-Id: <CAO-p-6Bw9N72TGvuF5vg34csZZHwjxN3i3DB4pxXDZLiAcFvGA@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 05 Jun 2018 09:16:21 +0000
+Subject: [PATCH -next] ocxl: Fix missing unlock on error in afu_ioctl_enable_p9_wait()
+Message-Id: <1528190181-15745-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1646985.m1Qjj59is2@joonhwan-virtualbox> <20180615110228.GA3107@kroah.com>
-In-Reply-To: <20180615110228.GA3107@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Brown <neil@brown.name>, christian@lkamp.de, blogic@openwrt.org
+To: Frederic Barrat <fbarrat@linux.vnet.ibm.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alastair D'Silva <alastair@d-silva.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi greg,
+Add the missing unlock before return from function
+afu_ioctl_enable_p9_wait() in the error handling case.
 
-I didn't noticed that. :(
-Thank you for your attention!
+Fixes: e948e06fc63a ("ocxl: Expose the thread_id needed for wait on POWER9")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/misc/ocxl/file.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Sincerely,
-JoonHwan
+diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
+index 33ae46c..e6a6074 100644
+--- a/drivers/misc/ocxl/file.c
++++ b/drivers/misc/ocxl/file.c
+@@ -139,8 +139,10 @@ static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
+ 		// Locks both status & tidr
+ 		mutex_lock(&ctx->status_mutex);
+ 		if (!ctx->tidr) {
+-			if (set_thread_tidr(current))
++			if (set_thread_tidr(current)) {
++				mutex_unlock(&ctx->status_mutex);
+ 				return -ENOENT;
++			}
+ 
+ 			ctx->tidr = current->thread.tidr;
+ 		}
 
-2018-06-15 20:02 GMT+09:00 Greg KH <gregkh@linuxfoundation.org>:
-> On Sat, Jun 09, 2018 at 03:03:27PM +0900, JoonHwan.Kim wrote:
->> * fix checkpatch.pl error:
->>   ERROR: code indent should use tabs where possible
->>
->> Signed-off-by: Joonhwan Kim <spilit464@gmail.com>
->> ---
->>  drivers/staging/mt7621-spi/spi-mt7621.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Someone else sent this same fix before you did, sorry.  Same for your
-> 2/2 patch :(
