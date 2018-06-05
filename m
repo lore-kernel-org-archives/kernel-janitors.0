@@ -1,22 +1,37 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 20 Jun 2018 17:26:16 +0000
-Subject: Re: [PATCH] blk-mq-debugfs: Off by one in blk_mq_rq_state_name()
-Message-Id: <5aed29c8-5125-cf15-b4b4-7f2c0057be36@kernel.dk>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 05 Jun 2018 02:42:56 +0000
+Subject: [PATCH net-next] net/mlx5e: fix error return code in mlx5e_alloc_rq()
+Message-Id: <1528166576-55047-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180620104503.nrwlfak3gyxjg7s2@kili.mountain>
-In-Reply-To: <20180620104503.nrwlfak3gyxjg7s2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Bart Van Assche <bart.vanassche@wdc.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@mellanox.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 6/20/18 4:45 AM, Dan Carpenter wrote:
-> If rq_state = ARRAY_SIZE() then we read one element beyond the end of
-> the blk_mq_rq_state_name_array[] array.
+Fix to return error code -ENOMEM from the kvzalloc_node() error handling
+case instead of 0, as done elsewhere in this function.
 
-Applied, thanks Dan.
+Fixes: 069d11465a80 ("net/mlx5e: RX, Enhance legacy Receive Queue memory scheme")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
--- 
-Jens Axboe
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index 333d4ed..89c96a0 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -566,8 +566,10 @@ static int mlx5e_alloc_rq(struct mlx5e_channel *c,
+ 			kvzalloc_node((wq_sz << rq->wqe.info.log_num_frags) *
+ 				      sizeof(*rq->wqe.frags),
+ 				      GFP_KERNEL, cpu_to_node(c->cpu));
+-		if (!rq->wqe.frags)
++		if (!rq->wqe.frags) {
++			err = -ENOMEM;
+ 			goto err_free;
++		}
+ 
+ 		err = mlx5e_init_di_list(rq, params, wq_sz, c->cpu);
+ 		if (err)
 
