@@ -1,31 +1,25 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 04 Jun 2018 07:38:13 +0000
-Subject: Re: [PATCH] mfd: timberdale: fix spelling mistake "Uknown" -> "Unknown"
-Message-Id: <20180604073813.GG25455@dell>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Tue, 05 Jun 2018 15:19:34 +0000
+Subject: Re: [-next] ocxl: Fix missing unlock on error in afu_ioctl_enable_p9_wait()
+Message-Id: <410b7r1h68z9s2k@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180526145713.10160-1-colin.king@canonical.com>
-In-Reply-To: <20180526145713.10160-1-colin.king@canonical.com>
+In-Reply-To: <1528190181-15745-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wei Yongjun <weiyongjun1@huawei.com>, Frederic Barrat <fbarrat@linux.vnet.ibm.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alastair D'Silva <alastair@d-silva.org>
+Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 26 May 2018, Colin King wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Tue, 2018-06-05 at 09:16:21 UTC, Wei Yongjun wrote:
+> Add the missing unlock before return from function
+> afu_ioctl_enable_p9_wait() in the error handling case.
 > 
-> Trivial fix to spelling mistake in dev_err message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/mfd/timberdale.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Fixes: e948e06fc63a ("ocxl: Expose the thread_id needed for wait on POWER9")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Reviewed-by: Alastair D'Silva <alastair@d-silva.org>
 
-Applied, thanks.
+Applied to powerpc next, thanks.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+https://git.kernel.org/powerpc/c/2e5c93d6bb2f7bc17eb82748943a1b
+
+cheers
