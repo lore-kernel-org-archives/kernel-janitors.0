@@ -1,38 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Jun 2018 11:31:39 +0000
-Subject: [PATCH] rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
-Message-Id: <20180605113139.m65jc2hlisa62deu@kili.mountain>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 Jun 2018 14:22:24 +0000
+Subject: [PATCH -next] usb: dwc3: Fix error return code in dwc3_qcom_probe()
+Message-Id: <1528294944-177096-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jussi Kivilinna <jussi.kivilinna@iki.fi>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manu Gautam <mgautam@codeaurora.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is a static checker fix, not something I have tested.  The issue
-is that on the second iteration through the loop, we jump forward by
-le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
-is more than "buflen" then we end up with a negative "buflen".  A
-negative buflen is type promoted to a high positive value and the loop
-continues but it's accessing beyond the end of the buffer.
+Fix to return error code -ENODEV from the get device failed error
+handling case instead of 0, as done elsewhere in this function.
 
-I believe the "auth_req->length" comes from the firmware and if the
-firmware is malicious or buggy, you're already toasted so the impact of
-this bug is probably not very severe.
+Fixes: a4333c3a6ba9 ("usb: dwc3: Add Qualcomm DWC3 glue driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/dwc3/dwc3-qcom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index b0e67ab..8854e42 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -490,6 +490,7 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+ 	qcom->dwc3 = of_find_device_by_node(dwc3_np);
+ 	if (!qcom->dwc3) {
+ 		dev_err(&pdev->dev, "failed to get dwc3 platform device\n");
++		ret = -ENODEV;
+ 		goto depopulate;
+ 	}
 
-diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
-index 9935bd09db1f..d4947e3a909e 100644
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -2928,6 +2928,8 @@ static void rndis_wlan_auth_indication(struct usbnet *usbdev,
- 
- 	while (buflen >= sizeof(*auth_req)) {
- 		auth_req = (void *)buf;
-+		if (buflen < le32_to_cpu(auth_req->length))
-+			return;
- 		type = "unknown";
- 		flags = le32_to_cpu(auth_req->flags);
- 		pairwise_error = false;
