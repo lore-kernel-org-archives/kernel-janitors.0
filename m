@@ -1,37 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 11 Jun 2018 17:30:35 +0000
-Subject: [PATCH] serial: pxa: Fix an error handling path in 'serial_pxa_probe()'
-Message-Id: <20180611173035.26930-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Jun 2018 08:06:00 +0000
+Subject: [PATCH][next] staging: vc04_services: make a couple of pointers static
+Message-Id: <20180606080600.29042-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-If port.line is out of range, we still need to release some resources, or
-we will leak them.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: afc7851fab83 ("serial: pxa: Fix out-of-bounds access through serial port index")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The pointers vchiq_dbg_dir and vchiq_dbg_clients are local to the
+source and do not need to be in global scope, so make them static.
+
+Cleans up sparse warnings:
+warning: symbol 'vchiq_dbg_dir' was not declared. Should it be static?
+warning: symbol 'vchiq_dbg_clients' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/serial/pxa.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/pxa.c b/drivers/tty/serial/pxa.c
-index eda3c7710d6a..4932b674f7ef 100644
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -887,7 +887,8 @@ static int serial_pxa_probe(struct platform_device *dev)
- 		goto err_clk;
- 	if (sport->port.line >= ARRAY_SIZE(serial_pxa_ports)) {
- 		dev_err(&dev->dev, "serial%d out of range\n", sport->port.line);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err_clk;
- 	}
- 	snprintf(sport->name, PXA_NAME_LEN - 1, "UART%d", sport->port.line + 1);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
+index 38805504d462..6a9e71a61142 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
+@@ -52,8 +52,8 @@
+ #define VCHIQ_LOG_TRACE_STR   "trace"
  
+ /* Global 'vchiq' debugfs and clients entry used by all instances */
+-struct dentry *vchiq_dbg_dir;
+-struct dentry *vchiq_dbg_clients;
++static struct dentry *vchiq_dbg_dir;
++static struct dentry *vchiq_dbg_clients;
+ 
+ /* Log category debugfs entries */
+ struct vchiq_debugfs_log_entry {
 -- 
 2.17.0
 
