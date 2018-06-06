@@ -1,72 +1,44 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Tue, 26 Jun 2018 21:34:50 +0000
-Subject: Re: [PATCH] platform/x86: dell-smbios: make a function and a pointer static
-Message-Id: <20180626213450.GB4945@fury>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Jun 2018 12:18:31 +0000
+Subject: [PATCH][next] drm/amd/pp: initialized result to zero before or'ing in data
+Message-Id: <20180606121831.3347-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180621181524.30550-1-colin.king@canonical.com>
- <20180623002237.GG27466@fury>
- <alpine.DEB.2.20.1806230823500.2696@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1806230823500.2696@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Colin King <colin.king@canonical.com>, Mario Limonciello <mario.limonciello@dell.com>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 08:24:26AM +0200, Julia Lawall wrote:
-> 
-> 
-> On Fri, 22 Jun 2018, Darren Hart wrote:
-> 
-> > On Thu, Jun 21, 2018 at 07:15:24PM +0100, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > The function dell_smbios_smm_call and pointer platform_device are
-> > > local to the source and do not need to be in global scope, so make
-> > > them static.
-> > >
-> > > Cleans up sparse warnings:
-> > > warning: symbol 'platform_device' was not declared. Should it be static?
-> > > warning: symbol 'dell_smbios_smm_call' was not declared. Should it be
-> > > static?
-> > >
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/platform/x86/dell-smbios-smm.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/platform/x86/dell-smbios-smm.c b/drivers/platform/x86/dell-smbios-smm.c
-> > > index e9e9da556318..97a90bebc360 100644
-> > > --- a/drivers/platform/x86/dell-smbios-smm.c
-> > > +++ b/drivers/platform/x86/dell-smbios-smm.c
-> > > @@ -24,7 +24,7 @@
-> > >  static int da_command_address;
-> > >  static int da_command_code;
-> > >  static struct calling_interface_buffer *buffer;
-> > > -struct platform_device *platform_device;
-> > > +static struct platform_device *platform_device;
-> > >  static DEFINE_MUTEX(smm_mutex);
-> > >
-> > >  static const struct dmi_system_id dell_device_table[] __initconst = {
-> > > @@ -82,7 +82,7 @@ static void find_cmd_address(const struct dmi_header *dm, void *dummy)
-> > >  	}
-> > >  }
-> > >
-> > > -int dell_smbios_smm_call(struct calling_interface_buffer *input)
-> > > +static int dell_smbios_smm_call(struct calling_interface_buffer *input)
-> >
-> > Hrm. So these are passed by pointer to dell_smbios_register_device(), which is in
-> > turn called by dell_smbios_call() from dell-smbios-base.c.
-> >
-> > So while it is valid to make these static, since we're not referencing the
-> > symbol, but the pointer value instead - I do worry about the "static" suggesting
-> > to someone reading the code that this data is not used outside of this file,
-> > when it is.
-> 
-> Static protects the name.  The name in this case is very generic.
+From: Colin Ian King <colin.king@canonical.com>
 
-Indeed "platform_device" is even more generic than I'd like for a static ;-)
+The current use of result is or'ing in values and checking for
+a non-zero result, however, result is not initialized to zero
+so it potentially contains garbage to start with. Fix this by
+initializing it to the first return from the call to
+vega10_program_didt_config_registers.
 
+Detected by cppcheck:
+"(error) Uninitialized variable: result"
+
+Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
+index a9efd8554fbc..dbe4b1f66784 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
+@@ -1104,7 +1104,7 @@ static int vega10_enable_psm_gc_edc_config(struct pp_hwmgr *hwmgr)
+ 	for (count = 0; count < num_se; count++) {
+ 		data = GRBM_GFX_INDEX__INSTANCE_BROADCAST_WRITES_MASK | GRBM_GFX_INDEX__SH_BROADCAST_WRITES_MASK | ( count << GRBM_GFX_INDEX__SE_INDEX__SHIFT);
+ 		WREG32_SOC15(GC, 0, mmGRBM_GFX_INDEX, data);
+-		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
++		result = vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallDelayConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlResetConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlConfig_Vega10, VEGA10_CONFIGREG_DIDT);
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.17.0
+
