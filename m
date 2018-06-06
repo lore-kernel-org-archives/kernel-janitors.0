@@ -1,57 +1,61 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 04 Jun 2018 13:46:08 +0000
-Subject: Re: [PATCH] fsl/qe: ucc: copy and paste bug in ucc_get_tdm_sync_shift()
-Message-Id: <alpine.DEB.2.20.1806042245360.3542@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Jun 2018 13:43:38 +0000
+Subject: [PATCH][next] pinctrl: pinctrl-single: add allocation failure checking of saved_vals
+Message-Id: <20180606134338.4645-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180604115842.7c4vzge3igjbnblt@kili.mountain>
- <alpine.DEB.2.20.1806042223580.3542@hadrien>
- <20180604134024.dmd7mn2wggqpmkcq@mwanda>
-In-Reply-To: <20180604134024.dmd7mn2wggqpmkcq@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently saved_vals is being allocated and there is no check for
+failed allocation (which is more likely than normal when using
+GFP_ATOMIC).  Fix this by checking for a failed allocation and
+propagating this error return down the the caller chain.
 
-On Mon, 4 Jun 2018, Dan Carpenter wrote:
+Detected by CoverityScan, CID#1469841 ("Dereference null return value")
 
-> On Mon, Jun 04, 2018 at 10:25:14PM +0900, Julia Lawall wrote:
-> >
-> >
-> > On Mon, 4 Jun 2018, Dan Carpenter wrote:
-> >
-> > > There is a copy and paste bug so we accidentally use the RX_ shift when
-> > > we're in TX_ mode.
-> > >
-> > > Fixes: bb8b2062aff3 ("fsl/qe: setup clock source for TDM mode")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > > Static analysis work.  Not tested.  This affects the success path, so
-> > > we should probably test it.
-> >
-> > Maybe this is another one?  I don't have time to look into it at the
-> > moment...
-> >
-> > drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-> >
-> >  	/* For strict priority entries defines the number of consecutive
-> >  	 * slots for the highest priority.
-> >  	 */
-> > 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
-> > 		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
-> >  	/* Mapping between the CREDIT_WEIGHT registers and actual client
-> >  	 * numbers
-> >  	 */
-> >
-> > I find some others that choose between constants, such as ... ? 0 : 0.
->
-> I feel like it should warn about all of those because people shouldn't
-> be submitting unfinished written code to the kernel.  Coccinelle is a
-> lot better for this than Smatch is because it's pre-processor stuff.
+Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-OK, maybe I can report these in the next few days.
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index 9c3c00515aa0..0905ee002041 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1588,8 +1588,11 @@ static int pcs_save_context(struct pcs_device *pcs)
+ 
+ 	mux_bytes = pcs->width / BITS_PER_BYTE;
+ 
+-	if (!pcs->saved_vals)
++	if (!pcs->saved_vals) {
+ 		pcs->saved_vals = devm_kzalloc(pcs->dev, pcs->size, GFP_ATOMIC);
++		if (!pcs->saved_vals)
++			return -ENOMEM;
++	}
+ 
+ 	switch (pcs->width) {
+ 	case 64:
+@@ -1649,8 +1652,13 @@ static int pinctrl_single_suspend(struct platform_device *pdev,
+ 	if (!pcs)
+ 		return -EINVAL;
+ 
+-	if (pcs->flags & PCS_CONTEXT_LOSS_OFF)
+-		pcs_save_context(pcs);
++	if (pcs->flags & PCS_CONTEXT_LOSS_OFF) {
++		int ret;
++
++		ret = pcs_save_context(pcs);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	return pinctrl_force_sleep(pcs->pctl);
+ }
+-- 
+2.17.0
 
-thanks,
-julia
