@@ -1,66 +1,40 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Tue, 12 Jun 2018 09:23:07 +0000
-Subject: Re: [PATCH][V2] drm/i915/guc: fix GEM_BUG_ON check
-Message-Id: <87d0ww2was.fsf@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Jun 2018 09:35:04 +0000
+Subject: [PATCH] ASoC: twl6040: make pointer dmic_codec_dev static
+Message-Id: <20180606093504.30255-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180611164653.13691-1-colin.king@canonical.com>
- <20180612091016.yi4lbmdgcltmcen3@mwanda>
-In-Reply-To: <20180612091016.yi4lbmdgcltmcen3@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-omap@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Mon, Jun 11, 2018 at 05:46:53PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->> 
->> The check for level being less than zero always false because flags
->> is currently unsigned and can never be negative. Fix this by making
->> flags a s32.
->> 
->> Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
->> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> 
->> ---
->> V2: Make flags s32 rather than remove the GEM_BUG_ON check, thanks to
->> Ville Syrjälä for spotting the mistake in my first attempt.
->> ---
->>  drivers/gpu/drm/i915/intel_guc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/intel_guc.c
->> index 116f4ccf1bbd..fb31f5004bcf 100644
->> --- a/drivers/gpu/drm/i915/intel_guc.c
->> +++ b/drivers/gpu/drm/i915/intel_guc.c
->> @@ -206,7 +206,7 @@ void intel_guc_fini(struct intel_guc *guc)
->>  static u32 get_log_control_flags(void)
->>  {
->>  	u32 level = i915_modparams.guc_log_level;
->> -	u32 flags = 0;
->> +	s32 flags = 0;
->>  
->>  	GEM_BUG_ON(level < 0);
->
-> Only insane people use "s32" when it's not part of the hardware spec and
-> you changed the wrong variable...
+From: Colin Ian King <colin.king@canonical.com>
 
-Yeah, int level.
+The pointer dmic_codec_dev is local to the source and does not need
+to be in global scope, so make it static.
 
-Also,
+Cleans up sparse warning:
+warning: symbol 'dmic_codec_dev' was not declared. Should it be static?
 
-Fixes: cb5d64e9f13e ("drm/i915/guc: Allow user to control default GuC logging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/omap/omap-abe-twl6040.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BR,
-Jani.
-
-
->
-> regards,
-> dan carpenter
->
-
+diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
+index 15ccbf479c96..d5ae9eb8c756 100644
+--- a/sound/soc/omap/omap-abe-twl6040.c
++++ b/sound/soc/omap/omap-abe-twl6040.c
+@@ -40,7 +40,7 @@ struct abe_twl6040 {
+ 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
+ };
+ 
+-struct platform_device *dmic_codec_dev;
++static struct platform_device *dmic_codec_dev;
+ 
+ static int omap_abe_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params)
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.0
+
