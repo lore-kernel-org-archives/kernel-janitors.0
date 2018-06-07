@@ -1,17 +1,17 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 06 Jun 2018 12:19:25 +0000
+From: Huang Rui <ray.huang@amd.com>
+Date: Thu, 07 Jun 2018 10:32:50 +0000
 Subject: Re: [PATCH][next] drm/amd/pp: initialized result to zero before or'ing in data
-Message-Id: <530e612b-0b1f-bed6-035e-707bbf745216@canonical.com>
+Message-Id: <20180607103248.GA10576@hr-amur2>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180606121831.3347-1-colin.king@canonical.com>
 In-Reply-To: <20180606121831.3347-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On 06/06/18 13:18, Colin King wrote:
+On Wed, Jun 06, 2018 at 01:18:31PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The current use of result is or'ing in values and checking for
@@ -25,6 +25,12 @@ On 06/06/18 13:18, Colin King wrote:
 > 
 > Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Nice catch, we must check return values for programming didt registers all
+as 0.
+
+Acked-by: Huang Rui <ray.huang@amd.com>
+
 > ---
 >  drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -42,6 +48,10 @@ On 06/06/18 13:18, Colin King wrote:
 >  		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallDelayConfig_Vega10, VEGA10_CONFIGREG_DIDT);
 >  		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlResetConfig_Vega10, VEGA10_CONFIGREG_DIDT);
 >  		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+> -- 
+> 2.17.0
 > 
-
-Oops, subject should be "initialize result to before or'ing in data"
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
