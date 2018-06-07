@@ -1,28 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 03 Jun 2018 14:39:15 +0000
-Subject: Re: [PATCH net-next] net/smc: fix error return code in smc_setsockopt()
-Message-Id: <20180603.103915.1786492119200211803.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Jun 2018 08:28:38 +0000
+Subject: [PATCH] dm: writecache: fix autocommit_time option
+Message-Id: <20180607082838.xbrgbboil4kay7zw@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1527733882-149144-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1527733882-149144-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: ubraun@linux.ibm.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>
+Cc: dm-devel@redhat.com, kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 31 May 2018 02:31:22 +0000
+The option is in terms of msecs so we should be using msecs_to_jiffies()
+to convert it instead of the other way around.
 
-> Fix to return error code -EINVAL instead of 0 if optlen is invalid.
-> 
-> Fixes: 01d2f7e2cdd3 ("net/smc: sockopts TCP_NODELAY and TCP_CORK")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 1be8d9c3da01 ("dm: add writecache target")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Although the TCP code should be checking this in the previous lines,
-it's not good practice to depend so tightly upon that.
-
-And it makes this code easier to audit if the check exists here
-explicitly too.
-
-So I'll apply this, thanks.
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index f2ae02f22c43..c755e8bc6bdd 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -1995,7 +1995,7 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 				goto invalid_optional;
+ 			if (autocommit_msecs > 3600000)
+ 				goto invalid_optional;
+-			wc->autocommit_jiffies = jiffies_to_msecs(autocommit_msecs);
++			wc->autocommit_jiffies = msecs_to_jiffies(autocommit_msecs);
+ 			wc->autocommit_time_set = true;
+ 		} else if (!strcasecmp(string, "fua")) {
+ 			if (WC_MODE_PMEM(wc)) {
