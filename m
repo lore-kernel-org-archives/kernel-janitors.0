@@ -1,24 +1,36 @@
-From: Chao Yu <yuchao0@huawei.com>
-Date: Thu, 21 Jun 2018 06:10:03 +0000
-Subject: Re: [PATCH] f2fs: Fix uninitialized return in f2fs_ioc_shutdown()
-Message-Id: <f490775d-c56f-e2db-9470-14a04d1b6210@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Jun 2018 08:30:02 +0000
+Subject: [PATCH] kselftest/cgroup: fix a signedness bug
+Message-Id: <20180607083001.m4z4wjev6j3sc423@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180620103953.bxdqzy2izn3elii7@kili.mountain>
-In-Reply-To: <20180620103953.bxdqzy2izn3elii7@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: kernel-janitors@vger.kernel.org
 
-On 2018/6/20 18:39, Dan Carpenter wrote:
-> "ret" can be uninitialized on the success path when "in =
-> F2FS_GOING_DOWN_FULLSYNC".
-> 
-> Fixes: 60b2b4ee2bc0 ("f2fs: Fix deadlock in shutdown ioctl")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"len" needs to be signed for the error handling to work.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-
+diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
+index b69bdeb4b9fe..1e9e3c470561 100644
+--- a/tools/testing/selftests/cgroup/cgroup_util.c
++++ b/tools/testing/selftests/cgroup/cgroup_util.c
+@@ -35,7 +35,7 @@ static ssize_t read_text(const char *path, char *buf, size_t max_len)
+ 	return len;
+ }
+ 
+-static ssize_t write_text(const char *path, char *buf, size_t len)
++static ssize_t write_text(const char *path, char *buf, ssize_t len)
+ {
+ 	int fd;
+ 
+@@ -140,7 +140,7 @@ long cg_read_key_long(const char *cgroup, const char *control, const char *key)
+ int cg_write(const char *cgroup, const char *control, char *buf)
+ {
+ 	char path[PATH_MAX];
+-	size_t len = strlen(buf);
++	ssize_t len = strlen(buf);
+ 
+ 	snprintf(path, sizeof(path), "%s/%s", cgroup, control);
+ 
