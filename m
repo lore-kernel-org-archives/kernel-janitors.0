@@ -1,26 +1,30 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Mon, 11 Jun 2018 18:45:04 +0000
-Subject: Re: [PATCH] IB/mlx4: Fix an error handling path in 'mlx4_ib_rereg_user_mr()'
-Message-Id: <20180611184504.GA15889@ziepe.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Jun 2018 13:17:14 +0000
+Subject: [PATCH] typec: tcpm: Fix a msecs vs jiffies bug
+Message-Id: <20180607131714.hjpd7xdhcpzntkob@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180611181511.28025-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180611181511.28025-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: yishaih@mellanox.com, dledford@redhat.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <groeck@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 08:15:11PM +0200, Christophe Jaillet wrote:
-> Before returning -EPERM we should release some resources, as already done
-> in the other error handling path of the function.
-> 
-> Fixes: d8f9cc328c88 ("IB/mlx4: Mark user MR as writable if actual virtual memory is writable")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/infiniband/hw/mlx4/mr.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+The tcpm_set_state() function take msecs not jiffies.
 
-Applied to for-rc, thanks
+Fixes: f0690a25a140 ("staging: typec: USB Type-C Port Manager (tcpm)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Jason
+diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+index 8a201dd53d36..0dfd755020f4 100644
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -3043,7 +3043,8 @@ static void run_state_machine(struct tcpm_port *port)
+ 		    tcpm_port_is_sink(port) &&
+ 		    time_is_after_jiffies(port->delayed_runtime)) {
+ 			tcpm_set_state(port, SNK_DISCOVERY,
+-				       port->delayed_runtime - jiffies);
++				       jiffies_to_msecs(port->delayed_runtime -
++							jiffies));
+ 			break;
+ 		}
+ 		tcpm_set_state(port, unattached_state(port), 0);
