@@ -1,25 +1,38 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 21 Jun 2018 09:04:16 +0000
-Subject: Re: [PATCH] ALSA: lx6464es: Missing error code in snd_lx6464es_create()
-Message-Id: <s5hd0wklddb.wl-tiwai@suse.de>
+From: "JoonHwan.Kim" <spilit464@gmail.com>
+Date: Sat, 09 Jun 2018 06:03:27 +0000
+Subject: [PATCH 1/2] staging: mt7621-spi: change indentation from space to tab
+Message-Id: <1646985.m1Qjj59is2@joonhwan-virtualbox>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180620204256.wvesr47qgikwhfgq@kili.mountain>
-In-Reply-To: <20180620204256.wvesr47qgikwhfgq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Zhouyang Jia <jiazhouyang09@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: neil@brown.name, blogic@openwrt.org, christian@lkamp.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 21 Jun 2018 10:07:21 +0200,
-Dan Carpenter wrote:
-> 
-> We forgot to set the error code on this error path.
-> 
-> Fixes: 4a23fc8cc068 ("ALSA: lx6464es: add error handling for pci_ioremap_bar")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* fix checkpatch.pl error:
+  ERROR: code indent should use tabs where possible
 
-Thanks, applied.
+Signed-off-by: Joonhwan Kim <spilit464@gmail.com>
+---
+ drivers/staging/mt7621-spi/spi-mt7621.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/mt7621-spi/spi-mt7621.c b/drivers/staging/mt7621-spi/spi-mt7621.c
+index d9b55d2059b0..a11cca3e2304 100644
+--- a/drivers/staging/mt7621-spi/spi-mt7621.c
++++ b/drivers/staging/mt7621-spi/spi-mt7621.c
+@@ -105,7 +105,7 @@ static void mt7621_spi_set_cs(struct spi_device *spi, int enable)
+ 	int cs = spi->chip_select;
+ 	u32 polar = 0;
+ 
+-        mt7621_spi_reset(rs, cs);
++	mt7621_spi_reset(rs, cs);
+ 	if (enable)
+ 		polar = BIT(cs);
+ 	mt7621_spi_write(rs, MT7621_SPI_POLAR, polar);
+-- 
+2.17.0
 
 
-Takashi
+
+
