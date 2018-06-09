@@ -1,40 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 30 Jun 2018 12:10:24 +0000
-Subject: [PATCH] platform/x86: dell-smbios-wmi: make function dell_smbios_wmi_call static
-Message-Id: <20180630121024.18993-1-colin.king@canonical.com>
+From: thtlwlsmsgkfla@gmail.com
+Date: Sat, 09 Jun 2018 06:07:51 +0000
+Subject: [PATCH 2/2] staging: rtl8192e: fix line over 80 characters
+Message-Id: <1667235.oI4jP7xdTe@os-virtualbox>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mario Limonciello <mario.limonciello@dell.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: davem@davemloft.net, colin.king@canonical.com, johannes.berg@intel.com, Linyu.Yuan@alcatel-sbell.com.cn, keescook@chromium.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+*fix checkpatch.pl warnings:
+ WARNING: line over 80 characters
 
-The function dell_smbios_wmi_call is local to the source and does not
-need to be in global scope, so make it static.
-
-Cleans up sparse warning:
-symbol 'dell_smbios_wmi_call' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Hyunil Kim <thtlwlsmsgkfla@gmail.com>
 ---
- drivers/platform/x86/dell-smbios-wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8192e/rtllib_softmac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
-index fbefedb1c172..88afe5651d24 100644
---- a/drivers/platform/x86/dell-smbios-wmi.c
-+++ b/drivers/platform/x86/dell-smbios-wmi.c
-@@ -82,7 +82,7 @@ static int run_smbios_call(struct wmi_device *wdev)
- 	return 0;
- }
+diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
+index d172e87..3c5def2 100644
+--- a/drivers/staging/rtl8192e/rtllib_softmac.c
++++ b/drivers/staging/rtl8192e/rtllib_softmac.c
+@@ -2596,7 +2596,8 @@ static void rtllib_start_ibss_wq(void *data)
  
--int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
-+static int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
- {
- 	struct wmi_smbios_priv *priv;
- 	size_t difference;
+ 	if (ieee->current_network.ssid_len = 0) {
+ 		strcpy(ieee->current_network.ssid, RTLLIB_DEFAULT_TX_ESSID);
+-		ieee->current_network.ssid_len = strlen(RTLLIB_DEFAULT_TX_ESSID);
++		ieee->current_network.ssid_len +			strlen(RTLLIB_DEFAULT_TX_ESSID);
+ 		ieee->ssid_set = 1;
+ 	}
+ 
 -- 
-2.17.1
+2.7.4
+
 
