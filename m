@@ -1,59 +1,39 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 11 Jun 2018 16:37:43 +0000
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/guc: remove redundant GEM_BUG_ON check
-Message-Id: <4115c6fb-7031-27ca-f891-55c0806895dd@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 10 Jun 2018 15:34:23 +0000
+Subject: [PATCH] EDAC, altera: Fix an error handling path in 'mv64x60_pci_err_probe()'
+Message-Id: <20180610153423.10769-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180611160037.23402-1-colin.king@canonical.com>
- <20180611162552.GY23723@intel.com>
-In-Reply-To: <20180611162552.GY23723@intel.com>
+References: <20170816050506.14541-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170816050506.14541-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: thor.thayer@linux.intel.com, bp@alien8.de, mchehab@kernel.org
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 11/06/18 17:25, Ville Syrjälä wrote:
-> On Mon, Jun 11, 2018 at 05:00:37PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The check for level being less than zero is redundant as level
->> is an unsigned u32 and hence will never be less than zero.
->> Remove this redundant check.
->>
->> Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/gpu/drm/i915/intel_guc.c | 2 --
->>  1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/intel_guc.c
->> index 116f4ccf1bbd..a2f782a4f97d 100644
->> --- a/drivers/gpu/drm/i915/intel_guc.c
->> +++ b/drivers/gpu/drm/i915/intel_guc.c
->> @@ -208,8 +208,6 @@ static u32 get_log_control_flags(void)
->>  	u32 level = i915_modparams.guc_log_level;
->>  	u32 flags = 0;
->>  
->> -	GEM_BUG_ON(level < 0);
-> 
-> i915_modparams.guc_log_level is a signed int. So s/u32/int would seem
-> like a better fix.
+IF 'regmap_write()' fails, we should release some resources as done in all
+the other error handling paths of the function.
 
-Good point, I somehow thought it  guc_loc_level was unsigned, but I was
-wrong. Sending a V2.
+Fixes: e9918d7fafae ("EDAC, altera: Handle SDRAM Uncorrectable Errors on Stratix10")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/edac/altera_edac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
->> -
->>  	if (!GUC_LOG_LEVEL_IS_ENABLED(level))
->>  		flags |= GUC_LOG_DEFAULT_DISABLED;
->>  
->> -- 
->> 2.17.0
->>
->> _______________________________________________
->> Intel-gfx mailing list
->> Intel-gfx@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
-> 
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index d0d5c4dbe097..5762c3c383f2 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -730,7 +730,8 @@ static int altr_s10_sdram_probe(struct platform_device *pdev)
+ 			 S10_DDR0_IRQ_MASK)) {
+ 		edac_printk(KERN_ERR, EDAC_MC,
+ 			    "Error clearing SDRAM ECC count\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err2;
+ 	}
+ 
+ 	if (regmap_update_bits(drvdata->mc_vbase, priv->ecc_irq_en_offset,
+-- 
+2.17.0
 
