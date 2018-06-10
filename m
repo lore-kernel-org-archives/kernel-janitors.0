@@ -1,22 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 30 Jun 2018 09:45:31 +0000
-Subject: Re: [PATCH net] atm: iphase: fix a 64 bit bug
-Message-Id: <20180630.184531.515145050835343609.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 10 Jun 2018 17:45:32 +0000
+Subject: [PATCH V2] EDAC, altera: Fix an error handling path in 'altr_s10_sdram_probe()'
+Message-Id: <20180610174532.22071-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180628092442.uu4ktcqymi65hbuh@kili.mountain>
-In-Reply-To: <20180628092442.uu4ktcqymi65hbuh@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: thor.thayer@linux.intel.com, bp@alien8.de, mchehab@kernel.org
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Jun 2018 12:24:42 +0300
+IF 'regmap_write()' fails, we should release some resources as done in all
+the other error handling paths of the function.
 
-> The code assumes that there is 4 bytes in a pointer and it doesn't
-> allocate enough memory.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: e9918d7fafae ("EDAC, altera: Handle SDRAM Uncorrectable Errors on Stratix10")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v1 -> v2: Fix subject line
+---
+ drivers/edac/altera_edac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index d0d5c4dbe097..5762c3c383f2 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -730,7 +730,8 @@ static int altr_s10_sdram_probe(struct platform_device *pdev)
+ 			 S10_DDR0_IRQ_MASK)) {
+ 		edac_printk(KERN_ERR, EDAC_MC,
+ 			    "Error clearing SDRAM ECC count\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err2;
+ 	}
+ 
+ 	if (regmap_update_bits(drvdata->mc_vbase, priv->ecc_irq_en_offset,
+-- 
+2.17.0
+
