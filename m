@@ -1,27 +1,69 @@
-From: =?UTF-8?B?6rmA7ZiE7J28?= <thtlwlsmsgkfla@gmail.com>
-Date: Sat, 16 Jun 2018 04:24:01 +0000
-Subject: Re: [PATCH 1/2] staging: rtl8192e: remove brace for single statement
-Message-Id: <CAO7xFUZJm_Jk90=TVx8j5t2-_owb=Q3Rw=WcsfQo7ZU_UjbKLw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Jun 2018 15:10:45 +0000
+Subject: [PATCH] [media] cx18: remove redundant zero check on retval
+Message-Id: <20180611151045.22535-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1986308.HpuS17FQ0J@os-virtualbox> <20180615110820.GB14855@kroah.com>
-In-Reply-To: <20180615110820.GB14855@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, Kees Cook <keescook@chromium.org>, johannes.berg@intel.com, Malcolm Priestley <tvboxspy@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Linyu.Yuan@alcatel-sbell.com.cn, Colin King <colin.king@canonical.com>, davem@davemloft.net
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andy Walls <awalls@md.metrocast.net>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-media@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks greg.
-Let me check and send again
-regards
-Hyunil Kim
+From: Colin Ian King <colin.king@canonical.com>
 
-On Fri, Jun 15, 2018 at 8:08 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Sat, Jun 09, 2018 at 03:05:56PM +0900, thtlwlsmsgkfla@gmail.com wrote:
->> * fix checkpatch.pl warning:
->>   WARNING: braces { are not necessary for single statement blocks
->>
->> Signed-off-by: Hyunil Kim <thtlwlsmsgkfla@gmail.com>
->
-> This does not match your "From:" line in your email headers :(
->
+The check for a zero retval is redundant as all paths that lead to
+this point have set retval to an error return value that is non-zero.
+Remove the redundant check.
+
+Detected by CoverityScan, CID#102589 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/firewire/firedtv-fw.c  | 3 +++
+ drivers/media/pci/cx18/cx18-driver.c | 2 --
+ drivers/regulator/vctrl-regulator.c  | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/firewire/firedtv-fw.c b/drivers/media/firewire/firedtv-fw.c
+index 92f4112d2e37..eed55be21836 100644
+--- a/drivers/media/firewire/firedtv-fw.c
++++ b/drivers/media/firewire/firedtv-fw.c
+@@ -271,6 +271,9 @@ static int node_probe(struct fw_unit *unit, const struct ieee1394_device_id *id)
+ 
+ 	name_len = fw_csr_string(unit->directory, CSR_MODEL,
+ 				 name, sizeof(name));
++	if (name_len < 0)
++		return name_len;
++
+ 	for (i = ARRAY_SIZE(model_names); --i; )
+ 		if (strlen(model_names[i]) <= name_len &&
+ 		    strncmp(name, model_names[i], name_len) = 0)
+diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+index 8f314ca320c7..0c389a3fb4e5 100644
+--- a/drivers/media/pci/cx18/cx18-driver.c
++++ b/drivers/media/pci/cx18/cx18-driver.c
+@@ -1134,8 +1134,6 @@ static int cx18_probe(struct pci_dev *pci_dev,
+ free_workqueues:
+ 	destroy_workqueue(cx->in_work_queue);
+ err:
+-	if (retval = 0)
+-		retval = -ENODEV;
+ 	CX18_ERR("Error %d on initialization\n", retval);
+ 
+ 	v4l2_device_unregister(&cx->v4l2_dev);
+diff --git a/drivers/regulator/vctrl-regulator.c b/drivers/regulator/vctrl-regulator.c
+index 78de002037c7..044e5a5ca163 100644
+--- a/drivers/regulator/vctrl-regulator.c
++++ b/drivers/regulator/vctrl-regulator.c
+@@ -340,7 +340,7 @@ static int vctrl_init_vtable(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	if (rdesc->n_voltages = 0) {
++	if (rdesc->n_voltages <= 0) {
+ 		dev_err(&pdev->dev, "invalid configuration\n");
+ 		return -EINVAL;
+ 	}
+-- 
+2.17.0
+
