@@ -1,46 +1,100 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 11 Jun 2018 17:15:37 +0000
-Subject: [PATCH] iwlwifi: pcie: make array prop static, shrinks object size
-Message-Id: <20180611171537.14597-1-colin.king@canonical.com>
+From: Joe Perches <joe@perches.com>
+Date: Mon, 11 Jun 2018 19:40:55 +0000
+Subject: Re: [PATCH] iwlwifi: pcie: make array prop static, shrinks object size
+Message-Id: <7f508dccf95cff7fb8e083666b8939c58f65f894.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180611171537.14597-1-colin.king@canonical.com>
+In-Reply-To: <20180611171537.14597-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+(adding Greg KH)
 
-Don't populate the read-only array 'prop' on the stack but
-instead make it static. Makes the object code smaller by 20 bytes:
+On Mon, 2018-06-11 at 18:15 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the read-only array 'prop' on the stack but
+> instead make it static. Makes the object code smaller by 20 bytes:
+> 
+> Before:
+>    text    data     bss     dec     hex filename
+>   71659   14614     576   86849   15341 trans.o
+> 
+> After:
+>    text    data     bss     dec     hex filename
+>   71479   14774     576   86829   1532d trans.o
+> 
+> (gcc version 7.3.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> index 7229991ae70d..c4626ebe5da1 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> @@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
+>  	struct iwl_trans_pcie_removal *removal >  		container_of(wk, struct iwl_trans_pcie_removal, work);
+>  	struct pci_dev *pdev = removal->pdev;
+> -	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
+> +	static char *prop[] = {"EVENT=INACCESSIBLE", NULL};
+>  
+>  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
+>  	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
 
-Before:
-   text    data     bss     dec     hex filename
-  71659   14614     576   86849   15341 trans.o
+Now what is happening is that prop is being reloaded
+each invocation with the constant addresses of the strings.
 
-After:
-   text    data     bss     dec     hex filename
-  71479   14774     576   86829   1532d trans.o
+It seems the prototype and function for kobject_uevent_env
+should change as well to avoid this.
 
-(gcc version 7.3.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Perhaps this should become:
 ---
  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/kobject.h                         | 2 +-
+ lib/kobject_uevent.c                            | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index 7229991ae70d..c4626ebe5da1 100644
+index 7229991ae70d..6668a8aad22e 100644
 --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
 +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
 @@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
  	struct iwl_trans_pcie_removal *removal  		container_of(wk, struct iwl_trans_pcie_removal, work);
  	struct pci_dev *pdev = removal->pdev;
 -	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
-+	static char *prop[] = {"EVENT=INACCESSIBLE", NULL};
++	static const char * const prop[] = {"EVENT=INACCESSIBLE", NULL};
  
  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
  	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
--- 
-2.17.0
-
+diff --git a/include/linux/kobject.h b/include/linux/kobject.h
+index 7f6f93c3df9c..9f5cf553dd1e 100644
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -217,7 +217,7 @@ extern struct kobject *firmware_kobj;
+ 
+ int kobject_uevent(struct kobject *kobj, enum kobject_action action);
+ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+-			char *envp[]);
++			const char * const envp[]);
+ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count);
+ 
+ __printf(2, 3)
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 63d0816ab23b..9107989a0cc8 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -452,7 +452,7 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
+  * corresponding error when it fails.
+  */
+ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+-		       char *envp_ext[])
++		       const char * const envp_ext[])
+ {
+ 	struct kobj_uevent_env *env;
+ 	const char *action_string = kobject_actions[action];
