@@ -1,40 +1,36 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 24 Jun 2018 10:38:03 +0000
-Subject: [PATCH] rtc: test: make array pdev static
-Message-Id: <20180624103803.4606-1-colin.king@canonical.com>
+Date: Mon, 11 Jun 2018 08:38:38 +0000
+Subject: [PATCH] soc: qcom: apr: fix spelling mistake: "paket" -> "packet"
+Message-Id: <20180611083838.24365-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org
+To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The array pdev is local to the source and does not need to be in
-global scope, so make it static.
-
-Cleans up sparse warning:
-symbol 'pdev' was not declared. Should it be static?
+Trivial fix to spelling mistake in dev_err message text
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/rtc/rtc-test.c | 2 +-
+ drivers/soc/qcom/apr.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
-index 8469256edc2a..ade6a82709be 100644
---- a/drivers/rtc/rtc-test.c
-+++ b/drivers/rtc/rtc-test.c
-@@ -22,7 +22,7 @@ struct rtc_test_data {
- 	bool alarm_en;
- };
+diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+index 57af8a537332..7f8c4c096ad2 100644
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@ -87,7 +87,7 @@ static int apr_callback(struct rpmsg_device *rpdev, void *buf,
+ 	}
  
--struct platform_device *pdev[MAX_RTC_TEST];
-+static struct platform_device *pdev[MAX_RTC_TEST];
+ 	if (hdr->pkt_size < APR_HDR_SIZE || hdr->pkt_size != len) {
+-		dev_err(apr->dev, "APR: Wrong paket size\n");
++		dev_err(apr->dev, "APR: Wrong packet size\n");
+ 		return -EINVAL;
+ 	}
  
- static int test_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- {
 -- 
 2.17.0
 
