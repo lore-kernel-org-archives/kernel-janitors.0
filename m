@@ -1,26 +1,40 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 06 Jun 2018 01:38:37 +0000
-Subject: Re: [PATCH] scsi: aic7xxx: aic79xx: fix potential null pointer dereference on ahd
-Message-Id: <yq1vaawelsy.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Jun 2018 16:00:37 +0000
+Subject: [PATCH] drm/i915/guc: remove redundant GEM_BUG_ON check
+Message-Id: <20180611160037.23402-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180531123117.32118-1-colin.king@canonical.com>
-In-Reply-To: <20180531123117.32118-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 31 May 2018 13:31:17 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+The check for level being less than zero is redundant as level
+is an unsigned u32 and hence will never be less than zero.
+Remove this redundant check.
 
-> If AHD_DEBUG is enabled and ahd_platform_alloc fails then ahd is set
-> to null and the debug printk dereferences ahd when passing it to
-> ahd_name.  Fix this by moving the debug printk to before the call to
-> ahd_platform_alloc where ahd is not null at that point.
+Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
 
-Applied to 4.18/scsi-fixes. Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/intel_guc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/intel_guc.c
+index 116f4ccf1bbd..a2f782a4f97d 100644
+--- a/drivers/gpu/drm/i915/intel_guc.c
++++ b/drivers/gpu/drm/i915/intel_guc.c
+@@ -208,8 +208,6 @@ static u32 get_log_control_flags(void)
+ 	u32 level = i915_modparams.guc_log_level;
+ 	u32 flags = 0;
+ 
+-	GEM_BUG_ON(level < 0);
+-
+ 	if (!GUC_LOG_LEVEL_IS_ENABLED(level))
+ 		flags |= GUC_LOG_DEFAULT_DISABLED;
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.0
+
