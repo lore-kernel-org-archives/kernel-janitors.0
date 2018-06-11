@@ -1,61 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 16 Jun 2018 12:46:21 +0000
-Subject: Re: [PATCH] media: staging: atomisp: add a blank line after declarations
-Message-Id: <20180616124621.onqmaamidzjdyzlj@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Jun 2018 17:15:37 +0000
+Subject: [PATCH] iwlwifi: pcie: make array prop static, shrinks object size
+Message-Id: <20180611171537.14597-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2750553.3y1WJKmnP5@joonhwan-virtualbox>
- <20180616090609.s5s4q2ri7e2x24oo@mwanda>
- <CAO-p-6CXp1LNMciC2WsT4S-+oubh6SLYHs+4rfmQP9m88F12iA@mail.gmail.com>
-In-Reply-To: <CAO-p-6CXp1LNMciC2WsT4S-+oubh6SLYHs+4rfmQP9m88F12iA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?utf-8?B?6rmA7KSA7ZmY?= <spilit464@gmail.com>
-Cc: alan@linux.intel.com, sakari.ailus@linux.intel.com, mchehab@kernel.org, devel@driverdev.osuosl.org, Greg KH <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 07:20:54PM +0900, 김준환 wrote:
-> Thank you for attention :)
-> 
-> I knew what I forgot before doing contribute
-> 
-> I updated it 'TODAY' and I'll never repeat this mistake again!
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-No rush.
+Don't populate the read-only array 'prop' on the stack but
+instead make it static. Makes the object code smaller by 20 bytes:
 
-This is a tiny mistake and doesn't affect runtime at all and we're all
-human.  The thing to do is figure out which are avoidable mistakes,
-right?
+Before:
+   text    data     bss     dec     hex filename
+  71659   14614     576   86849   15341 trans.o
 
-Like for me, when I was starting out I wrote some patches that added
-some allocations but I forgot to add the kfree().  So then I made a QC
-script that runs some static checkers over my patches and if I add any
-line with "alloc" in it then my QC script asks me:
+After:
+   text    data     bss     dec     hex filename
+  71479   14774     576   86829   1532d trans.o
 
-if git diff $fullname | grep ^+ | grep -qi alloc ; then
-    qc "Have you freed all your mallocs?"
-    qc "Have you checked all your mallocs for NULL returns?"
-fi
+(gcc version 7.3.0 x86_64)
 
-And a couple weeks ago, I accidentally introduced a bug, which someone
-caught during review, because I removed a cast that I thought was
-unnecessary.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	for (i = 0; i < (int)limit; i++) {
-
-I thought limit couldn't be negative but I was wrong.  So I wrote a
-static checker test for that so I'll never do it again.  And I found
-some similar bugs in other people's code and fixed those.  Static
-analysis is sort of my thing but anyone could do it really.  Or ask
-Julia and I to write a check.  But most people have the hardware and
-could write a test program to trigger the bug and add it to their QC
-process.
-
-So making mistakes is fine and it's part of learning.  You should
-definitely take the time to figure out where you went wrong and if it's
-preventable.  But no one really gets annoyed about mistakes because it's
-just part of life and being human.
-
-regards,
-dan carpenter
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+index 7229991ae70d..c4626ebe5da1 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+@@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
+ 	struct iwl_trans_pcie_removal *removal  		container_of(wk, struct iwl_trans_pcie_removal, work);
+ 	struct pci_dev *pdev = removal->pdev;
+-	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
++	static char *prop[] = {"EVENT=INACCESSIBLE", NULL};
+ 
+ 	dev_err(&pdev->dev, "Device gone - attempting removal\n");
+ 	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
+-- 
+2.17.0
 
