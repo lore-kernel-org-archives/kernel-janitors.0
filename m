@@ -1,36 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 11 Jun 2018 08:32:20 +0000
-Subject: [PATCH] media: bt8xx: bttv: fix spelling mistake: "culpit" -> "culprit"
-Message-Id: <20180611083220.24130-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Jun 2018 17:30:35 +0000
+Subject: [PATCH] serial: pxa: Fix an error handling path in 'serial_pxa_probe()'
+Message-Id: <20180611173035.26930-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+If port.line is out of range, we still need to release some resources, or
+we will leak them.
 
-Trivial fix to spelling mistake in pr_notice message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: afc7851fab83 ("serial: pxa: Fix out-of-bounds access through serial port index")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/pci/bt8xx/bttv-driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/pxa.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
-index de3f44b8dec6..cf05e11da01b 100644
---- a/drivers/media/pci/bt8xx/bttv-driver.c
-+++ b/drivers/media/pci/bt8xx/bttv-driver.c
-@@ -3511,7 +3511,7 @@ static void bttv_irq_debug_low_latency(struct bttv *btv, u32 rc)
+diff --git a/drivers/tty/serial/pxa.c b/drivers/tty/serial/pxa.c
+index eda3c7710d6a..4932b674f7ef 100644
+--- a/drivers/tty/serial/pxa.c
++++ b/drivers/tty/serial/pxa.c
+@@ -887,7 +887,8 @@ static int serial_pxa_probe(struct platform_device *dev)
+ 		goto err_clk;
+ 	if (sport->port.line >= ARRAY_SIZE(serial_pxa_ports)) {
+ 		dev_err(&dev->dev, "serial%d out of range\n", sport->port.line);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_clk;
  	}
- 	pr_notice("%d: Uhm. Looks like we have unusual high IRQ latencies\n",
- 		  btv->c.nr);
--	pr_notice("%d: Lets try to catch the culpit red-handed ...\n",
-+	pr_notice("%d: Lets try to catch the culprit red-handed ...\n",
- 		  btv->c.nr);
- 	dump_stack();
- }
+ 	snprintf(sport->name, PXA_NAME_LEN - 1, "UART%d", sport->port.line + 1);
+ 
 -- 
 2.17.0
 
