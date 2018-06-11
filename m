@@ -1,27 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 04 Jun 2018 21:30:53 +0000
-Subject: Re: [PATCH 1/2 v2 net-next] net_failover: Use netdev_features_t instead of u32
-Message-Id: <20180604.173053.1467861125387241500.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Jun 2018 16:53:35 +0000
+Subject: [PATCH] drm/meson: Fix an un-handled error path in 'meson_drv_bind_master()'
+Message-Id: <20180611165335.24542-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180604.093147.1707102168081704551.davem@davemloft.net>
-        <20180604144321.kjemxdfhi4qqb5ji@kili.mountain>
-In-Reply-To: <20180604144321.kjemxdfhi4qqb5ji@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sridhar.samudrala@intel.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: weiyongjun1@huawei.com, narmstrong@baylibre.com, airlied@linux.ie, carlo@caione.org, khilman@baylibre.com
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 4 Jun 2018 17:43:21 +0300
+If 'platform_get_resource_byname()' fails, we should release some resources
+before leaving, as already done in the other error handling path of the
+function.
 
-> The features mask needs to be a netdev_features_t (u64) because a u32
-> is not big enough.
-> 
-> Fixes: cfc80d9a1163 ("net: Introduce net_failover driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: In the original patch, I thought that the & should be | and I
->     introduced a bug.
+Fixes: acaa3f13b8dd ("drm/meson: Fix potential NULL dereference in meson_drv_bind_master()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/meson/meson_drv.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Applied.
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 32b1a6cdecfc..d3443125e661 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -197,8 +197,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	priv->io_base = regs;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
+-	if (!res)
+-		return -EINVAL;
++	if (!res) {
++		ret = -EINVAL;
++		goto free_drm;
++	}
+ 	/* Simply ioremap since it may be a shared register zone */
+ 	regs = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!regs) {
+@@ -215,8 +217,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
+-	if (!res)
+-		return -EINVAL;
++	if (!res) {
++		ret = -EINVAL;
++		goto free_drm;
++	}
+ 	/* Simply ioremap since it may be a shared register zone */
+ 	regs = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!regs) {
+-- 
+2.17.0
+
