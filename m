@@ -1,37 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 18 Jun 2018 08:55:35 +0000
-Subject: Re: qtnfmac: fix NULL pointer dereference
-Message-Id: <20180618085535.6A8F160B13@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Jun 2018 08:32:20 +0000
+Subject: [PATCH] media: bt8xx: bttv: fix spelling mistake: "culpit" -> "culprit"
+Message-Id: <20180611083220.24130-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180601132408.GA2572@embeddedor.com>
-In-Reply-To: <20180601132408.GA2572@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Igor Mitsyanko <imitsyanko@quantenna.com>, Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> In case *vif* is NULL at 655: if (!vif), the execution path jumps to
-> label out, where *vif* is dereferenced at 679:
-> 
-> if (vif->sta_state = QTNF_STA_CONNECTING)
-> 
-> Fix this by immediately returning when *vif* is NULL instead of
-> jumping to label out.
-> 
-> Addresses-Coverity-ID: 1469567 ("Dereference after null check")
-> Fixes: 480daa9cb62c ("qtnfmac: fix invalid STA state on EAPOL failure")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quanenna.com>
+Trivial fix to spelling mistake in pr_notice message text
 
-Patch applied to wireless-drivers.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/bt8xx/bttv-driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-c1e3f64f8738 qtnfmac: fix NULL pointer dereference
-
+diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
+index de3f44b8dec6..cf05e11da01b 100644
+--- a/drivers/media/pci/bt8xx/bttv-driver.c
++++ b/drivers/media/pci/bt8xx/bttv-driver.c
+@@ -3511,7 +3511,7 @@ static void bttv_irq_debug_low_latency(struct bttv *btv, u32 rc)
+ 	}
+ 	pr_notice("%d: Uhm. Looks like we have unusual high IRQ latencies\n",
+ 		  btv->c.nr);
+-	pr_notice("%d: Lets try to catch the culpit red-handed ...\n",
++	pr_notice("%d: Lets try to catch the culprit red-handed ...\n",
+ 		  btv->c.nr);
+ 	dump_stack();
+ }
 -- 
-https://patchwork.kernel.org/patch/10443507/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.0
 
