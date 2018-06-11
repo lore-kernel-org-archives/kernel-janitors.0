@@ -1,28 +1,41 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Thu, 07 Jun 2018 18:11:24 +0000
-Subject: Re: [PATCH] rtc: pxa: fix probe function
-Message-Id: <20180607181124.GC10521@piout.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Jun 2018 18:15:11 +0000
+Subject: [PATCH] IB/mlx4: Fix an error handling path in 'mlx4_ib_rereg_user_mr()'
+Message-Id: <20180611181511.28025-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180607082909.iyukeclgrb3dtjsy@kili.mountain>
-In-Reply-To: <20180607082909.iyukeclgrb3dtjsy@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Rob Herring <robh@kernel.org>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yishaih@mellanox.com, dledford@redhat.com, jgg@ziepe.ca
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 07/06/2018 11:29:09+0300, Dan Carpenter wrote:
-> This patch is from static analysis and I don't have the hardware to
-> to test it.  I think the test is reversed so now the probe function
-> will return success early and the last part of the function is dead
-> code.
-> 
-> Fixes: 3cdf4ad9633e ("rtc: pxa: convert to use shared sa1100 functions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Applied, thanks.
+Before returning -EPERM we should release some resources, as already done
+in the other error handling path of the function.
 
+Fixes: d8f9cc328c88 ("IB/mlx4: Mark user MR as writable if actual virtual memory is writable")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/mlx4/mr.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/mr.c b/drivers/infiniband/hw/mlx4/mr.c
+index ed1f253faf97..c7c85c22e4e3 100644
+--- a/drivers/infiniband/hw/mlx4/mr.c
++++ b/drivers/infiniband/hw/mlx4/mr.c
+@@ -486,8 +486,11 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *mr, int flags,
+ 	}
+ 
+ 	if (flags & IB_MR_REREG_ACCESS) {
+-		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
+-			return -EPERM;
++		if (ib_access_writable(mr_access_flags) &&
++		    !mmr->umem->writable) {
++			err = -EPERM;
++			goto release_mpt_entry;
++		}
+ 
+ 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
+ 					       convert_access(mr_access_flags));
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
+
