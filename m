@@ -1,79 +1,40 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 16 Jun 2018 23:13:59 +0000
-Subject: Re: [PATCH] staging: rtl8192u: fix line over 80 characters
-Message-Id: <5ad0ea84d5b8733e7bb7a647e185f2577c073cf5.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Jun 2018 17:52:27 +0000
+Subject: [PATCH] net: stmmac: dwmac-meson8b: Fix an error handling path in 'meson8b_dwmac_probe()'
+Message-Id: <20180611175227.27509-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1909265.MoDodiKBI3@os-virtualbox>
-         <127735.1529176927@turing-police.cc.vt.edu>
-In-Reply-To: <127735.1529176927@turing-police.cc.vt.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: valdis.kletnieks@vt.edu, Hyunil Kim <thtlwlsmsgkfla@gmail.com>
-Cc: gregkh@linuxfoundation.org, davem@davemloft.net, colin.king@canonical.com, johannes.berg@intel.com, Linyu.Yuan@alcatel-sbell.com.cn, keescook@chromium.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linus-amlogic@lists.infradead.org
 
-On Sat, 2018-06-16 at 15:22 -0400, valdis.kletnieks@vt.edu wrote:
-> On Sat, 16 Jun 2018 15:00:31 +0900, Hyunil Kim said:
-> > *fix checkpatch.pl warnings:
-> >  WARNING: line over 80 characters
-> > +		if (((ieee->wpa_ie[0] = 0xdd) &&
-> > +		    (!memcmp(&(ieee->wpa_ie[14]), ccmp_ie, 4))) ||
-> > +		    ((ieee->wpa_ie[0] = 0x30) &&
-> > +		    (!memcmp(&ieee->wpa_ie[10], ccmp_rsn_ie, 4))))
-> 
-> Ouch. The && and || at ends of line mean a lot of parenthesis counting to
-> figure out which goes with which.  Use additional indentation to help
-> understanding.
-> 
-> +		if (((ieee->wpa_ie[0] = 0xdd) &&
-> +			(!memcmp(&(ieee->wpa_ie[14]), ccmp_ie, 4))) ||
-> +		    ((ieee->wpa_ie[0] = 0x30) &&
-> +			(!memcmp(&ieee->wpa_ie[10], ccmp_rsn_ie, 4))))
-> 
-> Or perhaps
-> 
-> +		if (((ieee->wpa_ie[0] = 0xdd) &&
-> +			(!memcmp(&(ieee->wpa_ie[14]), ccmp_ie, 4)))
-> +		     || ((ieee->wpa_ie[0] = 0x30) &&
-> +			(!memcmp(&ieee->wpa_ie[10], ccmp_rsn_ie, 4))))
+If 'of_device_get_match_data()' fails, we need to release some resources as
+done in the other error handling path of this function.
 
-Or perhaps refactor to something like:
+Fixes: efacb568c962 ("net: stmmac: dwmac-meson: extend phy mode setting")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/rtl8192u/r8192U_core.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 8b17400f6c13..593ecc0ae1ae 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -2039,20 +2039,18 @@ static bool GetNmodeSupportBySecCfg8192(struct net_device *dev)
- 		   (strcmp(crypt->ops->name, "WEP") = 0));
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+index 4ff231df7322..c5979569fd60 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+@@ -334,9 +334,10 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
  
- 	/* simply judge  */
--	if (encrypt && (wpa_ie_len = 0)) {
--		/* wep encryption, no N mode setting */
-+	/* wep encryption, no N mode setting */
-+	if (encrypt && wpa_ie_len = 0)
- 		return false;
--	} else if ((wpa_ie_len != 0)) {
--		/* parse pairwise key type */
--		if (((ieee->wpa_ie[0] = 0xdd) && (!memcmp(&(ieee->wpa_ie[14]), ccmp_ie, 4))) || ((ieee->wpa_ie[0] = 0x30) && (!memcmp(&ieee->wpa_ie[10], ccmp_rsn_ie, 4))))
--			return true;
--		else
--			return false;
--	} else {
-+
-+	if (wpa_ie_len = 0)
- 		return true;
--	}
- 
--	return true;
-+	/* parse pairwise key type */
-+	return (ieee->wpa_ie[0] = 0xdd &&
-+		!memcmp(&ieee->wpa_ie[14], ccmp_ie, 4)) ||
-+	       (ieee->wpa_ie[0] = 0x30 &&
-+		!memcmp(&ieee->wpa_ie[10], ccmp_rsn_ie, 4));
- }
- 
- static bool GetHalfNmodeSupportByAPs819xUsb(struct net_device *dev)
+ 	dwmac->data = (const struct meson8b_dwmac_data *)
+ 		of_device_get_match_data(&pdev->dev);
+-	if (!dwmac->data)
+-		return -EINVAL;
+-
++	if (!dwmac->data) {
++		ret = -EINVAL;
++		goto err_remove_config_dt;
++	}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	dwmac->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(dwmac->regs)) {
+-- 
+2.17.0
 
