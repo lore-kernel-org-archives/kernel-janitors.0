@@ -1,47 +1,40 @@
-From: Jean Delvare <jdelvare@suse.de>
-Date: Mon, 04 Jun 2018 11:54:12 +0000
-Subject: Re: [PATCH] firmware-gsmi: make structure gsmi_dev static
-Message-Id: <20180604135412.2f8316e9@endymion>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Jun 2018 17:20:49 +0000
+Subject: [PATCH] fpga: altera-cvp: Fix an error handling path in 'altera_cvp_probe()'
+Message-Id: <20180611172049.26630-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180601131939.4959-1-colin.king@canonical.com>
-In-Reply-To: <20180601131939.4959-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: atull@kernel.org, mdf@kernel.org
+Cc: linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri,  1 Jun 2018 14:19:39 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure gsmi_dev is local to the source and does not need to be
-> in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/firmware/google/gsmi.c:96:3: warning: symbol 'gsmi_dev' was
-> not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/firmware/google/gsmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-> index c8f169bf2e27..734146eec1b9 100644
-> --- a/drivers/firmware/google/gsmi.c
-> +++ b/drivers/firmware/google/gsmi.c
-> @@ -84,7 +84,7 @@ struct gsmi_buf {
->  	u32 address;			/* physical address of buffer */
->  };
->  
-> -struct gsmi_device {
-> +static struct gsmi_device {
->  	struct platform_device *pdev;	/* platform device */
->  	struct gsmi_buf *name_buf;	/* variable name buffer */
->  	struct gsmi_buf *data_buf;	/* generic data buffer */
+If 'fpga_mgr_create()' fails, we should release some resources, as done
+in the other error handling path of the function.
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 7085e2a94f7d ("fpga: manager: change api, don't use drvdata")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/fpga/altera-cvp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index dd4edd8f22ce..7fa793672a7a 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -455,8 +455,10 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 
+ 	mgr = fpga_mgr_create(&pdev->dev, conf->mgr_name,
+ 			      &altera_cvp_ops, conf);
+-	if (!mgr)
+-		return -ENOMEM;
++	if (!mgr) {
++		ret = -ENOMEM;
++		goto err_unmap;
++	}
+ 
+ 	pci_set_drvdata(pdev, mgr);
+ 
 -- 
-Jean Delvare
-SUSE L3 Support
+2.17.0
+
