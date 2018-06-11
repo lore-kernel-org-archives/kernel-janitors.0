@@ -1,60 +1,61 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Tue, 26 Jun 2018 08:26:19 +0000
-Subject: Re: [PATCH] drm/meson: Fix an un-handled error path in 'meson_drv_bind_master()'
-Message-Id: <e24fbd8f-e280-8376-7f05-43390df7340c@baylibre.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Date: Mon, 11 Jun 2018 16:25:52 +0000
+Subject: Re: [Intel-gfx] [PATCH] drm/i915/guc: remove redundant GEM_BUG_ON check
+Message-Id: <20180611162552.GY23723@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180611165335.24542-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180611165335.24542-1-christophe.jaillet@wanadoo.fr>
+References: <20180611160037.23402-1-colin.king@canonical.com>
+In-Reply-To: <20180611160037.23402-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, weiyongjun1@huawei.com, airlied@linux.ie, carlo@caione.org, khilman@baylibre.com
-Cc: linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-On 11/06/2018 18:53, Christophe JAILLET wrote:
-> If 'platform_get_resource_byname()' fails, we should release some resources
-> before leaving, as already done in the other error handling path of the
-> function.
-> 
-> Fixes: acaa3f13b8dd ("drm/meson: Fix potential NULL dereference in meson_drv_bind_master()")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Mon, Jun 11, 2018 at 05:00:37PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The check for level being less than zero is redundant as level
+> is an unsigned u32 and hence will never be less than zero.
+> Remove this redundant check.
+>=20
+> Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/gpu/drm/meson/meson_drv.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-> index 32b1a6cdecfc..d3443125e661 100644
-> --- a/drivers/gpu/drm/meson/meson_drv.c
-> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -197,8 +197,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->  	priv->io_base = regs;
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
-> -	if (!res)
-> -		return -EINVAL;
-> +	if (!res) {
-> +		ret = -EINVAL;
-> +		goto free_drm;
-> +	}
->  	/* Simply ioremap since it may be a shared register zone */
->  	regs = devm_ioremap(dev, res->start, resource_size(res));
->  	if (!regs) {
-> @@ -215,8 +217,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->  	}
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
-> -	if (!res)
-> -		return -EINVAL;
-> +	if (!res) {
-> +		ret = -EINVAL;
-> +		goto free_drm;
-> +	}
->  	/* Simply ioremap since it may be a shared register zone */
->  	regs = devm_ioremap(dev, res->start, resource_size(res));
->  	if (!regs) {
-> 
+>  drivers/gpu/drm/i915/intel_guc.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/inte=
+l_guc.c
+> index 116f4ccf1bbd..a2f782a4f97d 100644
+> --- a/drivers/gpu/drm/i915/intel_guc.c
+> +++ b/drivers/gpu/drm/i915/intel_guc.c
+> @@ -208,8 +208,6 @@ static u32 get_log_control_flags(void)
+>  	u32 level =3D i915_modparams.guc_log_level;
+>  	u32 flags =3D 0;
+> =20
+> -	GEM_BUG_ON(level < 0);
 
-Applied to drm-misc-fixes
+i915_modparams.guc_log_level is a signed int. So s/u32/int would seem
+like a better fix.
 
-Thanks,
-Neil
+> -
+>  	if (!GUC_LOG_LEVEL_IS_ENABLED(level))
+>  		flags |=3D GUC_LOG_DEFAULT_DISABLED;
+> =20
+> --=20
+> 2.17.0
+>=20
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+
+--=20
+Ville Syrj=E4l=E4
+Intel
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
