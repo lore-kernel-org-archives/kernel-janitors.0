@@ -1,39 +1,29 @@
-From: Guenter Roeck <groeck@google.com>
-Date: Fri, 08 Jun 2018 06:13:11 +0000
-Subject: Re: [PATCH] typec: tcpm: Fix a msecs vs jiffies bug
-Message-Id: <CABXOdTcfdbFVFqfugYweT+7zYXU6wZ3bPHHiSMFNqBwfUNzgFg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jun 2018 12:04:33 +0000
+Subject: [PATCH] test_overflow: fix an IS_ERR() vs NULL bug
+Message-Id: <20180612120432.xqffkv7q74wnip5n@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180607131714.hjpd7xdhcpzntkob@kili.mountain>
-In-Reply-To: <20180607131714.hjpd7xdhcpzntkob@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <groeck@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 6:17 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The tcpm_set_state() function take msecs not jiffies.
->
+root_device_register() returns error pointers, it never returns NULL.
 
-Nice catch.
+Fixes: ca90800a91ba ("test_overflow: Add memory allocation overflow tests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-> Fixes: f0690a25a140 ("staging: typec: USB Type-C Port Manager (tcpm)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index 8a201dd53d36..0dfd755020f4 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -3043,7 +3043,8 @@ static void run_state_machine(struct tcpm_port *port)
->                     tcpm_port_is_sink(port) &&
->                     time_is_after_jiffies(port->delayed_runtime)) {
->                         tcpm_set_state(port, SNK_DISCOVERY,
-> -                                      port->delayed_runtime - jiffies);
-> +                                      jiffies_to_msecs(port->delayed_runtime -
-> +                                                       jiffies));
->                         break;
->                 }
->                 tcpm_set_state(port, unattached_state(port), 0);
+diff --git a/lib/test_overflow.c b/lib/test_overflow.c
+index aecbbb217305..2278fe05a1b0 100644
+--- a/lib/test_overflow.c
++++ b/lib/test_overflow.c
+@@ -367,7 +367,7 @@ static int __init test_overflow_allocation(void)
+ 
+ 	/* Create dummy device for devm_kmalloc()-family tests. */
+ 	dev = root_device_register(device_name);
+-	if (!dev) {
++	if (IS_ERR(dev)) {
+ 		pr_warn("Cannot register test device\n");
+ 		return 1;
+ 	}
