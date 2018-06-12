@@ -1,90 +1,63 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 28 Jun 2018 10:20:35 +0000
-Subject: Applied "ASoC: qdsp6: qdafe: fix some off by one bugs" to the asoc tree
-Message-Id: <E1fYU2V-00048l-O0@debutante>
+From: "Michal Wajdeczko" <michal.wajdeczko@intel.com>
+Date: Tue, 12 Jun 2018 12:08:43 +0000
+Subject: Re: [Intel-gfx] [PATCH][V3] drm/i915/guc: fix GEM_BUG_ON check
+Message-Id: <op.zkhv0tz5xaggs7@mwajdecz-mobl1.ger.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180627085653.v5bi34k2ozkvvrsr@kili.mountain>
-In-Reply-To: <20180627085653.v5bi34k2ozkvvrsr@kili.mountain>
+References: <20180612093804.11341-1-colin.king@canonical.com>
+In-Reply-To: <20180612093804.11341-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Colin King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+On Tue, 12 Jun 2018 11:38:04 +0200, Colin King <colin.king@canonical.com>  
+wrote:
 
-   ASoC: qdsp6: qdafe: fix some off by one bugs
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The check for level being less than zero always false because flags
+> is currently unsigned and can never be negative. Fix this by making
+> level a s32.
+>
+> Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
+>
+> Fixes: cb5d64e9f13e ("drm/i915/guc: Allow user to control default GuC  
+> logging")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>
+> ---
+> V3: Make level s32 and add the missing Fixes: tag, thanks to Dan  
+> Carpenter and
+> Jani Nikula for correcting my mistakes
+>
+> ---
+>  drivers/gpu/drm/i915/intel_guc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/intel_guc.c  
+> b/drivers/gpu/drm/i915/intel_guc.c
+> index 116f4ccf1bbd..bdb1fab322bf 100644
+> --- a/drivers/gpu/drm/i915/intel_guc.c
+> +++ b/drivers/gpu/drm/i915/intel_guc.c
+> @@ -205,7 +205,7 @@ void intel_guc_fini(struct intel_guc *guc)
+> static u32 get_log_control_flags(void)
+>  {
+> -	u32 level = i915_modparams.guc_log_level;
+> +	s32 level = i915_modparams.guc_log_level;
 
-has been applied to the asoc tree at
+s/s32 level/int level
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+to match modparam type as already suggested by others
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+>  	u32 flags = 0;
+> 	GEM_BUG_ON(level < 0);
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+please note that this BUG_ON will go away with pending [1] so maybe
+we can just merge series [2] instead ?
 
 Thanks,
-Mark
+Michal
 
-From c54c1c5ee8e73b7cb752834e52e2129b1dab00bd Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2018 11:56:53 +0300
-Subject: [PATCH] ASoC: qdsp6: qdafe: fix some off by one bugs
-
-The > should be >= or we could read one element beyond the end of the
-port_maps[] array.
-
-Fixes: 7fa2d70f9766 ("ASoC: qdsp6: q6afe: Add q6afe driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/qcom/qdsp6/q6afe.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index 621b67b34db9..671743453fbb 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -776,7 +776,7 @@ static int q6afe_callback(struct apr_device *adev, struct apr_resp_pkt *data)
-  */
- int q6afe_get_port_id(int index)
- {
--	if (index < 0 || index > AFE_PORT_MAX)
-+	if (index < 0 || index >= AFE_PORT_MAX)
- 		return -EINVAL;
- 
- 	return port_maps[index].port_id;
-@@ -1013,7 +1013,7 @@ int q6afe_port_stop(struct q6afe_port *port)
- 
- 	port_id = port->id;
- 	index = port->token;
--	if (index < 0 || index > AFE_PORT_MAX) {
-+	if (index < 0 || index >= AFE_PORT_MAX) {
- 		dev_err(afe->dev, "AFE port index[%d] invalid!\n", index);
- 		return -EINVAL;
- 	}
-@@ -1354,7 +1354,7 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
- 	unsigned long flags;
- 	int cfg_type;
- 
--	if (id < 0 || id > AFE_PORT_MAX) {
-+	if (id < 0 || id >= AFE_PORT_MAX) {
- 		dev_err(dev, "AFE port token[%d] invalid!\n", id);
- 		return ERR_PTR(-EINVAL);
- 	}
--- 
-2.18.0.rc2
-
+[1] https://patchwork.freedesktop.org/patch/227365/
+[2] https://patchwork.freedesktop.org/series/44201/
