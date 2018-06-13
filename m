@@ -1,52 +1,124 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 27 Jun 2018 16:07:19 +0000
-Subject: Re: rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
-Message-Id: <20180627160719.8B1B360791@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 13 Jun 2018 06:04:09 +0000
+Subject: [PATCH 1/2] WAN: LMC: fix up indentations with tabs
+Message-Id: <20180613060410.735-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180605113139.m65jc2hlisa62deu@kili.mountain>
-In-Reply-To: <20180605113139.m65jc2hlisa62deu@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jussi Kivilinna <jussi.kivilinna@iki.fi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This is a static checker fix, not something I have tested.  The issue
-> is that on the second iteration through the loop, we jump forward by
-> le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
-> is more than "buflen" then we end up with a negative "buflen".  A
-> negative buflen is type promoted to a high positive value and the loop
-> continues but it's accessing beyond the end of the buffer.
-> 
-> I believe the "auth_req->length" comes from the firmware and if the
-> firmware is malicious or buggy, you're already toasted so the impact of
-> this bug is probably not very severe.
-> 
-> Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
-> index 9935bd09db1f..d4947e3a909e 100644
-> --- a/drivers/net/wireless/rndis_wlan.c
-> +++ b/drivers/net/wireless/rndis_wlan.c
-> @@ -2928,6 +2928,8 @@ static void rndis_wlan_auth_indication(struct usbnet *usbdev,
->  
->  	while (buflen >= sizeof(*auth_req)) {
->  		auth_req = (void *)buf;
-> +		if (buflen < le32_to_cpu(auth_req->length))
-> +			return;
->  		type = "unknown";
->  		flags = le32_to_cpu(auth_req->flags);
->  		pairwise_error = false;
+Currently this source is using a mix of 4 char spaces and tabs
+for indentations.  Clean this up to consistently use tabs. Also
+add some white spaces in switch statements.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wan/lmc/lmc_proto.c | 79 ++++++++++++++++-----------------
+ 1 file changed, 39 insertions(+), 40 deletions(-)
 
-ae636fb15548 rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
-
+diff --git a/drivers/net/wan/lmc/lmc_proto.c b/drivers/net/wan/lmc/lmc_proto.c
+index f600075e84a2..5a6c87bce1bf 100644
+--- a/drivers/net/wan/lmc/lmc_proto.c
++++ b/drivers/net/wan/lmc/lmc_proto.c
+@@ -49,17 +49,17 @@
+ // attach
+ void lmc_proto_attach(lmc_softc_t *sc) /*FOLD00*/
+ {
+-    lmc_trace(sc->lmc_device, "lmc_proto_attach in");
+-    if (sc->if_type = LMC_NET) {
+-            struct net_device *dev = sc->lmc_device;
+-            /*
+-	     * They set a few basics because they don't use HDLC
+-             */
+-            dev->flags |= IFF_POINTOPOINT;
+-            dev->hard_header_len = 0;
+-            dev->addr_len = 0;
+-        }
+-    lmc_trace(sc->lmc_device, "lmc_proto_attach out");
++	lmc_trace(sc->lmc_device, "lmc_proto_attach in");
++	if (sc->if_type = LMC_NET) {
++		struct net_device *dev = sc->lmc_device;
++		/*
++		 * They set a few basics because they don't use HDLC
++		 */
++		dev->flags |= IFF_POINTOPOINT;
++		dev->hard_header_len = 0;
++		dev->addr_len = 0;
++	}
++	lmc_trace(sc->lmc_device, "lmc_proto_attach out");
+ }
+ 
+ int lmc_proto_ioctl(lmc_softc_t *sc, struct ifreq *ifr, int cmd)
+@@ -99,37 +99,36 @@ void lmc_proto_close(lmc_softc_t *sc)
+ 
+ __be16 lmc_proto_type(lmc_softc_t *sc, struct sk_buff *skb) /*FOLD00*/
+ {
+-    lmc_trace(sc->lmc_device, "lmc_proto_type in");
+-    switch(sc->if_type){
+-    case LMC_PPP:
+-	    return hdlc_type_trans(skb, sc->lmc_device);
+-	    break;
+-    case LMC_NET:
+-        return htons(ETH_P_802_2);
+-        break;
+-    case LMC_RAW: /* Packet type for skbuff kind of useless */
+-        return htons(ETH_P_802_2);
+-        break;
+-    default:
+-        printk(KERN_WARNING "%s: No protocol set for this interface, assuming 802.2 (which is wrong!!)\n", sc->name);
+-        return htons(ETH_P_802_2);
+-        break;
+-    }
+-    lmc_trace(sc->lmc_device, "lmc_proto_tye out");
+-
++	lmc_trace(sc->lmc_device, "lmc_proto_type in");
++	switch (sc->if_type) {
++	case LMC_PPP:
++		return hdlc_type_trans(skb, sc->lmc_device);
++		break;
++	case LMC_NET:
++		return htons(ETH_P_802_2);
++		break;
++	case LMC_RAW: /* Packet type for skbuff kind of useless */
++		return htons(ETH_P_802_2);
++		break;
++	default:
++		printk(KERN_WARNING "%s: No protocol set for this interface, assuming 802.2 (which is wrong!!)\n", sc->name);
++		return htons(ETH_P_802_2);
++		break;
++	}
++	lmc_trace(sc->lmc_device, "lmc_proto_tye out");
+ }
+ 
+ void lmc_proto_netif(lmc_softc_t *sc, struct sk_buff *skb) /*FOLD00*/
+ {
+-    lmc_trace(sc->lmc_device, "lmc_proto_netif in");
+-    switch(sc->if_type){
+-    case LMC_PPP:
+-    case LMC_NET:
+-    default:
+-        netif_rx(skb);
+-        break;
+-    case LMC_RAW:
+-        break;
+-    }
+-    lmc_trace(sc->lmc_device, "lmc_proto_netif out");
++	lmc_trace(sc->lmc_device, "lmc_proto_netif in");
++	switch (sc->if_type) {
++	case LMC_PPP:
++	case LMC_NET:
++	default:
++		netif_rx(skb);
++		break;
++	case LMC_RAW:
++		break;
++	}
++	lmc_trace(sc->lmc_device, "lmc_proto_netif out");
+ }
 -- 
-https://patchwork.kernel.org/patch/10448061/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.0
 
