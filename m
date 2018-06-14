@@ -1,22 +1,34 @@
-From: Raymonde DUPOUY <dupouy.ramonde@gmail.com>
-Date: Thu, 14 Jun 2018 13:06:04 +0000
-Subject: I will definately enlighten you more as soon as I hear from you
-Message-Id: <CA+Z29aDU_enq=AqDZKcCDAtwTHG4bm_8yAE5q7f_kfyHjDK-kA@mail.gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 14 Jun 2018 15:11:07 +0000
+Subject: Re: [net-next] ath10k: make some functions static
+Message-Id: <20180614151107.CBAC8602D7@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1527733994-149212-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1527733994-149212-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: "weiyongjun (A)" <weiyongjun1@huawei.com>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, Govind Singh <govinds@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Good Morning,
+"weiyongjun \(A\)" <weiyongjun1@huawei.com> wrote:
 
-Although, I am not comfortable discussing the content of my mail on
-the Internet owing to lots of unsolicited/Spam mails on the net
-nowadays. However, I have made up my mind to will my late Husband's
-funds to you so you can use it for charity duties and good work to
-humanity. The amounts are relatively huge, but please get back to me
-for further information. I will definately enlighten you more as soon
-as I hear from you.
+> Fixes the following sparse warnings:
+> 
+> drivers/net/wireless/ath/ath10k/snoc.c:823:5: warning:
+>  symbol 'ath10k_snoc_get_ce_id_from_irq' was not declared. Should it be static?
+> drivers/net/wireless/ath/ath10k/snoc.c:871:6: warning:
+>  symbol 'ath10k_snoc_init_napi' was not declared. Should it be static?
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Best of wishes to you,
+Patch applied to ath-next branch of ath.git, thanks.
 
-Mrs. Rania Hassya
+6ee0e175a33d ath10k: make some functions static
+
+-- 
+https://patchwork.kernel.org/patch/10440159/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
