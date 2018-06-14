@@ -1,41 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 01 Jun 2018 13:48:56 +0000
-Subject: [PATCH] mailbox: PCC: make struct pcc_mbox_driver static
-Message-Id: <20180601134856.13322-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 14 Jun 2018 15:22:30 +0000
+Subject: Re: ath9k: debug: fix spelling mistake "WATHDOG" -> "WATCHDOG"
+Message-Id: <20180614152230.5621D600D0@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180530092503.10481-1-colin.king@canonical.com>
+In-Reply-To: <20180530092503.10481-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-The structure pcc_mbox_driver is local to the source and does not
-need to be in global scope, so make it static.
+> Trivial fix to spelling mistake in PR_IS message text.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Cleans up sparse warning:
-drivers/mailbox/pcc.c:576:24: warning: symbol 'pcc_mbox_driver' was
-not declared. Should it be static?
+Patch applied to ath-next branch of ath.git, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mailbox/pcc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+d5e5f6855aab ath9k: debug: fix spelling mistake "WATHDOG" -> "WATCHDOG"
 
-diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-index fc3c237daef2..26976554372b 100644
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -573,7 +573,7 @@ static int pcc_mbox_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--struct platform_driver pcc_mbox_driver = {
-+static struct platform_driver pcc_mbox_driver = {
- 	.probe = pcc_mbox_probe,
- 	.driver = {
- 		.name = "PCCT",
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10438027/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
