@@ -1,28 +1,83 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 22 Jun 2018 00:31:50 +0000
-Subject: Re: [PATCH] net: ethernet: ti: davinci_cpdma: make function cpdma_desc_pool_create static
-Message-Id: <20180622.093150.372475753380132826.davem@davemloft.net>
+From: Joonhwan Kim <spilit464@gmail.com>
+Date: Sat, 16 Jun 2018 06:03:22 +0000
+Subject: [PATCH v2] staging: rtl8712: Adjust if statements to reduce indentation level
+Message-Id: <3225099.6uizQ2pf4A@joonhwan-virtualbox>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180621171645.29734-1-colin.king@canonical.com>
-In-Reply-To: <20180621171645.29734-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: f.fainelli@gmail.com, ivan.khoronzhuk@linaro.org, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com, liamryandev@gmail.com, martin@martinhomuth.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, stefano.manni@gmail.com, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 21 Jun 2018 18:16:45 +0100
+Merge two condition of if statements in
+r8712_surveydone_event_callback()
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function cpdma_desc_pool_create is local to the source and does not
-> need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> warning: symbol 'cpdma_desc_pool_create' was not declared. Should it
-> be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Joonhwan Kim <spilit464@gmail.com>
+---
+v2: fix my name without period in email header
 
-Applied, thanks Colin.
+ drivers/staging/rtl8712/rtl871x_mlme.c | 51 +++++++++++++-------------
+ 1 file changed, 25 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
+index ac547ddd72d1..b8618b0565d5 100644
+--- a/drivers/staging/rtl8712/rtl871x_mlme.c
++++ b/drivers/staging/rtl8712/rtl871x_mlme.c
+@@ -566,32 +566,31 @@ void r8712_surveydone_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 	}
+ 
+ 	if (pmlmepriv->to_join) {
+-		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
+-			if (!check_fwstate(pmlmepriv, _FW_LINKED)) {
+-				set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
+-
+-				if (r8712_select_and_join_from_scan(pmlmepriv)
+-				    = _SUCCESS) {
+-					mod_timer(&pmlmepriv->assoc_timer, jiffies +
+-						  msecs_to_jiffies(MAX_JOIN_TIMEOUT));
+-				} else {
+-					struct wlan_bssid_ex *pdev_network -					  &(adapter->registrypriv.dev_network);
+-					u8 *pibss -						 adapter->registrypriv.
+-							dev_network.MacAddress;
+-					pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;
+-					memcpy(&pdev_network->Ssid,
+-						&pmlmepriv->assoc_ssid,
+-						sizeof(struct
+-							 ndis_802_11_ssid));
+-					r8712_update_registrypriv_dev_network
+-						(adapter);
+-					r8712_generate_random_ibss(pibss);
+-					pmlmepriv->fw_state -						 WIFI_ADHOC_MASTER_STATE;
+-					pmlmepriv->to_join = false;
+-				}
++		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) &&
++		    !check_fwstate(pmlmepriv, _FW_LINKED)) {
++			set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
++
++			if (r8712_select_and_join_from_scan(pmlmepriv)
++			    = _SUCCESS) {
++				mod_timer(&pmlmepriv->assoc_timer, jiffies +
++					  msecs_to_jiffies(MAX_JOIN_TIMEOUT));
++			} else {
++				struct wlan_bssid_ex *pdev_network +				  &(adapter->registrypriv.dev_network);
++				u8 *pibss +					 adapter->registrypriv.
++						dev_network.MacAddress;
++				pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;
++				memcpy(&pdev_network->Ssid,
++					&pmlmepriv->assoc_ssid,
++					sizeof(struct
++						 ndis_802_11_ssid));
++				r8712_update_registrypriv_dev_network
++					(adapter);
++				r8712_generate_random_ibss(pibss);
++				pmlmepriv->fw_state +					 WIFI_ADHOC_MASTER_STATE;
++				pmlmepriv->to_join = false;
+ 			}
+ 		} else {
+ 			pmlmepriv->to_join = false;
+-- 
+2.17.1
+
+
+
+
