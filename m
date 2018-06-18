@@ -1,46 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Jun 2018 09:38:04 +0000
-Subject: [PATCH][V3] drm/i915/guc: fix GEM_BUG_ON check
-Message-Id: <20180612093804.11341-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 18 Jun 2018 08:55:35 +0000
+Subject: Re: qtnfmac: fix NULL pointer dereference
+Message-Id: <20180618085535.6A8F160B13@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180601132408.GA2572@embeddedor.com>
+In-Reply-To: <20180601132408.GA2572@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Igor Mitsyanko <imitsyanko@quantenna.com>, Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-The check for level being less than zero always false because flags
-is currently unsigned and can never be negative. Fix this by making
-level a s32.
+> In case *vif* is NULL at 655: if (!vif), the execution path jumps to
+> label out, where *vif* is dereferenced at 679:
+> 
+> if (vif->sta_state = QTNF_STA_CONNECTING)
+> 
+> Fix this by immediately returning when *vif* is NULL instead of
+> jumping to label out.
+> 
+> Addresses-Coverity-ID: 1469567 ("Dereference after null check")
+> Fixes: 480daa9cb62c ("qtnfmac: fix invalid STA state on EAPOL failure")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quanenna.com>
 
-Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
+Patch applied to wireless-drivers.git, thanks.
 
-Fixes: cb5d64e9f13e ("drm/i915/guc: Allow user to control default GuC logging")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+c1e3f64f8738 qtnfmac: fix NULL pointer dereference
 
----
-V3: Make level s32 and add the missing Fixes: tag, thanks to Dan Carpenter and
-Jani Nikula for correcting my mistakes
-
----
- drivers/gpu/drm/i915/intel_guc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/intel_guc.c
-index 116f4ccf1bbd..bdb1fab322bf 100644
---- a/drivers/gpu/drm/i915/intel_guc.c
-+++ b/drivers/gpu/drm/i915/intel_guc.c
-@@ -205,7 +205,7 @@ void intel_guc_fini(struct intel_guc *guc)
- 
- static u32 get_log_control_flags(void)
- {
--	u32 level = i915_modparams.guc_log_level;
-+	s32 level = i915_modparams.guc_log_level;
- 	u32 flags = 0;
- 
- 	GEM_BUG_ON(level < 0);
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10443507/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
