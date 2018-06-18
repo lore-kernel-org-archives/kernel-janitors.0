@@ -1,19 +1,19 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 22 Jun 2018 14:50:36 +0000
-Subject: Applied "ASoC: rt5682: use devm_snd_soc_register_component()" to the asoc tree
-Message-Id: <E1fWNOW-0002hz-IT@debutante>
+Date: Mon, 18 Jun 2018 11:59:58 +0000
+Subject: Applied "ASoC: ak4458: make structure soc_codec_dev_ak4458 static const" to the asoc tree
+Message-Id: <E1fUspC-0008U3-Uz@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1529634204-105428-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1529634204-105428-1-git-send-email-weiyongjun1@huawei.com>
+References: <20180606103123.31719-1-colin.king@canonical.com>
+In-Reply-To: <20180606103123.31719-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org@alsa-project.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
 
 The patch
 
-   ASoC: rt5682: use devm_snd_soc_register_component()
+   ASoC: ak4458: make structure soc_codec_dev_ak4458 static const
 
 has been applied to the asoc tree at
 
@@ -38,52 +38,38 @@ to this mail.
 Thanks,
 Mark
 
-From a98ec93d7e378db21a6cdbc6d55feaba9fb4b999 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 22 Jun 2018 02:23:24 +0000
-Subject: [PATCH] ASoC: rt5682: use devm_snd_soc_register_component()
+From 62624f72592b1d8e756e699cd6ade2be379f95a9 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 6 Jun 2018 11:31:23 +0100
+Subject: [PATCH] ASoC: ak4458: make structure soc_codec_dev_ak4458 static
+ const
 
-Using devm_snd_soc_register_component() and drop all of the code
-related to .remove hook.
+The structure soc_codec_dev_ak4458 is local to the source and do not
+need to be in global scope and can be const, make it static const.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Cleans up sparse warnings:
+warning: symbol 'soc_codec_dev_ak4458' was not declared. Should it
+be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5682.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ sound/soc/codecs/ak4458.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5682.c b/sound/soc/codecs/rt5682.c
-index 61a97301bcfa..baad177908ab 100644
---- a/sound/soc/codecs/rt5682.c
-+++ b/sound/soc/codecs/rt5682.c
-@@ -2630,17 +2630,11 @@ static int rt5682_i2c_probe(struct i2c_client *i2c,
- 
- 	}
- 
--	return snd_soc_register_component(&i2c->dev, &soc_component_dev_rt5682,
-+	return devm_snd_soc_register_component(&i2c->dev,
-+			&soc_component_dev_rt5682,
- 			rt5682_dai, ARRAY_SIZE(rt5682_dai));
+diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
+index 31ec0ba2e639..299ada4dfaa0 100644
+--- a/sound/soc/codecs/ak4458.c
++++ b/sound/soc/codecs/ak4458.c
+@@ -558,7 +558,7 @@ static int __maybe_unused ak4458_runtime_resume(struct device *dev)
  }
+ #endif /* CONFIG_PM */
  
--static int rt5682_i2c_remove(struct i2c_client *i2c)
--{
--	snd_soc_unregister_component(&i2c->dev);
--
--	return 0;
--}
--
- static void rt5682_i2c_shutdown(struct i2c_client *client)
- {
- 	struct rt5682_priv *rt5682 = i2c_get_clientdata(client);
-@@ -2671,7 +2665,6 @@ static struct i2c_driver rt5682_i2c_driver = {
- 		.acpi_match_table = ACPI_PTR(rt5682_acpi_match),
- 	},
- 	.probe = rt5682_i2c_probe,
--	.remove = rt5682_i2c_remove,
- 	.shutdown = rt5682_i2c_shutdown,
- 	.id_table = rt5682_i2c_id,
- };
+-struct snd_soc_component_driver soc_codec_dev_ak4458 = {
++static const struct snd_soc_component_driver soc_codec_dev_ak4458 = {
+ 	.probe			= ak4458_probe,
+ 	.remove			= ak4458_remove,
+ 	.controls		= ak4458_snd_controls,
 -- 
-2.18.0.rc2
+2.17.1
 
