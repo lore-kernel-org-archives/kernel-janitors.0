@@ -1,31 +1,31 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date: Mon, 25 Jun 2018 01:47:09 +0000
-Subject: Re: [PATCH] mm/zsmalloc: make several functions and a struct static
-Message-Id: <20180625014709.GC557@jagdpanzerIV>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Jun 2018 12:53:40 +0000
+Subject: [PATCH] cpuset: Fix cpuset_get_tree()
+Message-Id: <20180619125340.h2supkskfgwmrbtq@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180624213322.13776-1-colin.king@canonical.com>
-In-Reply-To: <20180624213322.13776-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On (06/24/18 22:33), Colin King wrote:
-> The functions zs_page_isolate, zs_page_migrate, zs_page_putback,
-> lock_zspage, trylock_zspage and structure zsmalloc_aops are local to
-> source and do not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> symbol 'zs_page_isolate' was not declared. Should it be static?
-> symbol 'zs_page_migrate' was not declared. Should it be static?
-> symbol 'zs_page_putback' was not declared. Should it be static?
-> symbol 'zsmalloc_aops' was not declared. Should it be static?
-> symbol 'lock_zspage' was not declared. Should it be static?
-> symbol 'trylock_zspage' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There was a reversed NULL test to the function couldn't work.
 
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Fixes: ec0090a1ccf7 ("cpuset: Use fs_context")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	-ss
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index e6582b2f5144..b02161a41d5a 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -324,10 +324,8 @@ static int cpuset_get_tree(struct fs_context *fc)
+ 	int ret = -ENODEV;
+ 
+ 	cgroup_fs = get_fs_type("cgroup");
+-	if (cgroup_fs) {
+-		ret = PTR_ERR(cgroup_fs);
++	if (!cgroup_fs)
+ 		goto out;
+-	}
+ 
+ 	cg_fc = vfs_new_fs_context(cgroup_fs, NULL, fc->sb_flags, fc->purpose);
+ 	put_filesystem(cgroup_fs);
