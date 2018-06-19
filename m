@@ -1,41 +1,43 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 29 Jun 2018 15:02:12 +0000
-Subject: Re: [PATCH] spelling.txt: add more spellings to spelling.txt
-Message-Id: <dd97033978ee266b236487668061db7025d39c15.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Jun 2018 12:25:30 +0000
+Subject: [PATCH] cifs: Silence uninitialized variable warning
+Message-Id: <20180619122530.a7b5ic6jdsl65ez5@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180629084511.29221-1-colin.king@canonical.com>
-In-Reply-To: <20180629084511.29221-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2018-06-29 at 09:45 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Here are some of the more common spelling mistakes and typos that I've
-> found while fixing up spelling mistakes in the kernel over the past 6
-> months.
+This is not really a runtime issue but Smatch complains that:
 
-Super, thanks.  One correction:
+    fs/cifs/smb2ops.c:1740 smb2_query_symlink()
+    error: uninitialized symbol 'resp_buftype'.
 
-> diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-[]
-> @@ -829,6 +881,7 @@ parametes||parameters
->  parametised||parametrised
->  paramter||parameter
->  paramters||parameters
-> +parmaters||paramaters
+The warning is right that it can be uninitialized...  Also "err_buf"
+would be NULL at this point and we're not supposed to pass NULLs to
+free_rsp_buf() or it might trigger some extra output if we turn on
+debugging.
 
-Misspelled correction correction
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-parameters
-
-> @@ -1143,11 +1219,14 @@ thresold||threshold
->  throught||through
->  troughput||throughput
->  thses||these
-> +tiggers||triggers
-
-Milne might object
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 0356b5559c71..5649cd3f377d 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1697,7 +1697,7 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
+ 		       &resp_buftype);
+ 	if (!rc || !err_iov.iov_base) {
+ 		rc = -ENOENT;
+-		goto querty_exit;
++		goto free_path;
+ 	}
+ 
+ 	err_buf = err_iov.iov_base;
+@@ -1738,6 +1738,7 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
+ 
+  querty_exit:
+ 	free_rsp_buf(resp_buftype, err_buf);
++ free_path:
+ 	kfree(utf16_path);
+ 	return rc;
+ }
