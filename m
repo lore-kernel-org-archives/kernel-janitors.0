@@ -1,49 +1,40 @@
-From: Stefan Agner <stefan@agner.ch>
-Date: Tue, 26 Jun 2018 10:35:24 +0000
-Subject: Re: [PATCH][next] mtd: rawnand: fix a couple of spelling mistakes
-Message-Id: <93be5d64cc447fb282bcc14fed853f0c@agner.ch>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Jun 2018 12:05:07 +0000
+Subject: [PATCH] drm/amd/display: Fix a loop timeout in wait_for_fbc_state_changed()
+Message-Id: <20180620120507.qztby4wtgehc65f2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180626102629.31083-1-colin.king@canonical.com>
-In-Reply-To: <20180626102629.31083-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lucas Stach <dev@lynxeye.de>, Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Roman Li <Roman.Li-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Bhawanpreet Lakha <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Shirish S <shirish.s-5C7GfCeVMHo@public.gmane.org>, Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tony Cheng <Tony.Cheng-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-On 26.06.2018 12:26, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trival fix of two spelling mistakes in dev_err error messages:
-> "supportes" -> "supports" and "strenght" -> "strength"
+We changed this loop so now it loops 1000 times instead of 10.  We need
+to make the counter larger because a uint8_t can't go up to 1000 and
+we need to update the test at the end to test for 1000 instead of 10.
 
-Acked-by: Stefan Agner <stefan@agner.ch>
+Fixes: 2b6199a1d1b7 ("drm/amd/display: replace msleep with udelay in fbc path")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/mtd/nand/raw/tegra_nand.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/tegra_nand.c
-> b/drivers/mtd/nand/raw/tegra_nand.c
-> index 4daa88d81413..9f7de36be893 100644
-> --- a/drivers/mtd/nand/raw/tegra_nand.c
-> +++ b/drivers/mtd/nand/raw/tegra_nand.c
-> @@ -1002,14 +1002,14 @@ static int tegra_nand_chips_init(struct device *dev,
->  	}
->  
->  	if (chip->ecc.algo = NAND_ECC_BCH && mtd->writesize < 2048) {
-> -		dev_err(dev, "BCH supportes 2K or 4K page size only\n");
-> +		dev_err(dev, "BCH supports 2K or 4K page size only\n");
->  		return -EINVAL;
->  	}
->  
->  	if (!chip->ecc.strength) {
->  		ret = tegra_nand_select_strength(chip, mtd->oobsize);
->  		if (ret < 0) {
-> -			dev_err(dev, "No valid strenght found, minimum %d\n",
-> +			dev_err(dev, "No valid strength found, minimum %d\n",
->  				chip->ecc_strength_ds);
->  			return ret;
->  		}
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c
+index e2994d337044..8e83ec66fd22 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c
+@@ -143,7 +143,7 @@ static void wait_for_fbc_state_changed(
+ 	struct dce110_compressor *cp110,
+ 	bool enabled)
+ {
+-	uint8_t counter = 0;
++	int counter = 0;
+ 	uint32_t addr = mmFBC_STATUS;
+ 	uint32_t value;
+ 
+@@ -158,7 +158,7 @@ static void wait_for_fbc_state_changed(
+ 		counter++;
+ 	}
+ 
+-	if (counter = 10) {
++	if (counter = 1000) {
+ 		DC_LOG_WARNING("%s: wait counter exceeded, changes to HW not applied",
+ 			__func__);
+ 	} else {
