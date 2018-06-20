@@ -1,29 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Jun 2018 10:45:05 +0000
-Subject: [PATCH] blk-mq-debugfs: Off by one in blk_mq_rq_state_name()
-Message-Id: <20180620104503.nrwlfak3gyxjg7s2@kili.mountain>
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+Date: Wed, 20 Jun 2018 13:46:17 +0000
+Subject: Re: [PATCH] blk-mq-debugfs: Off by one in blk_mq_rq_state_name()
+Message-Id: <31b2ca0fdd96e61bd57f8cda0f5f1b9c1afbb1d3.camel@wdc.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180620104503.nrwlfak3gyxjg7s2@kili.mountain>
+In-Reply-To: <20180620104503.nrwlfak3gyxjg7s2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bart.vanassche@wdc.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-If rq_state = ARRAY_SIZE() then we read one element beyond the end of
-the blk_mq_rq_state_name_array[] array.
-
-Fixes: ec6dcf63c55c ("blk-mq-debugfs: Show more request state information")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index ffa622366922..1c4532e92938 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -356,7 +356,7 @@ static const char *const blk_mq_rq_state_name_array[] = {
- 
- static const char *blk_mq_rq_state_name(enum mq_rq_state rq_state)
- {
--	if (WARN_ON_ONCE((unsigned int)rq_state >
-+	if (WARN_ON_ONCE((unsigned int)rq_state > 			 ARRAY_SIZE(blk_mq_rq_state_name_array)))
- 		return "(?)";
- 	return blk_mq_rq_state_name_array[rq_state];
+T24gV2VkLCAyMDE4LTA2LTIwIGF0IDEzOjQ1ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBJZiBycV9zdGF0ZSA9PSBBUlJBWV9TSVpFKCkgdGhlbiB3ZSByZWFkIG9uZSBlbGVtZW50IGJl
+eW9uZCB0aGUgZW5kIG9mDQo+IHRoZSBibGtfbXFfcnFfc3RhdGVfbmFtZV9hcnJheVtdIGFycmF5
+Lg0KPiANCj4gRml4ZXM6IGVjNmRjZjYzYzU1YyAoImJsay1tcS1kZWJ1Z2ZzOiBTaG93IG1vcmUg
+cmVxdWVzdCBzdGF0ZSBpbmZvcm1hdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50
+ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gDQo+IGRpZmYgLS1naXQgYS9ibG9jay9i
+bGstbXEtZGVidWdmcy5jIGIvYmxvY2svYmxrLW1xLWRlYnVnZnMuYw0KPiBpbmRleCBmZmE2MjIz
+NjY5MjIuLjFjNDUzMmU5MjkzOCAxMDA2NDQNCj4gLS0tIGEvYmxvY2svYmxrLW1xLWRlYnVnZnMu
+Yw0KPiArKysgYi9ibG9jay9ibGstbXEtZGVidWdmcy5jDQo+IEBAIC0zNTYsNyArMzU2LDcgQEAg
+c3RhdGljIGNvbnN0IGNoYXIgKmNvbnN0IGJsa19tcV9ycV9zdGF0ZV9uYW1lX2FycmF5W10gPSB7
+DQo+ICANCj4gIHN0YXRpYyBjb25zdCBjaGFyICpibGtfbXFfcnFfc3RhdGVfbmFtZShlbnVtIG1x
+X3JxX3N0YXRlIHJxX3N0YXRlKQ0KPiAgew0KPiAtCWlmIChXQVJOX09OX09OQ0UoKHVuc2lnbmVk
+IGludClycV9zdGF0ZSA+DQo+ICsJaWYgKFdBUk5fT05fT05DRSgodW5zaWduZWQgaW50KXJxX3N0
+YXRlID49DQo+ICAJCQkgQVJSQVlfU0laRShibGtfbXFfcnFfc3RhdGVfbmFtZV9hcnJheSkpKQ0K
+PiAgCQlyZXR1cm4gIig/KSI7DQo+ICAJcmV0dXJuIGJsa19tcV9ycV9zdGF0ZV9uYW1lX2FycmF5
+W3JxX3N0YXRlXTsNCg0KUmV2aWV3ZWQtYnk6IEJhcnQgVmFuIEFzc2NoZSA8YmFydC52YW5hc3Nj
+aGVAd2RjLmNvbT4NCg0KDQoNCg=
