@@ -1,41 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 23 Jun 2018 21:28:39 +0000
-Subject: [PATCH] dma-mapping: make variable max_segment static
-Message-Id: <20180623212839.5038-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Jun 2018 10:44:35 +0000
+Subject: [PATCH] partitions/ldm: Off by one in ldm_relative()
+Message-Id: <20180620104433.qegf5bakvcywzuga@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Richard Russon (FlatCap)" <ldm@flatcap.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If base = buflen then we read one character past the end of buffer[].
 
-The variable max_segment is local to the source and
-does not need to be in global scope, so make it static.
-
-Cleans up sparse warning:
-kernel/dma/swiotlb.c:91:14: warning: symbol 'max_segment' was not
-declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- kernel/dma/swiotlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is static analysis.  Not tested.  This code goes back to before the
+start of git.
 
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 04b68d9dffac..c95376d53c47 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -88,7 +88,7 @@ static unsigned int io_tlb_index;
-  * Max segment that we can provide which (if pages are contingous) will
-  * not be bounced (unless SWIOTLB_FORCE is set).
-  */
--unsigned int max_segment;
-+static unsigned int max_segment;
+diff --git a/block/partitions/ldm.c b/block/partitions/ldm.c
+index 0417937dfe99..8f4c302eb11b 100644
+--- a/block/partitions/ldm.c
++++ b/block/partitions/ldm.c
+@@ -636,12 +636,12 @@ static int ldm_relative(const u8 *buffer, int buflen, int base, int offset)
+ {
  
- /*
-  * We need to save away the original address corresponding to a mapped entry
--- 
-2.17.0
-
+ 	base += offset;
+-	if (!buffer || offset < 0 || base > buflen) {
++	if (!buffer || offset < 0 || base >= buflen) {
+ 		if (!buffer)
+ 			ldm_error("!buffer");
+ 		if (offset < 0)
+ 			ldm_error("offset (%d) < 0", offset);
+-		if (base > buflen)
++		if (base >= buflen)
+ 			ldm_error("base (%d) > buflen (%d)", base, buflen);
+ 		return -1;
+ 	}
