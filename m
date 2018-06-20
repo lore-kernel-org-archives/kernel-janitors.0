@@ -1,24 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 05 Jun 2018 14:20:03 +0000
-Subject: Re: [PATCH net-next] net/mlx5e: Make function mlx5e_change_rep_mtu() static
-Message-Id: <20180605.102003.937168132047996557.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Jun 2018 13:25:43 +0000
+Subject: [PATCH][next] drm/i915/psr: fix copy-paste error with setting of tp2_wakeup_time_us
+Message-Id: <20180620132543.28092-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1528166565-54828-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1528166565-54828-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: saeedm@mellanox.com, leon@kernel.org, adin@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 5 Jun 2018 02:42:45 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes the following sparse warning:
-> 
-> drivers/net/ethernet/mellanox/mlx5/core/en_rep.c:903:5: warning:
->  symbol 'mlx5e_change_rep_mtu' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Currently for the psr_table->tp2_tp3_wakeup_time case 3 there appears
+to be a copy-paste error from the previous switch statement where
+dev_priv->vbt.psr.tp1_wakeup_time_us is being assigned and I believe
+it should be dev_priv->vbt.psr.tp2_tp3_wakeup_time_us that should be
+assigned instead.
 
-Applied.
+Detected by CoverityScan, CID#1470105 ("Copy-paste error")
+
+Fixes: 77312ae8f071 ("drm/i915/psr: vbt change for psr")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/intel_bios.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_bios.c b/drivers/gpu/drm/i915/intel_bios.c
+index 03f04b472394..e0a14be1080a 100644
+--- a/drivers/gpu/drm/i915/intel_bios.c
++++ b/drivers/gpu/drm/i915/intel_bios.c
+@@ -740,7 +740,7 @@ parse_psr(struct drm_i915_private *dev_priv, const struct bdb_header *bdb)
+ 			dev_priv->vbt.psr.tp2_tp3_wakeup_time_us = 100;
+ 			break;
+ 		case 3:
+-			dev_priv->vbt.psr.tp1_wakeup_time_us = 0;
++			dev_priv->vbt.psr.tp2_tp3_wakeup_time_us = 0;
+ 			break;
+ 		default:
+ 			DRM_DEBUG_KMS("VBT tp2_tp3 wakeup time value %d is outside range[0-3], defaulting to max value 2500us\n",
+-- 
+2.17.0
+
