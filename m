@@ -1,33 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Jun 2018 12:03:02 +0000
-Subject: [PATCH] rtc: mrst: fix error code in probe()
-Message-Id: <20180612120302.kprwknomakzg7bdn@kili.mountain>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Wed, 20 Jun 2018 10:44:27 +0000
+Subject: Re: [PATCH] rtc: mrst: fix error code in probe()
+Message-Id: <20180620104427.GB7737@piout.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180612120302.kprwknomakzg7bdn@kili.mountain>
+In-Reply-To: <20180612120302.kprwknomakzg7bdn@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We should be returning "retval".  The "mrst_rtc.rtc" variable is a valid
-pointer.
+On 12/06/2018 15:03:02+0300, Dan Carpenter wrote:
+> We should be returning "retval".  The "mrst_rtc.rtc" variable is a valid
+> pointer.
+> 
+> Fixes: 32b41f93dcaf ("rtc: mrst: switch to devm functions")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+Applied, thanks.
 
-Fixes: 32b41f93dcaf ("rtc: mrst: switch to devm functions")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/rtc/rtc-mrst.c b/drivers/rtc/rtc-mrst.c
-index 097a4d4e2aba..1925aaf09093 100644
---- a/drivers/rtc/rtc-mrst.c
-+++ b/drivers/rtc/rtc-mrst.c
-@@ -367,10 +367,8 @@ static int vrtc_mrst_do_probe(struct device *dev, struct resource *iomem,
- 	}
- 
- 	retval = rtc_register_device(mrst_rtc.rtc);
--	if (retval) {
--		retval = PTR_ERR(mrst_rtc.rtc);
-+	if (retval)
- 		goto cleanup0;
--	}
- 
- 	dev_dbg(dev, "initialised\n");
- 	return 0;
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
