@@ -1,46 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 24 Jun 2018 18:25:36 +0000
-Subject: [PATCH] mm, swap: make swap_slots_cache_mutex and swap_slots_cache_enable_mutex static
-Message-Id: <20180624182536.4937-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Jun 2018 11:08:00 +0000
+Subject: [PATCH] tracing: Fix an off by one in __next()
+Message-Id: <20180620110758.crunhd5bfep7zuiz@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The > should be >= to prevent an off by one bug.
 
-The mutexes swap_slots_cache_mutex and swap_slots_cache_enable_mutex are
-local to the source and do not need to be in global scope, so make them
-static.
+From reviewing the code, it seems possible for
+stack_trace_max.nr_entries to be set to .max_entries and in that case we
+would be reading one element beyond the end of the stack_dump_trace[]
+array.  If it's not set to .max_entries then the bug doesn't affect
+runtime.
 
-Cleans up sparse warnings:
-symbol 'swap_slots_cache_mutex' was not declared. Should it be static?
-symbol 'swap_slots_cache_enable_mutex' was not declared. Should it be
-static?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/swap_slots.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/swap_slots.c b/mm/swap_slots.c
-index a791411fed71..008ccb22fee6 100644
---- a/mm/swap_slots.c
-+++ b/mm/swap_slots.c
-@@ -38,9 +38,9 @@ static DEFINE_PER_CPU(struct swap_slots_cache, swp_slots);
- static bool	swap_slot_cache_active;
- bool	swap_slot_cache_enabled;
- static bool	swap_slot_cache_initialized;
--DEFINE_MUTEX(swap_slots_cache_mutex);
-+static DEFINE_MUTEX(swap_slots_cache_mutex);
- /* Serialize swap slots cache enable/disable operations */
--DEFINE_MUTEX(swap_slots_cache_enable_mutex);
-+static DEFINE_MUTEX(swap_slots_cache_enable_mutex);
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 4237eba4ef20..6e3edd745c68 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -286,7 +286,7 @@ __next(struct seq_file *m, loff_t *pos)
+ {
+ 	long n = *pos - 1;
  
- static void __drain_swap_slots_cache(unsigned int type);
- static void deactivate_swap_slots_cache(void);
--- 
-2.17.0
-
+-	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
++	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
+ 		return NULL;
+ 
+ 	m->private = (void *)n;
