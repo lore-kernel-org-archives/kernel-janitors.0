@@ -1,22 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 12 Jun 2018 22:36:40 +0000
-Subject: Re: [PATCH] net: stmmac: dwmac-meson8b: Fix an error handling path in 'meson8b_dwmac_probe()'
-Message-Id: <20180612.153640.206354770292248454.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 21 Jun 2018 01:57:37 +0000
+Subject: [PATCH -next] mqueue: fix a typo in mq_init_ns()
+Message-Id: <1529546567-74814-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180611175227.27509-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180611175227.27509-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linus-amlogic@lists.infradead.org
+To: Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "Eric W. Biederman" <ebiederm@xmission.com>, David Howells <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 11 Jun 2018 19:52:27 +0200
+Fix a typo, use 'm' instead of 'ns->mq_mnt'.
 
-> If 'of_device_get_match_data()' fails, we need to release some resources as
-> done in the other error handling path of this function.
-> 
-> Fixes: efacb568c962 ("net: stmmac: dwmac-meson: extend phy mode setting")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 5cd6a50ace05 ("ipc: Convert mqueue fs to fs_context")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ ipc/mqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 833b8d7..0f10221 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -1620,7 +1620,7 @@ int mq_init_ns(struct ipc_namespace *ns)
+ 
+ 	m = mq_create_mount(&init_ipc_ns);
+ 	if (IS_ERR(m))
+-		return PTR_ERR(ns->mq_mnt);
++		return PTR_ERR(m);
+ 	ns->mq_mnt = m;
+ 	return 0;
+ }
+
