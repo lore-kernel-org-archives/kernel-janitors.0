@@ -1,35 +1,52 @@
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Date: Wed, 06 Jun 2018 03:01:01 +0000
-Subject: RE: [PATCH -next] pnfs: Use GFP_ATOMIC under spin lock
-Message-Id: <6AADFAC011213A4C87B956458587ADB401E0E6D3@dggeml512-mbx.china.huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 21 Jun 2018 18:15:24 +0000
+Subject: [PATCH] platform/x86: dell-smbios: make a function and a pointer static
+Message-Id: <20180621181524.30550-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1528250538-50721-1-git-send-email-weiyongjun1@huawei.com>
- <5da8a18dbac01f8072e9ff2d26714c3673e14b92.camel@hammerspace.com>
-In-Reply-To: <5da8a18dbac01f8072e9ff2d26714c3673e14b92.camel@hammerspace.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trondmy@hammerspace.com>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>, "fred.isaman@gmail.com" <fred.isaman@gmail.com>
-Cc: "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mario Limonciello <mario.limonciello@dell.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIC1uZXh0XSBwbmZzOiBVc2UgR0ZQX0FUT01JQyB1bmRlciBz
-cGluIGxvY2sNCj4gDQo+IE9uIFdlZCwgMjAxOC0wNi0wNiBhdCAwMjowMiArMDAwMCwgV2VpIFlv
-bmdqdW4gd3JvdGU6DQo+ID4gQSBzcGluIGxvY2sgaXMgdGFrZW4gaGVyZSBzbyB3ZSBzaG91bGQg
-dXNlIEdGUF9BVE9NSUMuDQo+ID4NCj4gPiBGaXhlczogMjQwOWE5NzZhMjk5ICgicG5mczogQWRk
-IExBWU9VVEdFVCB0byBPUEVOIG9mIGEgbmV3IGZpbGUiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IFdl
-aSBZb25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KPiA+IC0tLQ0KPiA+ICBmcy9uZnMv
-cG5mcy5jIHwgMiArLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
-ZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9mcy9uZnMvcG5mcy5jIGIvZnMvbmZzL3Bu
-ZnMuYw0KPiA+IGluZGV4IGQ5Mzk0MmYuLjFmZjE5OTggMTAwNjQ0DQo+ID4gLS0tIGEvZnMvbmZz
-L3BuZnMuYw0KPiA+ICsrKyBiL2ZzL25mcy9wbmZzLmMNCj4gPiBAQCAtMjAwOSw3ICsyMDA5LDcg
-QEAgc3RydWN0IHBuZnNfbGF5b3V0X3NlZ21lbnQgKg0KPiA+ICAJc3RydWN0IHBuZnNfbGF5b3V0
-X2hkciAqbG87DQo+ID4NCj4gPiAgCXNwaW5fbG9jaygmaW5vLT5pX2xvY2spOw0KPiA+IC0JbG8g
-PSBwbmZzX2ZpbmRfYWxsb2NfbGF5b3V0KGlubywgY3R4LCBHRlBfS0VSTkVMKTsNCj4gPiArCWxv
-ID0gcG5mc19maW5kX2FsbG9jX2xheW91dChpbm8sIGN0eCwgR0ZQX0FUT01JQyk7DQo+ID4gIAlp
-ZiAoIWxvKQ0KPiA+ICAJCWdvdG8gb3V0X3VubG9jazsNCj4gPiAgCWlmICghdGVzdF9iaXQoTkZT
-X0xBWU9VVF9JTlZBTElEX1NUSUQsICZsby0+cGxoX2ZsYWdzKSkNCj4gPg0KPiBIaSBXZWksDQo+
-IA0KPiBUaGUgaW5vLT5pX2xvY2sgc3BpbmxvY2sgaXMgdGVtcG9yYXJpbHkgZHJvcHBlZCBpbnNp
-ZGUNCj4gcG5mc19maW5kX2FsbG9jX2xheW91dCgpIGlmIHdlIGhhdmUgdG8gcGVyZm9ybSBhbiBh
-bGxvY2F0aW9uLCBzbyB0aGUNCj4gZXhpc3RpbmcgY29kZSBzaG91bGQgYmUgY29ycmVjdC4NCg0K
-SGkgVHJvbmQsDQoNClllcywgeW91IGFyZSByaWdodCwgdGhhbmtzIGZvciByZXZpZXcuDQoNClJl
-Z2FyZHMNCg0K
+From: Colin Ian King <colin.king@canonical.com>
+
+The function dell_smbios_smm_call and pointer platform_device are
+local to the source and do not need to be in global scope, so make
+them static.
+
+Cleans up sparse warnings:
+warning: symbol 'platform_device' was not declared. Should it be static?
+warning: symbol 'dell_smbios_smm_call' was not declared. Should it be
+static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/dell-smbios-smm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/dell-smbios-smm.c b/drivers/platform/x86/dell-smbios-smm.c
+index e9e9da556318..97a90bebc360 100644
+--- a/drivers/platform/x86/dell-smbios-smm.c
++++ b/drivers/platform/x86/dell-smbios-smm.c
+@@ -24,7 +24,7 @@
+ static int da_command_address;
+ static int da_command_code;
+ static struct calling_interface_buffer *buffer;
+-struct platform_device *platform_device;
++static struct platform_device *platform_device;
+ static DEFINE_MUTEX(smm_mutex);
+ 
+ static const struct dmi_system_id dell_device_table[] __initconst = {
+@@ -82,7 +82,7 @@ static void find_cmd_address(const struct dmi_header *dm, void *dummy)
+ 	}
+ }
+ 
+-int dell_smbios_smm_call(struct calling_interface_buffer *input)
++static int dell_smbios_smm_call(struct calling_interface_buffer *input)
+ {
+ 	struct smi_cmd command;
+ 	size_t size;
+-- 
+2.17.0
+
