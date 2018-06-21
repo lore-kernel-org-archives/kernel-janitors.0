@@ -1,54 +1,41 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 10 Jun 2018 13:44:53 +0000
-Subject: Re: [PATCH] tools: iio: iio_generic_buffer: allow infinite looping
-Message-Id: <20180610144453.07310b29@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 21 Jun 2018 17:16:45 +0000
+Subject: [PATCH] net: ethernet: ti: davinci_cpdma: make function cpdma_desc_pool_create static
+Message-Id: <20180621171645.29734-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180607083110.gjfmdfuzw2my6sl5@kili.mountain>
-        <6cf189db-adba-a731-f0cf-523e1d2970d7@xevo.com>
-In-Reply-To: <6cf189db-adba-a731-f0cf-523e1d2970d7@xevo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Kelly <mkelly@xevo.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, linux-omap@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 7 Jun 2018 09:31:06 -0700
-Martin Kelly <mkelly@xevo.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On 06/07/2018 01:31 AM, Dan Carpenter wrote:
-> > I think the num_loops variable was intended to be signed so that we
-> > could set it to -1 and it would loop forever.  Right now it just loops
-> > for a very long time.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/tools/iio/iio_generic_buffer.c b/tools/iio/iio_generic_buffer.c
-> > index 3040830d7797..84545666a09c 100644
-> > --- a/tools/iio/iio_generic_buffer.c
-> > +++ b/tools/iio/iio_generic_buffer.c
-> > @@ -330,7 +330,7 @@ static const struct option longopts[] = {
-> >   
-> >   int main(int argc, char **argv)
-> >   {
-> > -	unsigned long long num_loops = 2;
-> > +	long long num_loops = 2;
-> >   	unsigned long timedelay = 1000000;
-> >   	unsigned long buf_len = 128;
-> >     
-> 
-> Good catch, thanks.
-> 
-> Reviewed-by: Martin Kelly <mkelly@xevo.com>
-Applied.  I'm not going to rush this one as that is a very
-long time so we are unlikely to get lots of problems with it ;)
-Will wait for the next cycle.
+The function cpdma_desc_pool_create is local to the source and does not
+need to be in global scope, so make it static.
 
-Thanks,
+Cleans up sparse warning:
+warning: symbol 'cpdma_desc_pool_create' was not declared. Should it
+be static?
 
-Jonathan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/ti/davinci_cpdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
+index cdbddf16dd29..4f1267477aa4 100644
+--- a/drivers/net/ethernet/ti/davinci_cpdma.c
++++ b/drivers/net/ethernet/ti/davinci_cpdma.c
+@@ -205,7 +205,7 @@ static void cpdma_desc_pool_destroy(struct cpdma_ctlr *ctlr)
+  * devices (e.g. cpsw switches) use plain old memory.  Descriptor pools
+  * abstract out these details
+  */
+-int cpdma_desc_pool_create(struct cpdma_ctlr *ctlr)
++static int cpdma_desc_pool_create(struct cpdma_ctlr *ctlr)
+ {
+ 	struct cpdma_params *cpdma_params = &ctlr->params;
+ 	struct cpdma_desc_pool *pool;
+-- 
+2.17.0
 
