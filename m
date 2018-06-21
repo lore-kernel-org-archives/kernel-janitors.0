@@ -1,23 +1,43 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 20 Jun 2018 18:04:19 +0000
-Subject: Re: [PATCH] block: sed-opal: Fix a couple off by one bugs
-Message-Id: <c0ca9f14-8edc-65c0-5bab-481265c69863@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Jun 2018 08:06:41 +0000
+Subject: [PATCH] cpufreq: qcom-kryo: Fix error handling in probe()
+Message-Id: <20180621080618.gzbm3qgbp42pdirg@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180620104151.yhvcgbcbkkwj4cuk@kili.mountain>
-In-Reply-To: <20180620104151.yhvcgbcbkkwj4cuk@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Scott Bauer <scott.bauer@intel.com>
-Cc: Jonathan Derrick <jonathan.derrick@intel.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 6/20/18 4:41 AM, Dan Carpenter wrote:
-> resp->num is the number of tokens in resp->tok[].  It gets set in
-> response_parse().  So if n = resp->num then we're reading beyond the
-> end of the data.
+We should return if get_cpu_device() fails or it leads to a NULL
+dereference.  Also dev_pm_opp_of_get_opp_desc_node() returns NULL on
+error, it never returns error pointers.
 
-Applied, thanks Dan.
+Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Jens Axboe
-
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+index d049fe4b80c4..b54049614744 100644
+--- a/drivers/cpufreq/qcom-cpufreq-kryo.c
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -86,8 +86,8 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	cpu_dev = get_cpu_device(0);
+-	if (NULL = cpu_dev)
+-		ret = -ENODEV;
++	if (!cpu_dev)
++		return -ENODEV;
+ 
+ 	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+ 	if (NUM_OF_MSM8996_VERSIONS = msm8996_version) {
+@@ -96,8 +96,8 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+-	if (IS_ERR(np))
+-		return PTR_ERR(np);
++	if (!np)
++		return -ENOENT;
+ 
+ 	ret = of_device_is_compatible(np, "operating-points-v2-kryo-cpu");
+ 	if (!ret) {
