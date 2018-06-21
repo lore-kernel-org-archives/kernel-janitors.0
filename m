@@ -1,57 +1,43 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Thu, 28 Jun 2018 08:36:00 +0000
-Subject: Re: [PATCH] ASoC: qdsp6: qdafe: fix some off by one bugs
-Message-Id: <0c6dc870-f146-4894-ae43-882c63c16760@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Jun 2018 13:50:55 +0000
+Subject: [bug report] netlink: have netlink per-protocol bind function return an error code.
+Message-Id: <20180621135054.abihwzh2j6e46zgl@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180627085653.v5bi34k2ozkvvrsr@kili.mountain>
-In-Reply-To: <20180627085653.v5bi34k2ozkvvrsr@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Patrick Lai <plai@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-Thanks for the patch,
+Hello Richard Guy Briggs,
 
-On 27/06/18 09:56, Dan Carpenter wrote:
-> The > should be >= or we could read one element beyond the end of the
-> port_maps[] array.
-> 
-> Fixes: 7fa2d70f9766 ("ASoC: qdsp6: q6afe: Add q6afe driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+This is a semi-automatic email about new static checker warnings.
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+The patch 4f520900522f: "netlink: have netlink per-protocol bind 
+function return an error code." from Apr 22, 2014, leads to the 
+following Smatch complaint:
 
-> diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-> index 01f43218984b..69a7896cb713 100644
-> --- a/sound/soc/qcom/qdsp6/q6afe.c
-> +++ b/sound/soc/qcom/qdsp6/q6afe.c
-> @@ -777,7 +777,7 @@ static int q6afe_callback(struct apr_device *adev, struct apr_resp_pkt *data)
->    */
->   int q6afe_get_port_id(int index)
->   {
-> -	if (index < 0 || index > AFE_PORT_MAX)
-> +	if (index < 0 || index >= AFE_PORT_MAX)
->   		return -EINVAL;
->   
->   	return port_maps[index].port_id;
-> @@ -1014,7 +1014,7 @@ int q6afe_port_stop(struct q6afe_port *port)
->   
->   	port_id = port->id;
->   	index = port->token;
-> -	if (index < 0 || index > AFE_PORT_MAX) {
-> +	if (index < 0 || index >= AFE_PORT_MAX) {
->   		dev_err(afe->dev, "AFE port index[%d] invalid!\n", index);
->   		return -EINVAL;
->   	}
-> @@ -1355,7 +1355,7 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
->   	unsigned long flags;
->   	int cfg_type;
->   
-> -	if (id < 0 || id > AFE_PORT_MAX) {
-> +	if (id < 0 || id >= AFE_PORT_MAX) {
->   		dev_err(dev, "AFE port token[%d] invalid!\n", id);
->   		return ERR_PTR(-EINVAL);
->   	}
-> 
+    net/netlink/af_netlink.c:1056 netlink_bind()
+     error: we previously assumed 'nlk->groups' could be null (see line 1049)
+
+net/netlink/af_netlink.c
+  1048	
+  1049		if (!groups && (nlk->groups = NULL || !(u32)nlk->groups[0]))
+                    ^^^^^^^
+
+  1050			goto unlock;
+  1051		netlink_unlock_table();
+  1052	
+  1053		netlink_table_grab();
+  1054		netlink_update_subscriptions(sk, nlk->subscriptions +
+  1055						 hweight32(groups) -
+  1056						 hweight32(nlk->groups[0]));
+                                                           ^^^^^^^^^^^^^^
+Say groups is non-NULL and nlk->groups is NULL then this would be an
+issue.  Is that possible?  I don't know why Smatch is just now suddenly
+complaining about a 4 year old patch.
+
+  1057		nlk->groups[0] = (nlk->groups[0] & ~0xffffffffUL) | groups;
+  1058		netlink_update_listeners(sk);
+
+regards,
+dan carpenter
