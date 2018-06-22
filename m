@@ -1,42 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 26 Jun 2018 16:03:54 +0000
-Subject: [PATCH][next] drm/panel: ILI9881c: fix missing assignment to error return ret
-Message-Id: <20180626160354.1363-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 22 Jun 2018 02:23:34 +0000
+Subject: [PATCH -next] ASoC: rt1305: use devm_snd_soc_register_component()
+Message-Id: <1529634214-105520-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Using devm_snd_soc_register_component() and drop all of the code
+related to .remove hook.
 
-Currently, ret is being checked for an error condition however it
-is not being assigned in the previous statement on the call of
-function mipi_dsi_dcs_exit_sleep_mode.  Add in the missing assignment
-of ret.
-
-Detected by CoverityScan, CID#1470174, 1470178 ("Unchecked return value")
-
-Fixes: 26aec25593c2 ("drm/panel: Add Ilitek ILI9881c panel driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/rt1305.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-index e848af235df5..3ad4a46c4e94 100644
---- a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-@@ -334,7 +334,7 @@ static int ili9881c_prepare(struct drm_panel *panel)
- 	if (ret)
- 		return ret;
+diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
+index 421b8fb..c4452ef 100644
+--- a/sound/soc/codecs/rt1305.c
++++ b/sound/soc/codecs/rt1305.c
+@@ -1150,17 +1150,11 @@ static int rt1305_i2c_probe(struct i2c_client *i2c,
+ 	rt1305_reset(rt1305->regmap);
+ 	rt1305_calibrate(rt1305);
  
--	mipi_dsi_dcs_exit_sleep_mode(ctx->dsi);
-+	ret = mipi_dsi_dcs_exit_sleep_mode(ctx->dsi);
- 	if (ret)
- 		return ret;
+-	return snd_soc_register_component(&i2c->dev, &soc_component_dev_rt1305,
++	return devm_snd_soc_register_component(&i2c->dev,
++			&soc_component_dev_rt1305,
+ 			rt1305_dai, ARRAY_SIZE(rt1305_dai));
+ }
  
--- 
-2.17.1
+-static int rt1305_i2c_remove(struct i2c_client *i2c)
+-{
+-	snd_soc_unregister_component(&i2c->dev);
+-
+-	return 0;
+-}
+-
+ static void rt1305_i2c_shutdown(struct i2c_client *client)
+ {
+ 	struct rt1305_priv *rt1305 = i2c_get_clientdata(client);
+@@ -1180,7 +1174,6 @@ static void rt1305_i2c_shutdown(struct i2c_client *client)
+ #endif
+ 	},
+ 	.probe = rt1305_i2c_probe,
+-	.remove   = rt1305_i2c_remove,
+ 	.shutdown = rt1305_i2c_shutdown,
+ 	.id_table = rt1305_i2c_id,
+ };
 
