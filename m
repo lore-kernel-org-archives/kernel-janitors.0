@@ -1,31 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Jun 2018 11:09:11 +0000
-Subject: [PATCH] drm/i915/selftests: Don't dereference an error pointer
-Message-Id: <20180620110907.pnr5zrqmsko4cyvy@kili.mountain>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 22 Jun 2018 02:23:24 +0000
+Subject: [PATCH -next] ASoC: rt5682: use devm_snd_soc_register_component()
+Message-Id: <1529634204-105428-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is an error path where "ctx" is an error pointer so we can't
-pass it to kernel_context_close().
+Using devm_snd_soc_register_component() and drop all of the code
+related to .remove hook.
 
-Fixes: 09a4c02e58c1 ("drm/i915: Look for an active kernel context before switching")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/codecs/rt5682.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_context.c b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
-index 836f1af8b833..e41036fcd97e 100644
---- a/drivers/gpu/drm/i915/selftests/i915_gem_context.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
-@@ -541,7 +541,8 @@ static int igt_switch_to_kernel_context(void *arg)
- 		err = -EIO;
- 	mutex_unlock(&i915->drm.struct_mutex);
+diff --git a/sound/soc/codecs/rt5682.c b/sound/soc/codecs/rt5682.c
+index 61a9730..baad177 100644
+--- a/sound/soc/codecs/rt5682.c
++++ b/sound/soc/codecs/rt5682.c
+@@ -2630,17 +2630,11 @@ static int rt5682_i2c_probe(struct i2c_client *i2c,
  
--	kernel_context_close(ctx);
-+	if (!IS_ERR(ctx))
-+		kernel_context_close(ctx);
- 	return err;
+ 	}
+ 
+-	return snd_soc_register_component(&i2c->dev, &soc_component_dev_rt5682,
++	return devm_snd_soc_register_component(&i2c->dev,
++			&soc_component_dev_rt5682,
+ 			rt5682_dai, ARRAY_SIZE(rt5682_dai));
  }
  
+-static int rt5682_i2c_remove(struct i2c_client *i2c)
+-{
+-	snd_soc_unregister_component(&i2c->dev);
+-
+-	return 0;
+-}
+-
+ static void rt5682_i2c_shutdown(struct i2c_client *client)
+ {
+ 	struct rt5682_priv *rt5682 = i2c_get_clientdata(client);
+@@ -2671,7 +2665,6 @@ static void rt5682_i2c_shutdown(struct i2c_client *client)
+ 		.acpi_match_table = ACPI_PTR(rt5682_acpi_match),
+ 	},
+ 	.probe = rt5682_i2c_probe,
+-	.remove = rt5682_i2c_remove,
+ 	.shutdown = rt5682_i2c_shutdown,
+ 	.id_table = rt5682_i2c_id,
+ };
+
