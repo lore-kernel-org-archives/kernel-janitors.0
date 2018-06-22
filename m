@@ -1,19 +1,19 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 Jun 2018 12:00:01 +0000
-Subject: Applied "ASoC: ak5558: make two structures static" to the asoc tree
-Message-Id: <E1fUspF-0008VA-60@debutante>
+Date: Fri, 22 Jun 2018 14:50:34 +0000
+Subject: Applied "ASoC: rt1305: use devm_snd_soc_register_component()" to the asoc tree
+Message-Id: <E1fWNOU-0002gy-Cc@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180606095719.30831-1-colin.king@canonical.com>
-In-Reply-To: <20180606095719.30831-1-colin.king@canonical.com>
+References: <1529634214-105520-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1529634214-105520-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org@alsa-project.org
 
 The patch
 
-   ASoC: ak5558: make two structures static
+   ASoC: rt1305: use devm_snd_soc_register_component()
 
 has been applied to the asoc tree at
 
@@ -38,47 +38,52 @@ to this mail.
 Thanks,
 Mark
 
-From e380be7c557c4ddb1cb71404c10e0bfb3daf4644 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 6 Jun 2018 10:57:19 +0100
-Subject: [PATCH] ASoC: ak5558: make two structures static
+From 2854a214f398f2c3315204a05efff11739fec062 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 22 Jun 2018 02:23:34 +0000
+Subject: [PATCH] ASoC: rt1305: use devm_snd_soc_register_component()
 
-The structure ak5558_pm and soc_codec_dev_ak5558 are local to the
-source and do not need to be in global scope, so make them static.
-Also make soc_codec_dev_ak5558 static.
+Using devm_snd_soc_register_component() and drop all of the code
+related to .remove hook.
 
-Cleans up sparse warnings:
-warning: symbol 'ak5558_pm' was not declared. Should it be static?
-warning: symbol 'soc_codec_dev_ak5558' was not declared. Should it be
-static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ak5558.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt1305.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/codecs/ak5558.c b/sound/soc/codecs/ak5558.c
-index f4ed5cc40661..448bb90c9c8e 100644
---- a/sound/soc/codecs/ak5558.c
-+++ b/sound/soc/codecs/ak5558.c
-@@ -322,13 +322,13 @@ static int __maybe_unused ak5558_runtime_resume(struct device *dev)
- 	return regcache_sync(ak5558->regmap);
+diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
+index 421b8fb2fa04..c4452efc7970 100644
+--- a/sound/soc/codecs/rt1305.c
++++ b/sound/soc/codecs/rt1305.c
+@@ -1150,17 +1150,11 @@ static int rt1305_i2c_probe(struct i2c_client *i2c,
+ 	rt1305_reset(rt1305->regmap);
+ 	rt1305_calibrate(rt1305);
+ 
+-	return snd_soc_register_component(&i2c->dev, &soc_component_dev_rt1305,
++	return devm_snd_soc_register_component(&i2c->dev,
++			&soc_component_dev_rt1305,
+ 			rt1305_dai, ARRAY_SIZE(rt1305_dai));
  }
  
--const struct dev_pm_ops ak5558_pm = {
-+static const struct dev_pm_ops ak5558_pm = {
- 	SET_RUNTIME_PM_OPS(ak5558_runtime_suspend, ak5558_runtime_resume, NULL)
- 	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
- 				pm_runtime_force_resume)
+-static int rt1305_i2c_remove(struct i2c_client *i2c)
+-{
+-	snd_soc_unregister_component(&i2c->dev);
+-
+-	return 0;
+-}
+-
+ static void rt1305_i2c_shutdown(struct i2c_client *client)
+ {
+ 	struct rt1305_priv *rt1305 = i2c_get_clientdata(client);
+@@ -1180,7 +1174,6 @@ static struct i2c_driver rt1305_i2c_driver = {
+ #endif
+ 	},
+ 	.probe = rt1305_i2c_probe,
+-	.remove   = rt1305_i2c_remove,
+ 	.shutdown = rt1305_i2c_shutdown,
+ 	.id_table = rt1305_i2c_id,
  };
- 
--struct snd_soc_component_driver soc_codec_dev_ak5558 = {
-+static const struct snd_soc_component_driver soc_codec_dev_ak5558 = {
- 	.probe			= ak5558_probe,
- 	.remove			= ak5558_remove,
- 	.controls		= ak5558_snd_controls,
 -- 
-2.17.1
+2.18.0.rc2
 
