@@ -1,40 +1,44 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Sat, 02 Jun 2018 09:04:13 +0000
-Subject: [PATCH v2 2/3] staging: rtlwifi: Fix "writen"->"written"
-Message-Id: <20180602090414.5208-2-sabin.rapan@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Jun 2018 11:18:18 +0000
+Subject: [bug report] lib/kobject.c: use kvasprintf_const for formatting ->name
+Message-Id: <20180622111818.vpdv72rtjgj7533g@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180601060740.GA25648@kroah.com>
- <20180602090414.5208-1-sabin.rapan@gmail.com>
-In-Reply-To: <20180602090414.5208-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Trivial fix to spelling mistake in comment text.
+Hello Rasmus Villemoes,
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
----
-Changes in v2:
- - Added proper to and cc fields to the patch series.
+This is a semi-automatic email about new static checker warnings.
 
- drivers/staging/rtlwifi/rtl8822be/fw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch f773f32d71a4: "lib/kobject.c: use kvasprintf_const for
+formatting ->name" from Nov 6, 2015, leads to the following Smatch
+complaint:
 
-diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwifi/rtl8822be/fw.c
-index efec7281511c..a40396614814 100644
---- a/drivers/staging/rtlwifi/rtl8822be/fw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
-@@ -82,7 +82,7 @@ static void _rtl8822be_fill_h2c_command(struct ieee80211_hw *hw, u8 element_id,
- 	}
- 
- 	while (!bwrite_success) {
--		/* 2. Find the last BOX number which has been writen. */
-+		/* 2. Find the last BOX number which has been written. */
- 		boxnum = rtlhal->last_hmeboxnum;
- 		switch (boxnum) {
- 		case 0:
--- 
-2.17.0
+    lib/kobject.c:262 kobject_set_name_vargs()
+     error: we previously assumed 'fmt' could be null (see line 259)
 
+lib/kobject.c
+   258	
+   259		if (kobj->name && !fmt)
+                                   ^^^
+   260			return 0;
+   261	
+   262		s = kvasprintf_const(GFP_KERNEL, fmt, vargs);
+                                                 ^^^
+
+This warning is really old, and I suddenly have a lot of them today.
+
+I'm always dorking with Smatch so my version is never the released
+version or even the same as the day before.  I haven't figured out why
+I have so many of these warnings now.  But this looks like a legit
+issue.
+
+I think this a bug in Smatch, but we could change the check to if (!fmt)?
+
+   263		if (!s)
+   264			return -ENOMEM;
+
+regards,
+dan carpenter
