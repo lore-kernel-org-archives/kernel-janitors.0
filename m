@@ -1,53 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 31 May 2018 12:31:17 +0000
-Subject: [PATCH] scsi: aic7xxx: aic79xx: fix potential null pointer dereference on ahd
-Message-Id: <20180531123117.32118-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Jun 2018 11:16:20 +0000
+Subject: [PATCH] afs: memory leak in afs_init_fs_context()
+Message-Id: <20180622111620.m5n42ezymkdrbyxf@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We need to free "ctx" before returning on this error path.
 
-If AHD_DEBUG is enabled and ahd_platform_alloc fails then ahd is set
-to null and the debug printk dereferences ahd when passing it to
-ahd_name.  Fix this by moving the debug printk to before the call
-to ahd_platform_alloc where ahd is not null at that point.
+Fixes: 1ec2b51af007 ("afs: Add fs_context support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Detected by CoverityScan, CID#100296 ("Explicit null dereference")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/aic7xxx/aic79xx_core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-index 034f4eebb160..3efd4cdc40a0 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -6112,10 +6112,6 @@ ahd_alloc(void *platform_arg, char *name)
- 	ahd->int_coalescing_stop_threshold  	    AHD_INT_COALESCING_STOP_THRESHOLD_DEFAULT;
+diff --git a/fs/afs/super.c b/fs/afs/super.c
+index 656f810c5234..037f20f5ee90 100644
+--- a/fs/afs/super.c
++++ b/fs/afs/super.c
+@@ -596,8 +596,10 @@ static int afs_init_fs_context(struct fs_context *fc, struct dentry *reference)
+ 		break;
  
--	if (ahd_platform_alloc(ahd, platform_arg) != 0) {
--		ahd_free(ahd);
--		ahd = NULL;
--	}
- #ifdef AHD_DEBUG
- 	if ((ahd_debug & AHD_SHOW_MEMORY) != 0) {
- 		printk("%s: scb size = 0x%x, hscb size = 0x%x\n",
-@@ -6123,6 +6119,10 @@ ahd_alloc(void *platform_arg, char *name)
- 		       (u_int)sizeof(struct hardware_scb));
- 	}
- #endif
-+	if (ahd_platform_alloc(ahd, platform_arg) != 0) {
-+		ahd_free(ahd);
-+		ahd = NULL;
-+	}
- 	return (ahd);
- }
+ 	case FS_CONTEXT_FOR_SUBMOUNT:
+-		if (!reference)
++		if (!reference) {
++			kfree(ctx);
+ 			return -EINVAL;
++		}
  
--- 
-2.17.0
-
+ 		src_as = AFS_FS_S(reference->d_sb);
+ 		ASSERT(src_as);
