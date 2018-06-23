@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 23 Jun 2018 22:15:30 +0000
+Date: Sat, 23 Jun 2018 22:15:31 +0000
 Subject: [PATCH] brcmsmac: make function wlc_phy_workarounds_nphy_rev1 static
-Message-Id: <20180623221531.6396-1-colin.king@canonical.com>
+Message-Id: <20180623221531.6396-2-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180623221531.6396-1-colin.king@canonical.com>
+In-Reply-To: <20180623221531.6396-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
