@@ -1,30 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 14 Jun 2018 08:31:35 +0000
-Subject: Re: [PATCH][next] pinctrl: pinctrl-single: add allocation failure checking of saved_vals
-Message-Id: <CACRpkdZEawUiEU=qP+x7gTH5Sox9gH920ef7Cw-Y5-amxr9M2A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 23 Jun 2018 22:15:30 +0000
+Subject: [PATCH] brcmsmac: make function wlc_phy_workarounds_nphy_rev1 static
+Message-Id: <20180623221531.6396-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180606134338.4645-1-colin.king@canonical.com>
-In-Reply-To: <20180606134338.4645-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 3:43 PM, Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently saved_vals is being allocated and there is no check for
-> failed allocation (which is more likely than normal when using
-> GFP_ATOMIC).  Fix this by checking for a failed allocation and
-> propagating this error return down the the caller chain.
->
-> Detected by CoverityScan, CID#1469841 ("Dereference null return value")
->
-> Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The function wlc_phy_workarounds_nphy_rev1 is local to the source and
+does not need to be in global scope, so make it static.
 
-Patch applied with Johan's and Tony's ACKs.
+Cleans up sparse warning:
+symbol 'wlc_phy_workarounds_nphy_rev1' was not declared. Should it
+be static?
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+index 1a187557982e..bedec1606caa 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+@@ -16904,7 +16904,7 @@ static void wlc_phy_workarounds_nphy_rev3(struct brcms_phy *pi)
+ 	}
+ }
+ 
+-void wlc_phy_workarounds_nphy_rev1(struct brcms_phy *pi)
++static void wlc_phy_workarounds_nphy_rev1(struct brcms_phy *pi)
+ {
+ 	static const u8 rfseq_rx2tx_events[] = {
+ 		NPHY_RFSEQ_CMD_NOP,
+-- 
+2.17.0
+
