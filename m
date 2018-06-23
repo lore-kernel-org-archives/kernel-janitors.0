@@ -1,57 +1,93 @@
-From: Huang Rui <ray.huang@amd.com>
-Date: Thu, 07 Jun 2018 10:32:50 +0000
-Subject: Re: [PATCH][next] drm/amd/pp: initialized result to zero before or'ing in data
-Message-Id: <20180607103248.GA10576@hr-amur2>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 23 Jun 2018 22:01:15 +0000
+Subject: [PATCH] misc: rtsx: make several functions static
+Message-Id: <20180623220115.6053-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180606121831.3347-1-colin.king@canonical.com>
-In-Reply-To: <20180606121831.3347-1-colin.king@canonical.com>
+References: <20171204124329.5569-1-colin.king@canonical.com>
+In-Reply-To: <20171204124329.5569-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, Rui Feng <rui_feng@realsil.com.cn>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 01:18:31PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current use of result is or'ing in values and checking for
-> a non-zero result, however, result is not initialized to zero
-> so it potentially contains garbage to start with. Fix this by
-> initializing it to the first return from the call to
-> vega10_program_didt_config_registers.
-> 
-> Detected by cppcheck:
-> "(error) Uninitialized variable: result"
-> 
-> Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Nice catch, we must check return values for programming didt registers all
-as 0.
+The functions rtsx_pm_power_saving, rtsx_set_l1off_sub_cfg_d0,
+rtsx_pm_full_on, rtsx_comm_set_ltr_latency, rtsx_pci_process_ocp
+and rtsx_pci_process_ocp_interrupt are local to the source and do
+not need to be in global scope, so make them static.
 
-Acked-by: Huang Rui <ray.huang@amd.com>
+Cleans up sparse warnings:
+symbol 'rtsx_pm_power_saving' was not declared. Should it be static?
+symbol 'rtsx_set_l1off_sub_cfg_d0' was not declared. Should it be static?
+symbol 'rtsx_pm_full_on' was not declared. Should it be static?
+symbol 'rtsx_comm_set_ltr_latency' was not declared. Should it be static?
+symbol 'rtsx_pci_process_ocp' was not declared. Should it be static?
+symbol 'rtsx_pci_process_ocp_interrupt' was not declared. Should it be
+static?
 
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
-> index a9efd8554fbc..dbe4b1f66784 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
-> @@ -1104,7 +1104,7 @@ static int vega10_enable_psm_gc_edc_config(struct pp_hwmgr *hwmgr)
->  	for (count = 0; count < num_se; count++) {
->  		data = GRBM_GFX_INDEX__INSTANCE_BROADCAST_WRITES_MASK | GRBM_GFX_INDEX__SH_BROADCAST_WRITES_MASK | ( count << GRBM_GFX_INDEX__SE_INDEX__SHIFT);
->  		WREG32_SOC15(GC, 0, mmGRBM_GFX_INDEX, data);
-> -		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
-> +		result = vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
->  		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCStallDelayConfig_Vega10, VEGA10_CONFIGREG_DIDT);
->  		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlResetConfig_Vega10, VEGA10_CONFIGREG_DIDT);
->  		result |= vega10_program_didt_config_registers(hwmgr, PSMSEEDCCtrlConfig_Vega10, VEGA10_CONFIGREG_DIDT);
-> -- 
-> 2.17.0
-> 
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/cardreader/rtsx_pcr.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+index e8f1d4bb806a..da445223f4cc 100644
+--- a/drivers/misc/cardreader/rtsx_pcr.c
++++ b/drivers/misc/cardreader/rtsx_pcr.c
+@@ -80,7 +80,7 @@ static inline void rtsx_pci_disable_aspm(struct rtsx_pcr *pcr)
+ 		0xFC, 0);
+ }
+ 
+-int rtsx_comm_set_ltr_latency(struct rtsx_pcr *pcr, u32 latency)
++static int rtsx_comm_set_ltr_latency(struct rtsx_pcr *pcr, u32 latency)
+ {
+ 	rtsx_pci_write_register(pcr, MSGTXDATA0,
+ 				MASK_8_BIT_DEF, (u8) (latency & 0xFF));
+@@ -143,7 +143,7 @@ int rtsx_set_l1off_sub(struct rtsx_pcr *pcr, u8 val)
+ 	return 0;
+ }
+ 
+-void rtsx_set_l1off_sub_cfg_d0(struct rtsx_pcr *pcr, int active)
++static void rtsx_set_l1off_sub_cfg_d0(struct rtsx_pcr *pcr, int active)
+ {
+ 	if (pcr->ops->set_l1off_cfg_sub_d0)
+ 		pcr->ops->set_l1off_cfg_sub_d0(pcr, active);
+@@ -162,7 +162,7 @@ static void rtsx_comm_pm_full_on(struct rtsx_pcr *pcr)
+ 		rtsx_set_l1off_sub_cfg_d0(pcr, 1);
+ }
+ 
+-void rtsx_pm_full_on(struct rtsx_pcr *pcr)
++static void rtsx_pm_full_on(struct rtsx_pcr *pcr)
+ {
+ 	if (pcr->ops->full_on)
+ 		pcr->ops->full_on(pcr);
+@@ -967,13 +967,13 @@ static void rtsx_pci_card_detect(struct work_struct *work)
+ 				pcr->slots[RTSX_MS_CARD].p_dev);
+ }
+ 
+-void rtsx_pci_process_ocp(struct rtsx_pcr *pcr)
++static void rtsx_pci_process_ocp(struct rtsx_pcr *pcr)
+ {
+ 	if (pcr->ops->process_ocp)
+ 		pcr->ops->process_ocp(pcr);
+ }
+ 
+-int rtsx_pci_process_ocp_interrupt(struct rtsx_pcr *pcr)
++static int rtsx_pci_process_ocp_interrupt(struct rtsx_pcr *pcr)
+ {
+ 	if (pcr->option.ocp_en)
+ 		rtsx_pci_process_ocp(pcr);
+@@ -1094,7 +1094,7 @@ static void rtsx_comm_pm_power_saving(struct rtsx_pcr *pcr)
+ 	rtsx_enable_aspm(pcr);
+ }
+ 
+-void rtsx_pm_power_saving(struct rtsx_pcr *pcr)
++static void rtsx_pm_power_saving(struct rtsx_pcr *pcr)
+ {
+ 	if (pcr->ops->power_saving)
+ 		pcr->ops->power_saving(pcr);
+-- 
+2.17.0
+
