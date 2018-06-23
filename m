@@ -1,53 +1,43 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Thu, 07 Jun 2018 14:05:21 +0000
-Subject: [PATCH 3.16 286/410] clocksource/drivers/fsl_ftm_timer: Fix error return checking
-Message-Id: <lsq.1528380321.268215907@decadent.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 23 Jun 2018 22:42:08 +0000
+Subject: [PATCH] afs: make afs_volume_record_life static and remove afs_volume_gc_delay
+Message-Id: <20180623224208.7141-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Colin Ian King <colin.king@canonical.com>
-
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
-
-------------------
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 upstream.
+Variable afs_volume_record_life is local to the source and does not need
+to be in global scope, so make it static.  Variable afs_volume_gc_delay
+is not referenced at all in the source, it is unused and can be removed.
 
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
+Cleans up sparse warnings:
+symbol 'afs_volume_gc_delay' was not declared. Should it be static?
+symbol 'afs_volume_record_life' was not declared. Should it be static?
 
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/clocksource/fsl_ftm_timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/volume.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -282,7 +282,7 @@ static int __init __ftm_clk_init(struct
+diff --git a/fs/afs/volume.c b/fs/afs/volume.c
+index 7adcddf02e66..f924ead1c7a1 100644
+--- a/fs/afs/volume.c
++++ b/fs/afs/volume.c
+@@ -13,8 +13,7 @@
+ #include <linux/slab.h>
+ #include "internal.h"
  
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
+-unsigned __read_mostly afs_volume_gc_delay = 10;
+-unsigned __read_mostly afs_volume_record_life = 60 * 60;
++static unsigned __read_mostly afs_volume_record_life = 60 * 60;
  
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
+ static const char *const afs_voltypes[] = { "R/W", "R/O", "BAK" };
+ 
+-- 
+2.17.0
 
