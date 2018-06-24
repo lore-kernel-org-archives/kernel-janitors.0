@@ -1,29 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 14 Jun 2018 15:22:30 +0000
-Subject: Re: ath9k: debug: fix spelling mistake "WATHDOG" -> "WATCHDOG"
-Message-Id: <20180614152230.5621D600D0@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 24 Jun 2018 10:38:03 +0000
+Subject: [PATCH] rtc: test: make array pdev static
+Message-Id: <20180624103803.4606-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180530092503.10481-1-colin.king@canonical.com>
-In-Reply-To: <20180530092503.10481-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Trivial fix to spelling mistake in PR_IS message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The array pdev is local to the source and does not need to be in
+global scope, so make it static.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Cleans up sparse warning:
+symbol 'pdev' was not declared. Should it be static?
 
-d5e5f6855aab ath9k: debug: fix spelling mistake "WATHDOG" -> "WATCHDOG"
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
+index 8469256edc2a..ade6a82709be 100644
+--- a/drivers/rtc/rtc-test.c
++++ b/drivers/rtc/rtc-test.c
+@@ -22,7 +22,7 @@ struct rtc_test_data {
+ 	bool alarm_en;
+ };
+ 
+-struct platform_device *pdev[MAX_RTC_TEST];
++static struct platform_device *pdev[MAX_RTC_TEST];
+ 
+ static int test_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
 -- 
-https://patchwork.kernel.org/patch/10438027/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.0
 
