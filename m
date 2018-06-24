@@ -1,31 +1,39 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 01 Jun 2018 06:07:40 +0000
-Subject: Re: [PATCH 1/3] staging: rtlwifi: Fix "Trafic"->"Traffic"
-Message-Id: <20180601060740.GA25648@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 24 Jun 2018 10:57:31 +0000
+Subject: [PATCH] sfc: make function efx_rps_hash_bucket static
+Message-Id: <20180624105731.5167-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180531110314.3760-1-sabin.rapan@gmail.com>
- <20180531165747.GA28898@kroah.com>
- <438a4c2c-5bf8-8149-aaff-1f58493cdc79@gmail.com>
-In-Reply-To: <438a4c2c-5bf8-8149-aaff-1f58493cdc79@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Cc: Larry.Finger@lwfinger.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Solarflare linux maintainers <linux-net-drivers@solarflare.com>, Edward Cree <ecree@solarflare.com>, Bert Kenward <bkenward@solarflare.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 09:48:23PM +0200, Sabin Mihai Rapan wrote:
-> In the first patch series I forgot to CC linux-kernel@vger.kernel.org and
-> assumed (wrongly) that the patch series will be ignored.
-> In an attempt to fix that, I sent the second patch series with proper
-> CC added. I should have sent it as a reply to the first one and version
-> it.
-> I will do as you said and resend the patch series.
+From: Colin Ian King <colin.king@canonical.com>
 
-linux-kernel does not care about staging patches :)
+The function efx_rps_hash_bucket is local to the source and
+does not need to be in global scope, so make it static.
 
-Please use scripts/get_maintainers.pl to determine who to cc: and the
-proper mailing list to use.
+Cleans up sparse warning:
+symbol 'efx_rps_hash_bucket' was not declared. Should it be static?
 
-thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/sfc/efx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-greg k-h
+diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
+index ad4a354ce570..570ec72266f3 100644
+--- a/drivers/net/ethernet/sfc/efx.c
++++ b/drivers/net/ethernet/sfc/efx.c
+@@ -3180,6 +3180,7 @@ bool efx_rps_check_rule(struct efx_arfs_rule *rule, unsigned int filter_idx,
+ 	return true;
+ }
+ 
++static
+ struct hlist_head *efx_rps_hash_bucket(struct efx_nic *efx,
+ 				       const struct efx_filter_spec *spec)
+ {
+-- 
+2.17.0
+
