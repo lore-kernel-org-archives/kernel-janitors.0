@@ -1,64 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 06 Jun 2018 23:34:02 +0000
-Subject: [PATCH] staging: rtl8723bs: drop test
-Message-Id: <1528328042-6461-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 24 Jun 2018 11:22:06 +0000
+Subject: [PATCH] lib: make struct pointer foo static
+Message-Id: <20180624112206.5722-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, hdegoede@redhat.com
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The test selects between two identical values, so it doesn't look useful.
-It turns out that the tested expression can only be true anyway, so drop
-the test, the corresponding parameter, and the corresponding argument at
-the only call site.
+From: Colin Ian King <colin.king@canonical.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+The pointer foo is local to the source and does not need to be
+in global scope, so make it static.
 
-// <smpl>
-@@
-expression e,e1;
-@@
+Cleans up sparse warning:
+symbol 'foo' was not declared. Should it be static?
 
-* e ? e1 : e1
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ lib/test_debug_virtual.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c b/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c
-index 2ee25b2..53d3bdf 100644
---- a/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c
-+++ b/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c
-@@ -1352,7 +1352,6 @@ static void _PHY_ReloadMACRegisters8723B(
- static void _PHY_PathADDAOn8723B(
- 	struct adapter *padapter,
- 	u32 *ADDAReg,
--	bool isPathAOn,
- 	bool is2T
- )
+diff --git a/lib/test_debug_virtual.c b/lib/test_debug_virtual.c
+index b9cdeecc19dc..d5a06addeb27 100644
+--- a/lib/test_debug_virtual.c
++++ b/lib/test_debug_virtual.c
+@@ -15,7 +15,7 @@ struct foo {
+ 	unsigned int bar;
+ };
+ 
+-struct foo *foo;
++static struct foo *foo;
+ 
+ static int __init test_debug_virtual_init(void)
  {
-@@ -1363,7 +1362,7 @@ static void _PHY_PathADDAOn8723B(
- 
- 	ODM_RT_TRACE(pDM_Odm, ODM_COMP_CALIBRATION, ODM_DBG_LOUD, ("ADDA ON.\n"));
- 
--	pathOn = isPathAOn ? 0x01c00014 : 0x01c00014;
-+	pathOn = 0x01c00014;
- 	if (false = is2T) {
- 		pathOn = 0x01c00014;
- 		PHY_SetBBReg(pDM_Odm->Adapter, ADDAReg[0], bMaskDWord, 0x01c00014);
-@@ -1556,7 +1555,7 @@ static void phy_IQCalibrate_8723B(
- 	}
- 	ODM_RT_TRACE(pDM_Odm, ODM_COMP_CALIBRATION, ODM_DBG_LOUD, ("IQ Calibration for %s for %d times\n", (is2T ? "2T2R" : "1T1R"), t));
- 
--	_PHY_PathADDAOn8723B(padapter, ADDA_REG, true, is2T);
-+	_PHY_PathADDAOn8723B(padapter, ADDA_REG, is2T);
- 
- /* no serial mode */
- 
+-- 
+2.17.0
 
