@@ -1,7 +1,7 @@
 From: David Lechner <david@lechnology.com>
-Date: Sat, 02 Jun 2018 14:33:00 +0000
+Date: Mon, 25 Jun 2018 23:17:55 +0000
 Subject: Re: [PATCH] clk: davinci: cfgchip: testing the wrong variable
-Message-Id: <9444dee2-db66-77ab-06bb-81df888f6287@lechnology.com>
+Message-Id: <3a6d0388-7915-8ea3-6ad6-38dc7ee06377@lechnology.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
 In-Reply-To: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
@@ -33,5 +33,6 @@ On 06/02/2018 02:52 AM, Dan Carpenter wrote:
 >   		dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
 > 
 
-Reviewed-by: David Lechner <david@lechnology.com>
+Applied to https://github.com/dlech/linux/tree/clk-davinci-fixes
 
+Thanks.
