@@ -1,7 +1,7 @@
 From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Tue, 12 Jun 2018 14:34:49 +0000
+Date: Tue, 26 Jun 2018 08:26:19 +0000
 Subject: Re: [PATCH] drm/meson: Fix an un-handled error path in 'meson_drv_bind_master()'
-Message-Id: <b25b05d0-b192-1cf8-0c25-38b8bdb53b92@baylibre.com>
+Message-Id: <e24fbd8f-e280-8376-7f05-43390df7340c@baylibre.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180611165335.24542-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20180611165335.24542-1-christophe.jaillet@wanadoo.fr>
@@ -54,8 +54,7 @@ On 11/06/2018 18:53, Christophe JAILLET wrote:
 >  	if (!regs) {
 > 
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Applied to drm-misc-fixes
 
-I'll push it when rc1 is tagged.
-
+Thanks,
 Neil
