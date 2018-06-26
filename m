@@ -1,75 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 Jun 2018 11:59:58 +0000
-Subject: Applied "ASoC: ak4458: make structure soc_codec_dev_ak4458 static const" to the asoc tree
-Message-Id: <E1fUspC-0008U3-Uz@debutante>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Jun 2018 12:55:31 +0000
+Subject: [PATCH] USB: host: ehci-npcm7xx:  Fix some error codes in probe
+Message-Id: <20180626125531.ybs25owtn7nvvxx4@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180606103123.31719-1-colin.king@canonical.com>
-In-Reply-To: <20180606103123.31719-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+To: Alan Stern <stern@rowland.harvard.edu>, Avi Fishman <AviFishman70@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+We accidentally return 1 instead instead the negative error codes.
 
-   ASoC: ak4458: make structure soc_codec_dev_ak4458 static const
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 62624f72592b1d8e756e699cd6ade2be379f95a9 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 6 Jun 2018 11:31:23 +0100
-Subject: [PATCH] ASoC: ak4458: make structure soc_codec_dev_ak4458 static
- const
-
-The structure soc_codec_dev_ak4458 is local to the source and do not
-need to be in global scope and can be const, make it static const.
-
-Cleans up sparse warnings:
-warning: symbol 'soc_codec_dev_ak4458' was not declared. Should it
-be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: df44831ee2dd ("USB host: Add USB ehci support for nuvoton npcm7xx platform")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- sound/soc/codecs/ak4458.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The original patch used the "USB host:" prefix.  This is driver code and
+not generic USB host code so that's not the right thing.  This is a very
+common mistake in new drivers...  It's a pain because then it's up to me
+to guess what people want.  Some subsystems have their own specific
+rules and I can't remember them all so I sometimes get it wrong.
 
-diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
-index 31ec0ba2e639..299ada4dfaa0 100644
---- a/sound/soc/codecs/ak4458.c
-+++ b/sound/soc/codecs/ak4458.c
-@@ -558,7 +558,7 @@ static int __maybe_unused ak4458_runtime_resume(struct device *dev)
- }
- #endif /* CONFIG_PM */
+I probably guessed the obvious prefix this time so that's fine...
+
+diff --git a/drivers/usb/host/ehci-npcm7xx.c b/drivers/usb/host/ehci-npcm7xx.c
+index c80a8792d3b0..adaf8fb4b459 100644
+--- a/drivers/usb/host/ehci-npcm7xx.c
++++ b/drivers/usb/host/ehci-npcm7xx.c
+@@ -74,14 +74,14 @@ static int npcm7xx_ehci_hcd_drv_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gcr_regmap)) {
+ 		dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-gcr\n",
+ 			__func__);
+-		return IS_ERR(gcr_regmap);
++		return PTR_ERR(gcr_regmap);
+ 	}
  
--struct snd_soc_component_driver soc_codec_dev_ak4458 = {
-+static const struct snd_soc_component_driver soc_codec_dev_ak4458 = {
- 	.probe			= ak4458_probe,
- 	.remove			= ak4458_remove,
- 	.controls		= ak4458_snd_controls,
--- 
-2.17.1
-
+ 	rst_regmap = syscon_regmap_lookup_by_compatible("nuvoton,npcm750-rst");
+ 	if (IS_ERR(rst_regmap)) {
+ 		dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-rst\n",
+ 			__func__);
+-		return IS_ERR(rst_regmap);
++		return PTR_ERR(rst_regmap);
+ 	}
+ 
+ 	/********* phy init  ******/
