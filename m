@@ -1,36 +1,47 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 03 Jun 2018 15:12:34 +0000
-Subject: Re: [PATCH][next] iio: tsl2x7x/tsl2772: avoid potential division by zero
-Message-Id: <20180603161234.008ac6c5@archlinux>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 26 Jun 2018 15:18:29 +0000
+Subject: re: mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+Message-Id: <993e40ac-1f06-c2ee-e9fb-4523df368cb7@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180530181936.17902-1-colin.king@canonical.com>
-        <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
-In-Reply-To: <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Masney <masneyb@onstation.org>
-Cc: Colin King <colin.king@canonical.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 31 May 2018 05:28:01 -0400
-Brian Masney <masneyb@onstation.org> wrote:
+Hi there,
 
-> On Wed, May 30, 2018 at 07:19:36PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > It may be possible for tsl2772_get_lux to return a zero lux value
-> > and hence a division by zero can occur when lux_val is zero. Check
-> > for this case and return -ERANGE to avoid the division by zero.
-> > 
-> > Detected by CoverityScan, CID#1469484 ("Division or modulo by zero")
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>  
-> 
-> Acked-by: Brian Masney <masneyb@onstation.org>
+Static analysis with CoverityScan reported a potential issue with the
+following commit:
 
-Applied to the fixes-togreg branch of iio.git.
+commit 0f7b126ca91101d02d525f7cc880e8c71202a2b7
+Author: Stefan Agner <stefan@agner.ch>
+Date:   Sun Jun 24 23:27:25 2018 +0200
 
-As there was nothing in that branch that is going upstream until after
-the merge window closes, I moved it forward to match staging/staging-next.
+    mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
 
-Jonathan
+
+in function tegra_nand_cmd it looks like there maybe potential to pass a
+negative value in size into memcpy():
+
+        case NAND_OP_DATA_OUT_INSTR:
+
+negative_return_fn: Function nand_subop_get_data_len(subop, op_id)
+returns a negative number.
+
+var_assign: Assigning: unsigned variable size = nand_subop_get_data_len.
+
+                size = nand_subop_get_data_len(subop, op_id);
+                offset = nand_subop_get_data_start_off(subop, op_id);
+
+                cmd |= COMMAND_TRANS_SIZE(size) | COMMAND_PIO |
+                        COMMAND_TX | COMMAND_A_VALID;
+
+Argument cannot be negative (NEGATIVE_RETURNS)65. negative_returns: size
+is passed to a parameter that cannot be negative.
+                memcpy(&reg, instr->ctx.data.buf.out + offset, size);
+
+
+I also think the same issue may be happening with the
+NAND_OP_DATA_IN_INSTR case too.
+
+Colin
