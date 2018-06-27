@@ -1,31 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Jun 2018 11:19:48 +0000
-Subject: [PATCH] media: sr030pc30: inconsistent NULL checking in sr030pc30_base_config()
-Message-Id: <20180622111947.tormf7s7an5vj4lg@kili.mountain>
+From: Avi Fishman <avifishman70@gmail.com>
+Date: Wed, 27 Jun 2018 16:30:34 +0000
+Subject: Re: [PATCH v2] USB: host: ehci-npcm7xx: Fix some error codes in probe
+Message-Id: <CAKKbWA6UpaGCErUdLd0R_SoPtEUQyGMC52zvv_8TNdzJ4HJK5A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If info->pdata is NULL then we would oops on the next line.  And we can
-flip the "ret" test around and give up if a failure has already occured.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/media/i2c/sr030pc30.c b/drivers/media/i2c/sr030pc30.c
-index 2a4882cddc51..4ebd00198d34 100644
---- a/drivers/media/i2c/sr030pc30.c
-+++ b/drivers/media/i2c/sr030pc30.c
-@@ -569,8 +569,8 @@ static int sr030pc30_base_config(struct v4l2_subdev *sd)
- 	if (!ret)
- 		ret = sr030pc30_pwr_ctrl(sd, false, false);
- 
--	if (!ret && !info->pdata)
--		return ret;
-+	if (ret || !info->pdata)
-+		return -EIO;
- 
- 	expmin = EXPOS_MIN_MS * info->pdata->clk_rate / (8 * 1000);
- 	expmax = EXPOS_MAX_MS * info->pdata->clk_rate / (8 * 1000);
+Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
+On Wed, Jun 27, 2018 at 4:37 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> We accidentally return 1 instead of negative error codes.
+>
+> Fixes: df44831ee2dd ("USB host: Add USB ehci support for nuvoton npcm7xx platform")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: fix typo in the commit message
+>
+> diff --git a/drivers/usb/host/ehci-npcm7xx.c b/drivers/usb/host/ehci-npcm7xx.c
+> index c80a8792d3b0..adaf8fb4b459 100644
+> --- a/drivers/usb/host/ehci-npcm7xx.c
+> +++ b/drivers/usb/host/ehci-npcm7xx.c
+> @@ -74,14 +74,14 @@ static int npcm7xx_ehci_hcd_drv_probe(struct platform_device *pdev)
+>         if (IS_ERR(gcr_regmap)) {
+>                 dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-gcr\n",
+>                         __func__);
+> -               return IS_ERR(gcr_regmap);
+> +               return PTR_ERR(gcr_regmap);
+>         }
+>
+>         rst_regmap = syscon_regmap_lookup_by_compatible("nuvoton,npcm750-rst");
+>         if (IS_ERR(rst_regmap)) {
+>                 dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-rst\n",
+>                         __func__);
+> -               return IS_ERR(rst_regmap);
+> +               return PTR_ERR(rst_regmap);
+>         }
+>
+>         /********* phy init  ******/
