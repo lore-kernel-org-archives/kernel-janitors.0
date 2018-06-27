@@ -1,45 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 26 Jun 2018 12:55:31 +0000
-Subject: [PATCH] USB: host: ehci-npcm7xx:  Fix some error codes in probe
-Message-Id: <20180626125531.ybs25owtn7nvvxx4@kili.mountain>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 27 Jun 2018 16:07:19 +0000
+Subject: Re: rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
+Message-Id: <20180627160719.8B1B360791@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180605113139.m65jc2hlisa62deu@kili.mountain>
+In-Reply-To: <20180605113139.m65jc2hlisa62deu@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>, Avi Fishman <AviFishman70@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jussi Kivilinna <jussi.kivilinna@iki.fi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We accidentally return 1 instead instead the negative error codes.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Fixes: df44831ee2dd ("USB host: Add USB ehci support for nuvoton npcm7xx platform")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-The original patch used the "USB host:" prefix.  This is driver code and
-not generic USB host code so that's not the right thing.  This is a very
-common mistake in new drivers...  It's a pain because then it's up to me
-to guess what people want.  Some subsystems have their own specific
-rules and I can't remember them all so I sometimes get it wrong.
+> This is a static checker fix, not something I have tested.  The issue
+> is that on the second iteration through the loop, we jump forward by
+> le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
+> is more than "buflen" then we end up with a negative "buflen".  A
+> negative buflen is type promoted to a high positive value and the loop
+> continues but it's accessing beyond the end of the buffer.
+> 
+> I believe the "auth_req->length" comes from the firmware and if the
+> firmware is malicious or buggy, you're already toasted so the impact of
+> this bug is probably not very severe.
+> 
+> Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
+> index 9935bd09db1f..d4947e3a909e 100644
+> --- a/drivers/net/wireless/rndis_wlan.c
+> +++ b/drivers/net/wireless/rndis_wlan.c
+> @@ -2928,6 +2928,8 @@ static void rndis_wlan_auth_indication(struct usbnet *usbdev,
+>  
+>  	while (buflen >= sizeof(*auth_req)) {
+>  		auth_req = (void *)buf;
+> +		if (buflen < le32_to_cpu(auth_req->length))
+> +			return;
+>  		type = "unknown";
+>  		flags = le32_to_cpu(auth_req->flags);
+>  		pairwise_error = false;
 
-I probably guessed the obvious prefix this time so that's fine...
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/usb/host/ehci-npcm7xx.c b/drivers/usb/host/ehci-npcm7xx.c
-index c80a8792d3b0..adaf8fb4b459 100644
---- a/drivers/usb/host/ehci-npcm7xx.c
-+++ b/drivers/usb/host/ehci-npcm7xx.c
-@@ -74,14 +74,14 @@ static int npcm7xx_ehci_hcd_drv_probe(struct platform_device *pdev)
- 	if (IS_ERR(gcr_regmap)) {
- 		dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-gcr\n",
- 			__func__);
--		return IS_ERR(gcr_regmap);
-+		return PTR_ERR(gcr_regmap);
- 	}
- 
- 	rst_regmap = syscon_regmap_lookup_by_compatible("nuvoton,npcm750-rst");
- 	if (IS_ERR(rst_regmap)) {
- 		dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-rst\n",
- 			__func__);
--		return IS_ERR(rst_regmap);
-+		return PTR_ERR(rst_regmap);
- 	}
- 
- 	/********* phy init  ******/
+ae636fb15548 rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
+
+-- 
+https://patchwork.kernel.org/patch/10448061/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
