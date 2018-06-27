@@ -1,41 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 01 Jun 2018 13:31:17 +0000
-Subject: [PATCH] drivers/fmc: make struct fmc_dbgfs_sdb_dump static
-Message-Id: <20180601133117.6511-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2018 08:37:05 +0000
+Subject: [PATCH v2] USB: host: ehci-npcm7xx:  Fix some error codes in probe
+Message-Id: <20180627083705.ufge2afrszr7ylm5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Rubini <rubini@gnudd.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>, Avi Fishman <AviFishman70@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We accidentally return 1 instead of negative error codes.
 
-The structure fmc_dbgfs_sdb_dump is local to the source and does not
-need to be in global scope, so make it static.
-
-Cleans up sparse warning:
-drivers/fmc/fmc-debug.c:143:30: warning: symbol 'fmc_dbgfs_sdb_dump'
-was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: df44831ee2dd ("USB host: Add USB ehci support for nuvoton npcm7xx platform")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/fmc/fmc-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: fix typo in the commit message
 
-diff --git a/drivers/fmc/fmc-debug.c b/drivers/fmc/fmc-debug.c
-index 32930722770c..c96b928f0112 100644
---- a/drivers/fmc/fmc-debug.c
-+++ b/drivers/fmc/fmc-debug.c
-@@ -140,7 +140,7 @@ static int fmc_sdb_dump_open(struct inode *inode, struct file *file)
- }
+diff --git a/drivers/usb/host/ehci-npcm7xx.c b/drivers/usb/host/ehci-npcm7xx.c
+index c80a8792d3b0..adaf8fb4b459 100644
+--- a/drivers/usb/host/ehci-npcm7xx.c
++++ b/drivers/usb/host/ehci-npcm7xx.c
+@@ -74,14 +74,14 @@ static int npcm7xx_ehci_hcd_drv_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gcr_regmap)) {
+ 		dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-gcr\n",
+ 			__func__);
+-		return IS_ERR(gcr_regmap);
++		return PTR_ERR(gcr_regmap);
+ 	}
  
+ 	rst_regmap = syscon_regmap_lookup_by_compatible("nuvoton,npcm750-rst");
+ 	if (IS_ERR(rst_regmap)) {
+ 		dev_err(&pdev->dev, "%s: failed to find nuvoton,npcm750-rst\n",
+ 			__func__);
+-		return IS_ERR(rst_regmap);
++		return PTR_ERR(rst_regmap);
+ 	}
  
--const struct file_operations fmc_dbgfs_sdb_dump = {
-+static const struct file_operations fmc_dbgfs_sdb_dump = {
- 	.owner = THIS_MODULE,
- 	.open  = fmc_sdb_dump_open,
- 	.read = seq_read,
--- 
-2.17.0
-
+ 	/********* phy init  ******/
