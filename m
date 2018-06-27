@@ -1,40 +1,65 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Sat, 02 Jun 2018 09:04:14 +0000
-Subject: [PATCH v2 3/3] staging: rtlwifi: Fix "Alwyas"->"Always"
-Message-Id: <20180602090414.5208-3-sabin.rapan@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2018 13:29:42 +0000
+Subject: [bug report] net: fec: add phy_reset_after_clk_enable() support
+Message-Id: <20180627132942.hrkextrqujujy4ma@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180601060740.GA25648@kroah.com>
- <20180602090414.5208-1-sabin.rapan@gmail.com>
-In-Reply-To: <20180602090414.5208-1-sabin.rapan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Trivial fix to spelling mistake in comment text.
+Hello Richard Leitner,
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
----
-Changes in v2:
- - Added proper to and cc fields to the patch series.
+This is a semi-automatic email about new static checker warnings.
 
- drivers/staging/rtlwifi/rtl8822be/sw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 1b0a83ac04e3: "net: fec: add phy_reset_after_clk_enable() 
+support" from Dec 11, 2017, leads to the following Smatch complaint:
 
-diff --git a/drivers/staging/rtlwifi/rtl8822be/sw.c b/drivers/staging/rtlwifi/rtl8822be/sw.c
-index 7825e85ed091..a2ab19fa94f2 100644
---- a/drivers/staging/rtlwifi/rtl8822be/sw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/sw.c
-@@ -43,7 +43,7 @@ static void rtl8822be_init_aspm_vars(struct ieee80211_hw *hw)
- 	 * 0 - Disable ASPM,
- 	 * 1 - Enable ASPM without Clock Req,
- 	 * 2 - Enable ASPM with Clock Req,
--	 * 3 - Alwyas Enable ASPM with Clock Req,
-+	 * 3 - Always Enable ASPM with Clock Req,
- 	 * 4 - Always Enable ASPM without Clock Req.
- 	 * set default to RTL8822BE:3 RTL8822B:2
- 	 *
--- 
-2.17.0
+    drivers/net/ethernet/freescale/fec_main.c:2892 fec_enet_open()
+     error: we previously assumed 'ndev->phydev' could be null (see line 2861)
 
+drivers/net/ethernet/freescale/fec_main.c
+  2860		 */
+  2861		if (ndev->phydev && ndev->phydev->drv)
+                    ^^^^^^^^^^^^
+The patch introduces a new test for NULL.
+
+  2862			reset_again = false;
+  2863		else
+  2864			reset_again = true;
+  2865	
+  2866		/* I should reset the ring buffers here, but I don't yet know
+  2867		 * a simple way to do that.
+  2868		 */
+  2869	
+  2870		ret = fec_enet_alloc_buffers(ndev);
+  2871		if (ret)
+  2872			goto err_enet_alloc;
+  2873	
+  2874		/* Init MAC prior to mii bus probe */
+  2875		fec_restart(ndev);
+  2876	
+  2877		/* Probe and connect to PHY when open the interface */
+  2878		ret = fec_enet_mii_probe(ndev);
+  2879		if (ret)
+  2880			goto err_enet_mii_probe;
+  2881	
+  2882		/* Call phy_reset_after_clk_enable() again if it failed during
+  2883		 * phy_reset_after_clk_enable() before because the PHY wasn't probed.
+  2884		 */
+  2885		if (reset_again)
+  2886			phy_reset_after_clk_enable(ndev->phydev);
+  2887	
+  2888		if (fep->quirks & FEC_QUIRK_ERR006687)
+  2889			imx6q_cpuidle_fec_irqs_used();
+  2890	
+  2891		napi_enable(&fep->napi);
+  2892		phy_start(ndev->phydev);
+                          ^^^^^^^^^^^^
+But the old code dereferences it unconditionally inside the function.
+
+  2893		netif_tx_start_all_queues(ndev);
+  2894	
+
+regards,
+dan carpenter
