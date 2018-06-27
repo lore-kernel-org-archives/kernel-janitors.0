@@ -1,43 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 23 Jun 2018 22:42:08 +0000
-Subject: [PATCH] afs: make afs_volume_record_life static and remove afs_volume_gc_delay
-Message-Id: <20180623224208.7141-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 27 Jun 2018 15:58:02 +0000
+Subject: Re: brcmsmac: make function wlc_phy_workarounds_nphy_rev1 static
+Message-Id: <20180627155802.26F41601EA@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180623221531.6396-2-colin.king@canonical.com>
+In-Reply-To: <20180623221531.6396-2-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Variable afs_volume_record_life is local to the source and does not need
-to be in global scope, so make it static.  Variable afs_volume_gc_delay
-is not referenced at all in the source, it is unused and can be removed.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The function wlc_phy_workarounds_nphy_rev1 is local to the source and
+> does not need to be in global scope, so make it static.
+> 
+> Cleans up sparse warning:
+> symbol 'wlc_phy_workarounds_nphy_rev1' was not declared. Should it
+> be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Cleans up sparse warnings:
-symbol 'afs_volume_gc_delay' was not declared. Should it be static?
-symbol 'afs_volume_record_life' was not declared. Should it be static?
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/afs/volume.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ab8d904654e2 brcmsmac: make function wlc_phy_workarounds_nphy_rev1 static
 
-diff --git a/fs/afs/volume.c b/fs/afs/volume.c
-index 7adcddf02e66..f924ead1c7a1 100644
---- a/fs/afs/volume.c
-+++ b/fs/afs/volume.c
-@@ -13,8 +13,7 @@
- #include <linux/slab.h>
- #include "internal.h"
- 
--unsigned __read_mostly afs_volume_gc_delay = 10;
--unsigned __read_mostly afs_volume_record_life = 60 * 60;
-+static unsigned __read_mostly afs_volume_record_life = 60 * 60;
- 
- static const char *const afs_voltypes[] = { "R/W", "R/O", "BAK" };
- 
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10483927/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
