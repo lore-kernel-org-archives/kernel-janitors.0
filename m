@@ -1,39 +1,90 @@
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Date: Sat, 02 Jun 2018 09:04:12 +0000
-Subject: [PATCH v2 1/3] staging: rtlwifi: Fix "Trafic"->"Traffic"
-Message-Id: <20180602090414.5208-1-sabin.rapan@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 28 Jun 2018 10:20:35 +0000
+Subject: Applied "ASoC: qdsp6: qdafe: fix some off by one bugs" to the asoc tree
+Message-Id: <E1fYU2V-00048l-O0@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180601060740.GA25648@kroah.com>
-In-Reply-To: <20180601060740.GA25648@kroah.com>
+References: <20180627085653.v5bi34k2ozkvvrsr@kili.mountain>
+In-Reply-To: <20180627085653.v5bi34k2ozkvvrsr@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sabin Mihai Rapan <sabin.rapan@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Trivial fix to spelling mistake in comment text.
+The patch
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
+   ASoC: qdsp6: qdafe: fix some off by one bugs
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c54c1c5ee8e73b7cb752834e52e2129b1dab00bd Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2018 11:56:53 +0300
+Subject: [PATCH] ASoC: qdsp6: qdafe: fix some off by one bugs
+
+The > should be >= or we could read one element beyond the end of the
+port_maps[] array.
+
+Fixes: 7fa2d70f9766 ("ASoC: qdsp6: q6afe: Add q6afe driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Changes in v2:
- - Added proper to and cc fields to the patch series.
+ sound/soc/qcom/qdsp6/q6afe.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/staging/rtlwifi/phydm/phydm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtlwifi/phydm/phydm.c b/drivers/staging/rtlwifi/phydm/phydm.c
-index 985978d3decc..27635feedba2 100644
---- a/drivers/staging/rtlwifi/phydm/phydm.c
-+++ b/drivers/staging/rtlwifi/phydm/phydm.c
-@@ -149,7 +149,7 @@ static void phydm_traffic_load_decision(void *dm_void)
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index 621b67b34db9..671743453fbb 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -776,7 +776,7 @@ static int q6afe_callback(struct apr_device *adev, struct apr_resp_pkt *data)
+  */
+ int q6afe_get_port_id(int index)
  {
- 	struct phy_dm_struct *dm = (struct phy_dm_struct *)dm_void;
+-	if (index < 0 || index > AFE_PORT_MAX)
++	if (index < 0 || index >= AFE_PORT_MAX)
+ 		return -EINVAL;
  
--	/*---TP & Trafic-load calculation---*/
-+	/*---TP & Traffic-load calculation---*/
+ 	return port_maps[index].port_id;
+@@ -1013,7 +1013,7 @@ int q6afe_port_stop(struct q6afe_port *port)
  
- 	if (dm->last_tx_ok_cnt > *dm->num_tx_bytes_unicast)
- 		dm->last_tx_ok_cnt = *dm->num_tx_bytes_unicast;
+ 	port_id = port->id;
+ 	index = port->token;
+-	if (index < 0 || index > AFE_PORT_MAX) {
++	if (index < 0 || index >= AFE_PORT_MAX) {
+ 		dev_err(afe->dev, "AFE port index[%d] invalid!\n", index);
+ 		return -EINVAL;
+ 	}
+@@ -1354,7 +1354,7 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
+ 	unsigned long flags;
+ 	int cfg_type;
+ 
+-	if (id < 0 || id > AFE_PORT_MAX) {
++	if (id < 0 || id >= AFE_PORT_MAX) {
+ 		dev_err(dev, "AFE port token[%d] invalid!\n", id);
+ 		return ERR_PTR(-EINVAL);
+ 	}
 -- 
-2.17.0
+2.18.0.rc2
 
