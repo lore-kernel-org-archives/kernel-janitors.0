@@ -1,41 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 30 Jun 2018 20:39:24 +0000
-Subject: [PATCH][next] netdevsim: fix sa_idx out of bounds check
-Message-Id: <20180630203924.5121-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Jun 2018 09:24:42 +0000
+Subject: [PATCH net] atm: iphase: fix a 64 bit bug
+Message-Id: <20180628092442.uu4ktcqymi65hbuh@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jakub Kicinski <jakub.kicinski@netronome.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chas Williams <3chas3@gmail.com>
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The code assumes that there is 4 bytes in a pointer and it doesn't
+allocate enough memory.
 
-Currently if sa_idx is equal to NSIM_IPSEC_MAX_SA_COUNT then
-an out-of-bounds read on ipsec->sa will occur. Fix the
-incorrect bounds check by using >= rather than >.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Detected by CoverityScan, CID#1470226 ("Out-of-bounds-read")
-
-Fixes: 7699353da875 ("netdevsim: add ipsec offload testing")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/netdevsim/ipsec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/netdevsim/ipsec.c b/drivers/net/netdevsim/ipsec.c
-index ceff544510b9..2dcf6cc269d0 100644
---- a/drivers/net/netdevsim/ipsec.c
-+++ b/drivers/net/netdevsim/ipsec.c
-@@ -249,7 +249,7 @@ bool nsim_ipsec_tx(struct netdevsim *ns, struct sk_buff *skb)
- 	}
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index ff81a576347e..82532c299bb5 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -1618,7 +1618,7 @@ static int rx_init(struct atm_dev *dev)
+ 	skb_queue_head_init(&iadev->rx_dma_q);  
+ 	iadev->rx_free_desc_qhead = NULL;   
  
- 	sa_idx = xs->xso.offload_handle & ~NSIM_IPSEC_VALID;
--	if (unlikely(sa_idx > NSIM_IPSEC_MAX_SA_COUNT)) {
-+	if (unlikely(sa_idx >= NSIM_IPSEC_MAX_SA_COUNT)) {
- 		netdev_err(ns->netdev, "bad sa_idx=%d max=%d\n",
- 			   sa_idx, NSIM_IPSEC_MAX_SA_COUNT);
- 		return false;
--- 
-2.17.1
-
+-	iadev->rx_open = kcalloc(4, iadev->num_vc, GFP_KERNEL);
++	iadev->rx_open = kcalloc(iadev->num_vc, sizeof(void *), GFP_KERNEL);
+ 	if (!iadev->rx_open) {
+ 		printk(KERN_ERR DEV_LABEL "itf %d couldn't get free page\n",
+ 		dev->number);  
