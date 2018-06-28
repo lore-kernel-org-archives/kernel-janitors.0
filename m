@@ -1,50 +1,33 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Sun, 17 Jun 2018 10:45:38 +0000
-Subject: Re: [PATCH V2] EDAC, altera: Fix an error handling path in 'altr_s10_sdram_probe()'
-Message-Id: <20180617104538.GA16877@zn.tnic>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Jun 2018 09:31:25 +0000
+Subject: [PATCH net] cnic: tidy up a size calculation
+Message-Id: <20180628093125.6qamire66fzkv47l@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180610174532.22071-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20180610174532.22071-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thor Thayer <thor.thayer@linux.intel.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: mchehab@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Kees Cook <keescook@chromium.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 09:53:53AM -0500, Thor Thayer wrote:
-> On 06/10/2018 12:45 PM, Christophe JAILLET wrote:
-> > IF 'regmap_write()' fails, we should release some resources as done in all
-> > the other error handling paths of the function.
-> > 
-> > Fixes: e9918d7fafae ("EDAC, altera: Handle SDRAM Uncorrectable Errors on Stratix10")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > v1 -> v2: Fix subject line
-> > ---
-> >   drivers/edac/altera_edac.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-> > index d0d5c4dbe097..5762c3c383f2 100644
-> > --- a/drivers/edac/altera_edac.c
-> > +++ b/drivers/edac/altera_edac.c
-> > @@ -730,7 +730,8 @@ static int altr_s10_sdram_probe(struct platform_device *pdev)
-> >   			 S10_DDR0_IRQ_MASK)) {
-> >   		edac_printk(KERN_ERR, EDAC_MC,
-> >   			    "Error clearing SDRAM ECC count\n");
-> > -		return -ENODEV;
-> > +		ret = -ENODEV;
-> > +		goto err2;
-> >   	}
-> >   	if (regmap_update_bits(drvdata->mc_vbase, priv->ecc_irq_en_offset,
-> > Thanks.
-> 
-> Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
+Static checkers complain that id_tbl->table points to longs and 4 bytes
+is smaller than sizeof(long).  But the since other side is dividing by
+32 instead of sizeof(long), that means the current code works fine.
 
-Applied, thanks.
+Anyway, it's more conventional to use the BITS_TO_LONGS() macro when
+we're allocating a bitmap.
 
--- 
-Regards/Gruss,
-    Boris.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/drivers/net/ethernet/broadcom/cnic.c b/drivers/net/ethernet/broadcom/cnic.c
+index 30273a7717e2..4fd829b5e65d 100644
+--- a/drivers/net/ethernet/broadcom/cnic.c
++++ b/drivers/net/ethernet/broadcom/cnic.c
+@@ -660,7 +660,7 @@ static int cnic_init_id_tbl(struct cnic_id_tbl *id_tbl, u32 size, u32 start_id,
+ 	id_tbl->max = size;
+ 	id_tbl->next = next;
+ 	spin_lock_init(&id_tbl->lock);
+-	id_tbl->table = kcalloc(DIV_ROUND_UP(size, 32), 4, GFP_KERNEL);
++	id_tbl->table = kcalloc(BITS_TO_LONGS(size), sizeof(long), GFP_KERNEL);
+ 	if (!id_tbl->table)
+ 		return -ENOMEM;
+ 
