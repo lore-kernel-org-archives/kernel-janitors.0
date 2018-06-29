@@ -1,64 +1,41 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Mon, 11 Jun 2018 17:10:12 +0000
-Subject: Re: [PATCH -next] Input: synaptics-rmi4 - fix the error return code in rmi_probe_interrupts()
-Message-Id: <20180611171012.GA251078@dtor-ws>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Fri, 29 Jun 2018 10:00:03 +0000
+Subject: Re: [PATCH] PCI: endpoint: use after free in pci_epf_unregister_driver()
+Message-Id: <20180629100003.GC9576@red-moon>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6cdcc804be73a5e3bb6e8d70ab86dc716c5cc720.camel@redhat.com>
-In-Reply-To: <6cdcc804be73a5e3bb6e8d70ab86dc716c5cc720.camel@redhat.com>
+References: <20180531062148.qnhcnnibz2ql6soa@kili.mountain>
+In-Reply-To: <20180531062148.qnhcnnibz2ql6soa@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 02:16:43PM -0700, Nick Desaulniers wrote:
-> On Thu, Jun 7, 2018 at 2:15 PM, Nick Desaulniers
-> <nick.desaulniers@gmail.com> wrote:
-> > On Thu, Jun 7, 2018 at 9:22 AM, Lyude Paul <lyude@redhat.com> wrote:
-> >> Reviewed-by: Lyude Paul <lyude@redhat.com>
-> >>
-> >> On Thu, 2018-06-07 at 01:48 +0000, Wei Yongjun wrote:
-> >>> The error return code PTR_ERR(data->irqdomain) is always 0 since
-> >>> data->irqdomain is equal to NULL in this error handling case.
-> >>>
-> >>> Fixes: 24d28e4f1271 ("Input: synaptics-rmi4 - convert irq distribution to
-> >>> irq_domain")
-> >>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> >>> ---
-> >>>  drivers/input/rmi4/rmi_driver.c | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/input/rmi4/rmi_driver.c
-> >>> b/drivers/input/rmi4/rmi_driver.c
-> >>> index 2fb0ae0..cb6d983 100644
-> >>> --- a/drivers/input/rmi4/rmi_driver.c
-> >>> +++ b/drivers/input/rmi4/rmi_driver.c
-> >>> @@ -1043,7 +1043,7 @@ int rmi_probe_interrupts(struct rmi_driver_data *data)
-> >>>                                                  data);
-> >>>       if (!data->irqdomain) {
-> >>>               dev_err(&rmi_dev->dev, "Failed to create IRQ domain\n");
-> >>> -             return PTR_ERR(data->irqdomain);
-> >>> +             return -ENOMEM;
-> >>>       }
-> >>>
-> >>>       data->irq_count = irq_count;
-> >>>
-> >>> --
-> >>> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> >>> the body of a message to majordomo@vger.kernel.org
-> >>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >> --
-> >> Cheers,
-> >>         Lyude Paul
-> >
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+On Thu, May 31, 2018 at 09:21:48AM +0300, Dan Carpenter wrote:
+> We need to use list_for_each_entry_safe() because the
+> pci_ep_cfs_remove_epf_group() function frees "group".
 > 
-> Sorry, that probably should have been a
+> Fixes: ef1433f717a2 ("PCI: endpoint: Create configfs entry for each pci_epf_device_id table entry")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
-> hopefully that doesn't mess up any maintainers' automated scripts.
+> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> index 523a8cab3bfb..bf53fad636a5 100644
+> --- a/drivers/pci/endpoint/pci-epf-core.c
+> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> @@ -145,10 +145,10 @@ EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
+>   */
+>  void pci_epf_unregister_driver(struct pci_epf_driver *driver)
+>  {
+> -	struct config_group *group;
+> +	struct config_group *group, *tmp;
+>  
+>  	mutex_lock(&pci_epf_mutex);
+> -	list_for_each_entry(group, &driver->epf_group, group_entry)
+> +	list_for_each_entry_safe(group, tmp, &driver->epf_group, group_entry)
+>  		pci_ep_cfs_remove_epf_group(group);
+>  	list_del(&driver->epf_group);
+>  	mutex_unlock(&pci_epf_mutex);
 
-Applied, thank you.
+Kishon, I need your ACK to merge this fix, thanks.
 
--- 
-Dmitry
+Lorenzo
