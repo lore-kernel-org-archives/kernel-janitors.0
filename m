@@ -1,50 +1,40 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Fri, 01 Jun 2018 16:09:03 +0000
-Subject: Re: [PATCH] hwmon: (k10temp) Make function get_raw_temp static
-Message-Id: <20180601160903.GA4178@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 30 Jun 2018 12:10:24 +0000
+Subject: [PATCH] platform/x86: dell-smbios-wmi: make function dell_smbios_wmi_call static
+Message-Id: <20180630121024.18993-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180601133713.8817-1-colin.king@canonical.com>
-In-Reply-To: <20180601133713.8817-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mario Limonciello <mario.limonciello@dell.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 02:37:13PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function get_raw_temp is local to the source and does not need to
-> be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/hwmon/k10temp.c:149:14: warning: symbol 'get_raw_temp' was not
-> declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+The function dell_smbios_wmi_call is local to the source and does not
+need to be in global scope, so make it static.
 
-Thanks,
-Guenter
+Cleans up sparse warning:
+symbol 'dell_smbios_wmi_call' was not declared. Should it be static?
 
-> ---
->  drivers/hwmon/k10temp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-> index d3fae5a8e508..17c6460ae351 100644
-> --- a/drivers/hwmon/k10temp.c
-> +++ b/drivers/hwmon/k10temp.c
-> @@ -146,7 +146,7 @@ static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
->  		     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
->  }
->  
-> -unsigned int get_raw_temp(struct k10temp_data *data)
-> +static unsigned int get_raw_temp(struct k10temp_data *data)
->  {
->  	unsigned int temp;
->  	u32 regval;
-> -- 
-> 2.17.0
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/dell-smbios-wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+index fbefedb1c172..88afe5651d24 100644
+--- a/drivers/platform/x86/dell-smbios-wmi.c
++++ b/drivers/platform/x86/dell-smbios-wmi.c
+@@ -82,7 +82,7 @@ static int run_smbios_call(struct wmi_device *wdev)
+ 	return 0;
+ }
+ 
+-int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
++static int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
+ {
+ 	struct wmi_smbios_priv *priv;
+ 	size_t difference;
+-- 
+2.17.1
+
