@@ -1,37 +1,79 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 10 Jun 2018 14:24:15 +0000
-Subject: [PATCH] clocksource/drivers/stm32: fix error return code
-Message-Id: <1528640655-18948-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 30 Jun 2018 11:30:49 +0000
+Subject: [PATCH] crypto: zip: make several functions static
+Message-Id: <20180630113049.4402-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Jan Glauber <jglauber@cavium.com>, Robert Richter <rrichter@cavium.com>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Return an error code on failure.
+From: Colin Ian King <colin.king@canonical.com>
 
-Problem found using Coccinelle.
+The functions zip_ctx_exit, zip_compress, zip_decompress and zip_ctx_init
+are local to the source and do not need to be in global scope, so make
+them static.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Cleans up sparse warnings:
+symbol 'zip_ctx_exit' was not declared. Should it be static?
+symbol 'zip_compress' was not declared. Should it be static?
+symbol 'zip_decompress' was not declared. Should it be static?
+symbol 'zip_ctx_init' was not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/clocksource/timer-stm32.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/crypto/cavium/zip/zip_crypto.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clocksource/timer-stm32.c b/drivers/clocksource/timer-stm32.c
-index e5cdc3a..2717f88 100644
---- a/drivers/clocksource/timer-stm32.c
-+++ b/drivers/clocksource/timer-stm32.c
-@@ -304,8 +304,10 @@ static int __init stm32_timer_init(struct device_node *node)
+diff --git a/drivers/crypto/cavium/zip/zip_crypto.c b/drivers/crypto/cavium/zip/zip_crypto.c
+index b92b6e7e100f..f9e99a15d2a0 100644
+--- a/drivers/crypto/cavium/zip/zip_crypto.c
++++ b/drivers/crypto/cavium/zip/zip_crypto.c
+@@ -69,7 +69,7 @@ static void zip_static_init_zip_ops(struct zip_operation *zip_ops,
+ 	zip_ops->csum	      = 1; /* Adler checksum desired */
+ }
  
- 	to->private_data = kzalloc(sizeof(struct stm32_timer_private),
- 				   GFP_KERNEL);
--	if (!to->private_data)
-+	if (!to->private_data) {
-+		ret = -ENOMEM;
- 		goto deinit;
-+	}
+-int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
++static int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
+ {
+ 	struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
+ 	struct zip_operation  *decomp_ctx = &zip_ctx->zip_decomp;
+@@ -107,7 +107,7 @@ int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
+ 	return -ENOMEM;
+ }
  
- 	rstc = of_reset_control_get(node, NULL);
- 	if (!IS_ERR(rstc)) {
+-void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
++static void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
+ {
+ 	struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
+ 	struct zip_operation  *dec_ctx = &zip_ctx->zip_decomp;
+@@ -119,9 +119,9 @@ void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
+ 	zip_data_buf_free(dec_ctx->output, MAX_OUTPUT_BUFFER_SIZE);
+ }
+ 
+-int zip_compress(const u8 *src, unsigned int slen,
+-		 u8 *dst, unsigned int *dlen,
+-		 struct zip_kernel_ctx *zip_ctx)
++static int zip_compress(const u8 *src, unsigned int slen,
++			u8 *dst, unsigned int *dlen,
++			struct zip_kernel_ctx *zip_ctx)
+ {
+ 	struct zip_operation  *zip_ops   = NULL;
+ 	struct zip_state      *zip_state;
+@@ -155,9 +155,9 @@ int zip_compress(const u8 *src, unsigned int slen,
+ 	return ret;
+ }
+ 
+-int zip_decompress(const u8 *src, unsigned int slen,
+-		   u8 *dst, unsigned int *dlen,
+-		   struct zip_kernel_ctx *zip_ctx)
++static int zip_decompress(const u8 *src, unsigned int slen,
++			  u8 *dst, unsigned int *dlen,
++			  struct zip_kernel_ctx *zip_ctx)
+ {
+ 	struct zip_operation  *zip_ops   = NULL;
+ 	struct zip_state      *zip_state;
+-- 
+2.17.1
 
