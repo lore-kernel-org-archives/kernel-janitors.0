@@ -1,48 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 30 Jul 2018 08:59:36 +0000
-Subject: [PATCH][RESEND] lib/mpi: remove redundant variable esign
-Message-Id: <20180730085936.10050-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 01 Jul 2018 17:32:05 +0000
+Subject: [PATCH 3/3] [media] gspca_kinect: cast sizeof to int for comparison
+Message-Id: <1530466325-1678-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, Eric Biggers <ebiggers@google.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, joe@perches.com, Chengguang Xu <cgxu519@gmx.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Comparing an int to a size, which is unsigned, causes the int to become
+unsigned, giving the wrong result.  kinect_read returns the result of
+usb_control_msg, which can return a negtive error code.
 
-Variable esign is being assigned but is never used hence it is
-redundant and can be removed.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Cleans up clang warning:
-warning: variable 'esign' set but not used [-Wunused-but-set-variable]
+// <smpl>
+@@
+int x;
+expression e,e1;
+identifier f;
+@@
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+*x = f(...);
+... when != x = e1
+    when != if (x < 0 || ...) { ... return ...; }
+*x < sizeof(e)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- lib/mpi/mpi-pow.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/usb/gspca/kinect.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/mpi/mpi-pow.c b/lib/mpi/mpi-pow.c
-index 468fb7cd1221..a5c921e6d667 100644
---- a/lib/mpi/mpi-pow.c
-+++ b/lib/mpi/mpi-pow.c
-@@ -41,7 +41,7 @@ int mpi_powm(MPI res, MPI base, MPI exp, MPI mod)
- 	mpi_ptr_t tspace = NULL;
- 	mpi_ptr_t rp, ep, mp, bp;
- 	mpi_size_t esize, msize, bsize, rsize;
--	int esign, msign, bsign, rsign;
-+	int msign, bsign, rsign;
- 	mpi_size_t size;
- 	int mod_shift_cnt;
- 	int negative_result;
-@@ -53,7 +53,6 @@ int mpi_powm(MPI res, MPI base, MPI exp, MPI mod)
- 	esize = exp->nlimbs;
- 	msize = mod->nlimbs;
- 	size = 2 * msize;
--	esign = exp->sign;
- 	msign = mod->sign;
- 
- 	rp = res->d;
--- 
-2.17.1
+diff --git a/drivers/media/usb/gspca/kinect.c b/drivers/media/usb/gspca/kinect.c
+index 0cfdf8a..f993f62 100644
+--- a/drivers/media/usb/gspca/kinect.c
++++ b/drivers/media/usb/gspca/kinect.c
+@@ -163,7 +163,7 @@ static int send_cmd(struct gspca_dev *gspca_dev, uint16_t cmd, void *cmdbuf,
+ 		actual_len = kinect_read(udev, ibuf, 0x200);
+ 	} while (actual_len = 0);
+ 	gspca_dbg(gspca_dev, D_USBO, "Control reply: %d\n", actual_len);
+-	if (actual_len < sizeof(*rhdr)) {
++	if (actual_len < (int)sizeof(*rhdr)) {
+ 		pr_err("send_cmd: Input control transfer failed (%d)\n",
+ 		       actual_len);
+ 		return actual_len < 0 ? actual_len : -EREMOTEIO;
 
