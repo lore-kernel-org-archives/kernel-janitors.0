@@ -1,51 +1,48 @@
-From: Alexandre Bounine <alex.bou9@gmail.com>
-Date: Fri, 20 Jul 2018 00:25:12 +0000
-Subject: Re: [PATCH] rapidio: remove redundant pointer md
-Message-Id: <801e392b-c5ba-2857-c0af-157c65171bfe@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 12:15:04 +0000
+Subject: [PATCH][next] pinctrl: actions: fix unsigned less than zero comparison
+Message-Id: <20180702121504.6731-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180711082346.5223-1-colin.king@canonical.com>
-In-Reply-To: <20180711082346.5223-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Matt Porter <mporter@kernel.crashing.org>, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Acked-by: Alexandre Bounine <alex.bou9@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+The check to see if platform_get_irq failed is performed on the
+unsigned value of pctrl->irq[i] and the check is never true because
+an unsigned cannot be less than zero.  Fix this by assinging the
+signed int ret to the return of platform_get_irq and checking ret
+instead.
 
-On 2018-07-11 04:23 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer md is being assigned but is never used hence it is redundant
-> and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'md' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/rapidio/devices/rio_mport_cdev.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-> index a8cb8d2f2abb..cbe467ff1aba 100644
-> --- a/drivers/rapidio/devices/rio_mport_cdev.c
-> +++ b/drivers/rapidio/devices/rio_mport_cdev.c
-> @@ -1006,7 +1006,6 @@ static int rio_mport_transfer_ioctl(struct file *filp, void __user *arg)
->   static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
->   {
->   	struct mport_cdev_priv *priv;
-> -	struct mport_dev *md;
->   	struct rio_async_tx_wait w_param;
->   	struct mport_dma_req *req;
->   	dma_cookie_t cookie;
-> @@ -1016,7 +1015,6 @@ static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
->   	int ret;
->   
->   	priv = (struct mport_cdev_priv *)filp->private_data;
-> -	md = priv->md;
->   
->   	if (unlikely(copy_from_user(&w_param, arg, sizeof(w_param))))
->   		return -EFAULT;
-> 
+Detected by CoverityScan, CID#1470247 ("Unsigned comparison against 0")
+
+Fixes: 6c5d0736e9c0 ("pinctrl: actions: Add interrupt support for OWL S900 SoC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/actions/pinctrl-owl.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 4fa9cc377b3b..133ce9e0000a 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -1026,11 +1026,10 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	for (i = 0; i < pctrl->num_irq ; i++) {
+-		pctrl->irq[i] = platform_get_irq(pdev, i);
+-		if (pctrl->irq[i] < 0) {
+-			ret = pctrl->irq[i];
++		ret = platform_get_irq(pdev, i);
++		pctrl->irq[i] = ret;
++		if (ret < 0)
+ 			goto err_exit;
+-		}
+ 	}
+ 
+ 	ret = owl_gpio_init(pctrl);
+-- 
+2.17.1
+
