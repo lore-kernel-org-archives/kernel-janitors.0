@@ -1,77 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 17:32:38 +0000
-Subject: [PATCH v2 5/8] Coccinelle: atomic_as_refcounter: Replace disjunction by a constraint in two SmPL rul
-Message-Id: <94b3299b-becf-1026-e855-2c4826cd33ab@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 13:27:35 +0000
+Subject: [PATCH][staging-next] staging: rts5208: fix missing error check on call to rtsx_write_register
+Message-Id: <20180702132735.14199-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
- <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
-In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gaurav Pathak <gauravpathak129@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 18:12:10 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Three function names were specified for a search of function calls
-by the means of a disjunction in two rules of a script for
-the semantic patch language.
-Use a regular expression as a constraint for this source code search
-pattern instead so that duplication of SmPL code can be avoided.
+Currently the check on error return from the call to rtsx_write_register
+is checking the error status from the previous call. Fix this by adding
+in the missing assignment of retval.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Detected by CoverityScan, CID#709877
+
+Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../coccinelle/api/atomic_as_refcounter.cocci | 23 ++++---------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+ drivers/staging/rts5208/sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 62b0132d65fc..4484bea6c9d8 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -47,17 +47,10 @@ coccilib.report.print_report(p1[0], msg % (p2[0].line))
+diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
+index f2778abf10c0..e7efa34195c7 100644
+--- a/drivers/staging/rts5208/sd.c
++++ b/drivers/staging/rts5208/sd.c
+@@ -4690,7 +4690,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
+ 			goto sd_execute_write_cmd_failed;
+ 		}
  
- @r2 exists@
- expression a;
--identifier x;
-+identifier F =~ "^atomic(?:64|_long)?_add_unless$", x;
- position p1;
- @@
--
--(
--atomic_add_unless(&(a)->x,-1,1)@p1
--|
--atomic_long_add_unless(&(a)->x,-1,1)@p1
--|
--atomic64_add_unless(&(a)->x,-1,1)@p1
--)
-+ F(&(a)->x, -1, 1)@p1
- 
- @script:python depends on report@
- p1 << r2.p1;
-@@ -66,17 +59,11 @@ msg = "atomic_add_unless"
- coccilib.report.print_report(p1[0], msg)
- 
- @r3 exists@
--identifier x;
-+expression E;
-+identifier F =~ "^atomic(?:64|_long)?_add_return$";
- position p1;
- @@
--
--(
--x = atomic_add_return@p1(-1, ...);
--|
--x = atomic_long_add_return@p1(-1, ...);
--|
--x = atomic64_add_return@p1(-1, ...);
--)
-+ E = F@p1(-1, ...);
- 
- @script:python depends on report@
- p1 << r3.p1;
+-		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
++		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
+ 		if (retval != STATUS_SUCCESS) {
+ 			goto sd_execute_write_cmd_failed;
+ 		}
 -- 
-2.18.0
+2.17.1
 
