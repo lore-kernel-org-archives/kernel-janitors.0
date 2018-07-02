@@ -1,68 +1,48 @@
-From: Wu Hao <hao.wu@intel.com>
-Date: Wed, 18 Jul 2018 04:11:06 +0000
-Subject: Re: [PATCH] drivers: fpga: fix two trivial spelling mistakes
-Message-Id: <20180718041106.GB18178@hao-dev>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 16:37:52 +0000
+Subject: [PATCH] iommu/amd: remove redundant variable tag
+Message-Id: <20180702163752.16418-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180717092138.19010-1-colin.king@canonical.com>
-In-Reply-To: <20180717092138.19010-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Jiri Kosina <trivial@kernel.org>, linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Tue, Jul 17, 2018 at 10:21:38AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trival fix to two spellling mistakes
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank you very much for this fixing. Only one minor thing here.
+Variable tag is being assigned but is never used hence it is
+redundant and can be removed.
 
-s/Trival/Trivial/
-s/spellling/spelling/
+Cleans up clang warning:
+warning: variable 'tag' set but not used [-Wunused-but-set-variable]
 
-Thanks
-Hao
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iommu/amd_iommu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> "execeeded" -> "exceeded"
-> "Invaild" -> "Invalid"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/fpga/dfl-afu-dma-region.c | 2 +-
->  drivers/fpga/dfl-fme-mgr.c        | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/fpga/dfl-afu-dma-region.c b/drivers/fpga/dfl-afu-dma-region.c
-> index 0e81d33af856..025aba3ea76c 100644
-> --- a/drivers/fpga/dfl-afu-dma-region.c
-> +++ b/drivers/fpga/dfl-afu-dma-region.c
-> @@ -70,7 +70,7 @@ static int afu_dma_adjust_locked_vm(struct device *dev, long npages, bool incr)
->  	dev_dbg(dev, "[%d] RLIMIT_MEMLOCK %c%ld %ld/%ld%s\n", current->pid,
->  		incr ? '+' : '-', npages << PAGE_SHIFT,
->  		current->mm->locked_vm << PAGE_SHIFT, rlimit(RLIMIT_MEMLOCK),
-> -		ret ? "- execeeded" : "");
-> +		ret ? "- exceeded" : "");
->  
->  	up_write(&current->mm->mmap_sem);
->  
-> diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
-> index b5ef405b6d88..9f045d058cfd 100644
-> --- a/drivers/fpga/dfl-fme-mgr.c
-> +++ b/drivers/fpga/dfl-fme-mgr.c
-> @@ -201,7 +201,7 @@ static int fme_mgr_write(struct fpga_manager *mgr,
->  		}
->  
->  		if (count < 4) {
-> -			dev_err(dev, "Invaild PR bitstream size\n");
-> +			dev_err(dev, "Invalid PR bitstream size\n");
->  			return -EINVAL;
->  		}
->  
-> -- 
-> 2.17.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 596b95c50051..c6aed1b088e9 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -547,7 +547,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
+ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ {
+ 	struct device *dev = iommu->iommu.dev;
+-	int type, devid, pasid, flags, tag;
++	int type, devid, pasid, flags;
+ 	volatile u32 *event = __evt;
+ 	int count = 0;
+ 	u64 address;
+@@ -615,7 +615,6 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 	case EVENT_TYPE_INV_PPR_REQ:
+ 		pasid = ((event[0] >> 16) & 0xFFFF)
+ 			| ((event[1] << 6) & 0xF0000);
+-		tag = event[1] & 0x03FF;
+ 		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			pasid, address, flags);
+-- 
+2.17.1
+
