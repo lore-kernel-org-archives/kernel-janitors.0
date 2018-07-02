@@ -1,50 +1,44 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 04 Jul 2018 15:55:10 +0000
-Subject: Re: [PATCH] Input: cros_ec_keyb: remove redundant variable num_cols
-Message-Id: <20180704155510.b7q2zy4zehwumngc@penguin>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 10:13:59 +0000
+Subject: [PATCH] iio: dac: remove redundant pointer chip_info and spi_dev_id
+Message-Id: <20180702101359.16461-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180702162841.12553-1-colin.king@canonical.com>
-In-Reply-To: <20180702162841.12553-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Silvan Murer <silvan.murer@gmail.com>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 05:28:41PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable num_cols is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable ‘num_cols’ set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+Pointers chip_info and spi_dev_id are being assigned but are never used
+hence they are redundant and can be removed.
 
-> ---
->  drivers/input/keyboard/cros_ec_keyb.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-> index 820bebad519a..81be6f781f0b 100644
-> --- a/drivers/input/keyboard/cros_ec_keyb.c
-> +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> @@ -160,9 +160,6 @@ static void cros_ec_keyb_process(struct cros_ec_keyb *ckdev,
->  	int col, row;
->  	int new_state;
->  	int old_state;
-> -	int num_cols;
-> -
-> -	num_cols = len;
->  
->  	if (ckdev->ghost_filter && cros_ec_keyb_has_ghosting(ckdev, kb_state)) {
->  		/*
-> -- 
-> 2.17.1
-> 
+Cleans up clang warning:
+warning: variable 'chip_info' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/dac/ltc2632.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/iio/dac/ltc2632.c b/drivers/iio/dac/ltc2632.c
+index cca278eaa138..28e9b7656b20 100644
+--- a/drivers/iio/dac/ltc2632.c
++++ b/drivers/iio/dac/ltc2632.c
+@@ -87,12 +87,7 @@ static int ltc2632_read_raw(struct iio_dev *indio_dev,
+ 			    int *val2,
+ 			    long m)
+ {
+-	struct ltc2632_chip_info *chip_info;
+-
+ 	const struct ltc2632_state *st = iio_priv(indio_dev);
+-	const struct spi_device_id *spi_dev_id = spi_get_device_id(st->spi_dev);
+-
+-	chip_info = (struct ltc2632_chip_info *)spi_dev_id->driver_data;
+ 
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_SCALE:
 -- 
-Dmitry
+2.17.1
+
