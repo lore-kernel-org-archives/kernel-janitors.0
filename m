@@ -1,39 +1,27 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Sun, 08 Jul 2018 21:50:14 +0000
-Subject: Re: [PATCH -next v3] mtd: spinand: fix missing unlock on error
-Message-Id: <20180708235014.43648218@xps13>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Mon, 02 Jul 2018 20:17:45 +0000
+Subject: Re: [PATCH] scsi: qedi: tidy up a size caculation
+Message-Id: <yq1efglz91y.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530696061-76467-1-git-send-email-weiyongjun1@huawei.com>
- <1530696627-84879-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1530696627-84879-1-git-send-email-weiyongjun1@huawei.com>
+References: <20180628092310.ta2qzatghjtgnzx7@kili.mountain>
+In-Reply-To: <20180628092310.ta2qzatghjtgnzx7@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Frieder Schrempf <frieder.schrempf@exceet.de>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hi Wei,
 
-Wei Yongjun <weiyongjun1@huawei.com> wrote on Wed, 4 Jul 2018 09:30:27
-+0000:
+Dan,
 
-> Add the missing unlock before return from function
-> spinand_mtd_(read|write) in the error handling case.
->=20
-> Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI N=
-ANDs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v2 -> v3: remove blank line
-> v1 -> v2: using break instead of return
-> ---
+> The id_tbl->table pointer points to unsigned long so static checkers
+> complain that instead of 4 we should be allocating sizeof(long) bytes.
+>
+> We're trying to allocate enough bits for the bitmap.  The size variable
+> is always 1024.  (1024 / 32 * 4) is the same as (1024 / 64 * 8) so this
+> doesn't change runtime, but this is the more idiomatic way to do it and
+> makes the static checker happy.
 
-Merged with the original commit too.
+Applied to 4.19/scsi-queue, thanks!
 
-Thanks,
-Miqu=C3=A8l
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Martin K. Petersen	Oracle Linux Engineering
