@@ -1,81 +1,45 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 21 Jul 2018 18:07:43 +0000
-Subject: Re: [PATCH] iio: adc: at91-sama5d2_adc: fix up casting in at91_adc_read_info_raw()
-Message-Id: <20180721190743.370db592@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 07:06:23 +0000
+Subject: [PATCH] kvmclock: remove redundant variable 'size'
+Message-Id: <20180702070623.4769-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180709110658.bjtebvyinfqjrzbr@kili.mountain>
-        <20180717081200.gxg6fxvzlgycudo5@M43218.corp.atmel.com>
-In-Reply-To: <20180717081200.gxg6fxvzlgycudo5@M43218.corp.atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Eugen Hristev <eugen.hristev@microchip.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 17 Jul 2018 10:12:00 +0200
-Ludovic Desroches <ludovic.desroches@microchip.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Mon, Jul 09, 2018 at 02:06:59PM +0300, Dan Carpenter wrote:
-> > This code is problematic because we're supposed to be writing an int but
-> > we instead write to only the high 16 bits.  This doesn't work on big
-> > endian systems, and there is a potential that the bottom 16 bits are
-> > used without being initialized.
-> > 
-> > Fixes: 23ec2774f1cc ("iio: adc: at91-sama5d2_adc: add support for position and pressure channels")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >   
-> 
-> This patch sounds good and as it has been tested by Eugen:
-> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> 
-> Thanks Dan and Eugen.
+Variable size is being assigned but is never used hence it is redundant
+and can be removed.
 
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
+Cleans up clang warning:
+warning: variable ‘size’ set but not used [-Wunused-but-set-variable]
 
-Thanks
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kernel/kvmclock.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Jonathan
-
-> 
-> > diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-> > index e02f7d1c86bc..d5ea84cf6460 100644
-> > --- a/drivers/iio/adc/at91-sama5d2_adc.c
-> > +++ b/drivers/iio/adc/at91-sama5d2_adc.c
-> > @@ -1296,6 +1296,7 @@ static int at91_adc_read_info_raw(struct iio_dev *indio_dev,
-> >  {
-> >  	struct at91_adc_state *st = iio_priv(indio_dev);
-> >  	u32 cor = 0;
-> > +	u16 tmp_val;
-> >  	int ret;
-> >  
-> >  	/*
-> > @@ -1309,7 +1310,8 @@ static int at91_adc_read_info_raw(struct iio_dev *indio_dev,
-> >  		mutex_lock(&st->lock);
-> >  
-> >  		ret = at91_adc_read_position(st, chan->channel,
-> > -					     (u16 *)val);
-> > +					     &tmp_val);
-> > +		*val = tmp_val;
-> >  		mutex_unlock(&st->lock);
-> >  		iio_device_release_direct_mode(indio_dev);
-> >  
-> > @@ -1322,7 +1324,8 @@ static int at91_adc_read_info_raw(struct iio_dev *indio_dev,
-> >  		mutex_lock(&st->lock);
-> >  
-> >  		ret = at91_adc_read_pressure(st, chan->channel,
-> > -					     (u16 *)val);
-> > +					     &tmp_val);
-> > +		*val = tmp_val;
-> >  		mutex_unlock(&st->lock);
-> >  		iio_device_release_direct_mode(indio_dev);
-> >  
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index bf8d1eb7fca3..45c22ce941c1 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -354,13 +354,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
+ 	int cpu;
+ 	u8 flags;
+ 	struct pvclock_vcpu_time_info *vcpu_time;
+-	unsigned int size;
+ 
+ 	if (!hv_clock)
+ 		return 0;
+ 
+-	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-
+ 	cpu = get_cpu();
+ 
+ 	vcpu_time = &hv_clock[cpu].pvti;
+-- 
+2.17.1
 
