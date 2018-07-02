@@ -1,55 +1,50 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Wed, 04 Jul 2018 06:20:32 +0000
-Subject: Re: [PATCH] mfd: kempld-core: constify variables that point to const structure
-Message-Id: <20180704062032.GX20176@dell>
+From: Johan Hovold <johan@kernel.org>
+Date: Mon, 02 Jul 2018 08:59:33 +0000
+Subject: Re: [PATCH][next] gnss: make struct ubx_gserial_ops static
+Message-Id: <20180702085933.GG9802@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1528865289-3875-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1528865289-3875-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20180630112246.942-1-colin.king@canonical.com>
+In-Reply-To: <20180630112246.942-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: Johan Hovold <johan@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Wed, 13 Jun 2018, Julia Lawall wrote:
+On Sat, Jun 30, 2018 at 12:22:46PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The structure ubx_gserial_ops is local to the source and does not need
+> to be in global scope, so make it static.
+> 
+> Cleans up sparse warning:
+> symbol 'ubx_gserial_ops' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> Add const to the declaration of various local variables of type
-> kempld_platform_data for which the referenced value is always only
-> dereferenced or passed to a const parameter, to record the fact that
-> kempld_platform_data_generic is declared as const.
-> 
-> The semantic match that finds this issue is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> identifier i,j;
-> @@
-> const struct i j = { ... };
-> 
-> @ok@
-> identifier r.i;
-> position p;
-> @@
-> const struct i@p *
-> 
-> @@
-> identifier r.i;
-> position p != ok.p;
-> @@
-> * struct i@p *
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+This was reported by the kbuild test robot and an automated RFC patch
+submitted was a while back.
+
+I prefer this man-generated one with a proper commit message, so:
+
+Acked-by: Johan Hovold <johan@kernel.org>
+
 > ---
->  drivers/mfd/kempld-core.c |   15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
+>  drivers/gnss/ubx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
+> index 902b6854b7db..12568aebb7f6 100644
+> --- a/drivers/gnss/ubx.c
+> +++ b/drivers/gnss/ubx.c
+> @@ -59,7 +59,7 @@ static int ubx_set_power(struct gnss_serial *gserial,
+>  	return -EINVAL;
+>  }
+>  
+> -const struct gnss_serial_ops ubx_gserial_ops = {
+> +static const struct gnss_serial_ops ubx_gserial_ops = {
+>  	.set_power = ubx_set_power,
+>  };
 
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Johan
