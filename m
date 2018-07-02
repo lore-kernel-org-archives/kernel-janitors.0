@@ -1,63 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Jul 2018 10:00:38 +0000
-Subject: [bug report] mei: revamp client disconnection flow
-Message-Id: <20180704100038.te7zvykomfkttdy2@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 12:43:29 +0000
+Subject: [PATCH] pinctrl: actions: fix unsigned less than zero comparison
+Message-Id: <20180702124329.7087-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hello Tomas Winkler,
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch 3c66618295ca: "mei: revamp client disconnection flow" from
-May 4, 2015, leads to the following static checker warning:
+The check to see if platform_get_irq failed is performed on the
+unsigned value of pctrl->irq[i] and the check is never true because
+an unsigned cannot be less than zero.  Fix this by assinging the
+signed int ret to the return of platform_get_irq and checking ret
+instead.
 
-drivers/misc/mei/client.c:869 mei_cl_irq_disconnect() warn: 'slots' possible negative type promoted to high
-drivers/misc/mei/client.c:1062 mei_cl_irq_connect() warn: 'slots' possible negative type promoted to high
-drivers/misc/mei/client.c:1300 mei_cl_irq_notify() warn: 'slots' possible negative type promoted to high
-drivers/misc/mei/interrupt.c:179 mei_cl_irq_disconnect_rsp() warn: 'slots' possible negative type promoted to high
-drivers/misc/mei/interrupt.c:212 mei_cl_irq_read() warn: 'slots' possible negative type promoted to high
+Detected by CoverityScan, CID#1470247 ("Unsigned comparison against 0")
 
+Fixes: 6c5d0736e9c0 ("pinctrl: actions: Add interrupt support for OWL S900 SoC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/actions/pinctrl-owl.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-drivers/misc/mei/client.c
-  1048  int mei_cl_irq_connect(struct mei_cl *cl, struct mei_cl_cb *cb,
-  1049                         struct list_head *cmpl_list)
-  1050  {
-  1051          struct mei_device *dev = cl->dev;
-  1052          u32 msg_slots;
-                ^^^^^^^^^^^^^
-  1053          int slots;
-  1054          int rets;
-  1055  
-  1056          msg_slots = mei_data2slots(sizeof(struct hbm_client_connect_request));
-  1057          slots = mei_hbuf_empty_slots(dev);
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^
-Smatch thinks this can return -EOVERFLOW.  Which is weird.  I didn't
-look at the code.
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 4fa9cc377b3b..133ce9e0000a 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -1026,11 +1026,10 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	for (i = 0; i < pctrl->num_irq ; i++) {
+-		pctrl->irq[i] = platform_get_irq(pdev, i);
+-		if (pctrl->irq[i] < 0) {
+-			ret = pctrl->irq[i];
++		ret = platform_get_irq(pdev, i);
++		pctrl->irq[i] = ret;
++		if (ret < 0)
+ 			goto err_exit;
+-		}
+ 	}
+ 
+ 	ret = owl_gpio_init(pctrl);
+-- 
+2.17.1
 
-  1058  
-  1059          if (mei_cl_is_other_connecting(cl))
-  1060                  return 0;
-                        ^^^^^^^^
-It's weird that we return success if mei_hbuf_empty_slots() fails.
-
-  1061  
-  1062          if (slots < msg_slots)
-
-It gets type promoted to a high positive value (success).
-
-
-  1063                  return -EMSGSIZE;
-  1064  
-  1065          rets = mei_cl_send_connect(cl, cb);
-  1066          if (rets)
-  1067                  list_move_tail(&cb->list, cmpl_list);
-  1068  
-  1069          return rets;
-  1070  }
-
-The other warnings are the same.
-
-regards,
-dan carpenter
