@@ -1,24 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 13 Jul 2018 07:43:48 +0000
-Subject: Re: [PATCH -next] pinctrl: at91-pio4: remove redundant return value check of platform_get_resource()
-Message-Id: <CACRpkdb7zWv10Fnr_M4zSKmhHQ=QmJTOAJsqgCPguAdCuU=4iA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 08:14:19 +0000
+Subject: [PATCH] paride: remove redundant variable n
+Message-Id: <20180702081419.12207-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1531312447-134423-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1531312447-134423-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Tim Waugh <tim@cyberelk.net>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 2:25 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Remove unneeded error handling on the result of a call
-> to platform_get_resource() when the value is passed to
-> devm_ioremap_resource().
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Variable n is being assigned but is never used hence it is redundant
+and can be removed. Also put spacing between variables in declaration
+to clean up checkpatch warnings.
 
-Patch applied with the ACKs.
+Cleans up clang warning:
+warning: variable 'n' set but not used [-Wunused-but-set-variable]
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/paride/bpck.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/block/paride/bpck.c b/drivers/block/paride/bpck.c
+index 4f27e7392e38..89a96786f6ae 100644
+--- a/drivers/block/paride/bpck.c
++++ b/drivers/block/paride/bpck.c
+@@ -347,7 +347,7 @@ static int bpck_test_proto( PIA *pi, char * scratch, int verbose )
+ 
+ static void bpck_read_eeprom ( PIA *pi, char * buf )
+ 
+-{       int i,j,k,n,p,v,f, om, od;
++{       int i, j, k, p, v, f, om, od;
+ 
+ 	bpck_force_spp(pi);
+ 
+@@ -356,7 +356,6 @@ static void bpck_read_eeprom ( PIA *pi, char * buf )
+ 
+ 	bpck_connect(pi);
+ 	
+-	n = 0;
+ 	WR(4,0);
+ 	for (i=0;i<64;i++) {
+ 	    WR(6,8);  
+-- 
+2.17.1
+
