@@ -1,37 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 02 Jul 2018 14:06:02 +0000
-Subject: Re: [PATCH][V2] pinctrl: actions: fix unsigned less than zero comparison
-Message-Id: <CACRpkda2CkPFRPcpHSukBNjH+m6szCxq6Cfs+uK5fLHthQmZkg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 10:24:35 +0000
+Subject: [PATCH] iio: dac: remove redundant variable 'shift'
+Message-Id: <20180702102435.16724-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180702124708.7295-1-colin.king@canonical.com>
-In-Reply-To: <20180702124708.7295-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Sean Nyekjaer <sean.nyekjaer@prevas.dk>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 2:47 PM Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check to see if platform_get_irq failed is performed on the
-> unsigned value of pctrl->irq[i] and the check is never true because
-> an unsigned cannot be less than zero.  Fix this by assinging the
-> signed int ret to the return of platform_get_irq and checking ret
-> instead.
->
-> Detected by CoverityScan, CID#1470247 ("Unsigned comparison against 0")
->
-> Fixes: 6c5d0736e9c0 ("pinctrl: actions: Add interrupt support for OWL S900 SoC")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->
-> V2: move pctrl->irq[i] = ret assignment below the check on ret, thanks
-> to Manivannan Sadhasivam for suggesting this change.
+Variable shift is being assigned but is never used hence it is
+redundant and can be removed.
 
-Patch applied with Manivannan's ACK!
+Cleans up two clang warnings:
+warning: variable ‘shift’ set but not used [-Wunused-but-set-variable]
 
-(Hope it's the right version now.)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/dac/ti-dac5571.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/iio/dac/ti-dac5571.c b/drivers/iio/dac/ti-dac5571.c
+index dd21eebed6a8..e39d1e901353 100644
+--- a/drivers/iio/dac/ti-dac5571.c
++++ b/drivers/iio/dac/ti-dac5571.c
+@@ -97,9 +97,6 @@ static int dac5571_cmd_quad(struct dac5571_data *data, int channel, u16 val)
+ 
+ static int dac5571_pwrdwn_single(struct dac5571_data *data, int channel, u8 pwrdwn)
+ {
+-	unsigned int shift;
+-
+-	shift = 12 - data->spec->resolution;
+ 	data->buf[1] = 0;
+ 	data->buf[0] = pwrdwn << DAC5571_SINGLE_PWRDWN_BITS;
+ 
+@@ -111,9 +108,6 @@ static int dac5571_pwrdwn_single(struct dac5571_data *data, int channel, u8 pwrd
+ 
+ static int dac5571_pwrdwn_quad(struct dac5571_data *data, int channel, u8 pwrdwn)
+ {
+-	unsigned int shift;
+-
+-	shift = 16 - data->spec->resolution;
+ 	data->buf[2] = 0;
+ 	data->buf[1] = pwrdwn << DAC5571_QUAD_PWRDWN_BITS;
+ 	data->buf[0] = (channel << DAC5571_CHANNEL_SELECT) |
+-- 
+2.17.1
+
