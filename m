@@ -1,38 +1,49 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Sun, 08 Jul 2018 21:49:39 +0000
-Subject: Re: [PATCH -next] mtd: spinand: Fix error return code in spinand_init()
-Message-Id: <20180708234939.6beb9a0d@xps13>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 07:30:22 +0000
+Subject: [PATCH] sata_nv: remove redundant pointers sdev0 and sdev1
+Message-Id: <20180702073022.10000-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530693298-14271-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1530693298-14271-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Peter Pan <peterpandong@micron.com>, Frieder Schrempf <frieder.schrempf@exceet.de>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Wei,
+From: Colin Ian King <colin.king@canonical.com>
 
-Wei Yongjun <weiyongjun1@huawei.com> wrote on Wed, 4 Jul 2018 08:34:58
-+0000:
+Pointers sdev0 and sdev1 are being assigned but are never used hence they
+are redundant and can be removed.
 
-> Fix to return error code -ENOMEM from the kzalloc() error handling
-> case instead of 0, as done elsewhere in this function.
->=20
-> Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI N=
-ANDs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/mtd/nand/spi/core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Cleans up clang warnings:
+warning: variable 'sdev0' set but not used [-Wunused-but-set-variable]
+warning: variable 'sdev1' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/ata/sata_nv.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Merged with the original commit.
+diff --git a/drivers/ata/sata_nv.c b/drivers/ata/sata_nv.c
+index 10ae11aa1926..72c9b922a77b 100644
+--- a/drivers/ata/sata_nv.c
++++ b/drivers/ata/sata_nv.c
+@@ -675,7 +675,6 @@ static int nv_adma_slave_config(struct scsi_device *sdev)
+ 	struct ata_port *ap = ata_shost_to_port(sdev->host);
+ 	struct nv_adma_port_priv *pp = ap->private_data;
+ 	struct nv_adma_port_priv *port0, *port1;
+-	struct scsi_device *sdev0, *sdev1;
+ 	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
+ 	unsigned long segment_boundary, flags;
+ 	unsigned short sg_tablesize;
+@@ -736,8 +735,6 @@ static int nv_adma_slave_config(struct scsi_device *sdev)
+ 
+ 	port0 = ap->host->ports[0]->private_data;
+ 	port1 = ap->host->ports[1]->private_data;
+-	sdev0 = ap->host->ports[0]->link.device[0].sdev;
+-	sdev1 = ap->host->ports[1]->link.device[0].sdev;
+ 	if ((port0->flags & NV_ADMA_ATAPI_SETUP_COMPLETE) ||
+ 	    (port1->flags & NV_ADMA_ATAPI_SETUP_COMPLETE)) {
+ 		/*
+-- 
+2.17.1
 
-Thanks,
-Miqu=C3=A8l
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
