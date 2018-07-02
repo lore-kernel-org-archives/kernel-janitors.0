@@ -1,29 +1,33 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Tue, 03 Jul 2018 14:32:44 +0000
-Subject: Re: [PATCH] omapfb: encoder-tpd12s015: fix error return code
-Message-Id: <2458818.0lnoAlLxQ2@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Jul 2018 08:34:08 +0000
+Subject: Re: [PATCH] drm/msm/adreno: Remove VLA usage
+Message-Id: <b531d35a-631f-c84c-831d-9ce6cff02436@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180610145623epcas2p38562cc47b619add45620b677fb036479@epcas2p3.samsung.com>
- <1528640655-18948-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1528640655-18948-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20180629184818.GA37439@beast>
+In-Reply-To: <20180629184818.GA37439@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Kees Cook <keescook@chromium.org>, Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>, Jordan Crouse <jcrouse@codeaurora.org>
 
-On Sunday, June 10, 2018 04:24:13 PM Julia Lawall wrote:
-> Return an error code on failure.
+> @@ -91,12 +93,13 @@  static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname)
+>  		ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
+>  				mem_region, mem_phys, mem_size, NULL);
+>  	} else {
+> -		char newname[strlen("qcom/") + strlen(fwname) + 1];
+> +		char *newname;
 > 
-> Problem found using Coccinelle.
+> -		sprintf(newname, "qcom/%s", fwname);
+> +		newname = kasprintf(GFP_KERNEL, "qcom/%s", fwname);
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>  		ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
+>  				mem_region, mem_phys, mem_size, NULL);
 
-Patch queued for 4.19, thanks.
+I have taken another look also at this update suggestion.
+Now I wonder why the return value is not checked for the added name construction
+in the way as it is specified for the function “adreno_request_fw”.
+Will another condition check make sense at this place?
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Regards,
+Markus
