@@ -1,92 +1,88 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 03 Jul 2018 07:14:43 +0000
-Subject: [PATCH] misc: genwqe: remove several redundant variables
-Message-Id: <20180703071443.28921-1-colin.king@canonical.com>
+From: Jan Glauber <jan.glauber@cavium.com>
+Date: Mon, 02 Jul 2018 05:45:40 +0000
+Subject: Re: [PATCH] crypto: zip: make several functions static
+Message-Id: <20180702054540.GA14359@hc>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180630113049.4402-1-colin.king@canonical.com>
+In-Reply-To: <20180630113049.4402-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Frank Haverkamp <haver@linux.vnet.ibm.com>, "Guilherme G . Piccoli" <gpiccoli@linux.vnet.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Robert Richter <rrichter@cavium.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-The variables val16, type, pci_dev and type are set but are never used
-hence they are redundant and can be removed.
+I've already posted a similar patch:
+https://patchwork.kernel.org/patch/10482283/
 
-Cleans up clang warnings:
-warning: variable 'type' set but not used [-Wunused-but-set-variable]
-warning: variable 'val16' set but not used [-Wunused-but-set-variable]
-warning: variable 'pci_dev' set but not used [-Wunused-but-set-variable]
-warning: variable 'type' set but not used [-Wunused-but-set-variable]
+--Jan
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/misc/genwqe/card_debugfs.c | 4 ----
- drivers/misc/genwqe/card_dev.c     | 5 -----
- 2 files changed, 9 deletions(-)
-
-diff --git a/drivers/misc/genwqe/card_debugfs.c b/drivers/misc/genwqe/card_debugfs.c
-index f921dd590271..c6b82f09b3ba 100644
---- a/drivers/misc/genwqe/card_debugfs.c
-+++ b/drivers/misc/genwqe/card_debugfs.c
-@@ -305,7 +305,6 @@ GENWQE_DEBUGFS_RO(ddcb_info, genwqe_ddcb_info_show);
- static int genwqe_info_show(struct seq_file *s, void *unused)
- {
- 	struct genwqe_dev *cd = s->private;
--	u16 val16, type;
- 	u64 app_id, slu_id, bitstream = -1;
- 	struct pci_dev *pci_dev = cd->pci_dev;
- 
-@@ -315,9 +314,6 @@ static int genwqe_info_show(struct seq_file *s, void *unused)
- 	if (genwqe_is_privileged(cd))
- 		bitstream = __genwqe_readq(cd, IO_SLU_BITSTREAM);
- 
--	val16 = (u16)(slu_id & 0x0fLLU);
--	type  = (u16)((slu_id >> 20) & 0xffLLU);
--
- 	seq_printf(s, "%s driver version: %s\n"
- 		   "    Device Name/Type: %s %s CardIdx: %d\n"
- 		   "    SLU/APP Config  : 0x%016llx/0x%016llx\n"
-diff --git a/drivers/misc/genwqe/card_dev.c b/drivers/misc/genwqe/card_dev.c
-index 0dd6b5ef314a..f453ab82f0d7 100644
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -304,14 +304,12 @@ static int genwqe_open(struct inode *inode, struct file *filp)
- {
- 	struct genwqe_dev *cd;
- 	struct genwqe_file *cfile;
--	struct pci_dev *pci_dev;
- 
- 	cfile = kzalloc(sizeof(*cfile), GFP_KERNEL);
- 	if (cfile = NULL)
- 		return -ENOMEM;
- 
- 	cd = container_of(inode->i_cdev, struct genwqe_dev, cdev_genwqe);
--	pci_dev = cd->pci_dev;
- 	cfile->cd = cd;
- 	cfile->filp = filp;
- 	cfile->client = NULL;
-@@ -864,7 +862,6 @@ static int ddcb_cmd_fixups(struct genwqe_file *cfile, struct ddcb_requ *req)
- 	struct genwqe_dev *cd = cfile->cd;
- 	struct genwqe_ddcb_cmd *cmd = &req->cmd;
- 	struct dma_mapping *m;
--	const char *type = "UNKNOWN";
- 
- 	for (i = 0, asiv_offs = 0x00; asiv_offs <= 0x58;
- 	     i++, asiv_offs += 0x08) {
-@@ -933,11 +930,9 @@ static int ddcb_cmd_fixups(struct genwqe_file *cfile, struct ddcb_requ *req)
- 
- 			m = genwqe_search_pin(cfile, u_addr, u_size, NULL);
- 			if (m != NULL) {
--				type = "PINNING";
- 				page_offs = (u_addr -
- 					     (u64)m->u_vaddr)/PAGE_SIZE;
- 			} else {
--				type = "MAPPING";
- 				m = &req->dma_mappings[i];
- 
- 				genwqe_mapping_init(m,
--- 
-2.17.1
-
+On Sat, Jun 30, 2018 at 12:30:49PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The functions zip_ctx_exit, zip_compress, zip_decompress and zip_ctx_init
+> are local to the source and do not need to be in global scope, so make
+> them static.
+> 
+> Cleans up sparse warnings:
+> symbol 'zip_ctx_exit' was not declared. Should it be static?
+> symbol 'zip_compress' was not declared. Should it be static?
+> symbol 'zip_decompress' was not declared. Should it be static?
+> symbol 'zip_ctx_init' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/crypto/cavium/zip/zip_crypto.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/crypto/cavium/zip/zip_crypto.c b/drivers/crypto/cavium/zip/zip_crypto.c
+> index b92b6e7e100f..f9e99a15d2a0 100644
+> --- a/drivers/crypto/cavium/zip/zip_crypto.c
+> +++ b/drivers/crypto/cavium/zip/zip_crypto.c
+> @@ -69,7 +69,7 @@ static void zip_static_init_zip_ops(struct zip_operation *zip_ops,
+>         zip_ops->csum         = 1; /* Adler checksum desired */
+>  }
+> 
+> -int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
+> +static int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
+>  {
+>         struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
+>         struct zip_operation  *decomp_ctx = &zip_ctx->zip_decomp;
+> @@ -107,7 +107,7 @@ int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
+>         return -ENOMEM;
+>  }
+> 
+> -void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
+> +static void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
+>  {
+>         struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
+>         struct zip_operation  *dec_ctx = &zip_ctx->zip_decomp;
+> @@ -119,9 +119,9 @@ void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
+>         zip_data_buf_free(dec_ctx->output, MAX_OUTPUT_BUFFER_SIZE);
+>  }
+> 
+> -int zip_compress(const u8 *src, unsigned int slen,
+> -                u8 *dst, unsigned int *dlen,
+> -                struct zip_kernel_ctx *zip_ctx)
+> +static int zip_compress(const u8 *src, unsigned int slen,
+> +                       u8 *dst, unsigned int *dlen,
+> +                       struct zip_kernel_ctx *zip_ctx)
+>  {
+>         struct zip_operation  *zip_ops   = NULL;
+>         struct zip_state      *zip_state;
+> @@ -155,9 +155,9 @@ int zip_compress(const u8 *src, unsigned int slen,
+>         return ret;
+>  }
+> 
+> -int zip_decompress(const u8 *src, unsigned int slen,
+> -                  u8 *dst, unsigned int *dlen,
+> -                  struct zip_kernel_ctx *zip_ctx)
+> +static int zip_decompress(const u8 *src, unsigned int slen,
+> +                         u8 *dst, unsigned int *dlen,
+> +                         struct zip_kernel_ctx *zip_ctx)
+>  {
+>         struct zip_operation  *zip_ops   = NULL;
+>         struct zip_state      *zip_state;
+> --
+> 2.17.1
