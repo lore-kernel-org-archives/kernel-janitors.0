@@ -1,54 +1,49 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Jul 2018 07:35:26 +0000
-Subject: [PATCH 1/6] Coccinelle: atomic_as_refcounter: Omit placeholder specifications from two SmPL constrai
-Message-Id: <420481d3-0ec7-3990-30b3-0ef2118e5be8@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 08:31:45 +0000
+Subject: [PATCH] char: pcmcia: remove redundant pointer dev
+Message-Id: <20180702083145.14326-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
-In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
+To: Harald Welte <laforge@gnumonks.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Jul 2018 16:33:46 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A string was enclosed by placeholder specifications for
-regular expressions as constraints for metavariables in a script
-for the semantic patch language.
-The desired search functionality can be achieved also without
-the notation “.*”. Thus delete it.
+Pointer dev is being assigned but is never used hence it is redundant
+and can be removed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cleans up clang warning:
+warning: variable ‘dev’ set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/char/pcmcia/cm4000_cs.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 988120e0fd67..94373a35744e 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -12,7 +12,7 @@ virtual report
- @r1 exists@
- identifier a, x;
- position p1, p2;
--identifier fname =~ ".*free.*";
-+identifier fname =~ "free";
- identifier fname2 =~ ".*destroy.*";
- identifier fname3 =~ ".*del.*";
- identifier fname4 =~ ".*queue_work.*";
-@@ -60,8 +60,7 @@ coccilib.report.print_report(p1[0], msg % (p2[0].line))
- @r4 exists@
- identifier a, x, y;
- position p1, p2;
--identifier fname =~ ".*free.*";
--
-+identifier fname =~ "free";
- @@
+diff --git a/drivers/char/pcmcia/cm4000_cs.c b/drivers/char/pcmcia/cm4000_cs.c
+index 370e0a64ead1..a219964cb770 100644
+--- a/drivers/char/pcmcia/cm4000_cs.c
++++ b/drivers/char/pcmcia/cm4000_cs.c
+@@ -1748,8 +1748,6 @@ static int cm4000_config_check(struct pcmcia_device *p_dev, void *priv_data)
  
- (
+ static int cm4000_config(struct pcmcia_device * link, int devno)
+ {
+-	struct cm4000_dev *dev;
+-
+ 	link->config_flags |= CONF_AUTO_SET_IO;
+ 
+ 	/* read the config-tuples */
+@@ -1759,8 +1757,6 @@ static int cm4000_config(struct pcmcia_device * link, int devno)
+ 	if (pcmcia_enable_device(link))
+ 		goto cs_release;
+ 
+-	dev = link->priv;
+-
+ 	return 0;
+ 
+ cs_release:
 -- 
-2.18.0
+2.17.1
 
