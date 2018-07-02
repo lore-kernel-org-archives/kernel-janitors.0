@@ -1,29 +1,48 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Tue, 24 Jul 2018 16:48:52 +0000
-Subject: Re: [PATCH] fbdev: omapfb: off by one in omapfb_register_client()
-Message-Id: <8615162.0D3GuDQfVx@amdc3058>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 07:13:59 +0000
+Subject: [PATCH] partitions/ldm: remove redundant pointer dgrp
+Message-Id: <20180702071359.6534-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180713145615epcas3p4e584128beb220b339552ad92fe2eb3b4@epcas3p4.samsung.com>
- <20180713145555.sprrr4rl6eqspirz@kili.mountain>
-In-Reply-To: <20180713145555.sprrr4rl6eqspirz@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-fbdev@vger.kernel.org, Imre Deak <imre.deak@solidboot.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org
+To: Richard Russon <ldm@flatcap.org>, Jens Axboe <axboe@kernel.dk>, linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday, July 13, 2018 05:55:55 PM Dan Carpenter wrote:
-> The omapfb_register_client[] array has OMAPFB_PLANE_NUM elements so the
-> > should be >= or we are one element beyond the end of the array.
-> 
-> Fixes: 8b08cf2b64f5 ("OMAP: add TI OMAP framebuffer driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.19, thanks.
+Pointer dgrp is being assigned but is never used hence it is redundant
+and can be removed.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Cleans up clang warning:
+warning: variable 'dgrp' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ block/partitions/ldm.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/block/partitions/ldm.c b/block/partitions/ldm.c
+index 0417937dfe99..16766f267559 100644
+--- a/block/partitions/ldm.c
++++ b/block/partitions/ldm.c
+@@ -830,7 +830,6 @@ static bool ldm_parse_dgr4 (const u8 *buffer, int buflen, struct vblk *vb)
+ {
+ 	char buf[64];
+ 	int r_objid, r_name, r_id1, r_id2, len;
+-	struct vblk_dgrp *dgrp;
+ 
+ 	BUG_ON (!buffer || !vb);
+ 
+@@ -853,8 +852,6 @@ static bool ldm_parse_dgr4 (const u8 *buffer, int buflen, struct vblk *vb)
+ 	if (len != get_unaligned_be32(buffer + 0x14))
+ 		return false;
+ 
+-	dgrp = &vb->vblk.dgrp;
+-
+ 	ldm_get_vstr (buffer + 0x18 + r_objid, buf, sizeof (buf));
+ 	return true;
+ }
+-- 
+2.17.1
 
