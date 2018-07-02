@@ -1,37 +1,47 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 30 Jul 2018 17:57:33 +0000
-Subject: Re: [PATCH] ath6kl: remove redundant variables netlen, orig_buf, orig_len, dropped and stats
-Message-Id: <20180730175733.B6B8B60B15@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 09:40:28 +0000
+Subject: [PATCH] HID: intel-ish-hid: remove redundant variable num_frags
+Message-Id: <20180702094028.15428-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180709131720.6668-1-colin.king@canonical.com>
-In-Reply-To: <20180709131720.6668-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Variables netlen, orig_buf, orig_len, dropped and stats are assigned values
-> but are never used hence they are redundant and can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'netlen' set but not used [-Wunused-but-set-variable]
-> warning: variable 'orig_buf' set but not used [-Wunused-but-set-variable]
-> warning: variable 'orig_len' set but not used [-Wunused-but-set-variable]
-> warning: variable 'dropped' set but not used [-Wunused-but-set-variable]
-> warning: variable 'stats' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Variable num_frags is being assigned but is never used hence it is
+redundant and can be removed.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Cleans up clang warning:
+warning: variable 'num_frags' set but not used [-Wunused-but-set-variable]
 
-619c9700a8fe ath6kl: remove redundant variables netlen, orig_buf, orig_len, dropped and stats
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/intel-ish-hid/ishtp/hbm.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/hid/intel-ish-hid/ishtp/hbm.c b/drivers/hid/intel-ish-hid/ishtp/hbm.c
+index ae4a69f7f2f4..8b5dd580ceec 100644
+--- a/drivers/hid/intel-ish-hid/ishtp/hbm.c
++++ b/drivers/hid/intel-ish-hid/ishtp/hbm.c
+@@ -298,7 +298,6 @@ int ishtp_hbm_cl_flow_control_req(struct ishtp_device *dev,
+ 	struct ishtp_msg_hdr *ishtp_hdr = &hdr;
+ 	const size_t len = sizeof(struct hbm_flow_control);
+ 	int	rv;
+-	unsigned int	num_frags;
+ 	unsigned long	flags;
+ 
+ 	spin_lock_irqsave(&cl->fc_spinlock, flags);
+@@ -314,7 +313,6 @@ int ishtp_hbm_cl_flow_control_req(struct ishtp_device *dev,
+ 		return	0;
+ 	}
+ 
+-	num_frags = cl->recv_msg_num_frags;
+ 	cl->recv_msg_num_frags = 0;
+ 
+ 	rv = ishtp_write_message(dev, ishtp_hdr, data);
 -- 
-https://patchwork.kernel.org/patch/10514565/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
 
