@@ -1,62 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 17:34:35 +0000
-Subject: [PATCH v2 6/8] Coccinelle: atomic_as_refcounter: Use nested disjunctions in the first SmPL rule
-Message-Id: <15372138-088d-81ce-3d3e-0b95f5d91ce9@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Jul 2018 10:00:26 +0000
+Subject: [PATCH] ide-tape: remove redundant variable buffer_size
+Message-Id: <20180702100026.16007-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
- <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
-In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+To: "David S . Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 18:22:53 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Six function names were specified for a search of function calls
-by the means of a disjunction in the rule of a script for
-the semantic patch language.
-Refactor them into two groups so that the SmPL code repetition
-could be reduced a bit.
+Variable buffer_size is being assigned but is never used hence it is
+redundant and can be removed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cleans up clang warning:
+warning: variable 'buffer_size' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../coccinelle/api/atomic_as_refcounter.cocci  | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/ide/ide-tape.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 4484bea6c9d8..7eae23dc9ea8 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -18,17 +18,15 @@ identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
- @@
+diff --git a/drivers/ide/ide-tape.c b/drivers/ide/ide-tape.c
+index aee7b46d2330..34c1165226a4 100644
+--- a/drivers/ide/ide-tape.c
++++ b/drivers/ide/ide-tape.c
+@@ -1746,7 +1746,6 @@ static void idetape_setup(ide_drive_t *drive, idetape_tape_t *tape, int minor)
+ {
+ 	unsigned long t;
+ 	int speed;
+-	int buffer_size;
+ 	u16 *ctl = (u16 *)&tape->caps[12];
  
- (
-- atomic_dec_and_test@p1(&(a)->x)
-+(atomic_dec_and_test@p1
-+|atomic_long_dec_and_test@p1
-+|atomic64_dec_and_test@p1
-+|local_dec_and_test@p1
-+)                           (&(a)->x)
- |
-- atomic_dec_and_lock@p1(&(a)->x, ...)
--|
-- atomic_long_dec_and_lock@p1(&(a)->x, ...)
--|
-- atomic_long_dec_and_test@p1(&(a)->x)
--|
-- atomic64_dec_and_test@p1(&(a)->x)
--|
-- local_dec_and_test@p1(&(a)->x)
-+(atomic_dec_and_lock@p1
-+|atomic_long_dec_and_lock@p1
-+)                           (&(a)->x, ...)
- )
- ...
- (
+ 	ide_debug_log(IDE_DBG_FUNC, "minor: %d", minor);
+@@ -1781,7 +1780,6 @@ static void idetape_setup(ide_drive_t *drive, idetape_tape_t *tape, int minor)
+ 		*ctl /= 2;
+ 		tape->buffer_size = *ctl * tape->blk_size;
+ 	}
+-	buffer_size = tape->buffer_size;
+ 
+ 	/* select the "best" DSC read/write polling freq */
+ 	speed = max(*(u16 *)&tape->caps[14], *(u16 *)&tape->caps[8]);
 -- 
-2.18.0
+2.17.1
 
