@@ -1,28 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Jul 2018 10:30:49 +0000
-Subject: Re: [PATCH net-next] net: dsa: vsc73xx: Make some functions static
-Message-Id: <20180705.193049.809877010632185787.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Jul 2018 12:04:25 +0000
+Subject: [PATCH] pinctrl: nsp: off by ones in nsp_pinmux_enable()
+Message-Id: <20180703120425.jloiga5fcbdzcqpc@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530781149-52681-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1530781149-52681-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, linus.walleij@linaro.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 5 Jul 2018 08:59:09 +0000
+The > comparisons should be >= or else we read beyond the end of the
+pinctrl->functions[] array.
 
-> Fixes the following sparse warnings:
-> 
-> drivers/net/dsa/vitesse-vsc73xx.c:1054:6: warning:
->  symbol 'vsc73xx_get_strings' was not declared. Should it be static?
-> drivers/net/dsa/vitesse-vsc73xx.c:1113:5: warning:
->  symbol 'vsc73xx_get_sset_count' was not declared. Should it be static?
-> drivers/net/dsa/vitesse-vsc73xx.c:1122:6: warning:
->  symbol 'vsc73xx_get_ethtool_stats' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for Broadcom NSP SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+index 35c17653c694..5cd8166fbbc8 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+@@ -460,8 +460,8 @@ static int nsp_pinmux_enable(struct pinctrl_dev *pctrl_dev,
+ 	const struct nsp_pin_function *func;
+ 	const struct nsp_pin_group *grp;
+ 
+-	if (grp_select > pinctrl->num_groups ||
+-		func_select > pinctrl->num_functions)
++	if (grp_select >= pinctrl->num_groups ||
++	    func_select >= pinctrl->num_functions)
+ 		return -EINVAL;
+ 
+ 	func = &pinctrl->functions[func_select];
