@@ -1,44 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Jul 2018 09:09:38 +0000
-Subject: [PATCH][V2] x86/uv: remove redundant check of p == q
-Message-Id: <20180731090938.11856-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Jul 2018 12:25:31 +0000
+Subject: [PATCH v2] gnss: fix potential error pointer dereference
+Message-Id: <20180703122531.5mgay63srlurlkvo@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20180703121143.GP9802@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The gnss_allocate_device() function returns a mix of NULL and error
+pointers on error.  It should only return one or the other.  Since the
+callers both check for NULL, I've modified it to return NULL on error.
 
-The check for p = q is dead code because the proceeding switch
-statements jump to the end of the outer for-loop with continue
-statements.  Remove the dead code.
-
-Detected by CoverityScan, CID#145071 ("Structurally dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 2b6a44035143 ("gnss: add GNSS receiver subsystem")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Johan Hovold <johan@kernel.org>
 ---
- arch/x86/platform/uv/tlb_uv.c | 2 --
- 1 file changed, 2 deletions(-)
+v2: Use the correct Fixes tag.
 
----
-
-V2: fix spelling mistake in commit message "Structurally"
-
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index ca446da48fd2..e26dfad507c8 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -1607,8 +1607,6 @@ static int parse_tunables_write(struct bau_control *bcp, char *instr,
- 				*tunables[cnt].tunp = val;
- 			continue;
- 		}
--		if (q = p)
--			break;
+diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
+index f30ef8338b3a..4291a0dd22aa 100644
+--- a/drivers/gnss/core.c
++++ b/drivers/gnss/core.c
+@@ -235,7 +235,7 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
+ 	id = ida_simple_get(&gnss_minors, 0, GNSS_MINORS, GFP_KERNEL);
+ 	if (id < 0) {
+ 		kfree(gdev);
+-		return ERR_PTR(id);
++		return NULL;
  	}
- 	return 0;
+ 
+ 	gdev->id = id;
+@@ -270,7 +270,7 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
+ err_put_device:
+ 	put_device(dev);
+ 
+-	return ERR_PTR(-ENOMEM);
++	return NULL;
  }
--- 
-2.17.1
-
+ EXPORT_SYMBOL_GPL(gnss_allocate_device);
+ 
