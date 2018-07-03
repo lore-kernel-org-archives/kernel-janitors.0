@@ -1,41 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Jul 2018 12:53:14 +0000
-Subject: [PATCH] ocfs2: dlmglue: remove redundant check of null tmp_oh
-Message-Id: <20180731125314.21733-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Jul 2018 07:35:26 +0000
+Subject: [PATCH 1/6] Coccinelle: atomic_as_refcounter: Omit placeholder specifications from two SmPL constrai
+Message-Id: <420481d3-0ec7-3990-30b3-0ef2118e5be8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+ <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Jul 2018 16:33:46 +0200
 
-A null tmp_oh is already being checked earlier and always leads to
-an early return.  Thus the check for a null tmp_oh at the end of
-function ocfs2_inode_lock_tracker is redundant and can be replaced
-with a return 1 instead.
+A string was enclosed by placeholder specifications for
+regular expressions as constraints for metavariables in a script
+for the semantic patch language.
+The desired search functionality can be achieved also without
+the notation “.*”. Thus delete it.
 
-Detected by CoverityScan, CID#1468855 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/ocfs2/dlmglue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/coccinelle/api/atomic_as_refcounter.cocci | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index 040ddb6e7dab..5f85ce03ca7f 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -2695,7 +2695,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
- 			return status;
- 		}
- 	}
--	return tmp_oh ? 1 : 0;
-+	return 1;
- }
+diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+index 988120e0fd67..94373a35744e 100644
+--- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
++++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+@@ -12,7 +12,7 @@ virtual report
+ @r1 exists@
+ identifier a, x;
+ position p1, p2;
+-identifier fname =~ ".*free.*";
++identifier fname =~ "free";
+ identifier fname2 =~ ".*destroy.*";
+ identifier fname3 =~ ".*del.*";
+ identifier fname4 =~ ".*queue_work.*";
+@@ -60,8 +60,7 @@ coccilib.report.print_report(p1[0], msg % (p2[0].line))
+ @r4 exists@
+ identifier a, x, y;
+ position p1, p2;
+-identifier fname =~ ".*free.*";
+-
++identifier fname =~ "free";
+ @@
  
- void ocfs2_inode_unlock_tracker(struct inode *inode,
+ (
 -- 
-2.17.1
+2.18.0
 
