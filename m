@@ -1,41 +1,47 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 31 Jul 2018 07:18:47 +0000
-Subject: Re: [PATCH] ipw2x00: remove redundant variables len, ret, reason and crypt
-Message-Id: <20180731071847.4839760397@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Jul 2018 07:43:39 +0000
+Subject: [PATCH] mtd: cfi_cmdset_0002: remove redundant variable timeo
+Message-Id: <20180703074339.29989-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180711071212.3018-1-colin.king@canonical.com>
-In-Reply-To: <20180711071212.3018-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables len, ret, reason and crypt are assigned values that
-> are never read, hence they are redundant and can be removed.
-> 
-> Note: For the variable ret, a return code is being assigned, but
-> this is not returned and 0 is currently being returned, I believe
-> this is OK.
-> 
-> Cleans up clang warnings:
-> warning: variable 'len' set but not used [-Wunused-but-set-variable]
-> variable 'ret' set but not used [-Wunused-but-set-variable]
-> warning: variable 'reason' set but not used [-Wunused-but-set-variable]
-> warning: variable 'crypt' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable is_local is being assigned but is never used hence it is
+redundant and can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Cleans up clang warning:
+warning: variable 'timeo' set but not used [-Wunused-but-set-variable]
 
-0e139e97f58e ipw2x00: remove redundant variables len, ret, reason and crypt
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/chips/cfi_cmdset_0002.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index 1b64ac8c5bc8..72428b6bfc47 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -1216,7 +1216,6 @@ static inline int do_read_secsi_onechip(struct map_info *map,
+ 					size_t grouplen)
+ {
+ 	DECLARE_WAITQUEUE(wait, current);
+-	unsigned long timeo = jiffies + HZ;
+ 
+  retry:
+ 	mutex_lock(&chip->mutex);
+@@ -1229,7 +1228,6 @@ static inline int do_read_secsi_onechip(struct map_info *map,
+ 
+ 		schedule();
+ 		remove_wait_queue(&chip->wq, &wait);
+-		timeo = jiffies + HZ;
+ 
+ 		goto retry;
+ 	}
 -- 
-https://patchwork.kernel.org/patch/10518849/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
 
