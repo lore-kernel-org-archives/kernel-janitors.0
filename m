@@ -1,64 +1,76 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 03 Jul 2018 07:38:08 +0000
-Subject: [PATCH] misc: vmci: remove redundant variable is_local
-Message-Id: <20180703073808.29752-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Jul 2018 07:48:33 +0000
+Subject: [PATCH 6/6] Coccinelle: atomic_as_refcounter: Use format strings directly in SmPL rules
+Message-Id: <3d4a4864-3b48-94a7-39c3-0f0e3018f9d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+ <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Jul 2018 19:46:45 +0200
 
-Variable is_local is being assigned but is never used hence it is
-redundant and can be removed.
+Format strings were always assigned to the Python variable “msg”
+before they were used in four rules of a script for the semantic
+patch language.
+Delete these extra variables so that the specified string objects
+are directly used for the desired data output.
 
-Cleans up clang warning:
-warning: variable 'is_local' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/vmw_vmci/vmci_queue_pair.c | 5 -----
- 1 file changed, 5 deletions(-)
+ .../coccinelle/api/atomic_as_refcounter.cocci    | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-index b4d7774cfe07..9ee47244a308 100644
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -2214,7 +2214,6 @@ int vmci_qp_broker_map(struct vmci_handle handle,
- {
- 	struct qp_broker_entry *entry;
- 	const u32 context_id = vmci_ctx_get_id(context);
--	bool is_local = false;
- 	int result;
+diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+index 63cbe866c99f..1e2278ff3261 100644
+--- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
++++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+@@ -40,8 +40,9 @@ identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
+ p1 << r1.p1;
+ p2 << r1.p2;
+ @@
+-msg = "atomic_dec_and_test variation before object free at line %s."
+-coccilib.report.print_report(p1[0], msg % (p2[0].line))
++coccilib.report.print_report(p1[0],
++                             "atomic_dec_and_test variation before object free at line %s."
++                             % (p2[0].line))
  
- 	if (vmci_handle_is_invalid(handle) || !context ||
-@@ -2243,7 +2242,6 @@ int vmci_qp_broker_map(struct vmci_handle handle,
- 		goto out;
- 	}
+ @r4 exists@
+ expression a;
+@@ -71,8 +72,9 @@ fname@p2(y, ...);
+ p1 << r4.p1;
+ p2 << r4.p2;
+ @@
+-msg = "atomic_dec_and_test variation before object free at line %s."
+-coccilib.report.print_report(p1[0], msg % (p2[0].line))
++coccilib.report.print_report(p1[0],
++                             "atomic_dec_and_test variation before object free at line %s."
++                             % (p2[0].line))
  
--	is_local = entry->qp.flags & VMCI_QPFLAG_LOCAL;
- 	result = VMCI_SUCCESS;
+ @r2 exists@
+ expression a;
+@@ -85,8 +87,7 @@ position p1;
+ @script:python depends on report@
+ p1 << r2.p1;
+ @@
+-msg = "atomic_add_unless"
+-coccilib.report.print_report(p1[0], msg)
++coccilib.report.print_report(p1[0], "atomic_add_unless")
  
- 	if (context_id != VMCI_HOST_CONTEXT_ID) {
-@@ -2325,7 +2323,6 @@ int vmci_qp_broker_unmap(struct vmci_handle handle,
- {
- 	struct qp_broker_entry *entry;
- 	const u32 context_id = vmci_ctx_get_id(context);
--	bool is_local = false;
- 	int result;
- 
- 	if (vmci_handle_is_invalid(handle) || !context ||
-@@ -2354,8 +2351,6 @@ int vmci_qp_broker_unmap(struct vmci_handle handle,
- 		goto out;
- 	}
- 
--	is_local = entry->qp.flags & VMCI_QPFLAG_LOCAL;
--
- 	if (context_id != VMCI_HOST_CONTEXT_ID) {
- 		qp_acquire_queue_mutex(entry->produce_q);
- 		result = qp_save_headers(entry);
+ @r3 exists@
+ expression E;
+@@ -99,5 +100,4 @@ position p1;
+ @script:python depends on report@
+ p1 << r3.p1;
+ @@
+-msg = "x = atomic_add_return(-1, ...)"
+-coccilib.report.print_report(p1[0], msg)
++coccilib.report.print_report(p1[0], "x = atomic_add_return(-1, ...)")
 -- 
-2.17.1
+2.18.0
 
