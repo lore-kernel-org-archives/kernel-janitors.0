@@ -1,28 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Jul 2018 22:11:46 +0000
-Subject: Re: [PATCH] ipv6: sr: fix useless rol32 call on hash
-Message-Id: <20180719.071146.1992073818180515891.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Jul 2018 07:32:49 +0000
+Subject: [PATCH] misc: ti-st: remove redundant variable 'type'
+Message-Id: <20180703073249.29522-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180717155254.30367-1-colin.king@canonical.com>
-In-Reply-To: <20180717155254.30367-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 17 Jul 2018 16:52:54 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The rol32 call is currently rotating hash but the rol'd value is
-> being discarded. I believe the current code is incorrect and hash
-> should be assigned the rotated value returned from rol32.
-> 
-> Detected by CoverityScan, CID#1468411 ("Useless call")
-> 
-> Fixes: b5facfdba14c ("ipv6: sr: Compute flowlabel for outer IPv6 header of seg6 encap mode")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable type is being assigned but is never used hence it is
+redundant and can be removed.
 
-Applied and queued up for -stable.
+Cleans up clang warning:
+warning: variable 'type' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/ti-st/st_kim.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+index 5ec3f5a43718..28fba5b3625e 100644
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -138,7 +138,7 @@ static void kim_int_recv(struct kim_data_s *kim_gdata,
+ 	const unsigned char *data, long count)
+ {
+ 	const unsigned char *ptr;
+-	int len = 0, type = 0;
++	int len = 0;
+ 	unsigned char *plen;
+ 
+ 	pr_debug("%s", __func__);
+@@ -183,7 +183,6 @@ static void kim_int_recv(struct kim_data_s *kim_gdata,
+ 		case 0x04:
+ 			kim_gdata->rx_state = ST_W4_HEADER;
+ 			kim_gdata->rx_count = 2;
+-			type = *ptr;
+ 			break;
+ 		default:
+ 			pr_info("unknown packet");
+-- 
+2.17.1
+
