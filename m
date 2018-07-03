@@ -1,30 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 31 Jul 2018 18:11:34 +0000
-Subject: [PATCH] iio: light: si1133: fix an && vs || typo
-Message-Id: <20180731181134.rp57ywlshwqm4onu@kili.mountain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Jul 2018 07:40:30 +0000
+Subject: =?UTF-8?Q?[PATCH_3/6]_Coccinelle:_atomic=5fas=5frefcounter:_Use_typ?= =?UTF-8?Q?e_=e2=80=9cexpressio
+Message-Id: <c87de98e-9566-0bac-8264-8bc2a6e06d51@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+ <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, Maxime =?iso-8859-1?Q?Roussin-B=E9langer?= <maxime.roussinbelanger@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Francois Dagenais <jeff.dagenais@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
-The "val" variable can't be both 0 and 1 at the same time so this will
-always return -EINVAL.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Jul 2018 17:55:27 +0200
 
-Fixes: e01e7eaf37d8 ("iio: light: introduce si1133")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The metavariable “a” is enclosed by parentheses in three rules of
+a script for the semantic patch language.
+Replace its type by “expression” so that the corresponding source code
+search becomes more powerful.
 
-diff --git a/drivers/iio/light/si1133.c b/drivers/iio/light/si1133.c
-index d3fbeb3bc463..5ac22c46da1f 100644
---- a/drivers/iio/light/si1133.c
-+++ b/drivers/iio/light/si1133.c
-@@ -838,7 +838,7 @@ static int si1133_write_raw(struct iio_dev *iio_dev,
- 		switch (chan->type) {
- 		case IIO_INTENSITY:
- 		case IIO_UVINDEX:
--			if (val != 0 || val != 1)
-+			if (val != 0 && val != 1)
- 				return -EINVAL;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ scripts/coccinelle/api/atomic_as_refcounter.cocci | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+index 5571eea04c7b..57af2db9463e 100644
+--- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
++++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+@@ -10,7 +10,8 @@
+ virtual report
  
- 			return si1133_update_adcsens(data,
+ @r1 exists@
+-identifier a, x;
++expression a;
++identifier x;
+ position p1, p2;
+ identifier fname =~ "free";
+ identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
+@@ -45,7 +46,8 @@ msg = "atomic_dec_and_test variation before object free at line %s."
+ coccilib.report.print_report(p1[0], msg % (p2[0].line))
+ 
+ @r4 exists@
+-identifier a, x, y;
++expression a;
++identifier x, y;
+ position p1, p2;
+ identifier fname =~ "free";
+ @@
+@@ -77,7 +79,8 @@ msg = "atomic_dec_and_test variation before object free at line %s."
+ coccilib.report.print_report(p1[0], msg % (p2[0].line))
+ 
+ @r2 exists@
+-identifier a, x;
++expression a;
++identifier x;
+ position p1;
+ @@
+ 
+-- 
+2.18.0
+
