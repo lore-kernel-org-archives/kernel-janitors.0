@@ -1,36 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Jul 2018 12:23:09 +0000
-Subject: Re: [PATCH] gnss: fix potential error pointer dereference
-Message-Id: <20180703122309.x6m4hrawpg2tb2bu@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Jul 2018 07:23:05 +0000
+Subject: [PATCH] sgi-xp: remove redundant pointers ch and rp
+Message-Id: <20180703072305.29169-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180703115921.7h35wi73oym3use5@kili.mountain>
- <20180703121143.GP9802@localhost>
-In-Reply-To: <20180703121143.GP9802@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Cliff Whickman <cpw@sgi.com>, Robin Holt <robinmholt@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 02:11:43PM +0200, Johan Hovold wrote:
-> On Tue, Jul 03, 2018 at 02:59:22PM +0300, Dan Carpenter wrote:
-> > The gnss_allocate_device() function returns a mix of NULL and error
-> > pointers on error.  It should only return one or the other.  Since the
-> > callers both check for NULL, I've modified it to return NULL on error.
-> > 
-> > Fixes: 10f146639fee ("gnss: add receiver type support")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Ouch, thanks for catching this!
-> 
-> I think you got the wrong commit for the fixes tag above, however. That
-> should be:
-> 
-> Fixes: 2b6a44035143 ("gnss: add GNSS receiver subsystem")
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Oops.  That's what I intended, yes.  I will resend.
+The pointers ch and rp are set but are never used hence they are
+redundant and can be removed.
 
-regards,
-dan carpenter
+Cleans up clang warnings:
+warning: variable 'ch' set but not used [-Wunused-but-set-variable]
+warning: variable 'rp' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/sgi-xp/xpc_channel.c   | 3 ---
+ drivers/misc/sgi-xp/xpc_partition.c | 3 ---
+ 2 files changed, 6 deletions(-)
+
+diff --git a/drivers/misc/sgi-xp/xpc_channel.c b/drivers/misc/sgi-xp/xpc_channel.c
+index 128d5615c804..05a890ce2ab8 100644
+--- a/drivers/misc/sgi-xp/xpc_channel.c
++++ b/drivers/misc/sgi-xp/xpc_channel.c
+@@ -656,7 +656,6 @@ xpc_initiate_connect(int ch_number)
+ {
+ 	short partid;
+ 	struct xpc_partition *part;
+-	struct xpc_channel *ch;
+ 
+ 	DBUG_ON(ch_number < 0 || ch_number >= XPC_MAX_NCHANNELS);
+ 
+@@ -664,8 +663,6 @@ xpc_initiate_connect(int ch_number)
+ 		part = &xpc_partitions[partid];
+ 
+ 		if (xpc_part_ref(part)) {
+-			ch = &part->channels[ch_number];
+-
+ 			/*
+ 			 * Initiate the establishment of a connection on the
+ 			 * newly registered channel to the remote partition.
+diff --git a/drivers/misc/sgi-xp/xpc_partition.c b/drivers/misc/sgi-xp/xpc_partition.c
+index 7284413dabfd..4e59b01ad7eb 100644
+--- a/drivers/misc/sgi-xp/xpc_partition.c
++++ b/drivers/misc/sgi-xp/xpc_partition.c
+@@ -415,7 +415,6 @@ xpc_discovery(void)
+ 	int region_size;
+ 	int max_regions;
+ 	int nasid;
+-	struct xpc_rsvd_page *rp;
+ 	unsigned long *discovered_nasids;
+ 	enum xp_retval ret;
+ 
+@@ -432,8 +431,6 @@ xpc_discovery(void)
+ 		return;
+ 	}
+ 
+-	rp = (struct xpc_rsvd_page *)xpc_rsvd_page;
+-
+ 	/*
+ 	 * The term 'region' in this context refers to the minimum number of
+ 	 * nodes that can comprise an access protection grouping. The access
+-- 
+2.17.1
 
