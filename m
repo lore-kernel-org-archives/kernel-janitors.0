@@ -1,23 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Jul 2018 11:27:51 +0000
-Subject: Re: [PATCH][next] net: dsa: fix spelling mistake "waitting" -> "waiting"
-Message-Id: <20180705.202751.956484946573054373.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Jul 2018 12:29:21 +0000
+Subject: [PATCH] drm/vgem: off by one in vgem_gem_fault()
+Message-Id: <20180703122921.brlfxl4vx2ybvrd2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180705083004.13735-1-colin.king@canonical.com>
-In-Reply-To: <20180705083004.13735-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Laura Abbott <labbott@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Brian Norris <briannorris@chromium.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Cihangir Akturk <cakturk@gmail.com>, Souptick Joarder <jrdr.linux@gmail.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  5 Jul 2018 09:30:04 +0100
+If page_offset is = num_pages then we end up reading beyond the end of
+obj->pages[].
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err error message.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: af33a9190d02 ("drm/vgem: Enable dmabuf import interfaces")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Not tested
 
-Applied.
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index c64a85950c82..0e5620f76ee0 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -74,7 +74,7 @@ static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
+ 
+ 	num_pages = DIV_ROUND_UP(obj->base.size, PAGE_SIZE);
+ 
+-	if (page_offset > num_pages)
++	if (page_offset >= num_pages)
+ 		return VM_FAULT_SIGBUS;
+ 
+ 	mutex_lock(&obj->pages_lock);
