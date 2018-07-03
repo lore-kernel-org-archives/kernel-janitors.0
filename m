@@ -1,30 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jul 2018 12:29:29 +0000
-Subject: [PATCH] NFS: silence a harmless uninitialized variable warning
-Message-Id: <20180712122929.dshlwi3obipq6vfm@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Jul 2018 07:04:00 +0000
+Subject: [PATCH] eeprom: idt_89hpesx: remove redundant variable csrval_len
+Message-Id: <20180703070400.28165-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-kstrtoul() can return -ERANGE so Smatch complains that "num" can be
-uninitialized.  We check that it's within bounds so it's not a huge
-deal.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Variable csrval_len is being assigned but is never used hence it is
+redundant and can be removed.
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index b5f27d6999e5..d81a33461bee 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2901,7 +2901,7 @@ static int param_set_portnr(const char *val, const struct kernel_param *kp)
- 	if (!val)
- 		return -EINVAL;
- 	ret = kstrtoul(val, 0, &num);
--	if (ret = -EINVAL || num > NFS_CALLBACK_MAXPORTNR)
-+	if (ret || num > NFS_CALLBACK_MAXPORTNR)
- 		return -EINVAL;
- 	*((unsigned int *)kp->arg) = num;
- 	return 0;
+Cleans up clang warning:
+warning: variable 'csrval_len' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/eeprom/idt_89hpesx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
+index 59dc24bb70ec..119eb05a5a91 100644
+--- a/drivers/misc/eeprom/idt_89hpesx.c
++++ b/drivers/misc/eeprom/idt_89hpesx.c
+@@ -938,7 +938,7 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
+ {
+ 	struct idt_89hpesx_dev *pdev = filep->private_data;
+ 	char *colon_ch, *csraddr_str, *csrval_str;
+-	int ret, csraddr_len, csrval_len;
++	int ret, csraddr_len;
+ 	u32 csraddr, csrval;
+ 	char *buf;
+ 
+@@ -974,12 +974,10 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
+ 		csraddr_str[csraddr_len] = '\0';
+ 		/* Register value must follow the colon */
+ 		csrval_str = colon_ch + 1;
+-		csrval_len = strnlen(csrval_str, count - csraddr_len);
+ 	} else /* if (str_colon = NULL) */ {
+ 		csraddr_str = (char *)buf; /* Just to shut warning up */
+ 		csraddr_len = strnlen(csraddr_str, count);
+ 		csrval_str = NULL;
+-		csrval_len = 0;
+ 	}
+ 
+ 	/* Convert CSR address to u32 value */
+-- 
+2.17.1
+
