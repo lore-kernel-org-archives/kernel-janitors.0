@@ -1,34 +1,39 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 11 Jul 2018 13:15:54 +0000
-Subject: [PATCH -next] staging: pi433: fix error return code in pi433_probe()
-Message-Id: <1531314954-179244-1-git-send-email-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Jul 2018 12:30:56 +0000
+Subject: [PATCH] drm/nouveau/gem: off by one bugs in nouveau_gem_pushbuf_reloc_apply()
+Message-Id: <20180703123055.dtuzwjmidba2pnnm@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, minhnpq16@gmail.com, viro@zeniv.linux.org.uk, srishtishar@gmail.com, Valentin.Vidic@CARNet.hr, simon@nikanor.nu, linux@wolf-entwicklungen.de
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Fix to return a negative error code from the kthread_run() error
-handling case instead of 0, as done elsewhere in this function.
+The bo array has req->nr_buffers elements so the > should be >= so we
+don't read beyond the end of the array.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/staging/pi433/pi433_if.c | 1 +
- 1 file changed, 1 insertion(+)
+Fixes: a1606a9596e5 ("drm/nouveau: new gem pushbuf interface, bump to 0.0.16")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index 293602d..d4bfac1 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -1235,6 +1235,7 @@ static int pi433_probe(struct spi_device *spi)
- 					     device->minor);
- 	if (IS_ERR(device->tx_task_struct)) {
- 		dev_dbg(device->dev, "start of send thread failed");
-+		retval = PTR_ERR(device->tx_task_struct);
- 		goto send_thread_failed;
- 	}
+diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
+index 300daee74209..e6ccafcb9c41 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_gem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
+@@ -616,7 +616,7 @@ nouveau_gem_pushbuf_reloc_apply(struct nouveau_cli *cli,
+ 		struct nouveau_bo *nvbo;
+ 		uint32_t data;
  
-
-
-
+-		if (unlikely(r->bo_index > req->nr_buffers)) {
++		if (unlikely(r->bo_index >= req->nr_buffers)) {
+ 			NV_PRINTK(err, cli, "reloc bo index invalid\n");
+ 			ret = -EINVAL;
+ 			break;
+@@ -626,7 +626,7 @@ nouveau_gem_pushbuf_reloc_apply(struct nouveau_cli *cli,
+ 		if (b->presumed.valid)
+ 			continue;
+ 
+-		if (unlikely(r->reloc_bo_index > req->nr_buffers)) {
++		if (unlikely(r->reloc_bo_index >= req->nr_buffers)) {
+ 			NV_PRINTK(err, cli, "reloc container bo index invalid\n");
+ 			ret = -EINVAL;
+ 			break;
