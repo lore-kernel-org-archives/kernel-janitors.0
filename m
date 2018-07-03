@@ -1,64 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Jul 2018 07:37:39 +0000
-Subject: [PATCH 2/6] Coccinelle: atomic_as_refcounter: Optimise a disjunction in the first SmPL rule
-Message-Id: <a487edcd-8d53-be74-2034-3238fa7d4d68@users.sourceforge.net>
+Date: Tue, 03 Jul 2018 07:42:49 +0000
+Subject: [PATCH 4/6] Coccinelle: atomic_as_refcounter: Replace disjunction by a constraint in two SmPL rules
+Message-Id: <fcd2762c-66bb-3571-e2b7-da20eda5d8ea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
  <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Jul 2018 17:14:01 +0200
+Date: Mon, 2 Jul 2018 18:45:15 +0200
 
-The names “fname2” till “fname6” do not care for different function
-parameters in the disjunction at the end of a rule in a script
-for the semantic patch language.
-Thus reduce this disjunction by using a regular expression with
-an alternation for an optimised constraint.
+Three function names were specified for a search of function calls
+by the means of a disjunction in two rules of a script for
+the semantic patch language.
+Use a regular expression as a constraint for this source code search
+pattern instead so that duplication of SmPL code can be avoided.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ .../coccinelle/api/atomic_as_refcounter.cocci | 21 +++++--------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
 
 diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 94373a35744e..5571eea04c7b 100644
+index 57af2db9463e..372ae99591fd 100644
 --- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
 +++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -13,12 +13,7 @@ virtual report
- identifier a, x;
- position p1, p2;
- identifier fname =~ "free";
--identifier fname2 =~ ".*destroy.*";
--identifier fname3 =~ ".*del.*";
--identifier fname4 =~ ".*queue_work.*";
--identifier fname5 =~ ".*schedule_work.*";
--identifier fname6 =~ ".*call_rcu.*";
--
-+identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
+@@ -80,17 +80,11 @@ coccilib.report.print_report(p1[0], msg % (p2[0].line))
+ 
+ @r2 exists@
+ expression a;
+-identifier x;
++identifier F =~ "^atomic(?:64|_long)?_add_unless$", x;
+ position p1;
  @@
  
- (
-@@ -39,14 +34,6 @@ identifier fname6 =~ ".*call_rcu.*";
-  fname@p2(a, ...);
- |
-  fname2@p2(...);
+-(
+-atomic_add_unless(&(a)->x,-1,1)@p1
 -|
-- fname3@p2(...);
+-atomic_long_add_unless(&(a)->x,-1,1)@p1
 -|
-- fname4@p2(...);
--|
-- fname5@p2(...);
--|
-- fname6@p2(...);
- )
+-atomic64_add_unless(&(a)->x,-1,1)@p1
+-)
++ F(&(a)->x, -1, 1)@p1
  
+ @script:python depends on report@
+ p1 << r2.p1;
+@@ -99,17 +93,12 @@ msg = "atomic_add_unless"
+ coccilib.report.print_report(p1[0], msg)
  
+ @r3 exists@
+-identifier x;
++expression E;
++identifier F =~ "^atomic(?:64|_long)?_add_return$";
+ position p1;
+ @@
+ 
+-(
+-x = atomic_add_return@p1(-1, ...);
+-|
+-x = atomic_long_add_return@p1(-1, ...);
+-|
+-x = atomic64_add_return@p1(-1, ...);
+-)
++ E = F@p1(-1, ...);
+ 
+ @script:python depends on report@
+ p1 << r3.p1;
 -- 
 2.18.0
 
