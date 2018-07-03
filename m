@@ -1,34 +1,29 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 11 Jul 2018 13:18:59 +0000
-Subject: [PATCH -next] spi: cadence: Fix missing clk_disable_unprepare() on error in cnds_runtime_resume()
-Message-Id: <1531315139-184922-1-git-send-email-weiyongjun1@huawei.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Tue, 03 Jul 2018 14:32:44 +0000
+Subject: Re: [PATCH] omapfb: encoder-tpd12s015: fix error return code
+Message-Id: <2458818.0lnoAlLxQ2@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20180610145623epcas2p38562cc47b619add45620b677fb036479@epcas2p3.samsung.com>
+ <1528640655-18948-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1528640655-18948-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org
 
-Fix the missing clk_disable_unprepare() before return
-from cnds_runtime_resume() in the error handling case.
+On Sunday, June 10, 2018 04:24:13 PM Julia Lawall wrote:
+> Return an error code on failure.
+> 
+> Problem found using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/spi/spi-cadence.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch queued for 4.19, thanks.
 
-diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
-index a568f35..7c88f74 100644
---- a/drivers/spi/spi-cadence.c
-+++ b/drivers/spi/spi-cadence.c
-@@ -739,7 +739,7 @@ static int __maybe_unused cnds_runtime_resume(struct device *dev)
- 	ret = clk_prepare_enable(xspi->ref_clk);
- 	if (ret) {
- 		dev_err(dev, "Cannot enable device clock.\n");
--		clk_disable(xspi->pclk);
-+		clk_disable_unprepare(xspi->pclk);
- 		return ret;
- 	}
- 	return 0;
-
-
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
