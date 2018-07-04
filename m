@@ -1,22 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 14 Jul 2018 01:29:16 +0000
-Subject: Re: [PATCH net] qlogic: check kstrtoul() for errors
-Message-Id: <20180713.182916.383229511878562881.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Jul 2018 08:35:17 +0000
+Subject: [PATCH -next] mmc: sdhci-msm: Remove redundant dev_err call in sdhci_msm_probe()
+Message-Id: <1530693317-14482-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180712122345.dstjfogysfvfl2iq@kili.mountain>
-In-Reply-To: <20180712122345.dstjfogysfvfl2iq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: harish.patil@cavium.com, himanshu.madhani@qlogic.com, manish.chopra@cavium.com, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jul 2018 15:23:45 +0300
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-> We accidentally left out the error handling for kstrtoul().
-> 
-> Fixes: a520030e326a ("qlcnic: Implement flash sysfs callback for 83xx adapter")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Applied.
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index a0dc3e1..3cc8bfe 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -1764,7 +1764,6 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 				core_memres);
+ 
+ 		if (IS_ERR(msm_host->core_mem)) {
+-			dev_err(&pdev->dev, "Failed to remap registers\n");
+ 			ret = PTR_ERR(msm_host->core_mem);
+ 			goto clk_disable;
+ 		}
+
+
+
