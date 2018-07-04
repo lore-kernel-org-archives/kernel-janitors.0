@@ -1,67 +1,48 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Mon, 30 Jul 2018 06:25:36 +0000
-Subject: Re: [PATCH -next v2] thermal: armada: fix copy-paste error in armada_thermal_probe()
-Message-Id: <63a86b2d-7f57-a3d6-1bad-9b1a998883f0@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 11:20:44 +0000
+Subject: [PATCH] ethernet: micrel: remove redundant pointer 'info'
+Message-Id: <20180704112044.7930-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1532918717-46808-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1532918717-46808-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30/07/2018 04:45, Wei Yongjun wrote:
-> Fix the retrn value check which testing the wrong variable
+From: Colin Ian King <colin.king@canonical.com>
 
-s/retrn/return/
+Pointer 'info' is being assigned but is never used hence it is
+redundant and can be removed.
 
-"which testing" is not correct.
+Cleans up clang warning:
+warning: variable 'info' set but not used [-Wunused-but-set-variable]
 
-I would suggest something like:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/micrel/ksz884x.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
- "The return value from devm_kzalloc() is not checked correctly. The
-test is done against a wrong variable. Fix it."
+diff --git a/drivers/net/ethernet/micrel/ksz884x.c b/drivers/net/ethernet/micrel/ksz884x.c
+index b72d1bd11296..ebbdfb908745 100644
+--- a/drivers/net/ethernet/micrel/ksz884x.c
++++ b/drivers/net/ethernet/micrel/ksz884x.c
+@@ -3373,7 +3373,6 @@ static void port_get_link_speed(struct ksz_port *port)
+  */
+ static void port_set_link_speed(struct ksz_port *port)
+ {
+-	struct ksz_port_info *info;
+ 	struct ksz_hw *hw = port->hw;
+ 	u16 data;
+ 	u16 cfg;
+@@ -3382,8 +3381,6 @@ static void port_set_link_speed(struct ksz_port *port)
+ 	int p;
+ 
+ 	for (i = 0, p = port->first_port; i < port->port_cnt; i++, p++) {
+-		info = &hw->port_info[p];
+-
+ 		port_r16(hw, p, KS884X_PORT_CTRL_4_OFFSET, &data);
+ 		port_r8(hw, p, KS884X_PORT_STATUS_OFFSET, &status);
+ 
+-- 
+2.17.1
 
-
-> in armada_thermal_probe().
->=20
-> Fixes: e72f03ef2543 ("thermal: armada: use the resource managed registrat=
-ion helper alternative")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v1 - > v2: fix typo of patch subject
-> ---
->  drivers/thermal/armada_thermal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_th=
-ermal.c
-> index 8de4ba5..a269482 100644
-> --- a/drivers/thermal/armada_thermal.c
-> +++ b/drivers/thermal/armada_thermal.c
-> @@ -610,7 +610,7 @@ static int armada_thermal_probe(struct platform_devic=
-e *pdev)
->  		return -ENOMEM;
-> =20
->  	drvdata =3D devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!priv)
-> +	if (!drvdata)
->  		return -ENOMEM;
-> =20
->  	priv->dev =3D &pdev->dev;
->=20
-
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
- SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
