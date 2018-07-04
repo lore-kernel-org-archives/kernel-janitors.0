@@ -1,27 +1,48 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 02 Jul 2018 20:17:45 +0000
-Subject: Re: [PATCH] scsi: qedi: tidy up a size caculation
-Message-Id: <yq1efglz91y.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 06:46:09 +0000
+Subject: [PATCH] mtd: nftl: remove redundant variable nb_erases
+Message-Id: <20180704064609.13369-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180628092310.ta2qzatghjtgnzx7@kili.mountain>
-In-Reply-To: <20180628092310.ta2qzatghjtgnzx7@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan,
+Variable nb_erases is being assigned but is never used hence it is
+redundant and can be removed.
 
-> The id_tbl->table pointer points to unsigned long so static checkers
-> complain that instead of 4 we should be allocating sizeof(long) bytes.
->
-> We're trying to allocate enough bits for the bitmap.  The size variable
-> is always 1024.  (1024 / 32 * 4) is the same as (1024 / 64 * 8) so this
-> doesn't change runtime, but this is the more idiomatic way to do it and
-> makes the static checker happy.
+Cleans up clang warning:
+warning: variable 'nb_erases' set but not used [-Wunused-but-set-variable]
 
-Applied to 4.19/scsi-queue, thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/nftlmount.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
+index 27184e3874db..91b7fb326f9a 100644
+--- a/drivers/mtd/nftlmount.c
++++ b/drivers/mtd/nftlmount.c
+@@ -577,7 +577,7 @@ static int get_fold_mark(struct NFTLrecord *nftl, unsigned int block)
+ int NFTL_mount(struct NFTLrecord *s)
+ {
+ 	int i;
+-	unsigned int first_logical_block, logical_block, rep_block, nb_erases, erase_mark;
++	unsigned int first_logical_block, logical_block, rep_block, erase_mark;
+ 	unsigned int block, first_block, is_first_block;
+ 	int chain_length, do_format_chain;
+ 	struct nftl_uci0 h0;
+@@ -621,7 +621,6 @@ int NFTL_mount(struct NFTLrecord *s)
+ 
+ 				logical_block = le16_to_cpu ((h0.VirtUnitNum | h0.SpareVirtUnitNum));
+ 				rep_block = le16_to_cpu ((h0.ReplUnitNum | h0.SpareReplUnitNum));
+-				nb_erases = le32_to_cpu (h1.WearInfo);
+ 				erase_mark = le16_to_cpu ((h1.EraseMark | h1.EraseMark1));
+ 
+ 				is_first_block = !(logical_block >> 15);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
+
