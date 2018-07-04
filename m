@@ -1,27 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 14 Jul 2018 10:49:07 +0000
-Subject: Re: [PATCH -next] pinctrl: nsp: fix potential NULL dereference in nsp_pinmux_probe()
-Message-Id: <CACRpkdaSgwLhwwHEKHJfrWSHcQ+SAZPtkOreP88wtDKuMgTVcg@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Jul 2018 09:30:27 +0000
+Subject: [PATCH -next v3] mtd: spinand: fix missing unlock on error
+Message-Id: <1530696627-84879-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1531312461-134547-1-git-send-email-weiyongjun1@huawei.com>
- <CACRpkdbwAJOaFay3x45gyf7rBpkPOAMbxW6FLQUvCekUKatLYA@mail.gmail.com>
- <14329d52-72bb-3594-dec3-00ab0f7ccd40@broadcom.com>
-In-Reply-To: <14329d52-72bb-3594-dec3-00ab0f7ccd40@broadcom.com>
+References: <1530696061-76467-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1530696061-76467-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David
+ Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Frieder Schrempf <frieder.schrempf@exceet.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 6:53 PM Ray Jui <ray.jui@broadcom.com> wrote:
+Add the missing unlock before return from function
+spinand_mtd_(read|write) in the error handling case.
 
-> > Patch applied with Ray's ACK.
->
-> Would be nice to add the following Fixes tag:
->
-> Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for
-> Broadcom NSP SoC")
+Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI NANDs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v2 -> v3: remove blank line
+v1 -> v2: using break instead of return
+---
+ drivers/mtd/nand/spi/core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-OK fixed it!
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index 17d207a..8998dca 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -561,11 +561,11 @@ static int spinand_mtd_read(struct mtd_info *mtd, loff_t from,
+ 	nanddev_io_for_each_page(nand, from, ops, &iter) {
+ 		ret = spinand_select_target(spinand, iter.req.pos.target);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		ret = spinand_ecc_enable(spinand, enable_ecc);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		ret = spinand_read_page(spinand, &iter.req, enable_ecc);
+ 		if (ret < 0 && ret != -EBADMSG)
+@@ -609,11 +609,11 @@ static int spinand_mtd_write(struct mtd_info *mtd, loff_t to,
+ 	nanddev_io_for_each_page(nand, to, ops, &iter) {
+ 		ret = spinand_select_target(spinand, iter.req.pos.target);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		ret = spinand_ecc_enable(spinand, enable_ecc);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		ret = spinand_write_page(spinand, &iter.req);
+ 		if (ret)
 
-Yours,
-Linus Walleij
