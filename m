@@ -1,69 +1,45 @@
-From: Tomas Henzl <thenzl@redhat.com>
-Date: Wed, 11 Jul 2018 14:50:25 +0000
-Subject: Re: [PATCH][scsi-next] scsi: lpfc: fix null pointer dereference on nvmebuf
-Message-Id: <8d54503c-93c4-4e1c-f6dc-6c41e6a3a80a@redhat.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Date: Wed, 04 Jul 2018 08:28:29 +0000
+Subject: Re: [PATCH -next] mtd: spinand: Fix error return code in spinand_init()
+Message-Id: <20180704102829.6b29c6cb@bbrezillon>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180711134436.21963-1-colin.king@canonical.com>
-In-Reply-To: <20180711134436.21963-1-colin.king@canonical.com>
+References: <1530693298-14271-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1530693298-14271-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Peter Pan <peterpandong@micron.com>, Frieder Schrempf <frieder.schrempf@exceet.de>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07/11/2018 03:44 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check of nvmebuf suggests that it can be null, however a recent
-> change dereferences it to determine oxid before it is null checked,
-> hence there is a potential null deference on the pointer.  Fix this
-> by performing the null check first.  Also remove the oxid from the
-> debug log message as this is no longer valid.  I considered an early
-> fetch of oxid if nvmebuf was valid, however, what oxid should be set
-> to if nvembuf is null could lead to an ambiguous logging of an invalid
-> oxid, so I thought just removing it from the logging was the least
-> confusion solution.
+On Wed, 4 Jul 2018 08:34:58 +0000
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-I think that the 'if (!nvmebuf)' test is not needed and it would be better to remove the
-tests (it is tested for the second time later in the function).
-Tomas
+> Fix to return error code -ENOMEM from the kzalloc() error handling
+> case instead of 0, as done elsewhere in this function.
+> 
+> Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI NANDs")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
->
-> Detected by CoverityScan, CID#1471753 ("Dereference before null check")
->
-> Fixes: 68c9b55deea5 ("scsi: lpfc: Fix abort error path for NVMET")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
 > ---
->  drivers/scsi/lpfc/lpfc_nvmet.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-> index 22f8a204b69f..01652d9ac619 100644
-> --- a/drivers/scsi/lpfc/lpfc_nvmet.c
-> +++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-> @@ -1742,12 +1742,9 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
->  	uint32_t *payload;
->  	uint32_t size, oxid, sid, rc;
+>  drivers/mtd/nand/spi/core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+> index 17d207a..011683e 100644
+> --- a/drivers/mtd/nand/spi/core.c
+> +++ b/drivers/mtd/nand/spi/core.c
+> @@ -985,8 +985,10 @@ static int spinand_init(struct spinand_device *spinand)
+>  	spinand->databuf = kzalloc(nanddev_page_size(nand) +
+>  			       nanddev_per_page_oobsize(nand),
+>  			       GFP_KERNEL);
+> -	if (!spinand->databuf)
+> +	if (!spinand->databuf) {
+> +		ret = -ENOMEM;
+>  		goto err_free_bufs;
+> +	}
 >  
-> -	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
-> -	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
-> -
->  	if (!nvmebuf || !phba->targetport) {
->  		lpfc_printf_log(phba, KERN_ERR, LOG_NVME_IOERR,
-> -				"6154 LS Drop IO x%x\n", oxid);
-> +				"6154 LS Drop IO\n");
->  		oxid = 0;
->  		size = 0;
->  		sid = 0;
-> @@ -1755,6 +1752,9 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
->  		goto dropit;
->  	}
->  
-> +	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
-> +	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
-> +
->  	tgtp = (struct lpfc_nvmet_tgtport *)phba->targetport->private;
->  	payload = (uint32_t *)(nvmebuf->dbuf.virt);
->  	size = bf_get(lpfc_rcqe_length,  &nvmebuf->cq_event.cqe.rcqe_cmpl);
-
+>  	spinand->oobbuf = spinand->databuf + nanddev_page_size(nand);
+> 
 
