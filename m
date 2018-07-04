@@ -1,36 +1,27 @@
-From: Andy Duan <fugang.duan@nxp.com>
-Date: Wed, 04 Jul 2018 07:54:49 +0000
-Subject: RE: [PATCH] net: fec: remove redundant variable 'inc'
-Message-Id: <AM4PR0401MB22603C0B20F4EED3F4318A0DFF410@AM4PR0401MB2260.eurprd04.prod.outlook.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 04 Jul 2018 13:40:43 +0000
+Subject: Re: [PATCH] net: fec: remove redundant variable 'inc'
+Message-Id: <20180704.224043.1235205661791899520.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180704074943.15820-1-colin.king@canonical.com>
 In-Reply-To: <20180704074943.15820-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: colin.king@canonical.com
+Cc: fugang.duan@nxp.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPiBTZW50OiAyMDE45bm0
-N+aciDTml6UgMTU6NTANCj4gVmFyaWFibGUgJ2luYycgaXMgYmVpbmcgYXNzaWduZWQgYnV0IGlz
-IG5ldmVyIHVzZWQgaGVuY2UgaXQgaXMgcmVkdW5kYW50IGFuZA0KPiBjYW4gYmUgcmVtb3ZlZC4N
-Cj4gDQo+IENsZWFucyB1cCBjbGFuZyB3YXJuaW5nOg0KPiB3YXJuaW5nOiB2YXJpYWJsZSAnaW5j
-JyBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlXQ0KPiANCj4gU2ln
-bmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0K
-VGhhbmtzLg0KDQpBY2tlZC1ieTogRnVnYW5nIER1YW4gPGZ1Z2FuZy5kdWFuQG54cC5jb20+DQoN
-Cj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX3B0cC5jIHwgMiAt
-LQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19wdHAuYw0KPiBiL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNfcHRwLmMNCj4gaW5kZXggMzZjMmQ3ZDZlZTFiLi43ZTg5
-MmIxY2JkM2QgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9m
-ZWNfcHRwLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19wdHAu
-Yw0KPiBAQCAtOTksNyArOTksNiBAQCBzdGF0aWMgaW50IGZlY19wdHBfZW5hYmxlX3BwcyhzdHJ1
-Y3QNCj4gZmVjX2VuZXRfcHJpdmF0ZSAqZmVwLCB1aW50IGVuYWJsZSkgIHsNCj4gIAl1bnNpZ25l
-ZCBsb25nIGZsYWdzOw0KPiAgCXUzMiB2YWwsIHRlbXB2YWw7DQo+IC0JaW50IGluYzsNCj4gIAlz
-dHJ1Y3QgdGltZXNwZWM2NCB0czsNCj4gIAl1NjQgbnM7DQo+ICAJdmFsID0gMDsNCj4gQEAgLTEx
-NCw3ICsxMTMsNiBAQCBzdGF0aWMgaW50IGZlY19wdHBfZW5hYmxlX3BwcyhzdHJ1Y3QNCj4gZmVj
-X2VuZXRfcHJpdmF0ZSAqZmVwLCB1aW50IGVuYWJsZSkNCj4gDQo+ICAJZmVwLT5wcHNfY2hhbm5l
-bCA9IERFRkFVTFRfUFBTX0NIQU5ORUw7DQo+ICAJZmVwLT5yZWxvYWRfcGVyaW9kID0gUFBTX09V
-UFVUX1JFTE9BRF9QRVJJT0Q7DQo+IC0JaW5jID0gZmVwLT5wdHBfaW5jOw0KPiANCj4gIAlzcGlu
-X2xvY2tfaXJxc2F2ZSgmZmVwLT50bXJlZ19sb2NrLCBmbGFncyk7DQo+IA0KPiAtLQ0KPiAyLjE3
-LjENCg=
+From: Colin King <colin.king@canonical.com>
+Date: Wed,  4 Jul 2018 08:49:43 +0100
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable 'inc' is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'inc' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied.
