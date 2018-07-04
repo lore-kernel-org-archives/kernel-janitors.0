@@ -1,61 +1,38 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 13 Jul 2018 14:52:24 +0000
-Subject: Re: [PATCH] platform/x86: intel_ips: remove redundant variables slope and offset
-Message-Id: <CAHp75VcHniqfcsSZmZY-qU=Cx8u64u-ixuhvRbV2wFXVeJW4rg@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Jul 2018 09:25:43 +0000
+Subject: [PATCH -next] usb: typec: altmodes: Fix missing unlock on error in dp_altmode_activate()
+Message-Id: <1530696343-79595-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180711080910.4769-1-colin.king@canonical.com>
-In-Reply-To: <20180711080910.4769-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 11:09 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variables slope and offset are being assigned but are never used hence
-> they are redundant and can be removed.
->
+Add the missing unlock before return from function
+dp_altmode_activate() in the error handling case.
 
-Sounds like some half-baked calculus and perhaps would be fixed
-better. Though, no one complained so far and git will keep previous
-version in index anyway.
+Fixes: 0e3bb7d6894d ("usb: typec: Add driver for DisplayPort alternate mode")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/typec/altmodes/displayport.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> Cleans up clang warnings:
-> warning: variable 'slope' set but not used [-Wunused-but-set-variable]
-> warning: variable 'offset' set but not used [-Wunused-but-set-variable]
->
+diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
+index ef12b15..83e3a38 100644
+--- a/drivers/usb/typec/altmodes/displayport.c
++++ b/drivers/usb/typec/altmodes/displayport.c
+@@ -349,8 +349,10 @@ static int dp_altmode_activate(struct typec_altmode *alt, int activate)
+ 	cap = DP_CAP_CAPABILITY(dp->alt->vdo);
+ 
+ 	if ((con = DP_CONF_DFP_D && !(cap & DP_CAP_DFP_D)) ||
+-	    (con = DP_CONF_UFP_D && !(cap & DP_CAP_UFP_D)))
+-		return -EINVAL;
++	    (con = DP_CONF_UFP_D && !(cap & DP_CAP_UFP_D))) {
++		ret = -EINVAL;
++		goto err_unlock;
++	}
+ 
+ 	conf = dp->data.conf & ~DP_CONF_DUAL_D;
+ 	conf |= con;
 
-Pushed to my review and testing queue, thanks!
-
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/platform/x86/intel_ips.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
-> index 014fc1634a3d..c5ece7ef08c6 100644
-> --- a/drivers/platform/x86/intel_ips.c
-> +++ b/drivers/platform/x86/intel_ips.c
-> @@ -858,10 +858,7 @@ static u16 read_mgtv(struct ips_driver *ips)
->
->  static u16 read_ptv(struct ips_driver *ips)
->  {
-> -       u16 val, slope, offset;
-> -
-> -       slope = (ips->pta_val & PTA_SLOPE_MASK) >> PTA_SLOPE_SHIFT;
-> -       offset = ips->pta_val & PTA_OFFSET_MASK;
-> +       u16 val;
->
->         val = thm_readw(THM_PTV) & PTV_MASK;
->
-> --
-> 2.17.1
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
