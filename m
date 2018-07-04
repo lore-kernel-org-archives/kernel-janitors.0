@@ -1,68 +1,103 @@
-From: Daniel Mack <daniel@zonque.org>
-Date: Sat, 21 Jul 2018 09:54:35 +0000
-Subject: Re: [PATCH] nfc: st95hf: remove redundant pointers 'dev' and 'nfcddev'
-Message-Id: <8599f87b-8d71-37bc-cfbf-278a3359cf0b@zonque.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 11:45:53 +0000
+Subject: [PATCH] qlogic: netxen: remove various redundant variables
+Message-Id: <20180704114553.8293-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180720182431.24353-1-colin.king@canonical.com>
-In-Reply-To: <20180720182431.24353-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org
+To: Manish Chopra <manish.chopra@cavium.com>, Rahul Verma <rahul.verma@cavium.com>, Dept-GELinuxNICDev@cavium.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday, July 20, 2018 08:24 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointers 'dev' and 'nfcddev' are being assigned but are never used
-> hence they are redundant and can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'dev' set but not used [-Wunused-but-set-variable]
-> warning: variable 'nfcddev' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-This seems correct.
+Variables consumer, cmd_desc, end_cnt and no_of_desc are being assigned
+but are never used hence they are redundant and can be removed.
 
-I am currently working on a bigger series of patches for this driver 
-that also touches code in the same area. I plan to post the series next 
-week. If this patch is applied until then, I can rebase my changes upon 
-it before sending.
+Cleans up clang warnings:
+warning: variable 'consumer' set but not used [-Wunused-but-set-variable]
+warning: variable 'cmd_desc' set but not used [-Wunused-but-set-variable]
+warning: variable 'end_cnt' set but not used [-Wunused-but-set-variable]
+warning: variable 'no_of_desc' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c   | 10 ++--------
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c |  4 +---
+ 2 files changed, 3 insertions(+), 11 deletions(-)
 
-Thanks,
-Daniel
-
-
-
-
-
-> ---
->   drivers/nfc/st95hf/core.c | 4 ----
->   1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
-> index a50a95cfcfd8..36ef0e905ba3 100644
-> --- a/drivers/nfc/st95hf/core.c
-> +++ b/drivers/nfc/st95hf/core.c
-> @@ -781,9 +781,7 @@ static irqreturn_t st95hf_irq_thread_handler(int irq, void  *st95hfcontext)
->   	int result = 0;
->   	int res_len;
->   	static bool wtx;
-> -	struct device *dev;
->   	struct device *spidevice;
-> -	struct nfc_digital_dev *nfcddev;
->   	struct sk_buff *skb_resp;
->   	struct st95hf_context *stcontext  >   		(struct st95hf_context *)st95hfcontext;
-> @@ -828,8 +826,6 @@ static irqreturn_t st95hf_irq_thread_handler(int irq, void  *st95hfcontext)
->   		goto end;
->   	}
->   
-> -	dev = &stcontext->nfcdev->dev;
-> -	nfcddev = stcontext->ddev;
->   	if (skb_resp->data[2] = WTX_REQ_FROM_TAG) {
->   		/* Request for new FWT from tag */
->   		result = st95hf_handle_wtx(stcontext, true, skb_resp->data[3]);
-> 
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+index 1cd39c9a0345..52ad80621335 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+@@ -566,9 +566,8 @@ static int
+ netxen_send_cmd_descs(struct netxen_adapter *adapter,
+ 		struct cmd_desc_type0 *cmd_desc_arr, int nr_desc)
+ {
+-	u32 i, producer, consumer;
++	u32 i, producer;
+ 	struct netxen_cmd_buffer *pbuf;
+-	struct cmd_desc_type0 *cmd_desc;
+ 	struct nx_host_tx_ring *tx_ring;
+ 
+ 	i = 0;
+@@ -580,7 +579,6 @@ netxen_send_cmd_descs(struct netxen_adapter *adapter,
+ 	__netif_tx_lock_bh(tx_ring->txq);
+ 
+ 	producer = tx_ring->producer;
+-	consumer = tx_ring->sw_consumer;
+ 
+ 	if (nr_desc >= netxen_tx_avail(tx_ring)) {
+ 		netif_tx_stop_queue(tx_ring->txq);
+@@ -595,8 +593,6 @@ netxen_send_cmd_descs(struct netxen_adapter *adapter,
+ 	}
+ 
+ 	do {
+-		cmd_desc = &cmd_desc_arr[i];
+-
+ 		pbuf = &tx_ring->cmd_buf_arr[producer];
+ 		pbuf->skb = NULL;
+ 		pbuf->frag_count = 0;
+@@ -2350,7 +2346,7 @@ static int netxen_md_entry_err_chk(struct netxen_adapter *adapter,
+ static int netxen_parse_md_template(struct netxen_adapter *adapter)
+ {
+ 	int num_of_entries, buff_level, e_cnt, esize;
+-	int end_cnt = 0, rv = 0, sane_start = 0, sane_end = 0;
++	int rv = 0, sane_start = 0, sane_end = 0;
+ 	char *dbuff;
+ 	void *template_buff = adapter->mdump.md_template;
+ 	char *dump_buff = adapter->mdump.md_capture_buff;
+@@ -2386,8 +2382,6 @@ static int netxen_parse_md_template(struct netxen_adapter *adapter)
+ 			break;
+ 		case RDEND:
+ 			entry->hdr.driver_flags |= NX_DUMP_SKIP;
+-			if (!sane_end)
+-				end_cnt = e_cnt;
+ 			sane_end += 1;
+ 			break;
+ 		case CNTRL:
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
+index 8259e8309320..69aa7fc392c5 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
+@@ -2073,7 +2073,7 @@ netxen_nic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
+ 	struct skb_frag_struct *frag;
+ 
+ 	u32 producer;
+-	int frag_count, no_of_desc;
++	int frag_count;
+ 	u32 num_txd = tx_ring->num_desc;
+ 
+ 	frag_count = skb_shinfo(skb)->nr_frags + 1;
+@@ -2093,8 +2093,6 @@ netxen_nic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
+ 
+ 		frag_count = 1 + skb_shinfo(skb)->nr_frags;
+ 	}
+-	/* 4 fragments per cmd des */
+-	no_of_desc = (frag_count + 3) >> 2;
+ 
+ 	if (unlikely(netxen_tx_avail(tx_ring) <= TX_STOP_THRESH)) {
+ 		netif_stop_queue(netdev);
+-- 
+2.17.1
 
