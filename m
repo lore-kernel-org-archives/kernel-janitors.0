@@ -1,39 +1,47 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Mon, 16 Jul 2018 11:26:34 +0000
-Subject: Re: [PATCH] drm/vkms: off by one in vkms_gem_fault()
-Message-Id: <20180716112634.jpxifuvjfzmralsq@smtp.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 07:59:25 +0000
+Subject: [PATCH] net: hns3: remove redundant variable 'protocol'
+Message-Id: <20180704075925.16163-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180714104951.akt34gkcq54d5pvl@kili.mountain>
-In-Reply-To: <20180714104951.akt34gkcq54d5pvl@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your patch. I checked and tested it, everything is fine.
+Variable 'protocol' is being assigned but is never used hence it is
+redundant and can be removed.
 
-On 07/14, Dan Carpenter wrote:
-> The > should be >= so that we don't read one page beyond the end of the
-> obj->pages[] array.
-> 
-> Fixes: 559e50fd34d1 ("drm/vkms: Add dumb operations")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-> index c7e38368602b..2cca8c2f260f 100644
-> --- a/drivers/gpu/drm/vkms/vkms_gem.c
-> +++ b/drivers/gpu/drm/vkms/vkms_gem.c
-> @@ -55,7 +55,7 @@ int vkms_gem_fault(struct vm_fault *vmf)
->  	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
->  	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
->  
-> -	if (page_offset > num_pages)
-> +	if (page_offset >= num_pages)
->  		return VM_FAULT_SIGBUS;
->  
->  	ret = -ENOENT;
+Cleans up clang warning:
+warning: variable 'protocol' set but not used [-Wunused-but-set-variable]
 
-Reviewed-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 7e34d5fff3ae..f73c9dff46ff 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -885,7 +885,6 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
+ 	u16 out_vtag = 0;
+ 	u32 paylen = 0;
+ 	u16 mss = 0;
+-	__be16 protocol;
+ 	u8 ol4_proto;
+ 	u8 il4_proto;
+ 	int ret;
+@@ -914,7 +913,6 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
+ 
+ 		if (skb->ip_summed = CHECKSUM_PARTIAL) {
+ 			skb_reset_mac_len(skb);
+-			protocol = skb->protocol;
+ 
+ 			ret = hns3_get_l4_protocol(skb, &ol4_proto, &il4_proto);
+ 			if (ret)
+-- 
+2.17.1
+
