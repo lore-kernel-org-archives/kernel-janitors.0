@@ -1,80 +1,48 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Date: Tue, 31 Jul 2018 14:01:53 +0000
-Subject: Re: [PATCH][media-next] media: i2c: mt9v111: fix off-by-one array bounds check
-Message-Id: <20180731140153.GE370@w540>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cPi+lWm09sJ+d57q"
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 12:13:01 +0000
+Subject: [PATCH] sfc: remove redundant variable old_vlan
+Message-Id: <20180704121301.8896-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180731133343.22337-1-colin.king@canonical.com>
- <20180731135341.GD370@w540>
- <c2684aa2-71d7-b82e-df18-65ea3f026d97@canonical.com>
-In-Reply-To: <c2684aa2-71d7-b82e-df18-65ea3f026d97@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Solarflare linux maintainers <linux-net-drivers@solarflare.com>, Edward Cree <ecree@solarflare.com>, Bert Kenward <bkenward@solarflare.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---cPi+lWm09sJ+d57q
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Variable old_vlan is being assigned but is never used hence it is
+and can be removed.
 
-Hi Colin,
+Cleans up clang warning:
+warning: variable 'old_vlan' set but not used [-Wunused-but-set-variable]
 
-On Tue, Jul 31, 2018 at 02:55:25PM +0100, Colin Ian King wrote:
-> On 31/07/18 14:53, jacopo mondi wrote:
-> > Hi Colin,
-> >    thanks for the patch.
-> >
-> > On Tue, Jul 31, 2018 at 02:33:43PM +0100, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> The check of fse->index is off-by-one and should be using >= rather
-> >> than > to check the maximum allowed array index. Fix this.
-> >>
-> >> Detected by CoverityScan, CID#172122 ("Out-of-bounds read")
-> >>
-> >> Fixes: aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >
-> > Acked-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >
-> > Thanks
-> >   j
-> >
->
-> Just to note, I also got a build warning on this driver, so that's
-> something that should be fixed up too.
->
-> drivers/media/i2c/mt9v111.c:887:15: warning: 'idx' may be used
-> uninitialized in this function [-Wmaybe-uninitialized]
->   unsigned int idx;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/sfc/ef10_sriov.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yes, that's false positive but indeed gcc doesn't know about that.
+diff --git a/drivers/net/ethernet/sfc/ef10_sriov.c b/drivers/net/ethernet/sfc/ef10_sriov.c
+index 8820be83ce85..3d76fd1504c2 100644
+--- a/drivers/net/ethernet/sfc/ef10_sriov.c
++++ b/drivers/net/ethernet/sfc/ef10_sriov.c
+@@ -564,7 +564,7 @@ int efx_ef10_sriov_set_vf_vlan(struct efx_nic *efx, int vf_i, u16 vlan,
+ {
+ 	struct efx_ef10_nic_data *nic_data = efx->nic_data;
+ 	struct ef10_vf *vf;
+-	u16 old_vlan, new_vlan;
++	u16 new_vlan;
+ 	int rc = 0, rc2 = 0;
+ 
+ 	if (vf_i >= efx->vf_count)
+@@ -619,7 +619,6 @@ int efx_ef10_sriov_set_vf_vlan(struct efx_nic *efx, int vf_i, u16 vlan,
+ 	}
+ 
+ 	/* Do the actual vlan change */
+-	old_vlan = vf->vlan;
+ 	vf->vlan = new_vlan;
+ 
+ 	/* Restore everything in reverse order */
+-- 
+2.17.1
 
-A patch has already been sent and will hopefully be collected soon:
-https://patchwork.linuxtv.org/patch/51259/
-
-Thanks for noticing
-   j
-
---cPi+lWm09sJ+d57q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbYGvRAAoJEHI0Bo8WoVY8rS8QAJOIcceLmLJW2x1mtyw4zFJ4
-sn6jRcKEzBgWjTT2FuLgKXyGXCeDXCy3q0oqLhWjAOd0EwXP6DBEr9AHfDVuCpAj
-ZFQEJ41Whvq63wBDtCOZaJH9a/A3SSp6Jy7uOTYL1xdmZQrwbcS4y+eodhm9aFcE
-2klEOc4wfGanUjwLI4yUVNMQS7J694j4PyA+7gCXU01bh0vtJ6VuAudscTvWIr99
-pn7XY8yYwSWl/6MIWCWTOXpxeq7ujRRcmg6N5VZFNowkD2xGUE1skfEQaunSPMZ9
-U1bDaglzbB7NhXqQB/T3u6BiD/Y/dM2ICC+gDsw6/hpr1z0gEtRqSLqZPefDJC6R
-8BQdneF1uNDZRB7LrBlbn1qbRCBpQ3tKreJXmw6tce9OA3KZcM8lJqzKZhVJey2+
-pA+JGZo/Ukdk3DkbpPGglDcrZgxKBS75H999h0CgMImAy1PsRs8hIwgy/ltr6lgR
-vfheY6q2vKofHioXs3xUHaATeIxdG/gioQtwdnyKQ+Qwh7ImNy46sUgICxoCFHBj
-De5N2AcYqU9NdZQVXQYwzGy8GlRs1UOdcar5gvTbJ+3VEpZxmtG3jMD4TQozeemI
-2lGDLJCCsr7m1IdO0gxXBdf69iDaFBP6RNP/PG+l/Y8iHcb6PdNYJ4Yr9yFqmarU
-FLhsFNiQmeFvwcAQafq8
-=FtHl
------END PGP SIGNATURE-----
-
---cPi+lWm09sJ+d57q--
