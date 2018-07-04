@@ -1,39 +1,31 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 09 Jul 2018 12:03:17 +0000
-Subject: Re: [PATCH] mei: bus: type promotion bug in mei_nfc_if_version()
-Message-Id: <20180709120317.GC5196@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 09:53:37 +0000
+Subject: [PATCH net] ixgbe: Off by one in ixgbe_ipsec_tx()
+Message-Id: <20180704095337.nqiczkkd5r6k755v@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704093449.vryluk7khaudstgp@kili.mountain>
- <20180707153255.GA29925@kroah.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D968DBA@hasmsx108.ger.corp.intel.com>
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D968DBA@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "Usyskin, Alexander" <alexander.usyskin@intel.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Shannon Nelson <shannon.nelson@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 11:36:21AM +0000, Winkler, Tomas wrote:
-> > 
-> > On Wed, Jul 04, 2018 at 12:34:49PM +0300, Dan Carpenter wrote:
-> > > We accidentally removed the check for negative returns without
-> > > considering the issue of type promotion.  The "if_version_length"
-> > > variable is type size_t so if __mei_cl_recv() returns a negative then
-> > > "bytes_recv" is type promoted to a high positive value and treated as
-> > > success.
-> > >
-> > > Fixes: 582ab27a063a ("mei: bus: fix received data size check in NFC
-> > > fixup")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Didn't apply to my tree at all :(
-> 
-> I will rework this, anyhow I would prefer if you can wait for my signoff before applying, 
-> I believe we are reasonably responsive. 
+The ipsec->tx_tbl[] has IXGBE_IPSEC_MAX_SA_COUNT elements so the > needs
+to be changed to >= so we don't read one element beyond the end of the
+array.
 
-Yes you are, but for trusted developers, it's fine to merge their stuff
-as well.  Remember, maintainers are not "gatekeepers" :)
+Fixes: 592594704761 ("ixgbe: process the Tx ipsec offload")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks,
-
-greg k-h
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+index c116f459945d..da4322e4daed 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+@@ -839,7 +839,7 @@ int ixgbe_ipsec_tx(struct ixgbe_ring *tx_ring,
+ 	}
+ 
+ 	itd->sa_idx = xs->xso.offload_handle - IXGBE_IPSEC_BASE_TX_INDEX;
+-	if (unlikely(itd->sa_idx > IXGBE_IPSEC_MAX_SA_COUNT)) {
++	if (unlikely(itd->sa_idx >= IXGBE_IPSEC_MAX_SA_COUNT)) {
+ 		netdev_err(tx_ring->netdev, "%s: bad sa_idx=%d handle=%lu\n",
+ 			   __func__, itd->sa_idx, xs->xso.offload_handle);
+ 		return 0;
