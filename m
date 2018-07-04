@@ -1,60 +1,74 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Mon, 23 Jul 2018 08:12:39 +0000
-Subject: Re: [PATCH] nfc: fdp: remove redundant pointer 'client'
-Message-Id: <cd311a1b46eca9b9238a8071a211a7974154ac31.camel@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 09:58:02 +0000
+Subject: [PATCH] RDMA/bnxt_re: Fix a bunch of off by one bugs in qplib_fp.c
+Message-Id: <20180704095802.wg4wjgdweyy6ofug@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180720181643.21340-1-colin.king@canonical.com>
-In-Reply-To: <20180720181643.21340-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Samuel Ortiz <sameo@linux.intel.com>, Amit Pundir <amit.pundir@linaro.org>, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2018-07-20 at 19:16 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'client' is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'client' set but not used [-Wunused-but-set-
-> variable]
+The srq->swq[] is allocated in bnxt_qplib_create_srq().  It has
+srq->hwq.max_elements elements so these tests should be > instead of >or we might go beyond the end of the array.
 
-Oh, thanks! It seems I had missed this when did a refactoring.
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/nfc/fdp/i2c.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
-> index 70a970c7375c..5d3ea63e405f 100644
-> --- a/drivers/nfc/fdp/i2c.c
-> +++ b/drivers/nfc/fdp/i2c.c
-> @@ -210,7 +210,6 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy
-> *phy, struct sk_buff **skb)
->  static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
->  {
->  	struct fdp_i2c_phy *phy = phy_id;
-> -	struct i2c_client *client;
->  	struct sk_buff *skb;
->  	int r;
->  
-> @@ -219,8 +218,6 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int
-> irq, void *phy_id)
->  		return IRQ_NONE;
->  	}
->  
-> -	client = phy->i2c_dev;
-> -
->  	r = fdp_nci_i2c_read(phy, &skb);
->  
->  	if (r = -EREMOTEIO)
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+index 50d8f1fc98d5..e426b990c1dd 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+@@ -2354,7 +2354,7 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
+ 		srq = qp->srq;
+ 		if (!srq)
+ 			return -EINVAL;
+-		if (wr_id_idx > srq->hwq.max_elements) {
++		if (wr_id_idx >= srq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+ 				"QPLIB: FP: CQ Process RC ");
+ 			dev_err(&cq->hwq.pdev->dev,
+@@ -2369,7 +2369,7 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
+ 		*pcqe = cqe;
+ 	} else {
+ 		rq = &qp->rq;
+-		if (wr_id_idx > rq->hwq.max_elements) {
++		if (wr_id_idx >= rq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+ 				"QPLIB: FP: CQ Process RC ");
+ 			dev_err(&cq->hwq.pdev->dev,
+@@ -2437,7 +2437,7 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
+ 		if (!srq)
+ 			return -EINVAL;
+ 
+-		if (wr_id_idx > srq->hwq.max_elements) {
++		if (wr_id_idx >= srq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+ 				"QPLIB: FP: CQ Process UD ");
+ 			dev_err(&cq->hwq.pdev->dev,
+@@ -2452,7 +2452,7 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
+ 		*pcqe = cqe;
+ 	} else {
+ 		rq = &qp->rq;
+-		if (wr_id_idx > rq->hwq.max_elements) {
++		if (wr_id_idx >= rq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+ 				"QPLIB: FP: CQ Process UD ");
+ 			dev_err(&cq->hwq.pdev->dev,
+@@ -2546,7 +2546,7 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
+ 				"QPLIB: FP: SRQ used but not defined??");
+ 			return -EINVAL;
+ 		}
+-		if (wr_id_idx > srq->hwq.max_elements) {
++		if (wr_id_idx >= srq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+ 				"QPLIB: FP: CQ Process Raw/QP1 ");
+ 			dev_err(&cq->hwq.pdev->dev,
+@@ -2561,7 +2561,7 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
+ 		*pcqe = cqe;
+ 	} else {
+ 		rq = &qp->rq;
+-		if (wr_id_idx > rq->hwq.max_elements) {
++		if (wr_id_idx >= rq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+ 				"QPLIB: FP: CQ Process Raw/QP1 RQ wr_id ");
+ 			dev_err(&cq->hwq.pdev->dev,
