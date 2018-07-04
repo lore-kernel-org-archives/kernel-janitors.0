@@ -1,53 +1,30 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date: Fri, 06 Jul 2018 11:33:58 +0000
-Subject: Re: [PATCH] power: supply: max1721x: fix spelling mistake "RSenese" -> "RSense"
-Message-Id: <20180706113358.va5jyd3u2x7oo5gd@earth.universe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="m7rmygmwc5vxsndp"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 09:48:53 +0000
+Subject: [PATCH] xhci: xhci-mem: off by one in xhci_stream_id_to_ring()
+Message-Id: <20180704094852.nylsfxev557iluak@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180526135606.1153-1-colin.king@canonical.com>
-In-Reply-To: <20180526135606.1153-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mathias Nyman <mathias.nyman@intel.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The > should be >= here so that we don't read one element beyond the end
+of the ep->stream_info->stream_rings[] array.
 
---m7rmygmwc5vxsndp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: e9df17eb1408 ("USB: xhci: Correct assumptions about number of rings per endpoint.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hi,
-
-On Sat, May 26, 2018 at 02:56:06PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in dev_warn message text
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-
-Thanks, queued to power-supply-next.
-
--- Sebastian
-
---m7rmygmwc5vxsndp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/U6YACgkQ2O7X88g7
-+pqwrxAAoWN/p6SXkr4ZE3OIsIfUwWKI3Qv+Llqy7os3bnqXHIzWb2bxZU7NNmzh
-su/7wSJIvnteyBZWr0hNIdvs4naQ/e6dKYuuLvqmYlAtMzerOph5m0YPJCaPfCX7
-L83DLU9kOfVluZvY7pGku91uzmVZSN9OZTkccTp1djFfsrbpdBvZ+28HFr4PWi06
-60uoU/+STBTT2Sy+ywTQ11dQfLHomz0OJOBR4Gby5tcMqd3W2CRE3DamgPyp07+H
-touGpJOGxyI144ZWgZq/HZ/A1fezR6XdGdJ+0aotC19c4wPy2DLFo45s/rH+/fNg
-lVrx52fbrMcsIP6DxSyz7MW7yxkjSQFDfqEYQPodGtkXJdgGZwgtY96x/qb7Aq+9
-gtH1qApASXFi3v8uXq0eyQaJePcQqz2ZzfVmT7tsU51T06XoFURtY5Iv4OAJHefl
-/0WtkcmM2oscC/ttYPkU11DcXy6XlqSzJ5huFZnlW1bhDntAvp2TPEGHr/cKukFP
-odLy4+AKGTKIRN4/HoXpMYbm12TxPMrM8/PRxRZ3L47HkKcMtJu7ccUlNvuLlMyq
-FnaPphYECez9SnwOTeHYhrw45RydSavjL7CVOvNbSiSWfTA+v5+ZeyZx0a/U/GN2
-vqggJG5v9rW7GCkzO5JxD8HlnEoE1noGwOqMgsk9FZtl9AOW+W4=
-=Gi+s
------END PGP SIGNATURE-----
-
---m7rmygmwc5vxsndp--
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 8a62eee9eee1..ef350c33dc4a 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -595,7 +595,7 @@ struct xhci_ring *xhci_stream_id_to_ring(
+ 	if (!ep->stream_info)
+ 		return NULL;
+ 
+-	if (stream_id > ep->stream_info->num_streams)
++	if (stream_id >= ep->stream_info->num_streams)
+ 		return NULL;
+ 	return ep->stream_info->stream_rings[stream_id];
+ }
