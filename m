@@ -1,53 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 17:36:33 +0000
-Subject: [PATCH v2 7/8] Coccinelle: atomic_as_refcounter: Use string literals directly in two SmPL rules
-Message-Id: <a50c134e-fb8a-afb8-c3d5-57ff16cba89a@users.sourceforge.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Jul 2018 09:21:01 +0000
+Subject: [PATCH -next v2] mtd: spinand: fix missing unlock on error
+Message-Id: <1530696061-76467-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
- <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
-In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
+References: <1530692979-6274-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1530692979-6274-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David
+ Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Peter Pan <peterpandong@micron.com>, Frieder Schrempf <frieder.schrempf@exceet.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 18:36:41 +0200
+Add the missing unlock before return from function
+spinand_mtd_(read|write) in the error handling case.
 
-String literals were always assigned to the Python variable “msg”
-before they were used in two rules of a script for the semantic
-patch language.
-Delete these extra variables so that the specified string objects
-are directly used for the desired data output.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI NANDs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+v1 -> v2: using break instead of return
+---
+ drivers/mtd/nand/spi/core.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 7eae23dc9ea8..c9b838941024 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -53,8 +53,7 @@ position p1;
- @script:python depends on report@
- p1 << r2.p1;
- @@
--msg = "atomic_add_unless"
--coccilib.report.print_report(p1[0], msg)
-+coccilib.report.print_report(p1[0], "atomic_add_unless")
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index 17d207a..e072464 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -561,11 +561,12 @@ static int spinand_mtd_read(struct mtd_info *mtd, loff_t from,
+ 	nanddev_io_for_each_page(nand, from, ops, &iter) {
+ 		ret = spinand_select_target(spinand, iter.req.pos.target);
+ 		if (ret)
+-			return ret;
++			break;
  
- @r3 exists@
- expression E;
-@@ -66,5 +65,4 @@ position p1;
- @script:python depends on report@
- p1 << r3.p1;
- @@
--msg = "x = atomic_add_return(-1, ...)"
--coccilib.report.print_report(p1[0], msg)
-+coccilib.report.print_report(p1[0], "x = atomic_add_return(-1, ...)")
--- 
-2.18.0
+ 		ret = spinand_ecc_enable(spinand, enable_ecc);
+ 		if (ret)
+-			return ret;
++			break;
++
+ 
+ 		ret = spinand_read_page(spinand, &iter.req, enable_ecc);
+ 		if (ret < 0 && ret != -EBADMSG)
+@@ -609,11 +610,11 @@ static int spinand_mtd_write(struct mtd_info *mtd, loff_t to,
+ 	nanddev_io_for_each_page(nand, to, ops, &iter) {
+ 		ret = spinand_select_target(spinand, iter.req.pos.target);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		ret = spinand_ecc_enable(spinand, enable_ecc);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		ret = spinand_write_page(spinand, &iter.req);
+ 		if (ret)
 
