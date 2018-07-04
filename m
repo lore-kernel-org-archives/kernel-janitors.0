@@ -1,67 +1,33 @@
-From: "J . Bruce Fields" <bfields@fieldses.org>
-Date: Tue, 17 Jul 2018 10:13:20 +0000
-Subject: Re: [PATCH] nfsd: fix memory leak of async_copy
-Message-Id: <20180717101320.GB30192@fieldses.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 09:34:49 +0000
+Subject: [PATCH] mei: bus: type promotion bug in mei_nfc_if_version()
+Message-Id: <20180704093449.vryluk7khaudstgp@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180716120954.6720-1-colin.king@canonical.com>
- <20180717093005.3ggy24fskb3bxtni@mwanda>
- <d7bb05ee-c69b-bbed-bfb1-a16ce1ca39f2@canonical.com>
-In-Reply-To: <d7bb05ee-c69b-bbed-bfb1-a16ce1ca39f2@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Olga Kornievskaia <aglo@umich.edu>
+To: Tomas Winkler <tomas.winkler@intel.com>, Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Cc'ing Olga.--b.
+We accidentally removed the check for negative returns without
+considering the issue of type promotion.  The "if_version_length"
+variable is type size_t so if __mei_cl_recv() returns a negative then
+"bytes_recv" is type promoted to a high positive value and treated as
+success.
 
-On Tue, Jul 17, 2018 at 10:33:59AM +0100, Colin Ian King wrote:
-> On 17/07/18 10:30, Dan Carpenter wrote:
-> > On Mon, Jul 16, 2018 at 01:09:54PM +0100, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> In the case where async_copy is successfully allocated but
-> >> the call to nfs4_init_cp_state fails, async_copy is not
-> >> currently freed and the memory is leaked. Fix this by kfree'ing
-> >> it before returning.
-> >>
-> >> Detected by CoverityScan, CID#1471823 ("Resource leak")
-> >>
-> >> Fixes: beb1814d5a8a ("NFSD create new stateid for async copy")
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >> ---
-> >>  fs/nfsd/nfs4proc.c | 4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> >> index 8f3368353aaf..3fb96a2708b9 100644
-> >> --- a/fs/nfsd/nfs4proc.c
-> >> +++ b/fs/nfsd/nfs4proc.c
-> >> @@ -1295,8 +1295,10 @@ nfsd4_copy(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
-> >>  		async_copy = kzalloc(sizeof(struct nfsd4_copy), GFP_KERNEL);
-> >>  		if (!async_copy)
-> >>  			goto out;
-> >> -		if (!nfs4_init_cp_state(nn, copy))
-> >> +		if (!nfs4_init_cp_state(nn, copy)) {
-> >> +			kfree(async_copy);
-> >>  			goto out;
-> > 
-> > It really feels like both this and the kzalloc() failure should be doing
-> > an of fput() of copy->file_src and copy->file_dst.  The goto out_err
-> > does an list_del(&copy->copies); but it happens before the
-> > "list_add(&async_copy->copies ..." so that's likely wrong as well.
-> 
-> Good observation, thanks for spotting that. I suspect I'm a bit out of
-> my depth figuring out the exact error handling reaping steps here.
-> Perhaps this is one for the maintainers to figure out a safe cleanup on
-> these error paths.
-> 
-> > 
-> > regards,
-> > dan carpenter
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
+Fixes: 582ab27a063a ("mei: bus: fix received data size check in NFC fixup")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c
+index 0208c4b027c5..fa0236a5e59a 100644
+--- a/drivers/misc/mei/bus-fixup.c
++++ b/drivers/misc/mei/bus-fixup.c
+@@ -267,7 +267,7 @@ static int mei_nfc_if_version(struct mei_cl *cl,
+ 
+ 	ret = 0;
+ 	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length, 0);
+-	if (bytes_recv < if_version_length) {
++	if (bytes_recv < 0 || bytes_recv < if_version_length) {
+ 		dev_err(bus->dev, "Could not read IF version\n");
+ 		ret = -EIO;
+ 		goto err;
