@@ -1,44 +1,31 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 03 Jul 2018 13:06:25 +0000
-Subject: Re: [PATCH] drm/vgem: off by one in vgem_gem_fault()
-Message-Id: <20180703130625.GD3891@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 09:46:15 +0000
+Subject: [PATCH] drm/amd/display: off by one in find_irq_source_info()
+Message-Id: <20180704094615.ctabdm4cxbkdvuap@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180703122921.brlfxl4vx2ybvrd2@kili.mountain>
-In-Reply-To: <20180703122921.brlfxl4vx2ybvrd2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, Brian Norris <briannorris@chromium.org>, kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, Cihangir Akturk <cakturk@gmail.com>, Souptick Joarder <jrdr.linux@gmail.com>
+To: Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>
+Cc: David Airlie <airlied@linux.ie>, Tony Cheng <Tony.Cheng@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On Tue, Jul 03, 2018 at 03:29:21PM +0300, Dan Carpenter wrote:
-> If page_offset is = num_pages then we end up reading beyond the end of
-> obj->pages[].
-> 
-> Fixes: af33a9190d02 ("drm/vgem: Enable dmabuf import interfaces")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static analysis.  Not tested
+The ->info[] array has DAL_IRQ_SOURCES_NUMBER elements so this condition
+should be >= instead of > or we could read one element beyond the end of
+the array.
 
-Applied, thanks.
--Daniel
+Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-> index c64a85950c82..0e5620f76ee0 100644
-> --- a/drivers/gpu/drm/vgem/vgem_drv.c
-> +++ b/drivers/gpu/drm/vgem/vgem_drv.c
-> @@ -74,7 +74,7 @@ static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
->  
->  	num_pages = DIV_ROUND_UP(obj->base.size, PAGE_SIZE);
->  
-> -	if (page_offset > num_pages)
-> +	if (page_offset >= num_pages)
->  		return VM_FAULT_SIGBUS;
->  
->  	mutex_lock(&obj->pages_lock);
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/gpu/drm/amd/display/dc/irq/irq_service.c b/drivers/gpu/drm/amd/display/dc/irq/irq_service.c
+index dcdfa0f01551..604bea01fc13 100644
+--- a/drivers/gpu/drm/amd/display/dc/irq/irq_service.c
++++ b/drivers/gpu/drm/amd/display/dc/irq/irq_service.c
+@@ -78,7 +78,7 @@ const struct irq_source_info *find_irq_source_info(
+ 	struct irq_service *irq_service,
+ 	enum dc_irq_source source)
+ {
+-	if (source > DAL_IRQ_SOURCES_NUMBER || source < DC_IRQ_SOURCE_INVALID)
++	if (source >= DAL_IRQ_SOURCES_NUMBER || source < DC_IRQ_SOURCE_INVALID)
+ 		return NULL;
+ 
+ 	return &irq_service->info[source];
