@@ -1,39 +1,47 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 31 Jul 2018 14:38:52 +0000
-Subject: [PATCH -next] usb: dwc3: pci: Fix return value check in dwc3_byt_enable_ulpi_refclock()
-Message-Id: <1533047932-33559-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 07:49:43 +0000
+Subject: [PATCH] net: fec: remove redundant variable 'inc'
+Message-Id: <20180704074943.15820-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9929ebff-fdba-1da6-3032-b31acd5c3680@redhat.com>
-In-Reply-To: <9929ebff-fdba-1da6-3032-b31acd5c3680@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Fugang Duan <fugang.duan@nxp.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In case of error, the function pcim_iomap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 7740d04d901d ("usb: dwc3: pci: Enable ULPI Refclk on platforms where the firmware does not")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Variable 'inc' is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable 'inc' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/dwc3/dwc3-pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/freescale/fec_ptp.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-index 5edd794..1286076 100644
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -85,8 +85,8 @@ static int dwc3_byt_enable_ulpi_refclock(struct pci_dev *pci)
- 	u32		value;
+diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
+index 36c2d7d6ee1b..7e892b1cbd3d 100644
+--- a/drivers/net/ethernet/freescale/fec_ptp.c
++++ b/drivers/net/ethernet/freescale/fec_ptp.c
+@@ -99,7 +99,6 @@ static int fec_ptp_enable_pps(struct fec_enet_private *fep, uint enable)
+ {
+ 	unsigned long flags;
+ 	u32 val, tempval;
+-	int inc;
+ 	struct timespec64 ts;
+ 	u64 ns;
+ 	val = 0;
+@@ -114,7 +113,6 @@ static int fec_ptp_enable_pps(struct fec_enet_private *fep, uint enable)
  
- 	reg = pcim_iomap(pci, GP_RWBAR, 0);
--	if (IS_ERR(reg))
--		return PTR_ERR(reg);
-+	if (!reg)
-+		return -ENOMEM;
+ 	fep->pps_channel = DEFAULT_PPS_CHANNEL;
+ 	fep->reload_period = PPS_OUPUT_RELOAD_PERIOD;
+-	inc = fep->ptp_inc;
  
- 	value = readl(reg + GP_RWREG1);
- 	if (!(value & GP_RWREG1_ULPI_REFCLK_DISABLE))
+ 	spin_lock_irqsave(&fep->tmreg_lock, flags);
+ 
+-- 
+2.17.1
 
