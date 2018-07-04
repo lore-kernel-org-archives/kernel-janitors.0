@@ -1,53 +1,63 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 01 Jul 2018 17:32:03 +0000
-Subject: [PATCH 1/3] Input: elan_i2c_smbus - cast sizeof to int for comparison
-Message-Id: <1530466325-1678-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 10:00:38 +0000
+Subject: [bug report] mei: revamp client disconnection flow
+Message-Id: <20180704100038.te7zvykomfkttdy2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, joe@perches.com, Chengguang Xu <cgxu519@gmx.com>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Comparing an int to a size, which is unsigned, causes the int to become
-unsigned, giving the wrong result.  i2c_smbus_read_block_data can return the
-result of i2c_smbus_xfer, whih can return a negative error code.
+Hello Tomas Winkler,
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The patch 3c66618295ca: "mei: revamp client disconnection flow" from
+May 4, 2015, leads to the following static checker warning:
 
-// <smpl>
-@@
-int x;
-expression e,e1;
-identifier f;
-@@
+drivers/misc/mei/client.c:869 mei_cl_irq_disconnect() warn: 'slots' possible negative type promoted to high
+drivers/misc/mei/client.c:1062 mei_cl_irq_connect() warn: 'slots' possible negative type promoted to high
+drivers/misc/mei/client.c:1300 mei_cl_irq_notify() warn: 'slots' possible negative type promoted to high
+drivers/misc/mei/interrupt.c:179 mei_cl_irq_disconnect_rsp() warn: 'slots' possible negative type promoted to high
+drivers/misc/mei/interrupt.c:212 mei_cl_irq_read() warn: 'slots' possible negative type promoted to high
 
-*x = f(...);
-... when != x = e1
-    when != if (x < 0 || ...) { ... return ...; }
-*x < sizeof(e)
-// </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+drivers/misc/mei/client.c
+  1048  int mei_cl_irq_connect(struct mei_cl *cl, struct mei_cl_cb *cb,
+  1049                         struct list_head *cmpl_list)
+  1050  {
+  1051          struct mei_device *dev = cl->dev;
+  1052          u32 msg_slots;
+                ^^^^^^^^^^^^^
+  1053          int slots;
+  1054          int rets;
+  1055  
+  1056          msg_slots = mei_data2slots(sizeof(struct hbm_client_connect_request));
+  1057          slots = mei_hbuf_empty_slots(dev);
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+Smatch thinks this can return -EOVERFLOW.  Which is weird.  I didn't
+look at the code.
 
----
- drivers/input/mouse/elan_i2c_smbus.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  1058  
+  1059          if (mei_cl_is_other_connecting(cl))
+  1060                  return 0;
+                        ^^^^^^^^
+It's weird that we return success if mei_hbuf_empty_slots() fails.
 
-diff --git a/drivers/input/mouse/elan_i2c_smbus.c b/drivers/input/mouse/elan_i2c_smbus.c
-index c060d27..88e315d 100644
---- a/drivers/input/mouse/elan_i2c_smbus.c
-+++ b/drivers/input/mouse/elan_i2c_smbus.c
-@@ -387,7 +387,7 @@ static int elan_smbus_prepare_fw_update(struct i2c_client *client)
- 		len = i2c_smbus_read_block_data(client,
- 						ETP_SMBUS_IAP_PASSWORD_READ,
- 						val);
--		if (len < sizeof(u16)) {
-+		if (len < (int)sizeof(u16)) {
- 			error = len < 0 ? len : -EIO;
- 			dev_err(dev, "failed to read iap password: %d\n",
- 				error);
+  1061  
+  1062          if (slots < msg_slots)
 
+It gets type promoted to a high positive value (success).
+
+
+  1063                  return -EMSGSIZE;
+  1064  
+  1065          rets = mei_cl_send_connect(cl, cb);
+  1066          if (rets)
+  1067                  list_move_tail(&cb->list, cmpl_list);
+  1068  
+  1069          return rets;
+  1070  }
+
+The other warnings are the same.
+
+regards,
+dan carpenter
