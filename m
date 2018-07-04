@@ -1,40 +1,47 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 24 Jul 2018 20:57:29 +0000
-Subject: Re: [PATCH -next] IB/ipoib: Fix error return code in ipoib_dev_init()
-Message-Id: <20180724205729.GA18421@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 12:06:26 +0000
+Subject: [PATCH] qed: remove redundant pointer 'name'
+Message-Id: <20180704120626.8701-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1531314942-178931-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1531314942-178931-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 01:15:42PM +0000, Wei Yongjun wrote:
-> Fix to return a negative error code from the ipoib_neigh_hash_init()
-> error handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 515ed4f3aab4 ("IB/IPoIB: Separate control and data related initializations")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-> ---
->  drivers/infiniband/ulp/ipoib/ipoib_main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+Pointer 'name' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-> index 9bcd487..d11adfa 100644
-> --- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-> +++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-> @@ -1791,7 +1791,8 @@ int ipoib_dev_init(struct net_device *dev, struct ib_device *ca, int port)
->  		goto out_free_pd;
->  	}
->  
-> -	if (ipoib_neigh_hash_init(priv) < 0) {
-> +	ret = ipoib_neigh_hash_init(priv);
-> +	if (ret < 0) {
+Cleans up clang warning:
+warning: variable 'name' set but not used [-Wunused-but-set-variable]
 
-However I changed this to the cannonical 'if (ret)' format.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_dcbx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Jason
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+index e0680ce91328..12b4c2ab5796 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+@@ -221,7 +221,6 @@ qed_dcbx_update_app_info(struct qed_dcbx_results *p_data,
+ 	struct qed_hw_info *p_info = &p_hwfn->hw_info;
+ 	enum qed_pci_personality personality;
+ 	enum dcbx_protocol_type id;
+-	char *name;
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(qed_dcbx_app_update); i++) {
+@@ -231,7 +230,6 @@ qed_dcbx_update_app_info(struct qed_dcbx_results *p_data,
+ 			continue;
+ 
+ 		personality = qed_dcbx_app_update[i].personality;
+-		name = qed_dcbx_app_update[i].name;
+ 
+ 		qed_dcbx_set_params(p_data, p_info, enable,
+ 				    prio, tc, type, personality);
+-- 
+2.17.1
+
