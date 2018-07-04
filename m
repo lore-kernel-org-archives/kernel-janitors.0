@@ -1,31 +1,44 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Tue, 17 Jul 2018 13:52:21 +0000
-Subject: Re: [PATCH] HID: intel-ish-hid: remove redundant variable num_frags
-Message-Id: <nycvar.YFH.7.76.1807171552150.997@cbobk.fhfr.pm>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 09:35:56 +0000
+Subject: [PATCH] eCryptfs: fix a couple type promotion bugs
+Message-Id: <20180704093556.dlosbefurp2o42zs@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180702094028.15428-1-colin.king@canonical.com>
-In-Reply-To: <20180702094028.15428-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 2 Jul 2018, Colin King wrote:
+ECRYPTFS_SIZE_AND_MARKER_BYTES is type size_t, so if "rc" is negative
+that gets type promoted to a high positive value and treated as success.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable num_frags is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'num_frags' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 778aeb42a708 ("eCryptfs: Cleanup and optimize ecryptfs_lookup_interpose()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
-
+diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+index 4dd842f72846..506f2a0bba41 100644
+--- a/fs/ecryptfs/crypto.c
++++ b/fs/ecryptfs/crypto.c
+@@ -1018,8 +1018,10 @@ int ecryptfs_read_and_validate_header_region(struct inode *inode)
+ 
+ 	rc = ecryptfs_read_lower(file_size, 0, ECRYPTFS_SIZE_AND_MARKER_BYTES,
+ 				 inode);
++	if (rc < 0)
++		return rc;
+ 	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
+-		return rc >= 0 ? -EINVAL : rc;
++		return -EINVAL;
+ 	rc = ecryptfs_validate_marker(marker);
+ 	if (!rc)
+ 		ecryptfs_i_size_init(file_size, inode);
+@@ -1381,8 +1383,10 @@ int ecryptfs_read_and_validate_xattr_region(struct dentry *dentry,
+ 				     ecryptfs_inode_to_lower(inode),
+ 				     ECRYPTFS_XATTR_NAME, file_size,
+ 				     ECRYPTFS_SIZE_AND_MARKER_BYTES);
++	if (rc < 0)
++		return rc;
+ 	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
+-		return rc >= 0 ? -EINVAL : rc;
++		return -EINVAL;
+ 	rc = ecryptfs_validate_marker(marker);
+ 	if (!rc)
+ 		ecryptfs_i_size_init(file_size, inode);
