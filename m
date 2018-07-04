@@ -1,40 +1,48 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Tue, 05 Jun 2018 10:06:59 +0000
-Subject: Re: [PATCH] staging: comedi: quatech_daqp_cs: fix no-op loop daqp_ao_insn_write()
-Message-Id: <b17dd99c-2b0f-4fc3-9d82-69367d0e0574@mev.co.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 08:06:27 +0000
+Subject: [PATCH] net: hinic: remove redundant pointer pfhwdev
+Message-Id: <20180704080627.16393-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Aviad Krawczyk <aviad.krawczyk@huawei.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/06/18 10:36, Dan Carpenter wrote:
-> There is a '>' vs '<' typo so this loop is a no-op.
-> 
-> Fixes: d35dcc89fc93 ("staging: comedi: quatech_daqp_cs: fix daqp_ao_insn_write()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/comedi/drivers/quatech_daqp_cs.c b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-> index ea194aa01a64..257b0daff01f 100644
-> --- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-> +++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-> @@ -642,7 +642,7 @@ static int daqp_ao_insn_write(struct comedi_device *dev,
->   	/* Make sure D/A update mode is direct update */
->   	outb(0, dev->iobase + DAQP_AUX_REG);
->   
-> -	for (i = 0; i > insn->n; i++) {
-> +	for (i = 0; i < insn->n; i++) {
->   		unsigned int val = data[i];
->   		int ret;
->   
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for catching that bug!
+Pointer pfhwdev is being assigned but is never used hence it is
+redundant and can be removed.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Cleans up clang warning:
+warning: variable 'pfhwdev' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
+index 79b567447084..6b19607a4caa 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
+@@ -264,7 +264,6 @@ static int init_fw_ctxt(struct hinic_hwdev *hwdev)
+ 	struct hinic_hwif *hwif = hwdev->hwif;
+ 	struct pci_dev *pdev = hwif->pdev;
+ 	struct hinic_cmd_fw_ctxt fw_ctxt;
+-	struct hinic_pfhwdev *pfhwdev;
+ 	u16 out_size;
+ 	int err;
+ 
+@@ -276,8 +275,6 @@ static int init_fw_ctxt(struct hinic_hwdev *hwdev)
+ 	fw_ctxt.func_idx = HINIC_HWIF_FUNC_IDX(hwif);
+ 	fw_ctxt.rx_buf_sz = HINIC_RX_BUF_SZ;
+ 
+-	pfhwdev = container_of(hwdev, struct hinic_pfhwdev, hwdev);
+-
+ 	err = hinic_port_msg_cmd(hwdev, HINIC_PORT_CMD_FWCTXT_INIT,
+ 				 &fw_ctxt, sizeof(fw_ctxt),
+ 				 &fw_ctxt, &out_size);
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+2.17.1
+
