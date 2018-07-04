@@ -1,33 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 12 Jul 2018 05:54:50 +0000
-Subject: Re: [PATCH] wimax/i2400m: remove redundant variables ack_status, bcf and protocol
-Message-Id: <20180711.225450.1331664103278085758.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jul 2018 09:48:10 +0000
+Subject: [PATCH] drm/savage: off by one in savage_bci_cmdbuf()
+Message-Id: <20180704094810.whrgn6jxe7uibnfv@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180709122313.14483-1-colin.king@canonical.com>
-In-Reply-To: <20180709122313.14483-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: inaky.perez-gonzalez@intel.com, linux-wimax@intel.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon,  9 Jul 2018 13:23:13 +0100
+The > should be >= here so that we don't read beyond the end of the
+dma->buflist[] array.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables ack_status, bcf and protocol are being assigned but are
-> never used hence they are redundant and can be removed.
-> 
-> Also declare ack_type as unsigned int rather than unsigned to clean
-> up a checkpatch warning.
-> 
-> Cleans up clang warnings:
-> warning: variable 'ack_status' set but not used [-Wunused-but-set-variable]
-> warning: variable 'bcf' set but not used [-Wunused-but-set-variable]
-> warning: variable 'protocol' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This is simple enough that I'll just apply this directly, thanks
-Colin.
+diff --git a/drivers/gpu/drm/savage/savage_state.c b/drivers/gpu/drm/savage/savage_state.c
+index 2db89bed52e8..7559a820bd43 100644
+--- a/drivers/gpu/drm/savage/savage_state.c
++++ b/drivers/gpu/drm/savage/savage_state.c
+@@ -971,7 +971,7 @@ int savage_bci_cmdbuf(struct drm_device *dev, void *data, struct drm_file *file_
+ 	LOCK_TEST_WITH_RETURN(dev, file_priv);
+ 
+ 	if (dma && dma->buflist) {
+-		if (cmdbuf->dma_idx > dma->buf_count) {
++		if (cmdbuf->dma_idx >= dma->buf_count) {
+ 			DRM_ERROR
+ 			    ("vertex buffer index %u out of range (0-%u)\n",
+ 			     cmdbuf->dma_idx, dma->buf_count - 1);
