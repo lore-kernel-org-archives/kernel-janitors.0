@@ -1,34 +1,60 @@
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Date: Thu, 19 Jul 2018 09:25:17 +0000
-Subject: Re: [PATCH] drm/xen-front: Fix error code in xen_drm_front_gem_get_sg_table()
-Message-Id: <950fe063-3016-9e90-98a6-bfd26d25bbba@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 07:01:35 +0000
+Subject: [PATCH] net: alteon: acenic: remove redundant pointer rxdesc
+Message-Id: <20180704070135.13938-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180719081133.k7asay4fl2qhhpjf@mwanda>
- <b8154096-3a43-cca1-316e-4d60d69ee9ab@gmail.com>
- <20180719092010.5uhakswjb76gpfr7@mwanda>
-In-Reply-To: <20180719092010.5uhakswjb76gpfr7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org
+To: Jes Sorensen <jes@trained-monkey.org>, "David S . Miller" <davem@davemloft.net>, linux-acenic@sunsite.dk, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/19/2018 12:20 PM, Dan Carpenter wrote:
-> On Thu, Jul 19, 2018 at 12:06:38PM +0300, Oleksandr Andrushchenko wrote:
->> Hi, Dan!
->>
->> Thank you for the patch and sorry I was clumsy sending v3.
->>
->> Do you want me to send v3 now with the fixes for both Xen and CMA?
->>
->> Thank you,
-> Sorry, I forgot that you had sent these earlier.  After a while these
-> things all look the same.  I once accidentally wrote and sent the same
-> patch three times without realizing.
-np
-> Yeah.  Please resend a v3.
-sure
-> regards,
-> dan carpenter
->
+From: Colin Ian King <colin.king@canonical.com>
+
+Pointer rxdesc is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable 'rxdesc' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/alteon/acenic.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/alteon/acenic.c b/drivers/net/ethernet/alteon/acenic.c
+index 8f71b79b4949..08945baee48a 100644
+--- a/drivers/net/ethernet/alteon/acenic.c
++++ b/drivers/net/ethernet/alteon/acenic.c
+@@ -1933,7 +1933,7 @@ static void ace_rx_int(struct net_device *dev, u32 rxretprd, u32 rxretcsm)
+ 	while (idx != rxretprd) {
+ 		struct ring_info *rip;
+ 		struct sk_buff *skb;
+-		struct rx_desc *rxdesc, *retdesc;
++		struct rx_desc *retdesc;
+ 		u32 skbidx;
+ 		int bd_flags, desc_type, mapsize;
+ 		u16 csum;
+@@ -1959,19 +1959,16 @@ static void ace_rx_int(struct net_device *dev, u32 rxretprd, u32 rxretcsm)
+ 		case 0:
+ 			rip = &ap->skb->rx_std_skbuff[skbidx];
+ 			mapsize = ACE_STD_BUFSIZE;
+-			rxdesc = &ap->rx_std_ring[skbidx];
+ 			std_count++;
+ 			break;
+ 		case BD_FLG_JUMBO:
+ 			rip = &ap->skb->rx_jumbo_skbuff[skbidx];
+ 			mapsize = ACE_JUMBO_BUFSIZE;
+-			rxdesc = &ap->rx_jumbo_ring[skbidx];
+ 			atomic_dec(&ap->cur_jumbo_bufs);
+ 			break;
+ 		case BD_FLG_MINI:
+ 			rip = &ap->skb->rx_mini_skbuff[skbidx];
+ 			mapsize = ACE_MINI_BUFSIZE;
+-			rxdesc = &ap->rx_mini_ring[skbidx];
+ 			mini_count++;
+ 			break;
+ 		default:
+-- 
+2.17.1
 
