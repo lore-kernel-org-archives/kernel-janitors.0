@@ -1,41 +1,47 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Fri, 13 Jul 2018 15:42:47 +0000
-Subject: Re: [PATCH] ASoC: qdsp6: q6routing: off by one in routing_hw_params()
-Message-Id: <24d37072-bd4f-677f-5216-cca9d040f98a@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Jul 2018 07:15:30 +0000
+Subject: [PATCH] net: alx: remove redundant variable old_duplex
+Message-Id: <20180704071530.14431-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180713151100.x5usbqhlhrzjmeoq@kili.mountain>
-In-Reply-To: <20180713151100.x5usbqhlhrzjmeoq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Patrick Lai <plai@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, "David S . Miller" <davem@davemloft.net>, Sabrina Dubroca <sd@queasysnail.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Variable old_duplex is being assigned but is never used hence it is
+redundant and can be removed.
 
-On 13/07/18 16:11, Dan Carpenter wrote:
-> The data->port_data[] array has AFE_MAX_PORTS elements so the check
-> should be >= instead of > or we write one element beyond the end of the
-> array.
-> 
-> Fixes: e3a33673e845 ("ASoC: qdsp6: q6routing: Add q6routing driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Thanks for the fix,
+Cleans up clang warning:
+warning: variable 'old_duplex' set but not used [-Wunused-but-set-variable]
 
-Acked-by: Srinivas Kandgatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/atheros/alx/main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> 
-> diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
-> index 35269b492761..0e7cf9e35d51 100644
-> --- a/sound/soc/qcom/qdsp6/q6routing.c
-> +++ b/sound/soc/qcom/qdsp6/q6routing.c
-> @@ -927,7 +927,7 @@ static int routing_hw_params(struct snd_pcm_substream *substream,
->   	else
->   		path_type = ADM_PATH_LIVE_REC;
->   
-> -	if (be_id > AFE_MAX_PORTS)
-> +	if (be_id >= AFE_MAX_PORTS)
->   		return -EINVAL;
->   
->   	session = &data->port_data[be_id];
-> 
+diff --git a/drivers/net/ethernet/atheros/alx/main.c b/drivers/net/ethernet/atheros/alx/main.c
+index 5e5022fa1d04..6d3221134927 100644
+--- a/drivers/net/ethernet/atheros/alx/main.c
++++ b/drivers/net/ethernet/atheros/alx/main.c
+@@ -1279,7 +1279,6 @@ static void alx_check_link(struct alx_priv *alx)
+ 	struct alx_hw *hw = &alx->hw;
+ 	unsigned long flags;
+ 	int old_speed;
+-	u8 old_duplex;
+ 	int err;
+ 
+ 	/* clear PHY internal interrupt status, otherwise the main
+@@ -1288,7 +1287,6 @@ static void alx_check_link(struct alx_priv *alx)
+ 	alx_clear_phy_intr(hw);
+ 
+ 	old_speed = hw->link_speed;
+-	old_duplex = hw->duplex;
+ 	err = alx_read_phy_link(hw);
+ 	if (err < 0)
+ 		goto reset;
+-- 
+2.17.1
+
