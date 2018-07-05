@@ -1,29 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Jul 2018 09:48:35 +0000
-Subject: [PATCH] media: dvb_ca_en50221: off by one in dvb_ca_en50221_io_do_ioctl()
-Message-Id: <20180704094835.vzfqt44sqaga6aia@kili.mountain>
+From: "Jasmin J." <jasmin@anw.at>
+Date: Thu, 05 Jul 2018 07:32:28 +0000
+Subject: Re: [PATCH] media: dvb_ca_en50221: off by one in dvb_ca_en50221_io_do_ioctl()
+Message-Id: <6dda6fb1-fdce-df86-b0f9-a6c4bc522a2d@anw.at>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180704094835.vzfqt44sqaga6aia@kili.mountain>
+In-Reply-To: <20180704094835.vzfqt44sqaga6aia@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Jasmin Jessich <jasmin@anw.at>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The > should be >= so we don't read one element beyond the end of the
-ca->slot_info[] array.  The array is allocated in dvb_ca_en50221_init().
+Hello Dan!
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I checked this and this is in since ages. Good catch!
 
-diff --git a/drivers/media/dvb-core/dvb_ca_en50221.c b/drivers/media/dvb-core/dvb_ca_en50221.c
-index 1310526b0d49..4d371cea0d5d 100644
---- a/drivers/media/dvb-core/dvb_ca_en50221.c
-+++ b/drivers/media/dvb-core/dvb_ca_en50221.c
-@@ -1391,7 +1391,7 @@ static int dvb_ca_en50221_io_do_ioctl(struct file *file,
- 		struct dvb_ca_slot *sl;
- 
- 		slot = info->num;
--		if ((slot > ca->slot_count) || (slot < 0)) {
-+		if ((slot >= ca->slot_count) || (slot < 0)) {
- 			err = -EINVAL;
- 			goto out_unlock;
- 		}
+I did a quick look to the other places where this is checked also
+and they seem all ok.
+
+Acked-by: Jasmin Jessich <jasmin@anw.at>
+
+BR,
+   Jasmin
