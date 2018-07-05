@@ -1,26 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Jul 2018 10:30:57 +0000
-Subject: Re: [PATCH net-next] net: aquantia: Make some functions static
-Message-Id: <20180705.193057.524474932003989041.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Jul 2018 08:30:04 +0000
+Subject: [PATCH][next] net: dsa: fix spelling mistake "waitting" -> "waiting"
+Message-Id: <20180705083004.13735-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530781210-54589-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1530781210-54589-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: igor.russkikh@aquantia.com, pavel.belous@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 5 Jul 2018 09:00:10 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes the following sparse warnings:
-> 
-> drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:525:5: warning:
->  symbol 'hw_atl_utils_mpi_set_speed' was not declared. Should it be static?
-> drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:536:5: warning:
->  symbol 'hw_atl_utils_mpi_set_state' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Trivial fix to spelling mistake in dev_err error message.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/vitesse-vsc73xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/dsa/vitesse-vsc73xx.c b/drivers/net/dsa/vitesse-vsc73xx.c
+index a4fc260006de..3bbd86084119 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx.c
++++ b/drivers/net/dsa/vitesse-vsc73xx.c
+@@ -930,7 +930,7 @@ static void vsc73xx_adjust_link(struct dsa_switch *ds, int port,
+ 				     VSC73XX_ARBEMPTY, &val);
+ 			if (--maxloop = 0) {
+ 				dev_err(vsc->dev,
+-					"timeout waitting for block arbiter\n");
++					"timeout waiting for block arbiter\n");
+ 				/* Continue anyway */
+ 				break;
+ 			}
+-- 
+2.17.1
+
