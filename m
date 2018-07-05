@@ -1,27 +1,56 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Wed, 04 Jul 2018 13:43:14 +0000
-Subject: Re: [PATCH] USB: serial: ch341: type promotion bug in ch341_control_in()
-Message-Id: <20180704134314.GS9802@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Jul 2018 10:05:32 +0000
+Subject: [PATCH] fjes: use currently unused variable my_epid and max_epid
+Message-Id: <20180705100532.22277-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704092938.g3woukcm5ir6zr7e@kili.mountain>
-In-Reply-To: <20180704092938.g3woukcm5ir6zr7e@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 12:29:38PM +0300, Dan Carpenter wrote:
-> The "r" variable is an int and "bufsize" is an unsigned int so the
-> comparison is type promoted to unsigned.  If usb_control_msg() returns a
-> negative that is treated as a high positive value and the error handling
-> doesn't work.
-> 
-> Fixes: 2d5a9c72d0c4 ("USB: serial: ch341: fix control-message error handling")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for catching this.
+Variables my_epid and max_epid are currently assigned and not being
+used - however, I suspect they were intended to be used in the for-loops
+to reduce the dereferencing of hw.  Replace hw->my_epid and hw->max_epid
+with these variables.
 
-Now applied with a stable tag as this could have security implications.
+Cleans up clang warnings:
+warning: variable 'my_epid' set but not used [-Wunused-but-set-variable]
+variable 'max_epid' set but not used [-Wunused-but-set-variable]
 
-Johan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/fjes/fjes_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/fjes/fjes_main.c b/drivers/net/fjes/fjes_main.c
+index 750954be5a74..d3eae1239045 100644
+--- a/drivers/net/fjes/fjes_main.c
++++ b/drivers/net/fjes/fjes_main.c
+@@ -1395,8 +1395,8 @@ static void fjes_watch_unshare_task(struct work_struct *work)
+ 
+ 	while ((unshare_watch_bitmask || hw->txrx_stop_req_bit) &&
+ 	       (wait_time < 3000)) {
+-		for (epidx = 0; epidx < hw->max_epid; epidx++) {
+-			if (epidx = hw->my_epid)
++		for (epidx = 0; epidx < max_epid; epidx++) {
++			if (epidx = my_epid)
+ 				continue;
+ 
+ 			is_shared = fjes_hw_epid_is_shared(hw->hw_info.share,
+@@ -1453,8 +1453,8 @@ static void fjes_watch_unshare_task(struct work_struct *work)
+ 	}
+ 
+ 	if (hw->hw_info.buffer_unshare_reserve_bit) {
+-		for (epidx = 0; epidx < hw->max_epid; epidx++) {
+-			if (epidx = hw->my_epid)
++		for (epidx = 0; epidx < max_epid; epidx++) {
++			if (epidx = my_epid)
+ 				continue;
+ 
+ 			if (test_bit(epidx,
+-- 
+2.17.1
+
