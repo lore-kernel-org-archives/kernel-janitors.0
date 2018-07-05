@@ -1,59 +1,38 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 04 Jul 2018 09:30:27 +0000
-Subject: [PATCH -next v3] mtd: spinand: fix missing unlock on error
-Message-Id: <1530696627-84879-1-git-send-email-weiyongjun1@huawei.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Date: Thu, 05 Jul 2018 06:59:36 +0000
+Subject: Re: [PATCH -next v3] mtd: spinand: fix missing unlock on error
+Message-Id: <20180705085936.38f6c374@xps13>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1530696061-76467-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1530696061-76467-1-git-send-email-weiyongjun1@huawei.com>
+ <1530696627-84879-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1530696627-84879-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David
- Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Frieder Schrempf <frieder.schrempf@exceet.de>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add the missing unlock before return from function
-spinand_mtd_(read|write) in the error handling case.
+Hi Wei,
 
-Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI NANDs")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v2 -> v3: remove blank line
-v1 -> v2: using break instead of return
----
- drivers/mtd/nand/spi/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Wei Yongjun <weiyongjun1@huawei.com> wrote on Wed, 4 Jul 2018 09:30:27
++0000:
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index 17d207a..8998dca 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -561,11 +561,11 @@ static int spinand_mtd_read(struct mtd_info *mtd, loff_t from,
- 	nanddev_io_for_each_page(nand, from, ops, &iter) {
- 		ret = spinand_select_target(spinand, iter.req.pos.target);
- 		if (ret)
--			return ret;
-+			break;
- 
- 		ret = spinand_ecc_enable(spinand, enable_ecc);
- 		if (ret)
--			return ret;
-+			break;
- 
- 		ret = spinand_read_page(spinand, &iter.req, enable_ecc);
- 		if (ret < 0 && ret != -EBADMSG)
-@@ -609,11 +609,11 @@ static int spinand_mtd_write(struct mtd_info *mtd, loff_t to,
- 	nanddev_io_for_each_page(nand, to, ops, &iter) {
- 		ret = spinand_select_target(spinand, iter.req.pos.target);
- 		if (ret)
--			return ret;
-+			break;
- 
- 		ret = spinand_ecc_enable(spinand, enable_ecc);
- 		if (ret)
--			return ret;
-+			break;
- 
- 		ret = spinand_write_page(spinand, &iter.req);
- 		if (ret)
+> Add the missing unlock before return from function
+> spinand_mtd_(read|write) in the error handling case.
+>=20
+> Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI N=
+ANDs")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
+Thanks for the two fixes over the spinand work. As this code is not
+yet upstream, do you mind if I fold those fixes directly with the
+initial patch?
+
+Thanks,
+Miqu=C3=A8l
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
