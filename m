@@ -1,38 +1,32 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Sun, 01 Jul 2018 18:14:26 +0000
-Subject: Re: [PATCH][next] mtd: rawnand: fix a couple of spelling mistakes
-Message-Id: <20180701201426.33d5bd90@xps13>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Jul 2018 09:45:39 +0000
+Subject: [PATCH] PCI: mobiveil: integer overflow in IB_WIN_SIZE
+Message-Id: <20180705094539.xkmtfffbzl3kooum@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180626102629.31083-1-colin.king@canonical.com>
- <93be5d64cc447fb282bcc14fed853f0c@agner.ch>
-In-Reply-To: <93be5d64cc447fb282bcc14fed853f0c@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+IB_WIN_SIZE is larger than INT_MAX so we need to cast it to u64.
 
-> On 26.06.2018 12:26, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >=20
-> > Trival fix of two spelling mistakes in dev_err error messages:
-> > "supportes" -> "supports" and "strenght" -> "strength" =20
->=20
-> Acked-by: Stefan Agner <stefan@agner.ch>
->=20
-> >=20
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
+Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Untested...  Possibly the problem is that there are too many multiplies
+by * 1024.
 
-Thanks for fixing this, I squashed this change with the patch adding
-the driver itself.
-
-Thanks,
-Miqu=C3=A8l
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+index 4d6c20e47bed..cf0aa7cee5b0 100644
+--- a/drivers/pci/controller/pcie-mobiveil.c
++++ b/drivers/pci/controller/pcie-mobiveil.c
+@@ -107,7 +107,7 @@
+ #define CFG_WINDOW_TYPE	0
+ #define IO_WINDOW_TYPE		1
+ #define MEM_WINDOW_TYPE	2
+-#define IB_WIN_SIZE		(256 * 1024 * 1024 * 1024)
++#define IB_WIN_SIZE		((u64)256 * 1024 * 1024 * 1024)
+ #define MAX_PIO_WINDOWS	8
+ 
+ /* Parameters for the waiting for link up routine */
