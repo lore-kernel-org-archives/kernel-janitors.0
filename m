@@ -1,56 +1,61 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Thu, 12 Jul 2018 07:34:09 +0000
-Subject: Re: [PATCH -next] drm/sun4i: DW HDMI: Make symbol sun8i_dw_hdmi_pltfm_driver static
-Message-Id: <20180712073409.onkrxth7niearorq@flea>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="r3ewoxaupisvl7zi"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Jul 2018 13:36:47 +0000
+Subject: [PATCH][V2] usb: typec: unlock dp->lock on error exit path, and also zero ret if successful
+Message-Id: <20180705133647.13016-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1531315367-190647-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1531315367-190647-1-git-send-email-weiyongjun1@huawei.com>
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---r3ewoxaupisvl7zi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+One of the error handling paths forgets to unlock dp->lock on the error
+exit path leading to a potential lock-up.  Also the return path for a
+successful call to the function configuration_store can return an
+uninitialized error return code if dp->alt->active is false, so ensure
+ret is zeroed on the successful exit path to avoid garbage being returned.
 
-On Wed, Jul 11, 2018 at 01:22:47PM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
->=20
-> drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:228:24: warning:
->  symbol 'sun8i_dw_hdmi_pltfm_driver' was not declared. Should it be stati=
-c?
->=20
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Detected by CoverityScan, CID#1471597 ("Unitialized scalar variable")
 
-Applied, thanks!
-Maxime
+Fixes: 0e3bb7d6894d ("usb: typec: Add driver for DisplayPort alternate mode")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+---
 
---r3ewoxaupisvl7zi
-Content-Type: application/pgp-signature; name="signature.asc"
+V2: move the ret = 0 assignment to the declaration
 
------BEGIN PGP SIGNATURE-----
+---
+ drivers/usb/typec/altmodes/displayport.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltHBHAACgkQ0rTAlCFN
-r3RDQw//Y0F5/lq5ItRtavzvpMSsv8DMmtympz/s16gF7jRSeztMom2KhqRdKYDY
-h90zUIlXHYuuED0n/O7bWK7hRFlx6MxROxI/CqFaEIqj4zaAHO85u2ZnsgAK6jO5
-KPb+wlC75Dm01rwnsdcVoiPru2Qtzc6QtcW3TsRlbhc6FpUFcdd035ztntmS2496
-UHAkKZViXu5A8y1U47E0ptTZfZUZRi7dSWbqbLfTTLV27IqLWrZ8HfQPZ5SBPkij
-LQCR1lFr/ji+He4aDO4MWtH9g7j9vTjQTAbWEzoqxIr5YlU5uTv3HrqibBvghWtu
-61OZSRXG9KkNYNeUx6uzJReqpSnqKVF4Jjn4TikI1eFyESDBD5p/uiRTncIEEFxA
-9yYxvO+6b8q7t6JbaISBXcY9KVQwQj6cmSTOoXqLIDHE7p7SLNAJIeXgLCnxvWYz
-hijo0fWm7onbc8QqqqsBTZG3FAYltTVMOQ/8xO5jauRG2MqAWC7vkOdJt0HRI0ju
-YNZW9Odc/xf1X8GIkQkBmFnAH5GFavv2qvxUfi/UaX3B3RmdtH546dgAiYOfCUpT
-obLkPdzcUZ63IB0+7UeCk2gJtCNTDoDzQQmiaAVNXbUp/IeVpZWK5Kp9hsdGpFs5
-9yCS91R9Hq2b3bXbk+rWyGZOHmRBSDuYgy5dPYNR0lmQnJ+082Q=
-=19B8
------END PGP SIGNATURE-----
+diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
+index ef12b15bd484..3f06e94771a7 100644
+--- a/drivers/usb/typec/altmodes/displayport.c
++++ b/drivers/usb/typec/altmodes/displayport.c
+@@ -333,7 +333,7 @@ configuration_store(struct device *dev, struct device_attribute *attr,
+ 	u32 conf;
+ 	u32 cap;
+ 	int con;
+-	int ret;
++	int ret = 0;
+ 
+ 	con = sysfs_match_string(configurations, buf);
+ 	if (con < 0)
+@@ -349,8 +349,10 @@ configuration_store(struct device *dev, struct device_attribute *attr,
+ 	cap = DP_CAP_CAPABILITY(dp->alt->vdo);
+ 
+ 	if ((con = DP_CONF_DFP_D && !(cap & DP_CAP_DFP_D)) ||
+-	    (con = DP_CONF_UFP_D && !(cap & DP_CAP_UFP_D)))
+-		return -EINVAL;
++	    (con = DP_CONF_UFP_D && !(cap & DP_CAP_UFP_D))) {
++		ret = -EINVAL;
++		goto err_unlock;
++	}
+ 
+ 	conf = dp->data.conf & ~DP_CONF_DUAL_D;
+ 	conf |= con;
+-- 
+2.17.1
 
---r3ewoxaupisvl7zi--
