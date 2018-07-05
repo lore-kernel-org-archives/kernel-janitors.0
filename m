@@ -1,33 +1,60 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 30 Jul 2018 17:56:39 +0000
-Subject: Re: [PATCH] ath5k: remove redundant pointer rf
-Message-Id: <20180730175639.BF40362012@smtp.codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 05 Jul 2018 08:59:09 +0000
+Subject: [PATCH net-next] net: dsa: vsc73xx: Make some functions static
+Message-Id: <1530781149-52681-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180709124138.14996-1-colin.king@canonical.com>
-In-Reply-To: <20180709124138.14996-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jiri Slaby <jirislaby@gmail.com>, Nick Kossifidis <mickflemm@gmail.com>, "Luis R . Rodriguez" <mcgrof@do-not-panic.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Fixes the following sparse warnings:
 
-> Pointer rf is being assigned but is never used hence it is redundant
-> and can be removed.
-> 
-> Cleans up two clang warnings:
-> warning: variable 'rf' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+drivers/net/dsa/vitesse-vsc73xx.c:1054:6: warning:
+ symbol 'vsc73xx_get_strings' was not declared. Should it be static?
+drivers/net/dsa/vitesse-vsc73xx.c:1113:5: warning:
+ symbol 'vsc73xx_get_sset_count' was not declared. Should it be static?
+drivers/net/dsa/vitesse-vsc73xx.c:1122:6: warning:
+ symbol 'vsc73xx_get_ethtool_stats' was not declared. Should it be static?
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/dsa/vitesse-vsc73xx.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-e8c38062efc6 ath5k: remove redundant pointer rf
-
--- 
-https://patchwork.kernel.org/patch/10514529/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/net/dsa/vitesse-vsc73xx.c b/drivers/net/dsa/vitesse-vsc73xx.c
+index a4fc260..d4ea5cd 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx.c
++++ b/drivers/net/dsa/vitesse-vsc73xx.c
+@@ -1051,8 +1051,8 @@ static void vsc73xx_port_disable(struct dsa_switch *ds, int port,
+ 	return NULL;
+ }
+ 
+-void vsc73xx_get_strings(struct dsa_switch *ds, int port, u32 stringset,
+-			 uint8_t *data)
++static void vsc73xx_get_strings(struct dsa_switch *ds, int port, u32 stringset,
++				uint8_t *data)
+ {
+ 	const struct vsc73xx_counter *cnt;
+ 	struct vsc73xx *vsc = ds->priv;
+@@ -1110,7 +1110,7 @@ void vsc73xx_get_strings(struct dsa_switch *ds, int port, u32 stringset,
+ 	}
+ }
+ 
+-int vsc73xx_get_sset_count(struct dsa_switch *ds, int port, int sset)
++static int vsc73xx_get_sset_count(struct dsa_switch *ds, int port, int sset)
+ {
+ 	/* We only support SS_STATS */
+ 	if (sset != ETH_SS_STATS)
+@@ -1119,7 +1119,8 @@ int vsc73xx_get_sset_count(struct dsa_switch *ds, int port, int sset)
+ 	return 8;
+ }
+ 
+-void vsc73xx_get_ethtool_stats(struct dsa_switch *ds, int port, uint64_t *data)
++static void vsc73xx_get_ethtool_stats(struct dsa_switch *ds, int port,
++				      uint64_t *data)
+ {
+ 	struct vsc73xx *vsc = ds->priv;
+ 	u8 regs[] = {
 
