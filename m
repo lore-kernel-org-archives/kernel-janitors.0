@@ -1,65 +1,43 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Jul 2018 16:01:37 +0000
-Subject: [PATCH] net/tipc: remove redundant variables 'tn' and 'oport'
-Message-Id: <20180731160137.5850-1-colin.king@canonical.com>
+Date: Thu, 05 Jul 2018 09:26:13 +0000
+Subject: [PATCH] net: socionext: remove redundant pointer ndev
+Message-Id: <20180705092613.20560-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net
+To: Jassi Brar <jaswinder.singh@linaro.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variables 'tn' and 'oport'  are being assigned but are never used hence
-they are redundant and can be removed.
+Pointer ndev is being assigned but is never used hence it is
+redundant and can be removed.
 
-Cleans up clang warnings:
-warning: variable 'oport' set but not used [-Wunused-but-set-variable]
-warning: variable 'tn' set but not used [-Wunused-but-set-variable]
+Cleans up clang warning:
+warning: variable 'ndev' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/tipc/socket.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/socionext/netsec.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/tipc/socket.c b/net/tipc/socket.c
-index 3763bedecf5f..c1e93c9515bc 100644
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -411,7 +411,6 @@ static int tipc_sk_sock_err(struct socket *sock, long *timeout)
- static int tipc_sk_create(struct net *net, struct socket *sock,
- 			  int protocol, int kern)
+diff --git a/drivers/net/ethernet/socionext/netsec.c b/drivers/net/ethernet/socionext/netsec.c
+index e080d3e7c582..01589b6982e4 100644
+--- a/drivers/net/ethernet/socionext/netsec.c
++++ b/drivers/net/ethernet/socionext/netsec.c
+@@ -780,11 +780,9 @@ static int netsec_process_rx(struct netsec_priv *priv, int budget)
+ static int netsec_napi_poll(struct napi_struct *napi, int budget)
  {
--	struct tipc_net *tn;
- 	const struct proto_ops *ops;
- 	struct sock *sk;
- 	struct tipc_sock *tsk;
-@@ -446,7 +445,6 @@ static int tipc_sk_create(struct net *net, struct socket *sock,
- 	INIT_LIST_HEAD(&tsk->publications);
- 	INIT_LIST_HEAD(&tsk->cong_links);
- 	msg = &tsk->phdr;
--	tn = net_generic(sock_net(sk), tipc_net_id);
+ 	struct netsec_priv *priv;
+-	struct net_device *ndev;
+ 	int tx, rx, done, todo;
  
- 	/* Finish initializing socket data structures */
- 	sock->ops = ops;
-@@ -1117,7 +1115,7 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
- 	u32 self = tipc_own_addr(net);
- 	u32 type, lower, upper, scope;
- 	struct sk_buff *skb, *_skb;
--	u32 portid, oport, onode;
-+	u32 portid, onode;
- 	struct sk_buff_head tmpq;
- 	struct list_head dports;
- 	struct tipc_msg *hdr;
-@@ -1133,7 +1131,6 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
- 		user = msg_user(hdr);
- 		mtyp = msg_type(hdr);
- 		hlen = skb_headroom(skb) + msg_hdr_sz(hdr);
--		oport = msg_origport(hdr);
- 		onode = msg_orignode(hdr);
- 		type = msg_nametype(hdr);
+ 	priv = container_of(napi, struct netsec_priv, napi);
+-	ndev = priv->ndev;
  
+ 	todo = budget;
+ 	do {
 -- 
 2.17.1
 
