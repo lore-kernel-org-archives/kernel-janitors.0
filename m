@@ -1,24 +1,63 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 25 Jul 2018 23:38:20 +0000
-Subject: Re: [PATCH net-next] lan743x: Make symbol lan743x_pm_ops static
-Message-Id: <20180725.163820.956886787486240435.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Jul 2018 11:05:25 +0000
+Subject: [PATCH][V2] net: ethernet: sun: remove redundant variables adv and lpa and mii_reads
+Message-Id: <20180705110525.27231-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1532499076-191548-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1532499076-191548-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 25 Jul 2018 06:11:16 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes the following sparse warning:
-> 
-> drivers/net/ethernet/microchip/lan743x_main.c:2944:25: warning:
->  symbol 'lan743x_pm_ops' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Variables adv and lpa are being assigned but are never used hence they
+are redundant and can be removed.  Also remove the unncessary mii_reads
+too.
 
-Applied.
+Cleans up clang warnings:
+warning: variable 'lpa' set but not used [-Wunused-but-set-variable]
+warning: variable 'adv' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: remove mii_reads as suggessted by Dan Carpenter and David Miller
+
+---
+ drivers/net/ethernet/sun/niu.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index 88c12474a0c3..9319d84bf49f 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -1225,25 +1225,9 @@ static int link_status_1g_rgmii(struct niu *np, int *link_up_p)
+ 
+ 	bmsr = err;
+ 	if (bmsr & BMSR_LSTATUS) {
+-		u16 adv, lpa;
+-
+-		err = mii_read(np, np->phy_addr, MII_ADVERTISE);
+-		if (err < 0)
+-			goto out;
+-		adv = err;
+-
+-		err = mii_read(np, np->phy_addr, MII_LPA);
+-		if (err < 0)
+-			goto out;
+-		lpa = err;
+-
+-		err = mii_read(np, np->phy_addr, MII_ESTATUS);
+-		if (err < 0)
+-			goto out;
+ 		link_up = 1;
+ 		current_speed = SPEED_1000;
+ 		current_duplex = DUPLEX_FULL;
+-
+ 	}
+ 	lp->active_speed = current_speed;
+ 	lp->active_duplex = current_duplex;
+-- 
+2.17.1
+
