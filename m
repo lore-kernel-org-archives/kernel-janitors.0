@@ -1,73 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 13 Jul 2018 15:30:13 +0000
-Subject: Applied "ASoC: qdsp6: q6afe-dai: fix a range check in of_q6afe_parse_dai_data()" to the asoc tree
-Message-Id: <20180713153013.31DC8440088@finisterre.ee.mobilebroadband>
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Date: Fri, 06 Jul 2018 11:33:58 +0000
+Subject: Re: [PATCH] power: supply: max1721x: fix spelling mistake "RSenese" -> "RSense"
+Message-Id: <20180706113358.va5jyd3u2x7oo5gd@earth.universe>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="m7rmygmwc5vxsndp"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180713150557.gsx7wrau2l7tg2jq@kili.mountain>
-In-Reply-To: <20180713150557.gsx7wrau2l7tg2jq@kili.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>
+References: <20180526135606.1153-1-colin.king@canonical.com>
+In-Reply-To: <20180526135606.1153-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
 
-   ASoC: qdsp6: q6afe-dai: fix a range check in of_q6afe_parse_dai_data()
+--m7rmygmwc5vxsndp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+Hi,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+On Sat, May 26, 2018 at 02:56:06PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Trivial fix to spelling mistake in dev_warn message text
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thanks, queued to power-supply-next.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-- Sebastian
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--m7rmygmwc5vxsndp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Mark
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/U6YACgkQ2O7X88g7
++pqwrxAAoWN/p6SXkr4ZE3OIsIfUwWKI3Qv+Llqy7os3bnqXHIzWb2bxZU7NNmzh
+su/7wSJIvnteyBZWr0hNIdvs4naQ/e6dKYuuLvqmYlAtMzerOph5m0YPJCaPfCX7
+L83DLU9kOfVluZvY7pGku91uzmVZSN9OZTkccTp1djFfsrbpdBvZ+28HFr4PWi06
+60uoU/+STBTT2Sy+ywTQ11dQfLHomz0OJOBR4Gby5tcMqd3W2CRE3DamgPyp07+H
+touGpJOGxyI144ZWgZq/HZ/A1fezR6XdGdJ+0aotC19c4wPy2DLFo45s/rH+/fNg
+lVrx52fbrMcsIP6DxSyz7MW7yxkjSQFDfqEYQPodGtkXJdgGZwgtY96x/qb7Aq+9
+gtH1qApASXFi3v8uXq0eyQaJePcQqz2ZzfVmT7tsU51T06XoFURtY5Iv4OAJHefl
+/0WtkcmM2oscC/ttYPkU11DcXy6XlqSzJ5huFZnlW1bhDntAvp2TPEGHr/cKukFP
+odLy4+AKGTKIRN4/HoXpMYbm12TxPMrM8/PRxRZ3L47HkKcMtJu7ccUlNvuLlMyq
+FnaPphYECez9SnwOTeHYhrw45RydSavjL7CVOvNbSiSWfTA+v5+ZeyZx0a/U/GN2
+vqggJG5v9rW7GCkzO5JxD8HlnEoE1noGwOqMgsk9FZtl9AOW+W4=
+=Gi+s
+-----END PGP SIGNATURE-----
 
-From b8110a87b75f948d978c06e130cc68026645c4a1 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Jul 2018 18:05:57 +0300
-Subject: [PATCH] ASoC: qdsp6: q6afe-dai: fix a range check in
- of_q6afe_parse_dai_data()
-
-The main thing is that the data->priv[] array has AFE_PORT_MAX elements
-so the > condition should be >=.  But we may as well check for negative
-values as well just to be safe.
-
-Fixes: 24c4cbcfac09 ("ASoC: qdsp6: q6afe: Add q6afe dai driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/qcom/qdsp6/q6afe-dai.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
-index a373ca5523ff..9ba95956ada8 100644
---- a/sound/soc/qcom/qdsp6/q6afe-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-@@ -1183,7 +1183,7 @@ static void of_q6afe_parse_dai_data(struct device *dev,
- 		int id, i, num_lines;
- 
- 		ret = of_property_read_u32(node, "reg", &id);
--		if (ret || id > AFE_PORT_MAX) {
-+		if (ret || id < 0 || id >= AFE_PORT_MAX) {
- 			dev_err(dev, "valid dai id not found:%d\n", ret);
- 			continue;
- 		}
--- 
-2.18.0
-
+--m7rmygmwc5vxsndp--
