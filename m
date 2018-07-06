@@ -1,49 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 13 Jul 2018 09:55:30 +0000
-Subject: [PATCH] usb-misc: sisusbvga: remove redundant variable modey
-Message-Id: <20180713095530.23720-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 06 Jul 2018 08:37:56 +0000
+Subject: [PATCH] Staging: Gasket: uninitialized return in gasket_mmap()
+Message-Id: <20180706083756.dc3dhl56omkwefll@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Winischhofer <thomas@winischhofer.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We forgot to set the error code on this error path so ret can be
+uninitialized.
 
-Variable modey is being assigned but is never used hence it is
-redundant and can be removed.
+Fixes: 9a69f5087ccc ("drivers/staging: Gasket driver framework + Apex driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cleans up clang warning:
-warning: variable 'modey' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/misc/sisusbvga/sisusb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/misc/sisusbvga/sisusb.c b/drivers/usb/misc/sisusbvga/sisusb.c
-index f92c5df26320..3198d0477cf8 100644
---- a/drivers/usb/misc/sisusbvga/sisusb.c
-+++ b/drivers/usb/misc/sisusbvga/sisusb.c
-@@ -1750,7 +1750,7 @@ static int sisusb_setup_screen(struct sisusb_usb_data *sisusb,
- static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
- 		int touchengines)
- {
--	int ret = 0, i, j, modex, modey, bpp, du;
-+	int ret = 0, i, j, modex, bpp, du;
- 	u8 sr31, cr63, tmp8;
- 	static const char attrdata[] = {
- 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-@@ -1773,7 +1773,7 @@ static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
- 		0x00
- 	};
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 6511a33eb658..1f43c739a9ed 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1719,8 +1719,10 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
+ 		/* Try the next region if this one was not mappable. */
+ 		if (map_status = DO_MAP_REGION_INVALID)
+ 			continue;
+-		if (map_status = DO_MAP_REGION_FAILURE)
++		if (map_status = DO_MAP_REGION_FAILURE) {
++			ret = -ENOMEM;
+ 			goto fail;
++		}
  
--	modex = 640; modey = 480; bpp = 2;
-+	modex = 640; bpp = 2;
- 
- 	GETIREG(SISSR, 0x31, &sr31);
- 	GETIREG(SISCR, 0x63, &cr63);
--- 
-2.17.1
-
+ 		has_mapped_anything = 1;
+ 	}
