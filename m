@@ -1,33 +1,30 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 13 Jul 2018 00:50:07 +0000
-Subject: [PATCH -next] fsi: sbefifo: Fix missing unlock on error in sbefifo_dump_ffdc()
-Message-Id: <1531443007-144851-1-git-send-email-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 06 Jul 2018 08:39:21 +0000
+Subject: [PATCH] Staging: Gasket: shift wrapping bug in gasket_read_modify_write_64()
+Message-Id: <20180706083921.nzicmo757ybxx7mj@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Joel Stanley <joel@jms.id.au>, Eddie James <eajames@linux.vnet.ibm.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Add the missing unlock before return from function sbefifo_dump_ffdc()
-in the error handling case.
+This function only has one caller so mask_width is 1 and mask_shift is
+32.  Shifting an int by 32 bits is undefined, but I guess on GCC it
+wraps to 0x1?  Anyway it's supposed to be 0x100000000.
 
-Fixes: 9f4a8a2d7f9d ("fsi/sbefifo: Add driver for the SBE FIFO")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/fsi/fsi-sbefifo.c | 1 +
- 1 file changed, 1 insertion(+)
+Fixes: 9a69f5087ccc ("drivers/staging: Gasket driver framework + Apex driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/fsi/fsi-sbefifo.c b/drivers/fsi/fsi-sbefifo.c
-index 6b31cc24..35f2749 100644
---- a/drivers/fsi/fsi-sbefifo.c
-+++ b/drivers/fsi/fsi-sbefifo.c
-@@ -150,6 +150,7 @@ static void sbefifo_dump_ffdc(struct device *dev, const __be32 *ffdc,
- 		u32 w0, w1, w2, i;
- 		if (ffdc_sz < 3) {
- 			dev_err(dev, "SBE invalid FFDC package size %zd\n", ffdc_sz);
-+			mutex_unlock(&sbefifo_ffdc_mutex);
- 			return;
- 		}
- 		w0 = be32_to_cpu(*(ffdc++));
-
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index 203b9a31377b..5d6535a0f254 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -683,7 +683,7 @@ static inline void gasket_read_modify_write_64(
+ 	u64 mask, tmp;
+ 
+ 	tmp = gasket_dev_read_64(dev, bar, location);
+-	mask = ((1 << mask_width) - 1) << mask_shift;
++	mask = ((1ULL << mask_width) - 1) << mask_shift;
+ 	tmp = (tmp & ~mask) | (value << mask_shift);
+ 	gasket_dev_write_64(dev, tmp, bar, location);
+ }
