@@ -1,7 +1,7 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 04 Jul 2018 18:05:53 +0000
+From: Christoph Hellwig <hch@lst.de>
+Date: Sun, 08 Jul 2018 15:07:55 +0000
 Subject: Re: [PATCH] IB/core: type promotion bug in rdma_rw_init_one_mr()
-Message-Id: <20180704180553.GA10616@ziepe.ca>
+Message-Id: <20180708150755.GB14418@lst.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180704093211.o62tr44m3ugxxhjh@kili.mountain>
 In-Reply-To: <20180704093211.o62tr44m3ugxxhjh@kili.mountain>
@@ -18,7 +18,6 @@ On Wed, Jul 04, 2018 at 12:32:12PM +0300, Dan Carpenter wrote:
 > Fixes: a060b5629ab0 ("IB/core: generic RDMA READ/WRITE API")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to for-next
+Looks good,
 
-Thanks,
-Jason
+Reviewed-by: Christoph Hellwig <hch@lst.de>
