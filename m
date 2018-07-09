@@ -1,60 +1,78 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 03 Jul 2018 19:25:39 +0000
-Subject: Re: [PATCH] misc: ti-st: remove redundant variable 'type'
-Message-Id: <CAK8P3a3vfiSzeAqROx-D0+f0bMgb6bLLCp-Y+bCRBtnBwg94zA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 09 Jul 2018 12:34:46 +0000
+Subject: [PATCH] ath10k: remove redundant pointers 'dev' and 'noa'
+Message-Id: <20180709123446.14796-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180703073249.29522-1-colin.king@canonical.com>
-In-Reply-To: <20180703073249.29522-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pavan Savoy <pavan_savoy@ti.com>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 9:32 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable type is being assigned but is never used hence it is
-> redundant and can be removed.
->
-> Cleans up clang warning:
-> warning: variable 'type' set but not used [-Wunused-but-set-variable]
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Pointers dev and noa are being assigned but are never used hence they
+are redundant and can be removed.
 
+Cleans up clang warnings:
+warning: variable 'dev' set but not used [-Wunused-but-set-variable]
+warning: variable 'noa' set but not used [-Wunused-but-set-variable]
 
-It seems that version of the code dates back to 2011 with
-5c88b02196a9 ("drivers:misc: ti-st: register with channel IDs").
-I don't understand that patch, but if nobody has noticed a problem
-in seven years, it's probably harmless.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath10k/ahb.c     | 5 -----
+ drivers/net/wireless/ath/ath10k/wmi-tlv.c | 2 --
+ 2 files changed, 7 deletions(-)
 
-> ---
->  drivers/misc/ti-st/st_kim.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
-> index 5ec3f5a43718..28fba5b3625e 100644
-> --- a/drivers/misc/ti-st/st_kim.c
-> +++ b/drivers/misc/ti-st/st_kim.c
-> @@ -138,7 +138,7 @@ static void kim_int_recv(struct kim_data_s *kim_gdata,
->         const unsigned char *data, long count)
->  {
->         const unsigned char *ptr;
-> -       int len = 0, type = 0;
-> +       int len = 0;
->         unsigned char *plen;
->
->         pr_debug("%s", __func__);
-> @@ -183,7 +183,6 @@ static void kim_int_recv(struct kim_data_s *kim_gdata,
->                 case 0x04:
->                         kim_gdata->rx_state = ST_W4_HEADER;
->                         kim_gdata->rx_count = 2;
-> -                       type = *ptr;
->                         break;
->                 default:
->                         pr_info("unknown packet");
-> --
-> 2.17.1
->
+diff --git a/drivers/net/wireless/ath/ath10k/ahb.c b/drivers/net/wireless/ath/ath10k/ahb.c
+index fa39ffffd34d..c9bd0e2b5db7 100644
+--- a/drivers/net/wireless/ath/ath10k/ahb.c
++++ b/drivers/net/wireless/ath/ath10k/ahb.c
+@@ -133,11 +133,8 @@ static void ath10k_ahb_clock_deinit(struct ath10k *ar)
+ static int ath10k_ahb_clock_enable(struct ath10k *ar)
+ {
+ 	struct ath10k_ahb *ar_ahb = ath10k_ahb_priv(ar);
+-	struct device *dev;
+ 	int ret;
+ 
+-	dev = &ar_ahb->pdev->dev;
+-
+ 	if (IS_ERR_OR_NULL(ar_ahb->cmd_clk) ||
+ 	    IS_ERR_OR_NULL(ar_ahb->ref_clk) ||
+ 	    IS_ERR_OR_NULL(ar_ahb->rtc_clk)) {
+@@ -451,12 +448,10 @@ static int ath10k_ahb_resource_init(struct ath10k *ar)
+ {
+ 	struct ath10k_ahb *ar_ahb = ath10k_ahb_priv(ar);
+ 	struct platform_device *pdev;
+-	struct device *dev;
+ 	struct resource *res;
+ 	int ret;
+ 
+ 	pdev = ar_ahb->pdev;
+-	dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+index 8c49a26fc571..fc0f98487d11 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
++++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+@@ -1785,7 +1785,6 @@ ath10k_wmi_tlv_op_gen_vdev_start(struct ath10k *ar,
+ {
+ 	struct wmi_tlv_vdev_start_cmd *cmd;
+ 	struct wmi_channel *ch;
+-	struct wmi_p2p_noa_descriptor *noa;
+ 	struct wmi_tlv *tlv;
+ 	struct sk_buff *skb;
+ 	size_t len;
+@@ -1843,7 +1842,6 @@ ath10k_wmi_tlv_op_gen_vdev_start(struct ath10k *ar,
+ 	tlv = ptr;
+ 	tlv->tag = __cpu_to_le16(WMI_TLV_TAG_ARRAY_STRUCT);
+ 	tlv->len = 0;
+-	noa = (void *)tlv->value;
+ 
+ 	/* Note: This is a nested TLV containing:
+ 	 * [wmi_tlv][wmi_p2p_noa_descriptor][wmi_tlv]..
+-- 
+2.17.1
+
