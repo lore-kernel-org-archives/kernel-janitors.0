@@ -1,23 +1,22 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 13 Jul 2018 15:30:10 +0000
-Subject: Applied "ASoC: qdsp6: q6routing: off by one in routing_hw_params()" to the asoc tree
-Message-Id: <20180713153010.3EF2F440085@finisterre.ee.mobilebroadband>
+Date: Mon, 09 Jul 2018 11:16:46 +0000
+Subject: Applied "regulator: max8997: clean up a condition in max8997_list_voltage()" to the regulator tree
+Message-Id: <E1fcU9u-0005dI-QC@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180713151100.x5usbqhlhrzjmeoq@kili.mountain>
-In-Reply-To: <20180713151100.x5usbqhlhrzjmeoq@kili.mountain>
+In-Reply-To: <20180706083718.n3b7ejg42fknnwb2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: q6routing: off by one in routing_hw_params()
+   regulator: max8997: clean up a condition in max8997_list_voltage()
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -38,35 +37,43 @@ to this mail.
 Thanks,
 Mark
 
-From 090345ce7265dd111299e3a63cdc79c3ef924481 Mon Sep 17 00:00:00 2001
+From 1aa1b918946537c089716bffd1399e30a2981cb7 Mon Sep 17 00:00:00 2001
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Jul 2018 18:11:04 +0300
-Subject: [PATCH] ASoC: qdsp6: q6routing: off by one in routing_hw_params()
+Date: Fri, 6 Jul 2018 11:37:18 +0300
+Subject: [PATCH] regulator: max8997: clean up a condition in
+ max8997_list_voltage()
 
-The data->port_data[] array has AFE_MAX_PORTS elements so the check
-should be >= instead of > or we write one element beyond the end of the
-array.
+The current code generates a static cehcker warnings because "rid < 0"
+is always false:
 
-Fixes: e3a33673e845 ("ASoC: qdsp6: q6routing: Add q6routing driver")
+    drivers/regulator/max8997-regulator.c:169 max8997_list_voltage()
+    warn: condition is always false
+
+The problem is that because of type promotion, if "rid" is negative the
+comparison against ARRAY_SIZE() is type promoted to size_t and it's
+treated as a very high positive value.  I've changed the order of the
+checks so now everyone is happy.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6routing.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/max8997-regulator.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
-index 593f66b8622f..7a19d6278406 100644
---- a/sound/soc/qcom/qdsp6/q6routing.c
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -899,7 +899,7 @@ static int routing_hw_params(struct snd_pcm_substream *substream,
- 	else
- 		path_type = ADM_PATH_LIVE_REC;
+diff --git a/drivers/regulator/max8997-regulator.c b/drivers/regulator/max8997-regulator.c
+index a8ea30ee18a6..029a6ee426ab 100644
+--- a/drivers/regulator/max8997-regulator.c
++++ b/drivers/regulator/max8997-regulator.c
+@@ -165,8 +165,7 @@ static int max8997_list_voltage(struct regulator_dev *rdev,
+ 	int rid = rdev_get_id(rdev);
+ 	int val;
  
--	if (be_id > AFE_MAX_PORTS)
-+	if (be_id >= AFE_MAX_PORTS)
+-	if (rid >= ARRAY_SIZE(reg_voltage_map) ||
+-			rid < 0)
++	if (rid < 0 || rid >= ARRAY_SIZE(reg_voltage_map))
  		return -EINVAL;
  
- 	session = &data->port_data[be_id];
+ 	desc = reg_voltage_map[rid];
 -- 
-2.18.0
+2.18.0.rc2
 
