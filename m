@@ -1,36 +1,34 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 31 Jul 2018 07:17:39 +0000
-Subject: Re: [PATCH] airo: remove unused variables len and dev and clean upformatting
-Message-Id: <20180731071739.6A3D8606AC@smtp.codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 13:15:42 +0000
+Subject: [PATCH -next] IB/ipoib: Fix error return code in ipoib_dev_init()
+Message-Id: <1531314942-178931-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180709133843.15615-1-colin.king@canonical.com>
-In-Reply-To: <20180709133843.15615-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Fix to return a negative error code from the ipoib_neigh_hash_init()
+error handling case instead of 0, as done elsewhere in this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables len and dev assigned values but are never used hence they
-> are redundant and can be removed.  Also add in white space in for-loop
-> and remove some { } braces on if statement.
-> 
-> Cleans up clang warnings:
-> warning: variable 'len' set but not used [-Wunused-but-set-variable]
-> warning: variable 'dev' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 515ed4f3aab4 ("IB/IPoIB: Separate control and data related initializations")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-d01a4e04dab7 airo: remove unused variables len and dev and clean up formatting
-
--- 
-https://patchwork.kernel.org/patch/10514607/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 9bcd487..d11adfa 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -1791,7 +1791,8 @@ int ipoib_dev_init(struct net_device *dev, struct ib_device *ca, int port)
+ 		goto out_free_pd;
+ 	}
+ 
+-	if (ipoib_neigh_hash_init(priv) < 0) {
++	ret = ipoib_neigh_hash_init(priv);
++	if (ret < 0) {
+ 		pr_warn("%s failed to init neigh hash\n", dev->name);
+ 		goto out_dev_uninit;
+ 	}
 
