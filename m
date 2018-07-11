@@ -1,55 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 17:30:27 +0000
-Subject: =?UTF-8?Q?[PATCH_v2_4/8]_Coccinelle:_atomic=5fas=5frefcounter:_Use_?= =?UTF-8?Q?type_=e2=80=9cexpres
-Message-Id: <d9561774-a7ed-f9f8-796c-2ba2cb9f7732@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 10:32:29 +0000
+Subject: [PATCH] staging: comedi: remove redundant variable segpos
+Message-Id: <20180711103229.30066-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
- <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
-In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 18:00:54 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The metavariable “a” is enclosed by parentheses in two rules of
-a script for the semantic patch language.
-Replace its type by “expression” so that the corresponding source code
-search becomes more powerful.
+Variable segpos is being assigned but is never used hence it is redundant
+and can be removed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cleans up clang warning:
+warning: variable 'segpos' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/staging/comedi/drivers/pcl816.c | 4 ++--
+ drivers/staging/comedi/drivers/pcl818.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 4da83ccfa6f6..62b0132d65fc 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -10,7 +10,8 @@
- virtual report
+diff --git a/drivers/staging/comedi/drivers/pcl816.c b/drivers/staging/comedi/drivers/pcl816.c
+index d722079f3327..d87cf6d4a161 100644
+--- a/drivers/staging/comedi/drivers/pcl816.c
++++ b/drivers/staging/comedi/drivers/pcl816.c
+@@ -282,7 +282,7 @@ static int check_channel_list(struct comedi_device *dev,
+ 			      unsigned int chanlen)
+ {
+ 	unsigned int chansegment[16];
+-	unsigned int i, nowmustbechan, seglen, segpos;
++	unsigned int i, nowmustbechan, seglen;
  
- @r1 exists@
--identifier a, x;
-+expression a;
-+identifier x;
- position p1, p2;
- identifier fname =~ "free";
- identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
-@@ -45,7 +46,8 @@ msg = "atomic_dec_and_test variation before object free at line %s."
- coccilib.report.print_report(p1[0], msg % (p2[0].line))
+ 	/*  correct channel and range number check itself comedi/range.c */
+ 	if (chanlen < 1) {
+@@ -312,7 +312,7 @@ static int check_channel_list(struct comedi_device *dev,
+ 		}
  
- @r2 exists@
--identifier a, x;
-+expression a;
-+identifier x;
- position p1;
- @@
+ 		/*  check whole chanlist */
+-		for (i = 0, segpos = 0; i < chanlen; i++) {
++		for (i = 0; i < chanlen; i++) {
+ 			if (chanlist[i] != chansegment[i % seglen]) {
+ 				dev_dbg(dev->class_dev,
+ 					"bad channel or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
+diff --git a/drivers/staging/comedi/drivers/pcl818.c b/drivers/staging/comedi/drivers/pcl818.c
+index eebb49751713..0af5315d4357 100644
+--- a/drivers/staging/comedi/drivers/pcl818.c
++++ b/drivers/staging/comedi/drivers/pcl818.c
+@@ -573,7 +573,7 @@ static int check_channel_list(struct comedi_device *dev,
+ 			      unsigned int *chanlist, unsigned int n_chan)
+ {
+ 	unsigned int chansegment[16];
+-	unsigned int i, nowmustbechan, seglen, segpos;
++	unsigned int i, nowmustbechan, seglen;
  
+ 	/* correct channel and range number check itself comedi/range.c */
+ 	if (n_chan < 1) {
+@@ -605,7 +605,7 @@ static int check_channel_list(struct comedi_device *dev,
+ 		}
+ 
+ 		/*  check whole chanlist */
+-		for (i = 0, segpos = 0; i < n_chan; i++) {
++		for (i = 0; i < n_chan; i++) {
+ 			if (chanlist[i] != chansegment[i % seglen]) {
+ 				dev_dbg(dev->class_dev,
+ 					"bad channel or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
 -- 
-2.18.0
+2.17.1
 
