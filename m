@@ -1,24 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 25 Jul 2018 23:36:11 +0000
-Subject: Re: [PATCH net-next] tcp: make function tcp_retransmit_stamp() static
-Message-Id: <20180725.163611.91815153690923600.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 12:34:07 +0000
+Subject: [PATCH -next] pinctrl: at91-pio4: remove redundant return value check of platform_get_resource()
+Message-Id: <1531312447-134423-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1532498767-188296-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1532498767-188296-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: edumazet@google.com, jmaxwell37@gmail.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 25 Jul 2018 06:06:07 +0000
+Remove unneeded error handling on the result of a call
+to platform_get_resource() when the value is passed to
+devm_ioremap_resource().
 
-> Fixes the following sparse warnings:
-> 
-> net/ipv4/tcp_timer.c:25:5: warning:
->  symbol 'tcp_retransmit_stamp' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Applied, thank you.
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 8f06197..ef7ab20 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -971,10 +971,6 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+ 	atmel_pioctrl->npins = atmel_pioctrl->nbanks * ATMEL_PIO_NPINS_PER_BANK;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "unable to get atmel pinctrl resource\n");
+-		return -EINVAL;
+-	}
+ 	atmel_pioctrl->reg_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(atmel_pioctrl->reg_base))
+ 		return -EINVAL;
+
+
+
