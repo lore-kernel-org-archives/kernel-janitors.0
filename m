@@ -1,48 +1,44 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 17 Jul 2018 14:42:53 +0000
-Subject: [PATCH] orangefs: remove redundant pointer orangefs_inode
-Message-Id: <20180717144253.29039-1-colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 11:35:23 +0000
+Subject: [PATCH] staging: sm750fb: remove redundant pointer 'output'
+Message-Id: <20180711113523.31549-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Teddy Wang <teddy.wang@siliconmotion.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer orangefs_inode is being assigned but is never used hence it is
-redundant and can be removed.
+Pointer 'output' is being assigned but is never used hence it is redundant
+and can be removed.
 
 Cleans up clang warning:
-warning: variable 'orangefs_inode' set but not used [-Wunused-but-set-variable]
+warning: variable 'output' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/orangefs/inode.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/staging/sm750fb/sm750.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 6e4d2af8f5bc..31932879b716 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -251,7 +251,6 @@ int orangefs_getattr(const struct path *path, struct kstat *stat,
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 67207b0554cd..846d7d243994 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -512,12 +512,10 @@ static int lynxfb_ops_check_var(struct fb_var_screeninfo *var,
  {
- 	int ret = -ENOENT;
- 	struct inode *inode = path->dentry->d_inode;
--	struct orangefs_inode_s *orangefs_inode = NULL;
+ 	struct lynxfb_par *par;
+ 	struct lynxfb_crtc *crtc;
+-	struct lynxfb_output *output;
+ 	resource_size_t request;
  
- 	gossip_debug(GOSSIP_INODE_DEBUG,
- 		     "orangefs_getattr: called on %pd\n",
-@@ -262,8 +261,6 @@ int orangefs_getattr(const struct path *path, struct kstat *stat,
- 		generic_fillattr(inode, stat);
+ 	par = info->par;
+ 	crtc = &par->crtc;
+-	output = &par->output;
  
- 		/* override block size reported to stat */
--		orangefs_inode = ORANGEFS_I(inode);
--
- 		if (request_mask & STATX_SIZE)
- 			stat->result_mask = STATX_BASIC_STATS;
- 		else
+ 	pr_debug("check var:%dx%d-%d\n",
+ 		 var->xres,
 -- 
 2.17.1
 
