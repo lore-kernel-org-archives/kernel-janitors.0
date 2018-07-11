@@ -1,44 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 14 Jul 2018 16:11:24 +0000
-Subject: [PATCH] mm/hmm.c: remove redundant variables align_start and align_end
-Message-Id: <20180714161124.3923-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 13:15:54 +0000
+Subject: [PATCH -next] staging: pi433: fix error return code in pi433_probe()
+Message-Id: <1531314954-179244-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, minhnpq16@gmail.com, viro@zeniv.linux.org.uk, srishtishar@gmail.com, Valentin.Vidic@CARNet.hr, simon@nikanor.nu, linux@wolf-entwicklungen.de
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fix to return a negative error code from the kthread_run() error
+handling case instead of 0, as done elsewhere in this function.
 
-Variables align_start and align_end are being assigned but are
-never used hence they are redundant and can be removed.
-
-Cleans up clang warnings:
-warning: variable 'align_start' set but not used [-Wunused-but-set-variable]
-warning: variable 'align_size' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- mm/hmm.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/staging/pi433/pi433_if.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index caf9df27599e..76e7a058b32f 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -973,10 +973,7 @@ static RADIX_TREE(hmm_devmem_radix, GFP_KERNEL);
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index 293602d..d4bfac1 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -1235,6 +1235,7 @@ static int pi433_probe(struct spi_device *spi)
+ 					     device->minor);
+ 	if (IS_ERR(device->tx_task_struct)) {
+ 		dev_dbg(device->dev, "start of send thread failed");
++		retval = PTR_ERR(device->tx_task_struct);
+ 		goto send_thread_failed;
+ 	}
  
- static void hmm_devmem_radix_release(struct resource *resource)
- {
--	resource_size_t key, align_start, align_size;
--
--	align_start = resource->start & ~(PA_SECTION_SIZE - 1);
--	align_size = ALIGN(resource_size(resource), PA_SECTION_SIZE);
-+	resource_size_t key;
- 
- 	mutex_lock(&hmm_devmem_lock);
- 	for (key = resource->start;
--- 
-2.17.1
+
+
 
