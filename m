@@ -1,33 +1,51 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Tue, 24 Jul 2018 16:58:19 +0000
-Subject: Re: [PATCH] omapfb: encoder-tpd12s015: remove redundant pointer 'in'
-Message-Id: <7824518.4rCHaMUqme@amdc3058>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 11:26:07 +0000
+Subject: [PATCH] staging: speakup: remove redundant variable l
+Message-Id: <20180711112607.31292-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180720185219epcas1p2542795dbad64a8343ce7e9eff8dd7cce@epcas1p2.samsung.com>
- <20180720185213.3085-1-colin.king@canonical.com>
-In-Reply-To: <20180720185213.3085-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday, July 20, 2018 07:52:13 PM Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'in' is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'in' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.19, thanks.
+Variable l is being assigned but is never used hence it is redundant
+and can be removed.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Cleans up clang warning:
+warning: variable 'l' set but not used [-Wunused-but-set-variable
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/speakup/varhandlers.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/speakup/varhandlers.c b/drivers/staging/speakup/varhandlers.c
+index 54a76b6752ad..1b545152cc49 100644
+--- a/drivers/staging/speakup/varhandlers.c
++++ b/drivers/staging/speakup/varhandlers.c
+@@ -179,7 +179,6 @@ int spk_set_num_var(int input, struct st_var_header *var, int how)
+ {
+ 	int val;
+ 	int *p_val = var->p_val;
+-	int l;
+ 	char buf[32];
+ 	char *cp;
+ 	struct var_t *var_data = var->data;
+@@ -237,9 +236,9 @@ int spk_set_num_var(int input, struct st_var_header *var, int how)
+ 	else
+ 		cp = buf;
+ 	if (!var_data->u.n.out_str)
+-		l = sprintf(cp, var_data->u.n.synth_fmt, (int)val);
++		sprintf(cp, var_data->u.n.synth_fmt, (int)val);
+ 	else
+-		l = sprintf(cp,	var_data->u.n.synth_fmt, var_data->u.n.out_str[val]);
++		sprintf(cp, var_data->u.n.synth_fmt, var_data->u.n.out_str[val]);
+ 	synth_printf("%s", cp);
+ 	return 0;
+ }
+-- 
+2.17.1
 
