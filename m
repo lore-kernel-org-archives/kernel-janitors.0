@@ -1,47 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 03 Jul 2018 06:51:09 +0000
-Subject: [PATCH] md/r5cache: remove redundant pointer bio
-Message-Id: <20180703065109.23620-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 13:18:59 +0000
+Subject: [PATCH -next] spi: cadence: Fix missing clk_disable_unprepare() on error in cnds_runtime_resume()
+Message-Id: <1531315139-184922-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fix the missing clk_disable_unprepare() before return
+from cnds_runtime_resume() in the error handling case.
 
-Pointer bio is being assigned but is never used hence it is redundant
-and can be removed.
-
-Cleans up clang warning:
-warning: variable 'bio' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/md/raid5-cache.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/spi/spi-cadence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid5-cache.c b/drivers/md/raid5-cache.c
-index 2b775abf377b..7416db70c6cc 100644
---- a/drivers/md/raid5-cache.c
-+++ b/drivers/md/raid5-cache.c
-@@ -717,7 +717,6 @@ static void r5c_disable_writeback_async(struct work_struct *work)
- static void r5l_submit_current_io(struct r5l_log *log)
- {
- 	struct r5l_io_unit *io = log->current_io;
--	struct bio *bio;
- 	struct r5l_meta_block *block;
- 	unsigned long flags;
- 	u32 crc;
-@@ -730,7 +729,6 @@ static void r5l_submit_current_io(struct r5l_log *log)
- 	block->meta_size = cpu_to_le32(io->meta_offset);
- 	crc = crc32c_le(log->uuid_checksum, block, PAGE_SIZE);
- 	block->checksum = cpu_to_le32(crc);
--	bio = io->current_bio;
- 
- 	log->current_io = NULL;
- 	spin_lock_irqsave(&log->io_list_lock, flags);
--- 
-2.17.1
+diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
+index a568f35..7c88f74 100644
+--- a/drivers/spi/spi-cadence.c
++++ b/drivers/spi/spi-cadence.c
+@@ -739,7 +739,7 @@ static int __maybe_unused cnds_runtime_resume(struct device *dev)
+ 	ret = clk_prepare_enable(xspi->ref_clk);
+ 	if (ret) {
+ 		dev_err(dev, "Cannot enable device clock.\n");
+-		clk_disable(xspi->pclk);
++		clk_disable_unprepare(xspi->pclk);
+ 		return ret;
+ 	}
+ 	return 0;
+
+
 
