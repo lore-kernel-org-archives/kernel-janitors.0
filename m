@@ -1,27 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 07 Jul 2018 11:49:29 +0000
-Subject: Re: [PATCH] farsync: remove redundant variable txq_length
-Message-Id: <20180707.204929.2298078954908404083.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 13:17:38 +0000
+Subject: [PATCH -next] misc: vexpress: Fix potential NULL dereference in vexpress_syscfg_probe()
+Message-Id: <1531315058-183762-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180707112730.21404-1-colin.king@canonical.com>
-In-Reply-To: <20180707112730.21404-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kevin.curtis@farsite.co.uk, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat,  7 Jul 2018 12:27:30 +0100
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable txq_length is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'txq_length' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This is detected by Coccinelle semantic patch.
 
-Applied, thanks.
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
+
+res = platform_get_resource(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap(e1, res->start, e2);
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/misc/vexpress-syscfg.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/misc/vexpress-syscfg.c b/drivers/misc/vexpress-syscfg.c
+index 9eea30f..2d72c93 100644
+--- a/drivers/misc/vexpress-syscfg.c
++++ b/drivers/misc/vexpress-syscfg.c
+@@ -259,6 +259,8 @@ static int vexpress_syscfg_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&syscfg->funcs);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -EINVAL;
+ 	if (!devm_request_mem_region(&pdev->dev, res->start,
+ 			resource_size(res), pdev->name))
+ 		return -EBUSY;
+
+
+
