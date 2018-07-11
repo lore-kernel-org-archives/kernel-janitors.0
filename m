@@ -1,33 +1,47 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 30 Jul 2018 02:41:48 +0000
-Subject: [PATCH -next] thermal: armada: fix copy-paste error wit in armada_thermal_probe()
-Message-Id: <1532918508-45980-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 10:49:21 +0000
+Subject: [PATCH] staging: gdm724x: redundant variables idProduct and idVendor
+Message-Id: <20180711104921.30561-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix the retrn value check which testing the wrong variable
-in armada_thermal_probe().
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: e72f03ef2543 ("thermal: armada: use the resource managed registration helper alternative")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Variable idProduct and idVendor are being assigned but are never used
+hence they are redundant and can be removed.
+
+Cleans up clang warnings:
+warning: variable 'idProduct' set but not used [-Wunused-but-set-variable]
+warning: variable 'idVendor' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/thermal/armada_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gdm724x/gdm_usb.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
-index 8de4ba5..a269482 100644
---- a/drivers/thermal/armada_thermal.c
-+++ b/drivers/thermal/armada_thermal.c
-@@ -610,7 +610,7 @@ static int armada_thermal_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/staging/gdm724x/gdm_usb.c b/drivers/staging/gdm724x/gdm_usb.c
+index 0218782d1a08..dc4da66c3695 100644
+--- a/drivers/staging/gdm724x/gdm_usb.c
++++ b/drivers/staging/gdm724x/gdm_usb.c
+@@ -879,14 +879,9 @@ static void gdm_usb_disconnect(struct usb_interface *intf)
+ {
+ 	struct phy_dev *phy_dev;
+ 	struct lte_udev *udev;
+-	u16 idVendor, idProduct;
+ 	struct usb_device *usbdev;
  
- 	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!priv)
-+	if (!drvdata)
- 		return -ENOMEM;
+ 	usbdev = interface_to_usbdev(intf);
+-
+-	idVendor = __le16_to_cpu(usbdev->descriptor.idVendor);
+-	idProduct = __le16_to_cpu(usbdev->descriptor.idProduct);
+-
+ 	phy_dev = usb_get_intfdata(intf);
  
- 	priv->dev = &pdev->dev;
+ 	udev = phy_dev->priv_dev;
+-- 
+2.17.1
 
