@@ -1,50 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 13 Jul 2018 09:05:35 +0000
-Subject: [PATCH] tty: serial: jsm: remove redundant pointer ch
-Message-Id: <20180713090535.3205-1-colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 10:59:11 +0000
+Subject: [PATCH] staging: ks7010: remove redundant variable eth_proto
+Message-Id: <20180711105911.30887-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107114107.22805-1-colin.king@canonical.com>
-In-Reply-To: <20171107114107.22805-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Guilherme G . Piccoli" <gpiccoli@linux.vnet.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer ch is being assigned but is never used hence it is redundant
-and can be removed.
+Variable eth_proto is being assigned but is never used hence it is
+redundant and can be removed.
 
 Cleans up clang warning:
-warning: variable 'ch' set but not used [-Wunused-but-set-variable]
+warning: variable 'eth_proto' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/serial/jsm/jsm_tty.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_tty.c
-index b6bd6e15e07b..689774c073ca 100644
---- a/drivers/tty/serial/jsm/jsm_tty.c
-+++ b/drivers/tty/serial/jsm/jsm_tty.c
-@@ -430,7 +430,6 @@ int jsm_uart_port_init(struct jsm_board *brd)
- {
- 	int i, rc;
- 	unsigned int line;
--	struct jsm_channel *ch;
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index 0ecffab52ec2..a85975f63d26 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -354,7 +354,6 @@ void hostif_data_indication(struct ks_wlan_private *priv)
+ 	u16 auth_type;
+ 	unsigned char temp[256];
+ 	struct ether_hdr *eth_hdr;
+-	unsigned short eth_proto;
+ 	struct ieee802_1x_hdr *aa1x_hdr;
+ 	size_t size;
+ 	int ret;
+@@ -369,7 +368,6 @@ void hostif_data_indication(struct ks_wlan_private *priv)
+ 	get_word(priv);	/* Reserve Area */
  
- 	if (!brd)
- 		return -ENXIO;
-@@ -444,7 +443,7 @@ int jsm_uart_port_init(struct jsm_board *brd)
- 	brd->nasync = brd->maxports;
+ 	eth_hdr = (struct ether_hdr *)(priv->rxp);
+-	eth_proto = ntohs(eth_hdr->h_proto);
  
- 	/* Set up channel variables */
--	for (i = 0; i < brd->nasync; i++, ch = brd->channels[i]) {
-+	for (i = 0; i < brd->nasync; i++) {
- 
- 		if (!brd->channels[i])
- 			continue;
+ 	/* source address check */
+ 	if (ether_addr_equal(&priv->eth_addr[0], eth_hdr->h_source)) {
 -- 
 2.17.1
 
