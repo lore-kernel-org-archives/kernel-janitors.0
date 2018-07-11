@@ -1,32 +1,45 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Mon, 30 Jul 2018 07:35:47 +0000
-Subject: Re: [PATCH -next] thermal: armada: fix return value check in armada_thermal_probe_legacy()
-Message-Id: <20180730093547.5ddbdf55@xps13>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 12:34:21 +0000
+Subject: [PATCH -next] pinctrl: nsp: fix potential NULL dereference in nsp_pinmux_probe()
+Message-Id: <1531312461-134547-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1532918524-46054-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1532918524-46054-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Daniel,
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-Daniel Lezcano <daniel.lezcano@linaro.org> wrote on Mon, 30 Jul 2018
-08:18:53 +0200:
+This is detected by Coccinelle semantic patch.
 
-> On 30/07/2018 04:42, Wei Yongjun wrote:
-> > In case of error, the function platform_get_resource() returns NULL
-> > pointer not ERR_PTR(). The IS_ERR() test in the return value check
-> > should be replaced with NULL test.
-> > 
-> > Fixes: 175637792d45 ("thermal: armada: convert driver to syscon register accesses")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---  
-> 
-> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> 
-> 
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+res = platform_get_resource(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap_nocache(e1, res->start, e2);
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+index 5cd8166..87618a4 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+@@ -577,6 +577,8 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pinctrl->base0);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	if (!res)
++		return -EINVAL;
+ 	pinctrl->base1 = devm_ioremap_nocache(&pdev->dev, res->start,
+ 					      resource_size(res));
+ 	if (!pinctrl->base1) {
 
