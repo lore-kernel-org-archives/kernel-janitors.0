@@ -1,59 +1,48 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 10 Jul 2018 10:42:01 +0000
-Subject: Re: [PATCH][next] drm/panel: ILI9881c: fix missing assignment to error return ret
-Message-Id: <20180710104201.GJ1504@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="HcccYpVZDxQ8hzPO"
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 10:40:05 +0000
+Subject: [PATCH] staging: gasket: remove redundant pointer bar_data
+Message-Id: <20180711104005.30356-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180626160354.1363-1-colin.king@canonical.com>
-In-Reply-To: <20180626160354.1363-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Rob Springer <rspringer@google.com>, John Joseph <jnjoseph@google.com>, Ben Chan <benchan@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---HcccYpVZDxQ8hzPO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pointer bar_data is being assigned but is never used hence it is redundant
+and can be removed.
 
-On Tue, Jun 26, 2018 at 05:03:54PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently, ret is being checked for an error condition however it
-> is not being assigned in the previous statement on the call of
-> function mipi_dsi_dcs_exit_sleep_mode.  Add in the missing assignment
-> of ret.
->=20
-> Detected by CoverityScan, CID#1470174, 1470178 ("Unchecked return value")
->=20
-> Fixes: 26aec25593c2 ("drm/panel: Add Ilitek ILI9881c panel driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Cleans up clang warning:
+warning: variable 'bar_data' set but not used [-Wunused-but-set-variable]
 
-Applied, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/gasket/gasket_core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thierry
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index ad9442a5bb9d..45914ebc8f44 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1610,7 +1610,6 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	bool is_coherent_region;
+ 	const struct gasket_driver_desc *driver_desc;
+ 	struct gasket_dev *gasket_dev = (struct gasket_dev *)filp->private_data;
+-	struct gasket_bar_data *bar_data;
+ 	const struct gasket_bar_desc *bar_desc;
+ 	struct gasket_mappable_region *map_regions = NULL;
+ 	int num_map_regions = 0;
+@@ -1673,8 +1672,6 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	 * Subtract the base of the bar from the raw offset to get the
+ 	 * memory location within the bar to map.
+ 	 */
+-	bar_data = &gasket_dev->bar_data[bar_index];
+-
+ 	bar_desc = &driver_desc->bar_descriptions[bar_index];
+ 	permissions = bar_desc->permissions;
+ 	if (!gasket_mmap_has_permissions(gasket_dev, vma, permissions)) {
+-- 
+2.17.1
 
---HcccYpVZDxQ8hzPO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltEjXkACgkQ3SOs138+
-s6HLFRAAp0RfH9dXdPIBTsFKGhAnjEGXIByABT4ePuVE48uwunerFYt8UCeBkRTR
-RxQjfMEij4yRhOK18BM7yFNYZHTrFfN6C0TlUGxqA0HmIew1X0XCLh1AEZTwfz2b
-ZSQhkIW4nCMnyCSNkz2e50sKhhBw/rUyggOtdInj9HJHprFBGU6NCAIbwPdHQYG/
-+pJaXVdQq8X1ZuRx/tLy5+BMuLua/0swCU5Tqd9JsbL1kpWtoiX/wjYuDLEj3zUf
-4uBoWmm+kAFlZg2722Am3UmonLavdpl0Uh9Q2Suq6zSpAUqnNmVqgBNXgroDbOsF
-74Prk+pDtP7RLZYJ/ParuvonR6yZv3aYU+SpJw5fBHcrKv7AHrqUoGwvX/SZsKPM
-hPJ79rFK+8Ob5lGEbGFb5zebvnRFJ3KP/RTb/1WPBUJYUILwEZR9VXdu0vVXMvel
-RYvlS9ITDBLsSVr4ktJrWxP9ONlo746+6EHhtlsnFFaab3D2BYrpSrZ1IQCdnZu3
-k+pgTKtdnXsavBqliE3FVA8ijQ+dDpeQkJMKWZTj9OjNjLxCIzL3nauoHSdpGvjY
-i9jg7BYbREZmhOJhvR5ISWuVXY5DyEjZ2fHF++BAJyu5Z+dE+Vrn+cKr+Z6EHRjY
-UteLVk8HQEwRjFEiXbMjUSVZhhkIedA9LMeVn6U19suUjDW2LTg=
-=kp2D
------END PGP SIGNATURE-----
-
---HcccYpVZDxQ8hzPO--
