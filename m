@@ -1,42 +1,97 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Thu, 26 Jul 2018 10:56:17 +0000
-Subject: Re: [PATCH] PCI: mobiveil: integer overflow in IB_WIN_SIZE
-Message-Id: <20180726105617.GA6181@red-moon>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 07:12:12 +0000
+Subject: [PATCH] ipw2x00: remove redundant variables len, ret, reason and crypt
+Message-Id: <20180711071212.3018-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180705094539.xkmtfffbzl3kooum@kili.mountain>
-In-Reply-To: <20180705094539.xkmtfffbzl3kooum@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 12:45:39PM +0300, Dan Carpenter wrote:
-> IB_WIN_SIZE is larger than INT_MAX so we need to cast it to u64.
-> 
-> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Untested...  Possibly the problem is that there are too many multiplies
-> by * 1024.
-> 
-> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to pci/mobiveil for v4.19 (it is still not fixing anything
-given that the driver lacks a Kconfig and Makefile entries - that
-must be fixed with urgency), thanks.
+Variables len, ret, reason and crypt are assigned values that
+are never read, hence they are redundant and can be removed.
 
-Lorenzo
+Note: For the variable ret, a return code is being assigned, but
+this is not returned and 0 is currently being returned, I believe
+this is OK.
 
-> index 4d6c20e47bed..cf0aa7cee5b0 100644
-> --- a/drivers/pci/controller/pcie-mobiveil.c
-> +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -107,7 +107,7 @@
->  #define CFG_WINDOW_TYPE	0
->  #define IO_WINDOW_TYPE		1
->  #define MEM_WINDOW_TYPE	2
-> -#define IB_WIN_SIZE		(256 * 1024 * 1024 * 1024)
-> +#define IB_WIN_SIZE		((u64)256 * 1024 * 1024 * 1024)
->  #define MAX_PIO_WINDOWS	8
->  
->  /* Parameters for the waiting for link up routine */
+Cleans up clang warnings:
+warning: variable 'len' set but not used [-Wunused-but-set-variable]
+variable 'ret' set but not used [-Wunused-but-set-variable]
+warning: variable 'reason' set but not used [-Wunused-but-set-variable]
+warning: variable 'crypt' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c   | 7 -------
+ drivers/net/wireless/intel/ipw2x00/libipw_wx.c | 2 --
+ 2 files changed, 9 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index 1ad83ef5f202..910db46db6a1 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -5112,11 +5112,9 @@ static int ipw2100_disassociate_bssid(struct ipw2100_priv *priv)
+ 		.host_command_length = ETH_ALEN
+ 	};
+ 	int err;
+-	int len;
+ 
+ 	IPW_DEBUG_HC("DISASSOCIATION_BSSID\n");
+ 
+-	len = ETH_ALEN;
+ 	/* The Firmware currently ignores the BSSID and just disassociates from
+ 	 * the currently associated AP -- but in the off chance that a future
+ 	 * firmware does use the BSSID provided here, we go ahead and try and
+@@ -7723,7 +7721,6 @@ static int ipw2100_wx_get_auth(struct net_device *dev,
+ 	struct libipw_device *ieee = priv->ieee;
+ 	struct lib80211_crypt_data *crypt;
+ 	struct iw_param *param = &wrqu->param;
+-	int ret = 0;
+ 
+ 	switch (param->flags & IW_AUTH_INDEX) {
+ 	case IW_AUTH_WPA_VERSION:
+@@ -7733,7 +7730,6 @@ static int ipw2100_wx_get_auth(struct net_device *dev,
+ 		/*
+ 		 * wpa_supplicant will control these internally
+ 		 */
+-		ret = -EOPNOTSUPP;
+ 		break;
+ 
+ 	case IW_AUTH_TKIP_COUNTERMEASURES:
+@@ -7801,9 +7797,6 @@ static int ipw2100_wx_set_mlme(struct net_device *dev,
+ {
+ 	struct ipw2100_priv *priv = libipw_priv(dev);
+ 	struct iw_mlme *mlme = (struct iw_mlme *)extra;
+-	__le16 reason;
+-
+-	reason = cpu_to_le16(mlme->reason_code);
+ 
+ 	switch (mlme->cmd) {
+ 	case IW_MLME_DEAUTH:
+diff --git a/drivers/net/wireless/intel/ipw2x00/libipw_wx.c b/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
+index dd29f46d086b..d32d39fa2686 100644
+--- a/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
++++ b/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
+@@ -479,7 +479,6 @@ int libipw_wx_get_encode(struct libipw_device *ieee,
+ {
+ 	struct iw_point *erq = &(wrqu->encoding);
+ 	int len, key;
+-	struct lib80211_crypt_data *crypt;
+ 	struct libipw_security *sec = &ieee->sec;
+ 
+ 	LIBIPW_DEBUG_WX("GET_ENCODE\n");
+@@ -492,7 +491,6 @@ int libipw_wx_get_encode(struct libipw_device *ieee,
+ 	} else
+ 		key = ieee->crypt_info.tx_keyidx;
+ 
+-	crypt = ieee->crypt_info.crypt[key];
+ 	erq->flags = key + 1;
+ 
+ 	if (!sec->enabled) {
+-- 
+2.17.1
+
