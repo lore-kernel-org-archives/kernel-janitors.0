@@ -1,54 +1,35 @@
-From: Gary R Hook <ghook@amd.com>
-Date: Mon, 02 Jul 2018 20:21:28 +0000
-Subject: Re: [PATCH] iommu/amd: remove redundant variable tag
-Message-Id: <57a38891-d811-17af-a544-cfeea9476160@amd.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 13:22:47 +0000
+Subject: [PATCH -next] drm/sun4i: DW HDMI: Make symbol sun8i_dw_hdmi_pltfm_driver static
+Message-Id: <1531315367-190647-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180702163752.16418-1-colin.king@canonical.com>
-In-Reply-To: <20180702163752.16418-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07/02/2018 11:37 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable tag is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'tag' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/iommu/amd_iommu.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-> index 596b95c50051..c6aed1b088e9 100644
-> --- a/drivers/iommu/amd_iommu.c
-> +++ b/drivers/iommu/amd_iommu.c
-> @@ -547,7 +547,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
->   static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
->   {
->   	struct device *dev = iommu->iommu.dev;
-> -	int type, devid, pasid, flags, tag;
-> +	int type, devid, pasid, flags;
->   	volatile u32 *event = __evt;
->   	int count = 0;
->   	u64 address;
-> @@ -615,7 +615,6 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
->   	case EVENT_TYPE_INV_PPR_REQ:
->   		pasid = ((event[0] >> 16) & 0xFFFF)
->   			| ((event[1] << 6) & 0xF0000);
-> -		tag = event[1] & 0x03FF;
->   		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
->   			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
->   			pasid, address, flags);
-> 
+Fixes the following sparse warning:
 
-If it's all the same to you, the intent was to print the tag as well. 
-Could we add that to the message, rather than removing the variable, please?
+drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:228:24: warning:
+ symbol 'sun8i_dw_hdmi_pltfm_driver' was not declared. Should it be static?
 
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 3459b9e..281c42a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -225,7 +225,7 @@ static int sun8i_dw_hdmi_remove(struct platform_device *pdev)
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_dw_hdmi_dt_ids);
+ 
+-struct platform_driver sun8i_dw_hdmi_pltfm_driver = {
++static struct platform_driver sun8i_dw_hdmi_pltfm_driver = {
+ 	.probe  = sun8i_dw_hdmi_probe,
+ 	.remove = sun8i_dw_hdmi_remove,
+ 	.driver = {
 
