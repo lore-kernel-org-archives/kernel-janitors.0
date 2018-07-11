@@ -1,52 +1,60 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jul 2018 14:34:55 +0000
-Subject: Re: [v2] Coccinelle: Replace strncpy() + truncation by strscpy()
-Message-Id: <4bbe41a6-a9c6-ddd7-6683-14c792c16de0@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jul 2018 08:02:28 +0000
+Subject: [PATCH] drm/nouveau/hwmon: potential uninitialized variables
+Message-Id: <20180711080223.jktfeb4ofhqsv47a@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1531555951-9627-1-git-send-email-asmadeus@codewreck.org>
-In-Reply-To: <1531555951-9627-1-git-send-email-asmadeus@codewreck.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dominique Martinet <asmadeus@codewreck.org>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 
-I would like to contribute another bit of patch review for your proposal.
+Smatch complains that "value" can be uninitialized when kstrtol()
+returns -ERANGE.
 
-https://patchwork.kernel.org/patch/10524633/
-https://lore.kernel.org/lkml/1531555951-9627-1-git-send-email-asmadeus@codewreck.org/
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-* I have noticed that an action word was missing in the commit subject.
-
-* The commit description was started with the wording “Besides being simpler, …”.
-  I would prefer an other ordering of information there.
-
-  It seems that the mentioned compilation error gave you motivation for
-  the shown source code transformation.
-  I suggest to move the concrete update suggestion behind it.
-
-
-> +virtual patch
-> +virtual report
-> +virtual org
-
-How do you think about to reduce a bit of code repetition?
-
-+virtual patch, report, org
-
-
-> In particular, I have conciously not removed the intermediate msg
-> variable; as I made the message longer I actually added one more of
-> these for the org mode section.
-
-I propose again to reconsider such an implementation detail once more
-so that unnecessary Python code could be avoided.
-The Linux coding style supports the usage of long message strings.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id-b39a2f491a48ec740e0214a7dd584eefc2137d#n81
-
-Can string literals be nicer than extra variables (because of questionable
-source code layout concerns)?
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/nouveau/nouveau_hwmon.c b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
+index 44178b4c3599..08a1ab6b150d 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_hwmon.c
++++ b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
+@@ -69,8 +69,8 @@ nouveau_hwmon_set_temp1_auto_point1_temp(struct device *d,
+ 	struct nvkm_therm *therm = nvxx_therm(&drm->client.device);
+ 	long value;
+ 
+-	if (kstrtol(buf, 10, &value) = -EINVAL)
+-		return count;
++	if (kstrtol(buf, 10, &value))
++		return -EINVAL;
+ 
+ 	therm->attr_set(therm, NVKM_THERM_ATTR_THRS_FAN_BOOST,
+ 			value / 1000);
+@@ -102,8 +102,8 @@ nouveau_hwmon_set_temp1_auto_point1_temp_hyst(struct device *d,
+ 	struct nvkm_therm *therm = nvxx_therm(&drm->client.device);
+ 	long value;
+ 
+-	if (kstrtol(buf, 10, &value) = -EINVAL)
+-		return count;
++	if (kstrtol(buf, 10, &value))
++		return -EINVAL;
+ 
+ 	therm->attr_set(therm, NVKM_THERM_ATTR_THRS_FAN_BOOST_HYST,
+ 			value / 1000);
+@@ -156,7 +156,7 @@ nouveau_hwmon_set_pwm1_min(struct device *d, struct device_attribute *a,
+ 	long value;
+ 	int ret;
+ 
+-	if (kstrtol(buf, 10, &value) = -EINVAL)
++	if (kstrtol(buf, 10, &value))
+ 		return -EINVAL;
+ 
+ 	ret = therm->attr_set(therm, NVKM_THERM_ATTR_FAN_MIN_DUTY, value);
+@@ -179,7 +179,7 @@ nouveau_hwmon_set_pwm1_max(struct device *d, struct device_attribute *a,
+ 	long value;
+ 	int ret;
+ 
+-	if (kstrtol(buf, 10, &value) = -EINVAL)
++	if (kstrtol(buf, 10, &value))
+ 		return -EINVAL;
+ 
+ 	ret = therm->attr_set(therm, NVKM_THERM_ATTR_FAN_MAX_DUTY, value);
