@@ -1,29 +1,44 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Mon, 16 Jul 2018 12:11:02 +0000
-Subject: Re: [PATCH] usb: serial: mos7720: remove redundant variables iflag, mask and serial
-Message-Id: <20180716121102.GM10204@localhost>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 12:33:31 +0000
+Subject: [PATCH -next] pinctrl: single: Fix missing unlock on error path
+Message-Id: <1531312411-134133-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180713100831.29120-1-colin.king@canonical.com>
-In-Reply-To: <20180713100831.29120-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Jul 13, 2018 at 11:08:31AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables iflag, mask and serial are being assigned but ar never used
-> hence are redundant and can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'iflag' set but not used [-Wunused-but-set-variable]
-> warning: variable 'mask' set but not used [-Wunused-but-set-variable]
-> warning: variable 'serial' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Add the missing unlock before return from function
+in the error handling case.
 
-Now applied, thanks.
+Fixes: 0f5972033509 ("pinctrl: single: Fix group and function selector use")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Johan
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index 7dc680e..7ec72ff 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1071,8 +1071,8 @@ static int pcs_parse_one_pinctrl_entry(struct pcs_device *pcs,
+ 	*num_maps = 1;
+ free_function:
+ 	pinmux_generic_remove_function(pcs->pctl, fsel);
+-	mutex_unlock(&pcs->mutex);
+ free_pins:
++	mutex_unlock(&pcs->mutex);
+ 	devm_kfree(pcs->dev, pins);
+ 
+ free_vals:
+@@ -1211,8 +1211,8 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
+ 	*num_maps = 1;
+ free_function:
+ 	pinmux_generic_remove_function(pcs->pctl, fsel);
+-	mutex_unlock(&pcs->mutex);
+ free_pins:
++	mutex_unlock(&pcs->mutex);
+ 	devm_kfree(pcs->dev, pins);
+ 
+ free_vals:
+
