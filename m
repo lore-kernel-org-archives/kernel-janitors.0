@@ -1,23 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Jul 2018 11:13:39 +0000
-Subject: Re: [PATCH net] qed: off by one in qed_parse_mcp_trace_buf()
-Message-Id: <20180705.201339.710864685744249799.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 08:01:03 +0000
+Subject: [PATCH] PCI: pcie-candence-ep: remove redundant variable mmc
+Message-Id: <20180711080103.4581-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704095236.l3ub5au4jhoihk3g@kili.mountain>
-In-Reply-To: <20180704095236.l3ub5au4jhoihk3g@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Ariel.Elior@cavium.com, Michal.Kalderon@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Douglas <adouglas@cadence.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 4 Jul 2018 12:52:36 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> If format_idx = s_mcp_trace_meta.formats_num then we read one element
-> beyond the end of the s_mcp_trace_meta.formats[] array.
-> 
-> Fixes: 50bc60cb155c ("qed*: Utilize FW 8.33.11.0")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Variable mmc is being assigned but is never used hence it is redundant
+and can be removed.
 
-Applied.
+Cleans up clang warning:
+warning: variable 'mmc' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/controller/pcie-cadence-ep.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
+index e3fe4124e3af..63549e03eae8 100644
+--- a/drivers/pci/controller/pcie-cadence-ep.c
++++ b/drivers/pci/controller/pcie-cadence-ep.c
+@@ -238,7 +238,7 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn)
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct cdns_pcie *pcie = &ep->pcie;
+ 	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+-	u16 flags, mmc, mme;
++	u16 flags, mme;
+ 
+ 	/* Validate that the MSI feature is actually enabled. */
+ 	flags = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSI_FLAGS);
+@@ -249,7 +249,6 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn)
+ 	 * Get the Multiple Message Enable bitfield from the Message Control
+ 	 * register.
+ 	 */
+-	mmc = (flags & PCI_MSI_FLAGS_QMASK) >> 1;
+ 	mme = (flags & PCI_MSI_FLAGS_QSIZE) >> 4;
+ 
+ 	return mme;
+-- 
+2.17.1
+
