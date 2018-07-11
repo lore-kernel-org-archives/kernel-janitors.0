@@ -1,24 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 09 Jul 2018 13:29:12 +0000
-Subject: Re: [PATCH] pinctrl: nsp: off by ones in nsp_pinmux_enable()
-Message-Id: <CACRpkdbxG9N+JQQGGfGAdzJQD70HgjrxyFQ1QQR714+c6jTcEA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Jul 2018 13:44:36 +0000
+Subject: [PATCH][scsi-next] scsi: lpfc: fix null pointer dereference on nvmebuf
+Message-Id: <20180711134436.21963-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180703120425.jloiga5fcbdzcqpc@kili.mountain>
-In-Reply-To: <20180703120425.jloiga5fcbdzcqpc@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 2:04 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The > comparisons should be >= or else we read beyond the end of the
-> pinctrl->functions[] array.
->
-> Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for Broadcom NSP SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The check of nvmebuf suggests that it can be null, however a recent
+change dereferences it to determine oxid before it is null checked,
+hence there is a potential null deference on the pointer.  Fix this
+by performing the null check first.  Also remove the oxid from the
+debug log message as this is no longer valid.  I considered an early
+fetch of oxid if nvmebuf was valid, however, what oxid should be set
+to if nvembuf is null could lead to an ambiguous logging of an invalid
+oxid, so I thought just removing it from the logging was the least
+confusion solution.
 
-Patch applied with Ray's ACK for fixes.
+Detected by CoverityScan, CID#1471753 ("Dereference before null check")
 
-Yours,
-Linus Walleij
+Fixes: 68c9b55deea5 ("scsi: lpfc: Fix abort error path for NVMET")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_nvmet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index 22f8a204b69f..01652d9ac619 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1742,12 +1742,9 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 	uint32_t *payload;
+ 	uint32_t size, oxid, sid, rc;
+ 
+-	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
+-	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
+-
+ 	if (!nvmebuf || !phba->targetport) {
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_NVME_IOERR,
+-				"6154 LS Drop IO x%x\n", oxid);
++				"6154 LS Drop IO\n");
+ 		oxid = 0;
+ 		size = 0;
+ 		sid = 0;
+@@ -1755,6 +1752,9 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 		goto dropit;
+ 	}
+ 
++	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
++	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
++
+ 	tgtp = (struct lpfc_nvmet_tgtport *)phba->targetport->private;
+ 	payload = (uint32_t *)(nvmebuf->dbuf.virt);
+ 	size = bf_get(lpfc_rcqe_length,  &nvmebuf->cq_event.cqe.rcqe_cmpl);
+-- 
+2.17.1
+
