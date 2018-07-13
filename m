@@ -1,30 +1,31 @@
-From: Ingo Molnar <mingo@kernel.org>
-Date: Tue, 31 Jul 2018 05:56:01 +0000
-Subject: Re: [PATCH] x86/uv: remove redundant check of p == q
-Message-Id: <20180731055601.GA18964@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jul 2018 15:11:04 +0000
+Subject: [PATCH] ASoC: qdsp6: q6routing: off by one in routing_hw_params()
+Message-Id: <20180713151100.x5usbqhlhrzjmeoq@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180730103117.13731-1-colin.king@canonical.com>
-In-Reply-To: <20180730103117.13731-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Patrick Lai <plai@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>
 
+The data->port_data[] array has AFE_MAX_PORTS elements so the check
+should be >= instead of > or we write one element beyond the end of the
+array.
 
-* Colin King <colin.king@canonical.com> wrote:
+Fixes: e3a33673e845 ("ASoC: qdsp6: q6routing: Add q6routing driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check for p = q is dead code because the proceeding switch
-> statements jump to the end of the outer for-loop with continue
-> statements.  Remove the dead code.
-> 
-> Detected by CoverityScan, CID#145071 ("Structureally dead code")
-
-Do they really spell it "structureally", or is that your typo?
-
-Also, pease Cc: x86 patches to lkml.
-
-Thanks,
-
-	Ingo
+diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+index 35269b492761..0e7cf9e35d51 100644
+--- a/sound/soc/qcom/qdsp6/q6routing.c
++++ b/sound/soc/qcom/qdsp6/q6routing.c
+@@ -927,7 +927,7 @@ static int routing_hw_params(struct snd_pcm_substream *substream,
+ 	else
+ 		path_type = ADM_PATH_LIVE_REC;
+ 
+-	if (be_id > AFE_MAX_PORTS)
++	if (be_id >= AFE_MAX_PORTS)
+ 		return -EINVAL;
+ 
+ 	session = &data->port_data[be_id];
