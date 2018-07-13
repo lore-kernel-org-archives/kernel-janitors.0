@@ -1,20 +1,47 @@
-From: "Gerhard Kahmann" <Kahmann1@aol.jp>
-Date: Mon, 30 Jul 2018 14:27:16 +0000
-Subject: Product Enquiry
-Message-Id: <1532960811.k98NfE5EMR6zZk98NffK4m@mf-smf-ucb023c1>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Jul 2018 09:36:43 +0000
+Subject: [PATCH] usb: host: u132-hcd: remove redundant variable num_ports
+Message-Id: <20180713093643.16103-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello
+From: Colin Ian King <colin.king@canonical.com>
 
-We recently visited your website, we were recommended by one of your customer and we are interested in your models, We will like to place an order from the list of your products. However, we would like to see your company's latest catalogs with the; minimum order quantity, delivery time/FOB, payment terms etc. Official order placement will follow as soon as possible.
+Variable num_ports is being assigned but is never used hence it is
+redundant and can be removed.
 
-Awaiting your prompt reply
+Cleans up clang warning:
+warning: variable 'num_ports' set but not used [-Wunused-but-set-variable]
 
-Best Regards
-Gerhard Kahmann
-Purchasing Dept
-*****************************
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/host/u132-hcd.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
+index 032b8652910a..072bd5d5738e 100644
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@ -3062,7 +3062,6 @@ static int u132_probe(struct platform_device *pdev)
+ 	int retval;
+ 	u32 control;
+ 	u32 rh_a = -1;
+-	u32 num_ports;
+ 
+ 	msleep(100);
+ 	if (u132_exiting > 0)
+@@ -3077,7 +3076,6 @@ static int u132_probe(struct platform_device *pdev)
+ 	retval = ftdi_read_pcimem(pdev, roothub.a, &rh_a);
+ 	if (retval)
+ 		return retval;
+-	num_ports = rh_a & RH_A_NDP;	/* refuse to confuse usbcore */
+ 	if (pdev->dev.dma_mask)
+ 		return -EINVAL;
+ 
+-- 
+2.17.1
+
