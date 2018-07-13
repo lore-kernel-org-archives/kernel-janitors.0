@@ -1,47 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Jul 2018 08:21:16 +0000
-Subject: [PATCH] hpet: remove redundant pointer hpet
-Message-Id: <20180702082116.13991-1-colin.king@canonical.com>
+Date: Fri, 13 Jul 2018 09:51:51 +0000
+Subject: [PATCH] usb: isp1760: remove redundant variable 'selector'
+Message-Id: <20180713095151.22235-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer hpet is being assigned but is never used hence it is redundant
-and can be removed.
+Variable 'selector'  is being assigned but is never used hence it is
+redundant and can be removed.
 
 Cleans up clang warning:
-warning: variable 'hpet' set but not used [-Wunused-but-set-variable]
+warning: variable 'selector' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/char/hpet.c | 2 --
+ drivers/usb/isp1760/isp1760-hcd.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-index be426eb2a353..4a22b4b41aef 100644
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -579,7 +579,6 @@ hpet_ioctl_common(struct hpet_dev *devp, unsigned int cmd, unsigned long arg,
- 		  struct hpet_info *info)
- {
- 	struct hpet_timer __iomem *timer;
--	struct hpet __iomem *hpet;
- 	struct hpets *hpetp;
- 	int err;
- 	unsigned long v;
-@@ -591,7 +590,6 @@ hpet_ioctl_common(struct hpet_dev *devp, unsigned int cmd, unsigned long arg,
- 	case HPET_DPI:
- 	case HPET_IRQFREQ:
- 		timer = devp->hd_timer;
--		hpet = devp->hd_hpet;
- 		hpetp = devp->hd_hpets;
+diff --git a/drivers/usb/isp1760/isp1760-hcd.c b/drivers/usb/isp1760/isp1760-hcd.c
+index 1045521be293..8142c6b4c4cf 100644
+--- a/drivers/usb/isp1760/isp1760-hcd.c
++++ b/drivers/usb/isp1760/isp1760-hcd.c
+@@ -1817,7 +1817,6 @@ static int isp1760_hub_control(struct usb_hcd *hcd, u16 typeReq,
+ 	u32 temp, status;
+ 	unsigned long flags;
+ 	int retval = 0;
+-	unsigned selector;
+ 
+ 	/*
+ 	 * FIXME:  support SetPortFeatures USB_PORT_FEAT_INDICATOR.
+@@ -2010,7 +2009,6 @@ static int isp1760_hub_control(struct usb_hcd *hcd, u16 typeReq,
+ 		}
  		break;
- 	case HPET_IE_ON:
+ 	case SetPortFeature:
+-		selector = wIndex >> 8;
+ 		wIndex &= 0xff;
+ 		if (!wIndex || wIndex > ports)
+ 			goto error;
 -- 
 2.17.1
 
