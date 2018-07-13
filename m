@@ -1,45 +1,31 @@
-From: Harry Wentland <harry.wentland@amd.com>
-Date: Tue, 31 Jul 2018 14:03:31 +0000
-Subject: Re: [PATCH] drm/amd/display: add missing void parameter to dc_create_transfer_func
-Message-Id: <39ae8791-f3fb-ecc8-7409-3bb6b134e4a4@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jul 2018 15:05:57 +0000
+Subject: [PATCH] ASoC: qdsp6: q6afe-dai: fix a range check in of_q6afe_parse_dai_data()
+Message-Id: <20180713150557.gsx7wrau2l7tg2jq@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180731104254.14683-1-colin.king@canonical.com>
-In-Reply-To: <20180731104254.14683-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Patrick Lai <plai@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>
 
-On 2018-07-31 06:42 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Add a missing void parameter to function dc_create_transfer_func, fixes
-> sparse warning:
-> 
-> warning: non-ANSI function declaration of function 'dc_create_transfer_func'
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The main thing is that the data->priv[] array has AFE_PORT_MAX elements
+so the > condition should be >=.  But we may as well check for negative
+values as well just to be safe.
 
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Fixes: 24c4cbcfac09 ("ASoC: qdsp6: q6afe: Add q6afe dai driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Harry
-
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_surface.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
-> index 815dfb50089b..8fb3aefd195c 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
-> @@ -192,7 +192,7 @@ void dc_transfer_func_release(struct dc_transfer_func *tf)
->  	kref_put(&tf->refcount, dc_transfer_func_free);
->  }
->  
-> -struct dc_transfer_func *dc_create_transfer_func()
-> +struct dc_transfer_func *dc_create_transfer_func(void)
->  {
->  	struct dc_transfer_func *tf = kvzalloc(sizeof(*tf), GFP_KERNEL);
->  
-> 
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index e7f809e3ee1f..89df25e711c5 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -1329,7 +1329,7 @@ static void of_q6afe_parse_dai_data(struct device *dev,
+ 		int id, i, num_lines;
+ 
+ 		ret = of_property_read_u32(node, "reg", &id);
+-		if (ret || id > AFE_PORT_MAX) {
++		if (ret || id < 0 || id >= AFE_PORT_MAX) {
+ 			dev_err(dev, "valid dai id not found:%d\n", ret);
+ 			continue;
+ 		}
