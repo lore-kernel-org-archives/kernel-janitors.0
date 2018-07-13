@@ -1,28 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 02 Jul 2018 11:36:11 +0000
-Subject: Re: [PATCH][next] netdevsim: fix sa_idx out of bounds check
-Message-Id: <20180702.203611.801501021039255132.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jul 2018 15:10:17 +0000
+Subject: [PATCH v2] fs/coda: potential buffer overflow in coda_psdev_write()
+Message-Id: <20180713151017.lxbv4eljvd6olziq@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180630203924.5121-1-colin.king@canonical.com>
-In-Reply-To: <20180630203924.5121-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jakub.kicinski@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 30 Jun 2018 21:39:24 +0100
+"dcbuf" is a union that is "size" bytes large.  We ensure that "nbytes"
+is large enough to hold the smallest member of the union, but the
+problem is that we might try to use a larger member.  If "nbytes" is
+set to sizeof(struct coda_out_hdr) that would cause a problem in
+coda_downcall() when we try to access &out->coda_zapdir.CodaFid;
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if sa_idx is equal to NSIM_IPSEC_MAX_SA_COUNT then
-> an out-of-bounds read on ipsec->sa will occur. Fix the
-> incorrect bounds check by using >= rather than >.
-> 
-> Detected by CoverityScan, CID#1470226 ("Out-of-bounds-read")
-> 
-> Fixes: 7699353da875 ("netdevsim: add ipsec offload testing")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The union is quite small so we can allocate enough space so everything
+fits.  The CODA_ALLOC() macro calls kzalloc() which means the extra
+memory is just zeroed and it's fine.
 
-Applied, thank you.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: I forgot to update CODA_FREE() in my first patch.
+
+diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+index c5234c21b539..7ed698bc5f73 100644
+--- a/fs/coda/psdev.c
++++ b/fs/coda/psdev.c
+@@ -124,7 +124,7 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 				hdr.opcode, hdr.unique);
+ 		        nbytes = size;
+ 		}
+-		CODA_ALLOC(dcbuf, union outputArgs *, nbytes);
++		CODA_ALLOC(dcbuf, union outputArgs *, size);
+ 		if (copy_from_user(dcbuf, buf, nbytes)) {
+ 			CODA_FREE(dcbuf, nbytes);
+ 			retval = -EFAULT;
+@@ -134,7 +134,7 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 		/* what downcall errors does Venus handle ? */
+ 		error = coda_downcall(vcp, hdr.opcode, dcbuf);
+ 
+-		CODA_FREE(dcbuf, nbytes);
++		CODA_FREE(dcbuf, size);
+ 		if (error) {
+ 			pr_warn("%s: coda_downcall error: %d\n",
+ 				__func__, error);
