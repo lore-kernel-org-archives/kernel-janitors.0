@@ -1,43 +1,43 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 17 Jul 2018 08:53:42 +0000
-Subject: [PATCH] fscache, cachefiles: remove redundant pointer 'cache'
-Message-Id: <20180717085342.17864-1-colin.king@canonical.com>
+Date: Fri, 13 Jul 2018 09:48:07 +0000
+Subject: [PATCH] usb: xhci: dbc: remove redundant pointer dbc
+Message-Id: <20180713094807.20670-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'cache' is being assigned but is never used hence it is
+Pointer dbc is being assigned but is never used hence it is
 redundant and can be removed.
 
 Cleans up clang warning:
-warning: variable 'cache' set but not used [-Wunused-but-set-variable]
+variable 'dbc' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/cachefiles/rdwr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/usb/host/xhci-dbgcap.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 5082c8a49686..548790c4a027 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -955,11 +955,8 @@ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
- 	__releases(&object->fscache.cookie->lock)
+diff --git a/drivers/usb/host/xhci-dbgcap.c b/drivers/usb/host/xhci-dbgcap.c
+index 387f124a8334..86cff5c28eff 100644
+--- a/drivers/usb/host/xhci-dbgcap.c
++++ b/drivers/usb/host/xhci-dbgcap.c
+@@ -913,11 +913,9 @@ static ssize_t dbc_store(struct device *dev,
+ 			 struct device_attribute *attr,
+ 			 const char *buf, size_t count)
  {
- 	struct cachefiles_object *object;
--	struct cachefiles_cache *cache;
+-	struct xhci_dbc		*dbc;
+ 	struct xhci_hcd		*xhci;
  
- 	object = container_of(_object, struct cachefiles_object, fscache);
--	cache = container_of(object->fscache.cache,
--			     struct cachefiles_cache, cache);
+ 	xhci = hcd_to_xhci(dev_get_drvdata(dev));
+-	dbc = xhci->dbc;
  
- 	_enter("%p,{%lu}", object, page->index);
- 
+ 	if (!strncmp(buf, "enable", 6))
+ 		xhci_dbc_start(xhci);
 -- 
 2.17.1
 
