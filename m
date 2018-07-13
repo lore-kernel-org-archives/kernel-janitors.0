@@ -1,41 +1,55 @@
-From: Alan Douglas <adouglas@cadence.com>
-Date: Wed, 11 Jul 2018 08:16:17 +0000
-Subject: RE: [PATCH] PCI: pcie-candence-ep: remove redundant variable mmc
-Message-Id: <MWHPR07MB350280DBA03402F078C80ACCD85A0@MWHPR07MB3502.namprd07.prod.outlook.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Fri, 13 Jul 2018 14:15:11 +0000
+Subject: Re: [PATCH] PCI: pcie-candence-ep: remove redundant variable mmc
+Message-Id: <20180713141511.GA18555@red-moon>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180711080103.4581-1-colin.king@canonical.com>
 In-Reply-To: <20180711080103.4581-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Alan Douglas <adouglas@cadence.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMTEgSnVseSAyMDE4IDA5OjAxLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBGcm9tOiBDb2xpbiBJ
-YW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVmFyaWFibGUgbW1jIGlz
-IGJlaW5nIGFzc2lnbmVkIGJ1dCBpcyBuZXZlciB1c2VkIGhlbmNlIGl0IGlzIHJlZHVuZGFudA0K
-PiBhbmQgY2FuIGJlIHJlbW92ZWQuDQo+IA0KPiBDbGVhbnMgdXAgY2xhbmcgd2FybmluZzoNCj4g
-d2FybmluZzogdmFyaWFibGUgJ21tYycgc2V0IGJ1dCBub3QgdXNlZCBbLVd1bnVzZWQtYnV0LXNl
-dC12YXJpYWJsZV0NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5r
-aW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9wY2kvY29udHJvbGxlci9wY2ll
-LWNhZGVuY2UtZXAuYyB8IDMgKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
-IDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wY2kvY29udHJvbGxl
-ci9wY2llLWNhZGVuY2UtZXAuYyBiL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvcGNpZS1jYWRlbmNl
-LWVwLmMNCj4gaW5kZXggZTNmZTQxMjRlM2FmLi42MzU0OWUwM2VhZTggMTAwNjQ0DQo+IC0tLSBh
-L2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvcGNpZS1jYWRlbmNlLWVwLmMNCj4gKysrIGIvZHJpdmVy
-cy9wY2kvY29udHJvbGxlci9wY2llLWNhZGVuY2UtZXAuYw0KPiBAQCAtMjM4LDcgKzIzOCw3IEBA
-IHN0YXRpYyBpbnQgY2Ruc19wY2llX2VwX2dldF9tc2koc3RydWN0IHBjaV9lcGMgKmVwYywgdTgg
-Zm4pDQo+ICAJc3RydWN0IGNkbnNfcGNpZV9lcCAqZXAgPSBlcGNfZ2V0X2RydmRhdGEoZXBjKTsN
-Cj4gIAlzdHJ1Y3QgY2Ruc19wY2llICpwY2llID0gJmVwLT5wY2llOw0KPiAgCXUzMiBjYXAgPSBD
-RE5TX1BDSUVfRVBfRlVOQ19NU0lfQ0FQX09GRlNFVDsNCj4gLQl1MTYgZmxhZ3MsIG1tYywgbW1l
-Ow0KPiArCXUxNiBmbGFncywgbW1lOw0KPiANCj4gIAkvKiBWYWxpZGF0ZSB0aGF0IHRoZSBNU0kg
-ZmVhdHVyZSBpcyBhY3R1YWxseSBlbmFibGVkLiAqLw0KPiAgCWZsYWdzID0gY2Ruc19wY2llX2Vw
-X2ZuX3JlYWR3KHBjaWUsIGZuLCBjYXAgKyBQQ0lfTVNJX0ZMQUdTKTsNCj4gQEAgLTI0OSw3ICsy
-NDksNiBAQCBzdGF0aWMgaW50IGNkbnNfcGNpZV9lcF9nZXRfbXNpKHN0cnVjdCBwY2lfZXBjICpl
-cGMsIHU4IGZuKQ0KPiAgCSAqIEdldCB0aGUgTXVsdGlwbGUgTWVzc2FnZSBFbmFibGUgYml0Zmll
-bGQgZnJvbSB0aGUgTWVzc2FnZSBDb250cm9sDQo+ICAJICogcmVnaXN0ZXIuDQo+ICAJICovDQo+
-IC0JbW1jID0gKGZsYWdzICYgUENJX01TSV9GTEFHU19RTUFTSykgPj4gMTsNCj4gIAltbWUgPSAo
-ZmxhZ3MgJiBQQ0lfTVNJX0ZMQUdTX1FTSVpFKSA+PiA0Ow0KPiANCj4gIAlyZXR1cm4gbW1lOw0K
-PiAtLQ0KPiAyLjE3LjENClRoYW5rcyBmb3Igc3BvdHRpbmcgdGhpcywgbW1jIGlzIG5vdCBuZWVk
-ZWQgaGVyZSwganVzdCBpbnRlcmVzdGVkIGluIG1tZS4NCkFja2VkLWJ5OiBBbGFuIERvdWdsYXMg
-PGFkb3VnbGFzQGNhZGVuY2UuY29tPg0KDQo
+On Wed, Jul 11, 2018 at 09:01:03AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable mmc is being assigned but is never used hence it is redundant
+> and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'mmc' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/pci/controller/pcie-cadence-ep.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+Applied to pci/cadence for v4.19, thanks.
+
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
+> index e3fe4124e3af..63549e03eae8 100644
+> --- a/drivers/pci/controller/pcie-cadence-ep.c
+> +++ b/drivers/pci/controller/pcie-cadence-ep.c
+> @@ -238,7 +238,7 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn)
+>  	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+>  	struct cdns_pcie *pcie = &ep->pcie;
+>  	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+> -	u16 flags, mmc, mme;
+> +	u16 flags, mme;
+>  
+>  	/* Validate that the MSI feature is actually enabled. */
+>  	flags = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSI_FLAGS);
+> @@ -249,7 +249,6 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn)
+>  	 * Get the Multiple Message Enable bitfield from the Message Control
+>  	 * register.
+>  	 */
+> -	mmc = (flags & PCI_MSI_FLAGS_QMASK) >> 1;
+>  	mme = (flags & PCI_MSI_FLAGS_QSIZE) >> 4;
+>  
+>  	return mme;
+> -- 
+> 2.17.1
+> 
