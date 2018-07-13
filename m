@@ -1,50 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Jul 2018 09:47:05 +0000
-Subject: [PATCH] ide: remove redundant variables queue_run_ms and left
-Message-Id: <20180702094705.15734-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 13 Jul 2018 00:50:07 +0000
+Subject: [PATCH -next] fsi: sbefifo: Fix missing unlock on error in sbefifo_dump_ffdc()
+Message-Id: <1531443007-144851-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "David S . Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Joel Stanley <joel@jms.id.au>, Eddie James <eajames@linux.vnet.ibm.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Add the missing unlock before return from function sbefifo_dump_ffdc()
+in the error handling case.
 
-Variable queue_run_ms is not being used and is redundant and hence can
-be removed. Removing this also means that variable left can also be
-removed.
-
-Cleans up clang warning:
-warning: variable ‘queue_run_ms’ set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 9f4a8a2d7f9d ("fsi/sbefifo: Add driver for the SBE FIFO")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/ide/ide-io.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/fsi/fsi-sbefifo.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ide/ide-io.c b/drivers/ide/ide-io.c
-index a444bad7a2aa..0d93e0cfbeaf 100644
---- a/drivers/ide/ide-io.c
-+++ b/drivers/ide/ide-io.c
-@@ -460,7 +460,6 @@ void do_ide_request(struct request_queue *q)
- 	struct ide_host *host = hwif->host;
- 	struct request	*rq = NULL;
- 	ide_startstop_t	startstop;
--	unsigned long queue_run_ms = 3; /* old plug delay */
- 
- 	spin_unlock_irq(q->queue_lock);
- 
-@@ -480,9 +479,6 @@ void do_ide_request(struct request_queue *q)
- 		prev_port = hwif->host->cur_port;
- 		if (drive->dev_flags & IDE_DFLAG_SLEEPING &&
- 		    time_after(drive->sleep, jiffies)) {
--			unsigned long left = jiffies - drive->sleep;
--
--			queue_run_ms = jiffies_to_msecs(left + 1);
- 			ide_unlock_port(hwif);
- 			goto plug_device;
+diff --git a/drivers/fsi/fsi-sbefifo.c b/drivers/fsi/fsi-sbefifo.c
+index 6b31cc24..35f2749 100644
+--- a/drivers/fsi/fsi-sbefifo.c
++++ b/drivers/fsi/fsi-sbefifo.c
+@@ -150,6 +150,7 @@ static void sbefifo_dump_ffdc(struct device *dev, const __be32 *ffdc,
+ 		u32 w0, w1, w2, i;
+ 		if (ffdc_sz < 3) {
+ 			dev_err(dev, "SBE invalid FFDC package size %zd\n", ffdc_sz);
++			mutex_unlock(&sbefifo_ffdc_mutex);
+ 			return;
  		}
--- 
-2.17.1
+ 		w0 = be32_to_cpu(*(ffdc++));
 
