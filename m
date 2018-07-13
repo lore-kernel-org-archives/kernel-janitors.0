@@ -1,47 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 17:39:02 +0000
-Subject: [PATCH v2 8/8] Coccinelle: atomic_as_refcounter: Use format string directly in the first SmPL rule
-Message-Id: <0cfb32cf-2580-abee-b84c-40cf1ac78541@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Jul 2018 09:43:01 +0000
+Subject: [PATCH] USB: host: whci: remove redundant variable t
+Message-Id: <20180713094301.18585-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
- <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
-In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 18:45:55 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A format string was assigned to the Python variable “msg” before it was
-used in a rule of a script for the semantic patch language.
-Delete this extra variable so that the specified string object
-is directly used for the desired data output.
+Variable t is being assigned but is never used hence it is
+redundant and can be removed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cleans up clang warning:
+warning: variable 't' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/host/whci/pzl.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index c9b838941024..c2b55a5babb0 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -40,8 +40,9 @@ identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
- p1 << r1.p1;
- p2 << r1.p2;
- @@
--msg = "atomic_dec_and_test variation before object free at line %s."
--coccilib.report.print_report(p1[0], msg % (p2[0].line))
-+coccilib.report.print_report(p1[0],
-+                             "atomic_dec_and_test variation before object free at line %s."
-+                             % (p2[0].line))
+diff --git a/drivers/usb/host/whci/pzl.c b/drivers/usb/host/whci/pzl.c
+index bb84366f7bd3..ef52aeb02fde 100644
+--- a/drivers/usb/host/whci/pzl.c
++++ b/drivers/usb/host/whci/pzl.c
+@@ -96,9 +96,7 @@ static enum whc_update pzl_process_qset(struct whc *whc, struct whc_qset *qset)
  
- @r2 exists@
- expression a;
+ 	while (qset->ntds) {
+ 		struct whc_qtd *td;
+-		int t;
+ 
+-		t = qset->td_start;
+ 		td = &qset->qtd[qset->td_start];
+ 		status = le32_to_cpu(td->status);
+ 
 -- 
-2.18.0
+2.17.1
 
