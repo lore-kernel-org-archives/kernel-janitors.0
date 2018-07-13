@@ -1,72 +1,64 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Jul 2018 10:32:29 +0000
-Subject: [PATCH] staging: comedi: remove redundant variable segpos
-Message-Id: <20180711103229.30066-1-colin.king@canonical.com>
+Date: Fri, 13 Jul 2018 08:39:54 +0000
+Subject: [PATCH][V2] scsi: lpfc: remove null check on nvmebuf
+Message-Id: <20180713083954.26877-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variable segpos is being assigned but is never used hence it is redundant
-and can be removed.
+The null checks on nvmebuf are redundant as nvmebuf is always obtained
+from a container_of() and hence can never be null. Remove all the
+redundant null checks. This also cleans up a static analysis warning.
 
-Cleans up clang warning:
-warning: variable 'segpos' set but not used [-Wunused-but-set-variable]
-
+Detected by CoverityScan, CID#1471753 ("Dereference before null check")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/comedi/drivers/pcl816.c | 4 ++--
- drivers/staging/comedi/drivers/pcl818.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/pcl816.c b/drivers/staging/comedi/drivers/pcl816.c
-index d722079f3327..d87cf6d4a161 100644
---- a/drivers/staging/comedi/drivers/pcl816.c
-+++ b/drivers/staging/comedi/drivers/pcl816.c
-@@ -282,7 +282,7 @@ static int check_channel_list(struct comedi_device *dev,
- 			      unsigned int chanlen)
- {
- 	unsigned int chansegment[16];
--	unsigned int i, nowmustbechan, seglen, segpos;
-+	unsigned int i, nowmustbechan, seglen;
+V2: Remove null pointer checks thanks to James Bottomley for spotting
+that the caller obtains nvmebuf from container_of().
+
+---
+ drivers/scsi/lpfc/lpfc_nvmet.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index 22f8a204b69f..b766afe10d3d 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1745,7 +1745,7 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
+ 	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
  
- 	/*  correct channel and range number check itself comedi/range.c */
- 	if (chanlen < 1) {
-@@ -312,7 +312,7 @@ static int check_channel_list(struct comedi_device *dev,
- 		}
+-	if (!nvmebuf || !phba->targetport) {
++	if (!phba->targetport) {
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_NVME_IOERR,
+ 				"6154 LS Drop IO x%x\n", oxid);
+ 		oxid = 0;
+@@ -1770,8 +1770,7 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 		lpfc_nvmeio_data(phba, "NVMET LS  DROP: "
+ 				 "xri x%x sz %d from %06x\n",
+ 				 oxid, size, sid);
+-		if (nvmebuf)
+-			lpfc_in_buf_free(phba, &nvmebuf->dbuf);
++		lpfc_in_buf_free(phba, &nvmebuf->dbuf);
+ 		return;
+ 	}
+ 	ctxp->phba = phba;
+@@ -1814,8 +1813,7 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 			ctxp->oxid, rc);
  
- 		/*  check whole chanlist */
--		for (i = 0, segpos = 0; i < chanlen; i++) {
-+		for (i = 0; i < chanlen; i++) {
- 			if (chanlist[i] != chansegment[i % seglen]) {
- 				dev_dbg(dev->class_dev,
- 					"bad channel or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
-diff --git a/drivers/staging/comedi/drivers/pcl818.c b/drivers/staging/comedi/drivers/pcl818.c
-index eebb49751713..0af5315d4357 100644
---- a/drivers/staging/comedi/drivers/pcl818.c
-+++ b/drivers/staging/comedi/drivers/pcl818.c
-@@ -573,7 +573,7 @@ static int check_channel_list(struct comedi_device *dev,
- 			      unsigned int *chanlist, unsigned int n_chan)
- {
- 	unsigned int chansegment[16];
--	unsigned int i, nowmustbechan, seglen, segpos;
-+	unsigned int i, nowmustbechan, seglen;
+ 	/* We assume a rcv'ed cmd ALWAYs fits into 1 buffer */
+-	if (nvmebuf)
+-		lpfc_in_buf_free(phba, &nvmebuf->dbuf);
++	lpfc_in_buf_free(phba, &nvmebuf->dbuf);
  
- 	/* correct channel and range number check itself comedi/range.c */
- 	if (n_chan < 1) {
-@@ -605,7 +605,7 @@ static int check_channel_list(struct comedi_device *dev,
- 		}
- 
- 		/*  check whole chanlist */
--		for (i = 0, segpos = 0; i < n_chan; i++) {
-+		for (i = 0; i < n_chan; i++) {
- 			if (chanlist[i] != chansegment[i % seglen]) {
- 				dev_dbg(dev->class_dev,
- 					"bad channel or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
+ 	atomic_inc(&tgtp->xmt_ls_abort);
+ 	lpfc_nvmet_unsol_ls_issue_abort(phba, ctxp, sid, oxid);
 -- 
 2.17.1
 
