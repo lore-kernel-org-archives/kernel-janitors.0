@@ -1,24 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Jul 2018 12:27:45 +0000
-Subject: Re: [PATCH] pinctrl: actions: signedness bug in owl_pinctrl_probe()
-Message-Id: <20180703122745.4uvyf4kmqs4znl5o@mwanda>
+Date: Fri, 13 Jul 2018 15:05:37 +0000
+Subject: [PATCH 2/2] samples/bpf: test_cgrp2_sock2: fix an off by one
+Message-Id: <20180713150301.gdvfu2ejlzlnglii@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180703120255.rbkgt5lm53acnv6n@kili.mountain>
-In-Reply-To: <20180703120255.rbkgt5lm53acnv6n@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"prog_cnt" is the number of elements which are filled out in prog_fd[]
+so the test should be >= instead of >.
 
-On Tue, Jul 03, 2018 at 03:02:55PM +0300, Dan Carpenter wrote:
-> pctrl->irq[i] is unsigned so it can't be less than zero.
-> 
-> Fixes: 6c5d0736e9c0 ("pinctrl: actions: Add interrupt support for OWL S900 SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Never mind.  I see Colin already fixed this one.
-
-regards,
-dan carpenter
-
+diff --git a/samples/bpf/test_cgrp2_sock2.c b/samples/bpf/test_cgrp2_sock2.c
+index 3b5be2364975..a9277b118c33 100644
+--- a/samples/bpf/test_cgrp2_sock2.c
++++ b/samples/bpf/test_cgrp2_sock2.c
+@@ -51,7 +51,7 @@ int main(int argc, char **argv)
+ 	if (argc > 3)
+ 		filter_id = atoi(argv[3]);
+ 
+-	if (filter_id > prog_cnt) {
++	if (filter_id >= prog_cnt) {
+ 		printf("Invalid program id; program not found in file\n");
+ 		return EXIT_FAILURE;
+ 	}
