@@ -1,28 +1,30 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Tue, 24 Jul 2018 15:29:48 +0000
-Subject: Re: [PATCH] video: fbdev: metronomefb: fix some off by one bugs
-Message-Id: <2465673.hg9hjHzv6E@amdc3058>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jul 2018 14:55:15 +0000
+Subject: [PATCH] pinctrl: freescale: off by one in imx1_pinconf_group_dbg_show()
+Message-Id: <20180713145514.r7ukvw23kcdwc3pv@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180703122830epcas5p19c5ec248b138aafdb0c6f156ef3d8aca@epcas5p1.samsung.com>
- <20180703122813.hb75xlkxybogqpoq@kili.mountain>
-In-Reply-To: <20180703122813.hb75xlkxybogqpoq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-On Tuesday, July 03, 2018 03:28:13 PM Dan Carpenter wrote:
-> The "mem" buffer has "size" bytes.  The ">" should be ">=" to prevent
-> reading one character beyond the end of the array.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The info->groups[] array is allocated in imx1_pinctrl_parse_dt().  It
+has info->ngroups elements.  Thus the > here should be >= to prevent
+reading one element beyond the end of the array.
 
-Patch queued for 4.19, thanks.
+Fixes: 30612cd90005 ("pinctrl: imx1 core driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+index c3bdd90b1422..deb7870b3d1a 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+@@ -429,7 +429,7 @@ static void imx1_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 	const char *name;
+ 	int i, ret;
+ 
+-	if (group > info->ngroups)
++	if (group >= info->ngroups)
+ 		return;
+ 
+ 	seq_puts(s, "\n");
