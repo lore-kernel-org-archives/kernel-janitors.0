@@ -1,39 +1,58 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Sun, 08 Jul 2018 21:46:47 +0000
-Subject: Re: [PATCH] mtd: rawnand: gpmi: remove redundant variable payload_virt
-Message-Id: <20180708234647.28137d8c@xps13>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 14 Jul 2018 16:19:05 +0000
+Subject: [PATCH] apparmor: remove redundant pointer 'info'
+Message-Id: <20180714161905.5403-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180703081214.32754-1-colin.king@canonical.com>
-In-Reply-To: <20180703081214.32754-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Han Xu <han.xu@nxp.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-security-module@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin King <colin.king@canonical.com> wrote on Tue,  3 Jul 2018
-09:12:14 +0100:
+Pointer 'info' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Variable payload_virt is being assigned but is never used hence it is
-> redundant and can be removed.
->=20
-> Cleans up clang warning:
-> warning: variable 'payload_virt' set but not used [-Wunused-but-set-varia=
-ble]
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+Cleans up clang warning:
+warning: variable 'info' set but not used [-Wunused-but-set-variable]
 
-Applied to nand/next.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/apparmor/domain.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Thanks,
-Miqu=C3=A8l
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 098d546d8253..410d9ce09861 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1006,7 +1006,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ 					 const char *name, bool sibling)
+ {
+ 	struct aa_profile *root, *hat = NULL;
+-	const char *info = NULL;
+ 	int error = 0;
+ 
+ 	if (sibling && PROFILE_IS_HAT(profile)) {
+@@ -1014,7 +1013,6 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ 	} else if (!sibling && !PROFILE_IS_HAT(profile)) {
+ 		root = aa_get_profile(profile);
+ 	} else {
+-		info = "conflicting target types";
+ 		error = -EPERM;
+ 		goto audit;
+ 	}
+@@ -1025,10 +1023,8 @@ static struct aa_label *build_change_hat(struct aa_profile *profile,
+ 		if (COMPLAIN_MODE(profile)) {
+ 			hat = aa_new_null_profile(profile, true, name,
+ 						  GFP_KERNEL);
+-			if (!hat) {
+-				info = "failed null profile create";
++			if (!hat)
+ 				error = -ENOMEM;
+-			}
+ 		}
+ 	}
+ 	aa_put_profile(root);
+-- 
+2.17.1
+
