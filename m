@@ -1,59 +1,44 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 04 Jul 2018 09:21:01 +0000
-Subject: [PATCH -next v2] mtd: spinand: fix missing unlock on error
-Message-Id: <1530696061-76467-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 14 Jul 2018 16:11:24 +0000
+Subject: [PATCH] mm/hmm.c: remove redundant variables align_start and align_end
+Message-Id: <20180714161124.3923-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530692979-6274-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1530692979-6274-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David
- Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Peter Pan <peterpandong@micron.com>, Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add the missing unlock before return from function
-spinand_mtd_(read|write) in the error handling case.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: c898e0526fb6 ("mtd: nand: Add core infrastructure to support SPI NANDs")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Variables align_start and align_end are being assigned but are
+never used hence they are redundant and can be removed.
+
+Cleans up clang warnings:
+warning: variable 'align_start' set but not used [-Wunused-but-set-variable]
+warning: variable 'align_size' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v1 -> v2: using break instead of return
----
- drivers/mtd/nand/spi/core.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ mm/hmm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index 17d207a..e072464 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -561,11 +561,12 @@ static int spinand_mtd_read(struct mtd_info *mtd, loff_t from,
- 	nanddev_io_for_each_page(nand, from, ops, &iter) {
- 		ret = spinand_select_target(spinand, iter.req.pos.target);
- 		if (ret)
--			return ret;
-+			break;
+diff --git a/mm/hmm.c b/mm/hmm.c
+index caf9df27599e..76e7a058b32f 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -973,10 +973,7 @@ static RADIX_TREE(hmm_devmem_radix, GFP_KERNEL);
  
- 		ret = spinand_ecc_enable(spinand, enable_ecc);
- 		if (ret)
--			return ret;
-+			break;
-+
+ static void hmm_devmem_radix_release(struct resource *resource)
+ {
+-	resource_size_t key, align_start, align_size;
+-
+-	align_start = resource->start & ~(PA_SECTION_SIZE - 1);
+-	align_size = ALIGN(resource_size(resource), PA_SECTION_SIZE);
++	resource_size_t key;
  
- 		ret = spinand_read_page(spinand, &iter.req, enable_ecc);
- 		if (ret < 0 && ret != -EBADMSG)
-@@ -609,11 +610,11 @@ static int spinand_mtd_write(struct mtd_info *mtd, loff_t to,
- 	nanddev_io_for_each_page(nand, to, ops, &iter) {
- 		ret = spinand_select_target(spinand, iter.req.pos.target);
- 		if (ret)
--			return ret;
-+			break;
- 
- 		ret = spinand_ecc_enable(spinand, enable_ecc);
- 		if (ret)
--			return ret;
-+			break;
- 
- 		ret = spinand_write_page(spinand, &iter.req);
- 		if (ret)
+ 	mutex_lock(&hmm_devmem_lock);
+ 	for (key = resource->start;
+-- 
+2.17.1
 
