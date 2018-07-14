@@ -1,51 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 01 Jul 2018 17:32:04 +0000
-Subject: [PATCH 2/3] usb: wusbcore: security: cast sizeof to int for comparison
-Message-Id: <1530466325-1678-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jul 2018 14:34:55 +0000
+Subject: Re: [v2] Coccinelle: Replace strncpy() + truncation by strscpy()
+Message-Id: <4bbe41a6-a9c6-ddd7-6683-14c792c16de0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1531555951-9627-1-git-send-email-asmadeus@codewreck.org>
+In-Reply-To: <1531555951-9627-1-git-send-email-asmadeus@codewreck.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, joe@perches.com, Chengguang Xu <cgxu519@gmx.com>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dominique Martinet <asmadeus@codewreck.org>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
 
-Comparing an int to a size, which is unsigned, causes the int to become
-unsigned, giving the wrong result.  usb_get_descriptor can return a
-negative error code.
+I would like to contribute another bit of patch review for your proposal.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+https://patchwork.kernel.org/patch/10524633/
+https://lore.kernel.org/lkml/1531555951-9627-1-git-send-email-asmadeus@codewreck.org/
 
-// <smpl>
-@@
-int x;
-expression e,e1;
-identifier f;
-@@
 
-*x = f(...);
-... when != x = e1
-    when != if (x < 0 || ...) { ... return ...; }
-*x < sizeof(e)
-// </smpl>
+* I have noticed that an action word was missing in the commit subject.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+* The commit description was started with the wording “Besides being simpler, …”.
+  I would prefer an other ordering of information there.
 
----
- drivers/usb/wusbcore/security.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  It seems that the mentioned compilation error gave you motivation for
+  the shown source code transformation.
+  I suggest to move the concrete update suggestion behind it.
 
-diff --git a/drivers/usb/wusbcore/security.c b/drivers/usb/wusbcore/security.c
-index 33d2f5d..14ac8c9 100644
---- a/drivers/usb/wusbcore/security.c
-+++ b/drivers/usb/wusbcore/security.c
-@@ -217,7 +217,7 @@ int wusb_dev_sec_add(struct wusbhc *wusbhc,
- 
- 	result = usb_get_descriptor(usb_dev, USB_DT_SECURITY,
- 				    0, secd, sizeof(*secd));
--	if (result < sizeof(*secd)) {
-+	if (result < (int)sizeof(*secd)) {
- 		dev_err(dev, "Can't read security descriptor or "
- 			"not enough data: %d\n", result);
- 		goto out;
 
+> +virtual patch
+> +virtual report
+> +virtual org
+
+How do you think about to reduce a bit of code repetition?
+
++virtual patch, report, org
+
+
+> In particular, I have conciously not removed the intermediate msg
+> variable; as I made the message longer I actually added one more of
+> these for the org mode section.
+
+I propose again to reconsider such an implementation detail once more
+so that unnecessary Python code could be avoided.
+The Linux coding style supports the usage of long message strings.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id-b39a2f491a48ec740e0214a7dd584eefc2137d#n81
+
+Can string literals be nicer than extra variables (because of questionable
+source code layout concerns)?
+
+Regards,
+Markus
