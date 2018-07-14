@@ -1,27 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 04 Jul 2018 13:40:43 +0000
-Subject: Re: [PATCH] net: fec: remove redundant variable 'inc'
-Message-Id: <20180704.224043.1235205661791899520.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 14 Jul 2018 16:33:32 +0000
+Subject: [PATCH] vme: ca91cx42: remove redundant variable i
+Message-Id: <20180714163332.11600-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704074943.15820-1-colin.king@canonical.com>
-In-Reply-To: <20180704074943.15820-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: fugang.duan@nxp.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Martyn Welch <martyn@welchs.me.uk>, Manohar Vanga <manohar.vanga@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  4 Jul 2018 08:49:43 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable 'inc' is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'inc' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable i is being assigned but is never used hence it is redundant
+and can be removed.
 
-Applied.
+Cleans up clang warning:
+warning: variable 'i' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/vme/bridges/vme_ca91cx42.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/vme/bridges/vme_ca91cx42.c b/drivers/vme/bridges/vme_ca91cx42.c
+index 5dd284008630..53bdc256805f 100644
+--- a/drivers/vme/bridges/vme_ca91cx42.c
++++ b/drivers/vme/bridges/vme_ca91cx42.c
+@@ -970,7 +970,6 @@ static unsigned int ca91cx42_master_rmw(struct vme_master_resource *image,
+ {
+ 	u32 result;
+ 	uintptr_t pci_addr;
+-	int i;
+ 	struct ca91cx42_driver *bridge;
+ 	struct device *dev;
+ 
+@@ -978,7 +977,6 @@ static unsigned int ca91cx42_master_rmw(struct vme_master_resource *image,
+ 	dev = image->parent->parent;
+ 
+ 	/* Find the PCI address that maps to the desired VME address */
+-	i = image->number;
+ 
+ 	/* Locking as we can only do one of these at a time */
+ 	mutex_lock(&bridge->vme_rmw);
+-- 
+2.17.1
+
