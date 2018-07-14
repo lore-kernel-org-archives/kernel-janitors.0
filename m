@@ -1,37 +1,113 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Wed, 11 Jul 2018 17:15:55 +0000
-Subject: Re: [PATCH] staging: comedi: remove redundant variable segpos
-Message-Id: <e3dc8042-d3f4-791a-10a4-369bea691c38@mev.co.uk>
+From: Jan Harkes <jaharkes@cs.cmu.edu>
+Date: Sat, 14 Jul 2018 02:24:36 +0000
+Subject: [PATCH v3] fs/coda: potential buffer overflow in coda_psdev_write()
+Message-Id: <20180714022435.5lzzhzmpyn5cge5q@cs.cmu.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180711103229.30066-1-colin.king@canonical.com>
-In-Reply-To: <20180711103229.30066-1-colin.king@canonical.com>
+References: <20180712123255.rkcszmwdmrloxaki@kili.mountain>
+ <20180713151017.lxbv4eljvd6olziq@kili.mountain>
+ <20180713161630.olrwa2n2tnpqbmlt@cs.cmu.edu>
+ <20180713190503.eei3axzltm7pt4aa@mwanda>
+In-Reply-To: <20180713190503.eei3axzltm7pt4aa@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-On 11/07/18 11:32, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable segpos is being assigned but is never used hence it is redundant
-> and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'segpos' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/pcl816.c | 4 ++--
->   drivers/staging/comedi/drivers/pcl818.c | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
+Add checks to make sure the downcall message we got from the Coda cache
+manager is large enough to contain the data it is supposed to have.
+i.e. when we get a CODA_ZAPDIR we can access &out->coda_zapdir.CodaFid.
 
-Looks good, thanks!
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com
+Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+index c5234c21b539..43e8cc8dbf26 100644
+--- a/fs/coda/psdev.c
++++ b/fs/coda/psdev.c
+@@ -105,8 +105,12 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 	ssize_t retval = 0, count = 0;
+ 	int error;
+ 
++        /* make sure there is enough to copy out the (opcode, unique) values */
++        if (nbytes < (2 * sizeof(u_int32_t)))
++                return -EINVAL;
++
+         /* Peek at the opcode, uniquefier */
+-	if (copy_from_user(&hdr, buf, 2 * sizeof(u_long)))
++	if (copy_from_user(&hdr, buf, 2 * sizeof(u_int32_t)))
+ 	        return -EFAULT;
+ 
+         if (DOWNCALL(hdr.opcode)) {
+@@ -132,7 +136,7 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 		}
+ 
+ 		/* what downcall errors does Venus handle ? */
+-		error = coda_downcall(vcp, hdr.opcode, dcbuf);
++		error = coda_downcall(vcp, hdr.opcode, dcbuf, nbytes);
+ 
+ 		CODA_FREE(dcbuf, nbytes);
+ 		if (error) {
+diff --git a/fs/coda/upcall.c b/fs/coda/upcall.c
+index 1175a1722411..c3c35a80659b 100644
+--- a/fs/coda/upcall.c
++++ b/fs/coda/upcall.c
+@@ -804,12 +804,42 @@ static int coda_upcall(struct venus_comm *vcp,
+  *
+  * CODA_REPLACE -- replace one CodaFid with another throughout the name cache */
+ 
+-int coda_downcall(struct venus_comm *vcp, int opcode, union outputArgs *out)
++int coda_downcall(struct venus_comm *vcp, int opcode, union outputArgs *out,
++                  size_t nbytes)
+ {
+ 	struct inode *inode = NULL;
+ 	struct CodaFid *fid = NULL, *newfid;
+ 	struct super_block *sb;
+ 
++        /* make sure we have received enough data from the cache
++         * manager to populate the necessary fields in the buffer */
++	switch (opcode) {
++	case CODA_PURGEUSER:
++                if (nbytes < sizeof(struct coda_purgeuser_out))
++                        return -EINVAL;
++                break;
++
++	case CODA_ZAPDIR:
++                if (nbytes < sizeof(struct coda_zapdir_out))
++                        return -EINVAL;
++		break;
++
++	case CODA_ZAPFILE:
++                if (nbytes < sizeof(struct coda_zapfile_out))
++                        return -EINVAL;
++		break;
++
++	case CODA_PURGEFID:
++                if (nbytes < sizeof(struct coda_purgefid_out))
++                        return -EINVAL;
++		break;
++
++	case CODA_REPLACE:
++                if (nbytes < sizeof(struct coda_replace_out))
++                        return -EINVAL;
++		break;
++	}
++
+ 	/* Handle invalidation requests. */
+ 	mutex_lock(&vcp->vc_mutex);
+ 	sb = vcp->vc_sb;
+diff --git a/include/linux/coda_psdev.h b/include/linux/coda_psdev.h
+index 15170954aa2b..a553242b30c1 100644
+--- a/include/linux/coda_psdev.h
++++ b/include/linux/coda_psdev.h
+@@ -60,7 +60,8 @@ int venus_symlink(struct super_block *sb, struct CodaFid *fid,
+ int venus_access(struct super_block *sb, struct CodaFid *fid, int mask);
+ int venus_pioctl(struct super_block *sb, struct CodaFid *fid,
+ 		 unsigned int cmd, struct PioctlData *data);
+-int coda_downcall(struct venus_comm *vcp, int opcode, union outputArgs *out);
++int coda_downcall(struct venus_comm *vcp, int opcode, union outputArgs *out,
++                  size_t nbytes);
+ int venus_fsync(struct super_block *sb, struct CodaFid *fid);
+ int venus_statfs(struct dentry *dentry, struct kstatfs *sfs);
+ 
