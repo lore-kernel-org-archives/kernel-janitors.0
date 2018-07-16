@@ -1,59 +1,100 @@
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Tue, 17 Jul 2018 16:08:33 +0000
-Subject: Re: [PATCH] gfs2: remove redundant variable 'moved'
-Message-Id: <CAHc6FU79qQuWD4o1SFbTshQcmuYAoQvSsNZ49jEWc-oSTthhFw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Jul 2018 08:34:51 +0000
+Subject: [PATCH] ALSA: opl3: remove redundant pointer opl3
+Message-Id: <20180716083451.15290-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180717145928.29494-1-colin.king@canonical.com>
-In-Reply-To: <20180717145928.29494-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Bob Peterson <rpeterso@redhat.com>, cluster-devel <cluster-devel@redhat.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 17 July 2018 at 16:59, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable 'moved' s being assigned but is never used hence it is
-> redundant and can be removed.
->
-> Cleans up clang warning:
-> warning: variable 'moved' set but not used [-Wunused-but-set-variable]
+Variable opl3 is being assigned but is never used hence it is
+redundant and can be removed.
 
-thanks. I've looked up since when the variable is unused and added
-that info. The patch is on for-next now.
+Cleans up several clang warnings:
+warning: variable 'opl3' set but not used [-Wunused-but-set-variable]
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/gfs2/dir.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
-> index d97ad89955d1..e37002560c11 100644
-> --- a/fs/gfs2/dir.c
-> +++ b/fs/gfs2/dir.c
-> @@ -1011,7 +1011,7 @@ static int dir_split_leaf(struct inode *inode, const struct qstr *name)
->         u64 bn, leaf_no;
->         __be64 *lp;
->         u32 index;
-> -       int x, moved = 0;
-> +       int x;
->         int error;
->
->         index = name->hash >> (32 - dip->i_depth);
-> @@ -1113,8 +1113,6 @@ static int dir_split_leaf(struct inode *inode, const struct qstr *name)
->
->                         if (!prev)
->                                 prev = dent;
-> -
-> -                       moved = 1;
->                 } else {
->                         prev = dent;
->                 }
-> --
-> 2.17.1
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/drivers/opl3/opl3_midi.c | 12 ------------
+ sound/drivers/opl3/opl3_oss.c  |  6 ------
+ 2 files changed, 18 deletions(-)
 
-Andreas
+diff --git a/sound/drivers/opl3/opl3_midi.c b/sound/drivers/opl3/opl3_midi.c
+index bb3f3a5a6951..71cd5a2fbe82 100644
+--- a/sound/drivers/opl3/opl3_midi.c
++++ b/sound/drivers/opl3/opl3_midi.c
+@@ -721,9 +721,6 @@ void snd_opl3_note_off(void *p, int note, int vel,
+  */
+ void snd_opl3_key_press(void *p, int note, int vel, struct snd_midi_channel *chan)
+ {
+-  	struct snd_opl3 *opl3;
+-
+-	opl3 = p;
+ #ifdef DEBUG_MIDI
+ 	snd_printk(KERN_DEBUG "Key pressure, ch#: %i, inst#: %i\n",
+ 		   chan->number, chan->midi_program);
+@@ -735,9 +732,6 @@ void snd_opl3_key_press(void *p, int note, int vel, struct snd_midi_channel *cha
+  */
+ void snd_opl3_terminate_note(void *p, int note, struct snd_midi_channel *chan)
+ {
+-  	struct snd_opl3 *opl3;
+-
+-	opl3 = p;
+ #ifdef DEBUG_MIDI
+ 	snd_printk(KERN_DEBUG "Terminate note, ch#: %i, inst#: %i\n",
+ 		   chan->number, chan->midi_program);
+@@ -861,9 +855,6 @@ void snd_opl3_control(void *p, int type, struct snd_midi_channel *chan)
+ void snd_opl3_nrpn(void *p, struct snd_midi_channel *chan,
+ 		   struct snd_midi_channel_set *chset)
+ {
+-  	struct snd_opl3 *opl3;
+-
+-	opl3 = p;
+ #ifdef DEBUG_MIDI
+ 	snd_printk(KERN_DEBUG "NRPN, ch#: %i, inst#: %i\n",
+ 		   chan->number, chan->midi_program);
+@@ -876,9 +867,6 @@ void snd_opl3_nrpn(void *p, struct snd_midi_channel *chan,
+ void snd_opl3_sysex(void *p, unsigned char *buf, int len,
+ 		    int parsed, struct snd_midi_channel_set *chset)
+ {
+-  	struct snd_opl3 *opl3;
+-
+-	opl3 = p;
+ #ifdef DEBUG_MIDI
+ 	snd_printk(KERN_DEBUG "SYSEX\n");
+ #endif
+diff --git a/sound/drivers/opl3/opl3_oss.c b/sound/drivers/opl3/opl3_oss.c
+index 22c3e4bca220..8a0ce3f43f42 100644
+--- a/sound/drivers/opl3/opl3_oss.c
++++ b/sound/drivers/opl3/opl3_oss.c
+@@ -233,11 +233,8 @@ static int snd_opl3_load_patch_seq_oss(struct snd_seq_oss_arg *arg, int format,
+ static int snd_opl3_ioctl_seq_oss(struct snd_seq_oss_arg *arg, unsigned int cmd,
+ 				  unsigned long ioarg)
+ {
+-	struct snd_opl3 *opl3;
+-
+ 	if (snd_BUG_ON(!arg))
+ 		return -ENXIO;
+-	opl3 = arg->private_data;
+ 	switch (cmd) {
+ 		case SNDCTL_FM_LOAD_INSTR:
+ 			snd_printk(KERN_ERR "OPL3: "
+@@ -261,11 +258,8 @@ static int snd_opl3_ioctl_seq_oss(struct snd_seq_oss_arg *arg, unsigned int cmd,
+ /* reset device */
+ static int snd_opl3_reset_seq_oss(struct snd_seq_oss_arg *arg)
+ {
+-	struct snd_opl3 *opl3;
+-
+ 	if (snd_BUG_ON(!arg))
+ 		return -ENXIO;
+-	opl3 = arg->private_data;
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
