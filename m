@@ -1,35 +1,45 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Sat, 28 Jul 2018 06:49:48 +0000
-Subject: [PATCH net-next] xfrm: Make function xfrmi_get_link_net() static
-Message-Id: <1532760588-31129-1-git-send-email-weiyongjun1@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Jul 2018 17:26:51 +0000
+Subject: [PATCH v2 2/8] Coccinelle: atomic_as_refcounter: Omit placeholder specifications from a SmPL constra
+Message-Id: <7f7e6a42-3ff1-2495-57df-fb3b09cc1a21@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+ <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+ <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
+In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steffen Klassert <steffen.klassert@secunet.com>, Lorenzo Colitti <lorenzo@google.com>, Benedict Wong <benedictwong@google.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
 
-Fixes the following sparse warning:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Jul 2018 17:34:56 +0200
 
-net/xfrm/xfrm_interface.c:745:12: warning:
- symbol 'xfrmi_get_link_net' was not declared. Should it be static?
+A string was enclosed by placeholder specifications for
+regular expressions as constraints for metavariables in a script
+for the semantic patch language.
+The desired search functionality can be achieved also without
+the notation “.*”. Thus delete it at a specific place.
 
-Fixes: f203b76d7809 ("xfrm: Add virtual xfrm interfaces")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/xfrm/xfrm_interface.c | 2 +-
+ scripts/coccinelle/api/atomic_as_refcounter.cocci | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_interface.c b/net/xfrm/xfrm_interface.c
-index 31acc6f..2c0a5c5 100644
---- a/net/xfrm/xfrm_interface.c
-+++ b/net/xfrm/xfrm_interface.c
-@@ -742,7 +742,7 @@ static int xfrmi_fill_info(struct sk_buff *skb, const struct net_device *dev)
- 	return -EMSGSIZE;
- }
- 
--struct net *xfrmi_get_link_net(const struct net_device *dev)
-+static struct net *xfrmi_get_link_net(const struct net_device *dev)
- {
- 	struct xfrm_if *xi = netdev_priv(dev);
+diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+index 61fcaf5e45a3..46d27b2b1dff 100644
+--- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
++++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+@@ -12,7 +12,7 @@ virtual report
+ @r1 exists@
+ identifier a, x;
+ position p1, p2;
+-identifier fname =~ ".*free.*";
++identifier fname =~ "free";
+ identifier fname2 =~ ".*destroy.*";
+ identifier fname3 =~ ".*del.*";
+ identifier fname4 =~ ".*queue_work.*";
+-- 
+2.18.0
 
