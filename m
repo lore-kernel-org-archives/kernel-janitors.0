@@ -1,42 +1,45 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Mon, 30 Jul 2018 07:35:26 +0000
-Subject: Re: [PATCH -next v3] thermal: armada: fix copy-paste error in armada_thermal_probe()
-Message-Id: <20180730093526.3ae018ae@xps13>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Jul 2018 09:03:15 +0000
+Subject: [PATCH] ALSA: cs46xx: remove redundant pointer 'ins'
+Message-Id: <20180716090315.16267-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1532934423-179537-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1532934423-179537-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Wei,
+From: Colin Ian King <colin.king@canonical.com>
 
-Daniel Lezcano <daniel.lezcano@linaro.org> wrote on Mon, 30 Jul 2018
-09:29:32 +0200:
+Pointer 'ins' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> On 30/07/2018 09:07, Wei Yongjun wrote:
-> > The return value from devm_kzalloc() is not checked correctly. The
-> > test is done against a wrong variable. Fix it.
-> >=20
-> > Fixes: e72f03ef2543 ("thermal: armada: use the resource managed registr=
-ation helper alternative")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> > v2 - > v3: fix the description
-> > --- =20
->=20
->=20
-> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->=20
->=20
+Cleans up clang warning:
+warning: variable 'ins' set but not used [-Wunused-but-set-variable]
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/cs46xx/dsp_spos_scb_lib.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thanks,
-Miqu=C3=A8l
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/sound/pci/cs46xx/dsp_spos_scb_lib.c b/sound/pci/cs46xx/dsp_spos_scb_lib.c
+index abb01ce66983..8d0a3d357345 100644
+--- a/sound/pci/cs46xx/dsp_spos_scb_lib.c
++++ b/sound/pci/cs46xx/dsp_spos_scb_lib.c
+@@ -73,13 +73,10 @@ static void cs46xx_dsp_proc_scb_info_read (struct snd_info_entry *entry,
+ {
+ 	struct proc_scb_info * scb_info  = entry->private_data;
+ 	struct dsp_scb_descriptor * scb = scb_info->scb_desc;
+-	struct dsp_spos_instance * ins;
+ 	struct snd_cs46xx *chip = scb_info->chip;
+ 	int j,col;
+ 	void __iomem *dst = chip->region.idx[1].remap_addr + DSP_PARAMETER_BYTE_OFFSET;
+ 
+-	ins = chip->dsp_spos_instance;
+-
+ 	mutex_lock(&chip->spos_mutex);
+ 	snd_iprintf(buffer,"%04x %s:\n",scb->address,scb->scb_name);
+ 
+-- 
+2.17.1
+
