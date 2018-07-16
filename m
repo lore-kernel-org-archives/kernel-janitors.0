@@ -1,47 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 16 Jul 2018 08:49:38 +0000
-Subject: [PATCH] ALSA: gus: remove redundant pointer private_data
-Message-Id: <20180716084938.15733-1-colin.king@canonical.com>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 16 Jul 2018 12:31:31 +0000
+Subject: Re: [PATCH] ALSA: gus: remove redundant pointer private_data
+Message-Id: <s5ho9f75plo.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180716084938.15733-1-colin.king@canonical.com>
+In-Reply-To: <20180716084938.15733-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 16 Jul 2018 10:49:38 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer private_data is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'private_data' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Pointer private_data is being assigned but is never used hence it is
-redundant and can be removed.
+Applied, thanks.
 
-Cleans up clang warning:
-warning: variable 'private_data' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/isa/gus/gus_reset.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/sound/isa/gus/gus_reset.c b/sound/isa/gus/gus_reset.c
-index 3d1fed0c2620..59b3f683d49b 100644
---- a/sound/isa/gus/gus_reset.c
-+++ b/sound/isa/gus/gus_reset.c
-@@ -292,7 +292,6 @@ void snd_gf1_free_voice(struct snd_gus_card * gus, struct snd_gus_voice *voice)
- {
- 	unsigned long flags;
- 	void (*private_free)(struct snd_gus_voice *voice);
--	void *private_data;
- 
- 	if (voice = NULL || !voice->use)
- 		return;
-@@ -300,7 +299,6 @@ void snd_gf1_free_voice(struct snd_gus_card * gus, struct snd_gus_voice *voice)
- 	snd_gf1_clear_voices(gus, voice->number, voice->number);
- 	spin_lock_irqsave(&gus->voice_alloc, flags);
- 	private_free = voice->private_free;
--	private_data = voice->private_data;
- 	voice->private_free = NULL;
- 	voice->private_data = NULL;
- 	if (voice->pcm)
--- 
-2.17.1
-
+Takashi
