@@ -1,35 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 31 Jul 2018 07:20:29 +0000
-Subject: Re: [PATCH] ray_cs: remove redundant pointer 'p'
-Message-Id: <20180731072029.1243B607BD@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Jul 2018 13:44:58 +0000
+Subject: [PATCH] video: fbdev: tridentfb: remove deadcode on unreachable case statement
+Message-Id: <20180716134458.8654-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180720180740.21018-1-colin.king@canonical.com>
-In-Reply-To: <20180720180740.21018-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'p' is being assigned but is never used hence it is
-> redundant and can be removed. Also re-work if statement to remove
-> redundant assignment of p.
-> 
-> Cleans up clang warning:
-> warning: variable 'p' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The value of tmp being used in the switch statement has the range of
+just 0..3 hence the case 4 statement can never be reached and is
+deadcode and can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Detected by CoverityScan, CID#744384 ("Logically dead code")
 
-f21bcefcf91c ray_cs: remove redundant pointer 'p'
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/tridentfb.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/video/fbdev/tridentfb.c b/drivers/video/fbdev/tridentfb.c
+index 284706184b1b..f4b745590600 100644
+--- a/drivers/video/fbdev/tridentfb.c
++++ b/drivers/video/fbdev/tridentfb.c
+@@ -777,9 +777,6 @@ static int get_nativex(struct tridentfb_par *par)
+ 	case 3:
+ 		x = 800; y = 600;
+ 		break;
+-	case 4:
+-		x = 1400; y = 1050;
+-		break;
+ 	case 1:
+ 	default:
+ 		x = 640;  y = 480;
 -- 
-https://patchwork.kernel.org/patch/10538143/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
 
