@@ -1,29 +1,47 @@
-From: Jan Harkes <jaharkes@cs.cmu.edu>
-Date: Fri, 13 Jul 2018 19:08:13 +0000
-Subject: Re: [PATCH v2] fs/coda: potential buffer overflow in coda_psdev_write()
-Message-Id: <20180713190812.e4rhbaquh2iiktvj@cs.cmu.edu>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Jul 2018 08:43:08 +0000
+Subject: [PATCH] ALSA: es1688: remove redundant pointer chip
+Message-Id: <20180716084308.15571-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180712123255.rkcszmwdmrloxaki@kili.mountain>
- <20180713151017.lxbv4eljvd6olziq@kili.mountain>
- <20180713161630.olrwa2n2tnpqbmlt@cs.cmu.edu>
- <20180713190503.eei3axzltm7pt4aa@mwanda>
-In-Reply-To: <20180713190503.eei3axzltm7pt4aa@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 10:05:03PM +0300, Dan Carpenter wrote:
-> > The proper fix should be to check that we received at least enough data
-> > to fully read the received downcall message based on the opcode in the
-> > received message header and log/return an error if it doesn't match.
-> 
-> I just wanted to solve the memory corruption without breaking user
-> space.  What you're proposing sounds more complicated and probably
-> someone should test it.  Can you fix it and give me a Reported-by tag?
+From: Colin Ian King <colin.king@canonical.com>
 
-Should not be too hard and I am in the best position to test it, so yes
-I will do that.
+Pointer chip is being assigned but is never used hence it is
+redundant and can be removed.
 
-Jan
+Cleans up clang warning:
+warning: variable 'chip' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/isa/es1688/es1688.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/isa/es1688/es1688.c b/sound/isa/es1688/es1688.c
+index a826c138e7f5..3dfe7e592c25 100644
+--- a/sound/isa/es1688/es1688.c
++++ b/sound/isa/es1688/es1688.c
+@@ -260,7 +260,6 @@ static int snd_es968_pnp_detect(struct pnp_card_link *pcard,
+ 	struct snd_card *card;
+ 	static unsigned int dev;
+ 	int error;
+-	struct snd_es1688 *chip;
+ 
+ 	if (snd_es968_pnp_is_probed)
+ 		return -EBUSY;
+@@ -276,7 +275,6 @@ static int snd_es968_pnp_detect(struct pnp_card_link *pcard,
+ 			     sizeof(struct snd_es1688), &card);
+ 	if (error < 0)
+ 		return error;
+-	chip = card->private_data;
+ 
+ 	error = snd_card_es968_pnp(card, dev, pcard, pid);
+ 	if (error < 0) {
+-- 
+2.17.1
+
