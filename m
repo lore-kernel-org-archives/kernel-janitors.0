@@ -1,58 +1,44 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date: Thu, 05 Jul 2018 13:10:01 +0000
-Subject: Re: [PATCH][next] usb: typec: fix dereference before null check on adev
-Message-Id: <20180705131001.GC15989@kuha.fi.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Jul 2018 08:57:38 +0000
+Subject: [PATCH] ALSA: ali5451: remove redundant pointer 'codec'
+Message-Id: <20180716085738.16041-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704123406.9496-1-colin.king@canonical.com>
-In-Reply-To: <20180704123406.9496-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 01:34:06PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer adev is being dereferenced before it is being sanity
-> checked with a null pointer check, hence it is possible for
-> a null pointer dereference to occur.  Fix this by dereferencing
-> adev only once it is null checked.
-> 
-> Detected by CoverityScan, CID#1471598 ("Dereference before null check")
-> 
-> Fixes: 8a37d87d72f0 ("usb: typec: Bus type for alternate modes")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Pointer 'codec' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> ---
->  drivers/usb/typec/bus.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/bus.c b/drivers/usb/typec/bus.c
-> index 999d7904172a..95a2b10127db 100644
-> --- a/drivers/usb/typec/bus.c
-> +++ b/drivers/usb/typec/bus.c
-> @@ -51,7 +51,7 @@ static int typec_altmode_set_state(struct typec_altmode *adev, int state)
->  int typec_altmode_notify(struct typec_altmode *adev,
->  			 unsigned long conf, void *data)
->  {
-> -	bool is_port = is_typec_port(adev->dev.parent);
-> +	bool is_port;
->  	struct altmode *altmode;
->  	struct altmode *partner;
->  	int ret;
-> @@ -64,6 +64,7 @@ int typec_altmode_notify(struct typec_altmode *adev,
->  	if (!altmode->partner)
->  		return -ENODEV;
->  
-> +	is_port = is_typec_port(adev->dev.parent);
->  	partner = altmode->partner;
->  
->  	ret = typec_altmode_set_mux(is_port ? altmode : partner, (u8)conf);
+Cleans up clang warning:
+warning: variable 'codec' set but not used [-Wunused-but-set-variable]
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/ali5451/ali5451.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/sound/pci/ali5451/ali5451.c b/sound/pci/ali5451/ali5451.c
+index 39547e32e584..9f569379b77e 100644
+--- a/sound/pci/ali5451/ali5451.c
++++ b/sound/pci/ali5451/ali5451.c
+@@ -1484,12 +1484,9 @@ static struct snd_pcm_hardware snd_ali_capture  static void snd_ali_pcm_free_substream(struct snd_pcm_runtime *runtime)
+ {
+ 	struct snd_ali_voice *pvoice = runtime->private_data;
+-	struct snd_ali *codec;
+ 
+-	if (pvoice) {
+-		codec = pvoice->codec;
++	if (pvoice)
+ 		snd_ali_free_voice(pvoice->codec, pvoice);
+-	}
+ }
+ 
+ static int snd_ali_open(struct snd_pcm_substream *substream, int rec,
 -- 
-heikki
+2.17.1
+
