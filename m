@@ -1,60 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Jul 2018 08:02:28 +0000
-Subject: [PATCH] drm/nouveau/hwmon: potential uninitialized variables
-Message-Id: <20180711080223.jktfeb4ofhqsv47a@kili.mountain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Jul 2018 17:21:59 +0000
+Subject: [PATCH v2 0/8] Coccinelle: atomic_as_refcounter: Adjustments for source code search specifications
+Message-Id: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+ <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
 
-Smatch complains that "value" can be uninitialized when kstrtol()
-returns -ERANGE.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Jul 2018 19:15:26 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This source code search pattern was programmed in the way that
+some implementation details could be improved further.
+I suggest to avoid unnecessary code repetition also in this script
+for the semantic patch language.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_hwmon.c b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
-index 44178b4c3599..08a1ab6b150d 100644
---- a/drivers/gpu/drm/nouveau/nouveau_hwmon.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
-@@ -69,8 +69,8 @@ nouveau_hwmon_set_temp1_auto_point1_temp(struct device *d,
- 	struct nvkm_therm *therm = nvxx_therm(&drm->client.device);
- 	long value;
- 
--	if (kstrtol(buf, 10, &value) = -EINVAL)
--		return count;
-+	if (kstrtol(buf, 10, &value))
-+		return -EINVAL;
- 
- 	therm->attr_set(therm, NVKM_THERM_ATTR_THRS_FAN_BOOST,
- 			value / 1000);
-@@ -102,8 +102,8 @@ nouveau_hwmon_set_temp1_auto_point1_temp_hyst(struct device *d,
- 	struct nvkm_therm *therm = nvxx_therm(&drm->client.device);
- 	long value;
- 
--	if (kstrtol(buf, 10, &value) = -EINVAL)
--		return count;
-+	if (kstrtol(buf, 10, &value))
-+		return -EINVAL;
- 
- 	therm->attr_set(therm, NVKM_THERM_ATTR_THRS_FAN_BOOST_HYST,
- 			value / 1000);
-@@ -156,7 +156,7 @@ nouveau_hwmon_set_pwm1_min(struct device *d, struct device_attribute *a,
- 	long value;
- 	int ret;
- 
--	if (kstrtol(buf, 10, &value) = -EINVAL)
-+	if (kstrtol(buf, 10, &value))
- 		return -EINVAL;
- 
- 	ret = therm->attr_set(therm, NVKM_THERM_ATTR_FAN_MIN_DUTY, value);
-@@ -179,7 +179,7 @@ nouveau_hwmon_set_pwm1_max(struct device *d, struct device_attribute *a,
- 	long value;
- 	int ret;
- 
--	if (kstrtol(buf, 10, &value) = -EINVAL)
-+	if (kstrtol(buf, 10, &value))
- 		return -EINVAL;
- 
- 	ret = therm->attr_set(therm, NVKM_THERM_ATTR_FAN_MAX_DUTY, value);
+Markus Elfring (8):
+  Delete an unnecessary SmPL rule
+  Omit placeholder specifications from a SmPL constraint
+  Optimise a disjunction in the first SmPL rule
+  Use type “expression” for another metavariable
+  Replace disjunction by a constraint in two SmPL rules
+  Use nested disjunctions in the first SmPL rule
+  Use string literals directly in two SmPL rules
+  Use format string directly in the first SmPL rule
+
+---
+
+V2:
+Possible changes were recombined after the deletion of a questionable
+SmPL rule.
+
+ .../coccinelle/api/atomic_as_refcounter.cocci | 108 ++++--------------
+ 1 file changed, 24 insertions(+), 84 deletions(-)
+
+-- 
+2.18.0
+
