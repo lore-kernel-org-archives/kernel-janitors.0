@@ -1,41 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 20 Jul 2018 18:32:29 +0000
-Subject: [PATCH] staging: rtl8712: remove redundant pointer 'nic'
-Message-Id: <20180720183229.27529-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 16 Jul 2018 14:30:59 +0000
+Subject: Applied "spi: cadence: Fix missing clk_disable_unprepare() on error in cnds_runtime_resume()" to the
+Message-Id: <E1ff4Wh-0005Z6-CC@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Pointer 'nic' is being assigned but is never used hence it is
-redundant and can be removed.
+   spi: cadence: Fix missing clk_disable_unprepare() on error in cnds_runtime_resume()
 
-Cleans up clang warning:
-warning: variable 'nic' set but not used [-Wunused-but-set-variable]
+has been applied to the spi tree at
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 2ba87a9bcc7a10aa28af9fbf5b4354b3168366e2 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 11 Jul 2018 13:18:59 +0000
+Subject: [PATCH] spi: cadence: Fix missing clk_disable_unprepare() on error in
+ cnds_runtime_resume()
+
+Fix the missing clk_disable_unprepare() before return
+from cnds_runtime_resume() in the error handling case.
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/staging/rtl8712/rtl8712_led.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/spi/spi-cadence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8712/rtl8712_led.c b/drivers/staging/rtl8712/rtl8712_led.c
-index e9077347837e..0aa97c9dcced 100644
---- a/drivers/staging/rtl8712/rtl8712_led.c
-+++ b/drivers/staging/rtl8712/rtl8712_led.c
-@@ -89,9 +89,6 @@ static void BlinkWorkItemCallback(struct work_struct *work);
- static void InitLed871x(struct _adapter *padapter, struct LED_871x *pLed,
- 		 enum LED_PIN_871x	LedPin)
- {
--	struct  net_device *nic;
--
--	nic = padapter->pnetdev;
- 	pLed->padapter = padapter;
- 	pLed->LedPin = LedPin;
- 	pLed->CurrLedState = LED_STATE_OFF;
+diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
+index a568f35522f9..7c88f74f7f47 100644
+--- a/drivers/spi/spi-cadence.c
++++ b/drivers/spi/spi-cadence.c
+@@ -739,7 +739,7 @@ static int __maybe_unused cnds_runtime_resume(struct device *dev)
+ 	ret = clk_prepare_enable(xspi->ref_clk);
+ 	if (ret) {
+ 		dev_err(dev, "Cannot enable device clock.\n");
+-		clk_disable(xspi->pclk);
++		clk_disable_unprepare(xspi->pclk);
+ 		return ret;
+ 	}
+ 	return 0;
 -- 
-2.17.1
+2.18.0.rc2
 
