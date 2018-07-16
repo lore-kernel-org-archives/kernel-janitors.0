@@ -1,30 +1,45 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 16 Jul 2018 12:31:58 +0000
-Subject: Re: [PATCH] ALSA: cs46xx: remove redundant pointer 'ins'
-Message-Id: <s5hk1pv5pkx.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Jul 2018 12:09:54 +0000
+Subject: [PATCH] nfsd: fix memory leak of async_copy
+Message-Id: <20180716120954.6720-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180716090315.16267-1-colin.king@canonical.com>
-In-Reply-To: <20180716090315.16267-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "J . Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 16 Jul 2018 11:03:15 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'ins' is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'ins' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+In the case where async_copy is successfully allocated but
+the call to nfs4_init_cp_state fails, async_copy is not
+currently freed and the memory is leaked. Fix this by kfree'ing
+it before returning.
 
+Detected by CoverityScan, CID#1471823 ("Resource leak")
 
-Takashi
+Fixes: beb1814d5a8a ("NFSD create new stateid for async copy")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/nfsd/nfs4proc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 8f3368353aaf..3fb96a2708b9 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1295,8 +1295,10 @@ nfsd4_copy(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 		async_copy = kzalloc(sizeof(struct nfsd4_copy), GFP_KERNEL);
+ 		if (!async_copy)
+ 			goto out;
+-		if (!nfs4_init_cp_state(nn, copy))
++		if (!nfs4_init_cp_state(nn, copy)) {
++			kfree(async_copy);
+ 			goto out;
++		}
+ 		refcount_set(&async_copy->refcount, 1);
+ 		memcpy(&copy->cp_res.cb_stateid, &copy->cp_stateid,
+ 			sizeof(copy->cp_stateid));
+-- 
+2.17.1
+
