@@ -1,45 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 16 Jul 2018 09:03:15 +0000
-Subject: [PATCH] ALSA: cs46xx: remove redundant pointer 'ins'
-Message-Id: <20180716090315.16267-1-colin.king@canonical.com>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 16 Jul 2018 12:31:58 +0000
+Subject: Re: [PATCH] ALSA: cs46xx: remove redundant pointer 'ins'
+Message-Id: <s5hk1pv5pkx.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180716090315.16267-1-colin.king@canonical.com>
+In-Reply-To: <20180716090315.16267-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 16 Jul 2018 11:03:15 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer 'ins' is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'ins' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'ins' is being assigned but is never used hence it is
-redundant and can be removed.
+Applied, thanks.
 
-Cleans up clang warning:
-warning: variable 'ins' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/pci/cs46xx/dsp_spos_scb_lib.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/sound/pci/cs46xx/dsp_spos_scb_lib.c b/sound/pci/cs46xx/dsp_spos_scb_lib.c
-index abb01ce66983..8d0a3d357345 100644
---- a/sound/pci/cs46xx/dsp_spos_scb_lib.c
-+++ b/sound/pci/cs46xx/dsp_spos_scb_lib.c
-@@ -73,13 +73,10 @@ static void cs46xx_dsp_proc_scb_info_read (struct snd_info_entry *entry,
- {
- 	struct proc_scb_info * scb_info  = entry->private_data;
- 	struct dsp_scb_descriptor * scb = scb_info->scb_desc;
--	struct dsp_spos_instance * ins;
- 	struct snd_cs46xx *chip = scb_info->chip;
- 	int j,col;
- 	void __iomem *dst = chip->region.idx[1].remap_addr + DSP_PARAMETER_BYTE_OFFSET;
- 
--	ins = chip->dsp_spos_instance;
--
- 	mutex_lock(&chip->spos_mutex);
- 	snd_iprintf(buffer,"%04x %s:\n",scb->address,scb->scb_name);
- 
--- 
-2.17.1
-
+Takashi
