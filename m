@@ -1,88 +1,43 @@
-From: Jan Glauber <jan.glauber@cavium.com>
-Date: Mon, 02 Jul 2018 05:45:40 +0000
-Subject: Re: [PATCH] crypto: zip: make several functions static
-Message-Id: <20180702054540.GA14359@hc>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 17 Jul 2018 08:53:42 +0000
+Subject: [PATCH] fscache, cachefiles: remove redundant pointer 'cache'
+Message-Id: <20180717085342.17864-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180630113049.4402-1-colin.king@canonical.com>
-In-Reply-To: <20180630113049.4402-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Robert Richter <rrichter@cavium.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-I've already posted a similar patch:
-https://patchwork.kernel.org/patch/10482283/
+Pointer 'cache' is being assigned but is never used hence it is
+redundant and can be removed.
 
---Jan
+Cleans up clang warning:
+warning: variable 'cache' set but not used [-Wunused-but-set-variable]
 
-On Sat, Jun 30, 2018 at 12:30:49PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions zip_ctx_exit, zip_compress, zip_decompress and zip_ctx_init
-> are local to the source and do not need to be in global scope, so make
-> them static.
-> 
-> Cleans up sparse warnings:
-> symbol 'zip_ctx_exit' was not declared. Should it be static?
-> symbol 'zip_compress' was not declared. Should it be static?
-> symbol 'zip_decompress' was not declared. Should it be static?
-> symbol 'zip_ctx_init' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/cavium/zip/zip_crypto.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/crypto/cavium/zip/zip_crypto.c b/drivers/crypto/cavium/zip/zip_crypto.c
-> index b92b6e7e100f..f9e99a15d2a0 100644
-> --- a/drivers/crypto/cavium/zip/zip_crypto.c
-> +++ b/drivers/crypto/cavium/zip/zip_crypto.c
-> @@ -69,7 +69,7 @@ static void zip_static_init_zip_ops(struct zip_operation *zip_ops,
->         zip_ops->csum         = 1; /* Adler checksum desired */
->  }
-> 
-> -int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
-> +static int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
->  {
->         struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
->         struct zip_operation  *decomp_ctx = &zip_ctx->zip_decomp;
-> @@ -107,7 +107,7 @@ int zip_ctx_init(struct zip_kernel_ctx *zip_ctx, int lzs_flag)
->         return -ENOMEM;
->  }
-> 
-> -void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
-> +static void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
->  {
->         struct zip_operation  *comp_ctx   = &zip_ctx->zip_comp;
->         struct zip_operation  *dec_ctx = &zip_ctx->zip_decomp;
-> @@ -119,9 +119,9 @@ void zip_ctx_exit(struct zip_kernel_ctx *zip_ctx)
->         zip_data_buf_free(dec_ctx->output, MAX_OUTPUT_BUFFER_SIZE);
->  }
-> 
-> -int zip_compress(const u8 *src, unsigned int slen,
-> -                u8 *dst, unsigned int *dlen,
-> -                struct zip_kernel_ctx *zip_ctx)
-> +static int zip_compress(const u8 *src, unsigned int slen,
-> +                       u8 *dst, unsigned int *dlen,
-> +                       struct zip_kernel_ctx *zip_ctx)
->  {
->         struct zip_operation  *zip_ops   = NULL;
->         struct zip_state      *zip_state;
-> @@ -155,9 +155,9 @@ int zip_compress(const u8 *src, unsigned int slen,
->         return ret;
->  }
-> 
-> -int zip_decompress(const u8 *src, unsigned int slen,
-> -                  u8 *dst, unsigned int *dlen,
-> -                  struct zip_kernel_ctx *zip_ctx)
-> +static int zip_decompress(const u8 *src, unsigned int slen,
-> +                         u8 *dst, unsigned int *dlen,
-> +                         struct zip_kernel_ctx *zip_ctx)
->  {
->         struct zip_operation  *zip_ops   = NULL;
->         struct zip_state      *zip_state;
-> --
-> 2.17.1
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cachefiles/rdwr.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 5082c8a49686..548790c4a027 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -955,11 +955,8 @@ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
+ 	__releases(&object->fscache.cookie->lock)
+ {
+ 	struct cachefiles_object *object;
+-	struct cachefiles_cache *cache;
+ 
+ 	object = container_of(_object, struct cachefiles_object, fscache);
+-	cache = container_of(object->fscache.cache,
+-			     struct cachefiles_cache, cache);
+ 
+ 	_enter("%p,{%lu}", object, page->index);
+ 
+-- 
+2.17.1
+
