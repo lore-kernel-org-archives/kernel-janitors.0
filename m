@@ -1,47 +1,49 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 13 Jul 2018 09:24:33 +0000
-Subject: [PATCH] usb: dwc3: gadget: remove redundant variable maxpacket
-Message-Id: <20180713092433.10921-1-colin.king@canonical.com>
+Date: Tue, 17 Jul 2018 09:08:02 +0000
+Subject: [PATCH] userfaultfd: remove redundant pointer uwq
+Message-Id: <20180717090802.18357-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variable maxpacket is being assigned but is never used hence it is
+Pointer uwq is being assigned but is never used hence it is
 redundant and can be removed.
 
 Cleans up clang warning:
-warning: variable 'maxpacket' set but not used [-Wunused-but-set-variable]
+warning: variable 'uwq' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/dwc3/ep0.c | 3 ---
+ fs/userfaultfd.c | 3 ---
  1 file changed, 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
-index c77ff50a88a2..8efde178eef4 100644
---- a/drivers/usb/dwc3/ep0.c
-+++ b/drivers/usb/dwc3/ep0.c
-@@ -973,15 +973,12 @@ static void __dwc3_ep0_do_control_data(struct dwc3 *dwc,
- 		ret = dwc3_ep0_start_trans(dep);
- 	} else if (IS_ALIGNED(req->request.length, dep->endpoint.maxpacket) &&
- 		   req->request.length && req->request.zero) {
--		u32	maxpacket;
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 594d192b2331..0bc422ae8a46 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1847,17 +1847,14 @@ static void userfaultfd_show_fdinfo(struct seq_file *m, struct file *f)
+ {
+ 	struct userfaultfd_ctx *ctx = f->private_data;
+ 	wait_queue_entry_t *wq;
+-	struct userfaultfd_wait_queue *uwq;
+ 	unsigned long pending = 0, total = 0;
  
- 		ret = usb_gadget_map_request_by_dev(dwc->sysdev,
- 				&req->request, dep->number);
- 		if (ret)
- 			return;
- 
--		maxpacket = dep->endpoint.maxpacket;
--
- 		/* prepare normal TRB */
- 		dwc3_ep0_prepare_one_trb(dep, req->request.dma,
- 					 req->request.length,
+ 	spin_lock(&ctx->fault_pending_wqh.lock);
+ 	list_for_each_entry(wq, &ctx->fault_pending_wqh.head, entry) {
+-		uwq = container_of(wq, struct userfaultfd_wait_queue, wq);
+ 		pending++;
+ 		total++;
+ 	}
+ 	list_for_each_entry(wq, &ctx->fault_wqh.head, entry) {
+-		uwq = container_of(wq, struct userfaultfd_wait_queue, wq);
+ 		total++;
+ 	}
+ 	spin_unlock(&ctx->fault_pending_wqh.lock);
 -- 
 2.17.1
 
