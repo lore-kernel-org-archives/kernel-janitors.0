@@ -1,22 +1,49 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 16 Jul 2018 22:07:30 +0000
-Subject: Re: [PATCH 2/2] samples/bpf: test_cgrp2_sock2: fix an off by one
-Message-Id: <20180716220728.gd6yq7yke7d7qijw@ast-mbp.dhcp.thefacebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 17 Jul 2018 14:59:28 +0000
+Subject: [PATCH] gfs2: remove redundant variable 'moved'
+Message-Id: <20180717145928.29494-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180713150301.gdvfu2ejlzlnglii@kili.mountain>
-In-Reply-To: <20180713150301.gdvfu2ejlzlnglii@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bob Peterson <rpeterso@redhat.com>, Andreas Gruenbacher <agruenba@redhat.com>, cluster-devel@redhat.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 06:05:37PM +0300, Dan Carpenter wrote:
-> "prog_cnt" is the number of elements which are filled out in prog_fd[]
-> so the test should be >= instead of >.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-since this is sample code I've applied both patches to bpf-next tree.
-Thanks
+Variable 'moved' s being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable 'moved' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/gfs2/dir.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
+index d97ad89955d1..e37002560c11 100644
+--- a/fs/gfs2/dir.c
++++ b/fs/gfs2/dir.c
+@@ -1011,7 +1011,7 @@ static int dir_split_leaf(struct inode *inode, const struct qstr *name)
+ 	u64 bn, leaf_no;
+ 	__be64 *lp;
+ 	u32 index;
+-	int x, moved = 0;
++	int x;
+ 	int error;
+ 
+ 	index = name->hash >> (32 - dip->i_depth);
+@@ -1113,8 +1113,6 @@ static int dir_split_leaf(struct inode *inode, const struct qstr *name)
+ 
+ 			if (!prev)
+ 				prev = dent;
+-
+-			moved = 1;
+ 		} else {
+ 			prev = dent;
+ 		}
+-- 
+2.17.1
 
