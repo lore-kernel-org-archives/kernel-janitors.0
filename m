@@ -1,82 +1,47 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 08 Jul 2018 09:38:06 +0000
-Subject: Re: [PATCH 2/3] iio: adc: max1363: merge calls to of_match_device and of_device_get_match_data
-Message-Id: <20180708103624.4b754d9f@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 17 Jul 2018 09:02:56 +0000
+Subject: [PATCH] statfs: remove redundant pointer sb
+Message-Id: <20180717090256.18162-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018 11:49:09 +0200
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Drop call to of_match_device, which is subsumed by the subsequent
-> call to of_device_get_match_data.  The code becomes simpler, and a
-> temporary variable can be dropped.
-> 
-> The semantic match that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> local idexpression match;
-> identifier i;
-> expression x, dev, e, e1;
-> @@
-> -        match@i = of_match_device(x, dev);
-> -        if (match) e = of_device_get_match_data(dev);
-> -        else e = e1;
-> +        e = of_device_get_match_data(dev);
-> +        if (!e) e = e1;
-> 
-> @@
-> identifier r.i;
-> @@
-> - const struct of_device_id *i;
-> ... when != i
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Sorry, this got lost in my inbox.
+Pointer sb is being assigned but is never used hence it is
+redundant and can be removed.
 
-Anyhow, no applied to the togreg branch of iio.git and pushed out
-as testing for the autobuilders to play with it.
+Cleans up clang warning:
+warning: variable 'sb' set but not used [-Wunused-but-set-variable]
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/statfs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Jonathan
-
-> 
-> ---
->  drivers/iio/adc/max1363.c |    8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/max1363.c b/drivers/iio/adc/max1363.c
-> index 7f1848d..c1e6a7a 100644
-> --- a/drivers/iio/adc/max1363.c
-> +++ b/drivers/iio/adc/max1363.c
-> @@ -1575,7 +1575,6 @@ static int max1363_probe(struct i2c_client *client,
->  	struct max1363_state *st;
->  	struct iio_dev *indio_dev;
->  	struct regulator *vref;
-> -	const struct of_device_id *match;
->  
->  	indio_dev = devm_iio_device_alloc(&client->dev,
->  					  sizeof(struct max1363_state));
-> @@ -1602,11 +1601,8 @@ static int max1363_probe(struct i2c_client *client,
->  	/* this is only used for device removal purposes */
->  	i2c_set_clientdata(client, indio_dev);
->  
-> -	match = of_match_device(of_match_ptr(max1363_of_match),
-> -				&client->dev);
-> -	if (match)
-> -		st->chip_info = of_device_get_match_data(&client->dev);
-> -	else
-> +	st->chip_info = of_device_get_match_data(&client->dev);
-> +	if (!st->chip_info)
->  		st->chip_info = &max1363_chip_info_tbl[id->driver_data];
->  	st->client = client;
->  
-> 
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 3b8e27003754..82384616e524 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -402,7 +402,6 @@ COMPAT_SYSCALL_DEFINE2(ustat, unsigned, dev, struct compat_ustat __user *, u)
+ static int fsinfo_generic_statfs(struct dentry *dentry,
+ 				 struct fsinfo_statfs *p)
+ {
+-	struct super_block *sb;
+ 	struct kstatfs buf;
+ 	int ret;
+ 
+@@ -410,7 +409,6 @@ static int fsinfo_generic_statfs(struct dentry *dentry,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	sb = dentry->d_sb;
+ 	p->f_blocks	= buf.f_blocks;
+ 	p->f_bfree	= buf.f_bfree;
+ 	p->f_bavail	= buf.f_bavail;
+-- 
+2.17.1
 
