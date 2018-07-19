@@ -1,24 +1,40 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 04 Jul 2018 18:07:38 +0000
-Subject: Re: [PATCH] RDMA/bnxt_re: Fix a bunch of off by one bugs in qplib_fp.c
-Message-Id: <20180704180737.GB14028@ziepe.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Jul 2018 08:12:01 +0000
+Subject: [PATCH] drm/cma-helper: NULL dereference calling drm_gem_cma_prime_get_sg_table()
+Message-Id: <20180719081200.63xibytp4esvmg4z@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704095802.wg4wjgdweyy6ofug@kili.mountain>
-In-Reply-To: <20180704095802.wg4wjgdweyy6ofug@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Wed, Jul 04, 2018 at 12:58:02PM +0300, Dan Carpenter wrote:
-> The srq->swq[] is allocated in bnxt_qplib_create_srq().  It has
-> srq->hwq.max_elements elements so these tests should be > instead of >> or we might go beyond the end of the array.
-> 
-> Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+This funciton is only called from drm_gem_map_dma_buf().  It's supposed
+to return error pointers on failure and returning a NULL pointer will
+lead to a NULL dereference.
 
-Applied to for-next
+Fixes: 78467dc5f70f ("drm/cma: add low-level hook functions to use prime helpers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Jason
+diff --git a/drivers/gpu/drm/drm_gem_cma_helper.c b/drivers/gpu/drm/drm_gem_cma_helper.c
+index 80a5115c3846..f8a9c09efb87 100644
+--- a/drivers/gpu/drm/drm_gem_cma_helper.c
++++ b/drivers/gpu/drm/drm_gem_cma_helper.c
+@@ -436,7 +436,7 @@ struct sg_table *drm_gem_cma_prime_get_sg_table(struct drm_gem_object *obj)
+ 
+ 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
+ 	if (!sgt)
+-		return NULL;
++		return ERR_PTR(-EINVAL);
+ 
+ 	ret = dma_get_sgtable(obj->dev->dev, sgt, cma_obj->vaddr,
+ 			      cma_obj->paddr, obj->size);
+@@ -447,7 +447,7 @@ struct sg_table *drm_gem_cma_prime_get_sg_table(struct drm_gem_object *obj)
+ 
+ out:
+ 	kfree(sgt);
+-	return NULL;
++	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL_GPL(drm_gem_cma_prime_get_sg_table);
+ 
