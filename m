@@ -1,43 +1,31 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 31 Jul 2018 07:19:27 +0000
-Subject: Re: [PATCH] iwlegacy: remove several redundant variables
-Message-Id: <20180731071927.F3E2460376@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Jul 2018 08:16:48 +0000
+Subject: [PATCH] pinctrl: imx: off by one in imx_pinconf_group_dbg_show()
+Message-Id: <20180719081648.o6ug4z3t42mrsmop@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180711074253.4192-1-colin.king@canonical.com>
-In-Reply-To: <20180711074253.4192-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+The > should really be >= here.  It's harmless because
+pinctrl_generic_get_group() will return a NULL if group is invalid.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables id, unicast, write, conf, a_band, accum_tx and ucode are
-> assigned a value but it is never read, hence they are redundant and
-> can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'id' set but not used [-Wunused-but-set-variable]
-> warning: variable 'unicast' set but not used [-Wunused-but-set-variable]
-> warning: variable 'write' set but not used [-Wunused-but-set-variable]
-> warning: variable 'conf' set but not used [-Wunused-but-set-variable]
-> warning: variable 'a_band' set but not used [-Wunused-but-set-variable]
-> warning: variable 'tx' set but not used [-Wunused-but-set-variable]
-> warning: variable 'accum_tx' set but not used [-Wunused-but-set-variable]
-> warning: variable 'ucode' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driver")
+Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-454127ad36fb iwlegacy: remove several redundant variables
-
--- 
-https://patchwork.kernel.org/patch/10519029/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 1c6bb15579e1..b04edc22dad7 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -383,7 +383,7 @@ static void imx_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 	const char *name;
+ 	int i, ret;
+ 
+-	if (group > pctldev->num_groups)
++	if (group >= pctldev->num_groups)
+ 		return;
+ 
+ 	seq_puts(s, "\n");
