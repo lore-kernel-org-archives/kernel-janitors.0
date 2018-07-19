@@ -1,48 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Jul 2018 12:43:29 +0000
-Subject: [PATCH] pinctrl: actions: fix unsigned less than zero comparison
-Message-Id: <20180702124329.7087-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Jul 2018 08:19:21 +0000
+Subject: [PATCH] drm/i915/kvmgt: fix an error code in gvt_dma_map_page()
+Message-Id: <20180719081921.jdair4cgqllst5yj@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Changbin Du <changbin.du@intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gvt-dev@lists.freedesktop.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The dma_mapping_error() returns true on error but we want to return
+-ENOMEM here.
 
-The check to see if platform_get_irq failed is performed on the
-unsigned value of pctrl->irq[i] and the check is never true because
-an unsigned cannot be less than zero.  Fix this by assinging the
-signed int ret to the return of platform_get_irq and checking ret
-instead.
+Fixes: 79e542f5af79 ("drm/i915/kvmgt: Support setting dma map for huge pages")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Detected by CoverityScan, CID#1470247 ("Unsigned comparison against 0")
-
-Fixes: 6c5d0736e9c0 ("pinctrl: actions: Add interrupt support for OWL S900 SoC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/actions/pinctrl-owl.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-index 4fa9cc377b3b..133ce9e0000a 100644
---- a/drivers/pinctrl/actions/pinctrl-owl.c
-+++ b/drivers/pinctrl/actions/pinctrl-owl.c
-@@ -1026,11 +1026,10 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+index 4d2f53ae9f0f..32ec5748f176 100644
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -187,14 +187,14 @@ static int gvt_dma_map_page(struct intel_vgpu *vgpu, unsigned long gfn,
+ 
+ 	/* Setup DMA mapping. */
+ 	*dma_addr = dma_map_page(dev, page, 0, size, PCI_DMA_BIDIRECTIONAL);
+-	ret = dma_mapping_error(dev, *dma_addr);
+-	if (ret) {
++	if (dma_mapping_error(dev, *dma_addr)) {
+ 		gvt_vgpu_err("DMA mapping failed for pfn 0x%lx, ret %d\n",
+ 			     page_to_pfn(page), ret);
+ 		gvt_unpin_guest_page(vgpu, gfn, size);
++		return -ENOMEM;
  	}
  
- 	for (i = 0; i < pctrl->num_irq ; i++) {
--		pctrl->irq[i] = platform_get_irq(pdev, i);
--		if (pctrl->irq[i] < 0) {
--			ret = pctrl->irq[i];
-+		ret = platform_get_irq(pdev, i);
-+		pctrl->irq[i] = ret;
-+		if (ret < 0)
- 			goto err_exit;
--		}
- 	}
+-	return ret;
++	return 0;
+ }
  
- 	ret = owl_gpio_init(pctrl);
--- 
-2.17.1
-
+ static void gvt_dma_unmap_page(struct intel_vgpu *vgpu, unsigned long gfn,
