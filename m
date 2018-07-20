@@ -1,90 +1,54 @@
-From: Tyler Hicks <tyhicks@canonical.com>
-Date: Thu, 05 Jul 2018 14:52:18 +0000
-Subject: Re: [PATCH] eCryptfs: fix a couple type promotion bugs
-Message-Id: <20180705145218.GA29046@sec>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="opJtzjQTFsWo+cga"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 20 Jul 2018 18:07:40 +0000
+Subject: [PATCH] ray_cs: remove redundant pointer 'p'
+Message-Id: <20180720180740.21018-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704093556.dlosbefurp2o42zs@kili.mountain>
-In-Reply-To: <20180704093556.dlosbefurp2o42zs@kili.mountain>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---opJtzjQTFsWo+cga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pointer 'p' is being assigned but is never used hence it is
+redundant and can be removed. Also re-work if statement to remove
+redundant assignment of p.
 
-On 2018-07-04 12:35:56, Dan Carpenter wrote:
-> ECRYPTFS_SIZE_AND_MARKER_BYTES is type size_t, so if "rc" is negative
-> that gets type promoted to a high positive value and treated as success.
->=20
-> Fixes: 778aeb42a708 ("eCryptfs: Cleanup and optimize ecryptfs_lookup_inte=
-rpose()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cleans up clang warning:
+warning: variable 'p' set but not used [-Wunused-but-set-variable]
 
-Thanks, Dan!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ray_cs.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-I made a small change to use "if/else if" rather than "if/if". I've
-pushed the patch to the ecryptfs next branch.
+diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
+index a7e0a17aa7e8..08c607c031bc 100644
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -470,7 +470,6 @@ static inline struct rcs __iomem *rcs_base(ray_dev_t *dev)
+ static int ray_init(struct net_device *dev)
+ {
+ 	int i;
+-	UCHAR *p;
+ 	struct ccs __iomem *pccs;
+ 	ray_dev_t *local = netdev_priv(dev);
+ 	struct pcmcia_device *link = local->finder;
+@@ -513,12 +512,9 @@ static int ray_init(struct net_device *dev)
+ 	init_startup_params(local);
+ 
+ 	/* copy mac address to startup parameters */
+-	if (parse_addr(phy_addr, local->sparm.b4.a_mac_addr)) {
+-		p = local->sparm.b4.a_mac_addr;
+-	} else {
++	if (!parse_addr(phy_addr, local->sparm.b4.a_mac_addr)) {
+ 		memcpy(&local->sparm.b4.a_mac_addr,
+ 		       &local->startup_res.station_addr, ADDRLEN);
+-		p = local->sparm.b4.a_mac_addr;
+ 	}
+ 
+ 	clear_interrupt(local);	/* Clear any interrupt from the card */
+-- 
+2.17.1
 
-Tyler
-
->=20
-> diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-> index 4dd842f72846..506f2a0bba41 100644
-> --- a/fs/ecryptfs/crypto.c
-> +++ b/fs/ecryptfs/crypto.c
-> @@ -1018,8 +1018,10 @@ int ecryptfs_read_and_validate_header_region(struc=
-t inode *inode)
-> =20
->  	rc =3D ecryptfs_read_lower(file_size, 0, ECRYPTFS_SIZE_AND_MARKER_BYTES,
->  				 inode);
-> +	if (rc < 0)
-> +		return rc;
->  	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
-> -		return rc >=3D 0 ? -EINVAL : rc;
-> +		return -EINVAL;
->  	rc =3D ecryptfs_validate_marker(marker);
->  	if (!rc)
->  		ecryptfs_i_size_init(file_size, inode);
-> @@ -1381,8 +1383,10 @@ int ecryptfs_read_and_validate_xattr_region(struct=
- dentry *dentry,
->  				     ecryptfs_inode_to_lower(inode),
->  				     ECRYPTFS_XATTR_NAME, file_size,
->  				     ECRYPTFS_SIZE_AND_MARKER_BYTES);
-> +	if (rc < 0)
-> +		return rc;
->  	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
-> -		return rc >=3D 0 ? -EINVAL : rc;
-> +		return -EINVAL;
->  	rc =3D ecryptfs_validate_marker(marker);
->  	if (!rc)
->  		ecryptfs_i_size_init(file_size, inode);
-> --
-> To unsubscribe from this list: send the line "unsubscribe ecryptfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---opJtzjQTFsWo+cga
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJbPjCiAAoJENaSAD2qAscKJnIP/1JQlr+uTAVD0PSHf737Z5ah
-NQuqzSi7SYZGmG18/McKbYMvP9zW0osOjD9TPJM1zGFblPRIOVFeYy+JdiBB+L28
-JCkyv92sshZLoeV2GkrQq4Vi9qNSI3nUR5q5N1PaSORyEmgRe9SdWh8EHBEe2Y+9
-dAiRBDdlWbqsYquA/BVOp83ZEgMRJj8W+WOt5SwUi/mqtEa5Wld2kvQcGzcFjdkz
-ljk5+FKabizJ/0HFFds4y9Or08J4upSNjPgeToJDD7Q7M4rw7gFUGfiTIZUCdBzn
-D8N86Ve9cCfkd7+llrMEBW2G69ogSLsT3r76T8P5wVnd1ZKPU+bbVpSKDLVE7NLt
-W6EGhoC07JTssoOx395szbLNRZr4FUeGc87OUgPyc4qzfkSG74H9jOLxIebSUTRb
-EEEgNx5QtrgqdnOdu2zC7Gv2av364Emolgj95G3ySd7dnH8MHfrbL8DCGo5SnqOW
-6BtQiwLQwoSZ6cjyEDQtvkgp0M8XRLdVjjmFRu6RIwlRjIK9qunbhN81vD1hK4la
-4mR/uzm906K7Nv7wLyi2eljHLxR1N//0QlmmEFXG/ZDwwGmkWugtFPthBbffjv1F
-ss1TbMfkZH6zWrkpBadh0lsT1YFILr6dIKlUNd04PYhB7/gvujnHx/+vVyPinQYg
-dcU5uYN8SiUEQJR1KctC
-=Tcsp
------END PGP SIGNATURE-----
-
---opJtzjQTFsWo+cga--
