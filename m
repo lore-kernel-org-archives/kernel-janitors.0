@@ -1,47 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Jul 2018 10:49:21 +0000
-Subject: [PATCH] staging: gdm724x: redundant variables idProduct and idVendor
-Message-Id: <20180711104921.30561-1-colin.king@canonical.com>
+Date: Fri, 20 Jul 2018 18:32:29 +0000
+Subject: [PATCH] staging: rtl8712: remove redundant pointer 'nic'
+Message-Id: <20180720183229.27529-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variable idProduct and idVendor are being assigned but are never used
-hence they are redundant and can be removed.
+Pointer 'nic' is being assigned but is never used hence it is
+redundant and can be removed.
 
-Cleans up clang warnings:
-warning: variable 'idProduct' set but not used [-Wunused-but-set-variable]
-warning: variable 'idVendor' set but not used [-Wunused-but-set-variable]
+Cleans up clang warning:
+warning: variable 'nic' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/gdm724x/gdm_usb.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/staging/rtl8712/rtl8712_led.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/staging/gdm724x/gdm_usb.c b/drivers/staging/gdm724x/gdm_usb.c
-index 0218782d1a08..dc4da66c3695 100644
---- a/drivers/staging/gdm724x/gdm_usb.c
-+++ b/drivers/staging/gdm724x/gdm_usb.c
-@@ -879,14 +879,9 @@ static void gdm_usb_disconnect(struct usb_interface *intf)
+diff --git a/drivers/staging/rtl8712/rtl8712_led.c b/drivers/staging/rtl8712/rtl8712_led.c
+index e9077347837e..0aa97c9dcced 100644
+--- a/drivers/staging/rtl8712/rtl8712_led.c
++++ b/drivers/staging/rtl8712/rtl8712_led.c
+@@ -89,9 +89,6 @@ static void BlinkWorkItemCallback(struct work_struct *work);
+ static void InitLed871x(struct _adapter *padapter, struct LED_871x *pLed,
+ 		 enum LED_PIN_871x	LedPin)
  {
- 	struct phy_dev *phy_dev;
- 	struct lte_udev *udev;
--	u16 idVendor, idProduct;
- 	struct usb_device *usbdev;
- 
- 	usbdev = interface_to_usbdev(intf);
+-	struct  net_device *nic;
 -
--	idVendor = __le16_to_cpu(usbdev->descriptor.idVendor);
--	idProduct = __le16_to_cpu(usbdev->descriptor.idProduct);
--
- 	phy_dev = usb_get_intfdata(intf);
- 
- 	udev = phy_dev->priv_dev;
+-	nic = padapter->pnetdev;
+ 	pLed->padapter = padapter;
+ 	pLed->LedPin = LedPin;
+ 	pLed->CurrLedState = LED_STATE_OFF;
 -- 
 2.17.1
 
