@@ -1,52 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Jul 2018 15:00:18 +0000
-Subject: [PATCH] drm/etnaviv: fix some off by one bugs
-Message-Id: <20180713145631.qxd3pzk72v4bshii@kili.mountain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Jul 2018 09:40:30 +0000
+Subject: Re: [v3] Coccinelle: suggest replacing strncpy+truncation by strscpy
+Message-Id: <6c657df2-a524-df22-eceb-6237cb5a9faa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1532047018-23754-1-git-send-email-asmadeus@codewreck.org>
+In-Reply-To: <1532047018-23754-1-git-send-email-asmadeus@codewreck.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lucas Stach <l.stach@pengutronix.de>, Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Russell King <linux+etnaviv@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dominique Martinet <asmadeus@codewreck.org>, kernel-janitors@vger.kernel.org
+Cc: cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
 
-The ->nr_signal is the supposed to be the number of elements in the
-->signal array.  There was one place where it was 5 but it was supposed
-to be 4.  That looks like a copy and paste bug.  There were also two
-checks that were off by one.
+> I didn't move all virtuals in a single line because none of the other
+> kernel patch do it,
 
-Fixes: 9e2c2e273012 ("drm/etnaviv: add infrastructure to query perf counter")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Not tested.
+It can be occasionally useful to preserve another bit of coding tradition.
+I dared to propose the reconsideration of such an implementation detail.
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c b/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
-index 9980d81a26e3..4227a4006c34 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
-@@ -113,7 +113,7 @@ static const struct etnaviv_pm_domain doms_3d[] = {
- 		.name = "PE",
- 		.profile_read = VIVS_MC_PROFILE_PE_READ,
- 		.profile_config = VIVS_MC_PROFILE_CONFIG0,
--		.nr_signals = 5,
-+		.nr_signals = 4,
- 		.signal = (const struct etnaviv_pm_signal[]) {
- 			{
- 				"PIXEL_COUNT_KILLED_BY_COLOR_PIPE",
-@@ -435,7 +435,7 @@ int etnaviv_pm_query_sig(struct etnaviv_gpu *gpu,
- 
- 	dom = meta->domains + signal->domain;
- 
--	if (signal->iter > dom->nr_signals)
-+	if (signal->iter >= dom->nr_signals)
- 		return -EINVAL;
- 
- 	sig = &dom->signal[signal->iter];
-@@ -461,7 +461,7 @@ int etnaviv_pm_req_validate(const struct drm_etnaviv_gem_submit_pmr *r,
- 
- 	dom = meta->domains + r->domain;
- 
--	if (r->signal > dom->nr_signals)
-+	if (r->signal >= dom->nr_signals)
- 		return -EINVAL;
- 
- 	return 0;
+
+> and still do not see any advantage of moving the string to not use a variable
+> so kept that as well.
+
+I am curious if other software developers (besides me) would like to achieve
+more source code reduction according to the principle “Don't repeat yourself”.
+
+
+> This should hopefully be the last version :)
+
+* Do any related development concerns need further safety checks for this
+  evolving source code transformation pattern?
+
+* Julia Lawall has presented additional development ideas today.
+  https://lore.kernel.org/lkml/alpine.DEB.2.20.1807200759230.2349@hadrien/
+  https://lkml.org/lkml/2018/7/20/71
+
+
+Regards,
+Markus
