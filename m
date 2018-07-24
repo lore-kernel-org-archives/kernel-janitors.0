@@ -1,30 +1,35 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Date: Sun, 22 Jul 2018 23:38:41 +0000
-Subject: Re: [PATCH -next] EVM: fix return value check in evm_write_xattrs()
-Message-Id: <1532302721.6206.24.camel@linux.ibm.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 24 Jul 2018 06:32:59 +0000
+Subject: [PATCH -next] regulator: bd9571mwv: Make symbol 'dev_attr_backup_mode' static
+Message-Id: <1532413979-187684-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1531315720-4191-1-git-send-email-weiyongjun1@huawei.com>
-         <20180711151510.GA23645@mail.hallyn.com>
-In-Reply-To: <20180711151510.GA23645@mail.hallyn.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Serge E. Hallyn" <serge@hallyn.com>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, James Morris <jmorris@namei.org>, Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marek Vasut <marek.vasut+renesas@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2018-07-11 at 10:15 -0500, Serge E. Hallyn wrote:
-> Quoting Wei Yongjun (weiyongjun1@huawei.com):
-> > In case of error, the function audit_log_start() returns NULL pointer
-> > not ERR_PTR(). The IS_ERR() test in the return value check should be
-> > replaced with NULL test.
-> > 
-> > Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> Acked-by: Serge Hallyn <serge@hallyn.com>
+Fixes the following sparse warning:
 
-Thanks, this patch is now queued in the next-integrity branch of the
-linux-integrity tree.
+drivers/regulator/bd9571mwv-regulator.c:220:1: warning:
+ symbol 'dev_attr_backup_mode' was not declared. Should it be static?
 
-Mimi
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/regulator/bd9571mwv-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index c44613b..274c5ed 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -217,7 +217,7 @@ static ssize_t backup_mode_store(struct device *dev,
+ 	return count;
+ }
+ 
+-DEVICE_ATTR_RW(backup_mode);
++static DEVICE_ATTR_RW(backup_mode);
+ 
+ static int bd9571mwv_suspend(struct device *dev)
+ {
 
