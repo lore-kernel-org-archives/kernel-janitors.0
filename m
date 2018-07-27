@@ -1,30 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 Jul 2018 08:39:21 +0000
-Subject: [PATCH] Staging: Gasket: shift wrapping bug in gasket_read_modify_write_64()
-Message-Id: <20180706083921.nzicmo757ybxx7mj@kili.mountain>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 27 Jul 2018 07:15:15 +0000
+Subject: [PATCH -next] staging: axis-fifo: fix return value check in axis_fifo_probe()
+Message-Id: <1532675715-122016-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jacob Feder <jacobsfeder@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This function only has one caller so mask_width is 1 and mask_shift is
-32.  Shifting an int by 32 bits is undefined, but I guess on GCC it
-wraps to 0x1?  Anyway it's supposed to be 0x100000000.
+In case of error, the function device_create() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-Fixes: 9a69f5087ccc ("drivers/staging: Gasket driver framework + Apex driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 4a965c5f89de ("staging: add driver for Xilinx AXI-Stream FIFO v4.1 IP core")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/staging/axis-fifo/axis-fifo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
-index 203b9a31377b..5d6535a0f254 100644
---- a/drivers/staging/gasket/gasket_core.h
-+++ b/drivers/staging/gasket/gasket_core.h
-@@ -683,7 +683,7 @@ static inline void gasket_read_modify_write_64(
- 	u64 mask, tmp;
- 
- 	tmp = gasket_dev_read_64(dev, bar, location);
--	mask = ((1 << mask_width) - 1) << mask_shift;
-+	mask = ((1ULL << mask_width) - 1) << mask_shift;
- 	tmp = (tmp & ~mask) | (value << mask_shift);
- 	gasket_dev_write_64(dev, tmp, bar, location);
- }
+diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
+index 2a73302..51a081d 100644
+--- a/drivers/staging/axis-fifo/axis-fifo.c
++++ b/drivers/staging/axis-fifo/axis-fifo.c
+@@ -1006,10 +1006,10 @@ static int axis_fifo_probe(struct platform_device *pdev)
+ 	/* create driver file */
+ 	fifo->device = device_create(axis_fifo_driver_class, NULL, fifo->devt,
+ 				     NULL, device_name);
+-	if (!fifo->device) {
++	if (IS_ERR(fifo->device)) {
+ 		dev_err(fifo->dt_device,
+ 			"couldn't create driver file\n");
+-		rc = -ENOMEM;
++		rc = PTR_ERR(fifo->device);
+ 		goto err_chrdev_region;
+ 	}
+ 	dev_set_drvdata(fifo->device, fifo);
+
