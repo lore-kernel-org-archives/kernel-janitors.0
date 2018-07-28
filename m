@@ -1,64 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Jul 2018 07:40:30 +0000
-Subject: =?UTF-8?Q?[PATCH_3/6]_Coccinelle:_atomic=5fas=5frefcounter:_Use_typ?= =?UTF-8?Q?e_=e2=80=9cexpressio
-Message-Id: <c87de98e-9566-0bac-8264-8bc2a6e06d51@users.sourceforge.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 28 Jul 2018 06:49:48 +0000
+Subject: [PATCH net-next] xfrm: Make function xfrmi_get_link_net() static
+Message-Id: <1532760588-31129-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
-In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Elena Reshetova <elena.reshetova@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steffen Klassert <steffen.klassert@secunet.com>, Lorenzo Colitti <lorenzo@google.com>, Benedict Wong <benedictwong@google.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Jul 2018 17:55:27 +0200
+Fixes the following sparse warning:
 
-The metavariable “a” is enclosed by parentheses in three rules of
-a script for the semantic patch language.
-Replace its type by “expression” so that the corresponding source code
-search becomes more powerful.
+net/xfrm/xfrm_interface.c:745:12: warning:
+ symbol 'xfrmi_get_link_net' was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: f203b76d7809 ("xfrm: Add virtual xfrm interfaces")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/xfrm/xfrm_interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 5571eea04c7b..57af2db9463e 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -10,7 +10,8 @@
- virtual report
+diff --git a/net/xfrm/xfrm_interface.c b/net/xfrm/xfrm_interface.c
+index 31acc6f..2c0a5c5 100644
+--- a/net/xfrm/xfrm_interface.c
++++ b/net/xfrm/xfrm_interface.c
+@@ -742,7 +742,7 @@ static int xfrmi_fill_info(struct sk_buff *skb, const struct net_device *dev)
+ 	return -EMSGSIZE;
+ }
  
- @r1 exists@
--identifier a, x;
-+expression a;
-+identifier x;
- position p1, p2;
- identifier fname =~ "free";
- identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
-@@ -45,7 +46,8 @@ msg = "atomic_dec_and_test variation before object free at line %s."
- coccilib.report.print_report(p1[0], msg % (p2[0].line))
- 
- @r4 exists@
--identifier a, x, y;
-+expression a;
-+identifier x, y;
- position p1, p2;
- identifier fname =~ "free";
- @@
-@@ -77,7 +79,8 @@ msg = "atomic_dec_and_test variation before object free at line %s."
- coccilib.report.print_report(p1[0], msg % (p2[0].line))
- 
- @r2 exists@
--identifier a, x;
-+expression a;
-+identifier x;
- position p1;
- @@
- 
--- 
-2.18.0
+-struct net *xfrmi_get_link_net(const struct net_device *dev)
++static struct net *xfrmi_get_link_net(const struct net_device *dev)
+ {
+ 	struct xfrm_if *xi = netdev_priv(dev);
 
