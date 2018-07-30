@@ -1,27 +1,36 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 02 Jul 2018 14:27:00 +0000
-Subject: Re: [PATCH] block/floppy: remove redundant variable dflags
-Message-Id: <def4a200-a68a-3290-73d5-bd1c98626283@kernel.dk>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 30 Jul 2018 02:42:04 +0000
+Subject: [PATCH -next] thermal: armada: fix return value check in armada_thermal_probe_legacy()
+Message-Id: <1532918524-46054-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180702074234.10435-1-colin.king@canonical.com>
-In-Reply-To: <20180702074234.10435-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jiri Kosina <jikos@kernel.org>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 7/2/18 1:42 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable dflags is being assigned but is never used hence it is redundant
-> and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'dflags' set but not used [-Wunused-but-set-variable]
+In case of error, the function platform_get_resource() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
 
-Applied for 4.19, thanks.
+Fixes: 175637792d45 ("thermal: armada: convert driver to syscon register accesses")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/thermal/armada_thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-Jens Axboe
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index 8de4ba5..6782814 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -526,8 +526,8 @@ static int armada_thermal_probe_legacy(struct platform_device *pdev,
+ 
+ 	/* First memory region points towards the status register */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (IS_ERR(res))
+-		return PTR_ERR(res);
++	if (!res)
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Edit the resource start address and length to map over all the
 
