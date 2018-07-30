@@ -1,36 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 13 Jul 2018 08:04:32 +0000
-Subject: Re: [PATCH -next] gpio: pxa: fix potential NULL dereference in pxa_gpio_probe()
-Message-Id: <CACRpkdaqBnX0VjXCCZuAQG+TY6_Sxq3wpMHHsWqWvu+OPOx4cA@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 30 Jul 2018 06:59:39 +0000
+Subject: [PATCH -next v3] thermal: armada: fix copy-paste error in armada_thermal_probe()
+Message-Id: <1532934423-179537-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1531315178-185878-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1531315178-185878-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 3:10 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+The return value from devm_kzalloc() is not checked correctly. The
+test is done against a wrong variable. Fix it.
 
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
->
-> This is detected by Coccinelle semantic patch.
->
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
->
-> res = platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res = NULL
-> e = devm_ioremap(e1, res->start, e2);
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: e72f03ef2543 ("thermal: armada: use the resource managed registration helper alternative")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v2 - > v3: fix the description
+---
+ drivers/thermal/armada_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied with Robert's ACK.
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index 8de4ba5..a269482 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -610,7 +610,7 @@ static int armada_thermal_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
+-	if (!priv)
++	if (!drvdata)
+ 		return -ENOMEM;
+ 
+ 	priv->dev = &pdev->dev;
 
-Yours,
-Linus Walleij
