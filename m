@@ -1,27 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 04 Jul 2018 13:40:17 +0000
-Subject: Re: [PATCH] net: alteon: acenic: remove redundant pointer rxdesc
-Message-Id: <20180704.224017.1182444162221613940.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 30 Jul 2018 02:45:17 +0000
+Subject: [PATCH -next v2] thermal: armada: fix copy-paste error in armada_thermal_probe()
+Message-Id: <1532918717-46808-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704070135.13938-1-colin.king@canonical.com>
-In-Reply-To: <20180704070135.13938-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jes@trained-monkey.org, linux-acenic@sunsite.dk, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  4 Jul 2018 08:01:35 +0100
+Fix the retrn value check which testing the wrong variable
+in armada_thermal_probe().
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer rxdesc is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'rxdesc' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: e72f03ef2543 ("thermal: armada: use the resource managed registration helper alternative")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 - > v2: fix typo of patch subject
+---
+ drivers/thermal/armada_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index 8de4ba5..a269482 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -610,7 +610,7 @@ static int armada_thermal_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
+-	if (!priv)
++	if (!drvdata)
+ 		return -ENOMEM;
+ 
+ 	priv->dev = &pdev->dev;
+
