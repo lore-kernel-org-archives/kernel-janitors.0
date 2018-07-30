@@ -1,39 +1,36 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 27 Jul 2018 07:15:15 +0000
-Subject: [PATCH -next] staging: axis-fifo: fix return value check in axis_fifo_probe()
-Message-Id: <1532675715-122016-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Jul 2018 13:34:55 +0000
+Subject: [PATCH] fsi: master-ast-cf: fix spelling mistake: "firwmare" -> "firmware"
+Message-Id: <20180730133455.7881-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jacob Feder <jacobsfeder@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In case of error, the function device_create() returns ERR_PTR() and
-never returns NULL. The NULL test in the return value check should be
-replaced with IS_ERR().
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 4a965c5f89de ("staging: add driver for Xilinx AXI-Stream FIFO v4.1 IP core")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Trivial fix to spelling mistake in dev_err error message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/axis-fifo/axis-fifo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/fsi/fsi-master-ast-cf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
-index 2a73302..51a081d 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -1006,10 +1006,10 @@ static int axis_fifo_probe(struct platform_device *pdev)
- 	/* create driver file */
- 	fifo->device = device_create(axis_fifo_driver_class, NULL, fifo->devt,
- 				     NULL, device_name);
--	if (!fifo->device) {
-+	if (IS_ERR(fifo->device)) {
- 		dev_err(fifo->dt_device,
- 			"couldn't create driver file\n");
--		rc = -ENOMEM;
-+		rc = PTR_ERR(fifo->device);
- 		goto err_chrdev_region;
+diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+index 04d10ea8d343..85d9be38b32b 100644
+--- a/drivers/fsi/fsi-master-ast-cf.c
++++ b/drivers/fsi/fsi-master-ast-cf.c
+@@ -838,7 +838,7 @@ static int load_copro_firmware(struct fsi_master_acf *master)
+ 	rc = request_firmware(&fw, FW_FILE_NAME, master->dev);
+ 	if (rc) {
+ 		dev_err(
+-			master->dev, "Error %d to load firwmare '%s' !\n",
++			master->dev, "Error %d to load firmware '%s' !\n",
+ 			rc, FW_FILE_NAME);
+ 		return rc;
  	}
- 	dev_set_drvdata(fifo->device, fifo);
+-- 
+2.17.1
 
