@@ -1,25 +1,41 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 04 Jul 2018 18:07:21 +0000
-Subject: Re: [PATCH] RDMA/bnxt_re: Fix a couple off by one bugs
-Message-Id: <20180704180721.GA14028@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Jul 2018 12:59:18 +0000
+Subject: [PATCH] iio: light: fix test for val being not zero or not one.
+Message-Id: <20180730125918.7100-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704095711.v3mjb3qkbgo6iw2r@kili.mountain>
-In-Reply-To: <20180704095711.v3mjb3qkbgo6iw2r@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 12:57:11PM +0300, Dan Carpenter wrote:
-> The sgid_tbl->tbl[] array is allocated in bnxt_qplib_alloc_sgid_tbl().
-> It has sgid_tbl->max elements.  So the > should be >= to prevent
-> accessing one element beyond the end of the array.
-> 
-> Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next
+The current check on val always results in true and so the
+call to sii1133_update_adcsens never gets called. Fix this check
+so it returns with -EINVAL only when val is not zero and not one.
 
-Thanks,
-Jason
+Detected by CoverityScan, CID#1472099 ("Logically dead code")
+
+Fixes: e01e7eaf37d8 ("iio: light: introduce si1133")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/light/si1133.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/light/si1133.c b/drivers/iio/light/si1133.c
+index d3fbeb3bc463..5ac22c46da1f 100644
+--- a/drivers/iio/light/si1133.c
++++ b/drivers/iio/light/si1133.c
+@@ -838,7 +838,7 @@ static int si1133_write_raw(struct iio_dev *iio_dev,
+ 		switch (chan->type) {
+ 		case IIO_INTENSITY:
+ 		case IIO_UVINDEX:
+-			if (val != 0 || val != 1)
++			if (val != 0 && val != 1)
+ 				return -EINVAL;
+ 
+ 			return si1133_update_adcsens(data,
+-- 
+2.17.1
+
