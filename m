@@ -1,89 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Jul 2018 13:00:24 +0000
-Subject: Re: [PATCH 0/3] cast sizeof to int for comparison
-Message-Id: <20180702091834.etunideivmb6p2sf@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Jul 2018 12:27:16 +0000
+Subject: [PATCH] thermal: armada: fix incorrect check for drvdata allocation failure
+Message-Id: <20180730122716.6267-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
- <653914f26dc8433a3f682b5e7eb850ab94bd431d.camel@perches.com>
- <alpine.DEB.2.20.1807012050530.2494@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1807012050530.2494@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Joe Perches <joe@perches.com>, linux-usb@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jul 01, 2018 at 08:51:55PM +0200, Julia Lawall wrote:
-> 
-> 
-> On Sun, 1 Jul 2018, Joe Perches wrote:
-> 
-> > On Sun, 2018-07-01 at 19:32 +0200, Julia Lawall wrote:
-> > > Comparing an int to a size, which is unsigned, causes the int to become
-> > > unsigned, giving the wrong result.
-> > >
-> > > The semantic match that finds this problem is as follows:
-> > > (http://coccinelle.lip6.fr/)
-> >
-> > Great, thanks.
-> >
-> > But what about the ones in net/smc like:
-> >
-> > > net/smc/smc_clc.c:
-> > >
-> > >         len = kernel_sendmsg(smc->clcsock, &msg, &vec, 1,
-> > >                              sizeof(struct smc_clc_msg_decline));
-> > >         if (len < sizeof(struct smc_clc_msg_decline))
-> >
-> > Are those detected by the semantic match and ignored?
-> 
-> I wasn't sure how to justify that kernel_sendmsg returns a negative value.
-> If it is the case, I can send the patch.  I only found this in one file,
-> but there were multiple occurrences.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-In theory, Smatch is supposed to know return values but kernel_sendmsg()
-is too complicated for Smatch.  It's a tricky thing...  That particular
-check is correct and deliberate, but there is another check which is
-wrong.
+Currently the drvdata allocation failure is being incorrectly checked by
+checking priv and not drvdata.  Fix this and also free priv to fix a
+memory leak.
 
-net/smc/smc_clc.c
-   369          len = kernel_sendmsg(smc->clcsock, &msg, &vec, 1,
-   370                               sizeof(struct smc_clc_msg_decline));
-   371          if (len < sizeof(struct smc_clc_msg_decline))
-   372                  smc->sk.sk_err = EPROTO;
-   373          if (len < 0)
-   374                  smc->sk.sk_err = -len;
+Detected by Coverity Scan, CID#1472102 ("Logically dead code")
 
-If it's invalid we set an error code, if it's already an error we
-preserve the error code.
+Fixes: c9899c183921 ("thermal: armada: use the resource managed registration helper alternative")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/thermal/armada_thermal.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-   375          return sock_error(&smc->sk);
-
-[ snip ]
-
-   442          /* due to the few bytes needed for clc-handshake this cannot block */
-   443          len = kernel_sendmsg(smc->clcsock, &msg, vec, i, plen);
-   444          if (len < sizeof(pclc)) {
-   445                  if (len >= 0) {
-                            ^^^^^^^^
-This is always true.
-
-   446                          reason_code = -ENETUNREACH;
-   447                          smc->sk.sk_err = -reason_code;
-   448                  } else {
-   449                          smc->sk.sk_err = smc->clcsock->sk->sk_err;
-   450                          reason_code = -smc->sk.sk_err;
-   451                  }
-   452          }
-
-The other two checks are not type promoted so they also work as
-intended.
-
-This is an interesting sort of bug I've written a Smatch script inspired
-by your work here.  One for the type promotion and one for the
-impossible condition.  I'll let you know how it goes.
-
-regards,
-dan carpenter
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index 4164a5a4e480..b164fd9f21ac 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -611,8 +611,10 @@ static int armada_thermal_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
+-	if (!priv)
++	if (!drvdata) {
++		devm_kfree(&pdev->dev, priv);
+ 		return -ENOMEM;
++	}
+ 
+ 	priv->dev = &pdev->dev;
+ 	priv->data = (struct armada_thermal_data *)match->data;
+-- 
+2.17.1
 
