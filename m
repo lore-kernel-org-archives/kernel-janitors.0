@@ -1,36 +1,38 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 30 Jul 2018 02:42:04 +0000
-Subject: [PATCH -next] thermal: armada: fix return value check in armada_thermal_probe_legacy()
-Message-Id: <1532918524-46054-1-git-send-email-weiyongjun1@huawei.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Mon, 30 Jul 2018 06:18:53 +0000
+Subject: Re: [PATCH -next] thermal: armada: fix return value check in armada_thermal_probe_legacy()
+Message-Id: <0dfc85d7-2e71-119e-5fd2-a4f130e282dd@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1532918524-46054-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1532918524-46054-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-In case of error, the function platform_get_resource() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value check
-should be replaced with NULL test.
+On 30/07/2018 04:42, Wei Yongjun wrote:
+> In case of error, the function platform_get_resource() returns NULL
+> pointer not ERR_PTR(). The IS_ERR() test in the return value check
+> should be replaced with NULL test.
+>=20
+> Fixes: 175637792d45 ("thermal: armada: convert driver to syscon register =
+accesses")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-Fixes: 175637792d45 ("thermal: armada: convert driver to syscon register accesses")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/thermal/armada_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
-index 8de4ba5..6782814 100644
---- a/drivers/thermal/armada_thermal.c
-+++ b/drivers/thermal/armada_thermal.c
-@@ -526,8 +526,8 @@ static int armada_thermal_probe_legacy(struct platform_device *pdev,
- 
- 	/* First memory region points towards the status register */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (IS_ERR(res))
--		return PTR_ERR(res);
-+	if (!res)
-+		return -EINVAL;
- 
- 	/*
- 	 * Edit the resource start address and length to map over all the
 
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
+ SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
