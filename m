@@ -1,38 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 Jul 2018 08:37:18 +0000
-Subject: [PATCH] regulator: max8997:  clean up a condition in max8997_list_voltage()
-Message-Id: <20180706083718.n3b7ejg42fknnwb2@kili.mountain>
+Date: Tue, 31 Jul 2018 18:11:34 +0000
+Subject: [PATCH] iio: light: si1133: fix an && vs || typo
+Message-Id: <20180731181134.rp57ywlshwqm4onu@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Maxime =?iso-8859-1?Q?Roussin-B=E9langer?= <maxime.roussinbelanger@gmail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Francois Dagenais <jeff.dagenais@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The current code generates a static cehcker warnings because "rid < 0"
-is always false:
+The "val" variable can't be both 0 and 1 at the same time so this will
+always return -EINVAL.
 
-    drivers/regulator/max8997-regulator.c:169 max8997_list_voltage()
-    warn: condition is always false
-
-The problem is that because of type promotion, if "rid" is negative the
-comparison against ARRAY_SIZE() is type promoted to size_t and it's
-treated as a very high positive value.  I've changed the order of the
-checks so now everyone is happy.
-
+Fixes: e01e7eaf37d8 ("iio: light: introduce si1133")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/regulator/max8997-regulator.c b/drivers/regulator/max8997-regulator.c
-index a8ea30ee18a6..029a6ee426ab 100644
---- a/drivers/regulator/max8997-regulator.c
-+++ b/drivers/regulator/max8997-regulator.c
-@@ -165,8 +165,7 @@ static int max8997_list_voltage(struct regulator_dev *rdev,
- 	int rid = rdev_get_id(rdev);
- 	int val;
+diff --git a/drivers/iio/light/si1133.c b/drivers/iio/light/si1133.c
+index d3fbeb3bc463..5ac22c46da1f 100644
+--- a/drivers/iio/light/si1133.c
++++ b/drivers/iio/light/si1133.c
+@@ -838,7 +838,7 @@ static int si1133_write_raw(struct iio_dev *iio_dev,
+ 		switch (chan->type) {
+ 		case IIO_INTENSITY:
+ 		case IIO_UVINDEX:
+-			if (val != 0 || val != 1)
++			if (val != 0 && val != 1)
+ 				return -EINVAL;
  
--	if (rid >= ARRAY_SIZE(reg_voltage_map) ||
--			rid < 0)
-+	if (rid < 0 || rid >= ARRAY_SIZE(reg_voltage_map))
- 		return -EINVAL;
- 
- 	desc = reg_voltage_map[rid];
+ 			return si1133_update_adcsens(data,
