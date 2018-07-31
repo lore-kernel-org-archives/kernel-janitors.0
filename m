@@ -1,47 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 17 Jul 2018 09:02:56 +0000
-Subject: [PATCH] statfs: remove redundant pointer sb
-Message-Id: <20180717090256.18162-1-colin.king@canonical.com>
+Date: Tue, 31 Jul 2018 12:53:14 +0000
+Subject: [PATCH] ocfs2: dlmglue: remove redundant check of null tmp_oh
+Message-Id: <20180731125314.21733-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer sb is being assigned but is never used hence it is
-redundant and can be removed.
+A null tmp_oh is already being checked earlier and always leads to
+an early return.  Thus the check for a null tmp_oh at the end of
+function ocfs2_inode_lock_tracker is redundant and can be replaced
+with a return 1 instead.
 
-Cleans up clang warning:
-warning: variable 'sb' set but not used [-Wunused-but-set-variable]
+Detected by CoverityScan, CID#1468855 ("Logically dead code")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/statfs.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/ocfs2/dlmglue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/statfs.c b/fs/statfs.c
-index 3b8e27003754..82384616e524 100644
---- a/fs/statfs.c
-+++ b/fs/statfs.c
-@@ -402,7 +402,6 @@ COMPAT_SYSCALL_DEFINE2(ustat, unsigned, dev, struct compat_ustat __user *, u)
- static int fsinfo_generic_statfs(struct dentry *dentry,
- 				 struct fsinfo_statfs *p)
- {
--	struct super_block *sb;
- 	struct kstatfs buf;
- 	int ret;
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index 040ddb6e7dab..5f85ce03ca7f 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2695,7 +2695,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
+ 			return status;
+ 		}
+ 	}
+-	return tmp_oh ? 1 : 0;
++	return 1;
+ }
  
-@@ -410,7 +409,6 @@ static int fsinfo_generic_statfs(struct dentry *dentry,
- 	if (ret < 0)
- 		return ret;
- 
--	sb = dentry->d_sb;
- 	p->f_blocks	= buf.f_blocks;
- 	p->f_bfree	= buf.f_bfree;
- 	p->f_bavail	= buf.f_bavail;
+ void ocfs2_inode_unlock_tracker(struct inode *inode,
 -- 
 2.17.1
 
