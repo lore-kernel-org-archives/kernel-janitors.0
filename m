@@ -1,7 +1,7 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Date: Wed, 11 Jul 2018 09:26:44 +0000
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 31 Jul 2018 07:19:27 +0000
 Subject: Re: [PATCH] iwlegacy: remove several redundant variables
-Message-Id: <20180711092644.GA2114@redhat.com>
+Message-Id: <20180731071927.F3E2460376@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180711074253.4192-1-colin.king@canonical.com>
 In-Reply-To: <20180711074253.4192-1-colin.king@canonical.com>
@@ -9,9 +9,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 08:42:53AM +0100, Colin King wrote:
+Colin King <colin.king@canonical.com> wrote:
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Variables id, unicast, write, conf, a_band, accum_tx and ucode are
@@ -29,5 +30,14 @@ On Wed, Jul 11, 2018 at 08:42:53AM +0100, Colin King wrote:
 > warning: variable 'ucode' set but not used [-Wunused-but-set-variable]
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Patch applied to wireless-drivers-next.git, thanks.
+
+454127ad36fb iwlegacy: remove several redundant variables
+
+-- 
+https://patchwork.kernel.org/patch/10519029/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
