@@ -1,27 +1,65 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 04 Jul 2018 13:41:23 +0000
-Subject: Re: [PATCH] sfc: remove redundant variable old_vlan
-Message-Id: <20180704.224123.1814778518055648050.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Jul 2018 16:01:37 +0000
+Subject: [PATCH] net/tipc: remove redundant variables 'tn' and 'oport'
+Message-Id: <20180731160137.5850-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704121301.8896-1-colin.king@canonical.com>
-In-Reply-To: <20180704121301.8896-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: linux-net-drivers@solarflare.com, ecree@solarflare.com, bkenward@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  4 Jul 2018 13:13:01 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable old_vlan is being assigned but is never used hence it is
-> and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'old_vlan' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variables 'tn' and 'oport'  are being assigned but are never used hence
+they are redundant and can be removed.
 
-Applied.
+Cleans up clang warnings:
+warning: variable 'oport' set but not used [-Wunused-but-set-variable]
+warning: variable 'tn' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/tipc/socket.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/net/tipc/socket.c b/net/tipc/socket.c
+index 3763bedecf5f..c1e93c9515bc 100644
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -411,7 +411,6 @@ static int tipc_sk_sock_err(struct socket *sock, long *timeout)
+ static int tipc_sk_create(struct net *net, struct socket *sock,
+ 			  int protocol, int kern)
+ {
+-	struct tipc_net *tn;
+ 	const struct proto_ops *ops;
+ 	struct sock *sk;
+ 	struct tipc_sock *tsk;
+@@ -446,7 +445,6 @@ static int tipc_sk_create(struct net *net, struct socket *sock,
+ 	INIT_LIST_HEAD(&tsk->publications);
+ 	INIT_LIST_HEAD(&tsk->cong_links);
+ 	msg = &tsk->phdr;
+-	tn = net_generic(sock_net(sk), tipc_net_id);
+ 
+ 	/* Finish initializing socket data structures */
+ 	sock->ops = ops;
+@@ -1117,7 +1115,7 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
+ 	u32 self = tipc_own_addr(net);
+ 	u32 type, lower, upper, scope;
+ 	struct sk_buff *skb, *_skb;
+-	u32 portid, oport, onode;
++	u32 portid, onode;
+ 	struct sk_buff_head tmpq;
+ 	struct list_head dports;
+ 	struct tipc_msg *hdr;
+@@ -1133,7 +1131,6 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
+ 		user = msg_user(hdr);
+ 		mtyp = msg_type(hdr);
+ 		hlen = skb_headroom(skb) + msg_hdr_sz(hdr);
+-		oport = msg_origport(hdr);
+ 		onode = msg_orignode(hdr);
+ 		type = msg_nametype(hdr);
+ 
+-- 
+2.17.1
+
