@@ -1,68 +1,40 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date: Fri, 06 Jul 2018 07:10:36 +0000
-Subject: Re: [PATCH][V2] usb: typec: unlock dp->lock on error exit path, and also zero ret if successful
-Message-Id: <20180706071036.GB8308@kuha.fi.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Jul 2018 13:33:43 +0000
+Subject: [PATCH][media-next] media: i2c: mt9v111: fix off-by-one array bounds check
+Message-Id: <20180731133343.22337-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180705133647.13016-1-colin.king@canonical.com>
-In-Reply-To: <20180705133647.13016-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacopo Mondi <jacopo@jmondi.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 02:36:47PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> One of the error handling paths forgets to unlock dp->lock on the error
-> exit path leading to a potential lock-up.  Also the return path for a
-> successful call to the function configuration_store can return an
-> uninitialized error return code if dp->alt->active is false, so ensure
-> ret is zeroed on the successful exit path to avoid garbage being returned.
-> 
-> Detected by CoverityScan, CID#1471597 ("Unitialized scalar variable")
-> 
-> Fixes: 0e3bb7d6894d ("usb: typec: Add driver for DisplayPort alternate mode")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+The check of fse->index is off-by-one and should be using >= rather
+than > to check the maximum allowed array index. Fix this.
 
-> ---
-> 
-> V2: move the ret = 0 assignment to the declaration
-> 
-> ---
->  drivers/usb/typec/altmodes/displayport.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
-> index ef12b15bd484..3f06e94771a7 100644
-> --- a/drivers/usb/typec/altmodes/displayport.c
-> +++ b/drivers/usb/typec/altmodes/displayport.c
-> @@ -333,7 +333,7 @@ configuration_store(struct device *dev, struct device_attribute *attr,
->  	u32 conf;
->  	u32 cap;
->  	int con;
-> -	int ret;
-> +	int ret = 0;
->  
->  	con = sysfs_match_string(configurations, buf);
->  	if (con < 0)
-> @@ -349,8 +349,10 @@ configuration_store(struct device *dev, struct device_attribute *attr,
->  	cap = DP_CAP_CAPABILITY(dp->alt->vdo);
->  
->  	if ((con = DP_CONF_DFP_D && !(cap & DP_CAP_DFP_D)) ||
-> -	    (con = DP_CONF_UFP_D && !(cap & DP_CAP_UFP_D)))
-> -		return -EINVAL;
-> +	    (con = DP_CONF_UFP_D && !(cap & DP_CAP_UFP_D))) {
-> +		ret = -EINVAL;
-> +		goto err_unlock;
-> +	}
->  
->  	conf = dp->data.conf & ~DP_CONF_DUAL_D;
->  	conf |= con;
+Detected by CoverityScan, CID#172122 ("Out-of-bounds read")
 
-Thanks,
+Fixes: aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/i2c/mt9v111.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/i2c/mt9v111.c b/drivers/media/i2c/mt9v111.c
+index da8f6ab91307..b1d13f1d695e 100644
+--- a/drivers/media/i2c/mt9v111.c
++++ b/drivers/media/i2c/mt9v111.c
+@@ -848,7 +848,7 @@ static int mt9v111_enum_frame_size(struct v4l2_subdev *subdev,
+ 				   struct v4l2_subdev_pad_config *cfg,
+ 				   struct v4l2_subdev_frame_size_enum *fse)
+ {
+-	if (fse->pad || fse->index > ARRAY_SIZE(mt9v111_frame_sizes))
++	if (fse->pad || fse->index >= ARRAY_SIZE(mt9v111_frame_sizes))
+ 		return -EINVAL;
+ 
+ 	fse->min_width = mt9v111_frame_sizes[fse->index].width;
 -- 
-heikki
+2.17.1
+
