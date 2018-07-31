@@ -1,45 +1,39 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 04 Jul 2018 12:27:24 +0000
-Subject: Re: [PATCH] drm/savage: off by one in savage_bci_cmdbuf()
-Message-Id: <20180704122724.GB4693@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Jul 2018 10:42:54 +0000
+Subject: [PATCH] drm/amd/display: add missing void parameter to dc_create_transfer_func
+Message-Id: <20180731104254.14683-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180704094810.whrgn6jxe7uibnfv@kili.mountain>
-In-Reply-To: <20180704094810.whrgn6jxe7uibnfv@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 12:48:10PM +0300, Dan Carpenter wrote:
-> The > should be >= here so that we don't read beyond the end of the
-> dma->buflist[] array.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Uh, another root-hole driver ... Applied, thanks for the patch.
--Daniel
+Add a missing void parameter to function dc_create_transfer_func, fixes
+sparse warning:
 
-> 
-> diff --git a/drivers/gpu/drm/savage/savage_state.c b/drivers/gpu/drm/savage/savage_state.c
-> index 2db89bed52e8..7559a820bd43 100644
-> --- a/drivers/gpu/drm/savage/savage_state.c
-> +++ b/drivers/gpu/drm/savage/savage_state.c
-> @@ -971,7 +971,7 @@ int savage_bci_cmdbuf(struct drm_device *dev, void *data, struct drm_file *file_
->  	LOCK_TEST_WITH_RETURN(dev, file_priv);
->  
->  	if (dma && dma->buflist) {
-> -		if (cmdbuf->dma_idx > dma->buf_count) {
-> +		if (cmdbuf->dma_idx >= dma->buf_count) {
->  			DRM_ERROR
->  			    ("vertex buffer index %u out of range (0-%u)\n",
->  			     cmdbuf->dma_idx, dma->buf_count - 1);
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+warning: non-ANSI function declaration of function 'dc_create_transfer_func'
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_surface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
+index 815dfb50089b..8fb3aefd195c 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_surface.c
+@@ -192,7 +192,7 @@ void dc_transfer_func_release(struct dc_transfer_func *tf)
+ 	kref_put(&tf->refcount, dc_transfer_func_free);
+ }
+ 
+-struct dc_transfer_func *dc_create_transfer_func()
++struct dc_transfer_func *dc_create_transfer_func(void)
+ {
+ 	struct dc_transfer_func *tf = kvzalloc(sizeof(*tf), GFP_KERNEL);
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.17.1
+
