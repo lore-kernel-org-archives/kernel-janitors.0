@@ -1,25 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Aug 2018 09:39:48 +0000
-Subject: Re: [PATCH] fsl/qe: ucc: copy and paste bug in ucc_get_tdm_sync_shift()
-Message-Id: <20180829093948.c7nbl27ju4uszrum@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:33 +0000
+Subject: [PATCH 0/9] ALSA: remove redundant variables
+Message-Id: <20180801104742.4328-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180604115842.7c4vzge3igjbnblt@kili.mountain>
- <CA+7wUszWKm+qZQ7CQu3Kn7-aYeM-hSet03_PEh8EswNn141nyw@mail.gmail.com>
-In-Reply-To: <CA+7wUszWKm+qZQ7CQu3Kn7-aYeM-hSet03_PEh8EswNn141nyw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mathieu Malaterre <malat@debian.org>
-Cc: qiang.zhao@nxp.com, kernel-janitors@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, LKML <linux-kernel@vger.kernel.org>, leoyang.li@nxp.com
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 02:06:45PM +0200, Mathieu Malaterre wrote:
-> Where did the original go ?
-> 
-> https://patchwork.ozlabs.org/patch/868158/
-> 
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Btw, we still haven't pushed a patch for this bug.
+Clean up code by removing redundant variables that were
+detected by clang
 
-regards,
-dan carpenter
+Colin Ian King (9):
+  ALSA: asihpi: remove redundant variable max_streams
+  ALSA: cs5535audio: remove redundant pointer 'dma'
+  ALSA: emu10k1: remove redundant variable attn
+  ALSA: ens137x: remove redundant array pcm_devs
+  ALSA: sonicvibes: remove redundant pointer 'dir'
+  ASoC: nau8540: remove redundant variable osrate
+  ASoC: stm32: remove redundant pointers 'priv' and 'rtd'
+  ALSA: usb-audio: remove redundant pointer 'urb'
+  ALSA: intel_hdmi: remove redundant variable cfg_val
+
+ sound/pci/asihpi/hpi6205.c          | 5 -----
+ sound/pci/cs5535audio/cs5535audio.c | 7 +------
+ sound/pci/emu10k1/emupcm.c          | 3 +--
+ sound/pci/ens1370.c                 | 3 +--
+ sound/pci/sonicvibes.c              | 2 --
+ sound/soc/codecs/nau8540.c          | 3 ---
+ sound/soc/stm/stm32_adfsdm.c        | 8 +-------
+ sound/usb/endpoint.c                | 2 --
+ sound/x86/intel_hdmi_audio.c        | 2 --
+ 9 files changed, 4 insertions(+), 31 deletions(-)
+
+-- 
+2.17.1
+
