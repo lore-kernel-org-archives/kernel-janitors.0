@@ -1,68 +1,51 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 01 Aug 2018 13:14:22 +0000
-Subject: Re: [PATCH 3/9] ALSA: emu10k1: remove redundant variable attn
-Message-Id: <s5hy3dqmdox.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:34 +0000
+Subject: [PATCH 1/9] ALSA: asihpi: remove redundant variable max_streams
+Message-Id: <20180801104742.4328-2-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <220787354.139798.1533128625826@ox-groupware.bfs.de>
-In-Reply-To: <220787354.139798.1533128625826@ox-groupware.bfs.de>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Walter Harms <wharms@bfs.de>
-Cc: alsa-devel@alsa-project.org, Jaya Kumar <jayakumar.alsa@gmail.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 01 Aug 2018 15:03:45 +0200,
-Walter Harms wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable attn is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'attn' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  sound/pci/emu10k1/emupcm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/emu10k1/emupcm.c b/sound/pci/emu10k1/emupcm.c
-> index 69f9b100bd24..26f6eda3e766 100644
-> --- a/sound/pci/emu10k1/emupcm.c
-> +++ b/sound/pci/emu10k1/emupcm.c
-> @@ -290,7 +290,7 @@ static void snd_emu10k1_pcm_init_voice(struct snd_emu10k1
-> *emu,
->  	struct snd_pcm_runtime *runtime = substream->runtime;
->  	unsigned int silent_page, tmp;
->  	int voice, stereo, w_16;
-> -	unsigned char attn, send_amount[8];
-> +	unsigned char send_amount[8];
->  	unsigned char send_routing[8];
->  	unsigned long flags;
->  	unsigned int pitch_target;
-> @@ -313,7 +313,6 @@ static void snd_emu10k1_pcm_init_voice(struct snd_emu10k1
-> *emu,
->   	/* volume parameters */
->  	if (extra) {
-> -		attn = 0;
->  		memset(send_routing, 0, sizeof(send_routing));
->  		send_routing[0] = 0;
->  		send_routing[1] = 1;
-> 
-> 
-> IMHO, this code is a bit fishy.
-> The memset() sould go in the init section
-> and in the else branch tmp is set, maybe its an idea
-> to set it here also (for symmetry)
+From: Colin Ian King <colin.king@canonical.com>
 
-What does it have to do with this patch...?
+Variable max_streams is being assigned but is never used hence it is
+redundant and can be removed.
 
-The code there is OK, although it could be a bit optimized with a
-static array for the fixed routing.  But it's pretty minor and it's no
-hot path, so no need to bother complicating things.
+Cleans up clang warning:
+warning: variable 'max_streams' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/asihpi/hpi6205.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-thanks,
+diff --git a/sound/pci/asihpi/hpi6205.c b/sound/pci/asihpi/hpi6205.c
+index 8d5abfa4e24b..2864698436a5 100644
+--- a/sound/pci/asihpi/hpi6205.c
++++ b/sound/pci/asihpi/hpi6205.c
+@@ -635,7 +635,6 @@ static u16 create_adapter_obj(struct hpi_adapter_obj *pao,
+ 	{
+ 		struct hpi_message hm;
+ 		struct hpi_response hr;
+-		u32 max_streams;
+ 
+ 		HPI_DEBUG_LOG(VERBOSE, "init ADAPTER_GET_INFO\n");
+ 		memset(&hm, 0, sizeof(hm));
+@@ -660,10 +659,6 @@ static u16 create_adapter_obj(struct hpi_adapter_obj *pao,
+ 		pao->type = hr.u.ax.info.adapter_type;
+ 		pao->index = hr.u.ax.info.adapter_index;
+ 
+-		max_streams -			hr.u.ax.info.num_outstreams +
+-			hr.u.ax.info.num_instreams;
+-
+ 		HPI_DEBUG_LOG(VERBOSE,
+ 			"got adapter info type %x index %d serial %d\n",
+ 			hr.u.ax.info.adapter_type, hr.u.ax.info.adapter_index,
+-- 
+2.17.1
 
-Takashi
