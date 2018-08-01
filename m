@@ -1,48 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Aug 2018 10:47:38 +0000
-Subject: [PATCH 5/9] ALSA: sonicvibes: remove redundant pointer 'dir'
-Message-Id: <20180801104742.4328-6-colin.king@canonical.com>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 01 Aug 2018 12:01:35 +0000
+Subject: Re: [PATCH 5/9] ALSA: sonicvibes: remove redundant pointer 'dir'
+Message-Id: <s5hbmamnvmo.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180801104742.4328-1-colin.king@canonical.com>
-In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
+        <20180801104742.4328-6-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-6-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, Alexandre Torgue <alexandre.torgue@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Olivier Moysan <olivier.moysan@st.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 01 Aug 2018 12:47:38 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer 'dir' is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'dir' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'dir' is being assigned but is never used hence it is
-redundant and can be removed.
+Applied, thanks.
 
-Cleans up clang warning:
-warning: variable 'dir' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/pci/sonicvibes.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
-index 7fbdb703bfcd..7218f38b59db 100644
---- a/sound/pci/sonicvibes.c
-+++ b/sound/pci/sonicvibes.c
-@@ -1433,14 +1433,12 @@ static int snd_sonicvibes_midi(struct sonicvibes *sonic,
- {
- 	struct snd_mpu401 * mpu = rmidi->private_data;
- 	struct snd_card *card = sonic->card;
--	struct snd_rawmidi_str *dir;
- 	unsigned int idx;
- 	int err;
- 
- 	mpu->private_data = sonic;
- 	mpu->open_input = snd_sonicvibes_midi_input_open;
- 	mpu->close_input = snd_sonicvibes_midi_input_close;
--	dir = &rmidi->streams[SNDRV_RAWMIDI_STREAM_OUTPUT];
- 	for (idx = 0; idx < ARRAY_SIZE(snd_sonicvibes_midi_controls); idx++)
- 		if ((err = snd_ctl_add(card, snd_ctl_new1(&snd_sonicvibes_midi_controls[idx], sonic))) < 0)
- 			return err;
--- 
-2.17.1
-
+Takashi
