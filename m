@@ -1,37 +1,61 @@
-From: Craig Donaldson <jaminzawai@gmail.com>
-Date: Mon, 06 Aug 2018 14:45:32 +0000
-Subject: Hello,Your Response Is Needed Urgently
-Message-Id: <CALto7WC4E03Dbk=FWFAoTQdA1LJQ0kP=FgEDarQsLNTz6W4zHg@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Wed, 01 Aug 2018 23:03:54 +0000
+Subject: Re: [PATCH 1/3] Input: elan_i2c_smbus - cast sizeof to int for comparison
+Message-Id: <20180801230354.GA184797@dtor-ws>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1530466325-1678-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1530466325-1678-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: joe@perches.com, Chengguang Xu <cgxu519@gmx.com>, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+
+On Sun, Jul 01, 2018 at 07:32:03PM +0200, Julia Lawall wrote:
+> Comparing an int to a size, which is unsigned, causes the int to become
+> unsigned, giving the wrong result.  i2c_smbus_read_block_data can return the
+> result of i2c_smbus_xfer, whih can return a negative error code.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> int x;
+> expression e,e1;
+> identifier f;
+> @@
+> 
+> *x = f(...);
+> ... when != x = e1
+>     when != if (x < 0 || ...) { ... return ...; }
+> *x < sizeof(e)
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+
+Applied, thank you.
+
+> ---
+>  drivers/input/mouse/elan_i2c_smbus.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/mouse/elan_i2c_smbus.c b/drivers/input/mouse/elan_i2c_smbus.c
+> index c060d27..88e315d 100644
+> --- a/drivers/input/mouse/elan_i2c_smbus.c
+> +++ b/drivers/input/mouse/elan_i2c_smbus.c
+> @@ -387,7 +387,7 @@ static int elan_smbus_prepare_fw_update(struct i2c_client *client)
+>  		len = i2c_smbus_read_block_data(client,
+>  						ETP_SMBUS_IAP_PASSWORD_READ,
+>  						val);
+> -		if (len < sizeof(u16)) {
+> +		if (len < (int)sizeof(u16)) {
+>  			error = len < 0 ? len : -EIO;
+>  			dev_err(dev, "failed to read iap password: %d\n",
+>  				error);
+> 
 
 -- 
-Hello
-
-I am Craig Donaldson, the personal account office to our late customer
-with our Bank Name Withheld for security reasons, a national of your
-country, who used to work with Shell Oil - development company in here
-in UK as a contractor.
-
-On the 21st of April 2016, my client, his wife and their three
-children were involved in a car accident which all occupants of the
-vehicle unfortunately lost their lives including his wife and two
-children.
-
-Since then I have made several inquiries to your embassy to locate any
-of my customer's extended relatives.
-
-After these several unsuccessful attempts, I decided to track his last
-name over the Internet, to locate any member of his family or who can
-stand a chance to claim the funds as his next of kind with me as a
-deal hence I have all the documents that may be require to prove you
-as his relative by our bank management, hence I contacted you.
-
-Kindly get back to me with your details to enable me give you more
-details in this regard.
-
-Regards
-Craig Donaldson
+Dmitry
