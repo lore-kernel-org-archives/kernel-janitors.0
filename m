@@ -1,29 +1,51 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Tue, 28 Aug 2018 22:27:06 +0000
-Subject: Re: [PATCH] x86/xen: remove redundant variable save_pud
-Message-Id: <3057bad8-cea8-d72f-d83c-88e34c281d22@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 16:17:43 +0000
+Subject: [PATCH] scsi: csiostor: avoid null pointer dereference on card_fw allocation failure
+Message-Id: <20180801161743.22301-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180828161046.17165-1-colin.king@canonical.com>
-In-Reply-To: <20180828161046.17165-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, xen-devel@lists.xenproject.org
+To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/28/2018 12:10 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable save_pud is being assigned but is never used hence it is
-> redundant and can be removed.
->
-> Cleans up clang warning:
-> variable 'save_pud' set but not used [-Wunused-but-set-variable]
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently if card_fw fails to be allocated then a null pointer
+dereference occurs on card_fd when calling csio_hw_prep_fw. Fix this
+by checking for a failed allocation and returning -ENOMEM.
 
+Detected by CoverityScan, CID#1271213 ("Dereference null return value")
 
-Applied to for-linus-19b.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/csiostor/csio_hw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
--boris
+diff --git a/drivers/scsi/csiostor/csio_hw.c b/drivers/scsi/csiostor/csio_hw.c
+index a10cf25ee7f9..aa637e9ea9ba 100644
+--- a/drivers/scsi/csiostor/csio_hw.c
++++ b/drivers/scsi/csiostor/csio_hw.c
+@@ -2275,8 +2275,8 @@ static int csio_hw_prep_fw(struct csio_hw *hw, struct fw_info *fw_info,
+ }
+ 
+ /*
+- * Returns -EINVAL if attempts to flash the firmware failed
+- * else returns 0,
++ * Returns -EINVAL if attempts to flash the firmware failed,
++ * -ENOMEM if allocation failed, else returns 0,
+  * if flashing was not attempted because the card had the
+  * latest firmware ECANCELED is returned
+  */
+@@ -2321,6 +2321,8 @@ csio_hw_flash_fw(struct csio_hw *hw, int *reset)
+ 	 * card
+ 	 */
+ 	card_fw = kmalloc(sizeof(*card_fw), GFP_KERNEL);
++	if (!card_fw)
++		return -ENOMEM;
+ 
+ 	/* upgrade FW logic */
+ 	ret = csio_hw_prep_fw(hw, fw_info, fw_data, fw_size, card_fw,
+-- 
+2.17.1
+
