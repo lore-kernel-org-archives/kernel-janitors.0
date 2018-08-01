@@ -1,34 +1,50 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Tue, 21 Aug 2018 17:00:49 +0000
-Subject: Re: [PATCH] block/DAC960.c: make some arrays static const, shrinks object size
-Message-Id: <cbe876ce-8f1f-1dc3-86fb-b26278277312@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:37 +0000
+Subject: [PATCH 4/9] ALSA: ens137x: remove redundant array pcm_devs
+Message-Id: <20180801104742.4328-5-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180821091248.8669-1-colin.king@canonical.com>
-In-Reply-To: <20180821091248.8669-1-colin.king@canonical.com>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, linux-block@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 8/21/18 3:12 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the arrays ReadCacheStatus, WriteCacheStatus and
-> SenseErrors on the stack but instead make them static const. Makes
-> the object code smaller by 47 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->  160974	  34628	    832	 196434	  2ff52	drivers/block/DAC960.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->  160671	  34884	    832	 196387	  2ff23	drivers/block/DAC960.o
-> 
-> (gcc version 8.2.0 x86_64)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+The array pcm_devs is being assigned but is never used hence it is
+redundant and can be removed.
 
+Cleans up clang warning:
+warning: variable 'pcm_devs' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/ens1370.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/pci/ens1370.c b/sound/pci/ens1370.c
+index 39f79a6b5283..727eb3da1fda 100644
+--- a/sound/pci/ens1370.c
++++ b/sound/pci/ens1370.c
+@@ -2392,7 +2392,7 @@ static int snd_audiopci_probe(struct pci_dev *pci,
+ 	static int dev;
+ 	struct snd_card *card;
+ 	struct ensoniq *ensoniq;
+-	int err, pcm_devs[2];
++	int err;
+ 
+ 	if (dev >= SNDRV_CARDS)
+ 		return -ENODEV;
+@@ -2412,7 +2412,6 @@ static int snd_audiopci_probe(struct pci_dev *pci,
+ 	}
+ 	card->private_data = ensoniq;
+ 
+-	pcm_devs[0] = 0; pcm_devs[1] = 1;
+ #ifdef CHIP1370
+ 	if ((err = snd_ensoniq_1370_mixer(ensoniq)) < 0) {
+ 		snd_card_free(card);
 -- 
-Jens Axboe
+2.17.1
+
