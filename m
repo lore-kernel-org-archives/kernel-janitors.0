@@ -1,62 +1,48 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Mon, 06 Aug 2018 15:47:43 +0000
-Subject: Re: [PATCH][usb-next] USB: typec: fsusb302: remove unused variables snk_pdo and toggling_mode_name
-Message-Id: <554613b4-daec-7db6-d770-7e222ab8d23b@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:38 +0000
+Subject: [PATCH 5/9] ALSA: sonicvibes: remove redundant pointer 'dir'
+Message-Id: <20180801104742.4328-6-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180806111414.9436-1-colin.king@canonical.com>
-In-Reply-To: <20180806111414.9436-1-colin.king@canonical.com>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/06/2018 04:14 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables snk_pdo and toggling_mode_name are defined but are not used and
-> hence can be removed.
-> 
-> Cleans up clang warnings:
-> warning: 'snk_pdo' defined but not used [-Wunused-const-variable=]
-> warning: 'toggling_mode_name' defined but not used [-Wunused-const-variable=]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Pointer 'dir' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> ---
->   drivers/usb/typec/fusb302/fusb302.c | 11 -----------
->   1 file changed, 11 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
-> index 82bed9810be6..ad7cfed1cea7 100644
-> --- a/drivers/usb/typec/fusb302/fusb302.c
-> +++ b/drivers/usb/typec/fusb302/fusb302.c
-> @@ -48,13 +48,6 @@ enum toggling_mode {
->   	TOGGLING_MODE_SRC,
->   };
->   
-> -static const char * const toggling_mode_name[] = {
-> -	[TOGGLINE_MODE_OFF]	= "toggling_OFF",
-> -	[TOGGLING_MODE_DRP]	= "toggling_DRP",
-> -	[TOGGLING_MODE_SNK]	= "toggling_SNK",
-> -	[TOGGLING_MODE_SRC]	= "toggling_SRC",
-> -};
-> -
->   enum src_current_status {
->   	SRC_CURRENT_DEFAULT,
->   	SRC_CURRENT_MEDIUM,
-> @@ -1178,10 +1171,6 @@ static const u32 src_pdo[] = {
->   	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
->   };
->   
-> -static const u32 snk_pdo[] = {
-> -	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
-> -};
-> -
->   static const struct tcpc_config fusb302_tcpc_config = {
->   	.src_pdo = src_pdo,
->   	.nr_src_pdo = ARRAY_SIZE(src_pdo),
-> 
+Cleans up clang warning:
+warning: variable 'dir' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/sonicvibes.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
+index 7fbdb703bfcd..7218f38b59db 100644
+--- a/sound/pci/sonicvibes.c
++++ b/sound/pci/sonicvibes.c
+@@ -1433,14 +1433,12 @@ static int snd_sonicvibes_midi(struct sonicvibes *sonic,
+ {
+ 	struct snd_mpu401 * mpu = rmidi->private_data;
+ 	struct snd_card *card = sonic->card;
+-	struct snd_rawmidi_str *dir;
+ 	unsigned int idx;
+ 	int err;
+ 
+ 	mpu->private_data = sonic;
+ 	mpu->open_input = snd_sonicvibes_midi_input_open;
+ 	mpu->close_input = snd_sonicvibes_midi_input_close;
+-	dir = &rmidi->streams[SNDRV_RAWMIDI_STREAM_OUTPUT];
+ 	for (idx = 0; idx < ARRAY_SIZE(snd_sonicvibes_midi_controls); idx++)
+ 		if ((err = snd_ctl_add(card, snd_ctl_new1(&snd_sonicvibes_midi_controls[idx], sonic))) < 0)
+ 			return err;
+-- 
+2.17.1
 
