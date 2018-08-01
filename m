@@ -1,101 +1,49 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 13 Aug 2018 07:29:42 +0000
-Subject: Re: [PATCH] Coccinelle: doubletest: reduce side effect false positives
-Message-Id: <CAK7LNATeY08JV9kEm9M9O5O1WkxoxKFWTd+BLXe0_pjBs92fcw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:42 +0000
+Subject: [PATCH 9/9] ALSA: intel_hdmi: remove redundant variable cfg_val
+Message-Id: <20180801104742.4328-10-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1533313931-3639-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1533313931-3639-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2018-08-04 1:32 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> Ensure that the cited expression is not a function call or an
-> assignment to reduce the chance of false positives.
->
-> Slightly modify the warning message to indicate another source
-> of false positves.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+From: Colin Ian King <colin.king@canonical.com>
 
+Variable cfg_val is being assigned but is never used hence it is
+redundant and can be removed.
 
-Applied to linux-kbuild. Thanks!
+Cleans up clang warning:
+warning: variable 'cfg_val' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/x86/intel_hdmi_audio.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-(Please send a reminder
-if there are more coccinelle patches I missed.)
-
-
-
-
-> ---
->  scripts/coccinelle/tests/doubletest.cocci |   34 ++++++++++++++++++++++--------
->  1 file changed, 26 insertions(+), 8 deletions(-)
->
-> diff --git a/scripts/coccinelle/tests/doubletest.cocci b/scripts/coccinelle/tests/doubletest.cocci
-> index 78d74c2..7af2ce7 100644
-> --- a/scripts/coccinelle/tests/doubletest.cocci
-> +++ b/scripts/coccinelle/tests/doubletest.cocci
-> @@ -1,6 +1,7 @@
->  /// Find &&/|| operations that include the same argument more than once
-> -//# A common source of false positives is when the argument performs a side
-> -//# effect.
-> +//# A common source of false positives is when the expression, or
-> +//# another expresssion in the same && or || operation, performs a
-> +//# side effect.
->  ///
->  // Confidence: Moderate
->  // Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
-> @@ -20,20 +21,37 @@ position p;
->  @@
->
->  (
-> -* E@p
-> -  || ... || E
-> + E@p || ... || E
->  |
-> -* E@p
-> -  && ... && E
-> + E@p && ... && E
->  )
->
-> -@script:python depends on org@
-> +@bad@
-> +expression r.E,e1,e2,fn;
-> +position r.p;
-> +assignment operator op;
-> +@@
-> +
-> +(
-> +E@p
-> +&
-> + <+... \(fn(...)\|e1 op e2\|e1++\|e1--\|++e1\|--e1\) ...+>
-> +)
-> +
-> +@depends on context && !bad@
-> +expression r.E;
-> +position r.p;
-> +@@
-> +
-> +*E@p
-> +
-> +@script:python depends on org && !bad@
->  p << r.p;
->  @@
->
->  cocci.print_main("duplicated argument to && or ||",p)
->
-> -@script:python depends on report@
-> +@script:python depends on report && !bad@
->  p << r.p;
->  @@
->
->
-
-
-
+diff --git a/sound/x86/intel_hdmi_audio.c b/sound/x86/intel_hdmi_audio.c
+index edc9f5a34eff..fa7dca5a68c8 100644
+--- a/sound/x86/intel_hdmi_audio.c
++++ b/sound/x86/intel_hdmi_audio.c
+@@ -290,7 +290,6 @@ static void had_reset_audio(struct snd_intelhad *intelhaddata)
+ static int had_prog_status_reg(struct snd_pcm_substream *substream,
+ 			struct snd_intelhad *intelhaddata)
+ {
+-	union aud_cfg cfg_val = {.regval = 0};
+ 	union aud_ch_status_0 ch_stat0 = {.regval = 0};
+ 	union aud_ch_status_1 ch_stat1 = {.regval = 0};
+ 
+@@ -298,7 +297,6 @@ static int had_prog_status_reg(struct snd_pcm_substream *substream,
+ 					  IEC958_AES0_NONAUDIO) >> 1;
+ 	ch_stat0.regx.clk_acc = (intelhaddata->aes_bits &
+ 					  IEC958_AES3_CON_CLOCK) >> 4;
+-	cfg_val.regx.val_bit = ch_stat0.regx.lpcm_id;
+ 
+ 	switch (substream->runtime->rate) {
+ 	case AUD_SAMPLE_RATE_32:
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
