@@ -1,23 +1,45 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Wed, 01 Aug 2018 05:22:08 +0000
-Subject: Re: [PATCH net-next] xfrm: Make function xfrmi_get_link_net() static
-Message-Id: <20180801052208.wg4ct6kt5g2gdbrr@gauss3.secunet.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:39 +0000
+Subject: [PATCH 6/9] ASoC: nau8540: remove redundant variable osrate
+Message-Id: <20180801104742.4328-7-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1532760588-31129-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1532760588-31129-1-git-send-email-weiyongjun1@huawei.com>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Lorenzo Colitti <lorenzo@google.com>, Benedict Wong <benedictwong@google.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 06:49:48AM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
-> 
-> net/xfrm/xfrm_interface.c:745:12: warning:
->  symbol 'xfrmi_get_link_net' was not declared. Should it be static?
-> 
-> Fixes: f203b76d7809 ("xfrm: Add virtual xfrm interfaces")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks Wei!
+Variable osrate is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable 'osrate' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/nau8540.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/sound/soc/codecs/nau8540.c b/sound/soc/codecs/nau8540.c
+index 17104f8dc1a9..e3c8cd17daf2 100644
+--- a/sound/soc/codecs/nau8540.c
++++ b/sound/soc/codecs/nau8540.c
+@@ -362,11 +362,8 @@ static const struct snd_soc_dapm_route nau8540_dapm_routes[] = {
+ 
+ static int nau8540_clock_check(struct nau8540 *nau8540, int rate, int osr)
+ {
+-	int osrate;
+-
+ 	if (osr >= ARRAY_SIZE(osr_adc_sel))
+ 		return -EINVAL;
+-	osrate = osr_adc_sel[osr].osr;
+ 
+ 	if (rate * osr > CLK_ADC_MAX) {
+ 		dev_err(nau8540->dev, "exceed the maximum frequency of CLK_ADC\n");
+-- 
+2.17.1
+
