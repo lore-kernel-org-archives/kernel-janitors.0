@@ -1,39 +1,50 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 29 Aug 2018 01:46:54 +0000
-Subject: [PATCH can-next] can: ucan: remove set but not used variable 'udev'
-Message-Id: <1535507214-145191-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:36 +0000
+Subject: [PATCH 3/9] ALSA: emu10k1: remove redundant variable attn
+Message-Id: <20180801104742.4328-4-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, Martin Elshuber <martin.elshuber@theobroma-systems.com>, Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>, Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/net/can/usb/ucan.c: In function 'ucan_disconnect':
-drivers/net/can/usb/ucan.c:1578:21: warning:
- variable 'udev' set but not used [-Wunused-but-set-variable]
-  struct usb_device *udev;
+Variable attn is being assigned but is never used hence it is
+redundant and can be removed.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cleans up clang warning:
+warning: variable 'attn' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/can/usb/ucan.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/pci/emu10k1/emupcm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-index 0678a38..c9fd83e 100644
---- a/drivers/net/can/usb/ucan.c
-+++ b/drivers/net/can/usb/ucan.c
-@@ -1575,11 +1575,8 @@ static int ucan_probe(struct usb_interface *intf,
- /* disconnect the device */
- static void ucan_disconnect(struct usb_interface *intf)
- {
--	struct usb_device *udev;
- 	struct ucan_priv *up = usb_get_intfdata(intf);
+diff --git a/sound/pci/emu10k1/emupcm.c b/sound/pci/emu10k1/emupcm.c
+index 69f9b100bd24..26f6eda3e766 100644
+--- a/sound/pci/emu10k1/emupcm.c
++++ b/sound/pci/emu10k1/emupcm.c
+@@ -290,7 +290,7 @@ static void snd_emu10k1_pcm_init_voice(struct snd_emu10k1 *emu,
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	unsigned int silent_page, tmp;
+ 	int voice, stereo, w_16;
+-	unsigned char attn, send_amount[8];
++	unsigned char send_amount[8];
+ 	unsigned char send_routing[8];
+ 	unsigned long flags;
+ 	unsigned int pitch_target;
+@@ -313,7 +313,6 @@ static void snd_emu10k1_pcm_init_voice(struct snd_emu10k1 *emu,
  
--	udev = interface_to_usbdev(intf);
--
- 	usb_set_intfdata(intf, NULL);
- 
- 	if (up) {
+ 	/* volume parameters */
+ 	if (extra) {
+-		attn = 0;
+ 		memset(send_routing, 0, sizeof(send_routing));
+ 		send_routing[0] = 0;
+ 		send_routing[1] = 1;
+-- 
+2.17.1
+
