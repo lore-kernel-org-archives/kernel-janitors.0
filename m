@@ -1,56 +1,54 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 24 Aug 2018 17:35:12 +0000
-Subject: Re: [PATCH] wcn36xx: replace dma_alloc_coherent + memset with dma_zalloc_coherent
-Message-Id: <87bm9rhdm7.fsf@kamboji.qca.qualcomm.com>
+From: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date: Wed, 01 Aug 2018 07:19:14 +0000
+Subject: Re: [PATCH] PCI: mobiveil: integer overflow in IB_WIN_SIZE
+Message-Id: <CAFZiPx0p5YJz1M_K5AJYXT_NP04QxOQVTG8FLcFGkA=yCXdrWQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180824171410.22539-1-colin.king@canonical.com>
-In-Reply-To: <20180824171410.22539-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 24 Aug 2018 18:14:10 +0100")
+References: <20180705094539.xkmtfffbzl3kooum@kili.mountain> <20180726105617.GA6181@red-moon>
+In-Reply-To: <20180726105617.GA6181@red-moon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+Lorenzo,
+Added the compilation support in the next patch submitted at :
+https://patchwork.kernel.org/patch/10551771/
 
-> From: Colin Ian King <colin.king@canonical.com>
+please review.
+
+Thanks,
+Subrahmanya
+
+
+On Thu, Jul 26, 2018 at 4:26 PM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Thu, Jul 05, 2018 at 12:45:39PM +0300, Dan Carpenter wrote:
+>> IB_WIN_SIZE is larger than INT_MAX so we need to cast it to u64.
+>>
+>> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> ---
+>> Untested...  Possibly the problem is that there are too many multiplies
+>> by * 1024.
+>>
+>> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
 >
-> It is preferable to use dma_zalloc_coherent rather than dam_alloc_coherent
-> and memset, so use it.
+> Applied to pci/mobiveil for v4.19 (it is still not fixing anything
+> given that the driver lacks a Kconfig and Makefile entries - that
+> must be fixed with urgency), thanks.
 >
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/ath/wcn36xx/dxe.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> Lorenzo
 >
-> diff --git a/drivers/net/wireless/ath/wcn36xx/dxe.c b/drivers/net/wireles=
-s/ath/wcn36xx/dxe.c
-> index 06cfe8d311f3..e66ddaa39523 100644
-> --- a/drivers/net/wireless/ath/wcn36xx/dxe.c
-> +++ b/drivers/net/wireless/ath/wcn36xx/dxe.c
-> @@ -174,13 +174,11 @@ static int wcn36xx_dxe_init_descs(struct device *de=
-v, struct wcn36xx_dxe_ch *wcn
->  	int i;
-> =20
->  	size =3D wcn_ch->desc_num * sizeof(struct wcn36xx_dxe_desc);
-> -	wcn_ch->cpu_addr =3D dma_alloc_coherent(dev, size, &wcn_ch->dma_addr,
-> -					      GFP_KERNEL);
-> +	wcn_ch->cpu_addr =3D dma_zalloc_coherent(dev, size, &wcn_ch->dma_addr,
-> +					       GFP_KERNEL);
->  	if (!wcn_ch->cpu_addr)
->  		return -ENOMEM;
-> =20
-> -	memset(wcn_ch->cpu_addr, 0, size);
-> -
->  	cur_dxe =3D (struct wcn36xx_dxe_desc *)wcn_ch->cpu_addr;
->  	cur_ctl =3D wcn_ch->head_blk_ctl;
-
-Hehe, I think you are the third person submitting a similar patch :)
-Anyway, I just applied this few hours ago:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=3Da=
-th-next&id=D410e28f3ae476e1572b8893c646ef44fae7bbbd
-
---=20
-Kalle Valo
+>> index 4d6c20e47bed..cf0aa7cee5b0 100644
+>> --- a/drivers/pci/controller/pcie-mobiveil.c
+>> +++ b/drivers/pci/controller/pcie-mobiveil.c
+>> @@ -107,7 +107,7 @@
+>>  #define CFG_WINDOW_TYPE      0
+>>  #define IO_WINDOW_TYPE               1
+>>  #define MEM_WINDOW_TYPE      2
+>> -#define IB_WIN_SIZE          (256 * 1024 * 1024 * 1024)
+>> +#define IB_WIN_SIZE          ((u64)256 * 1024 * 1024 * 1024)
+>>  #define MAX_PIO_WINDOWS      8
+>>
+>>  /* Parameters for the waiting for link up routine */
