@@ -1,43 +1,69 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Fri, 03 Aug 2018 00:08:38 +0000
-Subject: Re: [PATCH -next] drm/vkms: Fix the error handling in vkms_init()
-Message-Id: <20180803000838.ku2lgy4hakcgqc6o@smtp.gmail.com>
+From: Ying Xue <ying.xue@windriver.com>
+Date: Wed, 01 Aug 2018 06:10:02 +0000
+Subject: Re: [PATCH] net/tipc: remove redundant variables 'tn' and 'oport'
+Message-Id: <34f9d78b-cce8-469a-3f5c-a96c1a6a4197@windriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1533200699-124300-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1533200699-124300-1-git-send-email-weiyongjun1@huawei.com>
+References: <20180731160137.5850-1-colin.king@canonical.com>
+In-Reply-To: <20180731160137.5850-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.com>
+To: Colin King <colin.king@canonical.com>, Jon Maloy <jon.maloy@ericsson.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/02, Wei Yongjun wrote:
-> In the drm_vblank_init() error handling case, platform device
-> unregister is missing. This patch fix it.
+On 08/01/2018 12:01 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Fixes: 3a0709928b17 ("drm/vkms: Add vblank events simulated by hrtimers")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Variables 'tn' and 'oport'  are being assigned but are never used hence
+> they are redundant and can be removed.
+> 
+> Cleans up clang warnings:
+> warning: variable 'oport' set but not used [-Wunused-but-set-variable]
+> warning: variable 'tn' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Ying Xue <ying.xue@windriver.com>
+
 > ---
->  drivers/gpu/drm/vkms/vkms_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  net/tipc/socket.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> index 6e728b8..5ad09d4 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> @@ -110,7 +110,7 @@ static int __init vkms_init(void)
->  	ret = drm_vblank_init(&vkms_device->drm, 1);
->  	if (ret) {
->  		DRM_ERROR("Failed to vblank\n");
-> -		goto out_fini;
-> +		goto out_unregister;
->  	}
+> diff --git a/net/tipc/socket.c b/net/tipc/socket.c
+> index 3763bedecf5f..c1e93c9515bc 100644
+> --- a/net/tipc/socket.c
+> +++ b/net/tipc/socket.c
+> @@ -411,7 +411,6 @@ static int tipc_sk_sock_err(struct socket *sock, long *timeout)
+>  static int tipc_sk_create(struct net *net, struct socket *sock,
+>  			  int protocol, int kern)
+>  {
+> -	struct tipc_net *tn;
+>  	const struct proto_ops *ops;
+>  	struct sock *sk;
+>  	struct tipc_sock *tsk;
+> @@ -446,7 +445,6 @@ static int tipc_sk_create(struct net *net, struct socket *sock,
+>  	INIT_LIST_HEAD(&tsk->publications);
+>  	INIT_LIST_HEAD(&tsk->cong_links);
+>  	msg = &tsk->phdr;
+> -	tn = net_generic(sock_net(sk), tipc_net_id);
 >  
->  	ret = vkms_modeset_init(vkms_device);
->
-
-Hi,
-
-Thanks for the patch! Everything is fine for me.
-
-Reviewed-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> 
+>  	/* Finish initializing socket data structures */
+>  	sock->ops = ops;
+> @@ -1117,7 +1115,7 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
+>  	u32 self = tipc_own_addr(net);
+>  	u32 type, lower, upper, scope;
+>  	struct sk_buff *skb, *_skb;
+> -	u32 portid, oport, onode;
+> +	u32 portid, onode;
+>  	struct sk_buff_head tmpq;
+>  	struct list_head dports;
+>  	struct tipc_msg *hdr;
+> @@ -1133,7 +1131,6 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
+>  		user = msg_user(hdr);
+>  		mtyp = msg_type(hdr);
+>  		hlen = skb_headroom(skb) + msg_hdr_sz(hdr);
+> -		oport = msg_origport(hdr);
+>  		onode = msg_orignode(hdr);
+>  		type = msg_nametype(hdr);
+>  
+> 
