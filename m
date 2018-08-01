@@ -1,51 +1,49 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 31 Aug 2018 11:53:56 +0000
-Subject: [PATCH net-next] liquidio: cHECK-remove set but not used variable 'irh'
-Message-Id: <1535716436-87194-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:41 +0000
+Subject: [PATCH 8/9] ALSA: usb-audio: remove redundant pointer 'urb'
+Message-Id: <20180801104742.4328-9-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5eb803ef-3c23-0b58-e8bc-3f40b3fb5a78@huawei.com>
-In-Reply-To: <5eb803ef-3c23-0b58-e8bc-3f40b3fb5a78@huawei.com>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, "David S. Miller" <davem@davemloft.net>
-Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/net/ethernet/cavium/liquidio/request_manager.c: In function 'lio_process_iq_request_list':
-drivers/net/ethernet/cavium/liquidio/request_manager.c:383:27: warning:
- variable 'irh' set but not used [-Wunused-but-set-variable]
+Pointer 'urb' is being assigned but is never used hence it is
+redundant and can be removed.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cleans up clang warning:
+warning: variable 'urb' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/cavium/liquidio/request_manager.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ sound/usb/endpoint.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
-index bd0153e..c6f4cbd 100644
---- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
-+++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
-@@ -380,7 +380,6 @@ static inline void __copy_cmd_into_iq(struct octeon_instr_queue *iq,
- 	u32 inst_count = 0;
- 	unsigned int pkts_compl = 0, bytes_compl = 0;
- 	struct octeon_soft_command *sc;
--	struct octeon_instr_irh *irh;
- 	unsigned long flags;
+diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
+index c90607ebe155..d86be8bfe412 100644
+--- a/sound/usb/endpoint.c
++++ b/sound/usb/endpoint.c
+@@ -325,7 +325,6 @@ static void queue_pending_output_urbs(struct snd_usb_endpoint *ep)
+ 		unsigned long flags;
+ 		struct snd_usb_packet_info *uninitialized_var(packet);
+ 		struct snd_urb_ctx *ctx = NULL;
+-		struct urb *urb;
+ 		int err, i;
  
- 	while (old != iq->octeon_read_index) {
-@@ -402,14 +401,6 @@ static inline void __copy_cmd_into_iq(struct octeon_instr_queue *iq,
- 		case REQTYPE_RESP_NET:
- 		case REQTYPE_SOFT_COMMAND:
- 			sc = buf;
--
--			if (OCTEON_CN23XX_PF(oct) || OCTEON_CN23XX_VF(oct))
--				irh = (struct octeon_instr_irh *)
--					&sc->cmd.cmd3.irh;
--			else
--				irh = (struct octeon_instr_irh *)
--					&sc->cmd.cmd2.irh;
--
- 			/* We're expecting a response from Octeon.
- 			 * It's up to lio_process_ordered_list() to
- 			 * process  sc. Add sc to the ordered soft
+ 		spin_lock_irqsave(&ep->lock, flags);
+@@ -345,7 +344,6 @@ static void queue_pending_output_urbs(struct snd_usb_endpoint *ep)
+ 			return;
+ 
+ 		list_del_init(&ctx->ready_list);
+-		urb = ctx->urb;
+ 
+ 		/* copy over the length information */
+ 		for (i = 0; i < packet->packets; i++)
+-- 
+2.17.1
+
