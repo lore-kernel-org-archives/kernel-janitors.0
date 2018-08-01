@@ -1,27 +1,55 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 09 Aug 2018 01:16:42 +0000
-Subject: Re: [PATCH] st: remove redundant pointer STbuffer
-Message-Id: <yq136vos5j9.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 10:47:35 +0000
+Subject: [PATCH 2/9] ALSA: cs5535audio: remove redundant pointer 'dma'
+Message-Id: <20180801104742.4328-3-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180803104752.17081-1-colin.king@canonical.com>
-In-Reply-To: <20180803104752.17081-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 3 Aug 2018 11:47:52 +0100")
+References: <20180801104742.4328-1-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kai =?utf-8?Q?M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Pointer 'dma' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> Pointer STbuffer is being assigned but is never used hence it is
-> redundant and can be removed.
->
-> Cleans up clang warning:
-> warning: variable 'STbuffer' set but not used [-Wunused-but-set-variable]
+Cleans up two clang warnings:
+warning: variable 'dma' set but not used [-Wunused-but-set-variable]
 
-Applied to 4.19/scsi-queue, thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/cs5535audio/cs5535audio.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
+diff --git a/sound/pci/cs5535audio/cs5535audio.c b/sound/pci/cs5535audio/cs5535audio.c
+index de409cda50aa..4590086d9cd8 100644
+--- a/sound/pci/cs5535audio/cs5535audio.c
++++ b/sound/pci/cs5535audio/cs5535audio.c
+@@ -192,8 +192,6 @@ static void process_bm0_irq(struct cs5535audio *cs5535au)
+ 	bm_stat = cs_readb(cs5535au, ACC_BM0_STATUS);
+ 	spin_unlock(&cs5535au->reg_lock);
+ 	if (bm_stat & EOP) {
+-		struct cs5535audio_dma *dma;
+-		dma = cs5535au->playback_substream->runtime->private_data;
+ 		snd_pcm_period_elapsed(cs5535au->playback_substream);
+ 	} else {
+ 		dev_err(cs5535au->card->dev,
+@@ -208,11 +206,8 @@ static void process_bm1_irq(struct cs5535audio *cs5535au)
+ 	spin_lock(&cs5535au->reg_lock);
+ 	bm_stat = cs_readb(cs5535au, ACC_BM1_STATUS);
+ 	spin_unlock(&cs5535au->reg_lock);
+-	if (bm_stat & EOP) {
+-		struct cs5535audio_dma *dma;
+-		dma = cs5535au->capture_substream->runtime->private_data;
++	if (bm_stat & EOP)
+ 		snd_pcm_period_elapsed(cs5535au->capture_substream);
+-	}
+ }
+ 
+ static irqreturn_t snd_cs5535audio_interrupt(int irq, void *dev_id)
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
+
