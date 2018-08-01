@@ -1,39 +1,76 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Aug 2018 11:09:23 +0000
-Subject: [PATCH] misc: apds990x: remove unused array ir_currents
-Message-Id: <20180807110923.16550-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 01 Aug 2018 11:17:07 +0000
+Subject: Applied "ASoC: nau8540: remove redundant variable osrate" to the asoc tree
+Message-Id: <20180801111707.B6E6A1124241@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180801104742.4328-7-colin.king@canonical.com>
+In-Reply-To: <20180801104742.4328-7-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, Jaya Kumar <jayakumar.alsa@gmail.com>
 
+The patch
+
+   ASoC: nau8540: remove redundant variable osrate
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From d101f9b96ee08f0454989bc3adb10e6cf7f3f953 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 1 Aug 2018 11:47:39 +0100
+Subject: [PATCH] ASoC: nau8540: remove redundant variable osrate
 
-Array ir_currents is declared but never used, hence it is redundant
-and can be removed.
+Variable osrate is being assigned but is never used hence it is
+redundant and can be removed.
 
 Cleans up clang warning:
-warning: 'ir_currents' defined but not used [-Wunused-const-variable=]
+warning: variable 'osrate' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/misc/apds990x.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/codecs/nau8540.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/misc/apds990x.c b/drivers/misc/apds990x.c
-index ed9412d750b7..24876c615c3c 100644
---- a/drivers/misc/apds990x.c
-+++ b/drivers/misc/apds990x.c
-@@ -188,7 +188,6 @@ struct apds990x_chip {
- #define APDS_LUX_DEFAULT_RATE		200
+diff --git a/sound/soc/codecs/nau8540.c b/sound/soc/codecs/nau8540.c
+index 17104f8dc1a9..e3c8cd17daf2 100644
+--- a/sound/soc/codecs/nau8540.c
++++ b/sound/soc/codecs/nau8540.c
+@@ -362,11 +362,8 @@ static const struct snd_soc_dapm_route nau8540_dapm_routes[] = {
  
- static const u8 again[]	= {1, 8, 16, 120}; /* ALS gain steps */
--static const u8 ir_currents[]	= {100, 50, 25, 12}; /* IRled currents in mA */
+ static int nau8540_clock_check(struct nau8540 *nau8540, int rate, int osr)
+ {
+-	int osrate;
+-
+ 	if (osr >= ARRAY_SIZE(osr_adc_sel))
+ 		return -EINVAL;
+-	osrate = osr_adc_sel[osr].osr;
  
- /* Following two tables must match i.e 10Hz rate means 1 as persistence value */
- static const u16 arates_hz[] = {10, 5, 2, 1};
+ 	if (rate * osr > CLK_ADC_MAX) {
+ 		dev_err(nau8540->dev, "exceed the maximum frequency of CLK_ADC\n");
 -- 
-2.17.1
+2.18.0
 
