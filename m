@@ -1,35 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 Aug 2018 08:09:43 +0000
-Subject: [PATCH 2/2] fbdev: sbuslib: integer overflow in sbusfb_ioctl_helper()
-Message-Id: <20180831080943.ldzpzha5suktn4ln@kili.mountain>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Wed, 01 Aug 2018 17:59:07 +0000
+Subject: Re: [PATCH] iio: light: si1133: fix an && vs || typo
+Message-Id: <20180801185907.3dd0cc81@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180731181134.rp57ywlshwqm4onu@kili.mountain>
+In-Reply-To: <20180731181134.rp57ywlshwqm4onu@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Peter Malone <peter.malone@gmail.com>
-Cc: Mathieu Malaterre <malat@debian.org>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Philippe Ombredanne <pombredanne@nexb.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Maxime =?UTF-8?B?Um91c3Npbi1Cw6lsYW5nZXI=?= <maxime.roussinbelanger@gmail.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Francois Dagenais <jeff.dagenais@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "index + count" addition can overflow.  Both come directly from the
-user.  This bug leads to an information leak.
+On Tue, 31 Jul 2018 21:11:34 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Btw, commit 250c6c49e3b6 ("fbdev: Fixing arbitrary kernel leak in case
-FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().") doesn't do anything so
-far as I can see.  The "cmap->len" variable is type u32, so the
-comparison was already unsigned in the original code because of type
-promotion.  But the commit was also harmless and nice cleanup.
+> The "val" variable can't be both 0 and 1 at the same time so this will
+> always return -EINVAL.
+> 
+> Fixes: e01e7eaf37d8 ("iio: light: introduce si1133")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks.  This time Colin King beat you to it.
 
-diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
-index 90c51330969c..01a7110e61a7 100644
---- a/drivers/video/fbdev/sbuslib.c
-+++ b/drivers/video/fbdev/sbuslib.c
-@@ -171,7 +171,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
- 		    get_user(ublue, &c->blue))
- 			return -EFAULT;
- 
--		if (index + count > cmap->len)
-+		if (index > cmap->len || count > cmap->len - index)
- 			return -EINVAL;
- 
- 		for (i = 0; i < count; i++) {
+Jonathan
+
+> 
+> diff --git a/drivers/iio/light/si1133.c b/drivers/iio/light/si1133.c
+> index d3fbeb3bc463..5ac22c46da1f 100644
+> --- a/drivers/iio/light/si1133.c
+> +++ b/drivers/iio/light/si1133.c
+> @@ -838,7 +838,7 @@ static int si1133_write_raw(struct iio_dev *iio_dev,
+>  		switch (chan->type) {
+>  		case IIO_INTENSITY:
+>  		case IIO_UVINDEX:
+> -			if (val != 0 || val != 1)
+> +			if (val != 0 && val != 1)
+>  				return -EINVAL;
+>  
+>  			return si1133_update_adcsens(data,
+
