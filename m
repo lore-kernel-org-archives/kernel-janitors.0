@@ -1,37 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 09 Aug 2018 15:14:03 +0000
-Subject: Re: [PATCH] rsi: remove redundant variables bss, wh and temp_flash_content
-Message-Id: <20180809151403.BF64160B23@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Aug 2018 17:22:41 +0000
+Subject: [PATCH] drivers: net: lmc: fix case value for target abort error
+Message-Id: <20180801172241.1974-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180803074636.20479-1-colin.king@canonical.com>
-In-Reply-To: <20180803074636.20479-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Vasyl Gomonovych <gomonovych@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables bss, wh and temp_flash_content are being assigned but are
-> never used hence they are redundant and can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'bss' set but not used [-Wunused-but-set-variable]
-> warning: variable 'wh' set but not used [-Wunused-but-set-variable]
-> warning: variable 'temp_flash_content' set but not used
->  [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Current value for a target abort error is 0x010, however, this value
+should in fact be 0x002.  As it stands, the range of error is 0..7 so
+it is currently never being detected.  This bug has been in the driver
+since the early 2.6.12 days (or before).
 
-Patch applied to wireless-drivers-next.git, thanks.
+Detected by CoverityScan, CID#744290 ("Logically dead code")
 
-35204d0aa83f rsi: remove redundant variables bss, wh and temp_flash_content
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wan/lmc/lmc_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/wan/lmc/lmc_main.c b/drivers/net/wan/lmc/lmc_main.c
+index 093bd21f574d..4907453f17f5 100644
+--- a/drivers/net/wan/lmc/lmc_main.c
++++ b/drivers/net/wan/lmc/lmc_main.c
+@@ -1362,7 +1362,7 @@ static irqreturn_t lmc_interrupt (int irq, void *dev_instance) /*fold00*/
+             case 0x001:
+                 printk(KERN_WARNING "%s: Master Abort (naughty)\n", dev->name);
+                 break;
+-            case 0x010:
++            case 0x002:
+                 printk(KERN_WARNING "%s: Target Abort (not so naughty)\n", dev->name);
+                 break;
+             default:
 -- 
-https://patchwork.kernel.org/patch/10554759/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
 
