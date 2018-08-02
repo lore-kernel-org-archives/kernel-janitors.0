@@ -1,28 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 30 Aug 2018 11:25:37 +0000
-Subject: Re: [PATCH] scsi: aacraid: remove unused variables dev and cpu
-Message-Id: <yq1zhx43xla.fsf@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 02 Aug 2018 04:31:02 +0000
+Subject: [PATCH -next] ALSA: usb-audio: Fix invalid use of sizeof in parse_uac_endpoint_attributes()
+Message-Id: <1533184262-148619-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180816133320.19682-1-colin.king@canonical.com>
-In-Reply-To: <20180816133320.19682-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 16 Aug 2018 14:33:20 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Markus Elfring <elfring@users.sourceforge.net>, Ruslan Bilovol <ruslan.bilovol@gmail.com>, Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, Michael Drake <michael.drake@codethink.co.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
+sizeof() when applied to a pointer typed expression gives the
+size of the pointer, not that of the pointed data.
 
-Colin,
+Fixes: 7edf3b5e6a45 ("ALSA: usb-audio: AudioStreaming Power Domain parsing")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/usb/stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Variables dev and cpu are not being used and are redundant and hence
-> can be removed.
->
-> Cleans up clang warnings:
-> warning: variable 'dev' set but not used [-Wunused-but-set-variable]
-> warning: variable 'cpu' set but not used [-Wunused-but-set-variable]
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 8fe3b0e..67cf849 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -1037,7 +1037,7 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+ 		fp->rate_max = UAC3_BADD_SAMPLING_RATE;
+ 		fp->rates = SNDRV_PCM_RATE_CONTINUOUS;
+ 
+-		pd = kzalloc(sizeof(pd), GFP_KERNEL);
++		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+ 		if (!pd) {
+ 			kfree(fp->rate_table);
+ 			kfree(fp);
 
-Applied to 4.20/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
