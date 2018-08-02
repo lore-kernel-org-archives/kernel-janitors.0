@@ -1,17 +1,34 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 23 Aug 2018 18:26:29 +0000
-Subject: Re: [PATCH] netfilter: conntrack: remove duplicated include from nf_conntrack_proto_udp.c
-Message-Id: <20180823182629.nw32xfdjrj3p5e6o@salvia>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 02 Aug 2018 08:57:24 +0000
+Subject: [PATCH -next] drm/vkms: Fix the error handling in vkms_init()
+Message-Id: <1533200699-124300-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1534860184-170985-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1534860184-170985-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Gustavo Padovan <gustavo.padovan@collabora.com>, Haneen Mohammed <hamohammed.sa@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 02:03:04PM +0000, Yue Haibing wrote:
-> Remove duplicated include.
+In the drm_vblank_init() error handling case, platform device
+unregister is missing. This patch fix it.
 
-Applied, thanks.
+Fixes: 3a0709928b17 ("drm/vkms: Add vblank events simulated by hrtimers")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/vkms/vkms_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 6e728b8..5ad09d4 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -110,7 +110,7 @@ static int __init vkms_init(void)
+ 	ret = drm_vblank_init(&vkms_device->drm, 1);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to vblank\n");
+-		goto out_fini;
++		goto out_unregister;
+ 	}
+ 
+ 	ret = vkms_modeset_init(vkms_device);
+
