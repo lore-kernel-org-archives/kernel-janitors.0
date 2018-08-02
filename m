@@ -1,64 +1,64 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 15 Aug 2018 09:54:26 +0000
-Subject: Re: [PATCH -next] platform/x86: mlx-platform: Fix copy-paste error in mlxplat_init()
-Message-Id: <CAHp75VffejtfTRNe7O7q0b1nj-4qXPK-t_-WYFq5YB9axh=Okg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 02 Aug 2018 07:56:13 +0000
+Subject: [PATCH] rdma/cxgb4: fix some info leaks
+Message-Id: <20180802075613.4zu6m6rv2dcumr5l@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1533700830-137279-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1533700830-137279-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 6:56 AM, Vadim Pasternak <vadimp@mellanox.com> wrote:
->
->
->> -----Original Message-----
->> From: Wei Yongjun <weiyongjun1@huawei.com>
->> Sent: Wednesday, August 08, 2018 7:01 AM
->> To: Vadim Pasternak <vadimp@mellanox.com>; Darren Hart
->> <dvhart@infradead.org>; Andy Shevchenko <andy@infradead.org>
->> Cc: Wei Yongjun <weiyongjun1@huawei.com>; platform-driver-
->> x86@vger.kernel.org; kernel-janitors@vger.kernel.org
->> Subject: [PATCH -next] platform/x86: mlx-platform: Fix copy-paste error in
->> mlxplat_init()
->>
->> The return value from platform_device_register_resndata() is not checked
->> correctly. The test is done against a wrong variable. This patch fix it.
->>
->> Fixes: 0378123c5800 ("platform/x86: mlx-platform: Add mlxreg-fan platform
->> driver activation")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->
+In c4iw_create_qp() there are several struct members which potentially
+aren't inintialized like uresp.rq_key.  I've fixed this code before in
+in commit ae1fe07f3f42 ("RDMA/cxgb4: Fix stack info leak in
+c4iw_create_qp()") so this time I'm just going to take a big hammer
+approach and memset the whole struct to zero.  Hopefully, it will stay
+fixed this time.
 
-Pushed to my review and testing queue, thanks!
+In c4iw_create_srq() we don't clear uresp.reserved.
 
-> Acked-by: Vadim Pasternak <vadimp@mellanox.com>
->
->> ---
->>  drivers/platform/x86/mlx-platform.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-
->> platform.c
->> index e1f9fce..d89936c 100644
->> --- a/drivers/platform/x86/mlx-platform.c
->> +++ b/drivers/platform/x86/mlx-platform.c
->> @@ -1704,8 +1704,8 @@ static int __init mlxplat_init(void)
->>                                       PLATFORM_DEVID_NONE, NULL, 0,
->>                                       mlxplat_fan,
->>                                       sizeof(*mlxplat_fan));
->> -             if (IS_ERR(priv->pdev_io_regs)) {
->> -                     err = PTR_ERR(priv->pdev_io_regs);
->> +             if (IS_ERR(priv->pdev_fan)) {
->> +                     err = PTR_ERR(priv->pdev_fan);
->>                       goto fail_platform_io_regs_register;
->>               }
->>       }
->
+Fixes: 6a0b6174d35a ("rdma/cxgb4: Add support for kernel mode SRQ's")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+These bugs are detected with Smatch btw if you want to go back to fixing
+them yourselves in a more delicate way.
 
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index 62e2c0d899f5..ba08e0839033 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -2088,6 +2088,7 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 				goto err_free_sq_db_key;
+ 			}
+ 		}
++		memset(&uresp, 0, sizeof(uresp));
+ 		if (t4_sq_onchip(&qhp->wq.sq)) {
+ 			ma_sync_key_mm = kmalloc(sizeof(*ma_sync_key_mm),
+ 						 GFP_KERNEL);
+@@ -2096,8 +2097,7 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 				goto err_free_rq_db_key;
+ 			}
+ 			uresp.flags = C4IW_QPF_ONCHIP;
+-		} else
+-			uresp.flags = 0;
++		}
+ 		uresp.qid_mask = rhp->rdev.qpmask;
+ 		uresp.sqid = qhp->wq.sq.qid;
+ 		uresp.sq_size = qhp->wq.sq.size;
+@@ -2111,8 +2111,6 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 		if (ma_sync_key_mm) {
+ 			uresp.ma_sync_key = ucontext->key;
+ 			ucontext->key += PAGE_SIZE;
+-		} else {
+-			uresp.ma_sync_key =  0;
+ 		}
+ 		uresp.sq_key = ucontext->key;
+ 		ucontext->key += PAGE_SIZE;
+@@ -2601,6 +2599,7 @@ struct ib_srq *c4iw_create_srq(struct ib_pd *pd, struct ib_srq_init_attr *attrs,
+ 			ret = -ENOMEM;
+ 			goto err_free_srq_key_mm;
+ 		}
++		memset(&uresp, 0, sizeof(uresp));
+ 		uresp.flags = srq->flags;
+ 		uresp.qid_mask = rhp->rdev.qpmask;
+ 		uresp.srqid = srq->wq.qid;
