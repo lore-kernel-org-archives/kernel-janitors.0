@@ -1,30 +1,30 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 31 Aug 2018 03:44:27 +0000
-Subject: [PATCH net-next] net: remove duplicated include from net_failover.c
-Message-Id: <1535687067-23044-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 02 Aug 2018 08:27:21 +0000
+Subject: [PATCH] eeprom: idt_89hpesx: clean up an error pointer vs NULL inconsistency
+Message-Id: <20180802082720.calhmn77gmkmcb2d@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Sridhar Samudrala <sridhar.samudrala@intel.com>, Stephen Hemminger <stephen@networkplumber.org>, Dan Carpenter <dan.carpenter@oracle.com>, Alexander Duyck <alexander.h.duyck@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Liran Alon <liran.alon@oracle.com>, Joao Martins <joao.m.martins@oracle.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huy Duong <qhuyduong@hotmail.com>, Serge Semin <fancer.lancer@gmail.com>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove duplicated include.
+We check for IS_ERR_OR_NULL() here, but later we check the same thing
+for NULL only.  It turns out that it can only be NULL so we can make the
+checking consistent by removing the ERR_PTR stuff.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/net_failover.c | 1 -
- 1 file changed, 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/net_failover.c b/drivers/net/net_failover.c
-index 7ae1856..192ae1c 100644
---- a/drivers/net/net_failover.c
-+++ b/drivers/net/net_failover.c
-@@ -19,7 +19,6 @@
- #include <linux/ethtool.h>
- #include <linux/module.h>
- #include <linux/slab.h>
--#include <linux/netdevice.h>
- #include <linux/netpoll.h>
- #include <linux/rtnetlink.h>
- #include <linux/if_vlan.h>
+diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
+index 119eb05a5a91..8a4659518c33 100644
+--- a/drivers/misc/eeprom/idt_89hpesx.c
++++ b/drivers/misc/eeprom/idt_89hpesx.c
+@@ -1128,7 +1128,7 @@ static void idt_get_fw_data(struct idt_89hpesx_dev *pdev)
+ 
+ 	device_for_each_child_node(dev, fwnode) {
+ 		ee_id = idt_ee_match_id(fwnode);
+-		if (IS_ERR_OR_NULL(ee_id)) {
++		if (!ee_id) {
+ 			dev_warn(dev, "Skip unsupported EEPROM device");
+ 			continue;
+ 		} else
