@@ -1,29 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 02 Aug 2018 08:44:29 +0000
-Subject: [PATCH] btrfs: dereferencing error pointer in btrfs_quota_enable()
-Message-Id: <20180802084428.k2uemow7k6j3us47@kili.mountain>
+From: Nikolay Borisov <nborisov@suse.com>
+Date: Thu, 02 Aug 2018 10:22:27 +0000
+Subject: Re: [PATCH] btrfs: dereferencing error pointer in btrfs_quota_enable()
+Message-Id: <2d11e8b5-5e6f-42d2-3351-3d31f53ece1b@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180802084428.k2uemow7k6j3us47@kili.mountain>
+In-Reply-To: <20180802084428.k2uemow7k6j3us47@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Chris Mason <clm@fb.com>
 Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The error handling in "goto out;" expects that if "trans" is non-NULL
-that means it's valid.  Unfortunately it could also be an error pointer.
 
-Fixes: c9a6fe84fe43 ("btrfs: qgroups: Move transaction management inside btrfs_quota_enable/disable")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index 3a9019928329..380ff978defa 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -904,6 +904,7 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_info)
- 	trans = btrfs_start_transaction(tree_root, 2);
- 	if (IS_ERR(trans)) {
- 		ret = PTR_ERR(trans);
-+		trans = NULL;
- 		goto out;
- 	}
- 
+On  2.08.2018 11:44, Dan Carpenter wrote:
+> The error handling in "goto out;" expects that if "trans" is non-NULL
+> that means it's valid.  Unfortunately it could also be an error pointer.
+> 
+> Fixes: c9a6fe84fe43 ("btrfs: qgroups: Move transaction management inside btrfs_quota_enable/disable")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+
+Good catch !
+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+
+> 
+> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+> index 3a9019928329..380ff978defa 100644
+> --- a/fs/btrfs/qgroup.c
+> +++ b/fs/btrfs/qgroup.c
+> @@ -904,6 +904,7 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_info)
+>  	trans = btrfs_start_transaction(tree_root, 2);
+>  	if (IS_ERR(trans)) {
+>  		ret = PTR_ERR(trans);
+> +		trans = NULL;
+>  		goto out;
+>  	}
+>  
+> 
