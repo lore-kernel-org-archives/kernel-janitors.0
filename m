@@ -1,52 +1,29 @@
-From: Li Yang <leoyang.li@nxp.com>
-Date: Thu, 30 Aug 2018 17:23:16 +0000
-Subject: Re: [PATCH] fsl: remove redundant pointer 'priv'
-Message-Id: <CADRPPNQxAZi4HahERZZdKDKpauh+pbw+PmDOe_nUXZvJbvJRng@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 02 Aug 2018 08:38:23 +0000
+Subject: [PATCH] apparmor: fix an error code in __aa_create_ns()
+Message-Id: <20180802083823.qrx5ieekfvtz2w4d@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180829092746.30674-1-colin.king@canonical.com>
-In-Reply-To: <20180829092746.30674-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-security-module@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 4:29 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Pointer 'priv' is being assigned but is never used hence it is
-> redundant and can be removed.
->
-> Cleans up clang warning:
-> variable 'priv' set but not used [-Wunused-but-set-variable]
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We should return error pointers in this function.  Returning NULL
+results in a NULL dereference in the caller.
 
-Merged for next after updated the title prefix.
+Fixes: 73688d1ed0b8 ("apparmor: refactor prepare_ns() and make usable from different views")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks!
-> ---
->  drivers/soc/fsl/dpio/dpio-driver.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/soc/fsl/dpio/dpio-driver.c b/drivers/soc/fsl/dpio/dpio-driver.c
-> index b60b77bfaffa..e58fcc9096e8 100644
-> --- a/drivers/soc/fsl/dpio/dpio-driver.c
-> +++ b/drivers/soc/fsl/dpio/dpio-driver.c
-> @@ -50,13 +50,10 @@ static void unregister_dpio_irq_handlers(struct fsl_mc_device *dpio_dev)
->
->  static int register_dpio_irq_handlers(struct fsl_mc_device *dpio_dev, int cpu)
->  {
-> -       struct dpio_priv *priv;
->         int error;
->         struct fsl_mc_device_irq *irq;
->         cpumask_t mask;
->
-> -       priv = dev_get_drvdata(&dpio_dev->dev);
-> -
->         irq = dpio_dev->irqs[0];
->         error = devm_request_irq(&dpio_dev->dev,
->                                  irq->msi_desc->irq,
-> --
-> 2.17.1
->
+diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
+index b0f9dc3f765a..1a7cec5d9cac 100644
+--- a/security/apparmor/policy_ns.c
++++ b/security/apparmor/policy_ns.c
+@@ -255,7 +255,7 @@ static struct aa_ns *__aa_create_ns(struct aa_ns *parent, const char *name,
+ 
+ 	ns = alloc_ns(parent->base.hname, name);
+ 	if (!ns)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 	ns->level = parent->level + 1;
+ 	mutex_lock_nested(&ns->lock, ns->level);
+ 	error = __aafs_ns_mkdir(ns, ns_subns_dir(parent), name, dir);
