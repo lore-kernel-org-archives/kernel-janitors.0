@@ -1,31 +1,29 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 09 Aug 2018 15:14:28 +0000
-Subject: Re: [PATCH] iwlegacy: fix spelling mistake "acumulative" -> "accumulative"
-Message-Id: <20180809151429.0A13B60AD8@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 02 Aug 2018 08:44:29 +0000
+Subject: [PATCH] btrfs: dereferencing error pointer in btrfs_quota_enable()
+Message-Id: <20180802084428.k2uemow7k6j3us47@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180803134224.2609-1-colin.king@canonical.com>
-In-Reply-To: <20180803134224.2609-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>
+Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+The error handling in "goto out;" expects that if "trans" is non-NULL
+that means it's valid.  Unfortunately it could also be an error pointer.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> fix spelling mistake in rx stats text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Fixes: c9a6fe84fe43 ("btrfs: qgroups: Move transaction management inside btrfs_quota_enable/disable")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-26b701adc378 iwlegacy: fix spelling mistake "acumulative" -> "accumulative"
-
--- 
-https://patchwork.kernel.org/patch/10555115/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index 3a9019928329..380ff978defa 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -904,6 +904,7 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_info)
+ 	trans = btrfs_start_transaction(tree_root, 2);
+ 	if (IS_ERR(trans)) {
+ 		ret = PTR_ERR(trans);
++		trans = NULL;
+ 		goto out;
+ 	}
+ 
