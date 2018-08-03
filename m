@@ -1,80 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 Aug 2018 10:12:29 +0000
-Subject: [PATCH] afs: remove unused variables 'before' and 'after'
-Message-Id: <20180830101229.30158-1-colin.king@canonical.com>
+Date: Fri, 03 Aug 2018 14:36:00 +0000
+Subject: [PATCH 3/4] media: dvb-usb-v2: fix spelling mistake: "completition" -> "completion"
+Message-Id: <20180803143601.4211-4-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180803143601.4211-1-colin.king@canonical.com>
+In-Reply-To: <20180803143601.4211-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variables 'before' and 'after' are being assigned but are never
-used (they are probably debugging cruft) hence they are redundant
-and can be removed.
-
-Cleans up clang warnings:
-variable 'before' set but not used [-Wunused-but-set-variable]
-variable 'after' set but not used [-Wunused-but-set-variable]
+Trivial fix to spelling mistake in dev_dbg and dev_err messages
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/afs/dir_edit.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/media/usb/dvb-usb-v2/usb_urb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index 8b400f5aead5..0e7162527db8 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -72,13 +72,11 @@ static int afs_find_contig_bits(union afs_xdr_dir_block *block, unsigned int nr_
- static void afs_set_contig_bits(union afs_xdr_dir_block *block,
- 				int bit, unsigned int nr_slots)
- {
--	u64 mask, before, after;
-+	u64 mask;
- 
- 	mask = (1 << nr_slots) - 1;
- 	mask <<= bit;
- 
--	before = *(u64 *)block->hdr.bitmap;
--
- 	block->hdr.bitmap[0] |= (u8)(mask >> 0 * 8);
- 	block->hdr.bitmap[1] |= (u8)(mask >> 1 * 8);
- 	block->hdr.bitmap[2] |= (u8)(mask >> 2 * 8);
-@@ -87,8 +85,6 @@ static void afs_set_contig_bits(union afs_xdr_dir_block *block,
- 	block->hdr.bitmap[5] |= (u8)(mask >> 5 * 8);
- 	block->hdr.bitmap[6] |= (u8)(mask >> 6 * 8);
- 	block->hdr.bitmap[7] |= (u8)(mask >> 7 * 8);
--
--	after = *(u64 *)block->hdr.bitmap;
- }
- 
- /*
-@@ -97,13 +93,11 @@ static void afs_set_contig_bits(union afs_xdr_dir_block *block,
- static void afs_clear_contig_bits(union afs_xdr_dir_block *block,
- 				  int bit, unsigned int nr_slots)
- {
--	u64 mask, before, after;
-+	u64 mask;
- 
- 	mask = (1 << nr_slots) - 1;
- 	mask <<= bit;
- 
--	before = *(u64 *)block->hdr.bitmap;
--
- 	block->hdr.bitmap[0] &= ~(u8)(mask >> 0 * 8);
- 	block->hdr.bitmap[1] &= ~(u8)(mask >> 1 * 8);
- 	block->hdr.bitmap[2] &= ~(u8)(mask >> 2 * 8);
-@@ -112,8 +106,6 @@ static void afs_clear_contig_bits(union afs_xdr_dir_block *block,
- 	block->hdr.bitmap[5] &= ~(u8)(mask >> 5 * 8);
- 	block->hdr.bitmap[6] &= ~(u8)(mask >> 6 * 8);
- 	block->hdr.bitmap[7] &= ~(u8)(mask >> 7 * 8);
--
--	after = *(u64 *)block->hdr.bitmap;
- }
- 
- /*
+diff --git a/drivers/media/usb/dvb-usb-v2/usb_urb.c b/drivers/media/usb/dvb-usb-v2/usb_urb.c
+index b0499f95ec45..024c751eb165 100644
+--- a/drivers/media/usb/dvb-usb-v2/usb_urb.c
++++ b/drivers/media/usb/dvb-usb-v2/usb_urb.c
+@@ -40,7 +40,7 @@ static void usb_urb_complete(struct urb *urb)
+ 		return;
+ 	default:        /* error */
+ 		dev_dbg_ratelimited(&stream->udev->dev,
+-				"%s: urb completition failed=%d\n",
++				"%s: urb completion failed=%d\n",
+ 				__func__, urb->status);
+ 		break;
+ 	}
+@@ -69,7 +69,7 @@ static void usb_urb_complete(struct urb *urb)
+ 		break;
+ 	default:
+ 		dev_err(&stream->udev->dev,
+-				"%s: unknown endpoint type in completition handler\n",
++				"%s: unknown endpoint type in completion handler\n",
+ 				KBUILD_MODNAME);
+ 		return;
+ 	}
 -- 
 2.17.1
+
