@@ -1,55 +1,29 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 31 Aug 2018 02:50:15 +0000
-Subject: Re: [PATCH][net-next] xdp: remove redundant variable 'headroom'
-Message-Id: <20180831025013.yiukmlw6o7gedevg@ast-mbp>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 Aug 2018 19:31:01 +0000
+Subject: [PATCH] vfs: potential deadlock in insert_inode_locked()
+Message-Id: <20180803193101.e422aso76vzbo3ko@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180830142718.10850-1-colin.king@canonical.com>
- <ec579a7c-345b-f462-95ac-f36de1072614@intel.com>
-In-Reply-To: <ec579a7c-345b-f462-95ac-f36de1072614@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>
-Cc: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 04:37:50PM +0200, Björn Töpel wrote:
-> On 2018-08-30 16:27, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Variable 'headroom' is being assigned but is never used hence it is
-> > redundant and can be removed.
-> > 
-> > Cleans up clang warning:
-> > variable ‘headroom’ set but not used [-Wunused-but-set-variable]
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   net/core/xdp.c | 3 +--
-> >   1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/net/core/xdp.c b/net/core/xdp.c
-> > index 654dbb19707e..4b2b194f4f1f 100644
-> > --- a/net/core/xdp.c
-> > +++ b/net/core/xdp.c
-> > @@ -412,7 +412,7 @@ EXPORT_SYMBOL_GPL(xdp_attachment_setup);
-> >   struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp)
-> >   {
-> > -	unsigned int metasize, headroom, totsize;
-> > +	unsigned int metasize, totsize;
-> >   	void *addr, *data_to_copy;
-> >   	struct xdp_frame *xdpf;
-> >   	struct page *page;
-> > @@ -420,7 +420,6 @@ struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp)
-> >   	/* Clone into a MEM_TYPE_PAGE_ORDER0 xdp_frame. */
-> >   	metasize = xdp_data_meta_unsupported(xdp) ? 0 :
-> >   		   xdp->data - xdp->data_meta;
-> > -	headroom = xdp->data - xdp->data_hard_start;
-> >   	totsize = xdp->data_end - xdp->data + metasize;
-> >   	if (sizeof(*xdpf) + totsize > PAGE_SIZE)
-> > 
-> 
-> This should go via bpf-next. Thanks for the fix!
-> 
-> Acked-by: Björn Töpel <bjorn.topel@intel.com>
+We added a new error path to insert_inode_locked() but we need to drop
+the inode_hash_lock spin_lock before we return.
 
-Applied, Thanks
+Fixes: 397127e49ff5 ("new primitive: discard_new_inode()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 593d0cfce27c..ed7c18495cd9 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1462,6 +1462,7 @@ int insert_inode_locked(struct inode *inode)
+ 		}
+ 		if (unlikely(old->i_state & I_CREATING)) {
+ 			spin_unlock(&old->i_lock);
++			spin_unlock(&inode_hash_lock);
+ 			return -EBUSY;
+ 		}
+ 		__iget(old);
