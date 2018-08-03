@@ -1,71 +1,38 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Wed, 08 Aug 2018 15:47:27 +0000
-Subject: Re: [PATCH][can-next] can: ucan: fix spelling mistake: "resumbmitting" -> "resubmitting"
-Message-Id: <2c5a77d3-9a45-aad1-b5ab-15ae4c875d36@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2bM044yOZQjicv5teLBGcoJ0DscvULEKY"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Aug 2018 14:35:58 +0000
+Subject: [PATCH 1/4] media: au0828: fix spelling mistake: "completition" -> "completion"
+Message-Id: <20180803143601.4211-2-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180730134037.8240-1-colin.king@canonical.com>
-In-Reply-To: <20180730134037.8240-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, Wolfgang Grandegger <wg@grandegger.com>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+References: <20180803143601.4211-1-colin.king@canonical.com>
+In-Reply-To: <20180803143601.4211-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---2bM044yOZQjicv5teLBGcoJ0DscvULEKY
-Content-Type: multipart/mixed; boundary="MGpDIgP7qkwvbUSgKuvSGOtYhz46GiJTE";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Colin King <colin.king@canonical.com>,
- Wolfgang Grandegger <wg@grandegger.com>,
- "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <2c5a77d3-9a45-aad1-b5ab-15ae4c875d36@pengutronix.de>
-Subject: Re: [PATCH][can-next] can: ucan: fix spelling mistake:
- "resumbmitting" -> "resubmitting"
-References: <20180730134037.8240-1-colin.king@canonical.com>
-In-Reply-To: <20180730134037.8240-1-colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
---MGpDIgP7qkwvbUSgKuvSGOtYhz46GiJTE
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+Trivial fix to spelling mistake in au0828_isocdbg debug message
 
-On 07/30/2018 03:40 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in netdev_dbg error message
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/au0828/au0828-video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to can-next.
+diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+index 70e187971590..62b45062b1e6 100644
+--- a/drivers/media/usb/au0828/au0828-video.c
++++ b/drivers/media/usb/au0828/au0828-video.c
+@@ -133,7 +133,7 @@ static void au0828_irq_callback(struct urb *urb)
+ 		au0828_isocdbg("au0828_irq_callback called: status kill\n");
+ 		return;
+ 	default:            /* unknown error */
+-		au0828_isocdbg("urb completition error %d.\n", urb->status);
++		au0828_isocdbg("urb completion error %d.\n", urb->status);
+ 		break;
+ 	}
+ 
+-- 
+2.17.1
 
-Tnx,
-Marc
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---MGpDIgP7qkwvbUSgKuvSGOtYhz46GiJTE--
-
---2bM044yOZQjicv5teLBGcoJ0DscvULEKY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltrEI8ACgkQk9IU1zQo
-ZfGqnggAloJVgXivJ9glL9Gbzqg4WcGalugDlcsrQltZgytKZFulDDouncmWxOHK
-ics1oLBfjTCyImLHUhK+7PJDDbUBLm2TtJ0sjhYG7/pC2pahu90wlWZRcV2prAdB
-GAr9UEu8l3QDX9g63aaFVuiuVSlA1G9j/O3RJjwJzarPjlPdq2vM+p5MH+0oldpU
-NlJ0mFd93Fis1+gQtprwTcY0mT7bWolJb2SEdXTyrk9+oCJ8czSrksOab6FV8gjU
-ref0cyQGg7MB9Y+U97+EXm0iawwmNSRXYkV9CgcjU9tbJbKuejO9x9k389cCP6zt
-aWL0yDrZ9tyK1nLgvW0MK5o45ycMZw==
-=Q4BW
------END PGP SIGNATURE-----
-
---2bM044yOZQjicv5teLBGcoJ0DscvULEKY--
