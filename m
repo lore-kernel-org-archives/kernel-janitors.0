@@ -1,40 +1,61 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Wed, 01 Aug 2018 17:59:07 +0000
-Subject: Re: [PATCH] iio: light: si1133: fix an && vs || typo
-Message-Id: <20180801185907.3dd0cc81@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Aug 2018 14:35:59 +0000
+Subject: [PATCH 2/4] media: cx231xx: fix spelling mistake: "completition" -> "completion"
+Message-Id: <20180803143601.4211-3-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180731181134.rp57ywlshwqm4onu@kili.mountain>
-In-Reply-To: <20180731181134.rp57ywlshwqm4onu@kili.mountain>
+References: <20180803143601.4211-1-colin.king@canonical.com>
+In-Reply-To: <20180803143601.4211-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Maxime =?UTF-8?B?Um91c3Npbi1Cw6lsYW5nZXI=?= <maxime.roussinbelanger@gmail.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Francois Dagenais <jeff.dagenais@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 31 Jul 2018 21:11:34 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The "val" variable can't be both 0 and 1 at the same time so this will
-> always return -EINVAL.
-> 
-> Fixes: e01e7eaf37d8 ("iio: light: introduce si1133")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Thanks.  This time Colin King beat you to it.
+Trivial fix to spelling mistake in dev_dbg debug messages
 
-Jonathan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/cx231xx/cx231xx-audio.c | 4 ++--
+ drivers/media/usb/cx231xx/cx231xx-vbi.c   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> diff --git a/drivers/iio/light/si1133.c b/drivers/iio/light/si1133.c
-> index d3fbeb3bc463..5ac22c46da1f 100644
-> --- a/drivers/iio/light/si1133.c
-> +++ b/drivers/iio/light/si1133.c
-> @@ -838,7 +838,7 @@ static int si1133_write_raw(struct iio_dev *iio_dev,
->  		switch (chan->type) {
->  		case IIO_INTENSITY:
->  		case IIO_UVINDEX:
-> -			if (val != 0 || val != 1)
-> +			if (val != 0 && val != 1)
->  				return -EINVAL;
->  
->  			return si1133_update_adcsens(data,
+diff --git a/drivers/media/usb/cx231xx/cx231xx-audio.c b/drivers/media/usb/cx231xx/cx231xx-audio.c
+index 0025187c28e3..32ee7b3f21c9 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-audio.c
++++ b/drivers/media/usb/cx231xx/cx231xx-audio.c
+@@ -112,7 +112,7 @@ static void cx231xx_audio_isocirq(struct urb *urb)
+ 	case -ESHUTDOWN:
+ 		return;
+ 	default:		/* error */
+-		dev_dbg(dev->dev, "urb completition error %d.\n",
++		dev_dbg(dev->dev, "urb completion error %d.\n",
+ 			urb->status);
+ 		break;
+ 	}
+@@ -203,7 +203,7 @@ static void cx231xx_audio_bulkirq(struct urb *urb)
+ 	case -ESHUTDOWN:
+ 		return;
+ 	default:		/* error */
+-		dev_dbg(dev->dev, "urb completition error %d.\n",
++		dev_dbg(dev->dev, "urb completion error %d.\n",
+ 			urb->status);
+ 		break;
+ 	}
+diff --git a/drivers/media/usb/cx231xx/cx231xx-vbi.c b/drivers/media/usb/cx231xx/cx231xx-vbi.c
+index 920417baf893..10b2eb7338ad 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-vbi.c
++++ b/drivers/media/usb/cx231xx/cx231xx-vbi.c
+@@ -317,7 +317,7 @@ static void cx231xx_irq_vbi_callback(struct urb *urb)
+ 		return;
+ 	default:		/* error */
+ 		dev_err(dev->dev,
+-			"urb completition error %d.\n",	urb->status);
++			"urb completion error %d.\n", urb->status);
+ 		break;
+ 	}
+ 
+-- 
+2.17.1
 
