@@ -1,44 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 09 Aug 2018 10:51:20 +0000
-Subject: [PATCH] staging: rtl8712: remove unused array iw_operation_mode
-Message-Id: <20180809105120.29019-1-colin.king@canonical.com>
+Date: Fri, 03 Aug 2018 14:36:01 +0000
+Subject: [PATCH 4/4] media: dvb-usb: fix spelling mistake: "completition" -> "completion"
+Message-Id: <20180803143601.4211-5-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180803143601.4211-1-colin.king@canonical.com>
+In-Reply-To: <20180803143601.4211-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin Homuth <martin@martinhomuth.de>, devel@driverdev.osuosl.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Array iw_operation_mode is defined but is never used hence it is
-redundant and can be removed. This array has been like this since
-the driver was added back in 2010
-
-Cleans up clang warning:
-warning: 'iw_operation_mode' defined but not used [-Wunused-const-variable=]
+Trivial fix to spelling mistake in debug and error messages
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8712/rtl871x_ioctl_linux.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/media/usb/dvb-usb/usb-urb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-index c3ff7c3e6681..12af6f4baa48 100644
---- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-+++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-@@ -67,11 +67,6 @@ static const long ieee80211_wlan_frequencies[] = {
- 	2472, 2484
- };
+diff --git a/drivers/media/usb/dvb-usb/usb-urb.c b/drivers/media/usb/dvb-usb/usb-urb.c
+index 5e05963f4220..9771f0954c69 100644
+--- a/drivers/media/usb/dvb-usb/usb-urb.c
++++ b/drivers/media/usb/dvb-usb/usb-urb.c
+@@ -33,7 +33,7 @@ static void usb_urb_complete(struct urb *urb)
+ 		case -ESHUTDOWN:
+ 			return;
+ 		default:        /* error */
+-			deb_ts("urb completition error %d.\n", urb->status);
++			deb_ts("urb completion error %d.\n", urb->status);
+ 			break;
+ 	}
  
--static const char * const iw_operation_mode[] = {
--	"Auto", "Ad-Hoc", "Managed",  "Master", "Repeater", "Secondary",
--	 "Monitor"
--};
--
- void r8712_indicate_wx_assoc_event(struct _adapter *padapter)
- {
- 	union iwreq_data wrqu;
+@@ -57,7 +57,7 @@ static void usb_urb_complete(struct urb *urb)
+ 				stream->complete(stream, b, urb->actual_length);
+ 			break;
+ 		default:
+-			err("unknown endpoint type in completition handler.");
++			err("unknown endpoint type in completion handler.");
+ 			return;
+ 	}
+ 	usb_submit_urb(urb,GFP_ATOMIC);
 -- 
 2.17.1
 
