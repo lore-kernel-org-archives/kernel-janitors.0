@@ -1,31 +1,35 @@
-From: DBC <info@dns10.dbc-data.com>
-Date: Thu, 02 Aug 2018 08:54:22 +0000
-Subject: R: CONTACTO
-Message-Id: <20180802_085422_006262.info@dns10.dbc-data.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Aug 2018 14:09:13 +0000
+Subject: [PATCH] ocfs2: fix spelling mistake: "ambigous" -> "ambiguous"
+Message-Id: <20180803140913.3357-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Estimado/a Sr./Sra:
+From: Colin Ian King <colin.king@canonical.com>
 
-Tras visitar su p=C3=A1gina de Internet, hemos observado que est=C3=A1 diri=
-gida principalmente a empresas; por eso, queremos proponerles un producto q=
-ue les ayudar=C3=A1 a aumentar significativamente su n=C3=BAmero de cliente=
-s.
+Trivial fix to spelling mistake in error message text
 
-Les invitamos a visitar nuestra p=C3=A1gina web:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-http://www.dbc-es.com/?page=CAtalog
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 79279240fb6e..8f3598550f2c 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -548,7 +548,7 @@ static int ocfs2_read_locked_inode(struct inode *inode,
+ 	 */
+ 	mlog_bug_on_msg(!!(fe->i_flags & cpu_to_le32(OCFS2_SYSTEM_FL)) ! 			!!(args->fi_flags & OCFS2_FI_FLAG_SYSFILE),
+-			"Inode %llu: system file state is ambigous\n",
++			"Inode %llu: system file state is ambiguous\n",
+ 			(unsigned long long)args->fi_blkno);
+ 
+ 	if (S_ISCHR(le16_to_cpu(fe->i_mode)) ||
+-- 
+2.17.1
 
-
-Atentamente,
-GC-Team
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
