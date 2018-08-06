@@ -1,50 +1,42 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Thu, 09 Aug 2018 14:18:42 +0000
-Subject: Re: [PATCH] ftrace: remove unused pointer ftrace_swapper_pid
-Message-Id: <20180809101842.5994fd21@gandalf.local.home>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Aug 2018 13:44:02 +0000
+Subject: [PATCH] clk: mediatek: remove unused array audio_parents
+Message-Id: <20180806134402.1055-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180809125609.13142-1-colin.king@canonical.com>
-In-Reply-To: <20180809125609.13142-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu,  9 Aug 2018 13:56:09 +0100
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer ftrace_swapper_pid is defined but is never used hence it is
-> redundant and can be removed. The use of this variable was removed
-> in commit 345ddcc882d8 ("ftrace: Have set_ftrace_pid use the bitmap
-> like events do").
-> 
-> Cleans up clang warning:
-> warning: 'ftrace_swapper_pid' defined but not used [-Wunused-const-variable=]
+Array audio_parents is declared but never used, hence it is redundant
+and can be removed.
 
-Thanks, applied!
+Cleans up clang warning:
+warning: 'audio_parents' defined but not used [-Wunused-const-variable=]
 
--- Steve
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/mediatek/clk-mt2701.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  kernel/trace/ftrace.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index caf9cbf35816..2cc008cfbd4f 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -1049,8 +1049,6 @@ static __init void ftrace_profile_tracefs(struct dentry *d_tracer)
->  }
->  #endif /* CONFIG_FUNCTION_PROFILER */
->  
-> -static struct pid * const ftrace_swapper_pid = &init_struct_pid;
-> -
->  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
->  static int ftrace_graph_active;
->  #else
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 4dda8988b2f0..ab6ab07f53e6 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -249,11 +249,6 @@ static const char * const msdc30_parents[] = {
+ 	"univpll2_d4"
+ };
+ 
+-static const char * const audio_parents[] = {
+-	"clk26m",
+-	"syspll1_d16"
+-};
+-
+ static const char * const aud_intbus_parents[] = {
+ 	"clk26m",
+ 	"syspll1_d4",
+-- 
+2.17.1
 
