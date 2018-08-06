@@ -1,40 +1,57 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 31 Aug 2018 14:05:38 +0000
-Subject: [PATCH] hfs: fix array out of bounds read of array extent
-Message-Id: <20180831140538.31566-1-colin.king@canonical.com>
+Date: Mon, 06 Aug 2018 11:14:14 +0000
+Subject: [PATCH][usb-next] USB: typec: fsusb302: remove unused variables snk_pdo and toggling_mode_name
+Message-Id: <20180806111414.9436-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, dhowells@redhat.com, viro@zeniv.linux.org.uk
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently extent and index i are both being incremented causing
-an array out of bounds read on extent[i]. Fix this by removing
-the extraneous increment of extent.
+Variables snk_pdo and toggling_mode_name are defined but are not used and
+hence can be removed.
 
-Detected by CoverityScan, CID#711541 ("Out of bounds read")
+Cleans up clang warnings:
+warning: 'snk_pdo' defined but not used [-Wunused-const-variable=]
+warning: 'toggling_mode_name' defined but not used [-Wunused-const-variable=]
 
-Fixes: d1081202f1d0 ("HFS rewrite")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/hfs/extent.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/typec/fusb302/fusb302.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-index 5d0182654580..636cdfcecb26 100644
---- a/fs/hfs/extent.c
-+++ b/fs/hfs/extent.c
-@@ -300,7 +300,7 @@ int hfs_free_fork(struct super_block *sb, struct hfs_cat_file *file, int type)
- 		return 0;
+diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
+index 82bed9810be6..ad7cfed1cea7 100644
+--- a/drivers/usb/typec/fusb302/fusb302.c
++++ b/drivers/usb/typec/fusb302/fusb302.c
+@@ -48,13 +48,6 @@ enum toggling_mode {
+ 	TOGGLING_MODE_SRC,
+ };
  
- 	blocks = 0;
--	for (i = 0; i < 3; extent++, i++)
-+	for (i = 0; i < 3; i++)
- 		blocks += be16_to_cpu(extent[i].count);
+-static const char * const toggling_mode_name[] = {
+-	[TOGGLINE_MODE_OFF]	= "toggling_OFF",
+-	[TOGGLING_MODE_DRP]	= "toggling_DRP",
+-	[TOGGLING_MODE_SNK]	= "toggling_SNK",
+-	[TOGGLING_MODE_SRC]	= "toggling_SRC",
+-};
+-
+ enum src_current_status {
+ 	SRC_CURRENT_DEFAULT,
+ 	SRC_CURRENT_MEDIUM,
+@@ -1178,10 +1171,6 @@ static const u32 src_pdo[] = {
+ 	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
+ };
  
- 	res = hfs_free_extents(sb, extent, blocks, blocks);
+-static const u32 snk_pdo[] = {
+-	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
+-};
+-
+ static const struct tcpc_config fusb302_tcpc_config = {
+ 	.src_pdo = src_pdo,
+ 	.nr_src_pdo = ARRAY_SIZE(src_pdo),
 -- 
 2.17.1
+
