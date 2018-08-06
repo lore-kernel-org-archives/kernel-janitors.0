@@ -1,7 +1,7 @@
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Wed, 01 Aug 2018 14:55:02 +0000
+Date: Mon, 06 Aug 2018 18:37:53 +0000
 Subject: Re: [alsa-devel] [PATCH 9/9] ALSA: intel_hdmi: remove redundant variable cfg_val
-Message-Id: <105efe0e-237e-dba0-3bfe-0f88b9ccd152@linux.intel.com>
+Message-Id: <a5a408bc-cc58-946e-5b36-496548a6316f@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180801104742.4328-1-colin.king@canonical.com>
  <20180801104742.4328-10-colin.king@canonical.com>
@@ -13,7 +13,7 @@ Content-Transfer-Encoding: 7bit
 To: Takashi Iwai <tiwai@suse.de>
 Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Colin King <colin.king@canonical.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jaya Kumar <jayakumar.alsa@gmail.com>
 
-On 8/1/18 4:00 AM, Takashi Iwai wrote:
+On 8/1/18 6:00 AM, Takashi Iwai wrote:
 > On Wed, 01 Aug 2018 12:47:42 +0200,
 > Colin King wrote:
 >>
@@ -52,6 +52,16 @@ On 8/1/18 4:00 AM, Takashi Iwai wrote:
 > It seems always 1 in the current code after the commit 964ca8083c02.
 > Pierre?
 
-I'll look into it, give me a couple of days. I vaguely remember this is 
-the AES validity bit but I am not sure why it's set with a pcm id, looks 
-like a mixup.
+This val_bit is only there for debug/test, it should be set to one by 
+default and has nothing to do with the lpcm_id. This variable was set 
+even in patches before upstream submission and was never needed, I guess 
+it must be a 9-yr old issue. Good catch!
+
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+
+BTW looking at the structures in intel_hdmi_lpe_audio.h, the field 
+format:3 in audio_ch_status_0 is misleading at best, it should be the 
+emphasis if I look at the SPDIF/AES docs. It's not used but I'll have to 
+relook at all this when I find some time... We should really set the 
+registers to mirror what the aes_bits are, not just the non_audio and 
+clock accuracy fields.
