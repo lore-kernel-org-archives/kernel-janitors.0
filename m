@@ -1,61 +1,64 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 01 Aug 2018 23:03:54 +0000
-Subject: Re: [PATCH 1/3] Input: elan_i2c_smbus - cast sizeof to int for comparison
-Message-Id: <20180801230354.GA184797@dtor-ws>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Aug 2018 12:41:51 +0000
+Subject: [bug report] tools: usb: aio example applications
+Message-Id: <20180807124151.pnqkga7e5blerl3j@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
- <1530466325-1678-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1530466325-1678-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: joe@perches.com, Chengguang Xu <cgxu519@gmx.com>, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 01, 2018 at 07:32:03PM +0200, Julia Lawall wrote:
-> Comparing an int to a size, which is unsigned, causes the int to become
-> unsigned, giving the wrong result.  i2c_smbus_read_block_data can return the
-> result of i2c_smbus_xfer, whih can return a negative error code.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> int x;
-> expression e,e1;
-> identifier f;
-> @@
-> 
-> *x = f(...);
-> ... when != x = e1
->     when != if (x < 0 || ...) { ... return ...; }
-> *x < sizeof(e)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+Hello Robert Baldyga,
 
-Applied, thank you.
+The patch b34e08d5c706: "tools: usb: aio example applications" from
+Feb 11, 2014, leads to the following static checker warning:
 
-> ---
->  drivers/input/mouse/elan_i2c_smbus.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/mouse/elan_i2c_smbus.c b/drivers/input/mouse/elan_i2c_smbus.c
-> index c060d27..88e315d 100644
-> --- a/drivers/input/mouse/elan_i2c_smbus.c
-> +++ b/drivers/input/mouse/elan_i2c_smbus.c
-> @@ -387,7 +387,7 @@ static int elan_smbus_prepare_fw_update(struct i2c_client *client)
->  		len = i2c_smbus_read_block_data(client,
->  						ETP_SMBUS_IAP_PASSWORD_READ,
->  						val);
-> -		if (len < sizeof(u16)) {
-> +		if (len < (int)sizeof(u16)) {
->  			error = len < 0 ? len : -EIO;
->  			dev_err(dev, "failed to read iap password: %d\n",
->  				error);
-> 
+	./tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c:320 main()
+	error: uninitialized symbol 'ready'.
 
--- 
-Dmitry
+./tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
+   286          memset(&ctx, 0, sizeof(ctx));
+   287          /* setup aio context to handle up to AIO_MAX requests */
+   288          if (io_setup(AIO_MAX, &ctx) < 0) {
+   289                  perror("unable to setup aio");
+   290                  return 1;
+   291          }
+   292  
+   293          evfd = eventfd(0, 0);
+   294          if (evfd < 0) {
+   295                  perror("unable to open eventfd");
+   296                  return 1;
+   297          }
+   298  
+   299          for (i = 0; i < sizeof(iobuf)/sizeof(*iobuf); ++i)
+   300                  init_bufs(&iobuf[i], BUFS_MAX, BUF_LEN);
+   301  
+   302          while (1) {
+   303                  FD_ZERO(&rfds);
+   304                  FD_SET(ep0, &rfds);
+   305                  FD_SET(evfd, &rfds);
+   306  
+   307                  ret = select(((ep0 > evfd) ? ep0 : evfd)+1,
+   308                               &rfds, NULL, NULL, NULL);
+   309                  if (ret < 0) {
+   310                          if (errno = EINTR)
+   311                                  continue;
+   312                          perror("select");
+   313                          break;
+   314                  }
+   315  
+   316                  if (FD_ISSET(ep0, &rfds))
+   317                          handle_ep0(ep0, &ready);
+                                                ^^^^^^
+Are we garuanteed that FD_ISSET() on the first iteration?
+
+   318  
+   319                  /* we are waiting for function ENABLE */
+   320                  if (!ready)
+                             ^^^^^
+Otherwise this could be uninitialized
+
+   321                          continue;
+
+regards,
+dan carpenter
