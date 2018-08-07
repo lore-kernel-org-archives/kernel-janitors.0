@@ -1,22 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 14 Aug 2018 17:08:25 +0000
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: missing unlock on error path
-Message-Id: <20180814.100825.1562962208475355418.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Aug 2018 06:46:02 +0000
+Subject: [PATCH] drm/i915/gvt: Off by one in intel_vgpu_write_fence()
+Message-Id: <20180807064602.sagf25ettlvfpidm@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180814090905.rm6i665c5utl7d32@kili.mountain>
-In-Reply-To: <20180814090905.rm6i665c5utl7d32@kili.mountain>
+References: <20180807023944.GZ22630@zhen-hp.sh.intel.com>
+In-Reply-To: <20180807023944.GZ22630@zhen-hp.sh.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gvt-dev@lists.freedesktop.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Aug 2018 12:09:05 +0300
+The > should be >= here so that we don't read one element beyond the
+end of the array.
 
-> We added a new error path, but we need to drop the lock before we return.
-> 
-> Fixes: 2d2e1dd29962 ("net: dsa: mv88e6xxx: Cache the port cmode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 28a60dee2ce6 ("drm/i915/gvt: vGPU HW resource management")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/gpu/drm/i915/gvt/aperture_gm.c b/drivers/gpu/drm/i915/gvt/aperture_gm.c
+index 380eeb2a0e83..fe754022e356 100644
+--- a/drivers/gpu/drm/i915/gvt/aperture_gm.c
++++ b/drivers/gpu/drm/i915/gvt/aperture_gm.c
+@@ -131,7 +131,7 @@ void intel_vgpu_write_fence(struct intel_vgpu *vgpu,
+ 
+ 	assert_rpm_wakelock_held(dev_priv);
+ 
+-	if (WARN_ON(fence > vgpu_fence_sz(vgpu)))
++	if (WARN_ON(fence >= vgpu_fence_sz(vgpu)))
+ 		return;
+ 
+ 	reg = vgpu->fence.regs[fence];
