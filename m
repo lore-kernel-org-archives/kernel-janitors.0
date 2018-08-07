@@ -1,101 +1,39 @@
-From: Gloria Adelaida Elias Mejia <gaeliasm@mineco.gob.gt>
-Date: Thu, 02 Aug 2018 02:08:09 +0000
-Subject: Spende von $ 4,800,000.00!
-Message-Id: <0E9FB776D8E6DA429730C03A4C3AA640880F42@EX2010SRV02.mineco.gob.gt>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="_000_0E9FB776D8E6DA429730C03A4C3AA640880F42EX2010SRV02mineco_"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Aug 2018 11:09:23 +0000
+Subject: [PATCH] misc: apds990x: remove unused array ir_currents
+Message-Id: <20180807110923.16550-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
---_000_0E9FB776D8E6DA429730C03A4C3AA640880F42EX2010SRV02mineco_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+From: Colin Ian King <colin.king@canonical.com>
 
-Hallo, Sie haben eine Spende von $ 4,800,000.00, ich habe die America Lotte=
-rie im Wert von $ 40 Millionen gewonnen und ich gebe einen Teil davon an f=
-=FCnf gl=FCckliche Menschen und Wohlt=E4tigkeitseinrichtungen zum Gedenken =
-an meine verstorbene Frau, die an Krebs starb.
+Array ir_currents is declared but never used, hence it is redundant
+and can be removed.
 
-Spendenreferenznummer: BBIB / AVL017 / 28392
+Cleans up clang warning:
+warning: 'ir_currents' defined but not used [-Wunused-const-variable=]
 
-Kontaktieren Sie mich f=FCr weitere Informationen: tomcrist895@gmail.com
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/apds990x.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Prost
-Tom Crist
+diff --git a/drivers/misc/apds990x.c b/drivers/misc/apds990x.c
+index ed9412d750b7..24876c615c3c 100644
+--- a/drivers/misc/apds990x.c
++++ b/drivers/misc/apds990x.c
+@@ -188,7 +188,6 @@ struct apds990x_chip {
+ #define APDS_LUX_DEFAULT_RATE		200
+ 
+ static const u8 again[]	= {1, 8, 16, 120}; /* ALS gain steps */
+-static const u8 ir_currents[]	= {100, 50, 25, 12}; /* IRled currents in mA */
+ 
+ /* Following two tables must match i.e 10Hz rate means 1 as persistence value */
+ static const u16 arates_hz[] = {10, 5, 2, 1};
+-- 
+2.17.1
 
---_000_0E9FB776D8E6DA429730C03A4C3AA640880F42EX2010SRV02mineco_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<meta name=3D"Generator" content=3D"Microsoft Word 12 (filtered medium)">
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0in;
-	margin-bottom:.0001pt;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:blue;
-	text-decoration:underline;}
-a:visited, span.MsoHyperlinkFollowed
-	{mso-style-priority:99;
-	color:purple;
-	text-decoration:underline;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
-	font-family:"Calibri","sans-serif";
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;}
-@page Section1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.0in 1.0in 1.0in;}
-div.Section1
-	{page:Section1;}
--->
-</style><!--[if gte mso 9]><xml>
- <o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <o:shapelayout v:ext=3D"edit">
-  <o:idmap v:ext=3D"edit" data=3D"1" />
- </o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-US" link=3D"blue" vlink=3D"purple">
-<div class=3D"Section1">
-<p class=3D"MsoNormal">Hallo, Sie haben eine Spende von $ 4,800,000.00, ich=
- habe die America Lotterie im Wert von $ 40 Millionen gewonnen und ich gebe=
- einen Teil davon an f=FCnf gl=FCckliche Menschen und Wohlt=E4tigkeitseinri=
-chtungen zum Gedenken an meine verstorbene
- Frau, die an Krebs starb.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Spendenreferenznummer: BBIB / AVL017 / 28392<o:p></o=
-:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Kontaktieren Sie mich f=FCr weitere Informationen: t=
-omcrist895@gmail.com<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Prost<o:p></o:p></p>
-<p class=3D"MsoNormal">Tom Crist<o:p></o:p></p>
-</div>
-</body>
-</html>
-
---_000_0E9FB776D8E6DA429730C03A4C3AA640880F42EX2010SRV02mineco_--
