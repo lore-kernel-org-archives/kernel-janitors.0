@@ -1,39 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Aug 2018 19:03:17 +0000
-Subject: Re: [PATCH] qede: fix null pointer dereference on skb on allocation failure
-Message-Id: <20180801.120317.1723805727309880042.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 07 Aug 2018 08:56:03 +0000
+Subject: [PATCH] rtmutex: Drop pointless static qualifier in rt_mutex_adjust_prio_chain()
+Message-Id: <1533632163-93769-1-git-send-email-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180801163947.22743-1-colin.king@canonical.com>
-In-Reply-To: <20180801163947.22743-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>
+Cc: Mao Wenan <maowenan@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  1 Aug 2018 17:39:47 +0100
+There is no need to have the 'T *v' variable static
+since new value always be assigned before use it.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> If skb fails to be allocated with the call to build_skb then a
-> null pointer dereference will occur on the call to skb_reserve.
-> Fix this by checking for a null skb and returning NULL.
-> 
-> Detected by CoverityScan, CID#1469485 ("Dereference null return value")
-> 
-> Fixes: 8a8633978b84 ("qede: Add build_skb() support.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ kernel/locking/rtmutex.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is in no way sufficient.
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 2823d41..ba70db8 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -472,7 +472,7 @@ static int rt_mutex_adjust_prio_chain(struct task_struct *task,
+ 	 * We limit the lock chain length for each invocation.
+ 	 */
+ 	if (++depth > max_lock_depth) {
+-		static int prev_max;
++		int prev_max;
+ 
+ 		/*
+ 		 * Print this only once. If the admin changes the limit,
 
-The caller doesn't check the return value, so you're just pushing
-the problem one function level up.
 
-In fact, the caller is going to take a reference on the page
-whether this returns NULL or not, thus leaking that memory.
 
-The whole call chain needs to be fixed to handle build_skb()
-errors, not just this one function.
-
-Thanks.
