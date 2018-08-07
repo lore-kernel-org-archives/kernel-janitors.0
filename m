@@ -1,43 +1,75 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Aug 2018 13:06:10 +0000
-Subject: [PATCH][media-next] media: ddbridge/sx8: remove redundant check of iq_mode == 2
-Message-Id: <20180801130610.19643-1-colin.king@canonical.com>
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+Date: Tue, 07 Aug 2018 02:40:39 +0000
+Subject: Re: [PATCH] drm/i915/kvmgt: fix an error code in gvt_dma_map_page()
+Message-Id: <20180807024039.GA22630@zhen-hp.sh.intel.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nynJ8Zgemp8dhn89"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Daniel Scheller <d.scheller.oss@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180719081921.jdair4cgqllst5yj@mwanda>
+In-Reply-To: <20180719081921.jdair4cgqllst5yj@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gvt-dev@lists.freedesktop.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The check for irq_mode = 2 occurs is always false and hence flags
-is always zero.  This is because the check occurs in a path where
-irq_mode is >= 3. Clean up the code by removing the check and irq_mode
-and just pass 0.
+--nynJ8Zgemp8dhn89
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Detected by CoverityScan, CID#1472214 ("Logically dead code")
+On 2018.07.19 11:19:21 +0300, Dan Carpenter wrote:
+> The dma_mapping_error() returns true on error but we want to return
+> -ENOMEM here.
+>=20
+> Fixes: 79e542f5af79 ("drm/i915/kvmgt: Support setting dma map for huge pa=
+ges")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/ddbridge/ddbridge-sx8.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/media/pci/ddbridge/ddbridge-sx8.c b/drivers/media/pci/ddbridge/ddbridge-sx8.c
-index 4418604258d1..c1c69d47f8c9 100644
---- a/drivers/media/pci/ddbridge/ddbridge-sx8.c
-+++ b/drivers/media/pci/ddbridge/ddbridge-sx8.c
-@@ -398,9 +398,7 @@ static int set_parameters(struct dvb_frontend *fe)
- 		}
- 		stat = start(fe, 3, mask, ts_config);
- 	} else {
--		u32 flags = (iq_mode = 2) ? 1 : 0;
--
--		stat = start_iq(fe, flags, 4, ts_config);
-+		stat = start_iq(fe, 0, 4, ts_config);
- 	}
- 	if (!stat) {
- 		state->started = 1;
--- 
-2.17.1
+> diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/=
+kvmgt.c
+> index 4d2f53ae9f0f..32ec5748f176 100644
+> --- a/drivers/gpu/drm/i915/gvt/kvmgt.c
+> +++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> @@ -187,14 +187,14 @@ static int gvt_dma_map_page(struct intel_vgpu *vgpu=
+, unsigned long gfn,
+> =20
+>  	/* Setup DMA mapping. */
+>  	*dma_addr =3D dma_map_page(dev, page, 0, size, PCI_DMA_BIDIRECTIONAL);
+> -	ret =3D dma_mapping_error(dev, *dma_addr);
+> -	if (ret) {
+> +	if (dma_mapping_error(dev, *dma_addr)) {
+>  		gvt_vgpu_err("DMA mapping failed for pfn 0x%lx, ret %d\n",
+>  			     page_to_pfn(page), ret);
+>  		gvt_unpin_guest_page(vgpu, gfn, size);
+> +		return -ENOMEM;
+>  	}
+> =20
+> -	return ret;
+> +	return 0;
+>  }
+> =20
+>  static void gvt_dma_unmap_page(struct intel_vgpu *vgpu, unsigned long gf=
+n,
+> _______________________________________________
+> intel-gvt-dev mailing list
+> intel-gvt-dev@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
 
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--nynJ8Zgemp8dhn89
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCW2kGpwAKCRCxBBozTXgY
+J740AJ9AmjZmzCry4HxFFNLnq9J8DsJ5fgCePClfgCdW5P3VSAKyn7OUUAltgbg=
+=PtTe
+-----END PGP SIGNATURE-----
+
+--nynJ8Zgemp8dhn89--
