@@ -1,54 +1,35 @@
-From: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Date: Wed, 01 Aug 2018 07:19:14 +0000
-Subject: Re: [PATCH] PCI: mobiveil: integer overflow in IB_WIN_SIZE
-Message-Id: <CAFZiPx0p5YJz1M_K5AJYXT_NP04QxOQVTG8FLcFGkA=yCXdrWQ@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 08 Aug 2018 03:53:15 +0000
+Subject: [PATCH -next] platform/x86: mlx-platform: Fix copy-paste error in mlxplat_init()
+Message-Id: <1533700830-137279-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180705094539.xkmtfffbzl3kooum@kili.mountain> <20180726105617.GA6181@red-moon>
-In-Reply-To: <20180726105617.GA6181@red-moon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Lorenzo,
-Added the compilation support in the next patch submitted at :
-https://patchwork.kernel.org/patch/10551771/
+The return value from platform_device_register_resndata() is not checked
+correctly. The test is done against a wrong variable. This patch fix it.
 
-please review.
+Fixes: 0378123c5800 ("platform/x86: mlx-platform: Add mlxreg-fan platform driver activation")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/platform/x86/mlx-platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Subrahmanya
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index e1f9fce..d89936c 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -1704,8 +1704,8 @@ static int __init mlxplat_init(void)
+ 					PLATFORM_DEVID_NONE, NULL, 0,
+ 					mlxplat_fan,
+ 					sizeof(*mlxplat_fan));
+-		if (IS_ERR(priv->pdev_io_regs)) {
+-			err = PTR_ERR(priv->pdev_io_regs);
++		if (IS_ERR(priv->pdev_fan)) {
++			err = PTR_ERR(priv->pdev_fan);
+ 			goto fail_platform_io_regs_register;
+ 		}
+ 	}
 
-
-On Thu, Jul 26, 2018 at 4:26 PM, Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
-> On Thu, Jul 05, 2018 at 12:45:39PM +0300, Dan Carpenter wrote:
->> IB_WIN_SIZE is larger than INT_MAX so we need to cast it to u64.
->>
->> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> Untested...  Possibly the problem is that there are too many multiplies
->> by * 1024.
->>
->> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
->
-> Applied to pci/mobiveil for v4.19 (it is still not fixing anything
-> given that the driver lacks a Kconfig and Makefile entries - that
-> must be fixed with urgency), thanks.
->
-> Lorenzo
->
->> index 4d6c20e47bed..cf0aa7cee5b0 100644
->> --- a/drivers/pci/controller/pcie-mobiveil.c
->> +++ b/drivers/pci/controller/pcie-mobiveil.c
->> @@ -107,7 +107,7 @@
->>  #define CFG_WINDOW_TYPE      0
->>  #define IO_WINDOW_TYPE               1
->>  #define MEM_WINDOW_TYPE      2
->> -#define IB_WIN_SIZE          (256 * 1024 * 1024 * 1024)
->> +#define IB_WIN_SIZE          ((u64)256 * 1024 * 1024 * 1024)
->>  #define MAX_PIO_WINDOWS      8
->>
->>  /* Parameters for the waiting for link up routine */
