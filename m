@@ -1,29 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jul 2018 12:30:08 +0000
-Subject: [PATCH] sunrpc: kstrtoul() can also return -ERANGE
-Message-Id: <20180712123008.3aejokccq2smpctq@kili.mountain>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 08 Aug 2018 04:30:09 +0000
+Subject: [PATCH -next] crypto: hisilicon - Make function sec_send_request() static
+Message-Id: <1533702609-162042-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch complains that "num" can be uninitialized when kstrtoul() returns
--ERANGE.  It's true enough, but basically harmless in this case.
+Fixes the following sparse warning:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/crypto/hisilicon/sec/sec_algs.c:396:5: warning:
+ symbol 'sec_send_request' was not declared. Should it be static?
 
-diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-index d2623b9f23d6..7bb3f2062045 100644
---- a/net/sunrpc/auth.c
-+++ b/net/sunrpc/auth.c
-@@ -50,7 +50,7 @@ static int param_set_hashtbl_sz(const char *val, const struct kernel_param *kp)
- 	if (!val)
- 		goto out_inval;
- 	ret = kstrtoul(val, 0, &num);
--	if (ret = -EINVAL)
-+	if (ret)
- 		goto out_inval;
- 	nbits = fls(num - 1);
- 	if (nbits > MAX_HASHTABLE_BITS || nbits < 2)
+Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/crypto/hisilicon/sec/sec_algs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
+index d69d3ce..03ba1df 100644
+--- a/drivers/crypto/hisilicon/sec/sec_algs.c
++++ b/drivers/crypto/hisilicon/sec/sec_algs.c
+@@ -393,7 +393,8 @@ static void sec_alg_free_el(struct sec_request_el *el,
+ }
+ 
+ /* queuelock must be held */
+-int sec_send_request(struct sec_request *sec_req, struct sec_queue *queue)
++static int sec_send_request(struct sec_request *sec_req,
++			    struct sec_queue *queue)
+ {
+ 	struct sec_request_el *el, *temp;
+ 	int ret = 0;
+
