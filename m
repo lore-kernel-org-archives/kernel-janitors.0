@@ -1,26 +1,35 @@
-From: jose_mera@hmha.gob.ec
-Date: Tue, 28 Aug 2018 06:36:37 +0000
-Subject: =?utf-8?b?V29obHTDpHRpZ2tlaXRzc3BlbmRlIGluIEjDtmhlIHZvbiDigqwgMi4wMDAu?= =?utf-8?q?000=2C00?=
-Message-Id: <20180828063648.3213F2082FDA@mail.hmha.gob.ec>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 08 Aug 2018 03:23:44 +0000
+Subject: [PATCH net-next] netfilter: nfnetlink_osf: fix using plain integer as NULL warning
+Message-Id: <1533698624-107304-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180506030144.EDC34842B6D@mail.ithb.ac.id>
-In-Reply-To: <20180506030144.EDC34842B6D@mail.ithb.ac.id>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Lieber Freund,
+Fixes the following sparse warning:
+
+net/netfilter/nfnetlink_osf.c:274:24: warning:
+ Using plain integer as NULL pointer
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/netfilter/nfnetlink_osf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nfnetlink_osf.c b/net/netfilter/nfnetlink_osf.c
+index f9dba62..00db27d 100644
+--- a/net/netfilter/nfnetlink_osf.c
++++ b/net/netfilter/nfnetlink_osf.c
+@@ -271,7 +271,7 @@ const char *nf_osf_find(const struct sk_buff *skb,
  
-Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
+ 	tcp = nf_osf_hdr_ctx_init(&ctx, skb, ip, opts);
+ 	if (!tcp)
+-		return false;
++		return NULL;
  
-UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
- 
-Das ist dein Spendencode: [DFC530342018]
- 
-Antworten Sie mit dem SPENDE-CODE an diese E-Mail: financialfundingcompany09@gmail.com
- 
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
- 
-Grüße
-Herr Tayeb Souami
+ 	list_for_each_entry_rcu(kf, &nf_osf_fingers[ctx.df], finger_entry) {
+ 		f = &kf->finger;
+
