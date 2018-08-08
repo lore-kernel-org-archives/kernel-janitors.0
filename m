@@ -1,41 +1,45 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 09 Aug 2018 10:44:32 +0000
-Subject: [PATCH] staging: gasket: apex: remove unused array cm_mappable_regions
-Message-Id: <20180809104432.26947-1-colin.king@canonical.com>
+Date: Wed, 08 Aug 2018 17:18:33 +0000
+Subject: [PATCH][next] drm/msm: a6xx: fix spelling mistake: "initalization" -> "initialization"
+Message-Id: <20180808171833.8789-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Springer <rspringer@google.com>, John Joseph <jnjoseph@google.com>, Ben Chan <benchan@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Array cm_mappable_regions is defined but is never used hence it is
-redundant and can be removed.
-
-Cleans up clang warning:
-warning: 'cm_mappable_regions' defined but not used [-Wunused-const-variable=]
+Trivial fix to spelling mistake in dev_err message and comment
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/gasket/apex_driver.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index c747e9ca4518..6dca3b177863 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -138,9 +138,6 @@ static const struct gasket_mappable_region mappable_regions[NUM_REGIONS] = {
- 	{ 0x48000, 0x1000 },
- };
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index fbb501986720..bbb8126ec5c5 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -125,7 +125,7 @@ static int a6xx_gmu_start(struct a6xx_gmu *gmu)
+ 		val = 0xbabeface, 100, 10000);
  
--static const struct gasket_mappable_region cm_mappable_regions[1] = { { 0x0,
--	APEX_CH_MEM_BYTES } };
--
- /* Gasket device interrupts enums must be dense (i.e., no empty slots). */
- enum apex_interrupt {
- 	APEX_INTERRUPT_INSTR_QUEUE = 0,
+ 	if (ret)
+-		dev_err(gmu->dev, "GMU firmware initalization timed out\n");
++		dev_err(gmu->dev, "GMU firmware initialization timed out\n");
+ 
+ 	return ret;
+ }
+@@ -1034,7 +1034,7 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+ 
+ 	/*
+ 	 * The GMU handles its own frequency switching so build a list of
+-	 * available frequencies to send during initalization
++	 * available frequencies to send during initialization
+ 	 */
+ 	ret = dev_pm_opp_of_add_table(gmu->dev);
+ 	if (ret) {
 -- 
 2.17.1
 
