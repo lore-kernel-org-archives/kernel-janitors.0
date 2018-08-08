@@ -1,43 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 Aug 2018 13:20:18 +0000
-Subject: [PATCH v2] media: sr030pc30: remove NULL in sr030pc30_base_config()
-Message-Id: <20180831132018.bbrvi2vt4vatyojj@kili.mountain>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Wed, 08 Aug 2018 15:47:27 +0000
+Subject: Re: [PATCH][can-next] can: ucan: fix spelling mistake: "resumbmitting" -> "resubmitting"
+Message-Id: <2c5a77d3-9a45-aad1-b5ab-15ae4c875d36@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="2bM044yOZQjicv5teLBGcoJ0DscvULEKY"
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20180831124221.3kuamslh4xw3vjt7@valkosipuli.retiisi.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20180730134037.8240-1-colin.king@canonical.com>
+In-Reply-To: <20180730134037.8240-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>, Wolfgang Grandegger <wg@grandegger.com>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This code doesn't check for NULL consistently and it generates a Smatch
-warning:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--2bM044yOZQjicv5teLBGcoJ0DscvULEKY
+Content-Type: multipart/mixed; boundary="MGpDIgP7qkwvbUSgKuvSGOtYhz46GiJTE";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Colin King <colin.king@canonical.com>,
+ Wolfgang Grandegger <wg@grandegger.com>,
+ "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <2c5a77d3-9a45-aad1-b5ab-15ae4c875d36@pengutronix.de>
+Subject: Re: [PATCH][can-next] can: ucan: fix spelling mistake:
+ "resumbmitting" -> "resubmitting"
+References: <20180730134037.8240-1-colin.king@canonical.com>
+In-Reply-To: <20180730134037.8240-1-colin.king@canonical.com>
 
-    drivers/media/i2c/sr030pc30.c:575 sr030pc30_base_config()
-    error: we previously assumed 'info->pdata' could be null (see line 572)
+--MGpDIgP7qkwvbUSgKuvSGOtYhz46GiJTE
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Fortunately, "info->pdata" can't be NULL to that check can be removed.
-The other thing is that if "ret" is an error code here, then we don't
-want to do the next call to cam_i2c_write(), so actually let's flip that
-test around and return the error.  This is more of a theoretical issue
-than something which is likely to affect real life.
+On 07/30/2018 03:40 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Trivial fix to spelling mistake in netdev_dbg error message
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: just remove the check
+Applied to can-next.
 
-Thanks Sakari Ailus for your review.
+Tnx,
+Marc
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
-diff --git a/drivers/media/i2c/sr030pc30.c b/drivers/media/i2c/sr030pc30.c
-index 2a4882cddc51..66d952624731 100644
---- a/drivers/media/i2c/sr030pc30.c
-+++ b/drivers/media/i2c/sr030pc30.c
-@@ -569,7 +569,7 @@ static int sr030pc30_base_config(struct v4l2_subdev *sd)
- 	if (!ret)
- 		ret = sr030pc30_pwr_ctrl(sd, false, false);
- 
--	if (!ret && !info->pdata)
-+	if (ret)
- 		return ret;
- 
- 	expmin = EXPOS_MIN_MS * info->pdata->clk_rate / (8 * 1000);
+
+--MGpDIgP7qkwvbUSgKuvSGOtYhz46GiJTE--
+
+--2bM044yOZQjicv5teLBGcoJ0DscvULEKY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltrEI8ACgkQk9IU1zQo
+ZfGqnggAloJVgXivJ9glL9Gbzqg4WcGalugDlcsrQltZgytKZFulDDouncmWxOHK
+ics1oLBfjTCyImLHUhK+7PJDDbUBLm2TtJ0sjhYG7/pC2pahu90wlWZRcV2prAdB
+GAr9UEu8l3QDX9g63aaFVuiuVSlA1G9j/O3RJjwJzarPjlPdq2vM+p5MH+0oldpU
+NlJ0mFd93Fis1+gQtprwTcY0mT7bWolJb2SEdXTyrk9+oCJ8czSrksOab6FV8gjU
+ref0cyQGg7MB9Y+U97+EXm0iawwmNSRXYkV9CgcjU9tbJbKuejO9x9k389cCP6zt
+aWL0yDrZ9tyK1nLgvW0MK5o45ycMZw==
+=Q4BW
+-----END PGP SIGNATURE-----
+
+--2bM044yOZQjicv5teLBGcoJ0DscvULEKY--
