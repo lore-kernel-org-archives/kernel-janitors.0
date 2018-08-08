@@ -1,30 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Aug 2018 11:56:40 +0000
-Subject: [PATCH] scsi: aic94xx: fix an error code in aic94xx_init()
-Message-Id: <20180808115640.at6qjutsykgexdt4@kili.mountain>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Date: Wed, 08 Aug 2018 13:52:20 +0000
+Subject: Re: [PATCH] scsi: aic94xx: fix an error code in aic94xx_init()
+Message-Id: <20180808135220.ntcj2qttafuzvyo5@linux-x5ow.site>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180808115640.at6qjutsykgexdt4@kili.mountain>
+In-Reply-To: <20180808115640.at6qjutsykgexdt4@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-We accidentally return success instead of -ENODEV on this error path.
-
-Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
-index 80e5b283fd81..cb8191afc1dc 100644
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -1030,8 +1030,10 @@ static int __init aic94xx_init(void)
- 
- 	aic94xx_transport_template  		sas_domain_attach_transport(&aic94xx_transport_functions);
--	if (!aic94xx_transport_template)
-+	if (!aic94xx_transport_template) {
-+		err = -ENODEV;
- 		goto out_destroy_caches;
-+	}
- 
- 	err = pci_register_driver(&aic94xx_pci_driver);
- 	if (err)
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+--=20
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
+GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
+HRB 21284 (AG N=FCrnberg)
+Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
