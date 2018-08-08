@@ -1,34 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 Aug 2018 19:27:55 +0000
-Subject: [PATCH net-next] net: sched: cls_flower: Fix an error code in fl_tmplt_create()
-Message-Id: <20180803192754.vggls5m46jw6ynfc@kili.mountain>
+Date: Wed, 08 Aug 2018 12:04:49 +0000
+Subject: [PATCH]  pinctrl: nomadik: silence uninitialized variable warning
+Message-Id: <20180808120449.ezhesrq7o5qdert2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@mellanox.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We forgot to set the error code on this path, so we return NULL instead
-of an error pointer.  In the current code kzalloc() won't fail for small
-allocations so this doesn't really affect runtime.
+This is harmless, but "val" isn't necessarily initialized if
+abx500_get_register_interruptible() fails.  I've re-arranged the code to
+just return an error code in that situation.
 
-Fixes: b95ec7eb3b4d ("net: sched: cls_flower: implement chain templates")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/net/sched/cls_flower.c b/net/sched/cls_flower.c
-index e8bd08ba998a..a3b69bb6f4b0 100644
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -1250,8 +1250,10 @@ static void *fl_tmplt_create(struct net *net, struct tcf_chain *chain,
- 		goto errout_tb;
- 
- 	tmplt = kzalloc(sizeof(*tmplt), GFP_KERNEL);
--	if (!tmplt)
-+	if (!tmplt) {
-+		err = -ENOMEM;
- 		goto errout_tb;
+diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+index aa592ef23a29..e3689cc62a41 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+@@ -101,15 +101,16 @@ static int abx500_gpio_get_bit(struct gpio_chip *chip, u8 reg,
+ 	reg += offset / 8;
+ 	ret = abx500_get_register_interruptible(pct->dev,
+ 						AB8500_MISC, reg, &val);
+-
+-	*bit = !!(val & BIT(pos));
+-
+-	if (ret < 0)
++	if (ret < 0) {
+ 		dev_err(pct->dev,
+ 			"%s read reg =%x, offset=%x failed (%d)\n",
+ 			__func__, reg, offset, ret);
++		return ret;
 +	}
- 	tmplt->chain = chain;
- 	err = fl_set_key(net, tb, &tmplt->dummy_key, &tmplt->mask, extack);
- 	if (err)
+ 
+-	return ret;
++	*bit = !!(val & BIT(pos));
++
++	return 0;
+ }
+ 
+ static int abx500_gpio_set_bits(struct gpio_chip *chip, u8 reg,
