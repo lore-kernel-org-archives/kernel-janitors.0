@@ -1,29 +1,46 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Mon, 13 Aug 2018 11:22:52 +0000
-Subject: Re: powerpc: Use common error handling code in setup_new_fdt()
-Message-Id: <41ptcs19GYz9s7c@ozlabs.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 08 Aug 2018 04:35:42 +0000
+Subject: [PATCH -next] statfs: remove set but not used variable 'sb'
+Message-Id: <1533702942-166827-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <0dd9d938-8d89-f0e0-f05f-9a3e5dc42a57@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>, Josh Sklar <sklar@linux.vnet.ibm.com>, Kees Cook <keescook@chromium.org>, Paul Mackerras <paulus@samba.org>, Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Tom Lendacky <thomas.lendacky@amd.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2018-03-11 at 08:16:47 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Mar 2018 09:03:42 +0100
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied to powerpc next, thanks.
+fs/statfs.c: In function 'fsinfo_generic_statfs':
+fs/statfs.c:406:22: warning:
+ variable 'sb' set but not used [-Wunused-but-set-variable]
+  struct super_block *sb;
+                      ^
 
-https://git.kernel.org/powerpc/c/baedcdf5054c151a33e34392af7d8c
+Fixes: 90b413cb970a ("vfs: syscall: Add fsinfo() to query filesystem information")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ fs/statfs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-cheers
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 2f3f2d5..f714f05 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -403,7 +403,6 @@ int kcompat_sys_fstatfs64(unsigned int fd, compat_size_t sz, struct compat_statf
+ static int fsinfo_generic_statfs(struct dentry *dentry,
+ 				 struct fsinfo_statfs *p)
+ {
+-	struct super_block *sb;
+ 	struct kstatfs buf;
+ 	int ret;
+ 
+@@ -411,7 +410,6 @@ static int fsinfo_generic_statfs(struct dentry *dentry,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	sb = dentry->d_sb;
+ 	p->f_blocks	= buf.f_blocks;
+ 	p->f_bfree	= buf.f_bfree;
+ 	p->f_bavail	= buf.f_bavail;
+
