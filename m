@@ -1,28 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 02 Aug 2018 21:33:50 +0000
-Subject: Re: [PATCH -next] gpio: pxa: remove set but not used variable 'gpio_offset'
-Message-Id: <CACRpkdb4L7zgTi8UWn_HdF=1fXn1Ue8r4eURD3Z+dB_TvzHz_A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 09 Aug 2018 13:53:38 +0000
+Subject: [PATCH] iio: max44000: remove unused variable max44000_alstim_shift
+Message-Id: <20180809135338.10868-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87y3dpooli.fsf@belgarion.home>
-In-Reply-To: <87y3dpooli.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 3:33 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpio/gpio-pxa.c: In function ‘pxa_gpio_probe’:
-> drivers/gpio/gpio-pxa.c:629:35: warning:
->  variable ‘gpio_offset’ set but not used [-Wunused-but-set-variable]
->   int irq0 = 0, irq1 = 0, irq_mux, gpio_offset = 0;
->                                    ^
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Variable max44000_alstim_shift is defined but is never used hence it is
+redundant and can be removed. This variable has been like this since
+the driver was added back in 2016.
 
-Fixed up the funny characters and applied with Robert's ACK!
+Cleans up clang warning:
+warning: 'max44000_alstim_shift' defined but not used [-Wunused-const-variable=]
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/light/max44000.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/iio/light/max44000.c b/drivers/iio/light/max44000.c
+index bcdb0eb9e537..b9b0bd341be8 100644
+--- a/drivers/iio/light/max44000.c
++++ b/drivers/iio/light/max44000.c
+@@ -99,7 +99,6 @@ static const int max44000_alspga_shift[] = {0, 2, 4, 7};
+  * Handling this internally is also required for buffer support because the
+  * channel's scan_type can't be modified dynamically.
+  */
+-static const int max44000_alstim_shift[] = {0, 2, 4, 6};
+ #define MAX44000_ALSTIM_SHIFT(alstim) (2 * (alstim))
+ 
+ /* Available integration times with pretty manual alignment: */
+-- 
+2.17.1
+
