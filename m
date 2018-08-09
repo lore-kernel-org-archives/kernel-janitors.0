@@ -1,46 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Aug 2018 13:21:01 +0000
-Subject: [PATCH] btrfs: remove unused pointer 'tree'
-Message-Id: <20180828132101.9559-1-colin.king@canonical.com>
+Date: Thu, 09 Aug 2018 10:44:32 +0000
+Subject: [PATCH] staging: gasket: apex: remove unused array cm_mappable_regions
+Message-Id: <20180809104432.26947-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+To: Rob Springer <rspringer@google.com>, John Joseph <jnjoseph@google.com>, Ben Chan <benchan@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'tree' is being assigned but is never used hence it is
+Array cm_mappable_regions is defined but is never used hence it is
 redundant and can be removed.
 
 Cleans up clang warning:
-warning: variable 'tree' set but not used [-Wunused-but-set-variable]
+warning: 'cm_mappable_regions' defined but not used [-Wunused-const-variable=]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/btrfs/compression.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/gasket/apex_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 9bfa66592aa7..8703ce68fe9d 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -528,7 +528,6 @@ blk_status_t btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
- 				 int mirror_num, unsigned long bio_flags)
- {
- 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
--	struct extent_io_tree *tree;
- 	struct extent_map_tree *em_tree;
- 	struct compressed_bio *cb;
- 	unsigned long compressed_len;
-@@ -545,7 +544,6 @@ blk_status_t btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
- 	int faili = 0;
- 	u32 *sums;
+diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+index c747e9ca4518..6dca3b177863 100644
+--- a/drivers/staging/gasket/apex_driver.c
++++ b/drivers/staging/gasket/apex_driver.c
+@@ -138,9 +138,6 @@ static const struct gasket_mappable_region mappable_regions[NUM_REGIONS] = {
+ 	{ 0x48000, 0x1000 },
+ };
  
--	tree = &BTRFS_I(inode)->io_tree;
- 	em_tree = &BTRFS_I(inode)->extent_tree;
- 
- 	/* we need the actual starting offset of this extent in the file */
+-static const struct gasket_mappable_region cm_mappable_regions[1] = { { 0x0,
+-	APEX_CH_MEM_BYTES } };
+-
+ /* Gasket device interrupts enums must be dense (i.e., no empty slots). */
+ enum apex_interrupt {
+ 	APEX_INTERRUPT_INSTR_QUEUE = 0,
 -- 
 2.17.1
+
