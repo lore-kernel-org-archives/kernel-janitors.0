@@ -1,27 +1,33 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 14 Aug 2018 13:39:34 +0000
-Subject: Re: [PATCH 1/2] hwmon: (adt7475) Potential error pointer dereferences
-Message-Id: <20180814133934.GA11077@roeck-us.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Aug 2018 10:50:32 +0000
+Subject: [PATCH] drm/amdgpu: fix integer overflow test in amdgpu_bo_list_create()
+Message-Id: <20180810105032.cltqjuv7tqfud7n6@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180814091236.zubxfj32bedobr52@kili.mountain>
-In-Reply-To: <20180814091236.zubxfj32bedobr52@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Tokunori Ikegami <ikegami@allied-telesis.co.jp>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Andrey Grodzovsky <andrey.grodzovsky-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Bas Nieuwenhuizen <basni-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Cihangir Akturk <cakturk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Kent Russell <kent.russell-5C7GfCeVMHo@public.gmane.org>
 
-On Tue, Aug 14, 2018 at 12:12:36PM +0300, Dan Carpenter wrote:
-> The adt7475_update_device() function returns error pointers.  The
-> problem is that in show_pwmfreq() we dereference it before the check.
-> And then in pwm_use_point2_pwm_at_crit_show() there isn't a check at
-> all.  I don't know if it's required, but it silences a static checker
-> warning and it's doesn't hurt anything to check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+We accidentally left out the size of the amdgpu_bo_list struct.  It
+could lead to memory corruption on 32 bit systems.  You'd have to
+pick the absolute maximum and set "num_entries = 59652323" then size
+would wrap to 16 bytes.
 
-Applied.
+Fixes: 920990cb080a ("drm/amdgpu: allocate the bo_list array after the list")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Guenter
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+index d472a2c8399f..b80243d3972e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+@@ -67,7 +67,8 @@ int amdgpu_bo_list_create(struct amdgpu_device *adev, struct drm_file *filp,
+ 	unsigned i;
+ 	int r;
+ 
+-	if (num_entries > SIZE_MAX / sizeof(struct amdgpu_bo_list_entry))
++	if (num_entries > (SIZE_MAX - sizeof(struct amdgpu_bo_list))
++				/ sizeof(struct amdgpu_bo_list_entry))
+ 		return -EINVAL;
+ 
+ 	size = sizeof(struct amdgpu_bo_list);
