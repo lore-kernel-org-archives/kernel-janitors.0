@@ -1,22 +1,41 @@
-From: Julian Smith <juliansmith@126.com>
-Date: Sun, 26 Aug 2018 19:53:12 +0000
-Subject: Inquiry
-Message-Id: <20180826195312.1711D95902@mail.nojami.ml>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 Aug 2018 08:02:17 +0000
+Subject: [PATCH] net: chelsio: cxgb2: remove unused array pci_speed
+Message-Id: <20180810080217.26758-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180826165133.F3D8C1139E8@mail.nojami.ml>
-In-Reply-To: <20180826165133.F3D8C1139E8@mail.nojami.ml>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is Ms Julian Smith and i am from Invictus Group Co.,LTD in United Kingdom.
-We are glad to know about your company from the web and we are interested in your products.
-Could you kindly send us your Latest catalog and price list for our trial order.
+Array pci_speed is defined but is never used hence it is redundant
+and can be removed.
 
-Best Regards,
+Cleans up clang warning:
+warning: 'pci_speed' defined but not used [-Wunused-const-variable=]
 
-Julian Smith
-Purchasing Manager
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/chelsio/cxgb/cxgb2.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+index 8623be13bf86..0ccdde366ae1 100644
+--- a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
++++ b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+@@ -109,10 +109,6 @@ static int disable_msi = 0;
+ module_param(disable_msi, int, 0);
+ MODULE_PARM_DESC(disable_msi, "Disable Message Signaled Interrupt (MSI)");
+ 
+-static const char pci_speed[][4] = {
+-	"33", "66", "100", "133"
+-};
+-
+ /*
+  * Setup MAC to receive the types of packets we want.
+  */
+-- 
+2.17.1
