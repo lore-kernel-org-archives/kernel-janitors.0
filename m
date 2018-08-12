@@ -1,8 +1,10 @@
-From: ines_valdiviezo@hmha.gob.ec
-Date: Sun, 12 Aug 2018 13:35:51 +0000
+From: jose_mera@hmha.gob.ec
+Date: Sun, 12 Aug 2018 16:00:19 +0000
 Subject: WICHTIGE MITTEILUNG
-Message-Id: <20180812133555.64A732005232@mail.hmha.gob.ec>
+Message-Id: <20180812160022.D79FF202472E@mail.hmha.gob.ec>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180812133555.64A732005232@mail.hmha.gob.ec>
+In-Reply-To: <20180812133555.64A732005232@mail.hmha.gob.ec>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
