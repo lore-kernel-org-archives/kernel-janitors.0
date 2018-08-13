@@ -1,7 +1,7 @@
-From: Ludovic BARRE <ludovic.barre@st.com>
-Date: Wed, 08 Aug 2018 12:29:29 +0000
+From: Marc Zyngier <marc.zyngier@arm.com>
+Date: Mon, 13 Aug 2018 15:22:44 +0000
 Subject: Re: [PATCH] irqchip/stm32: fix init error handling
-Message-Id: <71535398-d59d-4263-e9dd-4874d56cf8fa@st.com>
+Message-Id: <99d66ae8-f497-0108-8168-6e46fdf2fe1d@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180808120319.akmstg3ads325xcy@kili.mountain>
 In-Reply-To: <20180808120319.akmstg3ads325xcy@kili.mountain>
@@ -10,46 +10,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-oh yes, host_data is dereferenced (for kfree into out_free_mem) if 
-stm32_exti_host_init fail
-
-thanks Dan
-
-BR
-Ludo
-
-On 08/08/2018 02:03 PM, Dan Carpenter wrote:
+On 08/08/18 13:03, Dan Carpenter wrote:
 > If there are any errors in stm32_exti_host_init() then it leads to a
 > NULL dereference in the callers.  The function should clean up after
 > itself.
 > 
 > Fixes: f9fc1745501e ("irqchip/stm32: Add host and driver data structures")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
-
 > 
 > diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
 > index 3df527fcf4e1..0a2088e12d96 100644
 > --- a/drivers/irqchip/irq-stm32-exti.c
 > +++ b/drivers/irqchip/irq-stm32-exti.c
 > @@ -603,17 +603,24 @@ stm32_exti_host_data *stm32_exti_host_init(const struct stm32_exti_drv_data *dd,
->   					sizeof(struct stm32_exti_chip_data),
->   					GFP_KERNEL);
->   	if (!host_data->chips_data)
+>  					sizeof(struct stm32_exti_chip_data),
+>  					GFP_KERNEL);
+>  	if (!host_data->chips_data)
 > -		return NULL;
 > +		goto free_host_data;
->   
->   	host_data->base = of_iomap(node, 0);
->   	if (!host_data->base) {
->   		pr_err("%pOF: Unable to map registers\n", node);
+>  
+>  	host_data->base = of_iomap(node, 0);
+>  	if (!host_data->base) {
+>  		pr_err("%pOF: Unable to map registers\n", node);
 > -		return NULL;
 > +		goto free_chips_data;
->   	}
->   
->   	stm32_host_data = host_data;
->   
->   	return host_data;
+>  	}
+>  
+>  	stm32_host_data = host_data;
+>  
+>  	return host_data;
 > +
 > +free_chips_data:
 > +	kfree(host_data->chips_data);
@@ -57,49 +46,55 @@ Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
 > +	kfree(host_data);
 > +
 > +	return NULL;
->   }
->   
->   static struct
+>  }
+>  
+>  static struct
 > @@ -665,10 +672,8 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
->   	struct irq_domain *domain;
->   
->   	host_data = stm32_exti_host_init(drv_data, node);
+>  	struct irq_domain *domain;
+>  
+>  	host_data = stm32_exti_host_init(drv_data, node);
 > -	if (!host_data) {
 > -		ret = -ENOMEM;
 > -		goto out_free_mem;
 > -	}
 > +	if (!host_data)
 > +		return -ENOMEM;
->   
->   	domain = irq_domain_add_linear(node, drv_data->bank_nr * IRQS_PER_BANK,
->   				       &irq_exti_domain_ops, NULL);
+>  
+>  	domain = irq_domain_add_linear(node, drv_data->bank_nr * IRQS_PER_BANK,
+>  				       &irq_exti_domain_ops, NULL);
 > @@ -725,7 +730,6 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
->   	irq_domain_remove(domain);
->   out_unmap:
->   	iounmap(host_data->base);
+>  	irq_domain_remove(domain);
+>  out_unmap:
+>  	iounmap(host_data->base);
 > -out_free_mem:
->   	kfree(host_data->chips_data);
->   	kfree(host_data);
->   	return ret;
+>  	kfree(host_data->chips_data);
+>  	kfree(host_data);
+>  	return ret;
 > @@ -752,10 +756,8 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
->   	}
->   
->   	host_data = stm32_exti_host_init(drv_data, node);
+>  	}
+>  
+>  	host_data = stm32_exti_host_init(drv_data, node);
 > -	if (!host_data) {
 > -		ret = -ENOMEM;
 > -		goto out_free_mem;
 > -	}
 > +	if (!host_data)
 > +		return -ENOMEM;
->   
->   	for (i = 0; i < drv_data->bank_nr; i++)
->   		stm32_exti_chip_init(host_data, i, node);
+>  
+>  	for (i = 0; i < drv_data->bank_nr; i++)
+>  		stm32_exti_chip_init(host_data, i, node);
 > @@ -777,7 +779,6 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
->   
->   out_unmap:
->   	iounmap(host_data->base);
+>  
+>  out_unmap:
+>  	iounmap(host_data->base);
 > -out_free_mem:
->   	kfree(host_data->chips_data);
->   	kfree(host_data);
->   	return ret;
+>  	kfree(host_data->chips_data);
+>  	kfree(host_data);
+>  	return ret;
 > 
+
+Queued, thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
