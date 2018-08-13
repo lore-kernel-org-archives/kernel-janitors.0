@@ -1,41 +1,34 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 29 Aug 2018 09:35:30 +0000
-Subject: [PATCH] staging: fsl-dpaa2/ethsw: remove redundant pointer 'port_priv'
-Message-Id: <20180829093530.31200-1-colin.king@canonical.com>
+Date: Mon, 13 Aug 2018 14:00:32 +0000
+Subject: [PATCH][bpf-next] bpf: test: fix spelling mistake "REUSEEPORT" -> "REUSEPORT"
+Message-Id: <20180813140032.2208-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ioana Radulescu <ruxandra.radulescu@nxp.com>, Ioana Ciornei <ioana.ciornei@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'port_priv' is being assigned but is never used hence it is
-redundant and can be removed.
-
-Cleans up clang warning:
-variable 'port_priv' set but not used [-Wunused-but-set-variable]
+Trivial fix to spelling mistake in error message
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 2 --
- 1 file changed, 2 deletions(-)
+ tools/testing/selftests/bpf/test_maps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index ecdd3d84f956..0066ca3072c1 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -1014,10 +1014,8 @@ static void ethsw_switchdev_event_work(struct work_struct *work)
- 		container_of(work, struct ethsw_switchdev_event_work, work);
- 	struct net_device *dev = switchdev_work->dev;
- 	struct switchdev_notifier_fdb_info *fdb_info;
--	struct ethsw_port_priv *port_priv;
+diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
+index 4b7c74f5faa7..6f54f84144a0 100644
+--- a/tools/testing/selftests/bpf/test_maps.c
++++ b/tools/testing/selftests/bpf/test_maps.c
+@@ -1191,7 +1191,7 @@ static void prepare_reuseport_grp(int type, int map_fd,
  
- 	rtnl_lock();
--	port_priv = netdev_priv(dev);
- 	fdb_info = &switchdev_work->fdb_info;
+ 		err = setsockopt(fd64, SOL_SOCKET, SO_REUSEPORT,
+ 				 &optval, sizeof(optval));
+-		CHECK(err = -1, "setsockopt(SO_REUSEEPORT)",
++		CHECK(err = -1, "setsockopt(SO_REUSEPORT)",
+ 		      "err:%d errno:%d\n", err, errno);
  
- 	switch (switchdev_work->event) {
+ 		/* reuseport_array does not allow unbound sk */
 -- 
 2.17.1
