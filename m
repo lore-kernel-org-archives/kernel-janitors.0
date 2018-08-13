@@ -1,38 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 03 Aug 2018 14:35:58 +0000
-Subject: [PATCH 1/4] media: au0828: fix spelling mistake: "completition" -> "completion"
-Message-Id: <20180803143601.4211-2-colin.king@canonical.com>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Mon, 13 Aug 2018 11:23:13 +0000
+Subject: Re: powerpc: fix size calculation using resource_size()
+Message-Id: <41ptdG50hMz9sCn@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180803143601.4211-1-colin.king@canonical.com>
-In-Reply-To: <20180803143601.4211-1-colin.king@canonical.com>
+In-Reply-To: <20180808115724.gh5mbbi6twzqbqao@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jia Hongtao <B38951@freescale.com>
+Cc: Rob Herring <robh@kernel.org>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 2018-08-08 at 11:57:24 UTC, Dan Carpenter wrote:
+> The problem is the the calculation should be "end - start + 1" but the
+> plus one is missing in this calculation.
+> 
+> Fixes: 8626816e905e ("powerpc: add support for MPIC message register API")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Trivial fix to spelling mistake in au0828_isocdbg debug message
+Applied to powerpc next, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/au0828/au0828-video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://git.kernel.org/powerpc/c/c42d3be0c06f0c1c416054022aa535
 
-diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
-index 70e187971590..62b45062b1e6 100644
---- a/drivers/media/usb/au0828/au0828-video.c
-+++ b/drivers/media/usb/au0828/au0828-video.c
-@@ -133,7 +133,7 @@ static void au0828_irq_callback(struct urb *urb)
- 		au0828_isocdbg("au0828_irq_callback called: status kill\n");
- 		return;
- 	default:            /* unknown error */
--		au0828_isocdbg("urb completition error %d.\n", urb->status);
-+		au0828_isocdbg("urb completion error %d.\n", urb->status);
- 		break;
- 	}
- 
--- 
-2.17.1
-
+cheers
