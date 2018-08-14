@@ -1,32 +1,32 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 03 Aug 2018 02:17:53 +0000
-Subject: Re: [PATCH] rdma/cxgb4: fix some info leaks
-Message-Id: <20180803021753.GA16533@ziepe.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Aug 2018 09:06:43 +0000
+Subject: [PATCH net-next] net: dsa: mv88e6xxx: bitwise vs logical bug
+Message-Id: <20180814090643.ilis47jhsaa2sbhi@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180802075613.4zu6m6rv2dcumr5l@kili.mountain>
-In-Reply-To: <20180802075613.4zu6m6rv2dcumr5l@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 10:56:13AM +0300, Dan Carpenter wrote:
-> In c4iw_create_qp() there are several struct members which potentially
-> aren't inintialized like uresp.rq_key.  I've fixed this code before in
-> in commit ae1fe07f3f42 ("RDMA/cxgb4: Fix stack info leak in
-> c4iw_create_qp()") so this time I'm just going to take a big hammer
-> approach and memset the whole struct to zero.  Hopefully, it will stay
-> fixed this time.
-> 
-> In c4iw_create_srq() we don't clear uresp.reserved.
-> 
-> Fixes: 6a0b6174d35a ("rdma/cxgb4: Add support for kernel mode SRQ's")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Raju Rangoju <rajur@chelsio.com>
-> ---
-> These bugs are detected with Smatch btw if you want to go back to fixing
-> them yourselves in a more delicate way.
+We are trying to test if these flags are set but there are some && vs &
+typos.
 
-Applied to for-next, thanks
+Fixes: efd1ba6af93f ("net: dsa: mv88e6xxx: Add SERDES phydev_mac_change up for 6390")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Jason
+diff --git a/drivers/net/dsa/mv88e6xxx/serdes.c b/drivers/net/dsa/mv88e6xxx/serdes.c
+index f007d109b385..e82983975754 100644
+--- a/drivers/net/dsa/mv88e6xxx/serdes.c
++++ b/drivers/net/dsa/mv88e6xxx/serdes.c
+@@ -502,8 +502,8 @@ static irqreturn_t mv88e6390_serdes_thread_fn(int irq, void *dev_id)
+ 		err = mv88e6390_serdes_irq_status_sgmii(chip, lane, &status);
+ 		if (err)
+ 			goto out;
+-		if (status && (MV88E6390_SGMII_INT_LINK_DOWN ||
+-			       MV88E6390_SGMII_INT_LINK_UP)) {
++		if (status & (MV88E6390_SGMII_INT_LINK_DOWN |
++			      MV88E6390_SGMII_INT_LINK_UP)) {
+ 			ret = IRQ_HANDLED;
+ 			mv88e6390_serdes_irq_link_sgmii(chip, port->port, lane);
+ 		}
