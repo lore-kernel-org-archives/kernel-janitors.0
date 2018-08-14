@@ -1,33 +1,30 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 29 Aug 2018 01:25:45 +0000
-Subject: [PATCH can-next] can: ucan: remove duplicated include from ucan.c
-Message-Id: <1535505945-143347-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Aug 2018 09:09:45 +0000
+Subject: [PATCH] drm/amd/display: indent an if statement
+Message-Id: <20180814090944.qjm4vxyrjdqxu4d7@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171104061232.5bq5hwr2p2ca2cl7@mwanda>
+In-Reply-To: <20171104061232.5bq5hwr2p2ca2cl7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, Martin Elshuber <martin.elshuber@theobroma-systems.com>, Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>, Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Charlene Liu <charlene.liu-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Dmytro Laktyushkin <Dmytro.Laktyushkin-5C7GfCeVMHo@public.gmane.org>, Yongqiang Sun <yongqiang.sun-5C7GfCeVMHo@public.gmane.org>, Tony Cheng <tony.cheng-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-Remove duplicated include.
+The if statement isn't indented and it makes static checkers complain.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/can/usb/ucan.c | 4 ----
- 1 file changed, 4 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-index 0678a38..c6f4b41 100644
---- a/drivers/net/can/usb/ucan.c
-+++ b/drivers/net/can/usb/ucan.c
-@@ -35,10 +35,6 @@
- #include <linux/slab.h>
- #include <linux/usb.h>
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+index 4ca41d6e3bcf..d82ba58c720f 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+@@ -349,7 +349,7 @@ static bool is_dp_and_hdmi_sharable(
  
--#include <linux/can.h>
--#include <linux/can/dev.h>
--#include <linux/can/error.h>
--
- #define UCAN_DRIVER_NAME "ucan"
- #define UCAN_MAX_RX_URBS 8
- /* the CAN controller needs a while to enable/disable the bus */
+ 	if (stream1->clamping.c_depth != COLOR_DEPTH_888 ||
+ 	    stream2->clamping.c_depth != COLOR_DEPTH_888)
+-	return false;
++		return false;
+ 
+ 	return true;
+ 
