@@ -1,27 +1,46 @@
-From: jose_mera@hmha.gob.ec
-Date: Sun, 12 Aug 2018 16:00:19 +0000
-Subject: WICHTIGE MITTEILUNG
-Message-Id: <20180812160022.D79FF202472E@mail.hmha.gob.ec>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Aug 2018 09:14:32 +0000
+Subject: [PATCH 2/2] hwmon: (adt7475) Remove some unnecessary checks
+Message-Id: <20180814091432.xhdmxd7aqbz2si4k@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180812133555.64A732005232@mail.hmha.gob.ec>
-In-Reply-To: <20180812133555.64A732005232@mail.hmha.gob.ec>
+In-Reply-To: <20180814091236.zubxfj32bedobr52@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean Delvare <jdelvare@suse.com>, Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Lieber Freund,
+The adt7475_read_word() returns u16 values, so it's impossible for
+"ret" to be negative.  The check is harmless, but static checkers
+complain about it.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+index 16045149f3db..9d3da8ea38ba 100644
+--- a/drivers/hwmon/adt7475.c
++++ b/drivers/hwmon/adt7475.c
+@@ -1492,10 +1492,7 @@ static int adt7475_update_limits(struct i2c_client *client)
+ 	for (i = 0; i < ADT7475_TACH_COUNT; i++) {
+ 		if (i = 3 && !data->has_fan4)
+ 			continue;
+-		ret = adt7475_read_word(client, TACH_MIN_REG(i));
+-		if (ret < 0)
+-			return ret;
+-		data->tach[MIN][i] = ret;
++		data->tach[MIN][i] = adt7475_read_word(client, TACH_MIN_REG(i));
+ 	}
  
-Ich bin Herr Richard Wahl der Mega-Gewinner von $ 533M In Mega Millions Jackpot spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt. Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt. Ich habe mich freiwillig dazu entschieden, Ihnen den Betrag von € 2.000.000,00 zu spenden
-eine der ausgewählten 5, um meine Gewinne zu überprüfen, finden Sie auf meiner You Tube Seite unten.
+ 	for (i = 0; i < ADT7475_PWM_COUNT; i++) {
+@@ -1881,10 +1878,7 @@ static int adt7475_update_measure(struct device *dev)
+ 	for (i = 0; i < ADT7475_TACH_COUNT; i++) {
+ 		if (i = 3 && !data->has_fan4)
+ 			continue;
+-		ret = adt7475_read_word(client, TACH_REG(i));
+-		if (ret < 0)
+-			return ret;
+-		data->tach[INPUT][i] = ret;
++		data->tach[INPUT][i] = adt7475_read_word(client, TACH_REG(i));
+ 	}
  
-UHR MICH HIER: https://www.youtube.com/watch?v=tne02ExNDrw
- 
-Das ist dein Spendencode: [DF00430342018]
- 
-Antworten Sie mit dem Spendencode auf diese E-Mail: oceanicfinancialhome@gmail.com
- 
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
- 
-Grüße
-Herr Richard Wahl
+ 	/* Updated by hw when in auto mode */
