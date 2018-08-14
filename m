@@ -1,28 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Aug 2018 16:48:16 +0000
-Subject: Re: [PATCH] net/tipc: remove redundant variables 'tn' and 'oport'
-Message-Id: <20180801.094816.1024347972181172876.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Aug 2018 09:07:48 +0000
+Subject: [PATCH] libertas_tf: prevent underflow in process_cmdrequest()
+Message-Id: <20180814090747.a7gcph2wa6abyimi@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180731160137.5850-1-colin.king@canonical.com>
-In-Reply-To: <20180731160137.5850-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jon.maloy@ericsson.com, ying.xue@windriver.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Luis Carlos Cobo <luisca@cozybit.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Jul 2018 17:01:37 +0100
+If recvlength is less than MESSAGE_HEADER_LEN (4) we would end up
+corrupting memory.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables 'tn' and 'oport'  are being assigned but are never used hence
-> they are redundant and can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'oport' set but not used [-Wunused-but-set-variable]
-> warning: variable 'tn' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: c305a19a0d0a ("libertas_tf: usb specific functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is from static analysis.  I'm not positive that this is a real
+bug, but it's harmless to check.
 
-Applied.
+diff --git a/drivers/net/wireless/marvell/libertas_tf/if_usb.c b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
+index e92fc5001171..789337ea676a 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/if_usb.c
++++ b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
+@@ -605,9 +605,10 @@ static inline void process_cmdrequest(int recvlength, uint8_t *recvbuff,
+ {
+ 	unsigned long flags;
+ 
+-	if (recvlength > LBS_CMD_BUFFER_SIZE) {
++	if (recvlength < MESSAGE_HEADER_LEN ||
++	    recvlength > LBS_CMD_BUFFER_SIZE) {
+ 		lbtf_deb_usbd(&cardp->udev->dev,
+-			     "The receive buffer is too large\n");
++			     "The receive buffer is invalid: %d\n", recvlength);
+ 		kfree_skb(skb);
+ 		return;
+ 	}
