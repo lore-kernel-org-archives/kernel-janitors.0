@@ -1,46 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 02 Aug 2018 05:27:08 +0000
-Subject: Re: [PATCH -next] ALSA: usb-audio: Fix invalid use of sizeof in parse_uac_endpoint_attributes()
-Message-Id: <s5hr2jhxrrn.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 16 Aug 2018 12:50:30 +0000
+Subject: [PATCH] ath9k: remove unused array firstep_table
+Message-Id: <20180816125030.4416-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1533184262-148619-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1533184262-148619-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, Michael Drake <michael.drake@codethink.co.uk>, Ruslan Bilovol <ruslan.bilovol@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, MarkusElfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 02 Aug 2018 06:31:02 +0200,
-Wei Yongjun wrote:
-> 
-> sizeof() when applied to a pointer typed expression gives the
-> size of the pointer, not that of the pointed data.
-> 
-> Fixes: 7edf3b5e6a45 ("ALSA: usb-audio: AudioStreaming Power Domain parsing")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Array firstep_table is being assigned but is never used
+hence it is redundant and can be removed.
 
+Cleans up clang warning:
+warning: 'firstep_table' defined but not used [-Wunused-const-variable=]
 
-Takashi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath9k/ar5008_phy.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> ---
->  sound/usb/stream.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-> index 8fe3b0e..67cf849 100644
-> --- a/sound/usb/stream.c
-> +++ b/sound/usb/stream.c
-> @@ -1037,7 +1037,7 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
->  		fp->rate_max = UAC3_BADD_SAMPLING_RATE;
->  		fp->rates = SNDRV_PCM_RATE_CONTINUOUS;
->  
-> -		pd = kzalloc(sizeof(pd), GFP_KERNEL);
-> +		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
->  		if (!pd) {
->  			kfree(fp->rate_table);
->  			kfree(fp);
-> 
-> 
+diff --git a/drivers/net/wireless/ath/ath9k/ar5008_phy.c b/drivers/net/wireless/ath/ath9k/ar5008_phy.c
+index ef2dd68d3f77..11d6f975c87d 100644
+--- a/drivers/net/wireless/ath/ath9k/ar5008_phy.c
++++ b/drivers/net/wireless/ath/ath9k/ar5008_phy.c
+@@ -37,10 +37,6 @@
+ #define AR5008_11NG_HT_SS_SHIFT		12
+ #define AR5008_11NG_HT_DS_SHIFT		20
+ 
+-static const int firstep_table[] -/* level:  0   1   2   3   4   5   6   7   8  */
+-	{ -4, -2,  0,  2,  4,  6,  8, 10, 12 }; /* lvl 0-8, default 2 */
+-
+ /*
+  * register values to turn OFDM weak signal detection OFF
+  */
+-- 
+2.17.1
