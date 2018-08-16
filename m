@@ -1,21 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 21 Aug 2018 02:19:48 +0000
-Subject: Re: [PATCH] rhashtable: remove duplicated include from rhashtable.c
-Message-Id: <20180820.191948.2209287030911896001.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 16 Aug 2018 12:59:44 +0000
+Subject: [PATCH] orinoco: remove unused array encaps_hdr and macro ENCAPS_OVERHEAD
+Message-Id: <20180816125944.7804-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1534815716-102071-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1534815716-102071-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: tgraf@suug.ch, herbert@gondor.apana.org.au, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
-Date: Tue, 21 Aug 2018 01:41:56 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Remove duplicated include.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Array encaps_hdr and macro ENCAPS_OVERHEAD are declared but are
+not being used, hence they are redundant and can be removed.
 
-Applied, thank you.
+Cleans up clang warning:
+warning: 'encaps_hdr' defined but not used [-Wunused-const-variable=]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intersil/orinoco/orinoco_usb.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+index 94ad6fe29e69..d8c27203bc57 100644
+--- a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+@@ -73,10 +73,6 @@
+ #define URB_ASYNC_UNLINK 0
+ #endif
+ 
+-/* 802.2 LLC/SNAP header used for Ethernet encapsulation over 802.11 */
+-static const u8 encaps_hdr[] = {0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00};
+-#define ENCAPS_OVERHEAD		(sizeof(encaps_hdr) + 2)
+-
+ struct header_struct {
+ 	/* 802.3 */
+ 	u8 dest[ETH_ALEN];
+-- 
+2.17.1
