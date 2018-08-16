@@ -1,24 +1,94 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 20 Aug 2018 13:43:42 +0000
-Subject: Re: [PATCH] btrfs: use after free in btrfs_quota_enable()
-Message-Id: <20180820134342.GX24025@twin.jikos.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 16 Aug 2018 13:33:20 +0000
+Subject: [PATCH] scsi: aacraid: remove unused variables dev and cpu
+Message-Id: <20180816133320.19682-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180820082533.rs3yh4agza6epz7j@kili.mountain>
-In-Reply-To: <20180820082533.rs3yh4agza6epz7j@kili.mountain>
+References: <20171115165341.20042-1-colin.king@canonical.com>
+In-Reply-To: <20171115165341.20042-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 11:25:33AM +0300, Dan Carpenter wrote:
-> The issue here is that btrfs_commit_transaction() frees "trans" on both
-> the error and the success path.  So the problem would be if
-> btrfs_commit_transaction() succeeds, and then qgroup_rescan_init()
-> fails.  That means that "ret" is non-zero and "trans" is non-NULL and it
-> leads to a use after free inside the btrfs_end_transaction() macro.
-> 
-> Fixes: 340f1aa27f36 ("btrfs: qgroups: Move transaction management inside btrfs_quota_enable/disable")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Variables dev and cpu are not being used and are redundant and hence can
+be removed.
+
+Cleans up clang warnings:
+warning: variable 'dev' set but not used [-Wunused-but-set-variable]
+warning: variable 'cpu' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aacraid/aachba.c  | 7 -------
+ drivers/scsi/aacraid/commsup.c | 2 --
+ 2 files changed, 9 deletions(-)
+
+diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+index 6e356325d8d9..bd7f352c28f3 100644
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -3480,7 +3480,6 @@ int aac_dev_ioctl(struct aac_dev *dev, int cmd, void __user *arg)
+ 
+ static void aac_srb_callback(void *context, struct fib * fibptr)
+ {
+-	struct aac_dev *dev;
+ 	struct aac_srb_reply *srbreply;
+ 	struct scsi_cmnd *scsicmd;
+ 
+@@ -3491,8 +3490,6 @@ static void aac_srb_callback(void *context, struct fib * fibptr)
+ 
+ 	BUG_ON(fibptr = NULL);
+ 
+-	dev = fibptr->dev;
+-
+ 	srbreply = (struct aac_srb_reply *) fib_data(fibptr);
+ 
+ 	scsicmd->sense_buffer[0] = '\0';  /* Initialize sense valid flag to false */
+@@ -3921,13 +3918,11 @@ static int aac_send_hba_fib(struct scsi_cmnd *scsicmd)
+ 
+ static long aac_build_sg(struct scsi_cmnd *scsicmd, struct sgmap *psg)
+ {
+-	struct aac_dev *dev;
+ 	unsigned long byte_count = 0;
+ 	int nseg;
+ 	struct scatterlist *sg;
+ 	int i;
+ 
+-	dev = (struct aac_dev *)scsicmd->device->host->hostdata;
+ 	// Get rid of old data
+ 	psg->count = 0;
+ 	psg->sg[0].addr = 0;
+@@ -3963,14 +3958,12 @@ static long aac_build_sg(struct scsi_cmnd *scsicmd, struct sgmap *psg)
+ 
+ static long aac_build_sg64(struct scsi_cmnd *scsicmd, struct sgmap64 *psg)
+ {
+-	struct aac_dev *dev;
+ 	unsigned long byte_count = 0;
+ 	u64 addr;
+ 	int nseg;
+ 	struct scatterlist *sg;
+ 	int i;
+ 
+-	dev = (struct aac_dev *)scsicmd->device->host->hostdata;
+ 	// Get rid of old data
+ 	psg->count = 0;
+ 	psg->sg[0].addr[0] = 0;
+diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+index 6e1b022a823d..1e77d96a18f2 100644
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -2586,9 +2586,7 @@ int aac_acquire_irq(struct aac_dev *dev)
+ void aac_free_irq(struct aac_dev *dev)
+ {
+ 	int i;
+-	int cpu;
+ 
+-	cpu = cpumask_first(cpu_online_mask);
+ 	if (aac_is_src(dev)) {
+ 		if (dev->max_msix > 1) {
+ 			for (i = 0; i < dev->max_msix; i++)
+-- 
+2.17.1
