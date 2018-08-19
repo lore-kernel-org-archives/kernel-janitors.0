@@ -1,55 +1,131 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 31 Aug 2018 11:07:55 +0000
-Subject: Re: [PATCH] rsi: remove set but not used variable 'header_size'
-Message-Id: <9c1571f1-b353-7621-c7e0-20d54cbd59c4@huawei.com>
+From: Peter Rosin <peda@axentia.se>
+Date: Sun, 19 Aug 2018 07:02:42 +0000
+Subject: Re: [PATCH 3/3] iio: potentiometer: merge calls to of_match_device and of_device_get_match_data
+Message-Id: <0a8aff9e-51fe-96a5-bcab-cc472be92dcc@axentia.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1535707647-191888-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535707647-191888-1-git-send-email-yuehaibing@huawei.com>
+References: <1526896150-27134-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1526896150-27134-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1526896150-27134-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Pavani Muthyala <pavani.muthyala@redpinesignals.com>, Kees Cook <keescook@chromium.org>, Colin Ian King <colin.king@canonical.com>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, Sushant Kumar Mishra <sushant.mishra@redpinesignals.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
+On 2018-05-21 11:49, Julia Lawall wrote:
+> Drop call to of_match_device, which is subsumed by the subsequent
+> call to of_device_get_match_data.  The code becomes simpler, and a
+> temporary variable can be dropped.
+> 
+> The semantic match that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r@
+> local idexpression match;
+> identifier i;
+> expression x, dev, e, e1;
+> @@
+> -        match@i = of_match_device(x, dev);
+> -        if (match) e = of_device_get_match_data(dev);
+> -        else e = e1;
+> +        e = of_device_get_match_data(dev);
+> +        if (!e) e = e1;
+> 
+> @@
+> identifier r.i;
+> @@
+> - const struct of_device_id *i;
+> ... when != i
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On 2018/8/31 17:27, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
+Reviewed-by: Peter Rosin <peda@axentia.se>
+
+Cheers,
+Peter
+
 > 
-> drivers/net/wireless/rsi/rsi_91x_hal.c: In function 'rsi_send_data_pkt':
-> drivers/net/wireless/rsi/rsi_91x_hal.c:288:5: warning:
->  variable 'header_size' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/net/wireless/rsi/rsi_91x_hal.c | 2 --
->  1 file changed, 2 deletions(-)
+>  drivers/iio/potentiometer/max5481.c |    7 ++-----
+>  drivers/iio/potentiometer/mcp4018.c |    7 ++-----
+>  drivers/iio/potentiometer/mcp4531.c |    7 ++-----
+>  3 files changed, 6 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
-> index 01edf96..c4fb319 100644
-> --- a/drivers/net/wireless/rsi/rsi_91x_hal.c
-> +++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
-> @@ -285,7 +285,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
->  	struct skb_info *tx_params;
->  	struct ieee80211_bss_conf *bss;
->  	int status = -EINVAL;
-> -	u8 header_size;
+> diff --git a/drivers/iio/potentiometer/mcp4018.c b/drivers/iio/potentiometer/mcp4018.c
+> index 320a7c9..c051ee0 100644
+> --- a/drivers/iio/potentiometer/mcp4018.c
+> +++ b/drivers/iio/potentiometer/mcp4018.c
+> @@ -147,7 +147,6 @@ static int mcp4018_probe(struct i2c_client *client)
+>  	struct device *dev = &client->dev;
+>  	struct mcp4018_data *data;
+>  	struct iio_dev *indio_dev;
+> -	const struct of_device_id *match;
 >  
->  	if (!skb)
->  		return 0;
-> @@ -298,7 +297,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
->  	vif = info->control.vif;
->  	bss = &vif->bss_conf;
->  	tx_params = (struct skb_info *)info->driver_data;
-
-tx_params also can be removed.
-
-Will send V2.
-
-> -	header_size = tx_params->internal_hdr_size;
+>  	if (!i2c_check_functionality(client->adapter,
+>  				     I2C_FUNC_SMBUS_BYTE)) {
+> @@ -162,10 +161,8 @@ static int mcp4018_probe(struct i2c_client *client)
+>  	i2c_set_clientdata(client, indio_dev);
+>  	data->client = client;
 >  
->  	if (((vif->type = NL80211_IFTYPE_STATION) ||
->  	     (vif->type = NL80211_IFTYPE_P2P_CLIENT)) &&
-> 
-> 
-> .
+> -	match = of_match_device(of_match_ptr(mcp4018_of_match), dev);
+> -	if (match)
+> -		data->cfg = of_device_get_match_data(dev);
+> -	else
+> +	data->cfg = of_device_get_match_data(dev);
+> +	if (!data->cfg)
+>  		data->cfg = &mcp4018_cfg[i2c_match_id(mcp4018_id, client)->driver_data];
+>  
+>  	indio_dev->dev.parent = dev;
+> diff --git a/drivers/iio/potentiometer/mcp4531.c b/drivers/iio/potentiometer/mcp4531.c
+> index df894af..d87ca85 100644
+> --- a/drivers/iio/potentiometer/mcp4531.c
+> +++ b/drivers/iio/potentiometer/mcp4531.c
+> @@ -360,7 +360,6 @@ static int mcp4531_probe(struct i2c_client *client)
+>  	struct device *dev = &client->dev;
+>  	struct mcp4531_data *data;
+>  	struct iio_dev *indio_dev;
+> -	const struct of_device_id *match;
+>  
+>  	if (!i2c_check_functionality(client->adapter,
+>  				     I2C_FUNC_SMBUS_WORD_DATA)) {
+> @@ -375,10 +374,8 @@ static int mcp4531_probe(struct i2c_client *client)
+>  	i2c_set_clientdata(client, indio_dev);
+>  	data->client = client;
+>  
+> -	match = of_match_device(of_match_ptr(mcp4531_of_match), dev);
+> -	if (match)
+> -		data->cfg = of_device_get_match_data(dev);
+> -	else
+> +	data->cfg = of_device_get_match_data(dev);
+> +	if (!data->cfg)
+>  		data->cfg = &mcp4531_cfg[i2c_match_id(mcp4531_id, client)->driver_data];
+>  
+>  	indio_dev->dev.parent = dev;
+> diff --git a/drivers/iio/potentiometer/max5481.c b/drivers/iio/potentiometer/max5481.c
+> index ffe2761..6d2f13f 100644
+> --- a/drivers/iio/potentiometer/max5481.c
+> +++ b/drivers/iio/potentiometer/max5481.c
+> @@ -137,7 +137,6 @@ static int max5481_probe(struct spi_device *spi)
+>  	struct iio_dev *indio_dev;
+>  	struct max5481_data *data;
+>  	const struct spi_device_id *id = spi_get_device_id(spi);
+> -	const struct of_device_id *match;
+>  	int ret;
+>  
+>  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*data));
+> @@ -149,10 +148,8 @@ static int max5481_probe(struct spi_device *spi)
+>  
+>  	data->spi = spi;
+>  
+> -	match = of_match_device(of_match_ptr(max5481_match), &spi->dev);
+> -	if (match)
+> -		data->cfg = of_device_get_match_data(&spi->dev);
+> -	else
+> +	data->cfg = of_device_get_match_data(&spi->dev);
+> +	if (!data->cfg)
+>  		data->cfg = &max5481_cfg[id->driver_data];
+>  
+>  	indio_dev->name = id->name;
 > 
