@@ -1,29 +1,37 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Mon, 06 Aug 2018 19:59:03 +0000
-Subject: Re: [alsa-devel] [PATCH 9/9] ALSA: intel_hdmi: remove redundant variable cfg_val
-Message-Id: <eba27606-0d1e-93d1-4eee-382595fa78f0@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 20 Aug 2018 08:25:33 +0000
+Subject: [PATCH] btrfs: use after free in btrfs_quota_enable()
+Message-Id: <20180820082533.rs3yh4agza6epz7j@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180801104742.4328-1-colin.king@canonical.com>
- <20180801104742.4328-10-colin.king@canonical.com>
- <s5hin4unyh0.wl-tiwai@suse.de>
- <a5a408bc-cc58-946e-5b36-496548a6316f@linux.intel.com>
- <s5hwot3gub3.wl-tiwai@suse.de>
-In-Reply-To: <s5hwot3gub3.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Colin King <colin.king@canonical.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jaya Kumar <jayakumar.alsa@gmail.com>
+To: Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>
+Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The issue here is that btrfs_commit_transaction() frees "trans" on both
+the error and the success path.  So the problem would be if
+btrfs_commit_transaction() succeeds, and then qgroup_rescan_init()
+fails.  That means that "ret" is non-zero and "trans" is non-NULL and it
+leads to a use after free inside the btrfs_end_transaction() macro.
 
-> Good to hear, applied the patch now.
->
->> BTW looking at the structures in intel_hdmi_lpe_audio.h, the field
->> format:3 in audio_ch_status_0 is misleading at best, it should be the
->> emphasis if I look at the SPDIF/AES docs. It's not used but I'll have
->> to relook at all this when I find some time... We should really set
->> the registers to mirror what the aes_bits are, not just the non_audio
->> and clock accuracy fields.
-> A fix patch is always welcome ;)
-This sort of fixes is straighforward, the hard part is to locate an HDMI 
-analyzer to double-check that the changes result in something meaningful...
+Fixes: 340f1aa27f36 ("btrfs: qgroups: Move transaction management inside btrfs_quota_enable/disable")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index 4353bb69bb86..d4917c0cddf5 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -1019,10 +1019,9 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_info)
+ 	spin_unlock(&fs_info->qgroup_lock);
+ 
+ 	ret = btrfs_commit_transaction(trans);
+-	if (ret) {
+-		trans = NULL;
++	trans = NULL;
++	if (ret)
+ 		goto out_free_path;
+-	}
+ 
+ 	ret = qgroup_rescan_init(fs_info, 0, 1);
+ 	if (!ret) {
