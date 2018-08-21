@@ -1,41 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Aug 2018 10:47:33 +0000
-Subject: [PATCH 0/9] ALSA: remove redundant variables
-Message-Id: <20180801104742.4328-1-colin.king@canonical.com>
+From: Yue Haibing <yuehaibing@huawei.com>
+Date: Tue, 21 Aug 2018 01:33:42 +0000
+Subject: [PATCH] ufs: remove set but not used variable 'usb3'
+Message-Id: <1534815222-101634-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Evgeniy Dushistov <dushistov@mail.ru>
+Cc: Yue Haibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Clean up code by removing redundant variables that were
-detected by clang
+fs/ufs/super.c: In function 'ufs_statfs':
+fs/ufs/super.c:1409:32: warning:
+ variable 'usb3' set but not used [-Wunused-but-set-variable]
+  struct ufs_super_block_third *usb3;
+                                ^
 
-Colin Ian King (9):
-  ALSA: asihpi: remove redundant variable max_streams
-  ALSA: cs5535audio: remove redundant pointer 'dma'
-  ALSA: emu10k1: remove redundant variable attn
-  ALSA: ens137x: remove redundant array pcm_devs
-  ALSA: sonicvibes: remove redundant pointer 'dir'
-  ASoC: nau8540: remove redundant variable osrate
-  ASoC: stm32: remove redundant pointers 'priv' and 'rtd'
-  ALSA: usb-audio: remove redundant pointer 'urb'
-  ALSA: intel_hdmi: remove redundant variable cfg_val
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ fs/ufs/super.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- sound/pci/asihpi/hpi6205.c          | 5 -----
- sound/pci/cs5535audio/cs5535audio.c | 7 +------
- sound/pci/emu10k1/emupcm.c          | 3 +--
- sound/pci/ens1370.c                 | 3 +--
- sound/pci/sonicvibes.c              | 2 --
- sound/soc/codecs/nau8540.c          | 3 ---
- sound/soc/stm/stm32_adfsdm.c        | 8 +-------
- sound/usb/endpoint.c                | 2 --
- sound/x86/intel_hdmi_audio.c        | 2 --
- 9 files changed, 4 insertions(+), 31 deletions(-)
-
--- 
-2.17.1
-
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index a4e07e9..6a5db06 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -1406,11 +1406,9 @@ static int ufs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	struct super_block *sb = dentry->d_sb;
+ 	struct ufs_sb_private_info *uspi= UFS_SB(sb)->s_uspi;
+ 	unsigned  flags = UFS_SB(sb)->s_flags;
+-	struct ufs_super_block_third *usb3;
+ 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
+ 
+ 	mutex_lock(&UFS_SB(sb)->s_lock);
+-	usb3 = ubh_get_usb_third(uspi);
+ 	
+ 	if ((flags & UFS_TYPE_MASK) = UFS_TYPE_UFS2)
+ 		buf->f_type = UFS2_MAGIC;
