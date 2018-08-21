@@ -1,43 +1,93 @@
-From: Will Deacon <will.deacon@arm.com>
-Date: Tue, 28 Aug 2018 17:39:52 +0000
-Subject: Re: [PATCH] locking/ww_mutex: fix spelling mistake "cylic" -> "cyclic"
-Message-Id: <20180828173951.GB20375@arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Aug 2018 09:12:48 +0000
+Subject: [PATCH] block/DAC960.c: make some arrays static const, shrinks object size
+Message-Id: <20180821091248.8669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180824112235.8842-1-colin.king@canonical.com>
-In-Reply-To: <20180824112235.8842-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 12:22:35PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in pr_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  kernel/locking/test-ww_mutex.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Given that this is part of an error message, I agree it's worth fixing.
+Don't populate the arrays ReadCacheStatus, WriteCacheStatus and
+SenseErrors on the stack but instead make them static const. Makes
+the object code smaller by 47 bytes:
 
-Will
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 160974	  34628	    832	 196434	  2ff52	drivers/block/DAC960.o
 
-> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-> index 5b915b370d5a..0be047dbd897 100644
-> --- a/kernel/locking/test-ww_mutex.c
-> +++ b/kernel/locking/test-ww_mutex.c
-> @@ -324,7 +324,7 @@ static int __test_cycle(unsigned int nthreads)
->  		if (!cycle->result)
->  			continue;
->  
-> -		pr_err("cylic deadlock not resolved, ret[%d/%d] = %d\n",
-> +		pr_err("cyclic deadlock not resolved, ret[%d/%d] = %d\n",
->  		       n, nthreads, cycle->result);
->  		ret = -EINVAL;
->  		break;
-> -- 
-> 2.17.1
-> 
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 160671	  34884	    832	 196387	  2ff23	drivers/block/DAC960.o
+
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/DAC960.c | 42 ++++++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
+index f99e5c883368..581312ac375f 100644
+--- a/drivers/block/DAC960.c
++++ b/drivers/block/DAC960.c
+@@ -2428,16 +2428,20 @@ static bool DAC960_V2_ReportDeviceConfiguration(DAC960_Controller_T
+     {
+       DAC960_V2_LogicalDeviceInfo_T *LogicalDeviceInfo  	Controller->V2.LogicalDeviceInformation[LogicalDriveNumber];
+-      unsigned char *ReadCacheStatus[] = { "Read Cache Disabled",
+-					   "Read Cache Enabled",
+-					   "Read Ahead Enabled",
+-					   "Intelligent Read Ahead Enabled",
+-					   "-", "-", "-", "-" };
+-      unsigned char *WriteCacheStatus[] = { "Write Cache Disabled",
+-					    "Logical Device Read Only",
+-					    "Write Cache Enabled",
+-					    "Intelligent Write Cache Enabled",
+-					    "-", "-", "-", "-" };
++      static const unsigned char *ReadCacheStatus[] = {
++        "Read Cache Disabled",
++        "Read Cache Enabled",
++        "Read Ahead Enabled",
++        "Intelligent Read Ahead Enabled",
++        "-", "-", "-", "-"
++      };
++      static const unsigned char *WriteCacheStatus[] = {
++        "Write Cache Disabled",
++        "Logical Device Read Only",
++        "Write Cache Enabled",
++        "Intelligent Write Cache Enabled",
++        "-", "-", "-", "-"
++      };
+       unsigned char *GeometryTranslation;
+       if (LogicalDeviceInfo = NULL) continue;
+       switch (LogicalDeviceInfo->DriveGeometry)
+@@ -4339,14 +4343,16 @@ static void DAC960_V1_ProcessCompletedCommand(DAC960_Command_T *Command)
+ static void DAC960_V2_ReadWriteError(DAC960_Command_T *Command)
+ {
+   DAC960_Controller_T *Controller = Command->Controller;
+-  unsigned char *SenseErrors[] = { "NO SENSE", "RECOVERED ERROR",
+-				   "NOT READY", "MEDIUM ERROR",
+-				   "HARDWARE ERROR", "ILLEGAL REQUEST",
+-				   "UNIT ATTENTION", "DATA PROTECT",
+-				   "BLANK CHECK", "VENDOR-SPECIFIC",
+-				   "COPY ABORTED", "ABORTED COMMAND",
+-				   "EQUAL", "VOLUME OVERFLOW",
+-				   "MISCOMPARE", "RESERVED" };
++  static const unsigned char *SenseErrors[] = {
++    "NO SENSE", "RECOVERED ERROR",
++    "NOT READY", "MEDIUM ERROR",
++    "HARDWARE ERROR", "ILLEGAL REQUEST",
++    "UNIT ATTENTION", "DATA PROTECT",
++    "BLANK CHECK", "VENDOR-SPECIFIC",
++    "COPY ABORTED", "ABORTED COMMAND",
++    "EQUAL", "VOLUME OVERFLOW",
++    "MISCOMPARE", "RESERVED"
++  };
+   unsigned char *CommandName = "UNKNOWN";
+   switch (Command->CommandType)
+     {
+-- 
+2.17.1
