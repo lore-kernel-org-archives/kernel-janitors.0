@@ -1,27 +1,45 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 27 Aug 2018 09:05:58 +0000
-Subject: Re: [PATCH] ALSA: hdspm: fix spelling mistake "Initializeing" -> "Initializing"
-Message-Id: <s5hy3cs89hl.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Aug 2018 10:21:09 +0000
+Subject: [PATCH] iwlwifi: pcie: make array 'prop' static, shrinks object size
+Message-Id: <20180821102109.1630-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180826220952.12335-1-colin.king@canonical.com>
-In-Reply-To: <20180826220952.12335-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 00:09:52 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_dbg message and also remove
-> extraneous white space and repeated question marks.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Don't populate the array prop on the stack but instead make it static.
+Makes the object code smaller by 30 bytes:
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  80138	  15382	    576	  96096	  17760	drivers/net/wireless/intel/iwlwifi/pcie/trans.o
 
-Takashi
+After:
+   text	   data	    bss	    dec	    hex	filename
+  79948	  15542	    576	  96066	  17742	drivers/net/wireless/intel/iwlwifi/pcie/trans.o
+
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+index 7d319b6863fe..c7daf666ee21 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+@@ -1947,7 +1947,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
+ 	struct iwl_trans_pcie_removal *removal  		container_of(wk, struct iwl_trans_pcie_removal, work);
+ 	struct pci_dev *pdev = removal->pdev;
+-	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
++	static char *prop[] = {"EVENT=INACCESSIBLE", NULL};
+ 
+ 	dev_err(&pdev->dev, "Device gone - attempting removal\n");
+ 	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
+-- 
+2.17.1
