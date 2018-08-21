@@ -1,32 +1,30 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 31 Aug 2018 15:47:46 +0000
-Subject: Re: [PATCH] rt2x00: use simple_read_from_buffer()
-Message-Id: <20180831154746.482A460242@smtp.codeaurora.org>
+From: Yue Haibing <yuehaibing@huawei.com>
+Date: Tue, 21 Aug 2018 13:59:09 +0000
+Subject: [PATCH] rds: tcp: remove duplicated include from tcp.c
+Message-Id: <1534860342-171157-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180822104126.2logh4tqxkmiomqy@kili.mountain>
-In-Reply-To: <20180822104126.2logh4tqxkmiomqy@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>, "David S. Miller" <davem@davemloft.net>
+Cc: Yue Haibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Remove duplicated include.
 
-> The problem with this copy_to_user() calls is that they don't ensure
-> that "size" is less than the "length" which the user provided.
-> 
-> Obviously, this is debugfs and "size" is normally going to be very small
-> so it probably doesn't matter, but this is the correct thing to do.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/rds/tcp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-f483039cf51a rt2x00: use simple_read_from_buffer()
-
--- 
-https://patchwork.kernel.org/patch/10572845/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/net/rds/tcp.c b/net/rds/tcp.c
+index 2c7b7c3..b9bbcf3 100644
+--- a/net/rds/tcp.c
++++ b/net/rds/tcp.c
+@@ -37,7 +37,6 @@
+ #include <net/tcp.h>
+ #include <net/net_namespace.h>
+ #include <net/netns/generic.h>
+-#include <net/tcp.h>
+ #include <net/addrconf.h>
+ 
+ #include "rds.h"
