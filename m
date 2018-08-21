@@ -1,47 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 01 Aug 2018 21:01:28 +0000
-Subject: Re: [PATCH] pinctrl: freescale: off by one in imx1_pinconf_group_dbg_show()
-Message-Id: <CACRpkdYNYzqcdb33JgFCB0cHvDPddmnXJESfhQUAR3gMQG9tqA@mail.gmail.com>
+From: Yue Haibing <yuehaibing@huawei.com>
+Date: Tue, 21 Aug 2018 01:41:56 +0000
+Subject: [PATCH] rhashtable: remove duplicated include from rhashtable.c
+Message-Id: <1534815716-102071-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180713145514.r7ukvw23kcdwc3pv@kili.mountain>
- <CACRpkdaBM1tvbL9k7ZepEgnSC00_iLOStyb9B2t2=DipVgEW_A@mail.gmail.com> <20180731085243.v3g3vrjrngs4ib3y@pengutronix.de>
-In-Reply-To: <20180731085243.v3g3vrjrngs4ib3y@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: stable <stable@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, kernel-janitors@vger.kernel.org, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Yue Haibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:52 AM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Mon, Jul 30, 2018 at 05:43:43PM +0200, Linus Walleij wrote:
-> > On Fri, Jul 13, 2018 at 4:55 PM Dan Carpenter <dan.carpenter@oracle.com=
-> wrote:
-> >
-> > > The info->groups[] array is allocated in imx1_pinctrl_parse_dt().  It
-> > > has info->ngroups elements.  Thus the > here should be >=3D to prevent
-> > > reading one element beyond the end of the array.
-> > >
-> > > Fixes: 30612cd90005 ("pinctrl: imx1 core driver")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > Patch applied.
-> >
-> > I am not tagging for stable as it is debug code and does not
-> > affect end users.
->
-> Not sure this is a valid reason. Distro kernels usually enable debugfs.
-> I'd say an out-of-bounds access that can only be triggered by root
-> should still be fixed. I won't argue but added stable to the addressees
-> of this mail to at least raise awareness.
+Remove duplicated include.
 
-I won't argue either, I will just tag it for stable.
-If it matters for my friends, it matters to me, so: stable it is.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ lib/rhashtable.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index ae4223e..672eecd 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -28,7 +28,6 @@
+ #include <linux/rhashtable.h>
+ #include <linux/err.h>
+ #include <linux/export.h>
+-#include <linux/rhashtable.h>
+ 
+ #define HASH_DEFAULT_SIZE	64UL
+ #define HASH_MIN_SIZE		4U
