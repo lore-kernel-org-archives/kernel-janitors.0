@@ -1,68 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 Aug 2018 08:09:21 +0000
-Subject: [PATCH 1/2] fbdev: sbuslib: use checked version of put_user()
-Message-Id: <20180831080921.jstbxdkga3w2rnnf@kili.mountain>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 21 Aug 2018 13:34:24 +0000
+Subject: [PATCH] kernel: remove duplicated include from sys.c
+Message-Id: <20180821133424.18716-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-fbdev@vger.kernel.org, Mathieu Malaterre <malat@debian.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Philippe Ombredanne <pombredanne@nexb.com>, Peter Malone <peter.malone@gmail.com>
+To: wolffhardt.schwabe@fau.de, Dave.Martin@arm.com, yang.shi@linux.alibaba.com, gregkh@linuxfoundation.org, keescook@chromium.org, arnd@arndb.de, tglx@linutronix.de, akpm@linux-foundation.org, linux@dominikbrodowski.net, gorcunov@gmail.com, kstewart@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 
-I'm not sure why the code assumes that only the first put_user() needs
-an access_ok() check.  I have made all the put_user() and get_user()
-calls checked.
+Remove duplicated include.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ kernel/sys.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
-index a436d44f1b7f..90c51330969c 100644
---- a/drivers/video/fbdev/sbuslib.c
-+++ b/drivers/video/fbdev/sbuslib.c
-@@ -106,11 +106,11 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
- 		struct fbtype __user *f = (struct fbtype __user *) arg;
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 45dc552..d0281b5 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -71,9 +71,6 @@
+ #include <asm/io.h>
+ #include <asm/unistd.h>
  
- 		if (put_user(type, &f->fb_type) ||
--		    __put_user(info->var.yres, &f->fb_height) ||
--		    __put_user(info->var.xres, &f->fb_width) ||
--		    __put_user(fb_depth, &f->fb_depth) ||
--		    __put_user(0, &f->fb_cmsize) ||
--		    __put_user(fb_size, &f->fb_cmsize))
-+		    put_user(info->var.yres, &f->fb_height) ||
-+		    put_user(info->var.xres, &f->fb_width) ||
-+		    put_user(fb_depth, &f->fb_depth) ||
-+		    put_user(0, &f->fb_cmsize) ||
-+		    put_user(fb_size, &f->fb_cmsize))
- 			return -EFAULT;
- 		return 0;
- 	}
-@@ -125,10 +125,10 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
- 		unsigned int index, count, i;
+-/* Hardening for Spectre-v1 */
+-#include <linux/nospec.h>
+-
+ #include "uid16.h"
  
- 		if (get_user(index, &c->index) ||
--		    __get_user(count, &c->count) ||
--		    __get_user(ured, &c->red) ||
--		    __get_user(ugreen, &c->green) ||
--		    __get_user(ublue, &c->blue))
-+		    get_user(count, &c->count) ||
-+		    get_user(ured, &c->red) ||
-+		    get_user(ugreen, &c->green) ||
-+		    get_user(ublue, &c->blue))
- 			return -EFAULT;
- 
- 		cmap.len = 1;
-@@ -165,10 +165,10 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
- 		u8 red, green, blue;
- 
- 		if (get_user(index, &c->index) ||
--		    __get_user(count, &c->count) ||
--		    __get_user(ured, &c->red) ||
--		    __get_user(ugreen, &c->green) ||
--		    __get_user(ublue, &c->blue))
-+		    get_user(count, &c->count) ||
-+		    get_user(ured, &c->red) ||
-+		    get_user(ugreen, &c->green) ||
-+		    get_user(ublue, &c->blue))
- 			return -EFAULT;
- 
- 		if (index + count > cmap->len)
+ #ifndef SET_UNALIGN_CTL
+-- 
+2.7.0
