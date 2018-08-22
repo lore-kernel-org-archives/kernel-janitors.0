@@ -1,58 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Aug 2018 13:22:58 +0000
-Subject: [bug report] bus: ti-sysc: Fix module register ioremap for larger offsets
-Message-Id: <20180822132258.rh5u5kenlx2anuvs@kili.mountain>
+From: Tony Lindgren <tony@atomide.com>
+Date: Wed, 22 Aug 2018 14:29:49 +0000
+Subject: Re: [bug report] bus: ti-sysc: Fix module register ioremap for larger offsets
+Message-Id: <20180822142949.GA94926@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180822132258.rh5u5kenlx2anuvs@kili.mountain>
+In-Reply-To: <20180822132258.rh5u5kenlx2anuvs@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Tony Lindgren,
+Hi,
 
-The patch 7180c523efca: "bus: ti-sysc: Fix module register ioremap
-for larger offsets" from Aug 8, 2018, leads to the following static
-checker warning:
+* Dan Carpenter <dan.carpenter@oracle.com> [180822 13:26]:
+> Hello Tony Lindgren,
+> 
+> The patch 7180c523efca: "bus: ti-sysc: Fix module register ioremap
+> for larger offsets" from Aug 8, 2018, leads to the following static
+> checker warning:
+> 
+> 	drivers/bus/ti-sysc.c:518 sysc_ioremap()
+> 	warn: unsigned 'size' is never less than zero.
 
-	drivers/bus/ti-sysc.c:518 sysc_ioremap()
-	warn: unsigned 'size' is never less than zero.
+Thanks for catching it, we should use int here instead of u32.
 
-drivers/bus/ti-sysc.c
-   499  /**
-   500   * syc_ioremap - ioremap register space for the interconnect target module
-   501   * @ddata: device driver data
-   502   *
-   503   * Note that the interconnect target module registers can be anywhere
-   504   * within the interconnect target module range. For example, SGX has
-   505   * them at offset 0x1fc00 in the 32MB module address space. And cpsw
-   506   * has them at offset 0x1200 in the CPSW_WR child. Usually the
-   507   * the interconnect target module registers are at the beginning of
-   508   * the module range though.
-   509   */
-   510  static int sysc_ioremap(struct sysc *ddata)
-   511  {
-   512          u32 size;
-   513  
-   514          size = max3(ddata->offsets[SYSC_REVISION],
-   515                      ddata->offsets[SYSC_SYSCONFIG],
-   516                      ddata->offsets[SYSC_SYSSTATUS]);
-   517  
-   518          if (size < 0)
-                    ^^^^^^^^
-It's weird that we don't trust the offsets.  Can the += 4 overflow?
+>    510  static int sysc_ioremap(struct sysc *ddata)
+>    511  {
+>    512          u32 size;
+>    513  
+>    514          size = max3(ddata->offsets[SYSC_REVISION],
+>    515                      ddata->offsets[SYSC_SYSCONFIG],
+>    516                      ddata->offsets[SYSC_SYSSTATUS]);
+>    517  
+>    518          if (size < 0)
+>                     ^^^^^^^^
+> It's weird that we don't trust the offsets.  Can the += 4 overflow?
 
-   519                  return -EINVAL;
-   520  
-   521          size += 4;
-   522  
-   523          ddata->module_va = devm_ioremap(ddata->dev,
-   524                                          ddata->module_pa,
-   525                                          size);
-   526          if (!ddata->module_va)
-   527                  return -EIO;
-   528  
-   529          return 0;
-   530  }
+Some registers may not exist or can be at offset 0 so we use -ENODEV
+too. If no registers are found it's a dts configuration error for sure.
 
-regards,
-dan carpenter
+Checking for overflow is a good idea. It could happen with misconfigured
+dts file if a reg is past the module sizez. I'll be posting v2 of the
+patch.
+
+Regards,
+
+Tony
