@@ -1,35 +1,64 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 26 Aug 2018 22:31:17 +0000
-Subject: [PATCH] iwlwifi: mvm:  fix spelling mistake "Recieved" -> "Received"
-Message-Id: <20180826223117.12892-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 22 Aug 2018 10:41:26 +0000
+Subject: [PATCH] rt2x00: use simple_read_from_buffer()
+Message-Id: <20180822104126.2logh4tqxkmiomqy@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The problem with this copy_to_user() calls is that they don't ensure
+that "size" is less than the "length" which the user provided.
 
-Trivial fix to spelling mistake in debug message.
+Obviously, this is debugfs and "size" is normally going to be very small
+so it probably doesn't matter, but this is the correct thing to do.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From static analysis.  Not tested.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-index b15b0d84bb7e..5f32d3131d62 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -3320,7 +3320,7 @@ static bool iwl_mvm_rx_aux_roc(struct iwl_notif_wait_data *notif_wait,
- 	resp = (void *)pkt->data;
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00debug.c b/drivers/net/wireless/ralink/rt2x00/rt2x00debug.c
+index acc399b5574e..61ba573e8bf1 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00debug.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00debug.c
+@@ -464,11 +464,7 @@ static ssize_t rt2x00debug_read_##__name(struct file *file,	\
+ 								\
+ 	size = sprintf(line, __format, value);			\
+ 								\
+-	if (copy_to_user(buf, line, size))			\
+-		return -EFAULT;					\
+-								\
+-	*offset += size;					\
+-	return size;						\
++	return simple_read_from_buffer(buf, length, offset, line, size); \
+ }
  
- 	IWL_DEBUG_TE(mvm,
--		     "Aux ROC: Recieved response from ucode: status=%d uid=%d\n",
-+		     "Aux ROC: Received response from ucode: status=%d uid=%d\n",
- 		     resp->status, resp->event_unique_id);
+ #define RT2X00DEBUGFS_OPS_WRITE(__name, __type)			\
+@@ -545,11 +541,7 @@ static ssize_t rt2x00debug_read_dev_flags(struct file *file,
  
- 	te_data->uid = le32_to_cpu(resp->event_unique_id);
--- 
-2.17.1
+ 	size = sprintf(line, "0x%.8x\n", (unsigned int)intf->rt2x00dev->flags);
+ 
+-	if (copy_to_user(buf, line, size))
+-		return -EFAULT;
+-
+-	*offset += size;
+-	return size;
++	return simple_read_from_buffer(buf, length, offset, line, size);
+ }
+ 
+ static const struct file_operations rt2x00debug_fop_dev_flags = {
+@@ -574,11 +566,7 @@ static ssize_t rt2x00debug_read_cap_flags(struct file *file,
+ 
+ 	size = sprintf(line, "0x%.8x\n", (unsigned int)intf->rt2x00dev->cap_flags);
+ 
+-	if (copy_to_user(buf, line, size))
+-		return -EFAULT;
+-
+-	*offset += size;
+-	return size;
++	return simple_read_from_buffer(buf, length, offset, line, size);
+ }
+ 
+ static const struct file_operations rt2x00debug_fop_cap_flags = {
