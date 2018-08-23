@@ -1,46 +1,32 @@
-From: Wu Hao <hao.wu@intel.com>
-Date: Sun, 26 Aug 2018 23:18:23 +0000
-Subject: Re: [PATCH] fpga: dfl: fme-mgr: fix spelling mistake "Invaild" -> "Invalid"
-Message-Id: <20180826231823.GA7561@hao-dev>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 Aug 2018 13:56:33 +0000
+Subject: [PATCH] scsi: lpfc: remove an unnecessary NULL check
+Message-Id: <20180823135633.5qcevijtcalx76u6@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180826221355.12661-1-colin.king@canonical.com>
-In-Reply-To: <20180826221355.12661-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Aug 26, 2018 at 11:13:55PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err message.
+Smatch complains about this code:
 
-This patch is duplicated. This issue is covered by your previous patch.
+    drivers/scsi/lpfc/lpfc_scsi.c:1053 lpfc_get_scsi_buf_s4()
+    warn: variable dereferenced before check 'lpfc_cmd' (see line 1039)
 
-https://marc.info/?l=linux-fpga&m3202583007071&w=2
+Fortunately the NULL check isn't required so I have removed it.
 
-Thanks
-Hao
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/fpga/dfl-fme-mgr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
-> index b5ef405b6d88..9f045d058cfd 100644
-> --- a/drivers/fpga/dfl-fme-mgr.c
-> +++ b/drivers/fpga/dfl-fme-mgr.c
-> @@ -201,7 +201,7 @@ static int fme_mgr_write(struct fpga_manager *mgr,
->  		}
->  
->  		if (count < 4) {
-> -			dev_err(dev, "Invaild PR bitstream size\n");
-> +			dev_err(dev, "Invalid PR bitstream size\n");
->  			return -EINVAL;
->  		}
->  
-> -- 
-> 2.17.1
+diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
+index 5c7858e735c9..ef20d37e44db 100644
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -1050,7 +1050,7 @@ lpfc_get_scsi_buf_s4(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp)
+ 	if (!found)
+ 		return NULL;
+ 
+-	if (lpfc_ndlp_check_qdepth(phba, ndlp) && lpfc_cmd) {
++	if (lpfc_ndlp_check_qdepth(phba, ndlp)) {
+ 		atomic_inc(&ndlp->cmd_pending);
+ 		lpfc_cmd->flags |= LPFC_SBUF_BUMP_QDEPTH;
+ 	}
