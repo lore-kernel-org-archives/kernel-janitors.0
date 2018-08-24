@@ -1,61 +1,37 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Date: Mon, 20 Aug 2018 18:52:34 +0000
-Subject: Re: [PATCH] thermal: armada: fix incorrect check for drvdata allocation failure
-Message-Id: <20180820185232.GA16026@localhost.localdomain>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Aug 2018 11:22:35 +0000
+Subject: [PATCH] locking/ww_mutex: fix spelling mistake "cylic" -> "cyclic"
+Message-Id: <20180824112235.8842-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180730122716.6267-1-colin.king@canonical.com>
-In-Reply-To: <20180730122716.6267-1-colin.king@canonical.com>
+References: <20170330092231.18590-1-colin.king@canonical.com>
+In-Reply-To: <20170330092231.18590-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-hello Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Jul 30, 2018 at 01:27:16PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the drvdata allocation failure is being incorrectly checked by
-> checking priv and not drvdata.  Fix this and also free priv to fix a
-> memory leak.
-> 
-> Detected by Coverity Scan, CID#1472102 ("Logically dead code")
-> 
-> Fixes: c9899c183921 ("thermal: armada: use the resource managed registration helper alternative")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/thermal/armada_thermal.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
-> index 4164a5a4e480..b164fd9f21ac 100644
-> --- a/drivers/thermal/armada_thermal.c
-> +++ b/drivers/thermal/armada_thermal.c
-> @@ -611,8 +611,10 @@ static int armada_thermal_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!priv)
-> +	if (!drvdata) {
+Trivial fix to spelling mistake in pr_err error message
 
-Thanks for the fix but, I already collected this patch:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/locking/test-ww_mutex.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-84b64de597bc ("thermal: armada: fix copy-paste error in armada_thermal_probe()")
-
-which fixes the same issue you are addressing here.
-
-> +		devm_kfree(&pdev->dev, priv);
-
-As already mentioned by Daniel, the above is not necessary, as it is a
-devm_* helper.
-
-BR,
->  		return -ENOMEM;
-> +	}
->  
->  	priv->dev = &pdev->dev;
->  	priv->data = (struct armada_thermal_data *)match->data;
-> -- 
-> 2.17.1
-> 
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index 5b915b370d5a..0be047dbd897 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -324,7 +324,7 @@ static int __test_cycle(unsigned int nthreads)
+ 		if (!cycle->result)
+ 			continue;
+ 
+-		pr_err("cylic deadlock not resolved, ret[%d/%d] = %d\n",
++		pr_err("cyclic deadlock not resolved, ret[%d/%d] = %d\n",
+ 		       n, nthreads, cycle->result);
+ 		ret = -EINVAL;
+ 		break;
+-- 
+2.17.1
