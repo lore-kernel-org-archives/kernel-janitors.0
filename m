@@ -1,45 +1,35 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 02 Aug 2018 03:36:39 +0000
-Subject: [PATCH net-next] rxrpc: Remove set but not used variable 'nowj'
-Message-Id: <1533180999-138562-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Aug 2018 11:18:30 +0000
+Subject: [PATCH] qed: fix spelling mistake "comparsion" -> "comparison"
+Message-Id: <20180824111830.8657-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-net/rxrpc/proc.c: In function 'rxrpc_call_seq_show':
-net/rxrpc/proc.c:66:29: warning:
- variable 'nowj' set but not used [-Wunused-but-set-variable]
-  unsigned long timeout = 0, nowj;
-                             ^
+Trivial fix to spelling mistake in DP_ERR error message
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/rxrpc/proc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_init_ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/rxrpc/proc.c b/net/rxrpc/proc.c
-index 163d05d..9805e3b 100644
---- a/net/rxrpc/proc.c
-+++ b/net/rxrpc/proc.c
-@@ -63,7 +63,7 @@ static int rxrpc_call_seq_show(struct seq_file *seq, void *v)
- 	struct rxrpc_peer *peer;
- 	struct rxrpc_call *call;
- 	struct rxrpc_net *rxnet = rxrpc_net(seq_file_net(seq));
--	unsigned long timeout = 0, nowj;
-+	unsigned long timeout = 0;
- 	rxrpc_seq_t tx_hard_ack, rx_hard_ack;
- 	char lbuff[50], rbuff[50];
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_init_ops.c b/drivers/net/ethernet/qlogic/qed/qed_init_ops.c
+index d9ab5add27a8..34193c2f1699 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_init_ops.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_init_ops.c
+@@ -407,7 +407,7 @@ static void qed_init_cmd_rd(struct qed_hwfn *p_hwfn,
  
-@@ -97,7 +97,6 @@ static int rxrpc_call_seq_show(struct seq_file *seq, void *v)
- 
- 	if (call->state != RXRPC_CALL_SERVER_PREALLOC) {
- 		timeout = READ_ONCE(call->expect_rx_by);
--		nowj = jiffies;
- 		timeout -= jiffies;
+ 	if (i = QED_INIT_MAX_POLL_COUNT) {
+ 		DP_ERR(p_hwfn,
+-		       "Timeout when polling reg: 0x%08x [ Waiting-for: %08x Got: %08x (comparsion %08x)]\n",
++		       "Timeout when polling reg: 0x%08x [ Waiting-for: %08x Got: %08x (comparison %08x)]\n",
+ 		       addr, le32_to_cpu(cmd->expected_val),
+ 		       val, le32_to_cpu(cmd->op_data));
  	}
-
+-- 
+2.17.1
