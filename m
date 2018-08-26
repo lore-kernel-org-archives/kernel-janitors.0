@@ -1,8 +1,10 @@
 From: Julian Smith <juliansmith@126.com>
-Date: Sun, 26 Aug 2018 16:50:34 +0000
+Date: Sun, 26 Aug 2018 17:54:16 +0000
 Subject: Inquiry
-Message-Id: <20180826165133.F3D8C1139E8@mail.nojami.ml>
+Message-Id: <20180826175451.2B344114BD7@mail.nojami.ml>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180826165133.F3D8C1139E8@mail.nojami.ml>
+In-Reply-To: <20180826165133.F3D8C1139E8@mail.nojami.ml>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
