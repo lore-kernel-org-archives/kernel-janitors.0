@@ -1,21 +1,35 @@
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Date: Tue, 21 Aug 2018 16:45:39 +0000
-Subject: Re: [PATCH] rds: tcp: remove duplicated include from tcp.c
-Message-Id: <87ddf139-e013-a28d-6731-a42936f0c636@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 26 Aug 2018 22:13:55 +0000
+Subject: [PATCH] fpga: dfl: fme-mgr: fix spelling mistake "Invaild" -> "Invalid"
+Message-Id: <20180826221355.12661-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1534860342-171157-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1534860342-171157-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yue Haibing <yuehaibing@huawei.com>, "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
+To: Wu Hao <hao.wu@intel.com>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 8/21/2018 7:05 AM, Yue Haibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
-Looks fine.
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by : Santosh Shilimkar <santosh.shilimkar@oracle.ocm>
+Trivial fix to spelling mistake in dev_err message.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/fpga/dfl-fme-mgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+index b5ef405b6d88..9f045d058cfd 100644
+--- a/drivers/fpga/dfl-fme-mgr.c
++++ b/drivers/fpga/dfl-fme-mgr.c
+@@ -201,7 +201,7 @@ static int fme_mgr_write(struct fpga_manager *mgr,
+ 		}
+ 
+ 		if (count < 4) {
+-			dev_err(dev, "Invaild PR bitstream size\n");
++			dev_err(dev, "Invalid PR bitstream size\n");
+ 			return -EINVAL;
+ 		}
+ 
+-- 
+2.17.1
