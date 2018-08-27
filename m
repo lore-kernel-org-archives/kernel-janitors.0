@@ -1,66 +1,30 @@
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 29 Aug 2018 10:58:53 +0000
-Subject: Re: [PATCH] udf: remove unused variables group_start and nr_groups
-Message-Id: <20180829105853.GA5959@quack2.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Aug 2018 09:23:01 +0000
+Subject: [PATCH] scsi: aacraid: fix a signednes bug
+Message-Id: <20180827092301.xtbunhvpl3ht2mjx@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180829101612.31824-1-colin.king@canonical.com>
-In-Reply-To: <20180829101612.31824-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed 29-08-18 11:16:12, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables group_start and nr_groups are being assigned but are never used
-> hence they are redundant and can be removed.
-> 
-> Cleans up clang warning:
-> variable 'group_start' set but not used [-Wunused-but-set-variable]
-> variable 'nr_groups' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The problem is that ->reset_state is a u8 but it can be set to -1 or -2
+in aac_tmf_callback() and the error handling in aac_eh_target_reset()
+relies on it to be signed.
 
-Thanks. Added to my tree.
+Fixes: 0d643ff3c353 ("scsi: aacraid: use aac_tmf_callback for reset fib")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-								Honza
-
-> ---
->  fs/udf/balloc.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/udf/balloc.c b/fs/udf/balloc.c
-> index fcda0fc97b90..501bc5ffb4ce 100644
-> --- a/fs/udf/balloc.c
-> +++ b/fs/udf/balloc.c
-> @@ -175,8 +175,8 @@ static int udf_bitmap_prealloc_blocks(struct super_block *sb,
->  {
->  	struct udf_sb_info *sbi = UDF_SB(sb);
->  	int alloc_count = 0;
-> -	int bit, block, block_group, group_start;
-> -	int nr_groups, bitmap_nr;
-> +	int bit, block, block_group;
-> +	int bitmap_nr;
->  	struct buffer_head *bh;
->  	__u32 part_len;
->  
-> @@ -189,10 +189,8 @@ static int udf_bitmap_prealloc_blocks(struct super_block *sb,
->  		block_count = part_len - first_block;
->  
->  	do {
-> -		nr_groups = udf_compute_nr_groups(sb, partition);
->  		block = first_block + (sizeof(struct spaceBitmapDesc) << 3);
->  		block_group = block >> (sb->s_blocksize_bits + 3);
-> -		group_start = block_group ? 0 : sizeof(struct spaceBitmapDesc);
->  
->  		bitmap_nr = load_block_bitmap(sb, bitmap, block_group);
->  		if (bitmap_nr < 0)
-> -- 
-> 2.17.1
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
+index 29bf1e60f542..39eb415987fc 100644
+--- a/drivers/scsi/aacraid/aacraid.h
++++ b/drivers/scsi/aacraid/aacraid.h
+@@ -1346,7 +1346,7 @@ struct fib {
+ struct aac_hba_map_info {
+ 	__le32	rmw_nexus;		/* nexus for native HBA devices */
+ 	u8		devtype;	/* device type */
+-	u8		reset_state;	/* 0 - no reset, 1..x - */
++	s8		reset_state;	/* 0 - no reset, 1..x - */
+ 					/* after xth TM LUN reset */
+ 	u16		qd_limit;
+ 	u32		scan_counter;
