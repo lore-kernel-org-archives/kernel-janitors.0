@@ -1,42 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Aug 2018 12:04:49 +0000
-Subject: [PATCH]  pinctrl: nomadik: silence uninitialized variable warning
-Message-Id: <20180808120449.ezhesrq7o5qdert2@kili.mountain>
+From: "Rafaa Esawi" <test@nuntiux.org>
+Date: Mon, 27 Aug 2018 17:09:43 +0000
+Subject: YOUR PRODUCT
+Message-Id: <ee59503b0f123595a59da677109d1dd8.squirrel@nuntiux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is harmless, but "val" isn't necessarily initialized if
-abx500_get_register_interruptible() fails.  I've re-arranged the code to
-just return an error code in that situation.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-index aa592ef23a29..e3689cc62a41 100644
---- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-@@ -101,15 +101,16 @@ static int abx500_gpio_get_bit(struct gpio_chip *chip, u8 reg,
- 	reg += offset / 8;
- 	ret = abx500_get_register_interruptible(pct->dev,
- 						AB8500_MISC, reg, &val);
--
--	*bit = !!(val & BIT(pos));
--
--	if (ret < 0)
-+	if (ret < 0) {
- 		dev_err(pct->dev,
- 			"%s read reg =%x, offset=%x failed (%d)\n",
- 			__func__, reg, offset, ret);
-+		return ret;
-+	}
- 
--	return ret;
-+	*bit = !!(val & BIT(pos));
-+
-+	return 0;
- }
- 
- static int abx500_gpio_set_bits(struct gpio_chip *chip, u8 reg,
+
+Greetings,
+
+We are rebuilding Iraq after years of conflicts and we are inviting you to
+take up contracts. We are determined to purchase your products in large
+quantities, for use in all over our 18 governorates(provinces) as the task
+of re-building Iraq covers every single sectormand facet of our society.
+We'll submit your products information to
+the Iraqi Project and Contracting Office. They will examine the propriety
+and necessity of your product and approve for bulk supply contracting
+relationship.
+
+I am currently on the board of the Iraqi Project and Contracting Office,
+With my connections in the corridors of power, we are quite confident of
+securing approval. Also of note is the issue of different financial
+regulations between my country Iraq and your country. As such you will be
+paid 100% through the Iraqi ministry of Finance
+before you commence supplies. When you've received payment, we would be
+expecting a monthly supply; as the sum budgeted for product may be quite
+enormous as to outstrip your capacity and capability to supply.
+
+A consideration also is that your quotation must be CIF Port of Umm Qasr.
+Please send response so that I will reveal more procedural information to
+you upon your re-confirmation.
+
+Thany You.
+
+Rafaa Esawi
