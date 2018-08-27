@@ -1,28 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Aug 2018 09:09:08 +0000
-Subject: Re: [PATCH] [ALSA] seq: add error check in snd_seq_system_client_init()
-Message-Id: <s5h7eka7t8r.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Aug 2018 09:22:34 +0000
+Subject: [PATCH] rtc: sysfs: fix NULL check in rtc_add_groups()
+Message-Id: <20180827092234.mj44ruwkglbor3e5@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180828084634.5tlvwgc6znrqixro@kili.mountain>
-In-Reply-To: <20180828084634.5tlvwgc6znrqixro@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Denis Osterland <Denis.Osterland@diehl.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 28 Aug 2018 10:46:34 +0200,
-Dan Carpenter wrote:
-> 
-> Static checkers complain that snd_seq_create_kernel_client() can return
-> -EBUSY here so we need to have some error handling.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+devm_kcalloc() returns NULL, it never returns error pointers.  In the
+current code we would return PTR_ERR(NULL) which is success, instead of
+returning the -ENOMEM error code.
 
-Applied, thanks.
+Fixes: a0a1a1ba3032 ("rtc: sysfs: facilitate attribute add to rtc device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also we need to fix the case where an error is returned from
-snd_seq_kernel_client_ctl().  Will write up the patch soon later.
-
-
-Takashi
+diff --git a/drivers/rtc/rtc-sysfs.c b/drivers/rtc/rtc-sysfs.c
+index f1ff30ade534..9746c32eee2e 100644
+--- a/drivers/rtc/rtc-sysfs.c
++++ b/drivers/rtc/rtc-sysfs.c
+@@ -338,8 +338,8 @@ int rtc_add_groups(struct rtc_device *rtc, const struct attribute_group **grps)
+ 
+ 	new_cnt = old_cnt + add_cnt + 1;
+ 	groups = devm_kcalloc(&rtc->dev, new_cnt, sizeof(*groups), GFP_KERNEL);
+-	if (IS_ERR_OR_NULL(groups))
+-		return PTR_ERR(groups);
++	if (!groups)
++		return -ENOMEM;
+ 	memcpy(groups, rtc->dev.groups, old_cnt * sizeof(*groups));
+ 	memcpy(groups + old_cnt, grps, add_cnt * sizeof(*groups));
+ 	groups[old_cnt + add_cnt] = NULL;
