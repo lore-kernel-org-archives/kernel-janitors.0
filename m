@@ -1,43 +1,38 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Aug 2018 07:54:21 +0000
-Subject: Re: [PATCH] ieee802154: mcr20a: read out of bounds in mcr20a_set_channel()
-Message-Id: <20180830075421.czsb5pa5b2vygp2m@mwanda>
+Date: Mon, 27 Aug 2018 09:21:45 +0000
+Subject: [PATCH] ALSA: pcm: signedness bug in snd_pcm_plug_alloc()
+Message-Id: <20180827092144.5oj6obfb3zabp5us@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180829144923.6p2omsbe2s343wea@kili.mountain>
- <CAJuUDwtjRi0HnR95uaFp4zviSC7Yrs68o8jsK1nY6jWu6909bg@mail.gmail.com>
-In-Reply-To: <CAJuUDwtjRi0HnR95uaFp4zviSC7Yrs68o8jsK1nY6jWu6909bg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Xue Liu <liuxuenetmail@gmail.com>
-Cc: "alex. aring" <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>, "David S. Miller" <davem@davemloft.net>, linux-wpan - ML <linux-wpan@vger.kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-On Wed, Aug 29, 2018 at 07:50:51PM +0200, Xue Liu wrote:
-> Hello Dan,
-> 
-> 
-> On Wed, 29 Aug 2018 at 16:49, Dan Carpenter <dan.carpenter@oracle.com>
-> wrote:
-> 
-> > The "channel" variable can be any u8 value.  We need to make sure we
-> > don't read outside of the PLL_INT[] or PLL_FRAC[] arrays.
-> >
-> I think the “channel” variable can not be any u8 value. This values is
-> already checked before set_channel function is called.
-> https://github.com/torvalds/linux/blob/master/net/ieee802154/nl802154.c#L978
+The "frames" variable is unsigned so the error handling doesn't work
+properly.
 
-Oh...  Hm...  I should have reviewed more carefully.  This patch isn't
-correct.  But there may still be a bug.  What Smatch is worried about is
-the other call tree:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-ieee802154_start_req() calls (struct ieee802154_mlme_ops)->start_req
-  -> mac802154_mlme_start_req()
-     -> mac802154_dev_set_page_channel()
-        -> drv_set_channel() calls local->ops->set_channel(&local->hw, page, channel);
-           -> mcr20a_set_channel()
-
-So maybe we could move the check from nl802154_set_channel() to
-drv_set_channel() so channel is checked on both call trees.
-
-regards,
-dan carpenter
+diff --git a/sound/core/oss/pcm_plugin.c b/sound/core/oss/pcm_plugin.c
+index 0391cb1a4f19..141c5f3a9575 100644
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -111,7 +111,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_substream *plug, snd_pcm_uframes_t frames)
+ 		while (plugin->next) {
+ 			if (plugin->dst_frames)
+ 				frames = plugin->dst_frames(plugin, frames);
+-			if (snd_BUG_ON(frames <= 0))
++			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
+ 				return -ENXIO;
+ 			plugin = plugin->next;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
+@@ -123,7 +123,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_substream *plug, snd_pcm_uframes_t frames)
+ 		while (plugin->prev) {
+ 			if (plugin->src_frames)
+ 				frames = plugin->src_frames(plugin, frames);
+-			if (snd_BUG_ON(frames <= 0))
++			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
+ 				return -ENXIO;
+ 			plugin = plugin->prev;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
