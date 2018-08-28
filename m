@@ -1,100 +1,46 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Date: Mon, 13 Aug 2018 15:22:44 +0000
-Subject: Re: [PATCH] irqchip/stm32: fix init error handling
-Message-Id: <99d66ae8-f497-0108-8168-6e46fdf2fe1d@arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Aug 2018 16:10:46 +0000
+Subject: [PATCH] x86/xen: remove redundant variable save_pud
+Message-Id: <20180828161046.17165-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180808120319.akmstg3ads325xcy@kili.mountain>
-In-Reply-To: <20180808120319.akmstg3ads325xcy@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, xen-devel@lists.xenproject.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/08/18 13:03, Dan Carpenter wrote:
-> If there are any errors in stm32_exti_host_init() then it leads to a
-> NULL dereference in the callers.  The function should clean up after
-> itself.
-> 
-> Fixes: f9fc1745501e ("irqchip/stm32: Add host and driver data structures")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-> index 3df527fcf4e1..0a2088e12d96 100644
-> --- a/drivers/irqchip/irq-stm32-exti.c
-> +++ b/drivers/irqchip/irq-stm32-exti.c
-> @@ -603,17 +603,24 @@ stm32_exti_host_data *stm32_exti_host_init(const struct stm32_exti_drv_data *dd,
->  					sizeof(struct stm32_exti_chip_data),
->  					GFP_KERNEL);
->  	if (!host_data->chips_data)
-> -		return NULL;
-> +		goto free_host_data;
->  
->  	host_data->base = of_iomap(node, 0);
->  	if (!host_data->base) {
->  		pr_err("%pOF: Unable to map registers\n", node);
-> -		return NULL;
-> +		goto free_chips_data;
->  	}
->  
->  	stm32_host_data = host_data;
->  
->  	return host_data;
-> +
-> +free_chips_data:
-> +	kfree(host_data->chips_data);
-> +free_host_data:
-> +	kfree(host_data);
-> +
-> +	return NULL;
->  }
->  
->  static struct
-> @@ -665,10 +672,8 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
->  	struct irq_domain *domain;
->  
->  	host_data = stm32_exti_host_init(drv_data, node);
-> -	if (!host_data) {
-> -		ret = -ENOMEM;
-> -		goto out_free_mem;
-> -	}
-> +	if (!host_data)
-> +		return -ENOMEM;
->  
->  	domain = irq_domain_add_linear(node, drv_data->bank_nr * IRQS_PER_BANK,
->  				       &irq_exti_domain_ops, NULL);
-> @@ -725,7 +730,6 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
->  	irq_domain_remove(domain);
->  out_unmap:
->  	iounmap(host_data->base);
-> -out_free_mem:
->  	kfree(host_data->chips_data);
->  	kfree(host_data);
->  	return ret;
-> @@ -752,10 +756,8 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
->  	}
->  
->  	host_data = stm32_exti_host_init(drv_data, node);
-> -	if (!host_data) {
-> -		ret = -ENOMEM;
-> -		goto out_free_mem;
-> -	}
-> +	if (!host_data)
-> +		return -ENOMEM;
->  
->  	for (i = 0; i < drv_data->bank_nr; i++)
->  		stm32_exti_chip_init(host_data, i, node);
-> @@ -777,7 +779,6 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
->  
->  out_unmap:
->  	iounmap(host_data->base);
-> -out_free_mem:
->  	kfree(host_data->chips_data);
->  	kfree(host_data);
->  	return ret;
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Queued, thanks,
+Variable save_pud is being assigned but is never used hence it is
+redundant and can be removed.
 
-	M.
+Cleans up clang warning:
+variable 'save_pud' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/xen/mmu_pv.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 06a814d44b9b..2fe5c9b1816b 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -2060,7 +2060,6 @@ void __init xen_relocate_p2m(void)
+ 	pud_t *pud;
+ 	pgd_t *pgd;
+ 	unsigned long *new_p2m;
+-	int save_pud;
+ 
+ 	size = PAGE_ALIGN(xen_start_info->nr_pages * sizeof(unsigned long));
+ 	n_pte = roundup(size, PAGE_SIZE) >> PAGE_SHIFT;
+@@ -2090,7 +2089,6 @@ void __init xen_relocate_p2m(void)
+ 
+ 	pgd = __va(read_cr3_pa());
+ 	new_p2m = (unsigned long *)(2 * PGDIR_SIZE);
+-	save_pud = n_pud;
+ 	for (idx_pud = 0; idx_pud < n_pud; idx_pud++) {
+ 		pud = early_memremap(pud_phys, PAGE_SIZE);
+ 		clear_page(pud);
 -- 
-Jazz is not dead. It just smells funny...
+2.17.1
