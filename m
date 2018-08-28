@@ -1,30 +1,47 @@
-From: Yue Haibing <yuehaibing@huawei.com>
-Date: Tue, 21 Aug 2018 13:58:08 +0000
-Subject: [PATCH] sch_cake: Remove unused including <linux/version.h>
-Message-Id: <1534859888-170263-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Aug 2018 13:01:46 +0000
+Subject: [PATCH] afs: remove unused variable ret
+Message-Id: <20180828130146.8995-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>
-Cc: Yue Haibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove including <linux/version.h> that don't need it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Variable ret is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/sched/sch_cake.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/afs/server.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/sched/sch_cake.c b/net/sched/sch_cake.c
-index 35fc725..4d26b08 100644
---- a/net/sched/sch_cake.c
-+++ b/net/sched/sch_cake.c
-@@ -64,7 +64,6 @@
- #include <linux/vmalloc.h>
- #include <linux/reciprocal_div.h>
- #include <net/netlink.h>
--#include <linux/version.h>
- #include <linux/if_vlan.h>
- #include <net/pkt_sched.h>
- #include <net/pkt_cls.h>
+diff --git a/fs/afs/server.c b/fs/afs/server.c
+index 1d329e6981d5..cc8f7e9f76c5 100644
+--- a/fs/afs/server.c
++++ b/fs/afs/server.c
+@@ -153,7 +153,7 @@ static struct afs_server *afs_install_server(struct afs_net *net,
+ 	const struct afs_addr_list *alist;
+ 	struct afs_server *server;
+ 	struct rb_node **pp, *p;
+-	int ret = -EEXIST, diff;
++	int diff;
+ 
+ 	_enter("%p", candidate);
+ 
+@@ -198,7 +198,6 @@ static struct afs_server *afs_install_server(struct afs_net *net,
+ 		hlist_add_head_rcu(&server->addr6_link, &net->fs_addresses6);
+ 
+ 	write_sequnlock(&net->fs_addr_lock);
+-	ret = 0;
+ 
+ exists:
+ 	afs_get_server(server);
+-- 
+2.17.1
