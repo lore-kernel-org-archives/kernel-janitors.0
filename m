@@ -1,64 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Aug 2018 12:41:51 +0000
-Subject: [bug report] tools: usb: aio example applications
-Message-Id: <20180807124151.pnqkga7e5blerl3j@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Aug 2018 13:21:01 +0000
+Subject: [PATCH] btrfs: remove unused pointer 'tree'
+Message-Id: <20180828132101.9559-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Robert Baldyga,
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch b34e08d5c706: "tools: usb: aio example applications" from
-Feb 11, 2014, leads to the following static checker warning:
+Pointer 'tree' is being assigned but is never used hence it is
+redundant and can be removed.
 
-	./tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c:320 main()
-	error: uninitialized symbol 'ready'.
+Cleans up clang warning:
+warning: variable 'tree' set but not used [-Wunused-but-set-variable]
 
-./tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
-   286          memset(&ctx, 0, sizeof(ctx));
-   287          /* setup aio context to handle up to AIO_MAX requests */
-   288          if (io_setup(AIO_MAX, &ctx) < 0) {
-   289                  perror("unable to setup aio");
-   290                  return 1;
-   291          }
-   292  
-   293          evfd = eventfd(0, 0);
-   294          if (evfd < 0) {
-   295                  perror("unable to open eventfd");
-   296                  return 1;
-   297          }
-   298  
-   299          for (i = 0; i < sizeof(iobuf)/sizeof(*iobuf); ++i)
-   300                  init_bufs(&iobuf[i], BUFS_MAX, BUF_LEN);
-   301  
-   302          while (1) {
-   303                  FD_ZERO(&rfds);
-   304                  FD_SET(ep0, &rfds);
-   305                  FD_SET(evfd, &rfds);
-   306  
-   307                  ret = select(((ep0 > evfd) ? ep0 : evfd)+1,
-   308                               &rfds, NULL, NULL, NULL);
-   309                  if (ret < 0) {
-   310                          if (errno = EINTR)
-   311                                  continue;
-   312                          perror("select");
-   313                          break;
-   314                  }
-   315  
-   316                  if (FD_ISSET(ep0, &rfds))
-   317                          handle_ep0(ep0, &ready);
-                                                ^^^^^^
-Are we garuanteed that FD_ISSET() on the first iteration?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/compression.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-   318  
-   319                  /* we are waiting for function ENABLE */
-   320                  if (!ready)
-                             ^^^^^
-Otherwise this could be uninitialized
-
-   321                          continue;
-
-regards,
-dan carpenter
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index 9bfa66592aa7..8703ce68fe9d 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -528,7 +528,6 @@ blk_status_t btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 				 int mirror_num, unsigned long bio_flags)
+ {
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+-	struct extent_io_tree *tree;
+ 	struct extent_map_tree *em_tree;
+ 	struct compressed_bio *cb;
+ 	unsigned long compressed_len;
+@@ -545,7 +544,6 @@ blk_status_t btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 	int faili = 0;
+ 	u32 *sums;
+ 
+-	tree = &BTRFS_I(inode)->io_tree;
+ 	em_tree = &BTRFS_I(inode)->extent_tree;
+ 
+ 	/* we need the actual starting offset of this extent in the file */
+-- 
+2.17.1
