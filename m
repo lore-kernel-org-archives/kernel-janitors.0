@@ -1,29 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 23 Aug 2018 13:59:25 +0000
-Subject: [PATCH] PM / clk: signedness bug in of_pm_clk_add_clks()
-Message-Id: <20180823135925.6tt64b7tvbmeidiv@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Aug 2018 14:19:07 +0000
+Subject: [PATCH] ocfs2: remove unused pointer 'eb'
+Message-Id: <20180828141907.10826-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"count" needs to be signed for the error handling to work.  I made "i"
-signed as well so they match.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 02113ba93ea4 ("PM / clk: Add support for obtaining clocks from device-tree")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Pointer 'eb' is being assigned but is never used hence it is
+redundant and can be removed.
 
-diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-index 8e2e4757adcb..5a42ae4078c2 100644
---- a/drivers/base/power/clock_ops.c
-+++ b/drivers/base/power/clock_ops.c
-@@ -185,7 +185,7 @@ EXPORT_SYMBOL_GPL(of_pm_clk_add_clk);
- int of_pm_clk_add_clks(struct device *dev)
- {
- 	struct clk **clks;
--	unsigned int i, count;
-+	int i, count;
- 	int ret;
+Cleans up clang warning:
+warning: variable 'eb' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/alloc.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index a342f008e42f..d1cbb27808e2 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -5106,8 +5106,6 @@ int ocfs2_split_extent(handle_t *handle,
+ 	 * rightmost extent list.
+ 	 */
+ 	if (path->p_tree_depth) {
+-		struct ocfs2_extent_block *eb;
+-
+ 		ret = ocfs2_read_extent_block(et->et_ci,
+ 					      ocfs2_et_get_last_eb_blk(et),
+ 					      &last_eb_bh);
+@@ -5115,8 +5113,6 @@ int ocfs2_split_extent(handle_t *handle,
+ 			mlog_errno(ret);
+ 			goto out;
+ 		}
+-
+-		eb = (struct ocfs2_extent_block *) last_eb_bh->b_data;
+ 	}
  
- 	if (!dev || !dev->of_node)
+ 	if (rec->e_cpos = split_rec->e_cpos &&
+-- 
+2.17.1
