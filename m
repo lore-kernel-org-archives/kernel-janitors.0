@@ -1,51 +1,42 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Aug 2018 10:47:40 +0000
-Subject: [PATCH 7/9] ASoC: stm32: remove redundant pointers 'priv' and 'rtd'
-Message-Id: <20180801104742.4328-8-colin.king@canonical.com>
+Date: Wed, 29 Aug 2018 10:30:23 +0000
+Subject: [PATCH] cachefiles: remove redundant pointer 'cache'
+Message-Id: <20180829103023.32156-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180801104742.4328-1-colin.king@canonical.com>
-In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+To: David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'priv' is assigned and not used, removing this allows
-the removal of pointer 'rtd'.
+Pointer 'cache' is being assigned but is never used hence it is
+redundant and can be removed.
 
 Cleans up clang warning:
-warning: variable 'priv' set but not used [-Wunused-but-set-variable]
+variable 'cache' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/stm/stm32_adfsdm.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ fs/cachefiles/rdwr.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index 0e9373064032..706ff005234f 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -269,16 +269,10 @@ static int stm32_adfsdm_pcm_new(struct snd_soc_pcm_runtime *rtd)
- static void stm32_adfsdm_pcm_free(struct snd_pcm *pcm)
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 40f7595aad10..037cfcad8c62 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -962,11 +962,8 @@ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
+ 	__releases(&object->fscache.cookie->lock)
  {
- 	struct snd_pcm_substream *substream;
--	struct snd_soc_pcm_runtime *rtd;
--	struct stm32_adfsdm_priv *priv;
+ 	struct cachefiles_object *object;
+-	struct cachefiles_cache *cache;
  
- 	substream = pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream;
--	if (substream) {
--		rtd = substream->private_data;
--		priv = snd_soc_dai_get_drvdata(rtd->cpu_dai);
--
-+	if (substream)
- 		snd_pcm_lib_preallocate_free_for_all(pcm);
--	}
- }
+ 	object = container_of(_object, struct cachefiles_object, fscache);
+-	cache = container_of(object->fscache.cache,
+-			     struct cachefiles_cache, cache);
  
- static struct snd_soc_component_driver stm32_adfsdm_soc_platform = {
+ 	_enter("%p,{%lu}", object, page->index);
+ 
 -- 
 2.17.1
-
