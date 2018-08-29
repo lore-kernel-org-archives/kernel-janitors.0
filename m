@@ -1,37 +1,47 @@
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Date: Tue, 07 Aug 2018 14:26:46 +0000
-Subject: Re: [PATCH] drm/i915/gvt: Off by one in intel_vgpu_write_fence()
-Message-Id: <20180807142646.GA2210@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Aug 2018 14:51:06 +0000
+Subject: [PATCH][V2] power: supply: cros_usbpd: remove unused pointer 'dev'
+Message-Id: <20180829145106.9847-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180807023944.GZ22630@zhen-hp.sh.intel.com>
- <20180807064602.sagf25ettlvfpidm@kili.mountain>
-In-Reply-To: <20180807064602.sagf25ettlvfpidm@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org
+To: Sameer Nanda <snanda@chromium.org>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 09:46:02AM +0300, Dan Carpenter wrote:
-> The > should be >= here so that we don't read one element beyond the
-> end of the array.
-> 
-> Fixes: 28a60dee2ce6 ("drm/i915/gvt: vGPU HW resource management")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Pointer 'dev' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> 
-> diff --git a/drivers/gpu/drm/i915/gvt/aperture_gm.c b/drivers/gpu/drm/i915/gvt/aperture_gm.c
-> index 380eeb2a0e83..fe754022e356 100644
-> --- a/drivers/gpu/drm/i915/gvt/aperture_gm.c
-> +++ b/drivers/gpu/drm/i915/gvt/aperture_gm.c
-> @@ -131,7 +131,7 @@ void intel_vgpu_write_fence(struct intel_vgpu *vgpu,
->  
->  	assert_rpm_wakelock_held(dev_priv);
->  
-> -	if (WARN_ON(fence > vgpu_fence_sz(vgpu)))
-> +	if (WARN_ON(fence >= vgpu_fence_sz(vgpu)))
->  		return;
->  
->  	reg = vgpu->fence.regs[fence];
+Cleans up clang warning:
+variable 'dev' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: change subject to include 'cros_usbpd' and also send to Sameer.
+
+---
+ drivers/power/supply/cros_usbpd-charger.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
+index 688a16bacfbb..f2b8de502b82 100644
+--- a/drivers/power/supply/cros_usbpd-charger.c
++++ b/drivers/power/supply/cros_usbpd-charger.c
+@@ -378,12 +378,10 @@ static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
+ {
+ 	struct cros_ec_device *ec_device;
+ 	struct charger_data *charger;
+-	struct device *dev;
+ 	u32 host_event;
+ 
+ 	charger = container_of(nb, struct charger_data, notifier);
+ 	ec_device = charger->ec_device;
+-	dev = charger->dev;
+ 
+ 	host_event = cros_ec_get_host_event(ec_device);
+ 	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
+-- 
+2.17.1
