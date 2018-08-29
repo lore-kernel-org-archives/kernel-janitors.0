@@ -1,40 +1,41 @@
-From: "Rafaa Esawi" <test@nuntiux.org>
-Date: Mon, 27 Aug 2018 17:09:43 +0000
-Subject: YOUR PRODUCT
-Message-Id: <ee59503b0f123595a59da677109d1dd8.squirrel@nuntiux.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Aug 2018 09:35:30 +0000
+Subject: [PATCH] staging: fsl-dpaa2/ethsw: remove redundant pointer 'port_priv'
+Message-Id: <20180829093530.31200-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ioana Radulescu <ruxandra.radulescu@nxp.com>, Ioana Ciornei <ioana.ciornei@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Pointer 'port_priv' is being assigned but is never used hence it is
+redundant and can be removed.
 
+Cleans up clang warning:
+variable 'port_priv' set but not used [-Wunused-but-set-variable]
 
-Greetings,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-We are rebuilding Iraq after years of conflicts and we are inviting you to
-take up contracts. We are determined to purchase your products in large
-quantities, for use in all over our 18 governorates(provinces) as the task
-of re-building Iraq covers every single sectormand facet of our society.
-We'll submit your products information to
-the Iraqi Project and Contracting Office. They will examine the propriety
-and necessity of your product and approve for bulk supply contracting
-relationship.
-
-I am currently on the board of the Iraqi Project and Contracting Office,
-With my connections in the corridors of power, we are quite confident of
-securing approval. Also of note is the issue of different financial
-regulations between my country Iraq and your country. As such you will be
-paid 100% through the Iraqi ministry of Finance
-before you commence supplies. When you've received payment, we would be
-expecting a monthly supply; as the sum budgeted for product may be quite
-enormous as to outstrip your capacity and capability to supply.
-
-A consideration also is that your quotation must be CIF Port of Umm Qasr.
-Please send response so that I will reveal more procedural information to
-you upon your re-confirmation.
-
-Thany You.
-
-Rafaa Esawi
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index ecdd3d84f956..0066ca3072c1 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -1014,10 +1014,8 @@ static void ethsw_switchdev_event_work(struct work_struct *work)
+ 		container_of(work, struct ethsw_switchdev_event_work, work);
+ 	struct net_device *dev = switchdev_work->dev;
+ 	struct switchdev_notifier_fdb_info *fdb_info;
+-	struct ethsw_port_priv *port_priv;
+ 
+ 	rtnl_lock();
+-	port_priv = netdev_priv(dev);
+ 	fdb_info = &switchdev_work->fdb_info;
+ 
+ 	switch (switchdev_work->event) {
+-- 
+2.17.1
