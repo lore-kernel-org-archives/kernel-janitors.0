@@ -1,24 +1,43 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 02 Aug 2018 20:23:50 +0000
-Subject: Re: [PATCH] [SCSI] sym53c8xx: remove some redundant variables
-Message-Id: <yq1zhy4y0tl.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Aug 2018 09:27:46 +0000
+Subject: [PATCH] fsl: remove redundant pointer 'priv'
+Message-Id: <20180829092746.30674-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180801145841.5877-1-colin.king@canonical.com>
-In-Reply-To: <20180801145841.5877-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 1 Aug 2018 15:58:41 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Matthew Wilcox <willy@infradead.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Pointer 'priv' is being assigned but is never used hence it is
+redundant and can be removed.
 
-> Variables scriptb0 and dp_sgmin are being assigned but are never
-> used hence they are redundant and can be removed.
+Cleans up clang warning:
+variable 'priv' set but not used [-Wunused-but-set-variable]
 
-Applied to 4.19/scsi-queue, thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/soc/fsl/dpio/dpio-driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/soc/fsl/dpio/dpio-driver.c b/drivers/soc/fsl/dpio/dpio-driver.c
+index b60b77bfaffa..e58fcc9096e8 100644
+--- a/drivers/soc/fsl/dpio/dpio-driver.c
++++ b/drivers/soc/fsl/dpio/dpio-driver.c
+@@ -50,13 +50,10 @@ static void unregister_dpio_irq_handlers(struct fsl_mc_device *dpio_dev)
+ 
+ static int register_dpio_irq_handlers(struct fsl_mc_device *dpio_dev, int cpu)
+ {
+-	struct dpio_priv *priv;
+ 	int error;
+ 	struct fsl_mc_device_irq *irq;
+ 	cpumask_t mask;
+ 
+-	priv = dev_get_drvdata(&dpio_dev->dev);
+-
+ 	irq = dpio_dev->irqs[0];
+ 	error = devm_request_irq(&dpio_dev->dev,
+ 				 irq->msi_desc->irq,
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
