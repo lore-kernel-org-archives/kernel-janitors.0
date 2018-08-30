@@ -1,45 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 08 Aug 2018 17:18:33 +0000
-Subject: [PATCH][next] drm/msm: a6xx: fix spelling mistake: "initalization" -> "initialization"
-Message-Id: <20180808171833.8789-1-colin.king@canonical.com>
+Date: Thu, 30 Aug 2018 12:39:58 +0000
+Subject: [PATCH] Input: tca8418: remove redundant variable max_keys
+Message-Id: <20180830123958.25368-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Damien Riegel <damien.riegel@savoirfairelinux.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in dev_err message and comment
+Variable max_keys is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+variable 'max_keys' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/keyboard/tca8418_keypad.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index fbb501986720..bbb8126ec5c5 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -125,7 +125,7 @@ static int a6xx_gmu_start(struct a6xx_gmu *gmu)
- 		val = 0xbabeface, 100, 10000);
+diff --git a/drivers/input/keyboard/tca8418_keypad.c b/drivers/input/keyboard/tca8418_keypad.c
+index 6da607d3b811..3bbd7e652533 100644
+--- a/drivers/input/keyboard/tca8418_keypad.c
++++ b/drivers/input/keyboard/tca8418_keypad.c
+@@ -266,7 +266,7 @@ static int tca8418_keypad_probe(struct i2c_client *client,
+ 	struct tca8418_keypad *keypad_data;
+ 	struct input_dev *input;
+ 	u32 rows = 0, cols = 0;
+-	int error, row_shift, max_keys;
++	int error, row_shift;
+ 	u8 reg;
  
- 	if (ret)
--		dev_err(gmu->dev, "GMU firmware initalization timed out\n");
-+		dev_err(gmu->dev, "GMU firmware initialization timed out\n");
+ 	/* Check i2c driver capabilities */
+@@ -291,7 +291,6 @@ static int tca8418_keypad_probe(struct i2c_client *client,
+ 	}
  
- 	return ret;
- }
-@@ -1034,7 +1034,7 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+ 	row_shift = get_count_order(cols);
+-	max_keys = rows << row_shift;
  
- 	/*
- 	 * The GMU handles its own frequency switching so build a list of
--	 * available frequencies to send during initalization
-+	 * available frequencies to send during initialization
- 	 */
- 	ret = dev_pm_opp_of_add_table(gmu->dev);
- 	if (ret) {
+ 	/* Allocate memory for keypad_data and input device */
+ 	keypad_data = devm_kzalloc(dev, sizeof(*keypad_data), GFP_KERNEL);
 -- 
 2.17.1
-
