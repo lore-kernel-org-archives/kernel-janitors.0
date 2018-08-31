@@ -1,40 +1,32 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 31 Aug 2018 02:15:39 +0000
-Subject: [PATCH -next] rtc: mrst: remove set but not used variable 'valid'
-Message-Id: <1535681739-156599-1-git-send-email-yuehaibing@huawei.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Fri, 31 Aug 2018 09:17:57 +0000
+Subject: Re: [PATCH -next] rtc: mrst: remove set but not used variable 'valid'
+Message-Id: <20180831091757.GN16561@piout.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1535681739-156599-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1535681739-156599-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On 31/08/2018 02:15:39+0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/rtc/rtc-mrst.c: In function 'mrst_procfs':
+> drivers/rtc/rtc-mrst.c:264:29: warning:
+>  variable 'valid' set but not used [-Wunused-but-set-variable]
+>   unsigned char rtc_control, valid;
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/rtc/rtc-mrst.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+Applied, thanks.
 
-drivers/rtc/rtc-mrst.c: In function 'mrst_procfs':
-drivers/rtc/rtc-mrst.c:264:29: warning:
- variable 'valid' set but not used [-Wunused-but-set-variable]
-  unsigned char rtc_control, valid;
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/rtc/rtc-mrst.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-mrst.c b/drivers/rtc/rtc-mrst.c
-index bf2d7af..daf354a 100644
---- a/drivers/rtc/rtc-mrst.c
-+++ b/drivers/rtc/rtc-mrst.c
-@@ -261,11 +261,10 @@ static int mrst_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
- 
- static int mrst_procfs(struct device *dev, struct seq_file *seq)
- {
--	unsigned char	rtc_control, valid;
-+	unsigned char	rtc_control;
- 
- 	spin_lock_irq(&rtc_lock);
- 	rtc_control = vrtc_cmos_read(RTC_CONTROL);
--	valid = vrtc_cmos_read(RTC_VALID);
- 	spin_unlock_irq(&rtc_lock);
- 
- 	seq_printf(seq,
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
