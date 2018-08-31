@@ -1,31 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 01 Aug 2018 12:01:48 +0000
-Subject: Re: [PATCH 8/9] ALSA: usb-audio: remove redundant pointer 'urb'
-Message-Id: <s5ha7q6nvmb.wl-tiwai@suse.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 31 Aug 2018 09:27:27 +0000
+Subject: [PATCH] rsi: remove set but not used variable 'header_size'
+Message-Id: <1535707647-191888-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180801104742.4328-1-colin.king@canonical.com>
-        <20180801104742.4328-9-colin.king@canonical.com>
-In-Reply-To: <20180801104742.4328-9-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, Alexandre Torgue <alexandre.torgue@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Olivier Moysan <olivier.moysan@st.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Pavani Muthyala <pavani.muthyala@redpinesignals.com>, Kees Cook <keescook@chromium.org>, Colin Ian King <colin.king@canonical.com>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, Sushant Kumar Mishra <sushant.mishra@redpinesignals.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 01 Aug 2018 12:47:41 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'urb' is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'urb' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks.
+drivers/net/wireless/rsi/rsi_91x_hal.c: In function 'rsi_send_data_pkt':
+drivers/net/wireless/rsi/rsi_91x_hal.c:288:5: warning:
+ variable 'header_size' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_hal.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Takashi
+diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
+index 01edf96..c4fb319 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_hal.c
++++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
+@@ -285,7 +285,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
+ 	struct skb_info *tx_params;
+ 	struct ieee80211_bss_conf *bss;
+ 	int status = -EINVAL;
+-	u8 header_size;
+ 
+ 	if (!skb)
+ 		return 0;
+@@ -298,7 +297,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
+ 	vif = info->control.vif;
+ 	bss = &vif->bss_conf;
+ 	tx_params = (struct skb_info *)info->driver_data;
+-	header_size = tx_params->internal_hdr_size;
+ 
+ 	if (((vif->type = NL80211_IFTYPE_STATION) ||
+ 	     (vif->type = NL80211_IFTYPE_P2P_CLIENT)) &&
