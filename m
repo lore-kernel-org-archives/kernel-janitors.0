@@ -1,39 +1,45 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 30 Aug 2018 13:50:53 +0000
-Subject: [PATCH] spi: davinci: remove set but not used variable 'pdata'
-Message-Id: <1535637672-14306-1-git-send-email-yuehaibing@huawei.com>
+Date: Fri, 31 Aug 2018 01:58:37 +0000
+Subject: [PATCH -next] pinctrl: sirf: atlas7: remove set but not used variables 'conf, bank'
+Message-Id: <1535681346-152447-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/spi/spi-davinci.c: In function 'davinci_spi_chipselect':
-drivers/spi/spi-davinci.c:211:36: warning:
- variable 'pdata' set but not used [-Wunused-but-set-variable]
+drivers/pinctrl/sirf/pinctrl-atlas7.c: In function 'atlas7_pinmux_resume_noirq':
+drivers/pinctrl/sirf/pinctrl-atlas7.c:5545:6: warning:
+ variable 'bank' set but not used [-Wunused-but-set-variable]
+  u32 bank;
+
+drivers/pinctrl/sirf/pinctrl-atlas7.c:5543:28: warning:
+ variable 'conf' set but not used [-Wunused-but-set-variable]
+  struct atlas7_pad_config *conf;
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/spi/spi-davinci.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-index a02099c..3dabc20 100644
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -208,13 +208,11 @@ static inline void clear_io_bits(void __iomem *addr, u32 bits)
- static void davinci_spi_chipselect(struct spi_device *spi, int value)
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 1d16df1..ee1063f 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -5540,14 +5540,10 @@ static int atlas7_pinmux_resume_noirq(struct device *dev)
  {
- 	struct davinci_spi *dspi;
--	struct davinci_spi_platform_data *pdata;
- 	struct davinci_spi_config *spicfg = spi->controller_data;
- 	u8 chip_sel = spi->chip_select;
- 	u16 spidat1 = CS_DEFAULT;
+ 	struct atlas7_pmx *pmx = dev_get_drvdata(dev);
+ 	struct atlas7_pad_status *status;
+-	struct atlas7_pad_config *conf;
+ 	int idx;
+-	u32 bank;
  
- 	dspi = spi_master_get_devdata(spi->master);
--	pdata = &dspi->pdata;
+ 	for (idx = 0; idx < pmx->pctl_desc.npins; idx++) {
+ 		/* Get this Pad's descriptor from PINCTRL */
+-		conf = &pmx->pctl_data->confs[idx];
+-		bank = atlas7_pin_to_bank(idx);
+ 		status = &pmx->sleep_data[idx];
  
- 	/* program delay transfers if tx_delay is non zero */
- 	if (spicfg && spicfg->wdelay)
+ 		/* Restore Function selector */
