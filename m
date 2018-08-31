@@ -1,20 +1,40 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 08 Aug 2018 17:05:53 +0000
-Subject: Re: [PATCH net-next] netfilter: nfnetlink_osf: fix using plain integer as NULL warning
-Message-Id: <20180808170553.e6icrd5uq6bdjwwx@salvia>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 31 Aug 2018 02:15:39 +0000
+Subject: [PATCH -next] rtc: mrst: remove set but not used variable 'valid'
+Message-Id: <1535681739-156599-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1533698624-107304-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1533698624-107304-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 03:23:44AM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
-> 
-> net/netfilter/nfnetlink_osf.c:274:24: warning:
->  Using plain integer as NULL pointer
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks.
+drivers/rtc/rtc-mrst.c: In function 'mrst_procfs':
+drivers/rtc/rtc-mrst.c:264:29: warning:
+ variable 'valid' set but not used [-Wunused-but-set-variable]
+  unsigned char rtc_control, valid;
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/rtc/rtc-mrst.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-mrst.c b/drivers/rtc/rtc-mrst.c
+index bf2d7af..daf354a 100644
+--- a/drivers/rtc/rtc-mrst.c
++++ b/drivers/rtc/rtc-mrst.c
+@@ -261,11 +261,10 @@ static int mrst_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
+ 
+ static int mrst_procfs(struct device *dev, struct seq_file *seq)
+ {
+-	unsigned char	rtc_control, valid;
++	unsigned char	rtc_control;
+ 
+ 	spin_lock_irq(&rtc_lock);
+ 	rtc_control = vrtc_cmos_read(RTC_CONTROL);
+-	valid = vrtc_cmos_read(RTC_VALID);
+ 	spin_unlock_irq(&rtc_lock);
+ 
+ 	seq_printf(seq,
