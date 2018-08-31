@@ -1,43 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 02 Aug 2018 08:24:47 +0000
-Subject: [PATCH] uio: potential double frees if __uio_register_device() fails
-Message-Id: <20180802082447.rkdptfjxn5vyifbt@kili.mountain>
+Date: Fri, 31 Aug 2018 13:20:18 +0000
+Subject: [PATCH v2] media: sr030pc30: remove NULL in sr030pc30_base_config()
+Message-Id: <20180831132018.bbrvi2vt4vatyojj@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20180831124221.3kuamslh4xw3vjt7@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Hans J. Koch" <hjk@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The uio_unregister_device() function assumes that if "info->uio_dev" is
-non-NULL that means "info" is fully allocated.  Setting info->uio_de
-has to be the last thing in the function.
+This code doesn't check for NULL consistently and it generates a Smatch
+warning:
 
-In the current code, if request_threaded_irq() fails then we return with
-info->uio_dev set to non-NULL but info is not fully allocated and it can
-lead to double frees.
+    drivers/media/i2c/sr030pc30.c:575 sr030pc30_base_config()
+    error: we previously assumed 'info->pdata' could be null (see line 572)
 
-Fixes: beafc54c4e2f ("UIO: Add the User IO core code")
+Fortunately, "info->pdata" can't be NULL to that check can be removed.
+The other thing is that if "ret" is an error code here, then we don't
+want to do the next call to cam_i2c_write(), so actually let's flip that
+test around and return the error.  This is more of a theoretical issue
+than something which is likely to affect real life.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: just remove the check
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 144cf7365288..cf388c384553 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -957,8 +957,6 @@ int __uio_register_device(struct module *owner,
- 	if (ret)
- 		goto err_uio_dev_add_attributes;
+Thanks Sakari Ailus for your review.
+
+diff --git a/drivers/media/i2c/sr030pc30.c b/drivers/media/i2c/sr030pc30.c
+index 2a4882cddc51..66d952624731 100644
+--- a/drivers/media/i2c/sr030pc30.c
++++ b/drivers/media/i2c/sr030pc30.c
+@@ -569,7 +569,7 @@ static int sr030pc30_base_config(struct v4l2_subdev *sd)
+ 	if (!ret)
+ 		ret = sr030pc30_pwr_ctrl(sd, false, false);
  
--	info->uio_dev = idev;
--
- 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
- 		/*
- 		 * Note that we deliberately don't use devm_request_irq
-@@ -975,6 +973,7 @@ int __uio_register_device(struct module *owner,
- 			goto err_request_irq;
- 	}
+-	if (!ret && !info->pdata)
++	if (ret)
+ 		return ret;
  
-+	info->uio_dev = idev;
- 	return 0;
- 
- err_request_irq:
+ 	expmin = EXPOS_MIN_MS * info->pdata->clk_rate / (8 * 1000);
