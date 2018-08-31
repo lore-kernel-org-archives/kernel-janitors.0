@@ -1,76 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 01 Aug 2018 11:17:07 +0000
-Subject: Applied "ASoC: nau8540: remove redundant variable osrate" to the asoc tree
-Message-Id: <20180801111707.B6E6A1124241@debutante.sirena.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Aug 2018 08:10:55 +0000
+Subject: [PATCH] cfg80211: fix a type issue in ieee80211_chandef_to_operating_class()
+Message-Id: <20180831081055.kvbe3k56c2slonzt@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180801104742.4328-7-colin.king@canonical.com>
-In-Reply-To: <20180801104742.4328-7-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, Jaya Kumar <jayakumar.alsa@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>, Alexei Avshalom Lazar <ailizaro@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+The "chandef->center_freq1" variable is a u32 but "freq" is a u16 so we
+are truncating away the high bits.  I noticed this bug because in commit
+9cf0a0b4b64a ("cfg80211: Add support for 60GHz band channels 5 and 6")
+we made "freq <= 56160 + 2160 * 6" a valid requency when before it was
+only "freq <= 56160 + 2160 * 4" that was valid.  It introduces a static
+checker warning:
 
-   ASoC: nau8540: remove redundant variable osrate
+    net/wireless/util.c:1571 ieee80211_chandef_to_operating_class()
+    warn: always true condition '(freq <= 56160 + 2160 * 6) => (0-u16max <= 69120)'
 
-has been applied to the asoc tree at
+But really we probably shouldn't have been truncating the high bits
+away to begin with.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From d101f9b96ee08f0454989bc3adb10e6cf7f3f953 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 1 Aug 2018 11:47:39 +0100
-Subject: [PATCH] ASoC: nau8540: remove redundant variable osrate
-
-Variable osrate is being assigned but is never used hence it is
-redundant and can be removed.
-
-Cleans up clang warning:
-warning: variable 'osrate' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/nau8540.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/sound/soc/codecs/nau8540.c b/sound/soc/codecs/nau8540.c
-index 17104f8dc1a9..e3c8cd17daf2 100644
---- a/sound/soc/codecs/nau8540.c
-+++ b/sound/soc/codecs/nau8540.c
-@@ -362,11 +362,8 @@ static const struct snd_soc_dapm_route nau8540_dapm_routes[] = {
- 
- static int nau8540_clock_check(struct nau8540 *nau8540, int rate, int osr)
+diff --git a/net/wireless/util.c b/net/wireless/util.c
+index 2a89db5f2db7..4293f980e9c4 100644
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -1456,7 +1456,7 @@ bool ieee80211_chandef_to_operating_class(struct cfg80211_chan_def *chandef,
+ 					  u8 *op_class)
  {
--	int osrate;
--
- 	if (osr >= ARRAY_SIZE(osr_adc_sel))
- 		return -EINVAL;
--	osrate = osr_adc_sel[osr].osr;
+ 	u8 vht_opclass;
+-	u16 freq = chandef->center_freq1;
++	u32 freq = chandef->center_freq1;
  
- 	if (rate * osr > CLK_ADC_MAX) {
- 		dev_err(nau8540->dev, "exceed the maximum frequency of CLK_ADC\n");
--- 
-2.18.0
-
+ 	if (freq >= 2412 && freq <= 2472) {
+ 		if (chandef->width > NL80211_CHAN_WIDTH_40)
