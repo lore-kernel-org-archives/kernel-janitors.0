@@ -1,40 +1,35 @@
-From: Yue Haibing <yuehaibing@huawei.com>
-Date: Tue, 21 Aug 2018 01:33:42 +0000
-Subject: [PATCH] ufs: remove set but not used variable 'usb3'
-Message-Id: <1534815222-101634-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Aug 2018 08:09:43 +0000
+Subject: [PATCH 2/2] fbdev: sbuslib: integer overflow in sbusfb_ioctl_helper()
+Message-Id: <20180831080943.ldzpzha5suktn4ln@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Dushistov <dushistov@mail.ru>
-Cc: Yue Haibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Peter Malone <peter.malone@gmail.com>
+Cc: Mathieu Malaterre <malat@debian.org>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Philippe Ombredanne <pombredanne@nexb.com>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The "index + count" addition can overflow.  Both come directly from the
+user.  This bug leads to an information leak.
 
-fs/ufs/super.c: In function 'ufs_statfs':
-fs/ufs/super.c:1409:32: warning:
- variable 'usb3' set but not used [-Wunused-but-set-variable]
-  struct ufs_super_block_third *usb3;
-                                ^
-
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/ufs/super.c | 2 --
- 1 file changed, 2 deletions(-)
+Btw, commit 250c6c49e3b6 ("fbdev: Fixing arbitrary kernel leak in case
+FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().") doesn't do anything so
+far as I can see.  The "cmap->len" variable is type u32, so the
+comparison was already unsigned in the original code because of type
+promotion.  But the commit was also harmless and nice cleanup.
 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index a4e07e9..6a5db06 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -1406,11 +1406,9 @@ static int ufs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct super_block *sb = dentry->d_sb;
- 	struct ufs_sb_private_info *uspi= UFS_SB(sb)->s_uspi;
- 	unsigned  flags = UFS_SB(sb)->s_flags;
--	struct ufs_super_block_third *usb3;
- 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
+diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
+index 90c51330969c..01a7110e61a7 100644
+--- a/drivers/video/fbdev/sbuslib.c
++++ b/drivers/video/fbdev/sbuslib.c
+@@ -171,7 +171,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		    get_user(ublue, &c->blue))
+ 			return -EFAULT;
  
- 	mutex_lock(&UFS_SB(sb)->s_lock);
--	usb3 = ubh_get_usb_third(uspi);
- 	
- 	if ((flags & UFS_TYPE_MASK) = UFS_TYPE_UFS2)
- 		buf->f_type = UFS2_MAGIC;
+-		if (index + count > cmap->len)
++		if (index > cmap->len || count > cmap->len - index)
+ 			return -EINVAL;
+ 
+ 		for (i = 0; i < count; i++) {
