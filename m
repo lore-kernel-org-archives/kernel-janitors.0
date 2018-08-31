@@ -1,31 +1,36 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 01 Aug 2018 12:00:52 +0000
-Subject: Re: [PATCH 1/9] ALSA: asihpi: remove redundant variable max_streams
-Message-Id: <s5hh8kenvnv.wl-tiwai@suse.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 31 Aug 2018 03:57:34 +0000
+Subject: [PATCH net-next] bnxt_en: remove set but not used variable 'rx_stats'
+Message-Id: <1535688481-65721-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180801104742.4328-1-colin.king@canonical.com>
-        <20180801104742.4328-2-colin.king@canonical.com>
-In-Reply-To: <20180801104742.4328-2-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaya Kumar <jayakumar.alsa@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, Alexandre Torgue <alexandre.torgue@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Olivier Moysan <olivier.moysan@st.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Chan <michael.chan@broadcom.com>, "David S. Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 01 Aug 2018 12:47:34 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable max_streams is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'max_streams' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks.
+drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c: In function 'bnxt_vf_rep_rx':
+drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c:212:28: warning:
+ variable 'rx_stats' set but not used [-Wunused-but-set-variable]
+  struct bnxt_vf_rep_stats *rx_stats;
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Takashi
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c
+index e31f5d8..b574fe8 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c
+@@ -209,9 +209,7 @@ struct net_device *bnxt_get_vf_rep(struct bnxt *bp, u16 cfa_code)
+ void bnxt_vf_rep_rx(struct bnxt *bp, struct sk_buff *skb)
+ {
+ 	struct bnxt_vf_rep *vf_rep = netdev_priv(skb->dev);
+-	struct bnxt_vf_rep_stats *rx_stats;
+ 
+-	rx_stats = &vf_rep->rx_stats;
+ 	vf_rep->rx_stats.bytes += skb->len;
+ 	vf_rep->rx_stats.packets++;
