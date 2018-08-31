@@ -1,29 +1,58 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 31 Aug 2018 15:43:53 +0000
-Subject: Re: [PATCH] libertas_tf: prevent underflow in process_cmdrequest()
-Message-Id: <20180831154353.A86F3606CF@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 31 Aug 2018 11:48:43 +0000
+Subject: Re: [PATCH net-next] liquidio: cHECK-remove set but not used variable 'irh'
+Message-Id: <5eb803ef-3c23-0b58-e8bc-3f40b3fb5a78@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180814090747.a7gcph2wa6abyimi@kili.mountain>
-In-Reply-To: <20180814090747.a7gcph2wa6abyimi@kili.mountain>
+References: <1535716436-87194-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1535716436-87194-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Luis Carlos Cobo <luisca@cozybit.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+sorry, patch description is messy, will fix it in V2.
 
-> If recvlength is less than MESSAGE_HEADER_LEN (4) we would end up
-> corrupting memory.
+On 2018/8/31 19:53, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Fixes: c305a19a0d0a ("libertas_tf: usb specific functions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Patch applied to wireless-drivers-next.git, thanks.
-
-3348ef6a6a12 libertas_tf: prevent underflow in process_cmdrequest()
-
--- 
-https://patchwork.kernel.org/patch/10565197/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> drivers/net/ethernet/cavium/liquidio/request_manager.c: In function 'lio_process_iq_request_list':
+> drivers/net/ethernet/cavium/liquidio/request_manager.c:383:27: warning:
+>  variable 'irh' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/ethernet/cavium/liquidio/request_manager.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+> index bd0153e..c6f4cbd 100644
+> --- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
+> +++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+> @@ -380,7 +380,6 @@ static inline void __copy_cmd_into_iq(struct octeon_instr_queue *iq,
+>  	u32 inst_count = 0;
+>  	unsigned int pkts_compl = 0, bytes_compl = 0;
+>  	struct octeon_soft_command *sc;
+> -	struct octeon_instr_irh *irh;
+>  	unsigned long flags;
+>  
+>  	while (old != iq->octeon_read_index) {
+> @@ -402,14 +401,6 @@ static inline void __copy_cmd_into_iq(struct octeon_instr_queue *iq,
+>  		case REQTYPE_RESP_NET:
+>  		case REQTYPE_SOFT_COMMAND:
+>  			sc = buf;
+> -
+> -			if (OCTEON_CN23XX_PF(oct) || OCTEON_CN23XX_VF(oct))
+> -				irh = (struct octeon_instr_irh *)
+> -					&sc->cmd.cmd3.irh;
+> -			else
+> -				irh = (struct octeon_instr_irh *)
+> -					&sc->cmd.cmd2.irh;
+> -
+>  			/* We're expecting a response from Octeon.
+>  			 * It's up to lio_process_ordered_list() to
+>  			 * process  sc. Add sc to the ordered soft
+> 
+> 
+> .
+> 
