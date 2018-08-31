@@ -1,36 +1,74 @@
-From: KELLY ALAN <kellyalan@servicescourrier.club>
-Date: Sat, 25 Aug 2018 09:39:12 +0000
-Subject: TRADING  ACCOUNT
-Message-Id: <bc3e5a5ee2c27c75816e50af78b4eabb@servicescourrier.club>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 31 Aug 2018 15:43:16 +0000
+Subject: Applied "spi: davinci: remove set but not used variable 'pdata'" to the spi tree
+Message-Id: <20180831154316.0576411226FE@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kellyalan@servicescourrier.club
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Dear sir ,
+The patch
 
-I KELLY ALAN  purchasing and sales manager of CFM INTERNATIONAL .Our 
-Company specialised in Supplying computer hardware and Electronic .We 
-want to extend our supplier list because of concurrency in prices on the 
-international market. We are seeking a supplier with whom we can to have 
-  partnered long-term in order to have competitive prices . we are 
-interested to buy the products you sell and want to place an order with 
-you in big quantities.
-Can you give us payment facilities ( 14 , 30 or 60 days payment terms ) 
-?
-What is the procedure for our account opening  and credit line 
-application ?
+   spi: davinci: remove set but not used variable 'pdata'
 
-Cordially
+has been applied to the spi tree at
 
-  KELLY ALAN
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-CFM INTERNATIONAL
-2 BOULEVARD DU GAL MARTIAL VALIN
-75015 PARIS
-REG N° 302 527 700
-VAT N° FR90 302527700
-TEL +33171025367
-FAX +33177759149
-https://www.cfmaeroengines.com
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6e249d1ec1b4e39bd51b01cdfa3fa05641ca918e Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 30 Aug 2018 14:01:12 +0000
+Subject: [PATCH] spi: davinci: remove set but not used variable 'pdata'
+
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/spi/spi-davinci.c: In function 'davinci_spi_chipselect':
+drivers/spi/spi-davinci.c:211:36: warning:
+ variable 'pdata' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-davinci.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index a02099c90c5c..3dabc20b68a1 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -208,13 +208,11 @@ static inline void clear_io_bits(void __iomem *addr, u32 bits)
+ static void davinci_spi_chipselect(struct spi_device *spi, int value)
+ {
+ 	struct davinci_spi *dspi;
+-	struct davinci_spi_platform_data *pdata;
+ 	struct davinci_spi_config *spicfg = spi->controller_data;
+ 	u8 chip_sel = spi->chip_select;
+ 	u16 spidat1 = CS_DEFAULT;
+ 
+ 	dspi = spi_master_get_devdata(spi->master);
+-	pdata = &dspi->pdata;
+ 
+ 	/* program delay transfers if tx_delay is non zero */
+ 	if (spicfg && spicfg->wdelay)
+-- 
+2.19.0.rc1
