@@ -1,49 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sun, 23 Sep 2018 09:05:49 +0000
-Subject: Re: [PATCH -next] powerpc: Remove duplicated include from pci_32.c
-Message-Id: <20180923190549.1de60304@canb.auug.org.au>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/WWIZE=ZAavuz4SP_FRcygZC"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Sep 2018 16:01:10 +0000
+Subject: [PATCH] Bluetooth: btrtl: make array extension_sig static, shrinks object size
+Message-Id: <20180904160110.27837-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Al Viro <viro@zeniv.linux.org.uk>, Paul Burton <paul.burton@mips.com>, Sinan Kaya <okaya@codeaurora.org>, Mathieu Malaterre <malat@debian.org>, Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Christophe Leroy <christophe.leroy@c-s.fr>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/WWIZE=ZAavuz4SP_FRcygZC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi YueHaibing,
+Don't populate the array extension_sig on the stack but instead make it
+static. Makes the object code smaller by 59 bytes:
 
-On Sun, 23 Sep 2018 08:12:08 +0000 YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Remove duplicated include.
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  14366	   4920	      0	  19286	   4b56	linux/drivers/bluetooth/btrtl.o
 
-Good catch.  It was added by 2 separate commits in v4.18-rc1.
+After:
+   text	   data	    bss	    dec	    hex	filename
+  14243	   4984	      0	  19227	   4b1b	linux/drivers/bluetooth/btrtl.o
 
-Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
+(gcc version 8.2.0 x86_64)
 
---=20
-Cheers,
-Stephen Rothwell
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/bluetooth/btrtl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---Sig_/WWIZE=ZAavuz4SP_FRcygZC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlunV20ACgkQAVBC80lX
-0GyHRQgAh2paAZg1pxKRLibvX6qiQV5EDyFHpjlyVlAoTJBHVrVLkGnci+r9Uaaz
-HoY4az0poqh7jkKTpGj2WeoJKPvPmDk+KYSMGTZLdVxT+N8f3Y8djaUeBcq7dxpY
-20xOoSJJsFxr8sCG3ey2+UE7PPKRuQRC1G0DmWX0F161tzBJ6HO+dFHC3NsD2EXG
-Os2MGl0fIdttT+C258QBS9JfzjIVZd7p/9foXsC2GCPGMVqMQHfIC8rXpYfQpsf5
-/NJ+pr2M9IN7YVwleQ/9L/ZpliQCjJ3eI4uvCi/5IBPdk4hxhkwH1I151W7rl7cF
-euT0y+MzpttSOQCK9HfLTMIBoE1iSA==
-=EiDL
------END PGP SIGNATURE-----
-
---Sig_/WWIZE=ZAavuz4SP_FRcygZC--
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 7f9ea8e4c1b2..52a9a55057c0 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -206,7 +206,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
+ 				struct btrtl_device_info *btrtl_dev,
+ 				unsigned char **_buf)
+ {
+-	const u8 extension_sig[] = { 0x51, 0x04, 0xfd, 0x77 };
++	static const u8 extension_sig[] = { 0x51, 0x04, 0xfd, 0x77 };
+ 	struct rtl_epatch_header *epatch_info;
+ 	unsigned char *buf;
+ 	int i, len;
+-- 
+2.17.1
