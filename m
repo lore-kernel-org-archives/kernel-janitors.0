@@ -1,7 +1,7 @@
 From: Luciano Coelho <luciano.coelho@intel.com>
-Date: Tue, 04 Sep 2018 06:02:56 +0000
+Date: Tue, 04 Sep 2018 06:05:19 +0000
 Subject: Re: [PATCH] iwlwifi: mvm:  fix spelling mistake "Recieved" -> "Received"
-Message-Id: <399483f28108ba4154d824ec0e55bbd890ca1bf9.camel@intel.com>
+Message-Id: <339ef1c283fefd657d7a4b9ba2db067d52d9f7ef.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180826223117.12892-1-colin.king@canonical.com>
 In-Reply-To: <20180826223117.12892-1-colin.king@canonical.com>
@@ -35,8 +35,8 @@ On Sun, 2018-08-26 at 23:31 +0100, Colin King wrote:
 >  
 >  	te_data->uid = le32_to_cpu(resp->event_unique_id);
 
-Thanks! I pushed this to our internal tree and it will reach upstream
-following our normal process.
+Thanks! Again I pushed this to our internal tree and it will reach the
+mainline following our normal process.
 
 --
 Cheers,
