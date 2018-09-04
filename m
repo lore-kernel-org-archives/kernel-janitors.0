@@ -1,29 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 17 Sep 2018 14:58:25 +0000
-Subject: Re: [PATCH] net: hp100: fix always-true check for link up state
-Message-Id: <20180917.075825.1597877157605714597.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Sep 2018 15:23:33 +0000
+Subject: [PATCH] drm/nouveau/bios/dp: make array vsoff static, shrinks object size
+Message-Id: <20180904152333.21640-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180914163953.20734-1-colin.king@canonical.com>
-In-Reply-To: <20180914163953.20734-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: perex@perex.cz, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 14 Sep 2018 17:39:53 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The operation ~(p100_inb(VG_LAN_CFG_1) & HP100_LINK_UP) returns a value
-> that is always non-zero and hence the wait for the link to drop always
-> terminates prematurely.  Fix this by using a logical not operator instead
-> of a bitwise complement.  This issue has been in the driver since
-> pre-2.6.12-rc2.
-> 
-> Detected by CoverityScan, CID#114157 ("Logical vs. bitwise operator")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Don't populate the array vsoff on the stack but instead make it
+static. Makes the object code smaller by 67 bytes:
 
-Applied and queued up for -stable.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   5753	    112	      0	   5865	   16e9	.../nouveau/nvkm/subdev/bios/dp.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   5622	    176	      0	   5798	   16a6	.../nouveau/nvkm/subdev/bios/dp.o
+
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c
+index 3133b28f849c..b099d1209be8 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c
+@@ -212,7 +212,7 @@ nvbios_dpcfg_match(struct nvkm_bios *bios, u16 outp, u8 pc, u8 vs, u8 pe,
+ 	u16 data;
+ 
+ 	if (*ver >= 0x30) {
+-		const u8 vsoff[] = { 0, 4, 7, 9 };
++		static const u8 vsoff[] = { 0, 4, 7, 9 };
+ 		idx = (pc * 10) + vsoff[vs] + pe;
+ 		if (*ver >= 0x40 && *ver <= 0x41 && *hdr >= 0x12)
+ 			idx += nvbios_rd08(bios, outp + 0x11) * 40;
+-- 
+2.17.1
