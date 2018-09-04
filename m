@@ -1,40 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 27 Sep 2018 12:17:49 +0000
-Subject: [PATCH][staging-next] staging: wilc1000: fix incorrect allocation size for structure
-Message-Id: <20180927121749.13229-1-colin.king@canonical.com>
+From: Luciano Coelho <luciano.coelho@intel.com>
+Date: Tue, 04 Sep 2018 06:07:47 +0000
+Subject: Re: [PATCH] iwlwifi: pcie: make array 'prop' static, shrinks object size
+Message-Id: <78daed5d33990c816c7e947173a1ca12eaa27efb.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180821102109.1630-1-colin.king@canonical.com>
+In-Reply-To: <20180821102109.1630-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+To: Colin King <colin.king@canonical.com>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 2018-08-21 at 11:21 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array prop on the stack but instead make it static.
+> Makes the object code smaller by 30 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   80138	  15382	    576	  96096	  17760	drivers/net/wireless/intel/iwlwifi/pcie/trans.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   79948	  15542	    576	  96066	  17742	drivers/net/wireless/intel/iwlwifi/pcie/trans.o
+> 
+> (gcc version 8.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> index 7d319b6863fe..c7daf666ee21 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> @@ -1947,7 +1947,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
+>  	struct iwl_trans_pcie_removal *removal >  		container_of(wk, struct iwl_trans_pcie_removal, work);
+>  	struct pci_dev *pdev = removal->pdev;
+> -	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
+> +	static char *prop[] = {"EVENT=INACCESSIBLE", NULL};
+>  
+>  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
+>  	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
 
-Currently the allocation for str_vals is for the sizeof the pointer
-rather than the size of the structure.  Fix this.
+Thanks! I pushed this to our internal tree and it will reach upstream
+following our normal process.
 
-Detected by smatch
-"wilc_wlan_cfg_init() error: not allocating enough data 392 vs 8"
-
-Fixes: acceb12a9f8b ("staging: wilc1000: refactor code to avoid static variables for config parameters")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wilc1000/wilc_wlan_cfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/wilc1000/wilc_wlan_cfg.c b/drivers/staging/wilc1000/wilc_wlan_cfg.c
-index 930a3896f4ae..faa001c75681 100644
---- a/drivers/staging/wilc1000/wilc_wlan_cfg.c
-+++ b/drivers/staging/wilc1000/wilc_wlan_cfg.c
-@@ -457,7 +457,7 @@ int wilc_wlan_cfg_init(struct wilc *wl)
- 	if (!wl->cfg.s)
- 		goto out_w;
- 
--	str_vals = kzalloc(sizeof(str_vals), GFP_KERNEL);
-+	str_vals = kzalloc(sizeof(*str_vals), GFP_KERNEL);
- 	if (!str_vals)
- 		goto out_s;
- 
--- 
-2.17.1
+--
+Luca.
