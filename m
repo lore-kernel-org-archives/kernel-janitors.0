@@ -1,32 +1,50 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 20 Sep 2018 12:12:32 +0000
-Subject: Re: [PATCH] qtnfmac: remove set but not used variable 'vif'
-Message-Id: <20180920121232.45382602A7@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Sep 2018 14:36:56 +0000
+Subject: [PATCH] scsi: aic7xxx: remove unused redundant variable num_chip_names
+Message-Id: <20180904143656.3504-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536668904-13110-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536668904-13110-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Igor Mitsyanko <imitsyanko@quantenna.com>, Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Sergei Maksimenko <smaksimenko@quantenna.com>, Vasily Ulyanov <vulyanov@quantenna.com>, Andrey Shevchenko <ashevchenko@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/quantenna/qtnfmac/cfg80211.c: In function 'qtnf_dump_survey':
-> drivers/net/wireless/quantenna/qtnfmac/cfg80211.c:694:19: warning:
->  variable 'vif' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Variable num_chip_names is defined but not used, hence it is
+redundant and can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Cleans up clang warning:
+'num_chip_names' defined but not used [-Wunused-const-variable=]
 
-93ed990e3a6e qtnfmac: remove set but not used variable 'vif'
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aic7xxx/aic79xx_core.c | 1 -
+ drivers/scsi/aic7xxx/aic7xxx_core.c | 1 -
+ 2 files changed, 2 deletions(-)
 
+diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
+index 8e57a1dacb6a..9ee75c9a9aa1 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_core.c
++++ b/drivers/scsi/aic7xxx/aic79xx_core.c
+@@ -52,7 +52,6 @@ static const char *const ahd_chip_names[]  	"aic7902",
+ 	"aic7901A"
+ };
+-static const u_int num_chip_names = ARRAY_SIZE(ahd_chip_names);
+ 
+ /*
+  * Hardware error codes.
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
+index aa4eaa4fa23a..f3362f4ab16e 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_core.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
+@@ -61,7 +61,6 @@ static const char *const ahc_chip_names[] = {
+ 	"aic7892",
+ 	"aic7899"
+ };
+-static const u_int num_chip_names = ARRAY_SIZE(ahc_chip_names);
+ 
+ /*
+  * Hardware error codes.
 -- 
-https://patchwork.kernel.org/patch/10595609/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
