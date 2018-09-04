@@ -1,52 +1,46 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 23 Aug 2018 07:51:15 +0000
-Subject: [PATCH 4.17 009/324] clocksource/drivers/stm32: Fix error return code
-Message-Id: <20180823074956.401371103@linuxfoundation.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Sep 2018 14:15:53 +0000
+Subject: [PATCH] mfd: arizona: make array mclk_name static, shrinks object size
+Message-Id: <20180904141553.28000-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180823074955.885811006@linuxfoundation.org>
-In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>, patches@opensource.cirrus.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+From: Colin Ian King <colin.king@canonical.com>
 
-------------------
+Don't populate the array mclk_name on the stack but instead make it
+static. Makes the object code smaller by 23 bytes:
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  38050	  11604	     64	  49718	   c236	linux/drivers/mfd/arizona-core.o
 
-[ Upstream commit a26ed66c20f080c510fcf5bd448bce204f2c19d7 ]
+After:
+   text	   data	    bss	    dec	    hex	filename
+  38027	  11604	     64	  49695	   c21f	linux/drivers/mfd/arizona-core.o
 
-Return an error code on failure.
+(gcc version 8.2.0 x86_64)
 
-Problem found using Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: https://lkml.kernel.org/r1528640655-18948-3-git-send-email-Julia.Lawall@lip6.fr
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/clocksource/timer-stm32.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mfd/arizona-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clocksource/timer-stm32.c
-+++ b/drivers/clocksource/timer-stm32.c
-@@ -304,8 +304,10 @@ static int __init stm32_timer_init(struc
+diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+index 5f1e37d23943..918d81a00b37 100644
+--- a/drivers/mfd/arizona-core.c
++++ b/drivers/mfd/arizona-core.c
+@@ -990,7 +990,7 @@ static const struct mfd_cell wm8998_devs[] = {
  
- 	to->private_data = kzalloc(sizeof(struct stm32_timer_private),
- 				   GFP_KERNEL);
--	if (!to->private_data)
-+	if (!to->private_data) {
-+		ret = -ENOMEM;
- 		goto deinit;
-+	}
- 
- 	rstc = of_reset_control_get(node, NULL);
- 	if (!IS_ERR(rstc)) {
+ int arizona_dev_init(struct arizona *arizona)
+ {
+-	const char * const mclk_name[] = { "mclk1", "mclk2" };
++	static const char * const mclk_name[] = { "mclk1", "mclk2" };
+ 	struct device *dev = arizona->dev;
+ 	const char *type_name = NULL;
+ 	unsigned int reg, val;
+-- 
+2.17.1
