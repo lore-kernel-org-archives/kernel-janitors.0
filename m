@@ -1,34 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 06 Sep 2018 12:44:01 +0000
-Subject: Re: [PATCH] gpio: ep93xx: fix incorrect array element size check
-Message-Id: <CACRpkdaHabhD_pW3XtDh+XzQ3d--r=qNRZVnhx44RV82p0boMA@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 04 Sep 2018 03:36:01 +0000
+Subject: [PATCH -next] scsi: aic7xxx: remove set but not used variable 'shared_scb_data'
+Message-Id: <1536032161-124423-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180906115830.19386-1-colin.king@canonical.com>
-In-Reply-To: <20180906115830.19386-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 1:58 PM Colin King <colin.king@canonical.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the while loop checks for the end of the array using
-> the size of egp->gc rather that the number of elements in the array,
-> so fix this. Also, perform the array size check first as stylistically
-> it is always good to bounds check on an array first before referencing
-> the array (in this case, we're just computing the address of an
-> element in an array so this is a moot point).
->
-> Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/scsi/aic7xxx/aic79xx_pci.c: In function 'ahd_pci_config':
+drivers/scsi/aic7xxx/aic79xx_pci.c:291:19: warning:
+ variable 'shared_scb_data' set but not used [-Wunused-but-set-variable]
 
-Oh that was really neat code! Thanks a lot.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/aic7xxx/aic79xx_pci.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/scsi/aic7xxx/aic79xx_pci.c b/drivers/scsi/aic7xxx/aic79xx_pci.c
+index c68943b..8397ae9 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_pci.c
++++ b/drivers/scsi/aic7xxx/aic79xx_pci.c
+@@ -288,13 +288,11 @@ static void	ahd_configure_termination(struct ahd_softc *ahd,
+ int
+ ahd_pci_config(struct ahd_softc *ahd, const struct ahd_pci_identity *entry)
+ {
+-	struct scb_data *shared_scb_data;
+ 	u_int		 command;
+ 	uint32_t	 devconfig;
+ 	uint16_t	 subvendor; 
+ 	int		 error;
+ 
+-	shared_scb_data = NULL;
+ 	ahd->description = entry->name;
+ 	/*
+ 	 * Record if this is an HP board.
