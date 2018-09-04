@@ -1,41 +1,39 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 28 Sep 2018 02:18:09 +0000
-Subject: [PATCH -next] gpio: htc-egpio: Remove set but not used variable 'bit'
-Message-Id: <1538101089-160557-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Sep 2018 14:44:22 +0000
+Subject: [PATCH] afs: remove unused variable afs_zero_fid
+Message-Id: <20180904144422.6647-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/gpio/gpio-htc-egpio.c: In function 'egpio_set':
-drivers/gpio/gpio-htc-egpio.c:192:20: warning:
- variable 'bit' set but not used [-Wunused-but-set-variable]
+Variable afs_zero_fid is defined but not used, hence it is
+redundant and can be removed.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cleans up clang warning:
+'afs_zero_fid' defined but not used [-Wunused-const-variable=]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpio/gpio-htc-egpio.c | 2 --
+ fs/afs/fsclient.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
-index 38be44d..9d3ac51 100644
---- a/drivers/gpio/gpio-htc-egpio.c
-+++ b/drivers/gpio/gpio-htc-egpio.c
-@@ -189,7 +189,6 @@ static void egpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	unsigned long     flag;
- 	struct egpio_chip *egpio;
- 	struct egpio_info *ei;
--	unsigned          bit;
- 	int               pos;
- 	int               reg;
- 	int               shift;
-@@ -199,7 +198,6 @@ static void egpio_set(struct gpio_chip *chip, unsigned offset, int value)
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index 50929cb91732..1310ffe8da48 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -18,8 +18,6 @@
+ #include "afs_fs.h"
+ #include "xdr_fs.h"
  
- 	egpio = gpiochip_get_data(chip);
- 	ei    = dev_get_drvdata(egpio->dev);
--	bit   = egpio_bit(ei, offset);
- 	pos   = egpio_pos(ei, offset);
- 	reg   = egpio->reg_start + pos;
- 	shift = pos << ei->reg_shift;
+-static const struct afs_fid afs_zero_fid;
+-
+ /*
+  * We need somewhere to discard into in case the server helpfully returns more
+  * than we asked for in FS.FetchData{,64}.
+-- 
+2.17.1
