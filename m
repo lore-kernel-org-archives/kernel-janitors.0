@@ -1,25 +1,30 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 12 Sep 2018 01:00:50 +0000
-Subject: Re: [PATCH -next] scsi: libfc: remove set but not used variable 'rpriv'
-Message-Id: <yq1ftyfy1fh.fsf@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 05 Sep 2018 11:12:08 +0000
+Subject: [PATCH -next] mmc: tegra: Fix copy-paste error in tegra_sdhci_init_pinctrl_info()
+Message-Id: <1536145928-15629-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536031867-65592-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536031867-65592-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+The error code get against a wrong variable. This patch fix it.
 
-YueHaibing,
+Fixes: 5783a9529891 ("mmc: tegra: Reconfigure pad voltages during voltage switching")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/libfc/fc_fcp.c: In function 'fc_queuecommand':
-> drivers/scsi/libfc/fc_fcp.c:1875:30: warning:
->  variable 'rpriv' set but not used [-Wunused-but-set-variable]
-
-Applied to 4.20/scsi-queue. Thank you!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index e80716c..c789158 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -724,7 +724,7 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
+ 		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-1v8");
+ 	if (IS_ERR(tegra_host->pinctrl_state_1v8)) {
+ 		dev_warn(dev, "Missing 1.8V pad state, err: %ld\n",
+-			 PTR_ERR(tegra_host->pinctrl_state_3v3));
++			 PTR_ERR(tegra_host->pinctrl_state_1v8));
+ 		return -1;
+ 	}
