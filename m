@@ -1,25 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 28 Sep 2018 18:06:38 +0000
-Subject: Re: [PATCH net-next] net: sched: make function qdisc_free_cb() static
-Message-Id: <20180928.110638.1342180191872443696.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Sep 2018 07:46:27 +0000
+Subject: [PATCH 1/2] hwmon: (nct6775) Set weight source to zero correctly
+Message-Id: <20180905074627.putclq3777lmxvoe@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538059676-71316-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1538059676-71316-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <df45855d-e21c-9b29-d661-7284453241fe@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, vladbu@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 27 Sep 2018 14:47:56 +0000
+This is dead code because j can never be 1 at this point.  We had
+intended to just test if the bit was clear.
 
-> Fixes the following sparse warning:
-> 
-> net/sched/sch_generic.c:944:6: warning:
->  symbol 'qdisc_free_cb' was not declared. Should it be static?
-> 
-> Fixes: 3a7d0d07a386 ("net: sched: extend Qdisc with rcu")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: bbd8decd4123 ("hwmon: (nct6775) Add support for weighted fan control")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index 944f5b63aecd..139781ae830b 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -1558,7 +1558,7 @@ static void nct6775_update_pwm(struct device *dev)
+ 		reg = nct6775_read_value(data, data->REG_WEIGHT_TEMP_SEL[i]);
+ 		data->pwm_weight_temp_sel[i] = reg & 0x1f;
+ 		/* If weight is disabled, report weight source as 0 */
+-		if (j = 1 && !(reg & 0x80))
++		if (!(reg & 0x80))
+ 			data->pwm_weight_temp_sel[i] = 0;
+ 
+ 		/* Weight temp data */
