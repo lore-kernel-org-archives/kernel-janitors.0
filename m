@@ -1,92 +1,63 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Thu, 06 Sep 2018 12:13:31 +0000
-Subject: Re: [bug report] memory: aemif: add support for board files
-Message-Id: <CAMpxmJV+A-9UVcrDBbCc6ej7FbdD8BW=eqJmLXsdWWHp-8mPqw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 05 Sep 2018 09:46:05 +0000
+Subject: [PATCH] staging: most: video: fix registration of an empty comp core_component
+Message-Id: <20180905094605.14827-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180906114112.4t3xe4kntptm55rh@kili.mountain>
-In-Reply-To: <20180906114112.4t3xe4kntptm55rh@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, Abdun Nihaal <abdun.nihaal@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2018-09-06 13:41 GMT+02:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> Hello Bartosz Golaszewski,
->
-> This is a semi-automatic email about new static checker warnings.
->
-> The patch 8af70cd2ca50: "memory: aemif: add support for board files"
-> from Apr 20, 2018, leads to the following Smatch complaint:
->
->     drivers/memory/ti-aemif.c:415 aemif_probe()
->      error: we previously assumed 'pdata' could be null (see line 387)
->
-> drivers/memory/ti-aemif.c
->    363          if (np && of_device_is_compatible(np, "ti,da850-aemif"))
->    364                  aemif->cs_offset = 2;
->    365          else if (pdata)
->                          ^^^^^
-> It's possible that when "np" is NULL that means pdata is non-NULL?
->
->    366                  aemif->cs_offset = pdata->cs_offset;
->    367
->    368          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->    369          aemif->base = devm_ioremap_resource(dev, res);
->    370          if (IS_ERR(aemif->base)) {
->    371                  ret = PTR_ERR(aemif->base);
->    372                  goto error;
->    373          }
->    374
->    375          if (np) {
->    376                  /*
->    377                   * For every controller device node, there is a cs device node
->    378                   * that describe the bus configuration parameters. This
->    379                   * functions iterate over these nodes and update the cs data
->    380                   * array.
->    381                   */
->    382                  for_each_available_child_of_node(np, child_np) {
->    383                          ret = of_aemif_parse_abus_config(pdev, child_np);
->    384                          if (ret < 0)
->    385                                  goto error;
->    386                  }
->    387          } else if (pdata && pdata->num_abus_data > 0) {
->    388                  for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
->    389                          aemif->cs_data[i].cs = pdata->abus_data[i].cs;
->    390                          aemif_get_hw_params(pdev, i);
->    391                  }
->    392          }
->    393
->    394          for (i = 0; i < aemif->num_cs; i++) {
->    395                  ret = aemif_config_abus(pdev, i);
->    396                  if (ret < 0) {
->    397                          dev_err(dev, "Error configuring chip select %d\n",
->    398                                  aemif->cs_data[i].cs);
->    399                          goto error;
->    400                  }
->    401          }
->    402
->    403          /*
->    404           * Create a child devices explicitly from here to guarantee that the
->    405           * child will be probed after the AEMIF timing parameters are set.
->    406           */
->    407          if (np) {
->    408                  for_each_available_child_of_node(np, child_np) {
->    409                          ret = of_platform_populate(child_np, NULL,
->    410                                                     dev_lookup, dev);
->    411                          if (ret < 0)
->    412                                  goto error;
->    413                  }
->    414          } else {
->    415                  for (i = 0; i < pdata->num_sub_devices; i++) {
->                                         ^^^^^^^^^^^^^^^^^^^^^^
-> Not checked.
->
->    416                          pdata->sub_devices[i].dev.parent = dev;
->    417                          ret = platform_device_register(&pdata->sub_devices[i]);
->
-> regards,
-> dan carpenter
+From: Colin Ian King <colin.king@canonical.com>
 
-Fix sent to mailing list. Thanks!
+Currently we have structrues comp (which is empty) and comp_info being
+used to register and deregister the component.  This mismatch in naming
+occurred from a previous commit that renamed aim_info to comp. Fix this
+to use consistent component naming in line with most/net, most/sound etc.
 
-Bart
+This fixes the message two issues, one with a null empty name when
+loading the module:
+
+[ 1485.269515] most_core: registered new core component (null)
+
+and an Oops when removing the module:
+
+[ 1485.277971] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[ 1485.278648] PGD 0 P4D 0
+[ 1485.279253] Oops: 0002 [#2] SMP PTI
+[ 1485.279847] CPU: 1 PID: 32629 Comm: modprobe Tainted: P      D WC OE     4.18.0-8-generic #9
+[ 1485.280442] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+[ 1485.281040] RIP: 0010:most_deregister_component+0x3c/0x70 [most_core]
+.. etc
+
+Fixes: 1b10a0316e2d ("staging: most: video: remove aim designators")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/most/video/video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
+index cf342eb58e10..ad7e28ab9a4f 100644
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@ -530,7 +530,7 @@ static int comp_disconnect_channel(struct most_interface *iface,
+ 	return 0;
+ }
+ 
+-static struct core_component comp_info = {
++static struct core_component comp = {
+ 	.name = "video",
+ 	.probe_channel = comp_probe_channel,
+ 	.disconnect_channel = comp_disconnect_channel,
+@@ -565,7 +565,7 @@ static void __exit comp_exit(void)
+ 	}
+ 	spin_unlock_irq(&list_lock);
+ 
+-	most_deregister_component(&comp_info);
++	most_deregister_component(&comp);
+ 	BUG_ON(!list_empty(&video_devices));
+ }
+ 
+-- 
+2.17.1
