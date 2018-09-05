@@ -1,35 +1,31 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 14 Sep 2018 02:34:23 +0000
-Subject: [PATCH -next] media: dvb-usb-v2/gl861: Use kmemdup rather than duplicating its implementation in gl8
-Message-Id: <1536892463-129710-1-git-send-email-yuehaibing@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 05 Sep 2018 10:13:42 +0000
+Subject: Re: [PATCH -next] pinctrl: sirf: atlas7: remove set but not used variables 'conf, bank'
+Message-Id: <CACRpkdY5qurpthqB8=ek5RhD3egXbceWi0RYK1P8pboH-KcA7Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1535681346-152447-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1535681346-152447-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Use kmemdup rather than duplicating its implementation
+On Fri, Aug 31, 2018 at 3:58 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/media/usb/dvb-usb-v2/gl861.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/pinctrl/sirf/pinctrl-atlas7.c: In function 'atlas7_pinmux_resume_noirq':
+> drivers/pinctrl/sirf/pinctrl-atlas7.c:5545:6: warning:
+>  variable 'bank' set but not used [-Wunused-but-set-variable]
+>   u32 bank;
+>
+> drivers/pinctrl/sirf/pinctrl-atlas7.c:5543:28: warning:
+>  variable 'conf' set but not used [-Wunused-but-set-variable]
+>   struct atlas7_pad_config *conf;
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-diff --git a/drivers/media/usb/dvb-usb-v2/gl861.c b/drivers/media/usb/dvb-usb-v2/gl861.c
-index 0559417..80fed44 100644
---- a/drivers/media/usb/dvb-usb-v2/gl861.c
-+++ b/drivers/media/usb/dvb-usb-v2/gl861.c
-@@ -200,11 +200,10 @@ struct friio_config {
- 	u8 *buf;
- 	int ret;
- 
--	buf = kmalloc(wlen, GFP_KERNEL);
-+	buf = kmemdup(wbuf, wlen, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
- 
--	memcpy(buf, wbuf, wlen);
- 	ret = usb_control_msg(d->udev, usb_sndctrlpipe(d->udev, 0),
- 				 GL861_REQ_I2C_RAW, GL861_WRITE,
- 				 addr << (8 + 1), 0x0100, buf, wlen, 2000);
+Patch applied.
+
+Yours,
+Linus Walleij
