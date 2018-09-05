@@ -1,47 +1,41 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Sun, 09 Sep 2018 19:08:53 +0000
-Subject: Re: [PATCH] Input: wm97xx: only unregister wm97xx_driver if it has been registered
-Message-Id: <87o9d65vzu.fsf@belgarion.home>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 05 Sep 2018 14:54:01 +0000
+Subject: [PATCH] orangefs: rate limit the client not running info message
+Message-Id: <20180905145401.19772-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180904183505.10693-1-colin.king@canonical.com>
-        <20180905091609.GC1653@imbe.wolfsonmicro.main>
-In-Reply-To: <20180905091609.GC1653@imbe.wolfsonmicro.main> (Charles Keepax's
-        message of "Wed, 5 Sep 2018 10:16:09 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Colin King <colin.king@canonical.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Mark Brown <broonie@kernel.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, patches@opensource.cirrus.com, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Charles Keepax <ckeepax@opensource.cirrus.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Tue, Sep 04, 2018 at 07:35:05PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->> 
->> In the case where IS_BUILTIN(CONFIG_AC97_BUS)) is not true, the
->> wm97xx_driver driver is being unregistered even it has not been
->> previously registered.  Fix this by only unregistering it if
->> IS_BUILTIN(CONFIG_AC97_BUS)) is true.  This fixes the warning
->> message:
->> 
->> [  834.111248] ------------[ cut here ]------------
->> [  834.111248] Unexpected driver unregister!
->> [  834.111319] WARNING: CPU: 2 PID: 11749 at drivers/base/driver.c:193 driver_unregister+0x3b/0x40
->> [  834.111319] Modules linked in: wm97xx_ts(-) ....
->> 
->> ..and a stack trace.
->> 
->> To easily reproduce this, load and unload the module on a system where
->> the hardware is not supported.
->> 
->> Fixes: ae9d1b5fbd7b ("Input: wm97xx: add new AC97 bus support")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->
-> Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Currently accessing various /sys/fs/orangefs files will spam the
+kernel log with the following info message when the client is not
+running:
 
-Cheers.
+[  491.489284] sysfs_service_op_show: Client not running :-5:
 
+Rate limit this info message to make it less spammy.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/orangefs/orangefs-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/orangefs/orangefs-sysfs.c b/fs/orangefs/orangefs-sysfs.c
+index dd28079f518c..19739aaee675 100644
+--- a/fs/orangefs/orangefs-sysfs.c
++++ b/fs/orangefs/orangefs-sysfs.c
+@@ -323,7 +323,7 @@ static ssize_t sysfs_service_op_show(struct kobject *kobj,
+ 	/* Can't do a service_operation if the client is not running... */
+ 	rc = is_daemon_in_service();
+ 	if (rc) {
+-		pr_info("%s: Client not running :%d:\n",
++		pr_info_ratelimited("%s: Client not running :%d:\n",
+ 			__func__,
+ 			is_daemon_in_service());
+ 		goto out;
 -- 
-Robert
+2.17.1
