@@ -1,27 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Sep 2018 11:58:14 +0000
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 06 Sep 2018 12:01:58 +0000
 Subject: Re: [PATCH] ASoC: sgtl5000: avoid division by zero if lo_vag is zero
-Message-Id: <20180906115814.a5woyhfc5sczxksa@mwanda>
+Message-Id: <43293b8e-5b9d-ff51-aa3f-eb1a7b9490aa@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180906104152.17977-1-colin.king@canonical.com>
-In-Reply-To: <20180906104152.17977-1-colin.king@canonical.com>
+ <20180906115814.a5woyhfc5sczxksa@mwanda>
+In-Reply-To: <20180906115814.a5woyhfc5sczxksa@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 11:41:52AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 06/09/18 12:58, Dan Carpenter wrote:
+> On Thu, Sep 06, 2018 at 11:41:52AM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> In the case where lo_vag <= SGTL5000_LINE_OUT_GND_BASE, lo_vag
+>> is set to zero and later vol_quot is computed by dividing by
+>> lo_vag causing a division by zero error.  Fix this by avoiding
+>> a zero division and set vol_quot to zero in this specific case
+>> so that the lowest setting for i is correctly set.
+>>
 > 
-> In the case where lo_vag <= SGTL5000_LINE_OUT_GND_BASE, lo_vag
-> is set to zero and later vol_quot is computed by dividing by
-> lo_vag causing a division by zero error.  Fix this by avoiding
-> a zero division and set vol_quot to zero in this specific case
-> so that the lowest setting for i is correctly set.
+> This is a very clever patch.  How did you find the bug?
+
+trawling through a lot of false positives from a recent cppcheck run
+
 > 
-
-This is a very clever patch.  How did you find the bug?
-
-regards,
-dan carpenter
+> regards,
+> dan carpenter
+> 
