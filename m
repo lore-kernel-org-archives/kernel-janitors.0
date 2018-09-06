@@ -1,42 +1,38 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 06 Sep 2018 01:47:23 +0000
-Subject: [PATCH -next] ocfs2: remove set but not used variable 'rb'
-Message-Id: <1536198443-113047-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Sep 2018 09:58:44 +0000
+Subject: [PATCH] cfg80211: remove redundant check of !scan_plan
+Message-Id: <20180906095844.17071-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-fs/ocfs2/refcounttree.c: In function 'ocfs2_create_reflink_node':
-fs/ocfs2/refcounttree.c:4138:31: warning:
- variable 'rb' set but not used [-Wunused-but-set-variable]
+The check for !scan_plan is redunant as this has been checked
+in the proceeding statement and the code returns -ENOBUFS if
+it is true. Remove the redundant check.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ocfs2/refcounttree.c | 2 --
- 1 file changed, 2 deletions(-)
+ net/wireless/nl80211.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-index 7a5ee14..1114ef0 100644
---- a/fs/ocfs2/refcounttree.c
-+++ b/fs/ocfs2/refcounttree.c
-@@ -4135,7 +4135,6 @@ static int ocfs2_create_reflink_node(struct inode *s_inode,
- 	struct buffer_head *ref_root_bh = NULL;
- 	struct ocfs2_cached_dealloc_ctxt dealloc;
- 	struct ocfs2_super *osb = OCFS2_SB(s_inode->i_sb);
--	struct ocfs2_refcount_block *rb;
- 	struct ocfs2_dinode *di = (struct ocfs2_dinode *)s_bh->b_data;
- 	struct ocfs2_refcount_tree *ref_tree;
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index d5f9b5235cdd..b4908bcb0d77 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -10690,8 +10690,7 @@ static int nl80211_send_wowlan_nd(struct sk_buff *msg,
+ 		if (!scan_plan)
+ 			return -ENOBUFS;
  
-@@ -4162,7 +4161,6 @@ static int ocfs2_create_reflink_node(struct inode *s_inode,
- 		mlog_errno(ret);
- 		goto out;
- 	}
--	rb = (struct ocfs2_refcount_block *)ref_root_bh->b_data;
- 
- 	ret = ocfs2_duplicate_extent_list(s_inode, t_inode, t_bh,
- 					  &ref_tree->rf_ci, ref_root_bh,
+-		if (!scan_plan ||
+-		    nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_INTERVAL,
++		if (nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_INTERVAL,
+ 				req->scan_plans[i].interval) ||
+ 		    (req->scan_plans[i].iterations &&
+ 		     nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_ITERATIONS,
+-- 
+2.17.1
