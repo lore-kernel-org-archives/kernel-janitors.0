@@ -1,71 +1,58 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 10 Sep 2018 11:35:08 +0000
-Subject: Applied "ASoC: qdsp6: q6asm-dai: clean up a return" to the asoc tree
-Message-Id: <20180910113508.6D63B1122D51@debutante.sirena.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Sep 2018 12:32:07 +0000
+Subject: [PATCH] staging: rtl8723bs: check for i out of range before accessing szLine[i]
+Message-Id: <20180906123207.20164-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180910084048.uhgbbsasp25czuud@kili.mountain>
-In-Reply-To: <20180910084048.uhgbbsasp25czuud@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: qdsp6: q6asm-dai: clean up a return
+Currently szLine[i] is being accessed before the index i is being
+ranged checked.  Fix this by checking the range first.  Also, evaluate
+the length of the string szLine just once rather than multiple times and
+move the loop variable i to an inner scope and make it an int.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 0712e0288b7602efbde95d95bca4c651ccad01b8 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Sep 2018 11:40:48 +0300
-Subject: [PATCH] ASoC: qdsp6: q6asm-dai: clean up a return
-
-Smatch complains that if both "psubstream" and "csubstream" are NULL
-then "ret" is uninitialized.  That probably can't happen, but it's
-cleaner to just return zero anyway so let's do that.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index 9db9a2944ef2..c75fab38905d 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -493,7 +493,7 @@ static int q6asm_dai_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 		}
- 	}
+diff --git a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
+index 0d2c61b67d0e..0833cce43dd3 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
++++ b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
+@@ -2919,7 +2919,6 @@ int PHY_ConfigRFWithTxPwrTrackParaFile(struct adapter *Adapter, char *pFileName)
+ 	struct hal_com_data *pHalData = GET_HAL_DATA(Adapter);
+ 	int	rlen = 0, rtStatus = _FAIL;
+ 	char *szLine, *ptmp;
+-	u32 i = 0;
  
--	return ret;
-+	return 0;
- }
+ 	if (!(Adapter->registrypriv.load_phy_file & LOAD_RF_TXPWR_TRACK_PARA_FILE))
+ 		return rtStatus;
+@@ -2958,8 +2957,10 @@ int PHY_ConfigRFWithTxPwrTrackParaFile(struct adapter *Adapter, char *pFileName)
+ 				char band[5] = "", path[5] = "", sign[5] = "";
+ 				char chnl[5] = "", rate[10] = "";
+ 				char data[300] = ""; /*  100 is too small */
++				const int len = strlen(szLine);
++				int i;
  
- static void q6asm_dai_pcm_free(struct snd_pcm *pcm)
+-				if (strlen(szLine) < 10 || szLine[0] != '[')
++				if (len < 10 || szLine[0] != '[')
+ 					continue;
+ 
+ 				strncpy(band, szLine+1, 2);
+@@ -2973,7 +2974,7 @@ int PHY_ConfigRFWithTxPwrTrackParaFile(struct adapter *Adapter, char *pFileName)
+ 				if (!ParseQualifiedString(szLine, &i, chnl, '[', ']')) {
+ 					/* DBG_871X("Fail to parse channel group!\n"); */
+ 				}
+-				while (szLine[i] != '{' && i < strlen(szLine))
++				while (i < len && szLine[i] != '{')
+ 					i++;
+ 				if (!ParseQualifiedString(szLine, &i, data, '{', '}')) {
+ 					/* DBG_871X("Fail to parse data!\n"); */
 -- 
-2.19.0.rc1
+2.17.1
