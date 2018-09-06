@@ -1,24 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Fri, 28 Sep 2018 16:50:34 +0000
-Subject: Re: [PATCH -next] gpio: omap: Remove set but not used variable 'dev'
-Message-Id: <20180928165034.GH5662@atomide.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 06 Sep 2018 02:29:25 +0000
+Subject: [PATCH] ath10k: snoc: remove set but not used variable 'ar_snoc'
+Message-Id: <1536200965-121172-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538101068-160486-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538101068-160486-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Yue Haibing <yuehaibing@huawei.com>, ath10k@lists.infradead.org
 
-* YueHaibing <yuehaibing@huawei.com> [180928 02:13]:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/gpio/gpio-omap.c: In function 'gpio_omap_cpu_notifier':
-> drivers/gpio/gpio-omap.c:1327:17: warning:
->  variable 'dev' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Yue Haibing <yuehaibing@huawei.com>
 
-Thanks for noticing this:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+drivers/net/wireless/ath/ath10k/snoc.c: In function 'ath10k_snoc_tx_pipe_cleanup':
+drivers/net/wireless/ath/ath10k/snoc.c:681:22: warning:
+ variable 'ar_snoc' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/ath/ath10k/snoc.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index fa1843a..2d6ae00 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -678,13 +678,11 @@ static void ath10k_snoc_tx_pipe_cleanup(struct ath10k_snoc_pipe *snoc_pipe)
+ {
+ 	struct ath10k_ce_pipe *ce_pipe;
+ 	struct ath10k_ce_ring *ce_ring;
+-	struct ath10k_snoc *ar_snoc;
+ 	struct sk_buff *skb;
+ 	struct ath10k *ar;
+ 	int i;
+ 
+ 	ar = snoc_pipe->hif_ce_state;
+-	ar_snoc = ath10k_snoc_priv(ar);
+ 	ce_pipe = snoc_pipe->ce_hdl;
+ 	ce_ring = ce_pipe->src_ring;
