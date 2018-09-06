@@ -1,38 +1,34 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 07 Sep 2018 01:45:27 +0000
-Subject: [PATCH -next] interconnect: qcom: fix return value of qnoc_probe
-Message-Id: <1536284727-170651-1-git-send-email-yuehaibing@huawei.com>
+From: David Sterba <dsterba@suse.cz>
+Date: Thu, 06 Sep 2018 16:08:27 +0000
+Subject: Re: [PATCH] btrfs: remove unused pointer 'tree'
+Message-Id: <20180906160827.GE24025@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180828132101.9559-1-colin.king@canonical.com>
+In-Reply-To: <20180828132101.9559-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Tue, Aug 28, 2018 at 02:21:01PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer 'tree' is being assigned but is never used hence it is
+> redundant and can be removed.
 
-drivers/interconnect/qcom/msm8916.c: In function 'qnoc_probe':
-drivers/interconnect/qcom/msm8916.c:439:7: warning:
- variable 'ret' set but not used [-Wunused-but-set-variable]
+For patches removing dead code it's good to do a bit of research what
+was the reason for that. In most cases it's a simple leftover after some
+other cleanup or rework, ie. harmless, but this needs to be reviewed
+anyway and the reference in changelog helps.
 
-if icc_node_create failed, err code 'ret' will be returned,
-so it cannot be a local variable in for-loop.
+In this case it's after my commit 00032d38eaa89c76de7, I'll update the
+changelog. And the previous patch removing inode in relink_file_extents
+was udpated too.
+> 
+> Cleans up clang warning:
+> warning: variable 'tree' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 8d9300299a40 ("interconnect: qcom: Add msm8916 interconnect provider driver")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/interconnect/qcom/msm8916.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/interconnect/qcom/msm8916.c b/drivers/interconnect/qcom/msm8916.c
-index 74145f4..0e33fdf 100644
---- a/drivers/interconnect/qcom/msm8916.c
-+++ b/drivers/interconnect/qcom/msm8916.c
-@@ -436,7 +436,6 @@ static int qnoc_probe(struct platform_device *pdev)
- 	}
- 
- 	for (i = 0; i < num_nodes; i++) {
--		int ret;
- 		size_t j;
- 
- 		node = icc_node_create(qnodes[i]->id);
+Reviewed-by: David Sterba <dsterba@suse.com>
