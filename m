@@ -1,23 +1,32 @@
-From: Jiri Pirko <jiri@resnulli.us>
-Date: Sun, 23 Sep 2018 17:20:24 +0000
-Subject: Re: [PATCH net] devlink: double free in devlink_resource_fill()
-Message-Id: <20180923172024.GC2203@nanopsycho>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Sep 2018 13:33:48 +0000
+Subject: [PATCH] gpio: ep93xx: fix test for end of loop
+Message-Id: <20180906133348.brzvqt53nzukn7n2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180921080755.GA16307@mwanda>
-In-Reply-To: <20180921080755.GA16307@mwanda>
+References: <CACRpkdaHabhD_pW3XtDh+XzQ3d--r=qNRZVnhx44RV82p0boMA@mail.gmail.com>
+In-Reply-To: <CACRpkdaHabhD_pW3XtDh+XzQ3d--r=qNRZVnhx44RV82p0boMA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiri Pirko <jiri@mellanox.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Colin King <colin.king@canonical.com>
 
-Fri, Sep 21, 2018 at 10:07:55AM CEST, dan.carpenter@oracle.com wrote:
->Smatch reports that devlink_dpipe_send_and_alloc_skb() frees the skb
->on error so this is a double free.  We fixed a bunch of these bugs in
->commit 7fe4d6dcbcb4 ("devlink: Remove redundant free on error path") but
->we accidentally overlooked this one.
->
->Fixes: d9f9b9a4d05f ("devlink: Add support for resource abstraction")
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The problem is that if port = ARRAY_SIZE() and "gc = &epg->gc[port]"
+then that should be treated as invalid.
 
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index 68a416fc3141..b0699f57ddf5 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -80,7 +80,7 @@ static int ep93xx_gpio_port(struct gpio_chip *gc)
+ 		port++;
+ 
+ 	/* This should not happen but is there as a last safeguard */
+-	if (gc != &epg->gc[port]) {
++	if (port = ARRAY_SIZE(epg->gc)) {
+ 		pr_crit("can't find the GPIO port\n");
+ 		return 0;
+ 	}
