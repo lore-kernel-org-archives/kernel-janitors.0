@@ -1,42 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 06 Sep 2018 11:58:30 +0000
-Subject: [PATCH] gpio: ep93xx: fix incorrect array element size check
-Message-Id: <20180906115830.19386-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 06 Sep 2018 12:44:01 +0000
+Subject: Re: [PATCH] gpio: ep93xx: fix incorrect array element size check
+Message-Id: <CACRpkdaHabhD_pW3XtDh+XzQ3d--r=qNRZVnhx44RV82p0boMA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180906115830.19386-1-colin.king@canonical.com>
+In-Reply-To: <20180906115830.19386-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Sep 6, 2018 at 1:58 PM Colin King <colin.king@canonical.com> wrote:
 
-Currently the while loop checks for the end of the array using
-the size of egp->gc rather that the number of elements in the array,
-so fix this. Also, perform the array size check first as stylistically
-it is always good to bounds check on an array first before referencing
-the array (in this case, we're just computing the address of an
-element in an array so this is a moot point).
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently the while loop checks for the end of the array using
+> the size of egp->gc rather that the number of elements in the array,
+> so fix this. Also, perform the array size check first as stylistically
+> it is always good to bounds check on an array first before referencing
+> the array (in this case, we're just computing the address of an
+> element in an array so this is a moot point).
+>
+> Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
+Oh that was really neat code! Thanks a lot.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpio/gpio-ep93xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied.
 
-diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index 68a416fc3141..dd22ea19c3ed 100644
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@ -76,7 +76,7 @@ static int ep93xx_gpio_port(struct gpio_chip *gc)
- 	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
- 	int port = 0;
- 
--	while (gc != &epg->gc[port] && port < sizeof(epg->gc))
-+	while (port < ARRAY_SIZE(epg->gc) && gc != &epg->gc[port])
- 		port++;
- 
- 	/* This should not happen but is there as a last safeguard */
--- 
-2.17.1
+Yours,
+Linus Walleij
