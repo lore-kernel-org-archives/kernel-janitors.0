@@ -1,101 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 27 Sep 2018 15:24:31 +0000
-Subject: [PATCH][mtd-next] mtd: rawnand: fix spelling mistake "card_registred" -> "card_registered"
-Message-Id: <20180927152431.6031-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 06 Sep 2018 10:51:07 +0000
+Subject: Applied "spi: spi-gpio: Remove set but not used variable 'pdata'" to the spi tree
+Message-Id: <20180906105107.83F871122A1F@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Trivial fix to spelling mistake struct field name, rename it.
+   spi: spi-gpio: Remove set but not used variable 'pdata'
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 48c29d0d27fbbb4c78d3c14c50067d7e8919ed95 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 6 Sep 2018 01:38:45 +0000
+Subject: [PATCH] spi: spi-gpio: Remove set but not used variable 'pdata'
+
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/spi/spi-gpio.c: In function 'spi_gpio_remove':
+drivers/spi/spi-gpio.c:450:33: warning:
+ variable 'pdata' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/mtd/nand/raw/r852.c | 14 +++++++-------
- drivers/mtd/nand/raw/r852.h |  2 +-
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/spi/spi-gpio.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/r852.c b/drivers/mtd/nand/raw/r852.c
-index b08aa0a5a074..39be65b35ac2 100644
---- a/drivers/mtd/nand/raw/r852.c
-+++ b/drivers/mtd/nand/raw/r852.c
-@@ -637,7 +637,7 @@ static int r852_register_nand_device(struct r852_device *dev)
+diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
+index 0626e6e3ea0c..d0c6d71b6c0f 100644
+--- a/drivers/spi/spi-gpio.c
++++ b/drivers/spi/spi-gpio.c
+@@ -447,10 +447,8 @@ static int spi_gpio_probe(struct platform_device *pdev)
+ static int spi_gpio_remove(struct platform_device *pdev)
  {
- 	struct mtd_info *mtd = nand_to_mtd(dev->chip);
+ 	struct spi_gpio			*spi_gpio;
+-	struct spi_gpio_platform_data	*pdata;
  
--	WARN_ON(dev->card_registred);
-+	WARN_ON(dev->card_registered);
+ 	spi_gpio = platform_get_drvdata(pdev);
+-	pdata = dev_get_platdata(&pdev->dev);
  
- 	mtd->dev.parent = &dev->pci_dev->dev;
- 
-@@ -654,7 +654,7 @@ static int r852_register_nand_device(struct r852_device *dev)
- 		goto error3;
- 	}
- 
--	dev->card_registred = 1;
-+	dev->card_registered = 1;
- 	return 0;
- error3:
- 	nand_release(dev->chip);
-@@ -672,13 +672,13 @@ static void r852_unregister_nand_device(struct r852_device *dev)
- {
- 	struct mtd_info *mtd = nand_to_mtd(dev->chip);
- 
--	if (!dev->card_registred)
-+	if (!dev->card_registered)
- 		return;
- 
- 	device_remove_file(&mtd->dev, &dev_attr_media_type);
- 	nand_release(dev->chip);
- 	r852_engine_disable(dev);
--	dev->card_registred = 0;
-+	dev->card_registered = 0;
- }
- 
- /* Card state updater */
-@@ -692,7 +692,7 @@ static void r852_card_detect_work(struct work_struct *work)
- 	dev->card_unstable = 0;
- 
- 	/* False alarm */
--	if (dev->card_detected = dev->card_registred)
-+	if (dev->card_detected = dev->card_registered)
- 		goto exit;
- 
- 	/* Read media properties */
-@@ -1033,7 +1033,7 @@ static int r852_resume(struct device *device)
- 
- 
- 	/* If card status changed, just do the work */
--	if (dev->card_detected != dev->card_registred) {
-+	if (dev->card_detected != dev->card_registered) {
- 		dbg("card was %s during low power state",
- 			dev->card_detected ? "added" : "removed");
- 
-@@ -1043,7 +1043,7 @@ static int r852_resume(struct device *device)
- 	}
- 
- 	/* Otherwise, initialize the card */
--	if (dev->card_registred) {
-+	if (dev->card_registered) {
- 		r852_engine_enable(dev);
- 		dev->chip->select_chip(dev->chip, 0);
- 		nand_reset_op(dev->chip);
-diff --git a/drivers/mtd/nand/raw/r852.h b/drivers/mtd/nand/raw/r852.h
-index 1eed2fc2fa42..bc67f5bf67e8 100644
---- a/drivers/mtd/nand/raw/r852.h
-+++ b/drivers/mtd/nand/raw/r852.h
-@@ -129,7 +129,7 @@ struct r852_device {
- 	/* card status area */
- 	struct delayed_work card_detect_work;
- 	struct workqueue_struct *card_workqueue;
--	int card_registred;		/* card registered with mtd */
-+	int card_registered;		/* card registered with mtd */
- 	int card_detected;		/* card detected in slot */
- 	int card_unstable;		/* whenever the card is inserted,
- 					   is not known yet */
+ 	/* stop() unregisters child devices too */
+ 	spi_bitbang_stop(&spi_gpio->bitbang);
 -- 
-2.17.1
+2.19.0.rc1
