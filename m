@@ -1,35 +1,42 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 25 Sep 2018 14:57:42 +0000
-Subject: [PATCH -next] ovl: make symbol 'ovl_aops' static
-Message-Id: <1537887462-35160-1-git-send-email-weiyongjun1@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 06 Sep 2018 01:47:23 +0000
+Subject: [PATCH -next] ocfs2: remove set but not used variable 'rb'
+Message-Id: <1536198443-113047-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-unionfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warning:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-fs/overlayfs/inode.c:507:39: warning:
- symbol 'ovl_aops' was not declared. Should it be static?
+fs/ocfs2/refcounttree.c: In function 'ocfs2_create_reflink_node':
+fs/ocfs2/refcounttree.c:4138:31: warning:
+ variable 'rb' set but not used [-Wunused-but-set-variable]
 
-Fixes: 5b910bd615ba ("ovl: fix GPF in swapfile_activate of file from overlayfs over xfs")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- fs/overlayfs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ocfs2/refcounttree.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index b6ac545..3b7ed5d 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -504,7 +504,7 @@ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	.update_time	= ovl_update_time,
- };
+diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+index 7a5ee14..1114ef0 100644
+--- a/fs/ocfs2/refcounttree.c
++++ b/fs/ocfs2/refcounttree.c
+@@ -4135,7 +4135,6 @@ static int ocfs2_create_reflink_node(struct inode *s_inode,
+ 	struct buffer_head *ref_root_bh = NULL;
+ 	struct ocfs2_cached_dealloc_ctxt dealloc;
+ 	struct ocfs2_super *osb = OCFS2_SB(s_inode->i_sb);
+-	struct ocfs2_refcount_block *rb;
+ 	struct ocfs2_dinode *di = (struct ocfs2_dinode *)s_bh->b_data;
+ 	struct ocfs2_refcount_tree *ref_tree;
  
--const struct address_space_operations ovl_aops = {
-+static const struct address_space_operations ovl_aops = {
- 	/* For O_DIRECT dentry_open() checks f_mapping->a_ops->direct_IO */
- 	.direct_IO		= noop_direct_IO,
- };
+@@ -4162,7 +4161,6 @@ static int ocfs2_create_reflink_node(struct inode *s_inode,
+ 		mlog_errno(ret);
+ 		goto out;
+ 	}
+-	rb = (struct ocfs2_refcount_block *)ref_root_bh->b_data;
+ 
+ 	ret = ocfs2_duplicate_extent_list(s_inode, t_inode, t_bh,
+ 					  &ref_tree->rf_ci, ref_root_bh,
