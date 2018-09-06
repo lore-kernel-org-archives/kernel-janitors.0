@@ -1,30 +1,37 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 07 Sep 2018 01:55:33 +0000
-Subject: [PATCH -next] vfs: syscall: Remove duplicated include from namespace.c
-Message-Id: <1536285937-150932-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Sep 2018 09:39:01 +0000
+Subject: [PATCH] ASoC: hdac_hdmi: remove redundant check for !port condition
+Message-Id: <20180906093901.16682-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The !port check is redundant as it being performed in the following
+check. Remove it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/namespace.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/codecs/hdac_hdmi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 6c95796..e28db6e 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -26,7 +26,6 @@
- #include <linux/magic.h>
- #include <linux/bootmem.h>
- #include <linux/task_work.h>
--#include <linux/file.h>
- #include <linux/sched/task.h>
- #include <uapi/linux/mount.h>
- #include <linux/fs_context.h>
+diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
+index 7b8533abf637..dc6a0dfea050 100644
+--- a/sound/soc/codecs/hdac_hdmi.c
++++ b/sound/soc/codecs/hdac_hdmi.c
+@@ -1961,9 +1961,6 @@ static int hdac_hdmi_get_spk_alloc(struct hdac_device *hdev, int pcm_idx)
+ 
+ 	port = list_first_entry(&pcm->port_list, struct hdac_hdmi_port, head);
+ 
+-	if (!port)
+-		return 0;
+-
+ 	if (!port || !port->eld.eld_valid)
+ 		return 0;
+ 
+-- 
+2.17.1
