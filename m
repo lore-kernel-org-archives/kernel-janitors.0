@@ -1,29 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Sep 2018 07:42:00 +0000
-Subject: Re: [PATCH] pinctrl: mediatek: fix check on EINT_NA comparison
-Message-Id: <CACRpkdZC9L78P-vXvXsKndLAwOmeLDgSjf0+VzVfua-j+3GcDQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 07 Sep 2018 10:39:24 +0000
+Subject: [PATCH] scsi: mpt3sas: make sysfs error messages ratelimited
+Message-Id: <20180907103924.17598-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180925095556.19779-1-colin.king@canonical.com>
-In-Reply-To: <20180925095556.19779-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:55 AM Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently, the check on desc->eint.eint_n = EINT_NA is always false
-> because this is comparing a u16 to -1 which can never be true.  Fix
-> this by casting EINT_NA to u16.
->
-> Detected by CoverityScan, CID#1473610 ("Operands don't affect result")
->
-> Fixes: fb5fa8dc151b ("pinctrl: mediatek: extend struct mtk_pin_desc to pinctrl-mtk-common-v2.c")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It is possible to heavily spam the kernel logs with messages by
+excessive reading of the mpt3sas sysfs files.  Make the error messages
+ratelimited to reduce the spamming effect.
 
-Patch applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index 5e8c059ce2c9..656cec5adb17 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -2958,7 +2958,7 @@ _ctl_BRM_status_show(struct device *cdev, struct device_attribute *attr,
+ 	ssize_t rc = 0;
+ 
+ 	if (!ioc->is_warpdrive) {
+-		pr_err(MPT3SAS_FMT "%s: BRM attribute is only for"
++		pr_err_ratelimited(MPT3SAS_FMT "%s: BRM attribute is only for"
+ 		    " warpdrive\n", ioc->name, __func__);
+ 		goto out;
+ 	}
+@@ -3039,7 +3039,7 @@ _ctl_host_trace_buffer_size_show(struct device *cdev,
+ 	struct DIAG_BUFFER_START *request_data;
+ 
+ 	if (!ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE]) {
+-		pr_err(MPT3SAS_FMT
++		pr_err_ratelimited(MPT3SAS_FMT
+ 			"%s: host_trace_buffer is not registered\n",
+ 			ioc->name, __func__);
+ 		return 0;
+@@ -3047,7 +3047,7 @@ _ctl_host_trace_buffer_size_show(struct device *cdev,
+ 
+ 	if ((ioc->diag_buffer_status[MPI2_DIAG_BUF_TYPE_TRACE] &
+ 	    MPT3_DIAG_BUFFER_IS_REGISTERED) = 0) {
+-		pr_err(MPT3SAS_FMT
++		pr_err_ratelimited(MPT3SAS_FMT
+ 			"%s: host_trace_buffer is not registered\n",
+ 			ioc->name, __func__);
+ 		return 0;
+@@ -3089,7 +3089,7 @@ _ctl_host_trace_buffer_show(struct device *cdev, struct device_attribute *attr,
+ 	u32 size;
+ 
+ 	if (!ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE]) {
+-		pr_err(MPT3SAS_FMT
++		pr_err_ratelimited(MPT3SAS_FMT
+ 			"%s: host_trace_buffer is not registered\n",
+ 			ioc->name, __func__);
+ 		return 0;
+@@ -3097,7 +3097,7 @@ _ctl_host_trace_buffer_show(struct device *cdev, struct device_attribute *attr,
+ 
+ 	if ((ioc->diag_buffer_status[MPI2_DIAG_BUF_TYPE_TRACE] &
+ 	    MPT3_DIAG_BUFFER_IS_REGISTERED) = 0) {
+-		pr_err(MPT3SAS_FMT
++		pr_err_ratelimited(MPT3SAS_FMT
+ 			"%s: host_trace_buffer is not registered\n",
+ 			ioc->name, __func__);
+ 		return 0;
+-- 
+2.17.1
