@@ -1,63 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 30 Sep 2018 23:10:51 +0000
-Subject: [PATCH] staging: rtl8723bs: clean up clang warning on extraneous parentheses
-Message-Id: <20180930231051.18867-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Sep 2018 19:44:32 +0000
+Subject: [bug report] net: dsa: b53: Make SRAB driver manage port interrupts
+Message-Id: <20180907194432.3hhx2hya62z6rrrn@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Florian Fainelli,
 
-There are extraneous parantheses that are causing clang to produce a
-warning so remove these.
+This is a semi-automatic email about new static checker warnings.
 
-Clean up 3 clang warnings:
-equality comparison with extraneous parentheses [-Wparentheses-equality]
+The patch 16994374a6fc: "net: dsa: b53: Make SRAB driver manage port 
+interrupts" from Sep 5, 2018, leads to the following Smatch complaint:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8723bs/core/rtw_security.c      | 5 ++---
- drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c | 2 +-
- 2 files changed, 3 insertions(+), 4 deletions(-)
+    drivers/net/dsa/b53/b53_srab.c:633 b53_srab_remove()
+     warn: variable dereferenced before check 'dev' (see line 630)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-index 6c8ac9e86c9f..240818b4a2c9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_security.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-@@ -1543,7 +1543,7 @@ u32 rtw_aes_encrypt(struct adapter *padapter, u8 *pxmitframe)
- 	pframe = ((struct xmit_frame *)pxmitframe)->buf_addr + hw_hdr_offset;
- 
- 	/* 4 start to encrypt each fragment */
--	if ((pattrib->encrypt = _AES_)) {
-+	if (pattrib->encrypt = _AES_) {
- 		RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("rtw_aes_encrypt: stainfo!= NULL!!!\n"));
- 
- 		if (IS_MCAST(pattrib->ra))
-@@ -1866,8 +1866,7 @@ u32 rtw_aes_decrypt(struct adapter *padapter, u8 *precvframe)
- 
- 	pframe = (unsigned char *)((union recv_frame *)precvframe)->u.hdr.rx_data;
- 	/* 4 start to encrypt each fragment */
--	if ((prxattrib->encrypt = _AES_)) {
--
-+	if (prxattrib->encrypt = _AES_) {
- 		stainfo = rtw_get_stainfo(&padapter->stapriv, &prxattrib->ta[0]);
- 		if (stainfo != NULL) {
- 			RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("rtw_aes_decrypt: stainfo!= NULL!!!\n"));
-diff --git a/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c b/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
-index acc64fa8f166..0e674f39ef03 100644
---- a/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
-+++ b/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
-@@ -97,7 +97,7 @@ void odm_EdcaTurboCheckCE(void *pDM_VOID)
- 		return;
- 	}
- 
--	if ((pregpriv->wifi_spec = 1)) {
-+	if (pregpriv->wifi_spec = 1) {
- 		precvpriv->bIsAnyNonBEPkts = false;
- 		return;
- 	}
--- 
-2.17.1
+drivers/net/dsa/b53/b53_srab.c
+   629		struct b53_device *dev = platform_get_drvdata(pdev);
+   630		struct b53_srab_priv *priv = dev->priv;
+                                             ^^^^^^^^
+We added a dereference.
+
+   631	
+   632		b53_srab_intr_set(priv, false);
+   633		if (dev)
+                    ^^^
+The old code assumed "dev" could be NULL.
+
+   634			b53_switch_remove(dev);
+   635	
+
+regards,
+dan carpenter
