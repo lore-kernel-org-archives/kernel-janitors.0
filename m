@@ -1,23 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 17 Sep 2018 06:33:03 +0000
-Subject: Re: [PATCH] scsi: iscsi: target: fix spelling mistake "entires" -> "entries"
-Message-Id: <yq1y3c0skf4.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Sep 2018 12:25:34 +0000
+Subject: [PATCH] vfs: namespace: error pointer dereference in do_remount()
+Message-Id: <20180907122534.ojogke2alt3ldbom@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180914122808.5447-1-colin.king@canonical.com>
-In-Reply-To: <20180914122808.5447-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 14 Sep 2018 13:28:08 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "Nicholas A . Bellinger" <nab@linux-iscsi.org>, Bart Van Assche <bvanassche@acm.org>, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We need to check if vfs_new_fs_context() returns an error pointer.
 
-Colin,
+Fixes: fd0002870b45 ("vfs: Implement a filesystem superblock creation/configuration context")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Trivial fix to spelling mistake in function name and comment
-
-Applied to 4.20/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/fs/namespace.c b/fs/namespace.c
+index a240e20093e0..841517520c08 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2384,6 +2384,8 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+ 	fc = vfs_new_fs_context(path->dentry->d_sb->s_type,
+ 				path->dentry, sb_flags, MS_RMT_MASK,
+ 				FS_CONTEXT_FOR_RECONFIGURE);
++	if (IS_ERR(fc))
++		return PTR_ERR(fc);
+ 
+ 	err = parse_monolithic_mount_data(fc, data, data_size);
+ 	if (err < 0)
