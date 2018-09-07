@@ -1,36 +1,38 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 07 Sep 2018 02:19:16 +0000
-Subject: [PATCH -next] spi: pl022: Remove set but not used variable 'chip'
-Message-Id: <1536286756-76628-1-git-send-email-yuehaibing@huawei.com>
+Date: Fri, 07 Sep 2018 01:45:27 +0000
+Subject: [PATCH -next] interconnect: qcom: fix return value of qnoc_probe
+Message-Id: <1536284727-170651-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/spi/spi-pl022.c: In function 'do_polling_transfer':
-drivers/spi/spi-pl022.c:1493:20: warning:
- variable 'chip' set but not used [-Wunused-but-set-variable]
+drivers/interconnect/qcom/msm8916.c: In function 'qnoc_probe':
+drivers/interconnect/qcom/msm8916.c:439:7: warning:
+ variable 'ret' set but not used [-Wunused-but-set-variable]
 
+if icc_node_create failed, err code 'ret' will be returned,
+so it cannot be a local variable in for-loop.
+
+Fixes: 8d9300299a40 ("interconnect: qcom: Add msm8916 interconnect provider driver")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/spi/spi-pl022.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/interconnect/qcom/msm8916.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
-index 5f5f197..6120e6a 100644
---- a/drivers/spi/spi-pl022.c
-+++ b/drivers/spi/spi-pl022.c
-@@ -1490,10 +1490,8 @@ static void do_polling_transfer(struct pl022 *pl022)
- 	struct spi_message *message = NULL;
- 	struct spi_transfer *transfer = NULL;
- 	struct spi_transfer *previous = NULL;
--	struct chip_data *chip;
- 	unsigned long time, timeout;
+diff --git a/drivers/interconnect/qcom/msm8916.c b/drivers/interconnect/qcom/msm8916.c
+index 74145f4..0e33fdf 100644
+--- a/drivers/interconnect/qcom/msm8916.c
++++ b/drivers/interconnect/qcom/msm8916.c
+@@ -436,7 +436,6 @@ static int qnoc_probe(struct platform_device *pdev)
+ 	}
  
--	chip = pl022->cur_chip;
- 	message = pl022->cur_msg;
+ 	for (i = 0; i < num_nodes; i++) {
+-		int ret;
+ 		size_t j;
  
- 	while (message->state != STATE_DONE) {
+ 		node = icc_node_create(qnodes[i]->id);
