@@ -1,70 +1,46 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 05 Sep 2018 10:14:58 +0000
-Subject: Re: [PATCH] staging: most: video: fix registration of an empty comp core_component
-Message-Id: <f1fc70f2-6cec-53fa-48a3-36f97c36ec08@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Sep 2018 19:40:33 +0000
+Subject: [PATCH] ASoC: dapm: Fix a couple uninitialized ret variables
+Message-Id: <20180907194033.cmt4rdiwwznaeudq@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180905094605.14827-1-colin.king@canonical.com>
- <1588498.TolbaFeo5X@ws-140106>
-In-Reply-To: <1588498.TolbaFeo5X@ws-140106>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, Abdun Nihaal <abdun.nihaal@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-On 05/09/18 11:06, Alexander Stein wrote:
-> On Wednesday, September 5, 2018, 11:46:05 AM CEST Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently we have structrues comp (which is empty) and comp_info being
->> used to register and deregister the component.  This mismatch in naming
->> occurred from a previous commit that renamed aim_info to comp. Fix this
->> to use consistent component naming in line with most/net, most/sound etc.
->>
->> This fixes the message two issues, one with a null empty name when
->> loading the module:
->>
->> [ 1485.269515] most_core: registered new core component (null)
->>
->> and an Oops when removing the module:
->>
->> [ 1485.277971] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
->> [ 1485.278648] PGD 0 P4D 0
->> [ 1485.279253] Oops: 0002 [#2] SMP PTI
->> [ 1485.279847] CPU: 1 PID: 32629 Comm: modprobe Tainted: P      D WC OE     4.18.0-8-generic #9
->> [ 1485.280442] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
->> [ 1485.281040] RIP: 0010:most_deregister_component+0x3c/0x70 [most_core]
->> .. etc
->>
->> Fixes: 1b10a0316e2d ("staging: most: video: remove aim designators")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/staging/most/video/video.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
->> index cf342eb58e10..ad7e28ab9a4f 100644
->> --- a/drivers/staging/most/video/video.c
->> +++ b/drivers/staging/most/video/video.c
->> @@ -530,7 +530,7 @@ static int comp_disconnect_channel(struct most_interface *iface,
->>  	return 0;
->>  }
->>  
->> -static struct core_component comp_info = {
->> +static struct core_component comp = {
->>  	.name = "video",
->>  	.probe_channel = comp_probe_channel,
->>  	.disconnect_channel = comp_disconnect_channel,
-> 
-> Doesn't it make more sense to move that variable defintion where currently the forward declaration is?
+Smatch complains that these variables could be uninitialized.  The first
+one in snd_soc_dai_link_event() is probably a false positive, because
+probably we know the lists are not empty.  I would normally ignore the
+warning, but GCC complains here as well so I just silenced the warning.
+The "ret" in snd_soc_dapm_new_dai() does need to be initialized or it
+leads to a bogus dereference in the caller.
 
-Probably, I was just keeping this the same as the other most/* drivers
-to be consistent with those for now while just fixing this current buglet.
+Fixes: 3bbf5d34fd4a ("ASoC: dapm: Move error handling to snd_soc_dapm_new_control_unlocked")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> This way you can't have 2 variables accidentally. You will need forward declarations for those two functions, but a mismatch here results in a linker error rather than a runtime NULL pointer access
-> 
-> Best regards,
-> Alexander
-> 
-> 
-> 
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 9f4edcd19e02..0dcdcc23dcfd 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3623,7 +3623,7 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
+ 	struct snd_pcm_hw_params *params = NULL;
+ 	struct snd_pcm_runtime *runtime = NULL;
+ 	unsigned int fmt;
+-	int ret;
++	int ret = 0;
+ 
+ 	config = rtd->dai_link->params + rtd->params_select;
+ 
+@@ -3938,8 +3938,10 @@ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
+ 	dev_dbg(card->dev, "ASoC: adding %s widget\n", link_name);
+ 
+ 	w = snd_soc_dapm_new_control_unlocked(&card->dapm, &template);
+-	if (IS_ERR(w))
++	if (IS_ERR(w)) {
++		ret = PTR_ERR(w);
+ 		goto outfree_kcontrol_news;
++	}
+ 
+ 	w->priv = rtd;
+ 
