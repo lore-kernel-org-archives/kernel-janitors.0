@@ -1,40 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 27 Sep 2018 22:47:00 +0000
-Subject: [PATCH] tracing: fix potential null pointer dereference on rctr_end
-Message-Id: <20180927224700.13739-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 07 Sep 2018 16:09:08 +0000
+Subject: Applied "spi: pl022: Remove set but not used variable 'chip'" to the spi tree
+Message-Id: <20180907160908.454F81122A6D@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Currently rctr_end may assigned null if strchr() fails leading to
-a null pointer dereference in the following check on *(rctr_end + 1).
-Fix this by also adding a null pointer check before the dereference.
+   spi: pl022: Remove set but not used variable 'chip'
 
-Detected by CoverityScan, CID#1473700 ("Dereference null return value")
+has been applied to the spi tree at
 
-Fixes: 1cc33161a83d ("uprobes: Support SDT markers having reference count (semaphore)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b9e49520c1144cb4109ec6ed1fa76c326da850d0 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 7 Sep 2018 02:19:16 +0000
+Subject: [PATCH] spi: pl022: Remove set but not used variable 'chip'
+
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/spi/spi-pl022.c: In function 'do_polling_transfer':
+drivers/spi/spi-pl022.c:1493:20: warning:
+ variable 'chip' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- kernel/trace/trace_uprobe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-pl022.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 3a7c73c40007..c5514651e61f 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -477,7 +477,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 	rctr = strchr(arg, '(');
- 	if (rctr) {
- 		rctr_end = strchr(rctr, ')');
--		if (rctr > rctr_end || *(rctr_end + 1) != 0) {
-+		if (!rctr_end || rctr > rctr_end || *(rctr_end + 1) != 0) {
- 			ret = -EINVAL;
- 			pr_info("Invalid reference counter offset.\n");
- 			goto fail_address_parse;
+diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
+index 5f5f197b153c..6120e6abcd96 100644
+--- a/drivers/spi/spi-pl022.c
++++ b/drivers/spi/spi-pl022.c
+@@ -1490,10 +1490,8 @@ static void do_polling_transfer(struct pl022 *pl022)
+ 	struct spi_message *message = NULL;
+ 	struct spi_transfer *transfer = NULL;
+ 	struct spi_transfer *previous = NULL;
+-	struct chip_data *chip;
+ 	unsigned long time, timeout;
+ 
+-	chip = pl022->cur_chip;
+ 	message = pl022->cur_msg;
+ 
+ 	while (message->state != STATE_DONE) {
 -- 
-2.17.1
+2.19.0.rc1
