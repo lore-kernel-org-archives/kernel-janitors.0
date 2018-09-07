@@ -1,36 +1,36 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 26 Sep 2018 12:17:17 +0000
-Subject: [PATCH net-next] mac80211: fix error handling in ieee80211_register_hw()
-Message-Id: <1537964237-169158-1-git-send-email-weiyongjun1@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 07 Sep 2018 02:19:16 +0000
+Subject: [PATCH -next] spi: pl022: Remove set but not used variable 'chip'
+Message-Id: <1536286756-76628-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fix to return a negative error code -ENOMEM from the kmemdup
-error handling case instead of 0.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Fixes: 09b4a4faf9d0 ("mac80211: introduce capability flags for VHT EXT NSS support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+drivers/spi/spi-pl022.c: In function 'do_polling_transfer':
+drivers/spi/spi-pl022.c:1493:20: warning:
+ variable 'chip' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- net/mac80211/main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/spi/spi-pl022.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/mac80211/main.c b/net/mac80211/main.c
-index 7738101..e6375d0 100644
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -1203,8 +1203,10 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
- 			continue;
+diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
+index 5f5f197..6120e6a 100644
+--- a/drivers/spi/spi-pl022.c
++++ b/drivers/spi/spi-pl022.c
+@@ -1490,10 +1490,8 @@ static void do_polling_transfer(struct pl022 *pl022)
+ 	struct spi_message *message = NULL;
+ 	struct spi_transfer *transfer = NULL;
+ 	struct spi_transfer *previous = NULL;
+-	struct chip_data *chip;
+ 	unsigned long time, timeout;
  
- 		sband = kmemdup(sband, sizeof(*sband), GFP_KERNEL);
--		if (!sband)
-+		if (!sband) {
-+			result = -ENOMEM;
- 			goto fail_rate;
-+		}
+-	chip = pl022->cur_chip;
+ 	message = pl022->cur_msg;
  
- 		wiphy_dbg(hw->wiphy, "copying sband (band %d) due to VHT EXT NSS BW flag\n",
- 			  band);
+ 	while (message->state != STATE_DONE) {
