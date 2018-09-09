@@ -1,42 +1,85 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 06 Sep 2018 11:19:30 +0000
-Subject: [PATCH] agp: check for index out of range before accessing maxes_table[index]
-Message-Id: <20180906111930.18743-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 09 Sep 2018 11:13:25 +0000
+Subject: Re: [PATCH RFC 3/5] coccinelle: add xxxsetbitsXX converting spatch
+Message-Id: <463dbbdc-7afc-bee8-8da1-bbe70b4aec26@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1536349307-20714-4-git-send-email-clabbe@baylibre.com>
+In-Reply-To: <1536349307-20714-4-git-send-email-clabbe@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linus-amlogic@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+How do you think about to add any more meta-data for this semantic patch script?
 
-Currently maxes_table[index] is accessed before index is checked to
-be out of range.  Fix this by performing the out of range check on
-index first.  Also don't check against a hard-coded maximum value
-but use the array size instead.
+* SPDX identifier
+* Copyright information
+* Confidence level
 
-Detected by static analysis with cppcheck:
-"Array index 'index' is used before limits check"
+https://bottest.wiki.kernel.org/coccicheck
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/char/agp/backend.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/agp/backend.c b/drivers/char/agp/backend.c
-index 38ffb281df97..4e07f01833a2 100644
---- a/drivers/char/agp/backend.c
-+++ b/drivers/char/agp/backend.c
-@@ -121,7 +121,8 @@ static int agp_find_max(void)
- #endif
- 	index = 1;
- 
--	while ((memory > maxes_table[index].mem) && (index < 8))
-+	while ((index < ARRAY_SIZE(maxes_table) - 1) &&
-+	       (memory > maxes_table[index].mem))
- 		index++;
- 
- 	result = maxes_table[index - 1].agp +
--- 
-2.17.1
+> +virtual context
+
+Further variables will be needed if you would like to use corresponding
+operation modes (besides “patch”).
+
+
+> +expression reg;
+> +expression set;
+> +expression clear;
+
+I propose once more to avoid the repetition of (unnecessary) SmPL code.
+This part could be written like the following instead.
+
++expression clear, set, reg;
+
+
+If you would increase the usage of SmPL disjunctions, the specification
+of duplicate SmPL code could be reduced considerably.
+
+* Would you like to merge SmPL rules based on the distinction between
+  the data types “u32” and “u64”?
+
+* Did you identify any optional code in this transformation approach?
+
+
+> +@@
+> +expression base;
+> +expression offset;
+> +expression value;
+> +@@
+> +
+> +- mtu3_setbits(base, offset, value);
+> ++ setbits32(base + offset, value);
+> +
+> +@@
+> +expression base;
+> +expression offset;
+> +expression mask;
+> +@@
+> +
+> +- mtu3_clrbits(base, offset, mask);
+> ++ clrbits32(base + offset, mask);
+
+Another update suggestion:
+
++@replacement@
++expression base, offset;
++@@
++(
++-mtu3_clrbits
+++clrbits32
++|
++-mtu3_setbits
+++setbits32
++)(base
++-     ,
+++ +
++  offset, ...);
+
+
+Would you like to try further software fine-tuning out?
+
+Regards,
+Markus
