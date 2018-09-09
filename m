@@ -1,38 +1,35 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Thu, 27 Sep 2018 10:27:17 +0000
-Subject: Re: [PATCH] Bluetooth: btrtl: Make array extension_sig static, shrinks object size
-Message-Id: <B3D4C07F-E8A1-44B1-A221-FEE87F69C485@holtmann.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 09 Sep 2018 22:25:03 +0000
+Subject: [PATCH] scsi: qla2xxx: fix typo "CT-PASSTRHU" -> "CT-PASSTHRU"
+Message-Id: <20180909222503.8298-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180926083208.13632-1-colin.king@canonical.com>
-In-Reply-To: <20180926083208.13632-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-> Don't populate the array extension_sig on the stack but instead make it
-> static. Makes the object code smaller by 75 bytes:
-> 
-> Before:
->   text	   data	    bss	    dec	    hex	filename
->  14325	   4920	      0	  19245	   4b2d	drivers/bluetooth/btrtl.o
-> 
-> After:
->   text	   data	    bss	    dec	    hex	filename
->  14186	   4984	      0	  19170	   4ae2	drivers/bluetooth/btrtl.o
-> 
-> (gcc version 8.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/bluetooth/btrtl.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+Trivial fix to typo in debug message text.
 
-patch has been applied to bluetooth-next tree.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qla2xxx/qla_gs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards
-
-Marcel
+diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
+index a0038d879b9d..b48ff0095843 100644
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -4289,7 +4289,7 @@ static int qla24xx_async_gnnft(scsi_qla_host_t *vha, struct srb *sp,
+ 	}
+ 
+ 	ql_dbg(ql_dbg_disc, vha, 0xfffff,
+-	    "%s: FC4Type %x, CT-PASSTRHU %s command ctarg rsp size %d, ctarg req size %d\n",
++	    "%s: FC4Type %x, CT-PASSTHRU %s command ctarg rsp size %d, ctarg req size %d\n",
+ 	    __func__, fc4_type, sp->name, sp->u.iocb_cmd.u.ctarg.rsp_size,
+ 	     sp->u.iocb_cmd.u.ctarg.req_size);
+ 
+-- 
+2.17.1
