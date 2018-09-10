@@ -1,50 +1,37 @@
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Wed, 12 Sep 2018 05:35:50 +0000
-Subject: Re: [PATCH -next] staging: mt7621-pci: Use PTR_ERR_OR_ZERO in mt7621_pcie_parse_dt()
-Message-Id: <20180912053550.GA17293@foobar>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 10 Sep 2018 01:33:06 +0000
+Subject: [PATCH] cifs: Use kmemdup rather than duplicating its implementation in smb311_posix_mkdir()
+Message-Id: <1536543186-182076-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536720608-106123-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536720608-106123-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 02:50:08AM +0000, YueHaibing wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/staging/mt7621-pci/pci-mt7621.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/mt7621-pci/pci-mt7621.c b/drivers/staging/mt7621-pci/pci-mt7621.c
-> index ba1f117..d2cb910 100644
-> --- a/drivers/staging/mt7621-pci/pci-mt7621.c
-> +++ b/drivers/staging/mt7621-pci/pci-mt7621.c
-> @@ -396,10 +396,7 @@ static int mt7621_pcie_parse_dt(struct mt7621_pcie *pcie)
->  	}
->  
->  	pcie->base = devm_ioremap_resource(dev, &regs);
-> -	if (IS_ERR(pcie->base))
-> -		return PTR_ERR(pcie->base);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(pcie->base);
->  }
+Use kmemdup rather than duplicating its implementation
 
-This patch looks good but the 'mt7621_pcie_parse_dt' function is not completed at all.
-There is a lot of missing for each pci node to be parsed yet and some patch series which
-are doing this have not been tested yet so those patches are not included.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/cifs/smb2pdu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Please see: 
-    http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-September/125937.html
-
-Best regards,
-    Sergio Paracuellos
-
->  
->  static int mt7621_pcie_request_resources(struct mt7621_pcie *pcie,
-> 
-> 
-> 
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index c08acfc..90f041d 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2474,13 +2474,13 @@ int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
+ 		goto ioctl_exit;
+ 	}
+ 
+-	*out_data = kmalloc(*plen, GFP_KERNEL);
++	*out_data = kmemdup((char *)rsp + le32_to_cpu(rsp->OutputOffset),
++			    *plen, GFP_KERNEL);
+ 	if (*out_data = NULL) {
+ 		rc = -ENOMEM;
+ 		goto ioctl_exit;
+ 	}
+ 
+-	memcpy(*out_data, (char *)rsp + le32_to_cpu(rsp->OutputOffset), *plen);
+ ioctl_exit:
+ 	free_rsp_buf(resp_buftype, rsp);
+ 	return rc;
