@@ -1,46 +1,62 @@
-From: Minas Harutyunyan <minas.harutyunyan@synopsys.com>
-Date: Mon, 24 Sep 2018 05:48:33 +0000
-Subject: Re: [PATCH] usb: dwc2: remove set but unused variable
-Message-Id: <410670D7E743164D87FA6160E7907A56013A76F5B9@am04wembxa.internal.synopsys.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Sep 2018 08:37:45 +0000
+Subject: [PATCH] pinctrl: at91-pio4: fix has_config check in atmel_pctl_dt_subnode_to_map()
+Message-Id: <20180910083745.2laxr4upjq36cyqf@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180912181610.GA31006@josh-ThinkPad-T460s>
-In-Reply-To: <20180912181610.GA31006@josh-ThinkPad-T460s>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Josh Abraham <j.abraham1776@gmail.com>, "minas.harutyunyan@synopsys.com" <minas.harutyunyan@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On 9/24/2018 5:41 AM, Josh Abraham wrote:
-> This patch removes a set but unused variable in hcd.c.
->=20
-> Fixes gcc warning:
-> variable =91data_fifo=92 set but not used [-Wunused-but-set-variable]
->=20
-> Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
-> ---
->   drivers/usb/dwc2/hcd.c | 3 ---
->   1 file changed, 3 deletions(-)
->=20
-> diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
-> index 2bd6e6bfc241..5f23b933cafc 100644
-> --- a/drivers/usb/dwc2/hcd.c
-> +++ b/drivers/usb/dwc2/hcd.c
-> @@ -1328,14 +1328,11 @@ static void dwc2_hc_write_packet(struct dwc2_hsot=
-g *hsotg,
->   	u32 remaining_count;
->   	u32 byte_count;
->   	u32 dword_count;
-> -	u32 __iomem *data_fifo;
->   	u32 *data_buf =3D (u32 *)chan->xfer_buf;
->  =20
->   	if (dbg_hc(chan))
->   		dev_vdbg(hsotg->dev, "%s()\n", __func__);
->  =20
-> -	data_fifo =3D (u32 __iomem *)(hsotg->regs + HCFIFO(chan->hc_num));
-> -
->   	remaining_count =3D chan->xfer_len - chan->xfer_count;
->   	if (remaining_count > chan->max_packet)
->   		byte_count =3D chan->max_packet;
->=20
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Smatch complains about this condition:
+
+	if (has_config && num_pins >= 1)
+
+The "has_config" variable is either uninitialized or true.  The
+"num_pins" variable is unsigned and we verified that it is non-zero on
+the lines before so we know "num_pines >= 1" is true.  Really, we could
+just check "num_configs" directly and remove the "has_config" variable.
+
+Fixes: 776180848b57 ("pinctrl: introduce driver for Atmel PIO4 controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index ef7ab208b951..9e2f3738bf3e 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -493,7 +493,6 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	unsigned num_pins, num_configs, reserve;
+ 	unsigned long *configs;
+ 	struct property	*pins;
+-	bool has_config;
+ 	u32 pinfunc;
+ 	int ret, i;
+ 
+@@ -509,9 +508,6 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		return ret;
+ 	}
+ 
+-	if (num_configs)
+-		has_config = true;
+-
+ 	num_pins = pins->length / sizeof(u32);
+ 	if (!num_pins) {
+ 		dev_err(pctldev->dev, "no pins found in node %pOF\n", np);
+@@ -524,7 +520,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	 * map for each pin.
+ 	 */
+ 	reserve = 1;
+-	if (has_config && num_pins >= 1)
++	if (num_configs)
+ 		reserve++;
+ 	reserve *= num_pins;
+ 	ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps, num_maps,
+@@ -547,7 +543,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		pinctrl_utils_add_map_mux(pctldev, map, reserved_maps, num_maps,
+ 					  group, func);
+ 
+-		if (has_config) {
++		if (num_configs) {
+ 			ret = pinctrl_utils_add_map_configs(pctldev, map,
+ 					reserved_maps, num_maps, group,
+ 					configs, num_configs,
