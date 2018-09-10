@@ -1,49 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 26 Sep 2018 13:08:48 +0000
-Subject: [PATCH] scsi: qla4xxx: remove redundant check on drvr_wait
-Message-Id: <20180926130848.30645-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Sep 2018 08:38:18 +0000
+Subject: [PATCH] vlynq: uninitialized return in vlynq_probe()
+Message-Id: <20180910083817.l2xdfkxhrlml5q5q@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+"result" isn't initialized on this error path.
 
-The check for a non-zero drvr_wait is redundant as the same check
-is performed earlier in the outer while loop, the inner check will
-always be true if we reached this point inside the while loop.
-Remove the redundant if check.
+Fixes: 55e331cf7ebe ("drivers: add support for the TI VLYNQ bus")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Detected by cppcheck:
-(warning) Identical inner 'if' condition is always true.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/qla4xxx/ql4_init.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/scsi/qla4xxx/ql4_init.c b/drivers/scsi/qla4xxx/ql4_init.c
-index 52b1a0bc93c9..1ef74aa2d00a 100644
---- a/drivers/scsi/qla4xxx/ql4_init.c
-+++ b/drivers/scsi/qla4xxx/ql4_init.c
-@@ -766,12 +766,10 @@ int ql4xxx_lock_drvr_wait(struct scsi_qla_host *a)
- 	while (drvr_wait) {
- 		if (ql4xxx_lock_drvr(a) = 0) {
- 			ssleep(QL4_LOCK_DRVR_SLEEP);
--			if (drvr_wait) {
--				DEBUG2(printk("scsi%ld: %s: Waiting for "
--					      "Global Init Semaphore(%d)...\n",
--					      a->host_no,
--					      __func__, drvr_wait));
--			}
-+			DEBUG2(printk("scsi%ld: %s: Waiting for "
-+				      "Global Init Semaphore(%d)...\n",
-+				      a->host_no,
-+				      __func__, drvr_wait));
- 			drvr_wait -= QL4_LOCK_DRVR_SLEEP;
- 		} else {
- 			DEBUG2(printk("scsi%ld: %s: Global Init Semaphore "
--- 
-2.17.1
+diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
+index c0227f9418eb..44d3485d1108 100644
+--- a/drivers/vlynq/vlynq.c
++++ b/drivers/vlynq/vlynq.c
+@@ -727,7 +727,8 @@ static int vlynq_probe(struct platform_device *pdev)
+ 	dev->local_irq = dev->irq_end - dev->irq_start;
+ 	dev->remote_irq = dev->local_irq - 1;
+ 
+-	if (device_register(&dev->dev))
++	result = device_register(&dev->dev);
++	if (result)
+ 		goto fail_register;
+ 	platform_set_drvdata(pdev, dev);
+ 
