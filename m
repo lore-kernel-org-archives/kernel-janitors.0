@@ -1,34 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 08 Sep 2018 08:42:27 +0000
-Subject: [PATCH] scsi: qla2xxx: Fix an endian bug in fcpcmd_is_corrupted()
-Message-Id: <20180908084227.xo4g5aekndokopus@kili.mountain>
+From: "Tran, Quinn" <Quinn.Tran@cavium.com>
+Date: Mon, 10 Sep 2018 17:46:53 +0000
+Subject: Re: [PATCH] scsi: qla2xxx: Fix an endian bug in fcpcmd_is_corrupted()
+Message-Id: <CF205C80-BBA0-4A45-A0BC-00636FF3620C@cavium.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180908084227.xo4g5aekndokopus@kili.mountain>
+In-Reply-To: <20180908084227.xo4g5aekndokopus@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We should first do the le16_to_cpu endian conversion and then apply
-the FCP_CMD_LENGTH_MASK mask.
-
-Fixes: 5f35509db179 ("qla2xxx: Terminate exchange if corrupted")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I just happened to spot this when I was reviewing something unrelated.
-I don't have the hardware to test it, so please review carefully.
-
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index fecf96f0225c..199d3ba1916d 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -374,8 +374,8 @@ struct atio_from_isp {
- static inline int fcpcmd_is_corrupted(struct atio *atio)
- {
- 	if (atio->entry_type = ATIO_TYPE7 &&
--	    (le16_to_cpu(atio->attr_n_length & FCP_CMD_LENGTH_MASK) <
--	    FCP_CMD_LENGTH_MIN))
-+	    ((le16_to_cpu(atio->attr_n_length) & FCP_CMD_LENGTH_MASK) <
-+	     FCP_CMD_LENGTH_MIN))
- 		return 1;
- 	else
- 		return 0;
+RGFuLA0KDQpJdCBsb29rcyBnb29kLiAgVGhhbmtzLg0KDQpSZWdhcmRzLA0KUXVpbm4gVHJhbg0K
+77u/LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IERhbiBDYXJwZW50ZXIgPGRhbi5j
+YXJwZW50ZXJAb3JhY2xlLmNvbT4NCkRhdGU6IFNhdHVyZGF5LCBTZXB0ZW1iZXIgOCwgMjAxOCBh
+dCAxOjQyIEFNDQpUbzogRGVwdC1FbmcgUUxBMnh4eCBVcHN0cmVhbSA8cWxhMnh4eC11cHN0cmVh
+bUBjYXZpdW0uY29tPiwgIlRyYW4sIFF1aW5uIiA8UXVpbm4uVHJhbkBjYXZpdW0uY29tPg0KQ2M6
+ICJKYW1lcyBFLkouIEJvdHRvbWxleSIgPGplamJAbGludXgudm5ldC5pYm0uY29tPiwgIk1hcnRp
+biBLLiBQZXRlcnNlbiIgPG1hcnRpbi5wZXRlcnNlbkBvcmFjbGUuY29tPiwgImxpbnV4LXNjc2lA
+dmdlci5rZXJuZWwub3JnIiA8bGludXgtc2NzaUB2Z2VyLmtlcm5lbC5vcmc+LCAiTWFkaGFuaSwg
+SGltYW5zaHUiIDxIaW1hbnNodS5NYWRoYW5pQGNhdml1bS5jb20+LCAia2VybmVsLWphbml0b3Jz
+QHZnZXIua2VybmVsLm9yZyIgPGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc+DQpTdWJq
+ZWN0OiBbUEFUQ0hdIHNjc2k6IHFsYTJ4eHg6IEZpeCBhbiBlbmRpYW4gYnVnIGluIGZjcGNtZF9p
+c19jb3JydXB0ZWQoKQ0KDQogICAgRXh0ZXJuYWwgRW1haWwNCiAgICANCiAgICBXZSBzaG91bGQg
+Zmlyc3QgZG8gdGhlIGxlMTZfdG9fY3B1IGVuZGlhbiBjb252ZXJzaW9uIGFuZCB0aGVuIGFwcGx5
+DQogICAgdGhlIEZDUF9DTURfTEVOR1RIX01BU0sgbWFzay4NCiAgICANCiAgICBGaXhlczogNWYz
+NTUwOWRiMTc5ICgicWxhMnh4eDogVGVybWluYXRlIGV4Y2hhbmdlIGlmIGNvcnJ1cHRlZCIpDQog
+ICAgU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29t
+Pg0KICAgIC0tLQ0KICAgIEkganVzdCBoYXBwZW5lZCB0byBzcG90IHRoaXMgd2hlbiBJIHdhcyBy
+ZXZpZXdpbmcgc29tZXRoaW5nIHVucmVsYXRlZC4NCiAgICBJIGRvbid0IGhhdmUgdGhlIGhhcmR3
+YXJlIHRvIHRlc3QgaXQsIHNvIHBsZWFzZSByZXZpZXcgY2FyZWZ1bGx5Lg0KICAgIA0KICAgIGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmggYi9kcml2ZXJzL3Nj
+c2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmgNCiAgICBpbmRleCBmZWNmOTZmMDIyNWMuLjE5OWQzYmEx
+OTE2ZCAxMDA2NDQNCiAgICAtLS0gYS9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmgN
+CiAgICArKysgYi9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmgNCiAgICBAQCAtMzc0
+LDggKzM3NCw4IEBAIHN0cnVjdCBhdGlvX2Zyb21faXNwIHsNCiAgICAgc3RhdGljIGlubGluZSBp
+bnQgZmNwY21kX2lzX2NvcnJ1cHRlZChzdHJ1Y3QgYXRpbyAqYXRpbykNCiAgICAgew0KICAgICAg
+ICAgICAgaWYgKGF0aW8tPmVudHJ5X3R5cGUgPT0gQVRJT19UWVBFNyAmJg0KICAgIC0gICAgICAg
+ICAgIChsZTE2X3RvX2NwdShhdGlvLT5hdHRyX25fbGVuZ3RoICYgRkNQX0NNRF9MRU5HVEhfTUFT
+SykgPA0KICAgIC0gICAgICAgICAgIEZDUF9DTURfTEVOR1RIX01JTikpDQogICAgKyAgICAgICAg
+ICAgKChsZTE2X3RvX2NwdShhdGlvLT5hdHRyX25fbGVuZ3RoKSAmIEZDUF9DTURfTEVOR1RIX01B
+U0spIDwNCiAgICArICAgICAgICAgICAgRkNQX0NNRF9MRU5HVEhfTUlOKSkNCiAgICAgICAgICAg
+ICAgICAgICAgcmV0dXJuIDE7DQogICAgICAgICAgICBlbHNlDQogICAgICAgICAgICAgICAgICAg
+IHJldHVybiAwOw0KICAgIA0KDQo
