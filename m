@@ -1,45 +1,27 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Date: Tue, 25 Sep 2018 17:15:39 +0000
-Subject: Re: [PATCH -next] EDAC: Remove set but not used variable 'type'
-Message-Id: <20180925171539.GA16543@agluck-desk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Sep 2018 08:35:11 +0000
+Subject: [PATCH] RDMA/hns: Fix an error code in hns_roce_v2_init_eq_table()
+Message-Id: <20180910083511.egoljxb5rr3do6ue@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537842964-109749-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537842964-109749-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Borislav Petkov <bp@alien8.de>
-Cc: YueHaibing <yuehaibing@huawei.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lijun Ou <oulijun@huawei.com>
+Cc: "Wei Hu(Xavier)" <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 12:11:07PM +0200, Borislav Petkov wrote:
-> On Tue, Sep 25, 2018 at 02:36:04AM +0000, YueHaibing wrote:
-> >  	if (uncorrected_error) {
-> > -		if (ripv) {
-> > -			type = "FATAL";
-> > +		if (ripv)
-> >  			tp_event = HW_EVENT_ERR_FATAL;
-> > -		} else {
-> > -			type = "NON_FATAL";
-> > +		else
-> >  			tp_event = HW_EVENT_ERR_UNCORRECTED;
-> > -		}
-> >  	} else {
-> > -		type = "CORRECTED";
-> >  		tp_event = HW_EVENT_ERR_CORRECTED;
-> >  	}
-> 
-> Looks like this @type thing was never used. Tony, did you want to use it
-> for something?
+The error code isn't set on this path.
 
-That block of code looks to have been pasted from sb_edac.c, so likely
-need the same fix there.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-It also looks to be wrong. Saying "FATAL" if mcgstatus.ripv is set
-looks wrong (and incomplete). If RIPV is *NOT* set, then this is fatal.
-But if it is set, then we should be looking at other bits (like PCC
-and AR) ... or maybe just calling mce_severity()?
-
-Perhaps a moot point though. If the error is fatal, then we'll panic
-instead of calling the EDAC driver.
-
--Tony
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 0218c0f8c2a7..b84bfa48371d 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -5125,6 +5125,7 @@ static int hns_roce_v2_init_eq_table(struct hns_roce_dev *hr_dev)
+ 		create_singlethread_workqueue("hns_roce_irq_workqueue");
+ 	if (!hr_dev->irq_workq) {
+ 		dev_err(dev, "Create irq workqueue failed!\n");
++		ret = -ENOMEM;
+ 		goto err_request_irq_fail;
+ 	}
+ 
