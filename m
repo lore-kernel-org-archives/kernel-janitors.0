@@ -1,46 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Sep 2018 19:40:33 +0000
-Subject: [PATCH] ASoC: dapm: Fix a couple uninitialized ret variables
-Message-Id: <20180907194033.cmt4rdiwwznaeudq@kili.mountain>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Date: Mon, 10 Sep 2018 14:22:24 +0000
+Subject: Re: [PATCH] ASoC: dapm: Fix a couple uninitialized ret variables
+Message-Id: <20180910142224.GJ1653@imbe.wolfsonmicro.main>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180907194033.cmt4rdiwwznaeudq@kili.mountain>
+In-Reply-To: <20180907194033.cmt4rdiwwznaeudq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-Smatch complains that these variables could be uninitialized.  The first
-one in snd_soc_dai_link_event() is probably a false positive, because
-probably we know the lists are not empty.  I would normally ignore the
-warning, but GCC complains here as well so I just silenced the warning.
-The "ret" in snd_soc_dapm_new_dai() does need to be initialized or it
-leads to a bogus dereference in the caller.
+On Fri, Sep 07, 2018 at 10:40:33PM +0300, Dan Carpenter wrote:
+> Smatch complains that these variables could be uninitialized.  The first
+> one in snd_soc_dai_link_event() is probably a false positive, because
+> probably we know the lists are not empty.  I would normally ignore the
+> warning, but GCC complains here as well so I just silenced the warning.
+> The "ret" in snd_soc_dapm_new_dai() does need to be initialized or it
+> leads to a bogus dereference in the caller.
+> 
+> Fixes: 3bbf5d34fd4a ("ASoC: dapm: Move error handling to snd_soc_dapm_new_control_unlocked")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+> index 9f4edcd19e02..0dcdcc23dcfd 100644
+> --- a/sound/soc/soc-dapm.c
+> +++ b/sound/soc/soc-dapm.c
+> @@ -3623,7 +3623,7 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
+>  	struct snd_pcm_hw_params *params = NULL;
+>  	struct snd_pcm_runtime *runtime = NULL;
+>  	unsigned int fmt;
+> -	int ret;
+> +	int ret = 0;
 
-Fixes: 3bbf5d34fd4a ("ASoC: dapm: Move error handling to snd_soc_dapm_new_control_unlocked")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This one got fixed the other day in fc269c039644 ("ASoC: dapm:
+Avoid uninitialised variable warning").
+>  
+>  	config = rtd->dai_link->params + rtd->params_select;
+>  
+> @@ -3938,8 +3938,10 @@ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
+>  	dev_dbg(card->dev, "ASoC: adding %s widget\n", link_name);
+>  
+>  	w = snd_soc_dapm_new_control_unlocked(&card->dapm, &template);
+> -	if (IS_ERR(w))
+> +	if (IS_ERR(w)) {
+> +		ret = PTR_ERR(w);
+>  		goto outfree_kcontrol_news;
+> +	}
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 9f4edcd19e02..0dcdcc23dcfd 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3623,7 +3623,7 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
- 	struct snd_pcm_hw_params *params = NULL;
- 	struct snd_pcm_runtime *runtime = NULL;
- 	unsigned int fmt;
--	int ret;
-+	int ret = 0;
- 
- 	config = rtd->dai_link->params + rtd->params_select;
- 
-@@ -3938,8 +3938,10 @@ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
- 	dev_dbg(card->dev, "ASoC: adding %s widget\n", link_name);
- 
- 	w = snd_soc_dapm_new_control_unlocked(&card->dapm, &template);
--	if (IS_ERR(w))
-+	if (IS_ERR(w)) {
-+		ret = PTR_ERR(w);
- 		goto outfree_kcontrol_news;
-+	}
- 
- 	w->priv = rtd;
- 
+Thanks for spotting this, looks good to me.
+
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+
+>  
+>  	w->priv = rtd;
+>  
+
+Thanks,
+Charles
