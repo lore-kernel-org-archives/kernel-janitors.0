@@ -1,24 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 05 Sep 2018 15:06:45 +0000
-Subject: Re: [PATCH net-next] net/mlx5e: Make function mlx5i_grp_sw_update_stats() static
-Message-Id: <20180905.080645.298013872228567967.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Sep 2018 12:17:22 +0000
+Subject: [PATCH][next] cxgb4: remove redundant assignment to vlan_cmd.dropnovlan_fm
+Message-Id: <20180910121722.15524-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536146162-132732-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1536146162-132732-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: saeedm@mellanox.com, leon@kernel.org, jgg@ziepe.ca, ogerlitz@mellanox.com, tariqt@mellanox.com, ferasda@mellanox.com, valex@mellanox.com, erezsh@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ganesh Goudar <ganeshgr@chelsio.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 5 Sep 2018 11:16:02 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes the following sparse warning:
-> 
-> drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c:119:6: warning:
->  symbol 'mlx5i_grp_sw_update_stats' was not declared. Should it be static?
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+A recent commit updated vlan_cmd.dropnovlan_fm but failed to remove
+the older assignment.  Fix this by removing the former redundant
+assignment.
 
-Applied.
+Detected by CoverityScan, CID#1473290 ("Unused value")
+
+Fixes: a89cdd8e7c74 ("cxgb4: impose mandatory VLAN usage when non-zero TAG ID")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+index 6f1bd7bf1a11..c28a1d8b7f33 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+@@ -10209,7 +10209,6 @@ int t4_set_vlan_acl(struct adapter *adap, unsigned int mbox, unsigned int vf,
+ 					 FW_ACL_VLAN_CMD_VFN_V(vf));
+ 	vlan_cmd.en_to_len16 = cpu_to_be32(enable | FW_LEN16(vlan_cmd));
+ 	/* Drop all packets that donot match vlan id */
+-	vlan_cmd.dropnovlan_fm = FW_ACL_VLAN_CMD_FM_F;
+ 	vlan_cmd.dropnovlan_fm = (enable
+ 				  ? (FW_ACL_VLAN_CMD_DROPNOVLAN_F |
+ 				     FW_ACL_VLAN_CMD_FM_F) : 0);
+-- 
+2.17.1
