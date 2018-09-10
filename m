@@ -1,34 +1,71 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 04 Sep 2018 08:17:25 +0000
-Subject: Re: [PATCH v4] rsi: remove set but not used variables 'header_size' and 'tx_params'
-Message-Id: <20180904081725.9B421603D2@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Sep 2018 08:39:04 +0000
+Subject: [PATCH] power: supply: ab8500_fg: silence uninitialized variable warnings
+Message-Id: <20180910083904.sdjreuxjxtd2puc4@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1535788107-171830-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535788107-171830-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Pavani Muthyala <pavani.muthyala@redpinesignals.com>, Kees Cook <keescook@chromium.org>, Colin Ian King <colin.king@canonical.com>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>, Sushant Kumar Mishra <sushant.mishra@redpinesignals.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+If kstrtoul() fails then we print "charge_full" when it's uninitialized.
+The debug printk doesn't add anything so I deleted it and cleaned these
+two functions up a bit.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/rsi/rsi_91x_hal.c: In function 'rsi_send_data_pkt':
-> drivers/net/wireless/rsi/rsi_91x_hal.c:288:5: warning:
->  variable 'header_size' set but not used [-Wunused-but-set-variable]
-> 
-> 'tx_params' only used for 'header_size' dereferenced,so also
-> can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-ec7eccf7ad1c rsi: remove set but not used variables 'header_size' and 'tx_params'
-
--- 
-https://patchwork.kernel.org/patch/10584631/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab8500_fg.c
+index 2bdadb58bcc6..776102c31305 100644
+--- a/drivers/power/supply/ab8500_fg.c
++++ b/drivers/power/supply/ab8500_fg.c
+@@ -2433,17 +2433,14 @@ static ssize_t charge_full_store(struct ab8500_fg *di, const char *buf,
+ 				 size_t count)
+ {
+ 	unsigned long charge_full;
+-	ssize_t ret;
++	int ret;
+ 
+ 	ret = kstrtoul(buf, 10, &charge_full);
++	if (ret)
++		return ret;
+ 
+-	dev_dbg(di->dev, "Ret %zd charge_full %lu", ret, charge_full);
+-
+-	if (!ret) {
+-		di->bat_cap.max_mah = (int) charge_full;
+-		ret = count;
+-	}
+-	return ret;
++	di->bat_cap.max_mah = (int) charge_full;
++	return count;
+ }
+ 
+ static ssize_t charge_now_show(struct ab8500_fg *di, char *buf)
+@@ -2455,20 +2452,16 @@ static ssize_t charge_now_store(struct ab8500_fg *di, const char *buf,
+ 				 size_t count)
+ {
+ 	unsigned long charge_now;
+-	ssize_t ret;
++	int ret;
+ 
+ 	ret = kstrtoul(buf, 10, &charge_now);
++	if (ret)
++		return ret;
+ 
+-	dev_dbg(di->dev, "Ret %zd charge_now %lu was %d",
+-		ret, charge_now, di->bat_cap.prev_mah);
+-
+-	if (!ret) {
+-		di->bat_cap.user_mah = (int) charge_now;
+-		di->flags.user_cap = true;
+-		ret = count;
+-		queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
+-	}
+-	return ret;
++	di->bat_cap.user_mah = (int) charge_now;
++	di->flags.user_cap = true;
++	queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
++	return count;
+ }
+ 
+ static struct ab8500_fg_sysfs_entry charge_full_attr 
