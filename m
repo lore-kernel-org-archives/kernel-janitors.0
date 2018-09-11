@@ -1,60 +1,70 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Mon, 10 Sep 2018 14:22:24 +0000
-Subject: Re: [PATCH] ASoC: dapm: Fix a couple uninitialized ret variables
-Message-Id: <20180910142224.GJ1653@imbe.wolfsonmicro.main>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 11 Sep 2018 11:51:29 +0000
+Subject: [PATCH net-next] qlcnic: Remove set but not used variables 'fw_mbx' and 'hdr_size'
+Message-Id: <1536666689-3906-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180907194033.cmt4rdiwwznaeudq@kili.mountain>
-In-Reply-To: <20180907194033.cmt4rdiwwznaeudq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: Harish Patil <harish.patil@cavium.com>, Manish Chopra <manish.chopra@cavium.com>, "David S. Miller" <davem@davemloft.net>
+Cc: Yue Haibing <yuehaibing@huawei.com>, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 10:40:33PM +0300, Dan Carpenter wrote:
-> Smatch complains that these variables could be uninitialized.  The first
-> one in snd_soc_dai_link_event() is probably a false positive, because
-> probably we know the lists are not empty.  I would normally ignore the
-> warning, but GCC complains here as well so I just silenced the warning.
-> The "ret" in snd_soc_dapm_new_dai() does need to be initialized or it
-> leads to a bogus dereference in the caller.
-> 
-> Fixes: 3bbf5d34fd4a ("ASoC: dapm: Move error handling to snd_soc_dapm_new_control_unlocked")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-> index 9f4edcd19e02..0dcdcc23dcfd 100644
-> --- a/sound/soc/soc-dapm.c
-> +++ b/sound/soc/soc-dapm.c
-> @@ -3623,7 +3623,7 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
->  	struct snd_pcm_hw_params *params = NULL;
->  	struct snd_pcm_runtime *runtime = NULL;
->  	unsigned int fmt;
-> -	int ret;
-> +	int ret = 0;
+From: Yue Haibing <yuehaibing@huawei.com>
 
-This one got fixed the other day in fc269c039644 ("ASoC: dapm:
-Avoid uninitialised variable warning").
->  
->  	config = rtd->dai_link->params + rtd->params_select;
->  
-> @@ -3938,8 +3938,10 @@ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
->  	dev_dbg(card->dev, "ASoC: adding %s widget\n", link_name);
->  
->  	w = snd_soc_dapm_new_control_unlocked(&card->dapm, &template);
-> -	if (IS_ERR(w))
-> +	if (IS_ERR(w)) {
-> +		ret = PTR_ERR(w);
->  		goto outfree_kcontrol_news;
-> +	}
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks for spotting this, looks good to me.
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c: In function 'qlcnic_sriov_pull_bc_msg':
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c:907:6: warning:
+ variable 'fw_mbx' set but not used [-Wunused-but-set-variable]
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c: In function 'qlcnic_sriov_issue_bc_post':
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c:939:16: warning:
+ variable 'hdr_size' set but not used [-Wunused-but-set-variable]
 
->  
->  	w->priv = rtd;
->  
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Thanks,
-Charles
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+index 77e386e..f7c2f32 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+@@ -904,13 +904,11 @@ static void qlcnic_sriov_pull_bc_msg(struct qlcnic_adapter *adapter,
+ 				     u32 *hdr, u32 *pay, u32 size)
+ {
+ 	struct qlcnic_hardware_context *ahw = adapter->ahw;
+-	u32 fw_mbx;
+ 	u8 i, max = 2, hdr_size, j;
+ 
+ 	hdr_size = (sizeof(struct qlcnic_bc_hdr) / sizeof(u32));
+ 	max = (size / sizeof(u32)) + hdr_size;
+ 
+-	fw_mbx = readl(QLCNIC_MBX_FW(ahw, 0));
+ 	for (i = 2, j = 0; j < hdr_size; i++, j++)
+ 		*(hdr++) = readl(QLCNIC_MBX_FW(ahw, i));
+ 	for (; j < max; i++, j++)
+@@ -936,7 +934,7 @@ static int __qlcnic_sriov_issue_bc_post(struct qlcnic_vf_info *vf)
+ static int qlcnic_sriov_issue_bc_post(struct qlcnic_bc_trans *trans, u8 type)
+ {
+ 	struct qlcnic_vf_info *vf = trans->vf;
+-	u32 pay_size, hdr_size;
++	u32 pay_size;
+ 	u32 *hdr, *pay;
+ 	int ret;
+ 	u8 pci_func = trans->func_id;
+@@ -947,14 +945,12 @@ static int qlcnic_sriov_issue_bc_post(struct qlcnic_bc_trans *trans, u8 type)
+ 	if (type = QLC_BC_COMMAND) {
+ 		hdr = (u32 *)(trans->req_hdr + trans->curr_req_frag);
+ 		pay = (u32 *)(trans->req_pay + trans->curr_req_frag);
+-		hdr_size = (sizeof(struct qlcnic_bc_hdr) / sizeof(u32));
+ 		pay_size = qlcnic_sriov_get_bc_paysize(trans->req_pay_size,
+ 						       trans->curr_req_frag);
+ 		pay_size = (pay_size / sizeof(u32));
+ 	} else {
+ 		hdr = (u32 *)(trans->rsp_hdr + trans->curr_rsp_frag);
+ 		pay = (u32 *)(trans->rsp_pay + trans->curr_rsp_frag);
+-		hdr_size = (sizeof(struct qlcnic_bc_hdr) / sizeof(u32));
+ 		pay_size = qlcnic_sriov_get_bc_paysize(trans->rsp_pay_size,
+ 						       trans->curr_rsp_frag);
+ 		pay_size = (pay_size / sizeof(u32));
