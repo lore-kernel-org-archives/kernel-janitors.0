@@ -1,17 +1,18 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Wed, 05 Sep 2018 09:15:04 +0000
+From: Lee Jones <lee.jones@linaro.org>
+Date: Tue, 11 Sep 2018 14:00:31 +0000
 Subject: Re: [PATCH] mfd: arizona: make array mclk_name static, shrinks object size
-Message-Id: <20180905091504.GB1653@imbe.wolfsonmicro.main>
+Message-Id: <20180911140031.GT4185@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180904141553.28000-1-colin.king@canonical.com>
 In-Reply-To: <20180904141553.28000-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: Colin King <colin.king@canonical.com>
-Cc: Lee Jones <lee.jones@linaro.org>, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 03:15:53PM +0100, Colin King wrote:
+On Tue, 04 Sep 2018, Colin King wrote:
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Don't populate the array mclk_name on the stack but instead make it
@@ -29,8 +30,13 @@ On Tue, Sep 04, 2018 at 03:15:53PM +0100, Colin King wrote:
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
+>  drivers/mfd/arizona-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Applied, thanks.
 
-Thanks,
-Charles
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
