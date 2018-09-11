@@ -1,46 +1,38 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Date: Tue, 25 Sep 2018 15:19:56 +0000
-Subject: Re: [PATCH -next] serial: uartps: Fix missing unlock on error in cdns_get_id()
-Message-Id: <138f0ca2-7e84-faa8-2105-1e49e96cea14@xilinx.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 11 Sep 2018 12:28:24 +0000
+Subject: [PATCH] qtnfmac: remove set but not used variable 'vif'
+Message-Id: <1536668904-13110-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537885401-18605-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1537885401-18605-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Igor Mitsyanko <imitsyanko@quantenna.com>, Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Kalle Valo <kvalo@codeaurora.org>, Sergei Maksimenko <smaksimenko@quantenna.com>, Vasily Ulyanov <vulyanov@quantenna.com>, Andrey Shevchenko <ashevchenko@quantenna.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 25.9.2018 16:23, Wei Yongjun wrote:
-> Add the missing unlock before return from function cdns_get_id()
-> in the error handling case.
-> 
-> Fixes: ae1cca3fa347 ("serial: uartps: Change uart ID port allocation")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/tty/serial/xilinx_uartps.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-> index f77200a..0e3dae4 100644
-> --- a/drivers/tty/serial/xilinx_uartps.c
-> +++ b/drivers/tty/serial/xilinx_uartps.c
-> @@ -1394,8 +1394,10 @@ static int cdns_get_id(struct platform_device *pdev)
->  	if (!alias_bitmap_initialized) {
->  		ret = of_alias_get_alias_list(cdns_uart_of_match, "serial",
->  					      alias_bitmap, MAX_UART_INSTANCES);
-> -		if (ret)
-> +		if (ret) {
-> +			mutex_unlock(&bitmap_lock);
->  			return ret;
-> +		}
->  
->  		alias_bitmap_initialized++;
->  	}
-> 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks for the fix.
+drivers/net/wireless/quantenna/qtnfmac/cfg80211.c: In function 'qtnf_dump_survey':
+drivers/net/wireless/quantenna/qtnfmac/cfg80211.c:694:19: warning:
+ variable 'vif' set but not used [-Wunused-but-set-variable]
 
-Reviewed-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/quantenna/qtnfmac/cfg80211.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thanks,
-Michal
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+index 4aa332f..452d4b7 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+@@ -691,11 +691,8 @@ static int qtnf_set_default_key(struct wiphy *wiphy, struct net_device *dev,
+ 	const struct cfg80211_chan_def *chandef = &wdev->chandef;
+ 	struct ieee80211_channel *chan;
+ 	struct qtnf_chan_stats stats;
+-	struct qtnf_vif *vif;
+ 	int ret;
+ 
+-	vif = qtnf_netdev_get_priv(dev);
+-
+ 	sband = wiphy->bands[NL80211_BAND_2GHZ];
+ 	if (sband && idx >= sband->n_channels) {
+ 		idx -= sband->n_channels;
