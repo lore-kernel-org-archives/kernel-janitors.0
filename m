@@ -1,49 +1,35 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Mon, 24 Sep 2018 22:14:35 +0000
-Subject: Re: [PATCH] i2c: i2c-isch: fix spelling mistake "unitialized" -> "uninitialized"
-Message-Id: <20180924221435.GH18592@kunai>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6cMF9JLEeZkfJjkP"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Sep 2018 16:58:58 +0000
+Subject: [PATCH] firmware: vpd: fix spelling mistake "partion" -> "partition"
+Message-Id: <20180911165858.3015-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180924171437.3071-1-colin.king@canonical.com>
-In-Reply-To: <20180924171437.3071-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---6cMF9JLEeZkfJjkP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Trivial fix to spelling mistake in comment
 
-On Mon, Sep 24, 2018 at 06:14:37PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in dev_notice message.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/firmware/google/vpd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to for-current, thanks!
-
-
---6cMF9JLEeZkfJjkP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlupYcsACgkQFA3kzBSg
-KbYo7A/9FELjcZH/Lcr86xarLkGDMI/KSC5EFpa04dFESW86aRJhjZZYc4lGR1Wo
-m3oiGZObxtqU1HdSQq/CdFb5DKZvVKP/VD8+RNTEQFtUrexAIXx08rnjY01JBWFU
-38X1tIhg3fTM3JY2bVfUErZzuERL9ScwTmqIytfb1hzIfrWWZlY1/Cxva3q9GuOF
-71q9cHhcKSLytGJmDVBxvnsfXzzQ6o2nC0e+e00uSOH+59KH+Rui8iHsTKM/uU25
-AjVHdYR2T3uWL8L/ZsQUNYss3KKT5U8Hi7hJyxue6XYO/IhzNCt2DT754S36AAN/
-7ghwSBgG1ewHCWbL3lY11zmYvZpH2HOXPNv+R17/w6F+i3Np+kShAd/PfwRWH+1L
-SmdYTB704ex4pVuQDOghoXLGDpzpVR9cOdq9TqHnDGWProT1+4Qpv7wR/mHk/gKm
-Z9YQOV+Yoi1afjuVGZZW5ROwnlkCuGkjEY06ndlMmhAZJmMYP8DUBdqxylYmIl81
-P1EZRTwus/4gtMyQEpfGxolVqySuKr9+h1GlH7WZSvxlirvb8p4bwL46ALBFLBio
-7O5MR+RDnACn2EkfHAahs/3y9ff99PBTLZoMJ3f5ZhhoV8Hs6gSvWIpInGZqmSD5
-K29QEkedoyf7jKSirkSH0cTPhAFX+DmfJ7tLEERyxiitq/IXko0=
-=Fi9A
------END PGP SIGNATURE-----
-
---6cMF9JLEeZkfJjkP--
+diff --git a/drivers/firmware/google/vpd.c b/drivers/firmware/google/vpd.c
+index 1aa67bb5d8c0..c0c0b4e4e281 100644
+--- a/drivers/firmware/google/vpd.c
++++ b/drivers/firmware/google/vpd.c
+@@ -198,7 +198,7 @@ static int vpd_section_init(const char *name, struct vpd_section *sec,
+ 
+ 	sec->name = name;
+ 
+-	/* We want to export the raw partion with name ${name}_raw */
++	/* We want to export the raw partition with name ${name}_raw */
+ 	sec->raw_name = kasprintf(GFP_KERNEL, "%s_raw", name);
+ 	if (!sec->raw_name) {
+ 		err = -ENOMEM;
+-- 
+2.17.1
