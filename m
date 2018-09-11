@@ -1,41 +1,35 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 06 Sep 2018 02:29:25 +0000
-Subject: [PATCH] ath10k: snoc: remove set but not used variable 'ar_snoc'
-Message-Id: <1536200965-121172-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Sep 2018 08:18:58 +0000
+Subject: [PATCH] s390/tape: fix spelling mistake "partion" -> "partition"
+Message-Id: <20180911081858.27297-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Yue Haibing <yuehaibing@huawei.com>, ath10k@lists.infradead.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Trivial fix to spelling mistake in message text
 
-drivers/net/wireless/ath/ath10k/snoc.c: In function 'ath10k_snoc_tx_pipe_cleanup':
-drivers/net/wireless/ath/ath10k/snoc.c:681:22: warning:
- variable 'ar_snoc' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ath/ath10k/snoc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/s390/char/tape_3590.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index fa1843a..2d6ae00 100644
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -678,13 +678,11 @@ static void ath10k_snoc_tx_pipe_cleanup(struct ath10k_snoc_pipe *snoc_pipe)
- {
- 	struct ath10k_ce_pipe *ce_pipe;
- 	struct ath10k_ce_ring *ce_ring;
--	struct ath10k_snoc *ar_snoc;
- 	struct sk_buff *skb;
- 	struct ath10k *ar;
- 	int i;
- 
- 	ar = snoc_pipe->hif_ce_state;
--	ar_snoc = ath10k_snoc_priv(ar);
- 	ce_pipe = snoc_pipe->ce_hdl;
- 	ce_ring = ce_pipe->src_ring;
+diff --git a/drivers/s390/char/tape_3590.c b/drivers/s390/char/tape_3590.c
+index cdcde18e7220..4554cdf4d6bd 100644
+--- a/drivers/s390/char/tape_3590.c
++++ b/drivers/s390/char/tape_3590.c
+@@ -971,7 +971,7 @@ tape_3590_print_mim_msg_f0(struct tape_device *device, struct irb *irb)
+ 		snprintf(exception, BUFSIZE, "Data degraded");
+ 		break;
+ 	case 0x03:
+-		snprintf(exception, BUFSIZE, "Data degraded in partion %i",
++		snprintf(exception, BUFSIZE, "Data degraded in partition %i",
+ 			sense->fmt.f70.mp);
+ 		break;
+ 	case 0x04:
+-- 
+2.17.1
