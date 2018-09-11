@@ -1,36 +1,40 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 14 Sep 2018 02:33:58 +0000
-Subject: [PATCH -next] scsi: mptfusion: Use kmemdup rather than duplicating its implementation in mpt_remove_
-Message-Id: <1536892438-129520-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Sep 2018 16:53:09 +0000
+Subject: [PATCH] drivers: visorbus: fix spelling mistake "partion" -> "partition"
+Message-Id: <20180911165309.1314-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Kershner <david.kershner@unisys.com>, sparmaintainer@unisys.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Trivial fix to spelling mistake in comment, re-jig comment block
+to avoid checkpatch overly wide line warning.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/message/fusion/mptbase.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ include/linux/visorbus.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index dc1e43a..a32d3d0 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -6001,13 +6001,12 @@ static int mpt_remove_dead_ioc_func(void *arg)
- 	if (mpt_config(ioc, &cfg) != 0)
- 		goto out;
- 
--	mem = kmalloc(iocpage2sz, GFP_KERNEL);
-+	mem = kmemdup((u8 *)pIoc2, iocpage2sz, GFP_KERNEL);
- 	if (!mem) {
- 		rc = -ENOMEM;
- 		goto out;
- 	}
- 
--	memcpy(mem, (u8 *)pIoc2, iocpage2sz);
- 	ioc->raid_data.pIocPg2 = (IOCPage2_t *) mem;
- 
- 	mpt_read_ioc_pg_3(ioc);
+diff --git a/include/linux/visorbus.h b/include/linux/visorbus.h
+index 0d8bd6769b13..4a6abff20049 100644
+--- a/include/linux/visorbus.h
++++ b/include/linux/visorbus.h
+@@ -222,9 +222,9 @@ struct visorchipset_state {
+  *				hypervisor requests.
+  * @vbus_hdr_info:		A pointer to header info. Private use by bus
+  *				driver.
+- * @partition_guid:		Indicates client partion id. This should be the
+- *				same across all visor_devices in the current
+- *				guest. Private use by bus driver only.
++ * @partition_guid:		Indicates client partition id. This should be
++ *				the same across all visor_devices in the
++ *				current guest. Private use by bus driver only.
+  */
+ struct visor_device {
+ 	struct visorchannel *visorchannel;
+-- 
+2.17.1
