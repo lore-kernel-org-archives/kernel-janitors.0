@@ -1,43 +1,43 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 29 Sep 2018 13:53:07 +0000
-Subject: [PATCH -next] scsi: lpfc: Remove set but not used variable 'psli'
-Message-Id: <1538229187-17246-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Sep 2018 17:53:11 +0000
+Subject: [PATCH][net-dsa-next] net: dsa: b53: ensure variable pause is initialized
+Message-Id: <20180911175311.17929-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/scsi/lpfc/lpfc_hbadisc.c: In function 'lpfc_free_tx':
-drivers/scsi/lpfc/lpfc_hbadisc.c:5431:19: warning:
- variable 'psli' set but not used [-Wunused-but-set-variable]
+Currenly integer pause is not initialized and may be left an
+uninitialized state if flow control on BCM5301x's CPU port
+is not enabled.  This will potentially feed garbage into
+the TX or RX pause bits that are or'd into pause. Fix this
+by ensuring pause is initialized to zero.
 
-Since commit 895427bd012c ("scsi: lpfc: NVME Initiator: Base modifications")
-'psli' is not used any more.
+Detected by static analysis with smatch:
+"error: uninitialized symbol 'pause'."
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 5e004460f874 ("net: dsa: b53: Add helper to set link parameters")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/lpfc/lpfc_hbadisc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/dsa/b53/b53_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index f9a038ec..f4deb86 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -5428,12 +5428,10 @@ struct lpfc_nodelist *
- lpfc_free_tx(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp)
- {
- 	LIST_HEAD(completions);
--	struct lpfc_sli *psli;
- 	IOCB_t     *icmd;
- 	struct lpfc_iocbq    *iocb, *next_iocb;
- 	struct lpfc_sli_ring *pring;
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index ea4256cd628b..dbf5b86a07fe 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -1025,7 +1025,7 @@ static void b53_adjust_link(struct dsa_switch *ds, int port,
+ 	struct b53_device *dev = ds->priv;
+ 	struct ethtool_eee *p = &dev->ports[port].eee;
+ 	u8 rgmii_ctrl = 0, reg = 0, off;
+-	int pause;
++	int pause = 0;
  
--	psli = &phba->sli;
- 	pring = lpfc_phba_elsring(phba);
- 	if (unlikely(!pring))
+ 	if (!phy_is_pseudo_fixed_link(phydev))
  		return;
+-- 
+2.17.1
