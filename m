@@ -1,78 +1,35 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Thu, 27 Sep 2018 10:37:50 +0000
-Subject: Re: [PATCH can-next] can: ucan: remove set but not used variable 'udev'
-Message-Id: <2f22c7ba-398d-5df0-682f-b4b289475d16@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8cKmBNk7VWcb1aDTRruSsXo4LgHP2Ho0q"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Sep 2018 12:37:32 +0000
+Subject: [PATCH] fpga: region: fix spelling mistake "partion" -> "partition"
+Message-Id: <20180911123732.32579-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1535507214-145191-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535507214-145191-1-git-send-email-yuehaibing@huawei.com>
-To: YueHaibing <yuehaibing@huawei.com>, Wolfgang Grandegger <wg@grandegger.com>, "David S. Miller" <davem@davemloft.net>, Martin Elshuber <martin.elshuber@theobroma-systems.com>, Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>, Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---8cKmBNk7VWcb1aDTRruSsXo4LgHP2Ho0q
-Content-Type: multipart/mixed; boundary="ROFIXaM6U90sFTqSQZ7kEuC1RlanGJ6NT";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: YueHaibing <yuehaibing@huawei.com>,
- Wolfgang Grandegger <wg@grandegger.com>,
- "David S. Miller" <davem@davemloft.net>,
- Martin Elshuber <martin.elshuber@theobroma-systems.com>,
- Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
- Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Message-ID: <2f22c7ba-398d-5df0-682f-b4b289475d16@pengutronix.de>
-Subject: Re: [PATCH can-next] can: ucan: remove set but not used variable
- 'udev'
-References: <1535507214-145191-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535507214-145191-1-git-send-email-yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
---ROFIXaM6U90sFTqSQZ7kEuC1RlanGJ6NT
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+Trivial fix to spelling mistake in the documentation
 
-On 08/29/2018 03:46 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->=20
-> drivers/net/can/usb/ucan.c: In function 'ucan_disconnect':
-> drivers/net/can/usb/ucan.c:1578:21: warning:
->  variable 'udev' set but not used [-Wunused-but-set-variable]
->   struct usb_device *udev;
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ Documentation/devicetree/bindings/fpga/fpga-region.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to linux-can.
-
-tnx.
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---ROFIXaM6U90sFTqSQZ7kEuC1RlanGJ6NT--
-
---8cKmBNk7VWcb1aDTRruSsXo4LgHP2Ho0q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlussv4ACgkQk9IU1zQo
-ZfGlzwf7BVIIFVrcRHUmTcmOf78qJTcruqSgSICspv2rNEHAXNx3FpXu582PPf1/
-jfS/CYq9EZ5zBD8DsSMaUJk35yzVSP1Qs1Ab4/ggUigFoF9hdJ5tV9nYiPBZmrMd
-p0tDPNayud/B2qEwsmJTPHyAcKy6oDjJM9D1yGM7HGHhutW6vStpIGMcia8oXjYY
-J2f2NjtVeLh510S1OxUV66ng6mq+dJcobB4kgcxYwFvNtYInRxA6aKGUPCW3GGRR
-K/pm5rFcIC8E8ieacT88Z9aTsKDABF7PwEV/0vGmDML1QNQt7axCH+XQwcWvZj0I
-kH9vJB/B3OdINg7wN5GacUsieRv6VQ==
-=r+n9
------END PGP SIGNATURE-----
-
---8cKmBNk7VWcb1aDTRruSsXo4LgHP2Ho0q--
+diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.txt b/Documentation/devicetree/bindings/fpga/fpga-region.txt
+index 6db8aeda461a..71beb85b56f1 100644
+--- a/Documentation/devicetree/bindings/fpga/fpga-region.txt
++++ b/Documentation/devicetree/bindings/fpga/fpga-region.txt
+@@ -484,7 +484,7 @@ It is beyond the scope of this document to fully describe all the FPGA design
+ constraints required to make partial reconfiguration work[1] [2] [3], but a few
+ deserve quick mention.
+ 
+-A persona must have boundary connections that line up with those of the partion
++A persona must have boundary connections that line up with those of the partition
+ or region it is designed to go into.
+ 
+ During programming, transactions through those connections must be stopped and
+-- 
+2.17.1
