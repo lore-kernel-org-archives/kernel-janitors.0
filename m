@@ -1,35 +1,42 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 29 Sep 2018 11:25:39 +0000
-Subject: [PATCH] media: zoran: fix spelling mistake "queing" -> "queuing"
-Message-Id: <20180929112539.9667-1-colin.king@canonical.com>
+Date: Tue, 11 Sep 2018 09:21:16 +0000
+Subject: [PATCH] hpfs: fix spelling mistake "partion" -> "partition"
+Message-Id: <20180911092116.28449-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in kernel warning message
+Trivial fix to spelling mistakes in comments
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/media/zoran/zoran_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/hpfs/hpfs.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/zoran/zoran_driver.c b/drivers/staging/media/zoran/zoran_driver.c
-index e30c3ef31a9b..27c76e2eeb41 100644
---- a/drivers/staging/media/zoran/zoran_driver.c
-+++ b/drivers/staging/media/zoran/zoran_driver.c
-@@ -692,7 +692,7 @@ static int zoran_jpg_queue_frame(struct zoran_fh *fh, int num,
- 		case BUZ_STATE_DONE:
- 			dprintk(2,
- 				KERN_WARNING
--				"%s: %s - queing frame in BUZ_STATE_DONE state!?\n",
-+				"%s: %s - queuing frame in BUZ_STATE_DONE state!?\n",
- 				ZR_DEVNAME(zr), __func__);
- 			/* fall through */
- 		case BUZ_STATE_USER:
+diff --git a/fs/hpfs/hpfs.h b/fs/hpfs/hpfs.h
+index 823a328791c0..302f45101a96 100644
+--- a/fs/hpfs/hpfs.h
++++ b/fs/hpfs/hpfs.h
+@@ -120,11 +120,11 @@ struct hpfs_spare_block
+   u8 bad_sector: 1;			/* bad sector, corrupted disk (???) */
+   u8 bad_bitmap: 1;			/* bad bitmap */
+   u8 fast: 1;				/* partition was fast formatted */
+-  u8 old_wrote: 1;			/* old version wrote to partion */
+-  u8 old_wrote_1: 1;			/* old version wrote to partion (?) */
++  u8 old_wrote: 1;			/* old version wrote to partition */
++  u8 old_wrote_1: 1;			/* old version wrote to partition (?) */
+ #else
+-  u8 old_wrote_1: 1;			/* old version wrote to partion (?) */
+-  u8 old_wrote: 1;			/* old version wrote to partion */
++  u8 old_wrote_1: 1;			/* old version wrote to partition (?) */
++  u8 old_wrote: 1;			/* old version wrote to partition */
+   u8 fast: 1;				/* partition was fast formatted */
+   u8 bad_bitmap: 1;			/* bad bitmap */
+   u8 bad_sector: 1;			/* bad sector, corrupted disk (???) */
 -- 
 2.17.1
