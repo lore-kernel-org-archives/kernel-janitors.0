@@ -1,72 +1,43 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Thu, 27 Sep 2018 10:39:39 +0000
-Subject: Re: [PATCH can-next] can: ucan: remove duplicated include from ucan.c
-Message-Id: <2027cad1-d02f-c646-5683-29febd5699a2@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nWDw1VuV3ctXkoHZxrODo8MsoObIw7r4s"
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 12 Sep 2018 03:15:30 +0000
+Subject: [PATCH -next] drm/fb-helper: Remove set but not used variable 'connector_funcs'
+Message-Id: <1536722130-108819-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1535505945-143347-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535505945-143347-1-git-send-email-yuehaibing@huawei.com>
-To: YueHaibing <yuehaibing@huawei.com>, Wolfgang Grandegger <wg@grandegger.com>, "David S. Miller" <davem@davemloft.net>, Martin Elshuber <martin.elshuber@theobroma-systems.com>, Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>, Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---nWDw1VuV3ctXkoHZxrODo8MsoObIw7r4s
-Content-Type: multipart/mixed; boundary="sxNVx2JGGTzK3gvVDo9xTMyoCBj8e33Pm";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: YueHaibing <yuehaibing@huawei.com>,
- Wolfgang Grandegger <wg@grandegger.com>,
- "David S. Miller" <davem@davemloft.net>,
- Martin Elshuber <martin.elshuber@theobroma-systems.com>,
- Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
- Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Message-ID: <2027cad1-d02f-c646-5683-29febd5699a2@pengutronix.de>
-Subject: Re: [PATCH can-next] can: ucan: remove duplicated include from ucan.c
-References: <1535505945-143347-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535505945-143347-1-git-send-email-yuehaibing@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
---sxNVx2JGGTzK3gvVDo9xTMyoCBj8e33Pm
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+drivers/gpu/drm/drm_fb_helper.c: In function 'drm_pick_crtcs':
+drivers/gpu/drm/drm_fb_helper.c:2373:43: warning:
+ variable 'connector_funcs' set but not used [-Wunused-but-set-variable]
 
-On 08/29/2018 03:25 AM, YueHaibing wrote:
-> Remove duplicated include.
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/drm_fb_helper.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Applied to linux-can.
-
-Tnx,
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---sxNVx2JGGTzK3gvVDo9xTMyoCBj8e33Pm--
-
---nWDw1VuV3ctXkoHZxrODo8MsoObIw7r4s
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAluss2wACgkQk9IU1zQo
-ZfFKHwf/bwgWz8mlL9hBbtbo6kpchKhEHdfGEzVVcmFZRHvh6NTOwyruk5RC7LlR
-TDqoAzFRk0quqa+dE8/yHPKiry1wul8gKimY487o/VMnII/G3HCJb973Ih/TD6IC
-5kO6m7m/7vmUyo7gcfTkel+BXcjP4tOQiEQ+Dr7o2atFKPC8KbgqesAz/B/CjRow
-gmxre86e7euK56Fq9AlK578JbgTx5DmFa33obnY9v8JRFTQeMXPrcBLdcMG/tnpI
-DmInvDmBSxAor1ByvoqUroPmrNQE38TkqVYFKO/wMWTxYmq1SzelreeyboyVHJEk
-au1SSKvCYA8bq+20vXjlhb19YvtJyA==
-=hVvC
------END PGP SIGNATURE-----
-
---nWDw1VuV3ctXkoHZxrODo8MsoObIw7r4s--
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 73cf10a..16e3a59 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -2370,7 +2370,6 @@ static int drm_pick_crtcs(struct drm_fb_helper *fb_helper,
+ {
+ 	int c, o;
+ 	struct drm_connector *connector;
+-	const struct drm_connector_helper_funcs *connector_funcs;
+ 	int my_score, best_score, score;
+ 	struct drm_fb_helper_crtc **crtcs, *crtc;
+ 	struct drm_fb_helper_connector *fb_helper_conn;
+@@ -2399,8 +2398,6 @@ static int drm_pick_crtcs(struct drm_fb_helper *fb_helper,
+ 	if (drm_has_preferred_mode(fb_helper_conn, width, height))
+ 		my_score++;
+ 
+-	connector_funcs = connector->helper_private;
+-
+ 	/*
+ 	 * select a crtc for this connector and then attempt to configure
+ 	 * remaining connectors
