@@ -1,20 +1,25 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Tue, 04 Sep 2018 07:12:51 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 12 Sep 2018 01:00:50 +0000
 Subject: Re: [PATCH -next] scsi: libfc: remove set but not used variable 'rpriv'
-Message-Id: <20180904071251.GB5183@linux-x5ow.site>
+Message-Id: <yq1ftyfy1fh.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1536031867-65592-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1536031867-65592-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Acked-by: Johannes Thumshirn <jth@kernel.org>
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=FCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+
+YueHaibing,
+
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/scsi/libfc/fc_fcp.c: In function 'fc_queuecommand':
+> drivers/scsi/libfc/fc_fcp.c:1875:30: warning:
+>  variable 'rpriv' set but not used [-Wunused-but-set-variable]
+
+Applied to 4.20/scsi-queue. Thank you!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
