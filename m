@@ -1,25 +1,33 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 17 Sep 2018 07:02:46 +0000
-Subject: Re: [PATCH -next] scsi: qla2xxx: Remove set but not used variable 'ptr_dma'
-Message-Id: <yq1r2hsr4h5.fsf@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 12 Sep 2018 02:50:08 +0000
+Subject: [PATCH -next] staging: mt7621-pci: Use PTR_ERR_OR_ZERO in mt7621_pcie_parse_dt()
+Message-Id: <1536720608-106123-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536806456-124627-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536806456-124627-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-YueHaibing,
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/mt7621-pci/pci-mt7621.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/qla2xxx/qla_iocb.c: In function 'qla24xx_els_dcmd2_iocb':
-> drivers/scsi/qla2xxx/qla_iocb.c:2644:13: warning:
->  variable 'ptr_dma' set but not used [-Wunused-but-set-variable]
-
-Applied to 4.20/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/staging/mt7621-pci/pci-mt7621.c b/drivers/staging/mt7621-pci/pci-mt7621.c
+index ba1f117..d2cb910 100644
+--- a/drivers/staging/mt7621-pci/pci-mt7621.c
++++ b/drivers/staging/mt7621-pci/pci-mt7621.c
+@@ -396,10 +396,7 @@ static int mt7621_pcie_parse_dt(struct mt7621_pcie *pcie)
+ 	}
+ 
+ 	pcie->base = devm_ioremap_resource(dev, &regs);
+-	if (IS_ERR(pcie->base))
+-		return PTR_ERR(pcie->base);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(pcie->base);
+ }
+ 
+ static int mt7621_pcie_request_resources(struct mt7621_pcie *pcie,
