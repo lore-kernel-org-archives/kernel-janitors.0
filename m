@@ -1,77 +1,40 @@
-From: guido@kiener-muenchen.de
-Date: Fri, 28 Sep 2018 08:08:10 +0000
-Subject: Re: [PATCH] usb: usbtmc: check size before allocating buffer and remove duplicated allocation
-Message-Id: <20180928080810.Horde.QIGMZmp54QWS1jzs1zoa7_a@webmail.kiener-muenchen.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 13 Sep 2018 02:40:56 +0000
+Subject: [PATCH -next] scsi: qla2xxx: Remove set but not used variable 'ptr_dma'
+Message-Id: <1536806456-124627-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180927222332.13360-1-colin.king@canonical.com>
-In-Reply-To: <20180927222332.13360-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steve Bayless <steve_bayless@keysight.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Zitat von Colin King <colin.king@canonical.com>:
+drivers/scsi/qla2xxx/qla_iocb.c: In function 'qla24xx_els_dcmd2_iocb':
+drivers/scsi/qla2xxx/qla_iocb.c:2644:13: warning:
+ variable 'ptr_dma' set but not used [-Wunused-but-set-variable]
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the allocation of a buffer is performed before a sanity check on
-> the required buffer size and if the buffer size is too large the error exit
-> return leaks the allocated buffer.  Fix this by checking the size before
-> allocating.
->
-> Also, the same buffer is allocated again inside an if statement, causing
-> the first allocation to be leaked.  Fix this by removing this second
-> redundant allocation.
->
-> Detected by CoverityScan, CID#1473697 ("Resource leak")
->
-> Fixes: 658f24f4523e ("usb: usbtmc: Add ioctl for generic requests on  
-> control")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/class/usbtmc.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-> index 0fcb81a1399b..c01edff190d2 100644
-> --- a/drivers/usb/class/usbtmc.c
-> +++ b/drivers/usb/class/usbtmc.c
-> @@ -1895,18 +1895,14 @@ static int usbtmc_ioctl_request(struct  
-> usbtmc_device_data *data,
->  	if (res)
->  		return -EFAULT;
->
-> +	if (request.req.wLength > USBTMC_BUFSIZE)
-> +		return -EMSGSIZE;
-> +
->  	buffer = kmalloc(request.req.wLength, GFP_KERNEL);
->  	if (!buffer)
->  		return -ENOMEM;
->
-> -	if (request.req.wLength > USBTMC_BUFSIZE)
-> -		return -EMSGSIZE;
-> -
->  	if (request.req.wLength) {
-> -		buffer = kmalloc(request.req.wLength, GFP_KERNEL);
-> -		if (!buffer)
-> -			return -ENOMEM;
-> -
->  		if ((request.req.bRequestType & USB_DIR_IN) = 0) {
->  			/* Send control data to device */
->  			res = copy_from_user(buffer, request.data,
-> --
-> 2.17.1
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/qla2xxx/qla_iocb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Good to know that there are some tools finding this memory leak.
-I have already sent a patch series here:
-https://patchwork.kernel.org/cover/10612963/
-This includes a similar patch to your proposal:
-https://patchwork.kernel.org/patch/10612965/
-
-Thank you!
-
-Regards,
-
-Guido
+diff --git a/drivers/scsi/qla2xxx/qla_iocb.c b/drivers/scsi/qla2xxx/qla_iocb.c
+index 4de9102..86fb8b2 100644
+--- a/drivers/scsi/qla2xxx/qla_iocb.c
++++ b/drivers/scsi/qla2xxx/qla_iocb.c
+@@ -2641,7 +2641,6 @@ struct fw_dif_context {
+ 	struct qla_hw_data *ha = vha->hw;
+ 	int rval = QLA_SUCCESS;
+ 	void	*ptr, *resp_ptr;
+-	dma_addr_t ptr_dma;
+ 
+ 	/* Alloc SRB structure */
+ 	sp = qla2x00_get_sp(vha, fcport, GFP_KERNEL);
+@@ -2673,7 +2672,6 @@ struct fw_dif_context {
+ 	ptr = elsio->u.els_plogi.els_plogi_pyld  	    dma_alloc_coherent(&ha->pdev->dev, DMA_POOL_SIZE,
+ 		&elsio->u.els_plogi.els_plogi_pyld_dma, GFP_KERNEL);
+-	ptr_dma = elsio->u.els_plogi.els_plogi_pyld_dma;
+ 
+ 	if (!elsio->u.els_plogi.els_plogi_pyld) {
+ 		rval = QLA_FUNCTION_FAILED;
