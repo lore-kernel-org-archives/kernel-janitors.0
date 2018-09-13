@@ -1,38 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Sep 2018 11:12:07 +0000
-Subject: [PATCH] cifs: integer overflow in in SMB2_ioctl()
-Message-Id: <20180910111207.r2uqce4ie7ee7fsh@kili.mountain>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 13 Sep 2018 01:23:04 +0000
+Subject: [PATCH -next] scsi: qla2xxx: Use PTR_ERR_OR_ZERO in tcm_qla2xxx_check_initiator_node_acl()
+Message-Id: <1536801784-180263-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The "le32_to_cpu(rsp->OutputOffset) + *plen" addition can overflow and
-wrap around to a smaller value which looks like it would lead to an
-information leak.
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-Fixes: 4a72dafa19ba ("SMB2 FSCTL and IOCTL worker function")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index c08acfc77abc..8b54cd282d9c 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2459,14 +2459,14 @@ SMB2_ioctl(const unsigned int xid, struct cifs_tcon *tcon, u64 persistent_fid,
- 	/* We check for obvious errors in the output buffer length and offset */
- 	if (*plen = 0)
- 		goto ioctl_exit; /* server returned no data */
--	else if (*plen > 0xFF00) {
-+	else if (*plen > rsp_iov.iov_len || *plen > 0xFF00) {
- 		cifs_dbg(VFS, "srv returned invalid ioctl length: %d\n", *plen);
- 		*plen = 0;
- 		rc = -EIO;
- 		goto ioctl_exit;
- 	}
+diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+index 731a094..70356d2 100644
+--- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
++++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+@@ -1577,10 +1577,7 @@ static int tcm_qla2xxx_check_initiator_node_acl(
+ 				       sizeof(struct qla_tgt_cmd),
+ 				       TARGET_PROT_ALL, port_name,
+ 				       qlat_sess, tcm_qla2xxx_session_cb);
+-	if (IS_ERR(se_sess))
+-		return PTR_ERR(se_sess);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(se_sess);
+ }
  
--	if (rsp_iov.iov_len < le32_to_cpu(rsp->OutputOffset) + *plen) {
-+	if (rsp_iov.iov_len - *plen < le32_to_cpu(rsp->OutputOffset)) {
- 		cifs_dbg(VFS, "Malformed ioctl resp: len %d offset %d\n", *plen,
- 			le32_to_cpu(rsp->OutputOffset));
- 		*plen = 0;
+ static void tcm_qla2xxx_update_sess(struct fc_port *sess, port_id_t s_id,
