@@ -1,35 +1,39 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 20 Sep 2018 06:22:05 +0000
-Subject: [PATCH -next] platform: goldfish: pipe: Make symbol 'goldfish_pipe_dev' static
-Message-Id: <1537424525-23695-1-git-send-email-weiyongjun1@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 13 Sep 2018 01:22:01 +0000
+Subject: [PATCH -next] spi: davinci: remove set but not used variable 'pdata'
+Message-Id: <1536801721-178499-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Roman Kiryanov <rkir@google.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warning:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/platform/goldfish/goldfish_pipe.c:214:26: warning:
- symbol 'goldfish_pipe_dev' was not declared. Should it be static?
+drivers/spi/spi-davinci.c: In function 'davinci_spi_setup':
+drivers/spi/spi-davinci.c:422:36: warning:
+ variable 'pdata' set but not used [-Wunused-but-set-variable]
 
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-davinci.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index b4a484b..0f66d77 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -211,7 +211,7 @@ struct goldfish_pipe_dev {
- 	unsigned char __iomem *base;
- };
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index d502cf5..ce0e67d 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -419,13 +419,11 @@ static int davinci_spi_setup(struct spi_device *spi)
+ {
+ 	int retval = 0;
+ 	struct davinci_spi *dspi;
+-	struct davinci_spi_platform_data *pdata;
+ 	struct spi_master *master = spi->master;
+ 	struct device_node *np = spi->dev.of_node;
+ 	bool internal_cs = true;
  
--struct goldfish_pipe_dev goldfish_pipe_dev;
-+static struct goldfish_pipe_dev goldfish_pipe_dev;
+ 	dspi = spi_master_get_devdata(spi->master);
+-	pdata = &dspi->pdata;
  
- static int goldfish_pipe_cmd_locked(struct goldfish_pipe *pipe,
- 				    enum PipeCmdCode cmd)
+ 	if (!(spi->mode & SPI_NO_CS)) {
+ 		if (np && (master->cs_gpios != NULL) && (spi->cs_gpio >= 0)) {
