@@ -1,27 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 07 Sep 2018 04:55:25 +0000
-Subject: Re: [PATCH net-next] bnxt_en: remove set but not used variable 'addr_type'
-Message-Id: <20180906.215525.1228410994313718743.davem@davemloft.net>
+From: Josh Abraham <j.abraham1776@gmail.com>
+Date: Thu, 13 Sep 2018 01:13:54 +0000
+Subject: [PATCH] xen: fix GCC warning and remove duplicate EVTCHN_ROW/EVTCHN_COL usage
+Message-Id: <20180913011354.GA19226@josh-ThinkPad-T460s>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536147850-186781-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536147850-186781-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: michael.chan@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: boris.ostrovsky@oracle.com
+Cc: jgross@suse.com, aams@amazon.com, roger.pau@citrix.com, xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, j.abraham1776@gmail.com
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 5 Sep 2018 11:44:10 +0000
+This patch removes duplicate macro useage in events_base.c.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c: In function 'bnxt_tc_parse_flow':
-> drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c:186:6: warning:
->  variable 'addr_type' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+It also fixes gcc warning:
+variable ‘col’ set but not used [-Wunused-but-set-variable]
 
-Looks correct to me.
+Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
+---
+ drivers/xen/events/events_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
+index 08e4af04d6f2..e6c1934734b7 100644
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -138,7 +138,7 @@ static int set_evtchn_to_irq(unsigned evtchn, unsigned irq)
+ 		clear_evtchn_to_irq_row(row);
+ 	}
+ 
+-	evtchn_to_irq[EVTCHN_ROW(evtchn)][EVTCHN_COL(evtchn)] = irq;
++	evtchn_to_irq[row][col] = irq;
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
