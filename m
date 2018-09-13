@@ -1,25 +1,59 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 20 Sep 2018 06:10:29 +0000
-Subject: Re: [PATCH net-next] atl1: remove set but not used variable 'advertising'
-Message-Id: <20180919.231029.1752354474729594132.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 13 Sep 2018 01:54:24 +0000
+Subject: [PATCH -next] scsi: pm80xx: Remove set but not used variable 'device_id'
+Message-Id: <1536803664-42497-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537411290-5132-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537411290-5132-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, keescook@chromium.org, zhongjiang@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Sep 2018 02:41:30 +0000
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/atheros/atlx/atl1.c: In function 'atl1_set_link_ksettings':
-> drivers/net/ethernet/atheros/atlx/atl1.c:3280:6: warning:
->  variable 'advertising' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+drivers/scsi/pm8001/pm8001_sas.c: In function 'pm8001_I_T_nexus_event_handler':
+drivers/scsi/pm8001/pm8001_sas.c:1052:6: warning:
+ variable 'device_id' set but not used [-Wunused-but-set-variable]
 
-Applied.
+drivers/scsi/pm8001/pm8001_sas.c: In function 'pm8001_abort_task':
+drivers/scsi/pm8001/pm8001_sas.c:1191:6: warning:
+ variable 'device_id' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/pm8001/pm8001_sas.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index b1e7d26..84092e4 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -1049,13 +1049,11 @@ int pm8001_I_T_nexus_event_handler(struct domain_device *dev)
+ 	struct pm8001_device *pm8001_dev;
+ 	struct pm8001_hba_info *pm8001_ha;
+ 	struct sas_phy *phy;
+-	u32 device_id = 0;
+ 
+ 	if (!dev || !dev->lldd_dev)
+ 		return -1;
+ 
+ 	pm8001_dev = dev->lldd_dev;
+-	device_id = pm8001_dev->device_id;
+ 	pm8001_ha = pm8001_find_ha_by_dev(dev);
+ 
+ 	PM8001_EH_DBG(pm8001_ha,
+@@ -1188,7 +1186,6 @@ int pm8001_abort_task(struct sas_task *task)
+ {
+ 	unsigned long flags;
+ 	u32 tag;
+-	u32 device_id;
+ 	struct domain_device *dev ;
+ 	struct pm8001_hba_info *pm8001_ha;
+ 	struct scsi_lun lun;
+@@ -1202,7 +1199,6 @@ int pm8001_abort_task(struct sas_task *task)
+ 	dev = task->dev;
+ 	pm8001_dev = dev->lldd_dev;
+ 	pm8001_ha = pm8001_find_ha_by_dev(dev);
+-	device_id = pm8001_dev->device_id;
+ 	phy_id = pm8001_dev->attached_phy;
+ 	rc = pm8001_find_tag(task, &tag);
+ 	if (rc = 0) {
