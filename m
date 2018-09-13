@@ -1,33 +1,27 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Sat, 29 Sep 2018 03:55:16 +0000
-Subject: [PATCH -next] IB/mthca: Fix error return code in __mthca_init_one()
-Message-Id: <1538193316-155845-1-git-send-email-weiyongjun1@huawei.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Date: Thu, 13 Sep 2018 22:59:53 +0000
+Subject: Re: [Xen-devel] [PATCH] xen: fix GCC warning and remove duplicate EVTCHN_ROW/EVTCHN_COL usage
+Message-Id: <7e11300b-e590-4beb-28e7-bfc8bff73334@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180913011354.GA19226@josh-ThinkPad-T460s>
+ <37107f15-119b-118e-cbd3-1bb87356e442@suse.com>
+In-Reply-To: <37107f15-119b-118e-cbd3-1bb87356e442@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Juergen Gross <jgross@suse.com>, Josh Abraham <j.abraham1776@gmail.com>
+Cc: xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org, aams@amazon.com, linux-kernel@vger.kernel.org, roger.pau@citrix.com
 
-Fix to return a negative error code from the mthca_cmd_init() error
-handling case instead of 0, as done elsewhere in this function.
+On 9/13/18 1:13 AM, Juergen Gross wrote:
+> On 13/09/18 03:13, Josh Abraham wrote:
+>> This patch removes duplicate macro useage in events_base.c.
+>>
+>> It also fixes gcc warning:
+>> variable ‘col’ set but not used [-Wunused-but-set-variable]
+>>
+>> Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
+> Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Fixes: 80fd8238734c ("[PATCH] IB/mthca: Encapsulate command interface init")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/infiniband/hw/mthca/mthca_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Applied to for-linux-4.19b.
 
-diff --git a/drivers/infiniband/hw/mthca/mthca_main.c b/drivers/infiniband/hw/mthca/mthca_main.c
-index f99c7e0..92c49bf 100644
---- a/drivers/infiniband/hw/mthca/mthca_main.c
-+++ b/drivers/infiniband/hw/mthca/mthca_main.c
-@@ -986,7 +986,8 @@ static int __mthca_init_one(struct pci_dev *pdev, int hca_type)
- 		goto err_free_dev;
- 	}
- 
--	if (mthca_cmd_init(mdev)) {
-+	err = mthca_cmd_init(mdev);
-+	if (err) {
- 		mthca_err(mdev, "Failed to init command interface, aborting.\n");
- 		goto err_free_dev;
- 	}
+-boris
