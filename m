@@ -1,35 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Sep 2018 12:37:32 +0000
-Subject: [PATCH] fpga: region: fix spelling mistake "partion" -> "partition"
-Message-Id: <20180911123732.32579-1-colin.king@canonical.com>
+From: Alan Tull <atull@kernel.org>
+Date: Thu, 13 Sep 2018 20:21:30 +0000
+Subject: Re: [PATCH] fpga: region: fix spelling mistake "partion" -> "partition"
+Message-Id: <CANk1AXTxBtMEJo0NTW9g0GeMX8-RTcD_PJ2eyqkYyCtw-u_9Mw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180911123732.32579-1-colin.king@canonical.com>
+In-Reply-To: <20180911123732.32579-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Sep 11, 2018 at 7:37 AM Colin King <colin.king@canonical.com> wrote:
 
-Trivial fix to spelling mistake in the documentation
+Hi Colin,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- Documentation/devicetree/bindings/fpga/fpga-region.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in the documentation
 
-diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.txt b/Documentation/devicetree/bindings/fpga/fpga-region.txt
-index 6db8aeda461a..71beb85b56f1 100644
---- a/Documentation/devicetree/bindings/fpga/fpga-region.txt
-+++ b/Documentation/devicetree/bindings/fpga/fpga-region.txt
-@@ -484,7 +484,7 @@ It is beyond the scope of this document to fully describe all the FPGA design
- constraints required to make partial reconfiguration work[1] [2] [3], but a few
- deserve quick mention.
- 
--A persona must have boundary connections that line up with those of the partion
-+A persona must have boundary connections that line up with those of the partition
- or region it is designed to go into.
- 
- During programming, transactions through those connections must be stopped and
--- 
-2.17.1
+I took a look, there's other misspellings in this doc.  I'd like to
+get them all in one patch if possible.  If I have time I'll add them
+to this patch or if you have time, you can.
+
+Alan
+
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  Documentation/devicetree/bindings/fpga/fpga-region.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.txt b/Documentation/devicetree/bindings/fpga/fpga-region.txt
+> index 6db8aeda461a..71beb85b56f1 100644
+> --- a/Documentation/devicetree/bindings/fpga/fpga-region.txt
+> +++ b/Documentation/devicetree/bindings/fpga/fpga-region.txt
+> @@ -484,7 +484,7 @@ It is beyond the scope of this document to fully describe all the FPGA design
+>  constraints required to make partial reconfiguration work[1] [2] [3], but a few
+>  deserve quick mention.
+>
+> -A persona must have boundary connections that line up with those of the partion
+> +A persona must have boundary connections that line up with those of the partition
+>  or region it is designed to go into.
+>
+>  During programming, transactions through those connections must be stopped and
+> --
+> 2.17.1
+>
