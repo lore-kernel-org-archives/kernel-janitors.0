@@ -1,27 +1,36 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 25 Sep 2018 20:36:23 +0000
-Subject: Re: [PATCH] IB/usnic: fix spelling mistake "unvalid" -> "invalid"
-Message-Id: <20180925203623.GA21074@ziepe.ca>
+From: Josh Abraham <j.abraham1776@gmail.com>
+Date: Thu, 13 Sep 2018 03:07:11 +0000
+Subject: [PATCH] scsi: ufs: use PTR_ERR_OR_ZERO in ufs_hisi_get_resource()
+Message-Id: <20180913030711.GA12975@josh-ThinkPad-T460s>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180924172738.3508-1-colin.king@canonical.com>
-In-Reply-To: <20180924172738.3508-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Christian Benvenuti <benve@cisco.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: vinholikatti@gmail.com
+Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, j.abraham1776@gmail.com
 
-On Mon, Sep 24, 2018 at 06:27:38PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in usnic_err error message.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/usnic/usnic_transport.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Use PTR_ERR_OR_ZERO instead of IF_ERR() return PTR_ERR().
 
-Applied to for-next
+Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
+---
+ drivers/scsi/ufs/ufs-hisi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thanks,
-Jason
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 46df707e6f2c..e79499469cb3 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -505,10 +505,8 @@ static int ufs_hisi_get_resource(struct ufs_hisi_host *host)
+ 	/* get resource of ufs sys ctrl */
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	host->ufs_sys_ctrl = devm_ioremap_resource(dev, mem_res);
+-	if (IS_ERR(host->ufs_sys_ctrl))
+-		return PTR_ERR(host->ufs_sys_ctrl);
+ 
+-	return 0;
++	return PTR_ERR_OR_ZERO(host->ufs_sys_ctrl);
+ }
+ 
+ static void ufs_hisi_set_pm_lvl(struct ufs_hba *hba)
+-- 
+2.17.1
