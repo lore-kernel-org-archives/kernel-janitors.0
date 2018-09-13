@@ -1,25 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 26 Sep 2018 17:31:54 +0000
-Subject: Re: [PATCH net-next] net/core: make function ___gnet_stats_copy_basic() static
-Message-Id: <20180926.103154.1915916036667896505.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 13 Sep 2018 01:58:13 +0000
+Subject: [PATCH -next] scsi: lpfc: Remove set but not used variable 'sgl_size'
+Message-Id: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537963785-165570-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1537963785-165570-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: john.fastabend@gmail.com, toke@toke.dk, echaudro@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 26 Sep 2018 12:09:45 +0000
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Fixes the following sparse warning:
-> 
-> net/core/gen_stats.c:166:1: warning:
->  symbol '___gnet_stats_copy_basic' was not declared. Should it be static?
-> 
-> Fixes: 5e111210a443 ("net/core: Add new basic hardware counter")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+drivers/scsi/lpfc/lpfc_nvme.c: In function 'lpfc_new_nvme_buf':
+drivers/scsi/lpfc/lpfc_nvme.c:2238:24: warning:
+ variable 'sgl_size' set but not used [-Wunused-but-set-variable]
+  int bcnt, num_posted, sgl_size;
+                        ^
 
-Applied.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/lpfc/lpfc_nvme.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index 5438732..d86eb51 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -2235,13 +2235,11 @@
+ 	struct sli4_sge *sgl;
+ 	dma_addr_t pdma_phys_sgl;
+ 	uint16_t iotag, lxri = 0;
+-	int bcnt, num_posted, sgl_size;
++	int bcnt, num_posted;
+ 	LIST_HEAD(prep_nblist);
+ 	LIST_HEAD(post_nblist);
+ 	LIST_HEAD(nvme_nblist);
+ 
+-	sgl_size = phba->cfg_sg_dma_buf_size;
+-
+ 	for (bcnt = 0; bcnt < num_to_alloc; bcnt++) {
+ 		lpfc_ncmd = kzalloc(sizeof(struct lpfc_nvme_buf), GFP_KERNEL);
+ 		if (!lpfc_ncmd)
