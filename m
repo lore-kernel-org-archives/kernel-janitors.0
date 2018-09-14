@@ -1,36 +1,33 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 06 Sep 2018 01:38:45 +0000
-Subject: [PATCH -next] spi: spi-gpio: Remove set but not used variable 'pdata'
-Message-Id: <1536197925-158441-1-git-send-email-yuehaibing@huawei.com>
+Date: Fri, 14 Sep 2018 02:38:42 +0000
+Subject: [PATCH -next] [SCSI] aic79xx: Use kmemdup rather than duplicating its implementation in ahd_loadseq
+Message-Id: <1536892722-132553-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/spi/spi-gpio.c: In function 'spi_gpio_remove':
-drivers/spi/spi-gpio.c:450:33: warning:
- variable 'pdata' set but not used [-Wunused-but-set-variable]
+Use kmemdup rather than duplicating its implementation
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/spi/spi-gpio.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/scsi/aic7xxx/aic79xx_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-index 421bfc7..9d7ac41 100644
---- a/drivers/spi/spi-gpio.c
-+++ b/drivers/spi/spi-gpio.c
-@@ -447,10 +447,8 @@ static int spi_gpio_probe(struct platform_device *pdev)
- static int spi_gpio_remove(struct platform_device *pdev)
- {
- 	struct spi_gpio			*spi_gpio;
--	struct spi_gpio_platform_data	*pdata;
+diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
+index 9ee75c9..0970bb5 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_core.c
++++ b/drivers/scsi/aic7xxx/aic79xx_core.c
+@@ -9438,10 +9438,10 @@ struct scb *
+ 	if (cs_count != 0) {
  
- 	spi_gpio = platform_get_drvdata(pdev);
--	pdata = dev_get_platdata(&pdev->dev);
- 
- 	/* stop() unregisters child devices too */
- 	spi_bitbang_stop(&spi_gpio->bitbang);
+ 		cs_count *= sizeof(struct cs);
+-		ahd->critical_sections = kmalloc(cs_count, GFP_ATOMIC);
++		ahd->critical_sections = kmemdup(cs_table, cs_count,
++						 GFP_ATOMIC);
+ 		if (ahd->critical_sections = NULL)
+ 			panic("ahd_loadseq: Could not malloc");
+-		memcpy(ahd->critical_sections, cs_table, cs_count);
+ 	}
+ 	ahd_outb(ahd, SEQCTL0, PERRORDIS|FAILDIS|FASTMODE);
