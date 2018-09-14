@@ -1,41 +1,41 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 06 Sep 2018 06:31:15 +0000
-Subject: Re: [PATCH -next] mmc: tegra: Fix copy-paste error in tegra_sdhci_init_pinctrl_info()
-Message-Id: <CAPDyKFqiLayQ9tAN+oa==JdcButZXucA3k=zmnSwfcoKUxkDog@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Sep 2018 16:39:53 +0000
+Subject: [PATCH] net: hp100: fix always-true check for link up state
+Message-Id: <20180914163953.20734-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536145928-15629-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1536145928-15629-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 5 September 2018 at 13:12, Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> The error code get against a wrong variable. This patch fix it.
->
-> Fixes: 5783a9529891 ("mmc: tegra: Reconfigure pad voltages during voltage switching")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch, however I have already queued a patch in my next
-branch fixing this problem.
+The operation ~(p100_inb(VG_LAN_CFG_1) & HP100_LINK_UP) returns a value
+that is always non-zero and hence the wait for the link to drop always
+terminates prematurely.  Fix this by using a logical not operator instead
+of a bitwise complement.  This issue has been in the driver since
+pre-2.6.12-rc2.
 
-Kind regards
-Uffe
+Detected by CoverityScan, CID#114157 ("Logical vs. bitwise operator")
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index e80716c..c789158 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -724,7 +724,7 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
->                 pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-1v8");
->         if (IS_ERR(tegra_host->pinctrl_state_1v8)) {
->                 dev_warn(dev, "Missing 1.8V pad state, err: %ld\n",
-> -                        PTR_ERR(tegra_host->pinctrl_state_3v3));
-> +                        PTR_ERR(tegra_host->pinctrl_state_1v8));
->                 return -1;
->         }
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hp/hp100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hp/hp100.c b/drivers/net/ethernet/hp/hp100.c
+index c8c7ad2eff77..9b5a68b65432 100644
+--- a/drivers/net/ethernet/hp/hp100.c
++++ b/drivers/net/ethernet/hp/hp100.c
+@@ -2634,7 +2634,7 @@ static int hp100_login_to_vg_hub(struct net_device *dev, u_short force_relogin)
+ 		/* Wait for link to drop */
+ 		time = jiffies + (HZ / 10);
+ 		do {
+-			if (~(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
++			if (!(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
+ 				break;
+ 			if (!in_interrupt())
+ 				schedule_timeout_interruptible(1);
+-- 
+2.17.1
