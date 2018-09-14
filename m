@@ -1,42 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 18 Sep 2018 06:22:37 +0000
-Subject: [PATCH][net-next] net: caif: remove redundant null check on frontpkt
-Message-Id: <20180918062237.29581-1-colin.king@canonical.com>
+Date: Fri, 14 Sep 2018 12:38:50 +0000
+Subject: [PATCH][regulator-next] regulator: pfuze100-regulator: fix spelling mistake "standy" -> "standby"
+Message-Id: <20180914123850.5795-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-It is impossible for frontpkt to be null at the point of the null
-check because it has been assigned from rearpkt and there is no
-way realpkt can be null at the point of the assignment because
-of the sanity checking and exit paths taken previously. Remove
-the redundant null check.
-
-Detected by CoverityScan, CID#114434 ("Logically dead code")
+Trivial fix to spelling mistake in dev_info message
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/caif/cfrfml.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/regulator/pfuze100-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/caif/cfrfml.c b/net/caif/cfrfml.c
-index b82440e1fcb4..a931a71ef6df 100644
---- a/net/caif/cfrfml.c
-+++ b/net/caif/cfrfml.c
-@@ -264,9 +264,6 @@ static int cfrfml_transmit(struct cflayer *layr, struct cfpkt *pkt)
- 		frontpkt = rearpkt;
- 		rearpkt = NULL;
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 1e43a9de3bd5..dd41a9bb3f5c 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -576,7 +576,7 @@ static struct pfuze_chip *syspm_pfuze_chip;
  
--		err = -ENOMEM;
--		if (frontpkt = NULL)
--			goto out;
- 		err = -EPROTO;
- 		if (cfpkt_add_head(frontpkt, head, 6) < 0)
- 			goto out;
+ static void pfuze_power_off_prepare(void)
+ {
+-	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
++	dev_info(syspm_pfuze_chip->dev, "Configure standby mode for power off");
+ 
+ 	/* Switch from default mode: APS/APS to APS/Off */
+ 	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
 -- 
 2.17.1
