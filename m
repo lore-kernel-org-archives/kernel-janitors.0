@@ -1,73 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 07 Sep 2018 10:39:24 +0000
-Subject: [PATCH] scsi: mpt3sas: make sysfs error messages ratelimited
-Message-Id: <20180907103924.17598-1-colin.king@canonical.com>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 14 Sep 2018 11:26:25 +0000
+Subject: Re: [PATCH] scsi: mpt3sas: make sysfs error messages ratelimited
+Message-Id: <f1def33e05f7d6f568ee2f5259f8b1a35b413a10.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180907103924.17598-1-colin.king@canonical.com>
+In-Reply-To: <20180907103924.17598-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 2018-09-07 at 11:39 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> It is possible to heavily spam the kernel logs with messages by
+> excessive reading of the mpt3sas sysfs files.  Make the error messages
+> ratelimited to reduce the spamming effect.
+[]
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+[]
+> @@ -2958,7 +2958,7 @@ _ctl_BRM_status_show(struct device *cdev, struct device_attribute *attr,
+>  	ssize_t rc = 0;
+>  
+>  	if (!ioc->is_warpdrive) {
+> -		pr_err(MPT3SAS_FMT "%s: BRM attribute is only for"
+> +		pr_err_ratelimited(MPT3SAS_FMT "%s: BRM attribute is only for"
+>  		    " warpdrive\n", ioc->name, __func__);
+>  		goto out;
+>  	}
 
-It is possible to heavily spam the kernel logs with messages by
-excessive reading of the mpt3sas sysfs files.  Make the error messages
-ratelimited to reduce the spamming effect.
+trivia:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/mpt3sas/mpt3sas_ctl.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+All the uses of MPT3SAS_FMT in drivers/scsi/mpt3sas/ seem
+not nice.  It obfuscate the format and arguments.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index 5e8c059ce2c9..656cec5adb17 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -2958,7 +2958,7 @@ _ctl_BRM_status_show(struct device *cdev, struct device_attribute *attr,
- 	ssize_t rc = 0;
- 
- 	if (!ioc->is_warpdrive) {
--		pr_err(MPT3SAS_FMT "%s: BRM attribute is only for"
-+		pr_err_ratelimited(MPT3SAS_FMT "%s: BRM attribute is only for"
- 		    " warpdrive\n", ioc->name, __func__);
- 		goto out;
- 	}
-@@ -3039,7 +3039,7 @@ _ctl_host_trace_buffer_size_show(struct device *cdev,
- 	struct DIAG_BUFFER_START *request_data;
- 
- 	if (!ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE]) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
-@@ -3047,7 +3047,7 @@ _ctl_host_trace_buffer_size_show(struct device *cdev,
- 
- 	if ((ioc->diag_buffer_status[MPI2_DIAG_BUF_TYPE_TRACE] &
- 	    MPT3_DIAG_BUFFER_IS_REGISTERED) = 0) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
-@@ -3089,7 +3089,7 @@ _ctl_host_trace_buffer_show(struct device *cdev, struct device_attribute *attr,
- 	u32 size;
- 
- 	if (!ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE]) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
-@@ -3097,7 +3097,7 @@ _ctl_host_trace_buffer_show(struct device *cdev, struct device_attribute *attr,
- 
- 	if ((ioc->diag_buffer_status[MPI2_DIAG_BUF_TYPE_TRACE] &
- 	    MPT3_DIAG_BUFFER_IS_REGISTERED) = 0) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
--- 
-2.17.1
+Perhaps better would be create ioc_<level> macros.
