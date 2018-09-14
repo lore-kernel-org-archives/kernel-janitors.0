@@ -1,38 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 06 Sep 2018 09:58:44 +0000
-Subject: [PATCH] cfg80211: remove redundant check of !scan_plan
-Message-Id: <20180906095844.17071-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 14 Sep 2018 02:33:58 +0000
+Subject: [PATCH -next] scsi: mptfusion: Use kmemdup rather than duplicating its implementation in mpt_remove_
+Message-Id: <1536892438-129520-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Use kmemdup rather than duplicating its implementation
 
-The check for !scan_plan is redunant as this has been checked
-in the proceeding statement and the code returns -ENOBUFS if
-it is true. Remove the redundant check.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- net/wireless/nl80211.c | 3 +--
+ drivers/message/fusion/mptbase.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index d5f9b5235cdd..b4908bcb0d77 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -10690,8 +10690,7 @@ static int nl80211_send_wowlan_nd(struct sk_buff *msg,
- 		if (!scan_plan)
- 			return -ENOBUFS;
+diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+index dc1e43a..a32d3d0 100644
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -6001,13 +6001,12 @@ static int mpt_remove_dead_ioc_func(void *arg)
+ 	if (mpt_config(ioc, &cfg) != 0)
+ 		goto out;
  
--		if (!scan_plan ||
--		    nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_INTERVAL,
-+		if (nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_INTERVAL,
- 				req->scan_plans[i].interval) ||
- 		    (req->scan_plans[i].iterations &&
- 		     nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_ITERATIONS,
--- 
-2.17.1
+-	mem = kmalloc(iocpage2sz, GFP_KERNEL);
++	mem = kmemdup((u8 *)pIoc2, iocpage2sz, GFP_KERNEL);
+ 	if (!mem) {
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-	memcpy(mem, (u8 *)pIoc2, iocpage2sz);
+ 	ioc->raid_data.pIocPg2 = (IOCPage2_t *) mem;
+ 
+ 	mpt_read_ioc_pg_3(ioc);
