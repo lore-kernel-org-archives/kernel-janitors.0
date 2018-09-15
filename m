@@ -1,46 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 24 Sep 2018 17:30:31 +0000
-Subject: [PATCH] staging: rtl8723bs: fix spelling mistake "unvalid" -> "invalid"
-Message-Id: <20180924173031.3669-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 15 Sep 2018 01:33:38 +0000
+Subject: [PATCH net-next] net: dsa: gswip: Fix copy-paste error in gswip_gphy_fw_probe()
+Message-Id: <1536975218-185034-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170411131708.20268-1-colin.king@canonical.com>
-In-Reply-To: <20170411131708.20268-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The return value from of_reset_control_array_get_exclusive() is not
+checked correctly. The test is done against a wrong variable. This
+patch fix it.
 
-Trivial fix to spelling mistake in DBG_871X debug messages.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 14fceff4771e ("net: dsa: Add Lantiq / Intel DSA driver for vrx200")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/dsa/lantiq_gswip.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-index 0833cce43dd3..12c1cd590056 100644
---- a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-@@ -3084,7 +3084,7 @@ static int phy_ParsePowerLimitTableFile(struct adapter *Adapter, char *buffer)
+diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+index 9c28d0b..9c10570 100644
+--- a/drivers/net/dsa/lantiq_gswip.c
++++ b/drivers/net/dsa/lantiq_gswip.c
+@@ -934,10 +934,10 @@ static int gswip_gphy_fw_probe(struct gswip_priv *priv,
+ 	}
  
- 			if (colNum > TXPWR_LMT_MAX_REGULATION_NUM) {
- 				DBG_871X(
--					"unvalid col number %d (greater than max %d)\n",
-+					"invalid col number %d (greater than max %d)\n",
- 					colNum, TXPWR_LMT_MAX_REGULATION_NUM
- 				);
- 				return _FAIL;
-@@ -3102,7 +3102,7 @@ static int phy_ParsePowerLimitTableFile(struct adapter *Adapter, char *buffer)
- 				/* DBG_871X("regulation %s!\n", regulation[forCnt]); */
+ 	gphy_fw->reset = of_reset_control_array_get_exclusive(gphy_fw_np);
+-	if (IS_ERR(priv->gphy_fw)) {
+-		if (PTR_ERR(priv->gphy_fw) != -EPROBE_DEFER)
++	if (IS_ERR(gphy_fw->reset)) {
++		if (PTR_ERR(gphy_fw->reset) != -EPROBE_DEFER)
+ 			dev_err(dev, "Failed to lookup gphy reset\n");
+-		return PTR_ERR(priv->gphy_fw);
++		return PTR_ERR(gphy_fw->reset);
+ 	}
  
- 				if (regulation_name_cnt = 0) {
--					DBG_871X("unvalid number of regulation!\n");
-+					DBG_871X("invalid number of regulation!\n");
- 					return _FAIL;
- 				}
- 			}
--- 
-2.17.1
+ 	return gswip_gphy_fw_load(priv, gphy_fw);
