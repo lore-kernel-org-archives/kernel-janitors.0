@@ -1,80 +1,34 @@
-From: Sumit Saxena <sumit.saxena@broadcom.com>
-Date: Wed, 26 Sep 2018 11:31:10 +0000
-Subject: RE: [PATCH] scsi: megaraid: fix spelling mistake "maibox" -> "mailbox"
-Message-Id: <2517be92121ace5f4a42276bce2a413b@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 15 Sep 2018 01:42:09 +0000
+Subject: [PATCH net-next] net: hns: make function hns_gmac_wait_fifo_clean() static
+Message-Id: <1536975729-187303-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180923222548.7908-1-colin.king@canonical.com>
-In-Reply-To: <20180923222548.7908-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Kashyap Desai <kashyap.desai@broadcom.com>, Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, Peng Li <lipeng321@huawei.com>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> -----Original Message-----
-> From: Colin King [mailto:colin.king@canonical.com]
-> Sent: Monday, September 24, 2018 3:56 AM
-> To: Kashyap Desai <kashyap.desai@broadcom.com>; Sumit Saxena
-> <sumit.saxena@broadcom.com>; Shivasharan S
-> <shivasharan.srikanteshwara@broadcom.com>; James E . J . Bottomley
-> <jejb@linux.vnet.ibm.com>; Martin K . Petersen
-> <martin.petersen@oracle.com>; megaraidlinux.pdl@broadcom.com; linux-
-> scsi@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH] scsi: megaraid: fix spelling mistake "maibox" ->
-> "mailbox"
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in warning message and comments
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/scsi/megaraid/megaraid_mbox.c | 4 ++--
-> drivers/scsi/megaraid/megaraid_mbox.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/scsi/megaraid/megaraid_mbox.c
-> b/drivers/scsi/megaraid/megaraid_mbox.c
-> index 530358cdcb39..2013523605c5 100644
-> --- a/drivers/scsi/megaraid/megaraid_mbox.c
-> +++ b/drivers/scsi/megaraid/megaraid_mbox.c
-> @@ -484,7 +484,7 @@ megaraid_probe_one(struct pci_dev *pdev, const
-> struct pci_device_id *id)
->  	// Start the mailbox based controller
->  	if (megaraid_init_mbox(adapter) != 0) {
->  		con_log(CL_ANN, (KERN_WARNING
-> -			"megaraid: maibox adapter did not initialize\n"));
-> +			"megaraid: mailbox adapter did not initialize\n"));
->
->  		goto out_free_adapter;
->  	}
-> @@ -950,7 +950,7 @@ megaraid_fini_mbox(adapter_t *adapter)
->   * megaraid_alloc_cmd_packets - allocate shared mailbox
->   * @adapter		: soft state of the raid controller
->   *
-> - * Allocate and align the shared mailbox. This maibox is used to issue
-> + * Allocate and align the shared mailbox. This mailbox is used to issue
->   * all the commands. For IO based controllers, the mailbox is also
-> registered
->   * with the FW. Allocate memory for all commands as well.
->   * This is our big allocator.
-> diff --git a/drivers/scsi/megaraid/megaraid_mbox.h
-> b/drivers/scsi/megaraid/megaraid_mbox.h
-> index c1d86d961a92..e075aeb4012f 100644
-> --- a/drivers/scsi/megaraid/megaraid_mbox.h
-> +++ b/drivers/scsi/megaraid/megaraid_mbox.h
-> @@ -117,7 +117,7 @@
->   * @raw_mbox		: raw mailbox pointer
->   * @mbox		: mailbox
->   * @mbox64		: extended mailbox
-> - * @mbox_dma_h		: maibox dma address
-> + * @mbox_dma_h		: mailbox dma address
->   * @sgl64		: 64-bit scatter-gather list
->   * @sgl32		: 32-bit scatter-gather list
->   * @sgl_dma_h		: dma handle for the scatter-gather list
+Fixes the following sparse warning:
 
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c:322:5: warning:
+ symbol 'hns_gmac_wait_fifo_clean' was not declared. Should it be static?
 
-> --
-> 2.17.1
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+index 09e4061..aaf72c0 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -319,7 +319,7 @@ static void hns_gmac_set_promisc(void *mac_drv, u8 en)
+ 		hns_gmac_set_uc_match(mac_drv, en);
+ }
+ 
+-int hns_gmac_wait_fifo_clean(void *mac_drv)
++static int hns_gmac_wait_fifo_clean(void *mac_drv)
+ {
+ 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
+ 	int wait_cnt;
