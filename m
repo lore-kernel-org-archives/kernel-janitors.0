@@ -1,48 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 29 Sep 2018 11:43:13 +0000
-Subject: [PATCH] usb: gadget: fix spelling mistakeis "[En]queing" -> "[En]queuing"
-Message-Id: <20180929114313.10557-1-colin.king@canonical.com>
+Date: Tue, 18 Sep 2018 06:54:11 +0000
+Subject: [PATCH] usb: phy: mxs: fix spelling mistake "stardard" -> "standard"
+Message-Id: <20180918065411.30625-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistakes in debug warning messages
+Trivial fix to spelling mistake in dev_dbg message
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/gadget/udc/aspeed-vhub/epn.c | 2 +-
- drivers/usb/gadget/udc/udc-xilinx.c      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/phy/phy-mxs-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/aspeed-vhub/epn.c b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-index 5939eb1e97f2..e9ee2b72af19 100644
---- a/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-+++ b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-@@ -353,7 +353,7 @@ static int ast_vhub_epn_queue(struct usb_ep* u_ep, struct usb_request *u_req,
- 	/* Endpoint enabled ? */
- 	if (!ep->epn.enabled || !u_ep->desc || !ep->dev || !ep->d_idx ||
- 	    !ep->dev->enabled || ep->dev->suspended) {
--		EPDBG(ep,"Enqueing request on wrong or disabled EP\n");
-+		EPDBG(ep, "Enqueuing request on wrong or disabled EP\n");
- 		return -ESHUTDOWN;
+diff --git a/drivers/usb/phy/phy-mxs-usb.c b/drivers/usb/phy/phy-mxs-usb.c
+index e5aa24c1e4fd..1b1bb0ad40c3 100644
+--- a/drivers/usb/phy/phy-mxs-usb.c
++++ b/drivers/usb/phy/phy-mxs-usb.c
+@@ -563,7 +563,7 @@ static enum usb_charger_type mxs_charger_primary_detection(struct mxs_phy *x)
+ 	regmap_read(regmap, ANADIG_USB1_CHRG_DET_STAT, &val);
+ 	if (!(val & ANADIG_USB1_CHRG_DET_STAT_CHRG_DETECTED)) {
+ 		chgr_type = SDP_TYPE;
+-		dev_dbg(x->phy.dev, "It is a stardard downstream port\n");
++		dev_dbg(x->phy.dev, "It is a standard downstream port\n");
  	}
  
-diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
-index 6407e433bc78..b1f4104d1283 100644
---- a/drivers/usb/gadget/udc/udc-xilinx.c
-+++ b/drivers/usb/gadget/udc/udc-xilinx.c
-@@ -1078,7 +1078,7 @@ static int xudc_ep_queue(struct usb_ep *_ep, struct usb_request *_req,
- 	unsigned long flags;
- 
- 	if (!ep->desc) {
--		dev_dbg(udc->dev, "%s:queing request to disabled %s\n",
-+		dev_dbg(udc->dev, "%s: queuing request to disabled %s\n",
- 			__func__, ep->name);
- 		return -ESHUTDOWN;
- 	}
+ 	/* Disable charger detector */
 -- 
 2.17.1
