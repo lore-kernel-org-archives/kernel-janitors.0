@@ -1,40 +1,17 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Sep 2018 16:53:09 +0000
-Subject: [PATCH] drivers: visorbus: fix spelling mistake "partion" -> "partition"
-Message-Id: <20180911165309.1314-1-colin.king@canonical.com>
+From: "Danny Chan" <killer94@alice.it>
+Date: Wed, 19 Sep 2018 05:52:48 +0000
+Subject: Hello Friend
+Message-Id: <5B9BBDB90094B011@smtp214t.alice.it (added by postmaster@tim.it)>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Kershner <david.kershner@unisys.com>, sparmaintainer@unisys.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dear,
 
-Trivial fix to spelling mistake in comment, re-jig comment block
-to avoid checkpatch overly wide line warning.
+I am working in financial firm in Asia. I have a business to transfer the sum of $19.000.000.00 of abandon fund in my office.
+If you are,interested in the transaction reply on my email for more details.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- include/linux/visorbus.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/visorbus.h b/include/linux/visorbus.h
-index 0d8bd6769b13..4a6abff20049 100644
---- a/include/linux/visorbus.h
-+++ b/include/linux/visorbus.h
-@@ -222,9 +222,9 @@ struct visorchipset_state {
-  *				hypervisor requests.
-  * @vbus_hdr_info:		A pointer to header info. Private use by bus
-  *				driver.
-- * @partition_guid:		Indicates client partion id. This should be the
-- *				same across all visor_devices in the current
-- *				guest. Private use by bus driver only.
-+ * @partition_guid:		Indicates client partition id. This should be
-+ *				the same across all visor_devices in the
-+ *				current guest. Private use by bus driver only.
-  */
- struct visor_device {
- 	struct visorchannel *visorchannel;
--- 
-2.17.1
+Best Regards,
+Danny Chan.
