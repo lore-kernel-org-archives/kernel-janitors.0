@@ -1,50 +1,38 @@
-From: Alan Tull <atull@kernel.org>
-Date: Thu, 13 Sep 2018 20:21:30 +0000
-Subject: Re: [PATCH] fpga: region: fix spelling mistake "partion" -> "partition"
-Message-Id: <CANk1AXTxBtMEJo0NTW9g0GeMX8-RTcD_PJ2eyqkYyCtw-u_9Mw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Sep 2018 10:35:53 +0000
+Subject: [PATCH] x86/paravirt: fix some warning messages
+Message-Id: <20180919103553.GD9238@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180911123732.32579-1-colin.king@canonical.com>
-In-Reply-To: <20180911123732.32579-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Alok Kataria <akataria@vmware.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Sep 11, 2018 at 7:37 AM Colin King <colin.king@canonical.com> wrote:
+The first argument to WARN_ONCE() is a condition.
 
-Hi Colin,
+Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in the documentation
-
-I took a look, there's other misspellings in this doc.  I'd like to
-get them all in one patch if possible.  If I have time I'll add them
-to this patch or if you have time, you can.
-
-Alan
-
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  Documentation/devicetree/bindings/fpga/fpga-region.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.txt b/Documentation/devicetree/bindings/fpga/fpga-region.txt
-> index 6db8aeda461a..71beb85b56f1 100644
-> --- a/Documentation/devicetree/bindings/fpga/fpga-region.txt
-> +++ b/Documentation/devicetree/bindings/fpga/fpga-region.txt
-> @@ -484,7 +484,7 @@ It is beyond the scope of this document to fully describe all the FPGA design
->  constraints required to make partial reconfiguration work[1] [2] [3], but a few
->  deserve quick mention.
->
-> -A persona must have boundary connections that line up with those of the partion
-> +A persona must have boundary connections that line up with those of the partition
->  or region it is designed to go into.
->
->  During programming, transactions through those connections must be stopped and
-> --
-> 2.17.1
->
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index bbf006fe78d7..e4d4df37922a 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -89,7 +89,7 @@ static unsigned paravirt_patch_call(void *insnbuf, const void *target,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
+@@ -110,7 +110,7 @@ static unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
