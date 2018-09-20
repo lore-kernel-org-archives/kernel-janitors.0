@@ -1,24 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 21 Sep 2018 15:18:08 +0000
-Subject: Re: [PATCH -next] pinctrl: qcom: spmi-mpp: Fix err handling of pmic_mpp_set_mux
-Message-Id: <CACRpkdaeoKvaAkAFUL3n7Z9r3zU2GhnvdxekxjKuPS1nLcAMpQ@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Sep 2018 01:58:45 +0000
+Subject: [PATCH -next] serial: imx: remove set but not used variable 'rtsirq'
+Message-Id: <1537408725-196364-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537408698-196297-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537408698-196297-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 6:48 PM YueHaibing <yuehaibing@huawei.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> 'ret' should be returned while pmic_mpp_write_mode_ctl fails.
->
-> Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+drivers/tty/serial/imx.c: In function 'imx_uart_probe':
+drivers/tty/serial/imx.c:2198:20: warning:
+ variable 'rtsirq' set but not used [-Wunused-but-set-variable]
 
-Patch applied.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/tty/serial/imx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 4341589..1df7d23 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -2195,7 +2195,7 @@ static int imx_uart_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 	u32 ucr1;
+ 	struct resource *res;
+-	int txirq, rxirq, rtsirq;
++	int txirq, rxirq;
+ 
+ 	sport = devm_kzalloc(&pdev->dev, sizeof(*sport), GFP_KERNEL);
+ 	if (!sport)
+@@ -2220,7 +2220,6 @@ static int imx_uart_probe(struct platform_device *pdev)
+ 
+ 	rxirq = platform_get_irq(pdev, 0);
+ 	txirq = platform_get_irq(pdev, 1);
+-	rtsirq = platform_get_irq(pdev, 2);
+ 
+ 	sport->port.dev = &pdev->dev;
+ 	sport->port.mapbase = res->start;
