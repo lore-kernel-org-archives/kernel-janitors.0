@@ -1,49 +1,72 @@
-From: Andy Duan <fugang.duan@nxp.com>
-Date: Thu, 20 Sep 2018 09:41:18 +0000
-Subject: RE: [PATCH -next] serial: imx: remove set but not used variable 'rtsirq'
-Message-Id: <VI1PR0402MB3600A7368D538E3B6D044C5FFF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Sep 2018 12:04:38 +0000
+Subject: Re: [PATCH -next] serial: imx: remove set but not used variable 'rtsirq'
+Message-Id: <1884583f-5eec-7499-b987-b2e53b15b30e@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1537408725-196364-1-git-send-email-yuehaibing@huawei.com>
-         <3b23675a-f537-868f-2432-b7f8a0c8c466@suse.cz>
+ <3b23675a-f537-868f-2432-b7f8a0c8c466@suse.cz>
  <96170d620618804d49ad19323d3cdee853070c72.camel@nxp.com>
-In-Reply-To: <96170d620618804d49ad19323d3cdee853070c72.camel@nxp.com>
+ <VI1PR0402MB3600A7368D538E3B6D044C5FFF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB3600A7368D538E3B6D044C5FFF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "jslaby@suse.cz" <jslaby@suse.cz>
-Cc: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "A.s. Dong" <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>, Anson Huang <anson.huang@nxp.com>, Bough Chen <haibo.chen@nxp.com>, Cosmin Samoila <cosmin.samoila@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, Han Xu <han.xu@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>, Leo Zhang <leo.zhang@nxp.com>, Leonard Crestez <leonard.crestez@nxp.com>, Peng Fan <peng.fan@nxp.com>, Peter Chen <peter.chen@nxp.com>, Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>, Robert Chiras <robert.chiras@nxp.com>, Robin Gong <yibin.gong@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Viorel Suman <viorel.suman@nxp.com>, Zening
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Andy Duan <fugang.duan@nxp.com>, Leonard Crestez <leonard.crestez@nxp.com>, "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "jslaby@suse.cz" <jslaby@suse.cz>
+Cc: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "A.s. Dong" <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>, Anson Huang <anson.huang@nxp.com>, Bough Chen <haibo.chen@nxp.com>, Cosmin Samoila <cosmin.samoila@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, Han Xu <han.xu@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>, Leo Zhang <leo.zhang@nxp.com>, Peng Fan <peng.fan@nxp.com>, Peter Chen <peter.chen@nxp.com>, Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>, Robert Chiras <robert.chiras@nxp.com>, Robin Gong <yibin.gong@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Viorel Suman <viorel.suman@nxp.com>, Zening Wang <zening.wang@nxp.com>, gregkh@linuxfound
 
-RnJvbTogTGVvbmFyZCBDcmVzdGV6IFNlbnQ6IDIwMTjlubQ55pyIMjDml6UgMTY6NTENCj4gT24g
-VGh1LCAyMDE4LTA5LTIwIGF0IDA4OjQ1ICswMjAwLCBKaXJpIFNsYWJ5IHdyb3RlOg0KPiA+IE9u
-IDA5LzIwLzIwMTgsIDAzOjU4IEFNLCBZdWVIYWliaW5nIHdyb3RlOg0KPiA+ID4gRml4ZXMgZ2Nj
-ICctV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlJyB3YXJuaW5nOg0KPiA+ID4NCj4gPiA+IGRyaXZl
-cnMvdHR5L3NlcmlhbC9pbXguYzogSW4gZnVuY3Rpb24gJ2lteF91YXJ0X3Byb2JlJzoNCj4gPiA+
-IGRyaXZlcnMvdHR5L3NlcmlhbC9pbXguYzoyMTk4OjIwOiB3YXJuaW5nOg0KPiA+ID4gIHZhcmlh
-YmxlICdydHNpcnEnIHNldCBidXQgbm90IHVzZWQgWy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGVd
-DQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdHR5L3NlcmlhbC9pbXguYyBiL2Ry
-aXZlcnMvdHR5L3NlcmlhbC9pbXguYyBAQA0KPiA+ID4gLTIyMjAsNyArMjIyMCw2IEBAIHN0YXRp
-YyBpbnQgaW14X3VhcnRfcHJvYmUoc3RydWN0DQo+IHBsYXRmb3JtX2RldmljZQ0KPiA+ID4gKnBk
-ZXYpDQo+ID4gPg0KPiA+ID4gIAlyeGlycSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7DQo+
-ID4gPiAgCXR4aXJxID0gcGxhdGZvcm1fZ2V0X2lycShwZGV2LCAxKTsNCj4gPiA+IC0JcnRzaXJx
-ID0gcGxhdGZvcm1fZ2V0X2lycShwZGV2LCAyKTsNCj4gPg0KPiA+IEkgYW0gbm90IHN1cmUgdGhp
-cyBpcyBjb3JyZWN0LiBwbGF0Zm9ybV9nZXRfaXJxIGhhcyBzaWRlIGVmZmVjdHMgKGxpa2UNCj4g
-PiBlbmFibGluZyB0aGUgSVJRKS4gQXJlIHlvdSBzdXJlIHRoaXMgd29uJ3QgY2hhbmdlIHRoZSBi
-ZWhhdmlvdXIgKHRoaXMNCj4gPiBpcyBxdWVzdGlvbiBtb3N0bHkgdG8gSU1YIGZlbGxvd3MpPw0K
-PiANCj4gQXMgZmFyIGFzIEkgY2FuIHRlbGwgdGhlcmUgd2FzIGEgcmVxdWVzdF9pcnEgY2FsbCBm
-b3IgcnRzaXJxIHdoaWNoIHdhcw0KPiByZW1vdmVkIGJ5IG1pc3Rha2UgaW4gY29tbWl0IGFmZTlj
-YmIxYTZhZCAoInNlcmlhbDogaW14OiBkcm9wIHN1cHBvcnQNCj4gZm9yIElSREEiKToNCj4gDQo+
-IC0gICAgICAgICAgICAgICAvKiBkbyBub3QgdXNlIFJUUyBJUlEgb24gSXJEQSAqLw0KPiAtICAg
-ICAgICAgICAgICAgaWYgKCFVU0VfSVJEQShzcG9ydCkpIHsNCj4gLSAgICAgICAgICAgICAgICAg
-ICAgICAgcmV0ID0gZGV2bV9yZXF1ZXN0X2lycSgmcGRldi0+ZGV2LCBydHNpcnEsDQo+IC0gICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW14X3J0c2ludCwgMCwN
-Cj4gLQ0KPiBkZXZfbmFtZSgmcGRldi0+ZGV2KSwgc3BvcnQpOw0KPiAtICAgICAgICAgICAgICAg
-ICAgICAgICBpZiAocmV0KQ0KPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVy
-biByZXQ7DQo+IC0gICAgICAgICAgICAgICB9DQo+IA0KPiBUaGlzIHNob3VsZCBoYXZlIGp1c3Qg
-cmVtb3ZlZCB0aGUgSVJEQSBjaGVjayBhbmQgcmVxdWVzdCBydHNpcnENCj4gdW5jb25kaXRpb25h
-bGx5LiBOb2JvZHkgbm90aWNlZCB0aGlzIGJ5IHRlc3RpbmcgUlRTIG9uIGlteDEsIHRoaXMgaXMg
-YW4gb2xkDQo+IGNoaXAgYW5kIGxhdGVyIHZhcmlhbnRzIGhhdmUgYSBzaW5nbGUgY29tYmluZWQg
-aXJxLg0KPiANCj4gVGhlIGNvcnJlY3QgZml4IGZvciB0aGUgd2FybmluZyB3b3VsZCBiZSB0byBy
-ZXN0b3JlIHRoYXQgcmVxdWVzdF9pcnEuDQo+IA0KPiAtLQ0KPiBSZWdhcmRzLA0KPiBMZW9uYXJk
-DQoNClllcywgeW91ciBleHBsYWluIGlzIHZlcnkgY29ycmVjdCEgVGhhbmtzIGZvciB5b3VyIGNv
-bW1lbnQuDQpXZSBzaG91bGQgcmVzdG9yZSBydHNpcnEgcmVxdWVzdCB0aGF0IGZvciBpLk1YMS4N
-Cg0KUmVnYXJkcywNCkFuZHkgRHVhbg0K
+On 2018/9/20 17:41, Andy Duan wrote:
+> From: Leonard Crestez Sent: 2018年9月20日 16:51
+>> On Thu, 2018-09-20 at 08:45 +0200, Jiri Slaby wrote:
+>>> On 09/20/2018, 03:58 AM, YueHaibing wrote:
+>>>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>>>
+>>>> drivers/tty/serial/imx.c: In function 'imx_uart_probe':
+>>>> drivers/tty/serial/imx.c:2198:20: warning:
+>>>>  variable 'rtsirq' set but not used [-Wunused-but-set-variable]
+>>>>
+>>>> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c @@
+>>>> -2220,7 +2220,6 @@ static int imx_uart_probe(struct
+>> platform_device
+>>>> *pdev)
+>>>>
+>>>>  	rxirq = platform_get_irq(pdev, 0);
+>>>>  	txirq = platform_get_irq(pdev, 1);
+>>>> -	rtsirq = platform_get_irq(pdev, 2);
+>>>
+>>> I am not sure this is correct. platform_get_irq has side effects (like
+>>> enabling the IRQ). Are you sure this won't change the behaviour (this
+>>> is question mostly to IMX fellows)?
+>>
+>> As far as I can tell there was a request_irq call for rtsirq which was
+>> removed by mistake in commit afe9cbb1a6ad ("serial: imx: drop support
+>> for IRDA"):
+>>
+>> -               /* do not use RTS IRQ on IrDA */
+>> -               if (!USE_IRDA(sport)) {
+>> -                       ret = devm_request_irq(&pdev->dev, rtsirq,
+>> -                                              imx_rtsint, 0,
+>> -
+>> dev_name(&pdev->dev), sport);
+>> -                       if (ret)
+>> -                               return ret;
+>> -               }
+>>
+>> This should have just removed the IRDA check and request rtsirq
+>> unconditionally. Nobody noticed this by testing RTS on imx1, this is an old
+>> chip and later variants have a single combined irq.
+>>
+>> The correct fix for the warning would be to restore that request_irq.
+>>
+>> --
+>> Regards,
+>> Leonard
+> 
+> Yes, your explain is very correct! Thanks for your comment.
+> We should restore rtsirq request that for i.MX1.
+
+Ok, I will post a new fix patch as Leonard and suggested.
+
+> 
+> Regards,
+> Andy Duan
+> 
