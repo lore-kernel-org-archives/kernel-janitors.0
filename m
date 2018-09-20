@@ -1,24 +1,46 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Tue, 25 Sep 2018 12:12:24 +0000
-Subject: Re: [PATCH] iommu/fsl: fix spelling mistake pci_endpt_partioning -> pci_endpt_partitioning
-Message-Id: <20180925121224.36wxga5vm7ebqwir@8bytes.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 20 Sep 2018 06:21:28 +0000
+Subject: [PATCH -next] pinctrl: mediatek: paris: fix return value check in mtk_paris_pinctrl_probe()
+Message-Id: <1537424488-23485-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180911122832.32383-1-colin.king@canonical.com>
-In-Reply-To: <20180911122832.32383-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue, Sep 11, 2018 at 01:28:32PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in variable name
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/iommu/fsl_pamu_domain.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+In case of error, the function devm_kmalloc_array() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-Applied, thanks.
+Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-paris.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 4cf0fea..d217902 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -836,8 +836,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
+ 				      sizeof(*hw->base), GFP_KERNEL);
+-	if (IS_ERR(hw->base))
+-		return PTR_ERR(hw->base);
++	if (!hw->base)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < hw->soc->nbase_names; i++) {
+ 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+@@ -863,8 +863,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+ 	/* Copy from internal struct mtk_pin_desc to register to the core */
+ 	pins = devm_kmalloc_array(&pdev->dev, hw->soc->npins, sizeof(*pins),
+ 				  GFP_KERNEL);
+-	if (IS_ERR(pins))
+-		return PTR_ERR(pins);
++	if (!pins)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < hw->soc->npins; i++) {
+ 		pins[i].number = hw->soc->pins[i].number;
