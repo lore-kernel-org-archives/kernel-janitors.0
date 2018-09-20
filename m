@@ -1,64 +1,44 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Thu, 20 Sep 2018 07:19:57 +0000
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Date: Thu, 20 Sep 2018 08:50:44 +0000
 Subject: Re: [PATCH -next] serial: imx: remove set but not used variable 'rtsirq'
-Message-Id: <20180920071957.xnwni4lqb5kgncfc@pengutronix.de>
+Message-Id: <96170d620618804d49ad19323d3cdee853070c72.camel@nxp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1537408725-196364-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537408725-196364-1-git-send-email-yuehaibing@huawei.com>
+         <3b23675a-f537-868f-2432-b7f8a0c8c466@suse.cz>
+In-Reply-To: <3b23675a-f537-868f-2432-b7f8a0c8c466@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "jslaby@suse.cz" <jslaby@suse.cz>
+Cc: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, Andy Duan <fugang.duan@nxp.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Thu, Sep 20, 2018 at 01:58:45AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->=20
-> drivers/tty/serial/imx.c: In function 'imx_uart_probe':
-> drivers/tty/serial/imx.c:2198:20: warning:
->  variable 'rtsirq' set but not used [-Wunused-but-set-variable]
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Wow, this variable is write-only since=20
-
-	afe9cbb1a6ad ("serial: imx: drop support for IRDA")
-
-which is over three years old. The last hunk of this patch is wrong
-however, which means that nobody uses handshaking on imx1 with a kernel
-newer than 4.1-rc1. (Well, or they fixed it and didn't made the effort
-to tell.)
-
-I suggest to break rx and tx on imx1, too, and if nobody reports a
-regression within the next three years, we rip out imx1 support
-completely. :-)
-
-Otherwise we need:
-
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 4e853570ea80..554a69db1bca 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -2350,6 +2350,14 @@ static int imx_uart_probe(struct platform_device *pd=
-ev)
- 				ret);
- 			return ret;
- 		}
-+
-+		ret =3D devm_request_irq(&pdev->dev, rtsirq, imx_uart_rtsint, 0,
-+				       dev_name(&pdev->dev), sport);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to request rts irq: %d\n",
-+				ret);
-+			return ret;
-+		}
- 	} else {
- 		ret =3D devm_request_irq(&pdev->dev, rxirq, imx_uart_int, 0,
- 				       dev_name(&pdev->dev), sport);
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+T24gVGh1LCAyMDE4LTA5LTIwIGF0IDA4OjQ1ICswMjAwLCBKaXJpIFNsYWJ5IHdyb3RlOg0KPiBP
+biAwOS8yMC8yMDE4LCAwMzo1OCBBTSwgWXVlSGFpYmluZyB3cm90ZToNCj4gPiBGaXhlcyBnY2Mg
+Jy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGUnIHdhcm5pbmc6DQo+ID4gDQo+ID4gZHJpdmVycy90
+dHkvc2VyaWFsL2lteC5jOiBJbiBmdW5jdGlvbiAnaW14X3VhcnRfcHJvYmUnOg0KPiA+IGRyaXZl
+cnMvdHR5L3NlcmlhbC9pbXguYzoyMTk4OjIwOiB3YXJuaW5nOg0KPiA+ICB2YXJpYWJsZSAncnRz
+aXJxJyBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlXQ0KPiA+IA0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3R0eS9zZXJpYWwvaW14LmMgYi9kcml2ZXJzL3R0eS9z
+ZXJpYWwvaW14LmMNCj4gPiBAQCAtMjIyMCw3ICsyMjIwLDYgQEAgc3RhdGljIGludCBpbXhfdWFy
+dF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICANCj4gPiAgCXJ4aXJx
+ID0gcGxhdGZvcm1fZ2V0X2lycShwZGV2LCAwKTsNCj4gPiAgCXR4aXJxID0gcGxhdGZvcm1fZ2V0
+X2lycShwZGV2LCAxKTsNCj4gPiAtCXJ0c2lycSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMik7
+DQo+IA0KPiBJIGFtIG5vdCBzdXJlIHRoaXMgaXMgY29ycmVjdC4gcGxhdGZvcm1fZ2V0X2lycSBo
+YXMgc2lkZSBlZmZlY3RzIChsaWtlDQo+IGVuYWJsaW5nIHRoZSBJUlEpLiBBcmUgeW91IHN1cmUg
+dGhpcyB3b24ndCBjaGFuZ2UgdGhlIGJlaGF2aW91ciAodGhpcyBpcw0KPiBxdWVzdGlvbiBtb3N0
+bHkgdG8gSU1YIGZlbGxvd3MpPw0KDQpBcyBmYXIgYXMgSSBjYW4gdGVsbCB0aGVyZSB3YXMgYSBy
+ZXF1ZXN0X2lycSBjYWxsIGZvciBydHNpcnEgd2hpY2ggd2FzDQpyZW1vdmVkIGJ5IG1pc3Rha2Ug
+aW4gY29tbWl0IGFmZTljYmIxYTZhZCAoInNlcmlhbDogaW14OiBkcm9wIHN1cHBvcnQNCmZvciBJ
+UkRBIik6DQoNCi0gICAgICAgICAgICAgICAvKiBkbyBub3QgdXNlIFJUUyBJUlEgb24gSXJEQSAq
+Lw0KLSAgICAgICAgICAgICAgIGlmICghVVNFX0lSREEoc3BvcnQpKSB7DQotICAgICAgICAgICAg
+ICAgICAgICAgICByZXQgPSBkZXZtX3JlcXVlc3RfaXJxKCZwZGV2LT5kZXYsIHJ0c2lycSwNCi0g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW14X3J0c2ludCwg
+MCwNCi0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGV2X25h
+bWUoJnBkZXYtPmRldiksIHNwb3J0KTsNCi0gICAgICAgICAgICAgICAgICAgICAgIGlmIChyZXQp
+DQotICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7DQotICAgICAgICAg
+ICAgICAgfQ0KDQpUaGlzIHNob3VsZCBoYXZlIGp1c3QgcmVtb3ZlZCB0aGUgSVJEQSBjaGVjayBh
+bmQgcmVxdWVzdCBydHNpcnENCnVuY29uZGl0aW9uYWxseS4gTm9ib2R5IG5vdGljZWQgdGhpcyBi
+eSB0ZXN0aW5nIFJUUyBvbiBpbXgxLCB0aGlzIGlzIGFuDQpvbGQgY2hpcCBhbmQgbGF0ZXIgdmFy
+aWFudHMgaGF2ZSBhIHNpbmdsZSBjb21iaW5lZCBpcnEuDQoNClRoZSBjb3JyZWN0IGZpeCBmb3Ig
+dGhlIHdhcm5pbmcgd291bGQgYmUgdG8gcmVzdG9yZSB0aGF0IHJlcXVlc3RfaXJxLg0KDQotLQ0K
+UmVnYXJkcywNCkxlb25hcmQNCg=
