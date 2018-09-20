@@ -1,47 +1,46 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Wed, 26 Sep 2018 00:35:35 +0000
-Subject: Re: [PATCH -next] nfsd: remove set but not used variable 'dirp'
-Message-Id: <20180926003535.GC9559@fieldses.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Sep 2018 01:55:11 +0000
+Subject: [PATCH net-next] e1000: remove set but not used variable 'txb2b'
+Message-Id: <1537409078-2374-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537874573-182553-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537874573-182553-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S. Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks, applying for 4.20.--b.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Tue, Sep 25, 2018 at 11:22:53AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> fs/nfsd/vfs.c: In function 'nfsd_create':
-> fs/nfsd/vfs.c:1279:16: warning:
->  variable 'dirp' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  fs/nfsd/vfs.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index b53e763..d74583f 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1276,7 +1276,6 @@ __be32 nfsd_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
->  		int type, dev_t rdev, struct svc_fh *resfhp)
->  {
->  	struct dentry	*dentry, *dchild = NULL;
-> -	struct inode	*dirp;
->  	__be32		err;
->  	int		host_err;
->  
-> @@ -1288,7 +1287,6 @@ __be32 nfsd_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
->  		return err;
->  
->  	dentry = fhp->fh_dentry;
-> -	dirp = d_inode(dentry);
->  
->  	host_err = fh_want_write(fhp);
->  	if (host_err)
+drivers/net/ethernet/intel/e1000/e1000_main.c: In function 'e1000_watchdog':
+drivers/net/ethernet/intel/e1000/e1000_main.c:2436:9: warning:
+ variable 'txb2b' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/intel/e1000/e1000_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
+index 7e0f1f9..43b6d3c 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -2433,7 +2433,6 @@ static void e1000_watchdog(struct work_struct *work)
+ 	if (link) {
+ 		if (!netif_carrier_ok(netdev)) {
+ 			u32 ctrl;
+-			bool txb2b = true;
+ 			/* update snapshot of PHY registers on LSC */
+ 			e1000_get_speed_and_duplex(hw,
+ 						   &adapter->link_speed,
+@@ -2455,11 +2454,9 @@ static void e1000_watchdog(struct work_struct *work)
+ 			adapter->tx_timeout_factor = 1;
+ 			switch (adapter->link_speed) {
+ 			case SPEED_10:
+-				txb2b = false;
+ 				adapter->tx_timeout_factor = 16;
+ 				break;
+ 			case SPEED_100:
+-				txb2b = false;
+ 				/* maybe add some timeout factor ? */
+ 				break;
+ 			}
