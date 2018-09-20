@@ -1,47 +1,36 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Fri, 28 Sep 2018 17:29:08 +0000
-Subject: Re: [PATCH -next] PCI: hotplug: Use kmemdup rather than duplicating its implementation in pnv_php_ad
-Message-Id: <20180928172908.GC18434@bhelgaas-glaptop.roam.corp.google.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 20 Sep 2018 06:40:31 +0000
+Subject: [PATCH] PCI: hv: Fix return value check in hv_pci_assign_slots()
+Message-Id: <1537425631-28460-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538031141-138417-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538031141-138417-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Bjorn Helgaas <bhelgaas@google.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@linuxdriverproject.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 06:52:21AM +0000, YueHaibing wrote:
-> Use kmemdup rather than duplicating its implementation
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+In case of error, the function pci_create_slot() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-Applied with Michael's ack to pci/hotplug for v4.20, thanks!
+Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pci/controller/pci-hyperv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/pci/hotplug/pnv_php.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
-> index 5070620..ee54f5b 100644
-> --- a/drivers/pci/hotplug/pnv_php.c
-> +++ b/drivers/pci/hotplug/pnv_php.c
-> @@ -275,14 +275,13 @@ static int pnv_php_add_devtree(struct pnv_php_slot *php_slot)
->  		goto free_fdt1;
->  	}
->  
-> -	fdt = kzalloc(fdt_totalsize(fdt1), GFP_KERNEL);
-> +	fdt = kmemdup(fdt1, fdt_totalsize(fdt1), GFP_KERNEL);
->  	if (!fdt) {
->  		ret = -ENOMEM;
->  		goto free_fdt1;
->  	}
->  
->  	/* Unflatten device tree blob */
-> -	memcpy(fdt, fdt1, fdt_totalsize(fdt1));
->  	dt = of_fdt_unflatten_tree(fdt, php_slot->dn, NULL);
->  	if (!dt) {
->  		ret = -EINVAL;
-> 
-> 
-> 
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index ee80e79..9ba4d12 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -1484,8 +1484,10 @@ static void hv_pci_assign_slots(struct hv_pcibus_device *hbus)
+ 		snprintf(name, SLOT_NAME_SIZE, "%u", hpdev->desc.ser);
+ 		hpdev->pci_slot = pci_create_slot(hbus->pci_bus, slot_nr,
+ 					  name, NULL);
+-		if (!hpdev->pci_slot)
++		if (IS_ERR(hpdev->pci_slot)) {
+ 			pr_warn("pci_create slot %s failed\n", name);
++			hpdev->pci_slot = NULL;
++		}
+ 	}
+ }
