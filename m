@@ -1,58 +1,59 @@
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Fri, 07 Sep 2018 18:01:48 +0000
-Subject: Re: [PATCH] orangefs: rate limit the client not running info message
-Message-Id: <CAOg9mSTSiqaAiSuxN5uqQWoMF1W5ZXFgZ36jFHOFHRVe7CMraw@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Sep 2018 02:41:30 +0000
+Subject: [PATCH net-next] atl1: remove set but not used variable 'advertising'
+Message-Id: <1537411290-5132-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180905145401.19772-1-colin.king@canonical.com>
-In-Reply-To: <20180905145401.19772-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Marshall <hubcap@omnibond.com>
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, "David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>, zhong jiang <zhongjiang@huawei.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks... I've applied your patch to 4.19-rc2 and run it through xfstests.
-It is in my linux-next tree now.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I put that in there because I'm really just an old system administrator,
-and I would always be happy when I could tail dmesg and see some
-hint at why something wasn't doing as I expected.
+drivers/net/ethernet/atheros/atlx/atl1.c: In function 'atl1_set_link_ksettings':
+drivers/net/ethernet/atheros/atlx/atl1.c:3280:6: warning:
+ variable 'advertising' set but not used [-Wunused-but-set-variable]
 
-I just looked in ratelimit.h and at the ratelimit macros in printk.h,
-I should try to think about those more when adding sysadmin-alert
-messages.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/atheros/atlx/atl1.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
 
--Mike
-On Wed, Sep 5, 2018 at 10:54 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently accessing various /sys/fs/orangefs files will spam the
-> kernel log with the following info message when the client is not
-> running:
->
-> [  491.489284] sysfs_service_op_show: Client not running :-5:
->
-> Rate limit this info message to make it less spammy.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/orangefs/orangefs-sysfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/orangefs/orangefs-sysfs.c b/fs/orangefs/orangefs-sysfs.c
-> index dd28079f518c..19739aaee675 100644
-> --- a/fs/orangefs/orangefs-sysfs.c
-> +++ b/fs/orangefs/orangefs-sysfs.c
-> @@ -323,7 +323,7 @@ static ssize_t sysfs_service_op_show(struct kobject *kobj,
->         /* Can't do a service_operation if the client is not running... */
->         rc = is_daemon_in_service();
->         if (rc) {
-> -               pr_info("%s: Client not running :%d:\n",
-> +               pr_info_ratelimited("%s: Client not running :%d:\n",
->                         __func__,
->                         is_daemon_in_service());
->                 goto out;
-> --
-> 2.17.1
->
+diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
+index 72e7fa7..63edc57 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl1.c
++++ b/drivers/net/ethernet/atheros/atlx/atl1.c
+@@ -3277,7 +3277,6 @@ static int atl1_set_link_ksettings(struct net_device *netdev,
+ 	u16 phy_data;
+ 	int ret_val = 0;
+ 	u16 old_media_type = hw->media_type;
+-	u32 advertising;
+ 
+ 	if (netif_running(adapter->netdev)) {
+ 		if (netif_msg_link(adapter))
+@@ -3311,25 +3310,7 @@ static int atl1_set_link_ksettings(struct net_device *netdev,
+ 				hw->media_type = MEDIA_TYPE_10M_HALF;
+ 		}
+ 	}
+-	switch (hw->media_type) {
+-	case MEDIA_TYPE_AUTO_SENSOR:
+-		advertising -		    ADVERTISED_10baseT_Half |
+-		    ADVERTISED_10baseT_Full |
+-		    ADVERTISED_100baseT_Half |
+-		    ADVERTISED_100baseT_Full |
+-		    ADVERTISED_1000baseT_Full |
+-		    ADVERTISED_Autoneg | ADVERTISED_TP;
+-		break;
+-	case MEDIA_TYPE_1000M_FULL:
+-		advertising -		    ADVERTISED_1000baseT_Full |
+-		    ADVERTISED_Autoneg | ADVERTISED_TP;
+-		break;
+-	default:
+-		advertising = 0;
+-		break;
+-	}
++
+ 	if (atl1_phy_setup_autoneg_adv(hw)) {
+ 		ret_val = -EINVAL;
+ 		if (netif_msg_link(adapter))
