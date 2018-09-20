@@ -1,35 +1,51 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 25 Sep 2018 14:56:19 +0000
-Subject: [PATCH -next] uio: make symbol 'uio_class_registered' static
-Message-Id: <1537887920-46141-1-git-send-email-weiyongjun1@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Sep 2018 01:59:16 +0000
+Subject: [PATCH -next] tty: serial: remove set but not used variable 'error'
+Message-Id: <1537408756-196431-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-serial@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes the following sparse warning:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/uio/uio.c:277:6: warning:
- symbol 'uio_class_registered' was not declared. Should it be static?
+drivers/tty/serial/pmac_zilog.c: In function 'pmz_receive_chars':
+drivers/tty/serial/pmac_zilog.c:222:30: warning:
+ variable 'error' set but not used [-Wunused-but-set-variable]
 
-Fixes: ae61cf5b9913 ("uio: ensure class is registered before devices")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/uio/uio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/pmac_zilog.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 0ffb324..d4cc07d 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -274,7 +274,7 @@ static ssize_t event_show(struct device *dev,
- 	.dev_groups = uio_groups,
- };
+diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_zilog.c
+index a4ec22d..a9d4098 100644
+--- a/drivers/tty/serial/pmac_zilog.c
++++ b/drivers/tty/serial/pmac_zilog.c
+@@ -219,7 +219,7 @@ static void pmz_interrupt_control(struct uart_pmac_port *uap, int enable)
+ static bool pmz_receive_chars(struct uart_pmac_port *uap)
+ {
+ 	struct tty_port *port;
+-	unsigned char ch, r1, drop, error, flag;
++	unsigned char ch, r1, drop, flag;
+ 	int loops = 0;
  
--bool uio_class_registered;
-+static bool uio_class_registered;
+ 	/* Sanity check, make sure the old bug is no longer happening */
+@@ -231,7 +231,6 @@ static bool pmz_receive_chars(struct uart_pmac_port *uap)
+ 	port = &uap->port.state->port;
  
- /*
-  * device functions
+ 	while (1) {
+-		error = 0;
+ 		drop = 0;
+ 
+ 		r1 = read_zsreg(uap, R1);
+@@ -273,7 +272,6 @@ static bool pmz_receive_chars(struct uart_pmac_port *uap)
+ 		uap->port.icount.rx++;
+ 
+ 		if (r1 & (PAR_ERR | Rx_OVR | CRC_ERR | BRK_ABRT)) {
+-			error = 1;
+ 			if (r1 & BRK_ABRT) {
+ 				pmz_debug("pmz: got break !\n");
+ 				r1 &= ~(PAR_ERR | CRC_ERR);
