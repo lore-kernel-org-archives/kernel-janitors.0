@@ -1,23 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 27 Sep 2018 03:09:34 +0000
-Subject: Re: [PATCH] qed: fix spelling mistake "toogle" -> "toggle"
-Message-Id: <20180926.200934.1853462119582585664.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Sep 2018 08:07:55 +0000
+Subject: [PATCH net] devlink: double free in devlink_resource_fill()
+Message-Id: <20180921080755.GA16307@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180924155141.25125-1-colin.king@canonical.com>
-In-Reply-To: <20180924155141.25125-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 24 Sep 2018 16:51:41 +0100
+Smatch reports that devlink_dpipe_send_and_alloc_skb() frees the skb
+on error so this is a double free.  We fixed a bunch of these bugs in
+commit 7fe4d6dcbcb4 ("devlink: Remove redundant free on error path") but
+we accidentally overlooked this one.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in DP_VERBOSE message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d9f9b9a4d05f ("devlink: Add support for resource abstraction")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index 65fc366a78a4..8c0ed225e280 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -2592,7 +2592,7 @@ static int devlink_resource_fill(struct genl_info *info,
+ 	if (!nlh) {
+ 		err = devlink_dpipe_send_and_alloc_skb(&skb, info);
+ 		if (err)
+-			goto err_skb_send_alloc;
++			return err;
+ 		goto send_done;
+ 	}
+ 	return genlmsg_reply(skb, info);
+@@ -2600,7 +2600,6 @@ static int devlink_resource_fill(struct genl_info *info,
+ nla_put_failure:
+ 	err = -EMSGSIZE;
+ err_resource_put:
+-err_skb_send_alloc:
+ 	nlmsg_free(skb);
+ 	return err;
+ }
