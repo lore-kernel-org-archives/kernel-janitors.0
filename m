@@ -1,42 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Sep 2018 09:21:16 +0000
-Subject: [PATCH] hpfs: fix spelling mistake "partion" -> "partition"
-Message-Id: <20180911092116.28449-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 21 Sep 2018 02:53:17 +0000
+Subject: [PATCH RESEND] PCI: hv: Fix return value check in hv_pci_assign_slots()
+Message-Id: <1537498397-191756-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1537425631-28460-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1537425631-28460-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@linuxdriverproject.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In case of error, the function pci_create_slot() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-Trivial fix to spelling mistakes in comments
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- fs/hpfs/hpfs.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Since the orig patch is merged from net tree, cc netdev@vger.kernel.org
+---
+ drivers/pci/controller/pci-hyperv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/hpfs/hpfs.h b/fs/hpfs/hpfs.h
-index 823a328791c0..302f45101a96 100644
---- a/fs/hpfs/hpfs.h
-+++ b/fs/hpfs/hpfs.h
-@@ -120,11 +120,11 @@ struct hpfs_spare_block
-   u8 bad_sector: 1;			/* bad sector, corrupted disk (???) */
-   u8 bad_bitmap: 1;			/* bad bitmap */
-   u8 fast: 1;				/* partition was fast formatted */
--  u8 old_wrote: 1;			/* old version wrote to partion */
--  u8 old_wrote_1: 1;			/* old version wrote to partion (?) */
-+  u8 old_wrote: 1;			/* old version wrote to partition */
-+  u8 old_wrote_1: 1;			/* old version wrote to partition (?) */
- #else
--  u8 old_wrote_1: 1;			/* old version wrote to partion (?) */
--  u8 old_wrote: 1;			/* old version wrote to partion */
-+  u8 old_wrote_1: 1;			/* old version wrote to partition (?) */
-+  u8 old_wrote: 1;			/* old version wrote to partition */
-   u8 fast: 1;				/* partition was fast formatted */
-   u8 bad_bitmap: 1;			/* bad bitmap */
-   u8 bad_sector: 1;			/* bad sector, corrupted disk (???) */
--- 
-2.17.1
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index ee80e79..9ba4d12 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -1484,8 +1484,10 @@ static void hv_pci_assign_slots(struct hv_pcibus_device *hbus)
+ 		snprintf(name, SLOT_NAME_SIZE, "%u", hpdev->desc.ser);
+ 		hpdev->pci_slot = pci_create_slot(hbus->pci_bus, slot_nr,
+ 					  name, NULL);
+-		if (!hpdev->pci_slot)
++		if (IS_ERR(hpdev->pci_slot)) {
+ 			pr_warn("pci_create slot %s failed\n", name);
++			hpdev->pci_slot = NULL;
++		}
+ 	}
+ }
