@@ -1,34 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Sep 2018 13:38:32 +0000
-Subject: [PATCH] ALSA: usb-audio: ensure that cluster header size is enough
-Message-Id: <20180922133831.GA6792@mwanda>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Sat, 22 Sep 2018 17:13:35 +0000
+Subject: Re: [PATCH] ALSA: usb-audio: ensure that cluster header size is enough
+Message-Id: <6146a00b-70b6-cb02-2bd2-77201c07fb80@cogentembedded.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180922133831.GA6792@mwanda>
+In-Reply-To: <20180922133831.GA6792@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Ruslan Bilovol <ruslan.bilovol@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Ruslan Bilovol <ruslan.bilovol@gmail.com>
 Cc: alsa-devel@alsa-project.org, Michael Drake <michael.drake@codethink.co.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
 
-I think we need a check to make sure that "hc_header.wLength" is large
-enough for a struct struct uac3_cluster_header_descriptor.
+Hello!
 
-Fixes: 9a2fe9b801f5 ("ALSA: usb: initial USB Audio Device Class 3.0 support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 09/22/2018 04:38 PM, Dan Carpenter wrote:
 
-diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-index 67cf849aa16b..f7179ce39a19 100644
---- a/sound/usb/stream.c
-+++ b/sound/usb/stream.c
-@@ -968,6 +968,12 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 	 * and request Cluster Descriptor
- 	 */
- 	wLength = le16_to_cpu(hc_header.wLength);
-+	if (wLength < sizeof(*cluster)) {
-+		dev_err(&dev->dev,
-+			"%u:%d : cluster header size too small %d\n",
-+			iface_no, altno, wLength);
-+		return ERR_PTR(-EIO);
-+	}
- 	cluster = kzalloc(wLength, GFP_KERNEL);
- 	if (!cluster)
- 		return ERR_PTR(-ENOMEM);
+> I think we need a check to make sure that "hc_header.wLength" is large
+> enough for a struct struct uac3_cluster_header_descriptor.
+
+   struct struct? :-)
+
+> Fixes: 9a2fe9b801f5 ("ALSA: usb: initial USB Audio Device Class 3.0 support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+[...]
+
+MBR, Sergei
