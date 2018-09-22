@@ -1,25 +1,43 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Thu, 13 Sep 2018 05:13:46 +0000
-Subject: Re: [PATCH] xen: fix GCC warning and remove duplicate EVTCHN_ROW/EVTCHN_COL usage
-Message-Id: <37107f15-119b-118e-cbd3-1bb87356e442@suse.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 22 Sep 2018 06:31:26 +0000
+Subject: [PATCH -next] USB: core: remove set but not used variable 'udev'
+Message-Id: <1537597886-136734-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180913011354.GA19226@josh-ThinkPad-T460s>
-In-Reply-To: <20180913011354.GA19226@josh-ThinkPad-T460s>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Josh Abraham <j.abraham1776@gmail.com>, boris.ostrovsky@oracle.com
-Cc: aams@amazon.com, roger.pau@citrix.com, xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Drake <drake@endlessm.com>, Joe Perches <joe@perches.com>, Alan Stern <stern@rowland.harvard.edu>, Mathias Nyman <mathias.nyman@linux.intel.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Martin Liu <liumartin@google.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 13/09/18 03:13, Josh Abraham wrote:
-> This patch removes duplicate macro useage in events_base.c.
-> 
-> It also fixes gcc warning:
-> variable ‘col’ set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+drivers/usb/core/driver.c: In function 'usb_driver_claim_interface':
+drivers/usb/core/driver.c:513:21: warning:
+ variable 'udev' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/usb/core/driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Juergen
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index a1f225f..5356438 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -510,7 +510,6 @@ int usb_driver_claim_interface(struct usb_driver *driver,
+ 				struct usb_interface *iface, void *priv)
+ {
+ 	struct device *dev;
+-	struct usb_device *udev;
+ 	int retval = 0;
+ 
+ 	if (!iface)
+@@ -524,8 +523,6 @@ int usb_driver_claim_interface(struct usb_driver *driver,
+ 	if (!iface->authorized)
+ 		return -ENODEV;
+ 
+-	udev = interface_to_usbdev(iface);
+-
+ 	dev->driver = &driver->drvwrap.driver;
+ 	usb_set_intfdata(iface, priv);
+ 	iface->needs_binding = 0;
