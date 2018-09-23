@@ -1,45 +1,58 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Fri, 21 Sep 2018 08:50:31 +0000
-Subject: Re: [PATCH -next] drm/vkms: Fix possible memory leak in _vkms_get_crc()
-Message-Id: <20180921085031.GV11082@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 23 Sep 2018 22:25:48 +0000
+Subject: [PATCH] scsi: megaraid: fix spelling mistake "maibox" -> "mailbox"
+Message-Id: <20180923222548.7908-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536976399-1295-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1536976399-1295-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Mahesh Kumar <mahesh1.kumar@intel.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>
+To: Kashyap Desai <kashyap.desai@broadcom.com>, Sumit Saxena <sumit.saxena@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 15, 2018 at 01:53:19AM +0000, Wei Yongjun wrote:
-> 'vaddr_out' is malloced in _vkms_get_crc() and should be freed before
-> leaving from the error handling cases, otherwise it will cause memory
-> leak.
-> 
-> Fixes: db7f419c06d7 ("drm/vkms: Compute CRC with Cursor Plane")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks for your patch.
--Daniel
+Trivial fix to spelling mistake in warning message and comments
 
-> ---
->  drivers/gpu/drm/vkms/vkms_crc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_crc.c b/drivers/gpu/drm/vkms/vkms_crc.c
-> index 0a27456..9d9e814 100644
-> --- a/drivers/gpu/drm/vkms/vkms_crc.c
-> +++ b/drivers/gpu/drm/vkms/vkms_crc.c
-> @@ -125,6 +125,7 @@ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
->  	mutex_lock(&vkms_obj->pages_lock);
->  	if (WARN_ON(!vkms_obj->vaddr)) {
->  		mutex_unlock(&vkms_obj->pages_lock);
-> +		kfree(vaddr_out);
->  		return crc;
->  	}
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/megaraid/megaraid_mbox.c | 4 ++--
+ drivers/scsi/megaraid/megaraid_mbox.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
+index 530358cdcb39..2013523605c5 100644
+--- a/drivers/scsi/megaraid/megaraid_mbox.c
++++ b/drivers/scsi/megaraid/megaraid_mbox.c
+@@ -484,7 +484,7 @@ megaraid_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	// Start the mailbox based controller
+ 	if (megaraid_init_mbox(adapter) != 0) {
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: maibox adapter did not initialize\n"));
++			"megaraid: mailbox adapter did not initialize\n"));
+ 
+ 		goto out_free_adapter;
+ 	}
+@@ -950,7 +950,7 @@ megaraid_fini_mbox(adapter_t *adapter)
+  * megaraid_alloc_cmd_packets - allocate shared mailbox
+  * @adapter		: soft state of the raid controller
+  *
+- * Allocate and align the shared mailbox. This maibox is used to issue
++ * Allocate and align the shared mailbox. This mailbox is used to issue
+  * all the commands. For IO based controllers, the mailbox is also registered
+  * with the FW. Allocate memory for all commands as well.
+  * This is our big allocator.
+diff --git a/drivers/scsi/megaraid/megaraid_mbox.h b/drivers/scsi/megaraid/megaraid_mbox.h
+index c1d86d961a92..e075aeb4012f 100644
+--- a/drivers/scsi/megaraid/megaraid_mbox.h
++++ b/drivers/scsi/megaraid/megaraid_mbox.h
+@@ -117,7 +117,7 @@
+  * @raw_mbox		: raw mailbox pointer
+  * @mbox		: mailbox
+  * @mbox64		: extended mailbox
+- * @mbox_dma_h		: maibox dma address
++ * @mbox_dma_h		: mailbox dma address
+  * @sgl64		: 64-bit scatter-gather list
+  * @sgl32		: 32-bit scatter-gather list
+  * @sgl_dma_h		: dma handle for the scatter-gather list
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.17.1
