@@ -1,33 +1,31 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 14 Sep 2018 02:38:42 +0000
-Subject: [PATCH -next] [SCSI] aic79xx: Use kmemdup rather than duplicating its implementation in ahd_loadseq
-Message-Id: <1536892722-132553-1-git-send-email-yuehaibing@huawei.com>
+Date: Sun, 23 Sep 2018 12:11:33 +0000
+Subject: [PATCH -next] ring-buffer: Fix ring buffer size in rb_write_something
+Message-Id: <1537704693-184237-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
+'cnt' should be used to calculate ring buffer size rather than data->cnt
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/aic7xxx/aic79xx_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/ring_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-index 9ee75c9..0970bb5 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -9438,10 +9438,10 @@ struct scb *
- 	if (cs_count != 0) {
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 65bd461..53538c3 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -4924,7 +4924,7 @@ static __init int rb_write_something(struct rb_test_data *data, bool nested)
+ 	cnt = data->cnt + (nested ? 27 : 0);
  
- 		cs_count *= sizeof(struct cs);
--		ahd->critical_sections = kmalloc(cs_count, GFP_ATOMIC);
-+		ahd->critical_sections = kmemdup(cs_table, cs_count,
-+						 GFP_ATOMIC);
- 		if (ahd->critical_sections = NULL)
- 			panic("ahd_loadseq: Could not malloc");
--		memcpy(ahd->critical_sections, cs_table, cs_count);
- 	}
- 	ahd_outb(ahd, SEQCTL0, PERRORDIS|FAILDIS|FASTMODE);
+ 	/* Multiply cnt by ~e, to make some unique increment */
+-	size = (data->cnt * 68 / 25) % (sizeof(rb_string) - 1);
++	size = (cnt * 68 / 25) % (sizeof(rb_string) - 1);
+ 
+ 	len = size + sizeof(struct rb_item);
+ 
