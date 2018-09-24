@@ -1,22 +1,35 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 12 Sep 2018 01:09:22 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: Fix an endian bug in fcpcmd_is_corrupted()
-Message-Id: <yq17ejry119.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Sep 2018 17:18:53 +0000
+Subject: [PATCH] wimax/i2400m: fix spelling mistake "unitialized" -> "uninitialized"
+Message-Id: <20180924171853.3294-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180908084227.xo4g5aekndokopus@kili.mountain>
-In-Reply-To: <20180908084227.xo4g5aekndokopus@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan,
+Trivial fix to spelling mistake in ms_to_errno array of error messages
 
-> We should first do the le16_to_cpu endian conversion and then apply
-> the FCP_CMD_LENGTH_MASK mask.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wimax/i2400m/control.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.19/scsi-fixes, thank you!
-
+diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
+index 094cea775d0c..0475ad553707 100644
+--- a/drivers/net/wimax/i2400m/control.c
++++ b/drivers/net/wimax/i2400m/control.c
+@@ -257,7 +257,7 @@ static const struct
+ 	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accesibility error", -EIO },
+ 	[I2400M_MS_BUSY] = { "busy", -EBUSY },
+ 	[I2400M_MS_CORRUPTED_TLV] = { "corrupted TLV", -EILSEQ },
+-	[I2400M_MS_UNINITIALIZED] = { "not unitialized", -EILSEQ },
++	[I2400M_MS_UNINITIALIZED] = { "not uninitialized", -EILSEQ },
+ 	[I2400M_MS_UNKNOWN_ERROR] = { "unknown error", -EIO },
+ 	[I2400M_MS_PRODUCTION_ERROR] = { "production error", -EIO },
+ 	[I2400M_MS_NO_RF] = { "no RF", -EIO },
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
