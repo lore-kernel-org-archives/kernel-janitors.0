@@ -1,15 +1,17 @@
 From: Josh Abraham <j.abraham1776@gmail.com>
-Date: Thu, 13 Sep 2018 03:07:11 +0000
+Date: Mon, 24 Sep 2018 01:29:03 +0000
 Subject: [PATCH] scsi: ufs: use PTR_ERR_OR_ZERO in ufs_hisi_get_resource()
-Message-Id: <20180913030711.GA12975@josh-ThinkPad-T460s>
+Message-Id: <20180924012903.GA24400@josh-ThinkPad-T460s>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180913030711.GA12975@josh-ThinkPad-T460s>
+In-Reply-To: <20180913030711.GA12975@josh-ThinkPad-T460s>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: vinholikatti@gmail.com
-Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, j.abraham1776@gmail.com
+Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, j.abraham1776@gmail.com, kernel-janitors@vger.kernel.org
 
-Use PTR_ERR_OR_ZERO instead of IF_ERR() return PTR_ERR().
+This patch uses PTR_ERR_OR_ZERO instead of IF_ERR() return PTR_ERR().
 
 Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
 ---
