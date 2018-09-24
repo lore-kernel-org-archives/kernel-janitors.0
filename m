@@ -1,43 +1,49 @@
-From: Jean Delvare <jdelvare@suse.de>
-Date: Mon, 24 Sep 2018 21:01:42 +0000
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Mon, 24 Sep 2018 22:14:35 +0000
 Subject: Re: [PATCH] i2c: i2c-isch: fix spelling mistake "unitialized" -> "uninitialized"
-Message-Id: <20180924230142.111657af@endymion>
+Message-Id: <20180924221435.GH18592@kunai>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="6cMF9JLEeZkfJjkP"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180924171437.3071-1-colin.king@canonical.com>
 In-Reply-To: <20180924171437.3071-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 18:14:37 +0100, Colin King wrote:
+
+--6cMF9JLEeZkfJjkP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 24, 2018 at 06:14:37PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
-> 
+>=20
 > Trivial fix to spelling mistake in dev_notice message.
-> 
+>=20
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/i2c/busses/i2c-isch.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-isch.c b/drivers/i2c/busses/i2c-isch.c
-> index 0cf1379f4e80..5c754bf659e2 100644
-> --- a/drivers/i2c/busses/i2c-isch.c
-> +++ b/drivers/i2c/busses/i2c-isch.c
-> @@ -164,7 +164,7 @@ static s32 sch_access(struct i2c_adapter *adap, u16 addr,
->  		 * run ~75 kHz instead which should do no harm.
->  		 */
->  		dev_notice(&sch_adapter.dev,
-> -			"Clock divider unitialized. Setting defaults\n");
-> +			"Clock divider uninitialized. Setting defaults\n");
->  		outw(backbone_speed / (4 * 100), SMBHSTCLK);
->  	}
->  
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Applied to for-current, thanks!
 
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
+
+--6cMF9JLEeZkfJjkP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlupYcsACgkQFA3kzBSg
+KbYo7A/9FELjcZH/Lcr86xarLkGDMI/KSC5EFpa04dFESW86aRJhjZZYc4lGR1Wo
+m3oiGZObxtqU1HdSQq/CdFb5DKZvVKP/VD8+RNTEQFtUrexAIXx08rnjY01JBWFU
+38X1tIhg3fTM3JY2bVfUErZzuERL9ScwTmqIytfb1hzIfrWWZlY1/Cxva3q9GuOF
+71q9cHhcKSLytGJmDVBxvnsfXzzQ6o2nC0e+e00uSOH+59KH+Rui8iHsTKM/uU25
+AjVHdYR2T3uWL8L/ZsQUNYss3KKT5U8Hi7hJyxue6XYO/IhzNCt2DT754S36AAN/
+7ghwSBgG1ewHCWbL3lY11zmYvZpH2HOXPNv+R17/w6F+i3Np+kShAd/PfwRWH+1L
+SmdYTB704ex4pVuQDOghoXLGDpzpVR9cOdq9TqHnDGWProT1+4Qpv7wR/mHk/gKm
+Z9YQOV+Yoi1afjuVGZZW5ROwnlkCuGkjEY06ndlMmhAZJmMYP8DUBdqxylYmIl81
+P1EZRTwus/4gtMyQEpfGxolVqySuKr9+h1GlH7WZSvxlirvb8p4bwL46ALBFLBio
+7O5MR+RDnACn2EkfHAahs/3y9ff99PBTLZoMJ3f5ZhhoV8Hs6gSvWIpInGZqmSD5
+K29QEkedoyf7jKSirkSH0cTPhAFX+DmfJ7tLEERyxiitq/IXko0=
+=Fi9A
+-----END PGP SIGNATURE-----
+
+--6cMF9JLEeZkfJjkP--
