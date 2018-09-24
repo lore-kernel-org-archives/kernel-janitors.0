@@ -1,40 +1,26 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 29 Sep 2018 09:25:06 +0000
-Subject: Re: [PATCH v2 -next] usb: typec: remove set but not used variables 'snk_ma, flags'
-Message-Id: <701baf04-f0db-1dce-cf06-afe6e6311501@huawei.com>
+From: cinthia_reyes@hmha.gob.ec
+Date: Mon, 24 Sep 2018 07:42:14 +0000
+Subject: =?utf-8?b?V29obHTDpHRpZ2tlaXRzc3BlbmRlIGluIEjDtmhlIHZvbiDigqwgMi4wMDAu?= =?utf-8?q?000=2C00?=
+Message-Id: <20180924074223.80DD92596E97@mail.hmha.gob.ec>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538204292-142828-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538204292-142828-1-git-send-email-yuehaibing@huawei.com>
+References: <20180506030144.EDC34842B6D@mail.ithb.ac.id>
+In-Reply-To: <20180506030144.EDC34842B6D@mail.ithb.ac.id>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Guenter Roeck <linux@roeck-us.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-
-On 2018/9/29 16:56, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 9/29/2018 9:58 AM, YueHaibing wrote:
-> 
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/usb/typec/tcpm/tcpm.c: In function 'tcpm_pd_select_pps_apdo':
->> drivers/usb/typec/tcpm/tcpm.c:2212:39: warning:
->>   variable 'snk_ma' set but not used [-Wunused-but-set-variable]
->>
->> drivers/usb/typec/tcpm/tcpm.c: In function 'tcpm_pd_build_pps_request':
->> drivers/usb/typec/tcpm/tcpm.c:2405:37: warning:
->>   variable 'min_mv' set but not used [-Wunused-but-set-variable]
-> 
->    The subject still doesn't match the description and the diff.
-
-Thank you for review, will fix it.
-
-> 
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> [...]
-> 
-> MBR, Sergei
-> 
-> 
+Lieber Freund,
+ 
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
+ 
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+ 
+Das ist dein Spendencode: [DFC530342018]
+ 
+Antworten Sie mit dem SPENDE-CODE an diese E-Mail: financialfundingcompany09@gmail.com
+ 
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+ 
+Grüße
+Herr Tayeb Souami
