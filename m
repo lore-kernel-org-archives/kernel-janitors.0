@@ -1,66 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Sep 2018 13:56:22 +0000
-Subject: [PATCH] [media] VPU: mediatek: don't pass an unused parameter
-Message-Id: <20180917135622.GA23073@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Sep 2018 16:42:48 +0000
+Subject: [PATCH] mailbox: bcm-flexrm-mailbox: fix spelling mistake "toogle" -> "toggle"
+Message-Id: <20180924164248.2180-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>
-Cc: Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The load_requested_vpu() function returns a freed vpu_fw pointer.  It's
-not used so it doesn't cause any problems, but Smatch complains about
-it:
+From: Colin Ian King <colin.king@canonical.com>
 
-    drivers/media/platform/mtk-vpu/mtk_vpu.c:578 vpu_load_firmware()
-    warn: passing freed memory 'vpu_fw'
+Trivial fix to spelling mistake in function name flexrm_flip_header_toogle,
+rename it to flexrm_flip_header_toggle.
 
-We can clean up the code a bit and silence the static checker warning
-by not passing the parameter at all.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mailbox/bcm-flexrm-mailbox.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/media/platform/mtk-vpu/mtk_vpu.c b/drivers/media/platform/mtk-vpu/mtk_vpu.c
-index f8d35e3ac1dc..616f78b24a79 100644
---- a/drivers/media/platform/mtk-vpu/mtk_vpu.c
-+++ b/drivers/media/platform/mtk-vpu/mtk_vpu.c
-@@ -480,12 +480,12 @@ EXPORT_SYMBOL_GPL(vpu_get_plat_device);
+diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
+index 8ab077ff58f4..d7a8ed7d8097 100644
+--- a/drivers/mailbox/bcm-flexrm-mailbox.c
++++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+@@ -375,7 +375,7 @@ static u32 flexrm_estimate_header_desc_count(u32 nhcnt)
+ 	return hcnt;
+ }
  
- /* load vpu program/data memory */
- static int load_requested_vpu(struct mtk_vpu *vpu,
--			      const struct firmware *vpu_fw,
- 			      u8 fw_type)
+-static void flexrm_flip_header_toogle(void *desc_ptr)
++static void flexrm_flip_header_toggle(void *desc_ptr)
  {
- 	size_t tcm_size = fw_type ? VPU_DTCM_SIZE : VPU_PTCM_SIZE;
- 	size_t fw_size = fw_type ? VPU_D_FW_SIZE : VPU_P_FW_SIZE;
- 	char *fw_name = fw_type ? VPU_D_FW : VPU_P_FW;
-+	const struct firmware *vpu_fw;
- 	size_t dl_size = 0;
- 	size_t extra_fw_size = 0;
- 	void *dest;
-@@ -539,7 +539,6 @@ int vpu_load_firmware(struct platform_device *pdev)
- 	struct mtk_vpu *vpu;
- 	struct device *dev = &pdev->dev;
- 	struct vpu_run *run;
--	const struct firmware *vpu_fw = NULL;
- 	int ret;
+ 	u64 desc = flexrm_read_desc(desc_ptr);
  
- 	if (!pdev) {
-@@ -568,14 +567,14 @@ int vpu_load_firmware(struct platform_device *pdev)
- 	run->signaled = false;
- 	dev_dbg(vpu->dev, "firmware request\n");
- 	/* Downloading program firmware to device*/
--	ret = load_requested_vpu(vpu, vpu_fw, P_FW);
-+	ret = load_requested_vpu(vpu, P_FW);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to request %s, %d\n", VPU_P_FW, ret);
- 		goto OUT_LOAD_FW;
- 	}
+@@ -709,7 +709,7 @@ static void *flexrm_spu_write_descs(struct brcm_message *msg, u32 nhcnt,
+ 	wmb();
  
- 	/* Downloading data firmware to device */
--	ret = load_requested_vpu(vpu, vpu_fw, D_FW);
-+	ret = load_requested_vpu(vpu, D_FW);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to request %s, %d\n", VPU_D_FW, ret);
- 		goto OUT_LOAD_FW;
+ 	/* Flip toggle bit in header */
+-	flexrm_flip_header_toogle(orig_desc_ptr);
++	flexrm_flip_header_toggle(orig_desc_ptr);
+ 
+ 	return desc_ptr;
+ }
+@@ -838,7 +838,7 @@ static void *flexrm_sba_write_descs(struct brcm_message *msg, u32 nhcnt,
+ 	wmb();
+ 
+ 	/* Flip toggle bit in header */
+-	flexrm_flip_header_toogle(orig_desc_ptr);
++	flexrm_flip_header_toggle(orig_desc_ptr);
+ 
+ 	return desc_ptr;
+ }
+-- 
+2.17.1
