@@ -1,33 +1,41 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 06 Sep 2018 12:01:58 +0000
-Subject: Re: [PATCH] ASoC: sgtl5000: avoid division by zero if lo_vag is zero
-Message-Id: <43293b8e-5b9d-ff51-aa3f-eb1a7b9490aa@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Sep 2018 17:39:51 +0000
+Subject: [PATCH][V2] wimax/i2400m: fix spelling mistake "not unitialized" -> "uninitialized"
+Message-Id: <20180924173951.3931-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180906104152.17977-1-colin.king@canonical.com>
- <20180906115814.a5woyhfc5sczxksa@mwanda>
-In-Reply-To: <20180906115814.a5woyhfc5sczxksa@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/09/18 12:58, Dan Carpenter wrote:
-> On Thu, Sep 06, 2018 at 11:41:52AM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> In the case where lo_vag <= SGTL5000_LINE_OUT_GND_BASE, lo_vag
->> is set to zero and later vol_quot is computed by dividing by
->> lo_vag causing a division by zero error.  Fix this by avoiding
->> a zero division and set vol_quot to zero in this specific case
->> so that the lowest setting for i is correctly set.
->>
-> 
-> This is a very clever patch.  How did you find the bug?
+From: Colin Ian King <colin.king@canonical.com>
 
-trawling through a lot of false positives from a recent cppcheck run
+Trivial fix to spelling mistake in ms_to_errno array of error messages
+and remove confusing "not" from the error text since the error code
+refers to an uninitialized error code.
 
-> 
-> regards,
-> dan carpenter
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: remove "not" from text too. Thanks to Sergei Shtylyov for spotting that.
+
+---
+ drivers/net/wimax/i2400m/control.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
+index 094cea775d0c..0475ad553707 100644
+--- a/drivers/net/wimax/i2400m/control.c
++++ b/drivers/net/wimax/i2400m/control.c
+@@ -257,7 +257,7 @@ static const struct
+ 	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accesibility error", -EIO },
+ 	[I2400M_MS_BUSY] = { "busy", -EBUSY },
+ 	[I2400M_MS_CORRUPTED_TLV] = { "corrupted TLV", -EILSEQ },
+-	[I2400M_MS_UNINITIALIZED] = { "not unitialized", -EILSEQ },
++	[I2400M_MS_UNINITIALIZED] = { "uninitialized", -EILSEQ },
+ 	[I2400M_MS_UNKNOWN_ERROR] = { "unknown error", -EIO },
+ 	[I2400M_MS_PRODUCTION_ERROR] = { "production error", -EIO },
+ 	[I2400M_MS_NO_RF] = { "no RF", -EIO },
+-- 
+2.17.1
