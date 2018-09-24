@@ -1,42 +1,51 @@
-From: Peter Chen <hzpeterchen@gmail.com>
-Date: Thu, 20 Sep 2018 03:33:35 +0000
-Subject: Re: [PATCH] usb: phy: mxs: fix spelling mistake "stardard" -> "standard"
-Message-Id: <CAL411-pJT8AkmFpS__X9=JOd971-uxBUHVEUbnqBhe19SqXmYw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Sep 2018 16:25:25 +0000
+Subject: [PATCH] staging: rtl8723bs: fix spelling mistake "toogle" -> "toggle"
+Message-Id: <20180924162525.1644-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180918065411.30625-1-colin.king@canonical.com>
-In-Reply-To: <20180918065411.30625-1-colin.king@canonical.com>
+References: <20170411131708.20268-1-colin.king@canonical.com>
+In-Reply-To: <20170411131708.20268-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: balbi@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 2:55 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in dev_dbg message
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/phy/phy-mxs-usb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/phy/phy-mxs-usb.c b/drivers/usb/phy/phy-mxs-usb.c
-> index e5aa24c1e4fd..1b1bb0ad40c3 100644
-> --- a/drivers/usb/phy/phy-mxs-usb.c
-> +++ b/drivers/usb/phy/phy-mxs-usb.c
-> @@ -563,7 +563,7 @@ static enum usb_charger_type mxs_charger_primary_detection(struct mxs_phy *x)
->         regmap_read(regmap, ANADIG_USB1_CHRG_DET_STAT, &val);
->         if (!(val & ANADIG_USB1_CHRG_DET_STAT_CHRG_DETECTED)) {
->                 chgr_type = SDP_TYPE;
-> -               dev_dbg(x->phy.dev, "It is a stardard downstream port\n");
-> +               dev_dbg(x->phy.dev, "It is a standard downstream port\n");
->         }
->
->         /* Disable charger detector */
-> --
-> 2.17.1
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Peter Chen <peter.chen@nxp.com>
+Trivial fix to spelling mistake in struct field name
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_debug.c    | 2 +-
+ drivers/staging/rtl8723bs/include/drv_types.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_debug.c b/drivers/staging/rtl8723bs/core/rtw_debug.c
+index f852fde47350..a2a2cefd1786 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_debug.c
++++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
+@@ -657,7 +657,7 @@ int proc_get_suspend_resume_info(struct seq_file *m, void *v)
+ 	DBG_871X_SEL_NL(m, "dbg_enwow_dload_fw_fail_cnt =%d\n", pdbgpriv->dbg_enwow_dload_fw_fail_cnt);
+ 	DBG_871X_SEL_NL(m, "dbg_ips_drvopen_fail_cnt =%d\n", pdbgpriv->dbg_ips_drvopen_fail_cnt);
+ 	DBG_871X_SEL_NL(m, "dbg_poll_fail_cnt =%d\n", pdbgpriv->dbg_poll_fail_cnt);
+-	DBG_871X_SEL_NL(m, "dbg_rpwm_toogle_cnt =%d\n", pdbgpriv->dbg_rpwm_toogle_cnt);
++	DBG_871X_SEL_NL(m, "dbg_rpwm_toggle_cnt =%d\n", pdbgpriv->dbg_rpwm_toggle_cnt);
+ 	DBG_871X_SEL_NL(m, "dbg_rpwm_timeout_fail_cnt =%d\n", pdbgpriv->dbg_rpwm_timeout_fail_cnt);
+ 
+ 	return 0;
+diff --git a/drivers/staging/rtl8723bs/include/drv_types.h b/drivers/staging/rtl8723bs/include/drv_types.h
+index c57f290f605a..062fda9962be 100644
+--- a/drivers/staging/rtl8723bs/include/drv_types.h
++++ b/drivers/staging/rtl8723bs/include/drv_types.h
+@@ -381,7 +381,7 @@ struct debug_priv {
+ 	u32 dbg_enwow_dload_fw_fail_cnt;
+ 	u32 dbg_ips_drvopen_fail_cnt;
+ 	u32 dbg_poll_fail_cnt;
+-	u32 dbg_rpwm_toogle_cnt;
++	u32 dbg_rpwm_toggle_cnt;
+ 	u32 dbg_rpwm_timeout_fail_cnt;
+ 	u64 dbg_rx_fifo_last_overflow;
+ 	u64 dbg_rx_fifo_curr_overflow;
+-- 
+2.17.1
