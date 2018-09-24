@@ -1,38 +1,35 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 21 Sep 2018 02:29:19 +0000
-Subject: Re: [PATCH net-next] vhost_net: add a missing error return
-Message-Id: <159c9759-08fe-e170-f5ce-814da1818f48@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Sep 2018 17:27:38 +0000
+Subject: [PATCH] IB/usnic: fix spelling mistake "unvalid" -> "invalid"
+Message-Id: <20180924172738.3508-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180920100158.GA9551@mwanda>
-In-Reply-To: <20180920100158.GA9551@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christian Benvenuti <benve@cisco.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistake in usnic_err error message.
 
-On 2018年09月20日 18:01, Dan Carpenter wrote:
-> We accidentally left out this error return so it leads to some use after
-> free bugs later on.
->
-> Fixes: 0a0be13b8fe2 ("vhost_net: batch submitting XDP buffers to underlayer sockets")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index dd4e0a301635..1bff6bc8161a 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -1244,6 +1244,7 @@ static int vhost_net_open(struct inode *inode, struct file *f)
->   		kfree(vqs);
->   		kvfree(n);
->   		kfree(queue);
-> +		return -ENOMEM;
->   	}
->   	n->vqs[VHOST_NET_VQ_TX].xdp = xdp;
->   
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/usnic/usnic_transport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-Thanks!
+diff --git a/drivers/infiniband/hw/usnic/usnic_transport.c b/drivers/infiniband/hw/usnic/usnic_transport.c
+index e0a95538c364..82dd810bc000 100644
+--- a/drivers/infiniband/hw/usnic/usnic_transport.c
++++ b/drivers/infiniband/hw/usnic/usnic_transport.c
+@@ -121,7 +121,7 @@ void usnic_transport_unrsrv_port(enum usnic_transport_type type, u16 port_num)
+ 	if (type = USNIC_TRANSPORT_ROCE_CUSTOM) {
+ 		spin_lock(&roce_bitmap_lock);
+ 		if (!port_num) {
+-			usnic_err("Unreserved unvalid port num 0 for %s\n",
++			usnic_err("Unreserved invalid port num 0 for %s\n",
+ 					usnic_transport_to_str(type));
+ 			goto out_roce_custom;
+ 		}
+-- 
+2.17.1
