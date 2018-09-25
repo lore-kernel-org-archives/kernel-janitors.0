@@ -1,23 +1,35 @@
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Date: Mon, 24 Sep 2018 19:35:05 +0000
-Subject: Re: [PATCH] soc: ti: fix spelling mistake "instace" -> "instance"
-Message-Id: <9ac6d488-5b19-0af6-a2e1-7a591a9b75bc@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 25 Sep 2018 14:39:25 +0000
+Subject: [PATCH -next] PM / OPP: Make function _add_opp_dev_unlocked() static
+Message-Id: <1537886365-24923-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180923221436.7701-1-colin.king@canonical.com>
-In-Reply-To: <20180923221436.7701-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On 9/23/18 3:14 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err messages and comments
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-Thanks. I will fix this up.
+Fixes the following sparse warning:
 
-Regards,
-Santosh
+drivers/opp/core.c:762:19: warning:
+ symbol '_add_opp_dev_unlocked' was not declared. Should it be static?
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/opp/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index aaef20c..cdf918a 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -759,8 +759,8 @@ static void _remove_opp_dev(struct opp_device *opp_dev,
+ 	kfree(opp_dev);
+ }
+ 
+-struct opp_device *_add_opp_dev_unlocked(const struct device *dev,
+-					 struct opp_table *opp_table)
++static struct opp_device *_add_opp_dev_unlocked(const struct device *dev,
++						struct opp_table *opp_table)
+ {
+ 	struct opp_device *opp_dev;
+ 	int ret;
