@@ -1,55 +1,45 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Tue, 25 Sep 2018 10:11:07 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+Date: Tue, 25 Sep 2018 17:15:39 +0000
 Subject: Re: [PATCH -next] EDAC: Remove set but not used variable 'type'
-Message-Id: <20180925101107.GA23986@zn.tnic>
+Message-Id: <20180925171539.GA16543@agluck-desk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1537842964-109749-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1537842964-109749-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tony Luck <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>
 Cc: YueHaibing <yuehaibing@huawei.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 02:36:04AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
+On Tue, Sep 25, 2018 at 12:11:07PM +0200, Borislav Petkov wrote:
+> On Tue, Sep 25, 2018 at 02:36:04AM +0000, YueHaibing wrote:
+> >  	if (uncorrected_error) {
+> > -		if (ripv) {
+> > -			type = "FATAL";
+> > +		if (ripv)
+> >  			tp_event = HW_EVENT_ERR_FATAL;
+> > -		} else {
+> > -			type = "NON_FATAL";
+> > +		else
+> >  			tp_event = HW_EVENT_ERR_UNCORRECTED;
+> > -		}
+> >  	} else {
+> > -		type = "CORRECTED";
+> >  		tp_event = HW_EVENT_ERR_CORRECTED;
+> >  	}
 > 
-> drivers/edac/skx_edac.c: In function 'skx_mce_output_error':
-> drivers/edac/skx_edac.c:949:8: warning:
->  variable 'type' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/edac/skx_edac.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/edac/skx_edac.c b/drivers/edac/skx_edac.c
-> index b2987ef..3ffdbc4 100644
-> --- a/drivers/edac/skx_edac.c
-> +++ b/drivers/edac/skx_edac.c
-> @@ -959,15 +959,11 @@ static void skx_mce_output_error(struct mem_ctl_info *mci,
->  	recoverable = GET_BITFIELD(m->status, 56, 56);
->  
->  	if (uncorrected_error) {
-> -		if (ripv) {
-> -			type = "FATAL";
-> +		if (ripv)
->  			tp_event = HW_EVENT_ERR_FATAL;
-> -		} else {
-> -			type = "NON_FATAL";
-> +		else
->  			tp_event = HW_EVENT_ERR_UNCORRECTED;
-> -		}
->  	} else {
-> -		type = "CORRECTED";
->  		tp_event = HW_EVENT_ERR_CORRECTED;
->  	}
+> Looks like this @type thing was never used. Tony, did you want to use it
+> for something?
 
-Looks like this @type thing was never used. Tony, did you want to use it
-for something?
+That block of code looks to have been pasted from sb_edac.c, so likely
+need the same fix there.
 
--- 
-Regards/Gruss,
-    Boris.
+It also looks to be wrong. Saying "FATAL" if mcgstatus.ripv is set
+looks wrong (and incomplete). If RIPV is *NOT* set, then this is fatal.
+But if it is set, then we should be looking at other bits (like PCC
+and AR) ... or maybe just calling mce_severity()?
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Perhaps a moot point though. If the error is fatal, then we'll panic
+instead of calling the EDAC driver.
+
+-Tony
