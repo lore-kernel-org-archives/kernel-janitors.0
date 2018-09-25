@@ -1,41 +1,34 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Date: Sun, 30 Sep 2018 23:09:53 +0000
-Subject: Re: [PATCH] scsi: message: fusion: clean up clang warning on extraneous parentheses
-Message-Id: <20180930230953.GA12922@flashbox>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 25 Sep 2018 01:35:51 +0000
+Subject: [PATCH -next] drm/tegra: Use PTR_ERR_OR_ZERO in tegra_gem_create()
+Message-Id: <1537839351-104885-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180930223123.17907-1-colin.king@canonical.com>
-In-Reply-To: <20180930223123.17907-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Colin King <colin.king@canonical.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org
 
-T24gU3VuLCBTZXAgMzAsIDIwMTggYXQgMTE6MzE6MjNQTSArMDEwMCwgQ29saW4gS2luZyB3cm90
-ZToKPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPgo+IAo+
-IFRoZXJlIGFyZSBleHRyYW5lb3VzIHBhcmFudGhlc2VzIHRoYXQgYXJlIGNhdXNpbmcgY2xhbmcg
-dG8gcHJvZHVjZSBhCj4gd2FybmluZyBzbyByZW1vdmUgdGhlc2UuIEFsc28gcmVwbGFjZSBwb2lu
-dGVyIGNvbXBhcmlzb24gd2l0aCBOVUxMCj4gd2l0aCB0aGUgIXB0ciBpZGlvbS4KPiAKPiBDbGVh
-biB1cCBjbGFuZyB3YXJuaW5nczoKPiBlcXVhbGl0eSBjb21wYXJpc29uIHdpdGggZXh0cmFuZW91
-cyBwYXJlbnRoZXNlcyBbLVdwYXJlbnRoZXNlcy1lcXVhbGl0eV0KPiAKPiBTaWduZWQtb2ZmLWJ5
-OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPgo+IC0tLQo+ICBkcml2
-ZXJzL21lc3NhZ2UvZnVzaW9uL21wdGJhc2UuYyB8IDQgKystLQo+ICAxIGZpbGUgY2hhbmdlZCwg
-MiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L21lc3NhZ2UvZnVzaW9uL21wdGJhc2UuYyBiL2RyaXZlcnMvbWVzc2FnZS9mdXNpb24vbXB0YmFz
-ZS5jCj4gaW5kZXggZGMxZTQzYTAyNTk5Li5iYTU1MWQ4ZGZiYTQgMTAwNjQ0Cj4gLS0tIGEvZHJp
-dmVycy9tZXNzYWdlL2Z1c2lvbi9tcHRiYXNlLmMKPiArKysgYi9kcml2ZXJzL21lc3NhZ2UvZnVz
-aW9uL21wdGJhc2UuYwo+IEBAIC0zMzUsMTEgKzMzNSwxMSBAQCBzdGF0aWMgaW50IG1wdF9yZW1v
-dmVfZGVhZF9pb2NfZnVuYyh2b2lkICphcmcpCj4gIAlNUFRfQURBUFRFUiAqaW9jID0gKE1QVF9B
-REFQVEVSICopYXJnOwo+ICAJc3RydWN0IHBjaV9kZXYgKnBkZXY7Cj4gIAo+IC0JaWYgKChpb2Mg
-PSBOVUxMKSkKPiArCWlmICghaW9jKQo+ICAJCXJldHVybiAtMTsKPiAgCj4gIAlwZGV2ID0gaW9j
-LT5wY2lkZXY7Cj4gLQlpZiAoKHBkZXYgPSBOVUxMKSkKPiArCWlmICghcGRldikKPiAgCQlyZXR1
-cm4gLTE7Cj4gIAo+ICAJcGNpX3N0b3BfYW5kX3JlbW92ZV9idXNfZGV2aWNlX2xvY2tlZChwZGV2
-KTsKPiAtLSAKPiAyLjE3LjEKPiAKCkhpIENvbGluLAoKSSBhbHJlYWR5IHNlbnQgYSBwYXRjaCB0
-aGF0IHdhcyBwaWNrZWQgdXAgYnkgTWFydGluIGEgZmV3IGRheXMgYWdvOiBodHRwczovL2dpdC5r
-ZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9ta3Avc2NzaS5naXQvY29tbWl0Lz9p
-ZJBkZWQ0ZTIwMDViMTE5NWE1ZTc4MTAwOWJlOTkxZTFjZDA0OWMxMAoKSSd2ZSBiZWVuIHNlbmRp
-bmcgc2V2ZXJhbCB3YXJuaW5nIGZpeGVzIGZvciBDbGFuZyBvdmVyIHRoZSBwYXN0IGZldwp3ZWVr
-cyB0aGF0IGhhdmUgYmVlbiBkb2N1bWVudGVkIG9uIEdpdEh1Yi4gWW91IG1heSBjb25zaWRlciBj
-aGVja2luZwp0aGVtIG91dCBzaW5jZSBJIGhhdmUgc3RhcnRlZCB0byBzZWUgc29tZSBvdmVybGFw
-LgoKTGluazogaHR0cHM6Ly9naXRodWIuY29tL0NsYW5nQnVpbHRMaW51eC9saW51eC9pc3N1ZXMK
-CkNoZWVycyEKTmF0aGFu
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/tegra/drm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index e22352c..056f749 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -497,10 +497,7 @@ static int tegra_gem_create(struct drm_device *drm, void *data,
+ 
+ 	bo = tegra_bo_create_with_handle(file, drm, args->size, args->flags,
+ 					 &args->handle);
+-	if (IS_ERR(bo))
+-		return PTR_ERR(bo);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(bo);
+ }
+ 
+ static int tegra_gem_mmap(struct drm_device *drm, void *data,
