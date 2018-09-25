@@ -1,27 +1,35 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Thu, 13 Sep 2018 22:59:53 +0000
-Subject: Re: [Xen-devel] [PATCH] xen: fix GCC warning and remove duplicate EVTCHN_ROW/EVTCHN_COL usage
-Message-Id: <7e11300b-e590-4beb-28e7-bfc8bff73334@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 25 Sep 2018 14:57:42 +0000
+Subject: [PATCH -next] ovl: make symbol 'ovl_aops' static
+Message-Id: <1537887462-35160-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180913011354.GA19226@josh-ThinkPad-T460s>
- <37107f15-119b-118e-cbd3-1bb87356e442@suse.com>
-In-Reply-To: <37107f15-119b-118e-cbd3-1bb87356e442@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Juergen Gross <jgross@suse.com>, Josh Abraham <j.abraham1776@gmail.com>
-Cc: xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org, aams@amazon.com, linux-kernel@vger.kernel.org, roger.pau@citrix.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-unionfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 9/13/18 1:13 AM, Juergen Gross wrote:
-> On 13/09/18 03:13, Josh Abraham wrote:
->> This patch removes duplicate macro useage in events_base.c.
->>
->> It also fixes gcc warning:
->> variable ‘col’ set but not used [-Wunused-but-set-variable]
->>
->> Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
-> Reviewed-by: Juergen Gross <jgross@suse.com>
+Fixes the following sparse warning:
 
-Applied to for-linux-4.19b.
+fs/overlayfs/inode.c:507:39: warning:
+ symbol 'ovl_aops' was not declared. Should it be static?
 
--boris
+Fixes: 5b910bd615ba ("ovl: fix GPF in swapfile_activate of file from overlayfs over xfs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ fs/overlayfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index b6ac545..3b7ed5d 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -504,7 +504,7 @@ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	.update_time	= ovl_update_time,
+ };
+ 
+-const struct address_space_operations ovl_aops = {
++static const struct address_space_operations ovl_aops = {
+ 	/* For O_DIRECT dentry_open() checks f_mapping->a_ops->direct_IO */
+ 	.direct_IO		= noop_direct_IO,
+ };
