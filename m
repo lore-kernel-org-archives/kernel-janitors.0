@@ -1,30 +1,42 @@
-From: merez@codeaurora.org
-Date: Tue, 11 Sep 2018 19:04:28 +0000
-Subject: Re: [PATCH] wil6210: remove set but not used variable 'start'
-Message-Id: <dc5a51943508e915c860c2c7dcafe23c@codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 25 Sep 2018 11:22:53 +0000
+Subject: [PATCH -next] nfsd: remove set but not used variable 'dirp'
+Message-Id: <1537874573-182553-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536669139-14848-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536669139-14848-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless-owner@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2018-09-11 15:32, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/ath/wil6210/pm.c: In function 
-> 'wil_suspend_keep_radio_on':
-> drivers/net/wireless/ath/wil6210/pm.c:193:16: warning:
->  variable 'start' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: Maya Erez <merez@codeaurora.org>
+fs/nfsd/vfs.c: In function 'nfsd_create':
+fs/nfsd/vfs.c:1279:16: warning:
+ variable 'dirp' set but not used [-Wunused-but-set-variable]
 
--- 
-Maya Erez
-Qualcomm Israel, Inc. on behalf of Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/nfsd/vfs.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index b53e763..d74583f 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1276,7 +1276,6 @@ __be32 nfsd_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		int type, dev_t rdev, struct svc_fh *resfhp)
+ {
+ 	struct dentry	*dentry, *dchild = NULL;
+-	struct inode	*dirp;
+ 	__be32		err;
+ 	int		host_err;
+ 
+@@ -1288,7 +1287,6 @@ __be32 nfsd_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		return err;
+ 
+ 	dentry = fhp->fh_dentry;
+-	dirp = d_inode(dentry);
+ 
+ 	host_err = fh_want_write(fhp);
+ 	if (host_err)
