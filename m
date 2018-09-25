@@ -1,34 +1,34 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 25 Sep 2018 14:35:37 +0000
-Subject: [PATCH -next] crypto: ccp - Make function sev_get_firmware() static
-Message-Id: <1537886137-22153-1-git-send-email-weiyongjun1@huawei.com>
+From: Gary R Hook <ghook@amd.com>
+Date: Tue, 25 Sep 2018 15:43:15 +0000
+Subject: Re: [PATCH -next] crypto: ccp - Make function sev_get_firmware() static
+Message-Id: <fe3b3d29-257c-d753-bb96-e74fae4e9995@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1537886137-22153-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1537886137-22153-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Fixes the following sparse warning:
-
-drivers/crypto/ccp/psp-dev.c:444:5: warning:
- symbol 'sev_get_firmware' was not declared. Should it be static?
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/crypto/ccp/psp-dev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-index 3b33863..d64a78c 100644
---- a/drivers/crypto/ccp/psp-dev.c
-+++ b/drivers/crypto/ccp/psp-dev.c
-@@ -441,7 +441,8 @@ static int sev_get_api_version(void)
- 	return 0;
- }
- 
--int sev_get_firmware(struct device *dev, const struct firmware **firmware)
-+static int sev_get_firmware(struct device *dev,
-+			    const struct firmware **firmware)
- {
- 	char fw_name_specific[SEV_FW_NAME_SIZE];
- 	char fw_name_subset[SEV_FW_NAME_SIZE];
+T24gMDkvMjUvMjAxOCAwOTozNSBBTSwgV2VpIFlvbmdqdW4gd3JvdGU6DQo+IEZpeGVzIHRoZSBm
+b2xsb3dpbmcgc3BhcnNlIHdhcm5pbmc6DQo+IA0KPiBkcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRl
+di5jOjQ0NDo1OiB3YXJuaW5nOg0KPiAgIHN5bWJvbCAnc2V2X2dldF9maXJtd2FyZScgd2FzIG5v
+dCBkZWNsYXJlZC4gU2hvdWxkIGl0IGJlIHN0YXRpYz8NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFdl
+aSBZb25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KDQpUaGlzIGFwcGVhcnMgdG8gaGF2
+ZSBiZWVuIGludHJvZHVjZWQgYnkgKGNyeXB0b2Rldi0yLjYpIGNvbW1pdCANCmU5MzcyMDYwNmVm
+ZGJlOTE0MTEwZTBlZTk0YmQwODZmNTUxNGE2ZjEuIFBsZWFzZSB1cGRhdGUgdGhpcyBjb21taXQg
+DQptZXNzYWdlIHdpdGggYWxsIG9mIHRoZSAiZml4ZXMiIG1hZ2ljIChvciB3aGF0ZXZlciBoYXMg
+dG8gaGFwcGVuIGluIHRoZSANCmNyeXB0b2RldiByZXBvKSwgYW5kIENDOiB0aGUgYXV0aG9yIG9m
+IHRoZSBvcmlnaW5hbCBwYXRjaC4NCg0KDQo+IC0tLQ0KPiAgIGRyaXZlcnMvY3J5cHRvL2NjcC9w
+c3AtZGV2LmMgfCAzICsrLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRl
+di5jIGIvZHJpdmVycy9jcnlwdG8vY2NwL3BzcC1kZXYuYw0KPiBpbmRleCAzYjMzODYzLi5kNjRh
+NzhjIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRldi5jDQo+ICsrKyBi
+L2RyaXZlcnMvY3J5cHRvL2NjcC9wc3AtZGV2LmMNCj4gQEAgLTQ0MSw3ICs0NDEsOCBAQCBzdGF0
+aWMgaW50IHNldl9nZXRfYXBpX3ZlcnNpb24odm9pZCkNCj4gICAJcmV0dXJuIDA7DQo+ICAgfQ0K
+PiAgIA0KPiAtaW50IHNldl9nZXRfZmlybXdhcmUoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBz
+dHJ1Y3QgZmlybXdhcmUgKipmaXJtd2FyZSkNCj4gK3N0YXRpYyBpbnQgc2V2X2dldF9maXJtd2Fy
+ZShzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ICsJCQkgICAgY29uc3Qgc3RydWN0IGZpcm13YXJlICoq
+ZmlybXdhcmUpDQo+ICAgew0KPiAgIAljaGFyIGZ3X25hbWVfc3BlY2lmaWNbU0VWX0ZXX05BTUVf
+U0laRV07DQo+ICAgCWNoYXIgZndfbmFtZV9zdWJzZXRbU0VWX0ZXX05BTUVfU0laRV07DQo+IA0K
+DQo
