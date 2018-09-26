@@ -1,31 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 Sep 2018 01:50:58 +0000
-Subject: Re: [PATCH] net: caif: remove redundant null check on frontpkt
-Message-Id: <20180917.185058.178327866298767220.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 26 Sep 2018 14:15:34 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'header'
+Message-Id: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180914171916.21298-1-colin.king@canonical.com>
-In-Reply-To: <20180914171916.21298-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dmitry.tarnyagin@lockless.no, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Likun.Gao@amd.com, David.Francis@amd.com, ray.huang@amd.com, Feifei.Xu@amd.com, Monk.Liu@amd.com
+Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 14 Sep 2018 18:19:16 +0100
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> It is impossible for frontpkt to be null at the point of the null
-> check because it has been assigned from rearpkt and there is no
-> way realpkt can be null at the point of the assignment because
-> of the sanity checking and exit paths taken previously. Remove
-> the redundant null check.
-> 
-> Detected by CoverityScan, CID#114434 ("Logically dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c: In function 'amdgpu_ucode_init_bo':
+drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c:431:39: warning:
+ variable 'header' set but not used [-Wunused-but-set-variable]
 
-Appied to net-next with typo fixed.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+index 1fa8bc3..afd5cf3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+@@ -428,7 +428,6 @@ int amdgpu_ucode_init_bo(struct amdgpu_device *adev)
+ 	uint64_t fw_offset = 0;
+ 	int i, err;
+ 	struct amdgpu_firmware_info *ucode = NULL;
+-	const struct common_firmware_header *header = NULL;
+ 
+ 	if (!adev->firmware.fw_size) {
+ 		dev_warn(adev->dev, "No ip firmware need to load\n");
+@@ -465,7 +464,6 @@ int amdgpu_ucode_init_bo(struct amdgpu_device *adev)
+ 	for (i = 0; i < adev->firmware.max_ucodes; i++) {
+ 		ucode = &adev->firmware.ucode[i];
+ 		if (ucode->fw) {
+-			header = (const struct common_firmware_header *)ucode->fw->data;
+ 			amdgpu_ucode_init_single_fw(adev, ucode, adev->firmware.fw_buf_mc + fw_offset,
+ 						    adev->firmware.fw_buf_ptr + fw_offset);
+ 			if (i = AMDGPU_UCODE_ID_CP_MEC1 &&
