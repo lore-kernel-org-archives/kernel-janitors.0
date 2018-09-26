@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 04 Sep 2018 16:01:10 +0000
-Subject: [PATCH] Bluetooth: btrtl: make array extension_sig static, shrinks object size
-Message-Id: <20180904160110.27837-1-colin.king@canonical.com>
+Date: Wed, 26 Sep 2018 08:32:08 +0000
+Subject: [PATCH] Bluetooth: btrtl: Make array extension_sig static, shrinks object size
+Message-Id: <20180926083208.13632-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180904160110.27837-1-colin.king@canonical.com>
+In-Reply-To: <20180904160110.27837-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,15 +14,15 @@ Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 From: Colin Ian King <colin.king@canonical.com>
 
 Don't populate the array extension_sig on the stack but instead make it
-static. Makes the object code smaller by 59 bytes:
+static. Makes the object code smaller by 75 bytes:
 
 Before:
    text	   data	    bss	    dec	    hex	filename
-  14366	   4920	      0	  19286	   4b56	linux/drivers/bluetooth/btrtl.o
+  14325	   4920	      0	  19245	   4b2d	drivers/bluetooth/btrtl.o
 
 After:
    text	   data	    bss	    dec	    hex	filename
-  14243	   4984	      0	  19227	   4b1b	linux/drivers/bluetooth/btrtl.o
+  14186	   4984	      0	  19170	   4ae2	drivers/bluetooth/btrtl.o
 
 (gcc version 8.2.0 x86_64)
 
