@@ -1,34 +1,30 @@
-From: Gary R Hook <ghook@amd.com>
-Date: Tue, 25 Sep 2018 15:43:15 +0000
-Subject: Re: [PATCH -next] crypto: ccp - Make function sev_get_firmware() static
-Message-Id: <fe3b3d29-257c-d753-bb96-e74fae4e9995@amd.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 26 Sep 2018 10:51:10 +0000
+Subject: [PATCH -next] PCI/AER: Remove duplicated include from err.c
+Message-Id: <1537959610-71713-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537886137-22153-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1537886137-22153-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Russell Currey <ruscur@russell.cc>, Sam Bobroff <sbobroff@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gMDkvMjUvMjAxOCAwOTozNSBBTSwgV2VpIFlvbmdqdW4gd3JvdGU6DQo+IEZpeGVzIHRoZSBm
-b2xsb3dpbmcgc3BhcnNlIHdhcm5pbmc6DQo+IA0KPiBkcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRl
-di5jOjQ0NDo1OiB3YXJuaW5nOg0KPiAgIHN5bWJvbCAnc2V2X2dldF9maXJtd2FyZScgd2FzIG5v
-dCBkZWNsYXJlZC4gU2hvdWxkIGl0IGJlIHN0YXRpYz8NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFdl
-aSBZb25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KDQpUaGlzIGFwcGVhcnMgdG8gaGF2
-ZSBiZWVuIGludHJvZHVjZWQgYnkgKGNyeXB0b2Rldi0yLjYpIGNvbW1pdCANCmU5MzcyMDYwNmVm
-ZGJlOTE0MTEwZTBlZTk0YmQwODZmNTUxNGE2ZjEuIFBsZWFzZSB1cGRhdGUgdGhpcyBjb21taXQg
-DQptZXNzYWdlIHdpdGggYWxsIG9mIHRoZSAiZml4ZXMiIG1hZ2ljIChvciB3aGF0ZXZlciBoYXMg
-dG8gaGFwcGVuIGluIHRoZSANCmNyeXB0b2RldiByZXBvKSwgYW5kIENDOiB0aGUgYXV0aG9yIG9m
-IHRoZSBvcmlnaW5hbCBwYXRjaC4NCg0KDQo+IC0tLQ0KPiAgIGRyaXZlcnMvY3J5cHRvL2NjcC9w
-c3AtZGV2LmMgfCAzICsrLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEg
-ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRl
-di5jIGIvZHJpdmVycy9jcnlwdG8vY2NwL3BzcC1kZXYuYw0KPiBpbmRleCAzYjMzODYzLi5kNjRh
-NzhjIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRldi5jDQo+ICsrKyBi
-L2RyaXZlcnMvY3J5cHRvL2NjcC9wc3AtZGV2LmMNCj4gQEAgLTQ0MSw3ICs0NDEsOCBAQCBzdGF0
-aWMgaW50IHNldl9nZXRfYXBpX3ZlcnNpb24odm9pZCkNCj4gICAJcmV0dXJuIDA7DQo+ICAgfQ0K
-PiAgIA0KPiAtaW50IHNldl9nZXRfZmlybXdhcmUoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBz
-dHJ1Y3QgZmlybXdhcmUgKipmaXJtd2FyZSkNCj4gK3N0YXRpYyBpbnQgc2V2X2dldF9maXJtd2Fy
-ZShzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ICsJCQkgICAgY29uc3Qgc3RydWN0IGZpcm13YXJlICoq
-ZmlybXdhcmUpDQo+ICAgew0KPiAgIAljaGFyIGZ3X25hbWVfc3BlY2lmaWNbU0VWX0ZXX05BTUVf
-U0laRV07DQo+ICAgCWNoYXIgZndfbmFtZV9zdWJzZXRbU0VWX0ZXX05BTUVfU0laRV07DQo+IA0K
-DQo
+Remove duplicated include.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/pci/pcie/err.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 4da2a62b..773197a 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -12,7 +12,6 @@
+ 
+ #include <linux/pci.h>
+ #include <linux/module.h>
+-#include <linux/pci.h>
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+ #include <linux/aer.h>
