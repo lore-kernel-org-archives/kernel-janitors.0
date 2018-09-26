@@ -1,52 +1,69 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 26 Sep 2018 12:28:08 +0000
-Subject: Re: [PATCH] thermal: armada: NULL vs IS_ERR() bug in probe
-Message-Id: <20180926122808.oqxk3rucoqbealad@mwanda>
+Date: Wed, 26 Sep 2018 10:42:30 +0000
+Subject: [PATCH] pinctrl: mediatek: fix some NULL checks in probe
+Message-Id: <20180926104230.GC14535@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180926104301.GD14535@mwanda>
-In-Reply-To: <20180926104301.GD14535@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Zhiyong Tao <zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 
-On Wed, Sep 26, 2018 at 02:09:02PM +0200, Miquel Raynal wrote:
-> Hi Dan,
-> 
-> Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 26 Sep 2018
-> 13:43:36 +0300:
-> 
-> > The platform_get_resource() function doesn't return error pointers, it
-> > returns NULL on error.
-> > 
-> > Fixes: 3d4e51844a4e ("thermal: armada: convert driver to syscon register accesses")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
-> > index 2c2f6d93034e..ebfe7c9a5a7a 100644
-> > --- a/drivers/thermal/armada_thermal.c
-> > +++ b/drivers/thermal/armada_thermal.c
-> > @@ -526,8 +526,8 @@ static int armada_thermal_probe_legacy(struct platform_device *pdev,
-> >  
-> >  	/* First memory region points towards the status register */
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -	if (IS_ERR(res))
-> > -		return PTR_ERR(res);
-> > +	if (!res)
-> > +		return -ENODEV;
-> >  
-> >  	/*
-> >  	 * Edit the resource start address and length to map over all the
-> 
-> 
-> I already sent my
-> 
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> 
-> for this patch, and it looks like the title changed so it's a v2, right?
+The devm_kmalloc_array() function returns NULL on error, it doesn't
+return error pointers.
 
-Ooops.  I'm sorry, I switched dev boxes and so I accidentally re-wrote
-this patch.  My bad.  Sorry for the noise.
+Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 4cf0fea30b7d..d2179028f134 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -836,8 +836,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
+ 				      sizeof(*hw->base), GFP_KERNEL);
+-	if (IS_ERR(hw->base))
+-		return PTR_ERR(hw->base);
++	if (!hw->base)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < hw->soc->nbase_names; i++) {
+ 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+@@ -863,8 +863,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+ 	/* Copy from internal struct mtk_pin_desc to register to the core */
+ 	pins = devm_kmalloc_array(&pdev->dev, hw->soc->npins, sizeof(*pins),
+ 				  GFP_KERNEL);
+-	if (IS_ERR(pins))
+-		return PTR_ERR(pins);
++	if (!pins)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < hw->soc->npins; i++) {
+ 		pins[i].number = hw->soc->pins[i].number;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+index c27597cd3931..3bf5dd552749 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+@@ -608,8 +608,8 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
+ 				      sizeof(*hw->base), GFP_KERNEL);
+-	if (IS_ERR(hw->base))
+-		return PTR_ERR(hw->base);
++	if (!hw->base)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < hw->soc->nbase_names; i++) {
+ 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+@@ -629,8 +629,8 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+ 	/* Copy from internal struct mtk_pin_desc to register to the core */
+ 	pins = devm_kmalloc_array(&pdev->dev, hw->soc->npins, sizeof(*pins),
+ 				  GFP_KERNEL);
+-	if (IS_ERR(pins))
+-		return PTR_ERR(pins);
++	if (!pins)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < hw->soc->npins; i++) {
+ 		pins[i].number = hw->soc->pins[i].number;
