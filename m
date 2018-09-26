@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 04 Sep 2018 15:23:33 +0000
-Subject: [PATCH] drm/nouveau/bios/dp: make array vsoff static, shrinks object size
-Message-Id: <20180904152333.21640-1-colin.king@canonical.com>
+Date: Wed, 26 Sep 2018 08:22:28 +0000
+Subject: [PATCH] drm/nouveau/bios/dp: Make array vsoff static, shrinks object size
+Message-Id: <20180926082228.12635-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180904152333.21640-1-colin.king@canonical.com>
+In-Reply-To: <20180904152333.21640-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,11 +18,11 @@ static. Makes the object code smaller by 67 bytes:
 
 Before:
    text	   data	    bss	    dec	    hex	filename
-   5753	    112	      0	   5865	   16e9	.../nouveau/nvkm/subdev/bios/dp.o
+   5753	    112	      0	   5865	   16e9 drm/nouveau/nvkm/subdev/bios/dp.o
 
 After:
    text	   data	    bss	    dec	    hex	filename
-   5622	    176	      0	   5798	   16a6	.../nouveau/nvkm/subdev/bios/dp.o
+   5622	    176	      0	   5798	   16a6 drm/nouveau/nvkm/subdev/bios/dp.o
 
 (gcc version 8.2.0 x86_64)
 
