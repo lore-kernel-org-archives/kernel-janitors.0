@@ -1,28 +1,42 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Sat, 22 Sep 2018 17:13:35 +0000
-Subject: Re: [PATCH] ALSA: usb-audio: ensure that cluster header size is enough
-Message-Id: <6146a00b-70b6-cb02-2bd2-77201c07fb80@cogentembedded.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 26 Sep 2018 10:57:10 +0000
+Subject: [PATCH -next] PCI: hotplug: Remove set but not used variable 'physical_slot'
+Message-Id: <1537959962-83251-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180922133831.GA6792@mwanda>
-In-Reply-To: <20180922133831.GA6792@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Cc: alsa-devel@alsa-project.org, Michael Drake <michael.drake@codethink.co.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+To: Bjorn Helgaas <bhelgaas@google.com>, Kees Cook <keescook@chromium.org>, Markus Elfring <elfring@users.sourceforge.net>, Frederick Lawler <fred@fredlawl.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Lukas Wunner <lukas@wunner.de>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello!
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 09/22/2018 04:38 PM, Dan Carpenter wrote:
+drivers/pci/hotplug/cpqphp_core.c: In function 'init_SERR':
+drivers/pci/hotplug/cpqphp_core.c:124:5: warning:
+ variable 'physical_slot' set but not used [-Wunused-but-set-variable]
 
-> I think we need a check to make sure that "hc_header.wLength" is large
-> enough for a struct struct uac3_cluster_header_descriptor.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/pci/hotplug/cpqphp_core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-   struct struct? :-)
-
-> Fixes: 9a2fe9b801f5 ("ALSA: usb: initial USB Audio Device Class 3.0 support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-[...]
-
-MBR, Sergei
+diff --git a/drivers/pci/hotplug/cpqphp_core.c b/drivers/pci/hotplug/cpqphp_core.c
+index 95b7d60..16bbb18 100644
+--- a/drivers/pci/hotplug/cpqphp_core.c
++++ b/drivers/pci/hotplug/cpqphp_core.c
+@@ -121,7 +121,6 @@ static int init_SERR(struct controller *ctrl)
+ {
+ 	u32 tempdword;
+ 	u32 number_of_slots;
+-	u8 physical_slot;
+ 
+ 	if (!ctrl)
+ 		return 1;
+@@ -131,7 +130,6 @@ static int init_SERR(struct controller *ctrl)
+ 	number_of_slots = readb(ctrl->hpc_reg + SLOT_MASK) & 0x0F;
+ 	/* Loop through slots */
+ 	while (number_of_slots) {
+-		physical_slot = tempdword;
+ 		writeb(0, ctrl->hpc_reg + SLOT_SERR);
+ 		tempdword++;
+ 		number_of_slots--;
