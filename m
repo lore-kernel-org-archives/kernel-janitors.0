@@ -1,48 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 25 Sep 2018 09:55:56 +0000
-Subject: [PATCH] pinctrl: mediatek: fix check on EINT_NA comparison
-Message-Id: <20180925095556.19779-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Sep 2018 07:42:00 +0000
+Subject: Re: [PATCH] pinctrl: mediatek: fix check on EINT_NA comparison
+Message-Id: <CACRpkdZC9L78P-vXvXsKndLAwOmeLDgSjf0+VzVfua-j+3GcDQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180925095556.19779-1-colin.king@canonical.com>
+In-Reply-To: <20180925095556.19779-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Sep 25, 2018 at 11:55 AM Colin King <colin.king@canonical.com> wrote:
 
-Currently, the check on desc->eint.eint_n = EINT_NA is always false
-because this is comparing a u16 to -1 which can never be true.  Fix
-this by casting EINT_NA to u16.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently, the check on desc->eint.eint_n = EINT_NA is always false
+> because this is comparing a u16 to -1 which can never be true.  Fix
+> this by casting EINT_NA to u16.
+>
+> Detected by CoverityScan, CID#1473610 ("Operands don't affect result")
+>
+> Fixes: fb5fa8dc151b ("pinctrl: mediatek: extend struct mtk_pin_desc to pinctrl-mtk-common-v2.c")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Detected by CoverityScan, CID#1473610 ("Operands don't affect result")
+Patch applied.
 
-Fixes: fb5fa8dc151b ("pinctrl: mediatek: extend struct mtk_pin_desc to pinctrl-mtk-common-v2.c")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/mediatek/pinctrl-moore.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-index c27597cd3931..4aa6def1f785 100644
---- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-@@ -476,7 +476,7 @@ static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
- 
- 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
- 
--	if (desc->eint.eint_n = EINT_NA)
-+	if (desc->eint.eint_n = (u16)EINT_NA)
- 		return -ENOTSUPP;
- 
- 	return mtk_eint_find_irq(hw->eint, desc->eint.eint_n);
-@@ -493,7 +493,7 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
- 
- 	if (!hw->eint ||
- 	    pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE ||
--	    desc->eint.eint_n = EINT_NA)
-+	    desc->eint.eint_n = (u16)EINT_NA)
- 		return -ENOTSUPP;
- 
- 	debounce = pinconf_to_config_argument(config);
--- 
-2.17.1
+Yours,
+Linus Walleij
