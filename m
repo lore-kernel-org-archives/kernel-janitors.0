@@ -1,31 +1,35 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 26 Sep 2018 22:34:34 +0000
-Subject: Re: [PATCH] IB/mthca: remove redundant inner check of mdev->mthca_flags
-Message-Id: <20180926223434.GA12887@ziepe.ca>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 26 Sep 2018 12:09:45 +0000
+Subject: [PATCH net-next] net/core: make function ___gnet_stats_copy_basic() static
+Message-Id: <1537963785-165570-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180926122608.29853-1-colin.king@canonical.com>
-In-Reply-To: <20180926122608.29853-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Doug Ledford <dledford@redhat.com>, Bart Van Assche <bvanassche@acm.org>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: john.fastabend@gmail.com, toke@toke.dk, echaudro@redhat.com
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 01:26:08PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The inner check for mdev->mthca_flags & MTHCA_FLAG_MSI_X is redundant
-> as this is already true because of the previous identical check in
-> an outer if statement.  Remove it
-> 
-> Detected by cppcheck:
-> (warning) Identical inner 'if' condition is always true.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/mthca/mthca_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Fixes the following sparse warning:
 
-Applied to for-next, thanks
+net/core/gen_stats.c:166:1: warning:
+ symbol '___gnet_stats_copy_basic' was not declared. Should it be static?
 
-Jason
+Fixes: 5e111210a443 ("net/core: Add new basic hardware counter")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/core/gen_stats.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/gen_stats.c b/net/core/gen_stats.c
+index 65a2e82..9bf1b9a 100644
+--- a/net/core/gen_stats.c
++++ b/net/core/gen_stats.c
+@@ -162,7 +162,7 @@
+ }
+ EXPORT_SYMBOL(__gnet_stats_copy_basic);
+ 
+-int
++static int
+ ___gnet_stats_copy_basic(const seqcount_t *running,
+ 			 struct gnet_dump *d,
+ 			 struct gnet_stats_basic_cpu __percpu *cpu,
