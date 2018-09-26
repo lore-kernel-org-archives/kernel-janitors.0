@@ -1,60 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 30 Sep 2018 22:57:15 +0000
-Subject: [PATCH]  mt76: fix header guard macro define names
-Message-Id: <20180930225715.18491-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Sep 2018 10:41:33 +0000
+Subject: [PATCH] drm/amdgpu: fix a NULL check in debugfs init
+Message-Id: <20180926104133.GB14535@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
+Cc: Tom St Denis <tom.stdenis-5C7GfCeVMHo@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Andrey Grodzovsky <andrey.grodzovsky-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The debugfs_create_file() returns error pointers if DEBUGFS isn't
+enabled.  But here, we know that it is enabled so it returns NULL on
+error which could lead to a NULL dereference a few lines later.
 
-The header guards that are #defined are different from those being
-checked.  Fix this by #defining them to the correct name.
-
-Fixes clang warnings:
-drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h:17:9:
-warning: '__MT76x02_MCU_H' is used as a header guard here, followed
-by #define of a different macro [-Wheader-guard]
-
-drivers/net/wireless/mediatek/mt76/mt76x02_usb.h:17:9:
-warning: '__MT76x02_USB_H' is used as a header guard here, followed
-by #define of a different macro [-Wheader-guard]
-
-Fixes: 905db7470199 ("mt76: usb: move mt76x02 mcu code in mt76x02-usb module")
-Fixes: edaa580bc830 ("mt76: move shared mcu_calibrate routine in mt76x02-lib module")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h | 2 +-
- drivers/net/wireless/mediatek/mt76/mt76x02_usb.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+If someone wanted to delete the error handling as well that would also
+be fine, but I decided not to bother with that.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h b/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h
-index 2f5af3dad2bb..6e178bec07d8 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h
-@@ -15,7 +15,7 @@
-  */
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+index f5fb93795a69..0d806dfd5eeb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+@@ -832,12 +832,12 @@ int amdgpu_debugfs_regs_init(struct amdgpu_device *adev)
+ 		ent = debugfs_create_file(debugfs_regs_names[i],
+ 					  S_IFREG | S_IRUGO, root,
+ 					  adev, debugfs_regs[i]);
+-		if (IS_ERR(ent)) {
++		if (!ent) {
+ 			for (j = 0; j < i; j++) {
+ 				debugfs_remove(adev->debugfs_regs[i]);
+ 				adev->debugfs_regs[i] = NULL;
+ 			}
+-			return PTR_ERR(ent);
++			return -ENOMEM;
+ 		}
  
- #ifndef __MT76x02_MCU_H
--#define __MT76x0x_MCU_H
-+#define __MT76x02_MCU_H
- 
- #define MT_MCU_RESET_CTL		0x070C
- #define MT_MCU_INT_LEVEL		0x0718
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h b/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h
-index 2482f9761fcd..39dcfeee39f2 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h
-@@ -15,7 +15,7 @@
-  */
- 
- #ifndef __MT76x02_USB_H
--#define __MT76x0x_USB_H
-+#define __MT76x02_USB_H
- 
- #include "mt76.h"
- 
--- 
-2.17.1
+ 		if (!i)
