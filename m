@@ -1,51 +1,44 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Sep 2018 01:59:16 +0000
-Subject: [PATCH -next] tty: serial: remove set but not used variable 'error'
-Message-Id: <1537408756-196431-1-git-send-email-yuehaibing@huawei.com>
+Date: Thu, 27 Sep 2018 10:52:17 +0000
+Subject: [PATCH -next] VMCI: remove set but not used variable 'cid'
+Message-Id: <1538046079-137795-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-serial@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zhong jiang <zhongjiang@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/tty/serial/pmac_zilog.c: In function 'pmz_receive_chars':
-drivers/tty/serial/pmac_zilog.c:222:30: warning:
- variable 'error' set but not used [-Wunused-but-set-variable]
+drivers/misc/vmw_vmci/vmci_host.c: In function 'vmci_host_do_alloc_queuepair':
+drivers/misc/vmw_vmci/vmci_host.c:450:6: warning:
+ variable 'cid' set but not used [-Wunused-but-set-variable]
+  u32 cid;
+      ^
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/tty/serial/pmac_zilog.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/misc/vmw_vmci/vmci_host.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_zilog.c
-index a4ec22d..a9d4098 100644
---- a/drivers/tty/serial/pmac_zilog.c
-+++ b/drivers/tty/serial/pmac_zilog.c
-@@ -219,7 +219,7 @@ static void pmz_interrupt_control(struct uart_pmac_port *uap, int enable)
- static bool pmz_receive_chars(struct uart_pmac_port *uap)
- {
- 	struct tty_port *port;
--	unsigned char ch, r1, drop, error, flag;
-+	unsigned char ch, r1, drop, flag;
- 	int loops = 0;
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index be732e5..edfffc9 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -447,15 +447,12 @@ static int vmci_host_do_alloc_queuepair(struct vmci_host_dev *vmci_host_dev,
+ 	struct vmci_handle handle;
+ 	int vmci_status;
+ 	int __user *retptr;
+-	u32 cid;
  
- 	/* Sanity check, make sure the old bug is no longer happening */
-@@ -231,7 +231,6 @@ static bool pmz_receive_chars(struct uart_pmac_port *uap)
- 	port = &uap->port.state->port;
+ 	if (vmci_host_dev->ct_type != VMCIOBJ_CONTEXT) {
+ 		vmci_ioctl_err("only valid for contexts\n");
+ 		return -EINVAL;
+ 	}
  
- 	while (1) {
--		error = 0;
- 		drop = 0;
- 
- 		r1 = read_zsreg(uap, R1);
-@@ -273,7 +272,6 @@ static bool pmz_receive_chars(struct uart_pmac_port *uap)
- 		uap->port.icount.rx++;
- 
- 		if (r1 & (PAR_ERR | Rx_OVR | CRC_ERR | BRK_ABRT)) {
--			error = 1;
- 			if (r1 & BRK_ABRT) {
- 				pmz_debug("pmz: got break !\n");
- 				r1 &= ~(PAR_ERR | CRC_ERR);
+-	cid = vmci_ctx_get_id(vmci_host_dev->context);
+-
+ 	if (vmci_host_dev->user_version < VMCI_VERSION_NOVMVM) {
+ 		struct vmci_qp_alloc_info_vmvm alloc_info;
+ 		struct vmci_qp_alloc_info_vmvm __user *info = uptr;
