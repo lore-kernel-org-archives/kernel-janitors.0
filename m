@@ -1,39 +1,52 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Mon, 10 Sep 2018 10:04:40 +0000
-Subject: Re: [PATCH] ASoC: qdsp6: q6asm-dai: clean up a return
-Message-Id: <2790e939-5802-a044-cd5d-a36587d70074@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 27 Sep 2018 21:36:27 +0000
+Subject: [PATCH] rpmsg: fix memory leak on channel
+Message-Id: <20180927213627.12752-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180910084048.uhgbbsasp25czuud@kili.mountain>
-In-Reply-To: <20180910084048.uhgbbsasp25czuud@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Patrick Lai <plai@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently a failed allocation of channel->name leads to an
+immediate return without freeing channel. Fix this by setting
+ret to -ENOMEM and jumping to an exit path that kfree's channel.
 
-On 10/09/18 09:40, Dan Carpenter wrote:
-> Smatch complains that if both "psubstream" and "csubstream" are NULL
-> then "ret" is uninitialized.  That probably can't happen, but it's
-> cleaner to just return zero anyway so let's do that.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Detected by CoverityScan, CID#1473692 ("Resource Leak")
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rpmsg/qcom_smd.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> 
-> diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> index 9db9a2944ef2..c75fab38905d 100644
-> --- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-> +++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> @@ -493,7 +493,7 @@ static int q6asm_dai_pcm_new(struct snd_soc_pcm_runtime *rtd)
->   		}
->   	}
->   
-> -	return ret;
-> +	return 0;
->   }
->   
->   static void q6asm_dai_pcm_free(struct snd_pcm *pcm)
-> 
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 0dae7c9f4a8f..4abbeea782fa 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1122,8 +1122,10 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+ 
+ 	channel->edge = edge;
+ 	channel->name = kstrdup(name, GFP_KERNEL);
+-	if (!channel->name)
+-		return ERR_PTR(-ENOMEM);
++	if (!channel->name) {
++		ret = -ENOMEM;
++		goto free_channel;
++	}
+ 
+ 	spin_lock_init(&channel->tx_lock);
+ 	spin_lock_init(&channel->recv_lock);
+@@ -1173,6 +1175,7 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+ 
+ free_name_and_channel:
+ 	kfree(channel->name);
++free_channel:
+ 	kfree(channel);
+ 
+ 	return ERR_PTR(ret);
+-- 
+2.17.1
