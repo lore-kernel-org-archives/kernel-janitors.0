@@ -1,20 +1,101 @@
-From: Sinara Group <sinara-group@bk.ru>
-Date: Tue, 11 Sep 2018 21:51:20 +0000
-Subject: Inquiry
-Message-Id: <20180911215120.3E2135CEB5B@mail.smugo.tk>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 27 Sep 2018 15:24:31 +0000
+Subject: [PATCH][mtd-next] mtd: rawnand: fix spelling mistake "card_registred" -> "card_registered"
+Message-Id: <20180927152431.6031-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is Daniel Murray and i am from Sinara Group Co.Ltd Group Co.,LTD in Russia.
-We are glad to know about your company from the web and we are interested in your products.
-Could you kindly send us your Latest catalog and price list for our trial order.
+Trivial fix to spelling mistake struct field name, rename it.
 
-Best Regards,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/nand/raw/r852.c | 14 +++++++-------
+ drivers/mtd/nand/raw/r852.h |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-Daniel Murray
-Purchasing Manager
+diff --git a/drivers/mtd/nand/raw/r852.c b/drivers/mtd/nand/raw/r852.c
+index b08aa0a5a074..39be65b35ac2 100644
+--- a/drivers/mtd/nand/raw/r852.c
++++ b/drivers/mtd/nand/raw/r852.c
+@@ -637,7 +637,7 @@ static int r852_register_nand_device(struct r852_device *dev)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(dev->chip);
+ 
+-	WARN_ON(dev->card_registred);
++	WARN_ON(dev->card_registered);
+ 
+ 	mtd->dev.parent = &dev->pci_dev->dev;
+ 
+@@ -654,7 +654,7 @@ static int r852_register_nand_device(struct r852_device *dev)
+ 		goto error3;
+ 	}
+ 
+-	dev->card_registred = 1;
++	dev->card_registered = 1;
+ 	return 0;
+ error3:
+ 	nand_release(dev->chip);
+@@ -672,13 +672,13 @@ static void r852_unregister_nand_device(struct r852_device *dev)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(dev->chip);
+ 
+-	if (!dev->card_registred)
++	if (!dev->card_registered)
+ 		return;
+ 
+ 	device_remove_file(&mtd->dev, &dev_attr_media_type);
+ 	nand_release(dev->chip);
+ 	r852_engine_disable(dev);
+-	dev->card_registred = 0;
++	dev->card_registered = 0;
+ }
+ 
+ /* Card state updater */
+@@ -692,7 +692,7 @@ static void r852_card_detect_work(struct work_struct *work)
+ 	dev->card_unstable = 0;
+ 
+ 	/* False alarm */
+-	if (dev->card_detected = dev->card_registred)
++	if (dev->card_detected = dev->card_registered)
+ 		goto exit;
+ 
+ 	/* Read media properties */
+@@ -1033,7 +1033,7 @@ static int r852_resume(struct device *device)
+ 
+ 
+ 	/* If card status changed, just do the work */
+-	if (dev->card_detected != dev->card_registred) {
++	if (dev->card_detected != dev->card_registered) {
+ 		dbg("card was %s during low power state",
+ 			dev->card_detected ? "added" : "removed");
+ 
+@@ -1043,7 +1043,7 @@ static int r852_resume(struct device *device)
+ 	}
+ 
+ 	/* Otherwise, initialize the card */
+-	if (dev->card_registred) {
++	if (dev->card_registered) {
+ 		r852_engine_enable(dev);
+ 		dev->chip->select_chip(dev->chip, 0);
+ 		nand_reset_op(dev->chip);
+diff --git a/drivers/mtd/nand/raw/r852.h b/drivers/mtd/nand/raw/r852.h
+index 1eed2fc2fa42..bc67f5bf67e8 100644
+--- a/drivers/mtd/nand/raw/r852.h
++++ b/drivers/mtd/nand/raw/r852.h
+@@ -129,7 +129,7 @@ struct r852_device {
+ 	/* card status area */
+ 	struct delayed_work card_detect_work;
+ 	struct workqueue_struct *card_workqueue;
+-	int card_registred;		/* card registered with mtd */
++	int card_registered;		/* card registered with mtd */
+ 	int card_detected;		/* card detected in slot */
+ 	int card_unstable;		/* whenever the card is inserted,
+ 					   is not known yet */
+-- 
+2.17.1
