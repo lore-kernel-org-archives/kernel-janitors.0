@@ -1,46 +1,55 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 19 Sep 2018 11:35:22 +0000
-Subject: Re: [PATCH] thermal: armada: fix a test in probe()
-Message-Id: <20180919133522.7b0393c6@xps13>
+From: "Rangankar, Manish" <Manish.Rangankar@cavium.com>
+Date: Thu, 27 Sep 2018 11:15:42 +0000
+Subject: RE: [PATCH] scsi: qla4xxx: remove redundant check on drvr_wait
+Message-Id: <MW2PR07MB40429AAD3AC7C40972012788E3140@MW2PR07MB4042.namprd07.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180919103500.GB9238@mwanda>
-In-Reply-To: <20180919103500.GB9238@mwanda>
+References: <20180926130848.30645-1-colin.king@canonical.com>
+In-Reply-To: <20180926130848.30645-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, Dept-Eng QLogic Storage Upstream <QLogic-Storage-Upstream@cavium.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Dan,
-
-Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 19 Sep 2018
-13:35:00 +0300:
-
-> The platform_get_resource() function doesn't return error pointers, it
-> returns NULL on error.
->=20
-> Fixes: 3d4e51844a4e ("thermal: armada: convert driver to syscon register =
-accesses")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_th=
-ermal.c
-> index 2c2f6d93034e..92f67d40f2e9 100644
-> --- a/drivers/thermal/armada_thermal.c
-> +++ b/drivers/thermal/armada_thermal.c
-> @@ -526,8 +526,8 @@ static int armada_thermal_probe_legacy(struct platfor=
-m_device *pdev,
-> =20
->  	/* First memory region points towards the status register */
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (IS_ERR(res))
-> -		return PTR_ERR(res);
-> +	if (!res)
-> +		return -EIO;
-> =20
->  	/*
->  	 * Edit the resource start address and length to map over all the
-
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miqu=C3=A8l
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IENvbGluIEtpbmcgPGNvbGlu
+LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gU2VudDogV2VkbmVzZGF5LCBTZXB0ZW1iZXIgMjYsIDIw
+MTggNjozOSBQTQ0KPiBUbzogRGVwdC1FbmcgUUxvZ2ljIFN0b3JhZ2UgVXBzdHJlYW0gPFFMb2dp
+Yy1TdG9yYWdlLQ0KPiBVcHN0cmVhbUBjYXZpdW0uY29tPjsgSmFtZXMgRSAuIEogLiBCb3R0b21s
+ZXkgPGplamJAbGludXgudm5ldC5pYm0uY29tPjsNCj4gTWFydGluIEsgLiBQZXRlcnNlbiA8bWFy
+dGluLnBldGVyc2VuQG9yYWNsZS5jb20+OyBsaW51eC1zY3NpQHZnZXIua2VybmVsLm9yZw0KPiBD
+Yzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdIHNjc2k6IHFsYTR4eHg6IHJlbW92ZSByZWR1bmRh
+bnQgY2hlY2sgb24gZHJ2cl93YWl0DQo+IA0KPiBFeHRlcm5hbCBFbWFpbA0KPiANCj4gRnJvbTog
+Q29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZSBjaGVj
+ayBmb3IgYSBub24temVybyBkcnZyX3dhaXQgaXMgcmVkdW5kYW50IGFzIHRoZSBzYW1lIGNoZWNr
+IGlzIHBlcmZvcm1lZA0KPiBlYXJsaWVyIGluIHRoZSBvdXRlciB3aGlsZSBsb29wLCB0aGUgaW5u
+ZXIgY2hlY2sgd2lsbCBhbHdheXMgYmUgdHJ1ZSBpZiB3ZSByZWFjaGVkDQo+IHRoaXMgcG9pbnQg
+aW5zaWRlIHRoZSB3aGlsZSBsb29wLg0KPiBSZW1vdmUgdGhlIHJlZHVuZGFudCBpZiBjaGVjay4N
+Cj4gDQo+IERldGVjdGVkIGJ5IGNwcGNoZWNrOg0KPiAod2FybmluZykgSWRlbnRpY2FsIGlubmVy
+ICdpZicgY29uZGl0aW9uIGlzIGFsd2F5cyB0cnVlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29s
+aW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJz
+L3Njc2kvcWxhNHh4eC9xbDRfaW5pdC5jIHwgMTAgKysrKy0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5n
+ZWQsIDQgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL3Njc2kvcWxhNHh4eC9xbDRfaW5pdC5jIGIvZHJpdmVycy9zY3NpL3FsYTR4eHgvcWw0
+X2luaXQuYyBpbmRleA0KPiA1MmIxYTBiYzkzYzkuLjFlZjc0YWEyZDAwYSAxMDA2NDQNCj4gLS0t
+IGEvZHJpdmVycy9zY3NpL3FsYTR4eHgvcWw0X2luaXQuYw0KPiArKysgYi9kcml2ZXJzL3Njc2kv
+cWxhNHh4eC9xbDRfaW5pdC5jDQo+IEBAIC03NjYsMTIgKzc2NiwxMCBAQCBpbnQgcWw0eHh4X2xv
+Y2tfZHJ2cl93YWl0KHN0cnVjdCBzY3NpX3FsYV9ob3N0ICphKQ0KPiAgICAgICAgIHdoaWxlIChk
+cnZyX3dhaXQpIHsNCj4gICAgICAgICAgICAgICAgIGlmIChxbDR4eHhfbG9ja19kcnZyKGEpID09
+IDApIHsNCj4gICAgICAgICAgICAgICAgICAgICAgICAgc3NsZWVwKFFMNF9MT0NLX0RSVlJfU0xF
+RVApOw0KPiAtICAgICAgICAgICAgICAgICAgICAgICBpZiAoZHJ2cl93YWl0KSB7DQo+IC0gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgREVCVUcyKHByaW50aygic2NzaSVsZDogJXM6IFdh
+aXRpbmcgZm9yICINCj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICJHbG9iYWwgSW5pdCBTZW1hcGhvcmUoJWQpLi4uXG4iLA0KPiAtICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYS0+aG9zdF9ubywNCj4gLSAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF9fZnVuY19fLCBkcnZyX3dhaXQpKTsN
+Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiArICAgICAgICAgICAgICAgICAgICAgICBE
+RUJVRzIocHJpbnRrKCJzY3NpJWxkOiAlczogV2FpdGluZyBmb3IgIg0KPiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICJHbG9iYWwgSW5pdCBTZW1hcGhvcmUoJWQpLi4uXG4i
+LA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGEtPmhvc3Rfbm8sDQo+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgX19mdW5jX18sIGRydnJfd2Fp
+dCkpOw0KPiAgICAgICAgICAgICAgICAgICAgICAgICBkcnZyX3dhaXQgLT0gUUw0X0xPQ0tfRFJW
+Ul9TTEVFUDsNCj4gICAgICAgICAgICAgICAgIH0gZWxzZSB7DQo+ICAgICAgICAgICAgICAgICAg
+ICAgICAgIERFQlVHMihwcmludGsoInNjc2klbGQ6ICVzOiBHbG9iYWwgSW5pdCBTZW1hcGhvcmUg
+Ig0KPiAtLQ0KPiAyLjE3LjENCg0KVGhhbmtzLA0KDQpBY2tlZC1ieTogTWFuaXNoIFJhbmdhbmth
+ciA8TWFuaXNoLlJhbmdhbmthckBjYXZpdW0uY29tPg0K
