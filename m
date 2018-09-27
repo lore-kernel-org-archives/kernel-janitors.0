@@ -1,30 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 13 Sep 2018 12:17:48 +0000
-Subject: Re: [PATCH] pinctrl: at91-pio4: fix has_config check in atmel_pctl_dt_subnode_to_map()
-Message-Id: <CACRpkdY2OyNr2QcwJqx8P-wYo_6_s5Ya8VC+5eHsyvs2WJ9wog@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 27 Sep 2018 06:45:06 +0000
+Subject: [PATCH net-next] qed: Remove set but not used variable 'p_archipelago'
+Message-Id: <1538030706-138186-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180910083745.2laxr4upjq36cyqf@kili.mountain>
-In-Reply-To: <20180910083745.2laxr4upjq36cyqf@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ariel Elior <Ariel.Elior@cavium.com>, "David S. Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 10:37 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Smatch complains about this condition:
->
->         if (has_config && num_pins >= 1)
->
-> The "has_config" variable is either uninitialized or true.  The
-> "num_pins" variable is unsigned and we verified that it is non-zero on
-> the lines before so we know "num_pines >= 1" is true.  Really, we could
-> just check "num_configs" directly and remove the "has_config" variable.
->
-> Fixes: 776180848b57 ("pinctrl: introduce driver for Atmel PIO4 controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/net/ethernet/qlogic/qed/qed_ooo.c: In function 'qed_ooo_delete_isles':
+drivers/net/ethernet/qlogic/qed/qed_ooo.c:354:30: warning:
+ variable 'p_archipelago' set but not used [-Wunused-but-set-variable]
+ 
+drivers/net/ethernet/qlogic/qed/qed_ooo.c: In function 'qed_ooo_join_isles':
+drivers/net/ethernet/qlogic/qed/qed_ooo.c:463:30: warning:
+ variable 'p_archipelago' set but not used [-Wunused-but-set-variable]
 
-Patch applied with Ludovic's ACK.
+Since commit 1eec2437d14c ("qed: Make OOO archipelagos into an array"),
+'p_archipelago' is no longer in use.
 
-Yours,
-Linus Walleij
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_ooo.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ooo.c b/drivers/net/ethernet/qlogic/qed/qed_ooo.c
+index 63931df..ffac4ac 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ooo.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ooo.c
+@@ -351,11 +351,9 @@ void qed_ooo_delete_isles(struct qed_hwfn *p_hwfn,
+ 			  struct qed_ooo_info *p_ooo_info,
+ 			  u32 cid, u8 drop_isle, u8 drop_size)
+ {
+-	struct qed_ooo_archipelago *p_archipelago = NULL;
+ 	struct qed_ooo_isle *p_isle = NULL;
+ 	u8 isle_idx;
+ 
+-	p_archipelago = qed_ooo_seek_archipelago(p_hwfn, p_ooo_info, cid);
+ 	for (isle_idx = 0; isle_idx < drop_size; isle_idx++) {
+ 		p_isle = qed_ooo_seek_isle(p_hwfn, p_ooo_info, cid, drop_isle);
+ 		if (!p_isle) {
+@@ -460,7 +458,6 @@ void qed_ooo_add_new_buffer(struct qed_hwfn *p_hwfn,
+ void qed_ooo_join_isles(struct qed_hwfn *p_hwfn,
+ 			struct qed_ooo_info *p_ooo_info, u32 cid, u8 left_isle)
+ {
+-	struct qed_ooo_archipelago *p_archipelago = NULL;
+ 	struct qed_ooo_isle *p_right_isle = NULL;
+ 	struct qed_ooo_isle *p_left_isle = NULL;
+ 
+@@ -473,7 +470,6 @@ void qed_ooo_join_isles(struct qed_hwfn *p_hwfn,
+ 		return;
+ 	}
+ 
+-	p_archipelago = qed_ooo_seek_archipelago(p_hwfn, p_ooo_info, cid);
+ 	list_del(&p_right_isle->list_entry);
+ 	p_ooo_info->cur_isles_number--;
+ 	if (left_isle) {
