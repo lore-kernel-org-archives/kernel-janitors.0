@@ -1,111 +1,96 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Sun, 16 Sep 2018 09:42:25 +0000
-Subject: Re: [PATCH] power: supply: ab8500_fg: silence uninitialized variable warnings
-Message-Id: <20180916094225.dpbmcsyc2c6v3o5y@earth.universe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3nj3lvetxluw5uqu"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 27 Sep 2018 17:04:54 +0000
+Subject: [PATCH] qed: fix spelling mistake "b_cb_registred" -> "b_cb_registered"
+Message-Id: <20180927170454.7829-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180910083904.sdjreuxjxtd2puc4@kili.mountain>
-In-Reply-To: <20180910083904.sdjreuxjxtd2puc4@kili.mountain>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---3nj3lvetxluw5uqu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Trivial fix to spelling mistake struct field name, rename it.
 
-Hi,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 12 ++++++------
+ drivers/net/ethernet/qlogic/qed/qed_ll2.h |  4 ++--
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-On Mon, Sep 10, 2018 at 11:39:04AM +0300, Dan Carpenter wrote:
-> If kstrtoul() fails then we print "charge_full" when it's uninitialized.
-> The debug printk doesn't add anything so I deleted it and cleaned these
-> two functions up a bit.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-
-Thanks, queued.
-
--- Sebastian
-
-> diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab85=
-00_fg.c
-> index 2bdadb58bcc6..776102c31305 100644
-> --- a/drivers/power/supply/ab8500_fg.c
-> +++ b/drivers/power/supply/ab8500_fg.c
-> @@ -2433,17 +2433,14 @@ static ssize_t charge_full_store(struct ab8500_fg=
- *di, const char *buf,
->  				 size_t count)
->  {
->  	unsigned long charge_full;
-> -	ssize_t ret;
-> +	int ret;
-> =20
->  	ret =3D kstrtoul(buf, 10, &charge_full);
-> +	if (ret)
-> +		return ret;
-> =20
-> -	dev_dbg(di->dev, "Ret %zd charge_full %lu", ret, charge_full);
-> -
-> -	if (!ret) {
-> -		di->bat_cap.max_mah =3D (int) charge_full;
-> -		ret =3D count;
-> -	}
-> -	return ret;
-> +	di->bat_cap.max_mah =3D (int) charge_full;
-> +	return count;
->  }
-> =20
->  static ssize_t charge_now_show(struct ab8500_fg *di, char *buf)
-> @@ -2455,20 +2452,16 @@ static ssize_t charge_now_store(struct ab8500_fg =
-*di, const char *buf,
->  				 size_t count)
->  {
->  	unsigned long charge_now;
-> -	ssize_t ret;
-> +	int ret;
-> =20
->  	ret =3D kstrtoul(buf, 10, &charge_now);
-> +	if (ret)
-> +		return ret;
-> =20
-> -	dev_dbg(di->dev, "Ret %zd charge_now %lu was %d",
-> -		ret, charge_now, di->bat_cap.prev_mah);
-> -
-> -	if (!ret) {
-> -		di->bat_cap.user_mah =3D (int) charge_now;
-> -		di->flags.user_cap =3D true;
-> -		ret =3D count;
-> -		queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
-> -	}
-> -	return ret;
-> +	di->bat_cap.user_mah =3D (int) charge_now;
-> +	di->flags.user_cap =3D true;
-> +	queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
-> +	return count;
->  }
-> =20
->  static struct ab8500_fg_sysfs_entry charge_full_attr =3D
-
---3nj3lvetxluw5uqu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlueJYEACgkQ2O7X88g7
-+pqEghAAggSP4D426spw4xgUwCVMrDwJJHjV/PA0h9hn0t+2CxVKy69ui1cWC1N2
-MJHopVtMVlVhhnqUJEe8Z8IPxRyXywW6y+ku4Is8NaNfB6ygahfQL5MRRe/FC0av
-KhcAptvtS8gGtRtecn1HNADIp0jwnEvgL1/f/OaFMgloAdJOsqAFDgOAlr5MjyGO
-1Wdr7QbWGGn64cjyzIMsEY39Xp7mKw8/POU/VS1i2N06LOz6eh2l+UGXxUm5NbIz
-mQyQTcl+FZmflfGK12V08TaRH1tq/MC/J8iOPLALk0ioY6ikU5dB58yqSk4Dcgm6
-KF49f1OOQaS5htSHLuUwBPtl0rPpvp9wIKalE1gKpZJ165HgK5WP0OUZNAUgIkZN
-yHm/tirgdf3GDRV1CdDnETRFWBU/Ao2u3aPoA8NrYkcFmD+Q5Ke2BlhvEmgrWxmO
-A9cq+w3BG+zF7Q9TnxMuJRO2cS9t9IzsaortzoavOpuh/jq2sBBk70w5yFNL110n
-5MFxWCpgZNlPNUPI4ewfXwCdIfCHVd4UeB3sVkUkt5tLn6fR/Hvq2KWGCcMsoRWU
-s4QnGL+bFvJy9o64RxbvQk5yYYeRjEw0fI7qvZFNSPAavloig/knE8USBPBURD9j
-DIDtt5QmL3NoLWOqWtQjqkQMVV2pa0zFpx3m/lE5wwoL93poBR8=
-=2qEA
------END PGP SIGNATURE-----
-
---3nj3lvetxluw5uqu--
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index 14ac9cab2653..da13117a604a 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -63,8 +63,8 @@
+ #include "qed_sp.h"
+ #include "qed_rdma.h"
+ 
+-#define QED_LL2_RX_REGISTERED(ll2)	((ll2)->rx_queue.b_cb_registred)
+-#define QED_LL2_TX_REGISTERED(ll2)	((ll2)->tx_queue.b_cb_registred)
++#define QED_LL2_RX_REGISTERED(ll2)	((ll2)->rx_queue.b_cb_registered)
++#define QED_LL2_TX_REGISTERED(ll2)	((ll2)->tx_queue.b_cb_registered)
+ 
+ #define QED_LL2_TX_SIZE (256)
+ #define QED_LL2_RX_SIZE (4096)
+@@ -1404,7 +1404,7 @@ int qed_ll2_acquire_connection(void *cxt, struct qed_ll2_acquire_data *data)
+ 				    &p_hwfn->p_ll2_info[i],
+ 				    &p_ll2_info->rx_queue.rx_sb_index,
+ 				    &p_ll2_info->rx_queue.p_fw_cons);
+-		p_ll2_info->rx_queue.b_cb_registred = true;
++		p_ll2_info->rx_queue.b_cb_registered = true;
+ 	}
+ 
+ 	if (data->input.tx_num_desc) {
+@@ -1413,7 +1413,7 @@ int qed_ll2_acquire_connection(void *cxt, struct qed_ll2_acquire_data *data)
+ 				    &p_hwfn->p_ll2_info[i],
+ 				    &p_ll2_info->tx_queue.tx_sb_index,
+ 				    &p_ll2_info->tx_queue.p_fw_cons);
+-		p_ll2_info->tx_queue.b_cb_registred = true;
++		p_ll2_info->tx_queue.b_cb_registered = true;
+ 	}
+ 
+ 	*data->p_connection_handle = i;
+@@ -1929,7 +1929,7 @@ int qed_ll2_terminate_connection(void *cxt, u8 connection_handle)
+ 
+ 	/* Stop Tx & Rx of connection, if needed */
+ 	if (QED_LL2_TX_REGISTERED(p_ll2_conn)) {
+-		p_ll2_conn->tx_queue.b_cb_registred = false;
++		p_ll2_conn->tx_queue.b_cb_registered = false;
+ 		smp_wmb(); /* Make sure this is seen by ll2_lb_rxq_completion */
+ 		rc = qed_sp_ll2_tx_queue_stop(p_hwfn, p_ll2_conn);
+ 		if (rc)
+@@ -1940,7 +1940,7 @@ int qed_ll2_terminate_connection(void *cxt, u8 connection_handle)
+ 	}
+ 
+ 	if (QED_LL2_RX_REGISTERED(p_ll2_conn)) {
+-		p_ll2_conn->rx_queue.b_cb_registred = false;
++		p_ll2_conn->rx_queue.b_cb_registered = false;
+ 		smp_wmb(); /* Make sure this is seen by ll2_lb_rxq_completion */
+ 		rc = qed_sp_ll2_rx_queue_stop(p_hwfn, p_ll2_conn);
+ 		if (rc)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.h b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
+index f65817012e97..1a5c1ae01474 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
+@@ -79,7 +79,7 @@ struct qed_ll2_rx_queue {
+ 	struct qed_chain rxq_chain;
+ 	struct qed_chain rcq_chain;
+ 	u8 rx_sb_index;
+-	bool b_cb_registred;
++	bool b_cb_registered;
+ 	__le16 *p_fw_cons;
+ 	struct list_head active_descq;
+ 	struct list_head free_descq;
+@@ -93,7 +93,7 @@ struct qed_ll2_tx_queue {
+ 	spinlock_t lock;
+ 	struct qed_chain txq_chain;
+ 	u8 tx_sb_index;
+-	bool b_cb_registred;
++	bool b_cb_registered;
+ 	__le16 *p_fw_cons;
+ 	struct list_head active_descq;
+ 	struct list_head free_descq;
+-- 
+2.17.1
