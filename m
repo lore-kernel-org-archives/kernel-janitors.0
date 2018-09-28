@@ -1,34 +1,36 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 25 Sep 2018 14:30:36 +0000
-Subject: [PATCH -next] ANDROID: binder: make symbol 'binder_free_buf' static
-Message-Id: <1537885836-18996-1-git-send-email-weiyongjun1@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Sep 2018 02:16:47 +0000
+Subject: [PATCH -next] pxa168fb: remove set but not used variables 'mi'
+Message-Id: <1538101007-160417-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, maco@android.com
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lubomir Rintel <lkundrak@v3.sk>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org
 
-Fixes the following sparse warning:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/android/binder.c:3312:1: warning:
- symbol 'binder_free_buf' was not declared. Should it be static?
+drivers/video/fbdev/pxa168fb.c: In function 'pxa168fb_set_par':
+drivers/video/fbdev/pxa168fb.c:408:29: warning:
+ variable 'mi' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/android/binder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/pxa168fb.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 1b54bb5..cb30a52 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3308,7 +3308,7 @@ static void binder_transaction(struct binder_proc *proc,
-  *
-  * Cleanup buffer and free it.
-  */
--void
-+static void
- binder_free_buf(struct binder_proc *proc, struct binder_buffer *buffer)
- {
- 	if (buffer->transaction) {
+diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
+index d059d04..e31340f 100644
+--- a/drivers/video/fbdev/pxa168fb.c
++++ b/drivers/video/fbdev/pxa168fb.c
+@@ -405,9 +405,6 @@ static int pxa168fb_set_par(struct fb_info *info)
+ 	struct fb_var_screeninfo *var = &info->var;
+ 	struct fb_videomode mode;
+ 	u32 x;
+-	struct pxa168fb_mach_info *mi;
+-
+-	mi = dev_get_platdata(fbi->dev);
+ 
+ 	/*
+ 	 * Set additional mode info.
