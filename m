@@ -1,43 +1,45 @@
-From: Luciano Coelho <luciano.coelho@intel.com>
-Date: Tue, 04 Sep 2018 06:05:19 +0000
-Subject: Re: [PATCH] iwlwifi: mvm:  fix spelling mistake "Recieved" -> "Received"
-Message-Id: <339ef1c283fefd657d7a4b9ba2db067d52d9f7ef.camel@intel.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Sep 2018 10:59:53 +0000
+Subject: [PATCH -next] RDMA/hns: remove set but not used variable 'dseg'
+Message-Id: <1538132393-54509-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180826223117.12892-1-colin.king@canonical.com>
-In-Reply-To: <20180826223117.12892-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 2018-08-26 at 23:31 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in debug message.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-> index b15b0d84bb7e..5f32d3131d62 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-> @@ -3320,7 +3320,7 @@ static bool iwl_mvm_rx_aux_roc(struct iwl_notif_wait_data *notif_wait,
->  	resp = (void *)pkt->data;
->  
->  	IWL_DEBUG_TE(mvm,
-> -		     "Aux ROC: Recieved response from ucode: status=%d uid=%d\n",
-> +		     "Aux ROC: Received response from ucode: status=%d uid=%d\n",
->  		     resp->status, resp->event_unique_id);
->  
->  	te_data->uid = le32_to_cpu(resp->event_unique_id);
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks! Again I pushed this to our internal tree and it will reach the
-mainline following our normal process.
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c: In function 'hns_roce_v2_post_send':
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c:194:35: warning:
+ variable 'dseg' set but not used [-Wunused-but-set-variable]
 
---
-Cheers,
-Luca.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 0d7568e..8136dd8 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -191,7 +191,6 @@ static int hns_roce_v2_post_send(struct ib_qp *ibqp,
+ 	struct hns_roce_v2_ud_send_wqe *ud_sq_wqe;
+ 	struct hns_roce_v2_rc_send_wqe *rc_sq_wqe;
+ 	struct hns_roce_qp *qp = to_hr_qp(ibqp);
+-	struct hns_roce_v2_wqe_data_seg *dseg;
+ 	struct device *dev = hr_dev->dev;
+ 	struct hns_roce_v2_db sq_db;
+ 	struct ib_qp_attr attr;
+@@ -492,12 +491,6 @@ static int hns_roce_v2_post_send(struct ib_qp *ibqp,
+ 			roce_set_field(rc_sq_wqe->byte_4,
+ 				       V2_RC_SEND_WQE_BYTE_4_OPCODE_M,
+ 				       V2_RC_SEND_WQE_BYTE_4_OPCODE_S, hr_op);
+-			if (wr->opcode = IB_WR_ATOMIC_CMP_AND_SWP ||
+-			    wr->opcode = IB_WR_ATOMIC_FETCH_AND_ADD)
+-				dseg -				  wqe - sizeof(struct hns_roce_v2_wqe_data_seg);
+-			else
+-				dseg = wqe;
+ 
+ 			ret = set_rwqe_data_seg(ibqp, wr, rc_sq_wqe, wqe,
+ 						&sge_ind, bad_wr);
