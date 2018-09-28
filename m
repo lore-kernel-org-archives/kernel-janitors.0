@@ -1,58 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 06 Sep 2018 12:32:07 +0000
-Subject: [PATCH] staging: rtl8723bs: check for i out of range before accessing szLine[i]
-Message-Id: <20180906123207.20164-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Sep 2018 02:21:53 +0000
+Subject: [PATCH -next] staging: rtlwifi: Remove set but not used variable 'ppsc'
+Message-Id: <1538101313-161546-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nathan Chancellor <natechancellor@gmail.com>, Shreeya Patel <shreeya.patel23498@gmail.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Currently szLine[i] is being accessed before the index i is being
-ranged checked.  Fix this by checking the range first.  Also, evaluate
-the length of the string szLine just once rather than multiple times and
-move the loop variable i to an inner scope and make it an int.
+drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_leave_lps':
+drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c:284:21: warning:
+ variable 'ppsc' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_enter_lps':
+drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c:307:21: warning:
+ variable 'ppsc' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-index 0d2c61b67d0e..0833cce43dd3 100644
---- a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-@@ -2919,7 +2919,6 @@ int PHY_ConfigRFWithTxPwrTrackParaFile(struct adapter *Adapter, char *pFileName)
- 	struct hal_com_data *pHalData = GET_HAL_DATA(Adapter);
- 	int	rlen = 0, rtStatus = _FAIL;
- 	char *szLine, *ptmp;
--	u32 i = 0;
+diff --git a/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c
+index 85a7490..24e19ff 100644
+--- a/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -281,11 +281,9 @@ bool halbtc_send_bt_mp_operation(struct btc_coexist *btcoexist, u8 op_code,
+ static void halbtc_leave_lps(struct btc_coexist *btcoexist)
+ {
+ 	struct rtl_priv *rtlpriv;
+-	struct rtl_ps_ctl *ppsc;
+ 	bool ap_enable = false;
  
- 	if (!(Adapter->registrypriv.load_phy_file & LOAD_RF_TXPWR_TRACK_PARA_FILE))
- 		return rtStatus;
-@@ -2958,8 +2957,10 @@ int PHY_ConfigRFWithTxPwrTrackParaFile(struct adapter *Adapter, char *pFileName)
- 				char band[5] = "", path[5] = "", sign[5] = "";
- 				char chnl[5] = "", rate[10] = "";
- 				char data[300] = ""; /*  100 is too small */
-+				const int len = strlen(szLine);
-+				int i;
+ 	rtlpriv = btcoexist->adapter;
+-	ppsc = rtl_psc(rtlpriv);
  
--				if (strlen(szLine) < 10 || szLine[0] != '[')
-+				if (len < 10 || szLine[0] != '[')
- 					continue;
+ 	btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_AP_MODE_ENABLE,
+ 			   &ap_enable);
+@@ -304,11 +302,9 @@ static void halbtc_leave_lps(struct btc_coexist *btcoexist)
+ static void halbtc_enter_lps(struct btc_coexist *btcoexist)
+ {
+ 	struct rtl_priv *rtlpriv;
+-	struct rtl_ps_ctl *ppsc;
+ 	bool ap_enable = false;
  
- 				strncpy(band, szLine+1, 2);
-@@ -2973,7 +2974,7 @@ int PHY_ConfigRFWithTxPwrTrackParaFile(struct adapter *Adapter, char *pFileName)
- 				if (!ParseQualifiedString(szLine, &i, chnl, '[', ']')) {
- 					/* DBG_871X("Fail to parse channel group!\n"); */
- 				}
--				while (szLine[i] != '{' && i < strlen(szLine))
-+				while (i < len && szLine[i] != '{')
- 					i++;
- 				if (!ParseQualifiedString(szLine, &i, data, '{', '}')) {
- 					/* DBG_871X("Fail to parse data!\n"); */
--- 
-2.17.1
+ 	rtlpriv = btcoexist->adapter;
+-	ppsc = rtl_psc(rtlpriv);
+ 
+ 	btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_AP_MODE_ENABLE,
+ 			   &ap_enable);
