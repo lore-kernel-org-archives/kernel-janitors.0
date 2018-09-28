@@ -1,23 +1,51 @@
-From: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Date: Sun, 23 Sep 2018 14:59:08 +0000
-Subject: RE: [PATCH -next] x86/hyper-v: Remove unused including <linux/version.h>
-Message-Id: <CY4PR21MB0773E37E25D664DB57D079E4DC100@CY4PR21MB0773.namprd21.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Sep 2018 10:39:40 +0000
+Subject: [PATCH -next] drm/stm: ltdc: remove set but not used variable 'src_h'
+Message-Id: <1538131180-34108-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537690822-97455-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537690822-97455-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: "x86@kernel.org" <x86@kernel.org>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Yannick Fertre <yannick.fertre@st.com>, Philippe Cornu <philippe.cornu@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, David Airlie <airlied@linux.ie>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>  Sent: Sunday, September 23, 2018 1:20 AM
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Remove including <linux/version.h> that don't need it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  arch/x86/hyperv/hv_apic.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
+drivers/gpu/drm/stm/ltdc.c: In function 'ltdc_plane_atomic_check':
+drivers/gpu/drm/stm/ltdc.c:694:13: warning:
+ variable 'src_y' set but not used [-Wunused-but-set-variable]
+  u32 src_x, src_y, src_w, src_h;
+             ^
+             ^
+drivers/gpu/drm/stm/ltdc.c:694:6: warning:
+ variable 'src_x' set but not used [-Wunused-but-set-variable]
+  u32 src_x, src_y, src_w, src_h;
+      ^
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/stm/ltdc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index 61dd661..a91e041 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -691,7 +691,7 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
+ 				   struct drm_plane_state *state)
+ {
+ 	struct drm_framebuffer *fb = state->fb;
+-	u32 src_x, src_y, src_w, src_h;
++	u32 src_w, src_h;
+ 
+ 	DRM_DEBUG_DRIVER("\n");
+ 
+@@ -699,8 +699,6 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
+ 		return 0;
+ 
+ 	/* convert src_ from 16:16 format */
+-	src_x = state->src_x >> 16;
+-	src_y = state->src_y >> 16;
+ 	src_w = state->src_w >> 16;
+ 	src_h = state->src_h >> 16;
+ 
