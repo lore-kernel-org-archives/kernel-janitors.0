@@ -1,72 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Sep 2018 12:25:01 +0000
-Subject: [PATCH] ocfs2: clean up some data_ac usage
-Message-Id: <20180907122500.azbll3byq4hdnrlw@kili.mountain>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Sep 2018 02:18:09 +0000
+Subject: [PATCH -next] gpio: htc-egpio: Remove set but not used variable 'bit'
+Message-Id: <1538101089-160557-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: kernel-janitors@vger.kernel.org
 
-I started looking at this code because of a Smatch false positive:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-    fs/ocfs2/move_extents.c:347 ocfs2_defrag_extent()
-    warn: variable dereferenced before check 'context->data_ac' (see line 304)
+drivers/gpio/gpio-htc-egpio.c: In function 'egpio_set':
+drivers/gpio/gpio-htc-egpio.c:192:20: warning:
+ variable 'bit' set but not used [-Wunused-but-set-variable]
 
-context->data_ac can't be NULL so I removed the check.  I changed the
-next lines to use "data_ac" instead of "context->data_ac" for
-consistency.  And we don't need to pass "data_ac" to
-ocfs2_lock_meta_allocator_move_extents() any more so I removed that.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpio/gpio-htc-egpio.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 099016c9644e..9ee89d6816bc 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -160,15 +160,12 @@ static int __ocfs2_move_extent(handle_t *handle,
-  * lock allocators, and reserving appropriate number of bits for
-  * meta blocks and data clusters.
-  *
-- * in some cases, we don't need to reserve clusters, just let data_ac
-- * be NULL.
-  */
- static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
- 					struct ocfs2_extent_tree *et,
- 					u32 clusters_to_move,
- 					u32 extents_to_split,
- 					struct ocfs2_alloc_context **meta_ac,
--					struct ocfs2_alloc_context **data_ac,
- 					int extra_blocks,
- 					int *credits)
- {
-@@ -255,7 +252,6 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
- 						*len, 1,
- 						&context->meta_ac,
--						&context->data_ac,
- 						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
-@@ -344,10 +340,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		mlog_errno(ret);
+diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
+index 38be44d..9d3ac51 100644
+--- a/drivers/gpio/gpio-htc-egpio.c
++++ b/drivers/gpio/gpio-htc-egpio.c
+@@ -189,7 +189,6 @@ static void egpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	unsigned long     flag;
+ 	struct egpio_chip *egpio;
+ 	struct egpio_info *ei;
+-	unsigned          bit;
+ 	int               pos;
+ 	int               reg;
+ 	int               shift;
+@@ -199,7 +198,6 @@ static void egpio_set(struct gpio_chip *chip, unsigned offset, int value)
  
- out_commit:
--	if (need_free && context->data_ac) {
-+	if (need_free) {
- 		struct ocfs2_alloc_context *data_ac = context->data_ac;
- 
--		if (context->data_ac->ac_which = OCFS2_AC_USE_LOCAL)
-+		if (data_ac->ac_which = OCFS2_AC_USE_LOCAL)
- 			ocfs2_free_local_alloc_bits(osb, handle, data_ac,
- 					new_phys_cpos, new_len);
- 		else
-@@ -629,7 +625,7 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
- 	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
- 						len, 1,
- 						&context->meta_ac,
--						NULL, extra_blocks, &credits);
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
+ 	egpio = gpiochip_get_data(chip);
+ 	ei    = dev_get_drvdata(egpio->dev);
+-	bit   = egpio_bit(ei, offset);
+ 	pos   = egpio_pos(ei, offset);
+ 	reg   = egpio->reg_start + pos;
+ 	shift = pos << ei->reg_shift;
