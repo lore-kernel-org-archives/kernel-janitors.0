@@ -1,34 +1,33 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Thu, 06 Sep 2018 16:08:27 +0000
-Subject: Re: [PATCH] btrfs: remove unused pointer 'tree'
-Message-Id: <20180906160827.GE24025@twin.jikos.cz>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 29 Sep 2018 03:55:16 +0000
+Subject: [PATCH -next] IB/mthca: Fix error return code in __mthca_init_one()
+Message-Id: <1538193316-155845-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180828132101.9559-1-colin.king@canonical.com>
-In-Reply-To: <20180828132101.9559-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 02:21:01PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'tree' is being assigned but is never used hence it is
-> redundant and can be removed.
+Fix to return a negative error code from the mthca_cmd_init() error
+handling case instead of 0, as done elsewhere in this function.
 
-For patches removing dead code it's good to do a bit of research what
-was the reason for that. In most cases it's a simple leftover after some
-other cleanup or rework, ie. harmless, but this needs to be reviewed
-anyway and the reference in changelog helps.
+Fixes: 80fd8238734c ("[PATCH] IB/mthca: Encapsulate command interface init")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/infiniband/hw/mthca/mthca_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-In this case it's after my commit 00032d38eaa89c76de7, I'll update the
-changelog. And the previous patch removing inode in relink_file_extents
-was udpated too.
-> 
-> Cleans up clang warning:
-> warning: variable 'tree' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: David Sterba <dsterba@suse.com>
+diff --git a/drivers/infiniband/hw/mthca/mthca_main.c b/drivers/infiniband/hw/mthca/mthca_main.c
+index f99c7e0..92c49bf 100644
+--- a/drivers/infiniband/hw/mthca/mthca_main.c
++++ b/drivers/infiniband/hw/mthca/mthca_main.c
+@@ -986,7 +986,8 @@ static int __mthca_init_one(struct pci_dev *pdev, int hca_type)
+ 		goto err_free_dev;
+ 	}
+ 
+-	if (mthca_cmd_init(mdev)) {
++	err = mthca_cmd_init(mdev);
++	if (err) {
+ 		mthca_err(mdev, "Failed to init command interface, aborting.\n");
+ 		goto err_free_dev;
+ 	}
