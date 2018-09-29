@@ -1,48 +1,48 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Thu, 20 Sep 2018 15:41:37 +0000
-Subject: Re: [PATCH] PCI: hv: Fix return value check in hv_pci_assign_slots()
-Message-Id: <20180920154130.GA7693@e107981-ln.cambridge.arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 29 Sep 2018 11:43:13 +0000
+Subject: [PATCH] usb: gadget: fix spelling mistakeis "[En]queing" -> "[En]queuing"
+Message-Id: <20180929114313.10557-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537425631-28460-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1537425631-28460-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Bjorn Helgaas <bhelgaas@google.com>, devel@linuxdriverproject.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-[+DaveM, netdev]
+From: Colin Ian King <colin.king@canonical.com>
 
-Removed erroneously added disclaimer, apologies.
+Trivial fix to spelling mistakes in debug warning messages
 
-On Thu, Sep 20, 2018 at 06:40:31AM +0000, Wei Yongjun wrote:
-> In case of error, the function pci_create_slot() returns ERR_PTR() and
-> never returns NULL. The NULL test in the return value check should be
-> replaced with IS_ERR().
-> 
-> Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/pci/controller/pci-hyperv.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index ee80e79..9ba4d12 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -1484,8 +1484,10 @@ static void hv_pci_assign_slots(struct hv_pcibus_device *hbus)
->  		snprintf(name, SLOT_NAME_SIZE, "%u", hpdev->desc.ser);
->  		hpdev->pci_slot = pci_create_slot(hbus->pci_bus, slot_nr,
->  					  name, NULL);
-> -		if (!hpdev->pci_slot)
-> +		if (IS_ERR(hpdev->pci_slot)) {
->  			pr_warn("pci_create slot %s failed\n", name);
-> +			hpdev->pci_slot = NULL;
-> +		}
->  	}
->  }
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/gadget/udc/aspeed-vhub/epn.c | 2 +-
+ drivers/usb/gadget/udc/udc-xilinx.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I am dropping this patch from the PCI queue since the original series
-is now queued in net-next.
-
-Lorenzo
+diff --git a/drivers/usb/gadget/udc/aspeed-vhub/epn.c b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
+index 5939eb1e97f2..e9ee2b72af19 100644
+--- a/drivers/usb/gadget/udc/aspeed-vhub/epn.c
++++ b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
+@@ -353,7 +353,7 @@ static int ast_vhub_epn_queue(struct usb_ep* u_ep, struct usb_request *u_req,
+ 	/* Endpoint enabled ? */
+ 	if (!ep->epn.enabled || !u_ep->desc || !ep->dev || !ep->d_idx ||
+ 	    !ep->dev->enabled || ep->dev->suspended) {
+-		EPDBG(ep,"Enqueing request on wrong or disabled EP\n");
++		EPDBG(ep, "Enqueuing request on wrong or disabled EP\n");
+ 		return -ESHUTDOWN;
+ 	}
+ 
+diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
+index 6407e433bc78..b1f4104d1283 100644
+--- a/drivers/usb/gadget/udc/udc-xilinx.c
++++ b/drivers/usb/gadget/udc/udc-xilinx.c
+@@ -1078,7 +1078,7 @@ static int xudc_ep_queue(struct usb_ep *_ep, struct usb_request *_req,
+ 	unsigned long flags;
+ 
+ 	if (!ep->desc) {
+-		dev_dbg(udc->dev, "%s:queing request to disabled %s\n",
++		dev_dbg(udc->dev, "%s: queuing request to disabled %s\n",
+ 			__func__, ep->name);
+ 		return -ESHUTDOWN;
+ 	}
+-- 
+2.17.1
