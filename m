@@ -1,42 +1,41 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 26 Sep 2018 14:15:34 +0000
-Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'header'
-Message-Id: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
+Date: Sat, 29 Sep 2018 11:16:09 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring' in psp_v3_1_ring_stop
+Message-Id: <1538219769-37710-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Likun.Gao@amd.com, David.Francis@amd.com, ray.huang@amd.com, Feifei.Xu@amd.com, Monk.Liu@amd.com
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Shaoyun.Liu@amd.com, Ken.Wang@amd.com, Feifei.Xu@amd.com, ray.huang@amd.com, evan.quan@amd.com
 Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c: In function 'amdgpu_ucode_init_bo':
-drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c:431:39: warning:
- variable 'header' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/psp_v3_1.c: In function 'psp_v3_1_ring_stop':
+drivers/gpu/drm/amd/amdgpu/psp_v3_1.c:359:19: warning:
+ variable 'ring' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/psp_v3_1.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-index 1fa8bc3..afd5cf3 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-@@ -428,7 +428,6 @@ int amdgpu_ucode_init_bo(struct amdgpu_device *adev)
- 	uint64_t fw_offset = 0;
- 	int i, err;
- 	struct amdgpu_firmware_info *ucode = NULL;
--	const struct common_firmware_header *header = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+index e1ebf77..cc5e3ac 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+@@ -356,12 +356,9 @@ static int psp_v3_1_ring_stop(struct psp_context *psp,
+ 			      enum psp_ring_type ring_type)
+ {
+ 	int ret = 0;
+-	struct psp_ring *ring;
+ 	unsigned int psp_ring_reg = 0;
+ 	struct amdgpu_device *adev = psp->adev;
  
- 	if (!adev->firmware.fw_size) {
- 		dev_warn(adev->dev, "No ip firmware need to load\n");
-@@ -465,7 +464,6 @@ int amdgpu_ucode_init_bo(struct amdgpu_device *adev)
- 	for (i = 0; i < adev->firmware.max_ucodes; i++) {
- 		ucode = &adev->firmware.ucode[i];
- 		if (ucode->fw) {
--			header = (const struct common_firmware_header *)ucode->fw->data;
- 			amdgpu_ucode_init_single_fw(adev, ucode, adev->firmware.fw_buf_mc + fw_offset,
- 						    adev->firmware.fw_buf_ptr + fw_offset);
- 			if (i = AMDGPU_UCODE_ID_CP_MEC1 &&
+-	ring = &psp->km_ring;
+-
+ 	/* Write the ring destroy command to C2PMSG_64 */
+ 	psp_ring_reg = 3 << 16;
+ 	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
