@@ -1,25 +1,35 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Thu, 06 Sep 2018 15:59:51 +0000
-Subject: Re: [PATCH] btrfs: remove unused pointer inode
-Message-Id: <20180906155951.GD24025@twin.jikos.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 29 Sep 2018 11:03:30 +0000
+Subject: [PATCH] NFC: st95hf: fix spelling mistake "receieve" -> "receive"
+Message-Id: <20180929110330.8996-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180828104521.5167-1-colin.king@canonical.com>
-In-Reply-To: <20180828104521.5167-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Samuel Ortiz <sameo@linux.intel.com>, Daniel Mack <daniel@zonque.org>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 11:45:21AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer inode is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> variable ‘inode’ set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Trivial fix to spelling mistake in dev_err message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nfc/st95hf/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
+index a50a95cfcfd8..d72d48243141 100644
+--- a/drivers/nfc/st95hf/core.c
++++ b/drivers/nfc/st95hf/core.c
+@@ -327,7 +327,7 @@ static int st95hf_echo_command(struct st95hf_context *st95context)
+ 					  &echo_response);
+ 	if (result) {
+ 		dev_err(&st95context->spicontext.spidev->dev,
+-			"err: echo response receieve error = 0x%x\n", result);
++			"err: echo response receive error = 0x%x\n", result);
+ 		return result;
+ 	}
+ 
+-- 
+2.17.1
