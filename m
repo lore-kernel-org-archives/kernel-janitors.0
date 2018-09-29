@@ -1,37 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 06 Sep 2018 09:39:01 +0000
-Subject: [PATCH] ASoC: hdac_hdmi: remove redundant check for !port condition
-Message-Id: <20180906093901.16682-1-colin.king@canonical.com>
+Date: Sat, 29 Sep 2018 10:57:58 +0000
+Subject: [PATCH] drm/amdgpu: fix spelling mistake "recieve" -> "receive"
+Message-Id: <20180929105758.8775-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The !port check is redundant as it being performed in the following
-check. Remove it.
+Trivial fix to spelling mistake in pr_err message
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/hdac_hdmi.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
-index 7b8533abf637..dc6a0dfea050 100644
---- a/sound/soc/codecs/hdac_hdmi.c
-+++ b/sound/soc/codecs/hdac_hdmi.c
-@@ -1961,9 +1961,6 @@ static int hdac_hdmi_get_spk_alloc(struct hdac_device *hdev, int pcm_idx)
+diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
+index 64e875d528dd..ef0c56d4e3fe 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
++++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
+@@ -516,7 +516,7 @@ static void xgpu_vi_mailbox_flr_work(struct work_struct *work)
  
- 	port = list_first_entry(&pcm->port_list, struct hdac_hdmi_port, head);
- 
--	if (!port)
--		return 0;
--
- 	if (!port || !port->eld.eld_valid)
- 		return 0;
+ 	/* wait until RCV_MSG become 3 */
+ 	if (xgpu_vi_poll_msg(adev, IDH_FLR_NOTIFICATION_CMPL)) {
+-		pr_err("failed to recieve FLR_CMPL\n");
++		pr_err("failed to receive FLR_CMPL\n");
+ 		return;
+ 	}
  
 -- 
 2.17.1
