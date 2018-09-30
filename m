@@ -1,37 +1,63 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 26 Sep 2018 02:09:23 +0000
-Subject: [PATCH -next v2] crypto: ccp - Make function sev_get_firmware() static
-Message-Id: <1537927763-4772-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 30 Sep 2018 23:10:51 +0000
+Subject: [PATCH] staging: rtl8723bs: clean up clang warning on extraneous parentheses
+Message-Id: <20180930231051.18867-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes the following sparse warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/crypto/ccp/psp-dev.c:444:5: warning:
- symbol 'sev_get_firmware' was not declared. Should it be static?
+There are extraneous parantheses that are causing clang to produce a
+warning so remove these.
 
-Fixes: e93720606efd ("crypto: ccp - Allow SEV firmware to be chosen based on Family and Model")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Clean up 3 clang warnings:
+equality comparison with extraneous parentheses [-Wparentheses-equality]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v1 -> v2: add fixes and add cc Janakarajan
----
- drivers/crypto/ccp/psp-dev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/core/rtw_security.c      | 5 ++---
+ drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-index 3b33863..d64a78c 100644
---- a/drivers/crypto/ccp/psp-dev.c
-+++ b/drivers/crypto/ccp/psp-dev.c
-@@ -441,7 +441,8 @@ static int sev_get_api_version(void)
- 	return 0;
- }
+diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
+index 6c8ac9e86c9f..240818b4a2c9 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_security.c
++++ b/drivers/staging/rtl8723bs/core/rtw_security.c
+@@ -1543,7 +1543,7 @@ u32 rtw_aes_encrypt(struct adapter *padapter, u8 *pxmitframe)
+ 	pframe = ((struct xmit_frame *)pxmitframe)->buf_addr + hw_hdr_offset;
  
--int sev_get_firmware(struct device *dev, const struct firmware **firmware)
-+static int sev_get_firmware(struct device *dev,
-+			    const struct firmware **firmware)
- {
- 	char fw_name_specific[SEV_FW_NAME_SIZE];
- 	char fw_name_subset[SEV_FW_NAME_SIZE];
+ 	/* 4 start to encrypt each fragment */
+-	if ((pattrib->encrypt = _AES_)) {
++	if (pattrib->encrypt = _AES_) {
+ 		RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("rtw_aes_encrypt: stainfo!= NULL!!!\n"));
+ 
+ 		if (IS_MCAST(pattrib->ra))
+@@ -1866,8 +1866,7 @@ u32 rtw_aes_decrypt(struct adapter *padapter, u8 *precvframe)
+ 
+ 	pframe = (unsigned char *)((union recv_frame *)precvframe)->u.hdr.rx_data;
+ 	/* 4 start to encrypt each fragment */
+-	if ((prxattrib->encrypt = _AES_)) {
+-
++	if (prxattrib->encrypt = _AES_) {
+ 		stainfo = rtw_get_stainfo(&padapter->stapriv, &prxattrib->ta[0]);
+ 		if (stainfo != NULL) {
+ 			RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("rtw_aes_decrypt: stainfo!= NULL!!!\n"));
+diff --git a/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c b/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
+index acc64fa8f166..0e674f39ef03 100644
+--- a/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
++++ b/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
+@@ -97,7 +97,7 @@ void odm_EdcaTurboCheckCE(void *pDM_VOID)
+ 		return;
+ 	}
+ 
+-	if ((pregpriv->wifi_spec = 1)) {
++	if (pregpriv->wifi_spec = 1) {
+ 		precvpriv->bIsAnyNonBEPkts = false;
+ 		return;
+ 	}
+-- 
+2.17.1
