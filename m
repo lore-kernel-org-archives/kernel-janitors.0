@@ -1,28 +1,39 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 14 Sep 2018 01:59:48 +0000
-Subject: Re: [PATCH -next] blk-iolatency: remove set but not used variables 'changed' and 'blkiolat'
-Message-Id: <5b7bf9ea-335d-ba84-c469-cbe921ef8bc0@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 30 Sep 2018 22:38:09 +0000
+Subject: [PATCH] ipw2x00: clean up clang warning on extraneous parentheses
+Message-Id: <20180930223809.18136-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536888911-54172-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536888911-54172-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 9/13/18 7:35 PM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> block/blk-iolatency.c: In function 'scale_change':
-> block/blk-iolatency.c:301:7: warning:
->  variable 'changed' set but not used [-Wunused-but-set-variable]
-> 
-> block/blk-iolatency.c: In function 'iolatency_set_limit':
-> block/blk-iolatency.c:765:24: warning:
->  variable 'blkiolat' set but not used [-Wunused-but-set-variable]
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+There are extraneous parantheses that are causing clang to produce a
+warning so remove these.
 
+Clean up clang warning:
+equality comparison with extraneous parentheses [-Wparentheses-equality]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index 9644e7b93645..bbdca13c5a9f 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -5652,7 +5652,7 @@ static void ipw_merge_adhoc_network(struct work_struct *work)
+ 		}
+ 
+ 		mutex_lock(&priv->mutex);
+-		if ((priv->ieee->iw_mode = IW_MODE_ADHOC)) {
++		if (priv->ieee->iw_mode = IW_MODE_ADHOC) {
+ 			IPW_DEBUG_MERGE("remove network %*pE\n",
+ 					priv->essid_len, priv->essid);
+ 			ipw_remove_current_network(priv);
 -- 
-Jens Axboe
+2.17.1
