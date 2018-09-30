@@ -1,29 +1,51 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 05 Sep 2018 21:56:18 +0000
-Subject: Re: [PATCH rdma-next] RDMA/qedr: remove set but not used variable 'ctx'
-Message-Id: <20180905215618.GA30370@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 30 Sep 2018 23:03:07 +0000
+Subject: [PATCH] scsi: arcmsr: clean up clang warning on extraneous parentheses
+Message-Id: <20180930230307.18664-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1535774026-160694-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535774026-160694-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Michal Kalderon <Michal.Kalderon@cavium.com>, Ariel Elior <Ariel.Elior@cavium.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Ching Huang <ching2048@areca.com.tw>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 01, 2018 at 03:53:46AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/hw/qedr/verbs.c: In function 'qedr_create_srq':
-> drivers/infiniband/hw/qedr/verbs.c:1450:24: warning:
->  variable 'ctx' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Rahul Verma <rahul.verma@cavium.com>
-> ---
->  drivers/infiniband/hw/qedr/verbs.c | 2 --
->  1 file changed, 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+There are extraneous parantheses that are causing clang to produce a
+warning so remove these.
 
-Jason
+Clean up 3 clang warnings:
+equality comparison with extraneous parentheses [-Wparentheses-equality]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/arcmsr/arcmsr_hba.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index cc0be4651128..22cf697adab0 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -4135,9 +4135,9 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 		pci_read_config_byte(acb->pdev, i, &value[i]);
+ 	}
+ 	/* hardware reset signal */
+-	if ((acb->dev_id = 0x1680)) {
++	if (acb->dev_id = 0x1680) {
+ 		writel(ARCMSR_ARC1680_BUS_RESET, &pmuA->reserved1[0]);
+-	} else if ((acb->dev_id = 0x1880)) {
++	} else if (acb->dev_id = 0x1880) {
+ 		do {
+ 			count++;
+ 			writel(0xF, &pmuC->write_sequence);
+@@ -4161,7 +4161,7 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 		} while (((readl(&pmuE->host_diagnostic_3xxx) &
+ 			ARCMSR_ARC1884_DiagWrite_ENABLE) = 0) && (count < 5));
+ 		writel(ARCMSR_ARC188X_RESET_ADAPTER, &pmuE->host_diagnostic_3xxx);
+-	} else if ((acb->dev_id = 0x1214)) {
++	} else if (acb->dev_id = 0x1214) {
+ 		writel(0x20, pmuD->reset_request);
+ 	} else {
+ 		pci_write_config_byte(acb->pdev, 0x84, 0x20);
+-- 
+2.17.1
