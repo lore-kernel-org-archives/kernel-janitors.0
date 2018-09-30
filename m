@@ -1,21 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 02 Sep 2018 00:45:13 +0000
-Subject: Re: [PATCH net-next] net: remove duplicated include from net_failover.c
-Message-Id: <20180901.174513.1763535208386074281.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 30 Sep 2018 22:57:15 +0000
+Subject: [PATCH]  mt76: fix header guard macro define names
+Message-Id: <20180930225715.18491-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1535687067-23044-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1535687067-23044-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: sridhar.samudrala@intel.com, stephen@networkplumber.org, dan.carpenter@oracle.com, alexander.h.duyck@intel.com, jeffrey.t.kirsher@intel.com, liran.alon@oracle.com, joao.m.martins@oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 31 Aug 2018 03:44:27 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The header guards that are #defined are different from those being
+checked.  Fix this by #defining them to the correct name.
 
-Applied, thanks.
+Fixes clang warnings:
+drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h:17:9:
+warning: '__MT76x02_MCU_H' is used as a header guard here, followed
+by #define of a different macro [-Wheader-guard]
+
+drivers/net/wireless/mediatek/mt76/mt76x02_usb.h:17:9:
+warning: '__MT76x02_USB_H' is used as a header guard here, followed
+by #define of a different macro [-Wheader-guard]
+
+Fixes: 905db7470199 ("mt76: usb: move mt76x02 mcu code in mt76x02-usb module")
+Fixes: edaa580bc830 ("mt76: move shared mcu_calibrate routine in mt76x02-lib module")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt76x02_usb.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h b/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h
+index 2f5af3dad2bb..6e178bec07d8 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h
++++ b/drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h
+@@ -15,7 +15,7 @@
+  */
+ 
+ #ifndef __MT76x02_MCU_H
+-#define __MT76x0x_MCU_H
++#define __MT76x02_MCU_H
+ 
+ #define MT_MCU_RESET_CTL		0x070C
+ #define MT_MCU_INT_LEVEL		0x0718
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h b/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h
+index 2482f9761fcd..39dcfeee39f2 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h
++++ b/drivers/net/wireless/mediatek/mt76/mt76x02_usb.h
+@@ -15,7 +15,7 @@
+  */
+ 
+ #ifndef __MT76x02_USB_H
+-#define __MT76x0x_USB_H
++#define __MT76x02_USB_H
+ 
+ #include "mt76.h"
+ 
+-- 
+2.17.1
