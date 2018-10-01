@@ -1,51 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 03 Oct 2018 09:59:57 +0000
-Subject: [PATCH][usb-next] usb: core: fix memory leak on port_dev_path allocation
-Message-Id: <20181003095957.3395-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Oct 2018 06:56:36 +0000
+Subject: [bug report] jump_label: Annotate entries that operate on __init code earlier
+Message-Id: <20181001065636.GA22197@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Jon Flatley <jflat@chromium.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Ard Biesheuvel,
 
-Currently the allocation of port_dev_path from the call to
-kobject_get_path is not being kfree'd, causing a memory leak. Fix
-this by kfree'ing this at the end of the function. Add an extra
-error exit path to fix one of the early leaks when envp[0] fails
-to be allocated.
+This is a semi-automatic email about new static checker warnings.
 
-Detected by CoverityScan, CID#1473771 ("Resource Leak")
+The patch 19483677684b: "jump_label: Annotate entries that operate on 
+__init code earlier" from Sep 18, 2018, leads to the following Smatch 
+complaint:
 
-Fixes: 201af55da8a3 ("usb: core: added uevent for over-current")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/core/hub.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+    kernel/jump_label.c:524 __jump_label_mod_update()
+    error: we previously assumed 'm' could be null (see line 519)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 7801bb30bdba..8ae781ce1a80 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -5168,7 +5168,7 @@ static void port_over_current_notify(struct usb_port *port_dev)
- 
- 	envp[0] = kasprintf(GFP_KERNEL, "OVER_CURRENT_PORT=%s", port_dev_path);
- 	if (!envp[0])
--		return;
-+		goto exit_path;
- 
- 	envp[1] = kasprintf(GFP_KERNEL, "OVER_CURRENT_COUNT=%u",
- 			port_dev->over_current_count);
-@@ -5180,6 +5180,8 @@ static void port_over_current_notify(struct usb_port *port_dev)
- 	kfree(envp[1]);
- exit:
- 	kfree(envp[0]);
-+exit_path:
-+	kfree(port_dev_path);
- }
- 
- static void port_event(struct usb_hub *hub, int port1)
--- 
-2.17.1
+kernel/jump_label.c
+   518			m = mod->mod;
+   519			if (!m)
+                            ^^
+Old code has check for NULL
+
+   520				stop = __stop___jump_table;
+   521			else
+   522				stop = m->jump_entries + m->num_jump_entries;
+   523			__jump_label_update(key, mod->entries, stop,
+   524					    m->state = MODULE_STATE_COMING);
+                                            ^^^^^^^^
+New code adds unchecked dereference.
+
+   525		}
+   526	}
+
+regards,
+dan carpenter
