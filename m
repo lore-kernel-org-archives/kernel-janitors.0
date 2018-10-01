@@ -1,51 +1,26 @@
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 26 Oct 2018 18:54:43 +0000
-Subject: Re: [PATCH] Documentation: fix spelling mistake, EACCESS -> EACCES
-Message-Id: <CANiq72=4KUL60=_T_VEUZmjoRFkuRmT5WCfbXO9mJ5bZoVgZ+Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 01 Oct 2018 11:25:26 +0000
+Subject: Re: [PATCH -next] gpio: omap: Remove set but not used variable 'dev'
+Message-Id: <CACRpkdZn5sm1fis4hvy-qMrM0dZMApGjTZeYXeLQPD_j5vY_yg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181026172549.3628-1-colin.king@canonical.com>
- <CANiq72nFZS=3KGaQpGjRbprh8HTBiTcSpxScE2uacDmg-xqDGA@mail.gmail.com>
- <20181026184009.GV25444@bombadil.infradead.org> <CANiq72m-2FU7ioqj9sqsfWk4nSp2FO9S_8kYcbnGReXNAXYM2w@mail.gmail.com>
-In-Reply-To: <CANiq72m-2FU7ioqj9sqsfWk4nSp2FO9S_8kYcbnGReXNAXYM2w@mail.gmail.com>
+References: <1538101068-160486-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1538101068-160486-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Matthew Wilcox <willy@infradead.org>
-Cc: colin.king@canonical.com, jk@ozlabs.org, Jonathan Corbet <corbet@lwn.net>, Dave Airlie <airlied@linux.ie>, maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com, sean@poorly.run, linuxppc-dev@lists.ozlabs.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 8:53 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Fri, Oct 26, 2018 at 8:40 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Fri, Oct 26, 2018 at 08:20:12PM +0200, Miguel Ojeda wrote:
-> > > On Fri, Oct 26, 2018 at 7:27 PM Colin King <colin.king@canonical.com> wrote:
-> > > >
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > >
-> > > > Trivial fix to a spelling mistake of the error access name EACCESS,
-> > > > rename to EACCES
-> > >
-> > > ? It is not a typo, it is the name of the error (POSIX). Same thing
-> > > for the rest of the patches.
-> >
-> > Are you sure?  From open(2):
-> >
-> >        EACCES The  requested access to the file is not allowed, or search per‐
-> >               mission is denied for one of the directories in the path  prefix
-> >               of  pathname,  or the file did not exist yet and write access to
-> >               the parent directory is not  allowed.   (See  also  path_resolu‐
-> >               tion(7).)
-> >
-> > include/uapi/asm-generic/errno-base.h:#define   EACCES          13      /* Permission denied */
->
-> I thought you were doing the reverse change. Never mind! :-)
->
-> (Btw, the POSIX reference is
-> http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/errno.h.html#tag_13_09,
-> in case you want to include it or are curious)
+On Fri, Sep 28, 2018 at 4:08 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-Sorry Matthew, thought I was answering to Colin. I should go to rest.
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/gpio/gpio-omap.c: In function 'gpio_omap_cpu_notifier':
+> drivers/gpio/gpio-omap.c:1327:17: warning:
+>  variable 'dev' set but not used [-Wunused-but-set-variable]
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Cheers,
-Miguel
+Patch applied with Tony's ACK.
+
+Yours,
+Linus Walleij
