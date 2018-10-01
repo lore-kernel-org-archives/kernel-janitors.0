@@ -1,38 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Oct 2018 11:17:20 +0000
-Subject: [PATCH] staging: xgifb: clean an indentation issue
-Message-Id: <20181030111720.5118-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Oct 2018 16:44:41 +0000
+Subject: [PATCH] mei: samples: fix a signedness bug in amt_host_if_call()
+Message-Id: <20181001164440.GA29248@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaud Patard <arnaud.patard@rtp-net.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tomas Winkler <tomas.winkler@intel.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <shuahkh@osg.samsung.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+"out_buf_sz" needs to be signed for the error handling to work.
 
-Trivial fix to clean up an indentation issue
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/xgifb/XGI_main_26.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/xgifb/XGI_main_26.c b/drivers/staging/xgifb/XGI_main_26.c
-index eca0b50f0df6..217c6bb82c0d 100644
---- a/drivers/staging/xgifb/XGI_main_26.c
-+++ b/drivers/staging/xgifb/XGI_main_26.c
-@@ -923,8 +923,9 @@ static int XGIfb_do_set_var(struct fb_var_screeninfo *var, int isactive,
- 	if (!htotal || !vtotal) {
- 		pr_debug("Invalid 'var' information\n");
- 		return -EINVAL;
--	} pr_debug("var->pixclock=%d, htotal=%d, vtotal=%d\n",
--			var->pixclock, htotal, vtotal);
-+	}
-+	pr_debug("var->pixclock=%d, htotal=%d, vtotal=%d\n",
-+		 var->pixclock, htotal, vtotal);
- 
- 	if (var->pixclock) {
- 		drate = 1000000000 / var->pixclock;
--- 
-2.19.1
+diff --git a/samples/mei/mei-amt-version.c b/samples/mei/mei-amt-version.c
+index 57d0d871dcf7..33e67bd1dc34 100644
+--- a/samples/mei/mei-amt-version.c
++++ b/samples/mei/mei-amt-version.c
+@@ -370,7 +370,7 @@ static uint32_t amt_host_if_call(struct amt_host_if *acmd,
+ 			unsigned int expected_sz)
+ {
+ 	uint32_t in_buf_sz;
+-	uint32_t out_buf_sz;
++	ssize_t out_buf_sz;
+ 	ssize_t written;
+ 	uint32_t status;
+ 	struct amt_host_if_resp_header *msg_hdr;
