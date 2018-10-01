@@ -1,64 +1,33 @@
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 26 Oct 2018 18:50:54 +0000
-Subject: Re: [PATCH] cifs: fix spelling mistake, EACCESS -> EACCES
-Message-Id: <CAH2r5mtPEj04VutE44Dwdk+UtRM0PuT6_teMrOU44XCk3CirQA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Oct 2018 16:45:05 +0000
+Subject: [PATCH] drm/omap: Use after free in omap_connector_destroy()
+Message-Id: <20181001164505.GB29248@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181026180721.5040-1-colin.king@canonical.com>
-In-Reply-To: <20181026180721.5040-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-merged into cifs-2.6.git for-next
-On Fri, Oct 26, 2018 at 1:10 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to a spelling mistake of the error access name EACCESS,
-> rename to EACCES
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/file.c  | 2 +-
->  fs/cifs/inode.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 84477e995246..6894d071850a 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -1003,7 +1003,7 @@ cifs_lock_add(struct cifsFileInfo *cfile, struct cifsLockInfo *lock)
->   * Set the byte-range lock (mandatory style). Returns:
->   * 1) 0, if we set the lock and don't need to request to the server;
->   * 2) 1, if no locks prevent us but we need to request to the server;
-> - * 3) -EACCESS, if there is a lock that prevents us and wait is false.
-> + * 3) -EACCES, if there is a lock that prevents us and wait is false.
->   */
->  static int
->  cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
-> diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-> index 0945d40030eb..3685e2c25205 100644
-> --- a/fs/cifs/inode.c
-> +++ b/fs/cifs/inode.c
-> @@ -1305,8 +1305,8 @@ cifs_drop_nlink(struct inode *inode)
->  /*
->   * If d_inode(dentry) is null (usually meaning the cached dentry
->   * is a negative dentry) then we would attempt a standard SMB delete, but
-> - * if that fails we can not attempt the fall back mechanisms on EACCESS
-> - * but will return the EACCESS to the caller. Note that the VFS does not call
-> + * if that fails we can not attempt the fall back mechanisms on EACCES
-> + * but will return the EACCES to the caller. Note that the VFS does not call
->   * unlink on negative dentries currently.
->   */
->  int cifs_unlink(struct inode *dir, struct dentry *dentry)
-> --
-> 2.19.1
->
+We can free "omap_connector" until the end of the function.
 
+Fixes: 949ea2ef3fed ("drm/omap: Don't call HPD registration operations recursively")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Thanks,
-
-Steve
+diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
+index 98f5ca29444a..b81302c4bf9e 100644
+--- a/drivers/gpu/drm/omapdrm/omap_connector.c
++++ b/drivers/gpu/drm/omapdrm/omap_connector.c
+@@ -164,10 +164,11 @@ static void omap_connector_destroy(struct drm_connector *connector)
+ 
+ 	drm_connector_unregister(connector);
+ 	drm_connector_cleanup(connector);
+-	kfree(omap_connector);
+ 
+ 	omapdss_device_put(omap_connector->output);
+ 	omapdss_device_put(omap_connector->display);
++
++	kfree(omap_connector);
+ }
+ 
+ #define MAX_EDID  512
