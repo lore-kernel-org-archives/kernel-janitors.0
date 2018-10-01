@@ -1,70 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Oct 2018 16:46:02 +0000
-Subject: [PATCH] pcmcia:  clean an indentation issues, remove extraneous spaces
-Message-Id: <20181031164602.28738-1-colin.king@canonical.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Mon, 01 Oct 2018 09:43:46 +0000
+Subject: Re: [PATCH -next] PM / OPP: Make function _add_opp_dev_unlocked() static
+Message-Id: <20181001093146.s3hkigpohpdt34p6@vireshk-i7>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dominik Brodowski <linux@dominikbrodowski.net>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 25-09-18, 14:39, Wei Yongjun wrote:
+> Fixes the following sparse warning:
+> 
+> drivers/opp/core.c:762:19: warning:
+>  symbol '_add_opp_dev_unlocked' was not declared. Should it be static?
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/opp/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index aaef20c..cdf918a 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -759,8 +759,8 @@ static void _remove_opp_dev(struct opp_device *opp_dev,
+>  	kfree(opp_dev);
+>  }
+>  
+> -struct opp_device *_add_opp_dev_unlocked(const struct device *dev,
+> -					 struct opp_table *opp_table)
+> +static struct opp_device *_add_opp_dev_unlocked(const struct device *dev,
+> +						struct opp_table *opp_table)
+>  {
+>  	struct opp_device *opp_dev;
+>  	int ret;
 
-Trivial fix to clean up indentation issues, remove spaces
+Merged this into the original commit where the warning was introduced. Thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pcmcia/i82092.c | 34 ++++++++++++++++------------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
-index aae7e6df99cd..7cebea482200 100644
---- a/drivers/pcmcia/i82092.c
-+++ b/drivers/pcmcia/i82092.c
-@@ -430,27 +430,25 @@ static int i82092aa_get_status(struct pcmcia_socket *socket, u_int *value)
- 		
- 	/* IO cards have a different meaning of bits 0,1 */
- 	/* Also notice the inverse-logic on the bits */
--	 if (indirect_read(sock, I365_INTCTL) & I365_PC_IOCARD)	{
--	 	/* IO card */
--	 	if (!(status & I365_CS_STSCHG))
--	 		*value |= SS_STSCHG;
--	 } else { /* non I/O card */
--	 	if (!(status & I365_CS_BVD1))
--	 		*value |= SS_BATDEAD;
--	 	if (!(status & I365_CS_BVD2))
--	 		*value |= SS_BATWARN;
--	 		
--	 }
-+	if (indirect_read(sock, I365_INTCTL) & I365_PC_IOCARD)	{
-+		/* IO card */
-+		if (!(status & I365_CS_STSCHG))
-+			*value |= SS_STSCHG;
-+	} else { /* non I/O card */
-+		if (!(status & I365_CS_BVD1))
-+			*value |= SS_BATDEAD;
-+		if (!(status & I365_CS_BVD2))
-+			*value |= SS_BATWARN;
-+	}
- 	 
--	 if (status & I365_CS_WRPROT)
--	 	(*value) |= SS_WRPROT;	/* card is write protected */
-+	if (status & I365_CS_WRPROT)
-+		(*value) |= SS_WRPROT;	/* card is write protected */
- 	 
--	 if (status & I365_CS_READY)
--	 	(*value) |= SS_READY;    /* card is not busy */
-+	if (status & I365_CS_READY)
-+		(*value) |= SS_READY;    /* card is not busy */
- 	 	
--	 if (status & I365_CS_POWERON)
--	 	(*value) |= SS_POWERON;  /* power is applied to the card */
--
-+	if (status & I365_CS_POWERON)
-+		(*value) |= SS_POWERON;  /* power is applied to the card */
- 
- 	leave("i82092aa_get_status");
- 	return 0;
 -- 
-2.19.1
+viresh
