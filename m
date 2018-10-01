@@ -1,23 +1,35 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Thu, 04 Oct 2018 06:14:38 +0000
-Subject: Re: [-next] powerpc: Remove duplicated include from pci_32.c
-Message-Id: <42QjKD27qPz9s7W@ozlabs.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Oct 2018 16:44:30 +0000
+Subject: [PATCH] ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()
+Message-Id: <20181001164430.GA29197@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Al Viro <viro@zeniv.linux.org.uk>, Paul Burton <paul.burton@mips.com>, Sinan Kaya <okaya@codeaurora.org>, Mathieu Malaterre <malat@debian.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Patrick Lai <plai@codeaurora.org>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-On Sun, 2018-09-23 at 08:12:08 UTC, YueHaibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
+The q6asm_audio_client_alloc() doesn't return NULL, it returns error
+pointers.
 
-Applied to powerpc next, thanks.
+Fixes: 2a9e92d371db ("ASoC: qdsp6: q6asm: Add q6asm dai driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-https://git.kernel.org/powerpc/c/01b9870ea614518d48b6d2c787284b
-
-cheers
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index c3806d7037fc..a16c71c03058 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -318,10 +318,11 @@ static int q6asm_dai_open(struct snd_pcm_substream *substream)
+ 	prtd->audio_client = q6asm_audio_client_alloc(dev,
+ 				(q6asm_cb)event_handler, prtd, stream_id,
+ 				LEGACY_PCM_MODE);
+-	if (!prtd->audio_client) {
++	if (IS_ERR(prtd->audio_client)) {
+ 		pr_info("%s: Could not allocate memory\n", __func__);
++		ret = PTR_ERR(prtd->audio_client);
+ 		kfree(prtd);
+-		return -ENOMEM;
++		return ret;
+ 	}
+ 
+ 	if (substream->stream = SNDRV_PCM_STREAM_PLAYBACK)
