@@ -1,35 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 04 Oct 2018 14:20:27 +0000
-Subject: [PATCH] media: exynos4-is: make const array config_ids static
-Message-Id: <20181004142027.21009-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 02 Oct 2018 05:34:28 +0000
+Subject: Re: [PATCH net] net: sched: act_ipt: check for underflow in __tcf_ipt_init()
+Message-Id: <20181001.223428.810557942317894005.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180922134648.GA7027@mwanda>
+In-Reply-To: <20180922134648.GA7027@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: dan.carpenter@oracle.com
+Cc: jhs@mojatatu.com, kaber@trash.net, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 22 Sep 2018 16:46:48 +0300
 
-The const array config_ids can be made static, saves populating it on
-the stack and will make it read-only.
+> If "td->u.target_size" is larger than sizeof(struct xt_entry_target) we
+> return -EINVAL.  But we don't check whether it's smaller than
+> sizeof(struct xt_entry_target) and that could lead to an out of bounds
+> read.
+> 
+> Fixes: 7ba699c604ab ("[NET_SCHED]: Convert actions from rtnetlink to new netlink API")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 5ddb2321e9e4..f5fc54de19da 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -656,7 +656,7 @@ static int fimc_is_hw_open_sensor(struct fimc_is *is,
- 
- int fimc_is_hw_initialize(struct fimc_is *is)
- {
--	const int config_ids[] = {
-+	static const int config_ids[] = {
- 		IS_SC_PREVIEW_STILL, IS_SC_PREVIEW_VIDEO,
- 		IS_SC_CAPTURE_STILL, IS_SC_CAPTURE_VIDEO
- 	};
--- 
-2.17.1
+Applied.
