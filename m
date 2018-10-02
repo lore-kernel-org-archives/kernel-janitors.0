@@ -1,39 +1,80 @@
-From: Minas Harutyunyan <minas.harutyunyan@synopsys.com>
-Date: Thu, 18 Oct 2018 07:50:04 +0000
-Subject: Re: [PATCH] usb: dwc2: pci: Fix an error code in probe
-Message-Id: <410670D7E743164D87FA6160E7907A56013A794B32@am04wembxa.internal.synopsys.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 02 Oct 2018 22:53:17 +0000
+Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: clean up some data_ac usage
+Message-Id: <20181002155317.f3d3ff3f3d4d1787b5e3121d@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181018073647.5ud667degrrqzegc@kili.mountain>
-In-Reply-To: <20181018073647.5ud667degrrqzegc@kili.mountain>
+References: <20180907122500.azbll3byq4hdnrlw@kili.mountain>
+In-Reply-To: <20180907122500.azbll3byq4hdnrlw@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Minas Harutyunyan <minas.harutyunyan@synopsys.com>, Vardan Mikayelyan <mvardan@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: ocfs2-devel@oss.oracle.com
 
-On 10/18/2018 11:37 AM, Dan Carpenter wrote:
-> We added some error handling to this function but forgot to set the
-> error code on this path.
+On Fri, 7 Sep 2018 15:25:01 +0300 Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> I started looking at this code because of a Smatch false positive:
 > 
-> Fixes: ecd29dabb2ba ("usb: dwc2: pci: Handle error cleanup in probe")
+>     fs/ocfs2/move_extents.c:347 ocfs2_defrag_extent()
+>     warn: variable dereferenced before check 'context->data_ac' (see line 304)
+> 
+> context->data_ac can't be NULL so I removed the check.  I changed the
+> next lines to use "data_ac" instead of "context->data_ac" for
+> consistency.  And we don't need to pass "data_ac" to
+> ocfs2_lock_meta_allocator_move_extents() any more so I removed that.
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-
-> ---
->   drivers/usb/dwc2/pci.c | 1 +
->   1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/usb/dwc2/pci.c b/drivers/usb/dwc2/pci.c
-> index d257c541e51b..7afc10872f1f 100644
-> --- a/drivers/usb/dwc2/pci.c
-> +++ b/drivers/usb/dwc2/pci.c
-> @@ -120,6 +120,7 @@ static int dwc2_pci_probe(struct pci_dev *pci,
->   	dwc2 = platform_device_alloc("dwc2", PLATFORM_DEVID_AUTO);
->   	if (!dwc2) {
->   		dev_err(dev, "couldn't allocate dwc2 device\n");
-> +		ret = -ENOMEM;
->   		goto err;
->   	}
->   
-> 
+
+Please don't forget the ^---$ at end-of-changelog.
+
+> --- a/fs/ocfs2/move_extents.c
+> +++ b/fs/ocfs2/move_extents.c
+> @@ -160,15 +160,12 @@ static int __ocfs2_move_extent(handle_t *handle,
+>   * lock allocators, and reserving appropriate number of bits for
+>   * meta blocks and data clusters.
+>   *
+> - * in some cases, we don't need to reserve clusters, just let data_ac
+> - * be NULL.
+>   */
+>  static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
+>  					struct ocfs2_extent_tree *et,
+>  					u32 clusters_to_move,
+>  					u32 extents_to_split,
+>  					struct ocfs2_alloc_context **meta_ac,
+> -					struct ocfs2_alloc_context **data_ac,
+>  					int extra_blocks,
+>  					int *credits)
+>  {
+> @@ -255,7 +252,6 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+>  	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>  						*len, 1,
+>  						&context->meta_ac,
+> -						&context->data_ac,
+>  						extra_blocks, &credits);
+>  	if (ret) {
+>  		mlog_errno(ret);
+> @@ -344,10 +340,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+>  		mlog_errno(ret);
+>  
+>  out_commit:
+> -	if (need_free && context->data_ac) {
+> +	if (need_free) {
+
+Current mainline is different here.
+
+>  		struct ocfs2_alloc_context *data_ac = context->data_ac;
+>  
+> -		if (context->data_ac->ac_which = OCFS2_AC_USE_LOCAL)
+> +		if (data_ac->ac_which = OCFS2_AC_USE_LOCAL)
+>  			ocfs2_free_local_alloc_bits(osb, handle, data_ac,
+>  					new_phys_cpos, new_len);
+>  		else
+> @@ -629,7 +625,7 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+>  	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>  						len, 1,
+>  						&context->meta_ac,
+> -						NULL, extra_blocks, &credits);
+> +						extra_blocks, &credits);
+>  	if (ret) {
+>  		mlog_errno(ret);
+>  		goto out;
