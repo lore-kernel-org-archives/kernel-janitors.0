@@ -1,36 +1,51 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 04 Oct 2018 14:15:35 +0000
-Subject: [PATCH] media: cx23885: make const array addr_list static
-Message-Id: <20181004141535.20809-1-colin.king@canonical.com>
+Date: Wed, 03 Oct 2018 09:59:57 +0000
+Subject: [PATCH][usb-next] usb: core: fix memory leak on port_dev_path allocation
+Message-Id: <20181003095957.3395-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Jon Flatley <jflat@chromium.org>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The const array addr_list can be made static, saves populating it on
-the stack and will make it read-only.
+Currently the allocation of port_dev_path from the call to
+kobject_get_path is not being kfree'd, causing a memory leak. Fix
+this by kfree'ing this at the end of the function. Add an extra
+error exit path to fix one of the early leaks when envp[0] fails
+to be allocated.
 
+Detected by CoverityScan, CID#1473771 ("Resource Leak")
+
+Fixes: 201af55da8a3 ("usb: core: added uevent for over-current")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/pci/cx23885/cx23885-i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/hub.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx23885/cx23885-i2c.c b/drivers/media/pci/cx23885/cx23885-i2c.c
-index dd67135d2bb6..d0df3dfff694 100644
---- a/drivers/media/pci/cx23885/cx23885-i2c.c
-+++ b/drivers/media/pci/cx23885/cx23885-i2c.c
-@@ -340,7 +340,7 @@ int cx23885_i2c_register(struct cx23885_i2c *bus)
- 	/* Instantiate the IR receiver device, if present */
- 	if (0 = bus->i2c_rc) {
- 		struct i2c_board_info info;
--		const unsigned short addr_list[] = {
-+		static const unsigned short addr_list[] = {
- 			0x6b, I2C_CLIENT_END
- 		};
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 7801bb30bdba..8ae781ce1a80 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -5168,7 +5168,7 @@ static void port_over_current_notify(struct usb_port *port_dev)
  
+ 	envp[0] = kasprintf(GFP_KERNEL, "OVER_CURRENT_PORT=%s", port_dev_path);
+ 	if (!envp[0])
+-		return;
++		goto exit_path;
+ 
+ 	envp[1] = kasprintf(GFP_KERNEL, "OVER_CURRENT_COUNT=%u",
+ 			port_dev->over_current_count);
+@@ -5180,6 +5180,8 @@ static void port_over_current_notify(struct usb_port *port_dev)
+ 	kfree(envp[1]);
+ exit:
+ 	kfree(envp[0]);
++exit_path:
++	kfree(port_dev_path);
+ }
+ 
+ static void port_event(struct usb_hub *hub, int port1)
 -- 
 2.17.1
