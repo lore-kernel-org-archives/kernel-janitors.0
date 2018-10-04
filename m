@@ -1,44 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Oct 2018 15:07:27 +0000
-Subject: [PATCH] staging: rtlwifi: phydm: fix spelling mistake "Abnrormal" -> "Abnormal"
-Message-Id: <20181012150727.21479-1-colin.king@canonical.com>
+Date: Thu, 04 Oct 2018 13:37:40 +0000
+Subject: [PATCH] pinctrl: sirf: make const array rsc_ids static
+Message-Id: <20181004133740.19913-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in message text
+The const array rsc_ids can be made static, saves populating it on
+the stack and will make it read-only.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtlwifi/phydm/phydm_dig.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sirf/pinctrl-sirf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtlwifi/phydm/phydm_dig.c b/drivers/staging/rtlwifi/phydm/phydm_dig.c
-index 3115e7bdc749..f10776fbe2d9 100644
---- a/drivers/staging/rtlwifi/phydm/phydm_dig.c
-+++ b/drivers/staging/rtlwifi/phydm/phydm_dig.c
-@@ -813,7 +813,7 @@ void odm_DIG(void *dm_void)
- 			dig_tab->rx_gain_range_min = 0x1c;
- 			ODM_RT_TRACE(
- 				dm, ODM_COMP_DIG,
--				"DIG: Abnrormal #beacon (%d) case in STA mode: Force lower bound to 0x%x\n",
-+				"DIG: Abnormal #beacon (%d) case in STA mode: Force lower bound to 0x%x\n",
- 				dm->phy_dbg_info.num_qry_beacon_pkt,
- 				dig_tab->rx_gain_range_min);
- 		}
-@@ -824,7 +824,7 @@ void odm_DIG(void *dm_void)
- 		dig_tab->rx_gain_range_min = dig_tab->rx_gain_range_max;
- 		ODM_RT_TRACE(
- 			dm, ODM_COMP_DIG,
--			"DIG: Abnrormal lower bound case: Force lower bound to 0x%x\n",
-+			"DIG: Abnormal lower bound case: Force lower bound to 0x%x\n",
- 			dig_tab->rx_gain_range_min);
- 	}
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index 2e42d738b589..2a44b911018e 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -246,7 +246,7 @@ static struct pinctrl_desc sirfsoc_pinmux_desc = {
  
+ static void __iomem *sirfsoc_rsc_of_iomap(void)
+ {
+-	const struct of_device_id rsc_ids[]  = {
++	static const struct of_device_id rsc_ids[]  = {
+ 		{ .compatible = "sirf,prima2-rsc" },
+ 		{}
+ 	};
 -- 
 2.17.1
