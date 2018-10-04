@@ -1,75 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 04 Oct 2018 10:42:38 +0000
-Subject: Applied "ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()" to the asoc tree
-Message-Id: <20181004104238.04D1E1121BA8@debutante.sirena.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Oct 2018 13:59:06 +0000
+Subject: [PATCH] media: bttv-input: make const array addr_list static
+Message-Id: <20181004135906.20320-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181001164430.GA29197@mwanda>
-In-Reply-To: <20181001164430.GA29197@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()
+The const array addr_list can be made static, saves populating it on
+the stack and will make it read-only.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 8e9f7265eda9f3a662ca1ca47a69042a7840735b Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 1 Oct 2018 19:44:30 +0300
-Subject: [PATCH] ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()
-
-The q6asm_audio_client_alloc() doesn't return NULL, it returns error
-pointers.
-
-Fixes: 2a9e92d371db ("ASoC: qdsp6: q6asm: Add q6asm dai driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/pci/bt8xx/bttv-input.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index c3806d7037fc..a16c71c03058 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -318,10 +318,11 @@ static int q6asm_dai_open(struct snd_pcm_substream *substream)
- 	prtd->audio_client = q6asm_audio_client_alloc(dev,
- 				(q6asm_cb)event_handler, prtd, stream_id,
- 				LEGACY_PCM_MODE);
--	if (!prtd->audio_client) {
-+	if (IS_ERR(prtd->audio_client)) {
- 		pr_info("%s: Could not allocate memory\n", __func__);
-+		ret = PTR_ERR(prtd->audio_client);
- 		kfree(prtd);
--		return -ENOMEM;
-+		return ret;
- 	}
- 
- 	if (substream->stream = SNDRV_PCM_STREAM_PLAYBACK)
+diff --git a/drivers/media/pci/bt8xx/bttv-input.c b/drivers/media/pci/bt8xx/bttv-input.c
+index 5cf929370398..d34fbaa027c2 100644
+--- a/drivers/media/pci/bt8xx/bttv-input.c
++++ b/drivers/media/pci/bt8xx/bttv-input.c
+@@ -370,7 +370,7 @@ static int get_key_pv951(struct IR_i2c *ir, enum rc_proto *protocol,
+ /* Instantiate the I2C IR receiver device, if present */
+ void init_bttv_i2c_ir(struct bttv *btv)
+ {
+-	const unsigned short addr_list[] = {
++	static const unsigned short addr_list[] = {
+ 		0x1a, 0x18, 0x64, 0x30, 0x71,
+ 		I2C_CLIENT_END
+ 	};
 -- 
-2.19.0.rc2
+2.17.1
