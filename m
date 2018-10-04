@@ -1,23 +1,44 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Tue, 30 Oct 2018 11:48:43 +0000
-Subject: Re: [PATCH] xfrm: Fix error return code in xfrm_output_one()
-Message-Id: <20181030114843.GC2441@gauss3.secunet.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 04 Oct 2018 10:51:02 +0000
+Subject: [PATCH -next] scsi: lpfc: Remove set but not used variables 'tgtp'
+Message-Id: <1538650262-104577-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540620726-100678-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1540620726-100678-1-git-send-email-weiyongjun1@huawei.com>
+References: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 06:12:06AM +0000, Wei Yongjun wrote:
-> xfrm_output_one() does not return a error code when there is
-> no dst_entry attached to the skb, it is still possible crash
-> with a NULL pointer dereference in xfrm_output_resume(). Fix
-> it by return error code -EHOSTUNREACH.
-> 
-> Fixes: 9e1437937807 ("xfrm: Fix NULL pointer dereference when skb_dst_force clears the dst_entry.")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks a lot!
+drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_nodelist_data':
+drivers/scsi/lpfc/lpfc_debugfs.c:553:29: warning:
+ variable 'tgtp' set but not used [-Wunused-but-set-variable]
+
+It never used since 2b65e18202fd ("scsi: lpfc: NVME Target: Add debugfs support")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/lpfc/lpfc_debugfs.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
+index aec5b10..0c8005b 100644
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -550,7 +550,6 @@
+ 	struct lpfc_nodelist *ndlp;
+ 	unsigned char *statep;
+ 	struct nvme_fc_local_port *localport;
+-	struct lpfc_nvmet_tgtport *tgtp;
+ 	struct nvme_fc_remote_port *nrport = NULL;
+ 	struct lpfc_nvme_rport *rport;
+ 
+@@ -654,7 +653,6 @@
+ 			"\nOutstanding IO x%x\n",  outio);
+ 
+ 	if (phba->nvmet_support && phba->targetport && (vport = phba->pport)) {
+-		tgtp = (struct lpfc_nvmet_tgtport *)phba->targetport->private;
+ 		len += snprintf(buf + len, size - len,
+ 				"\nNVME Targetport Entry ...\n");
