@@ -1,49 +1,35 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 09 Oct 2018 01:45:59 +0000
-Subject: [PATCH v2] mt76x0: pci: fix set external PA I/O current
-Message-Id: <1539049559-178175-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Oct 2018 14:20:27 +0000
+Subject: [PATCH] media: exynos4-is: make const array config_ids static
+Message-Id: <20181004142027.21009-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539004909-195005-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539004909-195005-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi@redhat.com>, Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/net/wireless/mediatek/mt76/mt76x0/pci.c: In function 'mt76x0e_register_device':
-drivers/net/wireless/mediatek/mt76/mt76x0/pci.c:107:8: warning:
- variable 'data' set but not used [-Wunused-but-set-variable]
+The const array config_ids can be made static, saves populating it on
+the stack and will make it read-only.
 
-It seems correct value to write is 'data'
-
-Fixes: 2b2cb40bcd7d ("mt76x0: pci: add hw initialization at bootstrap")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2: remove 'net-next' from patch title
----
- drivers/net/wireless/mediatek/mt76/mt76x0/pci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
-index 87997cd..0426c68 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
-@@ -106,12 +106,12 @@ static int mt76x0e_register_device(struct mt76x02_dev *dev)
- 		if (val & MT_EE_NIC_CONF_0_PA_IO_CURRENT) {
- 			u32 data;
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 5ddb2321e9e4..f5fc54de19da 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -656,7 +656,7 @@ static int fimc_is_hw_open_sensor(struct fimc_is *is,
  
--			/* set external external PA I/O
-+			/* set external PA I/O
- 			 * current to 16mA
- 			 */
- 			data = mt76_rr(dev, 0x11c);
--			val |= 0xc03;
--			mt76_wr(dev, 0x11c, val);
-+			data |= 0xc03;
-+			mt76_wr(dev, 0x11c, data);
- 		}
- 	}
+ int fimc_is_hw_initialize(struct fimc_is *is)
+ {
+-	const int config_ids[] = {
++	static const int config_ids[] = {
+ 		IS_SC_PREVIEW_STILL, IS_SC_PREVIEW_VIDEO,
+ 		IS_SC_CAPTURE_STILL, IS_SC_CAPTURE_VIDEO
+ 	};
+-- 
+2.17.1
