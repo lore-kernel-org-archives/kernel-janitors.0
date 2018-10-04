@@ -1,53 +1,45 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 10 Oct 2018 19:11:38 +0000
-Subject: Re: [PATCH -next] drm/amdkfd: Remove set but not used variable 'preempt_all_queues'
-Message-Id: <CADnq5_MdvZ0DHJ+fRWqw2V595f_kGYRAV1_790OAAiFAsu8hCg@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 04 Oct 2018 06:58:39 +0000
+Subject: [PATCH v2 -next] USB: cypress_m8: remove set but not used variables 'iflag'
+Message-Id: <1538636993-126815-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539049980-186978-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539049980-186978-1-git-send-email-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
-Cc: Oded Gabbay <oded.gabbay-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chunming Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "Deucher,
- Alexander" <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Christian Koenig <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 3:37 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c: In function 'destroy_queue_cpsch':
-> drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c:1366:7: warning:
->  variable 'preempt_all_queues' set but not used [-Wunused-but-set-variable]
->
-> It never used since introduct in
-> commit 992839ad64f2 ("drm/amdkfd: Add static user-mode queues support")
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied.  Thanks!
+drivers/usb/serial/cypress_m8.c: In function 'cypress_set_termios':
+drivers/usb/serial/cypress_m8.c:866:18: warning:
+ variable 'iflag' set but not used [-Wunused-but-set-variable]
 
-Alex
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: only fix 'iflag' warning
+---
+ drivers/usb/serial/cypress_m8.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> index 4f22e74..06d38b7 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> @@ -1363,9 +1363,6 @@ static int destroy_queue_cpsch(struct device_queue_manager *dqm,
->  {
->         int retval;
->         struct mqd_manager *mqd_mgr;
-> -       bool preempt_all_queues;
-> -
-> -       preempt_all_queues = false;
->
->         retval = 0;
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/usb/serial/cypress_m8.c b/drivers/usb/serial/cypress_m8.c
+index 31c6091..8236997 100644
+--- a/drivers/usb/serial/cypress_m8.c
++++ b/drivers/usb/serial/cypress_m8.c
+@@ -863,7 +863,7 @@ static void cypress_set_termios(struct tty_struct *tty,
+ 	struct cypress_private *priv = usb_get_serial_port_data(port);
+ 	struct device *dev = &port->dev;
+ 	int data_bits, stop_bits, parity_type, parity_enable;
+-	unsigned cflag, iflag;
++	unsigned int cflag;
+ 	unsigned long flags;
+ 	__u8 oldlines;
+ 	int linechange = 0;
+@@ -899,7 +899,6 @@ static void cypress_set_termios(struct tty_struct *tty,
+ 	tty->termios.c_cflag &= ~(CMSPAR|CRTSCTS);
+ 
+ 	cflag = tty->termios.c_cflag;
+-	iflag = tty->termios.c_iflag;
+ 
+ 	/* check if there are new settings */
+ 	if (old_termios) {
