@@ -1,35 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 11 Oct 2018 09:57:57 +0000
-Subject: [PATCH] iwlwifi: fix spelling mistake "registrating" -> "registering"
-Message-Id: <20181011095757.18475-1-colin.king@canonical.com>
+From: John Garry <john.garry@huawei.com>
+Date: Thu, 04 Oct 2018 11:48:16 +0000
+Subject: Re: [SCSI] pmcraid: PMC-Sierra MaxRAID driver to support 6Gb/s SAS RAID controller
+Message-Id: <4910c207-5dc2-0095-7a7f-75bb025b337c@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f512d8fa-e782-0679-8140-0a27dd3b9062@canonical.com>
+In-Reply-To: <f512d8fa-e782-0679-8140-0a27dd3b9062@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On 04/10/2018 09:28, Colin Ian King wrote:
+> Hi,
+>
+> Static analysis from CoverityScan (CID#114178 "Operands don't affect
+> result") detected an issue in drivers/scsi/pmcraid.c, function
+> pmcraid_init_res_table with the following check:
+>
+>         if (pinstance->cfg_table->flags & MICROCODE_UPDATE_REQUIRED)
+>                 pmcraid_err("IOA requires microcode download\n");
+>
+>
+> pinstance->cfg_table->flags is a u8, MICROCODE_UPDATE_REQUIRED is  1 <<
+> 31, so the & operation always results in false and the error message is
+> never displayed.  From my understanding, flags should be a u8, so there
+> is something wrong here with the check.  Any ideas?
+>
+> Colin
+>
+>
 
-Trivial fix to spelling mistake in IWL_ERR error message
+Maybe MICROCODE_UPDATE_REQUIRED definition is wrong and should be:
+  /* config_table.flags value */
+-#define MICROCODE_UPDATE_REQUIRED        PMC_BIT32(0)
++#define MICROCODE_UPDATE_REQUIRED        PMC_BIT8(0)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/intel/iwlwifi/dvm/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
-index 1088ff036e13..a5041d92babc 100644
---- a/drivers/net/wireless/intel/iwlwifi/dvm/main.c
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
-@@ -1054,7 +1054,7 @@ static void iwl_bg_restart(struct work_struct *data)
- 			ieee80211_restart_hw(priv->hw);
- 		else
- 			IWL_ERR(priv,
--				"Cannot request restart before registrating with mac80211\n");
-+				"Cannot request restart before registering with mac80211\n");
- 	} else {
- 		WARN_ON(1);
- 	}
--- 
-2.17.1
+John
