@@ -1,45 +1,75 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 27 Oct 2018 14:27:19 +0000
-Subject: [PATCH] staging: rtl8723bs: fix typo in function name rtw_sctx_chk_waring_status
-Message-Id: <20181027142719.6269-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 04 Oct 2018 10:42:38 +0000
+Subject: Applied "ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()" to the asoc tree
+Message-Id: <20181004104238.04D1E1121BA8@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181001164430.GA29197@mwanda>
+In-Reply-To: <20181001164430.GA29197@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Straube <straube.linux@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Trivial fix to typo in function name, rename it to
-rtw_sctx_chk_warning_status.
+   ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8e9f7265eda9f3a662ca1ca47a69042a7840735b Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 1 Oct 2018 19:44:30 +0300
+Subject: [PATCH] ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()
+
+The q6asm_audio_client_alloc() doesn't return NULL, it returns error
+pointers.
+
+Fixes: 2a9e92d371db ("ASoC: qdsp6: q6asm: Add q6asm dai driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index edb678190b4b..729fd37f440b 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -3033,7 +3033,7 @@ int rtw_sctx_wait(struct submit_ctx *sctx, const char *msg)
- 	return ret;
- }
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index c3806d7037fc..a16c71c03058 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -318,10 +318,11 @@ static int q6asm_dai_open(struct snd_pcm_substream *substream)
+ 	prtd->audio_client = q6asm_audio_client_alloc(dev,
+ 				(q6asm_cb)event_handler, prtd, stream_id,
+ 				LEGACY_PCM_MODE);
+-	if (!prtd->audio_client) {
++	if (IS_ERR(prtd->audio_client)) {
+ 		pr_info("%s: Could not allocate memory\n", __func__);
++		ret = PTR_ERR(prtd->audio_client);
+ 		kfree(prtd);
+-		return -ENOMEM;
++		return ret;
+ 	}
  
--static bool rtw_sctx_chk_waring_status(int status)
-+static bool rtw_sctx_chk_warning_status(int status)
- {
- 	switch (status) {
- 	case RTW_SCTX_DONE_UNKNOWN:
-@@ -3051,7 +3051,7 @@ static bool rtw_sctx_chk_waring_status(int status)
- void rtw_sctx_done_err(struct submit_ctx **sctx, int status)
- {
- 	if (*sctx) {
--		if (rtw_sctx_chk_waring_status(status))
-+		if (rtw_sctx_chk_warning_status(status))
- 			DBG_871X("%s status:%d\n", __func__, status);
- 		(*sctx)->status = status;
- 		complete(&((*sctx)->done));
+ 	if (substream->stream = SNDRV_PCM_STREAM_PLAYBACK)
 -- 
-2.19.1
+2.19.0.rc2
