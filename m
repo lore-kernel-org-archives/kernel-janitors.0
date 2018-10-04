@@ -1,53 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 18 Oct 2018 07:36:19 +0000
-Subject: [PATCH] ath10k: Fixup extended per sta tx statistics
-Message-Id: <20181018073619.c2cxj74enkramhjr@kili.mountain>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 04 Oct 2018 08:59:40 +0000
+Subject: e1000: dubious check for 100Mb speed.
+Message-Id: <f8597763-8fae-d29a-d20b-903860dadc99@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Anilkumar Kolli <akolli@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-I had a couple concerns with this code.  First, we definitely need to
-set the error code if the kzalloc() fails.  Secondly, I was worried that
-if we didn't set "arsta->tx_stats" to NULL after freeing it, then it
-looks to me like it might lead to a use after free.  I can't test that,
-but it's harmless to set it to NULL so I did.
+Hi,
 
-Fixes: a904417fc876 ("ath10k: add extended per sta tx statistics support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/ath/ath10k/mac.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Static analysis with CoverityScan has detected an issue in
+drivers/net/ethernet/intel/e1000/e1000_hw.c, function
+e1000_config_mac_to_phy() as follows:
 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index a1c2801ded10..2b8c8bf80b0d 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6296,8 +6296,10 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
- 			arsta->tx_stats = kzalloc(sizeof(*arsta->tx_stats),
- 						  GFP_KERNEL);
--			if (!arsta->tx_stats)
-+			if (!arsta->tx_stats) {
-+				ret = -ENOMEM;
- 				goto exit;
-+			}
- 		}
- 
- 		num_tdls_stations = ath10k_mac_tdls_vif_stations_count(hw, vif);
-@@ -6385,8 +6387,10 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 			   "mac vdev %d peer delete %pM sta %pK (sta gone)\n",
- 			   arvif->vdev_id, sta->addr, sta);
- 
--		if (ath10k_debug_is_extd_tx_stats_enabled(ar))
-+		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
- 			kfree(arsta->tx_stats);
-+			arsta->tx_stats = NULL;
-+		}
- 
- 		if (sta->tdls) {
- 			ret = ath10k_mac_tdls_peer_update(ar, arvif->vdev_id,
--- 
-2.11.0
+        case e1000_phy_8201:
+                ret_val = e1000_read_phy_reg(hw, PHY_CTRL, &phy_data);
+                if (ret_val)
+                        return ret_val;
+
+                if (phy_data & RTL_PHY_CTRL_FD)
+                        ctrl |= E1000_CTRL_FD;
+                else
+                        ctrl &= ~E1000_CTRL_FD;
+
+                if (phy_data & RTL_PHY_CTRL_SPD_100)
+                        ctrl |= E1000_CTRL_SPD_100;
+                else
+                        ctrl |= E1000_CTRL_SPD_10;
+
+                e1000_config_collision_dist(hw);
+                break;
+
+phy_data is a u16, however, RTL_PHY_CTRL_SPD_100 is 0x200000 and so the
+bitwise and of phy_data & RTL_PHY_CTRL_SPD_100 is always zero, so ctrl
+can never be set to the 100Mb speed.
+
+Detected by CoverityScan, CID#140032 ("Operand's don't affect result").
+
+Colin
