@@ -1,39 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 30 Oct 2018 16:33:19 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: stm32: sai: fix invalid use of sizeof in stm32_sai_add_mclk_provider(
-Message-Id: <20181030163319.GA6462@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="k+w/mQv8wyuph6w0"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Oct 2018 12:11:18 +0000
+Subject: [PATCH][liquidio-next] liquidio: fix a couple of spelling mistakes
+Message-Id: <20181004121118.18014-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540606799-164510-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1540606799-164510-1-git-send-email-weiyongjun1@huawei.com>
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Trivial fix to spelling mistakes in dev_dbg warning messages
 
-On Sat, Oct 27, 2018 at 02:19:59AM +0000, Wei Yongjun wrote:
-> sizeof() when applied to a pointer typed expression gives the
-> size of the pointer, not that of the pointed data.
+"Reloade" -> "Reload"
+"chang" -> "change"
 
-Someone else already sent a fix for this.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cavium/liquidio/lio_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---k+w/mQv8wyuph6w0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvYh84ACgkQJNaLcl1U
-h9D2PAf8CQBR//hQIVawDMD9txVZHFp1FeTXTFRNmYHoG7e7Hukr3a2IEhRCBa4f
-eM4kmf1UpVKD8V5kUPDKDllx9SGVxrxEeDPAQmu3detQ8vdWsS1p5+Q8fCvwbTsc
-GuBk+IXKzFybzSqiu3tAf3DSPU9p0z+00mo4KmghbrwUAZuKAeu55KC32EEf85Cd
-WDPAVGEQ9rUm+YcdNGidf604yjGQy0gB5DuwLpq+t5f41O1NscnLEeusM83if7Qh
-fSpFccKSr+CN8yniLocbcRE/B2NUZymGfa7+ZMeqD+eU+G7fCHqQ1yBJH9OhpH/f
-Swim64E6tY3M8WOeqe+ZLrLN/De0dw==
-=Yi0e
------END PGP SIGNATURE-----
-
---k+w/mQv8wyuph6w0--
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+index eb96b0613cf6..825a28e5b544 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+@@ -1732,7 +1732,7 @@ int liquidio_set_fec(struct lio *lio, int on_off)
+ 	if (oct->props[lio->ifidx].fec ! 	    oct->props[lio->ifidx].fec_boot) {
+ 		dev_dbg(&oct->pci_dev->dev,
+-			"Reloade driver to chang fec to %s\n",
++			"Reload driver to change fec to %s\n",
+ 			oct->props[lio->ifidx].fec ? "on" : "off");
+ 	}
+ 
+@@ -1796,7 +1796,7 @@ int liquidio_get_fec(struct lio *lio)
+ 	if (oct->props[lio->ifidx].fec ! 	    oct->props[lio->ifidx].fec_boot) {
+ 		dev_dbg(&oct->pci_dev->dev,
+-			"Reloade driver to chang fec to %s\n",
++			"Reload driver to change fec to %s\n",
+ 			oct->props[lio->ifidx].fec ? "on" : "off");
+ 	}
+ 
+-- 
+2.17.1
