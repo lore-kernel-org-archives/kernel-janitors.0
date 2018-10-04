@@ -1,37 +1,27 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 12:16:40 +0000
-Subject: [PATCH 2/2] media: ov5645: constify v4l2_ctrl_ops structure
-Message-Id: <1540642600-25840-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 04 Oct 2018 08:28:19 +0000
+Subject: Re: [SCSI] pmcraid: PMC-Sierra MaxRAID driver to support 6Gb/s SAS RAID controller
+Message-Id: <f512d8fa-e782-0679-8140-0a27dd3b9062@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540642600-25840-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540642600-25840-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The v4l2_ctrl_ops structure is only passed as the second argument to
-functions such as v4l2_ctrl_new_std for which the corresponding
-parameter is const, so make the v4l2_ctrl_ops structure const as well.
+Hi,
 
-Done with the help of Coccinelle.
+Static analysis from CoverityScan (CID#114178 "Operands don't affect
+result") detected an issue in drivers/scsi/pmcraid.c, function
+pmcraid_init_res_table with the following check:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+        if (pinstance->cfg_table->flags & MICROCODE_UPDATE_REQUIRED)
+                pmcraid_err("IOA requires microcode download\n");
 
----
- drivers/media/i2c/ov5645.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
---- a/drivers/media/i2c/ov5645.c
-+++ b/drivers/media/i2c/ov5645.c
-@@ -886,7 +886,7 @@ static int ov5645_s_ctrl(struct v4l2_ctr
- 	return ret;
- }
- 
--static struct v4l2_ctrl_ops ov5645_ctrl_ops = {
-+static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
- 	.s_ctrl = ov5645_s_ctrl,
- };
- 
+pinstance->cfg_table->flags is a u8, MICROCODE_UPDATE_REQUIRED is  1 <<
+31, so the & operation always results in false and the error message is
+never displayed.  From my understanding, flags should be a u8, so there
+is something wrong here with the check.  Any ideas?
+
+Colin
