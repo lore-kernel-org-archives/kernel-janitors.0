@@ -1,32 +1,44 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 06 Oct 2018 01:49:33 +0000
-Subject: [PATCH -next] drm/msm/dpu: remove duplicated include from dpu_hw_lm.c
-Message-Id: <1538790573-171721-1-git-send-email-yuehaibing@huawei.com>
+Date: Fri, 05 Oct 2018 11:36:58 +0000
+Subject: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'file_priv'
+Message-Id: <1538739418-151469-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4a87e33a27de879647b95e4885c468dc@codeaurora.org>
-In-Reply-To: <4a87e33a27de879647b95e4885c468dc@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jeykumar Sankaran <jsanka-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Sravanthi Kollukuduru <skolluku-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rajesh Yadav <ryadav-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Sinclair Yeh <syeh@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove duplicated include.
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/gpu/drm/vmwgfx/vmwgfx_fence.c: In function 'vmw_event_fence_action_seq_passed':
+drivers/gpu/drm/vmwgfx/vmwgfx_fence.c:909:19: warning:
+ variable 'file_priv' set but not used [-Wunused-but-set-variable]
+  struct drm_file *file_priv;
+  
+It not used any more since 
+commit fb740cf2492c ("drm: Create drm_send_event helpers")
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-index acb8dc8..5d5dea8 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-@@ -16,7 +16,6 @@
- #include "dpu_hw_lm.h"
- #include "dpu_hw_mdss.h"
- #include "dpu_dbg.h"
--#include "dpu_kms.h"
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+index f872615..301260e 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+@@ -906,13 +906,10 @@ static void vmw_event_fence_action_seq_passed(struct vmw_fence_action *action)
+ 		container_of(action, struct vmw_event_fence_action, action);
+ 	struct drm_device *dev = eaction->dev;
+ 	struct drm_pending_event *event = eaction->event;
+-	struct drm_file *file_priv;
+-
  
- #define LM_OP_MODE                        0x00
- #define LM_OUT_SIZE                       0x04
+ 	if (unlikely(event = NULL))
+ 		return;
+ 
+-	file_priv = event->file_priv;
+ 	spin_lock_irq(&dev->event_lock);
+ 
+ 	if (likely(eaction->tv_sec != NULL)) {
