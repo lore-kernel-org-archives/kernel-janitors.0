@@ -1,41 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Oct 2018 06:41:01 +0000
-Subject: Re: [PATCH] net/mlx5: allocate enough space in
-Message-Id: <20181022064100.rtqh6z6nmy3bacr6@mwanda>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 05 Oct 2018 10:51:56 +0000
+Subject: [PATCH -next] drm/arm/malidp: remove set but not used variable 'afbc_superblock_size'
+Message-Id: <1538737393-112861-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181019200638.dea3r4uocbij6d6j@kili.mountain>
- <CAJ3xEMhwcYYDWWLropG95T6TyE62OfJS+oPAFDZKLOVJSurNRQ@mail.gmail.com>
- <CAJ3xEMjZ8WQu2cj_QgU9RoZvUZu7X2Szh6-Si6KZU-qMBFqwHQ@mail.gmail.com>
- <20181022052336.fr4kvd7idba5d2om@mwanda>
- <CAJ3xEMj5NPo-BJ2t_xno+R5O6R0_i3CU0Dig3_Wakop0xLa8CQ@mail.gmail.com>
-In-Reply-To: <CAJ3xEMj5NPo-BJ2t_xno+R5O6R0_i3CU0Dig3_Wakop0xLa8CQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Or Gerlitz <gerlitz.or@gmail.com>
-Cc: Saeed Mahameed <saeedm@mellanox.com>, Paul Blakey <paulb@mellanox.com>, kernel-janitors@vger.kernel.org, Linux Netdev List <netdev@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>
+To: Liviu Dudau <liviu.dudau@arm.com>, Brian Starkey <brian.starkey@arm.com>, Mali DP Maintainers <malidp@foss.arm.com>, David Airlie <airlied@linux.ie>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 09:18:43AM +0300, Or Gerlitz wrote:
-> On Mon, Oct 22, 2018 at 8:23 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > On Sun, Oct 21, 2018 at 01:56:26PM +0300, Or Gerlitz wrote:
-> > > I will re-post your patch, this time to netdev since the original
-> > > commit is there
-> > > and so should be the fix, thanks for reporting/fixing!
-> >
-> > I didn't realize it had been posted to netdev already so I deliberately
-> > left that off the CC.  If Dave hasn't applied the original (he probably
-> 
-> you didn't post it to netdev, I don't see how he could have got it
-> 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I meant commit 328edb499f99 ("net/mlx5: Split FDB fast path prio to
-multiple namespaces").  It turns out that Dave has applied that, but I
-was expecting to see his S-o-B on it.
+drivers/gpu/drm/arm/malidp_drv.c: In function 'malidp_verify_afbc_framebuffer_size':
+drivers/gpu/drm/arm/malidp_drv.c:318:6: warning:
+ variable 'afbc_superblock_size' set but not used [-Wunused-but-set-variable]
+  u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
 
-It's hard for me to know which tree patches are applied to.
+It never used since be introduced in
+commit 3dae1c0919d8 ("drm/arm/malidp: Implemented the size validation for AFBC framebuffers")
 
-Also I see that I screwed up the subject.  Thanks for fixing that.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/arm/malidp_drv.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index 9021485..1b0ede6 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -315,7 +315,7 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
+ 	int n_superblocks = 0;
+ 	const struct drm_format_info *info;
+ 	struct drm_gem_object *objs = NULL;
+-	u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
++	u32 afbc_superblock_height = 0;
+ 	u32 afbc_superblock_width = 0, afbc_size = 0;
+ 
+ 	switch (mode_cmd->modifier[0] & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK) {
+@@ -333,9 +333,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
+ 	n_superblocks = (mode_cmd->width / afbc_superblock_width) *
+ 		(mode_cmd->height / afbc_superblock_height);
+ 
+-	afbc_superblock_size = info->cpp[0] * afbc_superblock_width *
+-		afbc_superblock_height;
+-
+ 	afbc_size = ALIGN(n_superblocks * AFBC_HEADER_SIZE, 128);
+ 
+ 	if (mode_cmd->width * info->cpp[0] != mode_cmd->pitches[0]) {
