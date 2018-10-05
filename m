@@ -1,27 +1,61 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 11 Oct 2018 03:22:28 +0000
-Subject: Re: [PATCH] scsi: arcmsr: clean up clang warning on extraneous parentheses
-Message-Id: <yq1woqp1823.fsf@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 05 Oct 2018 06:43:27 +0000
+Subject: [PATCH -next] crypto: chtls - remove set but not used variable 'csk'
+Message-Id: <1538721807-120297-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180930230307.18664-1-colin.king@canonical.com>
-In-Reply-To: <20180930230307.18664-1-colin.king@canonical.com> (Colin King's
-        message of "Mon, 1 Oct 2018 00:03:07 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Ching Huang <ching2048@areca.com.tw>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Colin,
+drivers/crypto/chelsio/chtls/chtls_cm.c: In function 'chtls_disconnect':
+drivers/crypto/chelsio/chtls/chtls_cm.c:408:21: warning:
+ variable 'csk' set but not used [-Wunused-but-set-variable]
+ 
+drivers/crypto/chelsio/chtls/chtls_cm.c: In function 'chtls_recv_sock':
+drivers/crypto/chelsio/chtls/chtls_cm.c:1016:23: warning:
+ variable 'tcph' set but not used [-Wunused-but-set-variable]
+ 
+'csk' and 'tcph' are never used since introduce
+in commit cc35c88ae4db ("crypto : chtls - CPL handler definition")
 
-> There are extraneous parantheses that are causing clang to produce a
-> warning so remove these.
->
-> Clean up 3 clang warnings:
-> equality comparison with extraneous parentheses [-Wparentheses-equality]
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/chelsio/chtls/chtls_cm.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Applied to 4.20/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index fd2ae1e..20209e2 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -405,12 +405,10 @@ static int wait_for_states(struct sock *sk, unsigned int states)
+ 
+ int chtls_disconnect(struct sock *sk, int flags)
+ {
+-	struct chtls_sock *csk;
+ 	struct tcp_sock *tp;
+ 	int err;
+ 
+ 	tp = tcp_sk(sk);
+-	csk = rcu_dereference_sk_user_data(sk);
+ 	chtls_purge_recv_queue(sk);
+ 	chtls_purge_receive_queue(sk);
+ 	chtls_purge_write_queue(sk);
+@@ -1013,7 +1011,6 @@ static struct sock *chtls_recv_sock(struct sock *lsk,
+ 				    const struct cpl_pass_accept_req *req,
+ 				    struct chtls_dev *cdev)
+ {
+-	const struct tcphdr *tcph;
+ 	struct inet_sock *newinet;
+ 	const struct iphdr *iph;
+ 	struct net_device *ndev;
+@@ -1035,7 +1032,6 @@ static struct sock *chtls_recv_sock(struct sock *lsk,
+ 	if (!dst)
+ 		goto free_sk;
+ 
+-	tcph = (struct tcphdr *)(iph + 1);
+ 	n = dst_neigh_lookup(dst, &iph->saddr);
+ 	if (!n)
+ 		goto free_sk;
