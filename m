@@ -1,59 +1,43 @@
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-Date: Wed, 17 Oct 2018 23:36:16 +0000
-Subject: Re: [PATCH] hfs: fix array out of bounds read of array extent
-Message-Id: <1539819376.3188.6.camel@slavad-ubuntu-14.04>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 05 Oct 2018 04:15:45 +0000
+Subject: [PATCH] b43: remove set but not used variable 'wl'
+Message-Id: <1538712945-141866-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180831140538.31566-1-colin.king@canonical.com>
-         <20181017150117.fef4f8d8e814aa2d25adba5e@linux-foundation.org>
-In-Reply-To: <20181017150117.fef4f8d8e814aa2d25adba5e@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Colin King <colin.king@canonical.com>, linux-fsdevel@vger.kernel.org, dhowells@redhat.com, viro@zeniv.linux.org.uk, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Ernesto A.Fernndez" <ernesto.mnd.fernandez@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>, Colin Ian King <colin.king@canonical.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2018-10-17 at 15:01 -0700, Andrew Morton wrote:
-> On Fri, 31 Aug 2018 15:05:38 +0100 Colin King <colin.king@canonical.com> wrote:
-> 
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently extent and index i are both being incremented causing
-> > an array out of bounds read on extent[i]. Fix this by removing
-> > the extraneous increment of extent.
-> > 
-> > Detected by CoverityScan, CID#711541 ("Out of bounds read")
-> > 
-> > Fixes: d1081202f1d0 ("HFS rewrite")
-> 
-> No such commit here.  I assume this is 7cb74be6fd827e314f8.
-> 
-> > --- a/fs/hfs/extent.c
-> > +++ b/fs/hfs/extent.c
-> > @@ -300,7 +300,7 @@ int hfs_free_fork(struct super_block *sb, struct hfs_cat_file *file, int type)
-> >  		return 0;
-> >  
-> >  	blocks = 0;
-> > -	for (i = 0; i < 3; extent++, i++)
+Fixes gcc '-Wunused-but-set-variable' warning:
 
+drivers/net/wireless/broadcom/b43/main.c: In function 'b43_one_core_detach':
+drivers/net/wireless/broadcom/b43/main.c:5496:17: warning:
+ variable 'wl' set but not used [-Wunused-but-set-variable]
+ 
+After commit 644aa4d62096 ("b43: remove list of IEEE 802.11 devices")
+'wl' is not used any more.
 
-By the way, the hfs_free_extents() has the same logic [1] of for (i = 0;
-i < 3; extent++, i++). It looks like that the bug is not fixed yet. Did
-anyone test this patch? What's the real reproduction path for the bug?
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/broadcom/b43/main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-Vyacheslav Dubeyko.
-
-[1] https://elixir.bootlin.com/linux/latest/source/fs/hfs/extent.c#L251
-
-> > +	for (i = 0; i < 3; i++)
-> >  		blocks += be16_to_cpu(extent[i].count);
-> >  
-> >  	res = hfs_free_extents(sb, extent, blocks, blocks);
-> 
-> Well, that's quite the bug.  Question is, why didn't anyone notice it. 
-> What are the runtime effects?  A disk space leak, perhaps?
-> 
-> I worry a bit that, given the fs was evidently working "ok", perhaps
-> this error was corrected elsewhere in the code and that "fixing" this
-> site will have unexpected and undesirable runtime effects.  Can someone
-> help me out here?
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index 4daa1ce..74be3c8 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -5493,13 +5493,11 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
+ static void b43_one_core_detach(struct b43_bus_dev *dev)
+ {
+ 	struct b43_wldev *wldev;
+-	struct b43_wl *wl;
+ 
+ 	/* Do not cancel ieee80211-workqueue based work here.
+ 	 * See comment in b43_remove(). */
+ 
+ 	wldev = b43_bus_get_wldev(dev);
+-	wl = wldev->wl;
+ 	b43_debugfs_remove_device(wldev);
+ 	b43_wireless_core_detach(wldev);
+ 	list_del(&wldev->list);
