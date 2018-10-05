@@ -1,25 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 11 Oct 2018 05:18:40 +0000
-Subject: Re: [PATCH] net: aquantia: remove some redundant variable initializations
-Message-Id: <20181010.221840.945121881022811735.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 05 Oct 2018 11:21:06 +0000
+Subject: [PATCH -next] [media] media: drop pointless static qualifier in vpfe_resizer_init()
+Message-Id: <1538738466-129133-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181008133558.5841-1-colin.king@canonical.com>
-In-Reply-To: <20181008133558.5841-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: igor.russkikh@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Hans Verkuil <hans.verkuil@cisco.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Kees Cook <keescook@chromium.org>, Colin Ian King <colin.king@canonical.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon,  8 Oct 2018 14:35:58 +0100
+There is no need to have the 'resource_size_t res_len' variable static
+since new value always be assigned before use it.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are several variables being initialized that are being set later
-> and hence the initialization is redundant and can be removed. Remove
-> then.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/media/davinci_vpfe/dm365_resizer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to net-next.
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+index aac6dbf..b2b23a7 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+@@ -1884,7 +1884,7 @@ int vpfe_resizer_init(struct vpfe_resizer_device *vpfe_rsz,
+ 	struct v4l2_subdev *sd = &vpfe_rsz->crop_resizer.subdev;
+ 	struct media_pad *pads = &vpfe_rsz->crop_resizer.pads[0];
+ 	struct media_entity *me = &sd->entity;
+-	static resource_size_t  res_len;
++	resource_size_t  res_len;
+ 	struct resource *res;
+ 	int ret;
