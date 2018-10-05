@@ -1,43 +1,34 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 05 Oct 2018 04:15:45 +0000
-Subject: [PATCH] b43: remove set but not used variable 'wl'
-Message-Id: <1538712945-141866-1-git-send-email-yuehaibing@huawei.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 05 Oct 2018 08:38:32 +0000
+Subject: Re: [PATCH] b43: remove set but not used variable 'wl'
+Message-Id: <20181005083832.7D0B36076A@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1538712945-141866-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1538712945-141866-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Colin Ian King <colin.king@canonical.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Colin Ian King <colin.king@canonical.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-drivers/net/wireless/broadcom/b43/main.c: In function 'b43_one_core_detach':
-drivers/net/wireless/broadcom/b43/main.c:5496:17: warning:
- variable 'wl' set but not used [-Wunused-but-set-variable]
- 
-After commit 644aa4d62096 ("b43: remove list of IEEE 802.11 devices")
-'wl' is not used any more.
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/net/wireless/broadcom/b43/main.c: In function 'b43_one_core_detach':
+> drivers/net/wireless/broadcom/b43/main.c:5496:17: warning:
+>  variable 'wl' set but not used [-Wunused-but-set-variable]
+>  
+> After commit 644aa4d62096 ("b43: remove list of IEEE 802.11 devices")
+> 'wl' is not used any more.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/wireless/broadcom/b43/main.c | 2 --
- 1 file changed, 2 deletions(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index 4daa1ce..74be3c8 100644
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -5493,13 +5493,11 @@ static int b43_wireless_core_attach(struct b43_wldev *dev)
- static void b43_one_core_detach(struct b43_bus_dev *dev)
- {
- 	struct b43_wldev *wldev;
--	struct b43_wl *wl;
- 
- 	/* Do not cancel ieee80211-workqueue based work here.
- 	 * See comment in b43_remove(). */
- 
- 	wldev = b43_bus_get_wldev(dev);
--	wl = wldev->wl;
- 	b43_debugfs_remove_device(wldev);
- 	b43_wireless_core_detach(wldev);
- 	list_del(&wldev->list);
+a7dd5d7c2dd8 b43: remove set but not used variable 'wl'
+
+-- 
+https://patchwork.kernel.org/patch/10627361/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
