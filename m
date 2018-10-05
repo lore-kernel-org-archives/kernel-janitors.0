@@ -1,36 +1,41 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Thu, 25 Oct 2018 15:54:38 +0000
-Subject: RE: [PATCH] scsi: aic7xxx: Fix unintended sign extension issue
-Message-Id: <483f04b2ad5a4858b56c2be52cea625e@AcuMS.aculab.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 05 Oct 2018 21:56:09 +0000
+Subject: [PATCH][next] ath10k: fix out of bound read on array ath10k_rates
+Message-Id: <20181005215609.13935-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181025151334.15622-1-colin.king@canonical.com>
- <1540481569.3006.5.camel@linux.vnet.ibm.com>
-In-Reply-To: <1540481569.3006.5.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'James Bottomley' <jejb@linux.vnet.ibm.com>, Colin King <colin.king@canonical.com>, Hannes Reinecke <hare@suse.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sriram R <srirrama@codeaurora.org>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogSmFtZXMgQm90dG9tbGV5DQo+IFNlbnQ6IDI1IE9jdG9iZXIgMjAxOCAxNjozMw0KPiAN
-Cj4gT24gVGh1LCAyMDE4LTEwLTI1IGF0IDE2OjEzICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0K
-PiA+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+ID4N
-Cj4gPiBJbiB0aGUgZXhwcmVzc2lvbiAiYWhjX2luYihhaGMsIHBvcnQrMykgPDwgMjQiLCB0aGUg
-aW5pdGlhbCB2YWx1ZSBpcw0KPiA+IGEgdTgsIGJ1dCBpcyBwcm9tb3RlZCB0byBhIHNpZ25lZCBp
-bnQsIHRoZW4gc2lnbi1leHRlbmRlZCB0bw0KPiA+IHVpbnQ2NF90Lg0KPiANCj4gV2h5IGlzIHRo
-aXMsIHRoYXQncyBoaWdobHkgbm9uIGludHVpdGl2ZT8gIFRoZSBjb21waWxlciBpcyBzdXBwb3Nl
-ZCB0bw0KPiBwcm9tb3RlIHRvIHRoZSBiaWdnZXN0IHR5cGUsIHdoaWNoIGlzIHVpbnQ2NF90IGFu
-ZCB0aGVuIGRvIHRoZQ0KPiBjYWxjdWxhdGlvbg0KDQpEbyBub3QgZG91YnQgdGhlIHdpc2RvbSBv
-biB0aGUgQU5TSSBDIGNvbW1pdHRlZSB0aGF0IGRlY2lkZWQgdG8gZG8NCid2YWx1ZSBwcmVzZXJ2
-aW5nJyBpbnRlZ2VyIHByb21vdGlvbnMgaW5zdGVhZCBvZiB0aGUgJ3NpZ24gcHJlc2VydmluZycN
-Cm9uZXMgb2YgSyZSIEMuDQoNClNvICd1bnNpZ25lZCBjaGFyJyBpcyBwcm9tb3RlZCB0byAnaW50
-JyBhbG1vc3QgZXZlcnl3aGVyZSBpdCBpcyB1c2VkDQoodW5sZXNzIHRoZXkgYXJlIGJvdGggdGhl
-IHNhbWUgc2l6ZSAtIHdoaWNoIGlzIGFsbG93ZWQpLg0KVGhpcyBtZWFucyB0aGF0IGFoY19pbmIo
-KSA8PCAyNCBpcyBhY3R1YWxseSB1bmRlZmluZWQgKHNpZ25lZCBpbnRlZ2VyDQpvdmVyZmxvdyBj
-YW4gZG8gYW55dGhpbmcgaXQgbGlrZXMpLg0KDQpCeSBmYXIgdGhlIGJlc3QgZml4IGlzIHRvIGNo
-YW5nZSB0aGUgcmV0dXJuIHR5cGUgb2YgYWhjX2luYigpIHRvDQpiZSAndW5zaWduZWQgaW50Jy4N
-Ck9uIHN5c3RlbXMgd2l0aG91dCBieXRlIHNpemVkIHJlZ2lzdGVycyAoYWJvdXQgZXZlcnl0aGlu
-ZyBleGNlcHQgeDg2KQ0KdGhpcyB3aWxsIGFsbW9zdCBjZXJ0YWlubHkgZ2VuZXJhdGUgYmV0dGVy
-IGNvZGUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1s
-ZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJh
-dGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+An out-of-bounds read on array ath10k_rates is occurring because
+the maximum number of elements is currently based on the size of
+the array and not the number of elements in the array. Fix this
+by using ARRAY_SIZE instead of sizeof.
+
+Detected by CoverityScan, CID#1473918 ("Out-of-bounds read")
+
+Fixes: f279294e9ee2 ("ath10k: add support for configuring management packet rate")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath10k/mac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 3933dd96da55..3564676e74e3 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -164,7 +164,7 @@ static int ath10k_mac_get_rate_hw_value(int bitrate)
+ 	if (ath10k_mac_bitrate_is_cck(bitrate))
+ 		hw_value_prefix = WMI_RATE_PREAMBLE_CCK << 6;
+ 
+-	for (i = 0; i < sizeof(ath10k_rates); i++) {
++	for (i = 0; i < ARRAY_SIZE(ath10k_rates); i++) {
+ 		if (ath10k_rates[i].bitrate = bitrate)
+ 			return hw_value_prefix | ath10k_rates[i].hw_value;
+ 	}
+-- 
+2.17.1
