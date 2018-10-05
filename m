@@ -1,29 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 08 Oct 2018 18:04:26 +0000
-Subject: Re: [PATCH net-next] net: mscc: ocelot: remove set but not used variable 'phy_mode'
-Message-Id: <20181008.110426.490149828698716497.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 05 Oct 2018 08:51:30 +0000
+Subject: [PATCH] iwlwifi: acpi: Use kmemdup rather than duplicating its implementation in iwl_parse_nvm_mcc_i
+Message-Id: <1538730169-145458-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539007670-82488-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539007670-82488-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: alexandre.belloni@bootlin.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 8 Oct 2018 14:07:50 +0000
+Use kmemdup rather than duplicating its implementation
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/mscc/ocelot_board.c: In function 'mscc_ocelot_probe':
-> drivers/net/ethernet/mscc/ocelot_board.c:262:17: warning:
->  variable 'phy_mode' set but not used [-Wunused-but-set-variable]
->    enum phy_mode phy_mode;
-> 
-> It never used since introduction in 
-> commit 71e32a20cfbf ("net: mscc: ocelot: make use of SerDes PHYs for handling their configuration")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Applied.
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+index ec300d3..d979c00 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+@@ -1108,14 +1108,12 @@ struct ieee80211_regdomain *
+ 	regd_to_copy = sizeof(struct ieee80211_regdomain) +
+ 		valid_rules * sizeof(struct ieee80211_reg_rule);
+ 
+-	copy_rd = kzalloc(regd_to_copy, GFP_KERNEL);
++	copy_rd = kmemdup(regd, regd_to_copy, GFP_KERNEL);
+ 	if (!copy_rd) {
+ 		copy_rd = ERR_PTR(-ENOMEM);
+ 		goto out;
+ 	}
+ 
+-	memcpy(copy_rd, regd, regd_to_copy);
+-
+ out:
+ 	kfree(regdb_ptrs);
+ 	kfree(regd);
