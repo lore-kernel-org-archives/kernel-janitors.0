@@ -1,37 +1,31 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 16 Oct 2018 07:13:46 +0000
-Subject: [PATCH] mtd: spi-nor: cadence-quadspi: Fix the return value in case of error in 'cqspi_direct_read_e
-Message-Id: <20181016071346.25383-1-christophe.jaillet@wanadoo.fr>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 05 Oct 2018 11:23:54 +0000
+Subject: [PATCH -next] staging: axis-fifo: remove duplicated include from axis-fifo.c
+Message-Id: <1538738634-131706-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: marek.vasut@gmail.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@bootlin.com, richard@nod.at
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jacob Feder <jacobsfeder@gmail.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, kbuild test robot <fengguang.wu@intel.com>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We return 0 unconditionally in 'cqspi_direct_read_execute()'.
-However, 'ret' is set to some error codes in several error handling paths.
+Remove duplicated include.
 
-Return 'ret' instead to propagate the error code.
-
-Fixes: ffa639e069fb ("mtd: spi-nor: cadence-quadspi: Add DMA support for direct mode reads")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/mtd/spi-nor/cadence-quadspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/axis-fifo/axis-fifo.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 8e714fbfa521..6e9cbd1a0b6d 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -996,7 +996,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
- err_unmap:
- 	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
- 
--	return 0;
-+	return ret;
- }
- 
- static ssize_t cqspi_read(struct spi_nor *nor, loff_t from,
--- 
-2.17.1
+diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
+index 63c8efd..48a9877 100644
+--- a/drivers/staging/axis-fifo/axis-fifo.c
++++ b/drivers/staging/axis-fifo/axis-fifo.c
+@@ -27,8 +27,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/param.h>
+ #include <linux/fs.h>
+-#include <linux/device.h>
+-#include <linux/cdev.h>
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
+ #include <linux/jiffies.h>
