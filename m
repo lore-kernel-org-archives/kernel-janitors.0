@@ -1,29 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 05:47:34 +0000
-Subject: [PATCH 0/8] constify clk_ops structure
-Message-Id: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 05 Oct 2018 02:27:28 +0000
+Subject: Re: [PATCH -next v2] crypto: ccp - Make function sev_get_firmware() static
+Message-Id: <20181005022728.cr3l5jtaq7qaokss@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Declare as const clk_ops structures that are only stored in const fields or
-passed to functions with const parameters.
+On Wed, Sep 26, 2018 at 02:09:23AM +0000, Wei Yongjun wrote:
+> Fixes the following sparse warning:
+> 
+> drivers/crypto/ccp/psp-dev.c:444:5: warning:
+>  symbol 'sev_get_firmware' was not declared. Should it be static?
+> 
+> Fixes: e93720606efd ("crypto: ccp - Allow SEV firmware to be chosen based on Family and Model")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+> v1 -> v2: add fixes and add cc Janakarajan
+> ---
+>  drivers/crypto/ccp/psp-dev.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Identified and transformed using Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-
- arch/arm/mach-vexpress/spc.c             |    2 +-
- drivers/clk/clk-max77686.c               |    2 +-
- drivers/clk/clk-palmas.c                 |    2 +-
- drivers/clk/clk-s2mps11.c                |    2 +-
- drivers/clk/pistachio/clk-pll.c          |    8 ++++----
- drivers/clk/pxa/clk-pxa.c                |    4 ++--
- drivers/gpu/drm/imx/imx-tve.c            |    2 +-
- drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c |    2 +-
- 8 files changed, 12 insertions(+), 12 deletions(-)
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
