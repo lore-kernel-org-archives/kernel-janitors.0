@@ -1,47 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 12:49:04 +0000
-Subject: [PATCH 1/2] media: ov7740: constify structures stored in fields of v4l2_subdev_ops structure
-Message-Id: <1540644545-26184-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 06 Oct 2018 18:01:42 +0000
+Subject: [PATCH] media: cx231xx: fix potential sign-extension overflow on large shift
+Message-Id: <20181006180142.28443-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540644545-26184-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540644545-26184-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wenyou Yang <wenyou.yang@microchip.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The fields of a v4l2_subdev_ops structure are all const, so the
-structures that are stored there and are not used elsewhere can be
-const as well.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+Shifting the u8 value[3] by an int can lead to sign-extension
+overflow. For example, if value[3] is 0xff and the shift is 24 then it
+is promoted to int and then the top bit is sign-extended so that all
+upper 32 bits are set.  Fix this by casting value[3] to a u32 before
+the shift.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Detected by CoverityScan, CID#1016522 ("Unintended sign extension")
 
+Fixes: e0d3bafd0258 ("V4L/DVB (10954): Add cx231xx USB driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/ov7740.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/ov7740.c b/drivers/media/i2c/ov7740.c
-index 6e9c233cfbe3..177688afd9a6 100644
---- a/drivers/media/i2c/ov7740.c
-+++ b/drivers/media/i2c/ov7740.c
-@@ -322,7 +322,7 @@ static int ov7740_set_power(struct ov7740 *ov7740, int on)
- 	return 0;
- }
- 
--static struct v4l2_subdev_core_ops ov7740_subdev_core_ops = {
-+static const struct v4l2_subdev_core_ops ov7740_subdev_core_ops = {
- 	.log_status = v4l2_ctrl_subdev_log_status,
- #ifdef CONFIG_VIDEO_ADV_DEBUG
- 	.g_register = ov7740_get_register,
-@@ -648,7 +648,7 @@ static int ov7740_s_frame_interval(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
--static struct v4l2_subdev_video_ops ov7740_subdev_video_ops = {
-+static const struct v4l2_subdev_video_ops ov7740_subdev_video_ops = {
- 	.s_stream = ov7740_set_stream,
- 	.s_frame_interval = ov7740_s_frame_interval,
- 	.g_frame_interval = ov7740_g_frame_interval,
+diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
+index 29160df76cf7..f2f034c5cd62 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-video.c
++++ b/drivers/media/usb/cx231xx/cx231xx-video.c
+@@ -1389,7 +1389,7 @@ int cx231xx_g_register(struct file *file, void *priv,
+ 		ret = cx231xx_read_ctrl_reg(dev, VRT_GET_REGISTER,
+ 				(u16)reg->reg, value, 4);
+ 		reg->val = value[0] | value[1] << 8 |
+-			value[2] << 16 | value[3] << 24;
++			value[2] << 16 | (u32)value[3] << 24;
+ 		reg->size = 4;
+ 		break;
+ 	case 1:	/* AFE - read byte */
+-- 
+2.17.1
