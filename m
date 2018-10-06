@@ -1,53 +1,39 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Oct 2018 18:42:41 +0000
-Subject: [PATCH] pinctrl: mediatek: clean up indentation issues, add missing tab
-Message-Id: <20181031184241.5439-1-colin.king@canonical.com>
+Date: Sat, 06 Oct 2018 21:56:58 +0000
+Subject: [PATCH] misc: mic: scif: remove redundant check on ret < 0
+Message-Id: <20181006215658.31288-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Sudeep Dutt <sudeep.dutt@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to clean up indentation issues, add one level of
-indentation on two if statements.
+The check for ret < 0 is redundant as any places prior to this point
+where ret is set to an error value the code will exit out of the loop
+to the error exit label 'err'.  Remove this redundant dead code.
+
+Detected by CoverityScan, CID#1339528 ("Logically dead code")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-moore.c | 4 ++--
- drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/misc/mic/scif/scif_dma.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-index 3133ec0f2e67..aa1068d2867f 100644
---- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-@@ -310,8 +310,8 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		case PIN_CONFIG_DRIVE_STRENGTH:
- 			if (hw->soc->drive_set) {
- 				err = hw->soc->drive_set(hw, desc, arg);
--			if (err)
--				return err;
-+				if (err)
-+					return err;
- 			} else {
- 				err = -ENOTSUPP;
+diff --git a/drivers/misc/mic/scif/scif_dma.c b/drivers/misc/mic/scif/scif_dma.c
+index 03af8b5b7b0d..2d76c200d072 100644
+--- a/drivers/misc/mic/scif/scif_dma.c
++++ b/drivers/misc/mic/scif/scif_dma.c
+@@ -1035,8 +1035,6 @@ scif_rma_list_dma_copy_unaligned(struct scif_copy_work *work,
  			}
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index d2179028f134..50e68b1e9065 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -282,8 +282,8 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	case PIN_CONFIG_DRIVE_STRENGTH:
- 		if (hw->soc->drive_set) {
- 			err = hw->soc->drive_set(hw, desc, arg);
--		if (err)
--			return err;
-+			if (err)
-+				return err;
- 		} else {
- 			return -ENOTSUPP;
+ 			dma_async_issue_pending(chan);
  		}
+-		if (ret < 0)
+-			goto err;
+ 		offset += loop_len;
+ 		temp += loop_len;
+ 		temp_phys += loop_len;
 -- 
-2.19.1
+2.17.1
