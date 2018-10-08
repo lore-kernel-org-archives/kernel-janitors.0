@@ -1,35 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Oct 2018 15:19:32 +0000
-Subject: [PATCH] media: dib0700: fix spelling mistake "Amplifyer" -> "Amplifier"
-Message-Id: <20181012151932.21841-1-colin.king@canonical.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Mon, 08 Oct 2018 10:42:14 +0000
+Subject: Re: [PATCH 1/2] fbdev: sbuslib: use checked version of put_user()
+Message-Id: <20181008104215eucas1p24aa2afe494cfc35129b50bea1ac29ac8~bnBqSQr8g1047310473eucas1p2X@eucas1p2.samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20180831080941epcas5p3135e290b0ce17e7a4117556715361d84@epcas5p3.samsung.com>
+ <20180831080921.jstbxdkga3w2rnnf@kili.mountain>
+In-Reply-To: <20180831080921.jstbxdkga3w2rnnf@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-fbdev@vger.kernel.org, Mathieu Malaterre <malat@debian.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Philippe Ombredanne <pombredanne@nexb.com>, Peter Malone <peter.malone@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in MODULE_PARM_DESC text
+On 08/31/2018 10:09 AM, Dan Carpenter wrote:
+> I'm not sure why the code assumes that only the first put_user() needs
+> an access_ok() check.  I have made all the put_user() and get_user()
+> calls checked.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/dvb-usb/dib0700_devices.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch queued for 4.20, thanks.
 
-diff --git a/drivers/media/usb/dvb-usb/dib0700_devices.c b/drivers/media/usb/dvb-usb/dib0700_devices.c
-index 7551dce96f64..9311f7d4bba5 100644
---- a/drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
-@@ -29,7 +29,7 @@
- 
- static int force_lna_activation;
- module_param(force_lna_activation, int, 0644);
--MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifyer(s) (LNA), if applicable for the device (default: 0=automatic/off).");
-+MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifier(s) (LNA), if applicable for the device (default: 0=automatic/off).");
- 
- struct dib0700_adapter_state {
- 	int (*set_param_save) (struct dvb_frontend *);
--- 
-2.17.1
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
