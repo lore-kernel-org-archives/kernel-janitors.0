@@ -1,41 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 19 Oct 2018 12:58:01 +0000
-Subject: [PATCH] test_firmware: fix error return getting clobbered
-Message-Id: <20181019125801.4544-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 08 Oct 2018 05:57:45 +0000
+Subject: Re: [PATCH] oradax: remove redundant null check before kfree
+Message-Id: <20181007.225745.1952895704234282902.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180907103500.17453-1-colin.king@canonical.com>
+In-Reply-To: <20180907103500.17453-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: rob.gardner@oracle.com, jonathan.helman@oracle.com, sparclinux@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri,  7 Sep 2018 11:35:00 +0100
 
-In the case where eq->fw->size > PAGE_SIZE the error return rc
-is being set to EINVAL however this is being overwritten to
-rc = req->fw->size because the error exit path via label 'out' is
-not being taken.  Fix this by adding the jump to the error exit
-path 'out'.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> A null check before a kfree is redundant, so remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Detected by CoverityScan, CID#1453465 ("Unused value")
-
-Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- lib/test_firmware.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index b984806d7d7b..7cab9a9869ac 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -837,6 +837,7 @@ static ssize_t read_firmware_show(struct device *dev,
- 	if (req->fw->size > PAGE_SIZE) {
- 		pr_err("Testing interface must use PAGE_SIZE firmware for now\n");
- 		rc = -EINVAL;
-+		goto out;
- 	}
- 	memcpy(buf, req->fw->data, req->fw->size);
- 
--- 
-2.19.1
+Applied.
