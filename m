@@ -1,38 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 08 Oct 2018 14:50:12 +0000
-Subject: [PATCH] staging: bcm2835-camera: remove extraneous setting of dev->colourfx.enable
-Message-Id: <20181008145012.31312-1-colin.king@canonical.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Date: Mon, 08 Oct 2018 15:48:03 +0000
+Subject: Re: [PATCH] staging: bcm2835-camera: remove extraneous setting of dev->colourfx.enable
+Message-Id: <d753df4f-e812-c366-0b1d-9ff804da0ab5@i2se.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181008145012.31312-1-colin.king@canonical.com>
+In-Reply-To: <20181008145012.31312-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-Currently dev->colourfx.enable is being set twice, hence the first
-occurrance is redundant and can be removed, so remove it. This minor
-issue was introduced by commit 7b3ad5abf027 ("staging: Import the
-BCM2835 MMAL-based V4L2 camera driver.").
+Am 08.10.2018 um 16:50 schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently dev->colourfx.enable is being set twice, hence the first
+> occurrance is redundant and can be removed, so remove it. This minor
+> issue was introduced by commit 7b3ad5abf027 ("staging: Import the
+> BCM2835 MMAL-based V4L2 camera driver.").
+>
+> Detected by CoverityScan CID#1419711 ("Unused value")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/vc04_services/bcm2835-camera/controls.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+> index a2c55cb2192a..99831dd4365d 100644
+> --- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
+> +++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+> @@ -588,7 +588,6 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
+>  
+>  	control = &dev->component[MMAL_COMPONENT_CAMERA]->control;
+>  
+> -	dev->colourfx.enable = (ctrl->val & 0xff00) >> 8;
+>  	dev->colourfx.enable = ctrl->val & 0xff;
+>  
+>  	ret = vchiq_mmal_port_parameter_set(dev->instance, control,
 
-Detected by CoverityScan CID#1419711 ("Unused value")
+as long as the current behavior is correct, i'm okay with this patch.
+But the byte masking looks suspicious, so i hope Dave can clarify that.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/vc04_services/bcm2835-camera/controls.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
-index a2c55cb2192a..99831dd4365d 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
-@@ -588,7 +588,6 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
- 
- 	control = &dev->component[MMAL_COMPONENT_CAMERA]->control;
- 
--	dev->colourfx.enable = (ctrl->val & 0xff00) >> 8;
- 	dev->colourfx.enable = ctrl->val & 0xff;
- 
- 	ret = vchiq_mmal_port_parameter_set(dev->instance, control,
--- 
-2.17.1
+Thanks Stefan
