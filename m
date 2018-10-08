@@ -1,43 +1,120 @@
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-Date: Thu, 25 Oct 2018 07:32:29 +0000
-Subject: Re: [PATCH] mm/gup_benchmark: prevent integer overflow in ioctl
-Message-Id: <20181025073229.dbsloufbem4p4arz@kshutemo-mobl1>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 Oct 2018 08:50:28 +0000
+Subject: [PATCH] rtlwifi: rtl8821ae: replace _rtl8821ae_mrate_idx_to_arfr_id with generic version
+Message-Id: <20181008085028.23874-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181025061546.hnhkv33diogf2uis@kili.mountain>
-In-Reply-To: <20181025061546.hnhkv33diogf2uis@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Keith Busch <keith.busch@intel.com>, "Michael S. Tsirkin" <mst@redhat.com>, Kees Cook <keescook@chromium.org>, YueHaibing <yuehaibing@huawei.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 09:15:46AM +0300, Dan Carpenter wrote:
-> The concern here is that "gup->size" is a u64 and "nr_pages" is unsigned
-> long.  On 32 bit systems we could trick the kernel into allocating fewer
-> pages than expected.
-> 
-> Fixes: 64c349f4ae78 ("mm: add infrastructure for get_user_pages_fast() benchmarking")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  mm/gup_benchmark.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-> index debf11388a60..5b42d3d4b60a 100644
-> --- a/mm/gup_benchmark.c
-> +++ b/mm/gup_benchmark.c
-> @@ -27,6 +27,9 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
->  	int nr;
->  	struct page **pages;
->  
-> +	if (gup->size > ULONG_MAX)
-> +		return -EINVAL;
-> +
+From: Colin Ian King <colin.king@canonical.com>
 
-Strictly speaking gup->size / PAGE_SIZE has to be <= ULONG_MAX, but it
-should be fine this way too.
+Function _rtl8821ae_mrate_idx_to_arfr_id is functionally identical to
+the generic version rtl_mrate_idx_to_arfr_id, so remove 
+_rtl8821ae_mrate_idx_to_arfr_id and use the generic one instead.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+This also fixes a missing break statement found by CoverityScan in
+_rtl8821ae_mrate_idx_to_arfr_id, namely: CID#1167237 ("Missing break
+in switch")
 
+Thanks to Joe Perches for spotting this when I submitted an earlier patch.
+
+Fixes: 3c05bedb5fef ("Staging: rtl8812ae: Add Realtek 8821 PCI WIFI driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../wireless/realtek/rtlwifi/rtl8821ae/hw.c   | 71 +------------------
+ 1 file changed, 1 insertion(+), 70 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+index 317c1b3101da..ba258318ee9f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+@@ -3404,75 +3404,6 @@ static void rtl8821ae_update_hal_rate_table(struct ieee80211_hw *hw,
+ 		 "%x\n", rtl_read_dword(rtlpriv, REG_ARFR0));
+ }
+ 
+-static u8 _rtl8821ae_mrate_idx_to_arfr_id(
+-	struct ieee80211_hw *hw, u8 rate_index,
+-	enum wireless_mode wirelessmode)
+-{
+-	struct rtl_priv *rtlpriv = rtl_priv(hw);
+-	struct rtl_phy *rtlphy = &rtlpriv->phy;
+-	u8 ret = 0;
+-	switch (rate_index) {
+-	case RATR_INX_WIRELESS_NGB:
+-		if (rtlphy->rf_type = RF_1T1R)
+-			ret = 1;
+-		else
+-			ret = 0;
+-		; break;
+-	case RATR_INX_WIRELESS_N:
+-	case RATR_INX_WIRELESS_NG:
+-		if (rtlphy->rf_type = RF_1T1R)
+-			ret = 5;
+-		else
+-			ret = 4;
+-		; break;
+-	case RATR_INX_WIRELESS_NB:
+-		if (rtlphy->rf_type = RF_1T1R)
+-			ret = 3;
+-		else
+-			ret = 2;
+-		; break;
+-	case RATR_INX_WIRELESS_GB:
+-		ret = 6;
+-		break;
+-	case RATR_INX_WIRELESS_G:
+-		ret = 7;
+-		break;
+-	case RATR_INX_WIRELESS_B:
+-		ret = 8;
+-		break;
+-	case RATR_INX_WIRELESS_MC:
+-		if ((wirelessmode = WIRELESS_MODE_B)
+-			|| (wirelessmode = WIRELESS_MODE_G)
+-			|| (wirelessmode = WIRELESS_MODE_N_24G)
+-			|| (wirelessmode = WIRELESS_MODE_AC_24G))
+-			ret = 6;
+-		else
+-			ret = 7;
+-	case RATR_INX_WIRELESS_AC_5N:
+-		if (rtlphy->rf_type = RF_1T1R)
+-			ret = 10;
+-		else
+-			ret = 9;
+-		break;
+-	case RATR_INX_WIRELESS_AC_24N:
+-		if (rtlphy->current_chan_bw = HT_CHANNEL_WIDTH_80) {
+-			if (rtlphy->rf_type = RF_1T1R)
+-				ret = 10;
+-			else
+-				ret = 9;
+-		} else {
+-			if (rtlphy->rf_type = RF_1T1R)
+-				ret = 11;
+-			else
+-				ret = 12;
+-		}
+-		break;
+-	default:
+-		ret = 0; break;
+-	}
+-	return ret;
+-}
+-
+ static u32 _rtl8821ae_rate_to_bitmap_2ssvht(__le16 vht_rate)
+ {
+ 	u8 i, j, tmp_rate;
+@@ -3761,7 +3692,7 @@ static void rtl8821ae_update_hal_rate_mask(struct ieee80211_hw *hw,
+ 		break;
+ 	}
+ 
+-	ratr_index = _rtl8821ae_mrate_idx_to_arfr_id(hw, ratr_index, wirelessmode);
++	ratr_index = rtl_mrate_idx_to_arfr_id(hw, ratr_index, wirelessmode);
+ 	sta_entry->ratr_index = ratr_index;
+ 	ratr_bitmap = _rtl8821ae_set_ra_vht_ratr_bitmap(hw, wirelessmode,
+ 							ratr_bitmap);
 -- 
- Kirill A. Shutemov
+2.17.1
