@@ -1,52 +1,40 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 04 Oct 2018 10:49:27 +0000
-Subject: Re: [PATCH -next] EDAC: Remove set but not used variable 'type'
-Message-Id: <350b5c15-3b31-df3f-5abb-2e78bf0a49eb@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 Oct 2018 22:24:17 +0000
+Subject: [PATCH] phy: inno-usb2-phy: fix off-by-one comparison on port number
+Message-Id: <20181008222417.11739-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537842964-109749-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537842964-109749-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Shawn Guo <shawn.guo@linaro.org>, Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2018/9/26 1:15, Luck, Tony wrote:
-> On Tue, Sep 25, 2018 at 12:11:07PM +0200, Borislav Petkov wrote:
->> On Tue, Sep 25, 2018 at 02:36:04AM +0000, YueHaibing wrote:
->>>  	if (uncorrected_error) {
->>> -		if (ripv) {
->>> -			type = "FATAL";
->>> +		if (ripv)
->>>  			tp_event = HW_EVENT_ERR_FATAL;
->>> -		} else {
->>> -			type = "NON_FATAL";
->>> +		else
->>>  			tp_event = HW_EVENT_ERR_UNCORRECTED;
->>> -		}
->>>  	} else {
->>> -		type = "CORRECTED";
->>>  		tp_event = HW_EVENT_ERR_CORRECTED;
->>>  	}
->>
->> Looks like this @type thing was never used. Tony, did you want to use it
->> for something?
-> 
-> That block of code looks to have been pasted from sb_edac.c, so likely
-> need the same fix there.
-> 
-> It also looks to be wrong. Saying "FATAL" if mcgstatus.ripv is set
-> looks wrong (and incomplete). If RIPV is *NOT* set, then this is fatal.
-> But if it is set, then we should be looking at other bits (like PCC
-> and AR) ... or maybe just calling mce_severity()?
-> 
-> Perhaps a moot point though. If the error is fatal, then we'll panic
-> instead of calling the EDAC driver.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank you for comment
+Currently the range check on the port index is off-by-one and a potential
+out of bounds write can occur on priv->ports[i]. Fix this by checking the
+maximum port using >= INNO_PHY_PORT_NUM rather than > INNO_PHY_PORT_NUM.
 
-> 
-> -Tony
-> 
-> .
-> 
+Detected by CoverityScan, CID#1466118 ("Out-of-bounds write")
+
+Fixes: ba8b0ee81fbb ("phy: add inno-usb2-phy driver for hi3798cv200 SoC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/phy/hisilicon/phy-hisi-inno-usb2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/phy/hisilicon/phy-hisi-inno-usb2.c b/drivers/phy/hisilicon/phy-hisi-inno-usb2.c
+index 524381249a2b..b51e19402ab0 100644
+--- a/drivers/phy/hisilicon/phy-hisi-inno-usb2.c
++++ b/drivers/phy/hisilicon/phy-hisi-inno-usb2.c
+@@ -167,7 +167,7 @@ static int hisi_inno_phy_probe(struct platform_device *pdev)
+ 		phy_set_drvdata(phy, &priv->ports[i]);
+ 		i++;
+ 
+-		if (i > INNO_PHY_PORT_NUM) {
++		if (i >= INNO_PHY_PORT_NUM) {
+ 			dev_warn(dev, "Support %d ports in maximum\n", i);
+ 			break;
+ 		}
+-- 
+2.17.1
