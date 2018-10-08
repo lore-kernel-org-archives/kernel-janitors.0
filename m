@@ -1,24 +1,75 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Date: Mon, 29 Oct 2018 02:00:00 +0000
-Subject: Re: [PATCH] PCI: histb: constify dw_pcie_host_ops structure
-Message-Id: <CAAQ0ZWRXUotcf5u3CAnic=RqKOhVy2irQQw4jZHr_L5fYDZwVg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 Oct 2018 13:35:58 +0000
+Subject: [PATCH] net: aquantia: remove some redundant variable initializations
+Message-Id: <20181008133558.5841-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: sunjianguo1 <sunjianguo1@huawei.com>, kernel-janitors@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, Igor Russkikh <igor.russkikh@aquantia.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 3:06 AM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->
-> The dw_pcie_host_ops structure is only stored in the ops field
-> of a pcie_port structure, and this field is const, so make the
-> dw_pcie_host_ops structure const as well.
->
-> Done with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
+There are several variables being initialized that are being set later
+and hence the initialization is redundant and can be removed. Remove
+then.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+index 750007513f9d..1d5d6b8df855 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+@@ -84,7 +84,7 @@ static int aq_pci_probe_get_hw_by_id(struct pci_dev *pdev,
+ 				     const struct aq_hw_ops **ops,
+ 				     const struct aq_hw_caps_s **caps)
+ {
+-	int i = 0;
++	int i;
+ 
+ 	if (pdev->vendor != PCI_VENDOR_ID_AQUANTIA)
+ 		return -EINVAL;
+@@ -107,7 +107,7 @@ static int aq_pci_probe_get_hw_by_id(struct pci_dev *pdev,
+ 
+ int aq_pci_func_init(struct pci_dev *pdev)
+ {
+-	int err = 0;
++	int err;
+ 
+ 	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
+ 	if (!err) {
+@@ -141,7 +141,7 @@ int aq_pci_func_alloc_irq(struct aq_nic_s *self, unsigned int i,
+ 			  char *name, void *aq_vec, cpumask_t *affinity_mask)
+ {
+ 	struct pci_dev *pdev = self->pdev;
+-	int err = 0;
++	int err;
+ 
+ 	if (pdev->msix_enabled || pdev->msi_enabled)
+ 		err = request_irq(pci_irq_vector(pdev, i), aq_vec_isr, 0,
+@@ -164,7 +164,7 @@ int aq_pci_func_alloc_irq(struct aq_nic_s *self, unsigned int i,
+ void aq_pci_func_free_irqs(struct aq_nic_s *self)
+ {
+ 	struct pci_dev *pdev = self->pdev;
+-	unsigned int i = 0U;
++	unsigned int i;
+ 
+ 	for (i = 32U; i--;) {
+ 		if (!((1U << i) & self->msix_entry_mask))
+@@ -194,8 +194,8 @@ static void aq_pci_free_irq_vectors(struct aq_nic_s *self)
+ static int aq_pci_probe(struct pci_dev *pdev,
+ 			const struct pci_device_id *pci_id)
+ {
+-	struct aq_nic_s *self = NULL;
+-	int err = 0;
++	struct aq_nic_s *self;
++	int err;
+ 	struct net_device *ndev;
+ 	resource_size_t mmio_pa;
+ 	u32 bar;
+-- 
+2.17.1
