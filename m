@@ -1,87 +1,49 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Thu, 25 Oct 2018 10:10:37 +0000
-Subject: Re: [PATCH 2/2] mfd: ab8500-core: Return zero in get_register_interruptible()
-Message-Id: <20181025101037.GR4939@dell>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 08 Oct 2018 13:56:42 +0000
+Subject: [PATCH net-next] net: mscc: ocelot: remove set but not used variable 'phy_mode'
+Message-Id: <1539007670-82488-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181018080534.yw2crvhguen5vajg@kili.mountain>
- <20181025082508.GJ4939@dell>
- <20181025084643.tz72tsh7fulsnnzq@mwanda>
-In-Reply-To: <20181025084643.tz72tsh7fulsnnzq@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, "David S. Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 25 Oct 2018, Dan Carpenter wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> On Thu, Oct 25, 2018 at 09:25:08AM +0100, Lee Jones wrote:
-> > On Thu, 18 Oct 2018, Dan Carpenter wrote:
-> > 
-> > > I just noticed this in review.  The get_register_interruptible() should
-> > > return zero on success but it instead returns the value that it read.
-> > > 
-> > > I looked at all the places that called this directly and they check for
-> > > negatives and treat greater than or equal to zero as success.  This
-> > > function is also called as the ->get_register() function pointer.  Some
-> > > of the callers of that treat all non-zero returns as errors, so it's
-> > > possible that this bug causes some problems in real life.
-> > > 
-> > > I could not find any callers that rely on the current behavior, and this
-> > > makes the function align with the get_register_interruptible() in
-> > > ab3100-core.c.
-> > > 
-> > > Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > >  drivers/mfd/ab8500-core.c | 10 ++++++----
-> > >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
-> > > index 30d09d177171..66458a329127 100644
-> > > --- a/drivers/mfd/ab8500-core.c
-> > > +++ b/drivers/mfd/ab8500-core.c
-> > > @@ -252,16 +252,18 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
-> > >  	mutex_lock(&ab8500->lock);
-> > >  
-> > >  	ret = ab8500->read(ab8500, addr);
-> > > -	if (ret < 0)
-> > > +	if (ret < 0) {
-> > >  		dev_err(ab8500->dev, "failed to read reg %#x: %d\n",
-> > >  			addr, ret);
-> > > -	else
-> > > -		*value = ret;
-> > > +		return ret;
-> > 
-> > Looks like you just broke the AB8500.
-> > 
-> 
-> 
-> Oh wow.  I screwed up the locking.
-> 
-> 
-> > What is it you're trying to achieve here?  Apart from attempting to
-> > return with the mutex still held, what semantics have you changed?
-> > 
-> 
-> Sorry that wasn't clear.  Here is the relevant bits from the commit
-> message.
-> 
-> > > function is also called as the ->get_register() function pointer.  Some
-> > > of the callers of that treat all non-zero returns as errors, so it's
-> > > possible that this bug causes some problems in real life.
-> 
-> We're returning positive non-zero values on success instead of zero.
-> It's definitely a bug, but I'm not sure if it has an impact in real
-> life.
+drivers/net/ethernet/mscc/ocelot_board.c: In function 'mscc_ocelot_probe':
+drivers/net/ethernet/mscc/ocelot_board.c:262:17: warning:
+ variable 'phy_mode' set but not used [-Wunused-but-set-variable]
+   enum phy_mode phy_mode;
 
-Oh, I see.
+It never used since introduction in 
+commit 71e32a20cfbf ("net: mscc: ocelot: make use of SerDes PHYs for handling their configuration")
 
-Maybe:
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/mscc/ocelot_board.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-	return (ret > 0) ? 0 : ret;
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
+index 953b326..0cf0b09 100644
+--- a/drivers/net/ethernet/mscc/ocelot_board.c
++++ b/drivers/net/ethernet/mscc/ocelot_board.c
+@@ -259,7 +259,6 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 		struct phy_device *phy;
+ 		struct resource *res;
+ 		struct phy *serdes;
+-		enum phy_mode phy_mode;
+ 		void __iomem *regs;
+ 		char res_name[8];
+ 		u32 port;
+@@ -297,10 +296,8 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 		case PHY_INTERFACE_MODE_NA:
+ 			continue;
+ 		case PHY_INTERFACE_MODE_SGMII:
+-			phy_mode = PHY_MODE_SGMII;
+ 			break;
+ 		case PHY_INTERFACE_MODE_QSGMII:
+-			phy_mode = PHY_MODE_QSGMII;
+ 			break;
+ 		default:
+ 			dev_err(ocelot->dev,
