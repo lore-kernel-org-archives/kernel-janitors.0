@@ -1,23 +1,126 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 16 Oct 2018 05:40:45 +0000
-Subject: Re: [PATCH] qed: fix spelling mistake "Ireelevant" -> "Irrelevant"
-Message-Id: <20181015.224045.2147031121153042741.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 Oct 2018 16:22:28 +0000
+Subject: [PATCH][drm-next] drm/amdgpu/powerplay: fix missing break in switch statements
+Message-Id: <20181008162228.4599-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181013154825.6285-1-colin.king@canonical.com>
-In-Reply-To: <20181013154825.6285-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 13 Oct 2018 16:48:25 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in DP_INFO message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There are several switch statements that are missing break statements.
+Add missing breaks to handle any fall-throughs corner cases.
 
-Applied.
+Detected by CoverityScan, CID#1457175 ("Missing break in switch")
+
+Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
+ 5 files changed, 10 insertions(+)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+index 18643e06bc6f..669bd0c2a16c 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+@@ -2269,11 +2269,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
+ 		}
++		break;
+ 	}
+ 	pr_debug("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+index ec14798e87b6..bddd6d09f887 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+@@ -2331,6 +2331,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2340,6 +2341,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+index 73aa368a454e..2d4c7f167b88 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+@@ -2237,11 +2237,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+index ae8378ed32ee..a2ba5b012866 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+@@ -2619,6 +2619,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2628,6 +2629,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+index 3d415fabbd93..9f71512b2510 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+@@ -2185,6 +2185,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2194,6 +2195,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+-- 
+2.17.1
