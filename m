@@ -1,30 +1,44 @@
-From: "Bolotin, Denis" <Denis.Bolotin@cavium.com>
-Date: Wed, 10 Oct 2018 13:37:50 +0000
-Subject: RE: [PATCH] qed: fix memory leak of pent on error exit paths
-Message-Id: <MWHPR07MB3471CD4776023A072BD428E696E00@MWHPR07MB3471.namprd07.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 08 Oct 2018 13:21:49 +0000
+Subject: [PATCH net-next] mt76x0: pci: fix set external PA I/O current
+Message-Id: <1539004909-195005-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181008141703.21159-1-colin.king@canonical.com>
-In-Reply-To: <20181008141703.21159-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Elior, Ariel" <Ariel.Elior@cavium.com>, Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>, "David S . Miller" <davem@davemloft.net>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi@redhat.com>, Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-PiArZXJyOg0KPiArICAgICAgIHFlZF9zcHFfcmV0dXJuX2VudHJ5KHBfaHdmbiwgKnBwX2VudCk7
-DQo+ICsgICAgICAgKnBwX2VudCA9IE5VTEw7DQo+ICsNCj4gKyAgICAgICByZXR1cm4gcmM7DQoN
-CkhpIENvbGluLA0KDQpUaGlzIGxlYWsgaXMgYSBrbm93biBpc3N1ZSBhbmQgY2FuIGJlIGZvdW5k
-IGluIHNldmVyYWwgbG9jYXRpb25zIGluIHRoZSBjb2RlLiBXZSBhcmUgd29ya2luZyBvbiBmaXhp
-bmcgaXQgZ2xvYmFsbHkgYW5kIGl0IGlzIGN1cnJlbnRseSBiZWluZyB0ZXN0ZWQuDQpUaGFuayB5
-b3UgZm9yIHlvdXIgZml4IGJ1dCB3ZSB3b3VsZCByYXRoZXIgcHJlcGFyZSBhIGZpeCB0aGF0IHdv
-dWxkIGFsc28gY292ZXIgdGhlIG90aGVyIGxlYWtzIGluIHRoZSBjb2RlLg0KDQpUbyBjb21tZW50
-IG9uIHlvdXIgZml4LCBxZWRfc3BxX3JldHVybl9lbnRyeSgpIG1heSBub3QgYmUgdGhlIEFQSSBu
-ZWVkZWQgdG8gcHJldmVudCB0aGUgbGVhay4gSWYgeW91IGxvb2sgYXQgcWVkX3NwcV9nZXRfZW50
-cnkoKSwgeW914oCZbGwgc2VlIHRoYXQgYW4gZW50cnkgY2FuIGJlIHRha2VuIGZyb20gdGhlIGZy
-ZWVfcG9vbCBidXQgYWxzbyBjYW4gYmUga3phbGxvY+KAmWVkLg0KVGhlIHByb3BlciBzb2x1dGlv
-biB3b3VsZCBiZSB0aGUgc29sdXRpb24gYmVsb3csIGJ1dCBsaWtlIEkgc2FpZCwgd2UgYXJlIHdv
-cmtpbmcgb24gYSBjb21wbGV0ZSBwYXRjaCB0aGF0IHdpbGwgYmUgc3VibWl0dGVkIHNvb24uDQoN
-CisgICAgIGlmIChwX2VudC0+cXVldWUgPT0gJnBfaHdmbi0+cF9zcHEtPnVubGltaXRlZF9wZW5k
-aW5nDQorICAgICAgICAgICAgICAgICAgICBrZnJlZShwX2VudCk7DQorICAgICBlbHNlDQorICAg
-ICAgICAgICAgICAgICAgICBxZWRfc3BxX3JldHVybl9lbnRyeShwX2h3Zm4sICpwcF9lbnQpOw0K
-DQpUaGFua3MsDQpEZW5pcw0K
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/net/wireless/mediatek/mt76/mt76x0/pci.c: In function 'mt76x0e_register_device':
+drivers/net/wireless/mediatek/mt76/mt76x0/pci.c:107:8: warning:
+ variable 'data' set but not used [-Wunused-but-set-variable]
+
+It seems correct value to write is 'data'
+
+Fixes: 2b2cb40bcd7d ("mt76x0: pci: add hw initialization at bootstrap")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt76x0/pci.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+index 87997cd..0426c68 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+@@ -106,12 +106,12 @@ static int mt76x0e_register_device(struct mt76x02_dev *dev)
+ 		if (val & MT_EE_NIC_CONF_0_PA_IO_CURRENT) {
+ 			u32 data;
+ 
+-			/* set external external PA I/O
++			/* set external PA I/O
+ 			 * current to 16mA
+ 			 */
+ 			data = mt76_rr(dev, 0x11c);
+-			val |= 0xc03;
+-			mt76_wr(dev, 0x11c, val);
++			data |= 0xc03;
++			mt76_wr(dev, 0x11c, data);
+ 		}
+ 	}
