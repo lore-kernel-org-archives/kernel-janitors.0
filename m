@@ -1,56 +1,49 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Thu, 25 Oct 2018 14:10:22 +0000
-Subject: [PATCH AUTOSEL 4.18 1/8] x86/paravirt: Fix some warning messages
-Message-Id: <20181025141029.213274-1-sashal@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 09 Oct 2018 01:45:59 +0000
+Subject: [PATCH v2] mt76x0: pci: fix set external PA I/O current
+Message-Id: <1539049559-178175-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1539004909-195005-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539004909-195005-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi@redhat.com>, Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+drivers/net/wireless/mediatek/mt76/mt76x0/pci.c: In function 'mt76x0e_register_device':
+drivers/net/wireless/mediatek/mt76/mt76x0/pci.c:107:8: warning:
+ variable 'data' set but not used [-Wunused-but-set-variable]
 
-The first argument to WARN_ONCE() is a condition.
+It seems correct value to write is 'data'
 
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 2b2cb40bcd7d ("mt76x0: pci: add hw initialization at bootstrap")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: remove 'net-next' from patch title
+---
+ drivers/net/wireless/mediatek/mt76/mt76x0/pci.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 930c88341e4e..1fbf38dde84c 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+index 87997cd..0426c68 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+@@ -106,12 +106,12 @@ static int mt76x0e_register_device(struct mt76x02_dev *dev)
+ 		if (val & MT_EE_NIC_CONF_0_PA_IO_CURRENT) {
+ 			u32 data;
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
+-			/* set external external PA I/O
++			/* set external PA I/O
+ 			 * current to 16mA
+ 			 */
+ 			data = mt76_rr(dev, 0x11c);
+-			val |= 0xc03;
+-			mt76_wr(dev, 0x11c, val);
++			data |= 0xc03;
++			mt76_wr(dev, 0x11c, data);
+ 		}
  	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
--- 
-2.17.1
