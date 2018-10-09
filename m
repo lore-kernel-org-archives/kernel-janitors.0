@@ -1,54 +1,35 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 09 Oct 2018 02:31:13 +0000
-Subject: [PATCH net-next] rxrpc: Remove set but not used variable 'ioc'
-Message-Id: <1539052273-34824-1-git-send-email-yuehaibing@huawei.com>
+From: David Howells <dhowells@redhat.com>
+Date: Tue, 09 Oct 2018 10:13:16 +0000
+Subject: Re: [PATCH net-next] rxrpc: Remove set but not used variable 'ioc'
+Message-Id: <11853.1539079996@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1533180999-138562-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1533180999-138562-1-git-send-email-weiyongjun1@huawei.com>
+References: <1539052273-34824-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539052273-34824-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, davem@davemloft.net
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: dhowells@redhat.com, davem@davemloft.net, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-net/rxrpc/output.c: In function 'rxrpc_reject_packets':
-net/rxrpc/output.c:527:11: warning:
- variable 'ioc' set but not used [-Wunused-but-set-variable]
+> net/rxrpc/output.c: In function 'rxrpc_reject_packets':
+> net/rxrpc/output.c:527:11: warning:
+>  variable 'ioc' set but not used [-Wunused-but-set-variable]
+> 
+> It never used since introduction in
 
-It never used since introduction in
-commit ece64fec164f ("rxrpc: Emit BUSY packets when supposed to rather than ABORTs")
+I wonder why my compiler doesn't show this warning.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/rxrpc/output.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Anyway, NAK: just removing the variable is the wrong fix - you need to look at
+the code more closely.  The actual fix is to pass it to kernel_sendmsg()
+instead of 2.
 
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index e8fb892..f3ed16a 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -524,7 +524,7 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
- 	struct kvec iov[2];
- 	size_t size;
- 	__be32 code;
--	int ret, ioc;
-+	int ret;
- 
- 	_enter("%d", local->debug_id);
- 
-@@ -548,13 +548,11 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
- 		case RXRPC_SKB_MARK_REJECT_BUSY:
- 			whdr.type = RXRPC_PACKET_TYPE_BUSY;
- 			size = sizeof(whdr);
--			ioc = 1;
- 			break;
- 		case RXRPC_SKB_MARK_REJECT_ABORT:
- 			whdr.type = RXRPC_PACKET_TYPE_ABORT;
- 			code = htonl(skb->priority);
- 			size = sizeof(whdr) + sizeof(code);
--			ioc = 2;
- 			break;
- 		default:
- 			rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
+But thanks anyway!  Do you want to respin your patch?
+
+> commit ece64fec164f ("rxrpc: Emit BUSY packets when supposed to rather than ABORTs")
+
+Btw, this should be a 'Fixes: <commit> ("subject")' line and the patch needs
+to go to net, not net-next.
+
+David
