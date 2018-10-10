@@ -1,23 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 16 Oct 2018 05:50:10 +0000
-Subject: Re: [PATCH -next] fore200e: fix missing unlock on error in bsq_audit()
-Message-Id: <20181015.225010.1963314934467310847.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 Oct 2018 14:15:42 +0000
+Subject: [PATCH] ALSA: cs4236: fix return check from call to pnp_port_start
+Message-Id: <20181010141542.16100-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539572836-187019-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1539572836-187019-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: 3chas3@gmail.com, hch@lst.de, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 15 Oct 2018 03:07:16 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Add the missing unlock before return from function bsq_audit()
-> in the error handling case.
-> 
-> Fixes: 1d9d8be91788 ("fore200e: check for dma mapping failures")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Currently the return from pnp_port_start is being checked for validity
+by checking if it is greater or equal to zero, however, the return
+is unsigned and hence this check is always true.  An 0 return from
+pnp_port_start is actually an error, so fix the check by checking
+for validity when it is non-zero.
 
-Applied.
+Detected by CoverityScan, CID#1468334 ("Unsigned compared to 0")
+
+Fixes: a9824c868a2c ("[ALSA] Add CS4232 PnP BIOS support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/isa/cs423x/cs4236.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/isa/cs423x/cs4236.c b/sound/isa/cs423x/cs4236.c
+index 70559e59d18f..2211c39d2c18 100644
+--- a/sound/isa/cs423x/cs4236.c
++++ b/sound/isa/cs423x/cs4236.c
+@@ -292,7 +292,7 @@ static int snd_cs423x_pnp_init_mpu(int dev, struct pnp_dev *pdev)
+ 		mpu_irq[dev] = SNDRV_AUTO_IRQ;
+ 	} else {
+ 		mpu_port[dev] = pnp_port_start(pdev, 0);
+-		if (mpu_irq[dev] >= 0 &&
++		if (!mpu_irq[dev] &&
+ 		    pnp_irq_valid(pdev, 0) && pnp_irq(pdev, 0) >= 0) {
+ 			mpu_irq[dev] = pnp_irq(pdev, 0);
+ 		} else {
+-- 
+2.17.1
