@@ -1,24 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Oct 2018 21:25:58 +0000
-Subject: Re: [PATCH net-next] octeontx2-af: Copy the right amount of memory
-Message-Id: <20181024.142558.1699802085109283198.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 10 Oct 2018 02:14:12 +0000
+Subject: [PATCH net-next] netfilter: cttimeout: remove set but not used variable 'l3num'
+Message-Id: <1539137652-64831-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181024083221.humvwh2pefovptcd@kili.mountain>
-In-Reply-To: <20181024083221.humvwh2pefovptcd@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>
+Cc: YueHaibing <yuehaibing@huawei.com>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Oct 2018 11:32:21 +0300
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> This is a copy and paste bug where we copied the sizeof() from the chunk
-> before.  We're copying more data than intended but the destination is a
-> union so it doesn't cause memory corruption.
-> 
-> Fixes: ffb0abd7e9cb ("octeontx2-af: NIX AQ instruction enqueue support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+net/netfilter/nfnetlink_cttimeout.c: In function 'cttimeout_default_set':
+net/netfilter/nfnetlink_cttimeout.c:353:8: warning:
+ variable 'l3num' set but not used [-Wunused-but-set-variable]
 
-Applied, thanks Dan.
+It not used any more after
+commit dd2934a95701 ("netfilter: conntrack: remove l3->l4 mapping information")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/netfilter/nfnetlink_cttimeout.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/net/netfilter/nfnetlink_cttimeout.c b/net/netfilter/nfnetlink_cttimeout.c
+index b48545b..e7a50af 100644
+--- a/net/netfilter/nfnetlink_cttimeout.c
++++ b/net/netfilter/nfnetlink_cttimeout.c
+@@ -350,7 +350,6 @@ static int cttimeout_default_set(struct net *net, struct sock *ctnl,
+ 				 struct netlink_ext_ack *extack)
+ {
+ 	const struct nf_conntrack_l4proto *l4proto;
+-	__u16 l3num;
+ 	__u8 l4num;
+ 	int ret;
+ 
+@@ -359,7 +358,6 @@ static int cttimeout_default_set(struct net *net, struct sock *ctnl,
+ 	    !cda[CTA_TIMEOUT_DATA])
+ 		return -EINVAL;
+ 
+-	l3num = ntohs(nla_get_be16(cda[CTA_TIMEOUT_L3PROTO]));
+ 	l4num = nla_get_u8(cda[CTA_TIMEOUT_L4PROTO]);
+ 	l4proto = nf_ct_l4proto_find_get(l4num);
