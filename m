@@ -1,23 +1,52 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 16 Oct 2018 21:53:16 +0000
-Subject: Re: [PATCH] scsi: be2iscsi: fix spelling mistake "Retreiving" -> "Retrieving"
-Message-Id: <yq1tvllr22b.fsf@oracle.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 10 Oct 2018 19:13:59 +0000
+Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring' in psp_v11_0_ring_stop
+Message-Id: <CADnq5_MeA5VXnxVwUDfR0eKptf8hxCg0oVUDwLgnFUSKqKDEHA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181016174632.2022-1-colin.king@canonical.com>
-In-Reply-To: <20181016174632.2022-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 16 Oct 2018 18:46:32 +0100")
+References: <1538221154-49213-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1538221154-49213-1-git-send-email-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
+Cc: Chunming Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Feifei Xu <Feifei.Xu-5C7GfCeVMHo@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "Deucher, Alexander" <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, "Wang,
+ Ken" <Ken.Wang-5C7GfCeVMHo@public.gmane.org>, "Quan, Evan" <evan.quan-5C7GfCeVMHo@public.gmane.org>, Christian Koenig <christian.koenig-5C7GfCeVMHo@public.gmane.org>, Shaoyun Liu <Shaoyun.Liu-5C7GfCeVMHo@public.gmane.org>
 
+On Mon, Oct 1, 2018 at 3:26 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/gpu/drm/amd/amdgpu/psp_v11_0.c: In function 'psp_v11_0_ring_stop':
+> drivers/gpu/drm/amd/amdgpu/psp_v11_0.c:309:19: warning:
+>  variable 'ring' set but not used [-Wunused-but-set-variable]
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Colin,
+Applied.  Thanks!
 
-> Trivial fix to spelling mistake in beiscsi_log message.
+Alex
 
-Applied to 4.20/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> ---
+>  drivers/gpu/drm/amd/amdgpu/psp_v11_0.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> index 9217af0..3f3fac2 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> @@ -306,11 +306,8 @@ static int psp_v11_0_ring_stop(struct psp_context *psp,
+>                               enum psp_ring_type ring_type)
+>  {
+>         int ret = 0;
+> -       struct psp_ring *ring;
+>         struct amdgpu_device *adev = psp->adev;
+>
+> -       ring = &psp->km_ring;
+> -
+>         /* Write the ring destroy command to C2PMSG_64 */
+>         WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, GFX_CTRL_CMD_ID_DESTROY_RINGS);
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
