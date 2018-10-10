@@ -1,90 +1,62 @@
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Date: Tue, 30 Oct 2018 11:51:13 +0000
-Subject: Re: [PATCH] staging: speakup: clean up few indentation issues
-Message-Id: <20181030115113.pbef3nmx5t4beygk@function>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Oct 2018 10:06:53 +0000
+Subject: [bug report] nvmem: add support for cell lookups from machine code
+Message-Id: <20181010100653.GA8486@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181030110959.1471-1-colin.king@canonical.com>
-In-Reply-To: <20181030110959.1471-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Colin King, le mar. 30 oct. 2018 11:09:59 +0000, a ecrit:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to clean up indentation issues across the driver
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hello Bartosz Golaszewski,
 
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+The patch 506157be06ba: "nvmem: add support for cell lookups from
+machine code" from Sep 21, 2018, leads to the following static
+checker warning:
 
-> ---
->  drivers/staging/speakup/kobjects.c      | 2 +-
->  drivers/staging/speakup/speakup_decpc.c | 6 +++---
->  drivers/staging/speakup/speakup_keypc.c | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
-> index 08f11cc17371..2e36d872662c 100644
-> --- a/drivers/staging/speakup/kobjects.c
-> +++ b/drivers/staging/speakup/kobjects.c
-> @@ -545,7 +545,7 @@ ssize_t spk_var_show(struct kobject *kobj, struct kobj_attribute *attr,
->  	int rv = 0;
->  	struct st_var_header *param;
->  	struct var_t *var;
-> -		char *cp1;
-> +	char *cp1;
->  	char *cp;
->  	char ch;
->  	unsigned long flags;
-> diff --git a/drivers/staging/speakup/speakup_decpc.c b/drivers/staging/speakup/speakup_decpc.c
-> index 6649309e0342..459ee0c0bd57 100644
-> --- a/drivers/staging/speakup/speakup_decpc.c
-> +++ b/drivers/staging/speakup/speakup_decpc.c
-> @@ -302,12 +302,12 @@ static void synth_flush(struct spk_synth *synth)
->  	while (dt_ctrl(CTRL_flush)) {
->  		if (--timeout = 0)
->  			break;
-> -udelay(50);
-> +		udelay(50);
->  	}
->  	for (timeout = 0; timeout < 10; timeout++) {
->  		if (dt_waitbit(STAT_dma_ready))
->  			break;
-> -udelay(50);
-> +		udelay(50);
->  	}
->  	outb_p(DMA_sync, speakup_info.port_tts + 4);
->  	outb_p(0, speakup_info.port_tts + 4);
-> @@ -315,7 +315,7 @@ udelay(50);
->  	for (timeout = 0; timeout < 10; timeout++) {
->  		if (!(dt_getstatus() & STAT_flushing))
->  			break;
-> -udelay(50);
-> +		udelay(50);
->  	}
->  	dma_state = dt_getstatus() & STAT_dma_state;
->  	dma_state ^= STAT_dma_state;
-> diff --git a/drivers/staging/speakup/speakup_keypc.c b/drivers/staging/speakup/speakup_keypc.c
-> index 3901734982a4..b788272da4f9 100644
-> --- a/drivers/staging/speakup/speakup_keypc.c
-> +++ b/drivers/staging/speakup/speakup_keypc.c
-> @@ -177,7 +177,7 @@ static void do_catch_up(struct spk_synth *synth)
->  	jiffy_delta = spk_get_var(JIFFY);
->  	delay_time = spk_get_var(DELAY);
->  	full_time = spk_get_var(FULL);
-> -spin_lock_irqsave(&speakup_info.spinlock, flags);
-> +	spin_lock_irqsave(&speakup_info.spinlock, flags);
->  	jiffy_delta_val = jiffy_delta->u.n.value;
->  	spin_unlock_irqrestore(&speakup_info.spinlock, flags);
->  
-> -- 
-> 2.19.1
-> 
+	drivers/nvmem/core.c:960 nvmem_cell_get_from_lookup()
+	error: 'nvmem' dereferencing possible ERR_PTR()
 
--- 
-Samuel
-<P> je sens venir la fonte 14 pour le rapport
- -+- #ens-mim -+-
+drivers/nvmem/core.c
+   941  
+   942          if (!dev)
+   943                  return ERR_PTR(-EINVAL);
+   944  
+   945          dev_id = dev_name(dev);
+   946  
+   947          mutex_lock(&nvmem_lookup_mutex);
+   948  
+   949          list_for_each_entry(lookup, &nvmem_lookup_list, node) {
+   950                  if ((strcmp(lookup->dev_id, dev_id) = 0) &&
+   951                      (strcmp(lookup->con_id, con_id) = 0)) {
+   952                          /* This is the right entry. */
+   953                          nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This returns error pointers.
+
+   954                          if (!nvmem) {
+   955                                  /* Provider may not be registered yet. */
+   956                                  cell = ERR_PTR(-EPROBE_DEFER);
+   957                                  goto out;
+   958                          }
+   959  
+   960                          cell = nvmem_find_cell_by_name(nvmem,
+   961                                                         lookup->cell_name);
+   962                          if (!cell) {
+   963                                  __nvmem_device_put(nvmem);
+   964                                  goto out;
+                                        ^^^^^^^^
+We probably want to set the error code on this path.
+
+   965                          }
+   966                  }
+   967          }
+   968  
+   969  out:
+   970          mutex_unlock(&nvmem_lookup_mutex);
+   971          return cell;
+   972  }
+   973  
+
+regards,
+dan carpenter
