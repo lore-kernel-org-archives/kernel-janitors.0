@@ -1,29 +1,45 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Wed, 17 Oct 2018 08:41:23 +0000
-Subject: Re: [PATCH] xfs: Fix error code in 'xfs_ioc_getbmap()'
-Message-Id: <20181017084123.GK16896@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Oct 2018 11:04:31 +0000
+Subject: [bug report] net: phy: mscc: migrate to phy_select/restore_page functions
+Message-Id: <20181010110431.GA21125@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181017062138.1721-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20181017062138.1721-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: darrick.wong@oracle.com, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 08:21:38AM +0200, Christophe JAILLET wrote:
-> In this function, once 'buf' has been allocated, we unconditionally
-> return 0.
-> However, 'error' is set to some error codes in several error handling
-> paths.
-> Before commit 232b51948b99 ("xfs: simplify the xfs_getbmap interface")
-> this was not an issue because all error paths were returning directly,
-> but now that some cleanup at the end may be needed, we must propagate the
-> error code.
-> 
-> Fixes: 232b51948b99 ("xfs: simplify the xfs_getbmap interface")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hello Quentin Schulz,
 
-Looks good:
+The patch 6a0bfbbe20b0: "net: phy: mscc: migrate to
+phy_select/restore_page functions" from Oct 8, 2018, leads to the
+following static checker warning:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+	drivers/net/phy/mscc.c:529 vsc85xx_downshift_get()
+	warn: impossible condition '(reg_val < 0) => (0-u16max < 0)'
+
+drivers/net/phy/mscc.c
+   523  static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
+   524  {
+   525          u16 reg_val;
+                ^^^^^^^^^^^^
+   526  
+   527          reg_val = phy_read_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
+   528                                   MSCC_PHY_ACTIPHY_CNTL);
+   529          if (reg_val < 0)
+                    ^^^^^^^^^^^
+Impossible
+
+   530                  return reg_val;
+   531  
+   532          reg_val &= DOWNSHIFT_CNTL_MASK;
+   533          if (!(reg_val & DOWNSHIFT_EN))
+   534                  *count = DOWNSHIFT_DEV_DISABLE;
+   535          else
+   536                  *count = ((reg_val & ~DOWNSHIFT_EN) >> DOWNSHIFT_CNTL_POS) + 2;
+   537  
+   538          return 0;
+   539  }
+
+
+regards,
+dan carpenter
