@@ -1,47 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 05:47:39 +0000
-Subject: [PATCH 5/8] clk: pxa: constify clk_ops structures
-Message-Id: <1540619262-22681-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Oct 2018 10:36:06 +0000
+Subject: [PATCH] udlfb: fix some inconsistent NULL checking
+Message-Id: <20181010103606.GA14563@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bernie Thompson <bernie@plugable.com>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-These clk_ops structures are only passed to a call to
-clk_register_composite where the corresponding parameters
-are const, so the clk_ops structure can be const as well.
+In the current kernel, then kzalloc() can't fail for small allocations,
+but if it did fail then we would have a NULL dereference in the error
+handling.  Also in dlfb_usb_disconnect() if "info" were NULL then it
+would cause an Oops inside the unregister_framebuffer() function but it
+can't be NULL so let's remove that check.
 
-Identified and transformed using Coccinelle.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/clk/pxa/clk-pxa.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-index b80dc9d5855c..42627bf8a09e 100644
---- a/drivers/clk/pxa/clk-pxa.c
-+++ b/drivers/clk/pxa/clk-pxa.c
-@@ -70,7 +70,7 @@ static unsigned long cken_recalc_rate(struct clk_hw *hw,
- 	return clk_fixed_factor_ops.recalc_rate(&fix->hw, parent_rate);
+diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
+index 070026a7e55a..1d034dddc556 100644
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -1598,7 +1598,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
+ 	dlfb = kzalloc(sizeof(*dlfb), GFP_KERNEL);
+ 	if (!dlfb) {
+ 		dev_err(&intf->dev, "%s: failed to allocate dlfb\n", __func__);
+-		goto error;
++		return -ENOMEM;
+ 	}
+ 
+ 	INIT_LIST_HEAD(&dlfb->deferred_free);
+@@ -1703,7 +1703,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
+ error:
+ 	if (dlfb->info) {
+ 		dlfb_ops_destroy(dlfb->info);
+-	} else if (dlfb) {
++	} else {
+ 		usb_put_dev(dlfb->udev);
+ 		kfree(dlfb);
+ 	}
+@@ -1730,12 +1730,10 @@ static void dlfb_usb_disconnect(struct usb_interface *intf)
+ 	/* this function will wait for all in-flight urbs to complete */
+ 	dlfb_free_urb_list(dlfb);
+ 
+-	if (info) {
+-		/* remove udlfb's sysfs interfaces */
+-		for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
+-			device_remove_file(info->dev, &fb_device_attrs[i]);
+-		device_remove_bin_file(info->dev, &edid_attr);
+-	}
++	/* remove udlfb's sysfs interfaces */
++	for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
++		device_remove_file(info->dev, &fb_device_attrs[i]);
++	device_remove_bin_file(info->dev, &edid_attr);
+ 
+ 	unregister_framebuffer(info);
  }
- 
--static struct clk_ops cken_rate_ops = {
-+static const struct clk_ops cken_rate_ops = {
- 	.recalc_rate = cken_recalc_rate,
- };
- 
-@@ -83,7 +83,7 @@ static u8 cken_get_parent(struct clk_hw *hw)
- 	return pclk->is_in_low_power() ? 0 : 1;
- }
- 
--static struct clk_ops cken_mux_ops = {
-+static const struct clk_ops cken_mux_ops = {
- 	.get_parent = cken_get_parent,
- 	.set_parent = dummy_clk_set_parent,
- };
