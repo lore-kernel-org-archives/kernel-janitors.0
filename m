@@ -1,69 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 08 Oct 2018 14:17:03 +0000
-Subject: [PATCH] qed: fix memory leak of pent on error exit paths
-Message-Id: <20181008141703.21159-1-colin.king@canonical.com>
+From: "Bolotin, Denis" <Denis.Bolotin@cavium.com>
+Date: Wed, 10 Oct 2018 13:37:50 +0000
+Subject: RE: [PATCH] qed: fix memory leak of pent on error exit paths
+Message-Id: <MWHPR07MB3471CD4776023A072BD428E696E00@MWHPR07MB3471.namprd07.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181008141703.21159-1-colin.king@canonical.com>
+In-Reply-To: <20181008141703.21159-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, "David S . Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Elior, Ariel" <Ariel.Elior@cavium.com>, Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>, "David S . Miller" <davem@davemloft.net>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently, calls to qed_sp_init_request can leak pent on -EINVAL errors.
-Fix this by adding the allocated pent back to the p_hwfn free_pool
-on these error exits so it can be re-used later and hence fixes the
-leak.
-
-Detected by CoverityScan, CID#1411643 ("Resource leak")
-
-Fixes: fe56b9e6a8d9 ("qed: Add module with basic common support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../net/ethernet/qlogic/qed/qed_sp_commands.c    | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-index 77b6248ad3b9..810475a6522a 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-@@ -79,8 +79,10 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 		break;
- 
- 	case QED_SPQ_MODE_BLOCK:
--		if (!p_data->p_comp_data)
--			return -EINVAL;
-+		if (!p_data->p_comp_data) {
-+			rc = -EINVAL;
-+			goto err;
-+		}
- 
- 		p_ent->comp_cb.cookie = p_data->p_comp_data->cookie;
- 		break;
-@@ -95,7 +97,8 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 	default:
- 		DP_NOTICE(p_hwfn, "Unknown SPQE completion mode %d\n",
- 			  p_ent->comp_mode);
--		return -EINVAL;
-+		rc = -EINVAL;
-+		goto err;
- 	}
- 
- 	DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
-@@ -109,6 +112,13 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 	memset(&p_ent->ramrod, 0, sizeof(p_ent->ramrod));
- 
- 	return 0;
-+
-+err:
-+	qed_spq_return_entry(p_hwfn, *pp_ent);
-+	*pp_ent = NULL;
-+
-+	return rc;
-+
- }
- 
- static enum tunnel_clss qed_tunn_clss_to_fw_clss(u8 type)
--- 
-2.17.1
+PiArZXJyOg0KPiArICAgICAgIHFlZF9zcHFfcmV0dXJuX2VudHJ5KHBfaHdmbiwgKnBwX2VudCk7
+DQo+ICsgICAgICAgKnBwX2VudCA9IE5VTEw7DQo+ICsNCj4gKyAgICAgICByZXR1cm4gcmM7DQoN
+CkhpIENvbGluLA0KDQpUaGlzIGxlYWsgaXMgYSBrbm93biBpc3N1ZSBhbmQgY2FuIGJlIGZvdW5k
+IGluIHNldmVyYWwgbG9jYXRpb25zIGluIHRoZSBjb2RlLiBXZSBhcmUgd29ya2luZyBvbiBmaXhp
+bmcgaXQgZ2xvYmFsbHkgYW5kIGl0IGlzIGN1cnJlbnRseSBiZWluZyB0ZXN0ZWQuDQpUaGFuayB5
+b3UgZm9yIHlvdXIgZml4IGJ1dCB3ZSB3b3VsZCByYXRoZXIgcHJlcGFyZSBhIGZpeCB0aGF0IHdv
+dWxkIGFsc28gY292ZXIgdGhlIG90aGVyIGxlYWtzIGluIHRoZSBjb2RlLg0KDQpUbyBjb21tZW50
+IG9uIHlvdXIgZml4LCBxZWRfc3BxX3JldHVybl9lbnRyeSgpIG1heSBub3QgYmUgdGhlIEFQSSBu
+ZWVkZWQgdG8gcHJldmVudCB0aGUgbGVhay4gSWYgeW91IGxvb2sgYXQgcWVkX3NwcV9nZXRfZW50
+cnkoKSwgeW914oCZbGwgc2VlIHRoYXQgYW4gZW50cnkgY2FuIGJlIHRha2VuIGZyb20gdGhlIGZy
+ZWVfcG9vbCBidXQgYWxzbyBjYW4gYmUga3phbGxvY+KAmWVkLg0KVGhlIHByb3BlciBzb2x1dGlv
+biB3b3VsZCBiZSB0aGUgc29sdXRpb24gYmVsb3csIGJ1dCBsaWtlIEkgc2FpZCwgd2UgYXJlIHdv
+cmtpbmcgb24gYSBjb21wbGV0ZSBwYXRjaCB0aGF0IHdpbGwgYmUgc3VibWl0dGVkIHNvb24uDQoN
+CisgICAgIGlmIChwX2VudC0+cXVldWUgPT0gJnBfaHdmbi0+cF9zcHEtPnVubGltaXRlZF9wZW5k
+aW5nDQorICAgICAgICAgICAgICAgICAgICBrZnJlZShwX2VudCk7DQorICAgICBlbHNlDQorICAg
+ICAgICAgICAgICAgICAgICBxZWRfc3BxX3JldHVybl9lbnRyeShwX2h3Zm4sICpwcF9lbnQpOw0K
+DQpUaGFua3MsDQpEZW5pcw0K
