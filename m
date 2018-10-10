@@ -1,58 +1,44 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Thu, 25 Oct 2018 14:10:49 +0000
-Subject: [PATCH AUTOSEL 4.14 42/46] x86/paravirt: Fix some warning messages
-Message-Id: <20181025141053.213330-42-sashal@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 10 Oct 2018 01:55:10 +0000
+Subject: [PATCH v3] rxrpc: use correct kvec num while send response packet in rxrpc_reject_packets
+Message-Id: <1539137176-51239-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181025141053.213330-1-sashal@kernel.org>
-In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
+References: <1539094525-174123-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539094525-174123-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: David Howells <dhowells@redhat.com>, davem@davemloft.net
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+net/rxrpc/output.c: In function 'rxrpc_reject_packets':
+net/rxrpc/output.c:527:11: warning:
+ variable 'ioc' set but not used [-Wunused-but-set-variable]
 
-The first argument to WARN_ONCE() is a condition.
+'ioc' is the correct kvec num while send response packet.
 
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: ece64fec164f ("rxrpc: Emit BUSY packets when supposed to rather than ABORTs")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v3: remove 'commit' from Fixes info.
+v2: use 'ioc' rather than remove it.
+---
+ net/rxrpc/output.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index f3559b84cd75..04da826381c9 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
+index e8fb892..a141ee3 100644
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -572,7 +572,8 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
+ 			whdr.flags	^= RXRPC_CLIENT_INITIATED;
+ 			whdr.flags	&= RXRPC_CLIENT_INITIATED;
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
--- 
-2.17.1
+-			ret = kernel_sendmsg(local->socket, &msg, iov, 2, size);
++			ret = kernel_sendmsg(local->socket, &msg,
++					     iov, ioc, size);
+ 			if (ret < 0)
+ 				trace_rxrpc_tx_fail(local->debug_id, 0, ret,
+ 						    rxrpc_tx_point_reject);
