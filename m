@@ -1,39 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 16 Oct 2018 07:39:40 +0000
-Subject: [PATCH] wlcore: Fix the return value in case of error in 'wlcore_vendor_cmd_smart_config_start()'
-Message-Id: <20181016073940.26797-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 Oct 2018 09:57:57 +0000
+Subject: [PATCH] iwlwifi: fix spelling mistake "registrating" -> "registering"
+Message-Id: <20181011095757.18475-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvalo@codeaurora.org, davem@davemloft.net, tony@atomide.com
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We return 0 unconditionally at the end of
-'wlcore_vendor_cmd_smart_config_start()'.
-However, 'ret' is set to some error codes in several error handling paths
-and we already return some error codes at the beginning of the function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Return 'ret' instead to propagate the error code.
+Trivial fix to spelling mistake in IWL_ERR error message
 
-Fixes: 80ff8063e87c ("wlcore: handle smart config vendor commands")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ti/wlcore/vendor_cmd.c | 2 +-
+ drivers/net/wireless/intel/iwlwifi/dvm/main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ti/wlcore/vendor_cmd.c b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
-index dbe78d8491ef..7f34ec077ee5 100644
---- a/drivers/net/wireless/ti/wlcore/vendor_cmd.c
-+++ b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
-@@ -70,7 +70,7 @@ wlcore_vendor_cmd_smart_config_start(struct wiphy *wiphy,
- out:
- 	mutex_unlock(&wl->mutex);
- 
--	return 0;
-+	return ret;
- }
- 
- static int
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
+index 1088ff036e13..a5041d92babc 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/main.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
+@@ -1054,7 +1054,7 @@ static void iwl_bg_restart(struct work_struct *data)
+ 			ieee80211_restart_hw(priv->hw);
+ 		else
+ 			IWL_ERR(priv,
+-				"Cannot request restart before registrating with mac80211\n");
++				"Cannot request restart before registering with mac80211\n");
+ 	} else {
+ 		WARN_ON(1);
+ 	}
 -- 
 2.17.1
