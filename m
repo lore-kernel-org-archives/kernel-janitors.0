@@ -1,57 +1,27 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Tue, 30 Oct 2018 16:22:22 +0000
-Subject: Re: [PATCH 2/2] thermal: broadcom: constify thermal_zone_of_device_ops structure
-Message-Id: <b0442517-ea11-9366-b17d-c60acf5c9cb3@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Oct 2018 07:59:41 +0000
+Subject: [PATCH] staging: vboxvideo: unlock on error in vbox_cursor_atomic_update()
+Message-Id: <20181011075941.GA11658@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540912500-21941-1-git-send-email-Julia.Lawall@lip6.fr>
- <1540912500-21941-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540912500-21941-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On 30/10/2018 16:15, Julia Lawall wrote:
-> The thermal_zone_of_device_ops structure can be const as it is only
-> passed as the last argument of thermal_zone_of_sensor_register
-> and the corresponding parameter is declared as const.
->=20
-> Done with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We need to unlock before returning on this error path.
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Fixes: 35f3288c453e ("staging: vboxvideo: Atomic phase 1: convert cursor to universal plane")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->=20
-> Unrelated to this change, is there a reason not to use
-> devm_thermal_zone_of_sensor_register?
-
-Agree, it would make sense to use the devm* version.
-
->  drivers/thermal/broadcom/brcmstb_thermal.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff -u -p a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal=
-/broadcom/brcmstb_thermal.c
-> --- a/drivers/thermal/broadcom/brcmstb_thermal.c
-> +++ b/drivers/thermal/broadcom/brcmstb_thermal.c
-> @@ -299,7 +299,7 @@ static int brcmstb_set_trips(void *data,
->  	return 0;
->  }
-> =20
-> -static struct thermal_zone_of_device_ops of_ops =3D {
-> +static const struct thermal_zone_of_device_ops of_ops =3D {
->  	.get_temp	=3D brcmstb_get_temp,
->  	.set_trips	=3D brcmstb_set_trips,
->  };
->=20
-
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
- SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/drivers/staging/vboxvideo/vbox_mode.c b/drivers/staging/vboxvideo/vbox_mode.c
+index 042e4f384df9..78a9c9b13ff6 100644
+--- a/drivers/staging/vboxvideo/vbox_mode.c
++++ b/drivers/staging/vboxvideo/vbox_mode.c
+@@ -424,6 +424,7 @@ static void vbox_cursor_atomic_update(struct drm_plane *plane,
+ 	/* pinning is done in prepare/cleanup framebuffer */
+ 	src = vbox_bo_kmap(bo);
+ 	if (IS_ERR(src)) {
++		mutex_unlock(&vbox->hw_mutex);
+ 		DRM_WARN("Could not kmap cursor bo, skipping update\n");
+ 		return;
+ 	}
