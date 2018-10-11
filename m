@@ -1,56 +1,33 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 10 Oct 2018 19:18:56 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'header'
-Message-Id: <CADnq5_MF1KvBQQRPNuuRE1gcTq6aHutktCPBi2ocfjYyZAcPYA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Oct 2018 08:09:20 +0000
+Subject: [PATCH] ath10k: htt: remove some dead code
+Message-Id: <20181011080920.GA15131@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: "Deucher, Alexander" <alexander.deucher@amd.com>, Christian Koenig <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dave Airlie <airlied@linux.ie>, Likun Gao <Likun.Gao@amd.com>, David Francis <David.Francis@amd.com>, Huang Rui <ray.huang@amd.com>, Feifei Xu <Feifei.Xu@amd.com>, "monk.liu" <Monk.Liu@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Anilkumar Kolli <akolli@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org
 
-On Wed, Sep 26, 2018 at 11:01 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c: In function 'amdgpu_ucode_init_bo':
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c:431:39: warning:
->  variable 'header' set but not used [-Wunused-but-set-variable]
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+We added an unnecessary condition here in commit a904417fc876 ("ath10k:
+add extended per sta tx statistics support").  "legacy_rate_idx" is a u8
+so it can't be negative.  The caller doesn't pass negatives either.  I
+have deleted this code.
 
-Applied.  Thanks,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I didn't use the Fixes tag because it's not really a bug.
 
-Alex
-
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-> index 1fa8bc3..afd5cf3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-> @@ -428,7 +428,6 @@ int amdgpu_ucode_init_bo(struct amdgpu_device *adev)
->         uint64_t fw_offset = 0;
->         int i, err;
->         struct amdgpu_firmware_info *ucode = NULL;
-> -       const struct common_firmware_header *header = NULL;
->
->         if (!adev->firmware.fw_size) {
->                 dev_warn(adev->dev, "No ip firmware need to load\n");
-> @@ -465,7 +464,6 @@ int amdgpu_ucode_init_bo(struct amdgpu_device *adev)
->         for (i = 0; i < adev->firmware.max_ucodes; i++) {
->                 ucode = &adev->firmware.ucode[i];
->                 if (ucode->fw) {
-> -                       header = (const struct common_firmware_header *)ucode->fw->data;
->                         amdgpu_ucode_init_single_fw(adev, ucode, adev->firmware.fw_buf_mc + fw_offset,
->                                                     adev->firmware.fw_buf_ptr + fw_offset);
->                         if (i = AMDGPU_UCODE_ID_CP_MEC1 &&
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
+index f2405258a6d3..13717a287848 100644
+--- a/drivers/net/wireless/ath/ath10k/htt_rx.c
++++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
+@@ -2680,8 +2680,6 @@ ath10k_accumulate_per_peer_tx_stats(struct ath10k *ar,
+ 		STATS_OP_FMT(RETRY).ht[1][ht_idx] += pstats->retry_pkts;
+ 	} else {
+ 		mcs = legacy_rate_idx;
+-		if (mcs < 0)
+-			return;
+ 
+ 		STATS_OP_FMT(SUCC).legacy[0][mcs] += pstats->succ_bytes;
+ 		STATS_OP_FMT(SUCC).legacy[1][mcs] += pstats->succ_pkts;
