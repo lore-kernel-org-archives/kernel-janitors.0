@@ -1,41 +1,51 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 09 Oct 2018 14:15:25 +0000
-Subject: [PATCH v2] rxrpc: use correct kvec num while send response packet in rxrpc_reject_packets
-Message-Id: <1539094525-174123-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Oct 2018 14:48:32 +0000
+Subject: [PATCH] [media] exynos4-is: fix spelling mistake ACTURATOR -> ACTUATOR
+Message-Id: <20181012144832.20722-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539052273-34824-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539052273-34824-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, davem@davemloft.net
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-net/rxrpc/output.c: In function 'rxrpc_reject_packets':
-net/rxrpc/output.c:527:11: warning:
- variable 'ioc' set but not used [-Wunused-but-set-variable]
+Trivial fix to spelling mistake in macro name and text string
+ERROR_SENSOR_ACTURATOR_INIT_FAIL -> ERROR_SENSOR_ACTUATOR_INIT_FAIL
 
-'ioc' is the correct kvec num while send response packet.
-
-Fixes: commit ece64fec164f ("rxrpc: Emit BUSY packets when supposed to rather than ABORTs")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/rxrpc/output.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/platform/exynos4-is/fimc-is-errno.c | 4 ++--
+ drivers/media/platform/exynos4-is/fimc-is-errno.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index e8fb892..a141ee3 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -572,7 +572,8 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
- 			whdr.flags	^= RXRPC_CLIENT_INITIATED;
- 			whdr.flags	&= RXRPC_CLIENT_INITIATED;
- 
--			ret = kernel_sendmsg(local->socket, &msg, iov, 2, size);
-+			ret = kernel_sendmsg(local->socket, &msg,
-+					     iov, ioc, size);
- 			if (ret < 0)
- 				trace_rxrpc_tx_fail(local->debug_id, 0, ret,
- 						    rxrpc_tx_point_reject);
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.c b/drivers/media/platform/exynos4-is/fimc-is-errno.c
+index e050e63fe358..bbb08576492e 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-errno.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-errno.c
+@@ -90,8 +90,8 @@ const char *fimc_is_param_strerr(unsigned int error)
+ 		return "ERROR_SENSOR_INVALID_SIZE";
+ 	case ERROR_SENSOR_INVALID_SETTING:
+ 		return "ERROR_SENSOR_INVALID_SETTING";
+-	case ERROR_SENSOR_ACTURATOR_INIT_FAIL:
+-		return "ERROR_SENSOR_ACTURATOR_INIT_FAIL";
++	case ERROR_SENSOR_ACTUATOR_INIT_FAIL:
++		return "ERROR_SENSOR_ACTUATOR_INIT_FAIL";
+ 	case ERROR_SENSOR_INVALID_AF_POS:
+ 		return "ERROR_SENSOR_INVALID_AF_POS";
+ 	case ERROR_SENSOR_UNSUPPORT_FUNC:
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.h b/drivers/media/platform/exynos4-is/fimc-is-errno.h
+index ef981e74513a..77f4fc860be5 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-errno.h
++++ b/drivers/media/platform/exynos4-is/fimc-is-errno.h
+@@ -189,7 +189,7 @@ enum fimc_is_error {
+ 	ERROR_SENSOR_INVALID_EXPOSURETIME,
+ 	ERROR_SENSOR_INVALID_SIZE,
+ 	ERROR_SENSOR_INVALID_SETTING,
+-	ERROR_SENSOR_ACTURATOR_INIT_FAIL,
++	ERROR_SENSOR_ACTUATOR_INIT_FAIL,
+ 	ERROR_SENSOR_INVALID_AF_POS,
+ 	ERROR_SENSOR_UNSUPPORT_FUNC,
+ 	ERROR_SENSOR_UNSUPPORT_PERI,
+-- 
+2.17.1
