@@ -1,25 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 02 Oct 2018 05:34:28 +0000
-Subject: Re: [PATCH net] net: sched: act_ipt: check for underflow in __tcf_ipt_init()
-Message-Id: <20181001.223428.810557942317894005.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Oct 2018 15:30:59 +0000
+Subject: [PATCH] drm/nouveau/bios/init:  fix spelling mistake "INIT_GENERIC_CONDITON" -> "INIT_GENERIC_CONDIT
+Message-Id: <20181012153059.22052-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180922134648.GA7027@mwanda>
-In-Reply-To: <20180922134648.GA7027@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jhs@mojatatu.com, kaber@trash.net, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Sep 2018 16:46:48 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> If "td->u.target_size" is larger than sizeof(struct xt_entry_target) we
-> return -EINVAL.  But we don't check whether it's smaller than
-> sizeof(struct xt_entry_target) and that could lead to an out of bounds
-> read.
-> 
-> Fixes: 7ba699c604ab ("[NET_SCHED]: Convert actions from rtnetlink to new netlink API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Trivial fix to spelling mistake in warn message text
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+index 9cc10e438b3d..003dc8edf1c3 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+@@ -831,7 +831,7 @@ init_generic_condition(struct nvbios_init *init)
+ 			init_exec_set(init, false);
+ 		break;
+ 	default:
+-		warn("INIT_GENERIC_CONDITON: unknown 0x%02x\n", cond);
++		warn("INIT_GENERIC_CONDITION: unknown 0x%02x\n", cond);
+ 		init->offset += size;
+ 		break;
+ 	}
+-- 
+2.17.1
