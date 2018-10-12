@@ -1,28 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Oct 2018 16:44:41 +0000
-Subject: [PATCH] mei: samples: fix a signedness bug in amt_host_if_call()
-Message-Id: <20181001164440.GA29248@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Oct 2018 15:19:32 +0000
+Subject: [PATCH] media: dib0700: fix spelling mistake "Amplifyer" -> "Amplifier"
+Message-Id: <20181012151932.21841-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <shuahkh@osg.samsung.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"out_buf_sz" needs to be signed for the error handling to work.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Trivial fix to spelling mistake in MODULE_PARM_DESC text
 
-diff --git a/samples/mei/mei-amt-version.c b/samples/mei/mei-amt-version.c
-index 57d0d871dcf7..33e67bd1dc34 100644
---- a/samples/mei/mei-amt-version.c
-+++ b/samples/mei/mei-amt-version.c
-@@ -370,7 +370,7 @@ static uint32_t amt_host_if_call(struct amt_host_if *acmd,
- 			unsigned int expected_sz)
- {
- 	uint32_t in_buf_sz;
--	uint32_t out_buf_sz;
-+	ssize_t out_buf_sz;
- 	ssize_t written;
- 	uint32_t status;
- 	struct amt_host_if_resp_header *msg_hdr;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/dvb-usb/dib0700_devices.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/dvb-usb/dib0700_devices.c b/drivers/media/usb/dvb-usb/dib0700_devices.c
+index 7551dce96f64..9311f7d4bba5 100644
+--- a/drivers/media/usb/dvb-usb/dib0700_devices.c
++++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
+@@ -29,7 +29,7 @@
+ 
+ static int force_lna_activation;
+ module_param(force_lna_activation, int, 0644);
+-MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifyer(s) (LNA), if applicable for the device (default: 0=automatic/off).");
++MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifier(s) (LNA), if applicable for the device (default: 0=automatic/off).");
+ 
+ struct dib0700_adapter_state {
+ 	int (*set_param_save) (struct dvb_frontend *);
+-- 
+2.17.1
