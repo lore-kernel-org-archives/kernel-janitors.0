@@ -1,80 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 13:34:44 +0000
-Subject: [PATCH 3/3] ASoC: codecs: constify snd_soc_dai_ops structures
-Message-Id: <1540647284-26728-4-git-send-email-Julia.Lawall@lip6.fr>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 12 Oct 2018 10:40:22 +0000
+Subject: [PATCH -next] x86/cpu: Drop pointless static qualifier in punit_dev_state_show()
+Message-Id: <1539340822-117563-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The snd_soc_dai_ops structures are only stored in the ops field of a
-snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
-const as well.
+There is no need to have the 'struct dentry *dev_state' variable static
+since new value always be assigned before use it.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/codecs/ak4458.c   |    2 +-
- sound/soc/codecs/ak5558.c   |    2 +-
- sound/soc/codecs/hdac_hda.c |    2 +-
- sound/soc/codecs/tas6424.c  |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/platform/atom/punit_atom_debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
-index 299ada4dfaa0..70d4c89bd6fc 100644
---- a/sound/soc/codecs/ak4458.c
-+++ b/sound/soc/codecs/ak4458.c
-@@ -456,7 +456,7 @@ static int ak4458_startup(struct snd_pcm_substream *substream,
- 	return ret;
- }
+diff --git a/arch/x86/platform/atom/punit_atom_debug.c b/arch/x86/platform/atom/punit_atom_debug.c
+index 41dae0f..6cb6076 100644
+--- a/arch/x86/platform/atom/punit_atom_debug.c
++++ b/arch/x86/platform/atom/punit_atom_debug.c
+@@ -115,7 +115,7 @@ static int punit_dev_state_show(struct seq_file *seq_file, void *unused)
  
--static struct snd_soc_dai_ops ak4458_dai_ops = {
-+static const struct snd_soc_dai_ops ak4458_dai_ops = {
- 	.startup        = ak4458_startup,
- 	.hw_params	= ak4458_hw_params,
- 	.set_fmt	= ak4458_set_dai_fmt,
-diff --git a/sound/soc/codecs/ak5558.c b/sound/soc/codecs/ak5558.c
-index 448bb90c9c8e..60f1f12c81ea 100644
---- a/sound/soc/codecs/ak5558.c
-+++ b/sound/soc/codecs/ak5558.c
-@@ -246,7 +246,7 @@ static int ak5558_startup(struct snd_pcm_substream *substream,
- 					  &ak5558_rate_constraints);
- }
+ static int punit_dbgfs_register(struct punit_device *punit_device)
+ {
+-	static struct dentry *dev_state;
++	struct dentry *dev_state;
  
--static struct snd_soc_dai_ops ak5558_dai_ops = {
-+static const struct snd_soc_dai_ops ak5558_dai_ops = {
- 	.startup        = ak5558_startup,
- 	.hw_params	= ak5558_hw_params,
- 
-diff --git a/sound/soc/codecs/hdac_hda.c b/sound/soc/codecs/hdac_hda.c
-index 2aaa83028e55..ffecdaaa8cf2 100644
---- a/sound/soc/codecs/hdac_hda.c
-+++ b/sound/soc/codecs/hdac_hda.c
-@@ -46,7 +46,7 @@ static int hdac_hda_dai_set_tdm_slot(struct snd_soc_dai *dai,
- static struct hda_pcm *snd_soc_find_pcm_from_dai(struct hdac_hda_priv *hda_pvt,
- 						 struct snd_soc_dai *dai);
- 
--static struct snd_soc_dai_ops hdac_hda_dai_ops = {
-+static const struct snd_soc_dai_ops hdac_hda_dai_ops = {
- 	.startup = hdac_hda_dai_open,
- 	.shutdown = hdac_hda_dai_close,
- 	.prepare = hdac_hda_dai_prepare,
-diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
-index 36aebdb8f55c..aaba39295079 100644
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -378,7 +378,7 @@ static struct snd_soc_component_driver soc_codec_dev_tas6424 = {
- 	.non_legacy_dai_naming	= 1,
- };
- 
--static struct snd_soc_dai_ops tas6424_speaker_dai_ops = {
-+static const struct snd_soc_dai_ops tas6424_speaker_dai_ops = {
- 	.hw_params	= tas6424_hw_params,
- 	.set_fmt	= tas6424_set_dai_fmt,
- 	.set_tdm_slot	= tas6424_set_dai_tdm_slot,
+ 	punit_dbg_file = debugfs_create_dir("punit_atom", NULL);
+ 	if (!punit_dbg_file)
