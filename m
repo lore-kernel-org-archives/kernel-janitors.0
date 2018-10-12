@@ -1,36 +1,35 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Tue, 30 Oct 2018 16:20:43 +0000
-Subject: Re: [PATCH 1/2] thermal: armada: constify thermal_zone_of_device_ops structure
-Message-Id: <a7cdde4f-6d50-b01c-7dd3-5360b8d0e8cf@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Oct 2018 14:53:14 +0000
+Subject: [PATCH] alpha: fix spelling mistake QSD_PORT_ACTUVE -> QSD_PORT_ACTIVE
+Message-Id: <20181012145314.20897-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540912500-21941-1-git-send-email-Julia.Lawall@lip6.fr>
- <1540912500-21941-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540912500-21941-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Zhang Rui <rui.zhang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Richard Henderson <rth@twiddle.net>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30/10/2018 16:14, Julia Lawall wrote:
-> The thermal_zone_of_device_ops structure can be const as it is only
-> passed as the last argument of devm_thermal_zone_of_sensor_register
-> and the corresponding parameter is declared as const.
->=20
-> Done with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/thermal/armada_thermal.c |    2 +-
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Trivial fix to spelling mistake in kernel error message
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/alpha/kernel/core_wildfire.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
- SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/arch/alpha/kernel/core_wildfire.c b/arch/alpha/kernel/core_wildfire.c
+index cad36fc6ed7d..445e96e0c206 100644
+--- a/arch/alpha/kernel/core_wildfire.c
++++ b/arch/alpha/kernel/core_wildfire.c
+@@ -557,7 +557,7 @@ wildfire_dump_qsd_regs(int qbbno)
+ 	printk(KERN_ERR " QSD_REV:           0x%16lx\n", qsd->qsd_rev.csr);
+ 	printk(KERN_ERR " QSD_PORT_PRESENT:  0x%16lx\n",
+ 	       qsd->qsd_port_present.csr);
+-	printk(KERN_ERR " QSD_PORT_ACTUVE:   0x%16lx\n",
++	printk(KERN_ERR " QSD_PORT_ACTIVE:   0x%16lx\n",
+ 	       qsd->qsd_port_active.csr);
+ 	printk(KERN_ERR " QSD_FAULT_ENA:     0x%16lx\n",
+ 	       qsd->qsd_fault_ena.csr);
+-- 
+2.17.1
