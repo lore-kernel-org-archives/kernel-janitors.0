@@ -1,26 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 13:34:41 +0000
-Subject: [PATCH 0/3] constify snd_soc_dai_ops structures
-Message-Id: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 12 Oct 2018 07:17:09 +0000
+Subject: [PATCH] ice: remove an unneeded NULL check
+Message-Id: <20181012071709.GA10212@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: kernel-janitors@vger.kernel.org
 
-The snd_soc_dai_ops structures are only stored in the ops field of a
-snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
-const as well.
+We added a NULL check in commit 072f0c3db9da ("ice: Fix potential null
+pointer issues") but it causes static checker warnings.
 
-Done with the help of Coccinelle.
+    drivers/net/ethernet/intel/ice/ice_switch.c:2145 ice_add_to_vsi_fltr_list()
+    warn: address of 'fm_entry->fltr_info' is non-NULL
 
----
+We can just remove it.
 
- drivers/soundwire/intel.c        |    4 ++--
- sound/soc/codecs/ak4458.c        |    2 +-
- sound/soc/codecs/ak5558.c        |    2 +-
- sound/soc/codecs/hdac_hda.c      |    2 +-
- sound/soc/codecs/tas6424.c       |    2 +-
- sound/soc/qcom/qdsp6/q6afe-dai.c |    8 ++++----
- 6 files changed, 10 insertions(+), 10 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
+index 33403f39f1b3..a9ef19da6e61 100644
+--- a/drivers/net/ethernet/intel/ice/ice_switch.c
++++ b/drivers/net/ethernet/intel/ice/ice_switch.c
+@@ -2142,7 +2142,7 @@ ice_add_to_vsi_fltr_list(struct ice_hw *hw, u16 vsi_handle,
+ 		struct ice_fltr_info *fi;
+ 
+ 		fi = &fm_entry->fltr_info;
+-		if (!fi || !ice_vsi_uses_fltr(fm_entry, vsi_handle))
++		if (!ice_vsi_uses_fltr(fm_entry, vsi_handle))
+ 			continue;
+ 
+ 		status = ice_add_entry_to_vsi_fltr_list(hw, vsi_handle,
