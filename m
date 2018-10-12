@@ -1,45 +1,41 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Thu, 11 Oct 2018 08:53:19 +0000
-Subject: Re: [PATCH] staging: vboxvideo: unlock on error in vbox_cursor_atomic_update()
-Message-Id: <c19e1f6e-ff03-d312-be5f-3c743cbc1731@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 12 Oct 2018 01:49:13 +0000
+Subject: [PATCH net-next] net: cdc_ncm: remove set but not used variable 'ctx'
+Message-Id: <1539308953-185007-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181011075941.GA11658@mwanda>
-In-Reply-To: <20181011075941.GA11658@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oliver Neukum <oliver@neukum.org>, davem@davemloft.net
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 11-10-18 09:59, Dan Carpenter wrote:
-> We need to unlock before returning on this error path.
-> 
-> Fixes: 35f3288c453e ("staging: vboxvideo: Atomic phase 1: convert cursor to universal plane")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/net/usb/cdc_ncm.c: In function 'cdc_ncm_status':
+drivers/net/usb/cdc_ncm.c:1603:22: warning:
+ variable 'ctx' set but not used [-Wunused-but-set-variable]
+  struct cdc_ncm_ctx *ctx;
 
-Thanks, the kbuild test robot had already notified me about this
-but I did not get around to fixing it yet.
+It not used any more after
+commit fa83dbeee558 ("net: cdc_ncm: remove redundant "disconnected" flag")
 
-Fix looks good to me:
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/usb/cdc_ncm.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-> 
-> diff --git a/drivers/staging/vboxvideo/vbox_mode.c b/drivers/staging/vboxvideo/vbox_mode.c
-> index 042e4f384df9..78a9c9b13ff6 100644
-> --- a/drivers/staging/vboxvideo/vbox_mode.c
-> +++ b/drivers/staging/vboxvideo/vbox_mode.c
-> @@ -424,6 +424,7 @@ static void vbox_cursor_atomic_update(struct drm_plane *plane,
->   	/* pinning is done in prepare/cleanup framebuffer */
->   	src = vbox_bo_kmap(bo);
->   	if (IS_ERR(src)) {
-> +		mutex_unlock(&vbox->hw_mutex);
->   		DRM_WARN("Could not kmap cursor bo, skipping update\n");
->   		return;
->   	}
-> 
+diff --git a/drivers/net/usb/cdc_ncm.c b/drivers/net/usb/cdc_ncm.c
+index 35a7d61..50c05d0f 100644
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -1600,11 +1600,8 @@ int cdc_ncm_rx_fixup(struct usbnet *dev, struct sk_buff *skb_in)
+ 
+ static void cdc_ncm_status(struct usbnet *dev, struct urb *urb)
+ {
+-	struct cdc_ncm_ctx *ctx;
+ 	struct usb_cdc_notification *event;
+ 
+-	ctx = (struct cdc_ncm_ctx *)dev->data[0];
+-
+ 	if (urb->actual_length < sizeof(*event))
+ 		return;
