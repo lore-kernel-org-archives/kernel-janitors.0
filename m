@@ -1,37 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Oct 2018 22:31:37 +0000
-Subject: [PATCH] staging: rtl8188eu: fix spelling mistake "EINPROGESS" -> "EINPROGRESS"
-Message-Id: <20181012223137.26433-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 13 Oct 2018 10:26:53 +0000
+Subject: [PATCH] sparc: vDSO: Silence an uninitialized variable warning
+Message-Id: <20181013102653.GE16086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180926133405.31199-1-colin.king@canonical.com>
-In-Reply-To: <20180926133405.31199-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Straube <straube.linux@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Smatch complains that "val" would be uninitialized if kstrtoul() fails.
 
-Trivial fix to spelling mistake in RT_TRACE message text.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 9a08862a5d2e ("vDSO for sparc")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/sparc/vdso/vma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-index 43f031d644fd..d6a499692e96 100644
---- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-@@ -606,7 +606,7 @@ static void usb_write_port_complete(struct urb *purb, struct pt_regs *regs)
- 		if ((purb->status = -EPIPE) || (purb->status = -EPROTO)) {
- 			sreset_set_wifi_error_status(padapter, USB_WRITE_PORT_FAIL);
- 		} else if (purb->status = -EINPROGRESS) {
--			RT_TRACE(_module_hci_ops_os_c_, _drv_err_, ("usb_write_port_complete: EINPROGESS\n"));
-+			RT_TRACE(_module_hci_ops_os_c_, _drv_err_, ("usb_write_port_complete: EINPROGRESS\n"));
- 			goto check_completion;
- 		} else if (purb->status = -ENOENT) {
- 			DBG_88E("%s: -ENOENT\n", __func__);
+diff --git a/arch/sparc/vdso/vma.c b/arch/sparc/vdso/vma.c
+index f51595f861b8..5eaff3c1aa0c 100644
+--- a/arch/sparc/vdso/vma.c
++++ b/arch/sparc/vdso/vma.c
+@@ -262,7 +262,9 @@ static __init int vdso_setup(char *s)
+ 	unsigned long val;
+ 
+ 	err = kstrtoul(s, 10, &val);
++	if (err)
++		return err;
+ 	vdso_enabled = val;
+-	return err;
++	return 0;
+ }
+ __setup("vdso=", vdso_setup);
 -- 
-2.17.1
+2.18.0
