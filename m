@@ -1,32 +1,29 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 12 Oct 2018 23:04:58 +0000
-Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: clean up some data_ac usage
-Message-Id: <20181012160458.8c5e8850fe9ec673596366f9@linux-foundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 13 Oct 2018 10:22:22 +0000
+Subject: [PATCH] clocksource/timer-vt8500: remove duplicate function name
+Message-Id: <20181013102222.GC16086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180907122500.azbll3byq4hdnrlw@kili.mountain>
-	<20181002155317.f3d3ff3f3d4d1787b5e3121d@linux-foundation.org>
-	<20181011095950.drb2j3enjxizorn2@mwanda>
-In-Reply-To: <20181011095950.drb2j3enjxizorn2@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Tony Prisk <linux@prisktech.co.nz>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 11 Oct 2018 12:59:50 +0300 Dan Carpenter <dan.carpenter@oracle.com> wrote:
+We print the function name twice in a row in the error message so I've
+removed one.
 
-> > >  out_commit:
-> > > -	if (need_free && context->data_ac) {
-> > > +	if (need_free) {
-> > 
-> > Current mainline is different here.
-> > 
-> 
-> Huh...  I wrote it against linux-next, on top of commit 66897d21fa76
-> ("ocfs2: fix clusters leak in ocfs2_defrag_extent()").  But now git says
-> that patch was applied on Oct 4, two days later after your reply.
-> 
-> Anway, it should apply now again.  Would you like me to resend?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Yes please.  I've managed to lose the original email thanks to
-ocfs2-devel's tendency to think it knows best about where emails should
-be sent :(
+diff --git a/drivers/clocksource/timer-vt8500.c b/drivers/clocksource/timer-vt8500.c
+index e0f7489cfc8e..c3aff1a8f7d5 100644
+--- a/drivers/clocksource/timer-vt8500.c
++++ b/drivers/clocksource/timer-vt8500.c
+@@ -145,7 +145,7 @@ static int __init vt8500_timer_init(struct device_node *np)
+ 
+ 	ret = clocksource_register_hz(&clocksource, VT8500_TIMER_HZ);
+ 	if (ret) {
+-		pr_err("%s: vt8500_timer_init: clocksource_register failed for %s\n",
++		pr_err("%s: clocksource_register failed for %s\n",
+ 		       __func__, clocksource.name);
+ 		return ret;
+ 	}
