@@ -1,37 +1,37 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sat, 13 Oct 2018 17:05:54 +0000
-Subject: Re: [PATCH] rtl8xxxu: Remove set but not used variables 'usedesc40' and 'seq_number'
-Message-Id: <20181013170554.3879D60B72@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 13 Oct 2018 10:22:46 +0000
+Subject: [PATCH] irqchip/irq-mvebu-sei: Fix a NULL vs IS_ERR() bug in probe
+Message-Id: <20181013102246.GD16086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539008219-149058-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539008219-149058-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Jes Sorensen <Jes.Sorensen@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+The devm_ioremap_resource() function never returns NULL, it returns
+error pointers.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c: In function 'rtl8xxxu_tx':
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4925:7: warning:
->  variable 'usedesc40' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4921:6: warning:
->  variable 'seq_number' set but not used [-Wunused-but-set-variable]
-> 
-> 'usedesc40' and 'seq_number' are not used any more after
-> commit b59415c2dd08 ("rtl8xxxu: Split filling of TX descriptors into separate functions")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 61ce8d8d8a81 ("irqchip/irq-mvebu-sei: Add new driver for Marvell SEI")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/irqchip/irq-mvebu-sei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-03ce6f8a6776 rtl8xxxu: Remove set but not used variables 'usedesc40' and 'seq_number'
-
+diff --git a/drivers/irqchip/irq-mvebu-sei.c b/drivers/irqchip/irq-mvebu-sei.c
+index 566d69a2edbc..add4c9c934c8 100644
+--- a/drivers/irqchip/irq-mvebu-sei.c
++++ b/drivers/irqchip/irq-mvebu-sei.c
+@@ -384,9 +384,9 @@ static int mvebu_sei_probe(struct platform_device *pdev)
+ 
+ 	sei->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sei->base = devm_ioremap_resource(sei->dev, sei->res);
+-	if (!sei->base) {
++	if (IS_ERR(sei->base)) {
+ 		dev_err(sei->dev, "Failed to remap SEI resource\n");
+-		return -ENODEV;
++		return PTR_ERR(sei->base);
+ 	}
+ 
+ 	/* Retrieve the SEI capabilities with the interrupt ranges */
 -- 
-https://patchwork.kernel.org/patch/10630829/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.18.0
