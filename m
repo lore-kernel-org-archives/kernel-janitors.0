@@ -1,26 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 18 Oct 2018 22:59:21 +0000
-Subject: Re: [PATCH net-next] bnxt_en: Copy and paste bug in extended tx_stats
-Message-Id: <20181018.155921.1255000330618849685.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 13 Oct 2018 10:19:40 +0000
+Subject: [PATCH] perf stat: Potential NULL dereference in print_aggr()
+Message-Id: <20181013101940.GA16086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181018080239.z2egoh4bw4beb3r3@kili.mountain>
-In-Reply-To: <20181018080239.z2egoh4bw4beb3r3@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: michael.chan@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 18 Oct 2018 11:02:39 +0300
+Smatch complains that:
 
-> The struct type was copied from the line before but it should be "tx"
-> instead of "rx".  I have reviewed the code and I can't immediately see
-> that this bug causes a runtime issue.
-> 
-> Fixes: 36e53349b60b ("bnxt_en: Add additional extended port statistics.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is from static analysis and I don't have a way to test it.
+    ./tools/perf/util/stat-display.c:616 print_aggr()
+    error: we previously assumed 'config->aggr_map' could be null (see line 607)
 
-Applied.
+Not only that, but it looks like aggr_update_shadow() can Oops if
+"config->aggr_get_id" is NULL.  The intent seems to have been to return
+if either of these pointers is NULL.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ tools/perf/util/stat-display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index e7b4c44ebb62..db635c01d3a3 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -604,7 +604,7 @@ static void print_aggr(struct perf_stat_config *config,
+ 	u64 ena, run, val;
+ 	bool first;
+ 
+-	if (!(config->aggr_map || config->aggr_get_id))
++	if (!config->aggr_map || !config->aggr_get_id)
+ 		return;
+ 
+ 	aggr_update_shadow(config, evlist);
+-- 
+2.18.0
