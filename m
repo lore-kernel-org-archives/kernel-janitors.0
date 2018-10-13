@@ -1,49 +1,58 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 05 Oct 2018 07:18:42 +0000
-Subject: [PATCH -next] drm/omap: remove set but not used variable 'plane'
-Message-Id: <1538723922-175599-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 13 Oct 2018 15:27:27 +0000
+Subject: [PATCH] power: supply: fix spelling mistake "Gauage" -> "Guage"
+Message-Id: <20181013152727.5520-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536667253-5792-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536667253-5792-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>
-Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/gpu/drm/omapdrm/omap_fb.c: In function 'omap_framebuffer_update_scanout':
-drivers/gpu/drm/omapdrm/omap_fb.c:130:16: warning:
- variable 'plane' set but not used [-Wunused-but-set-variable]
-  struct plane *plane = &omap_fb->planes[0];
-  
-After commit 2ecceeb53b19 ("drm/omap: Move buffer pitch/offset to drm_framebuffer")
-'plane' is not used any more.
+Trivial fix to spelling mistake in MODULE_DESCRIPTION text
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/omapdrm/omap_fb.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/power/supply/ds2780_battery.c | 2 +-
+ drivers/power/supply/ds2781_battery.c | 2 +-
+ drivers/power/supply/ds2782_battery.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c b/drivers/gpu/drm/omapdrm/omap_fb.c
-index 4d264fd..e3e47aa 100644
---- a/drivers/gpu/drm/omapdrm/omap_fb.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fb.c
-@@ -127,7 +127,6 @@ void omap_framebuffer_update_scanout(struct drm_framebuffer *fb,
- {
- 	struct omap_framebuffer *omap_fb = to_omap_framebuffer(fb);
- 	const struct drm_format_info *format = omap_fb->format;
--	struct plane *plane = &omap_fb->planes[0];
- 	u32 x, y, orient = 0;
+diff --git a/drivers/power/supply/ds2780_battery.c b/drivers/power/supply/ds2780_battery.c
+index 370e9109342b..cad14ba1b648 100644
+--- a/drivers/power/supply/ds2780_battery.c
++++ b/drivers/power/supply/ds2780_battery.c
+@@ -829,5 +829,5 @@ module_platform_driver(ds2780_battery_driver);
  
- 	info->fourcc = fb->format->format;
-@@ -201,8 +200,6 @@ void omap_framebuffer_update_scanout(struct drm_framebuffer *fb,
- 	info->screen_width /= format->cpp[0];
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Clifton Barnes <cabarnes@indesign-llc.com>");
+-MODULE_DESCRIPTION("Maxim/Dallas DS2780 Stand-Alone Fuel Gauage IC driver");
++MODULE_DESCRIPTION("Maxim/Dallas DS2780 Stand-Alone Fuel Gauge IC driver");
+ MODULE_ALIAS("platform:ds2780-battery");
+diff --git a/drivers/power/supply/ds2781_battery.c b/drivers/power/supply/ds2781_battery.c
+index d1b5a19aae7c..5e794607f732 100644
+--- a/drivers/power/supply/ds2781_battery.c
++++ b/drivers/power/supply/ds2781_battery.c
+@@ -829,6 +829,6 @@ module_platform_driver(ds2781_battery_driver);
  
- 	if (fb->format->format = DRM_FORMAT_NV12) {
--		plane = &omap_fb->planes[1];
--
- 		if (info->rotation_type = OMAP_DSS_ROT_TILER) {
- 			WARN_ON(!(omap_gem_flags(fb->obj[1]) & OMAP_BO_TILED));
- 			omap_gem_rotated_dma_addr(fb->obj[1], orient, x/2, y/2,
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Renata Sayakhova <renata@oktetlabs.ru>");
+-MODULE_DESCRIPTION("Maxim/Dallas DS2781 Stand-Alone Fuel Gauage IC driver");
++MODULE_DESCRIPTION("Maxim/Dallas DS2781 Stand-Alone Fuel Gauge IC driver");
+ MODULE_ALIAS("platform:ds2781-battery");
+ 
+diff --git a/drivers/power/supply/ds2782_battery.c b/drivers/power/supply/ds2782_battery.c
+index a1b7e0592245..019c58493e3d 100644
+--- a/drivers/power/supply/ds2782_battery.c
++++ b/drivers/power/supply/ds2782_battery.c
+@@ -471,5 +471,5 @@ static struct i2c_driver ds278x_battery_driver = {
+ module_i2c_driver(ds278x_battery_driver);
+ 
+ MODULE_AUTHOR("Ryan Mallon");
+-MODULE_DESCRIPTION("Maxim/Dallas DS2782 Stand-Alone Fuel Gauage IC driver");
++MODULE_DESCRIPTION("Maxim/Dallas DS2782 Stand-Alone Fuel Gauge IC driver");
+ MODULE_LICENSE("GPL");
+-- 
+2.17.1
