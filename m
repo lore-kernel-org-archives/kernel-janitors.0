@@ -1,33 +1,42 @@
-From: Felix Fietkau <nbd@nbd.name>
-Date: Mon, 01 Oct 2018 11:57:22 +0000
-Subject: Re: [PATCH] mt76: fix header guard macro define names
-Message-Id: <ae443a0d-9272-d538-ee85-6d5bf1231db8@nbd.name>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 13 Oct 2018 15:45:13 +0000
+Subject: [PATCH] ASoC: wm8904: fix spelling mistake "Inveting" -> "Inverting"
+Message-Id: <20181013154513.6155-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180930225715.18491-1-colin.king@canonical.com>
-In-Reply-To: <20180930225715.18491-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2018-10-01 00:57, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The header guards that are #defined are different from those being
-> checked.  Fix this by #defining them to the correct name.
-> 
-> Fixes clang warnings:
-> drivers/net/wireless/mediatek/mt76/mt76x02_mcu.h:17:9:
-> warning: '__MT76x02_MCU_H' is used as a header guard here, followed
-> by #define of a different macro [-Wheader-guard]
-> 
-> drivers/net/wireless/mediatek/mt76/mt76x02_usb.h:17:9:
-> warning: '__MT76x02_USB_H' is used as a header guard here, followed
-> by #define of a different macro [-Wheader-guard]
-> 
-> Fixes: 905db7470199 ("mt76: usb: move mt76x02 mcu code in mt76x02-usb module")
-> Fixes: edaa580bc830 ("mt76: move shared mcu_calibrate routine in mt76x02-lib module")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Merged, thanks.
+From: Colin Ian King <colin.king@canonical.com>
 
-- Felix
+Trivial fix to spelling mistake in sound control text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/wm8904.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
+index 2a3e5fbd04e4..ef83dae6e5ae 100644
+--- a/sound/soc/codecs/wm8904.c
++++ b/sound/soc/codecs/wm8904.c
+@@ -870,7 +870,7 @@ static SOC_ENUM_SINGLE_DECL(lin_inv_enum, WM8904_ANALOGUE_LEFT_INPUT_1, 4,
+ 			    lin_text);
+ 
+ static const struct snd_kcontrol_new lin_inv_mux -	SOC_DAPM_ENUM("Left Capture Inveting Mux", lin_inv_enum);
++	SOC_DAPM_ENUM("Left Capture Inverting Mux", lin_inv_enum);
+ 
+ static const char *rin_text[] = {
+ 	"IN1R", "IN2R", "IN3R"
+@@ -886,7 +886,7 @@ static SOC_ENUM_SINGLE_DECL(rin_inv_enum, WM8904_ANALOGUE_RIGHT_INPUT_1, 4,
+ 			    rin_text);
+ 
+ static const struct snd_kcontrol_new rin_inv_mux -	SOC_DAPM_ENUM("Right Capture Inveting Mux", rin_inv_enum);
++	SOC_DAPM_ENUM("Right Capture Inverting Mux", rin_inv_enum);
+ 
+ static const char *aif_text[] = {
+ 	"Left", "Right"
+-- 
+2.17.1
