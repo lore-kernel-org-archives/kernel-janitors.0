@@ -1,42 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 04 Oct 2018 17:57:32 +0000
-Subject: [PATCH][-next] ixgbe: don't clear_bit on xdp_ring->state if xdp_ring is null
-Message-Id: <20181004175732.28329-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 13 Oct 2018 10:38:40 +0000
+Subject: [PATCH] partitions/ldm: Off by one in ldm_relative()
+Message-Id: <20181013103840.GA22816@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: "Richard Russon (FlatCap)" <ldm@flatcap.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The > should be >= or otherwise we could end up reading one element
+beyond the end of the array.
 
-There is an earlier check to see if xdp_ring is null when configuring
-the tx ring, so assuming that it can still be null, the clearing of
-the xdp_ring->state currently could end up with a null pointer
-dereference.  Fix this by only clearing the bit if xdp_ring is not null.
-
-Detected by CoverityScan, CID#1473795 ("Dereference after null check")
-
-Fixes: 024aa5800f32 ("ixgbe: added Rx/Tx ring disable/enable functions")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ block/partitions/ldm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 0049a2becd7e..8e4756247324 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -10517,7 +10517,8 @@ void ixgbe_txrx_ring_enable(struct ixgbe_adapter *adapter, int ring)
- 	ixgbe_configure_rx_ring(adapter, rx_ring);
+diff --git a/block/partitions/ldm.c b/block/partitions/ldm.c
+index 16766f267559..f48bcd2f5226 100644
+--- a/block/partitions/ldm.c
++++ b/block/partitions/ldm.c
+@@ -636,7 +636,7 @@ static int ldm_relative(const u8 *buffer, int buflen, int base, int offset)
+ {
  
- 	clear_bit(__IXGBE_TX_DISABLED, &tx_ring->state);
--	clear_bit(__IXGBE_TX_DISABLED, &xdp_ring->state);
-+	if (xdp_ring)
-+		clear_bit(__IXGBE_TX_DISABLED, &xdp_ring->state);
- }
- 
- /**
+ 	base += offset;
+-	if (!buffer || offset < 0 || base > buflen) {
++	if (!buffer || offset < 0 || base >= buflen) {
+ 		if (!buffer)
+ 			ldm_error("!buffer");
+ 		if (offset < 0)
 -- 
-2.17.1
+2.18.0
