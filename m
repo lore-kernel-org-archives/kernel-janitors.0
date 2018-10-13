@@ -1,36 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 28 Oct 2018 05:56:08 +0000
-Subject: [PATCH] ASoC: AMD: constify regulator_desc structure
-Message-Id: <1540706168-30601-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 13 Oct 2018 15:37:30 +0000
+Subject: [PATCH] rsi: fix spelling mistake "Initialzing" -> "Initializing"
+Message-Id: <20181013153730.5761-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The regulator_desc structure can be const as it is only passed as the
-second argument of devm_regulator_register and the corresponding
-parameter is declared as const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+Trivial fix to spelling mistake in rsi_dbg debug message
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/amd/acp-da7219-max98357a.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_sdio_ops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index 3f813ea5210a..a5daad973ce5 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -403,7 +403,7 @@ static struct regulator_config acp_da7219_cfg = {
- static struct regulator_ops acp_da7219_ops = {
- };
+diff --git a/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c b/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
+index 612c211e21a1..449f6d23c5e3 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
++++ b/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
+@@ -210,7 +210,7 @@ int rsi_init_sdio_slave_regs(struct rsi_hw *adapter)
+ 	}
  
--static struct regulator_desc acp_da7219_desc = {
-+static const struct regulator_desc acp_da7219_desc = {
- 	.name = "reg-fixed-1.8V",
- 	.type = REGULATOR_VOLTAGE,
- 	.owner = THIS_MODULE,
+ 	/* This tells SDIO FIFO when to start read to host */
+-	rsi_dbg(INIT_ZONE, "%s: Initialzing SDIO read start level\n", __func__);
++	rsi_dbg(INIT_ZONE, "%s: Initializing SDIO read start level\n", __func__);
+ 	byte = 0x24;
+ 
+ 	status = rsi_sdio_write_register(adapter,
+@@ -223,7 +223,7 @@ int rsi_init_sdio_slave_regs(struct rsi_hw *adapter)
+ 		return -1;
+ 	}
+ 
+-	rsi_dbg(INIT_ZONE, "%s: Initialzing FIFO ctrl registers\n", __func__);
++	rsi_dbg(INIT_ZONE, "%s: Initializing FIFO ctrl registers\n", __func__);
+ 	byte = (128 - 32);
+ 
+ 	status = rsi_sdio_write_register(adapter,
+-- 
+2.17.1
