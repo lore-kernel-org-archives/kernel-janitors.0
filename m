@@ -1,58 +1,45 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Tue, 16 Oct 2018 04:12:20 +0000
-Subject: [PATCH AUTOSEL 4.18 099/100] x86/paravirt: Fix some warning messages
-Message-Id: <20181016041221.135528-99-sashal@kernel.org>
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Sun, 14 Oct 2018 15:25:41 +0000
+Subject: [PATCH 3.16 307/366] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
+Message-Id: <lsq.1539530741.988231619@decadent.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181016041221.135528-1-sashal@kernel.org>
-In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
+In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: akpm@linux-foundation.org, Ralf Baechle <ralf@linux-mips.org>, Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+3.16.60-rc1 review patch.  If anyone has any objections, please let me know.
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+------------------
 
-The first argument to WARN_ONCE() is a condition.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
+commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
+
+Trivial fix to spelling mistake in debugfs_entries text.
+
+Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
 Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: James Hogan <jhogan@kernel.org>
+[bwh: Backported to 3.16: adjust filename, context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/kvm/kvm_mips.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 930c88341e4e..1fbf38dde84c 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
--- 
-2.17.1
+--- a/arch/mips/kvm/kvm_mips.c
++++ b/arch/mips/kvm/kvm_mips.c
+@@ -38,7 +38,7 @@ struct kvm_stats_debugfs_item debugfs_en
+ 	{ "cache", VCPU_STAT(cache_exits) },
+ 	{ "signal", VCPU_STAT(signal_exits) },
+ 	{ "interrupt", VCPU_STAT(int_exits) },
+-	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits) },
++	{ "cop_unusable", VCPU_STAT(cop_unusable_exits) },
+ 	{ "tlbmod", VCPU_STAT(tlbmod_exits) },
+ 	{ "tlbmiss_ld", VCPU_STAT(tlbmiss_ld_exits) },
+ 	{ "tlbmiss_st", VCPU_STAT(tlbmiss_st_exits) },
