@@ -1,35 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 11:46:11 +0000
-Subject: [PATCH] media: mxl5xx: constify dvb_frontend_ops structure
-Message-Id: <1540640771-25478-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Mon, 15 Oct 2018 04:01:01 +0000
+Subject: Re: powerpc: signedness bug in update_flash_db()
+Message-Id: <42YPqx5Pf3z9sCw@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20181001164458.GB29197@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Geoff Levand <geoff@infradead.org>, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 
-The dvb_frontend_ops structure is only copied into the ops field
-of a dvb_frontend structure, so it can be const.
+On Mon, 2018-10-01 at 16:44:58 UTC, Dan Carpenter wrote:
+> The "count < sizeof(struct os_area_db)" comparison is type promoted to
+> size_t so negative values of "count" are treated as very high values and
+> we accidentally return success instead of a negative error code.
+> 
+> This doesn't really change runtime much but it fixes a static checker
+> warning.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Geoff Levand <geoff@infradead.org>
 
-Done with the help of Coccinelle.
+Applied to powerpc next, thanks.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+https://git.kernel.org/powerpc/c/014704e6f54189a203cc14c7c0bb41
 
----
- drivers/media/dvb-frontends/mxl5xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/dvb-frontends/mxl5xx.c b/drivers/media/dvb-frontends/mxl5xx.c
-index 6191315f5970..290b9eab099f 100644
---- a/drivers/media/dvb-frontends/mxl5xx.c
-+++ b/drivers/media/dvb-frontends/mxl5xx.c
-@@ -781,7 +781,7 @@ static int set_input(struct dvb_frontend *fe, int input)
- 	return 0;
- }
- 
--static struct dvb_frontend_ops mxl_ops = {
-+static const struct dvb_frontend_ops mxl_ops = {
- 	.delsys = { SYS_DVBS, SYS_DVBS2, SYS_DSS },
- 	.info = {
- 		.name			= "MaxLinear MxL5xx DVB-S/S2 tuner-demodulator",
+cheers
