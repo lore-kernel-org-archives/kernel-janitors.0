@@ -1,23 +1,32 @@
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Date: Thu, 18 Oct 2018 10:49:33 +0000
-Subject: Re: [PATCH] brcmfmac: fix spelling mistake "Retreiving" -> "Retrieving"
-Message-Id: <22cad1fd-a00a-252a-0c89-f0b7ef558ff1@broadcom.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 15 Oct 2018 02:56:40 +0000
+Subject: [PATCH -next] fore200e: fix missing unlock on error in bsq_audit()
+Message-Id: <1539572836-187019-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181016174342.1867-1-colin.king@canonical.com>
-In-Reply-To: <20181016174342.1867-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chas Williams <3chas3@gmail.com>, Christoph Hellwig <hch@lst.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/16/2018 7:43 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in brcmf_err error message.
->
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Add the missing unlock before return from function bsq_audit()
+in the error handling case.
+
+Fixes: 1d9d8be91788 ("fore200e: check for dma mapping failures")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/atm/fore200e.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/atm/fore200e.c b/drivers/atm/fore200e.c
+index 2b5dc8f..ffc07ab 100644
+--- a/drivers/atm/fore200e.c
++++ b/drivers/atm/fore200e.c
+@@ -1606,6 +1606,7 @@ int bsq_audit(int where, struct host_bsq* bsq, int scheme, int magn)
+     if (dma_mapping_error(fore200e->dev, tpd->tsd[0].buffer)) {
+ 	if (tx_copy)
+ 	    kfree(data);
++	spin_unlock_irqrestore(&fore200e->q_lock, flags);
+ 	return -ENOMEM;
+     }
+     tpd->tsd[ 0 ].length = tx_len;
