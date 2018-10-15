@@ -1,46 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Oct 2018 15:05:32 +0000
-Subject: [PATCH] staging: rtl8723bs: fix spelling mistake "Abnrormal" -> "Abnormal"
-Message-Id: <20181012150532.21361-1-colin.king@canonical.com>
+From: "Allan, Bruce W" <bruce.w.allan@intel.com>
+Date: Mon, 15 Oct 2018 16:18:35 +0000
+Subject: RE: [Intel-wired-lan] [PATCH] ice: remove an unneeded NULL check
+Message-Id: <804857E1F29AAC47BF68C404FC60A184F24B35A4@FMSMSX151.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170411131708.20268-1-colin.king@canonical.com>
-In-Reply-To: <20170411131708.20268-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> -----Original Message-----
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On Behalf
+> Of Dan Carpenter
+> Sent: Friday, October 12, 2018 12:17 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Ertman, David M
+> <david.m.ertman@intel.com>
+> Cc: kernel-janitors@vger.kernel.org; intel-wired-lan@lists.osuosl.org
+> Subject: [Intel-wired-lan] [PATCH] ice: remove an unneeded NULL check
+> 
+> We added a NULL check in commit 072f0c3db9da ("ice: Fix potential null
+> pointer issues") but it causes static checker warnings.
 
-Trivial fix to spelling mistake in message text
+Which static checker and with what options?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8723bs/hal/odm_DIG.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/hal/odm_DIG.c b/drivers/staging/rtl8723bs/hal/odm_DIG.c
-index a12fdce77eae..4fa6cd315cf7 100644
---- a/drivers/staging/rtl8723bs/hal/odm_DIG.c
-+++ b/drivers/staging/rtl8723bs/hal/odm_DIG.c
-@@ -655,7 +655,7 @@ void odm_DIG(void *pDM_VOID)
- 				ODM_COMP_DIG,
- 				ODM_DBG_LOUD,
- 				(
--					"odm_DIG(): Abnrormal #beacon (%d) case in STA mode: Force lower bound to 0x%x !!!!!!\n\n",
-+					"odm_DIG(): Abnormal #beacon (%d) case in STA mode: Force lower bound to 0x%x !!!!!!\n\n",
- 					pDM_Odm->PhyDbgInfo.NumQryBeaconPkt,
- 					pDM_DigTable->rx_gain_range_min
- 				)
-@@ -671,7 +671,7 @@ void odm_DIG(void *pDM_VOID)
- 			ODM_COMP_DIG,
- 			ODM_DBG_LOUD,
- 			(
--				"odm_DIG(): Abnrormal lower bound case: Force lower bound to 0x%x !!!!!!\n\n",
-+				"odm_DIG(): Abnormal lower bound case: Force lower bound to 0x%x !!!!!!\n\n",
- 				pDM_DigTable->rx_gain_range_min
- 			)
- 		);
--- 
-2.17.1
+> 
+>     drivers/net/ethernet/intel/ice/ice_switch.c:2145 ice_add_to_vsi_fltr_list()
+>     warn: address of 'fm_entry->fltr_info' is non-NULL
+> 
+> We can just remove it.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c
+> b/drivers/net/ethernet/intel/ice/ice_switch.c
+> index 33403f39f1b3..a9ef19da6e61 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_switch.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_switch.c
+> @@ -2142,7 +2142,7 @@ ice_add_to_vsi_fltr_list(struct ice_hw *hw, u16
+> vsi_handle,
+>  		struct ice_fltr_info *fi;
+> 
+>  		fi = &fm_entry->fltr_info;
+> -		if (!fi || !ice_vsi_uses_fltr(fm_entry, vsi_handle))
+> +		if (!ice_vsi_uses_fltr(fm_entry, vsi_handle))
+>  			continue;
+> 
+>  		status = ice_add_entry_to_vsi_fltr_list(hw, vsi_handle,
+> _______________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
