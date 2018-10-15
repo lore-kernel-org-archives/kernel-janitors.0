@@ -1,27 +1,46 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Date: Tue, 09 Oct 2018 10:31:15 +0000
-Subject: Re: [PATCH] phy: inno-usb2-phy: fix off-by-one comparison on port number
-Message-Id: <CAAQ0ZWTOo8xr22f+kmeY+mrhGKgacCfCTaqO=zEewLuWGWvDYw@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 15 Oct 2018 02:16:35 +0000
+Subject: [PATCH] libertas: remove set but not used variable 'int_type'
+Message-Id: <1539569795-176889-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181008222417.11739-1-colin.king@canonical.com>
-In-Reply-To: <20181008222417.11739-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Jiancheng Xue <xuejiancheng@hisilicon.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Lubomir Rintel <lkundrak@v3.sk>
+Cc: YueHaibing <yuehaibing@huawei.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 6:24 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the range check on the port index is off-by-one and a potential
-> out of bounds write can occur on priv->ports[i]. Fix this by checking the
-> maximum port using >= INNO_PHY_PORT_NUM rather than > INNO_PHY_PORT_NUM.
->
-> Detected by CoverityScan, CID#1466118 ("Out-of-bounds write")
->
-> Fixes: ba8b0ee81fbb ("phy: add inno-usb2-phy driver for hi3798cv200 SoC")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
+drivers/net/wireless/marvell/libertas/if_spi.c: In function 'if_spi_h2c':
+drivers/net/wireless/marvell/libertas/if_spi.c:799:6: warning:
+ variable 'int_type' set but not used [-Wunused-but-set-variable]
+
+It never used since introduction in
+commit d2b21f191753 ("libertas: if_spi, driver for libertas GSPI devices")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/marvell/libertas/if_spi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net/wireless/marvell/libertas/if_spi.c
+index 504d6e0..7c3224b 100644
+--- a/drivers/net/wireless/marvell/libertas/if_spi.c
++++ b/drivers/net/wireless/marvell/libertas/if_spi.c
+@@ -796,15 +796,13 @@ static void if_spi_h2c(struct if_spi_card *card,
+ {
+ 	struct lbs_private *priv = card->priv;
+ 	int err = 0;
+-	u16 int_type, port_reg;
++	u16 port_reg;
+ 
+ 	switch (type) {
+ 	case MVMS_DAT:
+-		int_type = IF_SPI_CIC_TX_DOWNLOAD_OVER;
+ 		port_reg = IF_SPI_DATA_RDWRPORT_REG;
+ 		break;
+ 	case MVMS_CMD:
+-		int_type = IF_SPI_CIC_CMD_DOWNLOAD_OVER;
+ 		port_reg = IF_SPI_CMD_RDWRPORT_REG;
+ 		break;
+ 	default:
