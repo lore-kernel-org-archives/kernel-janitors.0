@@ -1,35 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Oct 2018 15:30:59 +0000
-Subject: [PATCH] drm/nouveau/bios/init:  fix spelling mistake "INIT_GENERIC_CONDITON" -> "INIT_GENERIC_CONDIT
-Message-Id: <20181012153059.22052-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 16 Oct 2018 07:13:46 +0000
+Subject: [PATCH] mtd: spi-nor: cadence-quadspi: Fix the return value in case of error in 'cqspi_direct_read_e
+Message-Id: <20181016071346.25383-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: marek.vasut@gmail.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@bootlin.com, richard@nod.at
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+We return 0 unconditionally in 'cqspi_direct_read_execute()'.
+However, 'ret' is set to some error codes in several error handling paths.
 
-Trivial fix to spelling mistake in warn message text
+Return 'ret' instead to propagate the error code.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: ffa639e069fb ("mtd: spi-nor: cadence-quadspi: Add DMA support for direct mode reads")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 2 +-
+ drivers/mtd/spi-nor/cadence-quadspi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-index 9cc10e438b3d..003dc8edf1c3 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-@@ -831,7 +831,7 @@ init_generic_condition(struct nvbios_init *init)
- 			init_exec_set(init, false);
- 		break;
- 	default:
--		warn("INIT_GENERIC_CONDITON: unknown 0x%02x\n", cond);
-+		warn("INIT_GENERIC_CONDITION: unknown 0x%02x\n", cond);
- 		init->offset += size;
- 		break;
- 	}
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index 8e714fbfa521..6e9cbd1a0b6d 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -996,7 +996,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
+ err_unmap:
+ 	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static ssize_t cqspi_read(struct spi_nor *nor, loff_t from,
 -- 
 2.17.1
