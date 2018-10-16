@@ -1,36 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 18 Oct 2018 07:34:30 +0000
-Subject: [PATCH] ASoC: Intel: kbl_da7219_max98927: minor white space clean up
-Message-Id: <20181018073430.c45sl5k62o3ebp2g@kili.mountain>
+From: Sasha Levin <sashal@kernel.org>
+Date: Tue, 16 Oct 2018 04:12:20 +0000
+Subject: [PATCH AUTOSEL 4.18 099/100] x86/paravirt: Fix some warning messages
+Message-Id: <20181016041221.135528-99-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181016041221.135528-1-sashal@kernel.org>
+In-Reply-To: <20181016041221.135528-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Mac Chiang <mac.chiang@intel.com>
-Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Harsha Priya <harshapriya.n@intel.com>, kernel-janitors@vger.kernel.org, Jie Yang <yang.jie@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Naveen Manohar <naveen.m@intel.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-I just added a couple missing tabs.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
+[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+
+The first argument to WARN_ONCE() is a condition.
+
+Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kernel/paravirt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/intel/boards/kbl_da7219_max98927.c b/sound/soc/intel/boards/kbl_da7219_max98927.c
-index 3ab96ee7bd3c..3fa1c3ca6d37 100644
---- a/sound/soc/intel/boards/kbl_da7219_max98927.c
-+++ b/sound/soc/intel/boards/kbl_da7219_max98927.c
-@@ -180,14 +180,14 @@ static int kabylake_ssp0_hw_params(struct snd_pcm_substream *substream,
- 			ret = snd_soc_dai_set_tdm_slot(codec_dai, 0x30, 3, 8, 16);
- 			if (ret < 0) {
- 				dev_err(runtime->dev, "DEV0 TDM slot err:%d\n", ret);
--			return ret;
-+				return ret;
- 			}
- 		}
- 		if (!strcmp(codec_dai->component->name, MAXIM_DEV1_NAME)) {
- 			ret = snd_soc_dai_set_tdm_slot(codec_dai, 0xC0, 3, 8, 16);
- 			if (ret < 0) {
- 				dev_err(runtime->dev, "DEV1 TDM slot err:%d\n", ret);
--			return ret;
-+				return ret;
- 			}
- 		}
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 930c88341e4e..1fbf38dde84c 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
  	}
+@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
+-- 
+2.17.1
