@@ -1,35 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 29 Oct 2018 22:46:11 +0000
-Subject: [PATCH][net-next] net: hns3: fix spelling mistake "intrerrupt" -> "interrupt"
-Message-Id: <20181029224611.20008-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 16 Oct 2018 02:35:30 +0000
+Subject: [PATCH net-next] mac80211: fix missing unlock on error in ieee80211_mark_sta_auth()
+Message-Id: <1539657330-35956-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Shiju Jose <shiju.jose@huawei.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, Jouni Malinen <jouni@codeaurora.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Add the missing unlock before return from function
+ieee80211_mark_sta_auth() in the error handling case.
 
-Trivial fix to spelling mistake in dev_err message
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: fc107a933071 ("mac80211: Helper function for marking STA authenticated")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/mlme.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-index dca6f2326c26..123c37e653f3 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-@@ -751,7 +751,7 @@ static void hclge_process_ncsi_error(struct hclge_dev *hdev,
- 	ret = hclge_cmd_clear_error(hdev, &desc_wr, &desc_rd,
- 				    HCLGE_NCSI_INT_CLR, 0);
- 	if (ret)
--		dev_err(dev, "failed(=%d) to clear NCSI intrerrupt status\n",
-+		dev_err(dev, "failed(=%d) to clear NCSI interrupt status\n",
- 			ret);
- }
- 
--- 
-2.19.1
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index d2bc8d5..755ca4d 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -2778,10 +2778,12 @@ static bool ieee80211_mark_sta_auth(struct ieee80211_sub_if_data *sdata,
+ 	sta = sta_info_get(sdata, bssid);
+ 	if (!sta) {
+ 		WARN_ONCE(1, "%s: STA %pM not found", sdata->name, bssid);
++		mutex_unlock(&sdata->local->sta_mtx);
+ 		return false;
+ 	}
+ 	if (sta_info_move_state(sta, IEEE80211_STA_AUTH)) {
+ 		sdata_info(sdata, "failed moving %pM to auth\n", bssid);
++		mutex_unlock(&sdata->local->sta_mtx);
+ 		return false;
+ 	}
+ 	mutex_unlock(&sdata->local->sta_mtx);
