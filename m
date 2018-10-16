@@ -1,60 +1,44 @@
-From: "Neftin, Sasha" <sasha.neftin@intel.com>
-Date: Wed, 24 Oct 2018 11:03:55 +0000
-Subject: Re: [PATCH] igc: Tidy up some white space
-Message-Id: <72ff26fd-d61b-1107-d1c3-a4e4deb93adc@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Oct 2018 17:43:42 +0000
+Subject: [PATCH] brcmfmac: fix spelling mistake "Retreiving" -> "Retrieving"
+Message-Id: <20181016174342.1867-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181019195747.e4h2oihuyroi5vwn@kili.mountain>
-In-Reply-To: <20181019195747.e4h2oihuyroi5vwn@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/19/2018 22:57, Dan Carpenter wrote:
-> I just cleaned up a couple small white space issues.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/net/ethernet/intel/igc/igc_main.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> index 9d85707e8a81..3233141c594b 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> @@ -1108,7 +1108,7 @@ static struct sk_buff *igc_build_skb(struct igc_ring *rx_ring,
->   
->   	/* update pointers within the skb to store the data */
->   	skb_reserve(skb, IGC_SKB_PAD);
-> -	 __skb_put(skb, size);
-> +	__skb_put(skb, size);
->   
->   	/* update buffer offset */
->   #if (PAGE_SIZE < 8192)
-> @@ -1160,9 +1160,9 @@ static struct sk_buff *igc_construct_skb(struct igc_ring *rx_ring,
->   				(va + headlen) - page_address(rx_buffer->page),
->   				size, truesize);
->   #if (PAGE_SIZE < 8192)
-> -	rx_buffer->page_offset ^= truesize;
-> +		rx_buffer->page_offset ^= truesize;
->   #else
-> -	rx_buffer->page_offset += truesize;
-> +		rx_buffer->page_offset += truesize;
->   #endif
->   	} else {
->   		rx_buffer->pagecnt_bias++;
-> @@ -1668,8 +1668,8 @@ static bool igc_clean_tx_irq(struct igc_q_vector *q_vector, int napi_budget)
->   				tx_buffer->next_to_watch,
->   				jiffies,
->   				tx_buffer->next_to_watch->wb.status);
-> -				netif_stop_subqueue(tx_ring->netdev,
-> -						    tx_ring->queue_index);
-> +			netif_stop_subqueue(tx_ring->netdev,
-> +					    tx_ring->queue_index);
->   
->   			/* we are about to reset, no point in enabling stuff */
->   			return true;
-> 
-Thanks for the patch. Good catch of typos.
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+Trivial fix to spelling mistake in brcmf_err error message.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
+index 94044a7a6021..9f6938f8b1ca 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
+@@ -214,7 +214,7 @@ int brcmf_c_preinit_dcmds(struct brcmf_if *ifp)
+ 	err = brcmf_fil_iovar_data_get(ifp, "cur_etheraddr", ifp->mac_addr,
+ 				       sizeof(ifp->mac_addr));
+ 	if (err < 0) {
+-		brcmf_err("Retreiving cur_etheraddr failed, %d\n", err);
++		brcmf_err("Retrieving cur_etheraddr failed, %d\n", err);
+ 		goto done;
+ 	}
+ 	memcpy(ifp->drvr->wiphy->perm_addr, ifp->drvr->mac, ETH_ALEN);
+@@ -269,7 +269,7 @@ int brcmf_c_preinit_dcmds(struct brcmf_if *ifp)
+ 	strcpy(buf, "ver");
+ 	err = brcmf_fil_iovar_data_get(ifp, "ver", buf, sizeof(buf));
+ 	if (err < 0) {
+-		brcmf_err("Retreiving version information failed, %d\n",
++		brcmf_err("Retrieving version information failed, %d\n",
+ 			  err);
+ 		goto done;
+ 	}
+-- 
+2.19.1
