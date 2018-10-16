@@ -1,27 +1,62 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Tue, 16 Oct 2018 02:03:29 +0000
-Subject: Re: [PATCH -next] null_blk: remove set but not used variable 'q'
-Message-Id: <ad638446-2ce6-34f4-ed7a-a3cafaabc2b4@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Oct 2018 16:14:18 +0000
+Subject: [PATCH][V2] iio: adc: ina2xx: add in early -EINVAL returns in case statements
+Message-Id: <20181016161418.29213-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539654326-165410-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539654326-165410-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, =?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/15/18 7:45 PM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/block/null_blk_main.c: In function 'end_cmd':
-> drivers/block/null_blk_main.c:609:24: warning:
->  variable 'q' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more after commit
-> e50b1e327aeb ("null_blk: remove legacy IO path")
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+Static analysis with CoverityScan is throwing warnings that specific
+case statements are missing breaks.  Rather than adding breaks, add
+return -EINVAL to the specific case statements to clarify the
+error return paths. Fix also saves 50 bytes.
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  21418	   4936	    128	  26482	   6772	drivers/iio/adc/ina2xx-adc.o
+
+After:
+  dec	    hex	filename
+  21370	   4936	    128	  26434	   6742	drivers/iio/adc/ina2xx-adc.o
+
+(gcc 8.2, x86-64)
+
+Detected by CoverityScan, CID#1462408 ("Missing break in switch")
+
+---
+
+V2: use returns instead of break statements to keep with the
+current style used in the switch statement.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/adc/ina2xx-adc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
+index d1239624187d..bdd7cba6f6b0 100644
+--- a/drivers/iio/adc/ina2xx-adc.c
++++ b/drivers/iio/adc/ina2xx-adc.c
+@@ -250,6 +250,7 @@ static int ina2xx_read_raw(struct iio_dev *indio_dev,
+ 			*val2 = chip->shunt_resistor_uohm;
+ 			return IIO_VAL_FRACTIONAL;
+ 		}
++		return -EINVAL;
+ 
+ 	case IIO_CHAN_INFO_HARDWAREGAIN:
+ 		switch (chan->address) {
+@@ -262,6 +263,7 @@ static int ina2xx_read_raw(struct iio_dev *indio_dev,
+ 			*val = chip->range_vbus = 32 ? 1 : 2;
+ 			return IIO_VAL_INT;
+ 		}
++		return -EINVAL;
+ 	}
+ 
+ 	return -EINVAL;
 -- 
-Jens Axboe
+2.19.1
