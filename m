@@ -1,51 +1,35 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 01 Oct 2018 23:50:45 +0000
-Subject: Re: [PATCH] drm/omap: Use after free in omap_connector_destroy()
-Message-Id: <8319740.4GPcRUpbZa@avalon>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Oct 2018 17:46:32 +0000
+Subject: [PATCH] scsi: be2iscsi: fix spelling mistake "Retreiving" -> "Retrieving"
+Message-Id: <20181016174632.2022-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181001164505.GB29248@mwanda>
-In-Reply-To: <20181001164505.GB29248@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Tomi Valkeinen <tomi.valkeinen@ti.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank you for the patch.
+Trivial fix to spelling mistake in beiscsi_log message.
 
-On Monday, 1 October 2018 19:45:05 EEST Dan Carpenter wrote:
-> We can free "omap_connector" until the end of the function.
-> 
-> Fixes: 949ea2ef3fed ("drm/omap: Don't call HPD registration operations
-> recursively") Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/be2iscsi/be_iscsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This has already been fixed by https://www.spinics.net/lists/dri-devel/
-msg190817.html.
-
-> diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c
-> b/drivers/gpu/drm/omapdrm/omap_connector.c index 98f5ca29444a..b81302c4bf9e
-> 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_connector.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-> @@ -164,10 +164,11 @@ static void omap_connector_destroy(struct
-> drm_connector *connector)
-> 
->  	drm_connector_unregister(connector);
->  	drm_connector_cleanup(connector);
-> -	kfree(omap_connector);
-> 
->  	omapdss_device_put(omap_connector->output);
->  	omapdss_device_put(omap_connector->display);
-> +
-> +	kfree(omap_connector);
->  }
-> 
->  #define MAX_EDID  512
-
-
+diff --git a/drivers/scsi/be2iscsi/be_iscsi.c b/drivers/scsi/be2iscsi/be_iscsi.c
+index c8f0a2144b44..6dfdf9cee8a9 100644
+--- a/drivers/scsi/be2iscsi/be_iscsi.c
++++ b/drivers/scsi/be2iscsi/be_iscsi.c
+@@ -771,7 +771,7 @@ int beiscsi_get_host_param(struct Scsi_Host *shost,
+ 			status = beiscsi_get_initiator_name(phba, buf, false);
+ 			if (status < 0) {
+ 				beiscsi_log(phba, KERN_ERR, BEISCSI_LOG_CONFIG,
+-					    "BS_%d : Retreiving Initiator Name Failed\n");
++					    "BS_%d : Retrieving Initiator Name Failed\n");
+ 				status = 0;
+ 			}
+ 		}
 -- 
-Regards,
-
-Laurent Pinchart
+2.19.1
