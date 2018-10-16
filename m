@@ -1,17 +1,17 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 16 Oct 2018 12:35:41 +0000
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Date: Tue, 16 Oct 2018 13:36:20 +0000
 Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
-Message-Id: <20181016123541.GW31561@phenom.ffwll.local>
+Message-Id: <57b40f9f-24d2-27de-4895-5a76ff267643@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
 In-Reply-To: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Gustavo Padovan <gustavo@padovan.org>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 02:05:29PM -0300, Rodrigo Siqueira wrote:
+Op 15-10-18 om 19:05 schreef Rodrigo Siqueira:
 > For historical reason, the function drm_wait_vblank_ioctl always return
 > -EINVAL if something gets wrong. This scenario limits the flexibility
 > for the userspace make detailed verification of the problem and take
@@ -26,7 +26,7 @@ On Mon, Oct 15, 2018 at 02:05:29PM -0300, Rodrigo Siqueira wrote:
 > libdrm, which is used by many compositors; because of this, it is
 > important to check if this change breaks any compositor. In this sense,
 > the following projects were examined:
-> 
+>
 > * Drm-hwcomposer
 > * Kwin
 > * Sway
@@ -34,41 +34,28 @@ On Mon, Oct 15, 2018 at 02:05:29PM -0300, Rodrigo Siqueira wrote:
 > * Wayland-core
 > * Weston
 > * Xorg (67 different drivers)
-> 
+>
 > For each repository the verification happened in three steps:
-> 
+>
 > * Update the main branch
 > * Look for any occurrence "drmWaitVBlank" with the command:
 >   git grep -n "drmWaitVBlank"
 > * Look in the git history of the project with the command:
 >   git log -SdrmWaitVBlank
-> 
+>
 > Finally, none of the above projects validate the use of EINVAL which
 > make safe, at least for these projects, to change the return values.
-> 
+>
 > Change since V1:
 >  Daniel Vetter and Chris Wilson
 >  - Replace ENOTTY by EOPNOTSUPP
 >  - Return EINVAL if the parameters are wrong
-> 
+>
 > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Can you pls also let intel-gfx-ci test this patch? You just need to
-include intel-gfx@lists.freedesktop.org in your recipient list.
-
-For merging, since you plan to stick around doing kms stuff a bit: Want
-commit rights for drm-misc?
-
-https://drm.pages.freedesktop.org/maintainer-tools/getting-started.html
-
-Cheers, Daniel
-
 > ---
 >  drivers/gpu/drm/drm_vblank.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+>
 > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
 > index 98e091175921..80f5a3bb427e 100644
 > --- a/drivers/gpu/drm/drm_vblank.c
@@ -79,17 +66,19 @@ Cheers, Daniel
 >  	if (!dev->irq_enabled)
 > -		return -EINVAL;
 > +		return -EOPNOTSUPP;
+Change to -EIO?
+
+If userspace would ever print this out, it would print the following
+confusing message to userspace:
+"Operation not supported on transport endpoint"
 >  
 >  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
 > -		return -EINVAL;
 > +		return -EOPNOTSUPP;
->  
+I would keep this -EINVAL, tbh and making it part of the below if statement..
 >  	if (vblwait->request.type &
 >  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
-> -- 
-> 2.19.1
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Cheers,
+
+Maarten
