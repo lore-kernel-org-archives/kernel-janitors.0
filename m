@@ -1,32 +1,61 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 29 Oct 2018 07:49:43 +0000
-Subject: Re: [PATCH 1/8] clk: max77686: constify clk_ops structure
-Message-Id: <CAJKOXPceTN=idoipU_X+jZQQorRVh3cBaepw72q5O-vn49OGzw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Oct 2018 18:03:43 +0000
+Subject: [PATCH] usbip: tools: fix atoi() on non-null terminated string
+Message-Id: <20181016180343.5620-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr> <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, kernel-janitors@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, mturquette@baylibre.com, sboyd@kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Valentina Manea <valentina.manea.m@gmail.com>, Shuah Khan <shuah@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 27 Oct 2018 at 08:23, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->
-> The clk_ops structure is only stored in the ops field of a
-> clk_init_data structure.  This field is const, so the clk_ops
-> structure can be const as well.
->
-> Identified and transformed using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  drivers/clk/clk-max77686.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Currently the call to atoi is being passed a single char string
+that is not null terminated, so there is a potential read overrun
+along the stack when parsing for an integer value.  Fix this by
+instead using a 2 char string that is initialized to all zeros
+to ensure that a 1 char read into the string is always terminated
+with a \0.
 
-Best regards,
-Krzysztof
+Detected by cppcheck:
+"Invalid atoi() argument nr 1. A nul-terminated string is required."
+
+Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
+index dc93fadbee96..d79c7581b175 100644
+--- a/tools/usb/usbip/libsrc/usbip_host_common.c
++++ b/tools/usb/usbip/libsrc/usbip_host_common.c
+@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 	int size;
+ 	int fd;
+ 	int length;
+-	char status;
++	char status[2] = { 0 };
+ 	int value = 0;
+ 
+ 	size = snprintf(status_attr_path, sizeof(status_attr_path),
+@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 		return -1;
+ 	}
+ 
+-	length = read(fd, &status, 1);
++	length = read(fd, status, 1);
+ 	if (length < 0) {
+ 		err("error reading attribute %s", status_attr_path);
+ 		close(fd);
+ 		return -1;
+ 	}
+ 
+-	value = atoi(&status);
++	value = atoi(status);
+ 
+ 	return value;
+ }
+-- 
+2.19.1
