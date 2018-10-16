@@ -1,58 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 Oct 2018 10:36:06 +0000
-Subject: [PATCH] udlfb: fix some inconsistent NULL checking
-Message-Id: <20181010103606.GA14563@mwanda>
+From: "Koenig, Christian" <Christian.Koenig@amd.com>
+Date: Tue, 16 Oct 2018 13:00:57 +0000
+Subject: Re: [PATCH] drm/amd/amdgpu: Fix debugfs error handling
+Message-Id: <613cc687-0a2a-434b-3e64-d7af2d858776@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180614144509.gxue54xlvu576obz@kili.mountain>
+In-Reply-To: <20180614144509.gxue54xlvu576obz-vMlZ3nK25oGAIHFoDFOv9A@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bernie Thompson <bernie@plugable.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "Deucher, Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>
+Cc: "StDenis, Tom" <Tom.StDenis-5C7GfCeVMHo@public.gmane.org>, "Zhou,
+ David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, "Grodzovsky,
+ Andrey" <Andrey.Grodzovsky-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "Huang,
+ Ray" <Ray.Huang-5C7GfCeVMHo@public.gmane.org>, "Quan, Evan" <Evan.Quan-5C7GfCeVMHo@public.gmane.org>, "Zhu,
+ Rex" <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>
 
-In the current kernel, then kzalloc() can't fail for small allocations,
-but if it did fail then we would have a NULL dereference in the error
-handling.  Also in dlfb_usb_disconnect() if "info" were NULL then it
-would cause an Oops inside the unregister_framebuffer() function but it
-can't be NULL so let's remove that check.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index 070026a7e55a..1d034dddc556 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1598,7 +1598,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
- 	dlfb = kzalloc(sizeof(*dlfb), GFP_KERNEL);
- 	if (!dlfb) {
- 		dev_err(&intf->dev, "%s: failed to allocate dlfb\n", __func__);
--		goto error;
-+		return -ENOMEM;
- 	}
- 
- 	INIT_LIST_HEAD(&dlfb->deferred_free);
-@@ -1703,7 +1703,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
- error:
- 	if (dlfb->info) {
- 		dlfb_ops_destroy(dlfb->info);
--	} else if (dlfb) {
-+	} else {
- 		usb_put_dev(dlfb->udev);
- 		kfree(dlfb);
- 	}
-@@ -1730,12 +1730,10 @@ static void dlfb_usb_disconnect(struct usb_interface *intf)
- 	/* this function will wait for all in-flight urbs to complete */
- 	dlfb_free_urb_list(dlfb);
- 
--	if (info) {
--		/* remove udlfb's sysfs interfaces */
--		for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
--			device_remove_file(info->dev, &fb_device_attrs[i]);
--		device_remove_bin_file(info->dev, &edid_attr);
--	}
-+	/* remove udlfb's sysfs interfaces */
-+	for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
-+		device_remove_file(info->dev, &fb_device_attrs[i]);
-+	device_remove_bin_file(info->dev, &edid_attr);
- 
- 	unregister_framebuffer(info);
- }
+QW0gMTQuMDYuMjAxOCB1bSAxNjo0NSBzY2hyaWViIERhbiBDYXJwZW50ZXI6DQo+IFRoZSBlcnJv
+ciBoYW5kbGluZyBpcyB3cm9uZyBhbmQgImVudCIgY291bGQgYmUgTlVMTCB3ZSB3aGVuIGRlcmVm
+ZXJlbmNlDQo+IGl0IHRvIGdldCAiZW50LT5kX2lub2RlIi4NCj4NCj4gVGhlIHRoaW5nIGlzIHRo
+YXQgbm9ybWFsbHkgZGVidWdmc19jcmVhdGVfZmlsZSgpIGlzIG5vdCBzdXBwb3NlZCB0bw0KPiBy
+ZXF1aXJlIChvciBoYXZlKSBhbnkgZXJyb3IgaGFuZGxpbmcuICBUaGF0IGZ1bmN0aW9uIGRvZXMg
+cmV0dXJuIGVycm9yDQo+IHBvaW50ZXJzIGlmIGRlYnVnZnMgaXMgdHVybmVkIG9mZiBidXQgd2Ug
+a25vdyBpdCdzIGVuYWJsZSBoZXJlLiAgV2hlbg0KPiBpdCdzIGVuYWJsZWQsIHRoZW4gaXQgcmV0
+dXJucyBOVUxMIG9uIGVycm9yLg0KPg0KPiBTbyB3aGF0IEkgZGlkIHdhcyBJIHN0cmlwcGVkIG91
+dCBhbGwgdGhlIGVycm9yIGhhbmRsaW5nIGV4Y2VwdCBhcm91bmQNCj4gdGhlIGlfc2l6ZV93cml0
+ZSgpLiAgSSBjb3VsZCBoYXZlIGp1c3QgdXNlZCBhIE5VTEwgY2hlY2sgaW5zdGVhZCBvZiBhbg0K
+PiBJU19FUlJfT1JfTlVMTCgpIGJ1dCBJIGZpZ3VyZWQgdGhpcyB3YXMgbW9yZSBjbGVhciBiZWNh
+dXNlIHRoYXQgd2F5IHlvdQ0KPiBkb24ndCBoYXZlIHRvIGxvb2sgYXQgdGhlIHN1cnJvdW5kaW5n
+IGNvZGUgdG8gc2VlIHdoZXRoZXIgZGVidWdmcyBpcw0KPiBlbmFibGVkIG9yIG5vdC4NCg0KU3R1
+bWJsZWQgb3ZlciB0aGlzIHdoaWxlIGdvaW5nIHRocm91Z2ggb2xkIG1haWxzLiBQYXRjaCBpcyBS
+ZXZpZXdlZCBhbmQgDQpwdXNoZWQuDQoNClRoYW5rcywNCkNocmlzdGlhbi4NCg0KPg0KPiBTaWdu
+ZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+DQo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZGVidWdmcy5j
+IGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2RlYnVnZnMuYw0KPiBpbmRleCBm
+NWZiOTM3OTVhNjkuLmRkOWE0ZmI5Y2UzOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2FtZC9hbWRncHUvYW1kZ3B1X2RlYnVnZnMuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1k
+L2FtZGdwdS9hbWRncHVfZGVidWdmcy5jDQo+IEBAIC04MjYsMjEgKzgyNiwxMyBAQCBpbnQgYW1k
+Z3B1X2RlYnVnZnNfcmVnc19pbml0KHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2KQ0KPiAgIHsN
+Cj4gICAJc3RydWN0IGRybV9taW5vciAqbWlub3IgPSBhZGV2LT5kZGV2LT5wcmltYXJ5Ow0KPiAg
+IAlzdHJ1Y3QgZGVudHJ5ICplbnQsICpyb290ID0gbWlub3ItPmRlYnVnZnNfcm9vdDsNCj4gLQl1
+bnNpZ25lZCBpLCBqOw0KPiArCXVuc2lnbmVkIGludCBpOw0KPiAgIA0KPiAgIAlmb3IgKGkgPSAw
+OyBpIDwgQVJSQVlfU0laRShkZWJ1Z2ZzX3JlZ3MpOyBpKyspIHsNCj4gICAJCWVudCA9IGRlYnVn
+ZnNfY3JlYXRlX2ZpbGUoZGVidWdmc19yZWdzX25hbWVzW2ldLA0KPiAgIAkJCQkJICBTX0lGUkVH
+IHwgU19JUlVHTywgcm9vdCwNCj4gICAJCQkJCSAgYWRldiwgZGVidWdmc19yZWdzW2ldKTsNCj4g
+LQkJaWYgKElTX0VSUihlbnQpKSB7DQo+IC0JCQlmb3IgKGogPSAwOyBqIDwgaTsgaisrKSB7DQo+
+IC0JCQkJZGVidWdmc19yZW1vdmUoYWRldi0+ZGVidWdmc19yZWdzW2ldKTsNCj4gLQkJCQlhZGV2
+LT5kZWJ1Z2ZzX3JlZ3NbaV0gPSBOVUxMOw0KPiAtCQkJfQ0KPiAtCQkJcmV0dXJuIFBUUl9FUlIo
+ZW50KTsNCj4gLQkJfQ0KPiAtDQo+IC0JCWlmICghaSkNCj4gKwkJaWYgKCFpICYmICFJU19FUlJf
+T1JfTlVMTChlbnQpKQ0KPiAgIAkJCWlfc2l6ZV93cml0ZShlbnQtPmRfaW5vZGUsIGFkZXYtPnJt
+bWlvX3NpemUpOw0KPiAgIAkJYWRldi0+ZGVidWdmc19yZWdzW2ldID0gZW50Ow0KPiAgIAl9DQoN
+Cg=
