@@ -1,37 +1,35 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 16 Oct 2018 02:35:30 +0000
-Subject: [PATCH net-next] mac80211: fix missing unlock on error in ieee80211_mark_sta_auth()
-Message-Id: <1539657330-35956-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Oct 2018 17:28:53 +0000
+Subject: [PATCH] scsi: lpfc: fix spelling mistake "Resrouce" -> "Resource"
+Message-Id: <20181016172853.1398-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>, Jouni Malinen <jouni@codeaurora.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add the missing unlock before return from function
-ieee80211_mark_sta_auth() in the error handling case.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: fc107a933071 ("mac80211: Helper function for marking STA authenticated")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Trivial fix to spelling mistake in lpfc_printf_log message text.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/mac80211/mlme.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/lpfc/lpfc_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index d2bc8d5..755ca4d 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -2778,10 +2778,12 @@ static bool ieee80211_mark_sta_auth(struct ieee80211_sub_if_data *sdata,
- 	sta = sta_info_get(sdata, bssid);
- 	if (!sta) {
- 		WARN_ONCE(1, "%s: STA %pM not found", sdata->name, bssid);
-+		mutex_unlock(&sdata->local->sta_mtx);
- 		return false;
- 	}
- 	if (sta_info_move_state(sta, IEEE80211_STA_AUTH)) {
- 		sdata_info(sdata, "failed moving %pM to auth\n", bssid);
-+		mutex_unlock(&sdata->local->sta_mtx);
- 		return false;
- 	}
- 	mutex_unlock(&sdata->local->sta_mtx);
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 0bd3ae99c4a6..20fa6785a0e2 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -7993,7 +7993,7 @@ lpfc_sli4_read_config(struct lpfc_hba *phba)
+ 	else
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_SLI,
+ 				"3028 GET_FUNCTION_CONFIG: failed to find "
+-				"Resrouce Descriptor:x%x\n",
++				"Resource Descriptor:x%x\n",
+ 				LPFC_RSRC_DESC_TYPE_FCFCOE);
+ 
+ read_cfg_out:
+-- 
+2.19.1
