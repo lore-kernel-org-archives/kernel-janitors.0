@@ -1,35 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 16 Oct 2018 17:46:32 +0000
-Subject: [PATCH] scsi: be2iscsi: fix spelling mistake "Retreiving" -> "Retrieving"
-Message-Id: <20181016174632.2022-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 16 Oct 2018 21:53:16 +0000
+Subject: Re: [PATCH] scsi: be2iscsi: fix spelling mistake "Retreiving" -> "Retrieving"
+Message-Id: <yq1tvllr22b.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181016174632.2022-1-colin.king@canonical.com>
+In-Reply-To: <20181016174632.2022-1-colin.king@canonical.com> (Colin King's
+        message of "Tue, 16 Oct 2018 18:46:32 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in beiscsi_log message.
+Colin,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/be2iscsi/be_iscsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Trivial fix to spelling mistake in beiscsi_log message.
 
-diff --git a/drivers/scsi/be2iscsi/be_iscsi.c b/drivers/scsi/be2iscsi/be_iscsi.c
-index c8f0a2144b44..6dfdf9cee8a9 100644
---- a/drivers/scsi/be2iscsi/be_iscsi.c
-+++ b/drivers/scsi/be2iscsi/be_iscsi.c
-@@ -771,7 +771,7 @@ int beiscsi_get_host_param(struct Scsi_Host *shost,
- 			status = beiscsi_get_initiator_name(phba, buf, false);
- 			if (status < 0) {
- 				beiscsi_log(phba, KERN_ERR, BEISCSI_LOG_CONFIG,
--					    "BS_%d : Retreiving Initiator Name Failed\n");
-+					    "BS_%d : Retrieving Initiator Name Failed\n");
- 				status = 0;
- 			}
- 		}
+Applied to 4.20/scsi-queue.
+
 -- 
-2.19.1
+Martin K. Petersen	Oracle Linux Engineering
