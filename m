@@ -1,38 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 05:47:42 +0000
-Subject: [PATCH 8/8] drm/msm/hdmi: constify clk_ops structure
-Message-Id: <1540619262-22681-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 16 Oct 2018 07:39:40 +0000
+Subject: [PATCH] wlcore: Fix the return value in case of error in 'wlcore_vendor_cmd_smart_config_start()'
+Message-Id: <20181016073940.26797-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Clark <robdclark@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: kvalo@codeaurora.org, davem@davemloft.net, tony@atomide.com
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The clk_ops structure is only stored in the ops field of a
-clk_init_data structure.  This field is const, so the clk_ops
-structure can be const as well.
+We return 0 unconditionally at the end of
+'wlcore_vendor_cmd_smart_config_start()'.
+However, 'ret' is set to some error codes in several error handling paths
+and we already return some error codes at the beginning of the function.
 
-Identified and transformed using Coccinelle.
+Return 'ret' instead to propagate the error code.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: 80ff8063e87c ("wlcore: handle smart config vendor commands")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c |    2 +-
+ drivers/net/wireless/ti/wlcore/vendor_cmd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c
-index 0df504c61833..b19a520c47d5 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c
-@@ -689,7 +689,7 @@ static int hdmi_8996_pll_is_enabled(struct clk_hw *hw)
- 	return pll_locked;
+diff --git a/drivers/net/wireless/ti/wlcore/vendor_cmd.c b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
+index dbe78d8491ef..7f34ec077ee5 100644
+--- a/drivers/net/wireless/ti/wlcore/vendor_cmd.c
++++ b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
+@@ -70,7 +70,7 @@ wlcore_vendor_cmd_smart_config_start(struct wiphy *wiphy,
+ out:
+ 	mutex_unlock(&wl->mutex);
+ 
+-	return 0;
++	return ret;
  }
  
--static struct clk_ops hdmi_8996_pll_ops = {
-+static const struct clk_ops hdmi_8996_pll_ops = {
- 	.set_rate = hdmi_8996_pll_set_clk_rate,
- 	.round_rate = hdmi_8996_pll_round_rate,
- 	.recalc_rate = hdmi_8996_pll_recalc_rate,
+ static int
+-- 
+2.17.1
