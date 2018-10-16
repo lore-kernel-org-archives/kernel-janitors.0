@@ -1,105 +1,45 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Sun, 21 Oct 2018 19:33:21 +0000
-Subject: Re: [PATCH] power: supply: fix spelling mistake "Gauage" -> "Guage"
-Message-Id: <20181021193321.nb5yxy6iwv2oih2m@earth.universe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="babzsxdsksejuhgu"
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 16 Oct 2018 07:59:54 +0000
+Subject: [PATCH -next] drivers/video/fbdev: remove set but not used variable 'size'
+Message-Id: <1539676794-40133-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181013152727.5520-1-colin.king@canonical.com>
-In-Reply-To: <20181013152727.5520-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Michael Ellerman <mpe@ellerman.id.au>, Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
---babzsxdsksejuhgu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/video/fbdev/chipsfb.c: In function 'chipsfb_pci_init':
+drivers/video/fbdev/chipsfb.c:352:22: warning:
+ variable 'size' set but not used [-Wunused-but-set-variable]
 
-Hi,
+It not used any more after commit
+8c8709334cec ("[PATCH] ppc32: Remove CONFIG_PMAC_PBOOK")
 
-On Sat, Oct 13, 2018 at 04:27:27PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in MODULE_DESCRIPTION text
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/video/fbdev/chipsfb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks, queued with typo in subject fixed.
-
--- Sebastian
-
->  drivers/power/supply/ds2780_battery.c | 2 +-
->  drivers/power/supply/ds2781_battery.c | 2 +-
->  drivers/power/supply/ds2782_battery.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/power/supply/ds2780_battery.c b/drivers/power/supply=
-/ds2780_battery.c
-> index 370e9109342b..cad14ba1b648 100644
-> --- a/drivers/power/supply/ds2780_battery.c
-> +++ b/drivers/power/supply/ds2780_battery.c
-> @@ -829,5 +829,5 @@ module_platform_driver(ds2780_battery_driver);
-> =20
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Clifton Barnes <cabarnes@indesign-llc.com>");
-> -MODULE_DESCRIPTION("Maxim/Dallas DS2780 Stand-Alone Fuel Gauage IC drive=
-r");
-> +MODULE_DESCRIPTION("Maxim/Dallas DS2780 Stand-Alone Fuel Gauge IC driver=
-");
->  MODULE_ALIAS("platform:ds2780-battery");
-> diff --git a/drivers/power/supply/ds2781_battery.c b/drivers/power/supply=
-/ds2781_battery.c
-> index d1b5a19aae7c..5e794607f732 100644
-> --- a/drivers/power/supply/ds2781_battery.c
-> +++ b/drivers/power/supply/ds2781_battery.c
-> @@ -829,6 +829,6 @@ module_platform_driver(ds2781_battery_driver);
-> =20
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Renata Sayakhova <renata@oktetlabs.ru>");
-> -MODULE_DESCRIPTION("Maxim/Dallas DS2781 Stand-Alone Fuel Gauage IC drive=
-r");
-> +MODULE_DESCRIPTION("Maxim/Dallas DS2781 Stand-Alone Fuel Gauge IC driver=
-");
->  MODULE_ALIAS("platform:ds2781-battery");
-> =20
-> diff --git a/drivers/power/supply/ds2782_battery.c b/drivers/power/supply=
-/ds2782_battery.c
-> index a1b7e0592245..019c58493e3d 100644
-> --- a/drivers/power/supply/ds2782_battery.c
-> +++ b/drivers/power/supply/ds2782_battery.c
-> @@ -471,5 +471,5 @@ static struct i2c_driver ds278x_battery_driver =3D {
->  module_i2c_driver(ds278x_battery_driver);
-> =20
->  MODULE_AUTHOR("Ryan Mallon");
-> -MODULE_DESCRIPTION("Maxim/Dallas DS2782 Stand-Alone Fuel Gauage IC drive=
-r");
-> +MODULE_DESCRIPTION("Maxim/Dallas DS2782 Stand-Alone Fuel Gauge IC driver=
-");
->  MODULE_LICENSE("GPL");
-> --=20
-> 2.17.1
->=20
-
---babzsxdsksejuhgu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvM1H8ACgkQ2O7X88g7
-+pprFhAAmPohgOOtT1okXUH13JGLihrOXrnU/7YvJFRB6TiF2D4wQKUWQ0AtLuvA
-FktHhIVa1l3OQ/mhUWqkKHBKfVIsls2EcOrq0dJ/EPVkDLCKcZk9JaaFsI6XzhxK
-Z5vQdRS/yQQEGKNMaSu5EEl0M/BKdJuSZ36O4vlJYWYLJXWMGIbnT62174EWg/Ky
-tXDHMhZvAP6XAbHbk6QmCVfYC8XNHYB8bFPRMwvZg90UIcqdFnEgPoQ99HbR/O05
-5QT2/ubp8W1s/DXUn1uA1g24P/eE02zknRo+f9f81HjWAf6eOYDKEzXHq6FxqSrH
-pqRdqEqwfC0eKZO3+sJd9a7Tslma6zemNOr+h5ZWGkTxztkMXs0rLcLeuOkm75k6
-D6A2dk/cLb8iwfWx5OxEK9nnXAuFi9wcZ1C+L9GoR5tWqJNysSYy4GILpf3l4e1T
-dNDjuKIdbP5PDejL0hVQNQXtJ09OC9r7yp3rwrh8HKPZDEXUeEsAp+d2tsBjWHcx
-7NcvgER1l514JWxY0tl+NLl7CaUe/9qgOIRej91vtXRoMDtlbbDZrrG3AwH7TsGh
-suc89km51h6xOCeOd8l6YMKh7VPGozZU3Dx9LzaCKouRAS9ZunA3PAjKchwdlgbT
-QScY8gC23fciGlcLZ1BhQkp73nY59MdMwUj8pEXQ/2OAv/GVKII=
-=tmqS
------END PGP SIGNATURE-----
-
---babzsxdsksejuhgu--
+diff --git a/drivers/video/fbdev/chipsfb.c b/drivers/video/fbdev/chipsfb.c
+index 40182ed..ca549e1 100644
+--- a/drivers/video/fbdev/chipsfb.c
++++ b/drivers/video/fbdev/chipsfb.c
+@@ -349,7 +349,7 @@ static void init_chips(struct fb_info *p, unsigned long addr)
+ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
+ {
+ 	struct fb_info *p;
+-	unsigned long addr, size;
++	unsigned long addr;
+ 	unsigned short cmd;
+ 	int rc = -ENODEV;
+ 
+@@ -361,7 +361,6 @@ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
+ 	if ((dp->resource[0].flags & IORESOURCE_MEM) = 0)
+ 		goto err_disable;
+ 	addr = pci_resource_start(dp, 0);
+-	size = pci_resource_len(dp, 0);
+ 	if (addr = 0)
+ 		goto err_disable;
