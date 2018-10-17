@@ -1,7 +1,7 @@
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 17 Oct 2018 01:47:06 +0000
-Subject: Re: [PATCH -next] scsi: lpfc: Remove set but not used variable 'psli'
-Message-Id: <yq15zy1pco5.fsf@oracle.com>
+Date: Wed, 17 Oct 2018 01:58:35 +0000
+Subject: Re: [PATCH -next] scsi: lpfc: Remove set but not used variables 'tgtp'
+Message-Id: <yq1woqhnxkk.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
@@ -15,14 +15,13 @@ YueHaibing,
 
 > Fixes gcc '-Wunused-but-set-variable' warning:
 >
-> drivers/scsi/lpfc/lpfc_hbadisc.c: In function 'lpfc_free_tx':
-> drivers/scsi/lpfc/lpfc_hbadisc.c:5431:19: warning:
->  variable 'psli' set but not used [-Wunused-but-set-variable]
+> drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_nodelist_data':
+> drivers/scsi/lpfc/lpfc_debugfs.c:553:29: warning:
+>  variable 'tgtp' set but not used [-Wunused-but-set-variable]
 >
-> Since commit 895427bd012c ("scsi: lpfc: NVME Initiator: Base modifications")
-> 'psli' is not used any more.
+> It never used since 2b65e18202fd ("scsi: lpfc: NVME Target: Add debugfs support")
 
-Applied to 4.20/scsi-queue.
+Applied to 4.20/scsi-queue. Thanks!
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
