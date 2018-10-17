@@ -1,70 +1,50 @@
-From: Liviu Dudau <liviu.dudau@arm.com>
-Date: Fri, 05 Oct 2018 12:38:05 +0000
-Subject: Re: [PATCH -next] drm/arm/malidp: remove set but not used variable 'afbc_superblock_size'
-Message-Id: <20181005123805.GE1156@e110455-lin.cambridge.arm.com>
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?=  <ernesto.mnd.fernandez@gmail.com>
+Date: Wed, 17 Oct 2018 17:49:54 +0000
+Subject: Re: [PATCH] hfs: fix array out of bounds read of array extent
+Message-Id: <20181017174954.6rd3tpcwqv42koh5@eaf>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538737393-112861-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538737393-112861-1-git-send-email-yuehaibing@huawei.com>
+References: <20180831140538.31566-1-colin.king@canonical.com>
+In-Reply-To: <20180831140538.31566-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mali DP Maintainers <malidp@foss.arm.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>
+Cc: linux-fsdevel@vger.kernel.org, dhowells@redhat.com, viro@zeniv.linux.org.uk, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Oct 05, 2018 at 11:03:13AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/gpu/drm/arm/malidp_drv.c: In function 'malidp_verify_afbc_framebuffer_size':
-> drivers/gpu/drm/arm/malidp_drv.c:318:6: warning:
->  variable 'afbc_superblock_size' set but not used [-Wunused-but-set-variable]
->   u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
-> 
-> It never used since be introduced in
-> commit 3dae1c0919d8 ("drm/arm/malidp: Implemented the size validation for AFBC framebuffers")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Fri, Aug 31, 2018 at 03:05:38PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Currently extent and index i are both being incremented causing
+> an array out of bounds read on extent[i]. Fix this by removing
+> the extraneous increment of extent.
+>=20
+> Detected by CoverityScan, CID#711541 ("Out of bounds read")
+>=20
+> Fixes: d1081202f1d0 ("HFS rewrite")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+I don't think this got picked up yet; let's see if I can help.
+
+Reviewed-by: Ernesto A. Fern=C3=A1ndez <ernesto.mnd.fernandez@gmail.com>
+
 > ---
->  drivers/gpu/drm/arm/malidp_drv.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> index 9021485..1b0ede6 100644
-> --- a/drivers/gpu/drm/arm/malidp_drv.c
-> +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> @@ -315,7 +315,7 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
->  	int n_superblocks = 0;
->  	const struct drm_format_info *info;
->  	struct drm_gem_object *objs = NULL;
-> -	u32 afbc_superblock_size = 0, afbc_superblock_height = 0;
-> +	u32 afbc_superblock_height = 0;
->  	u32 afbc_superblock_width = 0, afbc_size = 0;
->  
->  	switch (mode_cmd->modifier[0] & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK) {
-> @@ -333,9 +333,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
->  	n_superblocks = (mode_cmd->width / afbc_superblock_width) *
->  		(mode_cmd->height / afbc_superblock_height);
->  
-> -	afbc_superblock_size = info->cpp[0] * afbc_superblock_width *
-> -		afbc_superblock_height;
-> -
-
-Ah, that doesn't look right, it seems some code was dropped out of the
-upstream patch. I will send a fix for it now.
-
-Best regards,
-Liviu
-
->  	afbc_size = ALIGN(n_superblocks * AFBC_HEADER_SIZE, 128);
->  
->  	if (mode_cmd->width * info->cpp[0] != mode_cmd->pitches[0]) {
-> 
-
--- 
-==========
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+>  fs/hfs/extent.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+> index 5d0182654580..636cdfcecb26 100644
+> --- a/fs/hfs/extent.c
+> +++ b/fs/hfs/extent.c
+> @@ -300,7 +300,7 @@ int hfs_free_fork(struct super_block *sb, struct hfs_=
+cat_file *file, int type)
+>  		return 0;
+> =20
+>  	blocks =3D 0;
+> -	for (i =3D 0; i < 3; extent++, i++)
+> +	for (i =3D 0; i < 3; i++)
+>  		blocks +=3D be16_to_cpu(extent[i].count);
+> =20
+>  	res =3D hfs_free_extents(sb, extent, blocks, blocks);
+> --=20
+> 2.17.1
+>=20
