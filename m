@@ -1,62 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 13:34:43 +0000
-Subject: [PATCH 2/3] ASoC: qdsp6: q6afe-dai: constify snd_soc_dai_ops structures
-Message-Id: <1540647284-26728-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 17 Oct 2018 08:15:34 +0000
+Subject: [PATCH] staging: rtl8723bs: Fix the return value in case of error in 'rtw_wx_read32()'
+Message-Id: <20181017081534.2959-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick Lai <plai@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, quytelda@tamalin.org, straube.linux@gmail.com, mamtashukla555@gmail.com, baijiaju1990@gmail.com, arushisinghal19971997@gmail.com, natechancellor@gmail.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The snd_soc_dai_ops structures are only stored in the ops field of a
-snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
-const as well.
+We return 0 unconditionally in 'rtw_wx_read32()'.
+However, 'ret' is set to some error codes in several error handling paths.
 
-Done with the help of Coccinelle.
+Return 'ret' instead to propagate the error code.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: 554c0a3abf216 ("staging: Add rtl8723bs sdio wifi driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/qcom/qdsp6/q6afe-dai.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
-index 60ff4a2d3577..a07a4538d5cf 100644
---- a/sound/soc/qcom/qdsp6/q6afe-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-@@ -561,13 +561,13 @@ static const struct snd_soc_dapm_route q6afe_dapm_routes[] = {
- 	{"QUAT_MI2S_TX", NULL, "Quaternary MI2S Capture"},
- };
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index 28bfdbdc6e76..b8631baf128d 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -2289,7 +2289,7 @@ static int rtw_wx_read32(struct net_device *dev,
+ exit:
+ 	kfree(ptmp);
  
--static struct snd_soc_dai_ops q6hdmi_ops = {
-+static const struct snd_soc_dai_ops q6hdmi_ops = {
- 	.prepare	= q6afe_dai_prepare,
- 	.hw_params	= q6hdmi_hw_params,
- 	.shutdown	= q6afe_dai_shutdown,
- };
+-	return 0;
++	return ret;
+ }
  
--static struct snd_soc_dai_ops q6i2s_ops = {
-+static const struct snd_soc_dai_ops q6i2s_ops = {
- 	.prepare	= q6afe_dai_prepare,
- 	.hw_params	= q6i2s_hw_params,
- 	.set_fmt	= q6i2s_set_fmt,
-@@ -575,14 +575,14 @@ static struct snd_soc_dai_ops q6i2s_ops = {
- 	.set_sysclk	= q6afe_mi2s_set_sysclk,
- };
- 
--static struct snd_soc_dai_ops q6slim_ops = {
-+static const struct snd_soc_dai_ops q6slim_ops = {
- 	.prepare	= q6afe_dai_prepare,
- 	.hw_params	= q6slim_hw_params,
- 	.shutdown	= q6afe_dai_shutdown,
- 	.set_channel_map = q6slim_set_channel_map,
- };
- 
--static struct snd_soc_dai_ops q6tdm_ops = {
-+static const struct snd_soc_dai_ops q6tdm_ops = {
- 	.prepare	= q6afe_dai_prepare,
- 	.shutdown	= q6afe_dai_shutdown,
- 	.set_sysclk	= q6afe_mi2s_set_sysclk,
+ static int rtw_wx_write32(struct net_device *dev,
+-- 
+2.17.1
