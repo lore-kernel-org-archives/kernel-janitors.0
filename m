@@ -1,36 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 04 Oct 2018 13:59:06 +0000
-Subject: [PATCH] media: bttv-input: make const array addr_list static
-Message-Id: <20181004135906.20320-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 Oct 2018 08:04:00 +0000
+Subject: [PATCH 1/2] usb: phy: ab8500: silence some uninitialized variable warnings
+Message-Id: <20181018080400.2ffpzzyy6svvppzb@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Smatch complains that "reg" can be uninitialized if the
+abx500_get_register_interruptible() call fails.  It's an interruptable
+function, so we should check if the user presses CTRL-C.
 
-The const array addr_list can be made static, saves populating it on
-the stack and will make it read-only.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/pci/bt8xx/bttv-input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/phy/phy-ab8500-usb.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/pci/bt8xx/bttv-input.c b/drivers/media/pci/bt8xx/bttv-input.c
-index 5cf929370398..d34fbaa027c2 100644
---- a/drivers/media/pci/bt8xx/bttv-input.c
-+++ b/drivers/media/pci/bt8xx/bttv-input.c
-@@ -370,7 +370,7 @@ static int get_key_pv951(struct IR_i2c *ir, enum rc_proto *protocol,
- /* Instantiate the I2C IR receiver device, if present */
- void init_bttv_i2c_ir(struct bttv *btv)
- {
--	const unsigned short addr_list[] = {
-+	static const unsigned short addr_list[] = {
- 		0x1a, 0x18, 0x64, 0x30, 0x71,
- 		I2C_CLIENT_END
- 	};
+diff --git a/drivers/usb/phy/phy-ab8500-usb.c b/drivers/usb/phy/phy-ab8500-usb.c
+index 66143ab8c043..aaf363f19714 100644
+--- a/drivers/usb/phy/phy-ab8500-usb.c
++++ b/drivers/usb/phy/phy-ab8500-usb.c
+@@ -505,15 +505,19 @@ static int abx500_usb_link_status_update(struct ab8500_usb *ab)
+ 	if (is_ab8500(ab->ab8500)) {
+ 		enum ab8500_usb_link_status lsts;
+ 
+-		abx500_get_register_interruptible(ab->dev,
++		ret = abx500_get_register_interruptible(ab->dev,
+ 				AB8500_USB, AB8500_USB_LINE_STAT_REG, &reg);
++		if (ret < 0)
++			return ret;
+ 		lsts = (reg >> 3) & 0x0F;
+ 		ret = ab8500_usb_link_status_update(ab, lsts);
+ 	} else if (is_ab8505(ab->ab8500)) {
+ 		enum ab8505_usb_link_status lsts;
+ 
+-		abx500_get_register_interruptible(ab->dev,
++		ret = abx500_get_register_interruptible(ab->dev,
+ 				AB8500_USB, AB8505_USB_LINE_STAT_REG, &reg);
++		if (ret < 0)
++			return ret;
+ 		lsts = (reg >> 3) & 0x1F;
+ 		ret = ab8505_usb_link_status_update(ab, lsts);
+ 	}
 -- 
-2.17.1
+2.11.0
