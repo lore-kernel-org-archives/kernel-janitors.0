@@ -1,57 +1,41 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Tue, 16 Oct 2018 23:52:08 +0000
-Subject: Re: [PATCH -next] drivers/video/fbdev: remove set but not used variable 'size'
-Message-Id: <87d0s9laaf.fsf@concordia.ellerman.id.au>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 19 Oct 2018 11:52:36 +0000
+Subject: [PATCH net-next] rocker: Drop pointless static qualifier
+Message-Id: <1539950579-182423-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539676794-40133-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539676794-40133-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org
+To: Jiri Pirko <jiri@resnulli.us>, davem@davemloft.net
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> writes:
+There is no need to have the 'struct rocker_desc_info *desc_info'
+variable static since new value always be assigned before use it.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/video/fbdev/chipsfb.c: In function 'chipsfb_pci_init':
-> drivers/video/fbdev/chipsfb.c:352:22: warning:
->  variable 'size' set but not used [-Wunused-but-set-variable]
->
-> It not used any more after commit
-> 8c8709334cec ("[PATCH] ppc32: Remove CONFIG_PMAC_PBOOK")
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/video/fbdev/chipsfb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/rocker/rocker_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Looks good, thanks.
-
-Should I merge this? Or otherwise:
-
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-
-cheers
-
-> diff --git a/drivers/video/fbdev/chipsfb.c b/drivers/video/fbdev/chipsfb.c
-> index 40182ed..ca549e1 100644
-> --- a/drivers/video/fbdev/chipsfb.c
-> +++ b/drivers/video/fbdev/chipsfb.c
-> @@ -349,7 +349,7 @@ static void init_chips(struct fb_info *p, unsigned long addr)
->  static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
->  {
->  	struct fb_info *p;
-> -	unsigned long addr, size;
-> +	unsigned long addr;
->  	unsigned short cmd;
->  	int rc = -ENODEV;
->  
-> @@ -361,7 +361,6 @@ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
->  	if ((dp->resource[0].flags & IORESOURCE_MEM) = 0)
->  		goto err_disable;
->  	addr = pci_resource_start(dp, 0);
-> -	size = pci_resource_len(dp, 0);
->  	if (addr = 0)
->  		goto err_disable;
+diff --git a/drivers/net/ethernet/rocker/rocker_main.c b/drivers/net/ethernet/rocker/rocker_main.c
+index 8721c05..beb0662 100644
+--- a/drivers/net/ethernet/rocker/rocker_main.c
++++ b/drivers/net/ethernet/rocker/rocker_main.c
+@@ -371,7 +371,7 @@ static void rocker_desc_cookie_ptr_set(const struct rocker_desc_info *desc_info,
+ static struct rocker_desc_info *
+ rocker_desc_head_get(const struct rocker_dma_ring_info *info)
+ {
+-	static struct rocker_desc_info *desc_info;
++	struct rocker_desc_info *desc_info;
+ 	u32 head = __pos_inc(info->head, info->size);
+ 
+ 	desc_info = &info->desc_info[info->head];
+@@ -402,7 +402,7 @@ static void rocker_desc_head_set(const struct rocker *rocker,
+ static struct rocker_desc_info *
+ rocker_desc_tail_get(struct rocker_dma_ring_info *info)
+ {
+-	static struct rocker_desc_info *desc_info;
++	struct rocker_desc_info *desc_info;
+ 
+ 	if (info->tail = info->head)
+ 		return NULL; /* nothing to be done between head and tail */
