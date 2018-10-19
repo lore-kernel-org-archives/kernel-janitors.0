@@ -1,52 +1,55 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Sun, 14 Oct 2018 16:03:24 +0000
-Subject: Re: [PATCH] irqchip/irq-mvebu-sei: Fix a NULL vs IS_ERR() bug in probe
-Message-Id: <20181014180324.56e7d8d5@xps13>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Oct 2018 19:57:47 +0000
+Subject: [PATCH] igc: Tidy up some white space
+Message-Id: <20181019195747.e4h2oihuyroi5vwn@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181013102246.GD16086@mwanda>
-In-Reply-To: <20181013102246.GD16086@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+I just cleaned up a couple small white space issues.
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote on Sat, 13 Oct 2018
-13:22:46 +0300:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/intel/igc/igc_main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> The devm_ioremap_resource() function never returns NULL, it returns
-> error pointers.
->=20
-> Fixes: 61ce8d8d8a81 ("irqchip/irq-mvebu-sei: Add new driver for Marvell S=
-EI")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/irqchip/irq-mvebu-sei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/irqchip/irq-mvebu-sei.c b/drivers/irqchip/irq-mvebu-=
-sei.c
-> index 566d69a2edbc..add4c9c934c8 100644
-> --- a/drivers/irqchip/irq-mvebu-sei.c
-> +++ b/drivers/irqchip/irq-mvebu-sei.c
-> @@ -384,9 +384,9 @@ static int mvebu_sei_probe(struct platform_device *pd=
-ev)
-> =20
->  	sei->res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	sei->base =3D devm_ioremap_resource(sei->dev, sei->res);
-> -	if (!sei->base) {
-> +	if (IS_ERR(sei->base)) {
->  		dev_err(sei->dev, "Failed to remap SEI resource\n");
-> -		return -ENODEV;
-> +		return PTR_ERR(sei->base);
->  	}
-> =20
->  	/* Retrieve the SEI capabilities with the interrupt ranges */
-
-
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-
-Thanks,
-Miqu=C3=A8l
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index 9d85707e8a81..3233141c594b 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -1108,7 +1108,7 @@ static struct sk_buff *igc_build_skb(struct igc_ring *rx_ring,
+ 
+ 	/* update pointers within the skb to store the data */
+ 	skb_reserve(skb, IGC_SKB_PAD);
+-	 __skb_put(skb, size);
++	__skb_put(skb, size);
+ 
+ 	/* update buffer offset */
+ #if (PAGE_SIZE < 8192)
+@@ -1160,9 +1160,9 @@ static struct sk_buff *igc_construct_skb(struct igc_ring *rx_ring,
+ 				(va + headlen) - page_address(rx_buffer->page),
+ 				size, truesize);
+ #if (PAGE_SIZE < 8192)
+-	rx_buffer->page_offset ^= truesize;
++		rx_buffer->page_offset ^= truesize;
+ #else
+-	rx_buffer->page_offset += truesize;
++		rx_buffer->page_offset += truesize;
+ #endif
+ 	} else {
+ 		rx_buffer->pagecnt_bias++;
+@@ -1668,8 +1668,8 @@ static bool igc_clean_tx_irq(struct igc_q_vector *q_vector, int napi_budget)
+ 				tx_buffer->next_to_watch,
+ 				jiffies,
+ 				tx_buffer->next_to_watch->wb.status);
+-				netif_stop_subqueue(tx_ring->netdev,
+-						    tx_ring->queue_index);
++			netif_stop_subqueue(tx_ring->netdev,
++					    tx_ring->queue_index);
+ 
+ 			/* we are about to reset, no point in enabling stuff */
+ 			return true;
+-- 
+2.11.0
