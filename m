@@ -1,53 +1,38 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 11 Oct 2018 08:46:52 +0000
-Subject: Re: [PATCH -next] drm: Use PTR_ERR_OR_ZERO in drm_fb_cma_fbdev_init()
-Message-Id: <20181011084652.GZ31561@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Oct 2018 09:19:09 +0000
+Subject: [PATCH 3/3] scsi: myrs: prevent negatives in disable_enclosure_messages_store()
+Message-Id: <20181019091909.a22ah7wybj6agqch@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539176563-144779-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539176563-144779-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Sean Paul <sean@poorly.run>
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 01:02:43PM +0000, YueHaibing wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+We only want the value to be zero or one.
 
-Applied, thanks for your patch.
--Daniel
+It's not a big deal, but say we passed set value to INT_MIN, then
+disable_enclosure_messages_show() would return that 12 bytes of "buf"
+are initialized but actually only 3 are.  I think there are tools like
+KASAN which will trigger an info leak warning when that happens.
 
-> ---
->  drivers/gpu/drm/drm_fb_cma_helper.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
-> index fb0dfc6..30741eb 100644
-> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-> @@ -124,10 +124,7 @@ int drm_fb_cma_fbdev_init(struct drm_device *dev, unsigned int preferred_bpp,
->  
->  	/* dev->fb_helper will indirectly point to fbdev_cma after this call */
->  	fbdev_cma = drm_fbdev_cma_init(dev, preferred_bpp, max_conn_count);
-> -	if (IS_ERR(fbdev_cma))
-> -		return PTR_ERR(fbdev_cma);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(fbdev_cma);
->  }
->  EXPORT_SYMBOL_GPL(drm_fb_cma_fbdev_init);
->  
-> 
-> 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Fixes: 77266186397c ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/myrs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
+index 07e5a3f54e31..55842ed54231 100644
+--- a/drivers/scsi/myrs.c
++++ b/drivers/scsi/myrs.c
+@@ -1501,7 +1501,7 @@ static ssize_t disable_enclosure_messages_store(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (value > 2)
++	if (value < 0 || value > 2)
+ 		return -EINVAL;
+ 
+ 	cs->disable_enc_msg = value;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.11.0
