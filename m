@@ -1,75 +1,73 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 31 Oct 2018 18:05:19 +0000
-Subject: Re: [PATCH] tlclk: lean an indentation issue, remove extraneous tabs
-Message-Id: <0a6d5b7a21d4ad5b29295ac5695ada3d9f2133c4.camel@perches.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 19 Oct 2018 12:40:30 +0000
+Subject: [PATCH net-next] igc: Remove set but not used variables 'ctrl_ext, link_mode'
+Message-Id: <1539952830-187358-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181030115650.21104-1-colin.king@canonical.com>
-         <aa09c138-854e-ad84-59eb-5613b8cd3f0e@canonical.com>
-In-Reply-To: <aa09c138-854e-ad84-59eb-5613b8cd3f0e@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>, Mark Gross <mark.gross@intel.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Sasha Neftin <sasha.neftin@intel.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2018-10-30 at 11:57 +0000, Colin Ian King wrote:
-> $SUBJECT should be:
-> 
-> tlclk: clean an indentation issue, remove extraneous tabs
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Perhaps add missing braces for the last else uses as well?
+drivers/net/ethernet/intel/igc/igc_base.c: In function 'igc_init_phy_params_base':
+drivers/net/ethernet/intel/igc/igc_base.c:240:6: warning:
+ variable 'ctrl_ext' set but not used [-Wunused-but-set-variable]
+  u32 ctrl_ext;
+  
+drivers/net/ethernet/intel/igc/igc_base.c: In function 'igc_get_invariants_base':
+drivers/net/ethernet/intel/igc/igc_base.c:290:6: warning:
+ variable 'link_mode' set but not used [-Wunused-but-set-variable]
+  u32 link_mode = 0;
 
-> On 30/10/2018 11:56, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-[]
-> > diff --git a/drivers/char/tlclk.c b/drivers/char/tlclk.c
-[]
-> > +	if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
-> > +		SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x28);
-> > +		SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
-> > +	} else if (val >= CLK_8_592MHz) {
-> > +		SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x38);
-> > +		switch (val) {
-> > +		case CLK_8_592MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
-> > +			break;
-> > +		case CLK_11_184MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
-> > +			break;
-> > +		case CLK_34_368MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
-> > +			break;
-> > +		case CLK_44_736MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);.
-> > +			break;
-> > +		}
-> > +	} else
-> > +		SET_PORT_BITS(TLCLK_REG3, 0xc7, val << 3);
+It never used since introduction in
+commit c0071c7aa5fe ("igc: Add HW initialization code")
 
-here.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+I'm not sure that reading IGC_CTRL_EXT is necessary.
+---
+ drivers/net/ethernet/intel/igc/igc_base.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-> > @@ -548,27 +548,27 @@ static ssize_t store_select_amcb1_transmit_clock(struct device *d,
-[]
-> > +	if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
-> > +		SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x5);
-> > +		SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
-> > +	} else if (val >= CLK_8_592MHz) {
-> > +		SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x7);
-> > +		switch (val) {
-> > +		case CLK_8_592MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
-> > +			break;
-> > +		case CLK_11_184MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
-> > +			break;
-> > +		case CLK_34_368MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
-> > +			break;
-> > +		case CLK_44_736MHz:
-> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);
-> > +			break;
-> > +		}
-> > +	} else
-> > +		SET_PORT_BITS(TLCLK_REG3, 0xf8, val);
-
-and here.
+diff --git a/drivers/net/ethernet/intel/igc/igc_base.c b/drivers/net/ethernet/intel/igc/igc_base.c
+index 832da609..df40af7 100644
+--- a/drivers/net/ethernet/intel/igc/igc_base.c
++++ b/drivers/net/ethernet/intel/igc/igc_base.c
+@@ -237,7 +237,6 @@ static s32 igc_init_phy_params_base(struct igc_hw *hw)
+ {
+ 	struct igc_phy_info *phy = &hw->phy;
+ 	s32 ret_val = 0;
+-	u32 ctrl_ext;
+ 
+ 	if (hw->phy.media_type != igc_media_type_copper) {
+ 		phy->type = igc_phy_none;
+@@ -247,8 +246,6 @@ static s32 igc_init_phy_params_base(struct igc_hw *hw)
+ 	phy->autoneg_mask	= AUTONEG_ADVERTISE_SPEED_DEFAULT_2500;
+ 	phy->reset_delay_us	= 100;
+ 
+-	ctrl_ext = rd32(IGC_CTRL_EXT);
+-
+ 	/* set lan id */
+ 	hw->bus.func = (rd32(IGC_STATUS) & IGC_STATUS_FUNC_MASK) >>
+ 			IGC_STATUS_FUNC_SHIFT;
+@@ -287,8 +284,6 @@ static s32 igc_init_phy_params_base(struct igc_hw *hw)
+ static s32 igc_get_invariants_base(struct igc_hw *hw)
+ {
+ 	struct igc_mac_info *mac = &hw->mac;
+-	u32 link_mode = 0;
+-	u32 ctrl_ext = 0;
+ 	s32 ret_val = 0;
+ 
+ 	switch (hw->device_id) {
+@@ -302,9 +297,6 @@ static s32 igc_get_invariants_base(struct igc_hw *hw)
+ 
+ 	hw->phy.media_type = igc_media_type_copper;
+ 
+-	ctrl_ext = rd32(IGC_CTRL_EXT);
+-	link_mode = ctrl_ext & IGC_CTRL_EXT_LINK_MODE_MASK;
+-
+ 	/* mac initialization and operations */
+ 	ret_val = igc_init_mac_params_base(hw);
+ 	if (ret_val)
