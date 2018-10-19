@@ -1,45 +1,47 @@
-From: "Neftin, Sasha" <sasha.neftin@intel.com>
-Date: Wed, 24 Oct 2018 10:38:57 +0000
-Subject: Re: [PATCH][next] igc: fix error return handling from call to netif_set_real_num_tx_queues
-Message-Id: <e0080271-fdd5-75fa-6acb-a88eeb7a163b@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Oct 2018 20:08:43 +0000
+Subject: [PATCH] ath9k: Fix a locking bug in ath9k_add_interface()
+Message-Id: <20181019200842.7qclbjs547sm7mbn@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181019181615.27528-1-colin.king@canonical.com>
-In-Reply-To: <20181019181615.27528-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, "Neftin, Sasha" <sasha.neftin@intel.com>
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Felix Fietkau <nbd@nbd.name>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/19/2018 21:16, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to netif_set_real_num_tx_queues is not assigning the error
-> return to variable err even though the next line checks err for an
-> error.  Fix this by adding the missing err assignment.
-> 
-> Detected by CoverityScan, CID#1474551 ("Logically dead code")
-> 
-> Fixes: 3df25e4c1e66 ("igc: Add interrupt support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/net/ethernet/intel/igc/igc_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> index 9d85707e8a81..80ddbd987764 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> @@ -3358,7 +3358,7 @@ static int __igc_open(struct net_device *netdev, bool resuming)
->   		goto err_req_irq;
->   
->   	/* Notify the stack of the actual queue counts. */
-> -	netif_set_real_num_tx_queues(netdev, adapter->num_tx_queues);
-> +	err = netif_set_real_num_tx_queues(netdev, adapter->num_tx_queues);
->   	if (err)
->   		goto err_set_queues;
->   
-> 
-Thanks for the patch. Good catch of my typo.
+We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
+mode interface") but accidentally missed part of the locking change.
 
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+The lock has to be held earlier so that we're holding it when we do
+"sc->tx99_vif = vif;" and also there in the current code there is a
+stray unlock before we have taken the lock.
+
+Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/ath/ath9k/main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
+index 1e3b5f4a4cf9..f23cb2f3d296 100644
+--- a/drivers/net/wireless/ath/ath9k/main.c
++++ b/drivers/net/wireless/ath/ath9k/main.c
+@@ -1251,6 +1251,7 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
+ 	struct ath_vif *avp = (void *)vif->drv_priv;
+ 	struct ath_node *an = &avp->mcast_node;
+ 
++	mutex_lock(&sc->mutex);
+ 	if (IS_ENABLED(CONFIG_ATH9K_TX99)) {
+ 		if (sc->cur_chan->nvifs >= 1) {
+ 			mutex_unlock(&sc->mutex);
+@@ -1259,8 +1260,6 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
+ 		sc->tx99_vif = vif;
+ 	}
+ 
+-	mutex_lock(&sc->mutex);
+-
+ 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d\n", vif->type);
+ 	sc->cur_chan->nvifs++;
+ 
+-- 
+2.11.0
