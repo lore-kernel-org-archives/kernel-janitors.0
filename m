@@ -1,59 +1,50 @@
-From: Lubomir Rintel <lkundrak@v3.sk>
-Date: Tue, 23 Oct 2018 14:25:11 +0000
-Subject: Re: [PATCH] libertas: remove set but not used variable 'int_type'
-Message-Id: <56d49bb6e62e3a7246bd839a349874908e6a9673.camel@v3.sk>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 19 Oct 2018 11:48:19 +0000
+Subject: [PATCH v2 -next] KEYS: trusted: remove set but not used variable 'keyhndl'
+Message-Id: <1539949699-74650-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539569795-176889-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539569795-176889-1-git-send-email-yuehaibing@huawei.com>
+References: <1539241599-140866-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539241599-140866-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Bottomley <jejb@linux.vnet.ibm.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2018-10-15 at 02:16 +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/marvell/libertas/if_spi.c: In function
-> 'if_spi_h2c':
-> drivers/net/wireless/marvell/libertas/if_spi.c:799:6: warning:
->  variable 'int_type' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in
-> commit d2b21f191753 ("libertas: if_spi, driver for libertas GSPI
-> devices")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks.
+security/keys/trusted.c: In function 'tpm_unseal':
+security/keys/trusted.c:592:11: warning:
+ variable 'keyhndl' set but not used [-Wunused-but-set-variable]
+  uint32_t keyhndl;
 
-Tested-by: Lubomir Rintel <lkundrak@v3.sk>
+It never used since introduction in 
+commit d00a1c72f7f4 ("keys: add new trusted key-type")
 
-> ---
->  drivers/net/wireless/marvell/libertas/if_spi.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c
-> b/drivers/net/wireless/marvell/libertas/if_spi.c
-> index 504d6e0..7c3224b 100644
-> --- a/drivers/net/wireless/marvell/libertas/if_spi.c
-> +++ b/drivers/net/wireless/marvell/libertas/if_spi.c
-> @@ -796,15 +796,13 @@ static void if_spi_h2c(struct if_spi_card
-> *card,
->  {
->  	struct lbs_private *priv = card->priv;
->  	int err = 0;
-> -	u16 int_type, port_reg;
-> +	u16 port_reg;
->  
->  	switch (type) {
->  	case MVMS_DAT:
-> -		int_type = IF_SPI_CIC_TX_DOWNLOAD_OVER;
->  		port_reg = IF_SPI_DATA_RDWRPORT_REG;
->  		break;
->  	case MVMS_CMD:
-> -		int_type = IF_SPI_CIC_CMD_DOWNLOAD_OVER;
->  		port_reg = IF_SPI_CMD_RDWRPORT_REG;
->  		break;
->  	default:
-> 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix patch title
+---
+ security/keys/trusted.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ff67893..169df79 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -589,7 +589,6 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 	uint32_t authhandle2 = 0;
+ 	unsigned char cont = 0;
+ 	uint32_t ordinal;
+-	uint32_t keyhndl;
+ 	int ret;
+ 
+ 	/* sessions for unsealing key and data */
+@@ -605,7 +604,6 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 	}
+ 
+ 	ordinal = htonl(TPM_ORD_UNSEAL);
+-	keyhndl = htonl(SRKHANDLE);
+ 	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE) {
+ 		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
