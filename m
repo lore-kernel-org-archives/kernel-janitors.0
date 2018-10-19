@@ -1,24 +1,76 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 11 Oct 2018 05:54:47 +0000
-Subject: Re: [PATCH -next] phy: phy-ocelot-serdes: fix return value check in serdes_probe()
-Message-Id: <20181010.225447.2264091665828087261.davem@davemloft.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 19 Oct 2018 12:26:57 +0000
+Subject: Applied "ASoC: Intel: kbl_da7219_max98927: minor white space clean up" to the asoc tree
+Message-Id: <20181019122657.949791122548@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539136824-44940-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1539136824-44940-1-git-send-email-weiyongjun1@huawei.com>
+References: <20181018073430.c45sl5k62o3ebp2g@kili.mountain>
+In-Reply-To: <20181018073430.c45sl5k62o3ebp2g@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: kishon@ti.com, quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>, Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Harsha Priya <harshapriya.n@intel.com>, Jie Yang <yang.jie@linux.intel.com>, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Mac Chiang <mac.chiang@intel.com>, Mark Brown <broonie@kernel.org>, Naveen Manohar <naveen.m@intel.com>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 10 Oct 2018 02:00:24 +0000
+The patch
 
-> In case of error, the function syscon_node_to_regmap() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
-> 
-> Fixes: 51f6b410fc22 ("phy: add driver for Microsemi Ocelot SerDes muxing")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+   ASoC: Intel: kbl_da7219_max98927: minor white space clean up
 
-Applied.
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9ab2a1bd81f7eaef4b496168dd93e0f23e8906fe Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 Oct 2018 10:34:30 +0300
+Subject: [PATCH] ASoC: Intel: kbl_da7219_max98927: minor white space clean up
+
+I just added a couple missing tabs.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/boards/kbl_da7219_max98927.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/boards/kbl_da7219_max98927.c b/sound/soc/intel/boards/kbl_da7219_max98927.c
+index 3ab96ee7bd3c..3fa1c3ca6d37 100644
+--- a/sound/soc/intel/boards/kbl_da7219_max98927.c
++++ b/sound/soc/intel/boards/kbl_da7219_max98927.c
+@@ -180,14 +180,14 @@ static int kabylake_ssp0_hw_params(struct snd_pcm_substream *substream,
+ 			ret = snd_soc_dai_set_tdm_slot(codec_dai, 0x30, 3, 8, 16);
+ 			if (ret < 0) {
+ 				dev_err(runtime->dev, "DEV0 TDM slot err:%d\n", ret);
+-			return ret;
++				return ret;
+ 			}
+ 		}
+ 		if (!strcmp(codec_dai->component->name, MAXIM_DEV1_NAME)) {
+ 			ret = snd_soc_dai_set_tdm_slot(codec_dai, 0xC0, 3, 8, 16);
+ 			if (ret < 0) {
+ 				dev_err(runtime->dev, "DEV1 TDM slot err:%d\n", ret);
+-			return ret;
++				return ret;
+ 			}
+ 		}
+ 	}
+-- 
+2.19.0.rc2
