@@ -1,33 +1,39 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Thu, 18 Oct 2018 14:24:38 +0000
-Subject: Re: [PATCH v2] edac: qcom_edac: uninitialized variable in IRQ handler
-Message-Id: <20181018142438.GG20831@zn.tnic>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Oct 2018 20:11:11 +0000
+Subject: [PATCH net] qlcnic: fix a return in qlcnic_dcb_get_capability()
+Message-Id: <20181019201111.xwetmozyy46xd3pg@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181018141522.rywdvjmlpk4ticiw@kili.mountain>
-In-Reply-To: <20181018141522.rywdvjmlpk4ticiw@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Channagoud Kadabi <ckadabi@codeaurora.org>, Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shahed Shaikh <Shahed.Shaikh@cavium.com>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>
+Cc: Manish Chopra <manish.chopra@cavium.com>, Dept-GELinuxNICDev@cavium.com, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 05:15:22PM +0300, Dan Carpenter wrote:
-> We forgot to initialize "irq_handled" to false.  But really it's
-> cleaner to just get rid of that variable and use "irq_rc" directly
-> instead.
-> 
-> Fixes: 27450653f1db ("drivers: edac: Add EDAC driver support for QCOM SoCs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Get rid of the "irq_handled" variable.
-> 
->  drivers/edac/qcom_edac.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+These functions are supposed to return one on failure and zero on
+success.  Returning a zero here could cause uninitialized variable
+bugs in several of the callers.  For example:
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
+    drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:1660 get_iscsi_dcb_priority()
+    error: uninitialized symbol 'caps'.
 
+Fixes: 48365e485275 ("qlcnic: dcb: Add support for CEE Netlink interface.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+index 4b76c69fe86d..834208e55f7b 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+@@ -883,7 +883,7 @@ static u8 qlcnic_dcb_get_capability(struct net_device *netdev, int capid,
+ 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
+ 
+ 	if (!test_bit(QLCNIC_DCB_STATE, &adapter->dcb->state))
+-		return 0;
++		return 1;
+ 
+ 	switch (capid) {
+ 	case DCB_CAP_ATTR_PG:
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.11.0
