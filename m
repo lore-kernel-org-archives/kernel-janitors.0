@@ -1,46 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 25 Oct 2018 13:52:31 +0000
-Subject: [PATCH] x86/PCI: Fix Broadcom CNB20LE unintended sign extension (redux)
-Message-Id: <20181025135231.27817-1-colin.king@canonical.com>
+Date: Fri, 19 Oct 2018 12:58:01 +0000
+Subject: [PATCH] test_firmware: fix error return getting clobbered
+Message-Id: <20181019125801.4544-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-pci@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Wei Yongjun <weiyongjun1@huawei.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-In the expression "word1 << 16", word1 starts as u16, but is promoted to
-a signed int, then sign-extended to resource_size_t, which is probably
-not what was intended.  Cast to resource_size_t to avoid the sign
-extension.
+In the case where eq->fw->size > PAGE_SIZE the error return rc
+is being set to EINVAL however this is being overwritten to
+rc = req->fw->size because the error exit path via label 'out' is
+not being taken.  Fix this by adding the jump to the error exit
+path 'out'.
 
-This fixes an identical issue as fixed by commit 0b2d70764bb3
-("x86/PCI: Fix Broadcom CNB20LE unintended sign extension") back in 2014.
+Detected by CoverityScan, CID#1453465 ("Unused value")
 
-Detected by CoverityScan, CID#138749, 138750 ("Unintended sign extension")
-
-Fixes: 3f6ea84a3035 ("PCI: read memory ranges out of Broadcom CNB20LE host bridge")
+Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/pci/broadcom_bus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/test_firmware.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/pci/broadcom_bus.c b/arch/x86/pci/broadcom_bus.c
-index 526536c81ddc..d09c401a300d 100644
---- a/arch/x86/pci/broadcom_bus.c
-+++ b/arch/x86/pci/broadcom_bus.c
-@@ -50,8 +50,8 @@ static void __init cnb20le_res(u8 bus, u8 slot, u8 func)
- 	word1 = read_pci_config_16(bus, slot, func, 0xc0);
- 	word2 = read_pci_config_16(bus, slot, func, 0xc2);
- 	if (word1 != word2) {
--		res.start = (word1 << 16) | 0x0000;
--		res.end   = (word2 << 16) | 0xffff;
-+		res.start = ((resource_size_t) word1 << 16) | 0x0000;
-+		res.end   = ((resource_size_t) word2 << 16) | 0xffff;
- 		res.flags = IORESOURCE_MEM;
- 		update_res(info, res.start, res.end, res.flags, 0);
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index b984806d7d7b..7cab9a9869ac 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -837,6 +837,7 @@ static ssize_t read_firmware_show(struct device *dev,
+ 	if (req->fw->size > PAGE_SIZE) {
+ 		pr_err("Testing interface must use PAGE_SIZE firmware for now\n");
+ 		rc = -EINVAL;
++		goto out;
  	}
+ 	memcpy(buf, req->fw->data, req->fw->size);
+ 
 -- 
 2.19.1
