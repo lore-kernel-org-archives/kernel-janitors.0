@@ -1,27 +1,47 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 05 Oct 2018 13:40:43 +0000
-Subject: Re: [PATCH v2 -next] USB: cypress_m8: remove set but not used variables 'iflag'
-Message-Id: <20181005134043.GI3774@localhost>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 19 Oct 2018 12:12:57 +0000
+Subject: [PATCH -next] scsi: qedf: remove set but not used variable 'fcport'
+Message-Id: <1539951177-184754-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538636993-126815-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538636993-126815-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 07:09:53AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/usb/serial/cypress_m8.c: In function 'cypress_set_termios':
-> drivers/usb/serial/cypress_m8.c:866:18: warning:
->  variable 'iflag' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: only fix 'iflag' warning
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Now applied, thanks.
+drivers/scsi/qedf/qedf_main.c: In function 'qedf_eh_abort':
+drivers/scsi/qedf/qedf_main.c:619:21: warning:
+ variable 'fcport' set but not used [-Wunused-but-set-variable]
+  struct qedf_rport *fcport;
 
-Johan
+It never used since introduction in
+commit 61d8658b4a43 ("scsi: qedf: Add QLogic FastLinQ offload FCoE driver framework.")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/qedf/qedf_main.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+index d5a4f17..04f50a3 100644
+--- a/drivers/scsi/qedf/qedf_main.c
++++ b/drivers/scsi/qedf/qedf_main.c
+@@ -615,8 +615,6 @@ static u32 qedf_get_login_failures(void *cookie)
+ static int qedf_eh_abort(struct scsi_cmnd *sc_cmd)
+ {
+ 	struct fc_rport *rport = starget_to_rport(scsi_target(sc_cmd->device));
+-	struct fc_rport_libfc_priv *rp = rport->dd_data;
+-	struct qedf_rport *fcport;
+ 	struct fc_lport *lport;
+ 	struct qedf_ctx *qedf;
+ 	struct qedf_ioreq *io_req;
+@@ -636,8 +634,6 @@ static int qedf_eh_abort(struct scsi_cmnd *sc_cmd)
+ 		goto out;
+ 	}
+ 
+-	fcport = (struct qedf_rport *)&rp[1];
+-
+ 	io_req = (struct qedf_ioreq *)sc_cmd->SCp.ptr;
+ 	if (!io_req) {
+ 		QEDF_ERR(&(qedf->dbg_ctx), "io_req is NULL.\n");
