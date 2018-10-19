@@ -1,25 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 31 Oct 2018 19:33:29 +0000
-Subject: Re: [PATCH][net-next] net: hns3: fix spelling mistake "intrerrupt" -> "interrupt"
-Message-Id: <20181031.123329.534080519656916446.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Oct 2018 20:06:38 +0000
+Subject: [PATCH] net/mlx5: allocate enough space in
+Message-Id: <20181019200638.dea3r4uocbij6d6j@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181029224611.20008-1-colin.king@canonical.com>
-In-Reply-To: <20181029224611.20008-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, shiju.jose@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 29 Oct 2018 22:46:11 +0000
+FDB_MAX_CHAIN is 3.  We wanted to allocate enough memory to hold four
+structs but there are missing parentheses so we only allocate enough
+memory for three structs and the first byte of the fourth one.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 328edb499f99 ("net/mlx5: Split FDB fast path prio to multiple namespaces")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-net-next is closed, but a spelling fix is fine for 'net'.
-
-Applied, thanks.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+index 67ba4c975d81..9d73eb955f75 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -2470,7 +2470,7 @@ static int init_fdb_root_ns(struct mlx5_flow_steering *steering)
+ 		return -ENOMEM;
+ 
+ 	steering->fdb_sub_ns = kzalloc(sizeof(steering->fdb_sub_ns) *
+-				       FDB_MAX_CHAIN + 1, GFP_KERNEL);
++				       (FDB_MAX_CHAIN + 1), GFP_KERNEL);
+ 	if (!steering->fdb_sub_ns)
+ 		return -ENOMEM;
+ 
+-- 
+2.11.0
