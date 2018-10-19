@@ -1,32 +1,33 @@
-From: Luciano Coelho <luciano.coelho@intel.com>
-Date: Wed, 17 Oct 2018 07:38:01 +0000
-Subject: Re: [PATCH] iwlwifi: mvm: fix spelling mistake "Recieved" -> "Received"
-Message-Id: <7536486ceefd6ebdf174cc76d4a851b2ea77f9ce.camel@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Oct 2018 09:16:28 +0000
+Subject: [PATCH 1/3] scsi: myrs: Fix a logical vs bitwise bug
+Message-Id: <20181019091628.4pvqvib3nlz2pznb@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181016172251.1227-1-colin.king@canonical.com>
-In-Reply-To: <20181016172251.1227-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 2018-10-16 at 18:22 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in IWL_DEBUG_TE message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+The || was supposed to be |.  The original code just sets ->result to 1.
 
-Hi Colin,
+Fixes: 77266186397c ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/myrs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You already sent this patch before and it has already been applied in
-our internal tree and will reach upstream at some point.
-
-Please don't keep re-sending identical patches once I replied that it
-has been applied.
-
---
-Cheers,
-Luca.
+diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
+index b02ee0b0dd55..17e691bde485 100644
+--- a/drivers/scsi/myrs.c
++++ b/drivers/scsi/myrs.c
+@@ -2085,7 +2085,7 @@ static void myrs_handle_scsi(struct myrs_hba *cs, struct myrs_cmdblk *cmd_blk,
+ 	    status = MYRS_STATUS_DEVICE_NON_RESPONSIVE2)
+ 		scmd->result = (DID_BAD_TARGET << 16);
+ 	else
+-		scmd->result = (DID_OK << 16) || status;
++		scmd->result = (DID_OK << 16) | status;
+ 	scmd->scsi_done(scmd);
+ }
+ 
+-- 
+2.11.0
