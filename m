@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 19 Oct 2018 12:26:57 +0000
+Date: Fri, 19 Oct 2018 12:34:29 +0000
 Subject: Applied "ASoC: Intel: kbl_da7219_max98927: minor white space clean up" to the asoc tree
-Message-Id: <20181019122657.949791122548@debutante.sirena.org.uk>
+Message-Id: <20181019123429.9B6AD1122548@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181018073430.c45sl5k62o3ebp2g@kili.mountain>
 In-Reply-To: <20181018073430.c45sl5k62o3ebp2g@kili.mountain>
