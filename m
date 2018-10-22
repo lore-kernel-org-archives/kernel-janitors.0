@@ -1,71 +1,57 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Thu, 25 Oct 2018 18:49:29 +0000
-Subject: Re: [PATCH] usbip: tools: fix atoi() on non-null terminated string
-Message-Id: <82ed890f-f544-ce88-9509-f4eedafe4a91@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 22 Oct 2018 07:51:15 +0000
+Subject: [PATCH] rtlwifi: btcoex: remove set but not used variable 'ppsc'
+Message-Id: <1540194675-65562-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181016180343.5620-1-colin.king@canonical.com>
-In-Reply-To: <20181016180343.5620-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Valentina Manea <valentina.manea.m@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, Larry Finger <Larry.Finger@lwfinger.net>, Colin Ian King <colin.king@canonical.com>, Nathan Chancellor <natechancellor@gmail.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 10/16/2018 12:03 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the call to atoi is being passed a single char string
-> that is not null terminated, so there is a potential read overrun
-> along the stack when parsing for an integer value.  Fix this by
-> instead using a 2 char string that is initialized to all zeros
-> to ensure that a 1 char read into the string is always terminated
-> with a \0.
-> 
-> Detected by cppcheck:
-> "Invalid atoi() argument nr 1. A nul-terminated string is required."
-> 
-> Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
-> index dc93fadbee96..d79c7581b175 100644
-> --- a/tools/usb/usbip/libsrc/usbip_host_common.c
-> +++ b/tools/usb/usbip/libsrc/usbip_host_common.c
-> @@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
->  	int size;
->  	int fd;
->  	int length;
-> -	char status;
-> +	char status[2] = { 0 }>  	int value = 0;
->  
->  	size = snprintf(status_attr_path, sizeof(status_attr_path),
-> @@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
->  		return -1;
->  	}
->  
-> -	length = read(fd, &status, 1);
-> +	length = read(fd, status, 1);
->  	if (length < 0) {
->  		err("error reading attribute %s", status_attr_path);
->  		close(fd);
->  		return -1;
->  	}
->  
-> -	value = atoi(&status);
-> +	value = atoi(status);
->  
->  	return value;
->  }
-> 
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_leave_lps':
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:295:21: warning:
+ variable 'ppsc' set but not used [-Wunused-but-set-variable]
 
-Thanks for the patch. Looks good to me.
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_enter_lps':
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:318:21: warning:
+ variable 'ppsc' set but not used [-Wunused-but-set-variable]
 
-Acked-by: Shuah Khan <shuah@kernel.org>
+It never used since introduction in
+commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
 
-thanks,
--- Shuah
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+index 6fbf884..d748aab 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -292,11 +292,9 @@ bool halbtc_send_bt_mp_operation(struct btc_coexist *btcoexist, u8 op_code,
+ static void halbtc_leave_lps(struct btc_coexist *btcoexist)
+ {
+ 	struct rtl_priv *rtlpriv;
+-	struct rtl_ps_ctl *ppsc;
+ 	bool ap_enable = false;
+ 
+ 	rtlpriv = btcoexist->adapter;
+-	ppsc = rtl_psc(rtlpriv);
+ 
+ 	btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_AP_MODE_ENABLE,
+ 			   &ap_enable);
+@@ -315,11 +313,9 @@ static void halbtc_leave_lps(struct btc_coexist *btcoexist)
+ static void halbtc_enter_lps(struct btc_coexist *btcoexist)
+ {
+ 	struct rtl_priv *rtlpriv;
+-	struct rtl_ps_ctl *ppsc;
+ 	bool ap_enable = false;
+ 
+ 	rtlpriv = btcoexist->adapter;
+-	ppsc = rtl_psc(rtlpriv);
+ 
+ 	btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_AP_MODE_ENABLE,
+ 			   &ap_enable);
