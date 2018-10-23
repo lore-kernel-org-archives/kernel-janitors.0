@@ -1,57 +1,28 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 22 Oct 2018 07:51:15 +0000
-Subject: [PATCH] rtlwifi: btcoex: remove set but not used variable 'ppsc'
-Message-Id: <1540194675-65562-1-git-send-email-yuehaibing@huawei.com>
+From: Pkshih <pkshih@realtek.com>
+Date: Tue, 23 Oct 2018 01:24:45 +0000
+Subject: Re: [PATCH] rtlwifi: btcoex: remove set but not used variable 'ppsc'
+Message-Id: <1540257852.2768.4.camel@realtek.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540194675-65562-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1540194675-65562-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, Larry Finger <Larry.Finger@lwfinger.net>, Colin Ian King <colin.king@canonical.com>, Nathan Chancellor <natechancellor@gmail.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>, "natechancellor@gmail.com" <natechancellor@gmail.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_leave_lps':
-drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:295:21: warning:
- variable 'ppsc' set but not used [-Wunused-but-set-variable]
-
-drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_enter_lps':
-drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:318:21: warning:
- variable 'ppsc' set but not used [-Wunused-but-set-variable]
-
-It never used since introduction in
-commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-index 6fbf884..d748aab 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -292,11 +292,9 @@ bool halbtc_send_bt_mp_operation(struct btc_coexist *btcoexist, u8 op_code,
- static void halbtc_leave_lps(struct btc_coexist *btcoexist)
- {
- 	struct rtl_priv *rtlpriv;
--	struct rtl_ps_ctl *ppsc;
- 	bool ap_enable = false;
- 
- 	rtlpriv = btcoexist->adapter;
--	ppsc = rtl_psc(rtlpriv);
- 
- 	btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_AP_MODE_ENABLE,
- 			   &ap_enable);
-@@ -315,11 +313,9 @@ static void halbtc_leave_lps(struct btc_coexist *btcoexist)
- static void halbtc_enter_lps(struct btc_coexist *btcoexist)
- {
- 	struct rtl_priv *rtlpriv;
--	struct rtl_ps_ctl *ppsc;
- 	bool ap_enable = false;
- 
- 	rtlpriv = btcoexist->adapter;
--	ppsc = rtl_psc(rtlpriv);
- 
- 	btcoexist->btc_get(btcoexist, BTC_GET_BL_WIFI_AP_MODE_ENABLE,
- 			   &ap_enable);
+T24gTW9uLCAyMDE4LTEwLTIyIGF0IDA3OjUxICswMDAwLCBZdWVIYWliaW5nIHdyb3RlOg0KPiBG
+aXhlcyBnY2MgJy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGUnIHdhcm5pbmc6DQo+IA0KPiBkcml2
+ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYnRjb2V4aXN0L2hhbGJ0Y291dHNyYy5j
+OiBJbiBmdW5jdGlvbg0KPiAnaGFsYnRjX2xlYXZlX2xwcyc6DQo+IGRyaXZlcnMvbmV0L3dpcmVs
+ZXNzL3JlYWx0ZWsvcnRsd2lmaS9idGNvZXhpc3QvaGFsYnRjb3V0c3JjLmM6Mjk1OjIxOiB3YXJu
+aW5nOg0KPiDCoHZhcmlhYmxlICdwcHNjJyBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1idXQt
+c2V0LXZhcmlhYmxlXQ0KPiANCj4gZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZp
+L2J0Y29leGlzdC9oYWxidGNvdXRzcmMuYzogSW4gZnVuY3Rpb24NCj4gJ2hhbGJ0Y19lbnRlcl9s
+cHMnOg0KPiBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYnRjb2V4aXN0L2hh
+bGJ0Y291dHNyYy5jOjMxODoyMTogd2FybmluZzoNCj4gwqB2YXJpYWJsZSAncHBzYycgc2V0IGJ1
+dCBub3QgdXNlZCBbLVd1bnVzZWQtYnV0LXNldC12YXJpYWJsZV0NCj4gDQo+IEl0IG5ldmVyIHVz
+ZWQgc2luY2UgaW50cm9kdWN0aW9uIGluDQo+IGNvbW1pdCBhYTQ1YTY3M2IyOTEgKCJydGx3aWZp
+OiBidGNvZXhpc3Q6IEFkZCBuZXcgbWluaSBkcml2ZXIiKQ0KPiANCj4gU2lnbmVkLW9mZi1ieTog
+WXVlSGFpYmluZyA8eXVlaGFpYmluZ0BodWF3ZWkuY29tPg0KDQoNCkFja2VkLWJ5OiBQaW5nLUtl
+IFNoaWggPHBrc2hpaEByZWFsdGVrLmNvbT4NCg0KDQo
