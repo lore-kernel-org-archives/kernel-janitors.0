@@ -1,37 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Oct 2018 11:34:19 +0000
-Subject: [PATCH] bluetooth: hci_intel: clean an indentation issue, remove extraneous spaces
-Message-Id: <20181030113419.12107-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 23 Oct 2018 05:59:46 +0000
+Subject: [PATCH -next] scsi: a100u2w: remove set but not used variable 'bios_phys'
+Message-Id: <1540274386-65609-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Trivial fix to clean up an indentation issue, remove spaces
+drivers/scsi/a100u2w.c: In function 'inia100_probe_one':
+drivers/scsi/a100u2w.c:1093:8: warning:
+ variable 'bios_phys' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It never used since introduction in
+comit 4023c4747861 ("[SCSI] a100u2w: Convert into Linux style")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/bluetooth/hci_intel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/a100u2w.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
-index 46ace321bf60..c94671c1faf5 100644
---- a/drivers/bluetooth/hci_intel.c
-+++ b/drivers/bluetooth/hci_intel.c
-@@ -596,8 +596,8 @@ static int intel_setup(struct hci_uart *hu)
- 	 * is in bootloader mode or if it already has operational firmware
- 	 * loaded.
- 	 */
--	 err = btintel_read_version(hdev, &ver);
--	 if (err)
-+	err = btintel_read_version(hdev, &ver);
-+	if (err)
- 		return err;
+diff --git a/drivers/scsi/a100u2w.c b/drivers/scsi/a100u2w.c
+index 00072ed..012aa25 100644
+--- a/drivers/scsi/a100u2w.c
++++ b/drivers/scsi/a100u2w.c
+@@ -1089,8 +1089,6 @@ static int inia100_probe_one(struct pci_dev *pdev,
+ 	unsigned long port, bios;
+ 	int error = -ENODEV;
+ 	u32 sz;
+-	unsigned long biosaddr;
+-	char *bios_phys;
  
- 	/* The hardware platform number has a fixed value of 0x37 and
--- 
-2.19.1
+ 	if (pci_enable_device(pdev))
+ 		goto out;
+@@ -1140,9 +1138,6 @@ static int inia100_probe_one(struct pci_dev *pdev,
+ 		goto out_free_scb_array;
+ 	}
+ 
+-	biosaddr = host->BIOScfg;
+-	biosaddr = (biosaddr << 4);
+-	bios_phys = phys_to_virt(biosaddr);
+ 	if (init_orchid(host)) {	/* Initialize orchid chip */
+ 		printk("inia100: initial orchid fail!!\n");
+ 		goto out_free_escb_array;
