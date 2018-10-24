@@ -1,31 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 24 Oct 2018 05:50:52 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Oct 2018 12:56:30 +0000
 Subject: Re: [PATCH] ath9k: Fix a locking bug in ath9k_add_interface()
-Message-Id: <87tvlbuc3n.fsf@codeaurora.org>
+Message-Id: <20181024125630.pqs6uae3owjvfdhr@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181019200842.7qclbjs547sm7mbn@kili.mountain>
-In-Reply-To: <20181019200842.7qclbjs547sm7mbn@kili.mountain> (Dan Carpenter's
-        message of "Fri, 19 Oct 2018 23:08:43 +0300")
+ <87tvlbuc3n.fsf@codeaurora.org>
+In-Reply-To: <87tvlbuc3n.fsf@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Kalle Valo <kvalo@codeaurora.org>
 Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Felix Fietkau <nbd@nbd.name>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+On Wed, Oct 24, 2018 at 08:50:52AM +0300, Kalle Valo wrote:
+> Dan Carpenter <dan.carpenter@oracle.com> writes:
+> 
+> > We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
+> > mode interface") but accidentally missed part of the locking change.
+> >
+> > The lock has to be held earlier so that we're holding it when we do
+> > "sc->tx99_vif = vif;" and also there in the current code there is a
+> > stray unlock before we have taken the lock.
+> >
+> > Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> commit 6df0580be8bc is on it's way to v4.20 so should I also queue this
+> to v4.20?
 
-> We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
-> mode interface") but accidentally missed part of the locking change.
->
-> The lock has to be held earlier so that we're holding it when we do
-> "sc->tx99_vif = vif;" and also there in the current code there is a
-> stray unlock before we have taken the lock.
->
-> Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Yeah.  Obviously this is a static checker thing and I haven't tested it.
 
-commit 6df0580be8bc is on it's way to v4.20 so should I also queue this
-to v4.20?
+I don't know if add_interface() is ever called in parallel, but I can
+imagine that it might be.  In that case the race condition is something
+that would affect real life.
 
--- 
-Kalle Valo
+Anyway, it's a small obvious fix.
+
+regards,
+dan carpenter
