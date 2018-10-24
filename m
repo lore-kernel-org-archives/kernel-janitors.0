@@ -1,27 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 17 Oct 2018 01:58:35 +0000
-Subject: Re: [PATCH -next] scsi: lpfc: Remove set but not used variables 'tgtp'
-Message-Id: <yq1woqhnxkk.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Oct 2018 08:32:21 +0000
+Subject: [PATCH net-next] octeontx2-af: Copy the right amount of memory
+Message-Id: <20181024083221.humvwh2pefovptcd@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sunil Goutham <sgoutham@marvell.com>
+Cc: Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+This is a copy and paste bug where we copied the sizeof() from the chunk
+before.  We're copying more data than intended but the destination is a
+union so it doesn't cause memory corruption.
 
-YueHaibing,
+Fixes: ffb0abd7e9cb ("octeontx2-af: NIX AQ instruction enqueue support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_nodelist_data':
-> drivers/scsi/lpfc/lpfc_debugfs.c:553:29: warning:
->  variable 'tgtp' set but not used [-Wunused-but-set-variable]
->
-> It never used since 2b65e18202fd ("scsi: lpfc: NVME Target: Add debugfs support")
-
-Applied to 4.20/scsi-queue. Thanks!
-
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+index 8890c95831ca..a4eac3b9ee72 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+@@ -573,7 +573,7 @@ static int rvu_nix_aq_enq_inst(struct rvu *rvu, struct nix_aq_enq_req *req,
+ 				       sizeof(struct nix_cq_ctx_s));
+ 			else if (req->ctype = NIX_AQ_CTYPE_RSS)
+ 				memcpy(&rsp->rss, ctx,
+-				       sizeof(struct nix_cq_ctx_s));
++				       sizeof(struct nix_rsse_s));
+ 			else if (req->ctype = NIX_AQ_CTYPE_MCE)
+ 				memcpy(&rsp->mce, ctx,
+ 				       sizeof(struct nix_rx_mce_s));
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
