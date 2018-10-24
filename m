@@ -1,35 +1,39 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sat, 13 Oct 2018 11:59:48 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8821ae: add in a missing break in switch statement
-Message-Id: <20181013115948.230CE6072E@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Oct 2018 08:33:34 +0000
+Subject: [PATCH] wireless: airo: potential buffer overflow in sprintf()
+Message-Id: <20181024083334.a6pxsifew3iztuun@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181006184246.29985-1-colin.king@canonical.com>
-In-Reply-To: <20181006184246.29985-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>, Tsang-Shian Lin <thlin@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Johannes Berg <johannes.berg@intel.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
 
-Colin King <colin.king@canonical.com> wrote:
+It looks like we wanted to print a maximum of BSSList_rid.ssidLen bytes
+of the ssid, but we accidentally use "%*s" (width) instead of "%.*s"
+(precision) so if the ssid doesn't have a NUL terminator this could lead
+to an overflow.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The switch case RATR_INX_WIRELESS_MC has a missing break, this seems
-> to be unintentional as the setting of variable ret gets overwritten
-> when the case falls through to the following RATR_INX_WIRELESS_AC_5N
-> case.  Fix this by adding in the missing break.
-> 
-> Detected by CoverityScan, CID#1167237 ("Missing break in switch")
-> 
-> Fixes: 3c05bedb5fef ("Staging: rtl8812ae: Add Realtek 8821 PCI WIFI driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: e174961ca1a0 ("net: convert print_mac to %pM")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analsysis.  Not tested.
 
-Dropping this patch per discussion.
+ drivers/net/wireless/cisco/airo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch set to Changes Requested.
-
+diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
+index 04dd7a936593..5512c7f73fce 100644
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -5462,7 +5462,7 @@ static int proc_BSSList_open( struct inode *inode, struct file *file ) {
+            we have to add a spin lock... */
+ 	rc = readBSSListRid(ai, doLoseSync, &BSSList_rid);
+ 	while(rc = 0 && BSSList_rid.index != cpu_to_le16(0xffff)) {
+-		ptr += sprintf(ptr, "%pM %*s rssi = %d",
++		ptr += sprintf(ptr, "%pM %.*s rssi = %d",
+ 			       BSSList_rid.bssid,
+ 				(int)BSSList_rid.ssidLen,
+ 				BSSList_rid.ssid,
 -- 
-https://patchwork.kernel.org/patch/10629291/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
