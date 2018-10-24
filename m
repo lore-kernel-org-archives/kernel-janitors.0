@@ -1,47 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Oct 2018 20:08:43 +0000
-Subject: [PATCH] ath9k: Fix a locking bug in ath9k_add_interface()
-Message-Id: <20181019200842.7qclbjs547sm7mbn@kili.mountain>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 24 Oct 2018 05:50:52 +0000
+Subject: Re: [PATCH] ath9k: Fix a locking bug in ath9k_add_interface()
+Message-Id: <87tvlbuc3n.fsf@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181019200842.7qclbjs547sm7mbn@kili.mountain>
+In-Reply-To: <20181019200842.7qclbjs547sm7mbn@kili.mountain> (Dan Carpenter's
+        message of "Fri, 19 Oct 2018 23:08:43 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Felix Fietkau <nbd@nbd.name>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Felix Fietkau <nbd@nbd.name>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
-mode interface") but accidentally missed part of the locking change.
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-The lock has to be held earlier so that we're holding it when we do
-"sc->tx99_vif = vif;" and also there in the current code there is a
-stray unlock before we have taken the lock.
+> We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
+> mode interface") but accidentally missed part of the locking change.
+>
+> The lock has to be held earlier so that we're holding it when we do
+> "sc->tx99_vif = vif;" and also there in the current code there is a
+> stray unlock before we have taken the lock.
+>
+> Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/ath/ath9k/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+commit 6df0580be8bc is on it's way to v4.20 so should I also queue this
+to v4.20?
 
-diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
-index 1e3b5f4a4cf9..f23cb2f3d296 100644
---- a/drivers/net/wireless/ath/ath9k/main.c
-+++ b/drivers/net/wireless/ath/ath9k/main.c
-@@ -1251,6 +1251,7 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 	struct ath_vif *avp = (void *)vif->drv_priv;
- 	struct ath_node *an = &avp->mcast_node;
- 
-+	mutex_lock(&sc->mutex);
- 	if (IS_ENABLED(CONFIG_ATH9K_TX99)) {
- 		if (sc->cur_chan->nvifs >= 1) {
- 			mutex_unlock(&sc->mutex);
-@@ -1259,8 +1260,6 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 		sc->tx99_vif = vif;
- 	}
- 
--	mutex_lock(&sc->mutex);
--
- 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d\n", vif->type);
- 	sc->cur_chan->nvifs++;
- 
 -- 
-2.11.0
+Kalle Valo
