@@ -1,44 +1,79 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sun, 21 Oct 2018 09:59:04 +0000
-Subject: [PATCH -next] scsi: isci: remove set but not used variable 'index'
-Message-Id: <1540116568-165417-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Oct 2018 10:05:31 +0000
+Subject: [PATCH RESEND] ocfs2: clean up some data_ac usage
+Message-Id: <20181024100531.wxdstp77isbyo4rk@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+I started looking at this code because of a Smatch false positive:
 
-drivers/scsi/isci/host.c: In function 'sci_controller_complete_io':
-drivers/scsi/isci/host.c:2674:6: warning:
- variable 'index' set but not used [-Wunused-but-set-variable]
+    fs/ocfs2/move_extents.c:347 ocfs2_defrag_extent()
+    warn: variable dereferenced before check 'context->data_ac' (see line 304)
 
-It not used any more after commit
-db0562509800 ("isci: preallocate requests")
+context->data_ac can't be NULL so I removed the check.  I changed the
+next lines to use "data_ac" instead of "context->data_ac" for
+consistency.  And we don't need to pass "data_ac" to
+ocfs2_lock_meta_allocator_move_extents() any more so I removed that.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/scsi/isci/host.c | 2 --
- 1 file changed, 2 deletions(-)
+It should apply now.
 
-diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
-index 7b5deae..7ebfa3c 100644
---- a/drivers/scsi/isci/host.c
-+++ b/drivers/scsi/isci/host.c
-@@ -2671,7 +2671,6 @@ enum sci_status sci_controller_complete_io(struct isci_host *ihost,
- 					   struct isci_request *ireq)
+ fs/ocfs2/move_extents.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 099016c9644e..9ee89d6816bc 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -160,15 +160,12 @@ static int __ocfs2_move_extent(handle_t *handle,
+  * lock allocators, and reserving appropriate number of bits for
+  * meta blocks and data clusters.
+  *
+- * in some cases, we don't need to reserve clusters, just let data_ac
+- * be NULL.
+  */
+ static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
+ 					struct ocfs2_extent_tree *et,
+ 					u32 clusters_to_move,
+ 					u32 extents_to_split,
+ 					struct ocfs2_alloc_context **meta_ac,
+-					struct ocfs2_alloc_context **data_ac,
+ 					int extra_blocks,
+ 					int *credits)
  {
- 	enum sci_status status;
--	u16 index;
+@@ -255,7 +252,6 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+ 	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+ 						*len, 1,
+ 						&context->meta_ac,
+-						&context->data_ac,
+ 						extra_blocks, &credits);
+ 	if (ret) {
+ 		mlog_errno(ret);
+@@ -344,10 +340,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+ 		mlog_errno(ret);
  
- 	switch (ihost->sm.current_state_id) {
- 	case SCIC_STOPPING:
-@@ -2682,7 +2681,6 @@ enum sci_status sci_controller_complete_io(struct isci_host *ihost,
- 		if (status != SCI_SUCCESS)
- 			return status;
+ out_commit:
+-	if (need_free && context->data_ac) {
++	if (need_free) {
+ 		struct ocfs2_alloc_context *data_ac = context->data_ac;
  
--		index = ISCI_TAG_TCI(ireq->io_tag);
- 		clear_bit(IREQ_ACTIVE, &ireq->flags);
- 		return SCI_SUCCESS;
- 	default:
+-		if (context->data_ac->ac_which = OCFS2_AC_USE_LOCAL)
++		if (data_ac->ac_which = OCFS2_AC_USE_LOCAL)
+ 			ocfs2_free_local_alloc_bits(osb, handle, data_ac,
+ 					new_phys_cpos, new_len);
+ 		else
+@@ -629,7 +625,7 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+ 	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+ 						len, 1,
+ 						&context->meta_ac,
+-						NULL, extra_blocks, &credits);
++						extra_blocks, &credits);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+-- 
+2.11.0
