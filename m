@@ -1,52 +1,56 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Sun, 14 Oct 2018 14:04:46 +0000
-Subject: Re: [PATCH] perf stat: Potential NULL dereference in print_aggr()
-Message-Id: <20181014140446.GA24104@krava>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 25 Oct 2018 15:13:34 +0000
+Subject: [PATCH] scsi: aic7xxx: Fix unintended sign extension issue
+Message-Id: <20181025151334.15622-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181013101940.GA16086@mwanda>
-In-Reply-To: <20181013101940.GA16086@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 01:19:40PM +0300, Dan Carpenter wrote:
-> Smatch complains that:
-> 
->     ./tools/perf/util/stat-display.c:616 print_aggr()
->     error: we previously assumed 'config->aggr_map' could be null (see line 607)
-> 
-> Not only that, but it looks like aggr_update_shadow() can Oops if
-> "config->aggr_get_id" is NULL.  The intent seems to have been to return
-> if either of these pointers is NULL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 86ee6e18f6cb ("perf stat: Refactor aggregation code")
+In the expression "ahc_inb(ahc, port+3) << 24", the initial value is a
+u8, but is promoted to a signed int, then sign-extended to uint64_t.  If
+the value read from the port has the upper bit set then the sign
+extension will set all the upper bits of the expression which is probably
+not what was intended.  Cast to uint64_t to avoid the sign extension.
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Detected by CoverityScan, CID#138806, 138807 ("Unintended sign extension")
 
-thanks,
-jirka
+Fixes: be0d67680d52 ("[SCSI] aic7xxx, aic79xx: deinline functions")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aic7xxx/aic79xx_core.c | 2 +-
+ drivers/scsi/aic7xxx/aic7xxx_core.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  tools/perf/util/stat-display.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-> index e7b4c44ebb62..db635c01d3a3 100644
-> --- a/tools/perf/util/stat-display.c
-> +++ b/tools/perf/util/stat-display.c
-> @@ -604,7 +604,7 @@ static void print_aggr(struct perf_stat_config *config,
->  	u64 ena, run, val;
->  	bool first;
->  
-> -	if (!(config->aggr_map || config->aggr_get_id))
-> +	if (!config->aggr_map || !config->aggr_get_id)
->  		return;
->  
->  	aggr_update_shadow(config, evlist);
-> -- 
-> 2.18.0
-> 
+diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
+index 9ee75c9a9aa1..a836233edb91 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_core.c
++++ b/drivers/scsi/aic7xxx/aic79xx_core.c
+@@ -622,7 +622,7 @@ ahd_inq(struct ahd_softc *ahd, u_int port)
+ 	return ((ahd_inb(ahd, port))
+ 	      | (ahd_inb(ahd, port+1) << 8)
+ 	      | (ahd_inb(ahd, port+2) << 16)
+-	      | (ahd_inb(ahd, port+3) << 24)
++	      | (((uint64_t)ahd_inb(ahd, port+3)) << 24)
+ 	      | (((uint64_t)ahd_inb(ahd, port+4)) << 32)
+ 	      | (((uint64_t)ahd_inb(ahd, port+5)) << 40)
+ 	      | (((uint64_t)ahd_inb(ahd, port+6)) << 48)
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
+index f3362f4ab16e..74d3f1dd0427 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_core.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
+@@ -493,7 +493,7 @@ ahc_inq(struct ahc_softc *ahc, u_int port)
+ 	return ((ahc_inb(ahc, port))
+ 	      | (ahc_inb(ahc, port+1) << 8)
+ 	      | (ahc_inb(ahc, port+2) << 16)
+-	      | (ahc_inb(ahc, port+3) << 24)
++	      | (((uint64_t)ahc_inb(ahc, port+3)) << 24)
+ 	      | (((uint64_t)ahc_inb(ahc, port+4)) << 32)
+ 	      | (((uint64_t)ahc_inb(ahc, port+5)) << 40)
+ 	      | (((uint64_t)ahc_inb(ahc, port+6)) << 48)
+-- 
+2.19.1
