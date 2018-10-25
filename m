@@ -1,72 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Oct 2018 12:01:58 +0000
-Subject: [PATCH] crypto: chelsio: clean up various indentation issues
-Message-Id: <20181030120158.23323-1-colin.king@canonical.com>
+From: Sasha Levin <sashal@kernel.org>
+Date: Thu, 25 Oct 2018 14:10:49 +0000
+Subject: [PATCH AUTOSEL 4.14 42/46] x86/paravirt: Fix some warning messages
+Message-Id: <20181025141053.213330-42-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181025141053.213330-1-sashal@kernel.org>
+In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Trivial fix to clean up varous indentation issue
+[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The first argument to WARN_ONCE() is a condition.
+
+Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/chelsio/chcr_algo.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/kernel/paravirt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-index db203f8be429..497c57803de7 100644
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -1311,8 +1311,8 @@ static int chcr_aes_decrypt(struct ablkcipher_request *req)
- 			return -ENOSPC;
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index f3559b84cd75..04da826381c9 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
  	}
+@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
  
--	 err = process_cipher(req, u_ctx->lldi.rxq_ids[c_ctx(tfm)->rx_qidx],
--			      &skb, CHCR_DECRYPT_OP);
-+	err = process_cipher(req, u_ctx->lldi.rxq_ids[c_ctx(tfm)->rx_qidx],
-+			     &skb, CHCR_DECRYPT_OP);
- 	if (err || !skb)
- 		return err;
- 	skb->dev = u_ctx->lldi.ports[0];
-@@ -2008,7 +2008,7 @@ static int chcr_ahash_export(struct ahash_request *areq, void *out)
- 	memcpy(state->partial_hash, req_ctx->partial_hash,
- 	       CHCR_HASH_MAX_DIGEST_SIZE);
- 	chcr_init_hctx_per_wr(state);
--		return 0;
-+	return 0;
- }
- 
- static int chcr_ahash_import(struct ahash_request *areq, const void *in)
-@@ -2249,7 +2249,7 @@ static int chcr_aead_fallback(struct aead_request *req, unsigned short op_type)
- 				  req->base.complete, req->base.data);
- 	aead_request_set_crypt(subreq, req->src, req->dst, req->cryptlen,
- 				 req->iv);
--	 aead_request_set_ad(subreq, req->assoclen);
-+	aead_request_set_ad(subreq, req->assoclen);
- 	return op_type ? crypto_aead_decrypt(subreq) :
- 		crypto_aead_encrypt(subreq);
- }
-@@ -3118,12 +3118,12 @@ static int chcr_gcm_setauthsize(struct crypto_aead *tfm, unsigned int authsize)
- 		aeadctx->mayverify = VERIFY_HW;
- 		break;
- 	case ICV_12:
--		 aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_IPSEC_96BIT;
--		 aeadctx->mayverify = VERIFY_HW;
-+		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_IPSEC_96BIT;
-+		aeadctx->mayverify = VERIFY_HW;
- 		break;
- 	case ICV_14:
--		 aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_PL3;
--		 aeadctx->mayverify = VERIFY_HW;
-+		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_PL3;
-+		aeadctx->mayverify = VERIFY_HW;
- 		break;
- 	case ICV_16:
- 		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_NO_TRUNC;
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
 -- 
-2.19.1
+2.17.1
