@@ -1,52 +1,40 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Mon, 29 Oct 2018 00:43:22 +0000
-Subject: Re: [PATCH 6/8] clk: s2mps11: constify clk_ops structure
-Message-Id: <5BD657AA.1080108@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Oct 2018 12:43:44 +0000
+Subject: [PATCH 2/2 v2] mfd: ab8500-core: Return zero in get_register_interruptible()
+Message-Id: <20181025124344.xw3phqnvrwq2nj7g@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
-        <CGME20181027062328epcas3p1aed374207b7d5da30147ceea33585b67@epcas3p1.samsung.com>
-        <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <20181025101037.GR4939@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Sangbeom Kim <sbkim73@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On 2018년 10월 27일 14:47, Julia Lawall wrote:
-> The clk_ops structure is only stored in the ops fields of
-> clk_init_data structures.  This field is const, so the clk_ops
-> structure can be const as well.
-> 
-> Identified and transformed using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/clk/clk-s2mps11.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index 5b419b82f7ca..2ce370c804aa 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -71,7 +71,7 @@ static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
->  	return 32768;
->  }
->  
-> -static struct clk_ops s2mps11_clk_ops = {
-> +static const struct clk_ops s2mps11_clk_ops = {
->  	.prepare	= s2mps11_clk_prepare,
->  	.unprepare	= s2mps11_clk_unprepare,
->  	.is_prepared	= s2mps11_clk_is_prepared,
-> 
-> 
-> 
+This function is supposed to return zero on success or negative error
+codes on error.  Unfortunately, there is a bug so it sometimes returns
+non-zero, positive numbers on success.
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+I noticed this bug during review and I can't test it.  It does appear
+that the return is sometimes propogated back to _regmap_read() where all
+non-zero returns are treated as failure so this may affect run time.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: In v1, I introduced an new error path and forgot to drop the lock.
+
+ drivers/mfd/ab8500-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+index 30d09d177171..11ab17f64c64 100644
+--- a/drivers/mfd/ab8500-core.c
++++ b/drivers/mfd/ab8500-core.c
+@@ -261,7 +261,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
+ 	mutex_unlock(&ab8500->lock);
+ 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
+ 
+-	return ret;
++	return (ret < 0) ? ret : 0;
+ }
+ 
+ static int ab8500_get_register(struct device *dev, u8 bank,
