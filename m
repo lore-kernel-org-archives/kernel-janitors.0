@@ -1,40 +1,42 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 05 Oct 2018 20:38:31 +0000
-Subject: Re: [PATCH -next] EDAC: Fix debugfs_simple_attr.cocci warnings
-Message-Id: <20181005203831.GF10285@zn.tnic>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 25 Oct 2018 14:31:31 +0000
+Subject: [PATCH] RDMA/cxgb3: Fix unintended sign extension
+Message-Id: <20181025143131.4048-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538736760-101310-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538736760-101310-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Tony Luck <tony.luck@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 10:52:40AM +0000, YueHaibing wrote:
-> Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
-> for debugfs files.
-> 
-> Semantic patch information:
-> Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-> imposes some significant overhead as compared to
+From: Colin Ian King <colin.king@canonical.com>
 
-What significant overhead? This commit message needs to explain what is
-wrong with the use of DEFINE_DEBUGFS_ATTRIBUTE first.
+In the expression "utx_len << 28", utx_len starts as u8, but is promoted
+to a signed int, then sign-extended to u64.  If utx_len is 0xf8 or greater
+then the sign extension will set all the upper bits of utx_cmd which is
+probably not what was intended.  Cast to utx_len to u64  to avoid the sign
+extension.
 
-> DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+Detected by CoverityScan, CID#138764 ("Unintended sign extension")
 
-Reading the comment over this function:
+Fixes: b038ced7b370 ("RDMA/cxgb3: Add driver for Chelsio T3 RNIC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/cxgb3/cxio_hal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- * It is your responsibility to protect your struct file_operation
- * methods against file removals by means of debugfs_use_file_start()
- * and debugfs_use_file_finish(). ->open() is still protected by
- * debugfs though.
-
-doesn't sound like something I'd want to additionally pay attention to.
-
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.c b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+index dcb4bba522ba..c5cb80ccc6d6 100644
+--- a/drivers/infiniband/hw/cxgb3/cxio_hal.c
++++ b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+@@ -647,7 +647,7 @@ static int cxio_hal_ctrl_qp_write_mem(struct cxio_rdev *rdev_p, u32 addr,
+ 		wqe += (sizeof(struct t3_bypass_wr) >> 3);
+ 		utx_cmd = (T3_UTX_MEM_WRITE << 28) | (addr + i * 3);
+ 		utx_cmd <<= 32;
+-		utx_cmd |= (utx_len << 28) | ((utx_len << 2) + 1);
++		utx_cmd |= ((u64)utx_len << 28) | ((utx_len << 2) + 1);
+ 		*wqe = cpu_to_be64(utx_cmd);
+ 		wqe++;
+ 		copy_data = (u8 *) data + i * 96;
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.19.1
