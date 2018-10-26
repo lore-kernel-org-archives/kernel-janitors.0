@@ -1,34 +1,36 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Tue, 30 Oct 2018 19:34:23 +0000
-Subject: Re: [PATCH] perf/core: clean up inconsisent indentation
-Message-Id: <20181030193423.GC4454@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Oct 2018 18:05:12 +0000
+Subject: [PATCH] gpu: drm/lease: fix spelling mistake, EACCESS -> EACCES
+Message-Id: <20181026180512.4908-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181029233211.21475-1-colin.king@canonical.com>
- <20181030144444.GB23310@kernel.org>
- <20181030192531.2ormldhqj2qizy33@mwanda>
-In-Reply-To: <20181030192531.2ormldhqj2qizy33@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Colin King <colin.king@canonical.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em Tue, Oct 30, 2018 at 10:25:31PM +0300, Dan Carpenter escreveu:
-> On Tue, Oct 30, 2018 at 11:44:44AM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Mon, Oct 29, 2018 at 11:32:11PM +0000, Colin King escreveu:
-> > > From: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-> > > Replace a bunch of spaces with tab, cleans up indentation
+Trivial fix to a spelling mistake of the error access name EACCESS,
+rename to EACCES
 
-> > I think we can live with the spaces as the 'git blame' information is
-> > more valuable, i.e. who was that touched that line last?
- 
-> You can use "git blame -w" to ignore white space changes.  I add it
-> whenever I run blame.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/drm_lease.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Great! I didn't knew that, will try and get this to be the default for
-'git blame' in my machines.
-
-Thanks,
-
-- Arnaldo
+diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
+index 24a177ea5417..9ab88db8fad0 100644
+--- a/drivers/gpu/drm/drm_lease.c
++++ b/drivers/gpu/drm/drm_lease.c
+@@ -195,7 +195,7 @@ EXPORT_SYMBOL(drm_lease_filter_crtcs);
+  * make sure all of the desired objects can be leased, atomically
+  * leasing them to the new drmmaster.
+  *
+- * 	ERR_PTR(-EACCESS)	some other master holds the title to any object
++ * 	ERR_PTR(-EACCES)	some other master holds the title to any object
+  * 	ERR_PTR(-ENOENT)	some object is not a valid DRM object for this device
+  * 	ERR_PTR(-EBUSY)		some other lessee holds title to this object
+  *	ERR_PTR(-EEXIST)	same object specified more than once in the provided list
+-- 
+2.19.1
