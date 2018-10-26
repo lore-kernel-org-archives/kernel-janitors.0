@@ -1,35 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 31 Oct 2018 13:35:43 +0000
-Subject: Re: [PATCH 2/2 v2] mfd: ab8500-core: Return zero in get_register_interruptible()
-Message-Id: <CACRpkdYcmse-dRkDW-6Fvx9ojwj3XXWBWdOM-FXyWYyP11cj9w@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Oct 2018 17:25:49 +0000
+Subject: [PATCH] Documentation: fix spelling mistake, EACCESS -> EACCES
+Message-Id: <20181026172549.3628-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181025101037.GR4939@dell>
- <20181025124344.xw3phqnvrwq2nj7g@kili.mountain>
-In-Reply-To: <20181025124344.xw3phqnvrwq2nj7g@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jeremy Kerr <jk@ozlabs.org>, Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@linux.ie>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 2:44 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This function is supposed to return zero on success or negative error
-> codes on error.  Unfortunately, there is a bug so it sometimes returns
-> non-zero, positive numbers on success.
->
-> I noticed this bug during review and I can't test it.  It does appear
-> that the return is sometimes propogated back to _regmap_read() where all
-> non-zero returns are treated as failure so this may affect run time.
->
-> Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: In v1, I introduced an new error path and forgot to drop the lock.
+Trivial fix to a spelling mistake of the error access name EACCESS,
+rename to EACCES
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ Documentation/filesystems/spufs.txt | 2 +-
+ Documentation/gpu/drm-uapi.rst      | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-I've got some cleanup work to do with this driver.
-Getting to it.
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/filesystems/spufs.txt b/Documentation/filesystems/spufs.txt
+index 1343d118a9b2..eb9e3aa63026 100644
+--- a/Documentation/filesystems/spufs.txt
++++ b/Documentation/filesystems/spufs.txt
+@@ -452,7 +452,7 @@ RETURN VALUE
+ 
+ 
+ ERRORS
+-       EACCESS
++       EACCES
+               The  current  user does not have write access on the spufs mount
+               point.
+ 
+diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.rst
+index a2214cc1f821..f2f079e91b4c 100644
+--- a/Documentation/gpu/drm-uapi.rst
++++ b/Documentation/gpu/drm-uapi.rst
+@@ -190,11 +190,11 @@ ENOSPC:
+ 
+         Simply running out of kernel/system memory is signalled through ENOMEM.
+ 
+-EPERM/EACCESS:
++EPERM/EACCES:
+         Returned for an operation that is valid, but needs more privileges.
+         E.g. root-only or much more common, DRM master-only operations return
+         this when when called by unpriviledged clients. There's no clear
+-        difference between EACCESS and EPERM.
++        difference between EACCES and EPERM.
+ 
+ ENODEV:
+         Feature (like PRIME, modesetting, GEM) is not supported by the driver.
+-- 
+2.19.1
