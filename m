@@ -1,28 +1,49 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 24 Oct 2018 01:37:29 +0000
-Subject: Re: [PATCH -next] mvsas: Remove set but not used variable 'id'
-Message-Id: <yq1sh0wf7l2.fsf@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 26 Oct 2018 06:38:36 +0000
+Subject: [PATCH -next] mvsas: remove set but not used variables 'res_flag'
+Message-Id: <1540535916-45509-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1540115454-160677-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1540115454-160677-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Kees Cook <keescook@chromium.org>, John Garry <john.garry@huawei.com>, Jack Wang <jinpu.wang@profitbricks.com>, Johannes Thumshirn <jthumshirn@suse.de>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-YueHaibing,
+drivers/scsi/mvsas/mv_init.c: In function 'mvs_ioremap':
+drivers/scsi/mvsas/mv_init.c:315:36: warning:
+ variable 'res_flag' set but not used [-Wunused-but-set-variable]
+  unsigned long res_start, res_len, res_flag, res_flag_ex = 0;
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/mvsas/mv_sas.c: In function 'mvs_work_queue':
-> drivers/scsi/mvsas/mv_sas.c:1909:31: warning:
->  variable 'id' set but not used [-Wunused-but-set-variable]
->
-> It never used since introduction in commit
-> 20b09c2992fe ("[SCSI] mvsas: add support for 94xx; layout change; bug fixes")
+It not used anymore after commit
+92b19ff50e8f ("cleanup IORESOURCE_CACHEABLE vs ioremap()")
 
-Applied to 4.20/scsi-queue. Thanks!
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/mvsas/mv_init.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+index 3ac3437..d7534fb 100644
+--- a/drivers/scsi/mvsas/mv_init.c
++++ b/drivers/scsi/mvsas/mv_init.c
+@@ -312,7 +312,7 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
+ 
+ int mvs_ioremap(struct mvs_info *mvi, int bar, int bar_ex)
+ {
+-	unsigned long res_start, res_len, res_flag, res_flag_ex = 0;
++	unsigned long res_start, res_len, res_flag_ex = 0;
+ 	struct pci_dev *pdev = mvi->pdev;
+ 	if (bar_ex != -1) {
+ 		/*
+@@ -340,7 +340,6 @@ int mvs_ioremap(struct mvs_info *mvi, int bar, int bar_ex)
+ 		goto err_out;
+ 	}
+ 
+-	res_flag = pci_resource_flags(pdev, bar);
+ 	mvi->regs = ioremap(res_start, res_len);
+ 
+ 	if (!mvi->regs) {
