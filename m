@@ -1,40 +1,36 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Tue, 09 Oct 2018 11:32:53 +0000
-Subject: Re: [PATCH] HID: elan: fix spelling mistake "registred" -> "registered"
-Message-Id: <nycvar.YFH.7.76.1810091332440.14430@cbobk.fhfr.pm>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Oct 2018 18:02:47 +0000
+Subject: [PATCH] um: trap: fix spelling mistake, EACCESS -> EACCES
+Message-Id: <20181026180247.4765-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180927140052.28166-1-colin.king@canonical.com>
-In-Reply-To: <20180927140052.28166-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, linux-um@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 27 Sep 2018, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in hid_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/hid/hid-elan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
-> index 07e26c3567eb..0bfd6d1b44c1 100644
-> --- a/drivers/hid/hid-elan.c
-> +++ b/drivers/hid/hid-elan.c
-> @@ -497,7 +497,7 @@ static int elan_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  		return 0;
->  
->  	if (!drvdata->input) {
-> -		hid_err(hdev, "Input device is not registred\n");
-> +		hid_err(hdev, "Input device is not registered\n");
+Trivial fix to a spelling mistake of the error access name EACCESS,
+rename to EACCES
 
-Applied, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/um/kernel/trap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
+index cced82946042..0e8b6158f224 100644
+--- a/arch/um/kernel/trap.c
++++ b/arch/um/kernel/trap.c
+@@ -19,7 +19,7 @@
+ #include <skas.h>
+ 
+ /*
+- * Note this is constrained to return 0, -EFAULT, -EACCESS, -ENOMEM by
++ * Note this is constrained to return 0, -EFAULT, -EACCES, -ENOMEM by
+  * segv().
+  */
+ int handle_page_fault(unsigned long address, unsigned long ip,
 -- 
-Jiri Kosina
-SUSE Labs
+2.19.1
