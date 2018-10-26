@@ -1,41 +1,52 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Mon, 08 Oct 2018 07:39:58 +0000
-Subject: Re: [PATCH -next] media: imx-pxp: remove duplicated include from imx-pxp.c
-Message-Id: <1538984398.11512.2.camel@pengutronix.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Oct 2018 18:07:21 +0000
+Subject: [PATCH] cifs: fix spelling mistake, EACCESS -> EACCES
+Message-Id: <20181026180721.5040-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538811362-80425-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538811362-80425-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 2018-10-06 at 07:36 +0000, YueHaibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/media/platform/imx-pxp.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/imx-pxp.c b/drivers/media/platform/imx-pxp.c
-> index b76cd0e..229c23a 100644
-> --- a/drivers/media/platform/imx-pxp.c
-> +++ b/drivers/media/platform/imx-pxp.c
-> @@ -16,7 +16,6 @@
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> -#include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/sched.h>
+From: Colin Ian King <colin.king@canonical.com>
 
-This reverts a41d203a1d34, which was a duplicate of already applied
-b4fbf423cef9: https://patchwork.linuxtv.org/patch/52243/
+Trivial fix to a spelling mistake of the error access name EACCESS,
+rename to EACCES
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/file.c  | 2 +-
+ fs/cifs/inode.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-regards
-Philipp
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 84477e995246..6894d071850a 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1003,7 +1003,7 @@ cifs_lock_add(struct cifsFileInfo *cfile, struct cifsLockInfo *lock)
+  * Set the byte-range lock (mandatory style). Returns:
+  * 1) 0, if we set the lock and don't need to request to the server;
+  * 2) 1, if no locks prevent us but we need to request to the server;
+- * 3) -EACCESS, if there is a lock that prevents us and wait is false.
++ * 3) -EACCES, if there is a lock that prevents us and wait is false.
+  */
+ static int
+ cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
+diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
+index 0945d40030eb..3685e2c25205 100644
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -1305,8 +1305,8 @@ cifs_drop_nlink(struct inode *inode)
+ /*
+  * If d_inode(dentry) is null (usually meaning the cached dentry
+  * is a negative dentry) then we would attempt a standard SMB delete, but
+- * if that fails we can not attempt the fall back mechanisms on EACCESS
+- * but will return the EACCESS to the caller. Note that the VFS does not call
++ * if that fails we can not attempt the fall back mechanisms on EACCES
++ * but will return the EACCES to the caller. Note that the VFS does not call
+  * unlink on negative dentries currently.
+  */
+ int cifs_unlink(struct inode *dir, struct dentry *dentry)
+-- 
+2.19.1
