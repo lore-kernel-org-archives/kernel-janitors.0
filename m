@@ -1,66 +1,36 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Wed, 10 Oct 2018 06:10:15 +0000
-Subject: Re: [PATCH -next] remoteproc: qcom: qcom_q6v5_adsp: Fix some return value check
-Message-Id: <20181010061015.GR12063@builder>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Oct 2018 18:09:09 +0000
+Subject: [PATCH] jfs: fix spelling mistake, EACCESS -> EACCES
+Message-Id: <20181026180909.5249-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539143979-82369-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1539143979-82369-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rohit kumar <rohitkr@codeaurora.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue 09 Oct 20:59 PDT 2018, Wei Yongjun wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> In case of error, the functions devm_kcalloc() and devm_ioremap()
-> returns NULL pointer not ERR_PTR(). The IS_ERR() test in the return
-> value check should be replaced with NULL test.
-> 
-> Also removed -EPROBE_DEFER check since devm_kcalloc never return
-> this error.
-> 
-> Fixes: dc160e449122 ("remoteproc: qcom: Introduce Non-PAS ADSP PIL driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Trivial fix to a spelling mistake of the error access name EACCESS,
+rename to EACCES
 
-Thanks Wei, applied to rproc-next
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/jfs/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Bjorn
-
-> ---
->  drivers/remoteproc/qcom_q6v5_adsp.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index 3285a8b..79374d1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -295,12 +295,8 @@ static int adsp_init_clock(struct qcom_adsp *adsp)
->  	adsp->num_clks = ARRAY_SIZE(adsp_clk_id);
->  	adsp->clks = devm_kcalloc(adsp->dev, adsp->num_clks,
->  				sizeof(*adsp->clks), GFP_KERNEL);
-> -	if (IS_ERR(adsp->clks)) {
-> -		ret = PTR_ERR(adsp->clks);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(adsp->dev, "failed to get adsp clock");
-> -		return ret;
-> -	}
-> +	if (!adsp->clks)
-> +		return -ENOMEM;
->  
->  	for (i = 0; i < adsp->num_clks; i++)
->  		adsp->clks[i].id = adsp_clk_id[i];
-> @@ -337,9 +333,9 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	adsp->qdsp6ss_base = devm_ioremap(&pdev->dev, res->start,
->  			resource_size(res));
-> -	if (IS_ERR(adsp->qdsp6ss_base)) {
-> +	if (!adsp->qdsp6ss_base) {
->  		dev_err(adsp->dev, "failed to map QDSP6SS registers\n");
-> -		return PTR_ERR(adsp->qdsp6ss_base);
-> +		return -ENOMEM;
->  	}
->  
->  	syscon = of_parse_phandle(pdev->dev.of_node, "qcom,halt-regs", 0);
-> 
+diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
+index 14528c0ffe63..fa719a1553b6 100644
+--- a/fs/jfs/namei.c
++++ b/fs/jfs/namei.c
+@@ -203,7 +203,7 @@ static int jfs_create(struct inode *dip, struct dentry *dentry, umode_t mode,
+  * RETURN:	Errors from subroutines
+  *
+  * note:
+- * EACCESS: user needs search+write permission on the parent directory
++ * EACCES: user needs search+write permission on the parent directory
+  */
+ static int jfs_mkdir(struct inode *dip, struct dentry *dentry, umode_t mode)
+ {
+-- 
+2.19.1
