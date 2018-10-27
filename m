@@ -1,29 +1,26 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 01 Oct 2018 15:43:13 +0000
-Subject: Re: [PATCH] b43: fix spelling mistake "hw_registred" -> "hw_registered"
-Message-Id: <20181001154313.A8F5360C1D@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 13:34:41 +0000
+Subject: [PATCH 0/3] constify snd_soc_dai_ops structures
+Message-Id: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180927161119.6698-1-colin.king@canonical.com>
-In-Reply-To: <20180927161119.6698-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Philippe Ombredanne <pombredanne@nexb.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Colin King <colin.king@canonical.com> wrote:
+The snd_soc_dai_ops structures are only stored in the ops field of a
+snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
+const as well.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake struct field name, rename it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Done with the help of Coccinelle.
 
-Patch applied to wireless-drivers-next.git, thanks.
+---
 
-297fab130cdf b43: fix spelling mistake "hw_registred" -> "hw_registered"
-
--- 
-https://patchwork.kernel.org/patch/10618179/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+ drivers/soundwire/intel.c        |    4 ++--
+ sound/soc/codecs/ak4458.c        |    2 +-
+ sound/soc/codecs/ak5558.c        |    2 +-
+ sound/soc/codecs/hdac_hda.c      |    2 +-
+ sound/soc/codecs/tas6424.c       |    2 +-
+ sound/soc/qcom/qdsp6/q6afe-dai.c |    8 ++++----
+ 6 files changed, 10 insertions(+), 10 deletions(-)
