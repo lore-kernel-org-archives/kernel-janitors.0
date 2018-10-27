@@ -1,33 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 01 Oct 2018 14:08:58 +0000
-Subject: Re: [PATCH] wil6210: remove set but not used variable 'start'
-Message-Id: <20181001140858.36A7260C1B@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 18:31:19 +0000
+Subject: [PATCH] PCI: histb: constify dw_pcie_host_ops structure
+Message-Id: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536669139-14848-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536669139-14848-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Maya Erez <merez@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jianguo Sun <sunjianguo1@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+The dw_pcie_host_ops structure is only stored in the ops field
+of a pcie_port structure, and this field is const, so make the
+dw_pcie_host_ops structure const as well.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/ath/wil6210/pm.c: In function 'wil_suspend_keep_radio_on':
-> drivers/net/wireless/ath/wil6210/pm.c:193:16: warning:
->  variable 'start' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Maya Erez <merez@codeaurora.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Done with the help of Coccinelle.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-ec95e84c3955 wil6210: remove set but not used variable 'start'
+---
+ drivers/pci/controller/dwc/pcie-histb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-https://patchwork.kernel.org/patch/10595613/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff -u -p a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+--- a/drivers/pci/controller/dwc/pcie-histb.c
++++ b/drivers/pci/controller/dwc/pcie-histb.c
+@@ -202,7 +202,7 @@ static int histb_pcie_host_init(struct p
+ 	return 0;
+ }
+ 
+-static struct dw_pcie_host_ops histb_pcie_host_ops = {
++static const struct dw_pcie_host_ops histb_pcie_host_ops = {
+ 	.rd_own_conf = histb_pcie_rd_own_conf,
+ 	.wr_own_conf = histb_pcie_wr_own_conf,
+ 	.host_init = histb_pcie_host_init,
