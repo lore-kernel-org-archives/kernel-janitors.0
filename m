@@ -1,29 +1,38 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Mon, 08 Oct 2018 10:42:14 +0000
-Subject: Re: [PATCH 1/2] fbdev: sbuslib: use checked version of put_user()
-Message-Id: <20181008104215eucas1p24aa2afe494cfc35129b50bea1ac29ac8~bnBqSQr8g1047310473eucas1p2X@eucas1p2.samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 05:47:42 +0000
+Subject: [PATCH 8/8] drm/msm/hdmi: constify clk_ops structure
+Message-Id: <1540619262-22681-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20180831080941epcas5p3135e290b0ce17e7a4117556715361d84@epcas5p3.samsung.com>
- <20180831080921.jstbxdkga3w2rnnf@kili.mountain>
-In-Reply-To: <20180831080921.jstbxdkga3w2rnnf@kili.mountain>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-fbdev@vger.kernel.org, Mathieu Malaterre <malat@debian.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Philippe Ombredanne <pombredanne@nexb.com>, Peter Malone <peter.malone@gmail.com>
+To: Rob Clark <robdclark@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
+The clk_ops structure is only stored in the ops field of a
+clk_init_data structure.  This field is const, so the clk_ops
+structure can be const as well.
 
-On 08/31/2018 10:09 AM, Dan Carpenter wrote:
-> I'm not sure why the code assumes that only the first put_user() needs
-> an access_ok() check.  I have made all the put_user() and get_user()
-> calls checked.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Identified and transformed using Coccinelle.
 
-Patch queued for 4.20, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+---
+ drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c
+index 0df504c61833..b19a520c47d5 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c
+@@ -689,7 +689,7 @@ static int hdmi_8996_pll_is_enabled(struct clk_hw *hw)
+ 	return pll_locked;
+ }
+ 
+-static struct clk_ops hdmi_8996_pll_ops = {
++static const struct clk_ops hdmi_8996_pll_ops = {
+ 	.set_rate = hdmi_8996_pll_set_clk_rate,
+ 	.round_rate = hdmi_8996_pll_round_rate,
+ 	.recalc_rate = hdmi_8996_pll_recalc_rate,
