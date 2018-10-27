@@ -1,53 +1,65 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 11 Oct 2018 07:44:33 +0000
-Subject: [PATCH -next] USB: serial: quatech2: remove set but not used variable 'port_priv'
-Message-Id: <1539243873-41457-1-git-send-email-yuehaibing@huawei.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 05:47:38 +0000
+Subject: [PATCH 4/8] clk: pistachio: constify clk_ops structures
+Message-Id: <1540619262-22681-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+These clk_ops structures are only stored in the ops field of a
+clk_init_data structure.  This field is const, so the clk_ops
+structures can be const as well.
 
-drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb':
-drivers/usb/serial/quatech2.c:503:27: warning:
- variable 'port_priv' set but not used [-Wunused-but-set-variable]
+Identified and transformed using Coccinelle.
 
-It not used any more after
-commit 2be818a116b2 ("Revert "USB: quatech2: only write to the tty if the port is open."")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/usb/serial/quatech2.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/clk/pistachio/clk-pll.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/serial/quatech2.c b/drivers/usb/serial/quatech2.c
-index f2fbe1e..a62981c 100644
---- a/drivers/usb/serial/quatech2.c
-+++ b/drivers/usb/serial/quatech2.c
-@@ -500,7 +500,6 @@ static void qt2_process_read_urb(struct urb *urb)
- 	struct usb_serial *serial;
- 	struct qt2_serial_private *serial_priv;
- 	struct usb_serial_port *port;
--	struct qt2_port_private *port_priv;
- 	bool escapeflag;
- 	unsigned char *ch;
- 	int i;
-@@ -514,7 +513,6 @@ static void qt2_process_read_urb(struct urb *urb)
- 	serial = urb->context;
- 	serial_priv = usb_get_serial_data(serial);
- 	port = serial->port[serial_priv->current_port];
--	port_priv = usb_get_serial_port_data(port);
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 7e8daab9025b..312c3580187f 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -298,7 +298,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 	return rate;
+ }
  
- 	for (i = 0; i < urb->actual_length; i++) {
- 		ch = (unsigned char *)urb->transfer_buffer + i;
-@@ -566,7 +564,6 @@ static void qt2_process_read_urb(struct urb *urb)
+-static struct clk_ops pll_gf40lp_frac_ops = {
++static const struct clk_ops pll_gf40lp_frac_ops = {
+ 	.enable = pll_gf40lp_frac_enable,
+ 	.disable = pll_gf40lp_frac_disable,
+ 	.is_enabled = pll_gf40lp_frac_is_enabled,
+@@ -307,7 +307,7 @@ static struct clk_ops pll_gf40lp_frac_ops = {
+ 	.set_rate = pll_gf40lp_frac_set_rate,
+ };
  
- 				serial_priv->current_port = newport;
- 				port = serial->port[serial_priv->current_port];
--				port_priv = usb_get_serial_port_data(port);
- 				i += 3;
- 				escapeflag = true;
- 				break;
+-static struct clk_ops pll_gf40lp_frac_fixed_ops = {
++static const struct clk_ops pll_gf40lp_frac_fixed_ops = {
+ 	.enable = pll_gf40lp_frac_enable,
+ 	.disable = pll_gf40lp_frac_disable,
+ 	.is_enabled = pll_gf40lp_frac_is_enabled,
+@@ -430,7 +430,7 @@ static unsigned long pll_gf40lp_laint_recalc_rate(struct clk_hw *hw,
+ 	return rate;
+ }
+ 
+-static struct clk_ops pll_gf40lp_laint_ops = {
++static const struct clk_ops pll_gf40lp_laint_ops = {
+ 	.enable = pll_gf40lp_laint_enable,
+ 	.disable = pll_gf40lp_laint_disable,
+ 	.is_enabled = pll_gf40lp_laint_is_enabled,
+@@ -439,7 +439,7 @@ static struct clk_ops pll_gf40lp_laint_ops = {
+ 	.set_rate = pll_gf40lp_laint_set_rate,
+ };
+ 
+-static struct clk_ops pll_gf40lp_laint_fixed_ops = {
++static const struct clk_ops pll_gf40lp_laint_fixed_ops = {
+ 	.enable = pll_gf40lp_laint_enable,
+ 	.disable = pll_gf40lp_laint_disable,
+ 	.is_enabled = pll_gf40lp_laint_is_enabled,
