@@ -1,27 +1,35 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 04 Oct 2018 08:28:19 +0000
-Subject: Re: [SCSI] pmcraid: PMC-Sierra MaxRAID driver to support 6Gb/s SAS RAID controller
-Message-Id: <f512d8fa-e782-0679-8140-0a27dd3b9062@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 11:46:11 +0000
+Subject: [PATCH] media: mxl5xx: constify dvb_frontend_ops structure
+Message-Id: <1540640771-25478-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+The dvb_frontend_ops structure is only copied into the ops field
+of a dvb_frontend structure, so it can be const.
 
-Static analysis from CoverityScan (CID#114178 "Operands don't affect
-result") detected an issue in drivers/scsi/pmcraid.c, function
-pmcraid_init_res_table with the following check:
+Done with the help of Coccinelle.
 
-        if (pinstance->cfg_table->flags & MICROCODE_UPDATE_REQUIRED)
-                pmcraid_err("IOA requires microcode download\n");
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/media/dvb-frontends/mxl5xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-pinstance->cfg_table->flags is a u8, MICROCODE_UPDATE_REQUIRED is  1 <<
-31, so the & operation always results in false and the error message is
-never displayed.  From my understanding, flags should be a u8, so there
-is something wrong here with the check.  Any ideas?
-
-Colin
+diff --git a/drivers/media/dvb-frontends/mxl5xx.c b/drivers/media/dvb-frontends/mxl5xx.c
+index 6191315f5970..290b9eab099f 100644
+--- a/drivers/media/dvb-frontends/mxl5xx.c
++++ b/drivers/media/dvb-frontends/mxl5xx.c
+@@ -781,7 +781,7 @@ static int set_input(struct dvb_frontend *fe, int input)
+ 	return 0;
+ }
+ 
+-static struct dvb_frontend_ops mxl_ops = {
++static const struct dvb_frontend_ops mxl_ops = {
+ 	.delsys = { SYS_DVBS, SYS_DVBS2, SYS_DSS },
+ 	.info = {
+ 		.name			= "MaxLinear MxL5xx DVB-S/S2 tuner-demodulator",
