@@ -1,26 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 01 Oct 2018 11:25:26 +0000
-Subject: Re: [PATCH -next] gpio: omap: Remove set but not used variable 'dev'
-Message-Id: <CACRpkdZn5sm1fis4hvy-qMrM0dZMApGjTZeYXeLQPD_j5vY_yg@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 05:47:41 +0000
+Subject: [PATCH 7/8] drm/imx: imx-tve: constify clk_ops structure
+Message-Id: <1540619262-22681-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538101068-160486-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538101068-160486-1-git-send-email-yuehaibing@huawei.com>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Fri, Sep 28, 2018 at 4:08 AM YueHaibing <yuehaibing@huawei.com> wrote:
+The clk_ops structure is only stored in the ops field of a
+clk_init_data structure.  This field is const, so the clk_ops
+structure can be const as well.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpio/gpio-omap.c: In function 'gpio_omap_cpu_notifier':
-> drivers/gpio/gpio-omap.c:1327:17: warning:
->  variable 'dev' set but not used [-Wunused-but-set-variable]
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Identified and transformed using Coccinelle.
 
-Patch applied with Tony's ACK.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yours,
-Linus Walleij
+---
+ drivers/gpu/drm/imx/imx-tve.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/imx/imx-tve.c b/drivers/gpu/drm/imx/imx-tve.c
+index 4bc3ead5c4e3..293dd5752583 100644
+--- a/drivers/gpu/drm/imx/imx-tve.c
++++ b/drivers/gpu/drm/imx/imx-tve.c
+@@ -434,7 +434,7 @@ static int clk_tve_di_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
+-static struct clk_ops clk_tve_di_ops = {
++static const struct clk_ops clk_tve_di_ops = {
+ 	.round_rate = clk_tve_di_round_rate,
+ 	.set_rate = clk_tve_di_set_rate,
+ 	.recalc_rate = clk_tve_di_recalc_rate,
