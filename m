@@ -1,80 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 10 Oct 2018 14:37:31 +0000
-Subject: [PATCH] Bluetooth: Remove redundant check on status
-Message-Id: <20181010143731.16451-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 12:16:39 +0000
+Subject: [PATCH 1/2] media: vicodec: constify v4l2_ctrl_ops structure
+Message-Id: <1540642600-25840-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540642600-25840-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540642600-25840-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The v4l2_ctrl_ops structure is only stored in the ops field of a
+v4l2_ctrl_config structure, and this field is const, or passed as the
+second argument of v4l2_ctrl_new_std, and the corresponding parameter
+is declared as const.  Accordingly, the structure can also be const.
 
-The check on statis is redundant as a status has to be zero at
-the point it is being checked because of a previous check and return
-path via label 'unlock'.  Remove the redundant check and the deadcode
-that can never be reached.
+Done with the help of Coccinelle.
 
-Detected by CoverityScan, CID#1471710 ("Logically dead code")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/bluetooth/hci_event.c | 38 +++++++++++++++++---------------------
- 1 file changed, 17 insertions(+), 21 deletions(-)
+ drivers/media/platform/vicodec/vicodec-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index f47f8fad757a..ef9928d7b4fb 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -4937,31 +4937,27 @@ static void le_conn_complete_evt(struct hci_dev *hdev, u8 status,
- 	hci_debugfs_create_conn(conn);
- 	hci_conn_add_sysfs(conn);
+diff -u -p a/drivers/media/platform/vicodec/vicodec-core.c b/drivers/media/platform/vicodec/vicodec-core.c
+--- a/drivers/media/platform/vicodec/vicodec-core.c
++++ b/drivers/media/platform/vicodec/vicodec-core.c
+@@ -1108,7 +1108,7 @@ static int vicodec_s_ctrl(struct v4l2_ct
+ 	return -EINVAL;
+ }
  
--	if (!status) {
--		/* The remote features procedure is defined for master
--		 * role only. So only in case of an initiated connection
--		 * request the remote features.
--		 *
--		 * If the local controller supports slave-initiated features
--		 * exchange, then requesting the remote features in slave
--		 * role is possible. Otherwise just transition into the
--		 * connected state without requesting the remote features.
--		 */
--		if (conn->out ||
--		    (hdev->le_features[0] & HCI_LE_SLAVE_FEATURES)) {
--			struct hci_cp_le_read_remote_features cp;
-+	/* The remote features procedure is defined for master
-+	 * role only. So only in case of an initiated connection
-+	 * request the remote features.
-+	 *
-+	 * If the local controller supports slave-initiated features
-+	 * exchange, then requesting the remote features in slave
-+	 * role is possible. Otherwise just transition into the
-+	 * connected state without requesting the remote features.
-+	 */
-+	if (conn->out ||
-+	    (hdev->le_features[0] & HCI_LE_SLAVE_FEATURES)) {
-+		struct hci_cp_le_read_remote_features cp;
+-static struct v4l2_ctrl_ops vicodec_ctrl_ops = {
++static const struct v4l2_ctrl_ops vicodec_ctrl_ops = {
+ 	.s_ctrl = vicodec_s_ctrl,
+ };
  
--			cp.handle = __cpu_to_le16(conn->handle);
-+		cp.handle = __cpu_to_le16(conn->handle);
- 
--			hci_send_cmd(hdev, HCI_OP_LE_READ_REMOTE_FEATURES,
--				     sizeof(cp), &cp);
-+		hci_send_cmd(hdev, HCI_OP_LE_READ_REMOTE_FEATURES,
-+			     sizeof(cp), &cp);
- 
--			hci_conn_hold(conn);
--		} else {
--			conn->state = BT_CONNECTED;
--			hci_connect_cfm(conn, status);
--		}
-+		hci_conn_hold(conn);
- 	} else {
-+		conn->state = BT_CONNECTED;
- 		hci_connect_cfm(conn, status);
- 	}
- 
--- 
-2.17.1
