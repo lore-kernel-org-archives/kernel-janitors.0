@@ -1,59 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 13 Oct 2018 10:28:06 +0000
-Subject: [PATCH] drm/msm/gpu: Fix a couple memory leaks in debugfs
-Message-Id: <20181013102806.GF16086@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 13:34:43 +0000
+Subject: [PATCH 2/3] ASoC: qdsp6: q6afe-dai: constify snd_soc_dai_ops structures
+Message-Id: <1540647284-26728-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Patrick Lai <plai@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-The msm_gpu_open() function should free "show_priv" on error or it
-causes static checker warnings.
+The snd_soc_dai_ops structures are only stored in the ops field of a
+snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
+const as well.
 
-Fixes: 4f776f4511c7 ("drm/msm/gpu: Convert the GPU show function to use the GPU state")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/gpu/drm/msm/msm_debugfs.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ sound/soc/qcom/qdsp6/q6afe-dai.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
-index f0da0d3c8a80..d756436c1fcd 100644
---- a/drivers/gpu/drm/msm/msm_debugfs.c
-+++ b/drivers/gpu/drm/msm/msm_debugfs.c
-@@ -84,7 +84,7 @@ static int msm_gpu_open(struct inode *inode, struct file *file)
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index 60ff4a2d3577..a07a4538d5cf 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -561,13 +561,13 @@ static const struct snd_soc_dapm_route q6afe_dapm_routes[] = {
+ 	{"QUAT_MI2S_TX", NULL, "Quaternary MI2S Capture"},
+ };
  
- 	ret = mutex_lock_interruptible(&dev->struct_mutex);
- 	if (ret)
--		return ret;
-+		goto free_priv;
+-static struct snd_soc_dai_ops q6hdmi_ops = {
++static const struct snd_soc_dai_ops q6hdmi_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.hw_params	= q6hdmi_hw_params,
+ 	.shutdown	= q6afe_dai_shutdown,
+ };
  
- 	pm_runtime_get_sync(&gpu->pdev->dev);
- 	show_priv->state = gpu->funcs->gpu_state_get(gpu);
-@@ -94,13 +94,20 @@ static int msm_gpu_open(struct inode *inode, struct file *file)
+-static struct snd_soc_dai_ops q6i2s_ops = {
++static const struct snd_soc_dai_ops q6i2s_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.hw_params	= q6i2s_hw_params,
+ 	.set_fmt	= q6i2s_set_fmt,
+@@ -575,14 +575,14 @@ static struct snd_soc_dai_ops q6i2s_ops = {
+ 	.set_sysclk	= q6afe_mi2s_set_sysclk,
+ };
  
- 	if (IS_ERR(show_priv->state)) {
- 		ret = PTR_ERR(show_priv->state);
--		kfree(show_priv);
--		return ret;
-+		goto free_priv;
- 	}
+-static struct snd_soc_dai_ops q6slim_ops = {
++static const struct snd_soc_dai_ops q6slim_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.hw_params	= q6slim_hw_params,
+ 	.shutdown	= q6afe_dai_shutdown,
+ 	.set_channel_map = q6slim_set_channel_map,
+ };
  
- 	show_priv->dev = dev;
- 
--	return single_open(file, msm_gpu_show, show_priv);
-+	ret = single_open(file, msm_gpu_show, show_priv);
-+	if (ret)
-+		goto free_priv;
-+
-+	return 0;
-+
-+free_priv:
-+	kfree(show_priv);
-+	return ret;
- }
- 
- static const struct file_operations msm_gpu_fops = {
--- 
-2.18.0
+-static struct snd_soc_dai_ops q6tdm_ops = {
++static const struct snd_soc_dai_ops q6tdm_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.shutdown	= q6afe_dai_shutdown,
+ 	.set_sysclk	= q6afe_mi2s_set_sysclk,
