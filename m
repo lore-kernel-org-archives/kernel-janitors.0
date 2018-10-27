@@ -1,49 +1,32 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 26 Oct 2018 06:38:36 +0000
-Subject: [PATCH -next] mvsas: remove set but not used variables 'res_flag'
-Message-Id: <1540535916-45509-1-git-send-email-yuehaibing@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 27 Oct 2018 02:19:59 +0000
+Subject: [PATCH] ASoC: stm32: sai: fix invalid use of sizeof in stm32_sai_add_mclk_provider()
+Message-Id: <1540606799-164510-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540115454-160677-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1540115454-160677-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Kees Cook <keescook@chromium.org>, John Garry <john.garry@huawei.com>, Jack Wang <jinpu.wang@profitbricks.com>, Johannes Thumshirn <jthumshirn@suse.de>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+sizeof() when applied to a pointer typed expression gives the
+size of the pointer, not that of the pointed data.
 
-drivers/scsi/mvsas/mv_init.c: In function 'mvs_ioremap':
-drivers/scsi/mvsas/mv_init.c:315:36: warning:
- variable 'res_flag' set but not used [-Wunused-but-set-variable]
-  unsigned long res_start, res_len, res_flag, res_flag_ex = 0;
-
-It not used anymore after commit
-92b19ff50e8f ("cleanup IORESOURCE_CACHEABLE vs ioremap()")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 8307b2afd386 ("ASoC: stm32: sai: set sai as mclk clock provider")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/scsi/mvsas/mv_init.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/stm/stm32_sai_sub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-index 3ac3437..d7534fb 100644
---- a/drivers/scsi/mvsas/mv_init.c
-+++ b/drivers/scsi/mvsas/mv_init.c
-@@ -312,7 +312,7 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index ea05cc9..211589b 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -390,7 +390,7 @@ static int stm32_sai_add_mclk_provider(struct stm32_sai_sub_data *sai)
+ 	char *mclk_name, *p, *s = (char *)pname;
+ 	int ret, i = 0;
  
- int mvs_ioremap(struct mvs_info *mvi, int bar, int bar_ex)
- {
--	unsigned long res_start, res_len, res_flag, res_flag_ex = 0;
-+	unsigned long res_start, res_len, res_flag_ex = 0;
- 	struct pci_dev *pdev = mvi->pdev;
- 	if (bar_ex != -1) {
- 		/*
-@@ -340,7 +340,6 @@ int mvs_ioremap(struct mvs_info *mvi, int bar, int bar_ex)
- 		goto err_out;
- 	}
- 
--	res_flag = pci_resource_flags(pdev, bar);
- 	mvi->regs = ioremap(res_start, res_len);
- 
- 	if (!mvi->regs) {
+-	mclk = devm_kzalloc(dev, sizeof(mclk), GFP_KERNEL);
++	mclk = devm_kzalloc(dev, sizeof(*mclk), GFP_KERNEL);
+ 	if (!mclk)
+ 		return -ENOMEM;
