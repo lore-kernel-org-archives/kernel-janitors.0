@@ -1,79 +1,37 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Mon, 15 Oct 2018 13:41:32 +0000
-Subject: Re: [bug report] nvmem: add support for cell lookups from machine code
-Message-Id: <20181015134132.GC10221@kroah.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 05:47:36 +0000
+Subject: [PATCH 2/8] ARM: vexpress/spc: constify clk_ops structure
+Message-Id: <1540619262-22681-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181010100653.GA8486@mwanda>
-In-Reply-To: <20181010100653.GA8486@mwanda>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Oct 10, 2018 at 01:05:53PM +0200, Bartosz Golaszewski wrote:
-> śr., 10 paź 2018 o 12:07 Dan Carpenter <dan.carpenter@oracle.com> napisał(a):
-> >
-> > Hello Bartosz Golaszewski,
-> >
-> > The patch 506157be06ba: "nvmem: add support for cell lookups from
-> > machine code" from Sep 21, 2018, leads to the following static
-> > checker warning:
-> >
-> >         drivers/nvmem/core.c:960 nvmem_cell_get_from_lookup()
-> >         error: 'nvmem' dereferencing possible ERR_PTR()
-> >
-> > drivers/nvmem/core.c
-> >    941
-> >    942          if (!dev)
-> >    943                  return ERR_PTR(-EINVAL);
-> >    944
-> >    945          dev_id = dev_name(dev);
-> >    946
-> >    947          mutex_lock(&nvmem_lookup_mutex);
-> >    948
-> >    949          list_for_each_entry(lookup, &nvmem_lookup_list, node) {
-> >    950                  if ((strcmp(lookup->dev_id, dev_id) = 0) &&
-> >    951                      (strcmp(lookup->con_id, con_id) = 0)) {
-> >    952                          /* This is the right entry. */
-> >    953                          nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
-> >                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > This returns error pointers.
-> >
-> >    954                          if (!nvmem) {
-> >    955                                  /* Provider may not be registered yet. */
-> >    956                                  cell = ERR_PTR(-EPROBE_DEFER);
-> >    957                                  goto out;
-> >    958                          }
-> >    959
-> >    960                          cell = nvmem_find_cell_by_name(nvmem,
-> >    961                                                         lookup->cell_name);
-> >    962                          if (!cell) {
-> >    963                                  __nvmem_device_put(nvmem);
-> >    964                                  goto out;
-> >                                         ^^^^^^^^
-> > We probably want to set the error code on this path.
-> >
-> >    965                          }
-> >    966                  }
-> >    967          }
-> >    968
-> >    969  out:
-> >    970          mutex_unlock(&nvmem_lookup_mutex);
-> >    971          return cell;
-> >    972  }
-> >    973
-> >
-> > regards,
-> > dan carpenter
-> 
-> Hi Dan,
-> 
-> there's already a patch waiting on the list:
-> https://www.spinics.net/lists/arm-kernel/msg680023.html
-> 
-> Greg, Srinivas: can you pick up this one and this
-> (https://lkml.org/lkml/2018/10/3/310) for 4.20?
+The clk_ops structure is only stored in the ops field of a
+clk_init_data structure.  This field is const, so the clk_ops
+structure can be const as well.
 
-Sorry for the delay, will get to that today.
+Identified and transformed using Coccinelle.
 
-greg k-h
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/arm/mach-vexpress/spc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-vexpress/spc.c b/arch/arm/mach-vexpress/spc.c
+index 0f5381d13494..611f22de48cb 100644
+--- a/arch/arm/mach-vexpress/spc.c
++++ b/arch/arm/mach-vexpress/spc.c
+@@ -521,7 +521,7 @@ static int spc_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return ve_spc_set_performance(spc->cluster, rate / 1000);
+ }
+ 
+-static struct clk_ops clk_spc_ops = {
++static const struct clk_ops clk_spc_ops = {
+ 	.recalc_rate = spc_recalc_rate,
+ 	.round_rate = spc_round_rate,
+ 	.set_rate = spc_set_rate,
