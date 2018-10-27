@@ -1,51 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Oct 2018 14:48:32 +0000
-Subject: [PATCH] [media] exynos4-is: fix spelling mistake ACTURATOR -> ACTUATOR
-Message-Id: <20181012144832.20722-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 05:47:39 +0000
+Subject: [PATCH 5/8] clk: pxa: constify clk_ops structures
+Message-Id: <1540619262-22681-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These clk_ops structures are only passed to a call to
+clk_register_composite where the corresponding parameters
+are const, so the clk_ops structure can be const as well.
 
-Trivial fix to spelling mistake in macro name and text string
-ERROR_SENSOR_ACTURATOR_INIT_FAIL -> ERROR_SENSOR_ACTUATOR_INIT_FAIL
+Identified and transformed using Coccinelle.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/platform/exynos4-is/fimc-is-errno.c | 4 ++--
- drivers/media/platform/exynos4-is/fimc-is-errno.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/pxa/clk-pxa.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.c b/drivers/media/platform/exynos4-is/fimc-is-errno.c
-index e050e63fe358..bbb08576492e 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-errno.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-errno.c
-@@ -90,8 +90,8 @@ const char *fimc_is_param_strerr(unsigned int error)
- 		return "ERROR_SENSOR_INVALID_SIZE";
- 	case ERROR_SENSOR_INVALID_SETTING:
- 		return "ERROR_SENSOR_INVALID_SETTING";
--	case ERROR_SENSOR_ACTURATOR_INIT_FAIL:
--		return "ERROR_SENSOR_ACTURATOR_INIT_FAIL";
-+	case ERROR_SENSOR_ACTUATOR_INIT_FAIL:
-+		return "ERROR_SENSOR_ACTUATOR_INIT_FAIL";
- 	case ERROR_SENSOR_INVALID_AF_POS:
- 		return "ERROR_SENSOR_INVALID_AF_POS";
- 	case ERROR_SENSOR_UNSUPPORT_FUNC:
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.h b/drivers/media/platform/exynos4-is/fimc-is-errno.h
-index ef981e74513a..77f4fc860be5 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-errno.h
-+++ b/drivers/media/platform/exynos4-is/fimc-is-errno.h
-@@ -189,7 +189,7 @@ enum fimc_is_error {
- 	ERROR_SENSOR_INVALID_EXPOSURETIME,
- 	ERROR_SENSOR_INVALID_SIZE,
- 	ERROR_SENSOR_INVALID_SETTING,
--	ERROR_SENSOR_ACTURATOR_INIT_FAIL,
-+	ERROR_SENSOR_ACTUATOR_INIT_FAIL,
- 	ERROR_SENSOR_INVALID_AF_POS,
- 	ERROR_SENSOR_UNSUPPORT_FUNC,
- 	ERROR_SENSOR_UNSUPPORT_PERI,
--- 
-2.17.1
+diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
+index b80dc9d5855c..42627bf8a09e 100644
+--- a/drivers/clk/pxa/clk-pxa.c
++++ b/drivers/clk/pxa/clk-pxa.c
+@@ -70,7 +70,7 @@ static unsigned long cken_recalc_rate(struct clk_hw *hw,
+ 	return clk_fixed_factor_ops.recalc_rate(&fix->hw, parent_rate);
+ }
+ 
+-static struct clk_ops cken_rate_ops = {
++static const struct clk_ops cken_rate_ops = {
+ 	.recalc_rate = cken_recalc_rate,
+ };
+ 
+@@ -83,7 +83,7 @@ static u8 cken_get_parent(struct clk_hw *hw)
+ 	return pclk->is_in_low_power() ? 0 : 1;
+ }
+ 
+-static struct clk_ops cken_mux_ops = {
++static const struct clk_ops cken_mux_ops = {
+ 	.get_parent = cken_get_parent,
+ 	.set_parent = dummy_clk_set_parent,
+ };
