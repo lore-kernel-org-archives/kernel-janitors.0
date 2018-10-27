@@ -1,45 +1,46 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Sun, 14 Oct 2018 15:25:41 +0000
-Subject: [PATCH 3.16 307/366] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Message-Id: <lsq.1539530741.988231619@decadent.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 13:34:42 +0000
+Subject: [PATCH 1/3] soundwire: intel: constify snd_soc_dai_ops structures
+Message-Id: <1540647284-26728-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1539530740.755408431@decadent.org.uk>
+References: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Ralf Baechle <ralf@linux-mips.org>, Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Sanyog Kale <sanyog.r.kale@intel.com>, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-3.16.60-rc1 review patch.  If anyone has any objections, please let me know.
+The snd_soc_dai_ops structures are only stored in the ops field of a
+snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
+const as well.
 
-------------------
+Done with the help of Coccinelle.
 
-From: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
-
-Trivial fix to spelling mistake in debugfs_entries text.
-
-Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: James Hogan <jhogan@kernel.org>
-[bwh: Backported to 3.16: adjust filename, context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/kvm/kvm_mips.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soundwire/intel.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/mips/kvm/kvm_mips.c
-+++ b/arch/mips/kvm/kvm_mips.c
-@@ -38,7 +38,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "cache", VCPU_STAT(cache_exits) },
- 	{ "signal", VCPU_STAT(signal_exits) },
- 	{ "interrupt", VCPU_STAT(int_exits) },
--	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits) },
-+	{ "cop_unusable", VCPU_STAT(cop_unusable_exits) },
- 	{ "tlbmod", VCPU_STAT(tlbmod_exits) },
- 	{ "tlbmiss_ld", VCPU_STAT(tlbmiss_ld_exits) },
- 	{ "tlbmiss_st", VCPU_STAT(tlbmiss_st_exits) },
+diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+index c5ee97ee7886..fd8d034cfec1 100644
+--- a/drivers/soundwire/intel.c
++++ b/drivers/soundwire/intel.c
+@@ -654,14 +654,14 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
+ 	return cdns_set_sdw_stream(dai, stream, false, direction);
+ }
+ 
+-static struct snd_soc_dai_ops intel_pcm_dai_ops = {
++static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ 	.hw_params = intel_hw_params,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = sdw_cdns_shutdown,
+ 	.set_sdw_stream = intel_pcm_set_sdw_stream,
+ };
+ 
+-static struct snd_soc_dai_ops intel_pdm_dai_ops = {
++static const struct snd_soc_dai_ops intel_pdm_dai_ops = {
+ 	.hw_params = intel_hw_params,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = sdw_cdns_shutdown,
