@@ -1,35 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 18:31:19 +0000
-Subject: [PATCH] PCI: histb: constify dw_pcie_host_ops structure
-Message-Id: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Shawn Guo <shawn.guo@linaro.org>
+Date: Mon, 29 Oct 2018 02:00:00 +0000
+Subject: Re: [PATCH] PCI: histb: constify dw_pcie_host_ops structure
+Message-Id: <CAAQ0ZWRXUotcf5u3CAnic=RqKOhVy2irQQw4jZHr_L5fYDZwVg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jianguo Sun <sunjianguo1@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: sunjianguo1 <sunjianguo1@huawei.com>, kernel-janitors@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-The dw_pcie_host_ops structure is only stored in the ops field
-of a pcie_port structure, and this field is const, so make the
-dw_pcie_host_ops structure const as well.
+On Sun, Oct 28, 2018 at 3:06 AM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>
+> The dw_pcie_host_ops structure is only stored in the ops field
+> of a pcie_port structure, and this field is const, so make the
+> dw_pcie_host_ops structure const as well.
+>
+> Done with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/pci/controller/dwc/pcie-histb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -202,7 +202,7 @@ static int histb_pcie_host_init(struct p
- 	return 0;
- }
- 
--static struct dw_pcie_host_ops histb_pcie_host_ops = {
-+static const struct dw_pcie_host_ops histb_pcie_host_ops = {
- 	.rd_own_conf = histb_pcie_rd_own_conf,
- 	.wr_own_conf = histb_pcie_wr_own_conf,
- 	.host_init = histb_pcie_host_init,
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
