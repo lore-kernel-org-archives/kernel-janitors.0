@@ -1,22 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 27 Oct 2018 12:49:03 +0000
-Subject: [PATCH 0/2] constify structures stored in fields of v4l2_subdev_ops structure
-Message-Id: <1540644545-26184-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 29 Oct 2018 22:46:11 +0000
+Subject: [PATCH][net-next] net: hns3: fix spelling mistake "intrerrupt" -> "interrupt"
+Message-Id: <20181029224611.20008-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Shiju Jose <shiju.jose@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The fields of a v4l2_subdev_ops structure are all const, so the
-structures that are stored there and are not used elsewhere can be
-const as well.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+Trivial fix to spelling mistake in dev_err message
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/media/i2c/ov7740.c                |    4 ++--
- drivers/media/platform/vimc/vimc-sensor.c |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+index dca6f2326c26..123c37e653f3 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+@@ -751,7 +751,7 @@ static void hclge_process_ncsi_error(struct hclge_dev *hdev,
+ 	ret = hclge_cmd_clear_error(hdev, &desc_wr, &desc_rd,
+ 				    HCLGE_NCSI_INT_CLR, 0);
+ 	if (ret)
+-		dev_err(dev, "failed(=%d) to clear NCSI intrerrupt status\n",
++		dev_err(dev, "failed(=%d) to clear NCSI interrupt status\n",
+ 			ret);
+ }
+ 
+-- 
+2.19.1
