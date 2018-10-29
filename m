@@ -1,32 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 25 Oct 2018 07:08:16 +0000
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 29 Oct 2018 18:34:58 +0000
 Subject: Re: [PATCH] x86/ioremap: tighten integer overflow checking
-Message-Id: <20181025070816.3e77nr25mskrkzqg@mwanda>
+Message-Id: <alpine.DEB.2.21.1810291925470.5984@nanos.tec.linutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181025061633.t32bxslxj3h7jv2x@kili.mountain>
- <eaaddd4a-5ed0-9b58-f4be-994ec38ed660@suse.com>
-In-Reply-To: <eaaddd4a-5ed0-9b58-f4be-994ec38ed660@suse.com>
+In-Reply-To: <20181025061633.t32bxslxj3h7jv2x@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Juergen Gross <jgross@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Dan,
 
+On Thu, 25 Oct 2018, Dan Carpenter wrote:
 
-On Thu, Oct 25, 2018 at 08:28:44AM +0200, Juergen Gross wrote:
-> On 25/10/2018 08:16, Dan Carpenter wrote:
-> > The current check is a bit off in the case where "phys_addr + size"
-> > wraps to zero because then "last_addr" is set to ULONG_MAX which is >> > phys_addr.
+> The current check is a bit off in the case where "phys_addr + size"
+> wraps to zero because then "last_addr" is set to ULONG_MAX which is >> phys_addr.
 > 
-> And -2 would be okay?
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  arch/x86/mm/ioremap.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index 5378d10f1d31..ee43df3ebe66 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -146,9 +146,9 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+>  	void __iomem *ret_addr;
+>  
+>  	/* Don't allow wraparound or zero size */
+> -	last_addr = phys_addr + size - 1;
+> -	if (!size || last_addr < phys_addr)
+> +	if (!size || phys_addr + size < phys_addr)
 
-If you see any patches from me it's static checker stuff...
+Assume the following (resource_size_t = u32, which is the case when
+CONFIG_PHYS_ADDR_T_64BIT=n):
 
-I guess the original is actually fine because the -1 re-wraps back to
-what we wanted it to be.  We also do verify that size is correct in
-__ioremap_check_mem() so I can't see a problem here after all.
+       phys_addr = 0xFFFF0000
+       size	 = 0x00010000
 
-regards,
-dan carpenter
+       sum	 = 0x00000000  which is < phys_addr
+
+But the existing code does:
+
+       last_addr = phys_addr + size - 1
+
+       		 = 0xFFFFFFFF
+
+which is correct. last_addr is the last valid address in the to be remapped
+range starting @phys_addr.
+
+Thanks,
+
+	tglx
