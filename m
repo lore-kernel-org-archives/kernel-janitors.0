@@ -1,83 +1,39 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 31 Oct 2018 18:52:09 +0000
-Subject: Re: [PATCH] staging: vt6656: clean up few indentation issues
-Message-Id: <a54f58ee05b190ac66c9a1347027b8d006988b61.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 29 Oct 2018 23:21:46 +0000
+Subject: [PATCH][next] ubifs: authentication: fix memory leak on error exit path
+Message-Id: <20181029232146.21262-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181030111333.3181-1-colin.king@canonical.com>
-In-Reply-To: <20181030111333.3181-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-mtd@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-30 at 11:13 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to clean up indentation issues
-[]
-> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-> index ccafcc2c87ac..b613a1d113bb 100644
-> --- a/drivers/staging/vt6656/main_usb.c
-> +++ b/drivers/staging/vt6656/main_usb.c
-> @@ -245,10 +245,10 @@ static int vnt_init_registers(struct vnt_private *priv)
->  		} else {
->  			priv->tx_antenna_mode = ANT_B;
->  
-> -		if (priv->tx_rx_ant_inv)
-> -			priv->rx_antenna_mode = ANT_A;
-> -		else
-> -			priv->rx_antenna_mode = ANT_B;
-> +			if (priv->tx_rx_ant_inv)
-> +				priv->rx_antenna_mode = ANT_A;
-> +			else
-> +				priv->rx_antenna_mode = ANT_B;
->  		}
->  	}
+From: Colin Ian King <colin.king@canonical.com>
 
-This one is perhap better resolved by moving
-the inversion test after the block like:
+Currently a failure when calling ubifs_read_nnode results in a leak
+of desc and buf because of a direct return. Fix this by exiting via
+label 'out' that performs the necessary free'ing of the resources.
 
+Fixes: a1dc58140f7e ("ubifs: authentication: Authenticate LPT")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/vt6656/main_usb.c | 25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
+ fs/ubifs/lpt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index ccafcc2c87ac..3830437e321a 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -227,29 +227,16 @@ static int vnt_init_registers(struct vnt_private *priv)
- 	if (antenna = (EEP_ANTENNA_AUX | EEP_ANTENNA_MAIN)) {
- 		priv->tx_antenna_mode = ANT_B;
- 		priv->rx_antenna_sel = 1;
--
--		if (priv->tx_rx_ant_inv)
--			priv->rx_antenna_mode = ANT_A;
--		else
--			priv->rx_antenna_mode = ANT_B;
- 	} else  {
- 		priv->rx_antenna_sel = 0;
--
--		if (antenna & EEP_ANTENNA_AUX) {
-+		if (antenna & EEP_ANTENNA_AUX)
- 			priv->tx_antenna_mode = ANT_A;
--
--			if (priv->tx_rx_ant_inv)
--				priv->rx_antenna_mode = ANT_B;
--			else
--				priv->rx_antenna_mode = ANT_A;
--		} else {
--			priv->tx_antenna_mode = ANT_B;
--
--		if (priv->tx_rx_ant_inv)
--			priv->rx_antenna_mode = ANT_A;
- 		else
--			priv->rx_antenna_mode = ANT_B;
--		}
-+			priv->tx_antenna_mode = ANT_B;
-+	}
-+	if (priv->tx_rx_ant_inv) {
-+		priv->rx_antenna_mode +			(priv->rx_antenna_mode = ANT_A) ? ANT_B : ANT_A;
+diff --git a/fs/ubifs/lpt.c b/fs/ubifs/lpt.c
+index d1d5e96350dd..c162459a1e02 100644
+--- a/fs/ubifs/lpt.c
++++ b/fs/ubifs/lpt.c
+@@ -1688,7 +1688,7 @@ int ubifs_lpt_calc_hash(struct ubifs_info *c, u8 *hash)
+ 	if (!c->nroot) {
+ 		err = ubifs_read_nnode(c, NULL, 0);
+ 		if (err)
+-			return err;
++			goto out;
  	}
  
- 	/* Set initial antenna mode */
+ 	cnode = (struct ubifs_cnode *)c->nroot;
+-- 
+2.19.1
