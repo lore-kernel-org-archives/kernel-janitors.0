@@ -1,41 +1,55 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Tue, 16 Oct 2018 14:47:29 +0000
-Subject: Re: [PATCH] kvm: selftests: fix spelling mistake "Insufficent" -> "Insufficient"
-Message-Id: <0dbed644-47bf-0b4d-78a8-a5a59945f663@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 11:13:33 +0000
+Subject: [PATCH] staging: vt6656: clean up few indentation issues
+Message-Id: <20181030111333.3181-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181013154105.5999-1-colin.king@canonical.com>
-In-Reply-To: <20181013154105.5999-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/13/2018 09:41 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in TEST_ASSERT message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/testing/selftests/kvm/lib/kvm_util.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-> index 6fd8c089cafc..a56ef6b187bb 100644
-> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
-> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-> @@ -123,7 +123,7 @@ struct kvm_vm *vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
->  
->  	/* Allocate memory. */
->  	vm = calloc(1, sizeof(*vm));
-> -	TEST_ASSERT(vm != NULL, "Insufficent Memory");
-> +	TEST_ASSERT(vm != NULL, "Insufficient Memory");
->  
->  	vm->mode = mode;
->  	vm_open(vm, perm);
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch. Applied to linux-kselftest next for 4.20-rc1
+Trivial fix to clean up indentation issues
 
-thanks,
--- Shuah
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/vt6656/firmware.c | 2 +-
+ drivers/staging/vt6656/main_usb.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/vt6656/firmware.c b/drivers/staging/vt6656/firmware.c
+index 38521c338917..205347cff7c4 100644
+--- a/drivers/staging/vt6656/firmware.c
++++ b/drivers/staging/vt6656/firmware.c
+@@ -42,7 +42,7 @@ int vnt_download_firmware(struct vnt_private *priv)
+ 	if (rc) {
+ 		dev_err(dev, "firmware file %s request failed (%d)\n",
+ 			FIRMWARE_NAME, rc);
+-			goto out;
++		goto out;
+ 	}
+ 
+ 	buffer = kmalloc(FIRMWARE_CHUNK_SIZE, GFP_KERNEL);
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index ccafcc2c87ac..b613a1d113bb 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -245,10 +245,10 @@ static int vnt_init_registers(struct vnt_private *priv)
+ 		} else {
+ 			priv->tx_antenna_mode = ANT_B;
+ 
+-		if (priv->tx_rx_ant_inv)
+-			priv->rx_antenna_mode = ANT_A;
+-		else
+-			priv->rx_antenna_mode = ANT_B;
++			if (priv->tx_rx_ant_inv)
++				priv->rx_antenna_mode = ANT_A;
++			else
++				priv->rx_antenna_mode = ANT_B;
+ 		}
+ 	}
+ 
+-- 
+2.19.1
