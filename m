@@ -1,30 +1,43 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 30 Oct 2018 02:22:42 +0000
-Subject: [PATCH -next] nds32: Remove duplicated include from pm.c
-Message-Id: <1540866162-149564-1-git-send-email-yuehaibing@huawei.com>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Tue, 30 Oct 2018 07:15:27 +0000
+Subject: Re: [PATCH -next] nds32: Remove duplicated include from pm.c
+Message-Id: <20181030071527.GA22121@amd>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="7JfCtLOvnd9MIVvH"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>, Pavel Machek <pavel@ucw.cz>, Nick Hu <nickhu@andestech.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1540866162-149564-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1540866162-149564-1-git-send-email-yuehaibing@huawei.com>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>, Nick Hu <nickhu@andestech.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove duplicated include.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- arch/nds32/kernel/pm.c | 1 -
- 1 file changed, 1 deletion(-)
+--7JfCtLOvnd9MIVvH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/nds32/kernel/pm.c b/arch/nds32/kernel/pm.c
-index 6989560..ffa8040 100644
---- a/arch/nds32/kernel/pm.c
-+++ b/arch/nds32/kernel/pm.c
-@@ -5,7 +5,6 @@
- #include <linux/suspend.h>
- #include <linux/device.h>
- #include <linux/printk.h>
--#include <linux/suspend.h>
- #include <asm/suspend.h>
- #include <nds32_intrinsic.h>
- 
+On Tue 2018-10-30 02:22:42, YueHaibing wrote:
+> Remove duplicated include.
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--7JfCtLOvnd9MIVvH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvYBQ8ACgkQMOfwapXb+vLn/wCfYZnzdFhLfROj1ABixdAiPSqr
+7yIAn2fU8zqU05gnLbOyEp+uvunxTOXs
+=3C4f
+-----END PGP SIGNATURE-----
+
+--7JfCtLOvnd9MIVvH--
