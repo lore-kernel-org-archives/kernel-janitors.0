@@ -1,39 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 11 Oct 2018 09:49:42 +0000
-Subject: Re: [PATCH][next] ath10k: fix out of bound read on array ath10k_rates
-Message-Id: <20181011094942.AE70660C7D@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 14:07:22 +0000
+Subject: [PATCH] gpio: sch311x: clean an indentation issue, remove extraneous space
+Message-Id: <20181030140722.2853-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181005215609.13935-1-colin.king@canonical.com>
-In-Reply-To: <20181005215609.13935-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sriram R <srirrama@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An out-of-bounds read on array ath10k_rates is occurring because
-> the maximum number of elements is currently based on the size of
-> the array and not the number of elements in the array. Fix this
-> by using ARRAY_SIZE instead of sizeof.
-> 
-> Detected by CoverityScan, CID#1473918 ("Out-of-bounds read")
-> 
-> Fixes: f279294e9ee2 ("ath10k: add support for configuring management packet rate")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to clean up an indentation issue, remove space
 
-This is already fixed in ath-next.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-sch311x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-error: patch failed: drivers/net/wireless/ath/ath10k/mac.c:164
-error: drivers/net/wireless/ath/ath10k/mac.c: patch does not apply
-stg import: Diff does not apply cleanly
-
-Patch set to Rejected.
-
+diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
+index 5497f0a88cf0..4df5335469fd 100644
+--- a/drivers/gpio/gpio-sch311x.c
++++ b/drivers/gpio/gpio-sch311x.c
+@@ -188,7 +188,7 @@ static void sch311x_gpio_set(struct gpio_chip *chip, unsigned offset,
+ 	struct sch311x_gpio_block *block = gpiochip_get_data(chip);
+ 
+ 	spin_lock(&block->lock);
+-	 __sch311x_gpio_set(block, offset, value);
++	__sch311x_gpio_set(block, offset, value);
+ 	spin_unlock(&block->lock);
+ }
+ 
 -- 
-https://patchwork.kernel.org/patch/10628815/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.19.1
