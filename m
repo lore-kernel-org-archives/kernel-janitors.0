@@ -1,44 +1,72 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 27 Oct 2018 14:49:26 +0000
-Subject: [PATCH] pcrypt: use format specifier in kobject_add
-Message-Id: <20181027144926.8433-1-colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 12:01:58 +0000
+Subject: [PATCH] crypto: chelsio: clean up various indentation issues
+Message-Id: <20181030120158.23323-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Passing string 'name' as the format specifier is potentially hazardous
-because name could (although very unlikely to) have a format specifier
-embedded in it causing issues when parsing the non-existent arguments
-to these.  Follow best practice by using the "%s" format string for
-the string 'name'.
+Trivial fix to clean up varous indentation issue
 
-Cleans up clang warning:
-crypto/pcrypt.c:397:40: warning: format string is not a string literal
-(potentially insecure) [-Wformat-security]
-
-Fixes: a3fb1e330dd2 ("pcrypt: Added sysfs interface to pcrypt")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- crypto/pcrypt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/chelsio/chcr_algo.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
-index f8ec3d4ba4a8..29d2cf989c05 100644
---- a/crypto/pcrypt.c
-+++ b/crypto/pcrypt.c
-@@ -394,7 +394,7 @@ static int pcrypt_sysfs_add(struct padata_instance *pinst, const char *name)
- 	int ret;
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index db203f8be429..497c57803de7 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -1311,8 +1311,8 @@ static int chcr_aes_decrypt(struct ablkcipher_request *req)
+ 			return -ENOSPC;
+ 	}
  
- 	pinst->kobj.kset = pcrypt_kset;
--	ret = kobject_add(&pinst->kobj, NULL, name);
-+	ret = kobject_add(&pinst->kobj, NULL, "%s", name);
- 	if (!ret)
- 		kobject_uevent(&pinst->kobj, KOBJ_ADD);
+-	 err = process_cipher(req, u_ctx->lldi.rxq_ids[c_ctx(tfm)->rx_qidx],
+-			      &skb, CHCR_DECRYPT_OP);
++	err = process_cipher(req, u_ctx->lldi.rxq_ids[c_ctx(tfm)->rx_qidx],
++			     &skb, CHCR_DECRYPT_OP);
+ 	if (err || !skb)
+ 		return err;
+ 	skb->dev = u_ctx->lldi.ports[0];
+@@ -2008,7 +2008,7 @@ static int chcr_ahash_export(struct ahash_request *areq, void *out)
+ 	memcpy(state->partial_hash, req_ctx->partial_hash,
+ 	       CHCR_HASH_MAX_DIGEST_SIZE);
+ 	chcr_init_hctx_per_wr(state);
+-		return 0;
++	return 0;
+ }
  
+ static int chcr_ahash_import(struct ahash_request *areq, const void *in)
+@@ -2249,7 +2249,7 @@ static int chcr_aead_fallback(struct aead_request *req, unsigned short op_type)
+ 				  req->base.complete, req->base.data);
+ 	aead_request_set_crypt(subreq, req->src, req->dst, req->cryptlen,
+ 				 req->iv);
+-	 aead_request_set_ad(subreq, req->assoclen);
++	aead_request_set_ad(subreq, req->assoclen);
+ 	return op_type ? crypto_aead_decrypt(subreq) :
+ 		crypto_aead_encrypt(subreq);
+ }
+@@ -3118,12 +3118,12 @@ static int chcr_gcm_setauthsize(struct crypto_aead *tfm, unsigned int authsize)
+ 		aeadctx->mayverify = VERIFY_HW;
+ 		break;
+ 	case ICV_12:
+-		 aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_IPSEC_96BIT;
+-		 aeadctx->mayverify = VERIFY_HW;
++		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_IPSEC_96BIT;
++		aeadctx->mayverify = VERIFY_HW;
+ 		break;
+ 	case ICV_14:
+-		 aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_PL3;
+-		 aeadctx->mayverify = VERIFY_HW;
++		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_PL3;
++		aeadctx->mayverify = VERIFY_HW;
+ 		break;
+ 	case ICV_16:
+ 		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_NO_TRUNC;
 -- 
 2.19.1
