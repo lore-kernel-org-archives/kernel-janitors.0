@@ -1,40 +1,57 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 30 Oct 2018 15:15:00 +0000
-Subject: [PATCH 2/2] thermal: broadcom: constify thermal_zone_of_device_ops structure
-Message-Id: <1540912500-21941-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Tue, 30 Oct 2018 16:22:22 +0000
+Subject: Re: [PATCH 2/2] thermal: broadcom: constify thermal_zone_of_device_ops structure
+Message-Id: <b0442517-ea11-9366-b17d-c60acf5c9cb3@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1540912500-21941-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540912500-21941-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1540912500-21941-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540912500-21941-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-The thermal_zone_of_device_ops structure can be const as it is only
-passed as the last argument of thermal_zone_of_sensor_register
-and the corresponding parameter is declared as const.
+On 30/10/2018 16:15, Julia Lawall wrote:
+> The thermal_zone_of_device_ops structure can be const as it is only
+> passed as the last argument of thermal_zone_of_sensor_register
+> and the corresponding parameter is declared as const.
+>=20
+> Done with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> ---
+>=20
+> Unrelated to this change, is there a reason not to use
+> devm_thermal_zone_of_sensor_register?
 
----
+Agree, it would make sense to use the devm* version.
 
-Unrelated to this change, is there a reason not to use
-devm_thermal_zone_of_sensor_register?
+>  drivers/thermal/broadcom/brcmstb_thermal.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff -u -p a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal=
+/broadcom/brcmstb_thermal.c
+> --- a/drivers/thermal/broadcom/brcmstb_thermal.c
+> +++ b/drivers/thermal/broadcom/brcmstb_thermal.c
+> @@ -299,7 +299,7 @@ static int brcmstb_set_trips(void *data,
+>  	return 0;
+>  }
+> =20
+> -static struct thermal_zone_of_device_ops of_ops =3D {
+> +static const struct thermal_zone_of_device_ops of_ops =3D {
+>  	.get_temp	=3D brcmstb_get_temp,
+>  	.set_trips	=3D brcmstb_set_trips,
+>  };
+>=20
 
- drivers/thermal/broadcom/brcmstb_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
---- a/drivers/thermal/broadcom/brcmstb_thermal.c
-+++ b/drivers/thermal/broadcom/brcmstb_thermal.c
-@@ -299,7 +299,7 @@ static int brcmstb_set_trips(void *data,
- 	return 0;
- }
- 
--static struct thermal_zone_of_device_ops of_ops = {
-+static const struct thermal_zone_of_device_ops of_ops = {
- 	.get_temp	= brcmstb_get_temp,
- 	.set_trips	= brcmstb_set_trips,
- };
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
+ SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
