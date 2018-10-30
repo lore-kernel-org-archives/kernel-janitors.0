@@ -1,21 +1,35 @@
-From: David Howells <dhowells@redhat.com>
-Date: Thu, 11 Oct 2018 20:38:43 +0000
-Subject: Re: [PATCH net-next] rxrpc: Remove set but not used variable 'ioc'
-Message-Id: <19793.1539290323@warthog.procyon.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 30 Oct 2018 15:31:21 +0000
+Subject: [PATCH 1/2] usb: gadget: uvc: constify vb2_ops structure
+Message-Id: <1540913482-22130-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181011083807.tvhfguimyw7glrtp@mwanda> <1539052273-34824-1-git-send-email-yuehaibing@huawei.com> <11853.1539079996@warthog.procyon.org.uk>
-In-Reply-To: <20181011083807.tvhfguimyw7glrtp@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: dhowells@redhat.com, YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: kernel-janitors@vger.kernel.org, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The vb2_ops structure can be const as it is only stored in the ops
+field of a vb2_queue structure and this field is const.
 
-> I told him to do that because it wasn't a bugfix...  Probably just Fixes
-> is the right thing to use though.
+Done with the help of Coccinelle.
 
-But the correct fix *is* a bug fix.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-David
+---
+ drivers/usb/gadget/function/uvc_queue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadget/function/uvc_queue.c
+index 9e33d5206d54..526a10a33094 100644
+--- a/drivers/usb/gadget/function/uvc_queue.c
++++ b/drivers/usb/gadget/function/uvc_queue.c
+@@ -102,7 +102,7 @@ static void uvc_buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&queue->irqlock, flags);
+ }
+ 
+-static struct vb2_ops uvc_queue_qops = {
++static const struct vb2_ops uvc_queue_qops = {
+ 	.queue_setup = uvc_queue_setup,
+ 	.buf_prepare = uvc_buffer_prepare,
+ 	.buf_queue = uvc_buffer_queue,
