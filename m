@@ -1,31 +1,21 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Fri, 05 Oct 2018 14:38:41 +0000
-Subject: Re: [PATCH][mtd-next] mtd: rawnand: fix spelling mistake "card_registred" -> "card_registered"
-Message-Id: <20181005163841.21f3b3ce@xps13>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 30 Oct 2018 15:14:58 +0000
+Subject: [PATCH 0/2] constify thermal_zone_of_device_ops structures
+Message-Id: <1540912500-21941-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180927152431.6031-1-colin.king@canonical.com>
-In-Reply-To: <20180927152431.6031-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Maxim Levitsky <maximlevitsky@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Colin,
+The thermal_zone_of_device_ops structures can be const as they are
+only passed as the last argument of a thermal_zone_of_sensor_register
+function and the corresponding parameter is declared as const.
 
-Colin King <colin.king@canonical.com> wrote on Thu, 27 Sep 2018
-16:24:31 +0100:
+Done with the help of Coccinelle.
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake struct field name, rename it.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+---
 
-Applied to nand/next with the subject prefix changed to be
-
-        mtd: rawnand: r852:
-
-Thanks,
-Miqu=C3=A8l
+ drivers/thermal/armada_thermal.c           |    2 +-
+ drivers/thermal/broadcom/brcmstb_thermal.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
