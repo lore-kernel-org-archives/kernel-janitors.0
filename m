@@ -1,42 +1,21 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 13 Oct 2018 15:45:13 +0000
-Subject: [PATCH] ASoC: wm8904: fix spelling mistake "Inveting" -> "Inverting"
-Message-Id: <20181013154513.6155-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 30 Oct 2018 15:31:20 +0000
+Subject: [PATCH 0/2] constify vb2_ops structures
+Message-Id: <1540913482-22130-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The vb2_ops structures can be const as they are only stored in the ops
+field of a vb2_queue structure and this field is const.
 
-Trivial fix to spelling mistake in sound control text
+Done with the help of Coccinelle.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/wm8904.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
-index 2a3e5fbd04e4..ef83dae6e5ae 100644
---- a/sound/soc/codecs/wm8904.c
-+++ b/sound/soc/codecs/wm8904.c
-@@ -870,7 +870,7 @@ static SOC_ENUM_SINGLE_DECL(lin_inv_enum, WM8904_ANALOGUE_LEFT_INPUT_1, 4,
- 			    lin_text);
- 
- static const struct snd_kcontrol_new lin_inv_mux -	SOC_DAPM_ENUM("Left Capture Inveting Mux", lin_inv_enum);
-+	SOC_DAPM_ENUM("Left Capture Inverting Mux", lin_inv_enum);
- 
- static const char *rin_text[] = {
- 	"IN1R", "IN2R", "IN3R"
-@@ -886,7 +886,7 @@ static SOC_ENUM_SINGLE_DECL(rin_inv_enum, WM8904_ANALOGUE_RIGHT_INPUT_1, 4,
- 			    rin_text);
- 
- static const struct snd_kcontrol_new rin_inv_mux -	SOC_DAPM_ENUM("Right Capture Inveting Mux", rin_inv_enum);
-+	SOC_DAPM_ENUM("Right Capture Inverting Mux", rin_inv_enum);
- 
- static const char *aif_text[] = {
- 	"Left", "Right"
--- 
-2.17.1
+ drivers/media/i2c/video-i2c.c           |    2 +-
+ drivers/usb/gadget/function/uvc_queue.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
