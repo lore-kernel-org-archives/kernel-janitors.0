@@ -1,33 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 12 Oct 2018 07:17:09 +0000
-Subject: [PATCH] ice: remove an unneeded NULL check
-Message-Id: <20181012071709.GA10212@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 14:15:43 +0000
+Subject: [PATCH] uwb: clean an indentation issue, remove extraneous tab
+Message-Id: <20181030141543.3440-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We added a NULL check in commit 072f0c3db9da ("ice: Fix potential null
-pointer issues") but it causes static checker warnings.
+From: Colin Ian King <colin.king@canonical.com>
 
-    drivers/net/ethernet/intel/ice/ice_switch.c:2145 ice_add_to_vsi_fltr_list()
-    warn: address of 'fm_entry->fltr_info' is non-NULL
+Trivial fix to clean up an indentation issue, remove tab
 
-We can just remove it.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/uwb/i1480/dfu/usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
-index 33403f39f1b3..a9ef19da6e61 100644
---- a/drivers/net/ethernet/intel/ice/ice_switch.c
-+++ b/drivers/net/ethernet/intel/ice/ice_switch.c
-@@ -2142,7 +2142,7 @@ ice_add_to_vsi_fltr_list(struct ice_hw *hw, u16 vsi_handle,
- 		struct ice_fltr_info *fi;
- 
- 		fi = &fm_entry->fltr_info;
--		if (!fi || !ice_vsi_uses_fltr(fm_entry, vsi_handle))
-+		if (!ice_vsi_uses_fltr(fm_entry, vsi_handle))
- 			continue;
- 
- 		status = ice_add_entry_to_vsi_fltr_list(hw, vsi_handle,
+diff --git a/drivers/uwb/i1480/dfu/usb.c b/drivers/uwb/i1480/dfu/usb.c
+index c0430a41e24b..b1b466cbc33e 100644
+--- a/drivers/uwb/i1480/dfu/usb.c
++++ b/drivers/uwb/i1480/dfu/usb.c
+@@ -309,7 +309,7 @@ int i1480_usb_cmd(struct i1480 *i1480, const char *cmd_name, size_t cmd_size)
+ 	if (result < 0) {
+ 		dev_err(dev, "%s: cannot submit NEEP read: %d\n",
+ 			cmd_name, result);
+-			goto error_submit_ep1;
++		goto error_submit_ep1;
+ 	}
+ 	/* Now post the command on EP0 */
+ 	result = usb_control_msg(
+-- 
+2.19.1
