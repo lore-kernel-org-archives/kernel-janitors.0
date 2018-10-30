@@ -1,23 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 18 Oct 2018 04:55:18 +0000
-Subject: Re: [PATCH] sparc: vDSO: Silence an uninitialized variable warning
-Message-Id: <20181017.215518.39092071152820324.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 11:29:42 +0000
+Subject: [PATCH] mtip32xx: clean an indentation issue, remove extraneous tabs
+Message-Id: <20181030112942.10186-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181013102653.GE16086@mwanda>
-In-Reply-To: <20181013102653.GE16086@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 13 Oct 2018 13:26:53 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> Smatch complains that "val" would be uninitialized if kstrtoul() fails.
-> 
-> Fixes: 9a08862a5d2e ("vDSO for sparc")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Trivial fix to clean up an indentation issue, remove tabs
 
-So much bike shedding in this thread ;-)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/mtip32xx/mtip32xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks Dan.
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index dfc8de6ce525..a7daa8acbab3 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -1942,8 +1942,8 @@ static int exec_drive_taskfile(struct driver_data *dd,
+ 				dev_warn(&dd->pdev->dev,
+ 					"data movement but "
+ 					"sect_count is 0\n");
+-					err = -EINVAL;
+-					goto abort;
++				err = -EINVAL;
++				goto abort;
+ 			}
+ 		}
+ 	}
+-- 
+2.19.1
