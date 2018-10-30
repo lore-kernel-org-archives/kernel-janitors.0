@@ -1,93 +1,78 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 13 Oct 2018 12:44:29 +0000
-Subject: Re: [PATCH] iio: adc: ina2xx: fix missing break statement
-Message-Id: <20181013134429.1f450ba7@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 11:09:59 +0000
+Subject: [PATCH] staging: speakup: clean up few indentation issues
+Message-Id: <20181030110959.1471-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181008210904.9362-1-colin.king@canonical.com>
-        <1884341.stJYpOWv9L@pebbles>
-In-Reply-To: <1884341.stJYpOWv9L@pebbles>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Stefan =?UTF-8?B?QnLDvG5z?= <stefan.bruens@rwth-aachen.de>
-Cc: Colin King <colin.king@canonical.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018 12:42:39 +0200
-Stefan Br=C3=BCns <stefan.bruens@rwth-aachen.de> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Montag, 8. Oktober 2018 23:09:04 CEST Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >=20
-> > The IIO_CHAN_INFO_SCALE case is missing a break statement and in
-> > the unlikely event that chan->address is not matched in the nested
-> > switch statement then the code falls through to the following
-> > IIO_CHAN_INFO_HARDWAREGAIN case.  Fix this by adding the missing
-> > break.   While we are fixing this, it's probably a good idea to
-> > add in a break statement to the IIO_CHAN_INFO_HARDWAREGAIN case
-> > too (this is a moot point).
-> >=20
-> > Detected by CoverityScan, CID#1462408 ("Missing break in switch") =20
->=20
-> Although it is good for code clarity to add a break statement, the code c=
-an=20
-> never return anything but -EINVAL in case chan->address is not handled in=
-=20
-> IIO_CHAN_INFO_SCALE:
->=20
-> -----
-> switch (mask) {
-> case IIO_CHAN_INFO_SCALE:
->    switch (chan->address) {
->        case INA2XX_SHUNT_VOLTAGE:
->        ... return IIO_VAL_FRACTIONAL;
->       =20
->        case INA2XX_BUS_VOLTAGE:
->        ... return IIO_VAL_FRACTIONAL;
->=20
->        case INA2XX_CURRENT:
->        ... return IIO_VAL_FRACTIONAL;
->=20
->        case INA2XX_POWER:
->        ... return IIO_VAL_FRACTIONAL;
->    }
->=20
-> case IIO_CHAN_INFO_HARDWAREGAIN:
->    switch (chan->address) {
->        case INA2XX_SHUNT_VOLTAGE:
->        ... return IIO_VAL_FRACTIONAL;
->       =20
->        case INA2XX_BUS_VOLTAGE:
->        ... return IIO_VAL_INT;
->    }
-> }
-> return -EINVAL;
-> -----
->=20
-> The addresses handled in INFO_HARDWAREGAIN is a subset of the ones in=20
-> INFO_SCALE.
->=20
-> I would prefer an early "return -EINVAL" here, as it matches better with =
-the=20
-> other "switch (mask)" cases above.
->=20
-> Kind regards,
->=20
-> Stefan
+Trivial fix to clean up indentation issues across the driver
 
-I agree with Stefan on this.  It is more in keeping with the local
-style to use a direct return.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/speakup/kobjects.c      | 2 +-
+ drivers/staging/speakup/speakup_decpc.c | 6 +++---
+ drivers/staging/speakup/speakup_keypc.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Colin, would you mind doing a v2 with that approach?
-
-If not I'll get to it at somepoint if no one else does, but it may
-take some time!
-
-Please also change the title to make it clear that this is beyond unlikely
-as I think it is impossible (without a gross bug somewhere else).
-This is worthwhile as an improvement to code clarity and false warning
-suppression, but it's not a fix I want to be pushed back to ancient kernels
-as in that circumstance it's really just noise.
-
-Jonathan
-
->=20
+diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
+index 08f11cc17371..2e36d872662c 100644
+--- a/drivers/staging/speakup/kobjects.c
++++ b/drivers/staging/speakup/kobjects.c
+@@ -545,7 +545,7 @@ ssize_t spk_var_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 	int rv = 0;
+ 	struct st_var_header *param;
+ 	struct var_t *var;
+-		char *cp1;
++	char *cp1;
+ 	char *cp;
+ 	char ch;
+ 	unsigned long flags;
+diff --git a/drivers/staging/speakup/speakup_decpc.c b/drivers/staging/speakup/speakup_decpc.c
+index 6649309e0342..459ee0c0bd57 100644
+--- a/drivers/staging/speakup/speakup_decpc.c
++++ b/drivers/staging/speakup/speakup_decpc.c
+@@ -302,12 +302,12 @@ static void synth_flush(struct spk_synth *synth)
+ 	while (dt_ctrl(CTRL_flush)) {
+ 		if (--timeout = 0)
+ 			break;
+-udelay(50);
++		udelay(50);
+ 	}
+ 	for (timeout = 0; timeout < 10; timeout++) {
+ 		if (dt_waitbit(STAT_dma_ready))
+ 			break;
+-udelay(50);
++		udelay(50);
+ 	}
+ 	outb_p(DMA_sync, speakup_info.port_tts + 4);
+ 	outb_p(0, speakup_info.port_tts + 4);
+@@ -315,7 +315,7 @@ udelay(50);
+ 	for (timeout = 0; timeout < 10; timeout++) {
+ 		if (!(dt_getstatus() & STAT_flushing))
+ 			break;
+-udelay(50);
++		udelay(50);
+ 	}
+ 	dma_state = dt_getstatus() & STAT_dma_state;
+ 	dma_state ^= STAT_dma_state;
+diff --git a/drivers/staging/speakup/speakup_keypc.c b/drivers/staging/speakup/speakup_keypc.c
+index 3901734982a4..b788272da4f9 100644
+--- a/drivers/staging/speakup/speakup_keypc.c
++++ b/drivers/staging/speakup/speakup_keypc.c
+@@ -177,7 +177,7 @@ static void do_catch_up(struct spk_synth *synth)
+ 	jiffy_delta = spk_get_var(JIFFY);
+ 	delay_time = spk_get_var(DELAY);
+ 	full_time = spk_get_var(FULL);
+-spin_lock_irqsave(&speakup_info.spinlock, flags);
++	spin_lock_irqsave(&speakup_info.spinlock, flags);
+ 	jiffy_delta_val = jiffy_delta->u.n.value;
+ 	spin_unlock_irqrestore(&speakup_info.spinlock, flags);
+ 
+-- 
+2.19.1
