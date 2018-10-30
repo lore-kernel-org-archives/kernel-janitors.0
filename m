@@ -1,44 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 13 Oct 2018 15:37:30 +0000
-Subject: [PATCH] rsi: fix spelling mistake "Initialzing" -> "Initializing"
-Message-Id: <20181013153730.5761-1-colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 11:46:52 +0000
+Subject: [PATCH] ipmi: clean an indentation issue, remove extraneous space
+Message-Id: <20181030114652.17167-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, openipmi-developer@lists.sourceforge.net
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in rsi_dbg debug message
+Trivial fix to clean up an indentation issue, remove space
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/rsi/rsi_91x_sdio_ops.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/ipmi/ipmi_ssif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c b/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
-index 612c211e21a1..449f6d23c5e3 100644
---- a/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
-@@ -210,7 +210,7 @@ int rsi_init_sdio_slave_regs(struct rsi_hw *adapter)
+diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+index d06e00e95891..a7701af8fcf2 100644
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -1792,7 +1792,7 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 			       ssif_info,
+ 			       &ssif_info->client->dev,
+ 			       slave_addr);
+-	 if (rv) {
++	if (rv) {
+ 		pr_err("Unable to register device: error %d\n", rv);
+ 		goto out_remove_attr;
  	}
- 
- 	/* This tells SDIO FIFO when to start read to host */
--	rsi_dbg(INIT_ZONE, "%s: Initialzing SDIO read start level\n", __func__);
-+	rsi_dbg(INIT_ZONE, "%s: Initializing SDIO read start level\n", __func__);
- 	byte = 0x24;
- 
- 	status = rsi_sdio_write_register(adapter,
-@@ -223,7 +223,7 @@ int rsi_init_sdio_slave_regs(struct rsi_hw *adapter)
- 		return -1;
- 	}
- 
--	rsi_dbg(INIT_ZONE, "%s: Initialzing FIFO ctrl registers\n", __func__);
-+	rsi_dbg(INIT_ZONE, "%s: Initializing FIFO ctrl registers\n", __func__);
- 	byte = (128 - 32);
- 
- 	status = rsi_sdio_write_register(adapter,
 -- 
-2.17.1
+2.19.1
