@@ -1,37 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 17 Oct 2018 08:15:34 +0000
-Subject: [PATCH] staging: rtl8723bs: Fix the return value in case of error in 'rtw_wx_read32()'
-Message-Id: <20181017081534.2959-1-christophe.jaillet@wanadoo.fr>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 30 Oct 2018 20:28:08 +0000
+Subject: [PATCH v2] kernel/SRCU: Fix ctags
+Message-Id: <20181030202808.28027-1-semen.protsenko@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, quytelda@tamalin.org, straube.linux@gmail.com, mamtashukla555@gmail.com, baijiaju1990@gmail.com, arushisinghal19971997@gmail.com, natechancellor@gmail.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-We return 0 unconditionally in 'rtw_wx_read32()'.
-However, 'ret' is set to some error codes in several error handling paths.
+ctags indexing ("make tags" command) throws this warning:
 
-Return 'ret' instead to propagate the error code.
+    ctags: Warning: include/linux/notifier.h:125:
+    null expansion of name pattern "\1"
 
-Fixes: 554c0a3abf216 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This is the result of DEFINE_PER_CPU() macro expansion. Fix that by
+getting rid of line break.
+
+Similar fix was already done in commit 25528213fe9f ("tags: Fix
+DEFINE_PER_CPU expansions"), but this one probably wasn't noticed.
+
+Fixes: 9c80172b902d ("kernel/SRCU: provide a static initializer")
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/notifier.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 28bfdbdc6e76..b8631baf128d 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -2289,7 +2289,7 @@ static int rtw_wx_read32(struct net_device *dev,
- exit:
- 	kfree(ptmp);
+diff --git a/include/linux/notifier.h b/include/linux/notifier.h
+index f35c7bf76143..0096a05395e3 100644
+--- a/include/linux/notifier.h
++++ b/include/linux/notifier.h
+@@ -122,8 +122,7 @@ extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
  
--	return 0;
-+	return ret;
- }
+ #ifdef CONFIG_TREE_SRCU
+ #define _SRCU_NOTIFIER_HEAD(name, mod)				\
+-	static DEFINE_PER_CPU(struct srcu_data,			\
+-			name##_head_srcu_data);			\
++	static DEFINE_PER_CPU(struct srcu_data, name##_head_srcu_data); \
+ 	mod struct srcu_notifier_head name =			\
+ 			SRCU_NOTIFIER_INIT(name, name##_head_srcu_data)
  
- static int rtw_wx_write32(struct net_device *dev,
 -- 
-2.17.1
+2.19.1
