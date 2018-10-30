@@ -1,36 +1,124 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 12 Oct 2018 06:22:41 +0000
-Subject: Re: [PATCH -next] crypto: chtls - remove set but not used variable 'csk'
-Message-Id: <20181012062241.nyhogafjkyngirbb@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Oct 2018 11:56:50 +0000
+Subject: [PATCH] tlclk: lean an indentation issue, remove extraneous tabs
+Message-Id: <20181030115650.21104-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538721807-120297-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538721807-120297-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark Gross <mark.gross@intel.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 06:43:27AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/crypto/chelsio/chtls/chtls_cm.c: In function 'chtls_disconnect':
-> drivers/crypto/chelsio/chtls/chtls_cm.c:408:21: warning:
->  variable 'csk' set but not used [-Wunused-but-set-variable]
->  
-> drivers/crypto/chelsio/chtls/chtls_cm.c: In function 'chtls_recv_sock':
-> drivers/crypto/chelsio/chtls/chtls_cm.c:1016:23: warning:
->  variable 'tcph' set but not used [-Wunused-but-set-variable]
->  
-> 'csk' and 'tcph' are never used since introduce
-> in commit cc35c88ae4db ("crypto : chtls - CPL handler definition")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/crypto/chelsio/chtls/chtls_cm.c | 4 ----
->  1 file changed, 4 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Trivial fix to clean up an indentation issue, remove tabs
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/char/tlclk.c | 84 ++++++++++++++++++++++----------------------
+ 1 file changed, 42 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/char/tlclk.c b/drivers/char/tlclk.c
+index 8eeb4190207d..a0f2c0506176 100644
+--- a/drivers/char/tlclk.c
++++ b/drivers/char/tlclk.c
+@@ -506,27 +506,27 @@ static ssize_t store_select_amcb2_transmit_clock(struct device *d,
+ 
+ 	val = (unsigned char)tmp;
+ 	spin_lock_irqsave(&event_lock, flags);
+-		if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
+-			SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x28);
+-			SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
+-		} else if (val >= CLK_8_592MHz) {
+-			SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x38);
+-			switch (val) {
+-			case CLK_8_592MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
+-				break;
+-			case CLK_11_184MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
+-				break;
+-			case CLK_34_368MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
+-				break;
+-			case CLK_44_736MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);
+-				break;
+-			}
+-		} else
+-			SET_PORT_BITS(TLCLK_REG3, 0xc7, val << 3);
++	if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
++		SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x28);
++		SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
++	} else if (val >= CLK_8_592MHz) {
++		SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x38);
++		switch (val) {
++		case CLK_8_592MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
++			break;
++		case CLK_11_184MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
++			break;
++		case CLK_34_368MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
++			break;
++		case CLK_44_736MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);
++			break;
++		}
++	} else
++		SET_PORT_BITS(TLCLK_REG3, 0xc7, val << 3);
+ 
+ 	spin_unlock_irqrestore(&event_lock, flags);
+ 
+@@ -548,27 +548,27 @@ static ssize_t store_select_amcb1_transmit_clock(struct device *d,
+ 
+ 	val = (unsigned char)tmp;
+ 	spin_lock_irqsave(&event_lock, flags);
+-		if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
+-			SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x5);
+-			SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
+-		} else if (val >= CLK_8_592MHz) {
+-			SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x7);
+-			switch (val) {
+-			case CLK_8_592MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
+-				break;
+-			case CLK_11_184MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
+-				break;
+-			case CLK_34_368MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
+-				break;
+-			case CLK_44_736MHz:
+-				SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);
+-				break;
+-			}
+-		} else
+-			SET_PORT_BITS(TLCLK_REG3, 0xf8, val);
++	if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
++		SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x5);
++		SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
++	} else if (val >= CLK_8_592MHz) {
++		SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x7);
++		switch (val) {
++		case CLK_8_592MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
++			break;
++		case CLK_11_184MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
++			break;
++		case CLK_34_368MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
++			break;
++		case CLK_44_736MHz:
++			SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);
++			break;
++		}
++	} else
++		SET_PORT_BITS(TLCLK_REG3, 0xf8, val);
+ 	spin_unlock_irqrestore(&event_lock, flags);
+ 
+ 	return strnlen(buf, count);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.19.1
