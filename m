@@ -1,42 +1,40 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 06 Oct 2018 18:01:42 +0000
-Subject: [PATCH] media: cx231xx: fix potential sign-extension overflow on large shift
-Message-Id: <20181006180142.28443-1-colin.king@canonical.com>
+Date: Wed, 31 Oct 2018 19:31:43 +0000
+Subject: [PATCH] ASoC: stm32: sai: fix less than zero comparison on unsigned int
+Message-Id: <20181031193143.6994-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Shifting the u8 value[3] by an int can lead to sign-extension
-overflow. For example, if value[3] is 0xff and the shift is 24 then it
-is promoted to int and then the top bit is sign-extended so that all
-upper 32 bits are set.  Fix this by casting value[3] to a u32 before
-the shift.
+Currently, the comparison of div < 0 is always false because div is
+an unsigned int. Fix this by making div an int.
 
-Detected by CoverityScan, CID#1016522 ("Unintended sign extension")
+Detected by CoverityScan, CID#1475309 ("Unsigned compared against 0")
 
-Fixes: e0d3bafd0258 ("V4L/DVB (10954): Add cx231xx USB driver")
+Fixes: 8307b2afd386 "(ASoC: stm32: sai: set sai as mclk clock provider")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/cx231xx/cx231xx-video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/stm/stm32_sai_sub.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
-index 29160df76cf7..f2f034c5cd62 100644
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -1389,7 +1389,7 @@ int cx231xx_g_register(struct file *file, void *priv,
- 		ret = cx231xx_read_ctrl_reg(dev, VRT_GET_REGISTER,
- 				(u16)reg->reg, value, 4);
- 		reg->val = value[0] | value[1] << 8 |
--			value[2] << 16 | value[3] << 24;
-+			value[2] << 16 | (u32)value[3] << 24;
- 		reg->size = 4;
- 		break;
- 	case 1:	/* AFE - read byte */
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index 211589b0b2ef..d4825700b63f 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -336,8 +336,7 @@ static int stm32_sai_mclk_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
+ 	struct stm32_sai_sub_data *sai = mclk->sai_data;
+-	unsigned int div;
+-	int ret;
++	int div, ret;
+ 
+ 	div = stm32_sai_get_clk_div(sai, parent_rate, rate);
+ 	if (div < 0)
 -- 
-2.17.1
+2.19.1
