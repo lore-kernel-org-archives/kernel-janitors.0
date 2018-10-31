@@ -1,29 +1,35 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 05 Oct 2018 02:27:28 +0000
-Subject: Re: [PATCH -next v2] crypto: ccp - Make function sev_get_firmware() static
-Message-Id: <20181005022728.cr3l5jtaq7qaokss@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 31 Oct 2018 18:48:41 +0000
+Subject: [PATCH] power: supply: cpcap-charger: clean an indentation issue, remove tab
+Message-Id: <20181031184841.5673-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 02:09:23AM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
-> 
-> drivers/crypto/ccp/psp-dev.c:444:5: warning:
->  symbol 'sev_get_firmware' was not declared. Should it be static?
-> 
-> Fixes: e93720606efd ("crypto: ccp - Allow SEV firmware to be chosen based on Family and Model")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v1 -> v2: add fixes and add cc Janakarajan
-> ---
->  drivers/crypto/ccp/psp-dev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Trivial fix to clean up indentation issue, remove an extraneous tab
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/power/supply/cpcap-charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/supply/cpcap-charger.c
+index e4905bef2663..c843eaff8ad0 100644
+--- a/drivers/power/supply/cpcap-charger.c
++++ b/drivers/power/supply/cpcap-charger.c
+@@ -544,7 +544,7 @@ static void cpcap_charger_init_optional_gpios(struct cpcap_charger_ddata *ddata)
+ 		if (IS_ERR(ddata->gpio[i])) {
+ 			dev_info(ddata->dev, "no mode change GPIO%i: %li\n",
+ 				 i, PTR_ERR(ddata->gpio[i]));
+-				 ddata->gpio[i] = NULL;
++			ddata->gpio[i] = NULL;
+ 		}
+ 	}
+ }
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.19.1
