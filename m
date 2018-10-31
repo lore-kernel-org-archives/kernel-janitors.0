@@ -1,85 +1,75 @@
-From: "Gross, Mark" <mark.gross@intel.com>
-Date: Tue, 30 Oct 2018 15:41:06 +0000
-Subject: RE: [PATCH] tlclk: lean an indentation issue, remove extraneous tabs
-Message-Id: <BD75D217E5BAC84080F8EFB258297637DBD8401D@ORSMSX113.amr.corp.intel.com>
+From: Joe Perches <joe@perches.com>
+Date: Wed, 31 Oct 2018 18:05:19 +0000
+Subject: Re: [PATCH] tlclk: lean an indentation issue, remove extraneous tabs
+Message-Id: <0a6d5b7a21d4ad5b29295ac5695ada3d9f2133c4.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181030115650.21104-1-colin.king@canonical.com>
-In-Reply-To: <20181030115650.21104-1-colin.king@canonical.com>
+         <aa09c138-854e-ad84-59eb-5613b8cd3f0e@canonical.com>
+In-Reply-To: <aa09c138-854e-ad84-59eb-5613b8cd3f0e@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>, Mark Gross <mark.gross@intel.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-TG9va3MgY29vbCB0byBtZS4NCg0KUmV2aWV3ZWQtYnkgPG1hcmsuZ3Jvc3NAaW50ZWwuY29tPg0K
-DQotLW1hcmsNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBL
-aW5nIFttYWlsdG86Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBP
-Y3RvYmVyIDMwLCAyMDE4IDQ6NTcgQU0NCj4gVG86IEdyb3NzLCBNYXJrIDxtYXJrLmdyb3NzQGlu
-dGVsLmNvbT47IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+Ow0KPiBHcmVnIEtyb2FoLUhh
-cnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPg0KPiBDYzoga2VybmVsLWphbml0b3Jz
-QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0
-OiBbUEFUQ0hdIHRsY2xrOiBsZWFuIGFuIGluZGVudGF0aW9uIGlzc3VlLCByZW1vdmUgZXh0cmFu
-ZW91cyB0YWJzDQo+IA0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmlj
-YWwuY29tPg0KPiANCj4gVHJpdmlhbCBmaXggdG8gY2xlYW4gdXAgYW4gaW5kZW50YXRpb24gaXNz
-dWUsIHJlbW92ZSB0YWJzDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvY2hhci90bGNsay5jIHwg
-ODQgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gIDEgZmls
-ZSBjaGFuZ2VkLCA0MiBpbnNlcnRpb25zKCspLCA0MiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2NoYXIvdGxjbGsuYyBiL2RyaXZlcnMvY2hhci90bGNsay5jIGluZGV4
-DQo+IDhlZWI0MTkwMjA3ZC4uYTBmMmMwNTA2MTc2IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2No
-YXIvdGxjbGsuYw0KPiArKysgYi9kcml2ZXJzL2NoYXIvdGxjbGsuYw0KPiBAQCAtNTA2LDI3ICs1
-MDYsMjcgQEAgc3RhdGljIHNzaXplX3QNCj4gc3RvcmVfc2VsZWN0X2FtY2IyX3RyYW5zbWl0X2Ns
-b2NrKHN0cnVjdCBkZXZpY2UgKmQsDQo+IA0KPiAgCXZhbCA9ICh1bnNpZ25lZCBjaGFyKXRtcDsN
-Cj4gIAlzcGluX2xvY2tfaXJxc2F2ZSgmZXZlbnRfbG9jaywgZmxhZ3MpOw0KPiAtCQlpZiAoKHZh
-bCA9PSBDTEtfOGtIeikgfHwgKHZhbCA9PSBDTEtfMTZfMzg0TUh6KSkgew0KPiAtCQkJU0VUX1BP
-UlRfQklUUyhUTENMS19SRUczLCAweGM3LCAweDI4KTsNCj4gLQkJCVNFVF9QT1JUX0JJVFMoVExD
-TEtfUkVHMSwgMHhmYiwgfnZhbCk7DQo+IC0JCX0gZWxzZSBpZiAodmFsID49IENMS184XzU5Mk1I
-eikgew0KPiAtCQkJU0VUX1BPUlRfQklUUyhUTENMS19SRUczLCAweGM3LCAweDM4KTsNCj4gLQkJ
-CXN3aXRjaCAodmFsKSB7DQo+IC0JCQljYXNlIENMS184XzU5Mk1IejoNCj4gLQkJCQlTRVRfUE9S
-VF9CSVRTKFRMQ0xLX1JFRzAsIDB4ZmMsIDIpOw0KPiAtCQkJCWJyZWFrOw0KPiAtCQkJY2FzZSBD
-TEtfMTFfMTg0TUh6Og0KPiAtCQkJCVNFVF9QT1JUX0JJVFMoVExDTEtfUkVHMCwgMHhmYywgMCk7
-DQo+IC0JCQkJYnJlYWs7DQo+IC0JCQljYXNlIENMS18zNF8zNjhNSHo6DQo+IC0JCQkJU0VUX1BP
-UlRfQklUUyhUTENMS19SRUcwLCAweGZjLCAzKTsNCj4gLQkJCQlicmVhazsNCj4gLQkJCWNhc2Ug
-Q0xLXzQ0XzczNk1IejoNCj4gLQkJCQlTRVRfUE9SVF9CSVRTKFRMQ0xLX1JFRzAsIDB4ZmMsIDEp
-Ow0KPiAtCQkJCWJyZWFrOw0KPiAtCQkJfQ0KPiAtCQl9IGVsc2UNCj4gLQkJCVNFVF9QT1JUX0JJ
-VFMoVExDTEtfUkVHMywgMHhjNywgdmFsIDw8IDMpOw0KPiArCWlmICgodmFsID09IENMS184a0h6
-KSB8fCAodmFsID09IENMS18xNl8zODRNSHopKSB7DQo+ICsJCVNFVF9QT1JUX0JJVFMoVExDTEtf
-UkVHMywgMHhjNywgMHgyOCk7DQo+ICsJCVNFVF9QT1JUX0JJVFMoVExDTEtfUkVHMSwgMHhmYiwg
-fnZhbCk7DQo+ICsJfSBlbHNlIGlmICh2YWwgPj0gQ0xLXzhfNTkyTUh6KSB7DQo+ICsJCVNFVF9Q
-T1JUX0JJVFMoVExDTEtfUkVHMywgMHhjNywgMHgzOCk7DQo+ICsJCXN3aXRjaCAodmFsKSB7DQo+
-ICsJCWNhc2UgQ0xLXzhfNTkyTUh6Og0KPiArCQkJU0VUX1BPUlRfQklUUyhUTENMS19SRUcwLCAw
-eGZjLCAyKTsNCj4gKwkJCWJyZWFrOw0KPiArCQljYXNlIENMS18xMV8xODRNSHo6DQo+ICsJCQlT
-RVRfUE9SVF9CSVRTKFRMQ0xLX1JFRzAsIDB4ZmMsIDApOw0KPiArCQkJYnJlYWs7DQo+ICsJCWNh
-c2UgQ0xLXzM0XzM2OE1IejoNCj4gKwkJCVNFVF9QT1JUX0JJVFMoVExDTEtfUkVHMCwgMHhmYywg
-Myk7DQo+ICsJCQlicmVhazsNCj4gKwkJY2FzZSBDTEtfNDRfNzM2TUh6Og0KPiArCQkJU0VUX1BP
-UlRfQklUUyhUTENMS19SRUcwLCAweGZjLCAxKTsNCj4gKwkJCWJyZWFrOw0KPiArCQl9DQo+ICsJ
-fSBlbHNlDQo+ICsJCVNFVF9QT1JUX0JJVFMoVExDTEtfUkVHMywgMHhjNywgdmFsIDw8IDMpOw0K
-PiANCj4gIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZldmVudF9sb2NrLCBmbGFncyk7DQo+IA0K
-PiBAQCAtNTQ4LDI3ICs1NDgsMjcgQEAgc3RhdGljIHNzaXplX3QNCj4gc3RvcmVfc2VsZWN0X2Ft
-Y2IxX3RyYW5zbWl0X2Nsb2NrKHN0cnVjdCBkZXZpY2UgKmQsDQo+IA0KPiAgCXZhbCA9ICh1bnNp
-Z25lZCBjaGFyKXRtcDsNCj4gIAlzcGluX2xvY2tfaXJxc2F2ZSgmZXZlbnRfbG9jaywgZmxhZ3Mp
-Ow0KPiAtCQlpZiAoKHZhbCA9PSBDTEtfOGtIeikgfHwgKHZhbCA9PSBDTEtfMTZfMzg0TUh6KSkg
-ew0KPiAtCQkJU0VUX1BPUlRfQklUUyhUTENMS19SRUczLCAweGY4LCAweDUpOw0KPiAtCQkJU0VU
-X1BPUlRfQklUUyhUTENMS19SRUcxLCAweGZiLCB+dmFsKTsNCj4gLQkJfSBlbHNlIGlmICh2YWwg
-Pj0gQ0xLXzhfNTkyTUh6KSB7DQo+IC0JCQlTRVRfUE9SVF9CSVRTKFRMQ0xLX1JFRzMsIDB4Zjgs
-IDB4Nyk7DQo+IC0JCQlzd2l0Y2ggKHZhbCkgew0KPiAtCQkJY2FzZSBDTEtfOF81OTJNSHo6DQo+
-IC0JCQkJU0VUX1BPUlRfQklUUyhUTENMS19SRUcwLCAweGZjLCAyKTsNCj4gLQkJCQlicmVhazsN
-Cj4gLQkJCWNhc2UgQ0xLXzExXzE4NE1IejoNCj4gLQkJCQlTRVRfUE9SVF9CSVRTKFRMQ0xLX1JF
-RzAsIDB4ZmMsIDApOw0KPiAtCQkJCWJyZWFrOw0KPiAtCQkJY2FzZSBDTEtfMzRfMzY4TUh6Og0K
-PiAtCQkJCVNFVF9QT1JUX0JJVFMoVExDTEtfUkVHMCwgMHhmYywgMyk7DQo+IC0JCQkJYnJlYWs7
-DQo+IC0JCQljYXNlIENMS180NF83MzZNSHo6DQo+IC0JCQkJU0VUX1BPUlRfQklUUyhUTENMS19S
-RUcwLCAweGZjLCAxKTsNCj4gLQkJCQlicmVhazsNCj4gLQkJCX0NCj4gLQkJfSBlbHNlDQo+IC0J
-CQlTRVRfUE9SVF9CSVRTKFRMQ0xLX1JFRzMsIDB4ZjgsIHZhbCk7DQo+ICsJaWYgKCh2YWwgPT0g
-Q0xLXzhrSHopIHx8ICh2YWwgPT0gQ0xLXzE2XzM4NE1IeikpIHsNCj4gKwkJU0VUX1BPUlRfQklU
-UyhUTENMS19SRUczLCAweGY4LCAweDUpOw0KPiArCQlTRVRfUE9SVF9CSVRTKFRMQ0xLX1JFRzEs
-IDB4ZmIsIH52YWwpOw0KPiArCX0gZWxzZSBpZiAodmFsID49IENMS184XzU5Mk1Ieikgew0KPiAr
-CQlTRVRfUE9SVF9CSVRTKFRMQ0xLX1JFRzMsIDB4ZjgsIDB4Nyk7DQo+ICsJCXN3aXRjaCAodmFs
-KSB7DQo+ICsJCWNhc2UgQ0xLXzhfNTkyTUh6Og0KPiArCQkJU0VUX1BPUlRfQklUUyhUTENMS19S
-RUcwLCAweGZjLCAyKTsNCj4gKwkJCWJyZWFrOw0KPiArCQljYXNlIENMS18xMV8xODRNSHo6DQo+
-ICsJCQlTRVRfUE9SVF9CSVRTKFRMQ0xLX1JFRzAsIDB4ZmMsIDApOw0KPiArCQkJYnJlYWs7DQo+
-ICsJCWNhc2UgQ0xLXzM0XzM2OE1IejoNCj4gKwkJCVNFVF9QT1JUX0JJVFMoVExDTEtfUkVHMCwg
-MHhmYywgMyk7DQo+ICsJCQlicmVhazsNCj4gKwkJY2FzZSBDTEtfNDRfNzM2TUh6Og0KPiArCQkJ
-U0VUX1BPUlRfQklUUyhUTENMS19SRUcwLCAweGZjLCAxKTsNCj4gKwkJCWJyZWFrOw0KPiArCQl9
-DQo+ICsJfSBlbHNlDQo+ICsJCVNFVF9QT1JUX0JJVFMoVExDTEtfUkVHMywgMHhmOCwgdmFsKTsN
-Cj4gIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZldmVudF9sb2NrLCBmbGFncyk7DQo+IA0KPiAg
-CXJldHVybiBzdHJubGVuKGJ1ZiwgY291bnQpOw0KPiAtLQ0KPiAyLjE5LjENCg0K
+On Tue, 2018-10-30 at 11:57 +0000, Colin Ian King wrote:
+> $SUBJECT should be:
+> 
+> tlclk: clean an indentation issue, remove extraneous tabs
+
+Perhaps add missing braces for the last else uses as well?
+
+> On 30/10/2018 11:56, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+[]
+> > diff --git a/drivers/char/tlclk.c b/drivers/char/tlclk.c
+[]
+> > +	if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
+> > +		SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x28);
+> > +		SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
+> > +	} else if (val >= CLK_8_592MHz) {
+> > +		SET_PORT_BITS(TLCLK_REG3, 0xc7, 0x38);
+> > +		switch (val) {
+> > +		case CLK_8_592MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
+> > +			break;
+> > +		case CLK_11_184MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
+> > +			break;
+> > +		case CLK_34_368MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
+> > +			break;
+> > +		case CLK_44_736MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);.
+> > +			break;
+> > +		}
+> > +	} else
+> > +		SET_PORT_BITS(TLCLK_REG3, 0xc7, val << 3);
+
+here.
+
+> > @@ -548,27 +548,27 @@ static ssize_t store_select_amcb1_transmit_clock(struct device *d,
+[]
+> > +	if ((val = CLK_8kHz) || (val = CLK_16_384MHz)) {
+> > +		SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x5);
+> > +		SET_PORT_BITS(TLCLK_REG1, 0xfb, ~val);
+> > +	} else if (val >= CLK_8_592MHz) {
+> > +		SET_PORT_BITS(TLCLK_REG3, 0xf8, 0x7);
+> > +		switch (val) {
+> > +		case CLK_8_592MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 2);
+> > +			break;
+> > +		case CLK_11_184MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 0);
+> > +			break;
+> > +		case CLK_34_368MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 3);
+> > +			break;
+> > +		case CLK_44_736MHz:
+> > +			SET_PORT_BITS(TLCLK_REG0, 0xfc, 1);
+> > +			break;
+> > +		}
+> > +	} else
+> > +		SET_PORT_BITS(TLCLK_REG3, 0xf8, val);
+
+and here.
