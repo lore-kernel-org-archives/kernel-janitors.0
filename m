@@ -1,33 +1,64 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 08 Nov 2018 11:12:05 +0000
-Subject: Re: [PATCH -next] iommu/amd: remove set but not used variable 'tag'
-Message-Id: <6fef1aaf-e58e-720b-7060-353d6fd3901d@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Nov 2018 14:53:52 +0000
+Subject: [PATCH] rtc:  clean up indentation issues, remove extraneous space, add missing tabs
+Message-Id: <20181101145352.14104-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541657560-73681-1-git-send-email-yuehaibing@huawei.com>
- <20181108093237.GE19831@8bytes.org>
-In-Reply-To: <20181108093237.GE19831@8bytes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2018/11/8 17:32, Joerg Roedel wrote:
-> On Thu, Nov 08, 2018 at 06:12:40AM +0000, YueHaibing wrote:
->> -		tag = event[1] & 0x03FF;
->>  		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
->>  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
->>  			pasid, address, flags);
-> 
-> This looks like tag was just missed in the error message. It is better
-> to add it there instead of removing it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ok, will post a new patch.
+Trivial fix to clean up indentation issues, remove spaces, add missing
+tabs
 
-> 
-> Regards,
-> 
-> 	Joerg
-> 
-> .
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-ep93xx.c  | 2 +-
+ drivers/rtc/rtc-max6916.c | 2 +-
+ drivers/rtc/rtc-rk808.c   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/rtc/rtc-ep93xx.c b/drivers/rtc/rtc-ep93xx.c
+index 694038208745..1932a4f861d1 100644
+--- a/drivers/rtc/rtc-ep93xx.c
++++ b/drivers/rtc/rtc-ep93xx.c
+@@ -61,7 +61,7 @@ static int ep93xx_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	struct ep93xx_rtc *ep93xx_rtc = dev_get_platdata(dev);
+ 	unsigned long time;
+ 
+-	 time = readl(ep93xx_rtc->mmio_base + EP93XX_RTC_DATA);
++	time = readl(ep93xx_rtc->mmio_base + EP93XX_RTC_DATA);
+ 
+ 	rtc_time_to_tm(time, tm);
+ 	return 0;
+diff --git a/drivers/rtc/rtc-max6916.c b/drivers/rtc/rtc-max6916.c
+index 7e908a490cf6..9d4b407cc4b8 100644
+--- a/drivers/rtc/rtc-max6916.c
++++ b/drivers/rtc/rtc-max6916.c
+@@ -86,7 +86,7 @@ static int max6916_set_time(struct device *dev, struct rtc_time *dt)
+ 	if (dt->tm_year < 100 || dt->tm_year > 199) {
+ 		dev_err(&spi->dev, "Year must be between 2000 and 2099. It's %d.\n",
+ 			dt->tm_year + 1900);
+-	return -EINVAL;
++		return -EINVAL;
+ 	}
+ 
+ 	buf[0] = MAX6916_CLOCK_BURST & 0x7F;
+diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
+index 739c0d42e835..b2f9e45e0298 100644
+--- a/drivers/rtc/rtc-rk808.c
++++ b/drivers/rtc/rtc-rk808.c
+@@ -400,7 +400,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"Failed to write RTC status: %d\n", ret);
+-			return ret;
++		return ret;
+ 	}
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+-- 
+2.19.1
