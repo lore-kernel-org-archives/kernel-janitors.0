@@ -1,27 +1,49 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 19 Nov 2018 11:16:14 +0000
-Subject: Re: [PATCH 1/5] ALSA: asihpi: clean up indentation, replace spaces with tab
-Message-Id: <s5hefbh71xd.wl-tiwai@suse.de>
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+Date: Thu, 01 Nov 2018 19:24:35 +0000
+Subject: RE: [PATCH net-next] igc: Remove set but not used variables 'ctrl_ext, link_mode'
+Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B96598671@ORSMSX101.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181116150636.5226-1-colin.king@canonical.com>
-In-Reply-To: <20181116150636.5226-1-colin.king@canonical.com>
+References: <1539952830-187358-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539952830-187358-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "Neftin, Sasha" <sasha.neftin@intel.com>
+Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Fri, 16 Nov 2018 16:06:32 +0100,
-Colin King wrote:
+> From: netdev-owner@vger.kernel.org [mailto:netdev-
+> owner@vger.kernel.org] On Behalf Of YueHaibing
+> Sent: Friday, October 19, 2018 5:41 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Neftin, Sasha
+> <sasha.neftin@intel.com>
+> Cc: YueHaibing <yuehaibing@huawei.com>; intel-wired-lan@lists.osuosl.org;
+> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH net-next] igc: Remove set but not used variables 'ctrl_ext,
+> link_mode'
 > 
-> From: Colin Ian King <colin.king@canonical.com>
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> The struct declaration is not indented correctly. Fix this by replacing
-> spaces with a tab.
+> drivers/net/ethernet/intel/igc/igc_base.c: In function
+> 'igc_init_phy_params_base':
+> drivers/net/ethernet/intel/igc/igc_base.c:240:6: warning:
+>  variable 'ctrl_ext' set but not used [-Wunused-but-set-variable]
+>   u32 ctrl_ext;
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> drivers/net/ethernet/intel/igc/igc_base.c: In function
+> 'igc_get_invariants_base':
+> drivers/net/ethernet/intel/igc/igc_base.c:290:6: warning:
+>  variable 'link_mode' set but not used [-Wunused-but-set-variable]
+>   u32 link_mode = 0;
+> 
+> It never used since introduction in
+> commit c0071c7aa5fe ("igc: Add HW initialization code")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> I'm not sure that reading IGC_CTRL_EXT is necessary.
+> ---
+>  drivers/net/ethernet/intel/igc/igc_base.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
 
-Applied, thanks.
-
-
-Takashi
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
