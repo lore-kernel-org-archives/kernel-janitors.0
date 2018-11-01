@@ -1,32 +1,57 @@
-From: Keith Busch <keith.busch@intel.com>
-Date: Thu, 29 Nov 2018 15:08:56 +0000
-Subject: Re: [PATCH] scsi: Fix a harmless double shift bug
-Message-Id: <20181129150856.GB8332@localhost.localdomain>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Nov 2018 13:14:30 +0000
+Subject: [PATCH] cifs: don't dereference smb_file_target before null check
+Message-Id: <20181101131430.28901-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129103709.nthxjmmmlb2pdr6g@kili.mountain>
-In-Reply-To: <20181129103709.nthxjmmmlb2pdr6g@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 01:37:10PM +0300, Dan Carpenter wrote:
-> Smatch generates a warning:
-> 
->     drivers/scsi/scsi_lib.c:1656 scsi_mq_done() warn: test_bit() takes a bit number
-> 
-> The problem is that SCMD_STATE_COMPLETE is supposed to be bit number 0
-> and not a mask like "(1 << 0)".  It is used like this:
-> 
-> 	if (test_and_set_bit(SCMD_STATE_COMPLETE, &scmd->state))
-> 
-> The test_and_set_bit() has a shift built in so it's a double left shift
-> and uses bit number 1 instead of number 0.  This bug is harmless because
-> it's done consistently and it doesn't clash with any other flags.
-> 
-> Fixes: f1342709d18a ("scsi: Do not rely on blk-mq for double completions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Nice catch, thanks for the fix.
+There is a null check on dst_file->private data which suggests
+it can be potentially null. However, before this check, pointer
+smb_file_target is derived from dst_file->private and dereferenced
+in the call to tlink_tcon, hence there is a potential null pointer
+deference.
 
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+Fix this by assigning smb_file_target and target_tcon after the
+null pointer sanity checks.
+
+Detected by CoverityScan, CID#1475302 ("Dereference before null check")
+
+Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/cifsfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index e46af70153c0..db83938809a5 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1003,8 +1003,8 @@ static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
+ 	struct inode *src_inode = file_inode(src_file);
+ 	struct inode *target_inode = file_inode(dst_file);
+ 	struct cifsFileInfo *smb_file_src = src_file->private_data;
+-	struct cifsFileInfo *smb_file_target = dst_file->private_data;
+-	struct cifs_tcon *target_tcon = tlink_tcon(smb_file_target->tlink);
++	struct cifsFileInfo *smb_file_target;
++	struct cifs_tcon *target_tcon;
+ 	unsigned int xid;
+ 	int rc;
+ 
+@@ -1021,6 +1021,9 @@ static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
+ 		goto out;
+ 	}
+ 
++	smb_file_target = dst_file->private_data;
++	target_tcon = tlink_tcon(smb_file_target->tlink);
++
+ 	/*
+ 	 * Note: cifs case is easier than btrfs since server responsible for
+ 	 * checks for proper open modes and file type and if it wants
+-- 
+2.19.1
