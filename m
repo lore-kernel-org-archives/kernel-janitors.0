@@ -1,26 +1,27 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 06 Nov 2018 17:42:36 +0000
-Subject: Re: [PATCH 3/8] clk: palmas: constify clk_ops structure
-Message-Id: <154152615653.88331.17161218433869955843@swboyd.mtv.corp.google.com>
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+Date: Thu, 01 Nov 2018 19:29:05 +0000
+Subject: RE: [Intel-wired-lan] [PATCH] igc: Tidy up some white space
+Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B965986AF@ORSMSX101.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
- <1540619262-22681-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540619262-22681-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Michael Turquette <mturquette@baylibre.com>
-Cc: kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Quoting Julia Lawall (2018-10-26 22:47:37)
-> The clk_ops structure is only stored in the ops field of clk_init_data
-> structures.  This field is const, so the clk_ops structure can be
-> const as well.
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Dan Carpenter
+> Sent: Friday, October 19, 2018 12:58 PM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Neftin, Sasha
+> <sasha.neftin@intel.com>
+> Cc: kernel-janitors@vger.kernel.org; intel-wired-lan@lists.osuosl.org
+> Subject: [Intel-wired-lan] [PATCH] igc: Tidy up some white space
 > 
-> Identified and transformed using Coccinelle.
+> I just cleaned up a couple small white space issues.
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
+>  drivers/net/ethernet/intel/igc/igc_main.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
 
-Applied to clk-next
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
