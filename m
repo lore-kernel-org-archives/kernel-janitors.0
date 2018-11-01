@@ -1,35 +1,35 @@
-From: Dominique Martinet <asmadeus@codewreck.org>
-Date: Tue, 13 Nov 2018 13:08:31 +0000
-Subject: Re: [PATCH] net/9p: include trans_common.h to fix missing prototype warning.
-Message-Id: <20181113130831.GA8673@nautica>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Nov 2018 15:12:24 +0000
+Subject: [PATCH] input: atkbd: clean up indentation issue, add missing tab in an if statement
+Message-Id: <20181101151224.14840-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181113055324.GB5116@nautica>
- <b1c4df8f21689b10d451c28fe38e860722d20e71.1542089696.git.dato@net.com.org.es>
-In-Reply-To: <b1c4df8f21689b10d451c28fe38e860722d20e71.1542089696.git.dato@net.com.org.es>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Adeodato =?utf-8?B?U2ltw7M=?= <dato@net.com.org.es>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, v9fs-developer@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Adeodato Simó wrote on Tue, Nov 13, 2018:
-> This silences -Wmissing-prototypes when defining p9_release_pages.
-> 
-> Signed-off-by: Adeodato Simó <dato@net.com.org.es>
-> ---
->  net/9p/trans_common.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> It was suggested in the kernel-janitors mailing list that silencing
-> -Wmissing-prototypes would make for a worthy cause.
-> 
-> https://www.spinics.net/lists/linux-kernel-janitors/msg43981.html
-> 
-> Resending w/ Cc: linux-kernel as requested by Dominique.
+From: Colin Ian King <colin.king@canonical.com>
 
-Great, pushed to my for-next branch, it'll probably get in there today
-or tomorrow.
+Trivial fix to clean up indentation issues, add missing tab
 
-Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/keyboard/atkbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+index 7e75835e220f..850bb259c20e 100644
+--- a/drivers/input/keyboard/atkbd.c
++++ b/drivers/input/keyboard/atkbd.c
+@@ -841,7 +841,7 @@ static int atkbd_select_set(struct atkbd *atkbd, int target_set, int allow_extra
+ 	if (param[0] != 3) {
+ 		param[0] = 2;
+ 		if (ps2_command(ps2dev, param, ATKBD_CMD_SSCANSET))
+-		return 2;
++			return 2;
+ 	}
+ 
+ 	ps2_command(ps2dev, param, ATKBD_CMD_SETALL_MBR);
 -- 
-Dominique
+2.19.1
