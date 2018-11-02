@@ -1,27 +1,68 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Sat, 10 Nov 2018 03:08:24 +0000
-Subject: Re: [PATCH -next] block: remove set but not used variable 'et'
-Message-Id: <daa59ba1-5786-d181-bd4f-17aefd639ed9@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Nov 2018 19:01:26 +0000
+Subject: [PATCH][staging-next] drivers: staging: cedrus: find ctx before dereferencing it ctx
+Message-Id: <20181102190126.5628-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541817674-19370-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541817674-19370-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 11/9/18 7:41 PM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> block/blk-ioc.c: In function 'put_io_context_active':
-> block/blk-ioc.c:174:24: warning:
->  variable 'et' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more after commit
-> a1ce35fa4985 ("block: remove dead elevator code")
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+Currently if count is an invalid value the v4l2_info message will
+dereference a null ctx pointer to get the dev information. Fix
+this by finding ctx first and then checking for an invalid count,
+this way ctxt will be non-null hence avoiding the null pointer
+dereference.
 
+Detected by CoverityScan, CID#1475337 ("Explicit null dereferenced")
+
+Fixes: 50e761516f2b ("media: platform: Add Cedrus VPU decoder driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/sunxi/cedrus/cedrus.c | 22 ++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
+index 82558455384a..699d62dceb6c 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+@@ -108,17 +108,6 @@ static int cedrus_request_validate(struct media_request *req)
+ 	unsigned int count;
+ 	unsigned int i;
+ 
+-	count = vb2_request_buffer_cnt(req);
+-	if (!count) {
+-		v4l2_info(&ctx->dev->v4l2_dev,
+-			  "No buffer was provided with the request\n");
+-		return -ENOENT;
+-	} else if (count > 1) {
+-		v4l2_info(&ctx->dev->v4l2_dev,
+-			  "More than one buffer was provided with the request\n");
+-		return -EINVAL;
+-	}
+-
+ 	list_for_each_entry(obj, &req->objects, list) {
+ 		struct vb2_buffer *vb;
+ 
+@@ -133,6 +122,17 @@ static int cedrus_request_validate(struct media_request *req)
+ 	if (!ctx)
+ 		return -ENOENT;
+ 
++	count = vb2_request_buffer_cnt(req);
++	if (!count) {
++		v4l2_info(&ctx->dev->v4l2_dev,
++			  "No buffer was provided with the request\n");
++		return -ENOENT;
++	} else if (count > 1) {
++		v4l2_info(&ctx->dev->v4l2_dev,
++			  "More than one buffer was provided with the request\n");
++		return -EINVAL;
++	}
++
+ 	parent_hdl = &ctx->hdl;
+ 
+ 	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
 -- 
-Jens Axboe
+2.19.1
