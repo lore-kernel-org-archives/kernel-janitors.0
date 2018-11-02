@@ -1,36 +1,34 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 29 Nov 2018 05:52:13 +0000
-Subject: [PATCH -next] drm/tinydrm: Use kmemdup rather than duplicating its implementation in repaper_spi_tra
-Message-Id: <1543471233-159568-1-git-send-email-yuehaibing@huawei.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 02 Nov 2018 14:48:15 +0000
+Subject: [PATCH] media: rockchip/rga: constify video_device structure
+Message-Id: <1541170095-24104-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: noralf@tronnes.org, airlied@linux.ie
-Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-use kmemdup rather than duplicating its implementation
+The video_device structure is only copied into another structure, so
+it can be const.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/gpu/drm/tinydrm/repaper.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/rockchip/rga/rga.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tinydrm/repaper.c b/drivers/gpu/drm/tinydrm/repaper.c
-index 07f45a0..54d6fe0 100644
---- a/drivers/gpu/drm/tinydrm/repaper.c
-+++ b/drivers/gpu/drm/tinydrm/repaper.c
-@@ -108,12 +108,11 @@ static int repaper_spi_transfer(struct spi_device *spi, u8 header,
+diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
+index 9cc9db083870..4d3e08584027 100644
+--- a/drivers/media/platform/rockchip/rga/rga.c
++++ b/drivers/media/platform/rockchip/rga/rga.c
+@@ -700,7 +700,7 @@ static const struct v4l2_ioctl_ops rga_ioctl_ops = {
+ 	.vidioc_s_selection = vidioc_s_selection,
+ };
  
- 	/* Stack allocated tx? */
- 	if (tx && len <= 32) {
--		txbuf = kmalloc(len, GFP_KERNEL);
-+		txbuf = kmemdup(tx, len, GFP_KERNEL);
- 		if (!txbuf) {
- 			ret = -ENOMEM;
- 			goto out_free;
- 		}
--		memcpy(txbuf, tx, len);
- 	}
- 
- 	if (rx) {
+-static struct video_device rga_videodev = {
++static const struct video_device rga_videodev = {
+ 	.name = "rockchip-rga",
+ 	.fops = &rga_fops,
+ 	.ioctl_ops = &rga_ioctl_ops,
