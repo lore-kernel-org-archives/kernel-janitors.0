@@ -1,74 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 18 Nov 2018 16:36:56 +0000
-Subject: [PATCH] mtd: nftl: clean up indentation, remove extraneous tabs
-Message-Id: <20181118163656.30698-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 02 Nov 2018 15:11:55 +0000
+Subject: [PATCH] mailbox: hi3660: constify mbox_chan_ops structure
+Message-Id: <1541171515-24331-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The mbox_chan_ops structure can be const as it is only stored in the
+ops field of an mbox_controller structure and this field is const.
 
-The hunk of code is indented too much by one level, fix this by
-removing the extraneous tabs. Also terminate block comment using
-the recommended coding style to clean up checkpatch warning.
+Done with the help of Coccinelle.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/mtd/nftlmount.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ drivers/mailbox/hi3660-mailbox.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
-index 91b7fb326f9a..334aa5b3a655 100644
---- a/drivers/mtd/nftlmount.c
-+++ b/drivers/mtd/nftlmount.c
-@@ -346,25 +346,26 @@ int NFTL_formatblock(struct NFTLrecord *nftl, int block)
- 		goto fail;
- 	}
+diff --git a/drivers/mailbox/hi3660-mailbox.c b/drivers/mailbox/hi3660-mailbox.c
+index 3eea6b642484..c3fd1f2b797f 100644
+--- a/drivers/mailbox/hi3660-mailbox.c
++++ b/drivers/mailbox/hi3660-mailbox.c
+@@ -206,7 +206,7 @@ static int hi3660_mbox_send_data(struct mbox_chan *chan, void *msg)
+ 	return 0;
+ }
  
--		/* increase and write Wear-Leveling info */
--		nb_erases = le32_to_cpu(uci.WearInfo);
--		nb_erases++;
--
--		/* wrap (almost impossible with current flash) or free block */
--		if (nb_erases = 0)
--			nb_erases = 1;
--
--		/* check the "freeness" of Erase Unit before updating metadata
--		 * FixMe:  is this check really necessary ? since we have check the
--		 *         return code after the erase operation. */
--		if (check_free_sectors(nftl, instr->addr, nftl->EraseSize, 1) != 0)
--			goto fail;
--
--		uci.WearInfo = le32_to_cpu(nb_erases);
--		if (nftl_write_oob(mtd, block * nftl->EraseSize + SECTORSIZE +
--				   8, 8, &retlen, (char *)&uci) < 0)
--			goto fail;
--		return 0;
-+	/* increase and write Wear-Leveling info */
-+	nb_erases = le32_to_cpu(uci.WearInfo);
-+	nb_erases++;
-+
-+	/* wrap (almost impossible with current flash) or free block */
-+	if (nb_erases = 0)
-+		nb_erases = 1;
-+
-+	/* check the "freeness" of Erase Unit before updating metadata
-+	 * FixMe:  is this check really necessary ? since we have check the
-+	 *         return code after the erase operation.
-+	 */
-+	if (check_free_sectors(nftl, instr->addr, nftl->EraseSize, 1) != 0)
-+		goto fail;
-+
-+	uci.WearInfo = le32_to_cpu(nb_erases);
-+	if (nftl_write_oob(mtd, block * nftl->EraseSize + SECTORSIZE +
-+			   8, 8, &retlen, (char *)&uci) < 0)
-+		goto fail;
-+	return 0;
- fail:
- 	/* could not format, update the bad block table (caller is responsible
- 	   for setting the ReplUnitTable to BLOCK_RESERVED on failure) */
--- 
-2.19.1
+-static struct mbox_chan_ops hi3660_mbox_ops = {
++static const struct mbox_chan_ops hi3660_mbox_ops = {
+ 	.startup	= hi3660_mbox_startup,
+ 	.send_data	= hi3660_mbox_send_data,
+ };
