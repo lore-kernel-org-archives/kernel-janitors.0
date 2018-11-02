@@ -1,70 +1,60 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sat, 17 Nov 2018 03:28:08 +0000
-Subject: Applied "ASoC: tlv320dac33: clean up indentation, remove extraneous tab" to the asoc tree
-Message-Id: <20181117032808.3D89D440078@finisterre.ee.mobilebroadband>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 02 Nov 2018 18:33:55 +0000
+Subject: [PATCH 4.18 073/150] x86/paravirt: Fix some warning messages
+Message-Id: <20181102182908.682563548@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181116150636.5226-3-colin.king@canonical.com>
-In-Reply-To: <20181116150636.5226-3-colin.king@canonical.com>
+References: <20181102182902.250560510@linuxfoundation.org>
+In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-The patch
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-   ASoC: tlv320dac33: clean up indentation, remove extraneous tab
+------------------
 
-has been applied to the asoc tree at
+[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+The first argument to WARN_ONCE() is a condition.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 6857b9d0881e4cbf30237a1091e83a8e3e7ee7c3 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 16 Nov 2018 15:06:34 +0000
-Subject: [PATCH] ASoC: tlv320dac33: clean up indentation, remove extraneous
- tab
-
-The goto statement is indented too much by one level, fix this by
-removing the extraneous tab.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/tlv320dac33.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/paravirt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
-index a957eaeb7bc1..32907b1e20cf 100644
---- a/sound/soc/codecs/tlv320dac33.c
-+++ b/sound/soc/codecs/tlv320dac33.c
-@@ -394,7 +394,7 @@ static int dac33_hard_power(struct snd_soc_component *component, int power)
- 		if (ret != 0) {
- 			dev_err(component->dev,
- 				"Failed to enable supplies: %d\n", ret);
--				goto exit;
-+			goto exit;
- 		}
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 930c88341e4e..1fbf38dde84c 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
  
- 		if (dac33->power_gpio >= 0)
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
+@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
 -- 
-2.19.1
+2.17.1
