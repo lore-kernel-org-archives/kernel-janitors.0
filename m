@@ -1,33 +1,42 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 13 Nov 2018 11:13:04 +0000
-Subject: [PATCH -next] scsi: ufs: Use PTR_ERR_OR_ZERO in ufs_hisi_get_resource()
-Message-Id: <1542107584-23291-1-git-send-email-yuehaibing@huawei.com>
+From: Corey Minyard <minyard@acm.org>
+Date: Fri, 02 Nov 2018 19:43:37 +0000
+Subject: Re: [PATCH] ipmi: clean an indentation issue, remove extraneous space
+Message-Id: <72af05e6-68b8-b8c0-b6ac-a5a6fe327e73@acm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181030114652.17167-1-colin.king@canonical.com>
+In-Reply-To: <20181030114652.17167-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, openipmi-developer@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+On 10/30/18 6:46 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to clean up an indentation issue, remove space
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/ufs/ufs-hisi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
-index 452e19f..6fdf059 100644
---- a/drivers/scsi/ufs/ufs-hisi.c
-+++ b/drivers/scsi/ufs/ufs-hisi.c
-@@ -514,10 +514,7 @@ static int ufs_hisi_get_resource(struct ufs_hisi_host *host)
- 	/* get resource of ufs sys ctrl */
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	host->ufs_sys_ctrl = devm_ioremap_resource(dev, mem_res);
--	if (IS_ERR(host->ufs_sys_ctrl))
--		return PTR_ERR(host->ufs_sys_ctrl);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(host->ufs_sys_ctrl);
- }
- 
- static void ufs_hisi_set_pm_lvl(struct ufs_hba *hba)
+Queued for next release, thanks.
+
+-corey
+
+
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/char/ipmi/ipmi_ssif.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+> index d06e00e95891..a7701af8fcf2 100644
+> --- a/drivers/char/ipmi/ipmi_ssif.c
+> +++ b/drivers/char/ipmi/ipmi_ssif.c
+> @@ -1792,7 +1792,7 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   			       ssif_info,
+>   			       &ssif_info->client->dev,
+>   			       slave_addr);
+> -	 if (rv) {
+> +	if (rv) {
+>   		pr_err("Unable to register device: error %d\n", rv);
+>   		goto out_remove_attr;
+>   	}
