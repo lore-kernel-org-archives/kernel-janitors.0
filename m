@@ -1,34 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 01 Nov 2018 05:25:30 +0000
-Subject: [PATCH] scsi: bnx2fc: Fix NULL dereference in error handling
-Message-Id: <20181101052530.wcdusf5xc7l6pihz@kili.mountain>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 02 Nov 2018 18:34:36 +0000
+Subject: [PATCH 4.14 091/143] x86/paravirt: Fix some warning messages
+Message-Id: <20181102182905.146726078@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181102182857.064326086@linuxfoundation.org>
+In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-If "interface" is NULL then we can't release it and trying to will only
-lead to an Oops.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Fixes: aea71a024914 ("[SCSI] bnx2fc: Introduce interface structure for each vlan interface")
+------------------
+
+[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+
+The first argument to WARN_ONCE() is a condition.
+
+Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/paravirt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index cd160f2ec75d..bcd30e2374f1 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -2364,7 +2364,7 @@ static int _bnx2fc_create(struct net_device *netdev,
- 	if (!interface) {
- 		printk(KERN_ERR PFX "bnx2fc_interface_create failed\n");
- 		rc = -ENOMEM;
--		goto ifput_err;
-+		goto netdev_err;
- 	}
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index f3559b84cd75..04da826381c9 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
  
- 	if (is_vlan_dev(netdev)) {
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
+@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
 -- 
-2.11.0
+2.17.1
