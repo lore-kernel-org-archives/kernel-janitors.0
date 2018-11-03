@@ -1,22 +1,27 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Fri, 09 Nov 2018 11:08:17 +0000
-Subject: Re: mtd: Kconfig: fix spelling mistake "partions" -> "partition"
-Message-Id: <20181109110817.2192-1-boris.brezillon@bootlin.com>
+From: "Dr Kannan" <sale@allta.com.ua>
+Date: Sat, 03 Nov 2018 16:26:11 +0000
+Subject: Update
+Message-Id: <20181103162559.866ED1803A7@mail.allta.com.ua>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20180911124234.32744-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Recipients <sale@allta.com.ua>
 
-On Tue, 2018-09-11 at 12:42:34 UTC, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in the Kconfig text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hello dear
 
-Applied to http://git.infradead.org/linux-mtd.git mtd/next, thanks.
+Greetings to you,I am Dr.Kannan, a personal account manager to Late Engr. Richard Hernandez, who died with his family in the missing Malaysian Air crash
 
-Thanks!
+of 2014. His account with us is in intestate with no claim his fixed deposit of U$D 7 Million.
+
+I have been mandated by the Bank Management as his personal account officer, to present his relative or next of kin.
+
+I have searched through notary register of his country here all to no avail, so I wish to present you to the Bank as his only relative and next of kin.
+
+kindly contact me for more details, terms and condition shall be clarified upon your response. There is no risk whatsoever to this transaction as I have all papers and documents to pose of you the inheritance to this. 
+
+I wait for your prompt response.
+
+My regards,
+
+Dr. Kannan.
