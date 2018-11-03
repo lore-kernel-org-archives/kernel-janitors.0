@@ -1,26 +1,34 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Sat, 10 Nov 2018 13:03:29 +0000
-Subject: Re: [PATCH -next] sysv: return 'err' instead of 0 in __sysv_write_inode
-Message-Id: <20181110130329.GE32577@ZenIV.linux.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 03 Nov 2018 15:59:44 +0000
+Subject: [PATCH] cifs: clean up indentation, replace spaces with tab
+Message-Id: <20181103155944.3028-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541823204-45068-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541823204-45068-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Christoph Hellwig <hch@infradead.org>, David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 04:13:24AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> fs/sysv/inode.c: In function '__sysv_write_inode':
-> fs/sysv/inode.c:239:6: warning:
->  variable 'err' set but not used [-Wunused-but-set-variable]
-> 
-> __sysv_write_inode should return 'err' instead of 0
-> 
-> Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+Trivial fix to clean up indentation, replace spaces with tab
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/cifsencrypt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/cifs/cifsencrypt.c b/fs/cifs/cifsencrypt.c
+index 85b31cfa2f3c..ecdff344e8fe 100644
+--- a/fs/cifs/cifsencrypt.c
++++ b/fs/cifs/cifsencrypt.c
+@@ -224,7 +224,7 @@ int cifs_verify_signature(struct smb_rqst *rqst,
+ 	if (cifs_pdu->Command = SMB_COM_LOCKING_ANDX) {
+ 		struct smb_com_lock_req *pSMB  			(struct smb_com_lock_req *)cifs_pdu;
+-	    if (pSMB->LockType & LOCKING_ANDX_OPLOCK_RELEASE)
++		if (pSMB->LockType & LOCKING_ANDX_OPLOCK_RELEASE)
+ 			return 0;
+ 	}
+ 
+-- 
+2.19.1
