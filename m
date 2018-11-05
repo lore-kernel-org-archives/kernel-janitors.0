@@ -1,43 +1,31 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 19 Nov 2018 02:10:41 +0000
-Subject: [PATCH -next] Input: olpc_apsp - remove set but not used variable 'np'
-Message-Id: <1542593441-169671-1-git-send-email-yuehaibing@huawei.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 05 Nov 2018 11:12:33 +0000
+Subject: Re: [PATCH][ath10k-next] ath10k: fix some spelling mistakes
+Message-Id: <20181105111233.289C260AD8@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181018215104.10444-1-colin.king@canonical.com>
+In-Reply-To: <20181018215104.10444-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Colin King <colin.king@canonical.com> wrote:
 
-drivers/input/serio/olpc_apsp.c: In function 'olpc_apsp_probe':
-drivers/input/serio/olpc_apsp.c:192:22: warning:
- variable 'np' set but not used [-Wunused-but-set-variable]
+> Trivial fix to some spelling mistakes in ath10k_err and ath10k_dbg
+> messages:
+> "capablity" -> "capability"
+> "registed" -> "registered"
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-It never used since intrdduction in commit
-b56ece9a3ac3 ("Input: add OLPC AP-SP driver")
+Patch applied to ath-next branch of ath.git, thanks.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/input/serio/olpc_apsp.c | 2 --
- 1 file changed, 2 deletions(-)
+eb9bd8b963d6 ath10k: fix some spelling mistakes
 
-diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
-index 91d6fb8..b360847 100644
---- a/drivers/input/serio/olpc_apsp.c
-+++ b/drivers/input/serio/olpc_apsp.c
-@@ -189,14 +189,12 @@ static int olpc_apsp_probe(struct platform_device *pdev)
- 	struct serio *kb_serio, *pad_serio;
- 	struct olpc_apsp *priv;
- 	struct resource *res;
--	struct device_node *np;
- 	int error;
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
--	np = pdev->dev.of_node;
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(priv->base)) {
+-- 
+https://patchwork.kernel.org/patch/10648317/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
