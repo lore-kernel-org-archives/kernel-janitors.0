@@ -1,46 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Nov 2018 23:03:42 +0000
-Subject: [PATCH] power: supply: cpcap-battery: make array cpcap_battery_irqs static, shrinks object size
-Message-Id: <20181129230342.4300-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 05 Nov 2018 11:59:19 +0000
+Subject: Applied "ASoC: smd845: constify snd_soc_ops structure" to the asoc tree
+Message-Id: <20181105115919.AE2871124D98@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1541170818-24219-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1541170818-24219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Don't populate the array cpcap_battery_irqs  on the stack but instead
-make it static. Makes the object code smaller by 99 bytes:
+   ASoC: smd845: constify snd_soc_ops structure
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  13673	   2448	      0	  16121	   3ef9	cpcap-battery.o
+has been applied to the asoc tree at
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  13510	   2512	      0	  16022	   3e96	cpcap-battery.o
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-(gcc version 8.2.0 x86_64)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From ff60005e4598ca9a79fa6d8378dd35a668ae4de7 Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 2 Nov 2018 16:00:18 +0100
+Subject: [PATCH] ASoC: smd845: constify snd_soc_ops structure
+
+The snd_soc_ops structure can be const as it is only stored in the
+ops field of a snd_soc_dai_link structure and this field is const.
+
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/power/supply/cpcap-battery.c | 2 +-
+ sound/soc/qcom/sdm845.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/supply/cpcap-battery.c b/drivers/power/supply/cpcap-battery.c
-index 98ba07869c3b..204e22e3e9b4 100644
---- a/drivers/power/supply/cpcap-battery.c
-+++ b/drivers/power/supply/cpcap-battery.c
-@@ -620,7 +620,7 @@ static int cpcap_battery_init_irq(struct platform_device *pdev,
- static int cpcap_battery_init_interrupts(struct platform_device *pdev,
- 					 struct cpcap_battery_ddata *ddata)
- {
--	const char * const cpcap_battery_irqs[] = {
-+	static const char * const cpcap_battery_irqs[] = {
- 		"eol", "lowbph", "lowbpl",
- 		"chrgcurr1", "battdetb"
- 	};
+diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
+index 9effbecc571f..8d0cdff64377 100644
+--- a/sound/soc/qcom/sdm845.c
++++ b/sound/soc/qcom/sdm845.c
+@@ -171,7 +171,7 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+ 	}
+ }
+ 
+-static struct snd_soc_ops sdm845_be_ops = {
++static const struct snd_soc_ops sdm845_be_ops = {
+ 	.hw_params = sdm845_snd_hw_params,
+ 	.startup = sdm845_snd_startup,
+ 	.shutdown = sdm845_snd_shutdown,
 -- 
-2.19.1
+2.19.0.rc2
