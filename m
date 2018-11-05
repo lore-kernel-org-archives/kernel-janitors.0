@@ -1,73 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Nov 2018 16:47:37 +0000
-Subject: [bug report] net: systemport: Restore Broadcom tag match filters upon resume
-Message-Id: <20181122164736.ech7lz2gknoaqqrr@kili.mountain>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 05 Nov 2018 11:58:24 +0000
+Subject: Applied "ASoC: AMD: constify regulator_desc structure" to the asoc tree
+Message-Id: <20181105115824.0D0071124D98@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540706168-30601-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540706168-30601-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>alsa-devel@alsa-project.org
 
-Hello Florian Fainelli,
+The patch
 
-The patch 80f8dea8767e: "net: systemport: Restore Broadcom tag match
-filters upon resume" from Nov 6, 2018, leads to the following static
-checker warning:
+   ASoC: AMD: constify regulator_desc structure
 
-	drivers/net/ethernet/broadcom/bcmsysport.c:2202 bcm_sysport_rule_set()
-	warn: array off by one? 'priv->filters_loc[index]'
+has been applied to the asoc tree at
 
-drivers/net/ethernet/broadcom/bcmsysport.c
-  2168  static int bcm_sysport_rule_set(struct bcm_sysport_priv *priv,
-  2169                                  struct ethtool_rxnfc *nfc)
-  2170  {
-  2171          unsigned int index;
-  2172          u32 reg;
-  2173  
-  2174          /* We cannot match locations greater than what the classification ID
-  2175           * permits (256 entries)
-  2176           */
-  2177          if (nfc->fs.location > RXCHK_BRCM_TAG_CID_MASK)
-  2178                  return -E2BIG;
-  2179  
-  2180          /* We cannot support flows that are not destined for a wake-up */
-  2181          if (nfc->fs.ring_cookie != RX_CLS_FLOW_WAKE)
-  2182                  return -EOPNOTSUPP;
-  2183  
-  2184          /* All filters are already in use, we cannot match more rules */
-  2185          if (bitmap_weight(priv->filters, RXCHK_BRCM_TAG_MAX) =
-  2186              RXCHK_BRCM_TAG_MAX)
-  2187                  return -ENOSPC;
-                        ^^^^^^^^^^^^^^
-This check means we have space.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-  2188  
-  2189          index = find_first_zero_bit(priv->filters, RXCHK_BRCM_TAG_MAX);
-  2190          if (index > RXCHK_BRCM_TAG_MAX)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
-This check is off by one, but it's not required.  You could fix it or
-delete it?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-  2191                  return -ENOSPC;
-  2192  
-  2193          /* Location is the classification ID, and index is the position
-  2194           * within one of our 8 possible filters to be programmed
-  2195           */
-  2196          reg = rxchk_readl(priv, RXCHK_BRCM_TAG(index));
-  2197          reg &= ~(RXCHK_BRCM_TAG_CID_MASK << RXCHK_BRCM_TAG_CID_SHIFT);
-  2198          reg |= nfc->fs.location << RXCHK_BRCM_TAG_CID_SHIFT;
-  2199          rxchk_writel(priv, reg, RXCHK_BRCM_TAG(index));
-  2200          rxchk_writel(priv, 0xff00ffff, RXCHK_BRCM_TAG_MASK(index));
-  2201  
-  2202          priv->filters_loc[index] = nfc->fs.location;
-                                  ^^^^^
-  2203          set_bit(index, priv->filters);
-                        ^^^^^
-Off by one.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-  2204  
-  2205          return 0;
-  2206  }
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-regards,
-dan carpenter
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From de3636488cff3678bafaf2d024e64c003ed2beae Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 28 Oct 2018 06:56:08 +0100
+Subject: [PATCH] ASoC: AMD: constify regulator_desc structure
+
+The regulator_desc structure can be const as it is only passed as the
+second argument of devm_regulator_register and the corresponding
+parameter is declared as const.
+
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/amd/acp-da7219-max98357a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+index 3f813ea5210a..a5daad973ce5 100644
+--- a/sound/soc/amd/acp-da7219-max98357a.c
++++ b/sound/soc/amd/acp-da7219-max98357a.c
+@@ -403,7 +403,7 @@ static struct regulator_config acp_da7219_cfg = {
+ static struct regulator_ops acp_da7219_ops = {
+ };
+ 
+-static struct regulator_desc acp_da7219_desc = {
++static const struct regulator_desc acp_da7219_desc = {
+ 	.name = "reg-fixed-1.8V",
+ 	.type = REGULATOR_VOLTAGE,
+ 	.owner = THIS_MODULE,
+-- 
+2.19.0.rc2
