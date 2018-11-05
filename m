@@ -1,44 +1,96 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 25 Nov 2018 17:09:18 +0000
-Subject: [PATCH] drm/nouveau/bios/ramcfg: fix missing parentheses when calculating RON
-Message-Id: <20181125170918.8088-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 05 Nov 2018 11:58:44 +0000
+Subject: Applied "ASoC: qdsp6: q6afe-dai: constify snd_soc_dai_ops structures" to the asoc tree
+Message-Id: <20181105115844.ACB431124D98@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540647284-26728-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540647284-26728-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Currently, the expression for calculating RON is always going to result
-in zero no matter the value of ram->mr[1] because the ! operator has
-higher precedence than the shift >> operator.  I believe the missing
-parentheses around the expression before appying the ! operator will
-result in the desired result.
+   ASoC: qdsp6: q6afe-dai: constify snd_soc_dai_ops structures
 
-[ Note, not tested ]
+has been applied to the asoc tree at
 
-Detected by CoveritScan, CID#1324005 ("Operands don't affect result")
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Fixes: c25bf7b6155c ("drm/nouveau/bios/ramcfg: Separate out RON pull value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7dfcd9d727c3e69ecb51c0bb4d54b3d46de98e87 Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 27 Oct 2018 15:34:43 +0200
+Subject: [PATCH] ASoC: qdsp6: q6afe-dai: constify snd_soc_dai_ops structures
+
+The snd_soc_dai_ops structures are only stored in the ops field of a
+snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
+const as well.
+
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/qcom/qdsp6/q6afe-dai.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-index 60ece0a8a2e1..1d2d6bae73cd 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-@@ -87,7 +87,7 @@ nvkm_gddr3_calc(struct nvkm_ram *ram)
- 		WR  = (ram->next->bios.timing[2] & 0x007f0000) >> 16;
- 		/* XXX: Get these values from the VBIOS instead */
- 		DLL = !(ram->mr[1] & 0x1);
--		RON = !(ram->mr[1] & 0x300) >> 8;
-+		RON = !((ram->mr[1] & 0x300) >> 8);
- 		break;
- 	default:
- 		return -ENOSYS;
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index 60ff4a2d3577..a07a4538d5cf 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -561,13 +561,13 @@ static const struct snd_soc_dapm_route q6afe_dapm_routes[] = {
+ 	{"QUAT_MI2S_TX", NULL, "Quaternary MI2S Capture"},
+ };
+ 
+-static struct snd_soc_dai_ops q6hdmi_ops = {
++static const struct snd_soc_dai_ops q6hdmi_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.hw_params	= q6hdmi_hw_params,
+ 	.shutdown	= q6afe_dai_shutdown,
+ };
+ 
+-static struct snd_soc_dai_ops q6i2s_ops = {
++static const struct snd_soc_dai_ops q6i2s_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.hw_params	= q6i2s_hw_params,
+ 	.set_fmt	= q6i2s_set_fmt,
+@@ -575,14 +575,14 @@ static struct snd_soc_dai_ops q6i2s_ops = {
+ 	.set_sysclk	= q6afe_mi2s_set_sysclk,
+ };
+ 
+-static struct snd_soc_dai_ops q6slim_ops = {
++static const struct snd_soc_dai_ops q6slim_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.hw_params	= q6slim_hw_params,
+ 	.shutdown	= q6afe_dai_shutdown,
+ 	.set_channel_map = q6slim_set_channel_map,
+ };
+ 
+-static struct snd_soc_dai_ops q6tdm_ops = {
++static const struct snd_soc_dai_ops q6tdm_ops = {
+ 	.prepare	= q6afe_dai_prepare,
+ 	.shutdown	= q6afe_dai_shutdown,
+ 	.set_sysclk	= q6afe_mi2s_set_sysclk,
 -- 
-2.19.1
+2.19.0.rc2
