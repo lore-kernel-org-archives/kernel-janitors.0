@@ -1,32 +1,74 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 14 Nov 2018 09:55:34 +0000
-Subject: [PATCH -next] drm/msm/hdmi: Drop pointless static qualifier in msm_hdmi_bind()
-Message-Id: <1542189334-47735-1-git-send-email-yuehaibing@huawei.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 05 Nov 2018 11:59:30 +0000
+Subject: Applied "ASoC: stm32: sai: fix less than zero comparison on unsigned int" to the asoc tree
+Message-Id: <20181105115930.494DC1124D98@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181031193143.6994-1-colin.king@canonical.com>
+In-Reply-To: <20181031193143.6994-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Mamta Shukla <mamtashukla555-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todor Tomov <todor.tomov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org
 
-There is no need to have the 'struct hdmi_platform_config *hdmi_cfg'
-variable static since new value always be assigned before use it.
+The patch
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+   ASoC: stm32: sai: fix less than zero comparison on unsigned int
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6b27e27729270a2478fdebea2db9c4f57bb4e8e6 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 31 Oct 2018 19:31:43 +0000
+Subject: [PATCH] ASoC: stm32: sai: fix less than zero comparison on unsigned
+ int
+
+Currently, the comparison of div < 0 is always false because div is
+an unsigned int. Fix this by making div an int.
+
+Detected by CoverityScan, CID#1475309 ("Unsigned compared against 0")
+
+Fixes: 8307b2afd386 "(ASoC: stm32: sai: set sai as mclk clock provider")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/msm/hdmi/hdmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/stm/stm32_sai_sub.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
-index 74ffc24..ace8aab 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
-@@ -577,7 +577,7 @@ static int msm_hdmi_bind(struct device *dev, struct device *master, void *data)
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index ea05cc91aa05..506423d5861a 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -336,8 +336,7 @@ static int stm32_sai_mclk_set_rate(struct clk_hw *hw, unsigned long rate,
  {
- 	struct drm_device *drm = dev_get_drvdata(master);
- 	struct msm_drm_private *priv = drm->dev_private;
--	static struct hdmi_platform_config *hdmi_cfg;
-+	struct hdmi_platform_config *hdmi_cfg;
- 	struct hdmi *hdmi;
- 	struct device_node *of_node = dev->of_node;
- 	int i, err;
+ 	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
+ 	struct stm32_sai_sub_data *sai = mclk->sai_data;
+-	unsigned int div;
+-	int ret;
++	int div, ret;
+ 
+ 	div = stm32_sai_get_clk_div(sai, parent_rate, rate);
+ 	if (div < 0)
+-- 
+2.19.0.rc2
