@@ -1,39 +1,33 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Thu, 01 Nov 2018 19:26:22 +0000
-Subject: RE: [Intel-wired-lan] [PATCH][next] igc: fix error return handling from call to netif_set_real_num_t
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B9659869C@ORSMSX101.amr.corp.intel.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 05 Nov 2018 11:11:09 +0000
+Subject: Re: [PATCH] ath10k: Fixup extended per sta tx statistics
+Message-Id: <20181105111109.231AA6053D@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181019181615.27528-1-colin.king@canonical.com>
-In-Reply-To: <20181019181615.27528-1-colin.king@canonical.com>
+References: <20181018073619.c2cxj74enkramhjr@kili.mountain>
+In-Reply-To: <20181018073619.c2cxj74enkramhjr@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Neftin, Sasha" <sasha.neftin@intel.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Anilkumar Kolli <akolli@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Colin King
-> Sent: Friday, October 19, 2018 11:16 AM
-> To: Neftin, Sasha <sasha.neftin@intel.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; David S . Miller <davem@davemloft.net>;
-> intel-wired-lan@lists.osuosl.org
-> Cc: netdev@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH][next] igc: fix error return handling from
-> call to netif_set_real_num_tx_queues
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to netif_set_real_num_tx_queues is not assigning the error
-> return to variable err even though the next line checks err for an
-> error.  Fix this by adding the missing err assignment.
-> 
-> Detected by CoverityScan, CID#1474551 ("Logically dead code")
-> 
-> Fixes: 3df25e4c1e66 ("igc: Add interrupt support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/intel/igc/igc_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+> I had a couple concerns with this code.  First, we definitely need to
+> set the error code if the kzalloc() fails.  Secondly, I was worried that
+> if we didn't set "arsta->tx_stats" to NULL after freeing it, then it
+> looks to me like it might lead to a use after free.  I can't test that,
+> but it's harmless to set it to NULL so I did.
+> 
+> Fixes: a904417fc876 ("ath10k: add extended per sta tx statistics support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+539b44e70c5b ath10k: fixup extended per sta tx statistics
+
+-- 
+https://patchwork.kernel.org/patch/10646825/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
