@@ -1,62 +1,35 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Fri, 30 Nov 2018 08:18:48 +0000
-Subject: Re: [PATCH] drm/mgag200: make array m_div_val static, shrinks object size
-Message-Id: <862154684.73704.1543565929105@ox-groupware.bfs.de>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 05 Nov 2018 11:13:27 +0000
+Subject: Re: [PATCH] ath10k: remove set but not used variable 'tlv_len'
+Message-Id: <20181105111327.C9786607CA@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129234051.5463-1-colin.king@canonical.com>
-In-Reply-To: <20181129234051.5463-1-colin.king@canonical.com>
+References: <1539951626-185764-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539951626-185764-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-Am 30.11.2018 00:40, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Don't populate the const array m_div_val on the stack but instead
-> make it static. Makes the object code smaller by 60 bytes:
+> drivers/net/wireless/ath/ath10k/wmi-tlv.c: In function 'ath10k_wmi_tlv_op_gen_config_pno_start':
+> drivers/net/wireless/ath/ath10k/wmi-tlv.c:3455:6: warning:
+>  variable 'tlv_len' set but not used [-Wunused-but-set-variable]
 > 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   32339	   1728	      0	  34067	   8513	mgag200/mgag200_mode.o
+> It never used since inroduction in commit
+> ce834e280f2f ("ath10k: support NET_DETECT WoWLAN feature")
 > 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   32215	   1792	      0	  34007	   84d7	mgag200/mgag200_mode.o
-> 
-> (gcc version 8.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/mgag200/mgag200_mode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c
-> b/drivers/gpu/drm/mgag200/mgag200_mode.c
-> index acf7bfe68454..9939f0174bf7 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_mode.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
-> @@ -629,7 +629,7 @@ static int mga_g200er_set_plls(struct mga_device *mdev,
-> long clock)
->  	unsigned int p, m, n;
->  	unsigned int computed, vco;
->  	int tmp;
-> -	const unsigned int m_div_val[] = { 1, 2, 4, 8 };
-> +	static const unsigned int m_div_val[] = { 1, 2, 4, 8 };
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-hi,
-is that array needed at all ? obvious it is 2^n
-i found only one use:
- computed = vco / (m_div_val[testm] * (testo + 1));
+Patch applied to ath-next branch of ath.git, thanks.
 
-just my 2 cents,
+3468404f78e1 ath10k: remove set but not used variable 'tlv_len'
 
-re,
- wh
+-- 
+https://patchwork.kernel.org/patch/10649069/
 
-
->  
->  	m = n = p = 0;
->  	vcomax = 1488000;
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
