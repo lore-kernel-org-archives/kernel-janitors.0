@@ -1,20 +1,35 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Thu, 08 Nov 2018 14:19:27 +0000
-Subject: RE: [PATCH] usb: gadget: fix spelling mistakeis "[En]queing" -> "[En]queuing"
-Message-Id: <66d0fa13f6b6409bbc6b080ae58273ff@AcuMS.aculab.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 06 Nov 2018 16:52:54 +0000
+Subject: Re: [PATCH] libertas: remove set but not used variable 'int_type'
+Message-Id: <20181106165254.B70E261340@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180929114313.10557-1-colin.king@canonical.com>
- <1541642122.1498358.1569514624.6EA70C69@webmail.messagingengine.com>
-In-Reply-To: <1541642122.1498358.1569514624.6EA70C69@webmail.messagingengine.com>
+References: <1539569795-176889-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539569795-176889-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Lubomir Rintel <lkundrak@v3.sk>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-RnJvbTogQW5kcmV3IEplZmZlcnkNCj4gU2VudDogMDggTm92ZW1iZXIgMjAxOCAwMTo1NQ0KPiA+
-IC0JCUVQREJHKGVwLCJFbnF1ZWluZyByZXF1ZXN0IG9uIHdyb25nIG9yIGRpc2FibGVkIEVQXG4i
-KTsNCj4gPiArCQlFUERCRyhlcCwgIkVucXVldWluZyByZXF1ZXN0IG9uIHdyb25nIG9yIGRpc2Fi
-bGVkIEVQXG4iKTsNCg0KU2hvdWxkbid0IGl0IGJlIEVucXVldWVpbmcgPw0KDQoJRGF2aWQNCg0K
-LQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0s
-IE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdh
-bGVzKQ0K
+YueHaibing <yuehaibing@huawei.com> wrote:
+
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/net/wireless/marvell/libertas/if_spi.c: In function 'if_spi_h2c':
+> drivers/net/wireless/marvell/libertas/if_spi.c:799:6: warning:
+>  variable 'int_type' set but not used [-Wunused-but-set-variable]
+> 
+> It never used since introduction in
+> commit d2b21f191753 ("libertas: if_spi, driver for libertas GSPI devices")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Tested-by: Lubomir Rintel <lkundrak@v3.sk>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+937a13091cbd libertas: remove set but not used variable 'int_type'
+
+-- 
+https://patchwork.kernel.org/patch/10641005/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
