@@ -1,38 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 16 Nov 2018 15:06:36 +0000
-Subject: [PATCH 5/5] ASoC: qcom: clean up indentation, remove extraneous tab
-Message-Id: <20181116150636.5226-5-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 06 Nov 2018 16:53:32 +0000
+Subject: Re: [PATCH] wlcore: Fix the return value in case of error in 'wlcore_vendor_cmd_smart_config_start()
+Message-Id: <20181106165332.9446F60BDE@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181116150636.5226-1-colin.king@canonical.com>
-In-Reply-To: <20181116150636.5226-1-colin.king@canonical.com>
+References: <20181016073940.26797-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20181016073940.26797-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, tony@atomide.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-The return statement is indented too much by one level, fix this by
-removing the extraneous tab.
+> We return 0 unconditionally at the end of
+> 'wlcore_vendor_cmd_smart_config_start()'.
+> However, 'ret' is set to some error codes in several error handling paths
+> and we already return some error codes at the beginning of the function.
+> 
+> Return 'ret' instead to propagate the error code.
+> 
+> Fixes: 80ff8063e87c ("wlcore: handle smart config vendor commands")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/qcom/lpass-platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
-index d07271ea4c45..028bce671cbc 100644
---- a/sound/soc/qcom/lpass-platform.c
-+++ b/sound/soc/qcom/lpass-platform.c
-@@ -91,7 +91,7 @@ static int lpass_platform_pcmops_open(struct snd_pcm_substream *substream)
- 	if (ret) {
- 		dev_err(soc_runtime->dev,
- 			"error writing to rdmactl reg: %d\n", ret);
--			return ret;
-+		return ret;
- 	}
- 
- 	data->dma_ch = dma_ch;
+3419348a97bc wlcore: Fix the return value in case of error in 'wlcore_vendor_cmd_smart_config_start()'
+
 -- 
-2.19.1
+https://patchwork.kernel.org/patch/10643195/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
