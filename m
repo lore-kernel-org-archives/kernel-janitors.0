@@ -1,46 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Nov 2018 23:10:16 +0000
-Subject: [PATCH] fpga: mgr: altera-ps-spi: make array dummy static, shrinks object size
-Message-Id: <20181129231016.4580-1-colin.king@canonical.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Tue, 06 Nov 2018 17:43:44 +0000
+Subject: Re: [PATCH 6/8] clk: s2mps11: constify clk_ops structure
+Message-Id: <154152622426.88331.17363838226504925494@swboyd.mtv.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Quoting Julia Lawall (2018-10-26 22:47:40)
+> The clk_ops structure is only stored in the ops fields of
+> clk_init_data structures.  This field is const, so the clk_ops
+> structure can be const as well.
+> 
+> Identified and transformed using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
 
-Don't populate the const array dummy on the stack but instead
-make it static. Makes the object code smaller by 26 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   7371	   2032	      0	   9403	   24bb	drivers/fpga/altera-ps-spi.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-   7281	   2096	      0	   9377	   24a1	drivers/fpga/altera-ps-spi.o
-
-(gcc version 8.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/fpga/altera-ps-spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
-index 8c18beec6b57..678d0115f840 100644
---- a/drivers/fpga/altera-ps-spi.c
-+++ b/drivers/fpga/altera-ps-spi.c
-@@ -205,7 +205,7 @@ static int altera_ps_write_complete(struct fpga_manager *mgr,
- 				    struct fpga_image_info *info)
- {
- 	struct altera_ps_conf *conf = mgr->priv;
--	const char dummy[] = {0};
-+	static const char dummy[] = {0};
- 	int ret;
- 
- 	if (gpiod_get_value_cansleep(conf->status)) {
--- 
-2.19.1
+Applied to clk-next
