@@ -1,27 +1,26 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 29 Nov 2018 15:17:20 +0000
-Subject: Re: [PATCH 2/2] blk-mq: Add a NULL check in blk_mq_free_map_and_requests()
-Message-Id: <6224d24a-a04c-ccdc-6adc-23da4d10eaa7@kernel.dk>
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Tue, 06 Nov 2018 17:41:39 +0000
+Subject: Re: [PATCH 1/8] clk: max77686: constify clk_ops structure
+Message-Id: <154152609937.88331.11993895406323284065@swboyd.mtv.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129105654.5icpvxx7p2kq257c@kili.mountain>
-In-Reply-To: <20181129105654.5icpvxx7p2kq257c@kili.mountain>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Omar Sandoval <osandov@fb.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
-On 11/29/18 3:56 AM, Dan Carpenter wrote:
-> I recently found some code which called blk_mq_free_map_and_requests()
-> with a NULL set->tags pointer.  I fixed the caller, but it seems like a
-> good idea to add a NULL check here as well.  Now we can call:
+Quoting Julia Lawall (2018-10-26 22:47:35)
+> The clk_ops structure is only stored in the ops field of a
+> clk_init_data structure.  This field is const, so the clk_ops
+> structure can be const as well.
 > 
-> 	blk_mq_free_tag_set(set);
-> 	blk_mq_free_tag_set(set);
+> Identified and transformed using Coccinelle.
 > 
-> twice in a row and it's harmless.
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
 
-Applied, thanks.
-
--- 
-Jens Axboe
+Applied to clk-next
