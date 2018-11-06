@@ -1,55 +1,29 @@
-From: Lubomir Rintel <lkundrak@v3.sk>
-Date: Mon, 19 Nov 2018 08:16:06 +0000
-Subject: Re: [PATCH -next] Input: olpc_apsp - remove set but not used variable 'np'
-Message-Id: <ebfe75caa621e325343c3b36e1778ef85200a3d5.camel@v3.sk>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 06 Nov 2018 16:52:26 +0000
+Subject: Re: [PATCH] rsi: fix spelling mistake "Initialzing" -> "Initializing"
+Message-Id: <20181106165227.0066360B62@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181013153730.5761-1-colin.king@canonical.com>
+In-Reply-To: <20181013153730.5761-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-19 at 02:10 +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/input/serio/olpc_apsp.c: In function 'olpc_apsp_probe':
-> drivers/input/serio/olpc_apsp.c:192:22: warning:
->  variable 'np' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since intrdduction in commit
-> b56ece9a3ac3 ("Input: add OLPC AP-SP driver")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Colin King <colin.king@canonical.com> wrote:
 
-Thank you.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in rsi_dbg debug message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Lubomir Rintel <lkundrak@v3.sk>
+Patch applied to wireless-drivers-next.git, thanks.
 
-> ---
->  drivers/input/serio/olpc_apsp.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/input/serio/olpc_apsp.c
-> b/drivers/input/serio/olpc_apsp.c
-> index 91d6fb8..b360847 100644
-> --- a/drivers/input/serio/olpc_apsp.c
-> +++ b/drivers/input/serio/olpc_apsp.c
-> @@ -189,14 +189,12 @@ static int olpc_apsp_probe(struct
-> platform_device *pdev)
->  	struct serio *kb_serio, *pad_serio;
->  	struct olpc_apsp *priv;
->  	struct resource *res;
-> -	struct device_node *np;
->  	int error;
->  
->  	priv = devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp),
-> GFP_KERNEL);
->  	if (!priv)
->  		return -ENOMEM;
->  
-> -	np = pdev->dev.of_node;
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	priv->base = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(priv->base)) {
-> 
-> 
-> 
+55930d2bf79b rsi: fix spelling mistake "Initialzing" -> "Initializing"
+
+-- 
+https://patchwork.kernel.org/patch/10640377/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
