@@ -1,45 +1,37 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 08 Nov 2018 12:11:06 +0000
-Subject: [PATCH] md: remove set but not used variable 'bi_rdev'
-Message-Id: <1541679066-147768-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Nov 2018 10:39:32 +0000
+Subject: [PATCH] staging: rtl8192u: rename struct name _rt_firmare_seg_container
+Message-Id: <20181107103932.20325-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Whitmore <johnfwhitmore@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Rename struct _rt_firmare_seg_container to _fw_seg_container to match
+the typedef name of this structure. Also removes the spelling mistake
+of 'firmare'.
 
-drivers/md/md.c: In function 'md_integrity_add_rdev':
-drivers/md/md.c:2149:24: warning:
- variable 'bi_rdev' set but not used [-Wunused-but-set-variable]
-
-It not used any more after commit
-  1501efadc524 ("md/raid: only permit hot-add of compatible integrity profiles")
-
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/md/md.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/rtl8192u/r8192U.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 724def2..ee04495 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -2146,14 +2146,12 @@ int md_integrity_register(struct mddev *mddev)
-  */
- int md_integrity_add_rdev(struct md_rdev *rdev, struct mddev *mddev)
- {
--	struct blk_integrity *bi_rdev;
- 	struct blk_integrity *bi_mddev;
- 	char name[BDEVNAME_SIZE];
+diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
+index ec4de86933ba..ec33fb9122e9 100644
+--- a/drivers/staging/rtl8192u/r8192U.h
++++ b/drivers/staging/rtl8192u/r8192U.h
+@@ -364,7 +364,7 @@ typedef enum _firmware_status {
+ 	FW_STATUS_5_READY = 5,
+ } firmware_status_e;
  
- 	if (!mddev->gendisk)
- 		return 0;
- 
--	bi_rdev = bdev_get_integrity(rdev->bdev);
- 	bi_mddev = blk_get_integrity(mddev->gendisk);
- 
- 	if (!bi_mddev) /* nothing to do */
+-typedef struct _rt_firmare_seg_container {
++typedef struct _fw_seg_container {
+ 	u16	seg_size;
+ 	u8	*seg_ptr;
+ } fw_seg_container, *pfw_seg_container;
+-- 
+2.19.1
