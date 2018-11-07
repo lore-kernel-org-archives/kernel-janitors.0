@@ -1,80 +1,39 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 26 Nov 2018 08:27:30 +0000
-Subject: Re: [PATCH] ALSA: usb-audio: fix spelling mistake "Frequence" -> "Frequency"
-Message-Id: <s5hmupw6y6l.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Nov 2018 20:42:08 +0000
+Subject: [PATCH][i3c-next] i3c: fix incorrect update to max_read_ds
+Message-Id: <20181107204208.7411-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181125231208.14350-1-colin.king@canonical.com>
-In-Reply-To: <20181125231208.14350-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>, linux-i3c@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 00:12:08 +0100,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are spelling mistakes in equalizer name fields, fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-In general, it's not good to rename the control names even if they are
-fixes.  But these are rather device-specific ones, and they are EQ's,
-which aren't too fatal to change, so I took it as-is now.
+Currently max_read_ds is being updated twice, which is incorrect.
+The second assignment should be to max_write_ds instead. Fix this.
 
+Detected by CoverityScan, CID#1475379 ("Unused value")
 
-thanks,
+Fixes: 50cacdabeae1 ("i3c: Add core I3C infrastructure")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i3c/master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
-
-
-> ---
->  sound/usb/mixer_us16x08.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/sound/usb/mixer_us16x08.c b/sound/usb/mixer_us16x08.c
-> index 26ed23b18b77..4f594f9552a8 100644
-> --- a/sound/usb/mixer_us16x08.c
-> +++ b/sound/usb/mixer_us16x08.c
-> @@ -1119,7 +1119,7 @@ static const struct snd_us16x08_control_params eq_controls[] = {
->  		.control_id = SND_US16X08_ID_EQLOWFREQ,
->  		.type = USB_MIXER_U8,
->  		.num_channels = 16,
-> -		.name = "EQ Low Frequence",
-> +		.name = "EQ Low Frequency",
->  	},
->  	{ /* EQ mid low gain */
->  		.kcontrol_new = &snd_us16x08_eq_gain_ctl,
-> @@ -1133,7 +1133,7 @@ static const struct snd_us16x08_control_params eq_controls[] = {
->  		.control_id = SND_US16X08_ID_EQLOWMIDFREQ,
->  		.type = USB_MIXER_U8,
->  		.num_channels = 16,
-> -		.name = "EQ MidLow Frequence",
-> +		.name = "EQ MidLow Frequency",
->  	},
->  	{ /* EQ mid low Q */
->  		.kcontrol_new = &snd_us16x08_eq_mid_width_ctl,
-> @@ -1154,7 +1154,7 @@ static const struct snd_us16x08_control_params eq_controls[] = {
->  		.control_id = SND_US16X08_ID_EQHIGHMIDFREQ,
->  		.type = USB_MIXER_U8,
->  		.num_channels = 16,
-> -		.name = "EQ MidHigh Frequence",
-> +		.name = "EQ MidHigh Frequency",
->  	},
->  	{ /* EQ mid high Q */
->  		.kcontrol_new = &snd_us16x08_eq_mid_width_ctl,
-> @@ -1175,7 +1175,7 @@ static const struct snd_us16x08_control_params eq_controls[] = {
->  		.control_id = SND_US16X08_ID_EQHIGHFREQ,
->  		.type = USB_MIXER_U8,
->  		.num_channels = 16,
-> -		.name = "EQ High Frequence",
-> +		.name = "EQ High Frequency",
->  	},
->  };
->  
-> -- 
-> 2.19.1
-> 
-> 
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 68d6553dbd75..0ea7bb045fad 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -1093,7 +1093,7 @@ static int i3c_master_getmxds_locked(struct i3c_master_controller *master,
+ 	}
+ 
+ 	info->max_read_ds = getmaxds->maxrd;
+-	info->max_read_ds = getmaxds->maxwr;
++	info->max_write_ds = getmaxds->maxwr;
+ 	if (dest.payload.len = 5)
+ 		info->max_read_turnaround = getmaxds->maxrdturn[0] |
+ 					    ((u32)getmaxds->maxrdturn[1] << 8) |
+-- 
+2.19.1
