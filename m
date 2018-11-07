@@ -1,53 +1,42 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Thu, 29 Nov 2018 23:40:46 +0000
-Subject: Re: [PATCH] watchdog: asm9260_wdt: make array mode_name static, shrinks object size
-Message-Id: <20181129234046.GA19718@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Nov 2018 20:31:22 +0000
+Subject: [PATCH][drm-next] drm/virtio: fix memory leak of vfpriv on error return path
+Message-Id: <20181107203122.6861-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129232500.5039-1-colin.king@canonical.com>
-In-Reply-To: <20181129232500.5039-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 11:25:00PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const array mode_name on the stack but instead
-> make it static. Makes the object code smaller by 41 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    7699	   1872	      0	   9571	   2563	drivers/watchdog/asm9260_wdt.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    7594	   1936	      0	   9530	   253a	drivers/watchdog/asm9260_wdt.o
-> 
-> (gcc version 8.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+The allocation for vfpriv is being leaked on an error return path,
+fix this by kfree'ing it before returning.
 
-> ---
->  drivers/watchdog/asm9260_wdt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/asm9260_wdt.c b/drivers/watchdog/asm9260_wdt.c
-> index 2cf56b459d84..9768e44ffeb8 100644
-> --- a/drivers/watchdog/asm9260_wdt.c
-> +++ b/drivers/watchdog/asm9260_wdt.c
-> @@ -278,7 +278,7 @@ static int asm9260_wdt_probe(struct platform_device *pdev)
->  	struct watchdog_device *wdd;
->  	struct resource *res;
->  	int ret;
-> -	const char * const mode_name[] = { "hw", "sw", "debug", };
-> +	static const char * const mode_name[] = { "hw", "sw", "debug", };
->  
->  	priv = devm_kzalloc(&pdev->dev, sizeof(struct asm9260_wdt_priv),
->  			    GFP_KERNEL);
-> -- 
-> 2.19.1
-> 
+Detected by CoverityScan, CID#1475380 ("Resource Leak")
+
+Fixes: 6a37c49a94a9 ("drm/virtio: Handle context ID allocation errors")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_kms.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
+index bf609dcae224..f4f995639ed1 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_kms.c
++++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
+@@ -266,8 +266,10 @@ int virtio_gpu_driver_open(struct drm_device *dev, struct drm_file *file)
+ 
+ 	get_task_comm(dbgname, current);
+ 	id = virtio_gpu_context_create(vgdev, strlen(dbgname), dbgname);
+-	if (id < 0)
++	if (id < 0) {
++		kfree(vfpriv);
+ 		return id;
++	}
+ 
+ 	vfpriv->ctx_id = id;
+ 	file->driver_priv = vfpriv;
+-- 
+2.19.1
