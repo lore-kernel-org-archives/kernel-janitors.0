@@ -1,19 +1,17 @@
-From: Nikolay Borisov <nborisov@suse.com>
-Date: Thu, 08 Nov 2018 06:53:58 +0000
+From: David Sterba <dsterba@suse.cz>
+Date: Thu, 08 Nov 2018 12:11:59 +0000
 Subject: Re: [PATCH -next] btrfs: remove set but not used variable 'tree'
-Message-Id: <0e364fdf-e5ce-0e31-aacf-d77699b5654e@suse.com>
+Message-Id: <20181108121159.GH24115@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1541643283-109411-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1541643283-109411-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: YueHaibing <yuehaibing@huawei.com>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-On 8.11.18 г. 4:14 ч., YueHaibing wrote:
+On Thu, Nov 08, 2018 at 02:14:43AM +0000, YueHaibing wrote:
 > Fixes gcc '-Wunused-but-set-variable' warning:
 > 
 > fs/btrfs/extent_io.c: In function 'end_extent_writepage':
@@ -25,29 +23,5 @@ On 8.11.18 г. 4:14 ч., YueHaibing wrote:
 > 
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-
-> ---
->  fs/btrfs/extent_io.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index 0f8f9c0..17a15cc 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -2403,11 +2403,8 @@ static int bio_readpage_error(struct bio *failed_bio, u64 phy_offset,
->  void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
->  {
->  	int uptodate = (err = 0);
-> -	struct extent_io_tree *tree;
->  	int ret = 0;
->  
-> -	tree = &BTRFS_I(page->mapping->host)->io_tree;
-> -
->  	btrfs_writepage_endio_finish_ordered(page, start, end, NULL, uptodate);
->  
->  	if (!uptodate) {
-> 
-> 
-> 
-> 
+Thanks, the patches are still out of mainline so the commit id is not
+stable and I can fold in the fixup. Same for the other one.
