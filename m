@@ -1,31 +1,32 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 08 Nov 2018 02:04:57 +0000
-Subject: [PATCH net-next] SUNRPC: drop pointless static qualifier in xdr_get_next_encode_buffer()
-Message-Id: <1541642697-33860-1-git-send-email-yuehaibing@huawei.com>
+From: Trond Myklebust <trondmy@hammerspace.com>
+Date: Thu, 08 Nov 2018 03:13:25 +0000
+Subject: Re: [PATCH net-next] SUNRPC: drop pointless static qualifier in xdr_get_next_encode_buffer()
+Message-Id: <d23105929adb66c626d382525adef77265585404.camel@hammerspace.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1541642697-33860-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541642697-33860-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, David Miller <davem@davemloft.net>, Jeff Layton <jlayton@kernel.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>, "davem@davemloft.net" <davem@davemloft.net>, "bfields@fieldses.org" <bfields@fieldses.org>, "jlayton@kernel.org" <jlayton@kernel.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-There is no need to have the '__be32 *p' variable static since new value
-always be assigned before use it.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/sunrpc/xdr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
-index 2bbb8d3..d80b156 100644
---- a/net/sunrpc/xdr.c
-+++ b/net/sunrpc/xdr.c
-@@ -546,7 +546,7 @@ void xdr_commit_encode(struct xdr_stream *xdr)
- static __be32 *xdr_get_next_encode_buffer(struct xdr_stream *xdr,
- 		size_t nbytes)
- {
--	static __be32 *p;
-+	__be32 *p;
- 	int space_left;
- 	int frag1bytes, frag2bytes;
+T24gVGh1LCAyMDE4LTExLTA4IGF0IDAyOjA0ICswMDAwLCBZdWVIYWliaW5nIHdyb3RlOg0KPiBU
+aGVyZSBpcyBubyBuZWVkIHRvIGhhdmUgdGhlICdfX2JlMzIgKnAnIHZhcmlhYmxlIHN0YXRpYyBz
+aW5jZSBuZXcNCj4gdmFsdWUNCj4gYWx3YXlzIGJlIGFzc2lnbmVkIGJlZm9yZSB1c2UgaXQuDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBZdWVIYWliaW5nIDx5dWVoYWliaW5nQGh1YXdlaS5jb20+DQo+
+IC0tLQ0KPiAgbmV0L3N1bnJwYy94ZHIuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
+c2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL25ldC9zdW5ycGMv
+eGRyLmMgYi9uZXQvc3VucnBjL3hkci5jDQo+IGluZGV4IDJiYmI4ZDMuLmQ4MGIxNTYgMTAwNjQ0
+DQo+IC0tLSBhL25ldC9zdW5ycGMveGRyLmMNCj4gKysrIGIvbmV0L3N1bnJwYy94ZHIuYw0KPiBA
+QCAtNTQ2LDcgKzU0Niw3IEBAIHZvaWQgeGRyX2NvbW1pdF9lbmNvZGUoc3RydWN0IHhkcl9zdHJl
+YW0gKnhkcikNCj4gIHN0YXRpYyBfX2JlMzIgKnhkcl9nZXRfbmV4dF9lbmNvZGVfYnVmZmVyKHN0
+cnVjdCB4ZHJfc3RyZWFtICp4ZHIsDQo+ICAJCXNpemVfdCBuYnl0ZXMpDQo+ICB7DQo+IC0Jc3Rh
+dGljIF9fYmUzMiAqcDsNCj4gKwlfX2JlMzIgKnA7DQo+ICAJaW50IHNwYWNlX2xlZnQ7DQo+ICAJ
+aW50IGZyYWcxYnl0ZXMsIGZyYWcyYnl0ZXM7DQo+IA0KDQpPdWNoLCB0aGF0J3MgYSByZWFsbHkg
+bmFzdHkgYnVnIHRoYXQgY291bGQgZGVmaW5pdGVseSBjYXVzZSBjb3JydXB0aW9uDQppZiB5b3Ug
+aGF2ZSAyIHRocmVhZHMgc2ltdWx0YW5lb3VzbHkgY2FsbGluZyB0aGlzIGZ1bmN0aW9uISBUaGlz
+IHJlYWxseQ0KZGVzZXJ2ZXMgdG8gYmUgYSBzdGFibGUgcGF0Y2guDQoNClRoYW5rIHlvdSwgWXVl
+SGFpYmluZyENCg0KQnJ1Y2UsIGRvIHlvdSB3YW50IHRvIHNoZXBoZXJkIHRoaXMgb25lIGluPw0K
+DQotLSANClRyb25kIE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1t
+ZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg=
