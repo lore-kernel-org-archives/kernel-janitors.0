@@ -1,75 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 19 Nov 2018 16:34:00 +0000
-Subject: [PATCH] drivers: usb: early: clean up indentation, remove extraneous tabs
-Message-Id: <20181119163400.16991-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 08 Nov 2018 12:15:47 +0000
+Subject: [PATCH -next] scsi: qedi: remove set but not used variable 'conn'
+Message-Id: <1541679347-156629-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-There is a hunk of code that is indented too much by one level, fix
-this by removing the extraneous tabs.
+drivers/scsi/qedi/qedi_main.c: In function 'qedi_queue_cqe':
+drivers/scsi/qedi/qedi_main.c:1105:21: warning:
+ variable 'conn' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It never used since introduction in commit
+ace7f46ba5fd ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/usb/early/ehci-dbgp.c | 38 +++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ drivers/scsi/qedi/qedi_main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/usb/early/ehci-dbgp.c b/drivers/usb/early/ehci-dbgp.c
-index d633c2abe5a4..ea0d531c63e2 100644
---- a/drivers/usb/early/ehci-dbgp.c
-+++ b/drivers/usb/early/ehci-dbgp.c
-@@ -631,28 +631,28 @@ static int ehci_reset_port(int port)
- 		if (!(portsc & PORT_RESET))
- 			break;
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index 105b0e4..a2eb611 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -1102,7 +1102,6 @@ static int qedi_queue_cqe(struct qedi_ctx *qedi, union iscsi_cqe *cqe,
+ {
+ 	struct qedi_work *qedi_work;
+ 	struct qedi_conn *q_conn;
+-	struct iscsi_conn *conn;
+ 	struct qedi_cmd *qedi_cmd;
+ 	u32 iscsi_cid;
+ 	int rc = 0;
+@@ -1115,7 +1114,6 @@ static int qedi_queue_cqe(struct qedi_ctx *qedi, union iscsi_cqe *cqe,
+ 			  iscsi_cid);
+ 		return -1;
  	}
--		if (portsc & PORT_RESET) {
--			/* force reset to complete */
--			loop = 100 * 1000;
--			writel(portsc & ~(PORT_RWC_BITS | PORT_RESET),
--				&ehci_regs->port_status[port - 1]);
--			do {
--				udelay(1);
--				portsc = readl(&ehci_regs->port_status[port-1]);
--			} while ((portsc & PORT_RESET) && (--loop > 0));
--		}
-+	if (portsc & PORT_RESET) {
-+		/* force reset to complete */
-+		loop = 100 * 1000;
-+		writel(portsc & ~(PORT_RWC_BITS | PORT_RESET),
-+			&ehci_regs->port_status[port - 1]);
-+		do {
-+			udelay(1);
-+			portsc = readl(&ehci_regs->port_status[port-1]);
-+		} while ((portsc & PORT_RESET) && (--loop > 0));
-+	}
+-	conn = q_conn->cls_conn->dd_data;
  
--		/* Device went away? */
--		if (!(portsc & PORT_CONNECT))
--			return -ENOTCONN;
-+	/* Device went away? */
-+	if (!(portsc & PORT_CONNECT))
-+		return -ENOTCONN;
- 
--		/* bomb out completely if something weird happened */
--		if ((portsc & PORT_CSC))
--			return -EINVAL;
-+	/* bomb out completely if something weird happened */
-+	if ((portsc & PORT_CSC))
-+		return -EINVAL;
- 
--		/* If we've finished resetting, then break out of the loop */
--		if (!(portsc & PORT_RESET) && (portsc & PORT_PE))
--			return 0;
-+	/* If we've finished resetting, then break out of the loop */
-+	if (!(portsc & PORT_RESET) && (portsc & PORT_PE))
-+		return 0;
- 	return -EBUSY;
- }
- 
--- 
-2.19.1
+ 	switch (cqe->cqe_common.cqe_type) {
+ 	case ISCSI_CQE_TYPE_SOLICITED:
