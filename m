@@ -1,61 +1,38 @@
-From: "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>
-Date: Tue, 20 Nov 2018 20:08:00 +0000
-Subject: Re: [PATCH][drm-next] drm/amd/display: fix dereference of pointer fs_params before it is null checke
-Message-Id: <f62f6823-228a-dff9-dad5-45b3fde9c5c2@amd.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 08 Nov 2018 02:08:43 +0000
+Subject: [PATCH net-next] net: bcmgenet: return correct value 'ret' from bcmgenet_power_down
+Message-Id: <1541642923-81463-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181120171745.13812-1-colin.king@canonical.com>
-In-Reply-To: <20181120171745.13812-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Wentland, Harry" <Harry.Wentland@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Doug Berger <opendmb@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, davem@davemloft.net
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCk9uIDIwMTgtMTEtMjAgMTI6MTcgcC5tLiwgQ29saW4gS2luZyB3cm90ZToNCj4gRnJvbTog
-Q29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IEN1cnJlbnRs
-eSB0aGVyZSBhcmUgc2V2ZXJhbCBpbnN0YW5jZXMgb2YgcG9pbnRlciBmc19wYXJhbXMgYmVpbmcN
-Cj4gZGVyZWZlcmVuY2VkIGJlZm9yZSBmc19wYXJhbXMgaXMgYmVpbmcgbnVsbCBjaGVja2VkLiAg
-Rml4IHRoaXMgYnkNCj4gb25seSBkZXJlZmVyZW5jaW5nIGZzX3BhcmFtcyBhZnRlciB0aGUgbnVs
-bCBjaGVjay4NCj4gDQo+IERldGVjdGVkIGJ5IENvdmVyaXR5U2NhbiwgQ0lEIzE0NzU1NjUgKCJE
-ZXJlZmVyZW5jZSBiZWZvcmUgbnVsbCBjaGVjayIpDQo+IA0KPiBGaXhlczogZTFlOGEwMjBjNmI4
-ICgiZHJtL2FtZC9kaXNwbGF5OiBBZGQgc3VwcG9ydCBmb3IgRnJlZXN5bmMgMiBIRFIgYW5kIENv
-bnRlbnQgdG8gRGlzcGxheSBNYXBwaW5nIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtp
-bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IExlbyBMaSA8c3Vu
-cGVuZy5saUBhbWQuY29tPg0KDQpUaGFua3MhDQoNCj4gLS0tDQo+ICAgLi4uL2RybS9hbWQvZGlz
-cGxheS9tb2R1bGVzL2NvbG9yL2NvbG9yX2dhbW1hLmMgIHwgMTYgKysrKysrKysrKystLS0tLQ0K
-PiAgIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2NvbG9y
-L2NvbG9yX2dhbW1hLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvbW9kdWxlcy9jb2xv
-ci9jb2xvcl9nYW1tYS5jDQo+IGluZGV4IDc0ODBmMDcyYzM3NS4uYmJlY2JhZWZiNzQxIDEwMDY0
-NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvbW9kdWxlcy9jb2xvci9jb2xv
-cl9nYW1tYS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2Nv
-bG9yL2NvbG9yX2dhbW1hLmMNCj4gQEAgLTgxMywyMCArODEzLDI2IEBAIHN0YXRpYyBib29sIGJ1
-aWxkX2ZyZWVzeW5jX2hkcihzdHJ1Y3QgcHdsX2Zsb2F0X2RhdGFfZXggKnJnYl9yZWdhbW1hLA0K
-PiAgIAljb25zdCBzdHJ1Y3QgaHdfeF9wb2ludCAqY29vcmRfeCA9IGNvb3JkaW5hdGVfeDsNCj4g
-ICAJc3RydWN0IGZpeGVkMzFfMzIgc2NhbGVkWCA9IGRjX2ZpeHB0X3plcm87DQo+ICAgCXN0cnVj
-dCBmaXhlZDMxXzMyIHNjYWxlZFgxID0gZGNfZml4cHRfemVybzsNCj4gLQlzdHJ1Y3QgZml4ZWQz
-MV8zMiBtYXhfZGlzcGxheSA9IGRjX2ZpeHB0X2Zyb21faW50KGZzX3BhcmFtcy0+bWF4X2Rpc3Bs
-YXkpOw0KPiAtCXN0cnVjdCBmaXhlZDMxXzMyIG1pbl9kaXNwbGF5ID0gZGNfZml4cHRfZnJvbV9m
-cmFjdGlvbihmc19wYXJhbXMtPm1pbl9kaXNwbGF5LCAxMDAwMCk7DQo+IC0Jc3RydWN0IGZpeGVk
-MzFfMzIgbWF4X2NvbnRlbnQgPSBkY19maXhwdF9mcm9tX2ludChmc19wYXJhbXMtPm1heF9jb250
-ZW50KTsNCj4gLQlzdHJ1Y3QgZml4ZWQzMV8zMiBtaW5fY29udGVudCA9IGRjX2ZpeHB0X2Zyb21f
-ZnJhY3Rpb24oZnNfcGFyYW1zLT5taW5fY29udGVudCwgMTAwMDApOw0KPiArCXN0cnVjdCBmaXhl
-ZDMxXzMyIG1heF9kaXNwbGF5Ow0KPiArCXN0cnVjdCBmaXhlZDMxXzMyIG1pbl9kaXNwbGF5Ow0K
-PiArCXN0cnVjdCBmaXhlZDMxXzMyIG1heF9jb250ZW50Ow0KPiArCXN0cnVjdCBmaXhlZDMxXzMy
-IG1pbl9jb250ZW50Ow0KPiAgIAlzdHJ1Y3QgZml4ZWQzMV8zMiBjbGlwID0gZGNfZml4cHRfb25l
-Ow0KPiAgIAlzdHJ1Y3QgZml4ZWQzMV8zMiBvdXRwdXQ7DQo+ICAgCWJvb2wgdXNlX2VldGYgPSBm
-YWxzZTsNCj4gICAJYm9vbCBpc19jbGlwcGVkID0gZmFsc2U7DQo+IC0Jc3RydWN0IGZpeGVkMzFf
-MzIgc2RyX3doaXRlX2xldmVsID0gZGNfZml4cHRfZnJvbV9pbnQoZnNfcGFyYW1zLT5zZHJfd2hp
-dGVfbGV2ZWwpOw0KPiArCXN0cnVjdCBmaXhlZDMxXzMyIHNkcl93aGl0ZV9sZXZlbDsNCj4gICAN
-Cj4gICAJaWYgKGZzX3BhcmFtcyA9PSBOVUxMIHx8IGZzX3BhcmFtcy0+bWF4X2NvbnRlbnQgPT0g
-MCB8fA0KPiAgIAkJCWZzX3BhcmFtcy0+bWF4X2Rpc3BsYXkgPT0gMCkNCj4gICAJCXJldHVybiBm
-YWxzZTsNCj4gICANCj4gKwltYXhfZGlzcGxheSA9IGRjX2ZpeHB0X2Zyb21faW50KGZzX3BhcmFt
-cy0+bWF4X2Rpc3BsYXkpOw0KPiArCW1pbl9kaXNwbGF5ID0gZGNfZml4cHRfZnJvbV9mcmFjdGlv
-bihmc19wYXJhbXMtPm1pbl9kaXNwbGF5LCAxMDAwMCk7DQo+ICsJbWF4X2NvbnRlbnQgPSBkY19m
-aXhwdF9mcm9tX2ludChmc19wYXJhbXMtPm1heF9jb250ZW50KTsNCj4gKwltaW5fY29udGVudCA9
-IGRjX2ZpeHB0X2Zyb21fZnJhY3Rpb24oZnNfcGFyYW1zLT5taW5fY29udGVudCwgMTAwMDApOw0K
-PiArCXNkcl93aGl0ZV9sZXZlbCA9IGRjX2ZpeHB0X2Zyb21faW50KGZzX3BhcmFtcy0+c2RyX3do
-aXRlX2xldmVsKTsNCj4gKw0KPiAgIAlpZiAoZnNfcGFyYW1zLT5taW5fZGlzcGxheSA+IDEwMDAp
-IC8vIGNhcCBhdCAwLjEgYXQgdGhlIGJvdHRvbQ0KPiAgIAkJbWluX2Rpc3BsYXkgPSBkY19maXhw
-dF9mcm9tX2ZyYWN0aW9uKDEsIDEwKTsNCj4gICAJaWYgKGZzX3BhcmFtcy0+bWF4X2Rpc3BsYXkg
-PCAxMDApIC8vIGNhcCBhdCAxMDAgYXQgdGhlIHRvcA0KPiANCg=
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/net/ethernet/broadcom/genet/bcmgenet.c: In function 'bcmgenet_power_down':
+drivers/net/ethernet/broadcom/genet/bcmgenet.c:1136:6: warning:
+ variable 'ret' set but not used [-Wunused-but-set-variable]
+
+bcmgenet_power_down should return 'ret' instead of 0.
+
+Fixes: ca8cf341903f ("net: bcmgenet: propagate errors from bcmgenet_power_down")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index 2d6f090..bf88749 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -1169,7 +1169,7 @@ static int bcmgenet_power_down(struct bcmgenet_priv *priv,
+ 		break;
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static void bcmgenet_power_up(struct bcmgenet_priv *priv,
