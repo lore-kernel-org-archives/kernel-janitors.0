@@ -1,35 +1,81 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 05 Nov 2018 11:13:27 +0000
-Subject: Re: [PATCH] ath10k: remove set but not used variable 'tlv_len'
-Message-Id: <20181105111327.C9786607CA@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 08 Nov 2018 09:32:50 +0000
+Subject: [PATCH] ath10k: remove set but not used variable 'num_tdls_vifs'
+Message-Id: <1541669570-110540-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1539951626-185764-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1539951626-185764-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, ath10k@lists.infradead.org, netdev@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/ath/ath10k/wmi-tlv.c: In function 'ath10k_wmi_tlv_op_gen_config_pno_start':
-> drivers/net/wireless/ath/ath10k/wmi-tlv.c:3455:6: warning:
->  variable 'tlv_len' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since inroduction in commit
-> ce834e280f2f ("ath10k: support NET_DETECT WoWLAN feature")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+drivers/net/wireless/ath/ath10k/mac.c: In function 'ath10k_sta_state':
+drivers/net/wireless/ath/ath10k/mac.c:6238:7: warning:
+ variable 'num_tdls_vifs' set but not used [-Wunused-but-set-variable]
 
-Patch applied to ath-next branch of ath.git, thanks.
+'num_tdls_vifs' not used any more after
+  9a993cc1ea95 ("ath10k: fix the logic of limiting tdls peer counts")
 
-3468404f78e1 ath10k: remove set but not used variable 'tlv_len'
+Also, remove the single called function ath10k_mac_tdls_vifs_count
+and ath10k_mac_tdls_vifs_count_iter.
 
--- 
-https://patchwork.kernel.org/patch/10649069/
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/ath/ath10k/mac.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index a1c2801..6006f7a 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -5754,30 +5754,6 @@ static int ath10k_mac_tdls_vif_stations_count(struct ieee80211_hw *hw,
+ 	return data.num_tdls_stations;
+ }
+ 
+-static void ath10k_mac_tdls_vifs_count_iter(void *data, u8 *mac,
+-					    struct ieee80211_vif *vif)
+-{
+-	struct ath10k_vif *arvif = (void *)vif->drv_priv;
+-	int *num_tdls_vifs = data;
+-
+-	if (vif->type != NL80211_IFTYPE_STATION)
+-		return;
+-
+-	if (ath10k_mac_tdls_vif_stations_count(arvif->ar->hw, vif) > 0)
+-		(*num_tdls_vifs)++;
+-}
+-
+-static int ath10k_mac_tdls_vifs_count(struct ieee80211_hw *hw)
+-{
+-	int num_tdls_vifs = 0;
+-
+-	ieee80211_iterate_active_interfaces_atomic(hw,
+-						   IEEE80211_IFACE_ITER_NORMAL,
+-						   ath10k_mac_tdls_vifs_count_iter,
+-						   &num_tdls_vifs);
+-	return num_tdls_vifs;
+-}
+-
+ static int ath10k_hw_scan(struct ieee80211_hw *hw,
+ 			  struct ieee80211_vif *vif,
+ 			  struct ieee80211_scan_request *hw_req)
+@@ -6285,7 +6261,6 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 		 */
+ 		enum wmi_peer_type peer_type = WMI_PEER_TYPE_DEFAULT;
+ 		u32 num_tdls_stations;
+-		u32 num_tdls_vifs;
+ 
+ 		ath10k_dbg(ar, ATH10K_DBG_MAC,
+ 			   "mac vdev %d peer create %pM (new sta) sta %d / %d peer %d / %d\n",
+@@ -6301,7 +6276,6 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 		}
+ 
+ 		num_tdls_stations = ath10k_mac_tdls_vif_stations_count(hw, vif);
+-		num_tdls_vifs = ath10k_mac_tdls_vifs_count(hw);
+ 
+ 		if (sta->tdls) {
+ 			if (num_tdls_stations >= ar->max_num_tdls_vdevs) {
