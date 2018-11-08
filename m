@@ -1,64 +1,38 @@
-From: "Huang, Ray" <Ray.Huang@amd.com>
-Date: Thu, 08 Nov 2018 06:11:51 +0000
-Subject: RE: [PATCH -next] drm/ttm: remove set but not used variable 'driver'
-Message-Id: <BY2PR12MB0040B73B02AD39434F410677ECC50@BY2PR12MB0040.namprd12.prod.outlook.com>
+From: "Koenig, Christian" <Christian.Koenig@amd.com>
+Date: Thu, 08 Nov 2018 08:17:21 +0000
+Subject: Re: [PATCH -next] drm/ttm: remove set but not used variable 'driver'
+Message-Id: <99a59a71-6bdc-7822-7a4e-91ea040235d0@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1541643300-109641-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1541643300-109641-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhang, Jerry" <Jerry.Zhang@amd.com>, David Airlie <airlied@linux.ie>
+To: YueHaibing <yuehaibing@huawei.com>, "Huang, Ray" <Ray.Huang@amd.com>, "Zhang, Jerry" <Jerry.Zhang@amd.com>, David Airlie <airlied@linux.ie>
 Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-> -----Original Message-----
-> From: YueHaibing [mailto:yuehaibing@huawei.com]
-> Sent: Thursday, November 08, 2018 10:15 AM
-> To: Koenig, Christian <Christian.Koenig@amd.com>; Huang, Ray
-> <Ray.Huang@amd.com>; Zhang, Jerry <Jerry.Zhang@amd.com>; David Airlie
-> <airlied@linux.ie>
-> Cc: YueHaibing <yuehaibing@huawei.com>; dri-devel@lists.freedesktop.org;
-> linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH -next] drm/ttm: remove set but not used variable 'driver'
-> 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/gpu/drm/ttm/ttm_execbuf_util.c: In function
-> 'ttm_eu_fence_buffer_objects':
-> drivers/gpu/drm/ttm/ttm_execbuf_util.c:190:24: warning:
->  variable 'driver' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more after
-> commit f2c24b83ae90 ("drm/ttm: flip the switch, and convert to dma_fence")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Acked-by: Huang Rui <ray.huang@amd.com>
-
-> ---
->  drivers/gpu/drm/ttm/ttm_execbuf_util.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-> b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-> index e493edb..efa005a 100644
-> --- a/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-> +++ b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-> @@ -187,14 +187,12 @@ void ttm_eu_fence_buffer_objects(struct
-> ww_acquire_ctx *ticket,
->  	struct ttm_buffer_object *bo;
->  	struct ttm_bo_global *glob;
->  	struct ttm_bo_device *bdev;
-> -	struct ttm_bo_driver *driver;
-> 
->  	if (list_empty(list))
->  		return;
-> 
->  	bo = list_first_entry(list, struct ttm_validate_buffer, head)->bo;
->  	bdev = bo->bdev;
-> -	driver = bdev->driver;
->  	glob = bo->bdev->glob;
-> 
->  	spin_lock(&glob->lru_lock);
-> 
-> 
+QW0gMDguMTEuMTggdW0gMDM6MTUgc2NocmllYiBZdWVIYWliaW5nOg0KPiBGaXhlcyBnY2MgJy1X
+dW51c2VkLWJ1dC1zZXQtdmFyaWFibGUnIHdhcm5pbmc6DQo+DQo+IGRyaXZlcnMvZ3B1L2RybS90
+dG0vdHRtX2V4ZWNidWZfdXRpbC5jOiBJbiBmdW5jdGlvbiAndHRtX2V1X2ZlbmNlX2J1ZmZlcl9v
+YmplY3RzJzoNCj4gZHJpdmVycy9ncHUvZHJtL3R0bS90dG1fZXhlY2J1Zl91dGlsLmM6MTkwOjI0
+OiB3YXJuaW5nOg0KPiAgIHZhcmlhYmxlICdkcml2ZXInIHNldCBidXQgbm90IHVzZWQgWy1XdW51
+c2VkLWJ1dC1zZXQtdmFyaWFibGVdDQo+DQo+IEl0IG5vdCB1c2VkIGFueSBtb3JlIGFmdGVyDQo+
+IGNvbW1pdCBmMmMyNGI4M2FlOTAgKCJkcm0vdHRtOiBmbGlwIHRoZSBzd2l0Y2gsIGFuZCBjb252
+ZXJ0IHRvIGRtYV9mZW5jZSIpDQo+DQo+IFNpZ25lZC1vZmYtYnk6IFl1ZUhhaWJpbmcgPHl1ZWhh
+aWJpbmdAaHVhd2VpLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IENocmlzdGlhbiBLw7ZuaWcgPGNocmlz
+dGlhbi5rb2VuaWdAYW1kLmNvbT4gYW5kIGdvaW5nIHRvIA0KcHVzaCBpdCBpbnRvIG91ciBpbnRl
+cm5hbCBicmFuY2ggZm9yIHVwc3RyZWFtaW5nLg0KDQo+IC0tLQ0KPiAgIGRyaXZlcnMvZ3B1L2Ry
+bS90dG0vdHRtX2V4ZWNidWZfdXRpbC5jIHwgMiAtLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGRl
+bGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3R0bS90dG1fZXhl
+Y2J1Zl91dGlsLmMgYi9kcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV9leGVjYnVmX3V0aWwuYw0KPiBp
+bmRleCBlNDkzZWRiLi5lZmEwMDVhIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdHRt
+L3R0bV9leGVjYnVmX3V0aWwuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV9leGVj
+YnVmX3V0aWwuYw0KPiBAQCAtMTg3LDE0ICsxODcsMTIgQEAgdm9pZCB0dG1fZXVfZmVuY2VfYnVm
+ZmVyX29iamVjdHMoc3RydWN0IHd3X2FjcXVpcmVfY3R4ICp0aWNrZXQsDQo+ICAgCXN0cnVjdCB0
+dG1fYnVmZmVyX29iamVjdCAqYm87DQo+ICAgCXN0cnVjdCB0dG1fYm9fZ2xvYmFsICpnbG9iOw0K
+PiAgIAlzdHJ1Y3QgdHRtX2JvX2RldmljZSAqYmRldjsNCj4gLQlzdHJ1Y3QgdHRtX2JvX2RyaXZl
+ciAqZHJpdmVyOw0KPiAgIA0KPiAgIAlpZiAobGlzdF9lbXB0eShsaXN0KSkNCj4gICAJCXJldHVy
+bjsNCj4gICANCj4gICAJYm8gPSBsaXN0X2ZpcnN0X2VudHJ5KGxpc3QsIHN0cnVjdCB0dG1fdmFs
+aWRhdGVfYnVmZmVyLCBoZWFkKS0+Ym87DQo+ICAgCWJkZXYgPSBiby0+YmRldjsNCj4gLQlkcml2
+ZXIgPSBiZGV2LT5kcml2ZXI7DQo+ICAgCWdsb2IgPSBiby0+YmRldi0+Z2xvYjsNCj4gICANCj4g
+ICAJc3Bpbl9sb2NrKCZnbG9iLT5scnVfbG9jayk7DQo+DQo+DQo+DQoNCg=
