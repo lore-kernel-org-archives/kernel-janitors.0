@@ -1,39 +1,59 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 25 Nov 2018 02:04:02 +0000
-Subject: Re: [PATCH] net: bridge: check for a null p->dev before dereferencing it
-Message-Id: <20181124.180402.645583819668180736.davem@davemloft.net>
+From: Andrew Jeffery <andrew@aj.id.au>
+Date: Thu, 08 Nov 2018 02:07:22 +0000
+Subject: Re: [PATCH] usb: gadget: fix spelling mistakeis "[En]queing" -> "[En]queuing"
+Message-Id: <1541642122.1498358.1569514624.6EA70C69@webmail.messagingengine.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181124121551.6942-1-colin.king@canonical.com>
-        <85963d6a-3411-9461-67aa-42e1fd02e663@cumulusnetworks.com>
-In-Reply-To: <85963d6a-3411-9461-67aa-42e1fd02e663@cumulusnetworks.com>
+References: <20180929114313.10557-1-colin.king@canonical.com>
+In-Reply-To: <20180929114313.10557-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: nikolay@cumulusnetworks.com
-Cc: colin.king@canonical.com, roopa@cumulusnetworks.com, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Date: Sat, 24 Nov 2018 14:21:07 +0200
+On Sat, 29 Sep 2018, at 22:13, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistakes in debug warning messages
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> I was contacted recently about this privately and this was my reply:
-> "Checking new_nbp() and del_nbp() it should not be possible to reach that code
-> with p->dev or p->br as NULL. The cap check code has always been there, I just
-> shuffled the rest of the function to obtain rtnl lock and kept it as close to
-> the original as possible, thus the checks remained.
-> In order to avoid future reports like this I'll send a cleanup once net-next
-> opens up.
-> 
-> My reasoning of why it shouldn't be possible:
-> - On port add new_nbp() sets both p->dev and p->br before creating kobj/sysfs
-> 
-> - On port del (trickier) del_nbp() calls kobject_del() before call_rcu() to destroy
->   the port which in turn calls sysfs_remove_dir() which uses kernfs_remove() which
->   deactivates (shouldn't be able to open new files) and calls kernfs_drain() to drain
->   current open/mmaped files in the respective dir before continuing, thus making it
->   impossible to open a bridge port sysfs file with p->dev and p->br equal to NULL.
-> "
-> 
-> So I think it's safe to remove those checks altogether. It'd be nice to get a second
-> look over my reasoning as I might be missing something in sysfs/kernfs call path.
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-I did a once over your analysis and I agree, the checks should be safe to remove.
+> ---
+>  drivers/usb/gadget/udc/aspeed-vhub/epn.c | 2 +-
+>  drivers/usb/gadget/udc/udc-xilinx.c      | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/aspeed-vhub/epn.c b/drivers/usb/
+> gadget/udc/aspeed-vhub/epn.c
+> index 5939eb1e97f2..e9ee2b72af19 100644
+> --- a/drivers/usb/gadget/udc/aspeed-vhub/epn.c
+> +++ b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
+> @@ -353,7 +353,7 @@ static int ast_vhub_epn_queue(struct usb_ep* u_ep, 
+> struct usb_request *u_req,
+>  	/* Endpoint enabled ? */
+>  	if (!ep->epn.enabled || !u_ep->desc || !ep->dev || !ep->d_idx ||
+>  	    !ep->dev->enabled || ep->dev->suspended) {
+> -		EPDBG(ep,"Enqueing request on wrong or disabled EP\n");
+> +		EPDBG(ep, "Enqueuing request on wrong or disabled EP\n");
+>  		return -ESHUTDOWN;
+>  	}
+>  
+> diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/
+> udc/udc-xilinx.c
+> index 6407e433bc78..b1f4104d1283 100644
+> --- a/drivers/usb/gadget/udc/udc-xilinx.c
+> +++ b/drivers/usb/gadget/udc/udc-xilinx.c
+> @@ -1078,7 +1078,7 @@ static int xudc_ep_queue(struct usb_ep *_ep, 
+> struct usb_request *_req,
+>  	unsigned long flags;
+>  
+>  	if (!ep->desc) {
+> -		dev_dbg(udc->dev, "%s:queing request to disabled %s\n",
+> +		dev_dbg(udc->dev, "%s: queuing request to disabled %s\n",
+>  			__func__, ep->name);
+>  		return -ESHUTDOWN;
+>  	}
+> -- 
+> 2.17.1
+> 
