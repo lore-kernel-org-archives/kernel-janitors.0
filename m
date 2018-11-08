@@ -1,32 +1,41 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Thu, 15 Nov 2018 09:33:14 +0000
-Subject: Re: [PATCH][next] reset: fix null pointer dereference on dev by dev_name
-Message-Id: <1542274394.4915.6.camel@pengutronix.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 08 Nov 2018 02:14:43 +0000
+Subject: [PATCH -next] btrfs: remove set but not used variable 'tree'
+Message-Id: <1541643283-109411-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181114214935.16038-1-colin.king@canonical.com>
-In-Reply-To: <20181114214935.16038-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Wed, 2018-11-14 at 21:49 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to dev_name will dereference dev, however, dev is later
-> being null checked, so there is a possibility of a null pointer
-> dereference on dev by the call to dev_name. Fix this by null
-> checking dev first before the call to dev_name
-> 
-> Detected by CoverityScan, CID#1475475 ("Dereference before null check")
-> 
-> Fixes: 2a6cb2b1d83b ("reset: Add reset_control_get_count()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+fs/btrfs/extent_io.c: In function 'end_extent_writepage':
+fs/btrfs/extent_io.c:2406:25: warning:
+ variable 'tree' set but not used [-Wunused-but-set-variable]
 
-Thank you, applied to reset/next.
+It not used any more after
+commit 2922040236f9 ("btrfs: Remove extent_io_ops::writepage_end_io_hook")
 
-regards
-Philipp
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/btrfs/extent_io.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 0f8f9c0..17a15cc 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2403,11 +2403,8 @@ static int bio_readpage_error(struct bio *failed_bio, u64 phy_offset,
+ void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
+ {
+ 	int uptodate = (err = 0);
+-	struct extent_io_tree *tree;
+ 	int ret = 0;
+ 
+-	tree = &BTRFS_I(page->mapping->host)->io_tree;
+-
+ 	btrfs_writepage_endio_finish_ordered(page, start, end, NULL, uptodate);
+ 
+ 	if (!uptodate) {
