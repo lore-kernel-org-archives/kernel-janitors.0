@@ -1,28 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 12 Nov 2018 02:20:06 +0000
-Subject: Re: [PATCH net-next] net: phy: marvell: remove set but not used variable 'pause'
-Message-Id: <20181111.182006.2236972282509498071.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 08 Nov 2018 02:15:00 +0000
+Subject: [PATCH -next] drm/ttm: remove set but not used variable 'driver'
+Message-Id: <1541643300-109641-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541987250-18687-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541987250-18687-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christian Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Junwei Zhang <Jerry.Zhang@amd.com>, David Airlie <airlied@linux.ie>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 12 Nov 2018 01:47:30 +0000
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/phy/marvell.c: In function 'm88e1510_config_init':
-> drivers/net/phy/marvell.c:850:7: warning:
->  variable 'pause' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more after commit 3c1bcc8614db ("net: ethernet: Convert phydev
-> advertize and supported from u32 to link mode")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+drivers/gpu/drm/ttm/ttm_execbuf_util.c: In function 'ttm_eu_fence_buffer_objects':
+drivers/gpu/drm/ttm/ttm_execbuf_util.c:190:24: warning:
+ variable 'driver' set but not used [-Wunused-but-set-variable]
 
-Applied.
+It not used any more after
+commit f2c24b83ae90 ("drm/ttm: flip the switch, and convert to dma_fence")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/ttm/ttm_execbuf_util.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/ttm/ttm_execbuf_util.c b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
+index e493edb..efa005a 100644
+--- a/drivers/gpu/drm/ttm/ttm_execbuf_util.c
++++ b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
+@@ -187,14 +187,12 @@ void ttm_eu_fence_buffer_objects(struct ww_acquire_ctx *ticket,
+ 	struct ttm_buffer_object *bo;
+ 	struct ttm_bo_global *glob;
+ 	struct ttm_bo_device *bdev;
+-	struct ttm_bo_driver *driver;
+ 
+ 	if (list_empty(list))
+ 		return;
+ 
+ 	bo = list_first_entry(list, struct ttm_validate_buffer, head)->bo;
+ 	bdev = bo->bdev;
+-	driver = bdev->driver;
+ 	glob = bo->bdev->glob;
+ 
+ 	spin_lock(&glob->lru_lock);
