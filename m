@@ -1,23 +1,48 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 29 Nov 2018 02:37:53 +0000
-Subject: Re: [PATCH] scsi: mpt3sas: fix spelling mistake "manufaucturing" -> "manufacturing"
-Message-Id: <yq11s741uda.fsf@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 08 Nov 2018 11:36:02 +0000
+Subject: [PATCH -next] cifs: remove set but not used variable 'cifsi'
+Message-Id: <1541676962-125306-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181128153048.13804-1-colin.king@canonical.com>
-In-Reply-To: <20181128153048.13804-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 28 Nov 2018 15:30:48 +0000")
+References: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+From: Yue Haibing <yuehaibing@huawei.com>
 
-Colin,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> There is a spelling mistake in some description text, fix it.
+fs/cifs/smb2ops.c: In function 'smb3_punch_hole':
+fs/cifs/smb2ops.c:2122:24: warning:
+ variable 'cifsi' set but not used [-Wunused-but-set-variable]
 
-Applied to 4.21/scsi-queue, thanks!
+It never used since introduction in commit
+31742c5a3317 ("enable fallocate punch hole ("fallocate -p") for SMB3")
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ fs/cifs/smb2ops.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 15c7cbd..c9a4a2c 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2119,7 +2119,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
+ 			    loff_t offset, loff_t len)
+ {
+ 	struct inode *inode;
+-	struct cifsInodeInfo *cifsi;
+ 	struct cifsFileInfo *cfile = file->private_data;
+ 	struct file_zero_data_information fsctl_buf;
+ 	long rc;
+@@ -2129,7 +2128,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
+ 	xid = get_xid();
+ 
+ 	inode = d_inode(cfile->dentry);
+-	cifsi = CIFS_I(inode);
+ 
+ 	/* Need to make file sparse, if not already, before freeing range. */
+ 	/* Consider adding equivalent for compressed since it could also work */
