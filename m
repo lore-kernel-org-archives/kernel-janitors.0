@@ -1,35 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 02 Nov 2018 15:00:18 +0000
-Subject: [PATCH] ASoC: smd845: constify snd_soc_ops structure
-Message-Id: <1541170818-24219-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Andrew Jeffery <andrew@aj.id.au>
+Date: Thu, 08 Nov 2018 00:47:16 +0000
+Subject: Re: [PATCH] usb: gadget: aspeed-vhub: constify usb_gadget_ops structure
+Message-Id: <1541637316.1471870.1569457840.5A56DC54@webmail.messagingengine.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1540916399-22426-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540916399-22426-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick Lai <plai@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The snd_soc_ops structure can be const as it is only stored in the
-ops field of a snd_soc_dai_link structure and this field is const.
+On Wed, 31 Oct 2018, at 02:49, Julia Lawall wrote:
+> The usb_gadget_ops structure can be const as it is only stored in
+> the ops field of a usb_gadget structure and this field is const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/soc/qcom/sdm845.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 9effbecc571f..8d0cdff64377 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -171,7 +171,7 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
- 	}
- }
- 
--static struct snd_soc_ops sdm845_be_ops = {
-+static const struct snd_soc_ops sdm845_be_ops = {
- 	.hw_params = sdm845_snd_hw_params,
- 	.startup = sdm845_snd_startup,
- 	.shutdown = sdm845_snd_shutdown,
+> 
+> ---
+>  drivers/usb/gadget/udc/aspeed-vhub/dev.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/aspeed-vhub/dev.c b/drivers/usb/
+> gadget/udc/aspeed-vhub/dev.c
+> index f0233912bace..6b1b16b17d7d 100644
+> --- a/drivers/usb/gadget/udc/aspeed-vhub/dev.c
+> +++ b/drivers/usb/gadget/udc/aspeed-vhub/dev.c
+> @@ -438,7 +438,7 @@ static int ast_vhub_udc_stop(struct usb_gadget 
+> *gadget)
+>  	return 0;
+>  }
+>  
+> -static struct usb_gadget_ops ast_vhub_udc_ops = {
+> +static const struct usb_gadget_ops ast_vhub_udc_ops = {
+>  	.get_frame	= ast_vhub_udc_get_frame,
+>  	.wakeup		= ast_vhub_udc_wakeup,
+>  	.pullup		= ast_vhub_udc_pullup,
+> 
