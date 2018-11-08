@@ -1,59 +1,20 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Date: Thu, 08 Nov 2018 02:07:22 +0000
-Subject: Re: [PATCH] usb: gadget: fix spelling mistakeis "[En]queing" -> "[En]queuing"
-Message-Id: <1541642122.1498358.1569514624.6EA70C69@webmail.messagingengine.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Thu, 08 Nov 2018 14:19:27 +0000
+Subject: RE: [PATCH] usb: gadget: fix spelling mistakeis "[En]queing" -> "[En]queuing"
+Message-Id: <66d0fa13f6b6409bbc6b080ae58273ff@AcuMS.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20180929114313.10557-1-colin.king@canonical.com>
-In-Reply-To: <20180929114313.10557-1-colin.king@canonical.com>
+ <1541642122.1498358.1569514624.6EA70C69@webmail.messagingengine.com>
+In-Reply-To: <1541642122.1498358.1569514624.6EA70C69@webmail.messagingengine.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Sat, 29 Sep 2018, at 22:13, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistakes in debug warning messages
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-
-> ---
->  drivers/usb/gadget/udc/aspeed-vhub/epn.c | 2 +-
->  drivers/usb/gadget/udc/udc-xilinx.c      | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/aspeed-vhub/epn.c b/drivers/usb/
-> gadget/udc/aspeed-vhub/epn.c
-> index 5939eb1e97f2..e9ee2b72af19 100644
-> --- a/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-> +++ b/drivers/usb/gadget/udc/aspeed-vhub/epn.c
-> @@ -353,7 +353,7 @@ static int ast_vhub_epn_queue(struct usb_ep* u_ep, 
-> struct usb_request *u_req,
->  	/* Endpoint enabled ? */
->  	if (!ep->epn.enabled || !u_ep->desc || !ep->dev || !ep->d_idx ||
->  	    !ep->dev->enabled || ep->dev->suspended) {
-> -		EPDBG(ep,"Enqueing request on wrong or disabled EP\n");
-> +		EPDBG(ep, "Enqueuing request on wrong or disabled EP\n");
->  		return -ESHUTDOWN;
->  	}
->  
-> diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/
-> udc/udc-xilinx.c
-> index 6407e433bc78..b1f4104d1283 100644
-> --- a/drivers/usb/gadget/udc/udc-xilinx.c
-> +++ b/drivers/usb/gadget/udc/udc-xilinx.c
-> @@ -1078,7 +1078,7 @@ static int xudc_ep_queue(struct usb_ep *_ep, 
-> struct usb_request *_req,
->  	unsigned long flags;
->  
->  	if (!ep->desc) {
-> -		dev_dbg(udc->dev, "%s:queing request to disabled %s\n",
-> +		dev_dbg(udc->dev, "%s: queuing request to disabled %s\n",
->  			__func__, ep->name);
->  		return -ESHUTDOWN;
->  	}
-> -- 
-> 2.17.1
-> 
+RnJvbTogQW5kcmV3IEplZmZlcnkNCj4gU2VudDogMDggTm92ZW1iZXIgMjAxOCAwMTo1NQ0KPiA+
+IC0JCUVQREJHKGVwLCJFbnF1ZWluZyByZXF1ZXN0IG9uIHdyb25nIG9yIGRpc2FibGVkIEVQXG4i
+KTsNCj4gPiArCQlFUERCRyhlcCwgIkVucXVldWluZyByZXF1ZXN0IG9uIHdyb25nIG9yIGRpc2Fi
+bGVkIEVQXG4iKTsNCg0KU2hvdWxkbid0IGl0IGJlIEVucXVldWVpbmcgPw0KDQoJRGF2aWQNCg0K
+LQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0s
+IE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdh
+bGVzKQ0K
