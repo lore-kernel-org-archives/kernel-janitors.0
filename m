@@ -1,17 +1,17 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Thu, 08 Nov 2018 11:39:04 +0000
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Fri, 09 Nov 2018 14:32:37 +0000
 Subject: Re: [PATCH] media: staging: tegra-vde: print long unsigned using %lu format specifier
-Message-Id: <1ac3f16a-b6b5-107c-5f13-60a29cee4eef@gmail.com>
+Message-Id: <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181108110224.1916-1-colin.king@canonical.com>
 In-Reply-To: <20181108110224.1916-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
+To: Colin King <colin.king@canonical.com>, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08.11.2018 14:02, Colin King wrote:
+On 11/08/18 12:02, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
@@ -42,6 +42,28 @@ On 08.11.2018 14:02, Colin King wrote:
 >  		} else {
 > 
 
-Thanks,
+Compiling for i686 gives:
 
-Acked-by: Dmitry Osipenko <digetx@gmail.com>
+In file included from /home/hans/work/build/media-git/include/linux/printk.h:336,
+                 from /home/hans/work/build/media-git/include/linux/kernel.h:14,
+                 from /home/hans/work/build/media-git/include/linux/clk.h:16,
+                 from /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:12:
+/home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_iram_tables':
+/home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'u32' {aka 'unsigned int'} [-Wformat=]
+     "\tFrame %d: frame_num = %d B_frame = %lu\n",
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/hans/work/build/media-git/include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^~~
+/home/hans/work/build/media-git/include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
+  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+                       ^~~~~~~
+/home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of macro 'dev_dbg'
+    dev_dbg(vde->miscdev.parent,
+    ^~~~~~~
+
+Should it be %zu?
+
+Regards,
+
+	Hans
