@@ -1,42 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 24 Nov 2018 12:34:10 +0000
-Subject: [PATCH] altera-stapl: check for a null key before strcasecmp'ing it
-Message-Id: <20181124123410.7356-1-colin.king@canonical.com>
+From: Borislav Petkov <bp@alien8.de>
+Date: Fri, 09 Nov 2018 17:44:10 +0000
+Subject: HELP WANTED: Fix -Wmissing-prototypes warnings
+Message-Id: <20181109174357.GE21243@zn.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, driverdev-devel@linuxdriverproject.org
+Cc: wang.yi59@zte.com.cn, Greg KH <gregkh@linuxfoundation.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi all,
 
-Currently the null check on key is occurring after the strcasecmp on
-the key, hence there is a potential null pointer dereference on key.
-Fix this by checking if key is null first. Also replace the = 0
-check on strcasecmp with just the ! operator.
+gcc has a warning option
 
-Detected by CoverityScan, CID#1248787 ("Dereference before null check")
+  -Wmissing-prototypes
 
-Fixes: fa766c9be58b ("[media] Altera FPGA firmware download module")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/misc/altera-stapl/altera.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+which fires when a global function is missing a prototype declaration.
+This warning is important as it catches cases when that global
+function's prototype has been changed but its callers haven't been
+updated. And they should be.
 
-diff --git a/drivers/misc/altera-stapl/altera.c b/drivers/misc/altera-stapl/altera.c
-index ef83a9078646..486b8aa63869 100644
---- a/drivers/misc/altera-stapl/altera.c
-+++ b/drivers/misc/altera-stapl/altera.c
-@@ -2176,8 +2176,7 @@ static int altera_get_note(u8 *p, s32 program_size,
- 			key_ptr = &p[note_strings +
- 					get_unaligned_be32(
- 					&p[note_table + (8 * i)])];
--			if ((strncasecmp(key, key_ptr, strlen(key_ptr)) = 0) &&
--						(key != NULL)) {
-+			if (key && !strncasecmp(key, key_ptr, strlen(key_ptr))) {
- 				status = 0;
- 
- 				value_ptr = &p[note_strings +
+Currently, if enabled, this warning triggers ~1400 times for an
+allmodconfig build and we would like to have 0 warnings and then add
+that option to the main Makefile.
+
+So helping out here would be lovely!
+
+And it is very easy to do: you simply build the kernel with W=1:
+
+	make -j<num_cpus+1> W=1 2>w.log
+
+choose one -Wmissing-prototypes warning in the w.log build log and fix
+it by including the header which has the function prototype. Or you
+declare the function static. If that function prototype is missing, it
+needs to be added, of course.
+
+For every function, one should ask oneself, is it better to make the
+function static and save ourselves the prototype and include file
+dependency - that would be the preferred solution - or if not possible,
+should one make the prototype visible by including the proper header so
+that gcc sees the prototype.
+
+This should be a good exercise for newbies who'd like to get involved
+into kernel development.
+
+Feel free to ask if there are any questions.
+
+Thanks!
+
 -- 
-2.19.1
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
