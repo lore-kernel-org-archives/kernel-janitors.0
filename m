@@ -1,35 +1,82 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 25 Nov 2018 22:10:59 +0000
-Subject: [PATCH] rtlwifi: rtl8192de: fix spelling mistake "althougth" -> "although"
-Message-Id: <20181125221059.12234-1-colin.king@canonical.com>
+Date: Fri, 09 Nov 2018 13:23:12 +0000
+Subject: [PATCH] tracing: clean an indentation issue, remove extraneous spaces
+Message-Id: <20181109132312.20994-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a RT_TRACE message, fix it.
+Trivial fix to clean up an indentation issue, a whole chunk of code
+has an extra space in the indentation.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_filter.c | 48 +++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-index de98d88199d6..dcb5d839bbfd 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-@@ -812,7 +812,7 @@ bool rtl92d_phy_config_rf_with_headerfile(struct ieee80211_hw *hw,
- 	 * pathA or mac1 has to set phy0&phy1 pathA */
- 	if ((content = radiob_txt) && (rfpath = RF90_PATH_A)) {
- 		RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD,
--			 " ==> althougth Path A, we load radiob.txt\n");
-+			 " ==> although Path A, we load radiob.txt\n");
- 		radioa_arraylen = radiob_arraylen;
- 		radioa_array_table = radiob_array_table;
- 	}
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 84a65173b1e9..86b237215952 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1205,30 +1205,30 @@ static int parse_pred(const char *str, void *data,
+ 		 * (perf doesn't use it) and grab everything.
+ 		 */
+ 		if (strcmp(field->name, "ip") != 0) {
+-			 parse_error(pe, FILT_ERR_IP_FIELD_ONLY, pos + i);
+-			 goto err_free;
+-		 }
+-		 pred->fn = filter_pred_none;
+-
+-		 /*
+-		  * Quotes are not required, but if they exist then we need
+-		  * to read them till we hit a matching one.
+-		  */
+-		 if (str[i] = '\'' || str[i] = '"')
+-			 q = str[i];
+-		 else
+-			 q = 0;
+-
+-		 for (i++; str[i]; i++) {
+-			 if (q && str[i] = q)
+-				 break;
+-			 if (!q && (str[i] = ')' || str[i] = '&' ||
+-				    str[i] = '|'))
+-				 break;
+-		 }
+-		 /* Skip quotes */
+-		 if (q)
+-			 s++;
++			parse_error(pe, FILT_ERR_IP_FIELD_ONLY, pos + i);
++			goto err_free;
++		}
++		pred->fn = filter_pred_none;
++
++		/*
++		 * Quotes are not required, but if they exist then we need
++		 * to read them till we hit a matching one.
++		 */
++		if (str[i] = '\'' || str[i] = '"')
++			q = str[i];
++		else
++			q = 0;
++
++		for (i++; str[i]; i++) {
++			if (q && str[i] = q)
++				break;
++			if (!q && (str[i] = ')' || str[i] = '&' ||
++				   str[i] = '|'))
++				break;
++		}
++		/* Skip quotes */
++		if (q)
++			s++;
+ 		len = i - s;
+ 		if (len >= MAX_FILTER_STR_VAL) {
+ 			parse_error(pe, FILT_ERR_OPERAND_TOO_LONG, pos + i);
 -- 
 2.19.1
