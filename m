@@ -1,20 +1,22 @@
-From: Daniel Murray <daniel-murray@inbox.ru>
-Date: Sun, 11 Nov 2018 14:37:46 +0000
-Subject: Price Inquiry
-Message-Id: <20181111153247.1E359632C38@mail.hanqfast.gq>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Date: Fri, 09 Nov 2018 11:08:17 +0000
+Subject: Re: mtd: Kconfig: fix spelling mistake "partions" -> "partition"
+Message-Id: <20181109110817.2192-1-boris.brezillon@bootlin.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20180911124234.32744-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,friend,
- 
-This is Daniel Murray and i am from Sinara Group Co.Ltd Group Co.,LTD in Russia.
-We are glad to know about your company from the web and we are interested in your products.
-Could you kindly send us your Latest catalog and price list for our trial order.
- 
-Best Regards,
- 
-Daniel Murray
-Purchasing Manager
+On Tue, 2018-09-11 at 12:42:34 UTC, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in the Kconfig text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied to http://git.infradead.org/linux-mtd.git mtd/next, thanks.
+
+Thanks!
