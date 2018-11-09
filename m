@@ -1,27 +1,43 @@
-From: "Dr Kannan" <sale@allta.com.ua>
-Date: Sat, 03 Nov 2018 16:26:11 +0000
-Subject: Update
-Message-Id: <20181103162559.866ED1803A7@mail.allta.com.ua>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 09 Nov 2018 11:56:45 +0000
+Subject: [PATCH] staging: most: use format specifier "%s" in snprintf
+Message-Id: <20181109115645.18279-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Recipients <sale@allta.com.ua>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Hello dear
+From: Colin Ian King <colin.king@canonical.com>
 
-Greetings to you,I am Dr.Kannan, a personal account manager to Late Engr. Richard Hernandez, who died with his family in the missing Malaysian Air crash
+Passing string ch_data_type[i].name as the format specifier is
+potentially hazardous because it could (although very unlikely to)
+have a format specifier embedded in it causing issues when parsing
+the non-existent arguments to these.  Follow best practice by using
+the "%s" format string for the string.
 
-of 2014. His account with us is in intestate with no claim his fixed deposit of U$D 7 Million.
+Cleans up clang warning:
+format string is not a string literal (potentially insecure) [-Wformat-security]
 
-I have been mandated by the Bank Management as his personal account officer, to present his relative or next of kin.
+Fixes: e7f2b70fd3a9 ("staging: most: replace multiple if..else with table lookup")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/most/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have searched through notary register of his country here all to no avail, so I wish to present you to the Bank as his only relative and next of kin.
-
-kindly contact me for more details, terms and condition shall be clarified upon your response. There is no risk whatsoever to this transaction as I have all papers and documents to pose of you the inheritance to this. 
-
-I wait for your prompt response.
-
-My regards,
-
-Dr. Kannan.
+diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
+index 6a18cf73c85e..18936cdb1083 100644
+--- a/drivers/staging/most/core.c
++++ b/drivers/staging/most/core.c
+@@ -351,7 +351,7 @@ static ssize_t set_datatype_show(struct device *dev,
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ch_data_type); i++) {
+ 		if (c->cfg.data_type & ch_data_type[i].most_ch_data_type)
+-			return snprintf(buf, PAGE_SIZE, ch_data_type[i].name);
++			return snprintf(buf, PAGE_SIZE, "%s", ch_data_type[i].name);
+ 	}
+ 	return snprintf(buf, PAGE_SIZE, "unconfigured\n");
+ }
+-- 
+2.19.1
