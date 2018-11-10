@@ -1,45 +1,27 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 10 Nov 2018 02:41:14 +0000
-Subject: [PATCH -next] block: remove set but not used variable 'et'
-Message-Id: <1541817674-19370-1-git-send-email-yuehaibing@huawei.com>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Sat, 10 Nov 2018 03:08:24 +0000
+Subject: Re: [PATCH -next] block: remove set but not used variable 'et'
+Message-Id: <daa59ba1-5786-d181-bd4f-17aefd639ed9@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1541817674-19370-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541817674-19370-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On 11/9/18 7:41 PM, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> block/blk-ioc.c: In function 'put_io_context_active':
+> block/blk-ioc.c:174:24: warning:
+>  variable 'et' set but not used [-Wunused-but-set-variable]
+> 
+> It not used any more after commit
+> a1ce35fa4985 ("block: remove dead elevator code")
 
-block/blk-ioc.c: In function 'put_io_context_active':
-block/blk-ioc.c:174:24: warning:
- variable 'et' set but not used [-Wunused-but-set-variable]
+Thanks, applied.
 
-It not used any more after commit
-a1ce35fa4985 ("block: remove dead elevator code")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- block/blk-ioc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/block/blk-ioc.c b/block/blk-ioc.c
-index 007aac6..56755ad 100644
---- a/block/blk-ioc.c
-+++ b/block/blk-ioc.c
-@@ -171,7 +171,6 @@ void put_io_context(struct io_context *ioc)
-  */
- void put_io_context_active(struct io_context *ioc)
- {
--	struct elevator_type *et;
- 	unsigned long flags;
- 	struct io_cq *icq;
- 
-@@ -190,7 +189,6 @@ void put_io_context_active(struct io_context *ioc)
- 		if (icq->flags & ICQ_EXITED)
- 			continue;
- 
--		et = icq->q->elevator->type;
- 		ioc_exit_icq(icq);
- 	}
- 	spin_unlock_irqrestore(&ioc->lock, flags);
+-- 
+Jens Axboe
