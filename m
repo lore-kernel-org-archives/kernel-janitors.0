@@ -1,28 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 25 Nov 2018 01:40:53 +0000
-Subject: Re: [PATCH] net: qualcomm: rmnet: move null check on dev before dereferecing it
-Message-Id: <20181124.174053.2148461318593755323.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 10 Nov 2018 04:13:24 +0000
+Subject: [PATCH -next] sysv: return 'err' instead of 0 in __sysv_write_inode
+Message-Id: <1541823204-45068-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181124150302.20339-1-colin.king@canonical.com>
-In-Reply-To: <20181124150302.20339-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: subashab@codeaurora.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christoph Hellwig <hch@infradead.org>, David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 24 Nov 2018 15:03:02 +0000
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently dev is dereferenced by the call dev_net(dev) before dev is null
-> checked.  Fix this by null checking dev before the potential null
-> pointer dereference.
-> 
-> Detected by CoverityScan, CID#1462955 ("Dereference before null check")
-> 
-> Fixes: 23790ef12082 ("net: qualcomm: rmnet: Allow to configure flags for existing devices")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+fs/sysv/inode.c: In function '__sysv_write_inode':
+fs/sysv/inode.c:239:6: warning:
+ variable 'err' set but not used [-Wunused-but-set-variable]
 
-Applied to net-next.
+__sysv_write_inode should return 'err' instead of 0
+
+Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/sysv/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
+index 499a20a..273736f 100644
+--- a/fs/sysv/inode.c
++++ b/fs/sysv/inode.c
+@@ -275,7 +275,7 @@ static int __sysv_write_inode(struct inode *inode, int wait)
+                 }
+         }
+ 	brelse(bh);
+-	return 0;
++	return err;
+ }
+ 
+ int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
