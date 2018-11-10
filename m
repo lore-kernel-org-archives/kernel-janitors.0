@@ -1,60 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 02 Nov 2018 18:33:55 +0000
-Subject: [PATCH 4.18 073/150] x86/paravirt: Fix some warning messages
-Message-Id: <20181102182908.682563548@linuxfoundation.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 10 Nov 2018 02:45:52 +0000
+Subject: [PATCH -next] drm/panel: Remove set but not used variable 'config'
+Message-Id: <1541817952-20499-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181102182902.250560510@linuxfoundation.org>
-In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-------------------
+drivers/gpu/drm/panel/panel-truly-nt35597.c: In function 'truly_nt35597_panel_add':
+drivers/gpu/drm/panel/panel-truly-nt35597.c:488:31: warning:
+ variable 'config' set but not used [-Wunused-but-set-variable]
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+It never used since introdution in
+  1dd0b147c1ff ("drm/panel: Add support for Truly NT35597 panel driver")
 
-The first argument to WARN_ONCE() is a condition.
-
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/panel/panel-truly-nt35597.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 930c88341e4e..1fbf38dde84c 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+diff --git a/drivers/gpu/drm/panel/panel-truly-nt35597.c b/drivers/gpu/drm/panel/panel-truly-nt35597.c
+index fc2a66c..2d5a540 100644
+--- a/drivers/gpu/drm/panel/panel-truly-nt35597.c
++++ b/drivers/gpu/drm/panel/panel-truly-nt35597.c
+@@ -485,9 +485,7 @@ static int truly_nt35597_panel_add(struct truly_nt35597 *ctx)
+ {
+ 	struct device *dev = ctx->dev;
+ 	int ret, i;
+-	const struct nt35597_config *config;
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
--- 
-2.17.1
+-	config = ctx->config;
+ 	for (i = 0; i < ARRAY_SIZE(ctx->supplies); i++)
+ 		ctx->supplies[i].supply = regulator_names[i];
