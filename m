@@ -1,33 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 06 Nov 2018 17:03:00 +0000
-Subject: Re: [PATCH] wireless: airo: potential buffer overflow in sprintf()
-Message-Id: <20181106170300.7E7DF6038E@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 10 Nov 2018 02:41:14 +0000
+Subject: [PATCH -next] block: remove set but not used variable 'et'
+Message-Id: <1541817674-19370-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181024083334.a6pxsifew3iztuun@kili.mountain>
-In-Reply-To: <20181024083334.a6pxsifew3iztuun@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> It looks like we wanted to print a maximum of BSSList_rid.ssidLen bytes
-> of the ssid, but we accidentally use "%*s" (width) instead of "%.*s"
-> (precision) so if the ssid doesn't have a NUL terminator this could lead
-> to an overflow.
-> 
-> Static analysis.  Not tested.
-> 
-> Fixes: e174961ca1a0 ("net: convert print_mac to %pM")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+block/blk-ioc.c: In function 'put_io_context_active':
+block/blk-ioc.c:174:24: warning:
+ variable 'et' set but not used [-Wunused-but-set-variable]
 
-Patch applied to wireless-drivers-next.git, thanks.
+It not used any more after commit
+a1ce35fa4985 ("block: remove dead elevator code")
 
-3d39e1bb1c88 wireless: airo: potential buffer overflow in sprintf()
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ block/blk-ioc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
--- 
-https://patchwork.kernel.org/patch/10654389/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+index 007aac6..56755ad 100644
+--- a/block/blk-ioc.c
++++ b/block/blk-ioc.c
+@@ -171,7 +171,6 @@ void put_io_context(struct io_context *ioc)
+  */
+ void put_io_context_active(struct io_context *ioc)
+ {
+-	struct elevator_type *et;
+ 	unsigned long flags;
+ 	struct io_cq *icq;
+ 
+@@ -190,7 +189,6 @@ void put_io_context_active(struct io_context *ioc)
+ 		if (icq->flags & ICQ_EXITED)
+ 			continue;
+ 
+-		et = icq->q->elevator->type;
+ 		ioc_exit_icq(icq);
+ 	}
+ 	spin_unlock_irqrestore(&ioc->lock, flags);
