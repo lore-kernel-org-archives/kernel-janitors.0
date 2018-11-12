@@ -1,36 +1,44 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Tue, 06 Nov 2018 11:06:33 +0000
-Subject: Re: [PATCH v2] edac: qcom_edac: uninitialized variable in IRQ handler
-Message-Id: <20181106110633.GE13712@zn.tnic>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 12 Nov 2018 01:54:05 +0000
+Subject: [PATCH -next] scsi: bnx2i: remove set but not used variable 'cid_num'
+Message-Id: <1541987645-19467-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181018141522.rywdvjmlpk4ticiw@kili.mountain>
-In-Reply-To: <20181018141522.rywdvjmlpk4ticiw@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Channagoud Kadabi <ckadabi@codeaurora.org>, Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 04:24:38PM +0200, Borislav Petkov wrote:
-> On Thu, Oct 18, 2018 at 05:15:22PM +0300, Dan Carpenter wrote:
-> > We forgot to initialize "irq_handled" to false.  But really it's
-> > cleaner to just get rid of that variable and use "irq_rc" directly
-> > instead.
-> > 
-> > Fixes: 27450653f1db ("drivers: edac: Add EDAC driver support for QCOM SoCs")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: Get rid of the "irq_handled" variable.
-> > 
-> >  drivers/edac/qcom_edac.c | 8 ++------
-> >  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> Reviewed-by: Borislav Petkov <bp@suse.de>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thx.
+drivers/scsi/bnx2i/bnx2i_hwi.c: In function 'bnx2i_process_ofld_cmpl':
+drivers/scsi/bnx2i/bnx2i_hwi.c:2430:6: warning:
+ variable 'cid_num' set but not used [-Wunused-but-set-variable]
 
--- 
-Regards/Gruss,
-    Boris.
+It never used since commit
+  cf4e6363859d ("[SCSI] bnx2i: Add bnx2i iSCSI driver.")
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/bnx2i/bnx2i_hwi.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/bnx2i/bnx2i_hwi.c b/drivers/scsi/bnx2i/bnx2i_hwi.c
+index 6bad268..91f5316 100644
+--- a/drivers/scsi/bnx2i/bnx2i_hwi.c
++++ b/drivers/scsi/bnx2i/bnx2i_hwi.c
+@@ -2427,7 +2427,6 @@ static void bnx2i_process_ofld_cmpl(struct bnx2i_hba *hba,
+ {
+ 	u32 cid_addr;
+ 	struct bnx2i_endpoint *ep;
+-	u32 cid_num;
+ 
+ 	ep = bnx2i_find_ep_in_ofld_list(hba, ofld_kcqe->iscsi_conn_id);
+ 	if (!ep) {
+@@ -2462,7 +2461,6 @@ static void bnx2i_process_ofld_cmpl(struct bnx2i_hba *hba,
+ 	} else {
+ 		ep->state = EP_STATE_OFLD_COMPL;
+ 		cid_addr = ofld_kcqe->iscsi_conn_context_id;
+-		cid_num = bnx2i_get_cid_num(ep);
+ 		ep->ep_cid = cid_addr;
+ 		ep->qp.ctx_base = NULL;
+ 	}
