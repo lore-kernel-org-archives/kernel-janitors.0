@@ -1,8 +1,10 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 10 Nov 2018 03:44:46 +0000
-Subject: [PATCH -next] drm/qxl: remove set but not used variable 'map'
-Message-Id: <1541821486-40631-1-git-send-email-yuehaibing@huawei.com>
+Date: Mon, 12 Nov 2018 13:32:36 +0000
+Subject: [PATCH -next] drm/qxl: remove set but not used variables 'driver, qbo'
+Message-Id: <1542029556-88107-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1541821486-40631-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541821486-40631-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,41 +13,49 @@ Cc: YueHaibing <yuehaibing@huawei.com>, virtualization@lists.linux-foundation.or
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/qxl/qxl_object.c: In function 'qxl_bo_kunmap_atomic_page':
-drivers/gpu/drm/qxl/qxl_object.c:189:21: warning:
- variable 'map' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/qxl/qxl_release.c: In function 'qxl_release_fence_buffer_objects':
+drivers/gpu/drm/qxl/qxl_release.c:431:17: warning:
+ variable 'qbo' set but not used [-Wunused-but-set-variable]
+
+drivers/gpu/drm/qxl/qxl_release.c:430:24: warning:
+ variable 'driver' set but not used [-Wunused-but-set-variable]
+
+'qbo' not used since commit f2c24b83ae90 ("drm/ttm: flip the switch, and convert
+to dma_fence")
+
+And 'driver' never used since introduction in
+8002db6336dd ("qxl: convert qxl driver to proper use for reservations")
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/gpu/drm/qxl/qxl_object.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/qxl/qxl_release.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl_object.c
-index f67a3c5..b1706cb 100644
---- a/drivers/gpu/drm/qxl/qxl_object.c
-+++ b/drivers/gpu/drm/qxl/qxl_object.c
-@@ -186,13 +186,9 @@ void qxl_bo_kunmap_atomic_page(struct qxl_device *qdev,
- 			       struct qxl_bo *bo, void *pmap)
- {
- 	struct ttm_mem_type_manager *man = &bo->tbo.bdev->man[bo->tbo.mem.mem_type];
--	struct io_mapping *map;
+diff --git a/drivers/gpu/drm/qxl/qxl_release.c b/drivers/gpu/drm/qxl/qxl_release.c
+index 3813ec1..0a693fe 100644
+--- a/drivers/gpu/drm/qxl/qxl_release.c
++++ b/drivers/gpu/drm/qxl/qxl_release.c
+@@ -427,8 +427,6 @@ void qxl_release_fence_buffer_objects(struct qxl_release *release)
+ 	struct ttm_buffer_object *bo;
+ 	struct ttm_bo_global *glob;
+ 	struct ttm_bo_device *bdev;
+-	struct ttm_bo_driver *driver;
+-	struct qxl_bo *qbo;
+ 	struct ttm_validate_buffer *entry;
+ 	struct qxl_device *qdev;
  
--	if (bo->tbo.mem.mem_type = TTM_PL_VRAM)
--		map = qdev->vram_mapping;
--	else if (bo->tbo.mem.mem_type = TTM_PL_PRIV)
--		map = qdev->surface_mapping;
--	else
-+	if ((bo->tbo.mem.mem_type != TTM_PL_VRAM) &&
-+	    (bo->tbo.mem.mem_type != TTM_PL_PRIV))
- 		goto fallback;
+@@ -449,14 +447,12 @@ void qxl_release_fence_buffer_objects(struct qxl_release *release)
+ 		       release->id | 0xf0000000, release->base.seqno);
+ 	trace_dma_fence_emit(&release->base);
  
- 	io_mapping_unmap_atomic(pmap);
-@@ -200,7 +196,7 @@ void qxl_bo_kunmap_atomic_page(struct qxl_device *qdev,
- 	(void) ttm_mem_io_lock(man, false);
- 	ttm_mem_io_free(bo->tbo.bdev, &bo->tbo.mem);
- 	ttm_mem_io_unlock(man);
--	return ;
-+	return;
-  fallback:
- 	qxl_bo_kunmap(bo);
- }
+-	driver = bdev->driver;
+ 	glob = bdev->glob;
+ 
+ 	spin_lock(&glob->lru_lock);
+ 
+ 	list_for_each_entry(entry, &release->bos, head) {
+ 		bo = entry->bo;
+-		qbo = to_qxl_bo(bo);
+ 
+ 		reservation_object_add_shared_fence(bo->resv, &release->base);
+ 		ttm_bo_add_to_lru(bo);
