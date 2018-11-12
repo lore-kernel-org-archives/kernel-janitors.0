@@ -1,35 +1,20 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 03 Nov 2018 16:03:11 +0000
-Subject: [PATCH] fs/coda: clean up indentation, replace spaces with tab
-Message-Id: <20181103160311.3289-1-colin.king@canonical.com>
+From: Daniel Murray <sinara-group@bk.ru>
+Date: Mon, 12 Nov 2018 09:06:52 +0000
+Subject: Inquiry 12/11/18
+Message-Id: <20181112090748.7B90997B488@mail.hanqfast.gq>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Trivial fix to clean up indentation, replace spaces with tab
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/coda/psdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
-index c5234c21b539..1bc78463c346 100644
---- a/fs/coda/psdev.c
-+++ b/fs/coda/psdev.c
-@@ -358,7 +358,7 @@ static int init_coda_psdev(void)
- 	if (register_chrdev(CODA_PSDEV_MAJOR, "coda", &coda_psdev_fops)) {
- 		pr_err("%s: unable to get major %d\n",
- 		       __func__, CODA_PSDEV_MAJOR);
--              return -EIO;
-+		return -EIO;
- 	}
- 	coda_psdev_class = class_create(THIS_MODULE, "coda");
- 	if (IS_ERR(coda_psdev_class)) {
--- 
-2.19.1
+Hi,friend,
+ 
+This is Daniel Murray and i am from Sinara Group Co.Ltd Group Co.,LTD in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
+ 
+Best Regards,
+ 
+Daniel Murray
+Purchasing Manager
