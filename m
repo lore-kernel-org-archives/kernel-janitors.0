@@ -1,17 +1,19 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Mon, 12 Nov 2018 02:17:50 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 12 Nov 2018 02:20:06 +0000
 Subject: Re: [PATCH net-next] net: phy: marvell: remove set but not used variable 'pause'
-Message-Id: <20181112021750.GC23571@lunn.ch>
+Message-Id: <20181111.182006.2236972282509498071.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1541987250-18687-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1541987250-18687-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yuehaibing@huawei.com
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 01:47:30AM +0000, YueHaibing wrote:
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 12 Nov 2018 01:47:30 +0000
+
 > Fixes gcc '-Wunused-but-set-variable' warning:
 > 
 > drivers/net/phy/marvell.c: In function 'm88e1510_config_init':
@@ -23,6 +25,4 @@ On Mon, Nov 12, 2018 at 01:47:30AM +0000, YueHaibing wrote:
 > 
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Applied.
