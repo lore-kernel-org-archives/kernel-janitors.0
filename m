@@ -1,47 +1,45 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Sat, 10 Nov 2018 15:58:51 +0000
-Subject: Re: [PATCH] EDAC: clean an indentation issues, replace spaces for tabs
-Message-Id: <20181110155851.GC20023@zn.tnic>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 12 Nov 2018 01:47:30 +0000
+Subject: [PATCH net-next] net: phy: marvell: remove set but not used variable 'pause'
+Message-Id: <1541987250-18687-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181109133757.21471-1-colin.king@canonical.com>
-In-Reply-To: <20181109133757.21471-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mark Gross <mark.gross@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ranganathan Desikan <ravi@jetztechnologies.com>, "Arvind R ." <arvino55@gmail.com>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 01:37:57PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to clean up an indentation issues, replacing 7 space chars
-> for a tab and also inserting a missing indentation
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Pls see section "2) Describe your changes" in
+drivers/net/phy/marvell.c: In function 'm88e1510_config_init':
+drivers/net/phy/marvell.c:850:7: warning:
+ variable 'pause' set but not used [-Wunused-but-set-variable]
 
-  Documentation/process/submitting-patches.rst
+It not used any more after commit 3c1bcc8614db ("net: ethernet: Convert phydev
+advertize and supported from u32 to link mode")
 
-about how to formulate your commit message. Especially this:
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/phy/marvell.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy to
-do frotz", as if you are giving orders to the codebase to change its
-behaviour."
-
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/edac/e752x_edac.c   | 4 ++--
->  drivers/edac/i3000_edac.c   | 4 ++--
->  drivers/edac/i5000_edac.c   | 4 ++--
->  drivers/edac/i7core_edac.c  | 2 +-
->  drivers/edac/i82975x_edac.c | 4 ++--
->  5 files changed, 9 insertions(+), 9 deletions(-)
-
-Anyway, fixed up and applied,
-thanks.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 36a0db8..6a98819 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -847,7 +847,6 @@ static int m88e1510_config_init(struct phy_device *phydev)
+ 
+ 	/* SGMII-to-Copper mode initialization */
+ 	if (phydev->interface = PHY_INTERFACE_MODE_SGMII) {
+-		u32 pause;
+ 
+ 		/* Select page 18 */
+ 		err = marvell_set_page(phydev, 18);
+@@ -878,7 +877,6 @@ static int m88e1510_config_init(struct phy_device *phydev)
+ 		 * This means we can never be truely sure what was advertised,
+ 		 * so disable Pause support.
+ 		 */
+-		pause = SUPPORTED_Pause | SUPPORTED_Asym_Pause;
+ 		linkmode_clear_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+ 				   phydev->supported);
+ 		linkmode_clear_bit(ETHTOOL_LINK_MODE_Pause_BIT,
