@@ -1,24 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 28 Nov 2018 00:23:04 +0000
-Subject: Re: [PATCH] net: via: via-velocity: fix spelling mistake "alignement" -> "alignment"
-Message-Id: <20181127.162304.1089705109317922436.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 13 Nov 2018 13:56:56 +0000
+Subject: [PATCH -next] powerpc64/ftrace: Drop pointless static qualifier in is_b_op()
+Message-Id: <1542117416-52357-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181126153401.20982-1-colin.king@canonical.com>
-In-Reply-To: <20181126153401.20982-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: romieu@fr.zoreil.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>, Kate Stewart <kstewart@linuxfoundation.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 26 Nov 2018 15:34:01 +0000
+There is no need to have the 'intoffset' variable static since new value
+always be assigned before use it.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The text in array velocity_gstrings contains a spelling mistake,
-> rename rx_frame_alignement_errors to rx_frame_alignment_errors.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/powerpc/kernel/trace/ftrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/arch/powerpc/kernel/trace/ftrace.c b/arch/powerpc/kernel/trace/ftrace.c
+index 4bf051d..65248d4 100644
+--- a/arch/powerpc/kernel/trace/ftrace.c
++++ b/arch/powerpc/kernel/trace/ftrace.c
+@@ -107,7 +107,7 @@ static int is_b_op(unsigned int op)
+ 
+ static unsigned long find_bl_target(unsigned long ip, unsigned int op)
+ {
+-	static int offset;
++	int offset;
+ 
+ 	offset = (op & 0x03fffffc);
+ 	/* make it signed */
