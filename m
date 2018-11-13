@@ -1,89 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 14 Nov 2018 22:12:34 +0000
-Subject: Applied "spi: npcm: fix u32 csgpio being checked for less than zero" to the spi tree
-Message-Id: <20181114221234.2F1A9440078@finisterre.ee.mobilebroadband>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Nov 2018 09:38:14 +0000
+Subject: [PATCH][serial-next] serial-uartlite: fix null pointer dereference on pointer port
+Message-Id: <20181113093814.27598-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181114214246.15591-1-colin.king@canonical.com>
-In-Reply-To: <20181114214246.15591-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, Brendan Higgins <brendanhiggins@google.com>Mark Brown <broonie@kernel.org>, openbmc@lists.ozlabs.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
+To: Peter Korsgaard <jacmet@sunsite.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
-
-   spi: npcm: fix u32 csgpio being checked for less than zero
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 757ec116c9bce4278fa4423039736c832cc63b6f Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 14 Nov 2018 21:42:46 +0000
-Subject: [PATCH] spi: npcm: fix u32 csgpio being checked for less than zero
 
-The u32 variable csgpio is being checked for an error return
-from the call to of_get_named_gpio, however, since this is unsigned
-this comparison will always be false. Fix this by making csgpio an
-int and fix up the %u format specifiers to %d accordingly.
+Pointer port is dereferenced on port->private_data when assigning pointer
+pdata before port is null checked, leading to a potential null pointer
+dereference.  Fix this by assigning pdata after the null pointer check on
+port.
 
-Detected by CoverityScan, CID#1475476 ("Unsigned compared against 0")
+Detected by CoverityScan, CID#1475434 ("Dereference before null check")
 
-Fixes: 2a22f1b30cee ("spi: npcm: add NPCM PSPI controller driver")
+Fixes: 3b209d253e7f ("serial-uartlite: Do not use static struct uart_driver out of probe()")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-npcm-pspi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/serial/uartlite.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index 51777515c83f..6dae91091143 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -329,7 +329,7 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 	unsigned long clk_hz;
- 	struct device_node *np = pdev->dev.of_node;
- 	int num_cs, i;
--	u32 csgpio;
-+	int csgpio;
- 	int irq;
- 	int ret;
+diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
+index 4a7989df5ff5..0eff33cd9f24 100644
+--- a/drivers/tty/serial/uartlite.c
++++ b/drivers/tty/serial/uartlite.c
+@@ -715,10 +715,12 @@ static int ulite_release(struct device *dev)
+ static int __maybe_unused ulite_suspend(struct device *dev)
+ {
+ 	struct uart_port *port = dev_get_drvdata(dev);
+-	struct uartlite_data *pdata = port->private_data;
  
-@@ -417,12 +417,12 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev, "failed to get csgpio#%u\n", i);
- 			goto out_disable_clk;
- 		}
--		dev_dbg(&pdev->dev, "csgpio#%u = %u\n", i, csgpio);
-+		dev_dbg(&pdev->dev, "csgpio#%u = %d\n", i, csgpio);
- 		ret = devm_gpio_request_one(&pdev->dev, csgpio,
- 					    GPIOF_OUT_INIT_HIGH, DRIVER_NAME);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev,
--				"failed to configure csgpio#%u %u\n"
-+				"failed to configure csgpio#%u %d\n"
- 				, i, csgpio);
- 			goto out_disable_clk;
- 		}
+-	if (port)
++	if (port) {
++		struct uartlite_data *pdata = port->private_data;
++
+ 		uart_suspend_port(pdata->ulite_uart_driver, port);
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.19.1
