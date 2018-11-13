@@ -1,54 +1,51 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Wed, 14 Nov 2018 17:01:10 +0000
-Subject: Re: [PATCH] rtc: max8997: Fix the returned value in case of error in 'max8997_rtc_read_alarm()'
-Message-Id: <20181114170110.GZ29768@piout.net>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 13 Nov 2018 09:39:11 +0000
+Subject: NACK: [PATCH][serial-next] serial-uartlite: fix null pointer dereference on pointer port
+Message-Id: <1bf40dc1-86dc-468a-f741-39ccdc02e67a@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181114165025.2293-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20181114165025.2293-1-christophe.jaillet@wanadoo.fr>
+References: <20181113093814.27598-1-colin.king@canonical.com>
+In-Reply-To: <20181113093814.27598-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: a.zummo@towertech.it, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Korsgaard <jacmet@sunsite.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 14/11/2018 17:50:25+0100, Christophe JAILLET wrote:
-> In case of error, we return 0.
-> This is spurious and not consistent with the other functions of the driver.
-> Commit 22652ba72453 has modified more than what is said in the commit
-> message and error should be propagated.
+On 13/11/2018 09:38, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Fixes: 22652ba72453 ("rtc: stop validating rtc_time in .read_time")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure that the Fixes tag is the right one.
-> It is related, but not 100% accurate IMHO.
-
-Well, as you note, this make your commit message wrong 22652ba72453
-didn't modified more than what it said and the behavior stayed exactly
-the same as the previous one. Can you reword?
-
-> ---
->  drivers/rtc/rtc-max8997.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Pointer port is dereferenced on port->private_data when assigning pointer
+> pdata before port is null checked, leading to a potential null pointer
+> dereference.  Fix this by assigning pdata after the null pointer check on
+> port.
 > 
-> diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
-> index 08c661a332ec..20e50d9fdf88 100644
-> --- a/drivers/rtc/rtc-max8997.c
-> +++ b/drivers/rtc/rtc-max8997.c
-> @@ -215,7 +215,7 @@ static int max8997_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+> Detected by CoverityScan, CID#1475434 ("Dereference before null check")
+> 
+> Fixes: 3b209d253e7f ("serial-uartlite: Do not use static struct uart_driver out of probe()")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/tty/serial/uartlite.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
+> index 4a7989df5ff5..0eff33cd9f24 100644
+> --- a/drivers/tty/serial/uartlite.c
+> +++ b/drivers/tty/serial/uartlite.c
+> @@ -715,10 +715,12 @@ static int ulite_release(struct device *dev)
+>  static int __maybe_unused ulite_suspend(struct device *dev)
+>  {
+>  	struct uart_port *port = dev_get_drvdata(dev);
+> -	struct uartlite_data *pdata = port->private_data;
 >  
->  out:
->  	mutex_unlock(&info->lock);
-> -	return 0;
-> +	return ret;
+> -	if (port)
+> +	if (port) {
+> +		struct uartlite_data *pdata = port->private_data;
+> +
+>  		uart_suspend_port(pdata->ulite_uart_driver, port);
+> +	}
+>  
+>  	return 0;
 >  }
->  
->  static int max8997_rtc_stop_alarm(struct max8997_rtc_info *info)
-> -- 
-> 2.17.1
 > 
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Sorry for the noise, I sent the wrong fix. V2 coming soon.
