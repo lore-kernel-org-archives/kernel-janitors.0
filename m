@@ -1,51 +1,36 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 13 Nov 2018 09:39:11 +0000
-Subject: NACK: [PATCH][serial-next] serial-uartlite: fix null pointer dereference on pointer port
-Message-Id: <1bf40dc1-86dc-468a-f741-39ccdc02e67a@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Nov 2018 14:18:17 +0000
+Subject: [PATCH] net/decnet: add missing indentation
+Message-Id: <20181113141817.6189-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181113093814.27598-1-colin.king@canonical.com>
-In-Reply-To: <20181113093814.27598-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Korsgaard <jacmet@sunsite.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 13/11/2018 09:38, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer port is dereferenced on port->private_data when assigning pointer
-> pdata before port is null checked, leading to a potential null pointer
-> dereference.  Fix this by assigning pdata after the null pointer check on
-> port.
-> 
-> Detected by CoverityScan, CID#1475434 ("Dereference before null check")
-> 
-> Fixes: 3b209d253e7f ("serial-uartlite: Do not use static struct uart_driver out of probe()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/tty/serial/uartlite.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
-> index 4a7989df5ff5..0eff33cd9f24 100644
-> --- a/drivers/tty/serial/uartlite.c
-> +++ b/drivers/tty/serial/uartlite.c
-> @@ -715,10 +715,12 @@ static int ulite_release(struct device *dev)
->  static int __maybe_unused ulite_suspend(struct device *dev)
->  {
->  	struct uart_port *port = dev_get_drvdata(dev);
-> -	struct uartlite_data *pdata = port->private_data;
->  
-> -	if (port)
-> +	if (port) {
-> +		struct uartlite_data *pdata = port->private_data;
-> +
->  		uart_suspend_port(pdata->ulite_uart_driver, port);
-> +	}
->  
->  	return 0;
->  }
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry for the noise, I sent the wrong fix. V2 coming soon.
+There is a missing indentation before the declaration of port. Add
+it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/decnet/af_decnet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/decnet/af_decnet.c b/net/decnet/af_decnet.c
+index dbd0f7bae00a..bdccc46a2921 100644
+--- a/net/decnet/af_decnet.c
++++ b/net/decnet/af_decnet.c
+@@ -192,7 +192,7 @@ static int check_port(__le16 port)
+ static unsigned short port_alloc(struct sock *sk)
+ {
+ 	struct dn_scp *scp = DN_SK(sk);
+-static unsigned short port = 0x2000;
++	static unsigned short port = 0x2000;
+ 	unsigned short i_port = port;
+ 
+ 	while(check_port(cpu_to_le16(++port)) != 0) {
+-- 
+2.19.1
