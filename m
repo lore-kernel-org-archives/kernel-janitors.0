@@ -1,75 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Nov 2018 09:43:23 +0000
-Subject: [PATCH][serial-next][V2] serial-uartlite: fix null pointer dereference on pointer port
-Message-Id: <20181113094323.27934-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 13 Nov 2018 11:13:04 +0000
+Subject: [PATCH -next] scsi: ufs: Use PTR_ERR_OR_ZERO in ufs_hisi_get_resource()
+Message-Id: <1542107584-23291-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Korsgaard <jacmet@sunsite.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-Pointer port is dereferenced on port->private_data when assigning pointer
-pdata before port is null checked, leading to a potential null pointer
-dereference.  Fix this by assigning pdata after the null pointer check on
-port.
-
-Detected by CoverityScan, CID#1475434 ("Dereference before null check")
-
-Fixes: 3b209d253e7f ("serial-uartlite: Do not use static struct uart_driver out of probe()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/tty/serial/uartlite.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/scsi/ufs/ufs-hisi.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
-index 4a7989df5ff5..b8b912b5a8b9 100644
---- a/drivers/tty/serial/uartlite.c
-+++ b/drivers/tty/serial/uartlite.c
-@@ -694,10 +694,11 @@ static int ulite_assign(struct device *dev, int id, u32 base, int irq,
- static int ulite_release(struct device *dev)
- {
- 	struct uart_port *port = dev_get_drvdata(dev);
--	struct uartlite_data *pdata = port->private_data;
- 	int rc = 0;
- 
- 	if (port) {
-+		struct uartlite_data *pdata = port->private_data;
-+
- 		rc = uart_remove_one_port(pdata->ulite_uart_driver, port);
- 		dev_set_drvdata(dev, NULL);
- 		port->mapbase = 0;
-@@ -715,10 +716,12 @@ static int ulite_release(struct device *dev)
- static int __maybe_unused ulite_suspend(struct device *dev)
- {
- 	struct uart_port *port = dev_get_drvdata(dev);
--	struct uartlite_data *pdata = port->private_data;
- 
--	if (port)
-+	if (port) {
-+		struct uartlite_data *pdata = port->private_data;
-+
- 		uart_suspend_port(pdata->ulite_uart_driver, port);
-+	}
- 
- 	return 0;
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 452e19f..6fdf059 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -514,10 +514,7 @@ static int ufs_hisi_get_resource(struct ufs_hisi_host *host)
+ 	/* get resource of ufs sys ctrl */
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	host->ufs_sys_ctrl = devm_ioremap_resource(dev, mem_res);
+-	if (IS_ERR(host->ufs_sys_ctrl))
+-		return PTR_ERR(host->ufs_sys_ctrl);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(host->ufs_sys_ctrl);
  }
-@@ -732,10 +735,12 @@ static int __maybe_unused ulite_suspend(struct device *dev)
- static int __maybe_unused ulite_resume(struct device *dev)
- {
- 	struct uart_port *port = dev_get_drvdata(dev);
--	struct uartlite_data *pdata = port->private_data;
  
--	if (port)
-+	if (port) {
-+		struct uartlite_data *pdata = port->private_data;
-+
- 		uart_resume_port(pdata->ulite_uart_driver, port);
-+	}
- 
- 	return 0;
- }
--- 
-2.19.1
+ static void ufs_hisi_set_pm_lvl(struct ufs_hba *hba)
