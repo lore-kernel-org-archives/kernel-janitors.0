@@ -1,27 +1,46 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Thu, 29 Nov 2018 23:39:14 +0000
-Subject: Re: [PATCH] RDMA/drivers: fix spelling mistake "initalize" -> "initialize"
-Message-Id: <20181129233914.GA11331@ziepe.ca>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 13 Nov 2018 17:42:24 +0000
+Subject: [PATCH] net: lantiq: Fix returned value in case of error in 'xrx200_probe()'
+Message-Id: <20181113174224.7884-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181128151116.13216-1-colin.king@canonical.com>
-In-Reply-To: <20181128151116.13216-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Christian Benvenuti <benve@cisco.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: hauke@hauke-m.de, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Nov 28, 2018 at 03:11:16PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Fix spelling mistake in usnic_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/usnic/usnic_ib_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Return 'err' in the error handling path instead of 0.
+Return explicitly 0 in the normal path, instead of 'err', which is known
+to be 0 at this point.
 
-Applied to for-next
+Fixes: fe1a56420cf2 ("net: lantiq: Add Lantiq / Intel VRX200 Ethernet driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/lantiq_xrx200.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks,
-Jason
+diff --git a/drivers/net/ethernet/lantiq_xrx200.c b/drivers/net/ethernet/lantiq_xrx200.c
+index 8c5ba4b81fb7..2d4d10a017e5 100644
+--- a/drivers/net/ethernet/lantiq_xrx200.c
++++ b/drivers/net/ethernet/lantiq_xrx200.c
+@@ -512,7 +512,8 @@ static int xrx200_probe(struct platform_device *pdev)
+ 	err = register_netdev(net_dev);
+ 	if (err)
+ 		goto err_unprepare_clk;
+-	return err;
++
++	return 0;
+ 
+ err_unprepare_clk:
+ 	clk_disable_unprepare(priv->clk);
+@@ -520,7 +521,7 @@ static int xrx200_probe(struct platform_device *pdev)
+ err_uninit_dma:
+ 	xrx200_hw_cleanup(priv);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ static int xrx200_remove(struct platform_device *pdev)
+-- 
+2.17.1
