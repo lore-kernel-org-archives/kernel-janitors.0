@@ -1,24 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 17 Nov 2018 03:47:39 +0000
-Subject: Re: [PATCH] net: lantiq: Fix returned value in case of error in 'xrx200_probe()'
-Message-Id: <20181116.194739.1234724172712558692.davem@davemloft.net>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Tue, 13 Nov 2018 07:41:04 +0000
+Subject: Re: [PATCH 2/2 v2] mfd: ab8500-core: Return zero in get_register_interruptible()
+Message-Id: <20181113074104.GD29388@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181113174224.7884-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20181113174224.7884-1-christophe.jaillet@wanadoo.fr>
+References: <20181025101037.GR4939@dell>
+ <20181025124344.xw3phqnvrwq2nj7g@kili.mountain>
+In-Reply-To: <20181025124344.xw3phqnvrwq2nj7g@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: hauke@hauke-m.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 13 Nov 2018 18:42:24 +0100
+On Thu, 25 Oct 2018, Dan Carpenter wrote:
 
-> Return 'err' in the error handling path instead of 0.
-> Return explicitly 0 in the normal path, instead of 'err', which is known
-> to be 0 at this point.
+> This function is supposed to return zero on success or negative error
+> codes on error.  Unfortunately, there is a bug so it sometimes returns
+> non-zero, positive numbers on success.
 > 
-> Fixes: fe1a56420cf2 ("net: lantiq: Add Lantiq / Intel VRX200 Ethernet driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> I noticed this bug during review and I can't test it.  It does appear
+> that the return is sometimes propogated back to _regmap_read() where all
+> non-zero returns are treated as failure so this may affect run time.
+> 
+> Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: In v1, I introduced an new error path and forgot to drop the lock.
+> 
+>  drivers/mfd/ab8500-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+Applied, thanks.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
