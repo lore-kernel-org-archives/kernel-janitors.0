@@ -1,12 +1,15 @@
 From: =?UTF-8?q?Adeodato=20Sim=C3=B3?= <dato@net.com.org.es>
-Date: Tue, 13 Nov 2018 04:11:28 +0000
+Date: Tue, 13 Nov 2018 06:28:53 +0000
 Subject: [PATCH] net/9p: include trans_common.h to fix missing prototype warning.
-Message-Id: <b1c4df8f21689b10d451c28fe38e860722d20e71.1542082208.git.dato@net.com.org.es>
+Message-Id: <b1c4df8f21689b10d451c28fe38e860722d20e71.1542089696.git.dato@net.com.org.es>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181113055324.GB5116@nautica>
+In-Reply-To: <20181113055324.GB5116@nautica>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>, v9fs-developer@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 This silences -Wmissing-prototypes when defining p9_release_pages.
 
@@ -20,7 +23,7 @@ It was suggested in the kernel-janitors mailing list that silencing
 
 https://www.spinics.net/lists/linux-kernel-janitors/msg43981.html
 
-Thanks for considering!
+Resending w/ Cc: linux-kernel as requested by Dominique.
 
 diff --git a/net/9p/trans_common.c b/net/9p/trans_common.c
 index b718db2085b2..3dff68f05fb9 100644
