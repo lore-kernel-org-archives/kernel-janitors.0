@@ -1,59 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Nov 2018 18:08:44 +0000
-Subject: [PATCH][next] drivers: base: remove need for a temporary string for the node name
-Message-Id: <20181129180844.31138-1-colin.king@canonical.com>
+Date: Wed, 14 Nov 2018 21:49:35 +0000
+Subject: [PATCH][next] reset: fix null pointer dereference on dev by dev_name
+Message-Id: <20181114214935.16038-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the node name is being formatting into a temporary string
-node_name, however, kobject_init_and_add allows one to format up
-a node name, so use that instead. This removes the need for the
-node_name string and also cleans up the following warning:
+The call to dev_name will dereference dev, however, dev is later
+being null checked, so there is a possibility of a null pointer
+dereference on dev by the call to dev_name. Fix this by null
+checking dev first before the call to dev_name
 
-Fixes clang warning:
-warning: format string is not a string literal (potentially
-insecure) [-Wformat-security]
+Detected by CoverityScan, CID#1475475 ("Dereference before null check")
 
+Fixes: 2a6cb2b1d83b ("reset: Add reset_control_get_count()")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/base/swnode.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/reset/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index 9c63ec8d8ab4..306bb93287af 100644
---- a/drivers/base/swnode.c
-+++ b/drivers/base/swnode.c
-@@ -553,7 +553,6 @@ fwnode_create_software_node(const struct property_entry *properties,
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 7f95fcb7805d..3d9a887c217e 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -799,12 +799,13 @@ EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
+ static int reset_control_get_count_from_lookup(struct device *dev)
  {
- 	struct software_node *p = NULL;
- 	struct software_node *swnode;
--	char node_name[20];
- 	int ret;
+ 	const struct reset_control_lookup *lookup;
+-	const char *dev_id = dev_name(dev);
++	const char *dev_id;
+ 	int count = 0;
  
- 	if (parent) {
-@@ -576,8 +575,6 @@ fwnode_create_software_node(const struct property_entry *properties,
- 	}
+ 	if (!dev)
+ 		return -EINVAL;
  
- 	swnode->id = ret;
--	sprintf(node_name, "node%d", swnode->id);
--
- 	swnode->kobj.kset = swnode_kset;
- 	swnode->fwnode.ops = &software_node_ops;
++	dev_id = dev_name(dev);
+ 	mutex_lock(&reset_lookup_mutex);
  
-@@ -590,7 +587,7 @@ fwnode_create_software_node(const struct property_entry *properties,
- 		list_add_tail(&swnode->entry, &p->children);
- 
- 	ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
--				   p ? &p->kobj : NULL, node_name);
-+				   p ? &p->kobj : NULL, "node%d", swnode->id);
- 	if (ret) {
- 		kobject_put(&swnode->kobj);
- 		return ERR_PTR(ret);
+ 	list_for_each_entry(lookup, &reset_lookup_list, list) {
 -- 
 2.19.1
