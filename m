@@ -1,69 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sat, 17 Nov 2018 03:28:01 +0000
-Subject: Applied "ASoC: arizona: fix indentation issue with return statement" to the asoc tree
-Message-Id: <20181117032801.1096A440078@finisterre.ee.mobilebroadband>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 14 Nov 2018 01:57:03 +0000
+Subject: [PATCH -next] misc: mic/scif: fix copy-paste error in scif_create_remote_lookup
+Message-Id: <1542160623-29011-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181116150636.5226-4-colin.king@canonical.com>
-In-Reply-To: <20181116150636.5226-4-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, linux-kernel@vger.kernel.org, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: Sudeep Dutt <sudeep.dutt@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <jroedel@suse.de>, "Liu, Yi L" <yi.l.liu@intel.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+gcc '-Wunused-but-set-variable' warning:
 
-   ASoC: arizona: fix indentation issue with return statement
+drivers/misc/mic/scif/scif_rma.c: In function 'scif_create_remote_lookup':
+drivers/misc/mic/scif/scif_rma.c:373:25: warning:
+ variable 'vmalloc_num_pages' set but not used [-Wunused-but-set-variable]
 
-has been applied to the asoc tree at
+'vmalloc_num_pages' should be used to determine if the address is 
+within the vmalloc range.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 812fb75d977efb0257fe41700e6f8e04900ab27c Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 16 Nov 2018 15:06:35 +0000
-Subject: [PATCH] ASoC: arizona: fix indentation issue with return statement
-
-The return statement is indented incorrectly. Fix this by adding in
-the missing tab.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: ba612aa8b487 ("misc: mic: SCIF memory registration and unregistration")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/codecs/wm8998.c | 2 +-
+ drivers/misc/mic/scif/scif_rma.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm8998.c b/sound/soc/codecs/wm8998.c
-index 61294c787f27..409bed30a4e4 100644
---- a/sound/soc/codecs/wm8998.c
-+++ b/sound/soc/codecs/wm8998.c
-@@ -60,7 +60,7 @@ static int wm8998_asrc_ev(struct snd_soc_dapm_widget *w,
- 				dev_warn(component->dev,
- 					 "Unsupported ASRC rate1 (%s)\n",
- 					 arizona_sample_rate_val_to_name(val));
--			return -EINVAL;
-+				return -EINVAL;
- 			}
- 			break;
- 		default:
--- 
-2.19.1
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index b441f6b..749321e 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -416,7 +416,7 @@ static int scif_create_remote_lookup(struct scif_dev *remote_dev,
+ 		if (err)
+ 			goto error_window;
+ 		err = scif_map_page(&window->num_pages_lookup.lookup[j],
+-				    vmalloc_dma_phys ?
++				    vmalloc_num_pages ?
+ 				    vmalloc_to_page(&window->num_pages[i]) :
+ 				    virt_to_page(&window->num_pages[i]),
+ 				    remote_dev);
