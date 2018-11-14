@@ -1,35 +1,39 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 09 Nov 2018 13:27:36 +0000
-Subject: [PATCH] Bluetooth: clean an indentation issue, remove extraneous space
-Message-Id: <20181109132736.21166-1-colin.king@canonical.com>
+Date: Wed, 14 Nov 2018 21:31:48 +0000
+Subject: [PATCH][next] ASoC: amd: fix memory leak of i2s_data on error return
+Message-Id: <20181114213148.14977-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to clean up an indentation issue
+Currently when snd_pcm_hw_constraint_integer fails there is
+a memory leak of i2s_data on the error return path. Fix this by
+kfree'ing i2s_data before returning.
 
+Detected by CoverityScan, CID#1475479 ("Resource leak")
+
+Fixes: 0b87d6bcd648 ("ASoC: amd: add acp3x pcm driver dma ops")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/bluetooth/hci_request.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/amd/raven/acp3x-pcm-dma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
-index e8c9ef1e1922..ca73d36cc149 100644
---- a/net/bluetooth/hci_request.c
-+++ b/net/bluetooth/hci_request.c
-@@ -1556,7 +1556,7 @@ int __hci_req_setup_ext_adv_instance(struct hci_request *req, u8 instance)
- 	connectable = (flags & MGMT_ADV_FLAG_CONNECTABLE) ||
- 		      mgmt_get_connectable(hdev);
+diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
+index 2e61cef00f41..b16cdd187139 100644
+--- a/sound/soc/amd/raven/acp3x-pcm-dma.c
++++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
+@@ -309,6 +309,7 @@ static int acp3x_dma_open(struct snd_pcm_substream *substream)
+ 					    SNDRV_PCM_HW_PARAM_PERIODS);
+ 	if (ret < 0) {
+ 		dev_err(component->dev, "set integer constraint failed\n");
++		kfree(i2s_data);
+ 		return ret;
+ 	}
  
--	 if (!is_advertising_allowed(hdev, connectable))
-+	if (!is_advertising_allowed(hdev, connectable))
- 		return -EPERM;
- 
- 	/* Set require_privacy to true only when non-connectable
 -- 
 2.19.1
