@@ -1,82 +1,89 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Nov 2018 20:04:08 +0000
-Subject: Re: [PATCH] tracing: Fix an off by one in __next()
-Message-Id: <20181127200408.GG3073@unbuntlaptop>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 14 Nov 2018 22:12:34 +0000
+Subject: Applied "spi: npcm: fix u32 csgpio being checked for less than zero" to the spi tree
+Message-Id: <20181114221234.2F1A9440078@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180620110758.crunhd5bfep7zuiz@kili.mountain>
- <20181127134412.6f2141d4@gandalf.local.home>
-In-Reply-To: <20181127134412.6f2141d4@gandalf.local.home>
+References: <20181114214246.15591-1-colin.king@canonical.com>
+In-Reply-To: <20181114214246.15591-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, Brendan Higgins <brendanhiggins@google.com>Mark Brown <broonie@kernel.org>, openbmc@lists.ozlabs.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 01:44:12PM -0500, Steven Rostedt wrote:
-> 
-> Doing the sweep of my INBOX, I came across this patch (it was sent
-> while I was in the Alps :-)
-> 
-> 
-> On Wed, 20 Jun 2018 14:08:00 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > The > should be >= to prevent an off by one bug.
-> 
-> Well, not really.
-> 
-> > 
-> > >From reviewing the code, it seems possible for  
-> > stack_trace_max.nr_entries to be set to .max_entries and in that case we
-> > would be reading one element beyond the end of the stack_dump_trace[]
-> > array.  If it's not set to .max_entries then the bug doesn't affect
-> > runtime.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-> > index 4237eba4ef20..6e3edd745c68 100644
-> > --- a/kernel/trace/trace_stack.c
-> > +++ b/kernel/trace/trace_stack.c
-> > @@ -286,7 +286,7 @@ __next(struct seq_file *m, loff_t *pos)
-> >  {
-> >  	long n = *pos - 1;
-> >  
-> > -	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
-> > +	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
-> 
-> We have:
-> 
-> static unsigned long stack_dump_trace[STACK_TRACE_ENTRIES+1] > 	 { [0 ... (STACK_TRACE_ENTRIES)] = ULONG_MAX };
-> 
->  And
-> 
-> struct stack_trace stack_trace_max = {
-> 	.max_entries		= STACK_TRACE_ENTRIES - 1,
-> 	.entries		= &stack_dump_trace[0],
-> };
-> 
-> 
-> And nr_entries is set as this, and we have after that this:
-> 
-> 	stack_trace_max.nr_entries = x;
-> 	for (; x < i; x++)
-> 		stack_dump_trace[x] = ULONG_MAX;
-> 
-> Where we set stack_dump_trace[nr_entries] to ULONG_MAX.
-> 
-> Thus, nr_entries will not go pass the size of stack_dump_trace.
-> 
-> That said, if n = nr_entries, the second part of that if will always
-> be true. And this is a bit subtle, so I will apply the patch. But it is
-> not an off by one bug ;-)
+The patch
 
-Ah, yes.  I follow that now.  Thanks for taking the time to review this
-patch.
+   spi: npcm: fix u32 csgpio being checked for less than zero
 
-I am optimistic that eventually I will fix how Smatch handles loops so
-it maybe will be able to figure out that "x <= STACK_TRACE_ENTRIES - 1"
-but that's probably some time off.
+has been applied to the spi tree at
 
-regards,
-dan carpenter
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 757ec116c9bce4278fa4423039736c832cc63b6f Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 14 Nov 2018 21:42:46 +0000
+Subject: [PATCH] spi: npcm: fix u32 csgpio being checked for less than zero
+
+The u32 variable csgpio is being checked for an error return
+from the call to of_get_named_gpio, however, since this is unsigned
+this comparison will always be false. Fix this by making csgpio an
+int and fix up the %u format specifiers to %d accordingly.
+
+Detected by CoverityScan, CID#1475476 ("Unsigned compared against 0")
+
+Fixes: 2a22f1b30cee ("spi: npcm: add NPCM PSPI controller driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-npcm-pspi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
+index 51777515c83f..6dae91091143 100644
+--- a/drivers/spi/spi-npcm-pspi.c
++++ b/drivers/spi/spi-npcm-pspi.c
+@@ -329,7 +329,7 @@ static int npcm_pspi_probe(struct platform_device *pdev)
+ 	unsigned long clk_hz;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	int num_cs, i;
+-	u32 csgpio;
++	int csgpio;
+ 	int irq;
+ 	int ret;
+ 
+@@ -417,12 +417,12 @@ static int npcm_pspi_probe(struct platform_device *pdev)
+ 			dev_err(&pdev->dev, "failed to get csgpio#%u\n", i);
+ 			goto out_disable_clk;
+ 		}
+-		dev_dbg(&pdev->dev, "csgpio#%u = %u\n", i, csgpio);
++		dev_dbg(&pdev->dev, "csgpio#%u = %d\n", i, csgpio);
+ 		ret = devm_gpio_request_one(&pdev->dev, csgpio,
+ 					    GPIOF_OUT_INIT_HIGH, DRIVER_NAME);
+ 		if (ret < 0) {
+ 			dev_err(&pdev->dev,
+-				"failed to configure csgpio#%u %u\n"
++				"failed to configure csgpio#%u %d\n"
+ 				, i, csgpio);
+ 			goto out_disable_clk;
+ 		}
+-- 
+2.19.1
