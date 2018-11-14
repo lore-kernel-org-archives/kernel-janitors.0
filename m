@@ -1,71 +1,32 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 13 Nov 2018 07:09:38 +0000
-Subject: [PATCH -next] scsi: pmcraid: remove set but not used variables 'res, access'
-Message-Id: <1542092978-71192-1-git-send-email-yuehaibing@huawei.com>
+Date: Wed, 14 Nov 2018 09:55:34 +0000
+Subject: [PATCH -next] drm/msm/hdmi: Drop pointless static qualifier in msm_hdmi_bind()
+Message-Id: <1542189334-47735-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Mamta Shukla <mamtashukla555-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todor Tomov <todor.tomov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/scsi/pmcraid.c: In function 'pmcraid_abort_cmd':
-drivers/scsi/pmcraid.c:2878:33: warning:
- variable 'res' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/pmcraid.c: In function 'pmcraid_ioctl_passthrough':
-drivers/scsi/pmcraid.c:3603:5: warning:
- variable 'access' set but not used [-Wunused-but-set-variable]
-
-'res' never used since introduction in commit 89a368104150 ("[SCSI] pmcraid:
-PMC-Sierra MaxRAID driver to support 6Gb/s SAS RAID controller")
-
-'access' not used any more since commit
-edb88cef0570 ("scsi: pmcraid: use normal copy_from_user")
+There is no need to have the 'struct hdmi_platform_config *hdmi_cfg'
+variable static since new value always be assigned before use it.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/pmcraid.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/msm/hdmi/hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index 707d766..555e4a3 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -2875,10 +2875,8 @@ static struct pmcraid_cmd *pmcraid_abort_cmd(struct pmcraid_cmd *cmd)
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index 74ffc24..ace8aab 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -577,7 +577,7 @@ static int msm_hdmi_bind(struct device *dev, struct device *master, void *data)
  {
- 	struct pmcraid_cmd *cancel_cmd;
- 	struct pmcraid_instance *pinstance;
--	struct pmcraid_resource_entry *res;
- 
- 	pinstance = (struct pmcraid_instance *)cmd->drv_inst;
--	res = cmd->scsi_cmd->device->hostdata;
- 
- 	cancel_cmd = pmcraid_get_free_cmd(pinstance);
- 
-@@ -3600,7 +3598,7 @@ static long pmcraid_ioctl_passthrough(
- 	u32 ioasc;
- 	int request_size;
- 	int buffer_size;
--	u8 access, direction;
-+	u8 direction;
- 	int rc = 0;
- 
- 	/* If IOA reset is in progress, wait 10 secs for reset to complete */
-@@ -3648,13 +3646,10 @@ static long pmcraid_ioctl_passthrough(
- 
- 	request_size = le32_to_cpu(buffer->ioarcb.data_transfer_length);
- 
--	if (buffer->ioarcb.request_flags0 & TRANSFER_DIR_WRITE) {
--		access = VERIFY_READ;
-+	if (buffer->ioarcb.request_flags0 & TRANSFER_DIR_WRITE)
- 		direction = DMA_TO_DEVICE;
--	} else {
--		access = VERIFY_WRITE;
-+	else
- 		direction = DMA_FROM_DEVICE;
--	}
- 
- 	if (request_size < 0) {
- 		rc = -EINVAL;
+ 	struct drm_device *drm = dev_get_drvdata(master);
+ 	struct msm_drm_private *priv = drm->dev_private;
+-	static struct hdmi_platform_config *hdmi_cfg;
++	struct hdmi_platform_config *hdmi_cfg;
+ 	struct hdmi *hdmi;
+ 	struct device_node *of_node = dev->of_node;
+ 	int i, err;
