@@ -1,67 +1,69 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 28 Nov 2018 20:26:48 +0000
-Subject: Re: [PATCH] drm/amd/pp: fix spelling mistake "dependancy" -> "dependency"
-Message-Id: <CADnq5_Nxz3o2ttyAkN=+Ti+N8RMkWx5bQHqM+bsbZ53=bNF3-A@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 15 Nov 2018 12:00:35 +0000
+Subject: [PATCH v2 -next] drm/amdgpu: remove set but not used variable 'ring'
+Message-Id: <20181115120035.4328-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181127141943.27110-1-colin.king@canonical.com>
-In-Reply-To: <20181127141943.27110-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Rex Zhu <rex.zhu@amd.com>, "Quan, Evan" <evan.quan@amd.com>, "Deucher, Alexander" <alexander.deucher@amd.com>, Christian Koenig <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dave Airlie <airlied@linux.ie>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Shaoyun.Liu@amd.com, David.Francis@amd.com, ray.huang@amd.com, Feifei.Xu@amd.com, Likun.Gao@amd.com
+Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 
-On Tue, Nov 27, 2018 at 9:19 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are spelling mistakes in PP_ASSERT_WITH_CODE messages, fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied.  thanks!
+drivers/gpu/drm/amd/amdgpu/psp_v10_0.c: In function 'psp_v10_0_ring_stop':
+drivers/gpu/drm/amd/amdgpu/psp_v10_0.c:230:19: warning:
+ variable 'ring' set but not used [-Wunused-but-set-variable]
 
-Alex
+drivers/gpu/drm/amd/amdgpu/psp_v3_1.c: In function 'psp_v3_1_ring_stop':
+drivers/gpu/drm/amd/amdgpu/psp_v3_1.c:359:19: warning:
+ variable ‘ring’ set but not used [-Wunused-but-set-variable]
 
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> index 88f6b35ea6fe..5dcd21d29dbf 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> @@ -269,7 +269,7 @@ static int smu7_construct_voltage_tables(struct pp_hwmgr *hwmgr)
->                                         hwmgr->dyn_state.mvdd_dependency_on_mclk);
->
->                 PP_ASSERT_WITH_CODE((0 = result),
-> -                               "Failed to retrieve SVI2 MVDD table from dependancy table.",
-> +                               "Failed to retrieve SVI2 MVDD table from dependency table.",
->                                 return result;);
->         }
->
-> @@ -288,7 +288,7 @@ static int smu7_construct_voltage_tables(struct pp_hwmgr *hwmgr)
->                         result = phm_get_svi2_voltage_table_v0(&(data->vddci_voltage_table),
->                                         hwmgr->dyn_state.vddci_dependency_on_mclk);
->                 PP_ASSERT_WITH_CODE((0 = result),
-> -                               "Failed to retrieve SVI2 VDDCI table from dependancy table.",
-> +                               "Failed to retrieve SVI2 VDDCI table from dependency table.",
->                                 return result);
->         }
->
-> @@ -317,7 +317,7 @@ static int smu7_construct_voltage_tables(struct pp_hwmgr *hwmgr)
->                                 table_info->vddc_lookup_table);
->
->                 PP_ASSERT_WITH_CODE((0 = result),
-> -                       "Failed to retrieve SVI2 VDDC table from dependancy table.", return result;);
-> +                       "Failed to retrieve SVI2 VDDC table from dependency table.", return result;);
->         }
->
->         tmp = smum_get_mac_definition(hwmgr, SMU_MAX_LEVELS_VDDC);
-> --
-> 2.19.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+It not used since commit
+4ef72453311a ("drm/amdgpu: added api for stopping psp ring (v2)")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Huang Rui <ray.huang@amd.com>
+---
+v2:also remove it in psp_v3_1_ring_stop
+---
+ drivers/gpu/drm/amd/amdgpu/psp_v10_0.c | 3 ---
+ drivers/gpu/drm/amd/amdgpu/psp_v3_1.c  | 3 ---
+ 2 files changed, 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+index 295c220..d78b430 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+@@ -240,12 +240,9 @@ static int psp_v10_0_ring_stop(struct psp_context *psp,
+ 			       enum psp_ring_type ring_type)
+ {
+ 	int ret = 0;
+-	struct psp_ring *ring;
+ 	unsigned int psp_ring_reg = 0;
+ 	struct amdgpu_device *adev = psp->adev;
+ 
+-	ring = &psp->km_ring;
+-
+ 	/* Write the ring destroy command to C2PMSG_64 */
+ 	psp_ring_reg = 3 << 16;
+ 	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+index e1ebf77..cc5e3ac 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+@@ -356,12 +356,9 @@ static int psp_v3_1_ring_stop(struct psp_context *psp,
+ 			      enum psp_ring_type ring_type)
+ {
+ 	int ret = 0;
+-	struct psp_ring *ring;
+ 	unsigned int psp_ring_reg = 0;
+ 	struct amdgpu_device *adev = psp->adev;
+ 
+-	ring = &psp->km_ring;
+-
+ 	/* Write the ring destroy command to C2PMSG_64 */
+ 	psp_ring_reg = 3 << 16;
+ 	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
+-- 
+2.7.0
