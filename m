@@ -1,33 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 26 Nov 2018 14:27:35 +0000
-Subject: [PATCH] remoteproc: qcom: fix spelling mistake "Peripherial" -> "Peripheral"
-Message-Id: <20181126142735.29294-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 15 Nov 2018 12:14:02 +0000
+Subject: [PATCH -next] drm/nouveau: fix copy-paste error in nouveau_fence_wait_uevent_handler
+Message-Id: <1542284042-153903-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-There is a spelling mistake in the module description text, fix it.
+drivers/gpu/drm/nouveau/nouveau_fence.c: In function 'nouveau_fence_wait_uevent_handler':
+drivers/gpu/drm/nouveau/nouveau_fence.c:156:27: warning:
+ variable 'chan' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+nouveau_fence_update should use rcu protected 'chan'
+rather than 'fence->channel'
+
+Fixes: 0ec5f02f0e2c ("drm/nouveau: prevent stale fence->channel pointers, and protect with rcu")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/remoteproc/qcom_wcnss.c | 2 +-
+ drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index b0e07e9f42d5..1152da49a18a 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -622,5 +622,5 @@ static void __exit wcnss_exit(void)
- }
- module_exit(wcnss_exit);
+diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
+index d4964f3..91286d0 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_fence.c
++++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+@@ -157,7 +157,7 @@
  
--MODULE_DESCRIPTION("Qualcomm Peripherial Image Loader for Wireless Subsystem");
-+MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Wireless Subsystem");
- MODULE_LICENSE("GPL v2");
--- 
-2.19.1
+ 		fence = list_entry(fctx->pending.next, typeof(*fence), head);
+ 		chan = rcu_dereference_protected(fence->channel, lockdep_is_held(&fctx->lock));
+-		if (nouveau_fence_update(fence->channel, fctx))
++		if (nouveau_fence_update(chan, fctx))
+ 			ret = NVIF_NOTIFY_DROP;
+ 	}
+ 	spin_unlock_irqrestore(&fctx->lock, flags);
