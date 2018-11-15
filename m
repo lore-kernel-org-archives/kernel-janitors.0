@@ -1,45 +1,33 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Mon, 26 Nov 2018 08:46:43 +0000
-Subject: Re: [PATCH 2/2] ic3: master: off by one in mode_show()
-Message-Id: <20181126094643.6b1f05cd@bbrezillon>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 15 Nov 2018 10:55:00 +0000
+Subject: [PATCH -next] IB/srpt: Drop pointless static qualifier in srpt_make_tpg()
+Message-Id: <1542279300-104731-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181123071505.ahhh7xqvt4eb7tt2@kili.mountain>
-In-Reply-To: <20181123071505.ahhh7xqvt4eb7tt2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 23 Nov 2018 10:15:05 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Yue Haibing <yuehaibing@huawei.com>
 
-> This should be >= ARRAY_SIZE() to avoid reading one element beyond the
-> end of the array.
-> 
-> Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is no need to have the 'struct se_portal_group *tpg' variable
+static since new value always be assigned before use it.
 
-Queued to i3c/next.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/ulp/srpt/ib_srpt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Boris
-
-> ---
->  drivers/i3c/master.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> index bda4b9613e53..c39f89d2deba 100644
-> --- a/drivers/i3c/master.c
-> +++ b/drivers/i3c/master.c
-> @@ -475,7 +475,7 @@ static ssize_t mode_show(struct device *dev,
->  
->  	i3c_bus_normaluse_lock(i3cbus);
->  	if (i3cbus->mode < 0 ||
-> -	    i3cbus->mode > ARRAY_SIZE(i3c_bus_mode_strings) ||
-> +	    i3cbus->mode >= ARRAY_SIZE(i3c_bus_mode_strings) ||
->  	    !i3c_bus_mode_strings[i3cbus->mode])
->  		ret = sprintf(buf, "unknown\n");
->  	else
+diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+index 1ae638b..fe02fab 100644
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -3602,7 +3602,7 @@ static struct se_portal_group *srpt_make_tpg(struct se_wwn *wwn,
+ 					     const char *name)
+ {
+ 	struct srpt_port *sport = wwn->priv;
+-	static struct se_portal_group *tpg;
++	struct se_portal_group *tpg;
+ 	int res;
+ 
+ 	WARN_ON_ONCE(wwn != &sport->port_guid_wwn &&
