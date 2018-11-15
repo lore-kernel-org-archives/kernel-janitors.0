@@ -1,58 +1,68 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Mon, 19 Nov 2018 16:49:25 +0000
-Subject: Re: [PATCH][i3c-next] i3c: master: fix mask operation by using the correct operator
-Message-Id: <20181119174925.0733862e@bbrezillon>
+From: "Huang, Ray" <Ray.Huang@amd.com>
+Date: Thu, 15 Nov 2018 11:49:12 +0000
+Subject: RE: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
+Message-Id: <BY2PR12MB0040A0E1C221A3EBBF270C30ECDC0@BY2PR12MB0040.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181116184223.28240-1-colin.king@canonical.com>
-        <7d569740-e5d3-b8a6-79cf-9885039e53de@synopsys.com>
-In-Reply-To: <7d569740-e5d3-b8a6-79cf-9885039e53de@synopsys.com>
+References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vitor <vitor.soares@synopsys.com>
-Cc: Colin King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "Liu, Shaoyun" <Shaoyun.Liu@amd.com>, "Francis, David" <David.Francis@amd.com>, "Xu, Feifei" <Feifei.Xu@amd.com>, "Gao, Likun" <Likun.Gao@amd.com>
+Cc: "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Mon, 19 Nov 2018 12:41:10 +0000
-vitor <vitor.soares@synopsys.com> wrote:
+> -----Original Message-----
+> From: YueHaibing [mailto:yuehaibing@huawei.com]
+> Sent: Thursday, November 15, 2018 6:52 PM
+> To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
+> <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
+> <David1.Zhou@amd.com>; airlied@linux.ie; Liu, Shaoyun
+> <Shaoyun.Liu@amd.com>; Francis, David <David.Francis@amd.com>; Huang,
+> Ray <Ray.Huang@amd.com>; Xu, Feifei <Feifei.Xu@amd.com>; Gao, Likun
+> <Likun.Gao@amd.com>
+> Cc: YueHaibing <yuehaibing@huawei.com>; amd-gfx@lists.freedesktop.org;
+> dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel-
+> janitors@vger.kernel.org
+> Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
+> 
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/gpu/drm/amd/amdgpu/psp_v10_0.c: In function
+> 'psp_v10_0_ring_stop':
+> drivers/gpu/drm/amd/amdgpu/psp_v10_0.c:230:19: warning:
+>  variable 'ring' set but not used [-Wunused-but-set-variable]
+> 
+> It not used since commit
+> 4ef72453311a ("drm/amdgpu: added api for stopping psp ring (v2)")
 
-> Hi Coling,
+Thanks, please also remove the similar code in psp_v3_1. 
+With that updates, patch is Reviewed-by: Huang Rui <ray.huang@amd.com>
+
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/psp_v10_0.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+> b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+> index 295c220..d78b430 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+> @@ -240,12 +240,9 @@ static int psp_v10_0_ring_stop(struct psp_context
+> *psp,
+>  			       enum psp_ring_type ring_type)  {
+>  	int ret = 0;
+> -	struct psp_ring *ring;
+>  	unsigned int psp_ring_reg = 0;
+>  	struct amdgpu_device *adev = psp->adev;
+> 
+> -	ring = &psp->km_ring;
+> -
+>  	/* Write the ring destroy command to C2PMSG_64 */
+>  	psp_ring_reg = 3 << 16;
+>  	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
 > 
 > 
-> Thanks for your report.
 > 
-> On 16/11/18 18:42, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The masking operation on status is using a bitwise 'or' rather than
-> > a bitwise 'and' operator, and hence the result is always non-zero
-> > which is probably not what is intended. Fix this by using the correct
-> > operator.
-> >
-> > Detected by CoverityScan, CID#1475523 ("Wrong operator used")
-> >
-> > Fixes: 88acc98a712a ("i3c: master: Add driver for Synopsys DesignWare IP")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   drivers/i3c/master/dw-i3c-master.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-> > index 0153e6e9de52..b532e2c9cf5c 100644
-> > --- a/drivers/i3c/master/dw-i3c-master.c
-> > +++ b/drivers/i3c/master/dw-i3c-master.c
-> > @@ -1085,7 +1085,7 @@ static irqreturn_t dw_i3c_master_irq_handler(int irq, void *dev_id)
-> >   
-> >   	spin_lock(&master->xferqueue.lock);
-> >   	dw_i3c_master_end_xfer_locked(master, status);
-> > -	if (status | INTR_TRANSFER_ERR_STAT)
-> > +	if (status & INTR_TRANSFER_ERR_STAT)
-> >   		writel(INTR_TRANSFER_ERR_STAT, master->regs + INTR_STATUS);
-> >   	spin_unlock(&master->xferqueue.lock);
-> >     
-> Acked-by: Vitor Soares <vitor.soares@synopsys.com>
-
-Applied.
-
-Thanks,
-
-Boris
+> 
