@@ -1,62 +1,46 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Thu, 15 Nov 2018 10:41:16 +0000
-Subject: Re: [PATCH -next] i3c: master: Remove set but not used variable 'old_i3c_scl_lim'
-Message-Id: <20181115114116.3059e317@bbrezillon>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 15 Nov 2018 12:10:36 +0000
+Subject: [PATCH -next] drm/cirrus: Remove set but not used variable 'bo'
+Message-Id: <1542283836-152176-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1542175847-49517-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1542175847-49517-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, Daniel Stone <daniels@collabora.com>, Thomas Zimmermann <tzimmermann@suse.de>, Adam Jackson <ajax@redhat.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, virtualization@lists.linux-foundation.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 14 Nov 2018 06:10:47 +0000
-YueHaibing <yuehaibing@huawei.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/i3c/master/i3c-master-cdns.c: In function 'cdns_i3c_master_do_daa':
-> drivers/i3c/master/i3c-master-cdns.c:1137:16: warning:
->  variable 'old_i3c_scl_lim' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introdution in commit
->   acfab7d324b2 ("i3c: master: Add driver for Cadence IP")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+drivers/gpu/drm/cirrus/cirrus_fbdev.c: In function 'cirrusfb_create':
+drivers/gpu/drm/cirrus/cirrus_fbdev.c:172:20: warning:
+ variable 'bo' set but not used [-Wunused-but-set-variable]
 
-Applied.
+It never used since introduction in commit
+f9aa76a85248 ("drm/kms: driver for virtual cirrus under qemu")
 
-Thanks,
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/cirrus/cirrus_fbdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Boris
-
-> ---
->  drivers/i3c/master/i3c-master-cdns.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
-> index ad40162..e828921 100644
-> --- a/drivers/i3c/master/i3c-master-cdns.c
-> +++ b/drivers/i3c/master/i3c-master-cdns.c
-> @@ -1133,7 +1133,6 @@ static void cdns_i3c_master_upd_i3c_scl_lim(struct cdns_i3c_master *master)
->  static int cdns_i3c_master_do_daa(struct i3c_master_controller *m)
->  {
->  	struct cdns_i3c_master *master = to_cdns_i3c_master(m);
-> -	unsigned long old_i3c_scl_lim;
->  	u32 olddevs, newdevs;
->  	int ret, slot;
->  	u8 addrs[MAX_DEVS] = { };
-> @@ -1165,9 +1164,6 @@ static int cdns_i3c_master_do_daa(struct i3c_master_controller *m)
->  	newdevs = readl(master->regs + DEVS_CTRL) & DEVS_CTRL_DEVS_ACTIVE_MASK;
->  	newdevs &= ~olddevs;
->  
-> -	/* Save the old limitation before add devices. */
-> -	old_i3c_scl_lim = master->i3c_scl_lim;
-> -
->  	/*
->  	 * Clear all retaining registers filled during DAA. We already
->  	 * have the addressed assigned to them in the addrs array.
-> 
-> 
-> 
+diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+index 68ab182..4dd499c 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
++++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+@@ -169,7 +169,6 @@ static int cirrusfb_create(struct drm_fb_helper *helper,
+ 	struct drm_mode_fb_cmd2 mode_cmd;
+ 	void *sysram;
+ 	struct drm_gem_object *gobj = NULL;
+-	struct cirrus_bo *bo = NULL;
+ 	int size, ret;
+ 
+ 	mode_cmd.width = sizes->surface_width;
+@@ -185,8 +184,6 @@ static int cirrusfb_create(struct drm_fb_helper *helper,
+ 		return ret;
+ 	}
+ 
+-	bo = gem_to_cirrus_bo(gobj);
+-
+ 	sysram = vmalloc(size);
+ 	if (!sysram)
+ 		return -ENOMEM;
