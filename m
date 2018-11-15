@@ -1,23 +1,34 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 12 Nov 2018 10:18:29 +0000
-Subject: Re: [PATCH 1/3] soundwire: intel: constify snd_soc_dai_ops structures
-Message-Id: <20181112100629.GC2477@vkoul-mobl>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 15 Nov 2018 12:33:16 +0000
+Subject: [PATCH -next] powerpc/platforms/85xx: drop pointless static qualifier
+Message-Id: <1542285196-156161-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540647284-26728-1-git-send-email-Julia.Lawall@lip6.fr>
- <1540647284-26728-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540647284-26728-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Sanyog Kale <sanyog.r.kale@intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Scott Wood <oss@buserror.net>, Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Yue Haibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
 
-On 27-10-18, 15:34, Julia Lawall wrote:
-> The snd_soc_dai_ops structures are only stored in the ops field of a
-> snd_soc_dai_driver structure, so make the snd_soc_dai_ops structures
-> const as well.
+From: Yue Haibing <yuehaibing@huawei.com>
 
-Applied, thanks
+There is no need to have the 'void __iomem *cpld_base' variable static
+since new value always be assigned before use it.
 
--- 
-~Vinod
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ arch/powerpc/platforms/85xx/t1042rdb_diu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/85xx/t1042rdb_diu.c b/arch/powerpc/platforms/85xx/t1042rdb_diu.c
+index dac36ba..2d16521 100644
+--- a/arch/powerpc/platforms/85xx/t1042rdb_diu.c
++++ b/arch/powerpc/platforms/85xx/t1042rdb_diu.c
+@@ -39,7 +39,7 @@
+  */
+ static void t1042rdb_set_monitor_port(enum fsl_diu_monitor_port port)
+ {
+-	static void __iomem *cpld_base;
++	void __iomem *cpld_base;
+ 
+ 	cpld_base = of_iomap(cpld_node, 0);
+ 	if (!cpld_base) {
