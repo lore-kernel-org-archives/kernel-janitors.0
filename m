@@ -1,48 +1,31 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 08 Nov 2018 11:36:02 +0000
-Subject: [PATCH -next] cifs: remove set but not used variable 'cifsi'
-Message-Id: <1541676962-125306-1-git-send-email-yuehaibing@huawei.com>
+Date: Thu, 15 Nov 2018 11:36:28 +0000
+Subject: [PATCH -next] clk: stm32mp1: drop pointless static qualifier in stm32_register_hw_clk()
+Message-Id: <1542281788-129746-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
+There is no need to have the 'struct clk_hw **hws' variable static
+since new value always be assigned before use it.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-fs/cifs/smb2ops.c: In function 'smb3_punch_hole':
-fs/cifs/smb2ops.c:2122:24: warning:
- variable 'cifsi' set but not used [-Wunused-but-set-variable]
-
-It never used since introduction in commit
-31742c5a3317 ("enable fallocate punch hole ("fallocate -p") for SMB3")
-
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- fs/cifs/smb2ops.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/clk-stm32mp1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index 15c7cbd..c9a4a2c 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -2119,7 +2119,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 			    loff_t offset, loff_t len)
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 4f48342..6a31f7f 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -2015,7 +2015,7 @@ static int stm32_register_hw_clk(struct device *dev,
+ 				 void __iomem *base, spinlock_t *lock,
+ 				 const struct clock_config *cfg)
  {
- 	struct inode *inode;
--	struct cifsInodeInfo *cifsi;
- 	struct cifsFileInfo *cfile = file->private_data;
- 	struct file_zero_data_information fsctl_buf;
- 	long rc;
-@@ -2129,7 +2128,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 	xid = get_xid();
+-	static struct clk_hw **hws;
++	struct clk_hw **hws;
+ 	struct clk_hw *hw = ERR_PTR(-ENOENT);
  
- 	inode = d_inode(cfile->dentry);
--	cifsi = CIFS_I(inode);
- 
- 	/* Need to make file sparse, if not already, before freeing range. */
- 	/* Consider adding equivalent for compressed since it could also work */
+ 	hws = clk_data->hws;
