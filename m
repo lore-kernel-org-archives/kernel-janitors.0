@@ -1,38 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Nov 2018 14:37:58 +0000
-Subject: [bug report] perf script: Make itrace script default to all calls
-Message-Id: <20181128143758.fpzxjcublfisup6s@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Nov 2018 15:06:36 +0000
+Subject: [PATCH 5/5] ASoC: qcom: clean up indentation, remove extraneous tab
+Message-Id: <20181116150636.5226-5-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181116150636.5226-1-colin.king@canonical.com>
+In-Reply-To: <20181116150636.5226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Andi Kleen,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is a semi-automatic email about new static checker warnings.
+The return statement is indented too much by one level, fix this by
+removing the extraneous tab.
 
-The patch 4eb068157121: "perf script: Make itrace script default to 
-all calls" from Sep 20, 2018, leads to the following Smatch complaint:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/qcom/lpass-platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    ./tools/perf/util/intel-pt.c:2579 intel_pt_process_auxtrace_info()
-     error: we previously assumed 'session->itrace_synth_opts' could be null (see line 2575)
-
-./tools/perf/util/intel-pt.c
-  2574	
-  2575		if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
-The old code assumed this could be NULL.
-
-  2576			pt->synth_opts = *session->itrace_synth_opts;
-  2577		} else {
-  2578			itrace_synth_opts__set_default(&pt->synth_opts,
-  2579					session->itrace_synth_opts->default_no_sample);
-                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
-But the patch adds an unchecked dereference.
-
-  2580			if (use_browser != -1) {
-  2581				pt->synth_opts.branches = false;
-
-regards,
-dan carpenter
+diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
+index d07271ea4c45..028bce671cbc 100644
+--- a/sound/soc/qcom/lpass-platform.c
++++ b/sound/soc/qcom/lpass-platform.c
+@@ -91,7 +91,7 @@ static int lpass_platform_pcmops_open(struct snd_pcm_substream *substream)
+ 	if (ret) {
+ 		dev_err(soc_runtime->dev,
+ 			"error writing to rdmactl reg: %d\n", ret);
+-			return ret;
++		return ret;
+ 	}
+ 
+ 	data->dma_ch = dma_ch;
+-- 
+2.19.1
