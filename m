@@ -1,43 +1,36 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 28 Nov 2018 16:30:22 +0000
-Subject: Re: [PATCH] coresight: fix spelling mistake "deffered" -> "deferred"
-Message-Id: <CANLsYkzyHiD0NXn6jOpJg7Ho3G83dqTX9N-8BsNUtxNRiXS3Fw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Nov 2018 15:06:32 +0000
+Subject: [PATCH 1/5] ALSA: asihpi: clean up indentation, replace spaces with tab
+Message-Id: <20181116150636.5226-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181127140356.26626-1-colin.king@canonical.com>
-In-Reply-To: <20181127140356.26626-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018 at 07:03, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the dev_info error message, fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/hwtracing/coresight/coresight-stm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-> index 35d6f9709274..ef339ff22090 100644
-> --- a/drivers/hwtracing/coresight/coresight-stm.c
-> +++ b/drivers/hwtracing/coresight/coresight-stm.c
-> @@ -856,7 +856,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
->
->         if (stm_register_device(dev, &drvdata->stm, THIS_MODULE)) {
->                 dev_info(dev,
-> -                        "stm_register_device failed, probing deffered\n");
-> +                        "stm_register_device failed, probing deferred\n");
->                 return -EPROBE_DEFER;
->         }
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied - thanks,
-Mathieu
+The struct declaration is not indented correctly. Fix this by replacing
+spaces with a tab.
 
-> --
-> 2.19.1
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/asihpi/asihpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index a31fe1550903..aad74e809797 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -1183,7 +1183,7 @@ static int snd_card_asihpi_capture_prepare(struct snd_pcm_substream *substream)
+ static u64 snd_card_asihpi_capture_formats(struct snd_card_asihpi *asihpi,
+ 					u32 h_stream)
+ {
+-  struct hpi_format hpi_format;
++	struct hpi_format hpi_format;
+ 	u16 format;
+ 	u16 err;
+ 	u32 h_control;
+-- 
+2.19.1
