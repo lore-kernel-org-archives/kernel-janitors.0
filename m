@@ -1,56 +1,81 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 14 Nov 2018 21:42:46 +0000
-Subject: [PATCH][next] spi: npcm: fix u32 csgpio being checked for less than zero
-Message-Id: <20181114214246.15591-1-colin.king@canonical.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Fri, 16 Nov 2018 11:51:29 +0000
+Subject: Re: [PATCH -next] PCI: dra7xx: Fix potential NULL dereference
+Message-Id: <20181116115129.GA3228@e107981-ln.cambridge.arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1516284037-81537-1-git-send-email-weiyongjun1@huawei.com>
+ <20180118145420.GA21163@lenoch>
+ <20180118183525.GG53542@bhelgaas-glaptop.roam.corp.google.com>
+ <20180119095857.GA26765@lenoch>
+ <20180119170657.GA27882@lenoch>
+ <20180120001645.GA21343@lenoch>
+In-Reply-To: <20180120001645.GA21343@lenoch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, Brendan Higgins <brendanhiggins@google.com>, Mark Brown <broonie@kernel.org>, openbmc@lists.ozlabs.org, linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ladislav Michl <ladis@linux-mips.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, Jan 20, 2018 at 01:16:45AM +0100, Ladislav Michl wrote:
+> On Fri, Jan 19, 2018 at 06:06:57PM +0100, Ladislav Michl wrote:
+> > On Fri, Jan 19, 2018 at 10:58:57AM +0100, Ladislav Michl wrote:
+> > > On Thu, Jan 18, 2018 at 12:35:25PM -0600, Bjorn Helgaas wrote:
+> > > > That's probably a better idea.  Maybe we should add a comment like this
+> > > > to help avoid this in the future:
+> > > 
+> > > That seems to spot another a bit more serious problem (given how late
+> > > release cycle is now).
+> > > 
+> > > Both devm_ioremap() and devm_ioremap_resource() shares the same release
+> > > function: devm_ioremap_release(). However this function is not aware of
+> > > memory region previously requested by devm_request_mem_region() called
+> > > from devm_ioremap_resource().
+> > > 
+> > > Bellow is just a quick hack, even untested as looking at devm_ioremap,
+> > > devm_ioremap_wc and devm_ioremap_wc, there is some room for optimization.
+> > 
+> > Okay, forget it, above analysis is not correct, however there is a bug (and
+> > also in PCI version). To show it, let's make following modification:
+> 
+> I will never ever work in single tree for two different boards without full
+> recompile (which should save time and caused opposite) as it makes debugging
+> pointless - there is no bug.
+> 
+> As a request forgiveness, please accept following draft as proposed solution
+> for $subj
 
-The u32 variable csgpio is being checked for an error return
-from the call to of_get_named_gpio, however, since this is unsigned
-this comparison will always be false. Fix this by making csgpio an
-int and fix up the %u format specifiers to %d accordingly.
+Wei, Ladislav,
 
-Detected by CoverityScan, CID#1475476 ("Unsigned compared against 0")
+getting back to this old thread, I would mark it as "changes requested"
+and expect someone to post a follow-up patch, I do not think this is
+a solved problem.
 
-Fixes: 2a22f1b30cee ("spi: npcm: add NPCM PSPI controller driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/spi/spi-npcm-pspi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Lorenzo
 
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index 51777515c83f..6dae91091143 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -329,7 +329,7 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 	unsigned long clk_hz;
- 	struct device_node *np = pdev->dev.of_node;
- 	int num_cs, i;
--	u32 csgpio;
-+	int csgpio;
- 	int irq;
- 	int ret;
- 
-@@ -417,12 +417,12 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev, "failed to get csgpio#%u\n", i);
- 			goto out_disable_clk;
- 		}
--		dev_dbg(&pdev->dev, "csgpio#%u = %u\n", i, csgpio);
-+		dev_dbg(&pdev->dev, "csgpio#%u = %d\n", i, csgpio);
- 		ret = devm_gpio_request_one(&pdev->dev, csgpio,
- 					    GPIOF_OUT_INIT_HIGH, DRIVER_NAME);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev,
--				"failed to configure csgpio#%u %u\n"
-+				"failed to configure csgpio#%u %d\n"
- 				, i, csgpio);
- 			goto out_disable_clk;
- 		}
--- 
-2.19.1
+> Subject: [PATCH] PCI: dra7xx: Use devm_ioremap_resource()
+> 
+> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+> index 8bf7c2714db6..7f422ae258ac 100644
+> --- a/drivers/pci/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/dwc/pci-dra7xx.c
+> @@ -409,14 +409,14 @@ static int __init dra7xx_add_pcie_ep(struct dra7xx_pcie *dra7xx,
+>  	ep->ops = &pcie_ep_ops;
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics");
+> -	pci->dbi_base = devm_ioremap(dev, res->start, resource_size(res));
+> -	if (!pci->dbi_base)
+> -		return -ENOMEM;
+> +	pci->dbi_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(pci->dbi_base))
+> +		return PTR_ERR(pci->dbi_base);
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics2");
+> -	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
+> -	if (!pci->dbi_base2)
+> -		return -ENOMEM;
+> +	pci->dbi_base2 = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(pci->dbi_base2))
+> +		return PTR_ERR(pci->dbi_base2);
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
+>  	if (!res)
