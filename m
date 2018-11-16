@@ -1,25 +1,38 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 27 Nov 2018 09:22:32 +0000
-Subject: Re: [-next] powerpc/platforms/85xx: drop pointless static qualifier
-Message-Id: <433yx45hKJz9s55@ozlabs.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Nov 2018 15:06:34 +0000
+Subject: [PATCH 3/5] ASoC: tlv320dac33: clean up indentation, remove extraneous tab
+Message-Id: <20181116150636.5226-3-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1542285196-156161-1-git-send-email-yuehaibing@huawei.com>
+References: <20181116150636.5226-1-colin.king@canonical.com>
+In-Reply-To: <20181116150636.5226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Scott Wood <oss@buserror.net>, Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-15 at 12:33:16 UTC, YueHaibing wrote:
-> From: Yue Haibing <yuehaibing@huawei.com>
-> 
-> There is no need to have the 'void __iomem *cpld_base' variable static
-> since new value always be assigned before use it.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to powerpc next, thanks.
+The goto statement is indented too much by one level, fix this by
+removing the extraneous tab.
 
-https://git.kernel.org/powerpc/c/af8511cf32189ba66c7e2a4146f11c
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/tlv320dac33.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-cheers
+diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
+index a957eaeb7bc1..32907b1e20cf 100644
+--- a/sound/soc/codecs/tlv320dac33.c
++++ b/sound/soc/codecs/tlv320dac33.c
+@@ -394,7 +394,7 @@ static int dac33_hard_power(struct snd_soc_component *component, int power)
+ 		if (ret != 0) {
+ 			dev_err(component->dev,
+ 				"Failed to enable supplies: %d\n", ret);
+-				goto exit;
++			goto exit;
+ 		}
+ 
+ 		if (dac33->power_gpio >= 0)
+-- 
+2.19.1
