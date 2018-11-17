@@ -1,39 +1,69 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Nov 2018 12:14:02 +0000
-Subject: [PATCH -next] drm/nouveau: fix copy-paste error in nouveau_fence_wait_uevent_handler
-Message-Id: <1542284042-153903-1-git-send-email-yuehaibing@huawei.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Sat, 17 Nov 2018 03:27:53 +0000
+Subject: Applied "ASoC: qcom: clean up indentation, remove extraneous tab" to the asoc tree
+Message-Id: <20181117032753.A0F45440078@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181116150636.5226-5-colin.king@canonical.com>
+In-Reply-To: <20181116150636.5226-5-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
-Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The patch
 
-drivers/gpu/drm/nouveau/nouveau_fence.c: In function 'nouveau_fence_wait_uevent_handler':
-drivers/gpu/drm/nouveau/nouveau_fence.c:156:27: warning:
- variable 'chan' set but not used [-Wunused-but-set-variable]
+   ASoC: qcom: clean up indentation, remove extraneous tab
 
-nouveau_fence_update should use rcu protected 'chan'
-rather than 'fence->channel'
+has been applied to the asoc tree at
 
-Fixes: 0ec5f02f0e2c ("drm/nouveau: prevent stale fence->channel pointers, and protect with rcu")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From e8d4bf8ae8dbcf635a87883437539fb3e5deb6d4 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 16 Nov 2018 15:06:36 +0000
+Subject: [PATCH] ASoC: qcom: clean up indentation, remove extraneous tab
+
+The return statement is indented too much by one level, fix this by
+removing the extraneous tab.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
+ sound/soc/qcom/lpass-platform.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
-index d4964f3..91286d0 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-@@ -157,7 +157,7 @@
- 
- 		fence = list_entry(fctx->pending.next, typeof(*fence), head);
- 		chan = rcu_dereference_protected(fence->channel, lockdep_is_held(&fctx->lock));
--		if (nouveau_fence_update(fence->channel, fctx))
-+		if (nouveau_fence_update(chan, fctx))
- 			ret = NVIF_NOTIFY_DROP;
+diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
+index d07271ea4c45..028bce671cbc 100644
+--- a/sound/soc/qcom/lpass-platform.c
++++ b/sound/soc/qcom/lpass-platform.c
+@@ -91,7 +91,7 @@ static int lpass_platform_pcmops_open(struct snd_pcm_substream *substream)
+ 	if (ret) {
+ 		dev_err(soc_runtime->dev,
+ 			"error writing to rdmactl reg: %d\n", ret);
+-			return ret;
++		return ret;
  	}
- 	spin_unlock_irqrestore(&fctx->lock, flags);
+ 
+ 	data->dma_ch = dma_ch;
+-- 
+2.19.1
