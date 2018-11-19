@@ -1,39 +1,55 @@
-From: Dominique Martinet <asmadeus@codewreck.org>
-Date: Tue, 13 Nov 2018 05:53:24 +0000
-Subject: Re: [V9fs-developer] [PATCH] net/9p: include trans_common.h to fix missing prototype warning.
-Message-Id: <20181113055324.GB5116@nautica>
+From: Lubomir Rintel <lkundrak@v3.sk>
+Date: Mon, 19 Nov 2018 08:16:06 +0000
+Subject: Re: [PATCH -next] Input: olpc_apsp - remove set but not used variable 'np'
+Message-Id: <ebfe75caa621e325343c3b36e1778ef85200a3d5.camel@v3.sk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Adeodato Simó wrote on Tue, Nov 13, 2018:
-> This silences -Wmissing-prototypes when defining p9_release_pages.
+On Mon, 2018-11-19 at 02:10 +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Signed-off-by: Adeodato Simó <dato@net.com.org.es>
+> drivers/input/serio/olpc_apsp.c: In function 'olpc_apsp_probe':
+> drivers/input/serio/olpc_apsp.c:192:22: warning:
+>  variable 'np' set but not used [-Wunused-but-set-variable]
+> 
+> It never used since intrdduction in commit
+> b56ece9a3ac3 ("Input: add OLPC AP-SP driver")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Thank you.
+
+Acked-by: Lubomir Rintel <lkundrak@v3.sk>
+
 > ---
->  net/9p/trans_common.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/input/serio/olpc_apsp.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> It was suggested in the kernel-janitors mailing list that silencing
-> -Wmissing-prototypes would make for a worthy cause.
+> diff --git a/drivers/input/serio/olpc_apsp.c
+> b/drivers/input/serio/olpc_apsp.c
+> index 91d6fb8..b360847 100644
+> --- a/drivers/input/serio/olpc_apsp.c
+> +++ b/drivers/input/serio/olpc_apsp.c
+> @@ -189,14 +189,12 @@ static int olpc_apsp_probe(struct
+> platform_device *pdev)
+>  	struct serio *kb_serio, *pad_serio;
+>  	struct olpc_apsp *priv;
+>  	struct resource *res;
+> -	struct device_node *np;
+>  	int error;
+>  
+>  	priv = devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp),
+> GFP_KERNEL);
+>  	if (!priv)
+>  		return -ENOMEM;
+>  
+> -	np = pdev->dev.of_node;
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	priv->base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(priv->base)) {
 > 
-> https://www.spinics.net/lists/linux-kernel-janitors/msg43981.html
 > 
-> Thanks for considering!
-
-Looks harmless enough, and it does belong in that .h as non-static, so
-will take it.
-If you'll let me be a little bit annoying, could you please resend it
-after adding linux-kernel@vger.kernel.org in Cc? (please set the
-in-reply-to to your first mail or this one if possible as well)
-
-The point is that neither v9fs-developer or kernel-janitors are archived
-in lkml.kernel.org / marc.info so I cannot add a Link: tag to this
-e-mail easily; I need some major list Cc'd for these.
-Might as well be consistent if we can :)
-
-Thanks!
--- 
-Dominique
+> 
