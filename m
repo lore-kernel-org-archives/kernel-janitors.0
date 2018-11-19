@@ -1,71 +1,37 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 05 Nov 2018 11:59:19 +0000
-Subject: Applied "ASoC: smd845: constify snd_soc_ops structure" to the asoc tree
-Message-Id: <20181105115919.AE2871124D98@debutante.sirena.org.uk>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 19 Nov 2018 02:14:23 +0000
+Subject: [PATCH -next] scsi: dpt_i2o: remove set but not used variable ''
+Message-Id: <1542593663-170877-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541170818-24219-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1541170818-24219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-The patch
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-   ASoC: smd845: constify snd_soc_ops structure
+drivers/scsi/dpt_i2o.c: In function 'adpt_slave_configure':
+drivers/scsi/dpt_i2o.c:414:12: warning:
+ variable 'pHba' set but not used [-Wunused-but-set-variable]
 
-has been applied to the asoc tree at
+It never used since git history start.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From ff60005e4598ca9a79fa6d8378dd35a668ae4de7 Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 2 Nov 2018 16:00:18 +0100
-Subject: [PATCH] ASoC: smd845: constify snd_soc_ops structure
-
-The snd_soc_ops structure can be const as it is only stored in the
-ops field of a snd_soc_dai_link structure and this field is const.
-
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/qcom/sdm845.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/dpt_i2o.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 9effbecc571f..8d0cdff64377 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -171,7 +171,7 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
- 	}
- }
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index d5a474d..be6f3db 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -411,9 +411,6 @@ static void adpt_inquiry(adpt_hba* pHba)
+ static int adpt_slave_configure(struct scsi_device * device)
+ {
+ 	struct Scsi_Host *host = device->host;
+-	adpt_hba* pHba;
+-
+-	pHba = (adpt_hba *) host->hostdata[0];
  
--static struct snd_soc_ops sdm845_be_ops = {
-+static const struct snd_soc_ops sdm845_be_ops = {
- 	.hw_params = sdm845_snd_hw_params,
- 	.startup = sdm845_snd_startup,
- 	.shutdown = sdm845_snd_shutdown,
--- 
-2.19.0.rc2
+ 	if (host->can_queue && device->tagged_supported) {
+ 		scsi_change_queue_depth(device,
