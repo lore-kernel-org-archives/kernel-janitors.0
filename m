@@ -1,33 +1,43 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 06 Nov 2018 16:53:32 +0000
-Subject: Re: [PATCH] wlcore: Fix the return value in case of error in 'wlcore_vendor_cmd_smart_config_start()
-Message-Id: <20181106165332.9446F60BDE@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 19 Nov 2018 02:10:41 +0000
+Subject: [PATCH -next] Input: olpc_apsp - remove set but not used variable 'np'
+Message-Id: <1542593441-169671-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181016073940.26797-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20181016073940.26797-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, tony@atomide.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> We return 0 unconditionally at the end of
-> 'wlcore_vendor_cmd_smart_config_start()'.
-> However, 'ret' is set to some error codes in several error handling paths
-> and we already return some error codes at the beginning of the function.
-> 
-> Return 'ret' instead to propagate the error code.
-> 
-> Fixes: 80ff8063e87c ("wlcore: handle smart config vendor commands")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+drivers/input/serio/olpc_apsp.c: In function 'olpc_apsp_probe':
+drivers/input/serio/olpc_apsp.c:192:22: warning:
+ variable 'np' set but not used [-Wunused-but-set-variable]
 
-Patch applied to wireless-drivers-next.git, thanks.
+It never used since intrdduction in commit
+b56ece9a3ac3 ("Input: add OLPC AP-SP driver")
 
-3419348a97bc wlcore: Fix the return value in case of error in 'wlcore_vendor_cmd_smart_config_start()'
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/input/serio/olpc_apsp.c | 2 --
+ 1 file changed, 2 deletions(-)
 
--- 
-https://patchwork.kernel.org/patch/10643195/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
+index 91d6fb8..b360847 100644
+--- a/drivers/input/serio/olpc_apsp.c
++++ b/drivers/input/serio/olpc_apsp.c
+@@ -189,14 +189,12 @@ static int olpc_apsp_probe(struct platform_device *pdev)
+ 	struct serio *kb_serio, *pad_serio;
+ 	struct olpc_apsp *priv;
+ 	struct resource *res;
+-	struct device_node *np;
+ 	int error;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	np = pdev->dev.of_node;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(priv->base)) {
