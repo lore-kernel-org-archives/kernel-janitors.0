@@ -1,33 +1,75 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 05 Nov 2018 11:11:09 +0000
-Subject: Re: [PATCH] ath10k: Fixup extended per sta tx statistics
-Message-Id: <20181105111109.231AA6053D@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Nov 2018 16:34:00 +0000
+Subject: [PATCH] drivers: usb: early: clean up indentation, remove extraneous tabs
+Message-Id: <20181119163400.16991-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181018073619.c2cxj74enkramhjr@kili.mountain>
-In-Reply-To: <20181018073619.c2cxj74enkramhjr@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anilkumar Kolli <akolli@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> I had a couple concerns with this code.  First, we definitely need to
-> set the error code if the kzalloc() fails.  Secondly, I was worried that
-> if we didn't set "arsta->tx_stats" to NULL after freeing it, then it
-> looks to me like it might lead to a use after free.  I can't test that,
-> but it's harmless to set it to NULL so I did.
-> 
-> Fixes: a904417fc876 ("ath10k: add extended per sta tx statistics support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+There is a hunk of code that is indented too much by one level, fix
+this by removing the extraneous tabs.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/early/ehci-dbgp.c | 38 +++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-539b44e70c5b ath10k: fixup extended per sta tx statistics
-
+diff --git a/drivers/usb/early/ehci-dbgp.c b/drivers/usb/early/ehci-dbgp.c
+index d633c2abe5a4..ea0d531c63e2 100644
+--- a/drivers/usb/early/ehci-dbgp.c
++++ b/drivers/usb/early/ehci-dbgp.c
+@@ -631,28 +631,28 @@ static int ehci_reset_port(int port)
+ 		if (!(portsc & PORT_RESET))
+ 			break;
+ 	}
+-		if (portsc & PORT_RESET) {
+-			/* force reset to complete */
+-			loop = 100 * 1000;
+-			writel(portsc & ~(PORT_RWC_BITS | PORT_RESET),
+-				&ehci_regs->port_status[port - 1]);
+-			do {
+-				udelay(1);
+-				portsc = readl(&ehci_regs->port_status[port-1]);
+-			} while ((portsc & PORT_RESET) && (--loop > 0));
+-		}
++	if (portsc & PORT_RESET) {
++		/* force reset to complete */
++		loop = 100 * 1000;
++		writel(portsc & ~(PORT_RWC_BITS | PORT_RESET),
++			&ehci_regs->port_status[port - 1]);
++		do {
++			udelay(1);
++			portsc = readl(&ehci_regs->port_status[port-1]);
++		} while ((portsc & PORT_RESET) && (--loop > 0));
++	}
+ 
+-		/* Device went away? */
+-		if (!(portsc & PORT_CONNECT))
+-			return -ENOTCONN;
++	/* Device went away? */
++	if (!(portsc & PORT_CONNECT))
++		return -ENOTCONN;
+ 
+-		/* bomb out completely if something weird happened */
+-		if ((portsc & PORT_CSC))
+-			return -EINVAL;
++	/* bomb out completely if something weird happened */
++	if ((portsc & PORT_CSC))
++		return -EINVAL;
+ 
+-		/* If we've finished resetting, then break out of the loop */
+-		if (!(portsc & PORT_RESET) && (portsc & PORT_PE))
+-			return 0;
++	/* If we've finished resetting, then break out of the loop */
++	if (!(portsc & PORT_RESET) && (portsc & PORT_PE))
++		return 0;
+ 	return -EBUSY;
+ }
+ 
 -- 
-https://patchwork.kernel.org/patch/10646825/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.19.1
