@@ -1,78 +1,63 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Nov 2018 11:56:31 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
-Message-Id: <6e67a5b3-6a0e-6c3a-af90-2125713f522f@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 20 Nov 2018 17:17:45 +0000
+Subject: [PATCH][drm-next] drm/amd/display: fix dereference of pointer fs_params before it is null checked
+Message-Id: <20181120171745.13812-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
- <BY2PR12MB0040A0E1C221A3EBBF270C30ECDC0@BY2PR12MB0040.namprd12.prod.outlook.com>
-In-Reply-To: <BY2PR12MB0040A0E1C221A3EBBF270C30ECDC0@BY2PR12MB0040.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Huang, Ray" <Ray.Huang@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "Liu, Shaoyun" <Shaoyun.Liu@amd.com>, "Francis, David" <David.Francis@amd.com>, "Xu, Feifei" <Feifei.Xu@amd.com>, "Gao, Likun" <Likun.Gao@amd.com>
-Cc: "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2018/11/15 19:49, Huang, Ray wrote:
->> -----Original Message-----
->> From: YueHaibing [mailto:yuehaibing@huawei.com]
->> Sent: Thursday, November 15, 2018 6:52 PM
->> To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
->> <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
->> <David1.Zhou@amd.com>; airlied@linux.ie; Liu, Shaoyun
->> <Shaoyun.Liu@amd.com>; Francis, David <David.Francis@amd.com>; Huang,
->> Ray <Ray.Huang@amd.com>; Xu, Feifei <Feifei.Xu@amd.com>; Gao, Likun
->> <Likun.Gao@amd.com>
->> Cc: YueHaibing <yuehaibing@huawei.com>; amd-gfx@lists.freedesktop.org;
->> dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel-
->> janitors@vger.kernel.org
->> Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
->>
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/gpu/drm/amd/amdgpu/psp_v10_0.c: In function
->> 'psp_v10_0_ring_stop':
->> drivers/gpu/drm/amd/amdgpu/psp_v10_0.c:230:19: warning:
->>  variable 'ring' set but not used [-Wunused-but-set-variable]
->>
->> It not used since commit
->> 4ef72453311a ("drm/amdgpu: added api for stopping psp ring (v2)")
-> 
-> Thanks, please also remove the similar code in psp_v3_1. 
-> With that updates, patch is Reviewed-by: Huang Rui <ray.huang@amd.com>
-> 
+Currently there are several instances of pointer fs_params being
+dereferenced before fs_params is being null checked.  Fix this by
+only dereferencing fs_params after the null check.
 
-Ok, will send v2.
+Detected by CoverityScan, CID#1475565 ("Dereference before null check")
 
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/gpu/drm/amd/amdgpu/psp_v10_0.c | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> index 295c220..d78b430 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> @@ -240,12 +240,9 @@ static int psp_v10_0_ring_stop(struct psp_context
->> *psp,
->>  			       enum psp_ring_type ring_type)  {
->>  	int ret = 0;
->> -	struct psp_ring *ring;
->>  	unsigned int psp_ring_reg = 0;
->>  	struct amdgpu_device *adev = psp->adev;
->>
->> -	ring = &psp->km_ring;
->> -
->>  	/* Write the ring destroy command to C2PMSG_64 */
->>  	psp_ring_reg = 3 << 16;
->>  	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
->>
->>
->>
->>
-> 
-> 
-> .
-> 
+Fixes: e1e8a020c6b8 ("drm/amd/display: Add support for Freesync 2 HDR and Content to Display Mapping")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../drm/amd/display/modules/color/color_gamma.c  | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
+index 7480f072c375..bbecbaefb741 100644
+--- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
++++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
+@@ -813,20 +813,26 @@ static bool build_freesync_hdr(struct pwl_float_data_ex *rgb_regamma,
+ 	const struct hw_x_point *coord_x = coordinate_x;
+ 	struct fixed31_32 scaledX = dc_fixpt_zero;
+ 	struct fixed31_32 scaledX1 = dc_fixpt_zero;
+-	struct fixed31_32 max_display = dc_fixpt_from_int(fs_params->max_display);
+-	struct fixed31_32 min_display = dc_fixpt_from_fraction(fs_params->min_display, 10000);
+-	struct fixed31_32 max_content = dc_fixpt_from_int(fs_params->max_content);
+-	struct fixed31_32 min_content = dc_fixpt_from_fraction(fs_params->min_content, 10000);
++	struct fixed31_32 max_display;
++	struct fixed31_32 min_display;
++	struct fixed31_32 max_content;
++	struct fixed31_32 min_content;
+ 	struct fixed31_32 clip = dc_fixpt_one;
+ 	struct fixed31_32 output;
+ 	bool use_eetf = false;
+ 	bool is_clipped = false;
+-	struct fixed31_32 sdr_white_level = dc_fixpt_from_int(fs_params->sdr_white_level);
++	struct fixed31_32 sdr_white_level;
+ 
+ 	if (fs_params = NULL || fs_params->max_content = 0 ||
+ 			fs_params->max_display = 0)
+ 		return false;
+ 
++	max_display = dc_fixpt_from_int(fs_params->max_display);
++	min_display = dc_fixpt_from_fraction(fs_params->min_display, 10000);
++	max_content = dc_fixpt_from_int(fs_params->max_content);
++	min_content = dc_fixpt_from_fraction(fs_params->min_content, 10000);
++	sdr_white_level = dc_fixpt_from_int(fs_params->sdr_white_level);
++
+ 	if (fs_params->min_display > 1000) // cap at 0.1 at the bottom
+ 		min_display = dc_fixpt_from_fraction(1, 10);
+ 	if (fs_params->max_display < 100) // cap at 100 at the top
+-- 
+2.19.1
