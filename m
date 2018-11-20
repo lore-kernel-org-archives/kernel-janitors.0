@@ -1,40 +1,43 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Thu, 01 Nov 2018 19:24:54 +0000
-Subject: RE: [PATCH net-next] igc: Remove set but not used variable 'pci_using_dac'
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B96598688@ORSMSX101.amr.corp.intel.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Tue, 20 Nov 2018 11:37:18 +0000
+Subject: Re: [PATCH] PCI: histb: constify dw_pcie_host_ops structure
+Message-Id: <20181120113718.GA20893@e107981-ln.cambridge.arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539953291-189201-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539953291-189201-1-git-send-email-yuehaibing@huawei.com>
+References: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "David S. Miller" <davem@davemloft.net>, "Neftin, Sasha" <sasha.neftin@intel.com>
-Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jianguo Sun <sunjianguo1@huawei.com>, kernel-janitors@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> From: netdev-owner@vger.kernel.org [mailto:netdev-
-> owner@vger.kernel.org] On Behalf Of YueHaibing
-> Sent: Friday, October 19, 2018 5:48 AM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S. Miller
-> <davem@davemloft.net>; Neftin, Sasha <sasha.neftin@intel.com>
-> Cc: YueHaibing <yuehaibing@huawei.com>; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH net-next] igc: Remove set but not used variable
-> 'pci_using_dac'
+On Sat, Oct 27, 2018 at 08:31:19PM +0200, Julia Lawall wrote:
+> The dw_pcie_host_ops structure is only stored in the ops field
+> of a pcie_port structure, and this field is const, so make the
+> dw_pcie_host_ops structure const as well.
 > 
-> Fixes gcc '-Wunused-but-set-variable' warning:
+> Done with the help of Coccinelle.
 > 
-> drivers/net/ethernet/intel/igc/igc_main.c: In function 'igc_probe':
-> drivers/net/ethernet/intel/igc/igc_main.c:3535:11: warning:
->  variable 'pci_using_dac' set but not used [-Wunused-but-set-variable]
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> It never used since introduction in commit
-> d89f88419f99 ("igc: Add skeletal frame for Intel(R) 2.5G Ethernet Controller
-> support")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/net/ethernet/intel/igc/igc_main.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
+>  drivers/pci/controller/dwc/pcie-histb.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Applied to pci/dwc for v4.21, thanks.
+
+Lorenzo
+
+> diff -u -p a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+> --- a/drivers/pci/controller/dwc/pcie-histb.c
+> +++ b/drivers/pci/controller/dwc/pcie-histb.c
+> @@ -202,7 +202,7 @@ static int histb_pcie_host_init(struct p
+>  	return 0;
+>  }
+>  
+> -static struct dw_pcie_host_ops histb_pcie_host_ops = {
+> +static const struct dw_pcie_host_ops histb_pcie_host_ops = {
+>  	.rd_own_conf = histb_pcie_rd_own_conf,
+>  	.wr_own_conf = histb_pcie_wr_own_conf,
+>  	.host_init = histb_pcie_host_init,
+> 
