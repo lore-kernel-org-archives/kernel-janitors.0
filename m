@@ -1,63 +1,61 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 20 Nov 2018 17:17:45 +0000
-Subject: [PATCH][drm-next] drm/amd/display: fix dereference of pointer fs_params before it is null checked
-Message-Id: <20181120171745.13812-1-colin.king@canonical.com>
+From: "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>
+Date: Tue, 20 Nov 2018 20:08:00 +0000
+Subject: Re: [PATCH][drm-next] drm/amd/display: fix dereference of pointer fs_params before it is null checke
+Message-Id: <f62f6823-228a-dff9-dad5-45b3fde9c5c2@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181120171745.13812-1-colin.king@canonical.com>
+In-Reply-To: <20181120171745.13812-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Wentland, Harry" <Harry.Wentland@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently there are several instances of pointer fs_params being
-dereferenced before fs_params is being null checked.  Fix this by
-only dereferencing fs_params after the null check.
-
-Detected by CoverityScan, CID#1475565 ("Dereference before null check")
-
-Fixes: e1e8a020c6b8 ("drm/amd/display: Add support for Freesync 2 HDR and Content to Display Mapping")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../drm/amd/display/modules/color/color_gamma.c  | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-index 7480f072c375..bbecbaefb741 100644
---- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-+++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-@@ -813,20 +813,26 @@ static bool build_freesync_hdr(struct pwl_float_data_ex *rgb_regamma,
- 	const struct hw_x_point *coord_x = coordinate_x;
- 	struct fixed31_32 scaledX = dc_fixpt_zero;
- 	struct fixed31_32 scaledX1 = dc_fixpt_zero;
--	struct fixed31_32 max_display = dc_fixpt_from_int(fs_params->max_display);
--	struct fixed31_32 min_display = dc_fixpt_from_fraction(fs_params->min_display, 10000);
--	struct fixed31_32 max_content = dc_fixpt_from_int(fs_params->max_content);
--	struct fixed31_32 min_content = dc_fixpt_from_fraction(fs_params->min_content, 10000);
-+	struct fixed31_32 max_display;
-+	struct fixed31_32 min_display;
-+	struct fixed31_32 max_content;
-+	struct fixed31_32 min_content;
- 	struct fixed31_32 clip = dc_fixpt_one;
- 	struct fixed31_32 output;
- 	bool use_eetf = false;
- 	bool is_clipped = false;
--	struct fixed31_32 sdr_white_level = dc_fixpt_from_int(fs_params->sdr_white_level);
-+	struct fixed31_32 sdr_white_level;
- 
- 	if (fs_params = NULL || fs_params->max_content = 0 ||
- 			fs_params->max_display = 0)
- 		return false;
- 
-+	max_display = dc_fixpt_from_int(fs_params->max_display);
-+	min_display = dc_fixpt_from_fraction(fs_params->min_display, 10000);
-+	max_content = dc_fixpt_from_int(fs_params->max_content);
-+	min_content = dc_fixpt_from_fraction(fs_params->min_content, 10000);
-+	sdr_white_level = dc_fixpt_from_int(fs_params->sdr_white_level);
-+
- 	if (fs_params->min_display > 1000) // cap at 0.1 at the bottom
- 		min_display = dc_fixpt_from_fraction(1, 10);
- 	if (fs_params->max_display < 100) // cap at 100 at the top
--- 
-2.19.1
+DQoNCk9uIDIwMTgtMTEtMjAgMTI6MTcgcC5tLiwgQ29saW4gS2luZyB3cm90ZToNCj4gRnJvbTog
+Q29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IEN1cnJlbnRs
+eSB0aGVyZSBhcmUgc2V2ZXJhbCBpbnN0YW5jZXMgb2YgcG9pbnRlciBmc19wYXJhbXMgYmVpbmcN
+Cj4gZGVyZWZlcmVuY2VkIGJlZm9yZSBmc19wYXJhbXMgaXMgYmVpbmcgbnVsbCBjaGVja2VkLiAg
+Rml4IHRoaXMgYnkNCj4gb25seSBkZXJlZmVyZW5jaW5nIGZzX3BhcmFtcyBhZnRlciB0aGUgbnVs
+bCBjaGVjay4NCj4gDQo+IERldGVjdGVkIGJ5IENvdmVyaXR5U2NhbiwgQ0lEIzE0NzU1NjUgKCJE
+ZXJlZmVyZW5jZSBiZWZvcmUgbnVsbCBjaGVjayIpDQo+IA0KPiBGaXhlczogZTFlOGEwMjBjNmI4
+ICgiZHJtL2FtZC9kaXNwbGF5OiBBZGQgc3VwcG9ydCBmb3IgRnJlZXN5bmMgMiBIRFIgYW5kIENv
+bnRlbnQgdG8gRGlzcGxheSBNYXBwaW5nIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtp
+bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IExlbyBMaSA8c3Vu
+cGVuZy5saUBhbWQuY29tPg0KDQpUaGFua3MhDQoNCj4gLS0tDQo+ICAgLi4uL2RybS9hbWQvZGlz
+cGxheS9tb2R1bGVzL2NvbG9yL2NvbG9yX2dhbW1hLmMgIHwgMTYgKysrKysrKysrKystLS0tLQ0K
+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2NvbG9y
+L2NvbG9yX2dhbW1hLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvbW9kdWxlcy9jb2xv
+ci9jb2xvcl9nYW1tYS5jDQo+IGluZGV4IDc0ODBmMDcyYzM3NS4uYmJlY2JhZWZiNzQxIDEwMDY0
+NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvbW9kdWxlcy9jb2xvci9jb2xv
+cl9nYW1tYS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2Nv
+bG9yL2NvbG9yX2dhbW1hLmMNCj4gQEAgLTgxMywyMCArODEzLDI2IEBAIHN0YXRpYyBib29sIGJ1
+aWxkX2ZyZWVzeW5jX2hkcihzdHJ1Y3QgcHdsX2Zsb2F0X2RhdGFfZXggKnJnYl9yZWdhbW1hLA0K
+PiAgIAljb25zdCBzdHJ1Y3QgaHdfeF9wb2ludCAqY29vcmRfeCA9IGNvb3JkaW5hdGVfeDsNCj4g
+ICAJc3RydWN0IGZpeGVkMzFfMzIgc2NhbGVkWCA9IGRjX2ZpeHB0X3plcm87DQo+ICAgCXN0cnVj
+dCBmaXhlZDMxXzMyIHNjYWxlZFgxID0gZGNfZml4cHRfemVybzsNCj4gLQlzdHJ1Y3QgZml4ZWQz
+MV8zMiBtYXhfZGlzcGxheSA9IGRjX2ZpeHB0X2Zyb21faW50KGZzX3BhcmFtcy0+bWF4X2Rpc3Bs
+YXkpOw0KPiAtCXN0cnVjdCBmaXhlZDMxXzMyIG1pbl9kaXNwbGF5ID0gZGNfZml4cHRfZnJvbV9m
+cmFjdGlvbihmc19wYXJhbXMtPm1pbl9kaXNwbGF5LCAxMDAwMCk7DQo+IC0Jc3RydWN0IGZpeGVk
+MzFfMzIgbWF4X2NvbnRlbnQgPSBkY19maXhwdF9mcm9tX2ludChmc19wYXJhbXMtPm1heF9jb250
+ZW50KTsNCj4gLQlzdHJ1Y3QgZml4ZWQzMV8zMiBtaW5fY29udGVudCA9IGRjX2ZpeHB0X2Zyb21f
+ZnJhY3Rpb24oZnNfcGFyYW1zLT5taW5fY29udGVudCwgMTAwMDApOw0KPiArCXN0cnVjdCBmaXhl
+ZDMxXzMyIG1heF9kaXNwbGF5Ow0KPiArCXN0cnVjdCBmaXhlZDMxXzMyIG1pbl9kaXNwbGF5Ow0K
+PiArCXN0cnVjdCBmaXhlZDMxXzMyIG1heF9jb250ZW50Ow0KPiArCXN0cnVjdCBmaXhlZDMxXzMy
+IG1pbl9jb250ZW50Ow0KPiAgIAlzdHJ1Y3QgZml4ZWQzMV8zMiBjbGlwID0gZGNfZml4cHRfb25l
+Ow0KPiAgIAlzdHJ1Y3QgZml4ZWQzMV8zMiBvdXRwdXQ7DQo+ICAgCWJvb2wgdXNlX2VldGYgPSBm
+YWxzZTsNCj4gICAJYm9vbCBpc19jbGlwcGVkID0gZmFsc2U7DQo+IC0Jc3RydWN0IGZpeGVkMzFf
+MzIgc2RyX3doaXRlX2xldmVsID0gZGNfZml4cHRfZnJvbV9pbnQoZnNfcGFyYW1zLT5zZHJfd2hp
+dGVfbGV2ZWwpOw0KPiArCXN0cnVjdCBmaXhlZDMxXzMyIHNkcl93aGl0ZV9sZXZlbDsNCj4gICAN
+Cj4gICAJaWYgKGZzX3BhcmFtcyA9PSBOVUxMIHx8IGZzX3BhcmFtcy0+bWF4X2NvbnRlbnQgPT0g
+MCB8fA0KPiAgIAkJCWZzX3BhcmFtcy0+bWF4X2Rpc3BsYXkgPT0gMCkNCj4gICAJCXJldHVybiBm
+YWxzZTsNCj4gICANCj4gKwltYXhfZGlzcGxheSA9IGRjX2ZpeHB0X2Zyb21faW50KGZzX3BhcmFt
+cy0+bWF4X2Rpc3BsYXkpOw0KPiArCW1pbl9kaXNwbGF5ID0gZGNfZml4cHRfZnJvbV9mcmFjdGlv
+bihmc19wYXJhbXMtPm1pbl9kaXNwbGF5LCAxMDAwMCk7DQo+ICsJbWF4X2NvbnRlbnQgPSBkY19m
+aXhwdF9mcm9tX2ludChmc19wYXJhbXMtPm1heF9jb250ZW50KTsNCj4gKwltaW5fY29udGVudCA9
+IGRjX2ZpeHB0X2Zyb21fZnJhY3Rpb24oZnNfcGFyYW1zLT5taW5fY29udGVudCwgMTAwMDApOw0K
+PiArCXNkcl93aGl0ZV9sZXZlbCA9IGRjX2ZpeHB0X2Zyb21faW50KGZzX3BhcmFtcy0+c2RyX3do
+aXRlX2xldmVsKTsNCj4gKw0KPiAgIAlpZiAoZnNfcGFyYW1zLT5taW5fZGlzcGxheSA+IDEwMDAp
+IC8vIGNhcCBhdCAwLjEgYXQgdGhlIGJvdHRvbQ0KPiAgIAkJbWluX2Rpc3BsYXkgPSBkY19maXhw
+dF9mcm9tX2ZyYWN0aW9uKDEsIDEwKTsNCj4gICAJaWYgKGZzX3BhcmFtcy0+bWF4X2Rpc3BsYXkg
+PCAxMDApIC8vIGNhcCBhdCAxMDAgYXQgdGhlIHRvcA0KPiANCg=
