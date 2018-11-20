@@ -1,35 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 06 Nov 2018 15:40:22 +0000
-Subject: [PATCH][drm-next] drm/panel: s6d16d0: fix spelling mistake "enble" -> "enable"
-Message-Id: <20181106154022.9209-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 20 Nov 2018 12:50:51 +0000
+Subject: Re: [PATCH][drm-next] drm/panel: s6d16d0: fix spelling mistake "enble" -> "enable"
+Message-Id: <CACRpkdbhQCjKJOf8FVDBrsOOTxccUnGGZP4Lz5ez_GqHyLgkJA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181106154022.9209-1-colin.king@canonical.com>
+In-Reply-To: <20181106154022.9209-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Dave Airlie <airlied@linux.ie>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Nov 6, 2018 at 4:40 PM Colin King <colin.king@canonical.com> wrote:
 
-Trivial fix to spelling mistake in DRM_DEV_ERROR error message
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in DRM_DEV_ERROR error message
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/panel/panel-samsung-s6d16d0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied.
 
-diff --git a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
-index fa8bfa7c492d..33c22ee036f8 100644
---- a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
-+++ b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
-@@ -96,7 +96,7 @@ static int s6d16d0_prepare(struct drm_panel *panel)
- 	ret = mipi_dsi_dcs_set_tear_on(dsi,
- 				       MIPI_DSI_DCS_TEAR_MODE_VBLANK);
- 	if (ret) {
--		DRM_DEV_ERROR(s6->dev, "failed to enble vblank TE (%d)\n",
-+		DRM_DEV_ERROR(s6->dev, "failed to enable vblank TE (%d)\n",
- 			      ret);
- 		return ret;
- 	}
--- 
-2.19.1
+Yours,
+Linus Walleij
