@@ -1,15 +1,17 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 21 Nov 2018 16:57:23 +0000
+From: Jan Harkes <jaharkes@cs.cmu.edu>
+Date: Wed, 21 Nov 2018 18:10:42 +0000
 Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
-Message-Id: <20181121165723.GA5980@lst.de>
+Message-Id: <20181121181042.4gzuniz2vzjikpwc@cs.cmu.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181030202713.26203-1-semen.protsenko@linaro.org> <CAKaJLVu0h5woVtN5=Mh38ajACBZZQ3JHfRhkjNrwMwYXHEG-NQ@mail.gmail.com> <CAHp75Vd-ydncUWQtc8ziLpCMJRFCvjV=ueKB0wRgn7W-pnV09Q@mail.gmail.com>
+References: <20181030202713.26203-1-semen.protsenko@linaro.org>
+ <CAKaJLVu0h5woVtN5=Mh38ajACBZZQ3JHfRhkjNrwMwYXHEG-NQ@mail.gmail.com>
+ <CAHp75Vd-ydncUWQtc8ziLpCMJRFCvjV=ueKB0wRgn7W-pnV09Q@mail.gmail.com>
 In-Reply-To: <CAHp75Vd-ydncUWQtc8ziLpCMJRFCvjV=ueKB0wRgn7W-pnV09Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, jaharkes@cs.cmu.edu, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, codalist@coda.cs.cmu.edu, coda@cs.cmu.edu, Praneeth Bajjuri <praneeth@ti.com>, Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, Praneeth Bajjuri <praneeth@ti.com>, Ruslan Bilovol <ruslan.bilovol@gmail.com>
 
 On Wed, Nov 21, 2018 at 06:41:13PM +0200, Andy Shevchenko wrote:
 > I'm not sure how you managed to miss people in this list (perhaps by
@@ -17,5 +19,20 @@ On Wed, Nov 21, 2018 at 06:41:13PM +0200, Andy Shevchenko wrote:
 > guess we may gently ask Christoph to apply this in case Jan will not
 > appear.
 
-I don't really have a relevant tree.  You probably want to send it
-to Al Viro.
+You have got to give me a little more than 10 minutes to respond before
+assuming that I would not appear... I don't think I've ignored any
+previous emails on this subject and the only issues has been some people
+not receiving my responses for unknown reasons (agressive spam filter?).
+
+I have no problem with this patch, have it sitting with some other
+non-urgent patches and in case it doesn't appear upstream it should
+piggyback with whatever I have to send.
+
+I still don't know why the bare-metal toolchain couldn't just add a
+-D__linux__.  I understand that this define is expected to be always
+present while compiling kernel headers so that there is no good reason
+to even bother testing for it, which is why I have no issue with the
+patch. But it seems it would make your life a lot easier if you had it
+defined.
+
+Jan
