@@ -1,32 +1,56 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Mon, 12 Nov 2018 22:17:43 +0000
-Subject: Re: [PATCH] rtc:  clean up indentation issues, remove extraneous space, add missing tabs
-Message-Id: <20181112221743.GL29768@piout.net>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 21 Nov 2018 16:31:47 +0000
+Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
+Message-Id: <CAKaJLVu0h5woVtN5=Mh38ajACBZZQ3JHfRhkjNrwMwYXHEG-NQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181101145352.14104-1-colin.king@canonical.com>
-In-Reply-To: <20181101145352.14104-1-colin.king@canonical.com>
+References: <20181030202713.26203-1-semen.protsenko@linaro.org>
+In-Reply-To: <20181030202713.26203-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, Jan Harkes <jaharkes@cs.cmu.edu>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, codalist@coda.cs.cmu.edu, coda@cs.cmu.edu, Andy Shevchenko <andy.shevchenko@gmail.com>, Praneeth Bajjuri <praneeth@ti.com>, Ruslan Bilovol <ruslan.bilovol@gmail.com>
 
-On 01/11/2018 14:53:52+0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to clean up indentation issues, remove spaces, add missing
-> tabs
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Tue, Oct 30, 2018 at 10:27 PM Sam Protsenko
+<semen.protsenko@linaro.org> wrote:
+>
+> The kernel is self-contained project and can be built with bare-metal
+> toolchain. But bare-metal toolchain doesn't define __linux__. Because of
+> this u_quad_t type is not defined when using bare-metal toolchain and
+> codafs build fails. This patch fixes it by defining u_quad_t type
+> unconditionally.
+>
+> Cc: Jan Harkes <jaharkes@cs.cmu.edu>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  drivers/rtc/rtc-ep93xx.c  | 2 +-
->  drivers/rtc/rtc-max6916.c | 2 +-
->  drivers/rtc/rtc-rk808.c   | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-Applied, thanks.
+>  include/linux/coda.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/include/linux/coda.h b/include/linux/coda.h
+> index d30209b9cef8..0ca0c83fdb1c 100644
+> --- a/include/linux/coda.h
+> +++ b/include/linux/coda.h
+> @@ -58,8 +58,7 @@ Mellon the rights to redistribute these changes without encumbrance.
+>  #ifndef _CODA_HEADER_
+>  #define _CODA_HEADER_
+>
+> -#if defined(__linux__)
+>  typedef unsigned long long u_quad_t;
+> -#endif
+> +
+>  #include <uapi/linux/coda.h>
+>  #endif
+> --
+> 2.19.1
+>
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
++ Jan Harkes, + Ruslan Bilovol
+
+Hi Jan,
+
+Can you please apply this? Nobody seems to be interested in taking
+this patch, so I'm not sure how to proceed further. Please advice.
+
+Thanks!
