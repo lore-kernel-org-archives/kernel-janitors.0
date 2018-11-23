@@ -1,36 +1,23 @@
-From: Michal Hocko <mhocko@kernel.org>
-Date: Fri, 23 Nov 2018 09:01:25 +0000
+From: David Hildenbrand <david@redhat.com>
+Date: Fri, 23 Nov 2018 10:37:55 +0000
 Subject: Re: [PATCH] mm: debug: Fix a width vs precision bug in printk
-Message-Id: <20181123090125.GC8625@dhcp22.suse.cz>
+Message-Id: <831d66e9-7cf7-00a5-0a40-b7a7109dddbf@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181123072135.gqvblm2vdujbvfjs@kili.mountain>
 In-Reply-To: <20181123072135.gqvblm2vdujbvfjs@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Pavel Tatashin <pasha.tatashin@oracle.com>, Alexander Duyck <alexander.h.duyck@linux.intel.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>, Alexander Duyck <alexander.h.duyck@linux.intel.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-On Fri 23-11-18 10:21:35, Dan Carpenter wrote:
+On 23.11.18 08:21, Dan Carpenter wrote:
 > We had intended to only print dentry->d_name.len characters but there is
 > a width vs precision typo so if the name isn't NUL terminated it will
 > read past the end of the buffer.
-
-OK, it took me quite some time to grasp what you mean here. The code
-works as expected because d_name.len and dname.name are in sync so there
-no spacing going to happen. Anyway what you propose is formally more
-correct I guess.
- 
+> 
 > Fixes: 408ddbc22be3 ("mm: print more information about mapping in __dump_page")
-
-This sha is an unstable sha for mmotm patch.
-
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks!
-
 > ---
 >  mm/debug.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -48,10 +35,12 @@ Thanks!
 >  		}
 >  	}
 >  	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) != __NR_PAGEFLAGS + 1);
-> -- 
-> 2.11.0
 > 
 
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
 -- 
-Michal Hocko
-SUSE Labs
+
+Thanks,
+
+David / dhildenb
