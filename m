@@ -1,28 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 09 Nov 2018 00:22:01 +0000
-Subject: Re: [PATCH net-next] net: bcmgenet: return correct value 'ret' from bcmgenet_power_down
-Message-Id: <20181108.162201.360454923619072769.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Nov 2018 07:15:05 +0000
+Subject: [PATCH 2/2] ic3: master: off by one in mode_show()
+Message-Id: <20181123071505.ahhh7xqvt4eb7tt2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541642923-81463-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541642923-81463-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: opendmb@gmail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 8 Nov 2018 02:08:43 +0000
+This should be >= ARRAY_SIZE() to avoid reading one element beyond the
+end of the array.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/broadcom/genet/bcmgenet.c: In function 'bcmgenet_power_down':
-> drivers/net/ethernet/broadcom/genet/bcmgenet.c:1136:6: warning:
->  variable 'ret' set but not used [-Wunused-but-set-variable]
-> 
-> bcmgenet_power_down should return 'ret' instead of 0.
-> 
-> Fixes: ca8cf341903f ("net: bcmgenet: propagate errors from bcmgenet_power_down")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/i3c/master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index bda4b9613e53..c39f89d2deba 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -475,7 +475,7 @@ static ssize_t mode_show(struct device *dev,
+ 
+ 	i3c_bus_normaluse_lock(i3cbus);
+ 	if (i3cbus->mode < 0 ||
+-	    i3cbus->mode > ARRAY_SIZE(i3c_bus_mode_strings) ||
++	    i3cbus->mode >= ARRAY_SIZE(i3c_bus_mode_strings) ||
+ 	    !i3c_bus_mode_strings[i3cbus->mode])
+ 		ret = sprintf(buf, "unknown\n");
+ 	else
+-- 
+2.11.0
