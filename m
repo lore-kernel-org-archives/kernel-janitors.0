@@ -1,34 +1,36 @@
-From: Geoff Levand <geoff@infradead.org>
-Date: Mon, 12 Nov 2018 20:15:27 +0000
-Subject: Re: [PATCH] Documentation: fix spelling mistake, EACCESS -> EACCES
-Message-Id: <84e64a8b-765b-e89d-7427-5fd3a660575f@infradead.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Nov 2018 16:40:53 +0000
+Subject: [PATCH] jbd2: clean up indentation issue, replace spaces with tab
+Message-Id: <20181123164053.19193-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181026172549.3628-1-colin.king@canonical.com>
- <20181107153104.71eddf4d@lwn.net>
- <d1048515-239a-2686-e897-fb2a2b8d180f@ozlabs.org>
- <87bm6ua1xp.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87bm6ua1xp.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Ellerman <mpe@ellerman.id.au>, Jeremy Kerr <jk@ozlabs.org>, Jonathan Corbet <corbet@lwn.net>, Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Everyone,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 11/12/2018 04:57 AM, Michael Ellerman wrote:
-> But maybe Geoff has a better feel for how many people (other than him)
-> are still running upstream on PS3s.
+There is a statement that is indented with spaces, replace it with
+a tab.
 
-There are still PS3 users out there.  They are hobbyists who
-generally don't post to Linux kernel mailing lists.  I usually
-get one or two mail or IRC inquiries every month, many asking
-how to get a recent kernel running.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/jbd2/transaction.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I try keep my dev repo at k.org up to the latest -rc release
-and tested on the retail PS3.  For more info see:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/geoff/ps3-linux.git
-  https://www.kernel.org/pub/linux/kernel/people/geoff/cell/README
-
--Geoff
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index c0b66a7a795b..4af8ff17ad5c 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -910,7 +910,7 @@ do_get_write_access(handle_t *handle, struct journal_head *jh,
+ 	 * this is the first time this transaction is touching this buffer,
+ 	 * reset the modified flag
+ 	 */
+-       jh->b_modified = 0;
++	jh->b_modified = 0;
+ 
+ 	/*
+ 	 * If the buffer is not journaled right now, we need to make sure it
+-- 
+2.19.1
