@@ -1,45 +1,70 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Mon, 12 Nov 2018 19:41:51 +0000
-Subject: Re: [PATCH] input: atkbd: clean up indentation issue, add missing tab in an if statement
-Message-Id: <20181112194151.GG192687@dtor-ws>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Nov 2018 16:30:43 +0000
+Subject: [PATCH] ext4: clean up indentation issues, remove extraneous tabs
+Message-Id: <20181123163043.14178-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181101151224.14840-1-colin.king@canonical.com>
-In-Reply-To: <20181101151224.14840-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 03:12:24PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to clean up indentation issues, add missing tab
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+There are several lines that are indented too far, clean these
+up by removing the tabs.
 
-> ---
->  drivers/input/keyboard/atkbd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-> index 7e75835e220f..850bb259c20e 100644
-> --- a/drivers/input/keyboard/atkbd.c
-> +++ b/drivers/input/keyboard/atkbd.c
-> @@ -841,7 +841,7 @@ static int atkbd_select_set(struct atkbd *atkbd, int target_set, int allow_extra
->  	if (param[0] != 3) {
->  		param[0] = 2;
->  		if (ps2_command(ps2dev, param, ATKBD_CMD_SSCANSET))
-> -		return 2;
-> +			return 2;
->  	}
->  
->  	ps2_command(ps2dev, param, ATKBD_CMD_SETALL_MBR);
-> -- 
-> 2.19.1
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ext4/migrate.c | 12 ++++++------
+ fs/ext4/super.c   |  2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
+diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
+index 61a9d1927817..5ae61cd8c5c9 100644
+--- a/fs/ext4/migrate.c
++++ b/fs/ext4/migrate.c
+@@ -535,22 +535,22 @@ int ext4_ext_migrate(struct inode *inode)
+ 	if (i_data[EXT4_IND_BLOCK]) {
+ 		retval = update_ind_extent_range(handle, tmp_inode,
+ 				le32_to_cpu(i_data[EXT4_IND_BLOCK]), &lb);
+-			if (retval)
+-				goto err_out;
++		if (retval)
++			goto err_out;
+ 	} else
+ 		lb.curr_block += max_entries;
+ 	if (i_data[EXT4_DIND_BLOCK]) {
+ 		retval = update_dind_extent_range(handle, tmp_inode,
+ 				le32_to_cpu(i_data[EXT4_DIND_BLOCK]), &lb);
+-			if (retval)
+-				goto err_out;
++		if (retval)
++			goto err_out;
+ 	} else
+ 		lb.curr_block += max_entries * max_entries;
+ 	if (i_data[EXT4_TIND_BLOCK]) {
+ 		retval = update_tind_extent_range(handle, tmp_inode,
+ 				le32_to_cpu(i_data[EXT4_TIND_BLOCK]), &lb);
+-			if (retval)
+-				goto err_out;
++		if (retval)
++			goto err_out;
+ 	}
+ 	/*
+ 	 * Build the last extent
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 5603a4a1a864..15fc71398747 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1940,7 +1940,7 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
+ #ifdef CONFIG_FS_DAX
+ 		ext4_msg(sb, KERN_WARNING,
+ 		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+-			sbi->s_mount_opt |= m->mount_opt;
++		sbi->s_mount_opt |= m->mount_opt;
+ #else
+ 		ext4_msg(sb, KERN_INFO, "dax option not supported");
+ 		return -1;
 -- 
-Dmitry
+2.19.1
