@@ -1,37 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 26 Nov 2018 08:12:29 +0000
-Subject: [PATCH] misc/pvpanic: fix a NULL vs IS_ERR() check
-Message-Id: <20181126081229.zzgbambzjnbmmo7e@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 24 Nov 2018 14:48:40 +0000
+Subject: [PATCH] udlfb: don't call unregister_framebuffer on a null pointer
+Message-Id: <20181124144840.14608-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Peng Hao <peng.hao2@zte.com.cn>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bernie Thompson <bernie@plugable.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The devm_ioremap_resource() function doesn't return NULL, it returns
-error pointers.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 46f934c9a12f ("misc/pvpanic: add support to get pvpanic device info FDT")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Just before calling unregister_framebuffer with info there is a
+null check on info, implying info may possibly zero.  Calling
+unregister_framebuffer with a null pointer will cause a null
+pointer dereference, fix this by moving the call to the block
+where info has been null checked.
+
+Detected by CoverityScan, CID#1473969 ("Dereference after null check")
+
+Fixes: 68a958a915ca ("udlfb: handle unplug properly")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/misc/pvpanic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/udlfb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-index 01241ec6a5cd..595ac065b401 100644
---- a/drivers/misc/pvpanic.c
-+++ b/drivers/misc/pvpanic.c
-@@ -140,8 +140,8 @@ static int pvpanic_mmio_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
+index 070026a7e55a..cf8597f43d7e 100644
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -1735,9 +1735,9 @@ static void dlfb_usb_disconnect(struct usb_interface *intf)
+ 		for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
+ 			device_remove_file(info->dev, &fb_device_attrs[i]);
+ 		device_remove_bin_file(info->dev, &edid_attr);
++		unregister_framebuffer(info);
+ 	}
  
- 	base = devm_ioremap_resource(&pdev->dev, mem);
--	if (base = NULL)
--		return -EFAULT;
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
+-	unregister_framebuffer(info);
+ }
  
- 	atomic_notifier_chain_register(&panic_notifier_list,
- 				       &pvpanic_panic_nb);
+ static struct usb_driver dlfb_driver = {
 -- 
-2.11.0
+2.19.1
