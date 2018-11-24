@@ -1,60 +1,39 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 02 Nov 2018 18:34:36 +0000
-Subject: [PATCH 4.14 091/143] x86/paravirt: Fix some warning messages
-Message-Id: <20181102182905.146726078@linuxfoundation.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 24 Nov 2018 10:47:58 +0000
+Subject: [PATCH v2 -next] scsi: dpt_i2o: remove set but not used variable 'pHba'
+Message-Id: <1543056478-66284-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181102182857.064326086@linuxfoundation.org>
-In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>, Alok Kataria <akataria@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-------------------
+drivers/scsi/dpt_i2o.c: In function 'adpt_slave_configure':
+drivers/scsi/dpt_i2o.c:414:12: warning:
+ variable 'pHba' set but not used [-Wunused-but-set-variable]
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+It never used since git history start.
 
-The first argument to WARN_ONCE() is a condition.
-
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2:fix patch title
+---
+ drivers/scsi/dpt_i2o.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index f3559b84cd75..04da826381c9 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index d5a474d..be6f3db 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -411,9 +411,6 @@ static void adpt_inquiry(adpt_hba* pHba)
+ static int adpt_slave_configure(struct scsi_device * device)
+ {
+ 	struct Scsi_Host *host = device->host;
+-	adpt_hba* pHba;
+-
+-	pHba = (adpt_hba *) host->hostdata[0];
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
--- 
-2.17.1
+ 	if (host->can_queue && device->tagged_supported) {
+ 		scsi_change_queue_depth(device,
