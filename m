@@ -1,22 +1,50 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Tue, 20 Nov 2018 07:34:43 +0000
-Subject: Re: [PATCH] af_key: fix indentation on declaration statement
-Message-Id: <20181120073443.GB3581@gauss3.secunet.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 24 Nov 2018 12:15:51 +0000
+Subject: [PATCH] net: bridge: check for a null p->dev before dereferencing it
+Message-Id: <20181124121551.6942-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181113142328.8322-1-colin.king@canonical.com>
-In-Reply-To: <20181113142328.8322-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Roopa Prabhu <roopa@cumulusnetworks.com>, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>, "David S . Miller" <davem@davemloft.net>, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 02:23:28PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is an indentation issue before the declaration of xfrm_ctx. Remove
-> spaces and replace with a tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to ipsec-next.
+A recent change added a null check on p->dev after p->dev was being
+dereferenced by the ns_capable check on p->dev.  Fix this by performing
+the p->dev sanity check before it is dereferenced.
+
+Detected by CoverityScan, CID#751490 ("Dereference before null check")
+
+Fixes: a5f3ea54f3cc ("net: bridge: add support for raw sysfs port options")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/bridge/br_sysfs_if.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/bridge/br_sysfs_if.c b/net/bridge/br_sysfs_if.c
+index 7c87a2fe5248..aab8aa17cccf 100644
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -314,15 +314,15 @@ static ssize_t brport_store(struct kobject *kobj,
+ 	unsigned long val;
+ 	char *endp;
+ 
++	if (!p->dev || !p->br)
++		return -EINVAL;
++
+ 	if (!ns_capable(dev_net(p->dev)->user_ns, CAP_NET_ADMIN))
+ 		return -EPERM;
+ 
+ 	if (!rtnl_trylock())
+ 		return restart_syscall();
+ 
+-	if (!p->dev || !p->br)
+-		goto out_unlock;
+-
+ 	if (brport_attr->store_raw) {
+ 		char *buf_copy;
+ 
+-- 
+2.19.1
