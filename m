@@ -1,31 +1,67 @@
-From: "Moger, Babu" <Babu.Moger@amd.com>
-Date: Wed, 28 Nov 2018 19:28:11 +0000
-Subject: Re: [bug report] x86/resctrl: Bring cbm_validate() into the resource structure
-Message-Id: <337d4ab4-be4b-2438-d47f-9eb3fa257938@amd.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 25 Nov 2018 16:08:51 +0000
+Subject: [PATCH][V2] net: bridge: remove redundant checks for null p->dev and p->br
+Message-Id: <20181125160851.6919-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
-In-Reply-To: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roopa Prabhu <roopa@cumulusnetworks.com>, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>, "David S . Miller" <davem@davemloft.net>, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQpPbiAxMS8yOC8xOCAxOjIzIFBNLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0KPiBPbiBXZWQsIE5v
-diAyOCwgMjAxOCBhdCAwMzoyMToyMlBNICswMDAwLCBNb2dlciwgQmFidSB3cm90ZToNCj4+IENv
-cHlpbmcgQm9yaXMsDQo+Pg0KPj4gSGkgRGFuLCBUaGUgZm9sbG93aW5nIHBhdGNoIHNob3VsZCBo
-ZWxwLiBDYW4geW91IHBsZWFzZSBjb25maXJtLg0KPj4NCj4+IGRpZmYgLS1naXQgYS9hcmNoL3g4
-Ni9rZXJuZWwvY3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYw0KPj4gYi9hcmNoL3g4Ni9rZXJuZWwv
-Y3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYw0KPj4gaW5kZXggMjg2YzAzYmIxNGE3Li41YTFiNTQ0
-Nzk1Y2QgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3Jlc2N0cmwvY3RybG1v
-bmRhdGEuYw0KPj4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9yZXNjdHJsL2N0cmxtb25kYXRh
-LmMNCj4+IEBAIC0yMDEsNyArMjAxLDcgQEAgaW50IHBhcnNlX2NibShzdHJ1Y3QgcmR0X3BhcnNl
-X2RhdGEgKmRhdGEsIHN0cnVjdA0KPj4gcmR0X3Jlc291cmNlICpyLA0KPj4gICAgICAgICAgICAg
-ICBzdHJ1Y3QgcmR0X2RvbWFpbiAqZCkNCj4+ICB7DQo+PiAgICAgICAgIHN0cnVjdCByZHRncm91
-cCAqcmR0Z3JwID0gZGF0YS0+cmR0Z3JwOw0KPj4gLSAgICAgICB1MzIgY2JtX3ZhbDsNCj4+ICsg
-ICAgICAgdTMyIGNibV92YWwgPSAwOw0KPj4NCj4+ICAgICAgICAgaWYgKGQtPmhhdmVfbmV3X2N0
-cmwpIHsNCj4+ICAgICAgICAgICAgICAgICByZHRfbGFzdF9jbWRfcHJpbnRmKCJEdXBsaWNhdGUg
-ZG9tYWluICVkXG4iLCBkLT5pZCk7DQo+Pg0KPiANCj4gVGhhdCBvYnZpb3VzbHkgc2lsZW5jZXMg
-dGhlIHVuaW5pdGlhbGl6ZWQgdmFyaWFibGUgd2FybmluZy4uLiAgWW91IGtub3cNCj4gdGhlIGNv
-ZGUgYmV0dGVyIHRoYW4gSSBkbywgc28gcHJlc3VtYWJseSBpdCBpcyBjb3JyZWN0IGFzIHdlbGwu
-ICA6KQ0KDQpEYW4sIFRoYW5rIHlvdS4gV2lsbCBzZW5kIHRoZSBwYXRjaCByaWdodCB1cC4NCg0K
-PiANCj4gcmVnYXJkcywNCj4gZGFuIGNhcnBlbnRlcg0KPiANCg=
+From: Colin Ian King <colin.king@canonical.com>
+
+A recent change added a null check on p->dev after p->dev was being
+dereferenced by the ns_capable check on p->dev. It turns out that
+neither the p->dev and p->br null checks are necessary, and can be
+removed, which cleans up a static analyis warning.
+
+As Nikolay Aleksandrov noted, these checks can be removed because:
+
+"My reasoning of why it shouldn't be possible:
+- On port add new_nbp() sets both p->dev and p->br before creating
+  kobj/sysfs
+
+- On port del (trickier) del_nbp() calls kobject_del() before call_rcu()
+  to destroy the port which in turn calls sysfs_remove_dir() which uses
+  kernfs_remove() which deactivates (shouldn't be able to open new
+  files) and calls kernfs_drain() to drain current open/mmaped files in
+  the respective dir before continuing, thus making it impossible to
+  open a bridge port sysfs file with p->dev and p->br equal to NULL.
+
+So I think it's safe to remove those checks altogether. It'd be nice to
+get a second look over my reasoning as I might be missing something in
+sysfs/kernfs call path."
+
+Thanks to Nikolay Aleksandrov's suggestion to remove the check and
+David Miller for sanity checking this.
+
+Detected by CoverityScan, CID#751490 ("Dereference before null check")
+
+Fixes: a5f3ea54f3cc ("net: bridge: add support for raw sysfs port options")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+---
+
+V2: remove checks instead of moving them before the dereference of
+p->dev.
+---
+ net/bridge/br_sysfs_if.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/net/bridge/br_sysfs_if.c b/net/bridge/br_sysfs_if.c
+index 7c87a2fe5248..88715edb119a 100644
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -320,9 +320,6 @@ static ssize_t brport_store(struct kobject *kobj,
+ 	if (!rtnl_trylock())
+ 		return restart_syscall();
+ 
+-	if (!p->dev || !p->br)
+-		goto out_unlock;
+-
+ 	if (brport_attr->store_raw) {
+ 		char *buf_copy;
+ 
+-- 
+2.19.1
