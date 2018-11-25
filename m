@@ -1,17 +1,19 @@
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Date: Sun, 25 Nov 2018 17:06:40 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sun, 25 Nov 2018 18:26:07 +0000
 Subject: Re: [PATCH][V2] net: bridge: remove redundant checks for null p->dev and p->br
-Message-Id: <074d65f8-d6e8-078e-9365-a2d8f74b0c5e@cumulusnetworks.com>
+Message-Id: <20181125.102607.771941500171801961.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181125160851.6919-1-colin.king@canonical.com>
 In-Reply-To: <20181125160851.6919-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Roopa Prabhu <roopa@cumulusnetworks.com>, "David S . Miller" <davem@davemloft.net>, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: roopa@cumulusnetworks.com, nikolay@cumulusnetworks.com, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 25/11/2018 18:08, Colin King wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 25 Nov 2018 16:08:51 +0000
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > A recent change added a null check on p->dev after p->dev was being
@@ -43,30 +45,5 @@ On 25/11/2018 18:08, Colin King wrote:
 > 
 > Fixes: a5f3ea54f3cc ("net: bridge: add support for raw sysfs port options")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> ---
-> 
-> V2: remove checks instead of moving them before the dereference of
-> p->dev.
-> ---
->  net/bridge/br_sysfs_if.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/net/bridge/br_sysfs_if.c b/net/bridge/br_sysfs_if.c
-> index 7c87a2fe5248..88715edb119a 100644
-> --- a/net/bridge/br_sysfs_if.c
-> +++ b/net/bridge/br_sysfs_if.c
-> @@ -320,9 +320,6 @@ static ssize_t brport_store(struct kobject *kobj,
->  	if (!rtnl_trylock())
->  		return restart_syscall();
->  
-> -	if (!p->dev || !p->br)
-> -		goto out_unlock;
-> -
->  	if (brport_attr->store_raw) {
->  		char *buf_copy;
->  
-> 
 
-Thanks,
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Applied.
