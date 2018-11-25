@@ -1,81 +1,50 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Fri, 16 Nov 2018 11:51:29 +0000
-Subject: Re: [PATCH -next] PCI: dra7xx: Fix potential NULL dereference
-Message-Id: <20181116115129.GA3228@e107981-ln.cambridge.arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 25 Nov 2018 23:38:41 +0000
+Subject: [PATCH] perf: util: fix spelling mistake "Muliplier" -> "Multiplier"
+Message-Id: <20181125233841.14942-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1516284037-81537-1-git-send-email-weiyongjun1@huawei.com>
- <20180118145420.GA21163@lenoch>
- <20180118183525.GG53542@bhelgaas-glaptop.roam.corp.google.com>
- <20180119095857.GA26765@lenoch>
- <20180119170657.GA27882@lenoch>
- <20180120001645.GA21343@lenoch>
-In-Reply-To: <20180120001645.GA21343@lenoch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ladislav Michl <ladis@linux-mips.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jan 20, 2018 at 01:16:45AM +0100, Ladislav Michl wrote:
-> On Fri, Jan 19, 2018 at 06:06:57PM +0100, Ladislav Michl wrote:
-> > On Fri, Jan 19, 2018 at 10:58:57AM +0100, Ladislav Michl wrote:
-> > > On Thu, Jan 18, 2018 at 12:35:25PM -0600, Bjorn Helgaas wrote:
-> > > > That's probably a better idea.  Maybe we should add a comment like this
-> > > > to help avoid this in the future:
-> > > 
-> > > That seems to spot another a bit more serious problem (given how late
-> > > release cycle is now).
-> > > 
-> > > Both devm_ioremap() and devm_ioremap_resource() shares the same release
-> > > function: devm_ioremap_release(). However this function is not aware of
-> > > memory region previously requested by devm_request_mem_region() called
-> > > from devm_ioremap_resource().
-> > > 
-> > > Bellow is just a quick hack, even untested as looking at devm_ioremap,
-> > > devm_ioremap_wc and devm_ioremap_wc, there is some room for optimization.
-> > 
-> > Okay, forget it, above analysis is not correct, however there is a bug (and
-> > also in PCI version). To show it, let's make following modification:
-> 
-> I will never ever work in single tree for two different boards without full
-> recompile (which should save time and caused opposite) as it makes debugging
-> pointless - there is no bug.
-> 
-> As a request forgiveness, please accept following draft as proposed solution
-> for $subj
+From: Colin Ian King <colin.king@canonical.com>
 
-Wei, Ladislav,
+There are two instances of spelling mistakes of Multiplier, fix
+these.
 
-getting back to this old thread, I would mark it as "changes requested"
-and expect someone to post a follow-up patch, I do not think this is
-a solved problem.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/perf/util/intel-bts.c | 2 +-
+ tools/perf/util/intel-pt.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Lorenzo
-
-> Subject: [PATCH] PCI: dra7xx: Use devm_ioremap_resource()
-> 
-> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
-> index 8bf7c2714db6..7f422ae258ac 100644
-> --- a/drivers/pci/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/dwc/pci-dra7xx.c
-> @@ -409,14 +409,14 @@ static int __init dra7xx_add_pcie_ep(struct dra7xx_pcie *dra7xx,
->  	ep->ops = &pcie_ep_ops;
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics");
-> -	pci->dbi_base = devm_ioremap(dev, res->start, resource_size(res));
-> -	if (!pci->dbi_base)
-> -		return -ENOMEM;
-> +	pci->dbi_base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(pci->dbi_base))
-> +		return PTR_ERR(pci->dbi_base);
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ep_dbics2");
-> -	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
-> -	if (!pci->dbi_base2)
-> -		return -ENOMEM;
-> +	pci->dbi_base2 = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(pci->dbi_base2))
-> +		return PTR_ERR(pci->dbi_base2);
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
->  	if (!res)
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index 7b27d77306c2..075747492a52 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -851,7 +851,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
+ static const char * const intel_bts_info_fmts[] = {
+ 	[INTEL_BTS_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
+ 	[INTEL_BTS_TIME_SHIFT]		= "  Time Shift         %"PRIu64"\n",
+-	[INTEL_BTS_TIME_MULT]		= "  Time Muliplier     %"PRIu64"\n",
++	[INTEL_BTS_TIME_MULT]		= "  Time Multiplier    %"PRIu64"\n",
+ 	[INTEL_BTS_TIME_ZERO]		= "  Time Zero          %"PRIu64"\n",
+ 	[INTEL_BTS_CAP_USER_TIME_ZERO]	= "  Cap Time Zero      %"PRId64"\n",
+ 	[INTEL_BTS_SNAPSHOT_MODE]	= "  Snapshot mode      %"PRId64"\n",
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 149ff361ca78..38fb12e11569 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -2376,7 +2376,7 @@ static int intel_pt_perf_config(const char *var, const char *value, void *data)
+ static const char * const intel_pt_info_fmts[] = {
+ 	[INTEL_PT_PMU_TYPE]		= "  PMU Type            %"PRId64"\n",
+ 	[INTEL_PT_TIME_SHIFT]		= "  Time Shift          %"PRIu64"\n",
+-	[INTEL_PT_TIME_MULT]		= "  Time Muliplier      %"PRIu64"\n",
++	[INTEL_PT_TIME_MULT]		= "  Time Multiplier     %"PRIu64"\n",
+ 	[INTEL_PT_TIME_ZERO]		= "  Time Zero           %"PRIu64"\n",
+ 	[INTEL_PT_CAP_USER_TIME_ZERO]	= "  Cap Time Zero       %"PRId64"\n",
+ 	[INTEL_PT_TSC_BIT]		= "  TSC bit             %#"PRIx64"\n",
+-- 
+2.19.1
