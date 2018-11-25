@@ -1,24 +1,35 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Thu, 08 Nov 2018 14:04:50 +0000
-Subject: Re: [PATCH -next] iommu/amd: Add missed 'tag' to error msg in iommu_print_event
-Message-Id: <20181108140450.GF19831@8bytes.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 25 Nov 2018 23:25:24 +0000
+Subject: [PATCH] drm/i915/gvt: fix spelling mistake "Interupts" -> "Interrupts"
+Message-Id: <20181125232524.14672-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541657560-73681-1-git-send-email-yuehaibing@huawei.com>
- <1541678253-143948-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541678253-143948-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 11:57:33AM +0000, YueHaibing wrote:
-> -		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-> +		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x tag=0x%08x]\n",
+From: Colin Ian King <colin.king@canonical.com>
 
-Changed the %08x to %03x, which is enough for a 10-bit value, and
-applied it to x86/amd.
+There is a spelling mistake in an error message, fix it.
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gvt/interrupt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	Joerg
+diff --git a/drivers/gpu/drm/i915/gvt/interrupt.c b/drivers/gpu/drm/i915/gvt/interrupt.c
+index 5daa23ae566b..6b9d1354ff29 100644
+--- a/drivers/gpu/drm/i915/gvt/interrupt.c
++++ b/drivers/gpu/drm/i915/gvt/interrupt.c
+@@ -126,7 +126,7 @@ static const char * const irq_name[INTEL_GVT_EVENT_MAX] = {
+ 	[FDI_RX_INTERRUPTS_TRANSCODER_C] = "FDI RX Interrupts Combined C",
+ 	[AUDIO_CP_CHANGE_TRANSCODER_C] = "Audio CP Change Transcoder C",
+ 	[AUDIO_CP_REQUEST_TRANSCODER_C] = "Audio CP Request Transcoder C",
+-	[ERR_AND_DBG] = "South Error and Debug Interupts Combined",
++	[ERR_AND_DBG] = "South Error and Debug Interrupts Combined",
+ 	[GMBUS] = "Gmbus",
+ 	[SDVO_B_HOTPLUG] = "SDVO B hotplug",
+ 	[CRT_HOTPLUG] = "CRT Hotplug",
+-- 
+2.19.1
