@@ -1,26 +1,35 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Mon, 12 Nov 2018 09:09:34 +0000
-Subject: Re: [PATCH -next] USB: serial: quatech2: remove set but not used variable 'port_priv'
-Message-Id: <20181112090934.GB13311@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 25 Nov 2018 22:51:14 +0000
+Subject: [PATCH] media: dib0700: fix spelling mistake "Amplifyer" -> "Amplifier"
+Message-Id: <20181125225114.13850-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 07:44:33AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb':
-> drivers/usb/serial/quatech2.c:503:27: warning:
->  variable 'port_priv' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more after
-> commit 2be818a116b2 ("Revert "USB: quatech2: only write to the tty if the port is open."")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Now applied. Thanks for including the not-used-since information.
+There is a spelling mistake in the MODULE_PARM_DESC text, fix it.
 
-Johan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/dvb-usb/dib0700_devices.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/dvb-usb/dib0700_devices.c b/drivers/media/usb/dvb-usb/dib0700_devices.c
+index 7551dce96f64..9311f7d4bba5 100644
+--- a/drivers/media/usb/dvb-usb/dib0700_devices.c
++++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
+@@ -29,7 +29,7 @@
+ 
+ static int force_lna_activation;
+ module_param(force_lna_activation, int, 0644);
+-MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifyer(s) (LNA), if applicable for the device (default: 0=automatic/off).");
++MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifier(s) (LNA), if applicable for the device (default: 0=automatic/off).");
+ 
+ struct dib0700_adapter_state {
+ 	int (*set_param_save) (struct dvb_frontend *);
+-- 
+2.19.1
