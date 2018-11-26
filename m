@@ -1,24 +1,36 @@
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Date: Wed, 28 Nov 2018 16:16:19 +0000
-Subject: Re: [PATCH] staging: speakup: i18n: fix spelling mistake "phoneticly" -> "phonetically"
-Message-Id: <20181128161619.eee5hucep7mw47fi@function>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Nov 2018 15:34:01 +0000
+Subject: [PATCH] net: via: via-velocity: fix spelling mistake "alignement" -> "alignment"
+Message-Id: <20181126153401.20982-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181128161232.14907-1-colin.king@canonical.com>
-In-Reply-To: <20181128161232.14907-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Francois Romieu <romieu@fr.zoreil.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin King, le mer. 28 nov. 2018 16:12:32 +0000, a ecrit:
-> -	[MSG_FUNCNAME_SPELL_WORD_PHONETICALLY] = "spell word phoneticly",
-> +	[MSG_FUNCNAME_SPELL_WORD_PHONETICALLY] = "spell word phonetically",
+The text in array velocity_gstrings contains a spelling mistake,
+rename rx_frame_alignement_errors to rx_frame_alignment_errors.
 
-Mmm, clearly an english typo. Speakup people, do you think there might
-be any downside here?  Could it be that it was done on purpose for e.g.
-syntheses to pronounce it right?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/via/via-velocity.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Samuel
+diff --git a/drivers/net/ethernet/via/via-velocity.c b/drivers/net/ethernet/via/via-velocity.c
+index ef9538ee53d0..82412691ee66 100644
+--- a/drivers/net/ethernet/via/via-velocity.c
++++ b/drivers/net/ethernet/via/via-velocity.c
+@@ -3605,7 +3605,7 @@ static const char velocity_gstrings[][ETH_GSTRING_LEN] = {
+ 	"tx_jumbo",
+ 	"rx_mac_control_frames",
+ 	"tx_mac_control_frames",
+-	"rx_frame_alignement_errors",
++	"rx_frame_alignment_errors",
+ 	"rx_long_ok",
+ 	"rx_long_err",
+ 	"tx_sqe_errors",
+-- 
+2.19.1
