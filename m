@@ -1,39 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 06 Nov 2018 16:58:27 +0000
-Subject: Re: [PATCH] rtlwifi: btcoex: remove set but not used variable 'ppsc'
-Message-Id: <20181106165827.768EA6049C@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Nov 2018 15:53:54 +0000
+Subject: [PATCH] qed: fix spelling mistake "attnetion" -> "attention"
+Message-Id: <20181126155354.26698-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540194675-65562-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1540194675-65562-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, Colin Ian King <colin.king@canonical.com>, Nathan Chancellor <natechancellor@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_leave_lps':
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:295:21: warning:
->  variable 'ppsc' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c: In function 'halbtc_enter_lps':
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:318:21: warning:
->  variable 'ppsc' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in
-> commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+The text in array s_igu_fifo_error_strs contains a spelling mistake,
+fix it.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-9198f460ec9d rtlwifi: btcoex: remove set but not used variable 'ppsc'
-
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_debug.c b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+index 78a638ec7c0a..979f1e4bc18b 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+@@ -6071,7 +6071,7 @@ static const char * const s_igu_fifo_error_strs[] = {
+ 	"no error",
+ 	"length error",
+ 	"function disabled",
+-	"VF sent command to attnetion address",
++	"VF sent command to attention address",
+ 	"host sent prod update command",
+ 	"read of during interrupt register while in MIMD mode",
+ 	"access to PXP BAR reserved address",
 -- 
-https://patchwork.kernel.org/patch/10651825/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.19.1
