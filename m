@@ -1,28 +1,35 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 22 Nov 2018 03:26:49 +0000
-Subject: Re: [PATCH -next] scsi: bnx2i: remove set but not used variable 'cid_num'
-Message-Id: <yq15zwp7pxi.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Nov 2018 16:23:20 +0000
+Subject: [PATCH] IB/qib: fix spelling mistake "colescing" -> "coalescing"
+Message-Id: <20181126162320.27889-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541987645-19467-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541987645-19467-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-YueHaibing,
+There is a spelling mistake in the module description text, fix it.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/bnx2i/bnx2i_hwi.c: In function 'bnx2i_process_ofld_cmpl':
-> drivers/scsi/bnx2i/bnx2i_hwi.c:2430:6: warning:
->  variable 'cid_num' set but not used [-Wunused-but-set-variable]
->
-> It never used since commit
->   cf4e6363859d ("[SCSI] bnx2i: Add bnx2i iSCSI driver.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/qib/qib_pcie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.21/scsi-queue, thanks!
-
+diff --git a/drivers/infiniband/hw/qib/qib_pcie.c b/drivers/infiniband/hw/qib/qib_pcie.c
+index 30595b358d8f..864f2af171f7 100644
+--- a/drivers/infiniband/hw/qib/qib_pcie.c
++++ b/drivers/infiniband/hw/qib/qib_pcie.c
+@@ -387,7 +387,7 @@ void qib_pcie_reenable(struct qib_devdata *dd, u16 cmd, u8 iline, u8 cline)
+ 
+ static int qib_pcie_coalesce;
+ module_param_named(pcie_coalesce, qib_pcie_coalesce, int, S_IRUGO);
+-MODULE_PARM_DESC(pcie_coalesce, "tune PCIe colescing on some Intel chipsets");
++MODULE_PARM_DESC(pcie_coalesce, "tune PCIe coalescing on some Intel chipsets");
+ 
+ /*
+  * Enable PCIe completion and data coalescing, on Intel 5x00 and 7300
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.19.1
