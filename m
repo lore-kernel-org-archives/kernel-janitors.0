@@ -1,32 +1,38 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Wed, 14 Nov 2018 11:03:01 +0000
-Subject: Re: [PATCH] rtc: max77686: Fix the returned value in case of error in 'max77686_rtc_read_time()'
-Message-Id: <20181114110301.GX29768@piout.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Nov 2018 08:11:43 +0000
+Subject: [PATCH] ath10k: fix a NULL vs IS_ERR() check
+Message-Id: <20181126081143.tvu55aimdc3safcq@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181113233645.9118-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20181113233645.9118-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com, a.zummo@towertech.it, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Govind Singh <govinds@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org
 
-On 14/11/2018 00:36:45+0100, Christophe JAILLET wrote:
-> In case of error, we return 0.
-> This is spurious and not consistent with the other functions of the driver.
-> Commit e115a2bf1426 has modified more than what is said in the commit
-> message. Reverse part of it znd return an error when needed, as it was
-> previously.
-> 
-> Fixes: e115a2bf1426 ("rtc: max77686: stop validating rtc_time in .read_time")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/rtc/rtc-max77686.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-Applied, thanks.
+The devm_memremap() function doesn't return NULLs, it returns error
+pointers.
 
+Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/ath/ath10k/qmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
+index f0429bee35c2..37b3bd629f48 100644
+--- a/drivers/net/wireless/ath/ath10k/qmi.c
++++ b/drivers/net/wireless/ath/ath10k/qmi.c
+@@ -931,9 +931,9 @@ static int ath10k_qmi_setup_msa_resources(struct ath10k_qmi *qmi, u32 msa_size)
+ 		qmi->msa_mem_size = resource_size(&r);
+ 		qmi->msa_va = devm_memremap(dev, qmi->msa_pa, qmi->msa_mem_size,
+ 					    MEMREMAP_WT);
+-		if (!qmi->msa_va) {
++		if (IS_ERR(qmi->msa_va)) {
+ 			dev_err(dev, "failed to map memory region: %pa\n", &r.start);
+-			return -EBUSY;
++			return PTR_ERR(qmi->msa_va);
+ 		}
+ 	} else {
+ 		qmi->msa_va = dmam_alloc_coherent(dev, msa_size,
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.11.0
