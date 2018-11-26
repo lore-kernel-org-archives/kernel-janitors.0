@@ -1,46 +1,36 @@
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 03 Nov 2018 18:22:11 +0000
-Subject: Re: [PATCH] cifs: clean up indentation, replace spaces with tab
-Message-Id: <CAH2r5mtejuFDR=y13U3xiGwMOKoP3eOcHzk9midYLcwWp19Dyg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Nov 2018 16:08:14 +0000
+Subject: [PATCH] kvm: selftests: fix spelling mistake "begining" -> "beginning"
+Message-Id: <20181126160814.27473-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181103155944.3028-1-colin.king@canonical.com>
-In-Reply-To: <20181103155944.3028-1-colin.king@canonical.com>
+References: <20181013154105.5999-1-colin.king@canonical.com>
+In-Reply-To: <20181013154105.5999-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
-On Sat, Nov 3, 2018 at 11:00 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to clean up indentation, replace spaces with tab
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/cifsencrypt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/cifsencrypt.c b/fs/cifs/cifsencrypt.c
-> index 85b31cfa2f3c..ecdff344e8fe 100644
-> --- a/fs/cifs/cifsencrypt.c
-> +++ b/fs/cifs/cifsencrypt.c
-> @@ -224,7 +224,7 @@ int cifs_verify_signature(struct smb_rqst *rqst,
->         if (cifs_pdu->Command = SMB_COM_LOCKING_ANDX) {
->                 struct smb_com_lock_req *pSMB >                         (struct smb_com_lock_req *)cifs_pdu;
-> -           if (pSMB->LockType & LOCKING_ANDX_OPLOCK_RELEASE)
-> +               if (pSMB->LockType & LOCKING_ANDX_OPLOCK_RELEASE)
->                         return 0;
->         }
->
-> --
-> 2.19.1
->
+From: Colin Ian King <colin.king@canonical.com>
 
+The text in a TEST_ASSERT message contains a spelling mistake, fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/kvm/lib/elf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/kvm/lib/elf.c b/tools/testing/selftests/kvm/lib/elf.c
+index 5eb857584aa3..53c48f7587d3 100644
+--- a/tools/testing/selftests/kvm/lib/elf.c
++++ b/tools/testing/selftests/kvm/lib/elf.c
+@@ -141,7 +141,7 @@ void kvm_vm_elf_load(struct kvm_vm *vm, const char *filename,
+ 		offset = hdr.e_phoff + (n1 * hdr.e_phentsize);
+ 		offset_rv = lseek(fd, offset, SEEK_SET);
+ 		TEST_ASSERT(offset_rv = offset,
+-			"Failed to seek to begining of program header %u,\n"
++			"Failed to seek to beginning of program header %u,\n"
+ 			"  filename: %s\n"
+ 			"  rv: %jd errno: %i",
+ 			n1, filename, (intmax_t) offset_rv, errno);
 -- 
-Thanks,
-
-Steve
+2.19.1
