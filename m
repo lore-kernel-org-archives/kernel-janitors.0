@@ -1,43 +1,74 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Date: Thu, 08 Nov 2018 00:47:16 +0000
-Subject: Re: [PATCH] usb: gadget: aspeed-vhub: constify usb_gadget_ops structure
-Message-Id: <1541637316.1471870.1569457840.5A56DC54@webmail.messagingengine.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 26 Nov 2018 17:21:05 +0000
+Subject: Applied "ASoC: amd: Fix a NULL vs IS_ERR() check in probe" to the asoc tree
+Message-Id: <20181126172105.62712112519F@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540916399-22426-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540916399-22426-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20181126081307.qhbpwnlikquep476@kili.mountain>
+In-Reply-To: <20181126081307.qhbpwnlikquep476@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Sanju R Mehta <sanju.mehta@amd.com>, Mark Brown <broonie@kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 
-On Wed, 31 Oct 2018, at 02:49, Julia Lawall wrote:
-> The usb_gadget_ops structure can be const as it is only stored in
-> the ops field of a usb_gadget structure and this field is const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The patch
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+   ASoC: amd: Fix a NULL vs IS_ERR() check in probe
 
-> 
-> ---
->  drivers/usb/gadget/udc/aspeed-vhub/dev.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/aspeed-vhub/dev.c b/drivers/usb/
-> gadget/udc/aspeed-vhub/dev.c
-> index f0233912bace..6b1b16b17d7d 100644
-> --- a/drivers/usb/gadget/udc/aspeed-vhub/dev.c
-> +++ b/drivers/usb/gadget/udc/aspeed-vhub/dev.c
-> @@ -438,7 +438,7 @@ static int ast_vhub_udc_stop(struct usb_gadget 
-> *gadget)
->  	return 0;
->  }
->  
-> -static struct usb_gadget_ops ast_vhub_udc_ops = {
-> +static const struct usb_gadget_ops ast_vhub_udc_ops = {
->  	.get_frame	= ast_vhub_udc_get_frame,
->  	.wakeup		= ast_vhub_udc_wakeup,
->  	.pullup		= ast_vhub_udc_pullup,
-> 
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 83b12c2e1d942459f420490d4219fc1ad38c3620 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Nov 2018 11:13:07 +0300
+Subject: [PATCH] ASoC: amd: Fix a NULL vs IS_ERR() check in probe
+
+The platform_device_register_full() function doesn't return NULL, it
+returns error pointers.
+
+Fixes: 7894a7e7ea3d ("ASoC: amd: create ACP3x PCM platform device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/amd/raven/pci-acp3x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
+index c28457fd9b81..facec2472b34 100644
+--- a/sound/soc/amd/raven/pci-acp3x.c
++++ b/sound/soc/amd/raven/pci-acp3x.c
+@@ -97,10 +97,10 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		pdevinfo.size_data = sizeof(irqflags);
+ 
+ 		adata->pdev = platform_device_register_full(&pdevinfo);
+-		if (!adata->pdev) {
++		if (IS_ERR(adata->pdev)) {
+ 			dev_err(&pci->dev, "cannot register %s device\n",
+ 				pdevinfo.name);
+-			ret = -ENODEV;
++			ret = PTR_ERR(adata->pdev);
+ 			goto unmap_mmio;
+ 		}
+ 		break;
+-- 
+2.19.0.rc2
