@@ -1,35 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 25 Nov 2018 22:51:14 +0000
-Subject: [PATCH] media: dib0700: fix spelling mistake "Amplifyer" -> "Amplifier"
-Message-Id: <20181125225114.13850-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Nov 2018 08:12:29 +0000
+Subject: [PATCH] misc/pvpanic: fix a NULL vs IS_ERR() check
+Message-Id: <20181126081229.zzgbambzjnbmmo7e@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Peng Hao <peng.hao2@zte.com.cn>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The devm_ioremap_resource() function doesn't return NULL, it returns
+error pointers.
 
-There is a spelling mistake in the MODULE_PARM_DESC text, fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 46f934c9a12f ("misc/pvpanic: add support to get pvpanic device info FDT")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/usb/dvb-usb/dib0700_devices.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/pvpanic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/dvb-usb/dib0700_devices.c b/drivers/media/usb/dvb-usb/dib0700_devices.c
-index 7551dce96f64..9311f7d4bba5 100644
---- a/drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
-@@ -29,7 +29,7 @@
+diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
+index 01241ec6a5cd..595ac065b401 100644
+--- a/drivers/misc/pvpanic.c
++++ b/drivers/misc/pvpanic.c
+@@ -140,8 +140,8 @@ static int pvpanic_mmio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  
- static int force_lna_activation;
- module_param(force_lna_activation, int, 0644);
--MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifyer(s) (LNA), if applicable for the device (default: 0=automatic/off).");
-+MODULE_PARM_DESC(force_lna_activation, "force the activation of Low-Noise-Amplifier(s) (LNA), if applicable for the device (default: 0=automatic/off).");
+ 	base = devm_ioremap_resource(&pdev->dev, mem);
+-	if (base = NULL)
+-		return -EFAULT;
++	if (IS_ERR(base))
++		return PTR_ERR(base);
  
- struct dib0700_adapter_state {
- 	int (*set_param_save) (struct dvb_frontend *);
+ 	atomic_notifier_chain_register(&panic_notifier_list,
+ 				       &pvpanic_panic_nb);
 -- 
-2.19.1
+2.11.0
