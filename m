@@ -1,39 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 14 Nov 2018 21:31:48 +0000
-Subject: [PATCH][next] ASoC: amd: fix memory leak of i2s_data on error return
-Message-Id: <20181114213148.14977-1-colin.king@canonical.com>
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Tue, 27 Nov 2018 16:33:39 +0000
+Subject: Re: [PATCH] staging: comedi: fix spelling mistake "desination" -> "destination"
+Message-Id: <78410bc5-ec59-6ff6-f9e5-eef69abab74f@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181127142328.27287-1-colin.king@canonical.com>
+In-Reply-To: <20181127142328.27287-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, alsa-devel@alsa-project.org
+To: Colin King <colin.king@canonical.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Spencer E . Olson" <olsonse@umich.edu>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 27/11/2018 14:23, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in message text in the call to unittest,
+> fix this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/staging/comedi/drivers/tests/ni_routes_test.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers/tests/ni_routes_test.c b/drivers/staging/comedi/drivers/tests/ni_routes_test.c
+> index a1eda035f270..c6dc18f346e8 100644
+> --- a/drivers/staging/comedi/drivers/tests/ni_routes_test.c
+> +++ b/drivers/staging/comedi/drivers/tests/ni_routes_test.c
+> @@ -372,7 +372,7 @@ void test_ni_lookup_route_register(void)
+>   	unittest(ni_lookup_route_register(O(8), O(9), T) = 8,
+>   		 "validate last destination\n");
+>   	unittest(ni_lookup_route_register(O(10), O(9), T) = -EINVAL,
+> -		 "lookup invalid desination\n");
+> +		 "lookup invalid destination\n");
+>   
+>   	unittest(ni_lookup_route_register(rgout0_src0, TRIGGER_LINE(0), T) =
+>   		 -EINVAL,
+> 
 
-Currently when snd_pcm_hw_constraint_integer fails there is
-a memory leak of i2s_data on the error return path. Fix this by
-kfree'ing i2s_data before returning.
+Thanks for spotting that!  Looks good.
 
-Detected by CoverityScan, CID#1475479 ("Resource leak")
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
-Fixes: 0b87d6bcd648 ("ASoC: amd: add acp3x pcm driver dma ops")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/amd/raven/acp3x-pcm-dma.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index 2e61cef00f41..b16cdd187139 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -309,6 +309,7 @@ static int acp3x_dma_open(struct snd_pcm_substream *substream)
- 					    SNDRV_PCM_HW_PARAM_PERIODS);
- 	if (ret < 0) {
- 		dev_err(component->dev, "set integer constraint failed\n");
-+		kfree(i2s_data);
- 		return ret;
- 	}
- 
 -- 
-2.19.1
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
