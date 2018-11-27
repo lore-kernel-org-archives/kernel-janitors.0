@@ -1,31 +1,34 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 23 Nov 2018 20:27:08 +0000
-Subject: Re: [PATCH] ide-atapi: Check for blk_mq_alloc_request() errors
-Message-Id: <33de139d-8650-9579-624e-f54042b3985d@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Nov 2018 14:03:56 +0000
+Subject: [PATCH] coresight: fix spelling mistake "deffered" -> "deferred"
+Message-Id: <20181127140356.26626-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181123071823.zc6lfurqf3o2qn4b@kili.mountain>
-In-Reply-To: <20181123071823.zc6lfurqf3o2qn4b@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 11/23/18 1:24 PM, Dan Carpenter wrote:
-> On Fri, Nov 23, 2018 at 12:54:32PM -0700, Jens Axboe wrote:
->> On 11/23/18 12:18 AM, Dan Carpenter wrote:
->>> If blk_mq_alloc_request() fails then it leads to an error pointer
->>> dereference.
->>
->> Thanks, this should not error, as we're getting the one and only
->> reserved tag. That's why it doesn't check. So I think if we're
->> going to add code to a case that can't happen, it should at least
->> be accompanied by a error print of some sort.
-> 
-> Ah.  Fine.  Let's not add code just to make the static checker happy.
-> 
-> We should leave it as-is.
+From: Colin Ian King <colin.king@canonical.com>
 
-Agree, but I think it deserves a comment :-)
+There is a spelling mistake in the dev_info error message, fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hwtracing/coresight/coresight-stm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index 35d6f9709274..ef339ff22090 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -856,7 +856,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	if (stm_register_device(dev, &drvdata->stm, THIS_MODULE)) {
+ 		dev_info(dev,
+-			 "stm_register_device failed, probing deffered\n");
++			 "stm_register_device failed, probing deferred\n");
+ 		return -EPROBE_DEFER;
+ 	}
+ 
 -- 
-Jens Axboe
+2.19.1
