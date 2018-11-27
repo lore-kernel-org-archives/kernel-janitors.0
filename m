@@ -1,37 +1,82 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 09 Nov 2018 09:53:32 +0000
-Subject: Re: [PATCH] pcrypt: use format specifier in kobject_add
-Message-Id: <20181109095332.e6nu33okzpt4wpji@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Nov 2018 20:04:08 +0000
+Subject: Re: [PATCH] tracing: Fix an off by one in __next()
+Message-Id: <20181127200408.GG3073@unbuntlaptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181027144926.8433-1-colin.king@canonical.com>
-In-Reply-To: <20181027144926.8433-1-colin.king@canonical.com>
+References: <20180620110758.crunhd5bfep7zuiz@kili.mountain>
+ <20181127134412.6f2141d4@gandalf.local.home>
+In-Reply-To: <20181127134412.6f2141d4@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 03:49:26PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Tue, Nov 27, 2018 at 01:44:12PM -0500, Steven Rostedt wrote:
 > 
-> Passing string 'name' as the format specifier is potentially hazardous
-> because name could (although very unlikely to) have a format specifier
-> embedded in it causing issues when parsing the non-existent arguments
-> to these.  Follow best practice by using the "%s" format string for
-> the string 'name'.
+> Doing the sweep of my INBOX, I came across this patch (it was sent
+> while I was in the Alps :-)
 > 
-> Cleans up clang warning:
-> crypto/pcrypt.c:397:40: warning: format string is not a string literal
-> (potentially insecure) [-Wformat-security]
 > 
-> Fixes: a3fb1e330dd2 ("pcrypt: Added sysfs interface to pcrypt")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  crypto/pcrypt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Wed, 20 Jun 2018 14:08:00 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> 
+> > The > should be >= to prevent an off by one bug.
+> 
+> Well, not really.
+> 
+> > 
+> > >From reviewing the code, it seems possible for  
+> > stack_trace_max.nr_entries to be set to .max_entries and in that case we
+> > would be reading one element beyond the end of the stack_dump_trace[]
+> > array.  If it's not set to .max_entries then the bug doesn't affect
+> > runtime.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> > diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+> > index 4237eba4ef20..6e3edd745c68 100644
+> > --- a/kernel/trace/trace_stack.c
+> > +++ b/kernel/trace/trace_stack.c
+> > @@ -286,7 +286,7 @@ __next(struct seq_file *m, loff_t *pos)
+> >  {
+> >  	long n = *pos - 1;
+> >  
+> > -	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
+> > +	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] = ULONG_MAX)
+> 
+> We have:
+> 
+> static unsigned long stack_dump_trace[STACK_TRACE_ENTRIES+1] > 	 { [0 ... (STACK_TRACE_ENTRIES)] = ULONG_MAX };
+> 
+>  And
+> 
+> struct stack_trace stack_trace_max = {
+> 	.max_entries		= STACK_TRACE_ENTRIES - 1,
+> 	.entries		= &stack_dump_trace[0],
+> };
+> 
+> 
+> And nr_entries is set as this, and we have after that this:
+> 
+> 	stack_trace_max.nr_entries = x;
+> 	for (; x < i; x++)
+> 		stack_dump_trace[x] = ULONG_MAX;
+> 
+> Where we set stack_dump_trace[nr_entries] to ULONG_MAX.
+> 
+> Thus, nr_entries will not go pass the size of stack_dump_trace.
+> 
+> That said, if n = nr_entries, the second part of that if will always
+> be true. And this is a bit subtle, so I will apply the patch. But it is
+> not an off by one bug ;-)
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Ah, yes.  I follow that now.  Thanks for taking the time to review this
+patch.
+
+I am optimistic that eventually I will fix how Smatch handles loops so
+it maybe will be able to figure out that "x <= STACK_TRACE_ENTRIES - 1"
+but that's probably some time off.
+
+regards,
+dan carpenter
