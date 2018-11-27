@@ -1,38 +1,36 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 16 Nov 2018 15:06:34 +0000
-Subject: [PATCH 3/5] ASoC: tlv320dac33: clean up indentation, remove extraneous tab
-Message-Id: <20181116150636.5226-3-colin.king@canonical.com>
+Date: Tue, 27 Nov 2018 14:23:28 +0000
+Subject: [PATCH] staging: comedi: fix spelling mistake "desination" -> "destination"
+Message-Id: <20181127142328.27287-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181116150636.5226-1-colin.king@canonical.com>
-In-Reply-To: <20181116150636.5226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org
+To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Spencer E . Olson" <olsonse@umich.edu>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The goto statement is indented too much by one level, fix this by
-removing the extraneous tab.
+There is a spelling mistake in message text in the call to unittest,
+fix this.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/tlv320dac33.c | 2 +-
+ drivers/staging/comedi/drivers/tests/ni_routes_test.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
-index a957eaeb7bc1..32907b1e20cf 100644
---- a/sound/soc/codecs/tlv320dac33.c
-+++ b/sound/soc/codecs/tlv320dac33.c
-@@ -394,7 +394,7 @@ static int dac33_hard_power(struct snd_soc_component *component, int power)
- 		if (ret != 0) {
- 			dev_err(component->dev,
- 				"Failed to enable supplies: %d\n", ret);
--				goto exit;
-+			goto exit;
- 		}
+diff --git a/drivers/staging/comedi/drivers/tests/ni_routes_test.c b/drivers/staging/comedi/drivers/tests/ni_routes_test.c
+index a1eda035f270..c6dc18f346e8 100644
+--- a/drivers/staging/comedi/drivers/tests/ni_routes_test.c
++++ b/drivers/staging/comedi/drivers/tests/ni_routes_test.c
+@@ -372,7 +372,7 @@ void test_ni_lookup_route_register(void)
+ 	unittest(ni_lookup_route_register(O(8), O(9), T) = 8,
+ 		 "validate last destination\n");
+ 	unittest(ni_lookup_route_register(O(10), O(9), T) = -EINVAL,
+-		 "lookup invalid desination\n");
++		 "lookup invalid destination\n");
  
- 		if (dac33->power_gpio >= 0)
+ 	unittest(ni_lookup_route_register(rgout0_src0, TRIGGER_LINE(0), T) =
+ 		 -EINVAL,
 -- 
 2.19.1
