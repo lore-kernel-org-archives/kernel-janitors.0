@@ -1,40 +1,35 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 29 Nov 2018 15:17:10 +0000
-Subject: Re: [PATCH 1/2] ataflop: fix error handling in atari_floppy_init()
-Message-Id: <6c57a937-86c6-70c6-59fa-3e08b1f1de58@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Nov 2018 14:37:17 +0000
+Subject: [PATCH] openvswitch: fix spelling mistake "execeeds" -> "exceeds"
+Message-Id: <20181127143717.27698-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129105519.mklhnmx34yjucb22@kili.mountain>
-In-Reply-To: <20181129105519.mklhnmx34yjucb22@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Omar Sandoval <osandov@fb.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pravin B Shelar <pshelar@ovn.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, dev@openvswitch.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/29/18 3:55 AM, Dan Carpenter wrote:
-> Smatch complains that there is an off by one if the allocation fails in:
-> 
-> 	DMABuffer = atari_stram_alloc(BUFFER_SIZE+512, "ataflop");
-> 
-> In that situation, "i" would be point to one element beyond the end of
-> the unit[] array.
-> 
-> There is a second bug because the error handling calls
-> blk_mq_free_tag_set(&unit[i].tag_set); regardless of whether
-> "disk->queue" is NULL or non-NULL.  So if blk_mq_init_sq_queue() fails,
-> then that means unit[i].tag_set->tags is NULL and it leads to an Oops.
-> 
-> It's easiest to call put_disk() before the goto to clean up the partial
-> iteration.  Then the earlier unit[] elements are fully allocated so we
-> can remove the checks whether "disk->queue" is NULL and the code is
-> simpler.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+There is a spelling mistake in a net_warn_ratelimited message, fix this.
 
-> I hope the Atari floppy disk users are appropriately grateful for all
-> the love and effort we put into their software...
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/openvswitch/conntrack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm sure that one person has you on the xmas shipping list.
-
+diff --git a/net/openvswitch/conntrack.c b/net/openvswitch/conntrack.c
+index a4660c48ff01..cd94f925495a 100644
+--- a/net/openvswitch/conntrack.c
++++ b/net/openvswitch/conntrack.c
+@@ -1166,7 +1166,7 @@ static int ovs_ct_commit(struct net *net, struct sw_flow_key *key,
+ 				&ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple);
+ 			if (err) {
+ 				net_warn_ratelimited("openvswitch: zone: %u "
+-					"execeeds conntrack limit\n",
++					"exceeds conntrack limit\n",
+ 					info->zone.id);
+ 				return err;
+ 			}
 -- 
-Jens Axboe
+2.19.1
