@@ -1,21 +1,35 @@
-From: Andy Gross <andy.gross@linaro.org>
-Date: Wed, 28 Nov 2018 23:38:02 +0000
-Subject: Re: [PATCH -next] soc: qcom: llcc-slice: Remove duplicated include from llcc-slice.c
-Message-Id: <20181128233802.GB32306@hector.attlocal.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Nov 2018 14:00:15 +0000
+Subject: [PATCH] liquidio: fix spelling mistake "deferal" -> "deferral"
+Message-Id: <20181127140015.26409-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1542592635-162455-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1542592635-162455-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 01:57:15AM +0000, YueHaibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch.  I've queued this up.
+There is a spelling mistake in the oct_stats_strings array, fix it.
 
-Andy
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cavium/liquidio/lio_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
+index 4c3925af53bc..abe5d0dac851 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
+@@ -111,7 +111,7 @@ static const char oct_stats_strings[][ETH_GSTRING_LEN] = {
+ 	"mac_tx_one_collision",
+ 	"mac_tx_multi_collision",
+ 	"mac_tx_max_collision_fail",
+-	"mac_tx_max_deferal_fail",
++	"mac_tx_max_deferral_fail",
+ 	"mac_tx_fifo_err",
+ 	"mac_tx_runts",
+ 
+-- 
+2.19.1
