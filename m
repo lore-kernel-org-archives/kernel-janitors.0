@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 30 Nov 2018 21:17:48 +0000
-Subject: Re: [PATCH] liquidio: fix spelling mistake "deferal" -> "deferral"
-Message-Id: <20181130.131748.1465311346296662317.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Nov 2018 11:32:35 +0000
+Subject: [PATCH] EDAC, skx: clean up a debug printk
+Message-Id: <20181127113235.7mxd7cxojtzbkbid@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181127140015.26409-1-colin.king@canonical.com>
-In-Reply-To: <20181127140015.26409-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: derek.chickles@caviumnetworks.com, satananda.burla@caviumnetworks.com, felix.manlunas@caviumnetworks.com, raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 27 Nov 2018 14:00:15 +0000
+I've removed the 0x prefix for the row and col because the %#x format
+already adds a 0x.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the oct_stats_strings array, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: e235dd43d8b0 ("EDAC, skx: Prepend hex formatting with '0x'")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/edac/skx_edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/edac/skx_edac.c b/drivers/edac/skx_edac.c
+index 93ef161bb5e1..354d2a4b2c64 100644
+--- a/drivers/edac/skx_edac.c
++++ b/drivers/edac/skx_edac.c
+@@ -389,7 +389,7 @@ static int get_dimm_info(u32 mtr, u32 amap, struct dimm_info *dimm,
+ 	size = ((1ull << (rows + cols + ranks)) * banks) >> (20 - 3);
+ 	npages = MiB_TO_PAGES(size);
+ 
+-	edac_dbg(0, "mc#%d: channel %d, dimm %d, %lld MiB (%d pages) bank: %d, rank: %d, row: 0x%#x, col: 0x%#x\n",
++	edac_dbg(0, "mc#%d: channel %d, dimm %d, %lld MiB (%d pages) bank: %d, rank: %d, row: %#x, col: %#x\n",
+ 		 imc->mc, chan, dimmno, size, npages,
+ 		 banks, 1 << ranks, rows, cols);
+ 
+-- 
+2.11.0
