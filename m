@@ -1,35 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Nov 2018 07:20:24 +0000
-Subject: [PATCH] spi: npcm: Fix an error code in the probe function
-Message-Id: <20181123072024.5vtjzta4rcmqtyph@kili.mountain>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Tue, 27 Nov 2018 09:22:32 +0000
+Subject: Re: [-next] powerpc/platforms/85xx: drop pointless static qualifier
+Message-Id: <433yx45hKJz9s55@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <1542285196-156161-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>
-Cc: Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, Brendan Higgins <brendanhiggins@google.com>, Mark Brown <broonie@kernel.org>, openbmc@lists.ozlabs.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, Scott Wood <oss@buserror.net>, Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-There is an IS_ERR() vs PTR_ERR() typo here.  The current code returns 1
-but we want to return the negative error code.
+On Thu, 2018-11-15 at 12:33:16 UTC, YueHaibing wrote:
+> From: Yue Haibing <yuehaibing@huawei.com>
+> 
+> There is no need to have the 'void __iomem *cpld_base' variable static
+> since new value always be assigned before use it.
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-Fixes: 2a22f1b30cee ("spi: npcm: add NPCM PSPI controller driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/spi/spi-npcm-pspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to powerpc next, thanks.
 
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index 342178e282bc..fed05b02007c 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -381,7 +381,7 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 		syscon_regmap_lookup_by_compatible("nuvoton,npcm750-rst");
- 	if (IS_ERR(priv->rst_regmap)) {
- 		dev_err(&pdev->dev, "failed to find nuvoton,npcm750-rst\n");
--		return IS_ERR(priv->rst_regmap);
-+		return PTR_ERR(priv->rst_regmap);
- 	}
- 
- 	/* reset SPI-HW block */
--- 
-2.11.0
+https://git.kernel.org/powerpc/c/af8511cf32189ba66c7e2a4146f11c
+
+cheers
