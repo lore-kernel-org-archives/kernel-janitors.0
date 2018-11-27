@@ -1,39 +1,35 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 24 Nov 2018 10:47:58 +0000
-Subject: [PATCH v2 -next] scsi: dpt_i2o: remove set but not used variable 'pHba'
-Message-Id: <1543056478-66284-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Nov 2018 14:27:15 +0000
+Subject: [PATCH] staging: rtlwifi: fix spelling mistake "disnabled" -> "disabled"
+Message-Id: <20181127142715.27406-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/scsi/dpt_i2o.c: In function 'adpt_slave_configure':
-drivers/scsi/dpt_i2o.c:414:12: warning:
- variable 'pHba' set but not used [-Wunused-but-set-variable]
+There is a spelling mistake in an ODM_RT_TRACE message, fix it.
 
-It never used since git history start.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2:fix patch title
----
- drivers/scsi/dpt_i2o.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/staging/rtlwifi/phydm/phydm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index d5a474d..be6f3db 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -411,9 +411,6 @@ static void adpt_inquiry(adpt_hba* pHba)
- static int adpt_slave_configure(struct scsi_device * device)
- {
- 	struct Scsi_Host *host = device->host;
--	adpt_hba* pHba;
--
--	pHba = (adpt_hba *) host->hostdata[0];
+diff --git a/drivers/staging/rtlwifi/phydm/phydm.c b/drivers/staging/rtlwifi/phydm/phydm.c
+index 27635feedba2..52b85b3ddb34 100644
+--- a/drivers/staging/rtlwifi/phydm/phydm.c
++++ b/drivers/staging/rtlwifi/phydm/phydm.c
+@@ -477,7 +477,7 @@ static void phydm_supportability_init(void *dm_void)
  
- 	if (host->can_queue && device->tagged_supported) {
- 		scsi_change_queue_depth(device,
+ 	} else {
+ 		ODM_RT_TRACE(dm, ODM_COMP_INIT,
+-			     "ODM adaptivity is set to disnabled!!!\n");
++			     "ODM adaptivity is set to disabled!!!\n");
+ 		/**/
+ 	}
+ 
+-- 
+2.19.1
