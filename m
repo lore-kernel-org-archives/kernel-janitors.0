@@ -1,29 +1,21 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 19 Nov 2018 01:57:15 +0000
-Subject: [PATCH -next] soc: qcom: llcc-slice: Remove duplicated include from llcc-slice.c
-Message-Id: <1542592635-162455-1-git-send-email-yuehaibing@huawei.com>
+From: Andy Gross <andy.gross@linaro.org>
+Date: Wed, 28 Nov 2018 23:38:02 +0000
+Subject: Re: [PATCH -next] soc: qcom: llcc-slice: Remove duplicated include from llcc-slice.c
+Message-Id: <20181128233802.GB32306@hector.attlocal.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1542592635-162455-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1542592635-162455-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Remove duplicated include.
+On Mon, Nov 19, 2018 at 01:57:15AM +0000, YueHaibing wrote:
+> Remove duplicated include.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/soc/qcom/llcc-slice.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for the patch.  I've queued this up.
 
-diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
-index 6a7d016..80667f7 100644
---- a/drivers/soc/qcom/llcc-slice.c
-+++ b/drivers/soc/qcom/llcc-slice.c
-@@ -16,7 +16,6 @@
- #include <linux/sizes.h>
- #include <linux/slab.h>
- #include <linux/soc/qcom/llcc-qcom.h>
--#include <linux/module.h>
- 
- #define ACTIVATE                      BIT(0)
- #define DEACTIVATE                    BIT(1)
+Andy
