@@ -1,26 +1,36 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Fri, 30 Nov 2018 16:32:52 +0000
-Subject: Re: [PATCH] ptp: fix an IS_ERR() vs NULL check
-Message-Id: <20181130163252.e6z33t23j3qud57z@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Nov 2018 16:12:32 +0000
+Subject: [PATCH] staging: speakup: i18n: fix spelling mistake "phoneticly" -> "phonetically"
+Message-Id: <20181128161232.14907-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181130125834.u42dhxgof66rhya2@kili.mountain>
-In-Reply-To: <20181130125834.u42dhxgof66rhya2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 03:58:34PM +0300, Dan Carpenter wrote:
-> The pps_register_source() function doesn't return NULL, it returns
-> error pointers.
+From: Colin Ian King <colin.king@canonical.com>
 
-It keeps a local variable for errno, but then it returns NULL.
-But this is about to change with this recent patch:
+There is a spelling mistake in array speakup_default_msgs at index
+MSG_FUNCNAME_SPELL_WORD_PHONETICALLY, fix this.
 
-   26.Nov'18 YueHaibing [PATCH -next] pps: using ERR_PTR instead of NULL while pps_register_source fails
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/speakup/i18n.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It hasn't been merged yet AFAICT, but gregkh said he take it.
-
-Thanks,
-Richard
+diff --git a/drivers/staging/speakup/i18n.c b/drivers/staging/speakup/i18n.c
+index cea8707653f5..ee240d36f947 100644
+--- a/drivers/staging/speakup/i18n.c
++++ b/drivers/staging/speakup/i18n.c
+@@ -336,7 +336,7 @@ static char *speakup_default_msgs[MSG_LAST_INDEX] = {
+ 	[MSG_FUNCNAME_SPELL_DELAY_DEC] = "spell delay decrement",
+ 	[MSG_FUNCNAME_SPELL_DELAY_INC] = "spell delay increment",
+ 	[MSG_FUNCNAME_SPELL_WORD] = "spell word",
+-	[MSG_FUNCNAME_SPELL_WORD_PHONETICALLY] = "spell word phoneticly",
++	[MSG_FUNCNAME_SPELL_WORD_PHONETICALLY] = "spell word phonetically",
+ 	[MSG_FUNCNAME_TONE_DEC] = "tone decrement",
+ 	[MSG_FUNCNAME_TONE_INC] = "tone increment",
+ 	[MSG_FUNCNAME_VOICE_DEC] = "voice decrement",
+-- 
+2.19.1
