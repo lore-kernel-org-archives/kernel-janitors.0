@@ -1,61 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Nov 2018 11:13:26 +0000
-Subject: [bug report] x86/resctrl: Bring cbm_validate() into the resource structure
-Message-Id: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
+From: "Moger, Babu" <Babu.Moger@amd.com>
+Date: Wed, 28 Nov 2018 15:21:22 +0000
+Subject: Re: [bug report] x86/resctrl: Bring cbm_validate() into the resource structure
+Message-Id: <fc5f525a-2007-ae39-dcd8-58231cda8941@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
+In-Reply-To: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Babu Moger,
-
-The patch a36c5ff560fb: "x86/resctrl: Bring cbm_validate() into the
-resource structure" from Nov 21, 2018, leads to the following static
-checker warning:
-
-	arch/x86/kernel/cpu/resctrl/ctrlmondata.c:227 parse_cbm()
-	error: uninitialized symbol 'cbm_val'.
-
-arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-   201  int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
-   202                struct rdt_domain *d)
-   203  {
-   204          struct rdtgroup *rdtgrp = data->rdtgrp;
-   205          u32 cbm_val;
-   206  
-   207          if (d->have_new_ctrl) {
-   208                  rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
-   209                  return -EINVAL;
-   210          }
-   211  
-   212          /*
-   213           * Cannot set up more than one pseudo-locked region in a cache
-   214           * hierarchy.
-   215           */
-   216          if (rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP &&
-   217              rdtgroup_pseudo_locked_in_hierarchy(d)) {
-   218                  rdt_last_cmd_printf("Pseudo-locked region in hierarchy\n");
-   219                  return -EINVAL;
-   220          }
-   221  
-   222          if (r->cbm_validate && !r->cbm_validate(data->buf, &cbm_val, r))
-                    ^^^^^^^^^^^^^^^
-Assume this is NULL
-
-   223                  return -EINVAL;
-   224  
-   225          if ((rdtgrp->mode = RDT_MODE_EXCLUSIVE ||
-   226               rdtgrp->mode = RDT_MODE_SHAREABLE) &&
-   227              rdtgroup_cbm_overlaps_pseudo_locked(d, cbm_val)) {
-                                                           ^^^^^^^
-Then this is where Smatch complains that it's uninitialized.
-
-   228                  rdt_last_cmd_printf("CBM overlaps with pseudo-locked region\n");
-   229                  return -EINVAL;
-   230          }
-   231  
-
-
-regards,
-dan carpenter
+Q29weWluZyBCb3JpcywNCg0KSGkgRGFuLCBUaGUgZm9sbG93aW5nIHBhdGNoIHNob3VsZCBoZWxw
+LiBDYW4geW91IHBsZWFzZSBjb25maXJtLg0KDQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVs
+L2NwdS9yZXNjdHJsL2N0cmxtb25kYXRhLmMNCmIvYXJjaC94ODYva2VybmVsL2NwdS9yZXNjdHJs
+L2N0cmxtb25kYXRhLmMNCmluZGV4IDI4NmMwM2JiMTRhNy4uNWExYjU0NDc5NWNkIDEwMDY0NA0K
+LS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9yZXNjdHJsL2N0cmxtb25kYXRhLmMNCisrKyBiL2Fy
+Y2gveDg2L2tlcm5lbC9jcHUvcmVzY3RybC9jdHJsbW9uZGF0YS5jDQpAQCAtMjAxLDcgKzIwMSw3
+IEBAIGludCBwYXJzZV9jYm0oc3RydWN0IHJkdF9wYXJzZV9kYXRhICpkYXRhLCBzdHJ1Y3QNCnJk
+dF9yZXNvdXJjZSAqciwNCiAgICAgICAgICAgICAgc3RydWN0IHJkdF9kb21haW4gKmQpDQogew0K
+ICAgICAgICBzdHJ1Y3QgcmR0Z3JvdXAgKnJkdGdycCA9IGRhdGEtPnJkdGdycDsNCi0gICAgICAg
+dTMyIGNibV92YWw7DQorICAgICAgIHUzMiBjYm1fdmFsID0gMDsNCg0KICAgICAgICBpZiAoZC0+
+aGF2ZV9uZXdfY3RybCkgew0KICAgICAgICAgICAgICAgIHJkdF9sYXN0X2NtZF9wcmludGYoIkR1
+cGxpY2F0ZSBkb21haW4gJWRcbiIsIGQtPmlkKTsNCg0KDQoNCk9uIDExLzI4LzE4IDU6MTMgQU0s
+IERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IEhlbGxvIEJhYnUgTW9nZXIsDQo+IA0KPiBUaGUgcGF0
+Y2ggYTM2YzVmZjU2MGZiOiAieDg2L3Jlc2N0cmw6IEJyaW5nIGNibV92YWxpZGF0ZSgpIGludG8g
+dGhlDQo+IHJlc291cmNlIHN0cnVjdHVyZSIgZnJvbSBOb3YgMjEsIDIwMTgsIGxlYWRzIHRvIHRo
+ZSBmb2xsb3dpbmcgc3RhdGljDQo+IGNoZWNrZXIgd2FybmluZzoNCj4gDQo+IAlhcmNoL3g4Ni9r
+ZXJuZWwvY3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYzoyMjcgcGFyc2VfY2JtKCkNCj4gCWVycm9y
+OiB1bmluaXRpYWxpemVkIHN5bWJvbCAnY2JtX3ZhbCcuDQo+IA0KPiBhcmNoL3g4Ni9rZXJuZWwv
+Y3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYw0KPiAgICAyMDEgIGludCBwYXJzZV9jYm0oc3RydWN0
+IHJkdF9wYXJzZV9kYXRhICpkYXRhLCBzdHJ1Y3QgcmR0X3Jlc291cmNlICpyLA0KPiAgICAyMDIg
+ICAgICAgICAgICAgICAgc3RydWN0IHJkdF9kb21haW4gKmQpDQo+ICAgIDIwMyAgew0KPiAgICAy
+MDQgICAgICAgICAgc3RydWN0IHJkdGdyb3VwICpyZHRncnAgPSBkYXRhLT5yZHRncnA7DQo+ICAg
+IDIwNSAgICAgICAgICB1MzIgY2JtX3ZhbDsNCj4gICAgMjA2ICANCj4gICAgMjA3ICAgICAgICAg
+IGlmIChkLT5oYXZlX25ld19jdHJsKSB7DQo+ICAgIDIwOCAgICAgICAgICAgICAgICAgIHJkdF9s
+YXN0X2NtZF9wcmludGYoIkR1cGxpY2F0ZSBkb21haW4gJWRcbiIsIGQtPmlkKTsNCj4gICAgMjA5
+ICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ICAgIDIxMCAgICAgICAgICB9DQo+
+ICAgIDIxMSAgDQo+ICAgIDIxMiAgICAgICAgICAvKg0KPiAgICAyMTMgICAgICAgICAgICogQ2Fu
+bm90IHNldCB1cCBtb3JlIHRoYW4gb25lIHBzZXVkby1sb2NrZWQgcmVnaW9uIGluIGEgY2FjaGUN
+Cj4gICAgMjE0ICAgICAgICAgICAqIGhpZXJhcmNoeS4NCj4gICAgMjE1ICAgICAgICAgICAqLw0K
+PiAgICAyMTYgICAgICAgICAgaWYgKHJkdGdycC0+bW9kZSA9PSBSRFRfTU9ERV9QU0VVRE9fTE9D
+S1NFVFVQICYmDQo+ICAgIDIxNyAgICAgICAgICAgICAgcmR0Z3JvdXBfcHNldWRvX2xvY2tlZF9p
+bl9oaWVyYXJjaHkoZCkpIHsNCj4gICAgMjE4ICAgICAgICAgICAgICAgICAgcmR0X2xhc3RfY21k
+X3ByaW50ZigiUHNldWRvLWxvY2tlZCByZWdpb24gaW4gaGllcmFyY2h5XG4iKTsNCj4gICAgMjE5
+ICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ICAgIDIyMCAgICAgICAgICB9DQo+
+ICAgIDIyMSAgDQo+ICAgIDIyMiAgICAgICAgICBpZiAoci0+Y2JtX3ZhbGlkYXRlICYmICFyLT5j
+Ym1fdmFsaWRhdGUoZGF0YS0+YnVmLCAmY2JtX3ZhbCwgcikpDQo+ICAgICAgICAgICAgICAgICAg
+ICAgXl5eXl5eXl5eXl5eXl5eDQo+IEFzc3VtZSB0aGlzIGlzIE5VTEwNCj4gDQo+ICAgIDIyMyAg
+ICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiAgICAyMjQgIA0KPiAgICAyMjUgICAg
+ICAgICAgaWYgKChyZHRncnAtPm1vZGUgPT0gUkRUX01PREVfRVhDTFVTSVZFIHx8DQo+ICAgIDIy
+NiAgICAgICAgICAgICAgIHJkdGdycC0+bW9kZSA9PSBSRFRfTU9ERV9TSEFSRUFCTEUpICYmDQo+
+ICAgIDIyNyAgICAgICAgICAgICAgcmR0Z3JvdXBfY2JtX292ZXJsYXBzX3BzZXVkb19sb2NrZWQo
+ZCwgY2JtX3ZhbCkpIHsNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBeXl5eXl5eDQo+IFRoZW4gdGhpcyBpcyB3aGVyZSBTbWF0Y2gg
+Y29tcGxhaW5zIHRoYXQgaXQncyB1bmluaXRpYWxpemVkLg0KPiANCj4gICAgMjI4ICAgICAgICAg
+ICAgICAgICAgcmR0X2xhc3RfY21kX3ByaW50ZigiQ0JNIG92ZXJsYXBzIHdpdGggcHNldWRvLWxv
+Y2tlZCByZWdpb25cbiIpOw0KPiAgICAyMjkgICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZB
+TDsNCj4gICAgMjMwICAgICAgICAgIH0NCj4gICAgMjMxICANCj4gDQo+IA0KPiByZWdhcmRzLA0K
+PiBkYW4gY2FycGVudGVyDQo+IA0K
