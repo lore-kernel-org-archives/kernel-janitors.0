@@ -1,61 +1,35 @@
-From: Michal Hocko <mhocko@kernel.org>
-Date: Sun, 25 Nov 2018 08:08:34 +0000
-Subject: Re: [PATCH] mm: debug: Fix a width vs precision bug in printk
-Message-Id: <20181125080834.GB12455@dhcp22.suse.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Nov 2018 15:37:35 +0000
+Subject: [PATCH] fbdev: uvesafb: fix spelling mistake "memoery" -> "memory"
+Message-Id: <20181128153735.14083-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181123072135.gqvblm2vdujbvfjs@kili.mountain>
- <20181123090125.GC8625@dhcp22.suse.cz>
- <20181123143605.GB2970@unbuntlaptop>
- <ddbf19fb-1d73-40ca-b421-4c171466833b@I-love.SAKURA.ne.jp>
- <20181123160846.1160ba23c2514ed9c316be9d@linux-foundation.org>
-In-Reply-To: <20181123160846.1160ba23c2514ed9c316be9d@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Dan Carpenter <dan.carpenter@oracle.com>, Pavel Tatashin <pasha.tatashin@oracle.com>, Alexander Duyck <alexander.h.duyck@linux.intel.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Michal Januszewski <spock@gentoo.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri 23-11-18 16:08:46, Andrew Morton wrote:
-> On Fri, 23 Nov 2018 23:48:06 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> 
-> > On 2018/11/23 23:36, Dan Carpenter wrote:
-> > > On Fri, Nov 23, 2018 at 10:01:25AM +0100, Michal Hocko wrote:
-> > >> On Fri 23-11-18 10:21:35, Dan Carpenter wrote:
-> > >>> We had intended to only print dentry->d_name.len characters but there is
-> > >>> a width vs precision typo so if the name isn't NUL terminated it will
-> > >>> read past the end of the buffer.
-> > >>
-> > >> OK, it took me quite some time to grasp what you mean here. The code
-> > >> works as expected because d_name.len and dname.name are in sync so there
-> > >> no spacing going to happen. Anyway what you propose is formally more
-> > >> correct I guess.
-> > >>  
-> > > 
-> > > Yeah.  If we are sure that the name has a NUL terminator then this
-> > > change has no effect.
-> > 
-> > There seems to be %pd which is designed for printing "struct dentry".
-> 
-> ooh, who knew.  Can we use that please?
+From: Colin Ian King <colin.king@canonical.com>
 
-I wasn't aware of it either. I do not mind using it instead of the
-opencoded variant of mine.
+There is a spelling mistake in the module parameter description, fix it.
 
-This should do it, right?
-diff --git a/mm/debug.c b/mm/debug.c
-index d18c5cea3320..68e9a9f2df16 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -80,7 +80,7 @@ void __dump_page(struct page *page, const char *reason)
- 		if (mapping->host->i_dentry.first) {
- 			struct dentry *dentry;
- 			dentry = container_of(mapping->host->i_dentry.first, struct dentry, d_u.d_alias);
--			pr_warn("name:\"%*s\" ", dentry->d_name.len, dentry->d_name.name);
-+			pr_warn("name:\"%pd\" ", dentry);
- 		}
- 	}
- 	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) != __NR_PAGEFLAGS + 1);
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/uvesafb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/video/fbdev/uvesafb.c b/drivers/video/fbdev/uvesafb.c
+index 440a6636d8f0..34dc8e53a1e9 100644
+--- a/drivers/video/fbdev/uvesafb.c
++++ b/drivers/video/fbdev/uvesafb.c
+@@ -1979,7 +1979,7 @@ MODULE_PARM_DESC(noedid,
+ module_param(vram_remap, uint, 0);
+ MODULE_PARM_DESC(vram_remap, "Set amount of video memory to be used [MiB]");
+ module_param(vram_total, uint, 0);
+-MODULE_PARM_DESC(vram_total, "Set total amount of video memoery [MiB]");
++MODULE_PARM_DESC(vram_total, "Set total amount of video memory [MiB]");
+ module_param(maxclk, ushort, 0);
+ MODULE_PARM_DESC(maxclk, "Maximum pixelclock [MHz], overrides EDID data");
+ module_param(maxhf, ushort, 0);
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1
