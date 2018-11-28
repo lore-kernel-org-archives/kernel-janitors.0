@@ -1,38 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 16 Nov 2018 15:06:33 +0000
-Subject: [PATCH 2/5] ASoC: tlv320aic31xx: asihpi: clean up indentation, remove extraneous tab
-Message-Id: <20181116150636.5226-2-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Nov 2018 14:37:58 +0000
+Subject: [bug report] perf script: Make itrace script default to all calls
+Message-Id: <20181128143758.fpzxjcublfisup6s@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181116150636.5226-1-colin.king@canonical.com>
-In-Reply-To: <20181116150636.5226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Andi Kleen,
 
-The return statement is indented too much by one level, fix this by
-removing an extraneous tab.
+This is a semi-automatic email about new static checker warnings.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/tlv320aic31xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 4eb068157121: "perf script: Make itrace script default to 
+all calls" from Sep 20, 2018, leads to the following Smatch complaint:
 
-diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
-index 608ad49ad978..c6048d95c6d3 100644
---- a/sound/soc/codecs/tlv320aic31xx.c
-+++ b/sound/soc/codecs/tlv320aic31xx.c
-@@ -1095,7 +1095,7 @@ static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 	if (freq/i > 20000000) {
- 		dev_err(aic31xx->dev, "%s: Too high mclk frequency %u\n",
- 			__func__, freq);
--			return -EINVAL;
-+		return -EINVAL;
- 	}
- 	aic31xx->p_div = i;
- 
--- 
-2.19.1
+    ./tools/perf/util/intel-pt.c:2579 intel_pt_process_auxtrace_info()
+     error: we previously assumed 'session->itrace_synth_opts' could be null (see line 2575)
+
+./tools/perf/util/intel-pt.c
+  2574	
+  2575		if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+The old code assumed this could be NULL.
+
+  2576			pt->synth_opts = *session->itrace_synth_opts;
+  2577		} else {
+  2578			itrace_synth_opts__set_default(&pt->synth_opts,
+  2579					session->itrace_synth_opts->default_no_sample);
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+But the patch adds an unchecked dereference.
+
+  2580			if (use_browser != -1) {
+  2581				pt->synth_opts.branches = false;
+
+regards,
+dan carpenter
