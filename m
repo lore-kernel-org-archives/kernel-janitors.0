@@ -1,31 +1,42 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 05 Nov 2018 11:12:33 +0000
-Subject: Re: [PATCH][ath10k-next] ath10k: fix some spelling mistakes
-Message-Id: <20181105111233.289C260AD8@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Nov 2018 14:39:22 +0000
+Subject: [bug report] samples: bpf: fix: error handling regarding kprobe_events
+Message-Id: <20181128143922.uinv34f3s7cs3kgy@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181018215104.10444-1-colin.king@canonical.com>
-In-Reply-To: <20181018215104.10444-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Hello Daniel T. Lee,
 
-> Trivial fix to some spelling mistakes in ath10k_err and ath10k_dbg
-> messages:
-> "capablity" -> "capability"
-> "registed" -> "registered"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This is a semi-automatic email about new static checker warnings.
 
-Patch applied to ath-next branch of ath.git, thanks.
+The patch 5a863813216c: "samples: bpf: fix: error handling regarding 
+kprobe_events" from Nov 23, 2018, leads to the following Smatch 
+complaint:
 
-eb9bd8b963d6 ath10k: fix some spelling mistakes
+    ./samples/bpf/bpf_load.c:68 write_kprobe_events()
+     error: we previously assumed 'val' could be null (see line 61)
 
--- 
-https://patchwork.kernel.org/patch/10648317/
+./samples/bpf/bpf_load.c
+    60	
+    61		if ((val != NULL) && (val[0] = '\0'))
+                     ^^^^^^^^^^^
+If val is NULL
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+    62			flags = O_WRONLY | O_TRUNC;
+    63		else
+    64			flags = O_WRONLY | O_APPEND;
+    65	
+    66		fd = open("/sys/kernel/debug/tracing/kprobe_events", flags);
+    67	
+    68		ret = write(fd, val, strlen(val));
+                                     ^^^^^^^^^^^
+then we are toasted because strlen() dereferences it.
+
+    69		close(fd);
+    70	
+
+regards,
+dan carpenter
