@@ -1,26 +1,35 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 06 Nov 2018 17:43:44 +0000
-Subject: Re: [PATCH 6/8] clk: s2mps11: constify clk_ops structure
-Message-Id: <154152622426.88331.17363838226504925494@swboyd.mtv.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Nov 2018 15:11:16 +0000
+Subject: [PATCH] RDMA/drivers: fix spelling mistake "initalize" -> "initialize"
+Message-Id: <20181128151116.13216-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
- <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Sangbeom Kim <sbkim73@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+To: Christian Benvenuti <benve@cisco.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Julia Lawall (2018-10-26 22:47:40)
-> The clk_ops structure is only stored in the ops fields of
-> clk_init_data structures.  This field is const, so the clk_ops
-> structure can be const as well.
-> 
-> Identified and transformed using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+Fix spelling mistake in usnic_err error message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/usnic/usnic_ib_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_main.c b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+index 73bd00f8d2c8..413fa5732e2b 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_main.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+@@ -649,7 +649,7 @@ static int __init usnic_ib_init(void)
+ 
+ 	err = usnic_uiom_init(DRV_NAME);
+ 	if (err) {
+-		usnic_err("Unable to initalize umem with err %d\n", err);
++		usnic_err("Unable to initialize umem with err %d\n", err);
+ 		return err;
+ 	}
+ 
+-- 
+2.19.1
