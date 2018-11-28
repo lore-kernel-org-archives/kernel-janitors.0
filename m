@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Nov 2018 19:23:27 +0000
+From: "Moger, Babu" <Babu.Moger@amd.com>
+Date: Wed, 28 Nov 2018 19:28:11 +0000
 Subject: Re: [bug report] x86/resctrl: Bring cbm_validate() into the resource structure
-Message-Id: <20181128192327.GD3095@unbuntlaptop>
+Message-Id: <337d4ab4-be4b-2438-d47f-9eb3fa257938@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
 In-Reply-To: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
@@ -10,30 +10,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:21:22PM +0000, Moger, Babu wrote:
-> Copying Boris,
-> 
-> Hi Dan, The following patch should help. Can you please confirm.
-> 
-> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> index 286c03bb14a7..5a1b544795cd 100644
-> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> @@ -201,7 +201,7 @@ int parse_cbm(struct rdt_parse_data *data, struct
-> rdt_resource *r,
->               struct rdt_domain *d)
->  {
->         struct rdtgroup *rdtgrp = data->rdtgrp;
-> -       u32 cbm_val;
-> +       u32 cbm_val = 0;
-> 
->         if (d->have_new_ctrl) {
->                 rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
-> 
-
-That obviously silences the uninitialized variable warning...  You know
-the code better than I do, so presumably it is correct as well.  :)
-
-regards,
-dan carpenter
+DQpPbiAxMS8yOC8xOCAxOjIzIFBNLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0KPiBPbiBXZWQsIE5v
+diAyOCwgMjAxOCBhdCAwMzoyMToyMlBNICswMDAwLCBNb2dlciwgQmFidSB3cm90ZToNCj4+IENv
+cHlpbmcgQm9yaXMsDQo+Pg0KPj4gSGkgRGFuLCBUaGUgZm9sbG93aW5nIHBhdGNoIHNob3VsZCBo
+ZWxwLiBDYW4geW91IHBsZWFzZSBjb25maXJtLg0KPj4NCj4+IGRpZmYgLS1naXQgYS9hcmNoL3g4
+Ni9rZXJuZWwvY3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYw0KPj4gYi9hcmNoL3g4Ni9rZXJuZWwv
+Y3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYw0KPj4gaW5kZXggMjg2YzAzYmIxNGE3Li41YTFiNTQ0
+Nzk1Y2QgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3Jlc2N0cmwvY3RybG1v
+bmRhdGEuYw0KPj4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9yZXNjdHJsL2N0cmxtb25kYXRh
+LmMNCj4+IEBAIC0yMDEsNyArMjAxLDcgQEAgaW50IHBhcnNlX2NibShzdHJ1Y3QgcmR0X3BhcnNl
+X2RhdGEgKmRhdGEsIHN0cnVjdA0KPj4gcmR0X3Jlc291cmNlICpyLA0KPj4gICAgICAgICAgICAg
+ICBzdHJ1Y3QgcmR0X2RvbWFpbiAqZCkNCj4+ICB7DQo+PiAgICAgICAgIHN0cnVjdCByZHRncm91
+cCAqcmR0Z3JwID0gZGF0YS0+cmR0Z3JwOw0KPj4gLSAgICAgICB1MzIgY2JtX3ZhbDsNCj4+ICsg
+ICAgICAgdTMyIGNibV92YWwgPSAwOw0KPj4NCj4+ICAgICAgICAgaWYgKGQtPmhhdmVfbmV3X2N0
+cmwpIHsNCj4+ICAgICAgICAgICAgICAgICByZHRfbGFzdF9jbWRfcHJpbnRmKCJEdXBsaWNhdGUg
+ZG9tYWluICVkXG4iLCBkLT5pZCk7DQo+Pg0KPiANCj4gVGhhdCBvYnZpb3VzbHkgc2lsZW5jZXMg
+dGhlIHVuaW5pdGlhbGl6ZWQgdmFyaWFibGUgd2FybmluZy4uLiAgWW91IGtub3cNCj4gdGhlIGNv
+ZGUgYmV0dGVyIHRoYW4gSSBkbywgc28gcHJlc3VtYWJseSBpdCBpcyBjb3JyZWN0IGFzIHdlbGwu
+ICA6KQ0KDQpEYW4sIFRoYW5rIHlvdS4gV2lsbCBzZW5kIHRoZSBwYXRjaCByaWdodCB1cC4NCg0K
+PiANCj4gcmVnYXJkcywNCj4gZGFuIGNhcnBlbnRlcg0KPiANCg=
