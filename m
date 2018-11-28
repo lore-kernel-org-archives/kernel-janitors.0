@@ -1,7 +1,7 @@
-From: "Moger, Babu" <Babu.Moger@amd.com>
-Date: Wed, 28 Nov 2018 15:21:22 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Nov 2018 19:23:27 +0000
 Subject: Re: [bug report] x86/resctrl: Bring cbm_validate() into the resource structure
-Message-Id: <fc5f525a-2007-ae39-dcd8-58231cda8941@amd.com>
+Message-Id: <20181128192327.GD3095@unbuntlaptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
 In-Reply-To: <20181128111326.lwlqngnwmdslnbs2@kili.mountain>
@@ -10,51 +10,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Q29weWluZyBCb3JpcywNCg0KSGkgRGFuLCBUaGUgZm9sbG93aW5nIHBhdGNoIHNob3VsZCBoZWxw
-LiBDYW4geW91IHBsZWFzZSBjb25maXJtLg0KDQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVs
-L2NwdS9yZXNjdHJsL2N0cmxtb25kYXRhLmMNCmIvYXJjaC94ODYva2VybmVsL2NwdS9yZXNjdHJs
-L2N0cmxtb25kYXRhLmMNCmluZGV4IDI4NmMwM2JiMTRhNy4uNWExYjU0NDc5NWNkIDEwMDY0NA0K
-LS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9yZXNjdHJsL2N0cmxtb25kYXRhLmMNCisrKyBiL2Fy
-Y2gveDg2L2tlcm5lbC9jcHUvcmVzY3RybC9jdHJsbW9uZGF0YS5jDQpAQCAtMjAxLDcgKzIwMSw3
-IEBAIGludCBwYXJzZV9jYm0oc3RydWN0IHJkdF9wYXJzZV9kYXRhICpkYXRhLCBzdHJ1Y3QNCnJk
-dF9yZXNvdXJjZSAqciwNCiAgICAgICAgICAgICAgc3RydWN0IHJkdF9kb21haW4gKmQpDQogew0K
-ICAgICAgICBzdHJ1Y3QgcmR0Z3JvdXAgKnJkdGdycCA9IGRhdGEtPnJkdGdycDsNCi0gICAgICAg
-dTMyIGNibV92YWw7DQorICAgICAgIHUzMiBjYm1fdmFsID0gMDsNCg0KICAgICAgICBpZiAoZC0+
-aGF2ZV9uZXdfY3RybCkgew0KICAgICAgICAgICAgICAgIHJkdF9sYXN0X2NtZF9wcmludGYoIkR1
-cGxpY2F0ZSBkb21haW4gJWRcbiIsIGQtPmlkKTsNCg0KDQoNCk9uIDExLzI4LzE4IDU6MTMgQU0s
-IERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IEhlbGxvIEJhYnUgTW9nZXIsDQo+IA0KPiBUaGUgcGF0
-Y2ggYTM2YzVmZjU2MGZiOiAieDg2L3Jlc2N0cmw6IEJyaW5nIGNibV92YWxpZGF0ZSgpIGludG8g
-dGhlDQo+IHJlc291cmNlIHN0cnVjdHVyZSIgZnJvbSBOb3YgMjEsIDIwMTgsIGxlYWRzIHRvIHRo
-ZSBmb2xsb3dpbmcgc3RhdGljDQo+IGNoZWNrZXIgd2FybmluZzoNCj4gDQo+IAlhcmNoL3g4Ni9r
-ZXJuZWwvY3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYzoyMjcgcGFyc2VfY2JtKCkNCj4gCWVycm9y
-OiB1bmluaXRpYWxpemVkIHN5bWJvbCAnY2JtX3ZhbCcuDQo+IA0KPiBhcmNoL3g4Ni9rZXJuZWwv
-Y3B1L3Jlc2N0cmwvY3RybG1vbmRhdGEuYw0KPiAgICAyMDEgIGludCBwYXJzZV9jYm0oc3RydWN0
-IHJkdF9wYXJzZV9kYXRhICpkYXRhLCBzdHJ1Y3QgcmR0X3Jlc291cmNlICpyLA0KPiAgICAyMDIg
-ICAgICAgICAgICAgICAgc3RydWN0IHJkdF9kb21haW4gKmQpDQo+ICAgIDIwMyAgew0KPiAgICAy
-MDQgICAgICAgICAgc3RydWN0IHJkdGdyb3VwICpyZHRncnAgPSBkYXRhLT5yZHRncnA7DQo+ICAg
-IDIwNSAgICAgICAgICB1MzIgY2JtX3ZhbDsNCj4gICAgMjA2ICANCj4gICAgMjA3ICAgICAgICAg
-IGlmIChkLT5oYXZlX25ld19jdHJsKSB7DQo+ICAgIDIwOCAgICAgICAgICAgICAgICAgIHJkdF9s
-YXN0X2NtZF9wcmludGYoIkR1cGxpY2F0ZSBkb21haW4gJWRcbiIsIGQtPmlkKTsNCj4gICAgMjA5
-ICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ICAgIDIxMCAgICAgICAgICB9DQo+
-ICAgIDIxMSAgDQo+ICAgIDIxMiAgICAgICAgICAvKg0KPiAgICAyMTMgICAgICAgICAgICogQ2Fu
-bm90IHNldCB1cCBtb3JlIHRoYW4gb25lIHBzZXVkby1sb2NrZWQgcmVnaW9uIGluIGEgY2FjaGUN
-Cj4gICAgMjE0ICAgICAgICAgICAqIGhpZXJhcmNoeS4NCj4gICAgMjE1ICAgICAgICAgICAqLw0K
-PiAgICAyMTYgICAgICAgICAgaWYgKHJkdGdycC0+bW9kZSA9PSBSRFRfTU9ERV9QU0VVRE9fTE9D
-S1NFVFVQICYmDQo+ICAgIDIxNyAgICAgICAgICAgICAgcmR0Z3JvdXBfcHNldWRvX2xvY2tlZF9p
-bl9oaWVyYXJjaHkoZCkpIHsNCj4gICAgMjE4ICAgICAgICAgICAgICAgICAgcmR0X2xhc3RfY21k
-X3ByaW50ZigiUHNldWRvLWxvY2tlZCByZWdpb24gaW4gaGllcmFyY2h5XG4iKTsNCj4gICAgMjE5
-ICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ICAgIDIyMCAgICAgICAgICB9DQo+
-ICAgIDIyMSAgDQo+ICAgIDIyMiAgICAgICAgICBpZiAoci0+Y2JtX3ZhbGlkYXRlICYmICFyLT5j
-Ym1fdmFsaWRhdGUoZGF0YS0+YnVmLCAmY2JtX3ZhbCwgcikpDQo+ICAgICAgICAgICAgICAgICAg
-ICAgXl5eXl5eXl5eXl5eXl5eDQo+IEFzc3VtZSB0aGlzIGlzIE5VTEwNCj4gDQo+ICAgIDIyMyAg
-ICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiAgICAyMjQgIA0KPiAgICAyMjUgICAg
-ICAgICAgaWYgKChyZHRncnAtPm1vZGUgPT0gUkRUX01PREVfRVhDTFVTSVZFIHx8DQo+ICAgIDIy
-NiAgICAgICAgICAgICAgIHJkdGdycC0+bW9kZSA9PSBSRFRfTU9ERV9TSEFSRUFCTEUpICYmDQo+
-ICAgIDIyNyAgICAgICAgICAgICAgcmR0Z3JvdXBfY2JtX292ZXJsYXBzX3BzZXVkb19sb2NrZWQo
-ZCwgY2JtX3ZhbCkpIHsNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBeXl5eXl5eDQo+IFRoZW4gdGhpcyBpcyB3aGVyZSBTbWF0Y2gg
-Y29tcGxhaW5zIHRoYXQgaXQncyB1bmluaXRpYWxpemVkLg0KPiANCj4gICAgMjI4ICAgICAgICAg
-ICAgICAgICAgcmR0X2xhc3RfY21kX3ByaW50ZigiQ0JNIG92ZXJsYXBzIHdpdGggcHNldWRvLWxv
-Y2tlZCByZWdpb25cbiIpOw0KPiAgICAyMjkgICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZB
-TDsNCj4gICAgMjMwICAgICAgICAgIH0NCj4gICAgMjMxICANCj4gDQo+IA0KPiByZWdhcmRzLA0K
-PiBkYW4gY2FycGVudGVyDQo+IA0K
+On Wed, Nov 28, 2018 at 03:21:22PM +0000, Moger, Babu wrote:
+> Copying Boris,
+> 
+> Hi Dan, The following patch should help. Can you please confirm.
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> index 286c03bb14a7..5a1b544795cd 100644
+> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> @@ -201,7 +201,7 @@ int parse_cbm(struct rdt_parse_data *data, struct
+> rdt_resource *r,
+>               struct rdt_domain *d)
+>  {
+>         struct rdtgroup *rdtgrp = data->rdtgrp;
+> -       u32 cbm_val;
+> +       u32 cbm_val = 0;
+> 
+>         if (d->have_new_ctrl) {
+>                 rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
+> 
+
+That obviously silences the uninitialized variable warning...  You know
+the code better than I do, so presumably it is correct as well.  :)
+
+regards,
+dan carpenter
