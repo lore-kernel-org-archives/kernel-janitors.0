@@ -1,45 +1,45 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 08 Nov 2018 12:30:35 +0000
-Subject: [PATCH -next] ufs: remove set but not used variable 'usb3'
-Message-Id: <1541680235-158692-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Nov 2018 15:34:09 +0000
+Subject: [PATCH] [media] tda7432: fix spelling mistake "maximium" -> "maximum"
+Message-Id: <20181128153409.13941-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1534815222-101634-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1534815222-101634-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Dushistov <dushistov@mail.ru>, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Yue Haibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+There is a spelling mistake in the module description as well
+as a comment. Fix them.
 
-fs/ufs/super.c: In function 'ufs_statfs':
-fs/ufs/super.c:1409:32: warning:
- variable 'usb3' set but not used [-Wunused-but-set-variable]
-
-It not used any more after commit
-c596961d1b4c ("ufs: fix s_size/s_dsize users")
-
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ufs/super.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/i2c/tda7432.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index a4e07e9..6a5db06 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -1406,11 +1406,9 @@ static int ufs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct super_block *sb = dentry->d_sb;
- 	struct ufs_sb_private_info *uspi= UFS_SB(sb)->s_uspi;
- 	unsigned  flags = UFS_SB(sb)->s_flags;
--	struct ufs_super_block_third *usb3;
- 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
+diff --git a/drivers/media/i2c/tda7432.c b/drivers/media/i2c/tda7432.c
+index 9b4f21237810..06a78c2cdaab 100644
+--- a/drivers/media/i2c/tda7432.c
++++ b/drivers/media/i2c/tda7432.c
+@@ -19,7 +19,7 @@
+  *
+  * loudness - set between 0 and 15 for varying degrees of loudness effect
+  *
+- * maxvol   - set maximium volume to +20db (1), default is 0db(0)
++ * maxvol   - set maximum volume to +20db (1), default is 0db(0)
+  */
  
- 	mutex_lock(&UFS_SB(sb)->s_lock);
--	usb3 = ubh_get_usb_third(uspi);
- 	
- 	if ((flags & UFS_TYPE_MASK) = UFS_TYPE_UFS2)
- 		buf->f_type = UFS2_MAGIC;
+ #include <linux/module.h>
+@@ -53,7 +53,7 @@ MODULE_PARM_DESC(debug, "Set debugging level from 0 to 3. Default is off(0).");
+ module_param(loudness, int, S_IRUGO);
+ MODULE_PARM_DESC(loudness, "Turn loudness on(1) else off(0). Default is off(0).");
+ module_param(maxvol, int, S_IRUGO | S_IWUSR);
+-MODULE_PARM_DESC(maxvol, "Set maximium volume to +20dB(0) else +0dB(1). Default is +20dB(0).");
++MODULE_PARM_DESC(maxvol, "Set maximum volume to +20dB(0) else +0dB(1). Default is +20dB(0).");
+ 
+ 
+ /* Structure of address and subaddresses for the tda7432 */
+-- 
+2.19.1
