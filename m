@@ -1,56 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 26 Nov 2018 13:06:33 +0000
-Subject: Re: [PATCH] ath10k: fix a NULL vs IS_ERR() check
-Message-Id: <87va4k9eee.fsf@kamboji.qca.qualcomm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Nov 2018 10:31:33 +0000
+Subject: [PATCH] perf test: fix spelling mistake "sythesizing" -> "synthesizing"
+Message-Id: <20181129103133.17353-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181126081143.tvu55aimdc3safcq@kili.mountain>
- <8736rob60p.fsf@kamboji.qca.qualcomm.com>
- <20181126083021.GC3088@unbuntlaptop>
-In-Reply-To: <20181126083021.GC3088@unbuntlaptop> (Dan Carpenter's message of
- "Mon, 26 Nov 2018 11:30:22 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Govind Singh <govinds@codeaurora.org>, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org
+To: Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Mon, Nov 26, 2018 at 10:24:38AM +0200, Kalle Valo wrote:
->> Dan Carpenter <dan.carpenter@oracle.com> writes:
->> 
->> > The devm_memremap() function doesn't return NULLs, it returns error
->> > pointers.
->> >
->> > Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> > ---
->> >  drivers/net/wireless/ath/ath10k/qmi.c | 4 ++--
->> >  1 file changed, 2 insertions(+), 2 deletions(-)
->> >
->> > diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
->> > index f0429bee35c2..37b3bd629f48 100644
->> > --- a/drivers/net/wireless/ath/ath10k/qmi.c
->> > +++ b/drivers/net/wireless/ath/ath10k/qmi.c
->> > @@ -931,9 +931,9 @@ static int ath10k_qmi_setup_msa_resources(struct ath10k_qmi *qmi, u32 msa_size)
->> >  		qmi->msa_mem_size = resource_size(&r);
->> >  		qmi->msa_va = devm_memremap(dev, qmi->msa_pa, qmi->msa_mem_size,
->> >  					    MEMREMAP_WT);
->> > -		if (!qmi->msa_va) {
->> > +		if (IS_ERR(qmi->msa_va)) {
->> >  			dev_err(dev, "failed to map memory region: %pa\n", &r.start);
->> > -			return -EBUSY;
->> > +			return PTR_ERR(qmi->msa_va);
->> 
->> That's a very good find!
->> 
->> But how has this even worked before?
->
-> This only changes the error path.  Presumably it always succeeds in real
-> life.
+There are spelling mistakes in TEST_ASSERT_VAL messages, fix them.
 
-Ah, I missed the "!" operator. Yeah, I think you are correct. I'll queue
-this for -next then.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/perf/tests/mmap-thread-lookup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+index b1af2499a3c9..e8498d3e0176 100644
+--- a/tools/perf/tests/mmap-thread-lookup.c
++++ b/tools/perf/tests/mmap-thread-lookup.c
+@@ -224,11 +224,11 @@ static int mmap_events(synth_cb synth)
+ int test__mmap_thread_lookup(struct test *test __maybe_unused, int subtest __maybe_unused)
+ {
+ 	/* perf_event__synthesize_threads synthesize */
+-	TEST_ASSERT_VAL("failed with sythesizing all",
++	TEST_ASSERT_VAL("failed with synthesizing all",
+ 			!mmap_events(synth_all));
+ 
+ 	/* perf_event__synthesize_thread_map synthesize */
+-	TEST_ASSERT_VAL("failed with sythesizing process",
++	TEST_ASSERT_VAL("failed with synthesizing process",
+ 			!mmap_events(synth_process));
+ 
+ 	return 0;
 -- 
-Kalle Valo
+2.19.1
