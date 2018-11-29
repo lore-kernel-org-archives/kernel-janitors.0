@@ -1,40 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Nov 2018 10:31:33 +0000
-Subject: [PATCH] perf test: fix spelling mistake "sythesizing" -> "synthesizing"
-Message-Id: <20181129103133.17353-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 29 Nov 2018 02:36:32 +0000
+Subject: [PATCH net-next] net: qualcomm: rmnet: Remove set but not used variable 'cmd'
+Message-Id: <1543458992-103568-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>, YueHaibing <yuehaibing@huawei.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-There are spelling mistakes in TEST_ASSERT_VAL messages, fix them.
+drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c: In function 'rmnet_map_do_flow_control':
+drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c:23:36: warning:
+ variable 'cmd' set but not used [-Wunused-but-set-variable]
+  struct rmnet_map_control_command *cmd;
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+'cmd' not used anymore now, should also be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- tools/perf/tests/mmap-thread-lookup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
-index b1af2499a3c9..e8498d3e0176 100644
---- a/tools/perf/tests/mmap-thread-lookup.c
-+++ b/tools/perf/tests/mmap-thread-lookup.c
-@@ -224,11 +224,11 @@ static int mmap_events(synth_cb synth)
- int test__mmap_thread_lookup(struct test *test __maybe_unused, int subtest __maybe_unused)
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
+index 8990307..f6cf59a 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
+@@ -20,14 +20,12 @@ static u8 rmnet_map_do_flow_control(struct sk_buff *skb,
+ 				    struct rmnet_port *port,
+ 				    int enable)
  {
- 	/* perf_event__synthesize_threads synthesize */
--	TEST_ASSERT_VAL("failed with sythesizing all",
-+	TEST_ASSERT_VAL("failed with synthesizing all",
- 			!mmap_events(synth_all));
+-	struct rmnet_map_control_command *cmd;
+ 	struct rmnet_endpoint *ep;
+ 	struct net_device *vnd;
+ 	u8 mux_id;
+ 	int r;
  
- 	/* perf_event__synthesize_thread_map synthesize */
--	TEST_ASSERT_VAL("failed with sythesizing process",
-+	TEST_ASSERT_VAL("failed with synthesizing process",
- 			!mmap_events(synth_process));
+ 	mux_id = RMNET_MAP_GET_MUX_ID(skb);
+-	cmd = RMNET_MAP_GET_CMD_START(skb);
  
- 	return 0;
--- 
-2.19.1
+ 	if (mux_id >= RMNET_MAX_LOGICAL_EP) {
+ 		kfree_skb(skb);
