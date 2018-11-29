@@ -1,37 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 28 Nov 2018 15:30:48 +0000
-Subject: [PATCH] scsi: mpt3sas: fix spelling mistake "manufaucturing" -> "manufacturing"
-Message-Id: <20181128153048.13804-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 29 Nov 2018 02:37:53 +0000
+Subject: Re: [PATCH] scsi: mpt3sas: fix spelling mistake "manufaucturing" -> "manufacturing"
+Message-Id: <yq11s741uda.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180429123149.11077-1-colin.king@canonical.com>
-In-Reply-To: <20180429123149.11077-1-colin.king@canonical.com>
+References: <20181128153048.13804-1-colin.king@canonical.com>
+In-Reply-To: <20181128153048.13804-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 28 Nov 2018 15:30:48 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in some description text, fix it.
+Colin,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/mpt3sas/mpt3sas_config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> There is a spelling mistake in some description text, fix it.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_config.c b/drivers/scsi/mpt3sas/mpt3sas_config.c
-index 8516713f980b..fb0a17252f86 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_config.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_config.c
-@@ -119,7 +119,7 @@ _config_display_some_debug(struct MPT3SAS_ADAPTER *ioc, u16 smid,
- 		desc = "raid_volume";
- 		break;
- 	case MPI2_CONFIG_PAGETYPE_MANUFACTURING:
--		desc = "manufaucturing";
-+		desc = "manufacturing";
- 		break;
- 	case MPI2_CONFIG_PAGETYPE_RAID_PHYSDISK:
- 		desc = "physdisk";
+Applied to 4.21/scsi-queue, thanks!
+
 -- 
-2.19.1
+Martin K. Petersen	Oracle Linux Engineering
