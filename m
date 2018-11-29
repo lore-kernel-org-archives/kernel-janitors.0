@@ -1,42 +1,46 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Nov 2018 10:52:13 +0000
-Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
-Message-Id: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Nov 2018 23:25:00 +0000
+Subject: [PATCH] watchdog: asm9260_wdt: make array mode_name static, shrinks object size
+Message-Id: <20181129232500.5039-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Shaoyun.Liu@amd.com, David.Francis@amd.com, ray.huang@amd.com, Feifei.Xu@amd.com, Likun.Gao@amd.com
-Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/gpu/drm/amd/amdgpu/psp_v10_0.c: In function 'psp_v10_0_ring_stop':
-drivers/gpu/drm/amd/amdgpu/psp_v10_0.c:230:19: warning:
- variable 'ring' set but not used [-Wunused-but-set-variable]
+Don't populate the const array mode_name on the stack but instead
+make it static. Makes the object code smaller by 41 bytes:
 
-It not used since commit
-4ef72453311a ("drm/amdgpu: added api for stopping psp ring (v2)")
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   7699	   1872	      0	   9571	   2563	drivers/watchdog/asm9260_wdt.o
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+After:
+   text	   data	    bss	    dec	    hex	filename
+   7594	   1936	      0	   9530	   253a	drivers/watchdog/asm9260_wdt.o
+
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/amdgpu/psp_v10_0.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/watchdog/asm9260_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
-index 295c220..d78b430 100644
---- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
-@@ -240,12 +240,9 @@ static int psp_v10_0_ring_stop(struct psp_context *psp,
- 			       enum psp_ring_type ring_type)
- {
- 	int ret = 0;
--	struct psp_ring *ring;
- 	unsigned int psp_ring_reg = 0;
- 	struct amdgpu_device *adev = psp->adev;
+diff --git a/drivers/watchdog/asm9260_wdt.c b/drivers/watchdog/asm9260_wdt.c
+index 2cf56b459d84..9768e44ffeb8 100644
+--- a/drivers/watchdog/asm9260_wdt.c
++++ b/drivers/watchdog/asm9260_wdt.c
+@@ -278,7 +278,7 @@ static int asm9260_wdt_probe(struct platform_device *pdev)
+ 	struct watchdog_device *wdd;
+ 	struct resource *res;
+ 	int ret;
+-	const char * const mode_name[] = { "hw", "sw", "debug", };
++	static const char * const mode_name[] = { "hw", "sw", "debug", };
  
--	ring = &psp->km_ring;
--
- 	/* Write the ring destroy command to C2PMSG_64 */
- 	psp_ring_reg = 3 << 16;
- 	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(struct asm9260_wdt_priv),
+ 			    GFP_KERNEL);
+-- 
+2.19.1
