@@ -1,51 +1,37 @@
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 26 Nov 2018 13:56:32 +0000
-Subject: Re: [PATCH] jbd2: clean up indentation issue, replace spaces with tab
-Message-Id: <20181126135632.GA25835@quack2.suse.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Nov 2018 10:42:13 +0000
+Subject: [PATCH] IB/usnic: fix spelling mistake "miniumum" -> "minimum"
+Message-Id: <20181129104213.17593-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181123164053.19193-1-colin.king@canonical.com>
-In-Reply-To: <20181123164053.19193-1-colin.king@canonical.com>
+References: <20180924172738.3508-1-colin.king@canonical.com>
+In-Reply-To: <20180924172738.3508-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christian Benvenuti <benve@cisco.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri 23-11-18 16:40:53, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a statement that is indented with spaces, replace it with
-> a tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks good. You can add:
+There is a spelling mistake in a usnic_err error message, fix it.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-								Honza
-
-> ---
->  fs/jbd2/transaction.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-> index c0b66a7a795b..4af8ff17ad5c 100644
-> --- a/fs/jbd2/transaction.c
-> +++ b/fs/jbd2/transaction.c
-> @@ -910,7 +910,7 @@ do_get_write_access(handle_t *handle, struct journal_head *jh,
->  	 * this is the first time this transaction is touching this buffer,
->  	 * reset the modified flag
->  	 */
-> -       jh->b_modified = 0;
-> +	jh->b_modified = 0;
->  
->  	/*
->  	 * If the buffer is not journaled right now, we need to make sure it
-> -- 
-> 2.19.1
-> 
-> 
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c b/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
+index bf5136533d49..0cdb156e165e 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
+@@ -681,7 +681,7 @@ usnic_ib_qp_grp_create(struct usnic_fwd_dev *ufdev, struct usnic_ib_vf *vf,
+ 	err = usnic_vnic_res_spec_satisfied(&min_transport_spec[transport],
+ 						res_spec);
+ 	if (err) {
+-		usnic_err("Spec does not meet miniumum req for transport %d\n",
++		usnic_err("Spec does not meet minimum req for transport %d\n",
+ 				transport);
+ 		log_spec(res_spec);
+ 		return ERR_PTR(err);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.19.1
