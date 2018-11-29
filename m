@@ -1,33 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 26 Nov 2018 16:28:32 +0000
-Subject: [PATCH] hwmon: (ltc2978): Fix spelling mistake "comppatible" -> "compatible"
-Message-Id: <20181126162832.28060-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 29 Nov 2018 05:52:13 +0000
+Subject: [PATCH -next] drm/tinydrm: Use kmemdup rather than duplicating its implementation in repaper_spi_tra
+Message-Id: <1543471233-159568-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: noralf@tronnes.org, airlied@linux.ie
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+use kmemdup rather than duplicating its implementation
 
-There is a spelling mistake in the module description text, fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/hwmon/pmbus/ltc2978.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tinydrm/repaper.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/pmbus/ltc2978.c b/drivers/hwmon/pmbus/ltc2978.c
-index 07afb92bb36b..29c0b7219aaa 100644
---- a/drivers/hwmon/pmbus/ltc2978.c
-+++ b/drivers/hwmon/pmbus/ltc2978.c
-@@ -795,5 +795,5 @@ static struct i2c_driver ltc2978_driver = {
- module_i2c_driver(ltc2978_driver);
+diff --git a/drivers/gpu/drm/tinydrm/repaper.c b/drivers/gpu/drm/tinydrm/repaper.c
+index 07f45a0..54d6fe0 100644
+--- a/drivers/gpu/drm/tinydrm/repaper.c
++++ b/drivers/gpu/drm/tinydrm/repaper.c
+@@ -108,12 +108,11 @@ static int repaper_spi_transfer(struct spi_device *spi, u8 header,
  
- MODULE_AUTHOR("Guenter Roeck");
--MODULE_DESCRIPTION("PMBus driver for LTC2978 and comppatible chips");
-+MODULE_DESCRIPTION("PMBus driver for LTC2978 and compatible chips");
- MODULE_LICENSE("GPL");
--- 
-2.19.1
+ 	/* Stack allocated tx? */
+ 	if (tx && len <= 32) {
+-		txbuf = kmalloc(len, GFP_KERNEL);
++		txbuf = kmemdup(tx, len, GFP_KERNEL);
+ 		if (!txbuf) {
+ 			ret = -ENOMEM;
+ 			goto out_free;
+ 		}
+-		memcpy(txbuf, tx, len);
+ 	}
+ 
+ 	if (rx) {
