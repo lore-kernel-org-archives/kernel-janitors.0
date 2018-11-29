@@ -1,35 +1,46 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 06 Nov 2018 16:52:54 +0000
-Subject: Re: [PATCH] libertas: remove set but not used variable 'int_type'
-Message-Id: <20181106165254.B70E261340@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Nov 2018 23:10:16 +0000
+Subject: [PATCH] fpga: mgr: altera-ps-spi: make array dummy static, shrinks object size
+Message-Id: <20181129231016.4580-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539569795-176889-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539569795-176889-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Lubomir Rintel <lkundrak@v3.sk>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/marvell/libertas/if_spi.c: In function 'if_spi_h2c':
-> drivers/net/wireless/marvell/libertas/if_spi.c:799:6: warning:
->  variable 'int_type' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in
-> commit d2b21f191753 ("libertas: if_spi, driver for libertas GSPI devices")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Tested-by: Lubomir Rintel <lkundrak@v3.sk>
+Don't populate the const array dummy on the stack but instead
+make it static. Makes the object code smaller by 26 bytes:
 
-Patch applied to wireless-drivers-next.git, thanks.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   7371	   2032	      0	   9403	   24bb	drivers/fpga/altera-ps-spi.o
 
-937a13091cbd libertas: remove set but not used variable 'int_type'
+After:
+   text	   data	    bss	    dec	    hex	filename
+   7281	   2096	      0	   9377	   24a1	drivers/fpga/altera-ps-spi.o
 
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/fpga/altera-ps-spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
+index 8c18beec6b57..678d0115f840 100644
+--- a/drivers/fpga/altera-ps-spi.c
++++ b/drivers/fpga/altera-ps-spi.c
+@@ -205,7 +205,7 @@ static int altera_ps_write_complete(struct fpga_manager *mgr,
+ 				    struct fpga_image_info *info)
+ {
+ 	struct altera_ps_conf *conf = mgr->priv;
+-	const char dummy[] = {0};
++	static const char dummy[] = {0};
+ 	int ret;
+ 
+ 	if (gpiod_get_value_cansleep(conf->status)) {
 -- 
-https://patchwork.kernel.org/patch/10641005/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.19.1
