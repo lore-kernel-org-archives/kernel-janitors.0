@@ -1,57 +1,59 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 08 Nov 2018 09:10:44 +0000
-Subject: Re: [PATCH][i3c-next] i3c: fix incorrect update to max_read_ds
-Message-Id: <38ffc3d2-4390-29df-203a-58fbe04fdc81@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Nov 2018 18:08:44 +0000
+Subject: [PATCH][next] drivers: base: remove need for a temporary string for the node name
+Message-Id: <20181129180844.31138-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181107204208.7411-1-colin.king@canonical.com>
- <20181108100924.2381e9f0@bbrezillon>
-In-Reply-To: <20181108100924.2381e9f0@bbrezillon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/11/2018 09:09, Boris Brezillon wrote:
-> On Wed,  7 Nov 2018 20:42:08 +0000
-> Hi Colin,
-> 
-> Colin King <colin.king@canonical.com> wrote:
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently max_read_ds is being updated twice, which is incorrect.
->> The second assignment should be to max_write_ds instead. Fix this.
->>
->> Detected by CoverityScan, CID#1475379 ("Unused value")
->>
->> Fixes: 50cacdabeae1 ("i3c: Add core I3C infrastructure")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/i3c/master.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
->> index 68d6553dbd75..0ea7bb045fad 100644
->> --- a/drivers/i3c/master.c
->> +++ b/drivers/i3c/master.c
->> @@ -1093,7 +1093,7 @@ static int i3c_master_getmxds_locked(struct i3c_master_controller *master,
->>  	}
->>  
->>  	info->max_read_ds = getmaxds->maxrd;
->> -	info->max_read_ds = getmaxds->maxwr;
->> +	info->max_write_ds = getmaxds->maxwr;
-> 
-> Thanks for the fix.
-> 
-> Since the I3C driver is not merged yet, would you mind if I squash your
-> changes in the commit introducing the bug?
+From: Colin Ian King <colin.king@canonical.com>
 
-Sure, that's fine with me.
+Currently the node name is being formatting into a temporary string
+node_name, however, kobject_init_and_add allows one to format up
+a node name, so use that instead. This removes the need for the
+node_name string and also cleans up the following warning:
 
-Colin
-> 
-> Regards,
-> 
-> Boris
-> 
+Fixes clang warning:
+warning: format string is not a string literal (potentially
+insecure) [-Wformat-security]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/base/swnode.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+index 9c63ec8d8ab4..306bb93287af 100644
+--- a/drivers/base/swnode.c
++++ b/drivers/base/swnode.c
+@@ -553,7 +553,6 @@ fwnode_create_software_node(const struct property_entry *properties,
+ {
+ 	struct software_node *p = NULL;
+ 	struct software_node *swnode;
+-	char node_name[20];
+ 	int ret;
+ 
+ 	if (parent) {
+@@ -576,8 +575,6 @@ fwnode_create_software_node(const struct property_entry *properties,
+ 	}
+ 
+ 	swnode->id = ret;
+-	sprintf(node_name, "node%d", swnode->id);
+-
+ 	swnode->kobj.kset = swnode_kset;
+ 	swnode->fwnode.ops = &software_node_ops;
+ 
+@@ -590,7 +587,7 @@ fwnode_create_software_node(const struct property_entry *properties,
+ 		list_add_tail(&swnode->entry, &p->children);
+ 
+ 	ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
+-				   p ? &p->kobj : NULL, node_name);
++				   p ? &p->kobj : NULL, "node%d", swnode->id);
+ 	if (ret) {
+ 		kobject_put(&swnode->kobj);
+ 		return ERR_PTR(ret);
+-- 
+2.19.1
