@@ -1,29 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 13 Nov 2018 00:26:44 +0000
-Subject: Re: [PATCH][net-next] net: phy: check if advertising is zero using linkmode_empty
-Message-Id: <20181112.162644.2177457459131295892.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 29 Nov 2018 01:36:42 +0000
+Subject: [PATCH -next] RDMA/uverbs: Use PTR_ERR_OR_ZERO in ib_uverbs_create_cq()
+Message-Id: <1543455402-79511-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181112234556.5291-1-colin.king@canonical.com>
-In-Reply-To: <20181112234556.5291-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 12 Nov 2018 23:45:56 +0000
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A recent change modified variable advertising from a u32 to a link mode
-> array and left the u32 zero comparison, so essential we now have an array
-> being compared to null which is not the intention. Fix this by using the
-> call to linkmode_empty to check if advertising is all zero.
-> 
-> Detected by CoverityScan, CID#1475424 ("Array compared against 0")
-> 
-> Fixes: 3c1bcc8614db ("net: ethernet: Convert phydev advertize and supported from u32 to link mode")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/core/uverbs_cmd.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Applied.
+diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
+index 8ee9e94..0d31cee 100644
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -1051,10 +1051,7 @@ static int ib_uverbs_create_cq(struct uverbs_attr_bundle *attrs,
+ 				sizeof(cmd.comp_channel),
+ 			ib_uverbs_create_cq_cb, NULL);
+ 
+-	if (IS_ERR(obj))
+-		return PTR_ERR(obj);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(obj);
+ }
+ 
+ static int ib_uverbs_ex_create_cq_cb(struct uverbs_attr_bundle *attrs,
