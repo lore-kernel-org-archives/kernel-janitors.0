@@ -1,34 +1,46 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 12 Nov 2018 02:23:47 +0000
-Subject: [PATCH -next] block: drop pointless static qualifier in bd_mount()
-Message-Id: <1541989427-104478-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Nov 2018 23:03:42 +0000
+Subject: [PATCH] power: supply: cpcap-battery: make array cpcap_battery_irqs static, shrinks object size
+Message-Id: <20181129230342.4300-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Yue Haibing <yuehaibing@huawei.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-There is no need to have the 'struct vfsmount *bd_mnt' variable static
-since new value always be assigned before use it.
+Don't populate the array cpcap_battery_irqs  on the stack but instead
+make it static. Makes the object code smaller by 99 bytes:
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  13673	   2448	      0	  16121	   3ef9	cpcap-battery.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  13510	   2512	      0	  16022	   3e96	cpcap-battery.o
+
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/block_dev.c | 2 +-
+ drivers/power/supply/cpcap-battery.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 38b8ce0..4064622 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -810,7 +810,7 @@ static struct dentry *bd_mount(struct file_system_type *fs_type,
- void __init bdev_cache_init(void)
+diff --git a/drivers/power/supply/cpcap-battery.c b/drivers/power/supply/cpcap-battery.c
+index 98ba07869c3b..204e22e3e9b4 100644
+--- a/drivers/power/supply/cpcap-battery.c
++++ b/drivers/power/supply/cpcap-battery.c
+@@ -620,7 +620,7 @@ static int cpcap_battery_init_irq(struct platform_device *pdev,
+ static int cpcap_battery_init_interrupts(struct platform_device *pdev,
+ 					 struct cpcap_battery_ddata *ddata)
  {
- 	int err;
--	static struct vfsmount *bd_mnt;
-+	struct vfsmount *bd_mnt;
- 
- 	bdev_cachep = kmem_cache_create("bdev_cache", sizeof(struct bdev_inode),
- 			0, (SLAB_HWCACHE_ALIGN|SLAB_RECLAIM_ACCOUNT|
+-	const char * const cpcap_battery_irqs[] = {
++	static const char * const cpcap_battery_irqs[] = {
+ 		"eol", "lowbph", "lowbpl",
+ 		"chrgcurr1", "battdetb"
+ 	};
+-- 
+2.19.1
