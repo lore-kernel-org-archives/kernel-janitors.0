@@ -1,29 +1,43 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 21 Nov 2018 23:51:17 +0000
-Subject: Re: [PATCH -next] IB/srpt: Drop pointless static qualifier in srpt_make_tpg()
-Message-Id: <20181121235117.GC21840@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Nov 2018 10:50:38 +0000
+Subject: [PATCH][media-next] media: sun6i: fix spelling mistake "droped" -> "dropped"
+Message-Id: <20181129105038.17902-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1542279300-104731-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1542279300-104731-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Nov 15, 2018 at 10:55:00AM +0000, YueHaibing wrote:
-> From: Yue Haibing <yuehaibing@huawei.com>
-> 
-> There is no need to have the 'struct se_portal_group *tpg' variable
-> static since new value always be assigned before use it.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->  drivers/infiniband/ulp/srpt/ib_srpt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next
+There are spelling mistakes in dev_dbg messages, fix them.
 
-Thanks,
-Jason
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
+index 37c85b8f37a9..b04300c3811f 100644
+--- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
++++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
+@@ -261,7 +261,7 @@ void sun6i_video_frame_done(struct sun6i_video *video)
+ 	buf = list_first_entry(&video->dma_queue,
+ 			       struct sun6i_csi_buffer, list);
+ 	if (list_is_last(&buf->list, &video->dma_queue)) {
+-		dev_dbg(video->csi->dev, "Frame droped!\n");
++		dev_dbg(video->csi->dev, "Frame dropped!\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -274,7 +274,7 @@ void sun6i_video_frame_done(struct sun6i_video *video)
+ 	if (!next_buf->queued_to_csi) {
+ 		next_buf->queued_to_csi = true;
+ 		sun6i_csi_update_buf_addr(video->csi, next_buf->dma_addr);
+-		dev_dbg(video->csi->dev, "Frame droped!\n");
++		dev_dbg(video->csi->dev, "Frame dropped!\n");
+ 		goto unlock;
+ 	}
+ 
+-- 
+2.19.1
