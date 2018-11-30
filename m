@@ -1,24 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 17 Nov 2018 03:43:07 +0000
-Subject: Re: [PATCH] net/decnet: add missing indentation
-Message-Id: <20181116.194307.405189179555896506.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Nov 2018 12:58:34 +0000
+Subject: [PATCH] ptp: fix an IS_ERR() vs NULL check
+Message-Id: <20181130125834.u42dhxgof66rhya2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181113141817.6189-1-colin.king@canonical.com>
-In-Reply-To: <20181113141817.6189-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Nov 2018 14:18:17 +0000
+The pps_register_source() function doesn't return NULL, it returns
+error pointers.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a missing indentation before the declaration of port. Add
-> it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d94ba80ebbea ("ptp: Added a brand new class driver for ptp clocks.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/ptp/ptp_clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index 8a81eecc0ecd..48f3594a7458 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 		pps.mode = PTP_PPS_MODE;
+ 		pps.owner = info->owner;
+ 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
+-		if (!ptp->pps_source) {
+-			err = -EINVAL;
++		if (IS_ERR(ptp->pps_source)) {
++			err = PTR_ERR(ptp->pps_source);
+ 			pr_err("failed to register pps source\n");
+ 			goto no_pps;
+ 		}
+-- 
+2.11.0
