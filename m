@@ -1,48 +1,57 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 17 Dec 2018 11:07:04 +0000
-Subject: Re: [PATCH] staging: bcm2835-audio: double free in init error path
-Message-Id: <s5hbm5kh0o7.wl-tiwai@suse.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Dec 2018 08:39:45 +0000
+Subject: [PATCH -next] coresight: stm: remove set but not used variable 'res_size'
+Message-Id: <1543653585-108277-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181217070854.GG12159@kadam>
-In-Reply-To: <20181217070854.GG12159@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 08:08:54 +0100,
-Dan Carpenter wrote:
-> 
-> We free instance here and in the caller.  It should be only the caller
-> which handles it.
-> 
-> Fixes: d7ca3a71545b ("staging: bcm2835-audio: Operate non-atomic PCM ops")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+drivers/hwtracing/coresight/coresight-stm.c: In function 'stm_probe':
+drivers/hwtracing/coresight/coresight-stm.c:796:9: warning:
+ variable 'res_size' set but not used [-Wunused-but-set-variable]
 
+It never used since introduction in commit
+237483aa5cf4 ("coresight: stm: adding driver for CoreSight STM component")
 
-thanks,
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/hwtracing/coresight/coresight-stm.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Takashi
-
-
-> ---
->  drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-> index 0db412fd7c55..c0debdbce26c 100644
-> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-> @@ -138,7 +138,6 @@ vc_vchi_audio_init(VCHI_INSTANCE_T vchi_instance,
->  		dev_err(instance->dev,
->  			"failed to open VCHI service connection (status=%d)\n",
->  			status);
-> -		kfree(instance);
->  		return -EPERM;
->  	}
->  
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index ef339ff..f07825d 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -793,7 +793,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+ 	struct stm_drvdata *drvdata;
+ 	struct resource *res = &adev->res;
+ 	struct resource ch_res;
+-	size_t res_size, bitmap_size;
++	size_t bitmap_size;
+ 	struct coresight_desc desc = { 0 };
+ 	struct device_node *np = adev->dev.of_node;
+ 
+@@ -833,15 +833,11 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	drvdata->write_bytes = stm_fundamental_data_size(drvdata);
+ 
+-	if (boot_nr_channel) {
++	if (boot_nr_channel)
+ 		drvdata->numsp = boot_nr_channel;
+-		res_size = min((resource_size_t)(boot_nr_channel *
+-				  BYTES_PER_CHANNEL), resource_size(res));
+-	} else {
++	else
+ 		drvdata->numsp = stm_num_stimulus_port(drvdata);
+-		res_size = min((resource_size_t)(drvdata->numsp *
+-				 BYTES_PER_CHANNEL), resource_size(res));
+-	}
++
+ 	bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
+ 
+ 	guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
