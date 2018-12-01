@@ -1,29 +1,38 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 20 Dec 2018 17:07:05 +0000
-Subject: Re: [PATCH] ath10k: remove an unnecessary NULL check
-Message-Id: <20181220170705.28A1F60595@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Dec 2018 01:57:59 +0000
+Subject: [PATCH -next] mm/hmm: remove set but not used variable 'devmem'
+Message-Id: <1543629971-128377-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129142406.GV3073@unbuntlaptop>
-In-Reply-To: <20181129142406.GV3073@unbuntlaptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Rakesh Pillai <pillair@codeaurora.org>, ath10k@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
+To: jglisse@redhat.com, akpm@linux-foundation.org, sfr@canb.auug.org.au, dan.j.williams@intel.com
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> The "survey" pointer is the address of an array element.  We know that
-> it can't be NULL so this check can be removed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+mm/hmm.c: In function 'hmm_devmem_ref_kill':
+mm/hmm.c:995:21: warning:
+ variable 'devmem' set but not used [-Wunused-but-set-variable]
 
-Patch applied to ath-next branch of ath.git, thanks.
+It not used any more since commit 35d39f953d4e ("mm, hmm: replace
+hmm_devmem_pages_create() with devm_memremap_pages()")
 
-27120f2ac995 ath10k: remove an unnecessary NULL check
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ mm/hmm.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
--- 
-https://patchwork.kernel.org/patch/10704625/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 50fbaf8..361f370 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -992,9 +992,6 @@ static void hmm_devmem_ref_exit(void *data)
+ 
+ static void hmm_devmem_ref_kill(struct percpu_ref *ref)
+ {
+-	struct hmm_devmem *devmem;
+-
+-	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_kill(ref);
+ }
