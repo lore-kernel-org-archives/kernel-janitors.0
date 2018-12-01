@@ -1,30 +1,28 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 20 Dec 2018 17:05:43 +0000
-Subject: Re: [PATCH] ath10k: fix a NULL vs IS_ERR() check
-Message-Id: <20181220170543.1CE29607F1@smtp.codeaurora.org>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 01 Dec 2018 01:24:14 +0000
+Subject: Re: [PATCH net-next] net: qualcomm: rmnet: Remove set but not used variable 'cmd'
+Message-Id: <20181130.172414.113123648892933050.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181126081143.tvu55aimdc3safcq@kili.mountain>
-In-Reply-To: <20181126081143.tvu55aimdc3safcq@kili.mountain>
+References: <1543458992-103568-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1543458992-103568-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Govind Singh <govinds@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yuehaibing@huawei.com
+Cc: subashab@codeaurora.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 29 Nov 2018 02:36:32 +0000
 
-> The devm_memremap() function doesn't return NULLs, it returns error
-> pointers.
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c: In function 'rmnet_map_do_flow_control':
+> drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c:23:36: warning:
+>  variable 'cmd' set but not used [-Wunused-but-set-variable]
+>   struct rmnet_map_control_command *cmd;
+> 
+> 'cmd' not used anymore now, should also be removed.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-c28dcbce0592 ath10k: fix a NULL vs IS_ERR() check
-
--- 
-https://patchwork.kernel.org/patch/10697755/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Applied.
