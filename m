@@ -1,56 +1,33 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 18 Dec 2018 15:20:16 +0000
-Subject: Re: [PATCH -next] cifs: Fix to use kmem_cache_free() instead of kfree()
-Message-Id: <CAH2r5mtoo9G-mk4JB_mtPC6ZasEESAJ0R+V+P3fvhD7tAW+p6g@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Dec 2018 01:45:46 +0000
+Subject: [PATCH -next] mmc: jz4740: Use PTR_ERR_OR_ZERO in jz4740_mmc_request_gpios()
+Message-Id: <1543628746-101825-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545115022-164840-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1545115022-164840-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-On Tue, Dec 18, 2018 at 12:29 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> memory allocated by kmem_cache_alloc() in alloc_cache_entry()
-> should be freed using kmem_cache_free(), not kfree().
->
-> Fixes: 34a44fb160f9 ("cifs: Add DFS cache routines")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  fs/cifs/dfs_cache.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
-> index d20cc94..f745677 100644
-> --- a/fs/cifs/dfs_cache.c
-> +++ b/fs/cifs/dfs_cache.c
-> @@ -414,7 +414,7 @@ static int copy_ref_data(const struct dfs_info3_param *refs, int numrefs,
->
->         ce->ce_path = kstrdup_const(path, GFP_KERNEL);
->         if (!ce->ce_path) {
-> -               kfree(ce);
-> +               kmem_cache_free(dfs_cache_slab, ce);
->                 return ERR_PTR(-ENOMEM);
->         }
->         INIT_HLIST_NODE(&ce->ce_hlist);
-> @@ -423,7 +423,7 @@ static int copy_ref_data(const struct dfs_info3_param *refs, int numrefs,
->         rc = copy_ref_data(refs, numrefs, ce, NULL);
->         if (rc) {
->                 kfree(ce->ce_path);
-> -               kfree(ce);
-> +               kmem_cache_free(dfs_cache_slab, ce);
->                 ce = ERR_PTR(rc);
->         }
->         return ce;
->
->
->
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/mmc/host/jz4740_mmc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-
--- 
-Thanks,
-
-Steve
+diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
+index 6f7a99e..8eca423 100644
+--- a/drivers/mmc/host/jz4740_mmc.c
++++ b/drivers/mmc/host/jz4740_mmc.c
+@@ -975,10 +975,7 @@ static int jz4740_mmc_request_gpios(struct jz4740_mmc_host *host,
+ 
+ 	host->power = devm_gpiod_get_optional(&pdev->dev, "power",
+ 					      GPIOD_OUT_HIGH);
+-	if (IS_ERR(host->power))
+-		return PTR_ERR(host->power);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(host->power);
+ }
+ 
+ static const struct of_device_id jz4740_mmc_of_match[] = {
