@@ -1,41 +1,40 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 06 Dec 2018 15:23:30 +0000
-Subject: Re: [PATCH][next] drivers: base: remove need for a temporary string for the node name
-Message-Id: <CAJZ5v0g5DEmxq7wyMTL4USctSy-2PWGMFm843vGS85n=SeJSfw@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Dec 2018 03:12:56 +0000
+Subject: [PATCH -next] cpuset: Remove set but not used variable 'cs'
+Message-Id: <1543633976-183380-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129180844.31138-1-colin.king@canonical.com> <20181206145748.GA8360@kroah.com>
-In-Reply-To: <20181206145748.GA8360@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Colin Ian King <colin.king@canonical.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Li Zefan <lizefan@huawei.com>, tj@kernel.org, mingo@kernel.org
+Cc: YueHaibing <yuehaibing@huawei.com>, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 3:57 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Nov 29, 2018 at 06:08:44PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently the node name is being formatting into a temporary string
-> > node_name, however, kobject_init_and_add allows one to format up
-> > a node name, so use that instead. This removes the need for the
-> > node_name string and also cleans up the following warning:
-> >
-> > Fixes clang warning:
-> > warning: format string is not a string literal (potentially
-> > insecure) [-Wformat-security]
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/base/swnode.c | 5 +----
->
-> I don't know where this file comes from.  It's not in my
-> driver-core-next branch, who is creating it?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-It is in my linux-next one, comes from a series of device properties
-patches by Heikki (CCed to you).
+kernel/cgroup/cpuset.c: In function 'cpuset_cancel_attach':
+kernel/cgroup/cpuset.c:2167:17: warning:
+ variable 'cs' set but not used [-Wunused-but-set-variable]
 
-This is the patch adding it: https://patchwork.kernel.org/patch/10676063/
+It never used since introduction in commit 1f7dd3e5a6e4 ("cgroup: fix handling
+of multi-destination migration from subtree_control enabling")
 
-So Colin, please resend and CC linux-acpi@vger.kernel.org.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ kernel/cgroup/cpuset.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index e9f6906..48cfe55 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2164,10 +2164,8 @@ static int cpuset_can_attach(struct cgroup_taskset *tset)
+ static void cpuset_cancel_attach(struct cgroup_taskset *tset)
+ {
+ 	struct cgroup_subsys_state *css;
+-	struct cpuset *cs;
+ 
+ 	cgroup_taskset_first(tset, &css);
+-	cs = css_cs(css);
+ 
+ 	mutex_lock(&cpuset_mutex);
+ 	css_cs(css)->attach_in_progress--;
