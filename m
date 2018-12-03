@@ -1,37 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Dec 2018 09:55:45 +0000
-Subject: [bug report] phy: ti: introduce phy-gmii-sel driver
-Message-Id: <20181214094117.GA12567@kadam>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Mon, 03 Dec 2018 19:32:25 +0000
+Subject: Re: [PATCH -next] Input: olpc_apsp - remove set but not used variable 'np'
+Message-Id: <20181203193225.GF257010@dtor-ws>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Grygorii Strashko,
+On Mon, Nov 19, 2018 at 02:10:41AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/input/serio/olpc_apsp.c: In function 'olpc_apsp_probe':
+> drivers/input/serio/olpc_apsp.c:192:22: warning:
+>  variable 'np' set but not used [-Wunused-but-set-variable]
+> 
+> It never used since intrdduction in commit
+> b56ece9a3ac3 ("Input: add OLPC AP-SP driver")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-This is a semi-automatic email about new static checker warnings.
+Applied, thank you.
 
-The patch 92b58b34741f: "phy: ti: introduce phy-gmii-sel driver" from 
-Nov 25, 2018, leads to the following Smatch complaint:
+> ---
+>  drivers/input/serio/olpc_apsp.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
+> index 91d6fb8..b360847 100644
+> --- a/drivers/input/serio/olpc_apsp.c
+> +++ b/drivers/input/serio/olpc_apsp.c
+> @@ -189,14 +189,12 @@ static int olpc_apsp_probe(struct platform_device *pdev)
+>  	struct serio *kb_serio, *pad_serio;
+>  	struct olpc_apsp *priv;
+>  	struct resource *res;
+> -	struct device_node *np;
+>  	int error;
+>  
+>  	priv = devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp), GFP_KERNEL);
+>  	if (!priv)
+>  		return -ENOMEM;
+>  
+> -	np = pdev->dev.of_node;
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	priv->base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(priv->base)) {
+> 
+> 
+> 
 
-    drivers/phy/ti/phy-gmii-sel.c:210 phy_gmii_sel_of_xlate()
-    warn: variable dereferenced before check 'priv' (see line 207)
-
-drivers/phy/ti/phy-gmii-sel.c
-   206			return ERR_PTR(-EINVAL);
-   207		if (priv->soc_data->features & BIT(PHY_GMII_SEL_RMII_IO_CLK_EN) &&
-                    ^^^^^^^^^^^^^^
-dereference
-
-   208		    args->args_count < 2)
-   209			return ERR_PTR(-EINVAL);
-   210		if (!priv || !priv->if_phys)
-                    ^^^^^
-Too late.  Can priv even be NULL?  Should this condition be removed?
-
-   211			return ERR_PTR(-ENODEV);
-   212		if (phy_id > priv->soc_data->num_ports)
-
-regards,
-dan carpenter
+-- 
+Dmitry
