@@ -1,74 +1,58 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 18 Dec 2018 12:51:32 +0000
-Subject: Re: [PATCH] bus: sunxi-rsb: Fix a small memory leak
-Message-Id: <CAGb2v64NgqCn5Mq3W0SfO0ecFkzBvnn9nJxQtyuFSQc8q5kNQQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Dec 2018 14:49:33 +0000
+Subject: [PATCH] dmaengine: dmatest: fix a small memory leak in dmatest_func()
+Message-Id: <20181203144933.uwkmm2sjs434t322@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181218082800.GC440@kadam>
-In-Reply-To: <20181218082800.GC440@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Vinod Koul <vkoul@kernel.org>, Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+We recently moved the test size tests around but it means we need to
+adjust the error handling as well or we leak the "pq_coefs" memory.  I
+updated the label name to reflect that we're freeing coefs.
 
-On Tue, Dec 18, 2018 at 4:28 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The problem is in __devm_regmap_init_sunxi_rsb().  If the call to
-> __devm_regmap_init() fails, then we leak the "ctx" allocation.
+Fixes: 787d3083caf8 ("dmaengine: dmatest: move size checks earlier in function")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/dma/dmatest.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-This seems to be the same pattern with regmap implementations that
-allocate context data, the other two being:
-
-    - drivers/base/regmap/regmap-mmio.c
-    - drivers/bluetooth/btintel.c
-
-(CC-ing Mark) Maybe it's worth fixing in regmap itself?
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/bus/sunxi-rsb.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
->
-> diff --git a/drivers/bus/sunxi-rsb.c b/drivers/bus/sunxi-rsb.c
-> index 1b76d9585902..5ec25c8164d1 100644
-> --- a/drivers/bus/sunxi-rsb.c
-> +++ b/drivers/bus/sunxi-rsb.c
-> @@ -417,17 +417,9 @@ static int regmap_sunxi_rsb_reg_write(void *context, unsigned int reg,
->         return sunxi_rsb_write(rdev->rsb, rdev->rtaddr, reg, &val, ctx->size);
->  }
->
-> -static void regmap_sunxi_rsb_free_ctx(void *context)
-> -{
-> -       struct sunxi_rsb_ctx *ctx = context;
-> -
-> -       kfree(ctx);
-> -}
-> -
->  static struct regmap_bus regmap_sunxi_rsb = {
->         .reg_write = regmap_sunxi_rsb_reg_write,
->         .reg_read = regmap_sunxi_rsb_reg_read,
-> -       .free_context = regmap_sunxi_rsb_free_ctx,
->         .reg_format_endian_default = REGMAP_ENDIAN_NATIVE,
->         .val_format_endian_default = REGMAP_ENDIAN_NATIVE,
->  };
-> @@ -446,7 +438,7 @@ static struct sunxi_rsb_ctx *regmap_sunxi_rsb_init_ctx(struct sunxi_rsb_device *
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +       ctx = devm_kzalloc(&rdev->dev, sizeof(*ctx), GFP_KERNEL);
-
-This decouples the lifetime of ctx from the regmap itself. IMO it
-would be better to check the return value of __devm_regmap_init()
-and act accordingly instead.
-
-ChenYu
-
->         if (!ctx)
->                 return ERR_PTR(-ENOMEM);
->
-> --
-> 2.17.1
->
+diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+index e71aa1e3451c..28deaa084257 100644
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -511,18 +511,18 @@ static int dmatest_func(void *data)
+ 	if ((src_cnt + dst_cnt) >= 255) {
+ 		pr_err("too many buffers (%d of 255 supported)\n",
+ 		       src_cnt + dst_cnt);
+-		goto err_thread_type;
++		goto err_free_coefs;
+ 	}
+ 
+ 	if (1 << align > params->buf_size) {
+ 		pr_err("%u-byte buffer too small for %d-byte alignment\n",
+ 		       params->buf_size, 1 << align);
+-		goto err_thread_type;
++		goto err_free_coefs;
+ 	}
+ 
+ 	thread->srcs = kcalloc(src_cnt + 1, sizeof(u8 *), GFP_KERNEL);
+ 	if (!thread->srcs)
+-		goto err_srcs;
++		goto err_free_coefs;
+ 
+ 	thread->usrcs = kcalloc(src_cnt + 1, sizeof(u8 *), GFP_KERNEL);
+ 	if (!thread->usrcs)
+@@ -800,7 +800,7 @@ static int dmatest_func(void *data)
+ 	kfree(thread->usrcs);
+ err_usrcs:
+ 	kfree(thread->srcs);
+-err_srcs:
++err_free_coefs:
+ 	kfree(pq_coefs);
+ err_thread_type:
+ 	pr_info("%s: summary %u tests, %u failures %llu iops %llu KB/s (%d)\n",
+-- 
+2.11.0
