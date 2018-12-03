@@ -1,33 +1,38 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sun, 23 Dec 2018 04:01:41 +0000
-Subject: Re: [PATCH -next] crypto: chelsio - remove set but not used variable 'kctx_len'
-Message-Id: <20181223040141.yylwdffy3i3kv4kq@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Dec 2018 14:51:43 +0000
+Subject: [PATCH] clk: mmp: Off by one in mmp_clk_add()
+Message-Id: <20181203145143.qogc62x7ftx4zv4l@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1544515919-193254-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1544515919-193254-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Harsh Jain <harsh@chelsio.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Chao Xie <chao.xie@marvell.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 08:11:59AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/crypto/chelsio/chcr_ipsec.c: In function 'chcr_ipsec_xmit':
-> drivers/crypto/chelsio/chcr_ipsec.c:674:33: warning:
->  variable 'kctx_len' set but not used [-Wunused-but-set-variable]
->   unsigned int flits = 0, ndesc, kctx_len;
-> 
-> It not used since commit 8362ea16f69f ("crypto: chcr - ESN for Inline IPSec Tx")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/crypto/chelsio/chcr_ipsec.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+The > comparison should be >= or we write one element beyond the end of
+the unit->clk_table[] array.
 
-Patch applied.  Thanks.
+(The unit->clk_table[] array is allocated in the mmp_clk_init() function
+and it has unit->nr_clks elements).
+
+Fixes: 4661fda10f8b ("clk: mmp: add basic support functions for DT support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/clk/mmp/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mmp/clk.c b/drivers/clk/mmp/clk.c
+index ad8d483a35cd..ca7d37e2c7be 100644
+--- a/drivers/clk/mmp/clk.c
++++ b/drivers/clk/mmp/clk.c
+@@ -183,7 +183,7 @@ void mmp_clk_add(struct mmp_clk_unit *unit, unsigned int id,
+ 		pr_err("CLK %d has invalid pointer %p\n", id, clk);
+ 		return;
+ 	}
+-	if (id > unit->nr_clks) {
++	if (id >= unit->nr_clks) {
+ 		pr_err("CLK %d is invalid\n", id);
+ 		return;
+ 	}
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.11.0
