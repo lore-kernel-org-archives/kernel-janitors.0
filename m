@@ -1,28 +1,32 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Sat, 22 Dec 2018 23:09:02 +0000
-Subject: Re: [PATCH] IB/uverbs: Signedness bug in UVERBS_HANDLER()
-Message-Id: <20181222230902.GA20963@ziepe.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Dec 2018 10:04:58 +0000
+Subject: Re: [PATCH] ptp: fix an IS_ERR() vs NULL check
+Message-Id: <20181203100458.GZ3073@unbuntlaptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181222074259.GA6338@kadam>
-In-Reply-To: <20181222074259.GA6338@kadam>
+References: <20181130125834.u42dhxgof66rhya2@kili.mountain>
+ <20181130163252.e6z33t23j3qud57z@localhost>
+In-Reply-To: <20181130163252.e6z33t23j3qud57z@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 10:42:59AM +0300, Dan Carpenter wrote:
-> The "num_sge" variable needs to be signed for the error handling to
-> work.  The uverbs_attr_ptr_get_array_size() returns int so this change
-> is safe.
+On Fri, Nov 30, 2018 at 08:32:52AM -0800, Richard Cochran wrote:
+> On Fri, Nov 30, 2018 at 03:58:34PM +0300, Dan Carpenter wrote:
+> > The pps_register_source() function doesn't return NULL, it returns
+> > error pointers.
 > 
-> Fixes: ad8a4496757f ("IB/uverbs: Add support to advise_mr")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-> ---
->  drivers/infiniband/core/uverbs_std_types_mr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> It keeps a local variable for errno, but then it returns NULL.
+> But this is about to change with this recent patch:
+> 
+>    26.Nov'18 YueHaibing [PATCH -next] pps: using ERR_PTR instead of NULL while pps_register_source fails
+> 
+> It hasn't been merged yet AFAICT, but gregkh said he take it.
 
-Applied to for-next
+Oh, yeah.  That patch has actually been applied, but we didn't update
+the caller.  I should have made the Fixes tag point to that YueHaibing's
+patch.
 
-Thanks,
-Jason
+regards,
+dan carpenter
