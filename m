@@ -1,36 +1,47 @@
-From: Mathieu Malaterre <malat@debian.org>
-Date: Mon, 03 Dec 2018 21:22:13 +0000
-Subject: [PATCH] mips: annotate implicit fall throughs
-Message-Id: <20181203212214.8862-1-malat@debian.org>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Date: Mon, 03 Dec 2018 21:27:26 +0000
+Subject: Re: [PATCH] mips: annotate implicit fall throughs
+Message-Id: <20181203222726.23e747ae@bbrezillon>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181203212214.8862-1-malat@debian.org>
+In-Reply-To: <20181203212214.8862-1-malat@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Burton <paul.burton@mips.com>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Mathieu Malaterre <malat@debian.org>, Harvey Hunt <harveyhuntnexus@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Paul Burton <paul.burton@mips.com>, trivial@kernel.org, kernel-janitors@vger.kernel.org, Harvey Hunt <harveyhuntnexus@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-There is a plan to build the kernel with -Wimplicit-fallthrough and
-these places in the code produced warnings. Fix them up.
+Hi Mathieu,
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- drivers/mtd/nand/raw/jz4780_bch.c | 2 ++
- 1 file changed, 2 insertions(+)
+The subject prefix should be "mtd: rawnand: jz4780:" not "mips:"
 
-diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4780_bch.c
-index 731c6051d91e..7201827809e9 100644
---- a/drivers/mtd/nand/raw/jz4780_bch.c
-+++ b/drivers/mtd/nand/raw/jz4780_bch.c
-@@ -136,8 +136,10 @@ static void jz4780_bch_read_parity(struct jz4780_bch *bch, void *buf,
- 	switch (size8) {
- 	case 3:
- 		dest8[2] = (val >> 16) & 0xff;
-+		/* fall through */
- 	case 2:
- 		dest8[1] = (val >> 8) & 0xff;
-+		/* fall through */
- 	case 1:
- 		dest8[0] = val & 0xff;
- 		break;
--- 
-2.19.2
+Regards,
+
+Boris
+
+On Mon,  3 Dec 2018 22:22:13 +0100
+Mathieu Malaterre <malat@debian.org> wrote:
+
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> these places in the code produced warnings. Fix them up.
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  drivers/mtd/nand/raw/jz4780_bch.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4780_bch.c
+> index 731c6051d91e..7201827809e9 100644
+> --- a/drivers/mtd/nand/raw/jz4780_bch.c
+> +++ b/drivers/mtd/nand/raw/jz4780_bch.c
+> @@ -136,8 +136,10 @@ static void jz4780_bch_read_parity(struct jz4780_bch *bch, void *buf,
+>  	switch (size8) {
+>  	case 3:
+>  		dest8[2] = (val >> 16) & 0xff;
+> +		/* fall through */
+>  	case 2:
+>  		dest8[1] = (val >> 8) & 0xff;
+> +		/* fall through */
+>  	case 1:
+>  		dest8[0] = val & 0xff;
+>  		break;
