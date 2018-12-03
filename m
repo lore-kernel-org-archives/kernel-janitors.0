@@ -1,48 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Dec 2018 08:57:12 +0000
-Subject: [PATCH 17/20] dmaengine: pl330: drop useless LIST_HEAD
-Message-Id: <1545555435-24576-18-git-send-email-Julia.Lawall@lip6.fr>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Date: Mon, 03 Dec 2018 07:52:13 +0000
+Subject: Re: mtd: nftl: clean up indentation, remove extraneous tabs
+Message-Id: <20181203075213.28993-1-boris.brezillon@bootlin.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20181118163656.30698-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop LIST_HEAD where the variable it declares is never used.
+On Sun, 2018-11-18 at 16:36:56 UTC, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The hunk of code is indented too much by one level, fix this by
+> removing the extraneous tabs. Also terminate block comment using
+> the recommended coding style to clean up checkpatch warning.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The variable has not been used since the function was introduced
-in 740aa95703c5 ("dmaengine: pl330: Split device_control").
+Applied to http://git.infradead.org/linux-mtd.git mtd/next, thanks.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier x;
-@@
-- LIST_HEAD(x);
-  ... when != x
-// </smpl>
-
-Fixes: 740aa95703c5 ("dmaengine: pl330: Split device_control")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Successfully 0-day tested on 151 configurations.
-
- drivers/dma/pl330.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index cff1b143fff5..eec79fdf27a5 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -2267,7 +2267,6 @@ static int pl330_terminate_all(struct dma_chan *chan)
- 	struct dma_pl330_desc *desc;
- 	unsigned long flags;
- 	struct pl330_dmac *pl330 = pch->dmac;
--	LIST_HEAD(list);
- 	bool power_down = false;
- 
- 	pm_runtime_get_sync(pl330->ddma.dev);
+Boris
