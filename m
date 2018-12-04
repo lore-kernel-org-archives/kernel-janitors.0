@@ -1,63 +1,32 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Mon, 24 Dec 2018 10:53:18 +0000
-Subject: Re: [PATCH][next] drm: fix null pointer dereference on null state pointer
-Message-Id: <20181224105317.GC30772@dvetter-linux.ger.corp.intel.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 04 Dec 2018 06:32:15 +0000
+Subject: [PATCH -next] drm/fb-helper: Fix typo in parameter description
+Message-Id: <1543905135-35293-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181222130046.14083-1-colin.king@canonical.com>
-In-Reply-To: <20181222130046.14083-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Rob Clark <robdclark@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 01:00:46PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where state cannot be allocated, the current exit path via
-> label 'out' will dereference the null state pointer when calling
-> drm_atomic_state_put. Fix this by adding a new error exit label and
-> jumping to this to avoid the drm_atomic_state_put.
-> 
-> Detected by CoverityScan, CID#1476034 ("Dereference after null check")
-> 
-> Fixes: b9fc5e01d1ce ("drm: Add helper to implement legacy dirtyfb")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fix typo in parameter description.
 
-Looks correct to me, merged into drm-misc-next-fixes for 4.21.
+Fixes: 4be9bd10e22d ("drm/fb_helper: Allow leaking fbdev smem_start")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/drm_fb_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, Daniel
-
-> ---
->  drivers/gpu/drm/drm_damage_helper.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_damage_helper.c b/drivers/gpu/drm/drm_damage_helper.c
-> index d2a1c7372f36..31032407254d 100644
-> --- a/drivers/gpu/drm/drm_damage_helper.c
-> +++ b/drivers/gpu/drm/drm_damage_helper.c
-> @@ -178,7 +178,7 @@ int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
->  	state = drm_atomic_state_alloc(fb->dev);
->  	if (!state) {
->  		ret = -ENOMEM;
-> -		goto out;
-> +		goto out_drop_locks;
->  	}
->  	state->acquire_ctx = &ctx;
->  
-> @@ -238,6 +238,7 @@ int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
->  	kfree(rects);
->  	drm_atomic_state_put(state);
->  
-> +out_drop_locks:
->  	drm_modeset_drop_locks(&ctx);
->  	drm_modeset_acquire_fini(&ctx);
->  
-> -- 
-> 2.19.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helpe=
+r.c
+index 9a69ad7..f90d596 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -71,7 +71,7 @@
+ #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
+ static bool drm_leak_fbdev_smem =3D false;
+ module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
+-MODULE_PARM_DESC(fbdev_emulation,
++MODULE_PARM_DESC(drm_leak_fbdev_smem,
+ 		 "Allow unsafe leaking fbdev physical smem address [default=FAlse]");
+ #endif
