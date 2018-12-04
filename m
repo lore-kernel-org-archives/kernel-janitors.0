@@ -1,41 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 18 Dec 2018 11:35:52 +0000
-Subject: [PATCH][next] staging: most: sound: replace snprintf with strscpy
-Message-Id: <20181218113552.26916-1-colin.king@canonical.com>
+From: zhoucm1 <zhoucm1@amd.com>
+Date: Tue, 04 Dec 2018 06:39:52 +0000
+Subject: Re: [PATCH -next] drm/amdgpu: Fix return value check in amdgpu_allocate_static_csa()
+Message-Id: <fc2e78a7-d739-6e53-864b-75080e124585@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1543905576-38015-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1543905576-38015-1-git-send-email-weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, alexander.deucher-5C7GfCeVMHo@public.gmane.org, christian.koenig-5C7GfCeVMHo@public.gmane.org, David1.Zhou-5C7GfCeVMHo@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, Rex.Zhu-5C7GfCeVMHo@public.gmane.org, Monk.Liu-5C7GfCeVMHo@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Using snprintf without a format specifier is potentially risky if
-the string device_name contains format specifiers. Replace this with
-the safer and more efficient strscpy.
 
-Cleans up clang warning:
-drivers/staging/most/sound/sound.c:673:41: warning: format string is not
-a string literal (potentially insecure) [-Wformat-security]
+On 2018年12月04日 14:39, Wei Yongjun wrote:
+> Fix the return value check which testing the wrong variable
+> in amdgpu_allocate_static_csa().
+>
+> Fixes: 7946340fa389 ("drm/amdgpu: Move csa related code to separate file")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
+> index 0c590dd..a5fbc6f 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
+> @@ -43,7 +43,7 @@ int amdgpu_allocate_static_csa(struct amdgpu_device *adev, struct amdgpu_bo **bo
+>   	r = amdgpu_bo_create_kernel(adev, size, PAGE_SIZE,
+>   				domain, bo,
+>   				NULL, &ptr);
+> -	if (!bo)
+> +	if (!r)
+>   		return -ENOMEM;
+I guess original is correct as well, if you want to change it, you can 
+make like below, not your 'if (!r)':
+                 if (r)
+                         return r;
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/most/sound/sound.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/most/sound/sound.c b/drivers/staging/most/sound/sound.c
-index 29a4c72e6357..ccabf5922a73 100644
---- a/drivers/staging/most/sound/sound.c
-+++ b/drivers/staging/most/sound/sound.c
-@@ -670,7 +670,7 @@ static int audio_probe_channel(struct most_interface *iface, int channel_id,
- 		goto err_free_adpt;
- 
- 	pcm->private_data = channel;
--	snprintf(pcm->name, sizeof(pcm->name), device_name);
-+	strscpy(pcm->name, device_name, sizeof(pcm->name));
- 	snd_pcm_set_ops(pcm, direction, &pcm_ops);
- 
- 	if (create) {
--- 
-2.19.1
+-David
+>   
+>   	memset(ptr, 0, size);
+>
+>
+>
