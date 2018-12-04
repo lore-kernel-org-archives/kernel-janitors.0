@@ -1,52 +1,30 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Fri, 07 Dec 2018 18:51:07 +0000
-Subject: Re: [PATCH v2] mtd: rawnand: jz4780: annotate implicit fall throughs
-Message-Id: <20181207195107.1b4959e1@xps13>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Date: Tue, 04 Dec 2018 05:21:27 +0000
+Subject: Re: [PATCH] jbd2: clean up indentation issue, replace spaces with tab
+Message-Id: <20181204052127.GF4981@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181203212214.8862-1-malat@debian.org>
- <20181204201057.30733-1-malat@debian.org>
-In-Reply-To: <20181204201057.30733-1-malat@debian.org>
+References: <20181123164053.19193-1-colin.king@canonical.com>
+ <20181126135632.GA25835@quack2.suse.cz>
+In-Reply-To: <20181126135632.GA25835@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Paul Burton <paul.burton@mips.com>, trivial@kernel.org, kernel-janitors@vger.kernel.org, Harvey Hunt <harveyhuntnexus@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jan Kara <jack@suse.cz>
+Cc: Colin King <colin.king@canonical.com>, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Mathieu,
+On Mon, Nov 26, 2018 at 02:56:32PM +0100, Jan Kara wrote:
+> On Fri 23-11-18 16:40:53, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > There is a statement that is indented with spaces, replace it with
+> > a tab.
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Looks good. You can add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Mathieu Malaterre <malat@debian.org> wrote on Tue,  4 Dec 2018 21:10:57
-+0100:
+Thanks, applied.
 
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> these places in the code produced warnings. Fix them up.
->=20
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
-> v2: fix subject prefix non sense
->=20
->  drivers/mtd/nand/raw/jz4780_bch.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4=
-780_bch.c
-> index 731c6051d91e..7201827809e9 100644
-> --- a/drivers/mtd/nand/raw/jz4780_bch.c
-> +++ b/drivers/mtd/nand/raw/jz4780_bch.c
-> @@ -136,8 +136,10 @@ static void jz4780_bch_read_parity(struct jz4780_bch=
- *bch, void *buf,
->  	switch (size8) {
->  	case 3:
->  		dest8[2] =3D (val >> 16) & 0xff;
-> +		/* fall through */
->  	case 2:
->  		dest8[1] =3D (val >> 8) & 0xff;
-> +		/* fall through */
->  	case 1:
->  		dest8[0] =3D val & 0xff;
->  		break;
-
-Applied to nand/next.
-
-
-Thanks,
-Miqu=C3=A8l
+						- Ted
