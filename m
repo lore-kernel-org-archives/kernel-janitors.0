@@ -1,48 +1,54 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Mon, 17 Dec 2018 12:43:24 +0000
-Subject: Re: [PATCH -next] irqchip: irq-rda-intc: Fix return value check in rda8810_intc_init()
-Message-Id: <20181217123123.GA26530@mani>
+From: =?UTF-8?q?Adeodato=20Sim=C3=B3?= <dato@net.com.org.es>
+Date: Tue, 04 Dec 2018 05:14:22 +0000
+Subject: [PATCH 1/3] mm: add include files so that function definitions have a prototype
+Message-Id: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545047898-153890-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1545047898-153890-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:58:18AM +0000, Wei Yongjun wrote:
-> In case of error, the function of_io_request_and_map() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
-> 
-> Fixes: d852e62ad689 ("irqchip: Add RDA8810PL interrupt driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Previously, rodata_test(), usercopy_warn(), and usercopy_abort() were
+defined without a matching prototype. Detected by -Wmissing-prototypes
+GCC flag.
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Adeodato Sim=C3=B3 <dato@net.com.org.es>
+---
+I started poking at this after kernel-janitors got the suggestion[1]
+to look into the -Wmissing-prototypes warnings.
 
-Thanks,
-Mani
+Thanks for considering!
 
-> ---
->  drivers/irqchip/irq-rda-intc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-rda-intc.c b/drivers/irqchip/irq-rda-intc.c
-> index 1176291..9601683 100644
-> --- a/drivers/irqchip/irq-rda-intc.c
-> +++ b/drivers/irqchip/irq-rda-intc.c
-> @@ -85,8 +85,8 @@ static int __init rda8810_intc_init(struct device_node *node,
->  				    struct device_node *parent)
->  {
->  	rda_intc_base = of_io_request_and_map(node, 0, "rda-intc");
-> -	if (!rda_intc_base)
-> -		return -ENXIO;
-> +	if (IS_ERR(rda_intc_base))
-> +		return PTR_ERR(rda_intc_base);
->  
->  	/* Mask all interrupt sources */
->  	writel_relaxed(RDA_IRQ_MASK_ALL, rda_intc_base + RDA_INTC_MASK_CLR);
-> 
-> 
-> 
+[1]: https://www.spinics.net/lists/linux-kernel-janitors/msg43981.html
+
+ mm/rodata_test.c | 1 +
+ mm/usercopy.c    | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+index d908c8769b48..01306defbd1b 100644
+--- a/mm/rodata_test.c
++++ b/mm/rodata_test.c
+@@ -11,6 +11,7 @@
+  */
+ #define pr_fmt(fmt) "rodata_test: " fmt
+=20
++#include <linux/rodata_test.h>
+ #include <linux/uaccess.h>
+ #include <asm/sections.h>
+=20
+diff --git a/mm/usercopy.c b/mm/usercopy.c
+index 852eb4e53f06..f487ba4888df 100644
+--- a/mm/usercopy.c
++++ b/mm/usercopy.c
+@@ -20,6 +20,7 @@
+ #include <linux/sched/task.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/thread_info.h>
++#include <linux/uaccess.h>
+ #include <linux/atomic.h>
+ #include <linux/jump_label.h>
+ #include <asm/sections.h>
+--=20
+2.19.2
