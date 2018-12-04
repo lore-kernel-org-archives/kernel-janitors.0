@@ -1,45 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 19 Dec 2018 15:29:49 +0000
-Subject: [PATCH] drm/nouveau/pmu: don't print reply values if exec is false
-Message-Id: <20181219152949.14669-1-colin.king@canonical.com>
+From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Date: Tue, 04 Dec 2018 15:00:37 +0000
+Subject: Re: [PATCH -next] drm/tinydrm: Use kmemdup rather than duplicating its implementation in repaper_spi
+Message-Id: <b12a3f2a-deec-5da6-931c-884686b96e9d@tronnes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1543471233-159568-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1543471233-159568-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, airlied@linux.ie
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently the uninitialized values in the array reply are printed out
-when exec is false and nvkm_pmu_send has not updated the array. Avoid
-confusion by only dumping out these values if they have been actually
-updated.
+Den 29.11.2018 07.00, skrev YueHaibing:
+> use kmemdup rather than duplicating its implementation
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
 
-Detected by CoverityScan, CID#1271291 ("Uninitialized scaler variable")
-Fixes: ebb58dc2ef8c ("drm/nouveau/pmu: rename from pwr (no binary change)")
+Thanks, applied to drm-misc-next.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Noralf.
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-index 11b28b086a06..7b052879af72 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-@@ -88,10 +88,10 @@ nvkm_memx_fini(struct nvkm_memx **pmemx, bool exec)
- 	if (exec) {
- 		nvkm_pmu_send(pmu, reply, PROC_MEMX, MEMX_MSG_EXEC,
- 			      memx->base, finish);
-+		nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
-+			   reply[0], reply[1]);
- 	}
- 
--	nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
--		   reply[0], reply[1]);
- 	kfree(memx);
- 	return 0;
- }
--- 
-2.19.1
+>   drivers/gpu/drm/tinydrm/repaper.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tinydrm/repaper.c b/drivers/gpu/drm/tinydrm/repaper.c
+> index 07f45a0..54d6fe0 100644
+> --- a/drivers/gpu/drm/tinydrm/repaper.c
+> +++ b/drivers/gpu/drm/tinydrm/repaper.c
+> @@ -108,12 +108,11 @@ static int repaper_spi_transfer(struct spi_device *spi, u8 header,
+>   
+>   	/* Stack allocated tx? */
+>   	if (tx && len <= 32) {
+> -		txbuf = kmalloc(len, GFP_KERNEL);
+> +		txbuf = kmemdup(tx, len, GFP_KERNEL);
+>   		if (!txbuf) {
+>   			ret = -ENOMEM;
+>   			goto out_free;
+>   		}
+> -		memcpy(txbuf, tx, len);
+>   	}
+>   
+>   	if (rx) {
+>
+>
+>
