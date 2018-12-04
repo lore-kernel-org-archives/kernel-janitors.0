@@ -1,55 +1,61 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 11 Dec 2018 09:36:50 +0000
-Subject: Re: [PATCH][misc-next] misc: cardreader: fix spelling mistake "invailid" -> "invalid"
-Message-Id: <CAPDyKFrNYYvYYBaA_S+=RYkp5QfEHA3-Vy7GS4nCZ9_ic87tFQ@mail.gmail.com>
+From: =?UTF-8?q?Adeodato=20Sim=C3=B3?= <dato@net.com.org.es>
+Date: Tue, 04 Dec 2018 05:14:23 +0000
+Subject: [PATCH 2/3] mm: move two private functions to static linkage
+Message-Id: <75cae66d92a074dbd62590a966d7005b187f4fe5.1543899764.git.dato@net.com.org.es>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181206091936.11871-1-colin.king@canonical.com>
-In-Reply-To: <20181206091936.11871-1-colin.king@canonical.com>
+References: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
+In-Reply-To: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleksij Rempel <linux@rempel-privat.de>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Thu, 6 Dec 2018 at 10:19, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are spelling mistakes in a couple of dev_dbg messages, fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+follow_page_context() and __thp_get_unmapped_area() have no public
+declarations and are only used in the files that define them (mm/gup.c
+and mm/huge_memory.c, respectively).
 
-Applied for next (in my mmc tree), thanks!
+This change also appeases GCC if run with -Wmissing-prototypes.
 
-Kind regards
-Uffe
+Signed-off-by: Adeodato Sim=C3=B3 <dato@net.com.org.es>
+---
+ mm/gup.c         | 6 +++---
+ mm/huge_memory.c | 5 +++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-> ---
->  drivers/misc/cardreader/alcor_pci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardreader/alcor_pci.c
-> index 6872b8e29b4d..bcb10fa4bc3a 100644
-> --- a/drivers/misc/cardreader/alcor_pci.c
-> +++ b/drivers/misc/cardreader/alcor_pci.c
-> @@ -105,7 +105,7 @@ static int alcor_pci_find_cap_offset(struct alcor_pci_priv *priv,
->         while (1) {
->                 pci_read_config_dword(pci, where, &val32);
->                 if (val32 = 0xffffffff) {
-> -                       dev_dbg(priv->dev, "find_cap_offset invailid value %x.\n",
-> +                       dev_dbg(priv->dev, "find_cap_offset invalid value %x.\n",
->                                 val32);
->                         return 0;
->                 }
-> @@ -116,7 +116,7 @@ static int alcor_pci_find_cap_offset(struct alcor_pci_priv *priv,
->                 }
->
->                 if ((val32 & 0xff00) = 0x00) {
-> -                       dev_dbg(priv->dev, "pci_find_cap_offset invailid value %x.\n",
-> +                       dev_dbg(priv->dev, "pci_find_cap_offset invalid value %x.\n",
->                                 val32);
->                         break;
->                 }
-> --
-> 2.19.1
->
+diff --git a/mm/gup.c b/mm/gup.c
+index 6dd33e16a806..86a10a9b0344 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -399,9 +399,9 @@ static struct page *follow_p4d_mask(struct vm_area_stru=
+ct *vma,
+  * an error pointer if there is a mapping to something not represented
+  * by a page descriptor (see also vm_normal_page()).
+  */
+-struct page *follow_page_mask(struct vm_area_struct *vma,
+-			      unsigned long address, unsigned int flags,
+-			      struct follow_page_context *ctx)
++static struct page *follow_page_mask(struct vm_area_struct *vma,
++				     unsigned long address, unsigned int flags,
++				     struct follow_page_context *ctx)
+ {
+ 	pgd_t *pgd;
+ 	struct page *page;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2dba2c1c299a..45c1ff36baf1 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -499,8 +499,9 @@ void prep_transhuge_page(struct page *page)
+ 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
+ }
+=20
+-unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
+-		loff_t off, unsigned long flags, unsigned long size)
++static unsigned long __thp_get_unmapped_area(struct file *filp,
++		unsigned long len, loff_t off, unsigned long flags,
++		unsigned long size)
+ {
+ 	unsigned long addr;
+ 	loff_t off_end =3D off + len;
+--=20
+2.19.2
