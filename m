@@ -1,38 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Dec 2018 15:53:09 +0000
-Subject: [PATCH 2/8] net: ena: reduce indentation
-Message-Id: <1546185195-25676-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 04 Dec 2018 06:39:36 +0000
+Subject: [PATCH -next] drm/amdgpu: Fix return value check in amdgpu_allocate_static_csa()
+Message-Id: <1543905576-38015-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Netanel Belgazal <netanel@amazon.com>
-Cc: kernel-janitors@vger.kernel.org, Saeed Bishara <saeedb@amazon.com>, Zorik Machulsky <zorik@amazon.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Rex.Zhu@amd.com, Monk.Liu@amd.com
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Delete tab aligning a statement with the right hand side of a
-preceding assignment rather than the left hand side.
+Fix the return value check which testing the wrong variable
+in amdgpu_allocate_static_csa().
 
-Found with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: 7946340fa389 ("drm/amdgpu: Move csa related code to separate file")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/ethernet/amazon/ena/ena_eth_com.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_eth_com.c b/drivers/net/ethernet/amazon/ena/ena_eth_com.c
-index f6c2d3855be8..f7b4e359a2ff 100644
---- a/drivers/net/ethernet/amazon/ena/ena_eth_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_eth_com.c
-@@ -200,8 +200,8 @@ static inline int ena_com_sq_update_llq_tail(struct ena_com_io_sq *io_sq)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
+index 0c590dd..a5fbc6f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
+@@ -43,7 +43,7 @@ int amdgpu_allocate_static_csa(struct amdgpu_device *adev, struct amdgpu_bo **bo
+ 	r = amdgpu_bo_create_kernel(adev, size, PAGE_SIZE,
+ 				domain, bo,
+ 				NULL, &ptr);
+-	if (!bo)
++	if (!r)
+ 		return -ENOMEM;
  
- 		pkt_ctrl->curr_bounce_buf  			ena_com_get_next_bounce_buffer(&io_sq->bounce_buf_ctrl);
--			memset(io_sq->llq_buf_ctrl.curr_bounce_buf,
--			       0x0, llq_info->desc_list_entry_size);
-+		memset(io_sq->llq_buf_ctrl.curr_bounce_buf,
-+		       0x0, llq_info->desc_list_entry_size);
- 
- 		pkt_ctrl->idx = 0;
- 		if (unlikely(llq_info->desc_stride_ctrl = ENA_ADMIN_SINGLE_DESC_PER_ENTRY))
+ 	memset(ptr, 0, size);
