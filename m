@@ -1,43 +1,46 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 21 Dec 2018 08:40:21 +0000
-Subject: Re: [PATCH] Input: nomadik-ske-keypad - Fix a loop timeout test
-Message-Id: <20181221084021.GF211587@dtor-ws>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 05 Dec 2018 07:59:03 +0000
+Subject: [PATCH] wil6210: remove set but not used variable 'wdev'
+Message-Id: <1543996743-137124-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181218081854.GC32567@kadam>
-In-Reply-To: <20181218081854.GC32567@kadam>
+References: <1536669139-14848-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536669139-14848-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Maya Erez <merez@codeaurora.org>, Kalle Valo <kvalo@codeaurora.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:18:54AM +0300, Dan Carpenter wrote:
-> The loop exits with "timeout" set to -1 not to 0.
-> 
-> Fixes: 1158f0f16224 ("Input: add support for Nomadik SKE keypad controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thank you.
+drivers/net/wireless/ath/wil6210/main.c: In function '_wil6210_disconnect':
+drivers/net/wireless/ath/wil6210/main.c:407:23: warning:
+ variable 'wdev' set but not used [-Wunused-but-set-variable]
 
-> ---
->  drivers/input/keyboard/nomadik-ske-keypad.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/keyboard/nomadik-ske-keypad.c b/drivers/input/keyboard/nomadik-ske-keypad.c
-> index 8567ee47761e..ae3b04557074 100644
-> --- a/drivers/input/keyboard/nomadik-ske-keypad.c
-> +++ b/drivers/input/keyboard/nomadik-ske-keypad.c
-> @@ -100,7 +100,7 @@ static int __init ske_keypad_chip_init(struct ske_keypad *keypad)
->  	while ((readl(keypad->reg_base + SKE_RIS) != 0x00000000) && timeout--)
->  		cpu_relax();
->  
-> -	if (!timeout)
-> +	if (timeout = -1)
->  		return -EINVAL;
->  
->  	/*
-> -- 
-> 2.17.1
-> 
+It never used since commit ("e1b43407c034 wil6210: refactor disconnect flow")
 
--- 
-Dmitry
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/ath/wil6210/main.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
+index ba6a2ee..5b7de00 100644
+--- a/drivers/net/wireless/ath/wil6210/main.c
++++ b/drivers/net/wireless/ath/wil6210/main.c
+@@ -404,7 +404,6 @@ static void _wil6210_disconnect(struct wil6210_vif *vif, const u8 *bssid,
+ {
+ 	struct wil6210_priv *wil;
+ 	struct net_device *ndev;
+-	struct wireless_dev *wdev;
+ 	int cid = -ENOENT;
+ 
+ 	if (unlikely(!vif))
+@@ -412,7 +411,6 @@ static void _wil6210_disconnect(struct wil6210_vif *vif, const u8 *bssid,
+ 
+ 	wil = vif_to_wil(vif);
+ 	ndev = vif_to_ndev(vif);
+-	wdev = vif_to_wdev(vif);
+ 
+ 	might_sleep();
+ 	wil_info(wil, "disconnect bssid=%pM, reason=%d\n", bssid, reason_code);
