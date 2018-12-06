@@ -1,27 +1,36 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Fri, 21 Dec 2018 12:29:31 +0000
-Subject: Re: [alsa-devel] [PATCH 3/4] ASoC: qdsp6: q6asm-dai: Fix a small memory leak
-Message-Id: <2630a14e-ba15-0ed2-11f7-d217569a31c0@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Dec 2018 17:52:28 +0000
+Subject: [PATCH] xfrm: clean an indentation issue, remove a space
+Message-Id: <20181206175228.29186-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181221090610.GC2735@kadam>
-In-Reply-To: <20181221090610.GC2735@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Patrick Lai <plai@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>
+To: Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to clean up indentation issue, remove an extraneous
+space.
 
-On 21/12/2018 09:06, Dan Carpenter wrote:
-> We can't return directly if snd_dma_alloc_pages() fails; we first need
-> to free prtd->audio_client and prtd.
-> 
-> Fixes: 22930c79ac5c ("ASoC: qdsp6: q6asm-dai: Add support to compress offload")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ include/net/xfrm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Thanks for the patch! I was due to send something similar!
-
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+index 0b6531a951a5..dcbd494d81fd 100644
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@ -1971,7 +1971,7 @@ static inline void xfrm_dev_state_delete(struct xfrm_state *x)
+ static inline void xfrm_dev_state_free(struct xfrm_state *x)
+ {
+ 	struct xfrm_state_offload *xso = &x->xso;
+-	 struct net_device *dev = xso->dev;
++	struct net_device *dev = xso->dev;
+ 
+ 	if (dev && dev->xfrmdev_ops) {
+ 		if (dev->xfrmdev_ops->xdo_dev_state_free)
+-- 
+2.19.1
