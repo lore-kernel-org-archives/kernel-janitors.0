@@ -1,42 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 20 Dec 2018 14:05:50 +0000
-Subject: [PATCH] ray_cs: fix array out-of-bounds access
-Message-Id: <20181220140550.18853-1-colin.king@canonical.com>
+Date: Thu, 06 Dec 2018 18:00:18 +0000
+Subject: [PATCH] x86/lib: clean an indentation issue, remove a tab
+Message-Id: <20181206180018.29377-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently array element org[3] is being accessed, however the array is
-only 3 elements in size, so this looks like an off-by-one out-of-bounds
-error. Fix this by using org[2], which I believe was the original
-intent.
+The buff increment statement is indented too much, remove a tab.
 
-This issue has existed in the driver back in the pre-git days, so no
-idea when it was introduced.
-
-Detected by CoverityScan, CID#711344 ("Out-of-bounds read")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ray_cs.c | 2 +-
+ arch/x86/lib/csum-partial_64.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
-index 33ad87528d9a..8b2741c8edf2 100644
---- a/drivers/net/wireless/ray_cs.c
-+++ b/drivers/net/wireless/ray_cs.c
-@@ -959,7 +959,7 @@ static int translate_frame(ray_dev_t *local, struct tx_msg __iomem *ptx,
- 		if (proto = htons(ETH_P_AARP) || proto = htons(ETH_P_IPX)) {
- 			/* This is the selective translation table, only 2 entries */
- 			writeb(0xf8,
--			       &((struct snaphdr_t __iomem *)ptx->var)->org[3]);
-+			       &((struct snaphdr_t __iomem *)ptx->var)->org[2]);
- 		}
- 		/* Copy body of ethernet packet without ethernet header */
- 		memcpy_toio((void __iomem *)&ptx->var +
+diff --git a/arch/x86/lib/csum-partial_64.c b/arch/x86/lib/csum-partial_64.c
+index 9baca3e054be..e7925d668b68 100644
+--- a/arch/x86/lib/csum-partial_64.c
++++ b/arch/x86/lib/csum-partial_64.c
+@@ -94,7 +94,7 @@ static unsigned do_csum(const unsigned char *buff, unsigned len)
+ 				    : "m" (*(unsigned long *)buff), 
+ 				    "r" (zero),  "0" (result));
+ 				--count; 
+-					buff += 8;
++				buff += 8;
+ 			}
+ 			result = add32_with_carry(result>>32,
+ 						  result&0xffffffff); 
 -- 
 2.19.1
