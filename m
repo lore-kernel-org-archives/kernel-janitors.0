@@ -1,74 +1,23 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 06 Dec 2018 08:12:12 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Dec 2018 09:34:20 +0000
 Subject: Re: [PATCH] powerpc/ipic: Fix a bounds check in ipic_set_priority()
-Message-Id: <alpine.DEB.2.20.1812060908000.5574@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-15127499-1544083933=:5574"
+Message-Id: <20181206093420.GL3073@unbuntlaptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181203144834.ocxntjflfz2idxrb@kili.mountain>
  <87sgzchcw8.fsf@concordia.ellerman.id.au>
- <f570563c-1cc7-fecf-2ed2-58164047ec9d@c-s.fr>
-In-Reply-To: <f570563c-1cc7-fecf-2ed2-58164047ec9d@c-s.fr>
-To: Christophe LEROY <christophe.leroy@c-s.fr>
-Cc: Kim Phillips <kim.phillips@freescale.com>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Dan Carpenter <dan.carpenter@oracle.com>
+In-Reply-To: <87sgzchcw8.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Kim Phillips <kim.phillips@freescale.com>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
---8323329-15127499-1544083933=:5574
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+On Wed, Dec 05, 2018 at 02:26:47PM +1100, Michael Ellerman wrote:
+> Can smatch help us find things like this that are defined non-static but
+> never used?
+> 
 
+It's too tricky because it depends on the .config as well.
 
-
-On Thu, 6 Dec 2018, Christophe LEROY wrote:
-
->
->
-> Le 05/12/2018 à 04:26, Michael Ellerman a écrit :
-> > Hi Dan,
-> >
-> > Thanks for the patch.
-> >
-> > Dan Carpenter <dan.carpenter@oracle.com> writes:
-> > > The ipic_info[] array only has 95 elements so I have made the bounds
-> > > check smaller to prevent a read overflow.  It was Smatch that found
-> > > this issue:
-> > >
-> > >      arch/powerpc/sysdev/ipic.c:784 ipic_set_priority()
-> > >      error: buffer overflow 'ipic_info' 95 <= 127
-> > >
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > > I wasn't able to find any callers of this code.  Maybe we removed the
-> > > last one in commit b9f0f1bb2bca ("[POWERPC] Adapt ipic driver to new
-> > > host_ops interface, add set_irq_type to set IRQ sense").  So perhaps we
-> > > should just remove it.  I'm not really comfortable doing that myself,
-> > > because I don't know the code well enough and can't build test
-> > > it properly.
-> >
-> > Hah wow, last usage removed in 2006!
-> >
-> > I don't see any mention of it since then, so I'll remove it. If it
-> > breaks something we can put it back.
-> >
-> > Can smatch help us find things like this that are defined non-static but
-> > never used?
-> >
->
-> I think we have to do that carrefully. Some of those functions might be used
-> by out-of-tree boards.
->
-> I'm thinking especially at ipic_get_mcp_status() and ipic_set_mcp_status().
-> They are used in my 832x boards's machine check handler to know when a machine
-> check is a timeout from the 832x watchdog.
-
-The message I have gotten in the past is that the Linux kernel doesn't
-support code that is not used in the Linux kernel.  However, if I were to
-do this, I would send the code to the individual maintainers, who
-presumably would know what is actually needed and what is not.
-
-Perhaps a good sanity check would be if the code has been used in the
-past.  If there was a use in the past that has been removed, then perhaps
-it is more likely that the function was intended for internal kernel use
-rather than the case that you are describing.
-
-julia
---8323329-15127499-1544083933=:5574--
+regards,
+dan carpenter
