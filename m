@@ -1,33 +1,44 @@
-From: <Ajay.Kathat@microchip.com>
-Date: Thu, 20 Dec 2018 06:18:37 +0000
-Subject: Re: [PATCH] staging: wilc1000: fix missing read_write setting when reading data
-Message-Id: <f385b84e-3724-cdaf-323c-7a9c9337b98b@microchip.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Dec 2018 09:19:36 +0000
+Subject: [PATCH][misc-next] misc: cardreader: fix spelling mistake "invailid" -> "invalid"
+Message-Id: <20181206091936.11871-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181219163007.5329-1-colin.king@canonical.com>
-In-Reply-To: <20181219163007.5329-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, Adham.Abozaeid@microchip.com, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleksij Rempel <linux@rempel-privat.de>, Ulf Hansson <ulf.hansson@linaro.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEyLzE5LzIwMTggMTA6MDAgUE0sIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENv
-bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBDdXJyZW50bHkg
-dGhlIGNtZC5yZWFkX3dyaXRlIHNldHRpbmcgaXMgbm90IGluaXRpYWxpemVkIHNvIGl0IGNvbnRh
-aW5zDQo+IGdhcmJhZ2UgZnJvbSB0aGUgc3RhY2suICBGaXggdGhpcyBieSBzZXR0aW5nIGl0IHRv
-IDAgdG8gaW5kaWNhdGUgYQ0KPiByZWFkIGlzIHJlcXVpcmVkLg0KPiANCj4gRGV0ZWN0ZWQgYnkg
-Q292ZXJpdHlTY2FuLCBDSUQjMTM1NzkyNSAoIlVuaW5pdGlhbGl6ZWQgc2NhbGFyIHZhcmlhYmxl
-IikNCj4gDQo+IEZpeGVzOiBjNWM3N2JhMThlYTYgKCJzdGFnaW5nOiB3aWxjMTAwMDogQWRkIFNE
-SU8vU1BJIDgwMi4xMSBkcml2ZXIiKQ0KDQpBY2tlZC1ieTogQWpheSBTaW5naCA8YWpheS5rYXRo
-YXRAbWljcm9jaGlwLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGlu
-LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAv
-d2lsY19zZGlvLmMgfCAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYyBiL2Ry
-aXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYw0KPiBpbmRleCAyN2ZkZmJkZGE1YzAu
-LmUyZjczOWZlZjIxYyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAwL3dp
-bGNfc2Rpby5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYw0K
-PiBAQCAtODYxLDYgKzg2MSw3IEBAIHN0YXRpYyBpbnQgc2Rpb19yZWFkX2ludChzdHJ1Y3Qgd2ls
-YyAqd2lsYywgdTMyICppbnRfc3RhdHVzKQ0KPiAgCWlmICghc2Rpb19wcml2LT5pcnFfZ3Bpbykg
-ew0KPiAgCQlpbnQgaTsNCj4gIA0KPiArCQljbWQucmVhZF93cml0ZSA9IDA7DQo+ICAJCWNtZC5m
-dW5jdGlvbiA9IDE7DQo+ICAJCWNtZC5hZGRyZXNzID0gMHgwNDsNCj4gIAkJY21kLmRhdGEgPSAw
-Ow0KPiANCg=
+From: Colin Ian King <colin.king@canonical.com>
+
+There are spelling mistakes in a couple of dev_dbg messages, fix these.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/cardreader/alcor_pci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardreader/alcor_pci.c
+index 6872b8e29b4d..bcb10fa4bc3a 100644
+--- a/drivers/misc/cardreader/alcor_pci.c
++++ b/drivers/misc/cardreader/alcor_pci.c
+@@ -105,7 +105,7 @@ static int alcor_pci_find_cap_offset(struct alcor_pci_priv *priv,
+ 	while (1) {
+ 		pci_read_config_dword(pci, where, &val32);
+ 		if (val32 = 0xffffffff) {
+-			dev_dbg(priv->dev, "find_cap_offset invailid value %x.\n",
++			dev_dbg(priv->dev, "find_cap_offset invalid value %x.\n",
+ 				val32);
+ 			return 0;
+ 		}
+@@ -116,7 +116,7 @@ static int alcor_pci_find_cap_offset(struct alcor_pci_priv *priv,
+ 		}
+ 
+ 		if ((val32 & 0xff00) = 0x00) {
+-			dev_dbg(priv->dev, "pci_find_cap_offset invailid value %x.\n",
++			dev_dbg(priv->dev, "pci_find_cap_offset invalid value %x.\n",
+ 				val32);
+ 			break;
+ 		}
+-- 
+2.19.1
