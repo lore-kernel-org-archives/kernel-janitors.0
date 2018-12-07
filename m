@@ -1,40 +1,64 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Dec 2018 23:33:18 +0000
-Subject: [PATCH][scsi-next] scsi: qla2xxx: remove unused variable status
-Message-Id: <20181210233318.12779-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 07 Dec 2018 06:34:47 +0000
+Subject: [PATCH -next] mmc: remove set but not used variables 'len, clock_out'
+Message-Id: <1544164487-52246-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170605172958.12844-1-colin.king@canonical.com>
-In-Reply-To: <20170605172958.12844-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Variable 'status' is declared but not used, remove it.
+drivers/mmc/host/alcor.c: In function 'alcor_data_set_dma':
+drivers/mmc/host/alcor.c:124:12: warning:
+ variable 'len' set but not used [-Wunused-but-set-variable]
 
-Cleans up warning:
-warning: unused variable ‘status’ [-Wunused-variable]
+drivers/mmc/host/alcor.c:648:15: warning:
+ variable 'clock_out' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It never used since introduction in commit 2a9a4742e825 ("mmc: add new Alcor
+Micro Cardreader SD/MMC driver")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/qla2xxx/qla_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/alcor.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 63c47bc7ae59..db331cb5ba3c 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1788,7 +1788,7 @@ static void qla2x00_abort_srb(struct qla_qpair *qp, srb_t *sp, const int res,
- static void
- __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+diff --git a/drivers/mmc/host/alcor.c b/drivers/mmc/host/alcor.c
+index f729a64..c712b7d 100644
+--- a/drivers/mmc/host/alcor.c
++++ b/drivers/mmc/host/alcor.c
+@@ -121,7 +121,7 @@ static void alcor_reset(struct alcor_sdmmc_host *host, u8 val)
+ static void alcor_data_set_dma(struct alcor_sdmmc_host *host)
  {
--	int cnt, status;
-+	int cnt;
- 	unsigned long flags;
- 	srb_t *sp;
- 	scsi_qla_host_t *vha = qp->vha;
--- 
-2.19.1
+ 	struct alcor_pci_priv *priv = host->alcor_pci;
+-	u32 addr, len;
++	u32 addr;
+ 
+ 	if (!host->sg_count)
+ 		return;
+@@ -138,7 +138,6 @@ static void alcor_data_set_dma(struct alcor_sdmmc_host *host)
+ 
+ 
+ 	addr = (u32)sg_dma_address(host->sg);
+-	len = sg_dma_len(host->sg);
+ 
+ 	alcor_write32(priv, addr, AU6601_REG_SDMA_ADDR);
+ 	host->sg = sg_next(host->sg);
+@@ -645,7 +644,6 @@ static irqreturn_t alcor_irq(int irq, void *d)
+ static void alcor_set_clock(struct alcor_sdmmc_host *host, unsigned int clock)
+ {
+ 	struct alcor_pci_priv *priv = host->alcor_pci;
+-	unsigned int clock_out = 0;
+ 	int i, diff = 0x7fffffff, tmp_clock = 0;
+ 	u16 clk_src = 0;
+ 	u8 clk_div = 0;
+@@ -670,7 +668,6 @@ static void alcor_set_clock(struct alcor_sdmmc_host *host, unsigned int clock)
+ 			diff = tmp_diff;
+ 			clk_src = cfg->clk_src_reg;
+ 			clk_div = tmp_div;
+-			clock_out = tmp_clock;
+ 		}
+ 	}
+ 
