@@ -1,53 +1,47 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Mon, 03 Dec 2018 19:32:25 +0000
-Subject: Re: [PATCH -next] Input: olpc_apsp - remove set but not used variable 'np'
-Message-Id: <20181203193225.GF257010@dtor-ws>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 07 Dec 2018 06:44:16 +0000
+Subject: [PATCH -next] powerpc/mm: drop test in pp_601
+Message-Id: <1544165056-52579-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 02:10:41AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/input/serio/olpc_apsp.c: In function 'olpc_apsp_probe':
-> drivers/input/serio/olpc_apsp.c:192:22: warning:
->  variable 'np' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since intrdduction in commit
-> b56ece9a3ac3 ("Input: add OLPC AP-SP driver")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The test selects between two identical values, so it doesn't look useful.
+It turns out that the tested expression can only be true anyway, so drop
+the test, the corresponding parameter, and the corresponding argument at
+the only call site.
 
-Applied, thank you.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> ---
->  drivers/input/serio/olpc_apsp.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
-> index 91d6fb8..b360847 100644
-> --- a/drivers/input/serio/olpc_apsp.c
-> +++ b/drivers/input/serio/olpc_apsp.c
-> @@ -189,14 +189,12 @@ static int olpc_apsp_probe(struct platform_device *pdev)
->  	struct serio *kb_serio, *pad_serio;
->  	struct olpc_apsp *priv;
->  	struct resource *res;
-> -	struct device_node *np;
->  	int error;
->  
->  	priv = devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp), GFP_KERNEL);
->  	if (!priv)
->  		return -ENOMEM;
->  
-> -	np = pdev->dev.of_node;
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	priv->base = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(priv->base)) {
-> 
-> 
-> 
+// <smpl>
+@@
+expression e,e1;
+@@
 
--- 
-Dmitry
+* e ? e1 : e1
+// </smpl>
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/powerpc/mm/dump_bats.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/mm/dump_bats.c b/arch/powerpc/mm/dump_bats.c
+index a0d23e9..33450a8 100644
+--- a/arch/powerpc/mm/dump_bats.c
++++ b/arch/powerpc/mm/dump_bats.c
+@@ -17,8 +17,8 @@ static char *pp_601(int k, int pp)
+ 	if (pp = 1)
+ 		return k ? "ROX" : "RWX";
+ 	if (pp = 2)
+-		return k ? "RWX" : "RWX";
+-	return k ? "ROX" : "ROX";
++		return "RWX";
++	return "ROX";
+ }
+ 
+ static void bat_show_601(struct seq_file *m, int idx, u32 lower, u32 upper)
