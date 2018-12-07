@@ -1,63 +1,45 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Mon, 17 Dec 2018 11:39:03 +0000
-Subject: Re: [PATCH][next][RESEND] drivers: base: remove need for a temporary string for the node name
-Message-Id: <2449257.d8gDasH2Fh@aspire.rjw.lan>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 07 Dec 2018 06:57:40 +0000
+Subject: [PATCH -next] cifs: remove set but not used variable 'smb_buf'
+Message-Id: <1544166338-55271-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181206170557.27834-1-colin.king@canonical.com>
-In-Reply-To: <20181206170557.27834-1-colin.king@canonical.com>
+References: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thursday, December 6, 2018 6:05:57 PM CET Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the node name is being formatting into a temporary string
-> node_name, however, kobject_init_and_add allows one to format up
-> a node name, so use that instead. This removes the need for the
-> node_name string and also cleans up the following warning:
-> 
-> Fixes clang warning:
-> warning: format string is not a string literal (potentially
-> insecure) [-Wformat-security]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/base/swnode.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-> index 9c63ec8d8ab4..306bb93287af 100644
-> --- a/drivers/base/swnode.c
-> +++ b/drivers/base/swnode.c
-> @@ -553,7 +553,6 @@ fwnode_create_software_node(const struct property_entry *properties,
->  {
->  	struct software_node *p = NULL;
->  	struct software_node *swnode;
-> -	char node_name[20];
->  	int ret;
->  
->  	if (parent) {
-> @@ -576,8 +575,6 @@ fwnode_create_software_node(const struct property_entry *properties,
->  	}
->  
->  	swnode->id = ret;
-> -	sprintf(node_name, "node%d", swnode->id);
-> -
->  	swnode->kobj.kset = swnode_kset;
->  	swnode->fwnode.ops = &software_node_ops;
->  
-> @@ -590,7 +587,7 @@ fwnode_create_software_node(const struct property_entry *properties,
->  		list_add_tail(&swnode->entry, &p->children);
->  
->  	ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
-> -				   p ? &p->kobj : NULL, node_name);
-> +				   p ? &p->kobj : NULL, "node%d", swnode->id);
->  	if (ret) {
->  		kobject_put(&swnode->kobj);
->  		return ERR_PTR(ret);
-> 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks!
+fs/cifs/sess.c: In function '_sess_auth_rawntlmssp_assemble_req':
+fs/cifs/sess.c:1157:18: warning:
+ variable 'smb_buf' set but not used [-Wunused-but-set-variable]
+
+It never used since commit cc87c47d9d7a ("cifs: Separate rawntlmssp auth
+from CIFS_SessSetup()")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/cifs/sess.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
+index 7fa447a..dcd49ad 100644
+--- a/fs/cifs/sess.c
++++ b/fs/cifs/sess.c
+@@ -1154,14 +1154,12 @@ struct sess_data {
+ static int
+ _sess_auth_rawntlmssp_assemble_req(struct sess_data *sess_data)
+ {
+-	struct smb_hdr *smb_buf;
+ 	SESSION_SETUP_ANDX *pSMB;
+ 	struct cifs_ses *ses = sess_data->ses;
+ 	__u32 capabilities;
+ 	char *bcc_ptr;
+ 
+ 	pSMB = (SESSION_SETUP_ANDX *)sess_data->iov[0].iov_base;
+-	smb_buf = (struct smb_hdr *)pSMB;
+ 
+ 	capabilities = cifs_ssetup_hdr(ses, pSMB);
+ 	if ((pSMB->req.hdr.Flags2 & SMBFLG2_UNICODE) = 0) {
