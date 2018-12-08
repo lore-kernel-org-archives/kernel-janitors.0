@@ -1,22 +1,45 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Wed, 12 Dec 2018 11:57:24 +0000
-Subject: Re: [PATCH] xfrm: clean an indentation issue, remove a space
-Message-Id: <20181212115724.GU3581@gauss3.secunet.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 08 Dec 2018 08:36:25 +0000
+Subject: [PATCH -next] drm/ast: Remove set but not used variable 'bo'
+Message-Id: <1544258185-50430-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181206175228.29186-1-colin.king@canonical.com>
-In-Reply-To: <20181206175228.29186-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Sam Bobroff <sbobroff@linux.ibm.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 05:52:28PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to clean up indentation issue, remove an extraneous
-> space.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks!
+drivers/gpu/drm/ast/ast_fb.c: In function 'astfb_create':
+drivers/gpu/drm/ast/ast_fb.c:194:17: warning:
+ variable 'bo' set but not used [-Wunused-but-set-variable]
+
+It never used since introduction in commit 312fec1405dd ("drm: Initial KMS
+driver for AST (ASpeed Technologies) 2000 series (v2)")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/ast/ast_fb.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
+index de26df0..c2e4136 100644
+--- a/drivers/gpu/drm/ast/ast_fb.c
++++ b/drivers/gpu/drm/ast/ast_fb.c
+@@ -191,7 +191,6 @@ static int astfb_create(struct drm_fb_helper *helper,
+ 	int size, ret;
+ 	void *sysram;
+ 	struct drm_gem_object *gobj = NULL;
+-	struct ast_bo *bo = NULL;
+ 	mode_cmd.width = sizes->surface_width;
+ 	mode_cmd.height = sizes->surface_height;
+ 	mode_cmd.pitches[0] = mode_cmd.width * ((sizes->surface_bpp + 7)/8);
+@@ -206,7 +205,6 @@ static int astfb_create(struct drm_fb_helper *helper,
+ 		DRM_ERROR("failed to create fbcon backing object %d\n", ret);
+ 		return ret;
+ 	}
+-	bo = gem_to_ast_bo(gobj);
+ 
+ 	sysram = vmalloc(size);
+ 	if (!sysram)
