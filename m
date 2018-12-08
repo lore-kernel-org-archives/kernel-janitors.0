@@ -1,59 +1,68 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 04 Dec 2018 10:47:19 +0000
-Subject: Re: [PATCH -next] drm/vkms: Remove set but not used variable 'vkms_obj'
-Message-Id: <20181204104719.GB21184@phenom.ffwll.local>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 08 Dec 2018 14:53:23 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'grbm_soft_reset'
+Message-Id: <1544281273-73940-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543634444-186448-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1543634444-186448-1-git-send-email-yuehaibing@huawei.com>
+References: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: David Airlie <airlied@linux.ie>, Haneen Mohammed <hamohammed.sa@gmail.com>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, leo.liu@amd.com, Likun.Gao@amd.com, David.Panariti@amd.com, shirish.s@amd.com, Rex.Zhu@amd.com, andrey.grodzovsky@amd.com
+Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 01, 2018 at 03:20:44AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/gpu/drm/vkms/vkms_plane.c: In function 'vkms_prepare_fb':
-> drivers/gpu/drm/vkms/vkms_plane.c:144:26: warning:
->  variable 'vkms_obj' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in commit
-> 8ce1bb0b5337 ("drm/vkms: map/unmap buffers in [prepare/cleanup]_fb hooks")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks for your patch.
--Daniel
+drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c: In function 'gfx_v8_0_pre_soft_reset':
+drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c:4950:27: warning:
+ variable 'srbm_soft_reset' set but not used [-Wunused-but-set-variable]
 
-> ---
->  drivers/gpu/drm/vkms/vkms_plane.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index e3bcea4..4188176 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -141,14 +141,12 @@ static int vkms_prepare_fb(struct drm_plane *plane,
->  			   struct drm_plane_state *state)
->  {
->  	struct drm_gem_object *gem_obj;
-> -	struct vkms_gem_object *vkms_obj;
->  	int ret;
->  
->  	if (!state->fb)
->  		return 0;
->  
->  	gem_obj = drm_gem_fb_get_obj(state->fb, 0);
-> -	vkms_obj = drm_gem_to_vkms_gem(gem_obj);
->  	ret = vkms_gem_vmap(gem_obj);
->  	if (ret)
->  		DRM_ERROR("vmap failed: %d\n", ret);
-> 
-> 
-> 
+drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c: In function 'gfx_v8_0_post_soft_reset':
+drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c:5054:27: warning:
+ variable 'srbm_soft_reset' set but not used [-Wunused-but-set-variable]
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+It never used since introduction in commit d31a501ead7f ("drm/amdgpu: add
+pre_soft_reset ip func") and e4ae0fc33631 ("drm/amdgpu: implement
+gfx8 post_soft_reset")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+index 1454fc3..8c1ba79 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -4947,14 +4947,13 @@ static bool gfx_v8_0_check_soft_reset(void *handle)
+ static int gfx_v8_0_pre_soft_reset(void *handle)
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+-	u32 grbm_soft_reset = 0, srbm_soft_reset = 0;
++	u32 grbm_soft_reset = 0;
+ 
+ 	if ((!adev->gfx.grbm_soft_reset) &&
+ 	    (!adev->gfx.srbm_soft_reset))
+ 		return 0;
+ 
+ 	grbm_soft_reset = adev->gfx.grbm_soft_reset;
+-	srbm_soft_reset = adev->gfx.srbm_soft_reset;
+ 
+ 	/* stop the rlc */
+ 	adev->gfx.rlc.funcs->stop(adev);
+@@ -5051,14 +5050,13 @@ static int gfx_v8_0_soft_reset(void *handle)
+ static int gfx_v8_0_post_soft_reset(void *handle)
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+-	u32 grbm_soft_reset = 0, srbm_soft_reset = 0;
++	u32 grbm_soft_reset = 0;
+ 
+ 	if ((!adev->gfx.grbm_soft_reset) &&
+ 	    (!adev->gfx.srbm_soft_reset))
+ 		return 0;
+ 
+ 	grbm_soft_reset = adev->gfx.grbm_soft_reset;
+-	srbm_soft_reset = adev->gfx.srbm_soft_reset;
+ 
+ 	if (REG_GET_FIELD(grbm_soft_reset, GRBM_SOFT_RESET, SOFT_RESET_CP) ||
+ 	    REG_GET_FIELD(grbm_soft_reset, GRBM_SOFT_RESET, SOFT_RESET_CPF) ||
