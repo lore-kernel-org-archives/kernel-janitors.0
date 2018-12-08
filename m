@@ -1,47 +1,42 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Date: Fri, 07 Dec 2018 05:17:45 +0000
-Subject: Re: [PATCH -next] usb: mtu3: fix dbginfo in qmu_tx_zlp_error_handler
-Message-Id: <1544159865.32173.116.camel@mhfsdcap03>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Sat, 08 Dec 2018 03:20:38 +0000
+Subject: Re: [PATCH] scsi: Fix a harmless double shift bug
+Message-Id: <yq1pnucln5l.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1544154763-156094-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1544154763-156094-1-git-send-email-yuehaibing@huawei.com>
+References: <20181129103709.nthxjmmmlb2pdr6g@kili.mountain>
+In-Reply-To: <20181129103709.nthxjmmmlb2pdr6g@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Haibing,
 
-On Fri, 2018-12-07 at 03:52 +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/usb/mtu3/mtu3_qmu.c: In function 'qmu_tx_zlp_error_handler':
-> drivers/usb/mtu3/mtu3_qmu.c:385:22: warning:
->  variable 'req' set but not used [-Wunused-but-set-variable]
-> 
-> It seems dbginfo original intention is print 'req' other than 'mreq'
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/usb/mtu3/mtu3_qmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/mtu3/mtu3_qmu.c b/drivers/usb/mtu3/mtu3_qmu.c
-> index 73ac042..09f19f7 100644
-> --- a/drivers/usb/mtu3/mtu3_qmu.c
-> +++ b/drivers/usb/mtu3/mtu3_qmu.c
-> @@ -402,7 +402,7 @@ static void qmu_tx_zlp_error_handler(struct mtu3 *mtu, u8 epnum)
->  		return;
->  	}
->  
-> -	dev_dbg(mtu->dev, "%s send ZLP for req=%p\n", __func__, mreq);
-> +	dev_dbg(mtu->dev, "%s send ZLP for req=%p\n", __func__, req);
->  
->  	mtu3_clrbits(mbase, MU3D_EP_TXCR0(mep->epnum), TX_DMAREQEN);
-> 
-Acked-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Jens,
 
-Thanks a lot
-> 
-> 
+This went in through your tree. Can you please pick this fix up?
+
+> On Thu, Nov 29, 2018 at 01:37:10PM +0300, Dan Carpenter wrote:
+>> Smatch generates a warning:
+>> 
+>>     drivers/scsi/scsi_lib.c:1656 scsi_mq_done() warn: test_bit() takes a bit number
+>> 
+>> The problem is that SCMD_STATE_COMPLETE is supposed to be bit number 0
+>> and not a mask like "(1 << 0)".  It is used like this:
+>> 
+>> 	if (test_and_set_bit(SCMD_STATE_COMPLETE, &scmd->state))
+>> 
+>> The test_and_set_bit() has a shift built in so it's a double left shift
+>> and uses bit number 1 instead of number 0.  This bug is harmless because
+>> it's done consistently and it doesn't clash with any other flags.
+>> 
+>> Fixes: f1342709d18a ("scsi: Do not rely on blk-mq for double completions")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Nice catch, thanks for the fix.
+>
+> Reviewed-by: Keith Busch <keith.busch@intel.com>
+
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
