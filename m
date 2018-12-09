@@ -1,34 +1,44 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Dec 2018 02:51:25 +0000
-Subject: [PATCH] mac80211-next: remove duplicated include from virt_wifi.c
-Message-Id: <1545274285-143886-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 09 Dec 2018 15:01:42 +0000
+Subject: [PATCH] x86/platform/olpc: remove duplicated check on node == -1
+Message-Id: <20181209150142.9010-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Currently the node = -1 check is being performed twice, the
+second check is redundant and can be removed.  Fix this by
+removing the redundant second check and moving the first check
+into a combined check with the result from the olpc_ofw call.
+
+Detected by cppcheck:
+Identical condition '(s32)node=-1', second condition is always false
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/virt_wifi.c | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/x86/platform/olpc/olpc_dt.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
-index 64b2186..245d4d0 100644
---- a/drivers/net/wireless/virt_wifi.c
-+++ b/drivers/net/wireless/virt_wifi.c
-@@ -14,11 +14,6 @@
- #include <linux/etherdevice.h>
- #include <linux/module.h>
+diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/olpc_dt.c
+index b4ab779f1d47..658363ec3ff3 100644
+--- a/arch/x86/platform/olpc/olpc_dt.c
++++ b/arch/x86/platform/olpc/olpc_dt.c
+@@ -28,10 +28,7 @@ static phandle __init olpc_dt_getsibling(phandle node)
+ 	const void *args[] = { (void *)node };
+ 	void *res[] = { &node };
  
--#include <net/cfg80211.h>
--#include <net/rtnetlink.h>
--#include <linux/etherdevice.h>
--#include <linux/module.h>
+-	if ((s32)node = -1)
+-		return 0;
 -
- static struct wiphy *common_wiphy;
+-	if (olpc_ofw("peer", args, res) || (s32)node = -1)
++	if (((s32)node = -1) || olpc_ofw("peer", args, res))
+ 		return 0;
  
- struct virt_wifi_wiphy_priv {
+ 	return node;
+-- 
+2.19.1
