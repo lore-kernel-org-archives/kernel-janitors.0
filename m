@@ -1,39 +1,57 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 13:25:51 +0000
-Subject: [PATCH][next] IB/uverbs: fix an unsigned being compared to < 0
-Message-Id: <20181222132551.14696-1-colin.king@canonical.com>
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Sun, 09 Dec 2018 21:50:33 +0000
+Subject: [PATCH 3.16 249/328] x86/paravirt: Fix some warning messages
+Message-Id: <lsq.1544392233.371934358@decadent.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Moni Shoua <monis@mellanox.com>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: akpm@linux-foundation.org, "H. Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org, Alok Kataria <akataria@vmware.com>, Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>, virtualization@lists.linux-foundation.org
 
-From: Colin Ian King <colin.king@canonical.com>
+3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
 
-The check for num_sge < 0 is always false because num_sge is not signed,
-fix this by declaring it as an int.
+------------------
 
-Detected by CoverityScan, CID#1476005 ("Unsigned compared against 0")
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: ad8a4496757f ("IB/uverbs: Add support to advise_mr")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c upstream.
+
+The first argument to WARN_ONCE() is a condition.
+
+Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/core/uverbs_std_types_mr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/paravirt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/uverbs_std_types_mr.c b/drivers/infiniband/core/uverbs_std_types_mr.c
-index 71dfa5e5938e..4d4be0c2b752 100644
---- a/drivers/infiniband/core/uverbs_std_types_mr.c
-+++ b/drivers/infiniband/core/uverbs_std_types_mr.c
-@@ -47,7 +47,7 @@ static int UVERBS_HANDLER(UVERBS_METHOD_ADVISE_MR)(
- 	enum ib_uverbs_advise_mr_advice advice;
- 	struct ib_device *ib_dev = pd->device;
- 	struct ib_sge *sg_list;
--	u32 num_sge;
-+	int num_sge;
- 	u32 flags;
- 	int ret;
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -99,7 +99,7 @@ unsigned paravirt_patch_call(void *insnb
  
--- 
-2.19.1
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
+@@ -119,7 +119,7 @@ unsigned paravirt_patch_jmp(void *insnbu
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
