@@ -1,27 +1,60 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Sun, 23 Dec 2018 13:28:10 +0000
-Subject: Re: [3/5] powerpc/4xx: Delete an error message for a failed memory allocation in three functions
-Message-Id: <43N38W0169z9sP2@ozlabs.org>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sun, 09 Dec 2018 17:30:23 +0000
+Subject: NACK: [PATCH] x86/platform/olpc: remove duplicated check on node == -1
+Message-Id: <d0d75e91-9dce-3d36-6a29-c58ae81b9a9f@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <92f46132-b654-cc73-a589-4abf8ab3122a@users.sourceforge.net>
+References: <20181209150142.9010-1-colin.king@canonical.com>
+ <5ec13475-37d8-01b7-e575-cd9e9f496cc3@wanadoo.fr>
+In-Reply-To: <5ec13475-37d8-01b7-e575-cd9e9f496cc3@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2018-01-11 at 18:02:45 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 Jan 2018 18:28:54 +0100
+On 09/12/2018 17:13, Christophe JAILLET wrote:
+> Le 09/12/2018 à 16:01, Colin King a écrit :
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Currently the node = -1 check is being performed twice, the
+>> second check is redundant and can be removed.  Fix this by
+>> removing the redundant second check and moving the first check
+>> into a combined check with the result from the olpc_ofw call.
+>>
+>> Detected by cppcheck:
+>> Identical condition '(s32)node=-1', second condition is always false
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>   arch/x86/platform/olpc/olpc_dt.c | 5 +----
+>>   1 file changed, 1 insertion(+), 4 deletions(-)
+>>
+>> diff --git a/arch/x86/platform/olpc/olpc_dt.c
+>> b/arch/x86/platform/olpc/olpc_dt.c
+>> index b4ab779f1d47..658363ec3ff3 100644
+>> --- a/arch/x86/platform/olpc/olpc_dt.c
+>> +++ b/arch/x86/platform/olpc/olpc_dt.c
+>> @@ -28,10 +28,7 @@ static phandle __init olpc_dt_getsibling(phandle node)
+>>       const void *args[] = { (void *)node };
+>>       void *res[] = { &node };
+>>   -    if ((s32)node = -1)
+>> -        return 0;
+>> -
+>> -    if (olpc_ofw("peer", args, res) || (s32)node = -1)
+>> +    if (((s32)node = -1) || olpc_ofw("peer", args, res))
+>>           return 0;
+>>         return node;
 > 
-> Omit an extra message for a memory allocation failure in these functions.
+> 'res' is { &node }
 > 
-> This issue was detected by using the Coccinelle software.
+> Could 'node' be modified by 'olpc_ofw(..., res)' and set to -1?
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> In other words, I'm not sure that the 2nd check is a redundant here.
 
-Applied to powerpc next, thanks.
+Quite right. My mistake. Urgh.
 
-https://git.kernel.org/powerpc/c/a8d5dadae59f5866ac3b68cb993d53
-
-cheers
+> 
+> Just my 2c,
+> 
+> CJ
+> 
