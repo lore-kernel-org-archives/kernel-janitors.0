@@ -1,36 +1,37 @@
-From: oulijun <oulijun@huawei.com>
-Date: Mon, 17 Dec 2018 11:18:35 +0000
-Subject: Re: [PATCH] RDMA/hns: Fix an error code in hns_roce_create_srq()
-Message-Id: <1cdd5eb9-c544-d972-89ba-e4c19c8e3180@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 09 Dec 2018 15:08:32 +0000
+Subject: [PATCH][clk-next] clk: imx: remove redundant initialization of ret to zero
+Message-Id: <20181209150832.9366-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181217070815.GF12159@kadam>
-In-Reply-To: <20181217070815.GF12159@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, NXP Linux Team <linux-imx@nxp.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-=D4=DA 2018/12/17 15:08, Dan Carpenter =D0=B4=B5=C0:
-> The function accidentally returns success on this error path.
->
-> Fixes: c7bcb13442e1 ("RDMA/hns: Add SRQ support for hip08 kernel mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_srq.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_srq.c b/drivers/infiniban=
-d/hw/hns/hns_roce_srq.c
-> index 463df60094e8..6377e734e28e 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_srq.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_srq.c
-> @@ -286,6 +286,7 @@ struct ib_srq *hns_roce_create_srq(struct ib_pd *pd,
->  		if (IS_ERR(srq->idx_que.umem)) {
->  			dev_err(hr_dev->dev,
->  				"ib_umem_get error for index queue\n");
-> +			ret =3D PTR_ERR(srq->idx_que.umem);
->  			goto err_srq_mtt;
->  		}
-> =20
+From: Colin Ian King <colin.king@canonical.com>
 
-Ok=A3=ACthanks
+The initialization of ret is redundant as it is being re-assigned to
+the return value from the call to imx8m_clk_composite_compute_dividers.
+Clean this up by removing the initialization.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/imx/clk-composite-8m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index 6d9d3714b4df..527ade1d6933 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -93,7 +93,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 	unsigned long flags = 0;
+ 	int prediv_value;
+ 	int div_value;
+-	int ret = 0;
++	int ret;
+ 	u32 val;
+ 
+ 	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
+-- 
+2.19.1
