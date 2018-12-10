@@ -1,41 +1,34 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 10 Dec 2018 09:30:50 +0000
+From: Thomas Hellstrom <thellstrom@vmware.com>
+Date: Mon, 10 Dec 2018 12:50:29 +0000
 Subject: Re: [PATCH][drm-next] drm/selftest: fix spelling mistake "dimention" -> "dimenstion"
-Message-Id: <503e3826-6e73-3875-f22d-4da25a37fcf4@canonical.com>
+Message-Id: <1a41c8390de02ae0e7ca97fb3af033ee522e62fa.camel@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20181210092619.4016-1-colin.king@canonical.com>
 In-Reply-To: <20181210092619.4016-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Thomas Hellstrom <thellstrom@vmware.com>, Deepak Rawat <drawat@vmware.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "colin.king@canonical.com" <colin.king@canonical.com>, Deepak Singh Rawat <drawat@vmware.com>, "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>, "airlied@linux.ie" <airlied@linux.ie>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Ooops, $SUBJECT should be:
-
-"drm/selftest: fix spelling mistake "dimention" -> "dimension"
-
-On 10/12/2018 09:26, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a pr_err message, fix this.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/selftests/test-drm_damage_helper.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/selftests/test-drm_damage_helper.c b/drivers/gpu/drm/selftests/test-drm_damage_helper.c
-> index a2f753205a3e..9d2bcdf8bc29 100644
-> --- a/drivers/gpu/drm/selftests/test-drm_damage_helper.c
-> +++ b/drivers/gpu/drm/selftests/test-drm_damage_helper.c
-> @@ -53,7 +53,7 @@ static bool check_damage_clip(struct drm_plane_state *state, struct drm_rect *r,
->  	int src_y2 = (state->src.y2 >> 16) + !!(state->src.y2 & 0xFFFF);
->  
->  	if (x1 >= x2 || y1 >= y2) {
-> -		pr_err("Cannot have damage clip with no dimention.\n");
-> +		pr_err("Cannot have damage clip with no dimension.\n");
->  		return false;
->  	}
->  
-> 
+T24gTW9uLCAyMDE4LTEyLTEwIGF0IDA5OjI2ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KDQpS
+ZXZpZXdlZC1ieTogVGhvbWFzIEhlbGxzdHJvbSA8dGhlbGxzdHJvbUB2bXdhcmUuY29tPg0KDQpJ
+J2xsIHRha2UgdGhpcyBpbiB0aGUgbmV4dCBwdWxsIHJlcXVlc3QgdW5sZXNzIEknbSB0b2xkIG90
+aGVyd2lzZS4NCg0KL1Rob21hcw0KDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5n
+QGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGVyZSBpcyBhIHNwZWxsaW5nIG1pc3Rha2UgaW4gYSBw
+cl9lcnIgbWVzc2FnZSwgZml4IHRoaXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4g
+S2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9zZWxmdGVzdHMvdGVzdC1kcm1fZGFtYWdlX2hlbHBlci5jIHwgMiArLQ0KPiAgMSBmaWxlIGNo
+YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3NlbGZ0ZXN0cy90ZXN0LWRybV9kYW1hZ2VfaGVscGVyLmMNCj4gYi9k
+cml2ZXJzL2dwdS9kcm0vc2VsZnRlc3RzL3Rlc3QtZHJtX2RhbWFnZV9oZWxwZXIuYw0KPiBpbmRl
+eCBhMmY3NTMyMDVhM2UuLjlkMmJjZGY4YmMyOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL3NlbGZ0ZXN0cy90ZXN0LWRybV9kYW1hZ2VfaGVscGVyLmMNCj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL3NlbGZ0ZXN0cy90ZXN0LWRybV9kYW1hZ2VfaGVscGVyLmMNCj4gQEAgLTUzLDcgKzUz
+LDcgQEAgc3RhdGljIGJvb2wgY2hlY2tfZGFtYWdlX2NsaXAoc3RydWN0DQo+IGRybV9wbGFuZV9z
+dGF0ZSAqc3RhdGUsIHN0cnVjdCBkcm1fcmVjdCAqciwNCj4gIAlpbnQgc3JjX3kyID0gKHN0YXRl
+LT5zcmMueTIgPj4gMTYpICsgISEoc3RhdGUtPnNyYy55MiAmDQo+IDB4RkZGRik7DQo+ICANCj4g
+IAlpZiAoeDEgPj0geDIgfHwgeTEgPj0geTIpIHsNCj4gLQkJcHJfZXJyKCJDYW5ub3QgaGF2ZSBk
+YW1hZ2UgY2xpcCB3aXRoIG5vIGRpbWVudGlvbi5cbiIpOw0KPiArCQlwcl9lcnIoIkNhbm5vdCBo
+YXZlIGRhbWFnZSBjbGlwIHdpdGggbm8gZGltZW5zaW9uLlxuIik7DQo+ICAJCXJldHVybiBmYWxz
+ZTsNCj4gIAl9DQo+ICANCg=
