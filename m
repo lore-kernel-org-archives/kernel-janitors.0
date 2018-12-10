@@ -1,85 +1,35 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 18 Dec 2018 04:20:35 +0000
-Subject: Re: [PATCH -next] cifs: remove set but not used variable 'server'
-Message-Id: <CAH2r5mvhjvmuhekELU_FbsBEgqnt6tupLnXzBdvh8jzcuSy0Ag@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Dec 2018 09:26:19 +0000
+Subject: [PATCH][drm-next] drm/selftest: fix spelling mistake "dimention" -> "dimenstion"
+Message-Id: <20181210092619.4016-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Thomas Hellstrom <thellstrom@vmware.com>, Deepak Rawat <drawat@vmware.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Dec 17, 2018 at 8:44 PM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> fs/cifs/smb2pdu.c: In function 'smb311_posix_mkdir':
-> fs/cifs/smb2pdu.c:2040:26: warning:
->  variable 'server' set but not used [-Wunused-but-set-variable]
->
-> fs/cifs/smb2pdu.c: In function 'build_qfs_info_req':
-> fs/cifs/smb2pdu.c:4067:26: warning:
->  variable 'server' set but not used [-Wunused-but-set-variable]
->
-> The first 'server' never used since commit bea851b8babe ("smb3: Fix mode on
-> mkdir on smb311 mounts")
-> And the second not used since commit 1fc6ad2f10ad ("cifs: remove
-> header_preamble_size where it is always 0")
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  fs/cifs/smb2pdu.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index 69e99b6..e283590 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -2037,7 +2037,6 @@ int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
->         struct smb_rqst rqst;
->         struct smb2_create_req *req;
->         struct smb2_create_rsp *rsp = NULL;
-> -       struct TCP_Server_Info *server;
->         struct cifs_ses *ses = tcon->ses;
->         struct kvec iov[3]; /* make sure at least one for each open context */
->         struct kvec rsp_iov = {NULL, 0};
-> @@ -2060,9 +2059,7 @@ int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
->         if (!utf16_path)
->                 return -ENOMEM;
->
-> -       if (ses && (ses->server))
-> -               server = ses->server;
-> -       else {
-> +       if (!ses || !(ses->server)) {
->                 rc = -EIO;
->                 goto err_free_path;
->         }
-> @@ -4064,7 +4061,6 @@ void smb2_reconnect_server(struct work_struct *work)
->  build_qfs_info_req(struct kvec *iov, struct cifs_tcon *tcon, int level,
->                    int outbuf_len, u64 persistent_fid, u64 volatile_fid)
->  {
-> -       struct TCP_Server_Info *server;
->         int rc;
->         struct smb2_query_info_req *req;
->         unsigned int total_len;
-> @@ -4074,8 +4070,6 @@ void smb2_reconnect_server(struct work_struct *work)
->         if ((tcon->ses = NULL) || (tcon->ses->server = NULL))
->                 return -EIO;
->
-> -       server = tcon->ses->server;
-> -
->         rc = smb2_plain_req_init(SMB2_QUERY_INFO, tcon, (void **) &req,
->                              &total_len);
->         if (rc)
->
->
->
+There is a spelling mistake in a pr_err message, fix this.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/selftests/test-drm_damage_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/selftests/test-drm_damage_helper.c b/drivers/gpu/drm/selftests/test-drm_damage_helper.c
+index a2f753205a3e..9d2bcdf8bc29 100644
+--- a/drivers/gpu/drm/selftests/test-drm_damage_helper.c
++++ b/drivers/gpu/drm/selftests/test-drm_damage_helper.c
+@@ -53,7 +53,7 @@ static bool check_damage_clip(struct drm_plane_state *state, struct drm_rect *r,
+ 	int src_y2 = (state->src.y2 >> 16) + !!(state->src.y2 & 0xFFFF);
+ 
+ 	if (x1 >= x2 || y1 >= y2) {
+-		pr_err("Cannot have damage clip with no dimention.\n");
++		pr_err("Cannot have damage clip with no dimension.\n");
+ 		return false;
+ 	}
+ 
 -- 
-Thanks,
-
-Steve
+2.19.1
