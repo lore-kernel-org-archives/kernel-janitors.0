@@ -1,37 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 03 Dec 2018 10:34:06 +0000
-Subject: Re: [PATCH net] bpf: uninitialized variables in test code
-Message-Id: <20181203103406.GF3095@unbuntlaptop>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 11 Dec 2018 08:21:22 +0000
+Subject: [PATCH -next] scsi: lpfc: Remove set but not used variable 'maxch'
+Message-Id: <1544516482-195043-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181129102703.2huzlalirskjdl4k@kili.mountain>
- <20181130225801.7adzjdjkn5cirq4s@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20181130225801.7adzjdjkn5cirq4s@ast-mbp.dhcp.thefacebook.com>
+References: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536804299-64730-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Roman Gushchin <guro@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-I'm afraid Roman's patch doesn't fix the bug.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Fri, Nov 30, 2018 at 02:58:03PM -0800, Alexei Starovoitov wrote:
-> On Thu, Nov 29, 2018 at 01:27:03PM +0300, Dan Carpenter wrote:
-> > Smatch complains that if bpf_test_run() fails with -ENOMEM at the
-> > begining then the "duration" is uninitialized.  We then copy the
-> > unintialized variables to the user inside the bpf_test_finish()
-> > function.  The functions require CAP_SYS_ADMIN so it's not really an
-> > information leak.
-> > 
-> > Fixes: 1cf1cae963c2 ("bpf: introduce BPF_PROG_TEST_RUN command")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> That is incorrect fixes tag.
+drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_nvmestat_data':
+drivers/scsi/lpfc/lpfc_debugfs.c:780:14: warning:
+ variable 'maxch' set but not used [-Wunused-but-set-variable]
 
-Yeah.  You're right.  The Fixes tag is wrong.  I spent some time looking
-at this too, because the code is old but the warning only just
-appeared...  :/
+debugfs display buffer has be limit to 32 in below for loop,
+so this can be removed safely.
 
-Thanks for fixing this, Roman.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/lpfc/lpfc_debugfs.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
+index a58f0b3..fe446ac 100644
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -777,7 +777,7 @@
+ 	struct lpfc_nvme_lport *lport;
+ 	uint64_t data1, data2, data3;
+ 	uint64_t tot, totin, totout;
+-	int cnt, i, maxch;
++	int cnt, i;
+ 	int len = 0;
+ 
+ 	if (phba->nvmet_support) {
+@@ -919,10 +919,6 @@
+ 				atomic_read(&lport->fc4NvmeLsRequests),
+ 				atomic_read(&lport->fc4NvmeLsCmpls));
+ 
+-		if (phba->cfg_nvme_io_channel < 32)
+-			maxch = phba->cfg_nvme_io_channel;
+-		else
+-			maxch = 32;
+ 		totin = 0;
+ 		totout = 0;
+ 		for (i = 0; i < phba->cfg_nvme_io_channel; i++) {
