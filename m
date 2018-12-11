@@ -1,43 +1,29 @@
-From: "FUND ALLIANCE INTERNATIONAL" <info@cent.org>
-Date: Sun, 30 Dec 2018 21:27:08 +0000
-Subject: ALLIANCE LOAN OFFER/PROJECT FUNDING
-Message-Id: <e106a71f61c6aae67086a6159da643ab.squirrel@email.fatcow.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 11 Dec 2018 07:20:55 +0000
+Subject: [PATCH -next] sh: sh03: rtc: remove duplicated include from rtc.c
+Message-Id: <1544512855-138362-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: keyrings@vger.kernel.org
+To: linux-sh@vger.kernel.org
 
+Remove duplicated include.
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/sh/boards/mach-sh03/rtc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-Good Day,
-
-I'm Olivia Austin a consultant from Fund Alliance International, We are
-currently offering 95% Non-Recourse Loan with our BG Leased Monetization
-Program for trade finance, constructions, credit enhancement, government
-funding, property investment and all-round range of funding, with 2%
-interest rate per annul for a period of 10-years + 1 year grace period
-with no pre-payment penalties. .
-
-    TERMS:
-
-    2 % INTEREST RATE YEARLY
-    10 YEARS DURATION
-    1M-50B USD / EUR REQUIREMENT:
-
-    1.      CLIENT MUST OWN OR REPRESENT A COMPANY.
-
-    2.      CLIENT MUST BE ABLE TO PROVIDE BUSINESS PLAN OR EXECUTIVE
-SUMMARY OR SUMMARY PURPOSE OF THE LOAN.
-
-Let us know if you are interested in our services and meet up with the
-requirements? so as to provide you with more information.
-
-Regards,
-Olivia Austin
-Fund Alliance
-Lutzowplatz 17 10785, Berlin
-Germany
-Phone: +49 (322) 2109 7890
-Email:olistin001@gmail.com
+diff --git a/arch/sh/boards/mach-sh03/rtc.c b/arch/sh/boards/mach-sh03/rtc.c
+index 8b23ed7..165e2cc 100644
+--- a/arch/sh/boards/mach-sh03/rtc.c
++++ b/arch/sh/boards/mach-sh03/rtc.c
+@@ -14,7 +14,6 @@
+ #include <linux/rtc.h>
+ #include <linux/spinlock.h>
+ #include <linux/io.h>
+-#include <linux/rtc.h>
+ #include <linux/platform_device.h>
+ 
+ #define RTC_BASE	0xb0000000
