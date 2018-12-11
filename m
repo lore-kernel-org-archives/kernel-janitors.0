@@ -1,55 +1,45 @@
-From: Aisheng DONG <aisheng.dong@nxp.com>
-Date: Tue, 04 Dec 2018 12:35:06 +0000
-Subject: RE: [PATCH net-next] can: flexcan: flexcan_chip_start(): fix the error return code in flexcan_setup_
-Message-Id: <AM0PR04MB4211A1D868406816D7AB570A80AF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 11 Dec 2018 08:11:33 +0000
+Subject: [PATCH -next] scsi: bnx2fc: Remove set but not used variable 'fh'
+Message-Id: <1544515893-193130-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543904780-30235-1-git-send-email-weiyongjun1@huawei.com>
- <AM0PR04MB42112B975149B031A0ECA71F80AF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB42112B975149B031A0ECA71F80AF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1536720652-106193-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536720652-106193-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Joakim Zhang <qiangqing.zhang@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
+To: kernel-janitors@vger.kernel.org
 
-Copy Joakim.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> > From: Wei Yongjun [mailto:weiyongjun1@huawei.com]
-[...]
-> > Subject: [PATCH net-next] can: flexcan: flexcan_chip_start(): fix the
-> > error return code in flexcan_setup_stop_mode()
-> >
-> > The error return code PTR_ERR(gpr_np) is always 0 since gpr_np is
-> > equal to NULL in this error handling case. Fix it by return -ENOENT.
-> >
-> > Fixes: de3578c198c6 ("can: flexcan: add self wakeup support")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/net/can/flexcan.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/can/flexcan.c b/drivers/net/can/flexcan.c
-> > index
-> > 0f36eaf..f412d84 100644
-> > --- a/drivers/net/can/flexcan.c
-> > +++ b/drivers/net/can/flexcan.c
-> > @@ -1432,7 +1432,7 @@ static int flexcan_setup_stop_mode(struct
-> > platform_device *pdev)
-> >  	gpr_np = of_find_node_by_phandle(phandle);
-> >  	if (!gpr_np) {
-> >  		dev_dbg(&pdev->dev, "could not find gpr node by phandle\n");
-> > -		return PTR_ERR(gpr_np);
-> > +		return -ENOENT;
-> 
-> Good catch.
-> 
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> Regards
-> Dong Aisheng
-> 
-> >  	}
-> >
-> >  	priv = netdev_priv(dev);
-> >
-> >
+drivers/scsi/bnx2fc/bnx2fc_fcoe.c: In function 'bnx2fc_rcv':
+drivers/scsi/bnx2fc/bnx2fc_fcoe.c:431:26: warning:
+ variable 'fh' set but not used [-Wunused-but-set-variable]
+  struct fc_frame_header *fh;
+                          ^
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index bcd30e2..fa6a09a 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -428,7 +428,6 @@ static int bnx2fc_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	struct fc_lport *lport;
+ 	struct bnx2fc_interface *interface;
+ 	struct fcoe_ctlr *ctlr;
+-	struct fc_frame_header *fh;
+ 	struct fcoe_rcv_info *fr;
+ 	struct fcoe_percpu_s *bg;
+ 	struct sk_buff *tmp_skb;
+@@ -463,7 +462,6 @@ static int bnx2fc_rcv(struct sk_buff *skb, struct net_device *dev,
+ 		goto err;
+ 
+ 	skb_set_transport_header(skb, sizeof(struct fcoe_hdr));
+-	fh = (struct fc_frame_header *) skb_transport_header(skb);
+ 
+ 	fr = fcoe_dev_from_skb(skb);
+ 	fr->fr_dev = lport;
