@@ -1,51 +1,70 @@
-From: Tom Talpey <ttalpey@microsoft.com>
-Date: Tue, 18 Dec 2018 15:21:44 +0000
-Subject: RE: [PATCH -next] cifs: Use GFP_ATOMIC when a lock is held in cifs_mount()
-Message-Id: <DM5PR2101MB1095A21B59A14BBA74EE93A9A0BD0@DM5PR2101MB1095.namprd21.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 12 Dec 2018 08:33:53 +0000
+Subject: [PATCH net-next] net/mlx5e: Remove set but not used variable 'upriv'
+Message-Id: <1544603633-170212-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545096879-123632-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545096879-123632-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1jaWZzLW93bmVyQHZn
-ZXIua2VybmVsLm9yZyA8bGludXgtY2lmcy1vd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uDQo+IEJl
-aGFsZiBPZiBTdGV2ZSBGcmVuY2gNCj4gU2VudDogTW9uZGF5LCBEZWNlbWJlciAxNywgMjAxOCA5
-OjA2IFBNDQo+IFRvOiBQYXVsbyBBbGNhbnRhcmEgPHBhdWxvQHBhdWxvLmFjPg0KPiBDYzogWXVl
-SGFpYmluZyA8eXVlaGFpYmluZ0BodWF3ZWkuY29tPjsgU3RldmUgRnJlbmNoDQo+IDxzZnJlbmNo
-QHNhbWJhLm9yZz47IENJRlMgPGxpbnV4LWNpZnNAdmdlci5rZXJuZWwub3JnPjsgc2FtYmEtdGVj
-aG5pY2FsDQo+IDxzYW1iYS10ZWNobmljYWxAbGlzdHMuc2FtYmEub3JnPjsga2VybmVsLWphbml0
-b3JzIDxrZXJuZWwtDQo+IGphbml0b3JzQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6
-IFtQQVRDSCAtbmV4dF0gY2lmczogVXNlIEdGUF9BVE9NSUMgd2hlbiBhIGxvY2sgaXMgaGVsZCBp
-bg0KPiBjaWZzX21vdW50KCkNCj4gDQo+IG1lcmdlZCBpbnRvIGNpZnMtMi42LmdpdCBmb3ItbmV4
-dA0KPiANCj4gT24gTW9uLCBEZWMgMTcsIDIwMTggYXQgNzo1OCBQTSBQYXVsbyBBbGNhbnRhcmEg
-PHBhdWxvQHBhdWxvLmFjPiB3cm90ZToNCj4gPg0KPiA+DQo+ID4NCj4gPiBPbiBEZWNlbWJlciAx
-NywgMjAxOCAxMTozNDozOSBQTSBHTVQtMDI6MDAsIFl1ZUhhaWJpbmcNCj4gPHl1ZWhhaWJpbmdA
-aHVhd2VpLmNvbT4gd3JvdGU6DQo+ID4gPkEgc3BpbiBsb2NrIGlzIGhlbGQgYmVmb3JlIGtzdHJu
-ZHVwLCBpdCBtYXkgc2xlZXAgd2l0aCBob2xkaW5nDQo+ID4gPnRoZSBzcGlubG9jaywgc28gd2Ug
-c2hvdWxkIHVzZSBHRlBfQVRPTUlDIGluc3RlYWQuDQoNCldvdWxkbid0IGl0IGJlIGJldHRlciB0
-byBhbGxvY2F0ZSB0aGUgbWVtb3J5IGJlZm9yZSBlbnRlcmluZyB0aGUNCnNwaW5sb2NrLXByb3Rl
-Y3RlZCBzZWN0aW9uIGFsdG9nZXRoZXI/DQoNClRvbS4NCg0KPiA+ID5GaXhlczogZTU4YzMxZDVl
-Mzg3ICgiY2lmczogQWRkIHN1cHBvcnQgZm9yIGZhaWxvdmVyIGluDQo+ID4gPmNpZnNfcmVjb25u
-ZWN0KCkiKQ0KPiA+ID5TaWduZWQtb2ZmLWJ5OiBZdWVIYWliaW5nIDx5dWVoYWliaW5nQGh1YXdl
-aS5jb20+DQo+ID4gPi0tLQ0KPiA+ID4gZnMvY2lmcy9jb25uZWN0LmMgfCAzICsrLQ0KPiA+ID4g
-MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4NCj4g
-PiA+ZGlmZiAtLWdpdCBhL2ZzL2NpZnMvY29ubmVjdC5jIGIvZnMvY2lmcy9jb25uZWN0LmMNCj4g
-PiA+aW5kZXggYTgzYWE2MS4uM2Q1ZTMwOCAxMDA2NDQNCj4gPiA+LS0tIGEvZnMvY2lmcy9jb25u
-ZWN0LmMNCj4gPiA+KysrIGIvZnMvY2lmcy9jb25uZWN0LmMNCj4gPiA+QEAgLTQ1NzQsNyArNDU3
-NCw4IEBAIGludCBjaWZzX21vdW50KHN0cnVjdCBjaWZzX3NiX2luZm8gKmNpZnNfc2IsDQo+ID4g
-PnN0cnVjdCBzbWJfdm9sICp2b2wpDQo+ID4gPiAgICAgICAgICAgICAgIHRjb24tPnJlbWFwID0g
-Y2lmc19yZW1hcChjaWZzX3NiKTsNCj4gPiA+ICAgICAgIH0NCj4gPiA+ICAgICAgIGNpZnNfc2It
-Pm9yaWdpbl9mdWxscGF0aCA9IGtzdHJuZHVwKHRjb24tPmRmc19wYXRoLA0KPiA+ID4tICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RybGVuKHRjb24tPmRmc19wYXRo
-KSwgR0ZQX0tFUk5FTCk7DQo+ID4gPisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBzdHJsZW4odGNvbi0+ZGZzX3BhdGgpLA0KPiA+ID4rICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgR0ZQX0FUT01JQyk7DQo+ID4gPiAgICAgICBpZiAoIWNp
-ZnNfc2ItPm9yaWdpbl9mdWxscGF0aCkgew0KPiA+ID4gICAgICAgICAgICAgICBzcGluX3VubG9j
-aygmY2lmc190Y3Bfc2VzX2xvY2spOw0KPiA+ID4gICAgICAgICAgICAgICByYyA9IC1FTk9NRU07
-DQo+ID4NCj4gPiBSZXZpZXdlZC1ieTogUGF1bG8gQWxjYW50YXJhIDxwYWxjYW50YXJhQHN1c2Uu
-ZGU+DQo+ID4NCj4gPiBUaGFua3MNCj4gPiBQYXVsbw0KPiA+IC0tDQo+ID4gU2VudCBmcm9tIG15
-IEFuZHJvaWQgZGV2aWNlIHdpdGggSy05IE1haWwuIFBsZWFzZSBleGN1c2UgbXkgYnJldml0eS4N
-Cj4gDQo+IA0KPiANCj4gLS0NCj4gVGhhbmtzLA0KPiANCj4gU3RldmUNCg=
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/net/ethernet/mellanox/mlx5/core/en_rep.c: In function 'mlx5e_vport_rep_load':
+drivers/net/ethernet/mellanox/mlx5/core/en_rep.c:1490:21: warning:
+ variable 'upriv' set but not used [-Wunused-but-set-variable]
+
+drivers/net/ethernet/mellanox/mlx5/core/en_rep.c: In function 'mlx5e_vport_rep_unload':
+drivers/net/ethernet/mellanox/mlx5/core/en_rep.c:1557:21: warning:
+ variable 'upriv' set but not used [-Wunused-but-set-variable]
+
+It not used any more since commit ef381359e3a8 ("net/mlx5e: Replace egdev with
+indirect block notifications"). Also remove unused variable 'uplink_rpriv'
+after this change.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+index 85e51bd..e5230049 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -1484,10 +1484,8 @@ static int mlx5e_init_rep_tx(struct mlx5e_priv *priv)
+ static int
+ mlx5e_vport_rep_load(struct mlx5_core_dev *dev, struct mlx5_eswitch_rep *rep)
+ {
+-	struct mlx5e_rep_priv *uplink_rpriv;
+ 	struct mlx5e_rep_priv *rpriv;
+ 	struct net_device *netdev;
+-	struct mlx5e_priv *upriv;
+ 	int nch, err;
+ 
+ 	rpriv = kzalloc(sizeof(*rpriv), GFP_KERNEL);
+@@ -1522,9 +1520,6 @@ static int mlx5e_init_rep_tx(struct mlx5e_priv *priv)
+ 		goto err_detach_netdev;
+ 	}
+ 
+-	uplink_rpriv = mlx5_eswitch_get_uplink_priv(dev->priv.eswitch, REP_ETH);
+-	upriv = netdev_priv(uplink_rpriv->netdev);
+-
+ 	err = register_netdev(netdev);
+ 	if (err) {
+ 		pr_warn("Failed to register representor netdev for vport %d\n",
+@@ -1552,14 +1547,9 @@ static int mlx5e_init_rep_tx(struct mlx5e_priv *priv)
+ 	struct mlx5e_rep_priv *rpriv = mlx5e_rep_to_rep_priv(rep);
+ 	struct net_device *netdev = rpriv->netdev;
+ 	struct mlx5e_priv *priv = netdev_priv(netdev);
+-	struct mlx5e_rep_priv *uplink_rpriv;
+ 	void *ppriv = priv->ppriv;
+-	struct mlx5e_priv *upriv;
+ 
+ 	unregister_netdev(netdev);
+-	uplink_rpriv = mlx5_eswitch_get_uplink_priv(priv->mdev->priv.eswitch,
+-						    REP_ETH);
+-	upriv = netdev_priv(uplink_rpriv->netdev);
+ 	mlx5e_rep_neigh_cleanup(rpriv);
+ 	mlx5e_detach_netdev(priv);
+ 	mlx5e_destroy_netdev(priv);
