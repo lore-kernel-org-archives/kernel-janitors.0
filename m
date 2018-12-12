@@ -1,50 +1,27 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Wed, 12 Dec 2018 15:10:42 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 12 Dec 2018 18:55:45 +0000
 Subject: Re: [PATCH net-next] net/mlx5: Remove duplicated include from eswitch.c
-Message-Id: <20181212151042.GE3933@mtr-leonro.mtl.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="9AazSAFPVKSPmRXK"
+Message-Id: <20181212.105545.763866630881735656.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1544601818-134205-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1544601818-134205-1-git-send-email-yuehaibing@huawei.com>
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Saeed Mahameed <saeedm@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: yuehaibing@huawei.com
+Cc: saeedm@mellanox.com, leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 12 Dec 2018 08:03:38 +0000
 
---9AazSAFPVKSPmRXK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Dec 12, 2018 at 08:03:38AM +0000, YueHaibing wrote:
 > Remove duplicated include.
->
+> 
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 1 -
->  1 file changed, 1 deletion(-)
->
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Saeed, how would you like me to handle small fixes like this which have been
+explicitly ACK'd by a Mellanox developer?
 
---9AazSAFPVKSPmRXK
-Content-Type: application/pgp-signature; name="signature.asc"
+Do you want me to apply them directly or wait to get them from you in your
+next pull request?
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcESTyAAoJEORje4g2clinBBMP/2sB2wGTghrF69ldjECJOFQg
-PjtG2varPBEqLzJIt/0tvAa7rMH5nHd9ji+yp8DWwh5WbAqhWibq70CKykqdrZnh
-NQD6fDt58D796SWbCzQdjNYLb1ECJ+M3XWnriBAkF8JImYoFCVn/mkQ6L3sGb4lt
-lcKCCpaF2uZQ0OQW23blvv1QX66cK6c8ErQzJOhvdkLepoOkKpubZANgALy/6snf
-Ki2f/QmsmAqk0wvb0TE5YCyN34F/fsWTg8/ATdIc7bE+vq3pV6W+s1SV5cClDfct
-GmbBmLOrBotNd/Ko+JwUvQuHhV+D2wBEFpwQPRglYnG/BAnJj8IC7N6ziTZw3C6e
-hhR0iHwy2SsIDfPjwxG+Ys7uIT/PPP5g1OKzyy6IWWLZRXeW0dC/kfh/qIpMLX+S
-cuP6+u/zqinm4rZyOSgosQ+4j651lb5dDZobn6iks7ZtarE86X4CLUiL3D/cjNxt
-eeHGQaL3eGP+yHe3tVKN/RlpnyZz/Gq0RcbITtnrRPz2WlryEmKZFvUTm59ik1we
-Ge5uyr0KRyHa1PrvfGy4UMZ83XynWOkyYNzoN5jkyFc/sj8r3nzm52ReD0Mwa53A
-z5DkmHf4J3sZcjflYakRrD7+pA78ZIddMoAnPkqy64gZqg5yvIzaLpJuMuuRLTTR
-b72EYcDWjOYNJvKpXgUy
-=e8iq
------END PGP SIGNATURE-----
-
---9AazSAFPVKSPmRXK--
+Thanks.
