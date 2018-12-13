@@ -1,62 +1,36 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Wed, 12 Dec 2018 15:10:12 +0000
+From: Saeed Mahameed <saeedm@mellanox.com>
+Date: Thu, 13 Dec 2018 01:24:06 +0000
 Subject: Re: [PATCH net-next] net/mlx5e: Remove set but not used variable 'upriv'
-Message-Id: <20181212151012.GD3933@mtr-leonro.mtl.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Nx8xdmI2KD3LNVVP"
+Message-Id: <78a81cd9ded813a3838a6cfcbe87c84d4fd1821b.camel@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1544603633-170212-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1544603633-170212-1-git-send-email-yuehaibing@huawei.com>
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Saeed Mahameed <saeedm@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+         <20181212151012.GD3933@mtr-leonro.mtl.com>
+In-Reply-To: <20181212151012.GD3933@mtr-leonro.mtl.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, "leon@kernel.org" <leon@kernel.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-
---Nx8xdmI2KD3LNVVP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Dec 12, 2018 at 08:33:53AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/net/ethernet/mellanox/mlx5/core/en_rep.c: In function 'mlx5e_vport_rep_load':
-> drivers/net/ethernet/mellanox/mlx5/core/en_rep.c:1490:21: warning:
->  variable 'upriv' set but not used [-Wunused-but-set-variable]
->
-> drivers/net/ethernet/mellanox/mlx5/core/en_rep.c: In function 'mlx5e_vport_rep_unload':
-> drivers/net/ethernet/mellanox/mlx5/core/en_rep.c:1557:21: warning:
->  variable 'upriv' set but not used [-Wunused-but-set-variable]
->
-> It not used any more since commit ef381359e3a8 ("net/mlx5e: Replace egdev with
-> indirect block notifications"). Also remove unused variable 'uplink_rpriv'
-> after this change.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en_rep.c | 10 ----------
->  1 file changed, 10 deletions(-)
->
-
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-
---Nx8xdmI2KD3LNVVP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcESTUAAoJEORje4g2clinQeMQAJoQAMYYHbstWhyARNEiH8W2
-g/6HcJNkXaxvpW8QmxEco0qf3cCBA5ehRZsrsqrIQtDsdPnviatcgugjVJKsRMBI
-u8kUL6hg6VOBK1k9VgYOAl8QBsTyDX5h+db0C+A5CJEA7z8iGjptbunLAekH11vO
-Mz+414C33vG9e3gfKcWntLUt70RxXR/FMUajlUQoHoMP0mIbUc9z/6+DPLhKZUxB
-nY/wdiXIzTfrOrhW1cHMdJUZ6inDz2rAyL24ZIiWFpenJIr/0l8BkPomIepfogJj
-d6m3mmtYaXKWtNNT8C+3lsvyzZQ+N9PKSckzC+vbfcifTqEpQvtt23ZtGsrpNUln
-OiLaC2L8qPRxGlODjYpJ1LxgcKKbJFofUbpAx3eWTMgGbGq99Sajpl3fhgcT+4GE
-Lcxeb0L6iyejoqCw/So9DXBjj7PfQRO4v5RCQfce0as98AnKnShtmC74LelCrkjP
-olD1g23Hjko0DDkrWGxe5GMwfvyD2lQFSxwEMKGEwawhlnaz4zVKt21TgVk4OjU6
-PeHzph8acbIHKInJfVZZnYIN99fm+/nwg67iBePfz4GQo+c0p54W65GSngKoEtGS
-FX6B36DV/OdUzfkuTqg8I2em3kKXDdM8xXC046I0xDR7AjDBzbkvaKy5T1FyyxQL
-/NvFCcGobl/3vkZGHqo6
-=FJDk
------END PGP SIGNATURE-----
-
---Nx8xdmI2KD3LNVVP--
+T24gV2VkLCAyMDE4LTEyLTEyIGF0IDE3OjEwICswMjAwLCBMZW9uIFJvbWFub3Zza3kgd3JvdGU6
+DQo+IE9uIFdlZCwgRGVjIDEyLCAyMDE4IGF0IDA4OjMzOjUzQU0gKzAwMDAsIFl1ZUhhaWJpbmcg
+d3JvdGU6DQo+ID4gRml4ZXMgZ2NjICctV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlJyB3YXJuaW5n
+Og0KPiA+IA0KPiA+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lbl9y
+ZXAuYzogSW4gZnVuY3Rpb24NCj4gPiAnbWx4NWVfdnBvcnRfcmVwX2xvYWQnOg0KPiA+IGRyaXZl
+cnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lbl9yZXAuYzoxNDkwOjIxOiB3YXJu
+aW5nOg0KPiA+ICB2YXJpYWJsZSAndXByaXYnIHNldCBidXQgbm90IHVzZWQgWy1XdW51c2VkLWJ1
+dC1zZXQtdmFyaWFibGVdDQo+ID4gDQo+ID4gZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gv
+bWx4NS9jb3JlL2VuX3JlcC5jOiBJbiBmdW5jdGlvbg0KPiA+ICdtbHg1ZV92cG9ydF9yZXBfdW5s
+b2FkJzoNCj4gPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fcmVw
+LmM6MTU1NzoyMTogd2FybmluZzoNCj4gPiAgdmFyaWFibGUgJ3Vwcml2JyBzZXQgYnV0IG5vdCB1
+c2VkIFstV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlXQ0KPiA+IA0KPiA+IEl0IG5vdCB1c2VkIGFu
+eSBtb3JlIHNpbmNlIGNvbW1pdCBlZjM4MTM1OWUzYTggKCJuZXQvbWx4NWU6IFJlcGxhY2UNCj4g
+PiBlZ2RldiB3aXRoDQo+ID4gaW5kaXJlY3QgYmxvY2sgbm90aWZpY2F0aW9ucyIpLiBBbHNvIHJl
+bW92ZSB1bnVzZWQgdmFyaWFibGUNCj4gPiAndXBsaW5rX3Jwcml2Jw0KPiA+IGFmdGVyIHRoaXMg
+Y2hhbmdlLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFl1ZUhhaWJpbmcgPHl1ZWhhaWJpbmdA
+aHVhd2VpLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gv
+bWx4NS9jb3JlL2VuX3JlcC5jIHwgMTAgLS0tLS0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwg
+MTAgZGVsZXRpb25zKC0pDQo+ID4gDQo+IA0KPiBUaGFua3MsDQo+IFJldmlld2VkLWJ5OiBMZW9u
+IFJvbWFub3Zza3kgPGxlb25yb0BtZWxsYW5veC5jb20+DQoNCkFja2VkLWJ5OiBTYWVlZCBNYWhh
+bWVlZCA8c2FlZWRtQG1lbGxhbm94LmNvbT4NCg0KRGF2ZSBhcyBhZ3JlZWQsIHlvdSBjYW4gYXBw
+bHkgdGhpcyBwYXRjaCB0byBuZXQtbmV4dCBkaXJlY3RseS4NCg0KVGhhbmtzLA0KU2FlZWQuDQo
