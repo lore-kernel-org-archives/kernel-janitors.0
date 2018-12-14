@@ -1,38 +1,41 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 21 Dec 2018 06:28:01 +0000
-Subject: Re: [PATCH -next] IB/mlx4: Remove set but not used variable 'pd'
-Message-Id: <a54230eb-11ce-9822-2d15-61b29463329a@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Dec 2018 18:31:21 +0000
+Subject: [PATCH][next] nvmet: fix comparison of a u16 with -1
+Message-Id: <20181214183121.17445-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545357957-67309-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545357957-67309-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 2018/12/21 11:48, Jason Gunthorpe wrote:
-> On Fri, Dec 21, 2018 at 02:05:57AM +0000, YueHaibing wrote:
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/infiniband/hw/mlx4/qp.c: In function '_mlx4_ib_destroy_qp':
->> drivers/infiniband/hw/mlx4/qp.c:1612:22: warning:
->>  variable 'pd' set but not used [-Wunused-but-set-variable]
->>
->> It not used since commit e00b64f7c54c ("RDMA: Cleanup undesired
->> pd->uobject usage")
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/infiniband/hw/mlx4/qp.c | 3 ---
->>  1 file changed, 3 deletions(-)
-> 
-> I wonder why my compiler didn't flag this..
+From: Colin Ian King <colin.king@canonical.com>
 
-just use make W=1
+Currently the u16 req->error_loc is being compared to -1 which
+will always be false.  Fix this by casting -1 to u16 to fix this.
 
-> 
-> Applied to for-next, thanks
-> 
-> Jason
-> 
-> 
+Detected by clang:
+  warning: result of comparison of constant -1 with expression of
+  type 'u16' (aka 'unsigned short') is always false
+  [-Wtautological-constant-out-of-range-compare]
+
+Fixes: 76574f37bf4c ("nvmet: add interface to update error-log page")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nvme/target/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index cc81d0231587..b9c219c931eb 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -663,7 +663,7 @@ static void nvmet_set_error(struct nvmet_req *req, u16 status)
+ 
+ 	req->rsp->status = cpu_to_le16(status << 1);
+ 
+-	if (!ctrl || req->error_loc = -1)
++	if (!ctrl || req->error_loc = (u16)-1)
+ 		return;
+ 
+ 	spin_lock_irqsave(&ctrl->error_lock, flags);
+-- 
+2.19.1
