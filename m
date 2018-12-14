@@ -1,60 +1,34 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 28 Dec 2018 03:44:04 +0000
-Subject: [PATCH -next] crypto: brcm - Fix some set-but-not-used warning
-Message-Id: <1545968644-191671-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Dec 2018 11:42:43 +0000
+Subject: [PATCH][next] nvme-tcp: fix spelling mistake "attepmpt" -> "attempt"
+Message-Id: <20181214114243.10675-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, Gilad Ben-Yossef <gilad@benyossef.com>, Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>, Stefan Agner <stefan@agner.ch>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/crypto/bcm/cipher.c: In function 'handle_ahash_req':
-drivers/crypto/bcm/cipher.c:720:15: warning:
- variable 'chunk_start' set but not used [-Wunused-but-set-variable]
+There is a spelling mistake in a dev_info message, fix it.
 
-drivers/crypto/bcm/cipher.c: In function 'spu_rx_callback':
-drivers/crypto/bcm/cipher.c:1679:31: warning:
- variable 'areq' set but not used [-Wunused-but-set-variable]
-
-drivers/crypto/bcm/cipher.c:1678:22: warning:
- variable 'ctx' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/crypto/bcm/cipher.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/nvme/host/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
-index c9393ff..9a66c29 100644
---- a/drivers/crypto/bcm/cipher.c
-+++ b/drivers/crypto/bcm/cipher.c
-@@ -717,7 +717,7 @@ static int handle_ahash_req(struct iproc_reqctx_s *rctx)
- 	 */
- 	unsigned int new_data_len;
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 51826479a41e..f451cb21925c 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -1789,7 +1789,7 @@ static void nvme_tcp_reconnect_ctrl_work(struct work_struct *work)
+ 	if (nvme_tcp_setup_ctrl(ctrl, false))
+ 		goto requeue;
  
--	unsigned int chunk_start = 0;
-+	unsigned int __maybe_unused chunk_start = 0;
- 	u32 db_size;	 /* Length of data field, incl gcm and hash padding */
- 	int pad_len = 0; /* total pad len, including gcm, hash, stat padding */
- 	u32 data_pad_len = 0;	/* length of GCM/CCM padding */
-@@ -1675,8 +1675,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
- 	struct spu_hw *spu = &iproc_priv.spu;
- 	struct brcm_message *mssg = msg;
- 	struct iproc_reqctx_s *rctx;
--	struct iproc_ctx_s *ctx;
--	struct crypto_async_request *areq;
- 	int err = 0;
+-	dev_info(ctrl->device, "Successfully reconnected (%d attepmpt)\n",
++	dev_info(ctrl->device, "Successfully reconnected (%d attempt)\n",
+ 			ctrl->nr_reconnects);
  
- 	rctx = mssg->ctx;
-@@ -1686,8 +1684,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
- 		err = -EFAULT;
- 		goto cb_finish;
- 	}
--	areq = rctx->parent;
--	ctx = rctx->ctx;
- 
- 	/* process the SPU status */
- 	err = spu->spu_status_process(rctx->msg_buf.rx_stat);
+ 	ctrl->nr_reconnects = 0;
+-- 
+2.19.1
