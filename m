@@ -1,31 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 20 Dec 2018 10:17:32 +0000
-Subject: Re: [PATCH] remoteproc: fix a.vs ~ typo
-Message-Id: <20181220101732.GR19692@kadam>
+Date: Sat, 15 Dec 2018 09:41:52 +0000
+Subject: [bug report] regulator: axp20x: add support for set_ramp_delay for AXP209
+Message-Id: <20181215094152.GA6075@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181218081657.GA32567@kadam>
- <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
-In-Reply-To: <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Loic PALLARDY <loic.pallardy@st.com>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 10:05:55AM +0000, Patrice CHOTARD wrote:
-> Hi Dan
-> 
-> On 12/18/18 9:16 AM, Dan Carpenter wrote:
-> > This is from static analysis and not from testing.  It doesn't really
-> > make sense to talk about !BIT(0) so probably ~BIT(0) was intended.
-> > I had to cast it from unsigned long to unsigned int to silence a GCC
-> > warning.
-> > 
-> > Fixes: bb6869b21478 ("Peter Griffin <peter.griffin@linaro.org>")
+Hello Olliver Schinagl,
 
-And oh...  I put Peter's email here instead of the commit title.  Sorry.
+This is a semi-automatic email about new static checker warnings.
 
-I will resend if we decide the patch is required.
+The patch d29f54df8b16: "regulator: axp20x: add support for 
+set_ramp_delay for AXP209" from Dec 11, 2018, leads to the following 
+Smatch complaint:
+
+    drivers/regulator/axp20x-regulator.c:375 axp20x_set_ramp_delay()
+    warn: variable dereferenced before check 'rdev' (see line 369)
+
+drivers/regulator/axp20x-regulator.c
+   368	{
+   369		struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
+                                                             ^^^^
+   370		const struct regulator_desc *desc = rdev->desc;
+                                                    ^^^^^^^^^^
+Dereferences
+
+   371		u8 reg, mask, enable, cfg = 0xff;
+   372		const int *slew_rates;
+   373		int rate_count = 0;
+   374	
+   375		if (!rdev)
+                    ^^^^^
+Check too late.
+
+   376			return -EINVAL;
+   377	
 
 regards,
 dan carpenter
