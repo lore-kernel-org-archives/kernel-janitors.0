@@ -1,52 +1,49 @@
-From: David Hildenbrand <david@redhat.com>
-Date: Mon, 03 Dec 2018 11:11:55 +0000
-Subject: Re: [PATCH -next] mm/hmm: remove set but not used variable 'devmem'
-Message-Id: <c009d3b3-3ae5-948d-992a-393b64d25275@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 15 Dec 2018 09:53:56 +0000
+Subject: [PATCH -next] evm: CHECK-remove set but not used variable 'xattr'
+Message-Id: <1544867636-59276-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543629971-128377-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1543629971-128377-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, jglisse@redhat.com, akpm@linux-foundation.org, sfr@canb.auug.org.au, dan.j.williams@intel.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 01.12.18 03:06, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> mm/hmm.c: In function 'hmm_devmem_ref_kill':
-> mm/hmm.c:995:21: warning:
->  variable 'devmem' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more since commit 35d39f953d4e ("mm, hmm: replace
-> hmm_devmem_pages_create() with devm_memremap_pages()")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  mm/hmm.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index 50fbaf8..361f370 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -992,9 +992,6 @@ static void hmm_devmem_ref_exit(void *data)
->  
->  static void hmm_devmem_ref_kill(struct percpu_ref *ref)
->  {
-> -	struct hmm_devmem *devmem;
-> -
-> -	devmem = container_of(ref, struct hmm_devmem, ref);
->  	percpu_ref_kill(ref);
->  }
-> 
-> 
-> 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+security/integrity/evm/evm_main.c: In function 'init_evm':
+security/integrity/evm/evm_main.c:566:21: warning:
+ variable 'xattr' set but not used [-Wunused-but-set-variable]
 
--- 
+It never used since commit 21af76631476 ("EVM: turn evm_config_xattrnames
+into a list")
 
-Thanks,
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ security/integrity/evm/evm_main.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-David / dhildenb
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 5ecaa3d..b6d9f14 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -563,7 +563,6 @@ static int __init init_evm(void)
+ {
+ 	int error;
+ 	struct list_head *pos, *q;
+-	struct xattr_list *xattr;
+ 
+ 	evm_init_config();
+ 
+@@ -580,11 +579,8 @@ static int __init init_evm(void)
+ error:
+ 	if (error != 0) {
+ 		if (!list_empty(&evm_config_xattrnames)) {
+-			list_for_each_safe(pos, q, &evm_config_xattrnames) {
+-				xattr = list_entry(pos, struct xattr_list,
+-						   list);
++			list_for_each_safe(pos, q, &evm_config_xattrnames)
+ 				list_del(pos);
+-			}
+ 		}
+ 	}
