@@ -1,34 +1,13 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 14 Dec 2018 11:42:43 +0000
-Subject: [PATCH][next] nvme-tcp: fix spelling mistake "attepmpt" -> "attempt"
-Message-Id: <20181214114243.10675-1-colin.king@canonical.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Date: Sat, 15 Dec 2018 03:21:18 +0000
+Subject: Re: [PATCH][next] nvme-tcp: fix spelling mistake "attepmpt" -> "attempt"
+Message-Id: <c4ebec98-fb2a-a0c3-c45c-d519f755c161@grimberg.me>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181214114243.10675-1-colin.king@canonical.com>
+In-Reply-To: <20181214114243.10675-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in a dev_info message, fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/nvme/host/tcp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 51826479a41e..f451cb21925c 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -1789,7 +1789,7 @@ static void nvme_tcp_reconnect_ctrl_work(struct work_struct *work)
- 	if (nvme_tcp_setup_ctrl(ctrl, false))
- 		goto requeue;
- 
--	dev_info(ctrl->device, "Successfully reconnected (%d attepmpt)\n",
-+	dev_info(ctrl->device, "Successfully reconnected (%d attempt)\n",
- 			ctrl->nr_reconnects);
- 
- 	ctrl->nr_reconnects = 0;
--- 
-2.19.1
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
