@@ -1,31 +1,48 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Mon, 03 Dec 2018 16:25:55 +0000
-Subject: Re: [PATCH -next] cpuset: Remove set but not used variable 'cs'
-Message-Id: <20181203162555.GM2509588@devbig004.ftw2.facebook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 15 Dec 2018 06:31:07 +0000
+Subject: [PATCH -next] btrfs: remove set but not used variable 'num_pages'
+Message-Id: <1544855467-154115-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543633976-183380-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1543633976-183380-1-git-send-email-yuehaibing@huawei.com>
+References: <1541643283-109411-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541643283-109411-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Li Zefan <lizefan@huawei.com>, mingo@kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 01, 2018 at 03:12:56AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> kernel/cgroup/cpuset.c: In function 'cpuset_cancel_attach':
-> kernel/cgroup/cpuset.c:2167:17: warning:
->  variable 'cs' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in commit 1f7dd3e5a6e4 ("cgroup: fix handling
-> of multi-destination migration from subtree_control enabling")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied to cgroup/for-4.21.
+fs/btrfs/ioctl.c: In function 'btrfs_extent_same':
+fs/btrfs/ioctl.c:3260:6: warning:
+ variable 'num_pages' set but not used [-Wunused-but-set-variable]
 
-Thanks.
+It not used any more since commit 9ee8234e6220 ("Btrfs: use
+generic_remap_file_range_prep() for cloning and deduplication")
 
--- 
-tejun
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/btrfs/ioctl.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index fab9443..15fc467 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3257,7 +3257,6 @@ static int btrfs_extent_same(struct inode *src, u64 loff, u64 olen,
+ 			     struct inode *dst, u64 dst_loff)
+ {
+ 	int ret;
+-	int num_pages = PAGE_ALIGN(BTRFS_MAX_DEDUPE_LEN) >> PAGE_SHIFT;
+ 	u64 i, tail_len, chunk_count;
+ 
+ 	/* don't make the dst file partly checksummed */
+@@ -3270,8 +3269,6 @@ static int btrfs_extent_same(struct inode *src, u64 loff, u64 olen,
+ 
+ 	tail_len = olen % BTRFS_MAX_DEDUPE_LEN;
+ 	chunk_count = div_u64(olen, BTRFS_MAX_DEDUPE_LEN);
+-	if (chunk_count = 0)
+-		num_pages = PAGE_ALIGN(tail_len) >> PAGE_SHIFT;
+ 
+ 	for (i = 0; i < chunk_count; i++) {
+ 		ret = btrfs_extent_same_range(src, loff, BTRFS_MAX_DEDUPE_LEN,
