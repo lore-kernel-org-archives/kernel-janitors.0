@@ -1,34 +1,42 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Mon, 10 Dec 2018 12:50:29 +0000
-Subject: Re: [PATCH][drm-next] drm/selftest: fix spelling mistake "dimention" -> "dimenstion"
-Message-Id: <1a41c8390de02ae0e7ca97fb3af033ee522e62fa.camel@vmware.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 15 Dec 2018 06:31:24 +0000
+Subject: [PATCH -next] iio: imu: st_lsm6dsx: remove set but not used variable ''
+Message-Id: <1544855484-154231-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181210092619.4016-1-colin.king@canonical.com>
-In-Reply-To: <20181210092619.4016-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "colin.king@canonical.com" <colin.king@canonical.com>, Deepak Singh Rawat <drawat@vmware.com>, "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>, "airlied@linux.ie" <airlied@linux.ie>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTEyLTEwIGF0IDA5OjI2ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KDQpS
-ZXZpZXdlZC1ieTogVGhvbWFzIEhlbGxzdHJvbSA8dGhlbGxzdHJvbUB2bXdhcmUuY29tPg0KDQpJ
-J2xsIHRha2UgdGhpcyBpbiB0aGUgbmV4dCBwdWxsIHJlcXVlc3QgdW5sZXNzIEknbSB0b2xkIG90
-aGVyd2lzZS4NCg0KL1Rob21hcw0KDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5n
-QGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGVyZSBpcyBhIHNwZWxsaW5nIG1pc3Rha2UgaW4gYSBw
-cl9lcnIgbWVzc2FnZSwgZml4IHRoaXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4g
-S2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9zZWxmdGVzdHMvdGVzdC1kcm1fZGFtYWdlX2hlbHBlci5jIHwgMiArLQ0KPiAgMSBmaWxlIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL3NlbGZ0ZXN0cy90ZXN0LWRybV9kYW1hZ2VfaGVscGVyLmMNCj4gYi9k
-cml2ZXJzL2dwdS9kcm0vc2VsZnRlc3RzL3Rlc3QtZHJtX2RhbWFnZV9oZWxwZXIuYw0KPiBpbmRl
-eCBhMmY3NTMyMDVhM2UuLjlkMmJjZGY4YmMyOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL3NlbGZ0ZXN0cy90ZXN0LWRybV9kYW1hZ2VfaGVscGVyLmMNCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3NlbGZ0ZXN0cy90ZXN0LWRybV9kYW1hZ2VfaGVscGVyLmMNCj4gQEAgLTUzLDcgKzUz
-LDcgQEAgc3RhdGljIGJvb2wgY2hlY2tfZGFtYWdlX2NsaXAoc3RydWN0DQo+IGRybV9wbGFuZV9z
-dGF0ZSAqc3RhdGUsIHN0cnVjdCBkcm1fcmVjdCAqciwNCj4gIAlpbnQgc3JjX3kyID0gKHN0YXRl
-LT5zcmMueTIgPj4gMTYpICsgISEoc3RhdGUtPnNyYy55MiAmDQo+IDB4RkZGRik7DQo+ICANCj4g
-IAlpZiAoeDEgPj0geDIgfHwgeTEgPj0geTIpIHsNCj4gLQkJcHJfZXJyKCJDYW5ub3QgaGF2ZSBk
-YW1hZ2UgY2xpcCB3aXRoIG5vIGRpbWVudGlvbi5cbiIpOw0KPiArCQlwcl9lcnIoIkNhbm5vdCBo
-YXZlIGRhbWFnZSBjbGlwIHdpdGggbm8gZGltZW5zaW9uLlxuIik7DQo+ICAJCXJldHVybiBmYWxz
-ZTsNCj4gIAl9DQo+ICANCg=
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c: In function 'st_lsm6dsx_shub_read_reg':
+drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c:108:41: warning:
+ variable 'hub_settings' set but not used [-Wunused-but-set-variable]
+
+It never used since introduction in commit c91c1c844ebd ("iio: imu: st_lsm6dsx:
+add i2c embedded controller support")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
+index 8e47dcc..66fbcd9 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
+@@ -105,12 +105,10 @@ static void st_lsm6dsx_shub_wait_complete(struct st_lsm6dsx_hw *hw)
+ static int st_lsm6dsx_shub_read_reg(struct st_lsm6dsx_hw *hw, u8 addr,
+ 				    u8 *data, int len)
+ {
+-	const struct st_lsm6dsx_shub_settings *hub_settings;
+ 	int err;
+ 
+ 	mutex_lock(&hw->page_lock);
+ 
+-	hub_settings = &hw->settings->shub_settings;
+ 	err = st_lsm6dsx_set_page(hw, true);
+ 	if (err < 0)
+ 		goto out;
