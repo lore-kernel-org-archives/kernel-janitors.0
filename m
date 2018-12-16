@@ -1,25 +1,42 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Mon, 03 Dec 2018 17:55:28 +0000
-Subject: Re: [PATCH] clk: mmp: Off by one in mmp_clk_add()
-Message-Id: <154385972893.88331.5957151241120598045@swboyd.mtv.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 16 Dec 2018 13:33:15 +0000
+Subject: [PATCH] bonding: fix indentation issues, remove extra spaces
+Message-Id: <20181216133315.5269-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181203145143.qogc62x7ftx4zv4l@kili.mountain>
-In-Reply-To: <20181203145143.qogc62x7ftx4zv4l@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chao Xie <chao.xie@marvell.com>, Dan Carpenter <dan.carpenter@oracle.com>, Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jay Vosburgh <j.vosburgh@gmail.com>, Veaceslav Falico <vfalico@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Dan Carpenter (2018-12-03 06:51:43)
-> The > comparison should be >= or we write one element beyond the end of
-> the unit->clk_table[] array.
-> 
-> (The unit->clk_table[] array is allocated in the mmp_clk_init() function
-> and it has unit->nr_clks elements).
-> 
-> Fixes: 4661fda10f8b ("clk: mmp: add basic support functions for DT support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-fixes
+There are two statements that are indented too much by one space each,
+fix these.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/bonding/bond_3ad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
+index 93dfcef8afc4..7c46d9f4fefd 100644
+--- a/drivers/net/bonding/bond_3ad.c
++++ b/drivers/net/bonding/bond_3ad.c
+@@ -1220,7 +1220,7 @@ static void ad_churn_machine(struct port *port)
+ 		port->sm_churn_partner_state = AD_CHURN_MONITOR;
+ 		port->sm_churn_actor_timer_counter  			__ad_timer_to_ticks(AD_ACTOR_CHURN_TIMER, 0);
+-		 port->sm_churn_partner_timer_counter +		port->sm_churn_partner_timer_counter  			 __ad_timer_to_ticks(AD_PARTNER_CHURN_TIMER, 0);
+ 		return;
+ 	}
+@@ -2128,7 +2128,7 @@ void bond_3ad_unbind_slave(struct slave *slave)
+ 				if ((new_aggregator->lag_ports = port) &&
+ 				    new_aggregator->is_active) {
+ 					netdev_info(bond->dev, "Removing an active aggregator\n");
+-					 select_new_active_agg = 1;
++					select_new_active_agg = 1;
+ 				}
+ 
+ 				new_aggregator->is_individual = aggregator->is_individual;
+-- 
+2.19.1
