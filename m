@@ -1,46 +1,40 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 11:26:08 +0000
-Subject: [PATCH][next] regulator: axp20x: check rdev is null before dereferencing it
-Message-Id: <20181222112608.30681-1-colin.king@canonical.com>
+Date: Sun, 16 Dec 2018 13:37:49 +0000
+Subject: [PATCH] can: m_can: fix overly indented if statement
+Message-Id: <20181216133749.5478-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently rdev is dereferenced when assigning desc before rdev is null
-checked, hence there is a potential null pointer dereference on rdev.
-Fix this by null checking rdev first.
+There is an if statement that is indented too much by one level,
+remove the extra tab to fix this.
 
-Detected by CoverityScan, CID#1476031 ("Dereference before null check")
-
-Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/regulator/axp20x-regulator.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/can/m_can/m_can.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 48af859fd053..eaa7a487924c 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -436,11 +436,13 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
- {
- 	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
--	const struct regulator_desc *desc = rdev->desc;
-+	const struct regulator_desc *desc;
+diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+index 9b449400376b..a5d22a022f41 100644
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -1492,9 +1492,9 @@ static netdev_tx_t m_can_start_xmit(struct sk_buff *skb,
+ 		m_can_write(priv, M_CAN_TXBAR, (1 << putidx));
  
- 	if (!rdev)
- 		return -EINVAL;
+ 		/* stop network queue if fifo full */
+-			if (m_can_tx_fifo_full(priv) ||
+-			    m_can_next_echo_skb_occupied(dev, putidx))
+-				netif_stop_queue(dev);
++		if (m_can_tx_fifo_full(priv) ||
++		    m_can_next_echo_skb_occupied(dev, putidx))
++			netif_stop_queue(dev);
+ 	}
  
-+	desc = rdev->desc;
-+
- 	switch (axp20x->variant) {
- 	case AXP209_ID:
- 		if ((desc->id = AXP20X_LDO3) &&
+ 	return NETDEV_TX_OK;
 -- 
 2.19.1
