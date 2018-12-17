@@ -1,54 +1,60 @@
-From: Michal Hocko <mhocko@kernel.org>
-Date: Fri, 28 Dec 2018 08:58:04 +0000
-Subject: Re: [PATCH -next] mm: Mark 'stack_vm_area' with __maybe_unused
-Message-Id: <20181228085804.GR16738@dhcp22.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Dec 2018 07:00:38 +0000
+Subject: [PATCH] drm: Fix an error pointer dereference()
+Message-Id: <20181217065733.GA12159@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545965190-2381-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545965190-2381-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Marcos Paulo de Souza <marcos.souza.org@gmail.com>, David Windsor <dave@nullcore.net>, Roman Gushchin <guro@fb.com>, Andrew Morton <akpm@linux-foundation.org>, "Eric W. Biederman" <ebiederm@xmission.com>, Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org
 
-On Fri 28-12-18 02:46:30, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning when
-> CONFIG_VMAP_STACK is not set:
+The drm_mode_create_tile_group() is only called from
+drm_parse_tiled_block() and the caller expects it to return a NULL on
+error.  In other words, this function should match
+drm_mode_get_tile_group().
 
-Isn't this warning disabled? I can see the following
-# These warnings generated too much noise in a regular build.
-# Use make W=1 to enable them (see scripts/Makefile.extrawarn)
-KBUILD_CFLAGS += -Wno-unused-but-set-variable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I sent a version of this patch last year which updated
+drm_parse_tiled_block() to check for error pointers.  Daniel Vetter
+said that there was another caller in the msm code, but I don't think
+there is now.
 
-in the main makefile. IMHO this warning doesn't really give us much.
 
-> 
-> kernel/fork.c: In function 'dup_task_struct':
-> kernel/fork.c:843:20: warning:
->  variable 'stack_vm_area' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  kernel/fork.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index e2a5156..b38c392 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -840,7 +840,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
->  {
->  	struct task_struct *tsk;
->  	unsigned long *stack;
-> -	struct vm_struct *stack_vm_area;
-> +	struct vm_struct *stack_vm_area __maybe_unused;
->  	int err;
->  
->  	if (node = NUMA_NO_NODE)
-> 
-> 
-> 
+ drivers/gpu/drm/drm_connector.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index da8ae80c2750..3971174f6aed 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -2077,7 +2077,7 @@ EXPORT_SYMBOL(drm_mode_get_tile_group);
+  * identifier for the tile group.
+  *
+  * RETURNS:
+- * new tile group or error.
++ * new tile group or NULL.
+  */
+ struct drm_tile_group *drm_mode_create_tile_group(struct drm_device *dev,
+ 						  char topology[8])
+@@ -2087,7 +2087,7 @@ struct drm_tile_group *drm_mode_create_tile_group(struct drm_device *dev,
+ 
+ 	tg = kzalloc(sizeof(*tg), GFP_KERNEL);
+ 	if (!tg)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	kref_init(&tg->refcount);
+ 	memcpy(tg->group_data, topology, 8);
+@@ -2099,7 +2099,7 @@ struct drm_tile_group *drm_mode_create_tile_group(struct drm_device *dev,
+ 		tg->id = ret;
+ 	} else {
+ 		kfree(tg);
+-		tg = ERR_PTR(ret);
++		tg = NULL;
+ 	}
+ 
+ 	mutex_unlock(&dev->mode_config.idr_mutex);
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
