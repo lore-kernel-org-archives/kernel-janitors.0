@@ -1,28 +1,32 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Date: Tue, 18 Dec 2018 14:16:43 +0000
-Subject: RE: [PATCH -next] clk: imx: fix potential NULL dereference in imx8qxp_lpcg_clk_probe()
-Message-Id: <AM0PR04MB42111E537F8377C4DDAD56A880BD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Dec 2018 07:08:15 +0000
+Subject: [PATCH] RDMA/hns: Fix an error code in hns_roce_create_srq()
+Message-Id: <20181217070815.GF12159@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
- <CAOMZO5C1+bxWtapaBrdzf0o3Q30BkBNHLg9=4K5ZsxBk6s2DWw@mail.gmail.com>
-In-Reply-To: <CAOMZO5C1+bxWtapaBrdzf0o3Q30BkBNHLg9=4K5ZsxBk6s2DWw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabio Estevam <festevam@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "moderated list:ARM/FREESCALE IMX /
- MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: kernel-janitors@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWls
-dG86ZmVzdGV2YW1AZ21haWwuY29tXQ0KPiBIaSBXZWksDQo+IA0KPiBPbiBUdWUsIERlYyAxOCwg
-MjAxOCBhdCA0OjM2IEFNIFdlaSBZb25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KPiB3
-cm90ZToNCj4gDQo+ID4gICAgICAgICByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwg
-SU9SRVNPVVJDRV9NRU0sIDApOw0KPiA+ICsgICAgICAgaWYgKCFyZXMpDQo+ID4gKyAgICAgICAg
-ICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ICAgICAgICAgYmFzZSA9IGRldm1faW9yZW1hcChk
-ZXYsIHJlcy0+c3RhcnQsIHJlc291cmNlX3NpemUocmVzKSk7DQo+IA0KPiBXb3VsZG4ndCBpdCBi
-ZSBiZXR0ZXIgdG8gdXNlIGRldm1faW9yZW1hcF9yZXNvdXJjZSgpLCB3aGljaCBkb2VzIHRoZSBO
-VUxMDQo+IGNoZWNrPw0KDQpObywgZGV2bV9pb3JlbWFwX3Jlc291cmNlIHdpbGwgY2FsbCByZXF1
-ZXN0X21lbV9yZWdpb24gd2hpY2ggd2UgZG9uJ3Qgd2FudA0KYXMgTFBDRyBtZW1vcnkgc3BhY2Ug
-bWF5IG92ZXJsYXAgd2l0aCBvdGhlciBtb2R1bGVzIHdpdGhpbiB0aGUgc2FtZSBTUy4NCg0KVGhp
-cyBpcyBzb21ldGhpbmcgbGlrZSB0aGUgc3lzY29uIGRldmljZSBkb2VzOg0KZHJpdmVycy9tZmQv
-c3lzY29uLmMuDQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0K
+The function accidentally returns success on this error path.
+
+Fixes: c7bcb13442e1 ("RDMA/hns: Add SRQ support for hip08 kernel mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_srq.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_srq.c b/drivers/infiniband/hw/hns/hns_roce_srq.c
+index 463df60094e8..6377e734e28e 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_srq.c
++++ b/drivers/infiniband/hw/hns/hns_roce_srq.c
+@@ -286,6 +286,7 @@ struct ib_srq *hns_roce_create_srq(struct ib_pd *pd,
+ 		if (IS_ERR(srq->idx_que.umem)) {
+ 			dev_err(hr_dev->dev,
+ 				"ib_umem_get error for index queue\n");
++			ret = PTR_ERR(srq->idx_que.umem);
+ 			goto err_srq_mtt;
+ 		}
+ 
+-- 
+2.17.1
