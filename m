@@ -1,46 +1,36 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 06 Dec 2018 10:27:19 +0000
-Subject: Re: [PATCH][next] mmc: sdhci-of-esdhc: fix spelling mistake "upsupported" -> "unsupported"
-Message-Id: <CAPDyKFrR6u=WbDo9OpeZeTyEwwQfBqpECNFsOnttewQ6c7ic4g@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 17 Dec 2018 11:58:18 +0000
+Subject: [PATCH -next] irqchip: irq-rda-intc: Fix return value check in rda8810_intc_init()
+Message-Id: <1545047898-153890-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181206092411.12152-1-colin.king@canonical.com>
-In-Reply-To: <20181206092411.12152-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 6 Dec 2018 at 10:24, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a pr_warn message, fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+In case of error, the function of_io_request_and_map() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Applied for next, thanks!
+Fixes: d852e62ad689 ("irqchip: Add RDA8810PL interrupt driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/irqchip/irq-rda-intc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/host/sdhci-of-esdhc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-> index 856e809f38b7..e21e90f81bbd 100644
-> --- a/drivers/mmc/host/sdhci-of-esdhc.c
-> +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-> @@ -597,7 +597,7 @@ static void esdhc_of_set_clock(struct sdhci_host *host, unsigned int clock)
->                         pre_div = 4;
->                         div = 3;
->                 } else {
-> -                       pr_warn("%s: using upsupported clock division.\n",
-> +                       pr_warn("%s: using unsupported clock division.\n",
->                                 mmc_hostname(host->mmc));
->                 }
->         }
-> --
-> 2.19.1
->
+diff --git a/drivers/irqchip/irq-rda-intc.c b/drivers/irqchip/irq-rda-intc.c
+index 1176291..9601683 100644
+--- a/drivers/irqchip/irq-rda-intc.c
++++ b/drivers/irqchip/irq-rda-intc.c
+@@ -85,8 +85,8 @@ static int __init rda8810_intc_init(struct device_node *node,
+ 				    struct device_node *parent)
+ {
+ 	rda_intc_base = of_io_request_and_map(node, 0, "rda-intc");
+-	if (!rda_intc_base)
+-		return -ENXIO;
++	if (IS_ERR(rda_intc_base))
++		return PTR_ERR(rda_intc_base);
+ 
+ 	/* Mask all interrupt sources */
+ 	writel_relaxed(RDA_IRQ_MASK_ALL, rda_intc_base + RDA_INTC_MASK_CLR);
