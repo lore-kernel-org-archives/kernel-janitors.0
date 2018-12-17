@@ -1,40 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 16 Dec 2018 13:37:49 +0000
-Subject: [PATCH] can: m_can: fix overly indented if statement
-Message-Id: <20181216133749.5478-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Dec 2018 07:05:36 +0000
+Subject: [PATCH] IB/qib: Fix an error code in qib_sdma_verbs_send()
+Message-Id: <20181217070536.GE12159@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We accidentally return success on this error path.
 
-There is an if statement that is indented too much by one level,
-remove the extra tab to fix this.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: f931551bafe1 ("IB/qib: Add new qib driver for QLogic PCIe InfiniBand adapters")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/can/m_can/m_can.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/qib/qib_sdma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 9b449400376b..a5d22a022f41 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -1492,9 +1492,9 @@ static netdev_tx_t m_can_start_xmit(struct sk_buff *skb,
- 		m_can_write(priv, M_CAN_TXBAR, (1 << putidx));
- 
- 		/* stop network queue if fifo full */
--			if (m_can_tx_fifo_full(priv) ||
--			    m_can_next_echo_skb_occupied(dev, putidx))
--				netif_stop_queue(dev);
-+		if (m_can_tx_fifo_full(priv) ||
-+		    m_can_next_echo_skb_occupied(dev, putidx))
-+			netif_stop_queue(dev);
- 	}
- 
- 	return NETDEV_TX_OK;
+diff --git a/drivers/infiniband/hw/qib/qib_sdma.c b/drivers/infiniband/hw/qib/qib_sdma.c
+index 0b6ca424c11d..3d64081c4819 100644
+--- a/drivers/infiniband/hw/qib/qib_sdma.c
++++ b/drivers/infiniband/hw/qib/qib_sdma.c
+@@ -575,8 +575,10 @@ int qib_sdma_verbs_send(struct qib_pportdata *ppd,
+ 		dw = (len + 3) >> 2;
+ 		addr = dma_map_single(&ppd->dd->pcidev->dev, sge->vaddr,
+ 				      dw << 2, DMA_TO_DEVICE);
+-		if (dma_mapping_error(&ppd->dd->pcidev->dev, addr))
++		if (dma_mapping_error(&ppd->dd->pcidev->dev, addr)) {
++			ret = -ENOMEM;
+ 			goto unmap;
++		}
+ 		sdmadesc[0] = 0;
+ 		make_sdma_desc(ppd, sdmadesc, (u64) addr, dw, dwoffset);
+ 		/* SDmaUseLargeBuf has to be set in every descriptor */
 -- 
-2.19.1
+2.17.1
