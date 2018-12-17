@@ -1,50 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Dec 2018 08:57:06 +0000
-Subject: [PATCH 11/20] Btrfs: drop useless LIST_HEAD
-Message-Id: <1545555435-24576-12-git-send-email-Julia.Lawall@lip6.fr>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 17 Dec 2018 12:14:35 +0000
+Subject: [PATCH -next] media: platform: Fix missing spin_lock_init()
+Message-Id: <1545048875-157403-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>
-Cc: kernel-janitors@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eddie James <eajames@linux.ibm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
+Cc: linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Drop LIST_HEAD where the variable it declares is never used.
+The driver allocates the spinlock but not initialize it.
+Use spin_lock_init() on it to initialize it correctly.
 
-The uses were removed in 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC
-handling for balance"), but not the declaration.
+This is detected by Coccinelle semantic patch.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier x;
-@@
-- LIST_HEAD(x);
-  ... when != x
-// </smpl>
-
-Fixes: 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC handling for balance")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: d2b4387f3bdf ("media: platform: Add Aspeed Video Engine driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-Successfully 0-day tested on 151 configurations.
+ drivers/media/platform/aspeed-video.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- fs/btrfs/relocation.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index 272b287f8cf0..de802ba35a34 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -2128,7 +2128,6 @@ static noinline_for_stack int merge_reloc_root(struct reloc_control *rc,
- 					       struct btrfs_root *root)
- {
- 	struct btrfs_fs_info *fs_info = rc->extent_root->fs_info;
--	LIST_HEAD(inode_list);
- 	struct btrfs_key key;
- 	struct btrfs_key next_key;
- 	struct btrfs_trans_handle *trans = NULL;
+diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
+index dfec813..692e08e 100644
+--- a/drivers/media/platform/aspeed-video.c
++++ b/drivers/media/platform/aspeed-video.c
+@@ -1661,6 +1661,7 @@ static int aspeed_video_probe(struct platform_device *pdev)
+ 
+ 	video->frame_rate = 30;
+ 	video->dev = &pdev->dev;
++	spin_lock_init(&video->lock);
+ 	mutex_init(&video->video_lock);
+ 	init_waitqueue_head(&video->wait);
+ 	INIT_DELAYED_WORK(&video->res_work, aspeed_video_resolution_work);
