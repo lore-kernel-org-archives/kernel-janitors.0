@@ -1,68 +1,44 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 05 Dec 2018 17:24:16 +0000
-Subject: Re: [PATCH -next] coresight: stm: remove set but not used variable 'res_size'
-Message-Id: <CANLsYkzyVCrV8UG7Fim0an2Rto2a4WTd6fSZLr8tt=gLZACesA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Dec 2018 09:22:55 +0000
+Subject: Re: [patch] ia64: pci: Fix a condition in pcibr_dmamap_ate32()
+Message-Id: <20181217092255.GC19692@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543653585-108277-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1543653585-108277-1-git-send-email-yuehaibing@huawei.com>
+References: <20161208105936.GB11382@elgon.mountain>
+In-Reply-To: <20161208105936.GB11382@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: Alexandre TORGUE <alexandre.torgue@st.com>, "Suzuki K. Poulose" <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: kernel-janitors@vger.kernel.org
 
-On Sat, 1 Dec 2018 at 01:31, YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/hwtracing/coresight/coresight-stm.c: In function 'stm_probe':
-> drivers/hwtracing/coresight/coresight-stm.c:796:9: warning:
->  variable 'res_size' set but not used [-Wunused-but-set-variable]
->
-> It never used since introduction in commit
-> 237483aa5cf4 ("coresight: stm: adding driver for CoreSight STM component")
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+This patch is still required.  Would you like me to resend it?
 
-Applied - thanks,
-Mathieu
+regards,
+dan carpenter
 
-> ---
->  drivers/hwtracing/coresight/coresight-stm.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-> index ef339ff..f07825d 100644
-> --- a/drivers/hwtracing/coresight/coresight-stm.c
-> +++ b/drivers/hwtracing/coresight/coresight-stm.c
-> @@ -793,7 +793,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
->         struct stm_drvdata *drvdata;
->         struct resource *res = &adev->res;
->         struct resource ch_res;
-> -       size_t res_size, bitmap_size;
-> +       size_t bitmap_size;
->         struct coresight_desc desc = { 0 };
->         struct device_node *np = adev->dev.of_node;
->
-> @@ -833,15 +833,11 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
->
->         drvdata->write_bytes = stm_fundamental_data_size(drvdata);
->
-> -       if (boot_nr_channel) {
-> +       if (boot_nr_channel)
->                 drvdata->numsp = boot_nr_channel;
-> -               res_size = min((resource_size_t)(boot_nr_channel *
-> -                                 BYTES_PER_CHANNEL), resource_size(res));
-> -       } else {
-> +       else
->                 drvdata->numsp = stm_num_stimulus_port(drvdata);
-> -               res_size = min((resource_size_t)(drvdata->numsp *
-> -                                BYTES_PER_CHANNEL), resource_size(res));
-> -       }
-> +
->         bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
->
->         guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
->
->
->
+On Thu, Dec 08, 2016 at 01:59:36PM +0300, Dan Carpenter wrote:
+> Smatch complains that probably this condition isn't correct because it
+> first does a comparison and then a mask.  Judging from the surrounding
+> code probably the parenthesis are in the wrong place.
+> 
+> The original code is equivalent to:
+> 
+> 	if (dma_flags = SN_DMA_ADDR_PHYS)
+> 
+> And it's probably going to be true less often than my corrected version.
+> 
+> Fixes: 83821d3f558d ("[PATCH] PCI: altix: msi support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/arch/ia64/sn/pci/pcibr/pcibr_dma.c b/arch/ia64/sn/pci/pcibr/pcibr_dma.c
+> index 1e863b277ac9..71c9bf308adf 100644
+> --- a/arch/ia64/sn/pci/pcibr/pcibr_dma.c
+> +++ b/arch/ia64/sn/pci/pcibr/pcibr_dma.c
+> @@ -82,7 +82,7 @@
+>  	if (IS_PCIX(pcibus_info))
+>  		ate_flags &= ~(PCI32_ATE_PREF);
+>  
+> -	if (SN_DMA_ADDRTYPE(dma_flags = SN_DMA_ADDR_PHYS))
+> +	if (SN_DMA_ADDRTYPE(dma_flags) = SN_DMA_ADDR_PHYS)
+>  		xio_addr = IS_PIC_SOFT(pcibus_info) ? PHYS_TO_DMA(paddr) :
+>  	    					      PHYS_TO_TIODMA(paddr);
+>  	else
