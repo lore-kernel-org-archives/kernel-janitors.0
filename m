@@ -1,47 +1,33 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Mon, 03 Dec 2018 21:27:26 +0000
-Subject: Re: [PATCH] mips: annotate implicit fall throughs
-Message-Id: <20181203222726.23e747ae@bbrezillon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Dec 2018 07:08:54 +0000
+Subject: [PATCH] staging: bcm2835-audio: double free in init error path
+Message-Id: <20181217070854.GG12159@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181203212214.8862-1-malat@debian.org>
-In-Reply-To: <20181203212214.8862-1-malat@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Paul Burton <paul.burton@mips.com>, trivial@kernel.org, kernel-janitors@vger.kernel.org, Harvey Hunt <harveyhuntnexus@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Mathieu,
+We free instance here and in the caller.  It should be only the caller
+which handles it.
 
-The subject prefix should be "mtd: rawnand: jz4780:" not "mips:"
+Fixes: d7ca3a71545b ("staging: bcm2835-audio: Operate non-atomic PCM ops")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Regards,
-
-Boris
-
-On Mon,  3 Dec 2018 22:22:13 +0100
-Mathieu Malaterre <malat@debian.org> wrote:
-
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> these places in the code produced warnings. Fix them up.
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  drivers/mtd/nand/raw/jz4780_bch.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4780_bch.c
-> index 731c6051d91e..7201827809e9 100644
-> --- a/drivers/mtd/nand/raw/jz4780_bch.c
-> +++ b/drivers/mtd/nand/raw/jz4780_bch.c
-> @@ -136,8 +136,10 @@ static void jz4780_bch_read_parity(struct jz4780_bch *bch, void *buf,
->  	switch (size8) {
->  	case 3:
->  		dest8[2] = (val >> 16) & 0xff;
-> +		/* fall through */
->  	case 2:
->  		dest8[1] = (val >> 8) & 0xff;
-> +		/* fall through */
->  	case 1:
->  		dest8[0] = val & 0xff;
->  		break;
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+index 0db412fd7c55..c0debdbce26c 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+@@ -138,7 +138,6 @@ vc_vchi_audio_init(VCHI_INSTANCE_T vchi_instance,
+ 		dev_err(instance->dev,
+ 			"failed to open VCHI service connection (status=%d)\n",
+ 			status);
+-		kfree(instance);
+ 		return -EPERM;
+ 	}
+ 
+-- 
+2.17.1
