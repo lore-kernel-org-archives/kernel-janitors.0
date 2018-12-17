@@ -1,33 +1,21 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 30 Dec 2018 13:46:21 +0000
-Subject: [PATCH] crypto: virtio: clean up indentation, replace spaces with tab
-Message-Id: <20181230134621.7502-1-colin.king@canonical.com>
+From: Tayeb Souami <amar.tilmatine@univ-sba.dz>
+Date: Mon, 17 Dec 2018 00:01:58 +0000
+Subject: =?utf-8?Q?wohlt=C3=A4tige_Spende_von_2.000.000_euro?=
+Message-Id: <848027295.32455.1545004918253.JavaMail.zimbra@univ-sba.dz>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gonglei <arei.gonglei@huawei.com>, "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, virtualization@lists.linux-foundation.org, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-A statement is indented with spaces and not indented enough, fix this
-replacing spaces with a tab.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/virtio/virtio_crypto_algs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/virtio/virtio_crypto_algs.c b/drivers/crypto/virtio/virtio_crypto_algs.c
-index 2c573d1aaa64..0704833ece92 100644
---- a/drivers/crypto/virtio/virtio_crypto_algs.c
-+++ b/drivers/crypto/virtio/virtio_crypto_algs.c
-@@ -406,7 +406,7 @@ __virtio_crypto_ablkcipher_do_req(struct virtio_crypto_sym_request *vc_sym_req,
- 	} else {
- 		req_data->header.session_id  			cpu_to_le64(ctx->dec_sess_info.session_id);
--	    req_data->header.opcode +		req_data->header.opcode  			cpu_to_le32(VIRTIO_CRYPTO_CIPHER_DECRYPT);
- 	}
- 	req_data->u.sym_req.op_type = cpu_to_le32(VIRTIO_CRYPTO_SYM_OP_CIPHER);
 -- 
-2.19.1
+
+Lieber Freund,
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zuf&auml;llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgew&auml;hlt.Ich habe den gr&ouml;&szlig;ten Teil meines Verm&ouml;gens auf eine Reihe von Wohlt&auml;tigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von &euro; 2.000.000,00 an Sie als eine der ausgew&auml;hlten 5 zu spenden, um meine Gewinne zu &uuml;berpr&uuml;fen, sehen Sie bitte meine You Tube Seite unten.
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+Das ist dein Spendencode: [TS530342018]
+Antworten Sie mit dem SPENDE-CODE an diese E-Mail:Tayebsouam.spende@gmail.com
+Ich hoffe, Sie und Ihre Familie gl&uuml;cklich zu machen.
+Gr&uuml;&szlig;eHerr Tayeb Souami
