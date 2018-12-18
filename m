@@ -1,48 +1,27 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Dec 2018 08:57:00 +0000
-Subject: [PATCH 05/20] scsi: lpfc: lpfc_sli: drop useless LIST_HEAD
-Message-Id: <1545555435-24576-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Tue, 18 Dec 2018 23:50:04 +0000
+Subject: Re: [PATCH] bluetooth: hci_intel: clean an indentation issue, remove extraneous spaces
+Message-Id: <4A389261-2255-4A8D-B078-F36F4AD12032@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20181030113419.12107-1-colin.king@canonical.com>
+In-Reply-To: <20181030113419.12107-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop LIST_HEAD where the variable it declares has never
-been used.
+Hi Colin,
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+> Trivial fix to clean up an indentation issue, remove spaces
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> drivers/bluetooth/hci_intel.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 
-// <smpl>
-@@
-identifier x;
-@@
-- LIST_HEAD(x);
-  ... when != x
-// </smpl>
+patch has been applied to bluetooth-next tree.
 
-Fixes: 895427bd012ce ("scsi: lpfc: NVME Initiator: Base modifications")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Regards
 
----
-Successfully 0-day tested on 151 configurations.
-
- drivers/scsi/lpfc/lpfc_sli.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 30734caf77e1..13fe9d3331b9 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -3948,7 +3948,6 @@ lpfc_sli_abort_iocb_ring(struct lpfc_hba *phba, struct lpfc_sli_ring *pring)
- void
- lpfc_sli_abort_wqe_ring(struct lpfc_hba *phba, struct lpfc_sli_ring *pring)
- {
--	LIST_HEAD(completions);
- 	struct lpfc_iocbq *iocb, *next_iocb;
- 
- 	if (pring->ringno = LPFC_ELS_RING)
+Marcel
