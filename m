@@ -1,23 +1,63 @@
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 18 Dec 2018 09:48:43 +0000
-Subject: Re: [PATCH -next] clk: imx: fix potential NULL dereference in imx8qxp_lpcg_clk_probe()
-Message-Id: <CAOMZO5C1+bxWtapaBrdzf0o3Q30BkBNHLg9=4K5ZsxBk6s2DWw@mail.gmail.com>
+From: Aisheng Dong <aisheng.dong@nxp.com>
+Date: Tue, 18 Dec 2018 14:12:51 +0000
+Subject: RE: [PATCH -next] clk: imx: fix potential NULL dereference in imx8qxp_lpcg_clk_probe()
+Message-Id: <AM0PR04MB421133F1BA37512DC60057D680BD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
 In-Reply-To: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Aisheng Dong <aisheng.dong@nxp.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: Wei Yongjun <weiyongjun1@huawei.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, dl-linux-imx <linux-imx@nxp.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Wei,
+> -----Original Message-----
+> From: Wei Yongjun [mailto:weiyongjun1@huawei.com]
+> Sent: Tuesday, December 18, 2018 2:43 PM
+[...]
+> platform_get_resource() may fail and return NULL, so we should better check
+> it's return value to avoid a NULL pointer dereference a bit later in the code.
+> 
+> This is detected by Coccinelle semantic patch.
+> 
+> @@
+> expression pdev, res, n, t, e, e1, e2;
+> @@
+> 
+> res = platform_get_resource(pdev, t, n);
+> + if (!res)
+> +   return -EINVAL;
+> ... when != res == NULL
+> e = devm_ioremap(e1, res->start, e2);
+> 
+> Fixes: 1e3121bfe51a ("clk: imx: add imx8qxp lpcg driver")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-On Tue, Dec 18, 2018 at 4:36 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+Thanks for reporting this.
 
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res)
-> +               return -EINVAL;
->         base = devm_ioremap(dev, res->start, resource_size(res));
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Wouldn't it be better to use devm_ioremap_resource(), which does the NULL check?
+Regards
+Dong Aisheng
+
+> ---
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> index dcae1dd..8f241a4 100644
+> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> @@ -169,6 +169,8 @@ static int imx8qxp_lpcg_clk_probe(struct
+> platform_device *pdev)
+>  		return -ENODEV;
+> 
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res)
+> +		return -EINVAL;
+>  	base = devm_ioremap(dev, res->start, resource_size(res));
+>  	if (!base)
+>  		return -ENOMEM;
+> 
+> 
