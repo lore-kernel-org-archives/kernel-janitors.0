@@ -1,48 +1,36 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Dec 2018 02:20:53 +0000
-Subject: [PATCH -next] scsi: qedi: Remove set but not used variables 'cdev, udev'
-Message-Id: <1545272453-6665-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Dec 2018 08:18:10 +0000
+Subject: [PATCH] ASoC: dma-sh7760: cleanup a debug printk
+Message-Id: <20181218081810.GB32567@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Manuel Lauss <mano@roarinelk.homelinux.net>
+Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The intent was to print the address as a hexadecimal but there is an
+extra "u" in the "0x%08ulx" format specification so it is displayed as
+decimal.
 
-drivers/scsi/qedi/qedi_iscsi.c: In function 'qedi_ep_connect':
-drivers/scsi/qedi/qedi_iscsi.c:813:23: warning:
- variable 'udev' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/qedi/qedi_iscsi.c:812:18: warning:
- variable 'cdev' set but not used [-Wunused-but-set-variable]
- 
- It never used since intruction.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: aef3b06ac697 ("[ALSA] SH7760 ASoC support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/scsi/qedi/qedi_iscsi.c | 4 ----
- 1 file changed, 4 deletions(-)
+ sound/soc/sh/dma-sh7760.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
-index 4da660c..704ed0e 100644
---- a/drivers/scsi/qedi/qedi_iscsi.c
-+++ b/drivers/scsi/qedi/qedi_iscsi.c
-@@ -809,8 +809,6 @@ static int qedi_task_xmit(struct iscsi_task *task)
- 	struct qedi_endpoint *qedi_ep;
- 	struct sockaddr_in *addr;
- 	struct sockaddr_in6 *addr6;
--	struct qed_dev *cdev  =  NULL;
--	struct qedi_uio_dev *udev = NULL;
- 	struct iscsi_path path_req;
- 	u32 msg_type = ISCSI_KEVENT_IF_DOWN;
- 	u32 iscsi_cid = QEDI_CID_RESERVED;
-@@ -830,8 +828,6 @@ static int qedi_task_xmit(struct iscsi_task *task)
- 	}
+diff --git a/sound/soc/sh/dma-sh7760.c b/sound/soc/sh/dma-sh7760.c
+index 922fb6aa3ed1..5aee11c94f2a 100644
+--- a/sound/soc/sh/dma-sh7760.c
++++ b/sound/soc/sh/dma-sh7760.c
+@@ -202,7 +202,7 @@ static int camelot_prepare(struct snd_pcm_substream *substream)
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct camelot_pcm *cam = &cam_pcm_data[rtd->cpu_dai->id];
  
- 	qedi = iscsi_host_priv(shost);
--	cdev = qedi->cdev;
--	udev = qedi->udev;
- 
- 	if (test_bit(QEDI_IN_OFFLINE, &qedi->flags) ||
- 	    test_bit(QEDI_IN_RECOVERY, &qedi->flags)) {
+-	pr_debug("PCM data: addr 0x%08ulx len %d\n",
++	pr_debug("PCM data: addr 0x%08lx len %d\n",
+ 		 (u32)runtime->dma_addr, runtime->dma_bytes);
+  
+ 	if (substream->stream = SNDRV_PCM_STREAM_PLAYBACK) {
+-- 
+2.17.1
