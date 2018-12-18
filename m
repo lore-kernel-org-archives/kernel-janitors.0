@@ -1,34 +1,29 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 13 Dec 2018 15:04:35 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8821ae: remove set but not used variable 'type' in translate_rx_signal_stuff
-Message-Id: <20181213150435.48CC2608CB@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 18 Dec 2018 00:54:26 +0000
+Subject: [PATCH -next] KVM: VMX: Remove duplicated include from vmx.c
+Message-Id: <1545094909-85500-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1544097968-68563-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1544097968-68563-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Tzu-En Huang <tehuang@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+Remove duplicated include.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/trx.c: In function 'translate_rx_signal_stuff':
-> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/trx.c:309:6: warning:
->  variable 'type' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since commit 21e4b0726dc6 ("rtlwifi: rtl8821ae: Move driver from
-> staging to regular tree")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/x86/kvm/vmx/vmx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-e3e454b7047a rtlwifi: rtl8821ae: remove set but not used variable 'type' in translate_rx_signal_stuff
-
--- 
-https://patchwork.kernel.org/patch/10715629/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index c90fffd..0a826c6 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -62,7 +62,6 @@
+ #include "vmcs12.h"
+ #include "vmx.h"
+ #include "x86.h"
+-#include "vmx.h"
+ 
+ MODULE_AUTHOR("Qumranet");
+ MODULE_LICENSE("GPL");
