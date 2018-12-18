@@ -1,27 +1,41 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 18 Dec 2018 23:50:04 +0000
-Subject: Re: [PATCH] bluetooth: hci_intel: clean an indentation issue, remove extraneous spaces
-Message-Id: <4A389261-2255-4A8D-B078-F36F4AD12032@holtmann.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Dec 2018 11:35:52 +0000
+Subject: [PATCH][next] staging: most: sound: replace snprintf with strscpy
+Message-Id: <20181218113552.26916-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181030113419.12107-1-colin.king@canonical.com>
-In-Reply-To: <20181030113419.12107-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-> Trivial fix to clean up an indentation issue, remove spaces
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/bluetooth/hci_intel.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
+Using snprintf without a format specifier is potentially risky if
+the string device_name contains format specifiers. Replace this with
+the safer and more efficient strscpy.
 
-patch has been applied to bluetooth-next tree.
+Cleans up clang warning:
+drivers/staging/most/sound/sound.c:673:41: warning: format string is not
+a string literal (potentially insecure) [-Wformat-security]
 
-Regards
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/most/sound/sound.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Marcel
+diff --git a/drivers/staging/most/sound/sound.c b/drivers/staging/most/sound/sound.c
+index 29a4c72e6357..ccabf5922a73 100644
+--- a/drivers/staging/most/sound/sound.c
++++ b/drivers/staging/most/sound/sound.c
+@@ -670,7 +670,7 @@ static int audio_probe_channel(struct most_interface *iface, int channel_id,
+ 		goto err_free_adpt;
+ 
+ 	pcm->private_data = channel;
+-	snprintf(pcm->name, sizeof(pcm->name), device_name);
++	strscpy(pcm->name, device_name, sizeof(pcm->name));
+ 	snd_pcm_set_ops(pcm, direction, &pcm_ops);
+ 
+ 	if (create) {
+-- 
+2.19.1
