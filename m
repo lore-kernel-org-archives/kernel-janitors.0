@@ -1,7 +1,7 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 18 Dec 2018 02:05:55 +0000
-Subject: Re: [PATCH -next] cifs: Use GFP_ATOMIC when a lock is held in cifs_mount()
-Message-Id: <CAH2r5msMxk+aMNeLvVyUszjsrNh9k2x6OoojODZyT+xnTuhbBA@mail.gmail.com>
+From: Tom Talpey <ttalpey@microsoft.com>
+Date: Tue, 18 Dec 2018 15:21:44 +0000
+Subject: RE: [PATCH -next] cifs: Use GFP_ATOMIC when a lock is held in cifs_mount()
+Message-Id: <DM5PR2101MB1095A21B59A14BBA74EE93A9A0BD0@DM5PR2101MB1095.namprd21.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1545096879-123632-1-git-send-email-yuehaibing@huawei.com>
 In-Reply-To: <1545096879-123632-1-git-send-email-yuehaibing@huawei.com>
@@ -10,49 +10,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
-
-On Mon, Dec 17, 2018 at 7:58 PM Paulo Alcantara <paulo@paulo.ac> wrote:
->
->
->
-> On December 17, 2018 11:34:39 PM GMT-02:00, YueHaibing <yuehaibing@huawei.com> wrote:
-> >A spin lock is held before kstrndup, it may sleep with holding
-> >the spinlock, so we should use GFP_ATOMIC instead.
-> >
-> >Fixes: e58c31d5e387 ("cifs: Add support for failover in
-> >cifs_reconnect()")
-> >Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> >---
-> > fs/cifs/connect.c | 3 ++-
-> > 1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> >diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> >index a83aa61..3d5e308 100644
-> >--- a/fs/cifs/connect.c
-> >+++ b/fs/cifs/connect.c
-> >@@ -4574,7 +4574,8 @@ int cifs_mount(struct cifs_sb_info *cifs_sb,
-> >struct smb_vol *vol)
-> >               tcon->remap = cifs_remap(cifs_sb);
-> >       }
-> >       cifs_sb->origin_fullpath = kstrndup(tcon->dfs_path,
-> >-                                          strlen(tcon->dfs_path), GFP_KERNEL);
-> >+                                          strlen(tcon->dfs_path),
-> >+                                          GFP_ATOMIC);
-> >       if (!cifs_sb->origin_fullpath) {
-> >               spin_unlock(&cifs_tcp_ses_lock);
-> >               rc = -ENOMEM;
->
-> Reviewed-by: Paulo Alcantara <palcantara@suse.de>
->
-> Thanks
-> Paulo
-> --
-> Sent from my Android device with K-9 Mail. Please excuse my brevity.
-
-
-
--- 
-Thanks,
-
-Steve
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1jaWZzLW93bmVyQHZn
+ZXIua2VybmVsLm9yZyA8bGludXgtY2lmcy1vd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uDQo+IEJl
+aGFsZiBPZiBTdGV2ZSBGcmVuY2gNCj4gU2VudDogTW9uZGF5LCBEZWNlbWJlciAxNywgMjAxOCA5
+OjA2IFBNDQo+IFRvOiBQYXVsbyBBbGNhbnRhcmEgPHBhdWxvQHBhdWxvLmFjPg0KPiBDYzogWXVl
+SGFpYmluZyA8eXVlaGFpYmluZ0BodWF3ZWkuY29tPjsgU3RldmUgRnJlbmNoDQo+IDxzZnJlbmNo
+QHNhbWJhLm9yZz47IENJRlMgPGxpbnV4LWNpZnNAdmdlci5rZXJuZWwub3JnPjsgc2FtYmEtdGVj
+aG5pY2FsDQo+IDxzYW1iYS10ZWNobmljYWxAbGlzdHMuc2FtYmEub3JnPjsga2VybmVsLWphbml0
+b3JzIDxrZXJuZWwtDQo+IGphbml0b3JzQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6
+IFtQQVRDSCAtbmV4dF0gY2lmczogVXNlIEdGUF9BVE9NSUMgd2hlbiBhIGxvY2sgaXMgaGVsZCBp
+bg0KPiBjaWZzX21vdW50KCkNCj4gDQo+IG1lcmdlZCBpbnRvIGNpZnMtMi42LmdpdCBmb3ItbmV4
+dA0KPiANCj4gT24gTW9uLCBEZWMgMTcsIDIwMTggYXQgNzo1OCBQTSBQYXVsbyBBbGNhbnRhcmEg
+PHBhdWxvQHBhdWxvLmFjPiB3cm90ZToNCj4gPg0KPiA+DQo+ID4NCj4gPiBPbiBEZWNlbWJlciAx
+NywgMjAxOCAxMTozNDozOSBQTSBHTVQtMDI6MDAsIFl1ZUhhaWJpbmcNCj4gPHl1ZWhhaWJpbmdA
+aHVhd2VpLmNvbT4gd3JvdGU6DQo+ID4gPkEgc3BpbiBsb2NrIGlzIGhlbGQgYmVmb3JlIGtzdHJu
+ZHVwLCBpdCBtYXkgc2xlZXAgd2l0aCBob2xkaW5nDQo+ID4gPnRoZSBzcGlubG9jaywgc28gd2Ug
+c2hvdWxkIHVzZSBHRlBfQVRPTUlDIGluc3RlYWQuDQoNCldvdWxkbid0IGl0IGJlIGJldHRlciB0
+byBhbGxvY2F0ZSB0aGUgbWVtb3J5IGJlZm9yZSBlbnRlcmluZyB0aGUNCnNwaW5sb2NrLXByb3Rl
+Y3RlZCBzZWN0aW9uIGFsdG9nZXRoZXI/DQoNClRvbS4NCg0KPiA+ID5GaXhlczogZTU4YzMxZDVl
+Mzg3ICgiY2lmczogQWRkIHN1cHBvcnQgZm9yIGZhaWxvdmVyIGluDQo+ID4gPmNpZnNfcmVjb25u
+ZWN0KCkiKQ0KPiA+ID5TaWduZWQtb2ZmLWJ5OiBZdWVIYWliaW5nIDx5dWVoYWliaW5nQGh1YXdl
+aS5jb20+DQo+ID4gPi0tLQ0KPiA+ID4gZnMvY2lmcy9jb25uZWN0LmMgfCAzICsrLQ0KPiA+ID4g
+MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4NCj4g
+PiA+ZGlmZiAtLWdpdCBhL2ZzL2NpZnMvY29ubmVjdC5jIGIvZnMvY2lmcy9jb25uZWN0LmMNCj4g
+PiA+aW5kZXggYTgzYWE2MS4uM2Q1ZTMwOCAxMDA2NDQNCj4gPiA+LS0tIGEvZnMvY2lmcy9jb25u
+ZWN0LmMNCj4gPiA+KysrIGIvZnMvY2lmcy9jb25uZWN0LmMNCj4gPiA+QEAgLTQ1NzQsNyArNDU3
+NCw4IEBAIGludCBjaWZzX21vdW50KHN0cnVjdCBjaWZzX3NiX2luZm8gKmNpZnNfc2IsDQo+ID4g
+PnN0cnVjdCBzbWJfdm9sICp2b2wpDQo+ID4gPiAgICAgICAgICAgICAgIHRjb24tPnJlbWFwID0g
+Y2lmc19yZW1hcChjaWZzX3NiKTsNCj4gPiA+ICAgICAgIH0NCj4gPiA+ICAgICAgIGNpZnNfc2It
+Pm9yaWdpbl9mdWxscGF0aCA9IGtzdHJuZHVwKHRjb24tPmRmc19wYXRoLA0KPiA+ID4tICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RybGVuKHRjb24tPmRmc19wYXRo
+KSwgR0ZQX0tFUk5FTCk7DQo+ID4gPisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBzdHJsZW4odGNvbi0+ZGZzX3BhdGgpLA0KPiA+ID4rICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgR0ZQX0FUT01JQyk7DQo+ID4gPiAgICAgICBpZiAoIWNp
+ZnNfc2ItPm9yaWdpbl9mdWxscGF0aCkgew0KPiA+ID4gICAgICAgICAgICAgICBzcGluX3VubG9j
+aygmY2lmc190Y3Bfc2VzX2xvY2spOw0KPiA+ID4gICAgICAgICAgICAgICByYyA9IC1FTk9NRU07
+DQo+ID4NCj4gPiBSZXZpZXdlZC1ieTogUGF1bG8gQWxjYW50YXJhIDxwYWxjYW50YXJhQHN1c2Uu
+ZGU+DQo+ID4NCj4gPiBUaGFua3MNCj4gPiBQYXVsbw0KPiA+IC0tDQo+ID4gU2VudCBmcm9tIG15
+IEFuZHJvaWQgZGV2aWNlIHdpdGggSy05IE1haWwuIFBsZWFzZSBleGN1c2UgbXkgYnJldml0eS4N
+Cj4gDQo+IA0KPiANCj4gLS0NCj4gVGhhbmtzLA0KPiANCj4gU3RldmUNCg=
