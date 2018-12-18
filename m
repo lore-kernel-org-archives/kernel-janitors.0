@@ -1,34 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Dec 2018 08:06:06 +0000
-Subject: [PATCH net] net: stmmac: Fix an error code in probe()
-Message-Id: <20181217080606.GA21139@kadam>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 18 Dec 2018 23:50:29 +0000
+Subject: Re: [PATCH net] net: stmmac: Fix an error code in probe()
+Message-Id: <20181218.155029.2167821582989659697.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181217080606.GA21139@kadam>
+In-Reply-To: <20181217080606.GA21139@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, "David S. Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: peppe.cavallaro@st.com, Jose.Abreu@synopsys.com, alexandre.torgue@st.com, mcoquelin.stm32@gmail.com, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
 
-The function should return an error if create_singlethread_workqueue()
-fails.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Dec 2018 11:06:06 +0300
 
-Fixes: 34877a15f787 ("net: stmmac: Rework and fix TX Timeout code")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 1 +
- 1 file changed, 1 insertion(+)
+> The function should return an error if create_singlethread_workqueue()
+> fails.
+> 
+> Fixes: 34877a15f787 ("net: stmmac: Rework and fix TX Timeout code")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 5551fead8f66..c4a35e932f05 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4250,6 +4250,7 @@ int stmmac_dvr_probe(struct device *device,
- 	priv->wq = create_singlethread_workqueue("stmmac_wq");
- 	if (!priv->wq) {
- 		dev_err(priv->device, "failed to create workqueue\n");
-+		ret = -ENOMEM;
- 		goto error_wq;
- 	}
- 
--- 
-2.17.1
+Applied.
