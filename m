@@ -1,33 +1,75 @@
-From: Felix Fietkau <nbd@nbd.name>
-Date: Mon, 31 Dec 2018 14:41:21 +0000
-Subject: Re: [PATCH] mt76: make const array 'data' static, shrinks object size
-Message-Id: <453b64e0-220e-69a8-c855-51903707a88b@nbd.name>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Dec 2018 13:05:54 +0000
+Subject: [PATCH][next] amdgpu/dc: remove various variables that are defined but never used
+Message-Id: <20181218130554.28992-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181230132640.6916-1-colin.king@canonical.com>
-In-Reply-To: <20181230132640.6916-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Matthias Brugger <matthias.bgg@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2018-12-30 14:26, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const array 'data' on the stack but instead
-> make it static. Makes the object code smaller by 78 bytes:
-> 
-> Before:
->    text    data     bss     dec     hex filename
->    5438    1080       0    6518    1976 mediatek/mt76/mt76x2/usb_mcu.o
-> 
-> After:
->    text    data     bss     dec     hex filename
->    5296    1144       0    6440    1928 mediatek/mt76/mt76x2/usb_mcu.o
-> 
-> (gcc version 8.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied, thanks.
+From: Colin Ian King <colin.king@canonical.com>
 
-- Felix
+There are several variables that are defined and never used and hence can
+be removed. Remove them. Cleans up clang -Wunused-const-variable warnings:
+
+warning: ‘dvi_hdmi_dongle_signature_str’ defined but not used
+warning: ‘dce11_one_lpt_channel_max_resolution’ defined but not used
+warning: ‘ddc_hw_status_addr’ defined but not used
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link_ddc.c      |  1 -
+ .../gpu/drm/amd/display/dc/dce110/dce110_compressor.c  |  2 --
+ .../amd/display/dc/i2caux/dce80/i2c_sw_engine_dce80.c  | 10 ----------
+ 3 files changed, 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_ddc.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_ddc.c
+index 506a97e16956..99a314b79850 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_ddc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_ddc.c
+@@ -42,7 +42,6 @@
+ #define CV_SMART_DONGLE_ADDRESS 0x20
+ /* DVI-HDMI dongle slave address for retrieving dongle signature*/
+ #define DVI_HDMI_DONGLE_ADDRESS 0x68
+-static const int8_t dvi_hdmi_dongle_signature_str[] = "6140063500G";
+ struct dvi_hdmi_dongle_signature_data {
+ 	int8_t vendor[3];/* "AMD" */
+ 	uint8_t version[2];
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c
+index 52d50e24a995..7b23239d33fe 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_compressor.c
+@@ -62,8 +62,6 @@ static const struct dce110_compressor_reg_offsets reg_offsets[] = {
+ }
+ };
+ 
+-static const uint32_t dce11_one_lpt_channel_max_resolution = 2560 * 1600;
+-
+ static uint32_t align_to_chunks_number_per_line(uint32_t pixels)
+ {
+ 	return 256 * ((pixels + 255) / 256);
+diff --git a/drivers/gpu/drm/amd/display/dc/i2caux/dce80/i2c_sw_engine_dce80.c b/drivers/gpu/drm/amd/display/dc/i2caux/dce80/i2c_sw_engine_dce80.c
+index 4853ee26096a..c9d6cf08e8ab 100644
+--- a/drivers/gpu/drm/amd/display/dc/i2caux/dce80/i2c_sw_engine_dce80.c
++++ b/drivers/gpu/drm/amd/display/dc/i2caux/dce80/i2c_sw_engine_dce80.c
+@@ -50,16 +50,6 @@
+  * This unit
+  */
+ 
+-static const uint32_t ddc_hw_status_addr[] = {
+-	mmDC_I2C_DDC1_HW_STATUS,
+-	mmDC_I2C_DDC2_HW_STATUS,
+-	mmDC_I2C_DDC3_HW_STATUS,
+-	mmDC_I2C_DDC4_HW_STATUS,
+-	mmDC_I2C_DDC5_HW_STATUS,
+-	mmDC_I2C_DDC6_HW_STATUS,
+-	mmDC_I2C_DDCVGA_HW_STATUS
+-};
+-
+ /*
+  * @brief
+  * Cast 'struct i2c_sw_engine *'
+-- 
+2.19.1
