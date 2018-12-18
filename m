@@ -1,20 +1,56 @@
-From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-Date: Tue, 18 Dec 2018 10:57:55 +0000
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 18 Dec 2018 15:20:16 +0000
 Subject: Re: [PATCH -next] cifs: Fix to use kmem_cache_free() instead of kfree()
-Message-Id: <871s6f5cgc.fsf@suse.com>
+Message-Id: <CAH2r5mtoo9G-mk4JB_mtPC6ZasEESAJ0R+V+P3fvhD7tAW+p6g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1545115022-164840-1-git-send-email-weiyongjun1@huawei.com>
 In-Reply-To: <1545115022-164840-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+merged into cifs-2.6.git for-next
 
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+On Tue, Dec 18, 2018 at 12:29 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>
+> memory allocated by kmem_cache_alloc() in alloc_cache_entry()
+> should be freed using kmem_cache_free(), not kfree().
+>
+> Fixes: 34a44fb160f9 ("cifs: Add DFS cache routines")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  fs/cifs/dfs_cache.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
+> index d20cc94..f745677 100644
+> --- a/fs/cifs/dfs_cache.c
+> +++ b/fs/cifs/dfs_cache.c
+> @@ -414,7 +414,7 @@ static int copy_ref_data(const struct dfs_info3_param *refs, int numrefs,
+>
+>         ce->ce_path = kstrdup_const(path, GFP_KERNEL);
+>         if (!ce->ce_path) {
+> -               kfree(ce);
+> +               kmem_cache_free(dfs_cache_slab, ce);
+>                 return ERR_PTR(-ENOMEM);
+>         }
+>         INIT_HLIST_NODE(&ce->ce_hlist);
+> @@ -423,7 +423,7 @@ static int copy_ref_data(const struct dfs_info3_param *refs, int numrefs,
+>         rc = copy_ref_data(refs, numrefs, ce, NULL);
+>         if (rc) {
+>                 kfree(ce->ce_path);
+> -               kfree(ce);
+> +               kmem_cache_free(dfs_cache_slab, ce);
+>                 ce = ERR_PTR(rc);
+>         }
+>         return ce;
+>
+>
+>
+
 
 -- 
-Aurélien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+Thanks,
+
+Steve
