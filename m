@@ -1,23 +1,47 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 20 Dec 2018 02:54:37 +0000
-Subject: Re: [PATCH] scsi: 3w-xxx: fix indentation issue, add missing tab
-Message-Id: <yq1zht0ewlu.fsf@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 18 Dec 2018 06:43:09 +0000
+Subject: [PATCH -next] clk: imx: fix potential NULL dereference in imx8qxp_lpcg_clk_probe()
+Message-Id: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181215141708.30883-1-colin.king@canonical.com>
-In-Reply-To: <20181215141708.30883-1-colin.king@canonical.com> (Colin King's
-        message of "Sat, 15 Dec 2018 14:17:08 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Adam Radford <aradford@gmail.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, NXP Linux Team <linux-imx@nxp.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Aisheng Dong <aisheng.dong@nxp.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-Colin,
+This is detected by Coccinelle semantic patch.
 
-> There is a tab missing on a return statement, add the missing tab.
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
 
-Applied to 4.21/scsi-queue, thanks!
+res = platform_get_resource(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap(e1, res->start, e2);
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Fixes: 1e3121bfe51a ("clk: imx: add imx8qxp lpcg driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/imx/clk-imx8qxp-lpcg.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+index dcae1dd..8f241a4 100644
+--- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
++++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+@@ -169,6 +169,8 @@ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -EINVAL;
+ 	base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!base)
+ 		return -ENOMEM;
