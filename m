@@ -1,54 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 11:49:51 +0000
-Subject: [PATCH][next] media: staging: intel-ipu3: fix unsigned comparison with < 0
-Message-Id: <20181222114951.31503-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Dec 2018 08:16:57 +0000
+Subject: [PATCH] remoteproc: fix a.vs ~ typo
+Message-Id: <20181218081657.GA32567@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Patrice Chotard <patrice.chotard@st.com>, Peter Griffin <peter.griffin@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This is from static analysis and not from testing.  It doesn't really
+make sense to talk about !BIT(0) so probably ~BIT(0) was intended.
+I had to cast it from unsigned long to unsigned int to silence a GCC
+warning.
 
-The comparison css->pipes[pipe].bindex < 0 is always false because
-bindex is an unsigned int.  Fix this by using a signed integer for
-the comparison.
-
-Detected by CoverityScan, CID#1476023 ("Unsigned compared against 0")
-
-Fixes: f5f2e4273518 ("media: staging/intel-ipu3: Add css pipeline programming")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: bb6869b21478 ("Peter Griffin <peter.griffin@linaro.org>")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/media/ipu3/ipu3-css.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/ipu3/ipu3-css.c b/drivers/staging/media/ipu3/ipu3-css.c
-index 44c55639389a..b9354d2bb692 100644
---- a/drivers/staging/media/ipu3/ipu3-css.c
-+++ b/drivers/staging/media/ipu3/ipu3-css.c
-@@ -1751,7 +1751,7 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
- 					&q[IPU3_CSS_QUEUE_OUT].fmt.mpix;
- 	struct v4l2_pix_format_mplane *const vf  					&q[IPU3_CSS_QUEUE_VF].fmt.mpix;
--	int i, s;
-+	int i, s, ret;
+Sorry for the crap commit message.  I'm pretty sure the static checker
+warning is correct, but I don't know what the run time impact of this
+bug would be.
+
+ drivers/remoteproc/st_slim_rproc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+index d711d9430a4f..a646dfb9d6cd 100644
+--- a/drivers/remoteproc/st_slim_rproc.c
++++ b/drivers/remoteproc/st_slim_rproc.c
+@@ -128,7 +128,7 @@ static int slim_rproc_start(struct rproc *rproc)
+ 	writel(SLIM_STBUS_SYNC_DIS, slim_rproc->peri + SLIM_STBUS_SYNC_OFST);
  
- 	/* Adjust all formats, get statistics buffer sizes and formats */
- 	for (i = 0; i < IPU3_CSS_QUEUES; i++) {
-@@ -1826,12 +1826,12 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
- 	s = (bds->height - gdc->height) / 2 - FILTER_SIZE;
- 	env->height = s < MIN_ENVELOPE ? MIN_ENVELOPE : s;
+ 	/* enable cpu pipeline clock */
+-	writel(!SLIM_CLK_GATE_DIS,
++	writel((unsigned int)~SLIM_CLK_GATE_DIS,
+ 		slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
  
--	css->pipes[pipe].bindex -		ipu3_css_find_binary(css, pipe, q, r);
--	if (css->pipes[pipe].bindex < 0) {
-+	ret = ipu3_css_find_binary(css, pipe, q, r);
-+	if (ret < 0) {
- 		dev_err(css->dev, "failed to find suitable binary\n");
- 		return -EINVAL;
- 	}
-+	css->pipes[pipe].bindex = ret;
+ 	/* clear int & cmd mailbox */
+@@ -167,7 +167,7 @@ static int slim_rproc_stop(struct rproc *rproc)
+ 	/* disable cpu pipeline clock */
+ 	writel(SLIM_CLK_GATE_DIS, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
  
- 	dev_dbg(css->dev, "Binary index %d for pipe %d found.",
- 		css->pipes[pipe].bindex, pipe);
+-	writel(!SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
++	writel((unsigned int)~SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
+ 
+ 	val = readl(slim_rproc->slimcore + SLIM_EN_OFST);
+ 	if (val & SLIM_EN_RUN)
 -- 
-2.19.1
+2.17.1
