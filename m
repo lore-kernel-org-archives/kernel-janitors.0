@@ -1,28 +1,39 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Sun, 23 Dec 2018 13:28:09 +0000
-Subject: Re: [2/5] powerpc/4xx: Use seq_putc() in ocm_debugfs_show()
-Message-Id: <43N38T6bJTz9sP7@ozlabs.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Dec 2018 08:22:41 +0000
+Subject: [PATCH] clk: tegra: dfll: Fix a potential Oop in remove()
+Message-Id: <20181218082241.GA440@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <400b7f67-bd62-9f5f-228b-9633c23671d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2018-01-11 at 18:01:33 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 Jan 2018 18:10:02 +0100
-> 
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+If tegra_dfll_unregister() fails then "soc" is an error pointer.  We
+should just return instead of dereferencing it.
 
-Applied to powerpc next, thanks.
+Fixes: 1752c9ee23fb ("clk: tegra: dfll: Fix drvdata overwriting issue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-https://git.kernel.org/powerpc/c/52930bc6e87191af3894bec302774f
-
-cheers
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 269d3595758b..edc31bb56674 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -133,9 +133,11 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ 	struct tegra_dfll_soc_data *soc;
+ 
+ 	soc = tegra_dfll_unregister(pdev);
+-	if (IS_ERR(soc))
++	if (IS_ERR(soc)) {
+ 		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
+ 			PTR_ERR(soc));
++		return PTR_ERR(soc);
++	}
+ 
+ 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
+ 
+-- 
+2.17.1
