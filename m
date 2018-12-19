@@ -1,34 +1,45 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 18 Dec 2018 07:15:41 +0000
-Subject: [PATCH -next] mmc: sdhci_am654: Make symbol 'sdhci_am654_ops' static
-Message-Id: <1545117341-187171-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Dec 2018 15:29:49 +0000
+Subject: [PATCH] drm/nouveau/pmu: don't print reply values if exec is false
+Message-Id: <20181219152949.14669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes the following sparse warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/mmc/host/sdhci_am654.c:161:18: warning:
- symbol 'sdhci_am654_ops' was not declared. Should it be static?
+Currently the uninitialized values in the array reply are printed out
+when exec is false and nvkm_pmu_send has not updated the array. Avoid
+confusion by only dumping out these values if they have been actually
+updated.
 
-Fixes: aff88ff23512 ("mmc: sdhci_am654: Add Initial Support for AM654 SDHCI driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Detected by CoverityScan, CID#1271291 ("Uninitialized scaler variable")
+Fixes: ebb58dc2ef8c ("drm/nouveau/pmu: rename from pwr (no binary change)")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mmc/host/sdhci_am654.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index 8c05879..eea183e 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -158,7 +158,7 @@ static void sdhci_am654_set_power(struct sdhci_host *host, unsigned char mode,
- 	sdhci_set_power_noreg(host, mode, vdd);
- }
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
+index 11b28b086a06..7b052879af72 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
+@@ -88,10 +88,10 @@ nvkm_memx_fini(struct nvkm_memx **pmemx, bool exec)
+ 	if (exec) {
+ 		nvkm_pmu_send(pmu, reply, PROC_MEMX, MEMX_MSG_EXEC,
+ 			      memx->base, finish);
++		nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
++			   reply[0], reply[1]);
+ 	}
  
--struct sdhci_ops sdhci_am654_ops = {
-+static struct sdhci_ops sdhci_am654_ops = {
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
- 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
- 	.set_uhs_signaling = sdhci_set_uhs_signaling,
+-	nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
+-		   reply[0], reply[1]);
+ 	kfree(memx);
+ 	return 0;
+ }
+-- 
+2.19.1
