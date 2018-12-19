@@ -1,43 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 18 Dec 2018 15:19:47 +0000
-Subject: [PATCH] vxge: ensure data0 is initialized in when fetching firmware version information
-Message-Id: <20181218151947.31406-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 19 Dec 2018 06:03:44 +0000
+Subject: Re: [PATCH] vxge: ensure data0 is initialized in when fetching firmware version information
+Message-Id: <20181218.220344.197132278908226283.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181218151947.31406-1-colin.king@canonical.com>
+In-Reply-To: <20181218151947.31406-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jon Mason <jdmason@kudzu.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: jdmason@kudzu.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Dec 2018 15:19:47 +0000
 
-Currently variable data0 is not being initialized so a garbage value is
-being passed to vxge_hw_vpath_fw_api and this value is being written to
-the rts_access_steer_data0 register.  There are other occurrances where
-data0 is being initialized to zero (e.g. in function
-vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
-is initialized likewise to 0.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently variable data0 is not being initialized so a garbage value is
+> being passed to vxge_hw_vpath_fw_api and this value is being written to
+> the rts_access_steer_data0 register.  There are other occurrances where
+> data0 is being initialized to zero (e.g. in function
+> vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
+> is initialized likewise to 0.
+> 
+> Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
+> 
+> Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
-
-Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 4c1fb7e57888..7cde387e5ec6 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
- 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
- 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
- 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
--	u64 data0, data1 = 0, steer_ctrl = 0;
-+	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
- 	enum vxge_hw_status status;
- 
- 	status = vxge_hw_vpath_fw_api(vpath,
--- 
-2.19.1
+Applied.
