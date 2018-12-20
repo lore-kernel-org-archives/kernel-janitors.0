@@ -1,35 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 15 Dec 2018 14:17:08 +0000
-Subject: [PATCH] scsi: 3w-xxx: fix indentation issue, add missing tab
-Message-Id: <20181215141708.30883-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 20 Dec 2018 02:54:37 +0000
+Subject: Re: [PATCH] scsi: 3w-xxx: fix indentation issue, add missing tab
+Message-Id: <yq1zht0ewlu.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181215141708.30883-1-colin.king@canonical.com>
+In-Reply-To: <20181215141708.30883-1-colin.king@canonical.com> (Colin King's
+        message of "Sat, 15 Dec 2018 14:17:08 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adam Radford <aradford@gmail.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Adam Radford <aradford@gmail.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a tab missing on a return statement, add the missing tab.
+Colin,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/3w-xxxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> There is a tab missing on a return statement, add the missing tab.
 
-diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-index a58257645e94..04164d2f03dd 100644
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -1174,7 +1174,7 @@ static int tw_setfeature(TW_Device_Extension *tw_dev, int parm, int param_size,
-   	command_que_value = tw_dev->command_packet_physical_address[request_id];
- 	if (command_que_value = 0) {
- 		printk(KERN_WARNING "3w-xxxx: tw_setfeature(): Bad command packet physical address.\n");
--	return 1;
-+		return 1;
- 	}
- 
- 	/* Send command packet to the board */
+Applied to 4.21/scsi-queue, thanks!
+
 -- 
-2.19.1
+Martin K. Petersen	Oracle Linux Engineering
