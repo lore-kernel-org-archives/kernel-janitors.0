@@ -1,30 +1,40 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Mon, 03 Dec 2018 17:55:16 +0000
-Subject: Re: [PATCH] clk: mvebu: Off by one bugs in cp110_of_clk_get()
-Message-Id: <154385971618.88331.15503515631878065127@swboyd.mtv.corp.google.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Dec 2018 02:51:58 +0000
+Subject: [PATCH] mac80211-next: remove set but not used variable 'w_priv'
+Message-Id: <1545274318-144187-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181203145055.4fvrmy3c4zyocgsx@kili.mountain>
-In-Reply-To: <20181203145055.4fvrmy3c4zyocgsx@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Michael Turquette <mturquette@baylibre.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (2018-12-03 06:50:55)
-> These > comparisons should be >= to prevent reading beyond the end of
-> of the clk_data->hws[] buffer.
-> 
-> The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
-> when we do:
->         cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
->                                       sizeof(struct clk_hw *) * CP110_CLK_NUM,
->                                       GFP_KERNEL);
-> As you can see, it has CP110_CLK_NUM elements which is equivalent to
-> CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
-> 
-> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied to clk-fixes
+drivers/net/wireless/virt_wifi.c: In function 'virt_wifi_net_device_stop':
+drivers/net/wireless/virt_wifi.c:432:31: warning:
+ variable 'w_priv' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/virt_wifi.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
+index 64b2186..ea10f58 100644
+--- a/drivers/net/wireless/virt_wifi.c
++++ b/drivers/net/wireless/virt_wifi.c
+@@ -429,13 +429,11 @@ static int virt_wifi_net_device_open(struct net_device *dev)
+ static int virt_wifi_net_device_stop(struct net_device *dev)
+ {
+ 	struct virt_wifi_netdev_priv *n_priv = netdev_priv(dev);
+-	struct virt_wifi_wiphy_priv *w_priv;
+ 
+ 	n_priv->is_up = false;
+ 
+ 	if (!dev->ieee80211_ptr)
+ 		return 0;
+-	w_priv = wiphy_priv(dev->ieee80211_ptr->wiphy);
+ 
+ 	virt_wifi_cancel_scan(dev->ieee80211_ptr->wiphy);
+ 	virt_wifi_cancel_connect(dev);
