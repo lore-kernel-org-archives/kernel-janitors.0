@@ -1,50 +1,48 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 11:28:30 +0000
-Subject: NAK: [PATCH][next] regulator: axp20x: check rdev is null before dereferencing it
-Message-Id: <fad3c7aa-b030-0edd-3efc-54062f1ebeb2@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Dec 2018 02:20:53 +0000
+Subject: [PATCH -next] scsi: qedi: Remove set but not used variables 'cdev, udev'
+Message-Id: <1545272453-6665-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181222112608.30681-1-colin.king@canonical.com>
-In-Reply-To: <20181222112608.30681-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 22/12/2018 11:26, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently rdev is dereferenced when assigning desc before rdev is null
-> checked, hence there is a potential null pointer dereference on rdev.
-> Fix this by null checking rdev first.
-> 
-> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
-> 
-> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/regulator/axp20x-regulator.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-> index 48af859fd053..eaa7a487924c 100644
-> --- a/drivers/regulator/axp20x-regulator.c
-> +++ b/drivers/regulator/axp20x-regulator.c
-> @@ -436,11 +436,13 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
->  static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
->  {
->  	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-> -	const struct regulator_desc *desc = rdev->desc;
-> +	const struct regulator_desc *desc;
->  
->  	if (!rdev)
->  		return -EINVAL;
->  
-> +	desc = rdev->desc;
-> +
->  	switch (axp20x->variant) {
->  	case AXP209_ID:
->  		if ((desc->id = AXP20X_LDO3) &&
-> 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Forgot to add in another fix, I'll send a V2.
+drivers/scsi/qedi/qedi_iscsi.c: In function 'qedi_ep_connect':
+drivers/scsi/qedi/qedi_iscsi.c:813:23: warning:
+ variable 'udev' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/qedi/qedi_iscsi.c:812:18: warning:
+ variable 'cdev' set but not used [-Wunused-but-set-variable]
+ 
+ It never used since intruction.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/qedi/qedi_iscsi.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
+index 4da660c..704ed0e 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.c
++++ b/drivers/scsi/qedi/qedi_iscsi.c
+@@ -809,8 +809,6 @@ static int qedi_task_xmit(struct iscsi_task *task)
+ 	struct qedi_endpoint *qedi_ep;
+ 	struct sockaddr_in *addr;
+ 	struct sockaddr_in6 *addr6;
+-	struct qed_dev *cdev  =  NULL;
+-	struct qedi_uio_dev *udev = NULL;
+ 	struct iscsi_path path_req;
+ 	u32 msg_type = ISCSI_KEVENT_IF_DOWN;
+ 	u32 iscsi_cid = QEDI_CID_RESERVED;
+@@ -830,8 +828,6 @@ static int qedi_task_xmit(struct iscsi_task *task)
+ 	}
+ 
+ 	qedi = iscsi_host_priv(shost);
+-	cdev = qedi->cdev;
+-	udev = qedi->udev;
+ 
+ 	if (test_bit(QEDI_IN_OFFLINE, &qedi->flags) ||
+ 	    test_bit(QEDI_IN_RECOVERY, &qedi->flags)) {
