@@ -1,29 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 21 Dec 2018 00:47:45 +0000
-Subject: Re: [PATCH -next] scsi: fcoe: remove set but not used variable 'port'
-Message-Id: <yq14lb7d7ta.fsf@oracle.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 20 Dec 2018 17:43:20 +0000
+Subject: Re: [PATCH] fbdev: uvesafb: fix spelling mistake "memoery" -> "memory"
+Message-Id: <6ffc5f38-a167-e51c-ee36-f7bf1d190a4e@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545273824-132149-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545273824-132149-1-git-send-email-yuehaibing@huawei.com>
+References: <CGME20181128153831epcas3p2e9de4c3758e444885c08644a03b586a1@epcas3p2.samsung.com>
+ <20181128153735.14083-1-colin.king@canonical.com>
+In-Reply-To: <20181128153735.14083-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Michal Januszewski <spock@gentoo.org>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
 
-YueHaibing,
+On 11/28/2018 04:37 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in the module parameter description, fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/fcoe/fcoe.c: In function 'fcoe_recv_frame':
-> drivers/scsi/fcoe/fcoe.c:1672:20: warning:
->  variable 'port' set but not used [-Wunused-but-set-variable]
->
-> drivers/scsi/fcoe/fcoe.c: In function 'fcoe_device_notification':
-> drivers/scsi/fcoe/fcoe.c:1861:20: warning:
->  variable 'port' set but not used [-Wunused-but-set-variable]
+Patch queued for 4.21, thanks.
 
-Applied to 4.21/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
