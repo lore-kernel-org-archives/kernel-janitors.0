@@ -1,50 +1,61 @@
-From: Mike Rapoport <rppt@linux.ibm.com>
-Date: Tue, 04 Dec 2018 07:48:49 +0000
-Subject: Re: [PATCH 3/3] mm: add missing declaration of memmap_init in linux/mm.h
-Message-Id: <20181204074848.GH26700@rapoport-lnx>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Dec 2018 02:43:44 +0000
+Subject: [PATCH -next] scsi: fcoe: remove set but not used variable 'port'
+Message-Id: <1545273824-132149-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
- <fccff943020c51f2319b673dd9e5720672e64a6e.1543899764.git.dato@net.com.org.es>
-In-Reply-To: <fccff943020c51f2319b673dd9e5720672e64a6e.1543899764.git.dato@net.com.org.es>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Adeodato =?iso-8859-1?Q?Sim=F3?= <dato@net.com.org.es>
-Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 02:14:24AM -0300, Adeodato Sim=F3 wrote:
-> This follows-up commit dfb3ccd00a06 ("mm: make memmap_init a proper
-> function"), which changed memmap_init from macro to function.
->=20
-> Signed-off-by: Adeodato Sim=F3 <dato@net.com.org.es>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+drivers/scsi/fcoe/fcoe.c: In function 'fcoe_recv_frame':
+drivers/scsi/fcoe/fcoe.c:1672:20: warning:
+ variable 'port' set but not used [-Wunused-but-set-variable]
 
-> ---
-> scripts/checkpatch.pl complained about use of extern for a prototype,
-> but I preferred to maintain consistency with surrounding code. -d
->=20
->  include/linux/mm.h | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 3eb3bf7774f1..8597b864dd91 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2268,6 +2268,8 @@ static inline void zero_resv_unavail(void) {}
->  #endif
->=20
->  extern void set_dma_reserve(unsigned long new_dma_reserve);
-> +extern void memmap_init(unsigned long size, int nid,
-> +			unsigned long zone, unsigned long start_pfn);
->  extern void memmap_init_zone(unsigned long, int, unsigned long, unsigned=
- long,
->  		enum memmap_context, struct vmem_altmap *);
->  extern void setup_per_zone_wmarks(void);
-> --=20
-> 2.19.2
->=20
+drivers/scsi/fcoe/fcoe.c: In function 'fcoe_device_notification':
+drivers/scsi/fcoe/fcoe.c:1861:20: warning:
+ variable 'port' set but not used [-Wunused-but-set-variable]
 
---=20
-Sincerely yours,
-Mike.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/fcoe/fcoe.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+index 4961ae4..cd19be3 100644
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
+@@ -1669,7 +1669,6 @@ static void fcoe_recv_frame(struct sk_buff *skb)
+ 	struct fc_stats *stats;
+ 	struct fcoe_crc_eof crc_eof;
+ 	struct fc_frame *fp;
+-	struct fcoe_port *port;
+ 	struct fcoe_hdr *hp;
+ 
+ 	fr = fcoe_dev_from_skb(skb);
+@@ -1687,7 +1686,6 @@ static void fcoe_recv_frame(struct sk_buff *skb)
+ 			skb_end_pointer(skb), skb->csum,
+ 			skb->dev ? skb->dev->name : "<NULL>");
+ 
+-	port = lport_priv(lport);
+ 	skb_linearize(skb); /* check for skb_is_nonlinear is within skb_linearize */
+ 
+ 	/*
+@@ -1858,7 +1856,6 @@ static int fcoe_device_notification(struct notifier_block *notifier,
+ 	struct net_device *netdev = netdev_notifier_info_to_dev(ptr);
+ 	struct fcoe_ctlr *ctlr;
+ 	struct fcoe_interface *fcoe;
+-	struct fcoe_port *port;
+ 	struct fc_stats *stats;
+ 	u32 link_possible = 1;
+ 	u32 mfs;
+@@ -1896,7 +1893,6 @@ static int fcoe_device_notification(struct notifier_block *notifier,
+ 		break;
+ 	case NETDEV_UNREGISTER:
+ 		list_del(&fcoe->list);
+-		port = lport_priv(ctlr->lp);
+ 		fcoe_vport_remove(lport);
+ 		mutex_lock(&fcoe_config_mutex);
+ 		fcoe_if_destroy(lport);
