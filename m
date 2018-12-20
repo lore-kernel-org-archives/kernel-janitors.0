@@ -1,46 +1,33 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Date: Thu, 20 Dec 2018 10:45:50 +0000
-Subject: Re: [PATCH -next] regulator: act8945a-regulator: make symbol act8945a_pm static
-Message-Id: <20181220114550.782cdddc@bbrezillon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 20 Dec 2018 11:32:43 +0000
+Subject: [PATCH] cifs: Use kzfree() to free password
+Message-Id: <20181220113243.GA20171@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545117021-178814-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1545117021-178814-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 18 Dec 2018 07:10:21 +0000
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
+We should zero out the password before we free it.
 
-> Fixes the following sparse warning:
-> 
-> drivers/regulator/act8945a-regulator.c:340:1: warning:
->  symbol 'act8945a_pm' was not declared. Should it be static?
-> 
-> Fixes: 7482d6ecc68e ("regulator: act8945a-regulator: Implement PM functionalities")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 3d6cacbb5310 ("cifs: Add DFS cache routines")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/cifs/dfs_cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-> ---
->  drivers/regulator/act8945a-regulator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
-> index 90572b6..dc3942b 100644
-> --- a/drivers/regulator/act8945a-regulator.c
-> +++ b/drivers/regulator/act8945a-regulator.c
-> @@ -337,7 +337,7 @@ static int act8945a_suspend(struct device *pdev)
->  	return regmap_write(act8945a->regmap, ACT8945A_SYS_CTRL, 0x42);
->  }
->  
-> -SIMPLE_DEV_PM_OPS(act8945a_pm, act8945a_suspend, NULL);
-> +static SIMPLE_DEV_PM_OPS(act8945a_pm, act8945a_suspend, NULL);
->  
->  static void act8945a_pmic_shutdown(struct platform_device *pdev)
->  {
-> 
-> 
-> 
+diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
+index f74567788396..006333146a6d 100644
+--- a/fs/cifs/dfs_cache.c
++++ b/fs/cifs/dfs_cache.c
+@@ -1130,7 +1130,7 @@ static int dup_vol(struct smb_vol *vol, struct smb_vol *new)
+ err_free_unc:
+ 	kfree(new->UNC);
+ err_free_password:
+-	kfree(new->password);
++	kzfree(new->password);
+ err_free_username:
+ 	kfree(new->username);
+ 	kfree(new);
+-- 
+2.17.1
