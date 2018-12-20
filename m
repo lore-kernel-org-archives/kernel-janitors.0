@@ -1,60 +1,42 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sun, 09 Dec 2018 17:30:23 +0000
-Subject: NACK: [PATCH] x86/platform/olpc: remove duplicated check on node == -1
-Message-Id: <d0d75e91-9dce-3d36-6a29-c58ae81b9a9f@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 20 Dec 2018 14:05:50 +0000
+Subject: [PATCH] ray_cs: fix array out-of-bounds access
+Message-Id: <20181220140550.18853-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181209150142.9010-1-colin.king@canonical.com>
- <5ec13475-37d8-01b7-e575-cd9e9f496cc3@wanadoo.fr>
-In-Reply-To: <5ec13475-37d8-01b7-e575-cd9e9f496cc3@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On 09/12/2018 17:13, Christophe JAILLET wrote:
-> Le 09/12/2018 à 16:01, Colin King a écrit :
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the node = -1 check is being performed twice, the
->> second check is redundant and can be removed.  Fix this by
->> removing the redundant second check and moving the first check
->> into a combined check with the result from the olpc_ofw call.
->>
->> Detected by cppcheck:
->> Identical condition '(s32)node=-1', second condition is always false
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   arch/x86/platform/olpc/olpc_dt.c | 5 +----
->>   1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/arch/x86/platform/olpc/olpc_dt.c
->> b/arch/x86/platform/olpc/olpc_dt.c
->> index b4ab779f1d47..658363ec3ff3 100644
->> --- a/arch/x86/platform/olpc/olpc_dt.c
->> +++ b/arch/x86/platform/olpc/olpc_dt.c
->> @@ -28,10 +28,7 @@ static phandle __init olpc_dt_getsibling(phandle node)
->>       const void *args[] = { (void *)node };
->>       void *res[] = { &node };
->>   -    if ((s32)node = -1)
->> -        return 0;
->> -
->> -    if (olpc_ofw("peer", args, res) || (s32)node = -1)
->> +    if (((s32)node = -1) || olpc_ofw("peer", args, res))
->>           return 0;
->>         return node;
-> 
-> 'res' is { &node }
-> 
-> Could 'node' be modified by 'olpc_ofw(..., res)' and set to -1?
-> 
-> In other words, I'm not sure that the 2nd check is a redundant here.
+From: Colin Ian King <colin.king@canonical.com>
 
-Quite right. My mistake. Urgh.
+Currently array element org[3] is being accessed, however the array is
+only 3 elements in size, so this looks like an off-by-one out-of-bounds
+error. Fix this by using org[2], which I believe was the original
+intent.
 
-> 
-> Just my 2c,
-> 
-> CJ
-> 
+This issue has existed in the driver back in the pre-git days, so no
+idea when it was introduced.
+
+Detected by CoverityScan, CID#711344 ("Out-of-bounds read")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ray_cs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
+index 33ad87528d9a..8b2741c8edf2 100644
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -959,7 +959,7 @@ static int translate_frame(ray_dev_t *local, struct tx_msg __iomem *ptx,
+ 		if (proto = htons(ETH_P_AARP) || proto = htons(ETH_P_IPX)) {
+ 			/* This is the selective translation table, only 2 entries */
+ 			writeb(0xf8,
+-			       &((struct snaphdr_t __iomem *)ptx->var)->org[3]);
++			       &((struct snaphdr_t __iomem *)ptx->var)->org[2]);
+ 		}
+ 		/* Copy body of ethernet packet without ethernet header */
+ 		memcpy_toio((void __iomem *)&ptx->var +
+-- 
+2.19.1
