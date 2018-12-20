@@ -1,51 +1,79 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 15 Dec 2018 09:58:38 +0000
-Subject: [PATCH -next] evm: remove set but not used variable 'xattr'
-Message-Id: <1544868370-83459-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 20 Dec 2018 09:46:00 +0000
+Subject: [bug report] net: hns: Fix ping failed when use net bridge and send multicast
+Message-Id: <20181220094600.GA13233@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1544867636-59276-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1544867636-59276-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Hello Yonglong Liu,
 
-security/integrity/evm/evm_main.c: In function 'init_evm':
-security/integrity/evm/evm_main.c:566:21: warning:
- variable 'xattr' set but not used [-Wunused-but-set-variable]
+The patch 6adafc356e20: "net: hns: Fix ping failed when use net
+bridge and send multicast" from Dec 15, 2018, leads to the following
+static checker warning:
 
-It never used since commit 21af76631476 ("EVM: turn evm_config_xattrnames
-into a list")
+	drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:2822 set_promisc_tcam_enable()
+	error: testing array offset 'port' after use.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- security/integrity/evm/evm_main.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+  2786  
+  2787          mac_cb = dsaf_dev->mac_cb[port];
+                                   ^^^^^^^^^^^^
+The ->mac_cb[] array has 6 elements.
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 5ecaa3d..b6d9f14 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -563,7 +563,6 @@ static int __init init_evm(void)
- {
- 	int error;
- 	struct list_head *pos, *q;
--	struct xattr_list *xattr;
- 
- 	evm_init_config();
- 
-@@ -580,11 +579,8 @@ static int __init init_evm(void)
- error:
- 	if (error != 0) {
- 		if (!list_empty(&evm_config_xattrnames)) {
--			list_for_each_safe(pos, q, &evm_config_xattrnames) {
--				xattr = list_entry(pos, struct xattr_list,
--						   list);
-+			list_for_each_safe(pos, q, &evm_config_xattrnames)
- 				list_del(pos);
--			}
- 		}
- 	}
+  2788          (void)hns_mac_get_inner_port_num(mac_cb, 0, &port_num);
+  2789          tbl_tcam_ucast.tbl_ucast_out_port = port_num;
+  2790  
+  2791          /* config uc vague table */
+  2792          hns_dsaf_tcam_uc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_uc,
+  2793                                     &tbl_tcam_mask_uc, &tbl_tcam_ucast);
+  2794  
+  2795          /* update software entry */
+  2796          soft_mac_entry = priv->soft_mac_tbl;
+  2797          soft_mac_entry += entry_index;
+  2798          soft_mac_entry->index = entry_index;
+  2799          soft_mac_entry->tcam_key.high.val = mac_key.high.val;
+  2800          soft_mac_entry->tcam_key.low.val = mac_key.low.val;
+  2801          /* step back to the START for mc. */
+  2802          soft_mac_entry = priv->soft_mac_tbl;
+  2803  
+  2804          /* 2. set promisc multicast vague tcam entry. */
+  2805          entry_index = hns_dsaf_find_empty_mac_entry_reverse(dsaf_dev);
+  2806          if (entry_index = DSAF_INVALID_ENTRY_IDX) {
+  2807                  dev_err(dsaf_dev->dev,
+  2808                          "enable mc promisc failed (port:%#x)\n",
+  2809                          port);
+  2810                  return;
+  2811          }
+  2812  
+  2813          memset(&mask_entry, 0x0, sizeof(mask_entry));
+  2814          memset(&mask_key, 0x0, sizeof(mask_key));
+  2815          memset(&temp_key, 0x0, sizeof(temp_key));
+  2816          mask_entry.addr[0] = 0x01;
+  2817          hns_dsaf_set_mac_key(dsaf_dev, &mask_key, mask_entry.in_vlan_id,
+  2818                               port, mask_entry.addr);
+  2819          tbl_tcam_mcast.tbl_mcast_item_vld = 1;
+  2820          tbl_tcam_mcast.tbl_mcast_old_en = 0;
+  2821  
+  2822          if (port < DSAF_SERVICE_NW_NUM) {
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  2823                  mskid = port;
+  2824          } else if (port >= DSAF_BASE_INNER_PORT_NUM) {
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Here we are testing if "port" is over 127 but we are so toasted if
+that condition is true.
+
+  2825                  mskid = port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
+  2826          } else {
+  2827                  dev_err(dsaf_dev->dev, "%s,pnum(%d)error,key(%#x:%#x)\n",
+  2828                          dsaf_dev->ae_dev.name, port,
+  2829                          mask_key.high.val, mask_key.low.val);
+  2830                  return;
+  2831          }
+
+regards,
+dan carpenter
