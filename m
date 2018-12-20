@@ -1,34 +1,30 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 23:03:00 +0000
-Subject: Re: [PATCH][next] smack: fix two memory leaks in smack_add_opt
-Message-Id: <1d16d3a1-6466-fb16-460f-61cc59659ded@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 20 Dec 2018 17:05:43 +0000
+Subject: Re: [PATCH] ath10k: fix a NULL vs IS_ERR() check
+Message-Id: <20181220170543.1CE29607F1@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181222122750.13075-1-colin.king@canonical.com>
- <20181222193432.GC2217@ZenIV.linux.org.uk>
-In-Reply-To: <20181222193432.GC2217@ZenIV.linux.org.uk>
+References: <20181126081143.tvu55aimdc3safcq@kili.mountain>
+In-Reply-To: <20181126081143.tvu55aimdc3safcq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Govind Singh <govinds@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 22/12/2018 19:34, Al Viro wrote:
-> On Sat, Dec 22, 2018 at 12:27:50PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently if s is null or when returning via the error exit label
->> out_opt_err leaks of the allocated opts can occur. Fix the leak
->> on the null s case by checking s is null before the allocation. Fix
->> the leak on the exit path by checking if opts was allocated by
->> kfree'ing opts.
->>
->> Detected by CoverityScan, CID#1475953 ("Resource leak")
->>
->> Fixes: b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new helper")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> There's a better fix in local tree, will go into -next tonight.
-> 
-OK, sounds good to me. Thanks
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Colin
+> The devm_memremap() function doesn't return NULLs, it returns error
+> pointers.
+> 
+> Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+c28dcbce0592 ath10k: fix a NULL vs IS_ERR() check
+
+-- 
+https://patchwork.kernel.org/patch/10697755/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
