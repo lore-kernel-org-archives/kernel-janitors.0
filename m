@@ -1,70 +1,39 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Fri, 28 Dec 2018 22:08:23 +0000
-Subject: Re: [PATCH] drm/etnaviv: fix some off by one bugs
-Message-Id: <CAH9NwWeG7-Wbx46AwA6F8T2kqu8nMVD6PCJRi15HdgKjWfjLUA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 20 Dec 2018 16:50:50 +0000
+Subject: [PATCH][next] neighbour: remove stray semicolon
+Message-Id: <20181220165050.17429-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180713145631.qxd3pzk72v4bshii@kili.mountain>
-In-Reply-To: <20180713145631.qxd3pzk72v4bshii@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, The etnaviv authors <etnaviv@lists.freedesktop.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Russell King <linux+etnaviv@armlinux.org.uk>
+To: "David S . Miller" <davem@davemloft.net>, David Ahern <dsahern@gmail.com>, Roopa Prabhu <roopa@cumulusnetworks.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Fr., 13. Juli 2018 um 17:00 Uhr schrieb Dan Carpenter
-<dan.carpenter@oracle.com>:
->
-> The ->nr_signal is the supposed to be the number of elements in the
-> ->signal array.  There was one place where it was 5 but it was supposed
-> to be 4.  That looks like a copy and paste bug.  There were also two
-> checks that were off by one.
->
-> Fixes: 9e2c2e273012 ("drm/etnaviv: add infrastructure to query perf counter")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-Tested-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+Currently the stray semicolon means that the final term in the addition
+is being missed.  Fix this by removing it. Cleans up clang warning:
 
-> ---
-> Not tested.
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c b/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
-> index 9980d81a26e3..4227a4006c34 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_perfmon.c
-> @@ -113,7 +113,7 @@ static const struct etnaviv_pm_domain doms_3d[] = {
->                 .name = "PE",
->                 .profile_read = VIVS_MC_PROFILE_PE_READ,
->                 .profile_config = VIVS_MC_PROFILE_CONFIG0,
-> -               .nr_signals = 5,
-> +               .nr_signals = 4,
->                 .signal = (const struct etnaviv_pm_signal[]) {
->                         {
->                                 "PIXEL_COUNT_KILLED_BY_COLOR_PIPE",
-> @@ -435,7 +435,7 @@ int etnaviv_pm_query_sig(struct etnaviv_gpu *gpu,
->
->         dom = meta->domains + signal->domain;
->
-> -       if (signal->iter > dom->nr_signals)
-> +       if (signal->iter >= dom->nr_signals)
->                 return -EINVAL;
->
->         sig = &dom->signal[signal->iter];
-> @@ -461,7 +461,7 @@ int etnaviv_pm_req_validate(const struct drm_etnaviv_gem_submit_pmr *r,
->
->         dom = meta->domains + r->domain;
->
-> -       if (r->signal > dom->nr_signals)
-> +       if (r->signal >= dom->nr_signals)
->                 return -EINVAL;
->
->         return 0;
+net/core/neighbour.c:2821:9: warning: expression result unused [-Wunused-value]
 
+Fixes: 82cbb5c631a0 ("neighbour: register rtnl doit handler")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/core/neighbour.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index 43687c9abe1d..1c4b7814ac32 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -2817,7 +2817,7 @@ static int neigh_get_reply(struct net *net, struct neighbour *neigh,
+ static inline size_t pneigh_nlmsg_size(void)
+ {
+ 	return NLMSG_ALIGN(sizeof(struct ndmsg))
+-	       + nla_total_size(MAX_ADDR_LEN); /* NDA_DST */
++	       + nla_total_size(MAX_ADDR_LEN) /* NDA_DST */
+ 	       + nla_total_size(1); /* NDA_PROTOCOL */
+ }
+ 
 -- 
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info
+2.19.1
