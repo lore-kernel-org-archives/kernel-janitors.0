@@ -1,39 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 19 Dec 2018 16:30:07 +0000
-Subject: [PATCH] staging: wilc1000: fix missing read_write setting when reading data
-Message-Id: <20181219163007.5329-1-colin.king@canonical.com>
+From: <Ajay.Kathat@microchip.com>
+Date: Thu, 20 Dec 2018 06:18:37 +0000
+Subject: Re: [PATCH] staging: wilc1000: fix missing read_write setting when reading data
+Message-Id: <f385b84e-3724-cdaf-323c-7a9c9337b98b@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181219163007.5329-1-colin.king@canonical.com>
+In-Reply-To: <20181219163007.5329-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+To: colin.king@canonical.com, Adham.Abozaeid@microchip.com, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the cmd.read_write setting is not initialized so it contains
-garbage from the stack.  Fix this by setting it to 0 to indicate a
-read is required.
-
-Detected by CoverityScan, CID#1357925 ("Uninitialized scalar variable")
-
-Fixes: c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wilc1000/wilc_sdio.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/wilc1000/wilc_sdio.c b/drivers/staging/wilc1000/wilc_sdio.c
-index 27fdfbdda5c0..e2f739fef21c 100644
---- a/drivers/staging/wilc1000/wilc_sdio.c
-+++ b/drivers/staging/wilc1000/wilc_sdio.c
-@@ -861,6 +861,7 @@ static int sdio_read_int(struct wilc *wilc, u32 *int_status)
- 	if (!sdio_priv->irq_gpio) {
- 		int i;
- 
-+		cmd.read_write = 0;
- 		cmd.function = 1;
- 		cmd.address = 0x04;
- 		cmd.data = 0;
--- 
-2.19.1
+DQoNCk9uIDEyLzE5LzIwMTggMTA6MDAgUE0sIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENv
+bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBDdXJyZW50bHkg
+dGhlIGNtZC5yZWFkX3dyaXRlIHNldHRpbmcgaXMgbm90IGluaXRpYWxpemVkIHNvIGl0IGNvbnRh
+aW5zDQo+IGdhcmJhZ2UgZnJvbSB0aGUgc3RhY2suICBGaXggdGhpcyBieSBzZXR0aW5nIGl0IHRv
+IDAgdG8gaW5kaWNhdGUgYQ0KPiByZWFkIGlzIHJlcXVpcmVkLg0KPiANCj4gRGV0ZWN0ZWQgYnkg
+Q292ZXJpdHlTY2FuLCBDSUQjMTM1NzkyNSAoIlVuaW5pdGlhbGl6ZWQgc2NhbGFyIHZhcmlhYmxl
+IikNCj4gDQo+IEZpeGVzOiBjNWM3N2JhMThlYTYgKCJzdGFnaW5nOiB3aWxjMTAwMDogQWRkIFNE
+SU8vU1BJIDgwMi4xMSBkcml2ZXIiKQ0KDQpBY2tlZC1ieTogQWpheSBTaW5naCA8YWpheS5rYXRo
+YXRAbWljcm9jaGlwLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGlu
+LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAv
+d2lsY19zZGlvLmMgfCAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYyBiL2Ry
+aXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYw0KPiBpbmRleCAyN2ZkZmJkZGE1YzAu
+LmUyZjczOWZlZjIxYyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAwL3dp
+bGNfc2Rpby5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYw0K
+PiBAQCAtODYxLDYgKzg2MSw3IEBAIHN0YXRpYyBpbnQgc2Rpb19yZWFkX2ludChzdHJ1Y3Qgd2ls
+YyAqd2lsYywgdTMyICppbnRfc3RhdHVzKQ0KPiAgCWlmICghc2Rpb19wcml2LT5pcnFfZ3Bpbykg
+ew0KPiAgCQlpbnQgaTsNCj4gIA0KPiArCQljbWQucmVhZF93cml0ZSA9IDA7DQo+ICAJCWNtZC5m
+dW5jdGlvbiA9IDE7DQo+ICAJCWNtZC5hZGRyZXNzID0gMHgwNDsNCj4gIAkJY21kLmRhdGEgPSAw
+Ow0KPiANCg=
