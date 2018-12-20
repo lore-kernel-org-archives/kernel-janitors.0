@@ -1,39 +1,83 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Dec 2018 08:22:41 +0000
-Subject: [PATCH] clk: tegra: dfll: Fix a potential Oop in remove()
-Message-Id: <20181218082241.GA440@kadam>
+From: Omar Al Said <jfjfgfgfrgrytigkhlk7@gmail.com>
+Date: Thu, 20 Dec 2018 13:34:18 +0000
+Subject: Greetings My Good Friend
+Message-Id: <CANWdd1Lf7rVBdNxMGxT1zUvjerTmvMRFkkDq6qc23oszT=RESQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-If tegra_dfll_unregister() fails then "soc" is an error pointer.  We
-should just return instead of dereferencing it.
+Dear Friend,
 
-Fixes: 1752c9ee23fb ("clk: tegra: dfll: Fix drvdata overwriting issue")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+With due respect to your person and much sincerity of purpose, I make
+this contact with you as I believe that you can be of great assistance
+to me. My name is Mr Omar Al Said, from Ouagadougou Republic of
+BURKINA FASO, West Africa . Presently i work in the African
+development Bank as telex manager. I have been searching for your
+contact since you left our country some years ago.
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 269d3595758b..edc31bb56674 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -133,9 +133,11 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
- 
- 	soc = tegra_dfll_unregister(pdev);
--	if (IS_ERR(soc))
-+	if (IS_ERR(soc)) {
- 		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
- 			PTR_ERR(soc));
-+		return PTR_ERR(soc);
-+	}
- 
- 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
- 
--- 
-2.17.1
+I do not know whether this is your correct email address or not
+because I only used your name initials to search for your contact .In
+case you are not the person I am supposed to contact, please see this
+as a confidential message and do not reveal it to another person but
+if you are not the intended receiver, do let me know whether you can
+be of assistance regarding my proposal below because it is top secret.
+
+I am about to retire from active Bank service to start a new life but
+I am sceptical to reveal this particular secret to a stranger. You
+must assure me that everything will be handled confidentially because
+we are not going to suffer again in life.
+
+It has been 10 years now that most of the greedy African Politicians
+used our bank to launder money overseas through the help of their
+Political advisers. Most of the funds which they transferred out of
+the shores of Africa were gold and oil money that was supposed to have
+been used to develop the continent. Their Political advisers always
+inflated the amounts before transfer to foreign accounts so I also
+used the opportunity to divert part of the funds hence I am aware that
+there is no official trace of how much was transferred as all the
+accounts used for such transfers were being closed after transfer.
+
+I acted as the Bank Officer to most of the politicians and when I
+discovered that they were using me to succeed in their greedy act; I
+also cleaned some of their banking records from the Bank files and no
+one cared to ask me because the money was too much for them to
+control. They laundered over $5b Dollars during the process .As I am
+sending this message to you, I was able to divert thirty five million
+united state dollars ($35m) to an escrow account belonging to no one
+in the bank. The bank is anxious now to know who the beneficiary to
+the funds is because they have made a lot of profits with the funds.
+
+It is more than Eight years now and most of the politicians are no
+longer using our bank to transfer funds overseas. The ($35) Million
+Dollars has been laying waste but I don't want to retire from the bank
+without transferring the funds to a foreign account to enable me share
+the proceeds with the receiver. The money will be shared 60% for me
+and 40% for you..
+
+There is no one coming to ask you about the funds because I secured
+everything. I only want you to assist me by providing a bank account
+where the funds can be transferred. You are not to face any
+difficulties or legal implications as I am going to handle the
+transfer personally. If you are capable of receiving the funds, do let
+me know immediately to enable me give you a detailed information on
+what to do.
+
+For me, I have not stolen the money from anyone because the other
+people that took the whole money did not face any problems. This is my
+chance also to grab my own but you must keep the details of the funds
+secret to avoid any leakages as no one in the bank knows about the
+funds.
+
+Please get back to me if you are interested and capable to handle this project
+
+I shall intimate you on what to do when I hear from your confirmation
+and acceptance. If you are capable of being my trusted associate, do
+declare your consent to me .
+
+Waiting for your urgent response.
+
+Yours Faithfully,
+
+Mr. Omar Al Said
