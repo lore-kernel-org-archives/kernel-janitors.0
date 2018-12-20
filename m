@@ -1,18 +1,38 @@
-From: Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-Date: Mon, 17 Dec 2018 18:04:44 +0000
-Subject: Re: [PATCH][next] nvmet: fix comparison of a u16 with -1
-Message-Id: <178EFF23-A96E-4DB3-B8E8-8EBF906030F1@wdc.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 20 Dec 2018 16:47:01 +0000
+Subject: Re: [PATCH] ath10k: remove set but not used variable 'num_tdls_vifs'
+Message-Id: <20181220164701.CED3C607F1@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181214183121.17445-1-colin.king@canonical.com>
- <20181216162638.GB12651@lst.de>
-In-Reply-To: <20181216162638.GB12651@lst.de>
+References: <1541669570-110540-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541669570-110540-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-DQpXaWxsIHNlbmQgb3V0IGEgcGF0aC4NCg0K77u/T24gMTIvMTYvMTgsIDg6MjYgQU0sICJDaHJp
-c3RvcGggSGVsbHdpZyIgPGhjaEBsc3QuZGU+IHdyb3RlOg0KDQogICAgVGhhbmtzLCBhcHBsaWVk
-Lg0KICAgIA0KICAgIE1heWJlIGl0IG1pZ2h0IGJlIHdvcnRoIGFkZGluZyBhIE5WTUVfTk9fRVJS
-X0xPQyBkZWZpbnRpb24gdG8gY2xlYW4NCiAgICB0aGlzIHVwIGEgYml0IG1vcmUuICBDaGFpdGFu
-eWEsIGNhbiB5b3UgbG9vayBpbnRvIHRoYXQ/DQogICAgDQoNCg=
+YueHaibing <yuehaibing@huawei.com> wrote:
+
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/net/wireless/ath/ath10k/mac.c: In function 'ath10k_sta_state':
+> drivers/net/wireless/ath/ath10k/mac.c:6238:7: warning:
+>  variable 'num_tdls_vifs' set but not used [-Wunused-but-set-variable]
+> 
+> 'num_tdls_vifs' not used any more after
+>   9a993cc1ea95 ("ath10k: fix the logic of limiting tdls peer counts")
+> 
+> Also, remove the single called function ath10k_mac_tdls_vifs_count
+> and ath10k_mac_tdls_vifs_count_iter.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+bff70e5f78e9 ath10k: remove set but not used variable 'num_tdls_vifs'
+
+-- 
+https://patchwork.kernel.org/patch/10673841/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
