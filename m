@@ -1,41 +1,72 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Dec 2018 06:14:16 +0000
-Subject: [PATCH] scripts: coccinelle: boolinit: drop warnings on named constants
-Message-Id: <1546064056-15569-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 21 Dec 2018 13:42:29 +0000
+Subject: Applied "ASoC: qdsp6: q6asm-dai: Off by one in of_q6asm_parse_dai_data()" to the asoc tree
+Message-Id: <20181221134229.B95561121B93@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181221090442.GA2735@kadam>
+In-Reply-To: <20181221090442.GA2735@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, cocci@systeme.lip6.fr
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Coccinelle doesn't always have access to the values of named
-(#define) constants, and they may likely often be bound to true
-and false values anyway, resulting in false positives.  So stop
-warning about them.
+The patch
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+   ASoC: qdsp6: q6asm-dai: Off by one in of_q6asm_parse_dai_data()
 
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6f10aff97f5d2c9a26a4deff1482f845841b7307 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Dec 2018 12:04:42 +0300
+Subject: [PATCH] ASoC: qdsp6: q6asm-dai: Off by one in
+ of_q6asm_parse_dai_data()
+
+The q6asm_fe_dais[] array has MAX_SESSIONS (8) elements so the >
+comparison should be >= or we access one element beyond the end of the
+array.
+
+Fixes: 22930c79ac5c ("ASoC: qdsp6: q6asm-dai: Add support to compress offload")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- scripts/coccinelle/misc/boolinit.cocci |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/misc/boolinit.cocci b/scripts/coccinelle/misc/boolinit.cocci
-index b0584a3..aabb581 100644
---- a/scripts/coccinelle/misc/boolinit.cocci
-+++ b/scripts/coccinelle/misc/boolinit.cocci
-@@ -136,9 +136,14 @@ position p1;
- @r4 depends on !patch@
- bool b;
- position p2;
-+identifier i;
- constant c != {0,1};
- @@
-+(
-+ b = i
-+|
- *b@p2 = c
-+)
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index 5b986b74dd36..9d738b4c1e05 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -874,7 +874,7 @@ static int of_q6asm_parse_dai_data(struct device *dev,
  
- @script:python depends on org@
- p << r1.p;
+ 	for_each_child_of_node(dev->of_node, node) {
+ 		ret = of_property_read_u32(node, "reg", &id);
+-		if (ret || id > MAX_SESSIONS || id < 0) {
++		if (ret || id >= MAX_SESSIONS || id < 0) {
+ 			dev_err(dev, "valid dai id not found:%d\n", ret);
+ 			continue;
+ 		}
+-- 
+2.20.1
