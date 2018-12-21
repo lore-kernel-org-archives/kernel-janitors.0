@@ -1,35 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 20 Dec 2018 07:45:05 +0000
-Subject: Re: [PATCH] wil6210: remove set but not used variable 'wdev'
-Message-Id: <20181220074505.9A84A609BD@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Dec 2018 23:12:41 +0000
+Subject: [PATCH] input: drv2667: fix indentation issues, remove extra tabs
+Message-Id: <20181221231241.15925-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543996743-137124-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1543996743-137124-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Maya Erez <merez@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/ath/wil6210/main.c: In function '_wil6210_disconnect':
-> drivers/net/wireless/ath/wil6210/main.c:407:23: warning:
->  variable 'wdev' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since commit ("e1b43407c034 wil6210: refactor disconnect flow")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Maya Erez <merez@codeaurora.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+There are some statements that are indented incorrectly, fix this by
+removinf the extra tabs.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/misc/drv2667.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-3fe970e76b37 wil6210: remove set but not used variable 'wdev'
-
+diff --git a/drivers/input/misc/drv2667.c b/drivers/input/misc/drv2667.c
+index 2849bb6906a8..6091f0490e8f 100644
+--- a/drivers/input/misc/drv2667.c
++++ b/drivers/input/misc/drv2667.c
+@@ -177,9 +177,9 @@ static int drv2667_set_waveform_freq(struct drv2667_data *haptics)
+ 		error = regmap_write(haptics->regmap, DRV2667_PAGE, read_buf);
+ 		if (error) {
+ 			dev_err(&haptics->client->dev,
+-					"Failed to set the page: %d\n", error);
+-				return -EIO;
+-			}
++				"Failed to set the page: %d\n", error);
++			return -EIO;
++		}
+ 	}
+ 
+ 	return error;
 -- 
-https://patchwork.kernel.org/patch/10713127/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.19.1
