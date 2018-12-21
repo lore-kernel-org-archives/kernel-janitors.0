@@ -1,48 +1,64 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Dec 2018 08:57:15 +0000
-Subject: [PATCH 20/20] cw1200: drop useless LIST_HEAD
-Message-Id: <1545555435-24576-21-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Dec 2018 23:18:12 +0000
+Subject: [PATCH] bcache: fix indentation issue, remove tabs on a hunk of code
+Message-Id: <20181221231812.16086-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Solomon Peachy <pizza@shaftnet.org>
-Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Coly Li <colyli@suse.de>, Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop LIST_HEAD where the variable it declares has never
-been used.
+From: Colin Ian King <colin.king@canonical.com>
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+There is a hunk of code that is indented one level too deep, fix this
+by removing the extra tabs.
 
-// <smpl>
-@@
-identifier x;
-@@
-- LIST_HEAD(x);
-  ... when != x
-// </smpl>
-
-Fixes: a910e4a94f692 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Successfully 0-day tested on 151 configurations.
+ drivers/md/bcache/super.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
- drivers/net/wireless/st/cw1200/queue.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/wireless/st/cw1200/queue.c b/drivers/net/wireless/st/cw1200/queue.c
-index 7c31b63b8258..7895efefa95d 100644
---- a/drivers/net/wireless/st/cw1200/queue.c
-+++ b/drivers/net/wireless/st/cw1200/queue.c
-@@ -283,7 +283,6 @@ int cw1200_queue_put(struct cw1200_queue *queue,
- 		     struct cw1200_txpriv *txpriv)
- {
- 	int ret = 0;
--	LIST_HEAD(gc_list);
- 	struct cw1200_queue_stats *stats = queue->stats;
- 
- 	if (txpriv->link_id >= queue->stats->map_capacity)
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 4dee119c3664..a697a3a923cd 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1615,21 +1615,21 @@ static void conditional_stop_bcache_device(struct cache_set *c,
+ 		 */
+ 		pr_warn("stop_when_cache_set_failed of %s is \"auto\" and cache is dirty, stop it to avoid potential data corruption.",
+ 			d->disk->disk_name);
+-			/*
+-			 * There might be a small time gap that cache set is
+-			 * released but bcache device is not. Inside this time
+-			 * gap, regular I/O requests will directly go into
+-			 * backing device as no cache set attached to. This
+-			 * behavior may also introduce potential inconsistence
+-			 * data in writeback mode while cache is dirty.
+-			 * Therefore before calling bcache_device_stop() due
+-			 * to a broken cache device, dc->io_disable should be
+-			 * explicitly set to true.
+-			 */
+-			dc->io_disable = true;
+-			/* make others know io_disable is true earlier */
+-			smp_mb();
+-			bcache_device_stop(d);
++		/*
++		 * There might be a small time gap that cache set is
++		 * released but bcache device is not. Inside this time
++		 * gap, regular I/O requests will directly go into
++		 * backing device as no cache set attached to. This
++		 * behavior may also introduce potential inconsistence
++		 * data in writeback mode while cache is dirty.
++		 * Therefore before calling bcache_device_stop() due
++		 * to a broken cache device, dc->io_disable should be
++		 * explicitly set to true.
++		 */
++		dc->io_disable = true;
++		/* make others know io_disable is true earlier */
++		smp_mb();
++		bcache_device_stop(d);
+ 	} else {
+ 		/*
+ 		 * dc->stop_when_cache_set_failed = BCH_CACHED_STOP_AUTO
+-- 
+2.19.1
