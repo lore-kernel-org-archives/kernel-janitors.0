@@ -1,75 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 21 Dec 2018 13:42:27 +0000
-Subject: Applied "ASoC: qdsp6: q6asm-dai: Fix a NULL vs IS_ERR() bug" to the asoc tree
-Message-Id: <20181221134227.DAF411121B93@debutante.sirena.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Dec 2018 22:44:19 +0000
+Subject: [PATCH] gru: clean up indentation issue, remove spaces
+Message-Id: <20181221224419.15284-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181221090516.GB2735@kadam>
-In-Reply-To: <20181221090516.GB2735@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Dimitri Sivanich <sivanich@sgi.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: qdsp6: q6asm-dai: Fix a NULL vs IS_ERR() bug
+There are a couple of statements that have extra spaces in the identation,
+fix this by removing them.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 168f6a0b0d2a9c662a6b5d839385dcce70e8c518 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Dec 2018 12:05:16 +0300
-Subject: [PATCH] ASoC: qdsp6: q6asm-dai: Fix a NULL vs IS_ERR() bug
-
-The q6asm_audio_client_alloc() doesn't return NULL, it returns error
-pointers.
-
-Fixes: 22930c79ac5c ("ASoC: qdsp6: q6asm-dai: Add support to compress offload")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/misc/sgi-gru/grufault.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index 9d738b4c1e05..3407e51b8861 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -570,10 +570,11 @@ static int q6asm_dai_compr_open(struct snd_compr_stream *stream)
- 	prtd->audio_client = q6asm_audio_client_alloc(dev,
- 					(q6asm_cb)compress_event_handler,
- 					prtd, stream_id, LEGACY_PCM_MODE);
--	if (!prtd->audio_client) {
-+	if (IS_ERR(prtd->audio_client)) {
- 		dev_err(dev, "Could not allocate memory\n");
-+		ret = PTR_ERR(prtd->audio_client);
- 		kfree(prtd);
--		return -ENOMEM;
-+		return ret;
+diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+index 93be82fc338a..2ec5808ba464 100644
+--- a/drivers/misc/sgi-gru/grufault.c
++++ b/drivers/misc/sgi-gru/grufault.c
+@@ -616,8 +616,8 @@ irqreturn_t gru_intr_mblade(int irq, void *dev_id)
+ 	for_each_possible_blade(blade) {
+ 		if (uv_blade_nr_possible_cpus(blade))
+ 			continue;
+-		 gru_intr(0, blade);
+-		 gru_intr(1, blade);
++		gru_intr(0, blade);
++		gru_intr(1, blade);
  	}
- 
- 	size = COMPR_PLAYBACK_MAX_FRAGMENT_SIZE *
+ 	return IRQ_HANDLED;
+ }
 -- 
-2.20.1
+2.19.1
