@@ -1,47 +1,51 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 07 Dec 2018 06:44:16 +0000
-Subject: [PATCH -next] powerpc/mm: drop test in pp_601
-Message-Id: <1544165056-52579-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Dec 2018 09:06:58 +0000
+Subject: [PATCH 4/4] ALSA: compress: prevent potential divide by zero bugs
+Message-Id: <20181221090658.GD2735@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181221090442.GA2735@kadam>
+In-Reply-To: <20181221090442.GA2735@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
+To: Patrick Lai <plai@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>
 
-The test selects between two identical values, so it doesn't look useful.
-It turns out that the tested expression can only be true anyway, so drop
-the test, the corresponding parameter, and the corresponding argument at
-the only call site.
+The problem is seen in the q6asm_dai_compr_set_params() function:
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+	ret = q6asm_map_memory_regions(dir, prtd->audio_client, prtd->phys,
+				       (prtd->pcm_size / prtd->periods),
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+				       prtd->periods);
 
-// <smpl>
-@@
-expression e,e1;
-@@
+In this code prtd->pcm_size is the buffer_size and prtd->periods comes
+from params->buffer.fragments.  If we allow the number of fragments to
+be zero then it results in a divide by zero bug.  One possible fix would
+be to use prtd->pcm_count directly instead of using the division to
+re-calculate it.  But I decided that it doesn't really make sense to
+allow zero fragments.
 
-* e ? e1 : e1
-// </smpl>
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- arch/powerpc/mm/dump_bats.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I am not very sure of this patch.  Please review it extra carefully
+because it is an API change.
 
-diff --git a/arch/powerpc/mm/dump_bats.c b/arch/powerpc/mm/dump_bats.c
-index a0d23e9..33450a8 100644
---- a/arch/powerpc/mm/dump_bats.c
-+++ b/arch/powerpc/mm/dump_bats.c
-@@ -17,8 +17,8 @@ static char *pp_601(int k, int pp)
- 	if (pp = 1)
- 		return k ? "ROX" : "RWX";
- 	if (pp = 2)
--		return k ? "RWX" : "RWX";
--	return k ? "ROX" : "ROX";
-+		return "RWX";
-+	return "ROX";
- }
+ sound/core/compress_offload.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index a5b09e75e787..f7d2b373da0a 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -541,7 +541,8 @@ static int snd_compress_check_input(struct snd_compr_params *params)
+ {
+ 	/* first let's check the buffer parameter's */
+ 	if (params->buffer.fragment_size = 0 ||
+-	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
++	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size ||
++	    params->buffer.fragments = 0)
+ 		return -EINVAL;
  
- static void bat_show_601(struct seq_file *m, int idx, u32 lower, u32 upper)
+ 	/* now codec parameters */
+-- 
+2.17.1
