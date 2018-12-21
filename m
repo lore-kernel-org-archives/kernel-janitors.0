@@ -1,42 +1,61 @@
-From: shuah <shuah@kernel.org>
-Date: Thu, 13 Dec 2018 14:24:51 +0000
-Subject: Re: [PATCH][next] selftests: watchdog: fix spelling mistake "experies" -> "expires"
-Message-Id: <32532eac-969a-83e2-4373-fdbef613ce33@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Dec 2018 09:06:10 +0000
+Subject: [PATCH 3/4] ASoC: qdsp6: q6asm-dai: Fix a small memory leak
+Message-Id: <20181221090610.GC2735@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181213094015.31397-1-colin.king@canonical.com>
-In-Reply-To: <20181213094015.31397-1-colin.king@canonical.com>
+References: <20181221090442.GA2735@kadam>
+In-Reply-To: <20181221090442.GA2735@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Patrick Lai <plai@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>
 
-On 12/13/18 2:40 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the --gettimeleft help text, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   tools/testing/selftests/watchdog/watchdog-test.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-> index dac907a932ce..c2333c78cf04 100644
-> --- a/tools/testing/selftests/watchdog/watchdog-test.c
-> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
-> @@ -78,7 +78,7 @@ static void usage(char *progname)
->   	printf(" -T, --gettimeout    Get the timeout\n");
->   	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
->   	printf(" -N, --getpretimeout Get the pretimeout\n");
-> -	printf(" -L, --gettimeleft   Get the time left until timer experies\n");
-> +	printf(" -L, --gettimeleft   Get the time left until timer expires\n");
->   	printf("\n");
->   	printf("Parameters are parsed left-to-right in real-time.\n");
->   	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
-> 
+We can't return directly if snd_dma_alloc_pages() fails; we first need
+to free prtd->audio_client and prtd.
 
-That is quick! Thanks for the patch. I will apply it to linuxk-kselftest 
-next
+Fixes: 22930c79ac5c ("ASoC: qdsp6: q6asm-dai: Add support to compress offload")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index 3407e51b8861..548eb4fa2da6 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -573,8 +573,7 @@ static int q6asm_dai_compr_open(struct snd_compr_stream *stream)
+ 	if (IS_ERR(prtd->audio_client)) {
+ 		dev_err(dev, "Could not allocate memory\n");
+ 		ret = PTR_ERR(prtd->audio_client);
+-		kfree(prtd);
+-		return ret;
++		goto free_prtd;
+ 	}
+ 
+ 	size = COMPR_PLAYBACK_MAX_FRAGMENT_SIZE *
+@@ -583,7 +582,7 @@ static int q6asm_dai_compr_open(struct snd_compr_stream *stream)
+ 				  &prtd->dma_buffer);
+ 	if (ret) {
+ 		dev_err(dev, "Cannot allocate buffer(s)\n");
+-		return ret;
++		goto free_client;
+ 	}
+ 
+ 	if (pdata->sid < 0)
+@@ -596,6 +595,13 @@ static int q6asm_dai_compr_open(struct snd_compr_stream *stream)
+ 	runtime->private_data = prtd;
+ 
+ 	return 0;
++
++free_client:
++	q6asm_audio_client_free(prtd->audio_client);
++free_prtd:
++	kfree(prtd);
++
++	return ret;
+ }
+ 
+ static int q6asm_dai_compr_free(struct snd_compr_stream *stream)
+-- 
+2.17.1
