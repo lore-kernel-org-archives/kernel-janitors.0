@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 21 Dec 2018 13:42:29 +0000
-Subject: Applied "ASoC: qdsp6: q6asm-dai: Off by one in of_q6asm_parse_dai_data()" to the asoc tree
-Message-Id: <20181221134229.B95561121B93@debutante.sirena.org.uk>
+Date: Fri, 21 Dec 2018 13:42:25 +0000
+Subject: Applied "ASoC: qdsp6: q6asm-dai: Fix a small memory leak" to the asoc tree
+Message-Id: <20181221134225.EDCC51121B93@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181221090442.GA2735@kadam>
-In-Reply-To: <20181221090442.GA2735@kadam>
+References: <20181221090610.GC2735@kadam>
+In-Reply-To: <20181221090610.GC2735@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,7 +13,7 @@ Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patr
 
 The patch
 
-   ASoC: qdsp6: q6asm-dai: Off by one in of_q6asm_parse_dai_data()
+   ASoC: qdsp6: q6asm-dai: Fix a small memory leak
 
 has been applied to the asoc tree at
 
@@ -38,35 +38,57 @@ to this mail.
 Thanks,
 Mark
 
-From 6f10aff97f5d2c9a26a4deff1482f845841b7307 Mon Sep 17 00:00:00 2001
+From 686a6dace3bd783ef9f747e9c2cff68038be0e3a Mon Sep 17 00:00:00 2001
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Dec 2018 12:04:42 +0300
-Subject: [PATCH] ASoC: qdsp6: q6asm-dai: Off by one in
- of_q6asm_parse_dai_data()
+Date: Fri, 21 Dec 2018 12:06:10 +0300
+Subject: [PATCH] ASoC: qdsp6: q6asm-dai: Fix a small memory leak
 
-The q6asm_fe_dais[] array has MAX_SESSIONS (8) elements so the >
-comparison should be >= or we access one element beyond the end of the
-array.
+We can't return directly if snd_dma_alloc_pages() fails; we first need
+to free prtd->audio_client and prtd.
 
 Fixes: 22930c79ac5c ("ASoC: qdsp6: q6asm-dai: Add support to compress offload")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index 5b986b74dd36..9d738b4c1e05 100644
+index 3407e51b8861..548eb4fa2da6 100644
 --- a/sound/soc/qcom/qdsp6/q6asm-dai.c
 +++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -874,7 +874,7 @@ static int of_q6asm_parse_dai_data(struct device *dev,
+@@ -573,8 +573,7 @@ static int q6asm_dai_compr_open(struct snd_compr_stream *stream)
+ 	if (IS_ERR(prtd->audio_client)) {
+ 		dev_err(dev, "Could not allocate memory\n");
+ 		ret = PTR_ERR(prtd->audio_client);
+-		kfree(prtd);
+-		return ret;
++		goto free_prtd;
+ 	}
  
- 	for_each_child_of_node(dev->of_node, node) {
- 		ret = of_property_read_u32(node, "reg", &id);
--		if (ret || id > MAX_SESSIONS || id < 0) {
-+		if (ret || id >= MAX_SESSIONS || id < 0) {
- 			dev_err(dev, "valid dai id not found:%d\n", ret);
- 			continue;
- 		}
+ 	size = COMPR_PLAYBACK_MAX_FRAGMENT_SIZE *
+@@ -583,7 +582,7 @@ static int q6asm_dai_compr_open(struct snd_compr_stream *stream)
+ 				  &prtd->dma_buffer);
+ 	if (ret) {
+ 		dev_err(dev, "Cannot allocate buffer(s)\n");
+-		return ret;
++		goto free_client;
+ 	}
+ 
+ 	if (pdata->sid < 0)
+@@ -596,6 +595,13 @@ static int q6asm_dai_compr_open(struct snd_compr_stream *stream)
+ 	runtime->private_data = prtd;
+ 
+ 	return 0;
++
++free_client:
++	q6asm_audio_client_free(prtd->audio_client);
++free_prtd:
++	kfree(prtd);
++
++	return ret;
+ }
+ 
+ static int q6asm_dai_compr_free(struct snd_compr_stream *stream)
 -- 
 2.20.1
