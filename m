@@ -1,40 +1,68 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Dec 2018 02:51:58 +0000
-Subject: [PATCH] mac80211-next: remove set but not used variable 'w_priv'
-Message-Id: <1545274318-144187-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Dec 2018 11:31:59 +0000
+Subject: [PATCH][V2][next] regulator: axp20x: check rdev is null before dereferencing it
+Message-Id: <20181222113159.31029-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/net/wireless/virt_wifi.c: In function 'virt_wifi_net_device_stop':
-drivers/net/wireless/virt_wifi.c:432:31: warning:
- variable 'w_priv' set but not used [-Wunused-but-set-variable]
+Currently rdev is dereferenced when assigning desc before rdev is null
+checked, hence there is a potential null pointer dereference on rdev.
+Fix this by null checking rdev first.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Detected by CoverityScan, CID#1476031 ("Dereference before null check")
+
+Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/virt_wifi.c | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
-index 64b2186..ea10f58 100644
---- a/drivers/net/wireless/virt_wifi.c
-+++ b/drivers/net/wireless/virt_wifi.c
-@@ -429,13 +429,11 @@ static int virt_wifi_net_device_open(struct net_device *dev)
- static int virt_wifi_net_device_stop(struct net_device *dev)
+V2: Fix 2nd occurrance of this thinko
+
+---
+ drivers/regulator/axp20x-regulator.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 48af859fd053..0dfa4ea6bbdf 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -367,7 +367,7 @@ static const int axp209_dcdc2_ldo3_slew_rates[] = {
+ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
  {
- 	struct virt_wifi_netdev_priv *n_priv = netdev_priv(dev);
--	struct virt_wifi_wiphy_priv *w_priv;
+ 	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
+-	const struct regulator_desc *desc = rdev->desc;
++	const struct regulator_desc *desc;
+ 	u8 reg, mask, enable, cfg = 0xff;
+ 	const int *slew_rates;
+ 	int rate_count = 0;
+@@ -375,6 +375,8 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
+ 	if (!rdev)
+ 		return -EINVAL;
  
- 	n_priv->is_up = false;
++	desc = rdev->desc;
++
+ 	switch (axp20x->variant) {
+ 	case AXP209_ID:
+ 		if (desc->id = AXP20X_DCDC2) {
+@@ -436,11 +438,13 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
+ static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
+ {
+ 	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
+-	const struct regulator_desc *desc = rdev->desc;
++	const struct regulator_desc *desc;
  
- 	if (!dev->ieee80211_ptr)
- 		return 0;
--	w_priv = wiphy_priv(dev->ieee80211_ptr->wiphy);
+ 	if (!rdev)
+ 		return -EINVAL;
  
- 	virt_wifi_cancel_scan(dev->ieee80211_ptr->wiphy);
- 	virt_wifi_cancel_connect(dev);
++	desc = rdev->desc;
++
+ 	switch (axp20x->variant) {
+ 	case AXP209_ID:
+ 		if ((desc->id = AXP20X_LDO3) &&
+-- 
+2.19.1
