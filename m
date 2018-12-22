@@ -1,40 +1,32 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Tue, 25 Dec 2018 08:06:08 +0000
-Subject: Re: [PATCH][V2] drivers/net: appletalk/cops: remove redundant if statement and mask
-Message-Id: <322fb722-cf17-896a-cbf4-27ac796d0c7a@cogentembedded.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 22 Dec 2018 10:30:30 +0000
+Subject: [PATCH -next] RDMA/srpt: Use kmem_cache_free() instead of kfree()
+Message-Id: <1545474630-123120-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181224194146.11511-1-colin.king@canonical.com>
-In-Reply-To: <20181224194146.11511-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: target-devel@vger.kernel.org
 
-On 24.12.2018 22:41, Colin King wrote:
+memory allocated by kmem_cache_alloc() should be freed using
+kmem_cache_free(), not kfree().
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The two different assignments for pkt_len are actually the same and
-> so the if statement is redundant and can be removed.  Masking a u8
-> return value from inb() with 0xFF is also redundant and can also be
-> emoved.
+Fixes: 5dabcd0456d7 ("RDMA/srpt: Add support for immediate data")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/infiniband/ulp/srpt/ib_srpt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    Removed. :-)
-
-> Similarly, the two different outb calls are identical as the mask
-> of 0xff on the second outb is redundant since a u8 is being written,
-> so the if statement is also redundant and can be also removed.
-> 
-> Detected by CoverityScan, CID#1475639 ("Identical code for different
-> branches")
-> 
-> ---
-> 
-> V2: Remove the if statement for the outb calls, thanks to David
-> Miller for spotting this.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+index d38205c..e9c336c 100644
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -674,7 +674,7 @@ static struct srpt_ioctx *srpt_alloc_ioctx(struct srpt_device *sdev,
+ 	return ioctx;
+ 
+ err_free_buf:
+-	kfree(ioctx->buf);
++	kmem_cache_free(buf_cache, ioctx->buf);
+ err_free_ioctx:
+ 	kfree(ioctx);
+ err:
