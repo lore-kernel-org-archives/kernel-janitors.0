@@ -1,63 +1,49 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Sun, 23 Dec 2018 09:40:26 +0000
-Subject: Re: [PATCH 02/20] net/mlx5e: drop useless LIST_HEAD
-Message-Id: <20181223094026.GO3940@mtr-leonro.mtl.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="hHiQ9nAwW5IGN2dL"
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Dec 2018 13:00:46 +0000
+Subject: [PATCH][next] drm: fix null pointer dereference on null state pointer
+Message-Id: <20181222130046.14083-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
- <1545555435-24576-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-3-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Saeed Mahameed <saeedm@mellanox.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Rob Clark <robdclark@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---hHiQ9nAwW5IGN2dL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In the case where state cannot be allocated, the current exit path via
+label 'out' will dereference the null state pointer when calling
+drm_atomic_state_put. Fix this by adding a new error exit label and
+jumping to this to avoid the drm_atomic_state_put.
 
-On Sun, Dec 23, 2018 at 09:56:57AM +0100, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
->
-> These became useless in 244cd96adb5f ("net_sched: remove list_head
-> from tc_action")
->
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
->
-> Fixes: 244cd96adb5f ("net_sched: remove list_head from tc_action")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+Detected by CoverityScan, CID#1476034 ("Dereference after null check")
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Fixes: b9fc5e01d1ce ("drm: Add helper to implement legacy dirtyfb")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/drm_damage_helper.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---hHiQ9nAwW5IGN2dL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcH1gKAAoJEORje4g2clinezYQALJ4CE1YSPVZl0v/mro+VPkd
-ibEjMf6lCI9/I2ldfbwlvzZfEVE5KKILn0YCwn614zvcnR+Qvvb1Pt3tbsxWGsIj
-IZ/oZMhuIUWME7TEiAmxK+UvqARbgqseVykG0/1f7CajispL5WVp8BdVCvAiUcgE
-JtAkJtyjByHAvCWpWutQqWqJ4cq7PLlGKzOPFhdh/nfMpe53iKCRyhB3xrTEbCF0
-ETU1GKujnbcQY6F30SNTjPn7I5EOCTZlfqop92o0391ypVXewnKmGACgm6fIgrnm
-FADP2CckVunXd6jAodc5VUJj9cRBIRdV+k7O3YS0YOjOMk48K5JqM6VDbEmctdKQ
-d5YV4alekhnN4dlSdktJod5J4npL6DX9OcNTZk8FnDmyX4X0nP+uODY5G9Aie3Iq
-jb96mi4pZrQry/fky0DppS1SX6W5yrjiH/qhcagHFHKxmUc2sAE9L27wFUBVw0B6
-wcJc6eWJxCkuoHc+xD1mZz/Eo3I60aVoJPX5WSSnchkgFNpT6ZnaMWl754JlBfbP
-iok/mUYp2nYDqj+lJxi2a689T3ossODrS6x4rxmruvU4Y+5DVSZ0q3QcGD779kxi
-XFdqu+O65uDcU4lx1HD5wWYjfCAvwnHLvTDFuXdkbDZ94lO7o1k/9OmFiIFNDe91
-Yd4Rh70MvMJ1TQElNTJ+
-=v4sq
------END PGP SIGNATURE-----
-
---hHiQ9nAwW5IGN2dL--
+diff --git a/drivers/gpu/drm/drm_damage_helper.c b/drivers/gpu/drm/drm_damage_helper.c
+index d2a1c7372f36..31032407254d 100644
+--- a/drivers/gpu/drm/drm_damage_helper.c
++++ b/drivers/gpu/drm/drm_damage_helper.c
+@@ -178,7 +178,7 @@ int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+ 	state = drm_atomic_state_alloc(fb->dev);
+ 	if (!state) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto out_drop_locks;
+ 	}
+ 	state->acquire_ctx = &ctx;
+ 
+@@ -238,6 +238,7 @@ int drm_atomic_helper_dirtyfb(struct drm_framebuffer *fb,
+ 	kfree(rects);
+ 	drm_atomic_state_put(state);
+ 
++out_drop_locks:
+ 	drm_modeset_drop_locks(&ctx);
+ 	drm_modeset_acquire_fini(&ctx);
+ 
+-- 
+2.19.1
