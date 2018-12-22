@@ -1,58 +1,50 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Dec 2018 08:57:08 +0000
-Subject: [PATCH 13/20] xenbus: drop useless LIST_HEAD
-Message-Id: <1545555435-24576-14-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 22 Dec 2018 11:28:30 +0000
+Subject: NAK: [PATCH][next] regulator: axp20x: check rdev is null before dereferencing it
+Message-Id: <fad3c7aa-b030-0edd-3efc-54062f1ebeb2@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20181222112608.30681-1-colin.king@canonical.com>
+In-Reply-To: <20181222112608.30681-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Juergen Gross <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>, xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop LIST_HEAD where the variable it declares is never used.
+On 22/12/2018 11:26, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently rdev is dereferenced when assigning desc before rdev is null
+> checked, hence there is a potential null pointer dereference on rdev.
+> Fix this by null checking rdev first.
+> 
+> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
+> 
+> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/regulator/axp20x-regulator.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+> index 48af859fd053..eaa7a487924c 100644
+> --- a/drivers/regulator/axp20x-regulator.c
+> +++ b/drivers/regulator/axp20x-regulator.c
+> @@ -436,11 +436,13 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
+>  static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
+>  {
+>  	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
+> -	const struct regulator_desc *desc = rdev->desc;
+> +	const struct regulator_desc *desc;
+>  
+>  	if (!rdev)
+>  		return -EINVAL;
+>  
+> +	desc = rdev->desc;
+> +
+>  	switch (axp20x->variant) {
+>  	case AXP209_ID:
+>  		if ((desc->id = AXP20X_LDO3) &&
+> 
 
-The declarations were introduced with the file, but the declared
-variables were not used.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier x;
-@@
-- LIST_HEAD(x);
-  ... when != x
-// </smpl>
-
-Fixes: 1107ba885e46 ("xen: add xenfs to allow usermode <-> Xen interaction")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Successfully 0-day tested on 151 configurations.
-
- drivers/xen/xenbus/xenbus_dev_frontend.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/xen/xenbus/xenbus_dev_frontend.c b/drivers/xen/xenbus/xenbus_dev_frontend.c
-index c3e201025ef0..25c53545ea01 100644
---- a/drivers/xen/xenbus/xenbus_dev_frontend.c
-+++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
-@@ -465,7 +465,6 @@ static int xenbus_write_watch(unsigned msg_type, struct xenbus_file_priv *u)
- 	struct watch_adapter *watch;
- 	char *path, *token;
- 	int err, rc;
--	LIST_HEAD(staging_q);
- 
- 	path = u->u.buffer + sizeof(u->u.msg);
- 	token = memchr(path, 0, u->u.msg.len);
-@@ -523,7 +522,6 @@ static ssize_t xenbus_file_write(struct file *filp,
- 	uint32_t msg_type;
- 	int rc = len;
- 	int ret;
--	LIST_HEAD(staging_q);
- 
- 	/*
- 	 * We're expecting usermode to be writing properly formed
+Forgot to add in another fix, I'll send a V2.
