@@ -1,21 +1,39 @@
-From: Tayeb Souami <amar.tilmatine@univ-sba.dz>
-Date: Mon, 17 Dec 2018 00:01:58 +0000
-Subject: =?utf-8?Q?wohlt=C3=A4tige_Spende_von_2.000.000_euro?=
-Message-Id: <848027295.32455.1545004918253.JavaMail.zimbra@univ-sba.dz>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Dec 2018 13:25:51 +0000
+Subject: [PATCH][next] IB/uverbs: fix an unsigned being compared to < 0
+Message-Id: <20181222132551.14696-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Moni Shoua <monis@mellanox.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The check for num_sge < 0 is always false because num_sge is not signed,
+fix this by declaring it as an int.
 
+Detected by CoverityScan, CID#1476005 ("Unsigned compared against 0")
+
+Fixes: ad8a4496757f ("IB/uverbs: Add support to advise_mr")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/core/uverbs_std_types_mr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/core/uverbs_std_types_mr.c b/drivers/infiniband/core/uverbs_std_types_mr.c
+index 71dfa5e5938e..4d4be0c2b752 100644
+--- a/drivers/infiniband/core/uverbs_std_types_mr.c
++++ b/drivers/infiniband/core/uverbs_std_types_mr.c
+@@ -47,7 +47,7 @@ static int UVERBS_HANDLER(UVERBS_METHOD_ADVISE_MR)(
+ 	enum ib_uverbs_advise_mr_advice advice;
+ 	struct ib_device *ib_dev = pd->device;
+ 	struct ib_sge *sg_list;
+-	u32 num_sge;
++	int num_sge;
+ 	u32 flags;
+ 	int ret;
+ 
 -- 
-
-Lieber Freund,
-Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zuf&auml;llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgew&auml;hlt.Ich habe den gr&ouml;&szlig;ten Teil meines Verm&ouml;gens auf eine Reihe von Wohlt&auml;tigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von &euro; 2.000.000,00 an Sie als eine der ausgew&auml;hlten 5 zu spenden, um meine Gewinne zu &uuml;berpr&uuml;fen, sehen Sie bitte meine You Tube Seite unten.
-UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
-Das ist dein Spendencode: [TS530342018]
-Antworten Sie mit dem SPENDE-CODE an diese E-Mail:Tayebsouam.spende@gmail.com
-Ich hoffe, Sie und Ihre Familie gl&uuml;cklich zu machen.
-Gr&uuml;&szlig;eHerr Tayeb Souami
+2.19.1
