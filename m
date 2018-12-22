@@ -1,56 +1,37 @@
-From: "Pawnikar, Sumeet R" <sumeet.r.pawnikar@intel.com>
-Date: Tue, 18 Dec 2018 15:16:22 +0000
-Subject: RE: [PATCH] thermal: int340x_thermal: Fix a NULL vs IS_ERR() check
-Message-Id: <3C3E65E75D9910479323816378A812E741445EFC@BGSMSX104.gar.corp.intel.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 22 Dec 2018 10:34:54 +0000
+Subject: [PATCH net-next] cw1200: fix missing unlock on error in cw1200_hw_scan()
+Message-Id: <1545474894-124328-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181217070106.GB12159@kadam>
-In-Reply-To: <20181217070106.GB12159@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Solomon Peachy <pizza@shaftnet.org>, Kalle Valo <kvalo@codeaurora.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Add the missing unlock before return from function cw1200_hw_scan()
+in the error handling case.
 
+Fixes: 4f68ef64cd7f ("cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/st/cw1200/scan.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->-----Original Message-----
->From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
->Sent: Monday, December 17, 2018 12:33 PM
->To: Zhang, Rui <rui.zhang@intel.com>
->Cc: Eduardo Valentin <edubezval@gmail.com>; Srinivas Pandruvada
-><srinivas.pandruvada@linux.intel.com>; Daniel Lezcano
-><daniel.lezcano@linaro.org>; Pawnikar, Sumeet R
-><sumeet.r.pawnikar@intel.com>; Amit Kucheria <amit.kucheria@linaro.org>;
->linux-pm@vger.kernel.org; kernel-janitors@vger.kernel.org
->Subject: [PATCH] thermal: int340x_thermal: Fix a NULL vs IS_ERR() check
->
->The intel_soc_dts_iosf_init() function doesn't return NULL, it returns error
->pointers.
->
->Fixes: 4d0dd6c1576b ("Thermal/int340x/processor_thermal: Enable auxiliary
->DTS for Braswell")
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->---
-> .../thermal/intel/int340x_thermal/processor_thermal_device.c    | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
->b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
->index 284cf2c5a8fd..8e0f665cf06f 100644
->--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
->+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
->@@ -423,7 +423,7 @@ static int  proc_thermal_pci_probe(struct pci_dev
->*pdev,
-> 		proc_priv->soc_dts = intel_soc_dts_iosf_init(
-> 					INTEL_SOC_DTS_INTERRUPT_MSI, 2,
->0);
->
->-		if (proc_priv->soc_dts && pdev->irq) {
->+		if (!IS_ERR(proc_priv->soc_dts) && pdev->irq) {
-
-Thanks for finding this. Just curious to know the background of this bug. Is there any Bugzilla number ? 
-
-> 			ret = pci_enable_msi(pdev);
-> 			if (!ret) {
-> 				ret = request_threaded_irq(pdev->irq, NULL,
->--
->2.17.1
+diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
+index 0a9eac9..71e9b91 100644
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -84,8 +84,11 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+-	if (!frame.skb)
++	if (!frame.skb) {
++		mutex_unlock(&priv->conf_mutex);
++		up(&priv->scan.lock);
+ 		return -ENOMEM;
++	}
+ 
+ 	if (req->ie_len)
+ 		skb_put_data(frame.skb, req->ie, req->ie_len);
