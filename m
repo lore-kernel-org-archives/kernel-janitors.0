@@ -1,40 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Dec 2018 15:53:12 +0000
-Subject: [PATCH 5/8] staging: rtl8192e: reduce indentation
-Message-Id: <1546185195-25676-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Dec 2018 19:11:16 +0000
+Subject: [PATCH][next] x86/fault: fix sign-extend of a unsigned that has been promoted to an int
+Message-Id: <20181222191116.21831-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Delete tab aligning a statement with the right hand side of a
-preceding assignment rather than the left hand side.
+From: Colin Ian King <colin.king@canonical.com>
 
-Found with the help of Coccinelle.
+The shifting of desc.base2 by 24 bits will end up with a sign extension
+error if the bit 7 of desc.base2 is set.  This because desc.base2 is
+promoted to type int and then sign extended to an unsigned long, causing
+the upper bits 32 bits to be set on the sign extension.  Fix this by
+casting desc.base2 to unsigned long before the shift.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Detected by CoverityScan, CID#1475635 ("Unintended sign extension")
 
+Fixes: a1a371c468f7 ("x86/fault: Decode page fault OOPSes better")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8192e/rtl8192e/rtl_wx.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-index 843e874b8a06..b798cde0ce47 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-@@ -1049,9 +1049,9 @@ static int _rtl92e_wx_set_promisc_mode(struct net_device *dev,
- 					(bPromiscuousOn) ? (true) : (false);
- 		ieee->IntelPromiscuousModeInfo.bFilterSourceStationFrame  			(bFilterSourceStationFrame) ? (true) : (false);
--			(bPromiscuousOn) ?
--			(rtllib_EnableIntelPromiscuousMode(dev, false)) :
--			(rtllib_DisableIntelPromiscuousMode(dev, false));
-+		(bPromiscuousOn) ?
-+		(rtllib_EnableIntelPromiscuousMode(dev, false)) :
-+		(rtllib_DisableIntelPromiscuousMode(dev, false));
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 2ff25ad33233..9d5c75f02295 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -595,7 +595,7 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
+ 		return;
+ 	}
  
- 		netdev_info(dev,
- 			    "====>%s(), on = %d, filter src sta = %d\n",
+-	addr = desc.base0 | (desc.base1 << 16) | (desc.base2 << 24);
++	addr = desc.base0 | (desc.base1 << 16) | ((unsigned long)desc.base2 << 24);
+ #ifdef CONFIG_X86_64
+ 	addr |= ((u64)desc.base3 << 32);
+ #endif
+-- 
+2.19.1
