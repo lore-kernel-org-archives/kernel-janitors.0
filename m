@@ -1,68 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 11:31:59 +0000
-Subject: [PATCH][V2][next] regulator: axp20x: check rdev is null before dereferencing it
-Message-Id: <20181222113159.31029-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:56:56 +0000
+Subject: [PATCH 01/20] nfsd: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Drop LIST_HEAD where the variable it declares is never used.
 
-Currently rdev is dereferenced when assigning desc before rdev is null
-checked, hence there is a potential null pointer dereference on rdev.
-Fix this by null checking rdev first.
+This was introduced in c5c707f96fc9a ("nfsd: implement pNFS
+layout recalls"), but was not used even in that commit.
 
-Detected by CoverityScan, CID#1476031 ("Dereference before null check")
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: c5c707f96fc9a ("nfsd: implement pNFS layout recalls")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
+Successfully 0-day tested on 151 configurations.
 
-V2: Fix 2nd occurrance of this thinko
+ fs/nfsd/nfs4layouts.c |    1 -
+ 1 file changed, 1 deletion(-)
 
----
- drivers/regulator/axp20x-regulator.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 48af859fd053..0dfa4ea6bbdf 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -367,7 +367,7 @@ static const int axp209_dcdc2_ldo3_slew_rates[] = {
- static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- {
- 	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
--	const struct regulator_desc *desc = rdev->desc;
-+	const struct regulator_desc *desc;
- 	u8 reg, mask, enable, cfg = 0xff;
- 	const int *slew_rates;
- 	int rate_count = 0;
-@@ -375,6 +375,8 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- 	if (!rdev)
- 		return -EINVAL;
+diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
+index 2b36aa037ce0..44517fb5c0de 100644
+--- a/fs/nfsd/nfs4layouts.c
++++ b/fs/nfsd/nfs4layouts.c
+@@ -656,7 +656,6 @@ nfsd4_cb_layout_done(struct nfsd4_callback *cb, struct rpc_task *task)
+ 	struct nfsd_net *nn;
+ 	ktime_t now, cutoff;
+ 	const struct nfsd4_layout_ops *ops;
+-	LIST_HEAD(reaplist);
  
-+	desc = rdev->desc;
-+
- 	switch (axp20x->variant) {
- 	case AXP209_ID:
- 		if (desc->id = AXP20X_DCDC2) {
-@@ -436,11 +438,13 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
- {
- 	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
--	const struct regulator_desc *desc = rdev->desc;
-+	const struct regulator_desc *desc;
  
- 	if (!rdev)
- 		return -EINVAL;
- 
-+	desc = rdev->desc;
-+
- 	switch (axp20x->variant) {
- 	case AXP209_ID:
- 		if ((desc->id = AXP20X_LDO3) &&
--- 
-2.19.1
+ 	switch (task->tk_status) {
