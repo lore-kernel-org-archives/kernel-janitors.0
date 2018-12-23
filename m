@@ -1,47 +1,48 @@
-From: zhoucm1 <zhoucm1@amd.com>
-Date: Tue, 04 Dec 2018 06:39:52 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: Fix return value check in amdgpu_allocate_static_csa()
-Message-Id: <fc2e78a7-d739-6e53-864b-75080e124585@amd.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:07 +0000
+Subject: [PATCH 12/20] dmaengine: dw: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543905576-38015-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1543905576-38015-1-git-send-email-weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, alexander.deucher-5C7GfCeVMHo@public.gmane.org, christian.koenig-5C7GfCeVMHo@public.gmane.org, David1.Zhou-5C7GfCeVMHo@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, Rex.Zhu-5C7GfCeVMHo@public.gmane.org, Monk.Liu-5C7GfCeVMHo@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Viresh Kumar <vireshk@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Drop LIST_HEAD where the variable it declares is never used.
 
+Commit ab703f818ac3 ("dmaengine: dw: lazy allocation of dma
+descriptors") removed the uses, but not the declaration.
 
-On 2018年12月04日 14:39, Wei Yongjun wrote:
-> Fix the return value check which testing the wrong variable
-> in amdgpu_allocate_static_csa().
->
-> Fixes: 7946340fa389 ("drm/amdgpu: Move csa related code to separate file")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-> index 0c590dd..a5fbc6f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-> @@ -43,7 +43,7 @@ int amdgpu_allocate_static_csa(struct amdgpu_device *adev, struct amdgpu_bo **bo
->   	r = amdgpu_bo_create_kernel(adev, size, PAGE_SIZE,
->   				domain, bo,
->   				NULL, &ptr);
-> -	if (!bo)
-> +	if (!r)
->   		return -ENOMEM;
-I guess original is correct as well, if you want to change it, you can 
-make like below, not your 'if (!r)':
-                 if (r)
-                         return r;
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--David
->   
->   	memset(ptr, 0, size);
->
->
->
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: ab703f818ac3 ("dmaengine: dw: lazy allocation of dma descriptors")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Successfully 0-day tested on 151 configurations.
+
+ drivers/dma/dw/core.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/dma/dw/core.c b/drivers/dma/dw/core.c
+index dc053e62f894..290d21be4d4c 100644
+--- a/drivers/dma/dw/core.c
++++ b/drivers/dma/dw/core.c
+@@ -1150,7 +1150,6 @@ static void dwc_free_chan_resources(struct dma_chan *chan)
+ 	struct dw_dma_chan	*dwc = to_dw_dma_chan(chan);
+ 	struct dw_dma		*dw = to_dw_dma(chan->device);
+ 	unsigned long		flags;
+-	LIST_HEAD(list);
+ 
+ 	dev_dbg(chan2dev(chan), "%s: descs allocated=%u\n", __func__,
+ 			dwc->descs_allocated);
