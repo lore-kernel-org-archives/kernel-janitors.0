@@ -1,55 +1,68 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 09 Dec 2018 17:13:12 +0000
-Subject: Re: [PATCH] x86/platform/olpc: remove duplicated check on node == -1
-Message-Id: <5ec13475-37d8-01b7-e575-cd9e9f496cc3@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:02 +0000
+Subject: [PATCH 07/20] dmaengine: at_hdmac: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181209150142.9010-1-colin.king@canonical.com>
-In-Reply-To: <20181209150142.9010-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 09/12/2018 à 16:01, Colin King a écrit :
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the node = -1 check is being performed twice, the
-> second check is redundant and can be removed.  Fix this by
-> removing the redundant second check and moving the first check
-> into a combined check with the result from the olpc_ofw call.
->
-> Detected by cppcheck:
-> Identical condition '(s32)node=-1', second condition is always false
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   arch/x86/platform/olpc/olpc_dt.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/olpc_dt.c
-> index b4ab779f1d47..658363ec3ff3 100644
-> --- a/arch/x86/platform/olpc/olpc_dt.c
-> +++ b/arch/x86/platform/olpc/olpc_dt.c
-> @@ -28,10 +28,7 @@ static phandle __init olpc_dt_getsibling(phandle node)
->   	const void *args[] = { (void *)node };
->   	void *res[] = { &node };
->   
-> -	if ((s32)node = -1)
-> -		return 0;
-> -
-> -	if (olpc_ofw("peer", args, res) || (s32)node = -1)
-> +	if (((s32)node = -1) || olpc_ofw("peer", args, res))
->   		return 0;
->   
->   	return node;
+Drop LIST_HEAD where the variable it declares is never used.
 
-'res' is { &node }
+tmp_list has been declared since the introduction of the driver
+and has never been used.  The two declarations of list were
+introduced with the containing functions but were also not used.
 
-Could 'node' be modified by 'olpc_ofw(..., res)' and set to -1?
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-In other words, I'm not sure that the 2nd check is a redundant here.
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
 
-Just my 2c,
+Fixes: dc78baa2b90b ("dmaengine: at_hdmac: new driver for the Atmel AHB DMA Controller")
+Fixes: 4facfe7f09f2b ("dmaengine: hdmac: Split device_control")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-CJ
+---
+Successfully 0-day tested on 151 configurations.
+
+ drivers/dma/at_hdmac.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
+index 01d936c9fe89..a0a9cd76c1d4 100644
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -134,7 +134,6 @@ static struct at_desc *atc_desc_get(struct at_dma_chan *atchan)
+ 	struct at_desc *ret = NULL;
+ 	unsigned long flags;
+ 	unsigned int i = 0;
+-	LIST_HEAD(tmp_list);
+ 
+ 	spin_lock_irqsave(&atchan->lock, flags);
+ 	list_for_each_entry_safe(desc, _desc, &atchan->free_list, desc_node) {
+@@ -1387,8 +1386,6 @@ static int atc_pause(struct dma_chan *chan)
+ 	int			chan_id = atchan->chan_common.chan_id;
+ 	unsigned long		flags;
+ 
+-	LIST_HEAD(list);
+-
+ 	dev_vdbg(chan2dev(chan), "%s\n", __func__);
+ 
+ 	spin_lock_irqsave(&atchan->lock, flags);
+@@ -1408,8 +1405,6 @@ static int atc_resume(struct dma_chan *chan)
+ 	int			chan_id = atchan->chan_common.chan_id;
+ 	unsigned long		flags;
+ 
+-	LIST_HEAD(list);
+-
+ 	dev_vdbg(chan2dev(chan), "%s\n", __func__);
+ 
+ 	if (!atc_chan_is_paused(atchan))
