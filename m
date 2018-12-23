@@ -1,33 +1,29 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 04 Dec 2018 06:39:36 +0000
-Subject: [PATCH -next] drm/amdgpu: Fix return value check in amdgpu_allocate_static_csa()
-Message-Id: <1543905576-38015-1-git-send-email-weiyongjun1@huawei.com>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Sun, 23 Dec 2018 13:28:11 +0000
+Subject: Re: [5/5] powerpc/4xx: Delete an unnecessary return statement in two functions
+Message-Id: <43N38W5pqRz9sNr@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <de85bbcd-36a8-7de5-8d18-96e1530a23c2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, Rex.Zhu@amd.com, Monk.Liu@amd.com
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Fix the return value check which testing the wrong variable
-in amdgpu_allocate_static_csa().
+On Thu, 2018-01-11 at 18:04:54 UTC, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 11 Jan 2018 18:40:23 +0100
+> 
+> The script "checkpatch.pl" pointed information out like the following.
+> 
+> WARNING: void function return statements are not generally useful
+> 
+> Thus remove such a statement in the affected functions.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Fixes: 7946340fa389 ("drm/amdgpu: Move csa related code to separate file")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to powerpc next, thanks.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-index 0c590dd..a5fbc6f 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-@@ -43,7 +43,7 @@ int amdgpu_allocate_static_csa(struct amdgpu_device *adev, struct amdgpu_bo **bo
- 	r = amdgpu_bo_create_kernel(adev, size, PAGE_SIZE,
- 				domain, bo,
- 				NULL, &ptr);
--	if (!bo)
-+	if (!r)
- 		return -ENOMEM;
- 
- 	memset(ptr, 0, size);
+https://git.kernel.org/powerpc/c/ae6263cc33742d1c179510b6aadd31
+
+cheers
