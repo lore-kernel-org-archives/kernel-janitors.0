@@ -1,49 +1,52 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 26 Dec 2018 07:54:36 +0000
-Subject: [PATCH 1/2] um: vector: Fix a potential NULL pointer dereference in 'vector_net_open()'
-Message-Id: <20181226075436.11018-1-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:56:58 +0000
+Subject: [PATCH 03/20] scsi: lpfc: lpfc_nvme: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com, rppt@linux.vnet.ibm.com, akpm@linux-foundation.org, yuehaibing@huawei.com, keescook@chromium.org
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: James Smart <james.smart@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'create_queue()' returns NULL in case of memory allocation failure. So we
-must check if it succeeds in order to avoid potential NULL pointer
-dereference.
+Drop LIST_HEAD where the variable it declares is never used.
 
-For 'vp->rx_queue', the dereference would occur just one line after the
-failed allocation. For 'vp->tx_queue', it would occur later during normal
-processing.
+These were introduced with the file, but were not even used
+at that time.
 
-Fixes: 49da7e64f33e ("High Performance UML Vector Network Driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: 01649561a8b4b ("scsi: lpfc: NVME Initiator: bind to nvme_fc api")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/um/drivers/vector_kern.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Successfully 0-day tested on 151 configurations.
 
-diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-index 046fa9ea0ccc..5b917716289d 100644
---- a/arch/um/drivers/vector_kern.c
-+++ b/arch/um/drivers/vector_kern.c
-@@ -1182,6 +1182,8 @@ static int vector_net_open(struct net_device *dev)
- 			vp->rx_header_size,
- 			MAX_IOV_SIZE
- 		);
-+		if (!vp->rx_queue)
-+			goto out_close;
- 		vp->rx_queue->queue_depth = get_depth(vp->parsed);
- 	} else {
- 		vp->header_rxbuffer = kmalloc(
-@@ -1198,6 +1200,8 @@ static int vector_net_open(struct net_device *dev)
- 			vp->header_size,
- 			MAX_IOV_SIZE
- 		);
-+		if (!vp->tx_queue)
-+			goto out_close;
- 	} else {
- 		vp->header_txbuffer = kmalloc(vp->header_size, GFP_KERNEL);
- 		if (vp->header_txbuffer = NULL)
--- 
-2.19.1
+ drivers/scsi/lpfc/lpfc_nvme.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index 4c66b19e6199..2119f36213e4 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -2234,9 +2234,7 @@ lpfc_new_nvme_buf(struct lpfc_vport *vport, int num_to_alloc)
+ 	dma_addr_t pdma_phys_sgl;
+ 	uint16_t iotag, lxri = 0;
+ 	int bcnt, num_posted;
+-	LIST_HEAD(prep_nblist);
+ 	LIST_HEAD(post_nblist);
+-	LIST_HEAD(nvme_nblist);
+ 
+ 	for (bcnt = 0; bcnt < num_to_alloc; bcnt++) {
+ 		lpfc_ncmd = kzalloc(sizeof(struct lpfc_nvme_buf), GFP_KERNEL);
