@@ -1,38 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Dec 2018 20:42:52 +0000
-Subject: [PATCH] usb: gadget: Potential NULL dereference on allocation error
-Message-Id: <20181221204252.GA29544@kadam>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:56:59 +0000
+Subject: [PATCH 04/20] scsi: lpfc: lpfc_scsi: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The source_sink_alloc_func() function is supposed to return error
-pointers on error.  The function is called from usb_get_function() which
-doesn't check for NULL returns so it would result in an Oops.
+Drop LIST_HEAD where the variable it declares is never used.
 
-Of course, in the current kernel, small allocations always succeed so
-this doesn't affect runtime.
+These were introduced in 8a9d2e8003040 ("[SCSI] lpfc 8.3.31:
+Correct handling of SLI4-port XRI resource-provisioning profile
+change"), but were not even used at that time.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: 8a9d2e8003040 ("[SCSI] lpfc 8.3.31: Correct handling of SLI4-port XRI resource-provisioning profile change")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/usb/gadget/function/f_sourcesink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Successfully 0-day tested on 151 configurations.
 
-diff --git a/drivers/usb/gadget/function/f_sourcesink.c b/drivers/usb/gadget/function/f_sourcesink.c
-index 9cdef108fb1b..ed68a4860b7d 100644
---- a/drivers/usb/gadget/function/f_sourcesink.c
-+++ b/drivers/usb/gadget/function/f_sourcesink.c
-@@ -838,7 +838,7 @@ static struct usb_function *source_sink_alloc_func(
+ drivers/scsi/lpfc/lpfc_scsi.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
+index b4f1a840b3b4..dd415d783593 100644
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -805,9 +805,7 @@ lpfc_new_scsi_buf_s4(struct lpfc_vport *vport, int num_to_alloc)
+ 	dma_addr_t pdma_phys_bpl;
+ 	uint16_t iotag, lxri = 0;
+ 	int bcnt, num_posted, sgl_size;
+-	LIST_HEAD(prep_sblist);
+ 	LIST_HEAD(post_sblist);
+-	LIST_HEAD(scsi_sblist);
  
- 	ss = kzalloc(sizeof(*ss), GFP_KERNEL);
- 	if (!ss)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	ss_opts =  container_of(fi, struct f_ss_opts, func_inst);
- 
--- 
-2.17.1
+ 	sgl_size = phba->cfg_sg_dma_buf_size -
+ 		(sizeof(struct fcp_cmnd) + sizeof(struct fcp_rsp));
