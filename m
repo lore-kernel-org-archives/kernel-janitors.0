@@ -1,51 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 14:12:26 +0000
-Subject: [PATCH][next] media: cxd2880-spi: fix two memory leaks of dvb_spi
-Message-Id: <20181222141226.15775-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:06 +0000
+Subject: [PATCH 11/20] Btrfs: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>
+Cc: kernel-janitors@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Drop LIST_HEAD where the variable it declares is never used.
 
-There are two return paths that do not kfree dvb_spi. Fix the memory
-leaks by returning via the exit label fail_adapter that will free
-dvi_spi.
+The uses were removed in 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC
+handling for balance"), but not the declaration.
 
-Detected by CoverityScan, CID#1475991 ("Resource Leak")
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Fixes: cb496cd472af ("media: cxd2880-spi: Add optional vcc regulator")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC handling for balance")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/spi/cxd2880-spi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Successfully 0-day tested on 151 configurations.
 
-diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
-index d5c433e20d4a..3499c90dc695 100644
---- a/drivers/media/spi/cxd2880-spi.c
-+++ b/drivers/media/spi/cxd2880-spi.c
-@@ -522,13 +522,15 @@ cxd2880_spi_probe(struct spi_device *spi)
- 
- 	dvb_spi->vcc_supply = devm_regulator_get_optional(&spi->dev, "vcc");
- 	if (IS_ERR(dvb_spi->vcc_supply)) {
--		if (PTR_ERR(dvb_spi->vcc_supply) = -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(dvb_spi->vcc_supply) = -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto fail_adapter;
-+		}
- 		dvb_spi->vcc_supply = NULL;
- 	} else {
- 		ret = regulator_enable(dvb_spi->vcc_supply);
--		if (ret)
--			return ret;
-+		if (ret)
-+			goto fail_adapter;
- 	}
- 
- 	dvb_spi->spi = spi;
--- 
-2.19.1
+ fs/btrfs/relocation.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+index 272b287f8cf0..de802ba35a34 100644
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -2128,7 +2128,6 @@ static noinline_for_stack int merge_reloc_root(struct reloc_control *rc,
+ 					       struct btrfs_root *root)
+ {
+ 	struct btrfs_fs_info *fs_info = rc->extent_root->fs_info;
+-	LIST_HEAD(inode_list);
+ 	struct btrfs_key key;
+ 	struct btrfs_key next_key;
+ 	struct btrfs_trans_handle *trans = NULL;
