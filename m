@@ -1,31 +1,51 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 01 Dec 2018 01:43:51 +0000
-Subject: [PATCH -next] sh: kfr2r09: drop pointless static qualifier in kfr2r09_usb0_gadget_setup()
-Message-Id: <1543628631-99957-1-git-send-email-yuehaibing@huawei.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:05 +0000
+Subject: [PATCH 10/20] scsi: qla2xxx: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There is no need to have the 'struct clk *camera_clk' variable static
-since new value always be assigned before use it.
+Drop LIST_HEAD where the variable it declares is never used.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The uses of new_fcports were removed in 726b85487067 ("qla2xxx:
+Add framework for async fabric discovery"), but not the
+declaration.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/sh/boards/mach-kfr2r09/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Successfully 0-day tested on 151 configurations.
 
-diff --git a/arch/sh/boards/mach-kfr2r09/setup.c b/arch/sh/boards/mach-kfr2r09/setup.c
-index c70bc78..203d249 100644
---- a/arch/sh/boards/mach-kfr2r09/setup.c
-+++ b/arch/sh/boards/mach-kfr2r09/setup.c
-@@ -477,7 +477,7 @@ static int kfr2r09_usb0_gadget_setup(void)
+ drivers/scsi/qla2xxx/qla_init.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 364bb52ed2a6..d72e3ad97a54 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -5400,7 +5400,6 @@ qla2x00_configure_fabric(scsi_qla_host_t *vha)
+ 	fc_port_t	*fcport;
+ 	uint16_t	mb[MAILBOX_REGISTER_COUNT];
+ 	uint16_t	loop_id;
+-	LIST_HEAD(new_fcports);
+ 	struct qla_hw_data *ha = vha->hw;
+ 	int		discovery_gen;
  
- static int __init kfr2r09_devices_setup(void)
- {
--	static struct clk *camera_clk;
-+	struct clk *camera_clk;
- 
- 	/* register board specific self-refresh code */
- 	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF |
