@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Dec 2018 08:56:58 +0000
-Subject: [PATCH 03/20] scsi: lpfc: lpfc_nvme: drop useless LIST_HEAD
-Message-Id: <1545555435-24576-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:00 +0000
+Subject: [PATCH 05/20] scsi: lpfc: lpfc_sli: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -11,10 +11,8 @@ Content-Transfer-Encoding: 7bit
 To: James Smart <james.smart@broadcom.com>
 Cc: kernel-janitors@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop LIST_HEAD where the variable it declares is never used.
-
-These were introduced with the file, but were not even used
-at that time.
+Drop LIST_HEAD where the variable it declares has never
+been used.
 
 The semantic patch that fixes this problem is as follows:
 (http://coccinelle.lip6.fr/)
@@ -27,26 +25,24 @@ identifier x;
   ... when != x
 // </smpl>
 
-Fixes: 01649561a8b4b ("scsi: lpfc: NVME Initiator: bind to nvme_fc api")
+Fixes: 895427bd012ce ("scsi: lpfc: NVME Initiator: Base modifications")
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
 Successfully 0-day tested on 151 configurations.
 
- drivers/scsi/lpfc/lpfc_nvme.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_sli.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
-index 4c66b19e6199..2119f36213e4 100644
---- a/drivers/scsi/lpfc/lpfc_nvme.c
-+++ b/drivers/scsi/lpfc/lpfc_nvme.c
-@@ -2234,9 +2234,7 @@ lpfc_new_nvme_buf(struct lpfc_vport *vport, int num_to_alloc)
- 	dma_addr_t pdma_phys_sgl;
- 	uint16_t iotag, lxri = 0;
- 	int bcnt, num_posted;
--	LIST_HEAD(prep_nblist);
- 	LIST_HEAD(post_nblist);
--	LIST_HEAD(nvme_nblist);
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 30734caf77e1..13fe9d3331b9 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -3948,7 +3948,6 @@ lpfc_sli_abort_iocb_ring(struct lpfc_hba *phba, struct lpfc_sli_ring *pring)
+ void
+ lpfc_sli_abort_wqe_ring(struct lpfc_hba *phba, struct lpfc_sli_ring *pring)
+ {
+-	LIST_HEAD(completions);
+ 	struct lpfc_iocbq *iocb, *next_iocb;
  
- 	for (bcnt = 0; bcnt < num_to_alloc; bcnt++) {
- 		lpfc_ncmd = kzalloc(sizeof(struct lpfc_nvme_buf), GFP_KERNEL);
+ 	if (pring->ringno = LPFC_ELS_RING)
