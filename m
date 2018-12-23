@@ -1,38 +1,48 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 20 Dec 2018 16:47:01 +0000
-Subject: Re: [PATCH] ath10k: remove set but not used variable 'num_tdls_vifs'
-Message-Id: <20181220164701.CED3C607F1@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:15 +0000
+Subject: [PATCH 20/20] cw1200: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-21-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541669570-110540-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541669570-110540-1-git-send-email-yuehaibing@huawei.com>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+Drop LIST_HEAD where the variable it declares has never
+been used.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/ath/ath10k/mac.c: In function 'ath10k_sta_state':
-> drivers/net/wireless/ath/ath10k/mac.c:6238:7: warning:
->  variable 'num_tdls_vifs' set but not used [-Wunused-but-set-variable]
-> 
-> 'num_tdls_vifs' not used any more after
->   9a993cc1ea95 ("ath10k: fix the logic of limiting tdls peer counts")
-> 
-> Also, remove the single called function ath10k_mac_tdls_vifs_count
-> and ath10k_mac_tdls_vifs_count_iter.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Patch applied to ath-next branch of ath.git, thanks.
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
 
-bff70e5f78e9 ath10k: remove set but not used variable 'num_tdls_vifs'
+Fixes: a910e4a94f692 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-https://patchwork.kernel.org/patch/10673841/
+---
+Successfully 0-day tested on 151 configurations.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+ drivers/net/wireless/st/cw1200/queue.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/wireless/st/cw1200/queue.c b/drivers/net/wireless/st/cw1200/queue.c
+index 7c31b63b8258..7895efefa95d 100644
+--- a/drivers/net/wireless/st/cw1200/queue.c
++++ b/drivers/net/wireless/st/cw1200/queue.c
+@@ -283,7 +283,6 @@ int cw1200_queue_put(struct cw1200_queue *queue,
+ 		     struct cw1200_txpriv *txpriv)
+ {
+ 	int ret = 0;
+-	LIST_HEAD(gc_list);
+ 	struct cw1200_queue_stats *stats = queue->stats;
+ 
+ 	if (txpriv->link_id >= queue->stats->map_capacity)
