@@ -1,57 +1,57 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Sun, 09 Dec 2018 21:50:33 +0000
-Subject: [PATCH 3.16 249/328] x86/paravirt: Fix some warning messages
-Message-Id: <lsq.1544392233.371934358@decadent.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:09 +0000
+Subject: [PATCH 14/20] dmaengine: st_fdma: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, "H. Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org, Alok Kataria <akataria@vmware.com>, Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>, virtualization@lists.linux-foundation.org
+To: Patrice Chotard <patrice.chotard@st.com>
+Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
-3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
+Drop LIST_HEAD where the variable it declares is never used.
 
-------------------
+The declarations were introduced with the file, but the declared
+variables were not used.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c upstream.
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
 
-The first argument to WARN_ONCE() is a condition.
+Fixes: 6b4cd727eaf1 ("dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Successfully 0-day tested on 151 configurations.
 
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -99,7 +99,7 @@ unsigned paravirt_patch_call(void *insnb
+ drivers/dma/st_fdma.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/dma/st_fdma.c b/drivers/dma/st_fdma.c
+index 07c20aa2e955..954f7cf62bb1 100644
+--- a/drivers/dma/st_fdma.c
++++ b/drivers/dma/st_fdma.c
+@@ -294,8 +294,6 @@ static void st_fdma_free_chan_res(struct dma_chan *chan)
+ 	struct rproc *rproc = fchan->fdev->slim_rproc->rproc;
+ 	unsigned long flags;
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -119,7 +119,7 @@ unsigned paravirt_patch_jmp(void *insnbu
+-	LIST_HEAD(head);
+-
+ 	dev_dbg(fchan->fdev->dev, "%s: freeing chan:%d\n",
+ 		__func__, fchan->vchan.chan.chan_id);
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
+@@ -626,7 +624,6 @@ static void st_fdma_issue_pending(struct dma_chan *chan)
+ static int st_fdma_pause(struct dma_chan *chan)
+ {
+ 	unsigned long flags;
+-	LIST_HEAD(head);
+ 	struct st_fdma_chan *fchan = to_st_fdma_chan(chan);
+ 	int ch_id = fchan->vchan.chan.chan_id;
+ 	unsigned long cmd = FDMA_CMD_PAUSE(ch_id);
