@@ -1,23 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 Dec 2018 23:45:04 +0000
-Subject: Re: [PATCH net] qed: Fix an error code qed_ll2_start_xmit()
-Message-Id: <20181218.154504.355265644967978127.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:03 +0000
+Subject: [PATCH 08/20] xfs: xfs_buf: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181217070513.GD12159@kadam>
-In-Reply-To: <20181217070513.GD12159@kadam>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Mintz@kadam, Yuval.Mintz@cavium.com, Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Dec 2018 10:05:13 +0300
+Drop LIST_HEAD where the variable it declares has never
+been used.
 
-> We accidentally deleted the code to set "rc = -ENOMEM;" and this patch
-> adds it back.
-> 
-> Fixes: d2201a21598a ("qed: No need for LL2 frags indication")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied.
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: 26f1fe858f274 ("xfs: reduce lock hold times in buffer writeback")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Successfully 0-day tested on 151 configurations.
+
+ fs/xfs/xfs_buf.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index b21ea2ba768d..eedc5e0156ff 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1992,7 +1992,6 @@ xfs_buf_delwri_submit_buffers(
+ 	struct list_head	*wait_list)
+ {
+ 	struct xfs_buf		*bp, *n;
+-	LIST_HEAD		(submit_list);
+ 	int			pinned = 0;
+ 	struct blk_plug		plug;
+ 
