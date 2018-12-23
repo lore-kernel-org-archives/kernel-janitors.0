@@ -1,81 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 21 Dec 2018 13:42:24 +0000
-Subject: Applied "ALSA: compress: prevent potential divide by zero bugs" to the asoc tree
-Message-Id: <20181221134224.1E1831121B93@debutante.sirena.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:11 +0000
+Subject: [PATCH 16/20] mlxsw: spectrum: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-17-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181221090658.GD2735@kadam>
-In-Reply-To: <20181221090658.GD2735@kadam>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: kernel-janitors@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+Drop LIST_HEAD where the variable it declares is never used.
 
-   ALSA: compress: prevent potential divide by zero bugs
+The uses were removed in 244cd96adb5f ("net_sched: remove
+list_head from tc_action"), but not the declaration.
 
-has been applied to the asoc tree at
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Fixes: 244cd96adb5f ("net_sched: remove list_head from tc_action")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From e9d960271d89c0cabf094123e2ddc94705de2a31 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Dec 2018 12:06:58 +0300
-Subject: [PATCH] ALSA: compress: prevent potential divide by zero bugs
-
-The problem is seen in the q6asm_dai_compr_set_params() function:
-
-	ret = q6asm_map_memory_regions(dir, prtd->audio_client, prtd->phys,
-				       (prtd->pcm_size / prtd->periods),
-                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-				       prtd->periods);
-
-In this code prtd->pcm_size is the buffer_size and prtd->periods comes
-from params->buffer.fragments.  If we allow the number of fragments to
-be zero then it results in a divide by zero bug.  One possible fix would
-be to use prtd->pcm_count directly instead of using the division to
-re-calculate it.  But I decided that it doesn't really make sense to
-allow zero fragments.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/core/compress_offload.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Successfully 0-day tested on 151 configurations.
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index a5b09e75e787..f7d2b373da0a 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -541,7 +541,8 @@ static int snd_compress_check_input(struct snd_compr_params *params)
- {
- 	/* first let's check the buffer parameter's */
- 	if (params->buffer.fragment_size = 0 ||
--	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
-+	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size ||
-+	    params->buffer.fragments = 0)
- 		return -EINVAL;
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index c742a581f0d0..eed1045e4d96 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -1347,7 +1347,6 @@ static int mlxsw_sp_port_add_cls_matchall(struct mlxsw_sp_port *mlxsw_sp_port,
+ 	struct mlxsw_sp_port_mall_tc_entry *mall_tc_entry;
+ 	__be16 protocol = f->common.protocol;
+ 	const struct tc_action *a;
+-	LIST_HEAD(actions);
+ 	int err;
  
- 	/* now codec parameters */
--- 
-2.20.1
+ 	if (!tcf_exts_has_one_action(f->exts)) {
