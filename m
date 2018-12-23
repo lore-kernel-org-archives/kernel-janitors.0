@@ -1,44 +1,54 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 25 Dec 2018 11:55:47 +0000
-Subject: [PATCH -next] ASoC: Intel: remove set but not used variable 'stage_type'
-Message-Id: <1545738947-93207-1-git-send-email-yuehaibing@huawei.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:13 +0000
+Subject: [PATCH 18/20] dmaengine: sa11x0: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-19-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Drop LIST_HEAD where the variable it declares has never been
+used.
 
-sound/soc/intel/haswell/sst-haswell-ipc.c: In function 'hsw_stream_message':
-sound/soc/intel/haswell/sst-haswell-ipc.c:669:29: warning:
- variable 'stage_type' set but not used [-Wunused-but-set-variable]
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-It never used since commit ba57f68235cf ("ASoC: Intel: create haswell folder
-and move haswell platform files in")
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 4a533218fccf ("dmaengine: sa11x0: Split device_control")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- sound/soc/intel/haswell/sst-haswell-ipc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Successfully 0-day tested on 151 configurations.
 
-diff --git a/sound/soc/intel/haswell/sst-haswell-ipc.c b/sound/soc/intel/haswell/sst-haswell-ipc.c
-index 31fcdf12..a3c374e 100644
---- a/sound/soc/intel/haswell/sst-haswell-ipc.c
-+++ b/sound/soc/intel/haswell/sst-haswell-ipc.c
-@@ -666,13 +666,12 @@ static int hsw_module_message(struct sst_hsw *hsw, u32 header)
+ drivers/dma/sa11x0-dma.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/dma/sa11x0-dma.c b/drivers/dma/sa11x0-dma.c
+index 784d5f1a473b..3fae23768b47 100644
+--- a/drivers/dma/sa11x0-dma.c
++++ b/drivers/dma/sa11x0-dma.c
+@@ -705,7 +705,6 @@ static int sa11x0_dma_device_pause(struct dma_chan *chan)
+ 	struct sa11x0_dma_chan *c = to_sa11x0_dma_chan(chan);
+ 	struct sa11x0_dma_dev *d = to_sa11x0_dma(chan->device);
+ 	struct sa11x0_dma_phy *p;
+-	LIST_HEAD(head);
+ 	unsigned long flags;
  
- static int hsw_stream_message(struct sst_hsw *hsw, u32 header)
- {
--	u32 stream_msg, stream_id, stage_type;
-+	u32 stream_msg, stream_id;
- 	struct sst_hsw_stream *stream;
- 	int handled = 0;
+ 	dev_dbg(d->slave.dev, "vchan %p: pause\n", &c->vc);
+@@ -732,7 +731,6 @@ static int sa11x0_dma_device_resume(struct dma_chan *chan)
+ 	struct sa11x0_dma_chan *c = to_sa11x0_dma_chan(chan);
+ 	struct sa11x0_dma_dev *d = to_sa11x0_dma(chan->device);
+ 	struct sa11x0_dma_phy *p;
+-	LIST_HEAD(head);
+ 	unsigned long flags;
  
- 	stream_msg = msg_get_stream_type(header);
- 	stream_id = msg_get_stream_id(header);
--	stage_type = msg_get_stage_type(header);
- 
- 	stream = get_stream_by_id(hsw, stream_id);
- 	if (stream = NULL)
+ 	dev_dbg(d->slave.dev, "vchan %p: resume\n", &c->vc);
