@@ -1,50 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Dec 2018 15:53:08 +0000
-Subject: [PATCH 1/8] usb: gadget: udc: reduce indentation
-Message-Id: <1546185195-25676-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Sun, 23 Dec 2018 13:28:08 +0000
+Subject: Re: [1/5] powerpc/4xx: Combine four seq_printf() calls into two in ocm_debugfs_show()
+Message-Id: <43N38S6v33z9sP9@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <90e9f81b-25ad-cf02-663c-50a9997d9d53@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Delete tab aligning a statement with the right hand side of a
-preceding assignment rather than the left hand side.
+On Thu, 2018-01-11 at 18:00:33 UTC, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 11 Jan 2018 18:08:08 +0100
+> 
+> Some data were printed into a sequence by four separate function calls.
+> Print the same data by two single function calls instead.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Found with the help of Coccinelle.
+Applied to powerpc next, thanks.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+https://git.kernel.org/powerpc/c/b52106a040e6f86848b05be1b43174
 
----
- drivers/usb/gadget/udc/snps_udc_core.c |   17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/snps_udc_core.c b/drivers/usb/gadget/udc/snps_udc_core.c
-index d4da47f4f6f4..3fcded31405a 100644
---- a/drivers/usb/gadget/udc/snps_udc_core.c
-+++ b/drivers/usb/gadget/udc/snps_udc_core.c
-@@ -947,15 +947,14 @@ static int prep_dma(struct udc_ep *ep, struct udc_request *req, gfp_t gfp)
- 				UDC_DMA_STP_STS_BS_HOST_READY,
- 				UDC_DMA_STP_STS_BS);
- 
--
--			/* clear NAK by writing CNAK */
--			if (ep->naking) {
--				tmp = readl(&ep->regs->ctl);
--				tmp |= AMD_BIT(UDC_EPCTL_CNAK);
--				writel(tmp, &ep->regs->ctl);
--				ep->naking = 0;
--				UDC_QUEUE_CNAK(ep, ep->num);
--			}
-+		/* clear NAK by writing CNAK */
-+		if (ep->naking) {
-+			tmp = readl(&ep->regs->ctl);
-+			tmp |= AMD_BIT(UDC_EPCTL_CNAK);
-+			writel(tmp, &ep->regs->ctl);
-+			ep->naking = 0;
-+			UDC_QUEUE_CNAK(ep, ep->num);
-+		}
- 
- 	}
- 
+cheers
