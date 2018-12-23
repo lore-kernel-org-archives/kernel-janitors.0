@@ -1,44 +1,36 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 26 Dec 2018 07:54:49 +0000
-Subject: [PATCH 2/2] um: vector: Use 'kmalloc_array' instead of 'kmalloc'
-Message-Id: <20181226075449.11071-1-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:56:55 +0000
+Subject: [PATCH 00/20] drop useless LIST_HEAD
+Message-Id: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com, rppt@linux.vnet.ibm.com, akpm@linux-foundation.org, yuehaibing@huawei.com, keescook@chromium.org
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-wireless@vger.kernel.org, linux-nfs@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, dmaengine@vger.kernel.org, xen-devel@lists.xenproject.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-Use 'kmalloc_array' instead of 'kmalloc' when appropriate.
+Drop LIST_HEAD where the variable it declares is never used.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I don't know why it has not already been replaced in 6da2ec56059c
-("treewide: kmalloc() -> kmalloc_array()".
----
- arch/um/drivers/vector_kern.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-index 5b917716289d..dee5246bda81 100644
---- a/arch/um/drivers/vector_kern.c
-+++ b/arch/um/drivers/vector_kern.c
-@@ -507,12 +507,12 @@ static struct vector_queue *create_queue(
- 		return NULL;
- 	result->max_depth = max_size;
- 	result->dev = vp->dev;
--	result->mmsg_vector = kmalloc(
--		(sizeof(struct mmsghdr) * max_size), GFP_KERNEL);
-+	result->mmsg_vector = kmalloc_array(max_size, sizeof(struct mmsghdr),
-+					    GFP_KERNEL);
- 	if (result->mmsg_vector = NULL)
- 		goto out_mmsg_fail;
--	result->skbuff_vector = kmalloc(
--		(sizeof(void *) * max_size), GFP_KERNEL);
-+	result->skbuff_vector = kmalloc_array(max_size, sizeof(void *),
-+					      GFP_KERNEL);
- 	if (result->skbuff_vector = NULL)
- 		goto out_skb_fail;
- 
--- 
-2.19.1
+ drivers/dma/at_hdmac.c                                |    5 -----
+ drivers/dma/dw/core.c                                 |    1 -
+ drivers/dma/pl330.c                                   |    1 -
+ drivers/dma/sa11x0-dma.c                              |    2 --
+ drivers/dma/st_fdma.c                                 |    3 ---
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c               |    1 -
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    5 -----
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c       |    3 ---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c        |    1 -
+ drivers/net/wireless/st/cw1200/queue.c                |    1 -
+ drivers/scsi/lpfc/lpfc_nvme.c                         |    2 --
+ drivers/scsi/lpfc/lpfc_scsi.c                         |    2 --
+ drivers/scsi/lpfc/lpfc_sli.c                          |    1 -
+ drivers/scsi/qla2xxx/qla_init.c                       |    1 -
+ drivers/xen/xenbus/xenbus_dev_frontend.c              |    2 --
+ fs/btrfs/relocation.c                                 |    1 -
+ fs/nfs/nfs4client.c                                   |    1 -
+ fs/nfsd/nfs4layouts.c                                 |    1 -
+ fs/xfs/xfs_buf.c                                      |    1 -
+ fs/xfs/xfs_fsops.c                                    |    1 -
+ 20 files changed, 36 deletions(-)
