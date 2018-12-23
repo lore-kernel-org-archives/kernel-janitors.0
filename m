@@ -1,30 +1,50 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Date: Tue, 04 Dec 2018 05:17:57 +0000
-Subject: Re: [PATCH] ext4: clean up indentation issues, remove extraneous tabs
-Message-Id: <20181204051757.GE4981@thunk.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Dec 2018 08:57:01 +0000
+Subject: [PATCH 06/20] IB/ipoib: drop useless LIST_HEAD
+Message-Id: <1545555435-24576-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181123163043.14178-1-colin.king@canonical.com>
- <20181127092836.GD16301@quack2.suse.cz>
-In-Reply-To: <20181127092836.GD16301@quack2.suse.cz>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: Colin King <colin.king@canonical.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:28:36AM +0100, Jan Kara wrote:
-> On Fri 23-11-18 16:30:43, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There are several lines that are indented too far, clean these
-> > up by removing the tabs.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> The patch looks good. You can add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+Drop LIST_HEAD where the variable it declares is never used.
 
-Thanks, applied.
+Commit 31c02e215700 ("IPoIB: Avoid using stale last_send counter
+when reaping AHs") removed the uses, but not the declaration.
 
-						- Ted
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x;
+@@
+- LIST_HEAD(x);
+  ... when != x
+// </smpl>
+
+Fixes: 31c02e215700 ("IPoIB: Avoid using stale last_send counter when reaping AHs")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Successfully 0-day tested on 151 configurations.
+
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ib.c b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+index 6d35570092d6..78fa777c87b1 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+@@ -669,7 +669,6 @@ static void __ipoib_reap_ah(struct net_device *dev)
+ {
+ 	struct ipoib_dev_priv *priv = ipoib_priv(dev);
+ 	struct ipoib_ah *ah, *tah;
+-	LIST_HEAD(remove_list);
+ 	unsigned long flags;
+ 
+ 	netif_tx_lock_bh(dev);
