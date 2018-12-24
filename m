@@ -1,44 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 16:58:41 +0000
-Subject: [PATCH] drivers/net: appletalk/cops: remove redundant if statement and mask
-Message-Id: <20181222165841.18288-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 24 Dec 2018 18:08:36 +0000
+Subject: Re: [PATCH] drivers/net: appletalk/cops: remove redundant if statement and mask
+Message-Id: <20181224.100836.117884501889550887.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181222165841.18288-1-colin.king@canonical.com>
+In-Reply-To: <20181222165841.18288-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Dec 2018 16:58:41 +0000
 
-The two different assignments for pkt_len are actually the same and
-so the if statement is redundant and can be removed.  Masking a u8
-return value from inb() with 0xFF is also redundant and can also be
-emoved.  Remove the redundant code.
+> @@ -777,10 +777,7 @@ static void cops_rx(struct net_device *dev)
+>          }
+>  
+>          /* Get response length. */
+> -	if(lp->board=DAYNA)
+> -        	pkt_len = inb(ioaddr) & 0xFF;
+> -	else
+> -		pkt_len = inb(ioaddr) & 0x00FF;
+> +	pkt_len = inb(ioaddr);
 
-Detected by CoverityScan, CID#1475639 ("Identical code for different
-branches")
+There are other instances of similar weird identical statements guarded
+by the test on the board type being DAYNA.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/appletalk/cops.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+For example, in cops_send_packet():
 
-diff --git a/drivers/net/appletalk/cops.c b/drivers/net/appletalk/cops.c
-index bb49f6e40a19..64c74002fe8b 100644
---- a/drivers/net/appletalk/cops.c
-+++ b/drivers/net/appletalk/cops.c
-@@ -777,10 +777,7 @@ static void cops_rx(struct net_device *dev)
-         }
- 
-         /* Get response length. */
--	if(lp->board=DAYNA)
--        	pkt_len = inb(ioaddr) & 0xFF;
--	else
--		pkt_len = inb(ioaddr) & 0x00FF;
-+	pkt_len = inb(ioaddr);
-         pkt_len |= (inb(ioaddr) << 8);
-         /* Input IO code. */
-         rsp_type=inb(ioaddr);
--- 
-2.19.1
+	if(lp->board = DAYNA)
+               	outb(skb->len >> 8, ioaddr);
+	else
+		outb((skb->len >> 8)&0x0FF, ioaddr);
+
+Could you scan the rest of the driver and deal with all of these
+instances in one go?
+
+Thank you!
