@@ -1,54 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Dec 2018 08:57:13 +0000
-Subject: [PATCH 18/20] dmaengine: sa11x0: drop useless LIST_HEAD
-Message-Id: <1545555435-24576-19-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 26 Dec 2018 07:54:36 +0000
+Subject: [PATCH 1/2] um: vector: Fix a potential NULL pointer dereference in 'vector_net_open()'
+Message-Id: <20181226075436.11018-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com, rppt@linux.vnet.ibm.com, akpm@linux-foundation.org, yuehaibing@huawei.com, keescook@chromium.org
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Drop LIST_HEAD where the variable it declares has never been
-used.
+'create_queue()' returns NULL in case of memory allocation failure. So we
+must check if it succeeds in order to avoid potential NULL pointer
+dereference.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+For 'vp->rx_queue', the dereference would occur just one line after the
+failed allocation. For 'vp->tx_queue', it would occur later during normal
+processing.
 
-// <smpl>
-@@
-identifier x;
-@@
-- LIST_HEAD(x);
-  ... when != x
-// </smpl>
-
-Fixes: 4a533218fccf ("dmaengine: sa11x0: Split device_control")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: 49da7e64f33e ("High Performance UML Vector Network Driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Successfully 0-day tested on 151 configurations.
+ arch/um/drivers/vector_kern.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/dma/sa11x0-dma.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/dma/sa11x0-dma.c b/drivers/dma/sa11x0-dma.c
-index 784d5f1a473b..3fae23768b47 100644
---- a/drivers/dma/sa11x0-dma.c
-+++ b/drivers/dma/sa11x0-dma.c
-@@ -705,7 +705,6 @@ static int sa11x0_dma_device_pause(struct dma_chan *chan)
- 	struct sa11x0_dma_chan *c = to_sa11x0_dma_chan(chan);
- 	struct sa11x0_dma_dev *d = to_sa11x0_dma(chan->device);
- 	struct sa11x0_dma_phy *p;
--	LIST_HEAD(head);
- 	unsigned long flags;
- 
- 	dev_dbg(d->slave.dev, "vchan %p: pause\n", &c->vc);
-@@ -732,7 +731,6 @@ static int sa11x0_dma_device_resume(struct dma_chan *chan)
- 	struct sa11x0_dma_chan *c = to_sa11x0_dma_chan(chan);
- 	struct sa11x0_dma_dev *d = to_sa11x0_dma(chan->device);
- 	struct sa11x0_dma_phy *p;
--	LIST_HEAD(head);
- 	unsigned long flags;
- 
- 	dev_dbg(d->slave.dev, "vchan %p: resume\n", &c->vc);
+diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+index 046fa9ea0ccc..5b917716289d 100644
+--- a/arch/um/drivers/vector_kern.c
++++ b/arch/um/drivers/vector_kern.c
+@@ -1182,6 +1182,8 @@ static int vector_net_open(struct net_device *dev)
+ 			vp->rx_header_size,
+ 			MAX_IOV_SIZE
+ 		);
++		if (!vp->rx_queue)
++			goto out_close;
+ 		vp->rx_queue->queue_depth = get_depth(vp->parsed);
+ 	} else {
+ 		vp->header_rxbuffer = kmalloc(
+@@ -1198,6 +1200,8 @@ static int vector_net_open(struct net_device *dev)
+ 			vp->header_size,
+ 			MAX_IOV_SIZE
+ 		);
++		if (!vp->tx_queue)
++			goto out_close;
+ 	} else {
+ 		vp->header_txbuffer = kmalloc(vp->header_size, GFP_KERNEL);
+ 		if (vp->header_txbuffer = NULL)
+-- 
+2.19.1
