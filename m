@@ -1,28 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 01 Dec 2018 01:24:14 +0000
-Subject: Re: [PATCH net-next] net: qualcomm: rmnet: Remove set but not used variable 'cmd'
-Message-Id: <20181130.172414.113123648892933050.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 26 Dec 2018 11:28:24 +0000
+Subject: [PATCH -next] hwmon: (lm80) Fix missing unlock on error in set_fan_div()
+Message-Id: <1545823704-73836-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1543458992-103568-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1543458992-103568-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: subashab@codeaurora.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Kangjie Lu <kjlu@umn.edu>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 29 Nov 2018 02:36:32 +0000
+Add the missing unlock before return from function set_fan_div()
+in the error handling case.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c: In function 'rmnet_map_do_flow_control':
-> drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c:23:36: warning:
->  variable 'cmd' set but not used [-Wunused-but-set-variable]
->   struct rmnet_map_control_command *cmd;
-> 
-> 'cmd' not used anymore now, should also be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: c9c63915519b ("hwmon: (lm80) fix a missing check of the status of SMBus read")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/hwmon/lm80.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index 0e30fa0..f9b8e3e 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -393,8 +393,10 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 	}
+ 
+ 	rv = lm80_read_value(client, LM80_REG_FANDIV);
+-	if (rv < 0)
++	if (rv < 0) {
++		mutex_unlock(&data->update_lock);
+ 		return rv;
++	}
+ 	reg = (rv & ~(3 << (2 * (nr + 1))))
+ 	    | (data->fan_div[nr] << (2 * (nr + 1)));
+ 	lm80_write_value(client, LM80_REG_FANDIV, reg);
