@@ -1,28 +1,60 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Sat, 22 Dec 2018 23:09:18 +0000
-Subject: Re: [PATCH] RDMA/mlx5: Signedness bug in UVERBS_HANDLER()
-Message-Id: <20181222230918.GB20963@ziepe.ca>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Dec 2018 03:44:04 +0000
+Subject: [PATCH -next] crypto: brcm - Fix some set-but-not-used warning
+Message-Id: <1545968644-191671-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181222074332.GA7662@kadam>
-In-Reply-To: <20181222074332.GA7662@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, Gilad Ben-Yossef <gilad@benyossef.com>, Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>, Stefan Agner <stefan@agner.ch>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 10:43:32AM +0300, Dan Carpenter wrote:
-> The "num_actions" variable needs to be signed for the error handling to
-> work.  The maximum number of actions is less than 256 so int type is
-> large enough for that.
-> 
-> Fixes: cbfdd442c43e ("IB/uverbs: Add helper to get array size from ptr attribute")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Leon Romanovsky <leonro@mellanox.com>
-> ---
->  drivers/infiniband/hw/mlx5/flow.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied to for-next
+drivers/crypto/bcm/cipher.c: In function 'handle_ahash_req':
+drivers/crypto/bcm/cipher.c:720:15: warning:
+ variable 'chunk_start' set but not used [-Wunused-but-set-variable]
 
-Thanks,
-Jason
+drivers/crypto/bcm/cipher.c: In function 'spu_rx_callback':
+drivers/crypto/bcm/cipher.c:1679:31: warning:
+ variable 'areq' set but not used [-Wunused-but-set-variable]
+
+drivers/crypto/bcm/cipher.c:1678:22: warning:
+ variable 'ctx' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/bcm/cipher.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
+index c9393ff..9a66c29 100644
+--- a/drivers/crypto/bcm/cipher.c
++++ b/drivers/crypto/bcm/cipher.c
+@@ -717,7 +717,7 @@ static int handle_ahash_req(struct iproc_reqctx_s *rctx)
+ 	 */
+ 	unsigned int new_data_len;
+ 
+-	unsigned int chunk_start = 0;
++	unsigned int __maybe_unused chunk_start = 0;
+ 	u32 db_size;	 /* Length of data field, incl gcm and hash padding */
+ 	int pad_len = 0; /* total pad len, including gcm, hash, stat padding */
+ 	u32 data_pad_len = 0;	/* length of GCM/CCM padding */
+@@ -1675,8 +1675,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
+ 	struct spu_hw *spu = &iproc_priv.spu;
+ 	struct brcm_message *mssg = msg;
+ 	struct iproc_reqctx_s *rctx;
+-	struct iproc_ctx_s *ctx;
+-	struct crypto_async_request *areq;
+ 	int err = 0;
+ 
+ 	rctx = mssg->ctx;
+@@ -1686,8 +1684,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
+ 		err = -EFAULT;
+ 		goto cb_finish;
+ 	}
+-	areq = rctx->parent;
+-	ctx = rctx->ctx;
+ 
+ 	/* process the SPU status */
+ 	err = spu->spu_status_process(rctx->msg_buf.rx_stat);
