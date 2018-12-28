@@ -1,60 +1,45 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 16 Dec 2018 14:16:01 +0000
-Subject: Re: [PATCH -next] iio: imu: st_lsm6dsx: remove set but not used variable ''
-Message-Id: <20181216141601.0bc53375@archlinux>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Dec 2018 06:41:42 +0000
+Subject: [PATCH -next] crypto: chelsio - CHECK-remove set but not used variables 'adap'
+Message-Id: <1545979302-111921-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1544855484-154231-1-git-send-email-yuehaibing@huawei.com>
-        <CAA2SeN+6eNer_tMdC97LCuvVN+LqQGFAZidA_O6Ot86XASKfTA@mail.gmail.com>
-In-Reply-To: <CAA2SeN+6eNer_tMdC97LCuvVN+LqQGFAZidA_O6Ot86XASKfTA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 15 Dec 2018 09:24:57 +0100
-Lorenzo Bianconi <lorenzo.bianconi83@gmail.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> >
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> >
-> > drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c: In function 'st_lsm6dsx_shub_read_reg':
-> > drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c:108:41: warning:
-> >  variable 'hub_settings' set but not used [-Wunused-but-set-variable]
-> >
-> > It never used since introduction in commit c91c1c844ebd ("iio: imu: st_lsm6dsx:
-> > add i2c embedded controller support")
-> >
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> > index 8e47dcc..66fbcd9 100644
-> > --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> > +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> > @@ -105,12 +105,10 @@ static void st_lsm6dsx_shub_wait_complete(struct st_lsm6dsx_hw *hw)
-> >  static int st_lsm6dsx_shub_read_reg(struct st_lsm6dsx_hw *hw, u8 addr,
-> >                                     u8 *data, int len)
-> >  {
-> > -       const struct st_lsm6dsx_shub_settings *hub_settings;
-> >         int err;
-> >
-> >         mutex_lock(&hw->page_lock);
-> >
-> > -       hub_settings = &hw->settings->shub_settings;
-> >         err = st_lsm6dsx_set_page(hw, true);
-> >         if (err < 0)
-> >                 goto out;
-> >
-> >
-> >  
-> Acked-by: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
+drivers/crypto/chelsio/chcr_algo.c: In function 'chcr_device_init':
+drivers/crypto/chelsio/chcr_algo.c:1371:18: warning:
+ variable 'adap' set but not used [-Wunused-but-set-variable]
 
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
+It not used since commit a1c6fd4308d3 ("crypto: chelsio - Update ntx queue
+received from cxgb4")
 
-Thanks,
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/chelsio/chcr_algo.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Jonathan
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index bcef765..c8cd2d3 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -1368,7 +1368,6 @@ static int chcr_aes_decrypt(struct ablkcipher_request *req)
+ static int chcr_device_init(struct chcr_context *ctx)
+ {
+ 	struct uld_ctx *u_ctx = NULL;
+-	struct adapter *adap;
+ 	unsigned int id;
+ 	int txq_perchan, txq_idx, ntxq;
+ 	int err = 0, rxq_perchan, rxq_idx;
+@@ -1382,7 +1381,6 @@ static int chcr_device_init(struct chcr_context *ctx)
+ 			goto out;
+ 		}
+ 		ctx->dev = &u_ctx->dev;
+-		adap = padap(ctx->dev);
+ 		ntxq = u_ctx->lldi.ntxq;
+ 		rxq_perchan = u_ctx->lldi.nrxq / u_ctx->lldi.nchan;
+ 		txq_perchan = ntxq / u_ctx->lldi.nchan;
