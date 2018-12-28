@@ -1,63 +1,38 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Sun, 23 Dec 2018 09:41:17 +0000
-Subject: Re: [PATCH 06/20] IB/ipoib: drop useless LIST_HEAD
-Message-Id: <20181223094117.GQ3940@mtr-leonro.mtl.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6eUvXotnMb6+obQB"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 28 Dec 2018 22:28:21 +0000
+Subject: [PATCH] net/ipv6: Fix a test against 'ipv6_find_idev()' return value
+Message-Id: <20181228222821.20332-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
- <1545555435-24576-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-7-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Doug Ledford <dledford@redhat.com>, kernel-janitors@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, sd@queasysnail.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+'ipv6_find_idev()' returns NULL on error, not an error pointer.
+Update the test accordingly and return -ENOBUFS, as already done in
+'addrconf_add_dev()', if NULL is returned.
 
---6eUvXotnMb6+obQB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: ("ipv6: allow userspace to add IFA_F_OPTIMISTIC addresses")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/ipv6/addrconf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Sun, Dec 23, 2018 at 09:57:01AM +0100, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
->
-> Commit 31c02e215700 ("IPoIB: Avoid using stale last_send counter
-> when reaping AHs") removed the uses, but not the declaration.
->
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
->
-> Fixes: 31c02e215700 ("IPoIB: Avoid using stale last_send counter when reaping AHs")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-
---6eUvXotnMb6+obQB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcH1g9AAoJEORje4g2clinbiAP/09GK5uVeUsgTo9XjVHeaW++
-hsT8BlZjsZp1bLcOXWGNQHqPNtUDdxDiOp5vdnsTN9cayNUmqbWV1+Fd+NIkiXO6
-CL308qmZc7Rh+lc9Kzx89P06KQ8naRa98MkC+OK2FwDRCi0iM7kfhhU76SHu5m4a
-9Xfrsqq5V5tUdIVIZnaKcKF9cOH9yKQ84GLxhR5KJkTipDvp4rttTTSBDJwr2rGR
-vZxME3gSRLN67jpugpYavRNeklUcZ/pVIdlV1PnRhHN1CHAc4oDFj7hCBCJ8eR0D
-0kzeTSKOPZn+MpkFZWbM67d3IT8gc2GFML1cdNDCeD8zL0MWW8plkrpojgWlC+re
-LAxETG6EdnIV0JFU7X88tK1tcBOHtTixkD1AMONuABATglQoYMAHhZvuhDiVZU4e
-3QrkmMjPeWoJW0ZoiGDUcprWJl3qkflHTg3M06q+FuCMOzvvSvJUYEBFd4/Gut+L
-S8HUOhcDw/CDHhjorLAwWEkifoSSYEFJvWQEXmn6OjvCd3SLUdjttsZ5ZLVnJlYf
-ANM09Uh966ymj3uno+m4qcsFzkX9yYfLFTnhnmPf8ZJoinKdC6ztLd7eo7Aubk1Q
-IgkAPX+a0NI0A9urHY1s91AXIcJs9CKQVh5xvemhTTEm4B6yQjJh1jcNRwnZod/x
-jSGxgzvyFRWO/kb0vvRa
-=hj/d
------END PGP SIGNATURE-----
-
---6eUvXotnMb6+obQB--
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 521e471f1cf9..8eeec6eb2bd3 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -4736,8 +4736,8 @@ inet6_rtm_newaddr(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 			 IFA_F_MCAUTOJOIN | IFA_F_OPTIMISTIC;
+ 
+ 	idev = ipv6_find_idev(dev);
+-	if (IS_ERR(idev))
+-		return PTR_ERR(idev);
++	if (!idev)
++		return -ENOBUFS;
+ 
+ 	if (!ipv6_allow_optimistic_dad(net, idev))
+ 		cfg.ifa_flags &= ~IFA_F_OPTIMISTIC;
+-- 
+2.19.1
