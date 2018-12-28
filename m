@@ -1,36 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Dec 2018 07:05:36 +0000
-Subject: [PATCH] IB/qib: Fix an error code in qib_sdma_verbs_send()
-Message-Id: <20181217070536.GE12159@kadam>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Dec 2018 06:10:33 +0000
+Subject: [PATCH -next] crypto: ux500 catch dma submission error
+Message-Id: <1545977433-125317-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Markus Elfring <elfring@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nathan Chancellor <natechancellor@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We accidentally return success on this error path.
+Test cookie return by dmaengine_submit() and return error if any.
 
-Fixes: f931551bafe1 ("IB/qib: Add new qib driver for QLogic PCIe InfiniBand adapters")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/infiniband/hw/qib/qib_sdma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/crypto/ux500/cryp/cryp_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/infiniband/hw/qib/qib_sdma.c b/drivers/infiniband/hw/qib/qib_sdma.c
-index 0b6ca424c11d..3d64081c4819 100644
---- a/drivers/infiniband/hw/qib/qib_sdma.c
-+++ b/drivers/infiniband/hw/qib/qib_sdma.c
-@@ -575,8 +575,10 @@ int qib_sdma_verbs_send(struct qib_pportdata *ppd,
- 		dw = (len + 3) >> 2;
- 		addr = dma_map_single(&ppd->dd->pcidev->dev, sge->vaddr,
- 				      dw << 2, DMA_TO_DEVICE);
--		if (dma_mapping_error(&ppd->dd->pcidev->dev, addr))
-+		if (dma_mapping_error(&ppd->dd->pcidev->dev, addr)) {
-+			ret = -ENOMEM;
- 			goto unmap;
-+		}
- 		sdmadesc[0] = 0;
- 		make_sdma_desc(ppd, sdmadesc, (u64) addr, dw, dwoffset);
- 		/* SDmaUseLargeBuf has to be set in every descriptor */
--- 
-2.17.1
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index a92a66b..db94f89 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -595,6 +595,12 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 	}
+ 
+ 	cookie = dmaengine_submit(desc);
++	if (dma_submit_error(cookie)) {
++		dev_dbg(ctx->device->dev, "[%s]: DMA submission failed\n",
++			__func__);
++		return cookie;
++	}
++
+ 	dma_async_issue_pending(channel);
+ 
+ 	return 0;
