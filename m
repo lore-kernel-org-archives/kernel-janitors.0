@@ -1,42 +1,36 @@
-From: Dave Rodgman <dave.rodgman@arm.com>
-Date: Mon, 03 Dec 2018 16:07:29 +0000
-Subject: Re: [bug report] lib/lzo: implement run-length encoding
-Message-Id: <bd82e581-15bd-bb2f-fc6a-2a6fc67ec78b@arm.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Dec 2018 02:46:30 +0000
+Subject: [PATCH -next] mm: Mark 'stack_vm_area' with __maybe_unused
+Message-Id: <1545965190-2381-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181203145312.sln3spjceokekjpf@kili.mountain>
-In-Reply-To: <20181203145312.sln3spjceokekjpf@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Marcos Paulo de Souza <marcos.souza.org@gmail.com>, David Windsor <dave@nullcore.net>, Roman Gushchin <guro@fb.com>, Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Rik van Riel <riel@surriel.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gMDMvMTIvMjAxOCAyOjUzIHBtLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0KPiBIZWxsbyBEYXZl
-IFJvZGdtYW4sDQo+IFRoZSBwYXRjaCA1MGM0YzYxNmVjNTI6ICJsaWIvbHpvOiBpbXBsZW1lbnQg
-cnVuLWxlbmd0aCBlbmNvZGluZyIgZnJvbQ0KPiBOb3YgMzAsIDIwMTgsIGxlYWRzIHRvIHRoZSBm
-b2xsb3dpbmcgc3RhdGljIGNoZWNrZXIgd2FybmluZzoNCj4NCj4gbGliL2x6by9sem8xeF9jb21w
-cmVzcy5jOjE2NCBsem8xeF8xX2RvX2NvbXByZXNzKCkNCj4gZXJyb3I6IHVuaW5pdGlhbGl6ZWQg
-c3ltYm9sICdtX3BvcycuDQo+DQo+IGxpYi9sem8vbHpvMXhfY29tcHJlc3MuYw0KPiAgICAgMTAw
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlyKys7DQo+ICAgICAxMDEgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHJ1bl9sZW5ndGggPSBpciAtIGlwOw0KPiAgICAgMTAyICAgICAg
-ICAgICAgICAgICAgICAgICAgICBpZiAocnVuX2xlbmd0aCA+IE1BWF9aRVJPX1JVTl9MRU5HVEgp
-DQo+ICAgICAxMDMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcnVuX2xlbmd0aCA9
-IE1BWF9aRVJPX1JVTl9MRU5HVEg7DQo+ICAgICAxMDQgICAgICAgICAgICAgICAgICB9IGVsc2Ug
-ew0KPiAgICAgMTA1ICAgICAgICAgICAgICAgICAgICAgICAgICB0ID0gKChkdiAqIDB4MTgyNDQy
-OWQpID4+ICgzMiAtIERfQklUUykpICYgRF9NQVNLOw0KPiAgICAgMTA2ICAgICAgICAgICAgICAg
-ICAgICAgICAgICBtX3BvcyA9IGluICsgZGljdFt0XTsNCj4gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgXl5eXl5eXl5eXl5eXl5eXl5eXl5eDQo+IFdlIG9ubHkgaW5pdGlhbGl6ZSBt
-X3BvcyBvbiB0aGUgZWxzZSBwYXRoIG5vdy4NCj4gICAgIDE2MSAgI2lmIGRlZmluZWQoQ09ORklH
-X0hBVkVfRUZGSUNJRU5UX1VOQUxJR05FRF9BQ0NFU1MpICYmIGRlZmluZWQoTFpPX1VTRV9DVFo2
-NCkNCj4gICAgIDE2MiAgICAgICAgICAgICAgICAgIHU2NCB2Ow0KPiAgICAgMTYzICAgICAgICAg
-ICAgICAgICAgdiA9IGdldF91bmFsaWduZWQoKGNvbnN0IHU2NCAqKSAoaXAgKyBtX2xlbikpIF4N
-Cj4gICAgIDE2NCAgICAgICAgICAgICAgICAgICAgICBnZXRfdW5hbGlnbmVkKChjb25zdCB1NjQg
-KikgKG1fcG9zICsgbV9sZW4pKTsNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eXl5eXl4NCj4gU21hdGNoIGNvbXBsYWlu
-cyBoZXJlLg0KDQpUaGFua3MsIHRoaXMgd2FzIGZpeGVkIGluIHRoZSBsYXRlc3QgdmVyc2lvbiBv
-ZiB0aGlzIHBhdGNoc2V0Og0KDQpodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOC8xMS8zMC85NzIN
-Cg0KRGF2ZQ0KDQpJTVBPUlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMgb2YgdGhpcyBlbWFpbCBh
-bmQgYW55IGF0dGFjaG1lbnRzIGFyZSBjb25maWRlbnRpYWwgYW5kIG1heSBhbHNvIGJlIHByaXZp
-bGVnZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIHBsZWFzZSBub3Rp
-ZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Nsb3NlIHRoZSBjb250ZW50
-cyB0byBhbnkgb3RoZXIgcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJwb3NlLCBvciBzdG9yZSBv
-ciBjb3B5IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkgbWVkaXVtLiBUaGFuayB5b3UuDQo
+Fixes gcc '-Wunused-but-set-variable' warning when
+CONFIG_VMAP_STACK is not set:
+
+kernel/fork.c: In function 'dup_task_struct':
+kernel/fork.c:843:20: warning:
+ variable 'stack_vm_area' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index e2a5156..b38c392 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -840,7 +840,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+ {
+ 	struct task_struct *tsk;
+ 	unsigned long *stack;
+-	struct vm_struct *stack_vm_area;
++	struct vm_struct *stack_vm_area __maybe_unused;
+ 	int err;
+ 
+ 	if (node = NUMA_NO_NODE)
