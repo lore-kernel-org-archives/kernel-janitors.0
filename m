@@ -1,56 +1,41 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 16:43:38 +0000
-Subject: bug report: serial: 8250: Rate limit serial port rx interrupts during input overruns
-Message-Id: <5e1c661d-61ea-b639-46fe-f37326fe2e7e@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 28 Dec 2018 14:49:01 +0000
+Subject: [PATCH] scripts/coccinelle: check for redeclaration
+Message-Id: <1546008541-3175-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>, "Jason A . Donenfeld" <zx2c4@kernel.org>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr
 
-Hi,
+Avoid reporting on the use of an iterator index variable when
+the variable is redeclared.
 
-Static analysis with CoverityScan found a potential null pointer
-deference issue with a null uart with recent commit
-6d7f677a2afa1c82d7fc7af7f9159cbffd5dc010 ("serial: 8250: Rate limit
-serial port rx interrupts during input overruns").
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Coverity Analysis is below:
+---
+ scripts/coccinelle/iterators/use_after_iter.cocci |    3 +++
+ 1 file changed, 3 insertions(+)
 
-
- 983        uart = serial8250_find_match_or_unused(&up->port);
-
-    2. Condition uart, taking false branch.
-    3. var_compare_op: Comparing uart to null implies that uart might be
-null.
-
- 984        if (uart && uart->port.type != PORT_8250_CIR) {
- 985                if (uart->port.dev)
-
-...
-...
-
-1075        /* Initialise interrupt backoff work if required */
-
-    4. Condition up->overrun_backoff_time_ms > 0, taking false branch.
-
-1076        if (up->overrun_backoff_time_ms > 0) {
-
-    CID 1475967 (#1 of 2): Dereference after null check (FORWARD_NULL)
-
-1077                uart->overrun_backoff_time_ms up->overrun_backoff_time_ms;
-1078                INIT_DELAYED_WORK(&uart->overrun_backoff,
-1079                                  serial_8250_overrun_backoff_work);
-1080        } else {
-
-    CID 1475967 (#2 of 2): Dereference after null check (FORWARD_NULL)5.
-var_deref_op: Dereferencing null pointer uart.
-
-1081                uart->overrun_backoff_time_ms = 0;
-1082        }
-
-The implication is that uart could be null, so the code block between
-lines 1076 and 1082 should be guarded with a sanity null check on uart too.
-
-Colin
+diff --git a/scripts/coccinelle/iterators/use_after_iter.cocci b/scripts/coccinelle/iterators/use_after_iter.cocci
+index ce8cc9c..66a1140 100644
+--- a/scripts/coccinelle/iterators/use_after_iter.cocci
++++ b/scripts/coccinelle/iterators/use_after_iter.cocci
+@@ -35,6 +35,7 @@ iterator name hlist_for_each_entry_from;
+ iterator name hlist_for_each_entry_safe;
+ statement S;
+ position p1,p2;
++type T;
+ @@
+ 
+ (
+@@ -125,6 +126,8 @@ sizeof(<+...c...+>)
+ |
+  &c->member
+ |
++T c;
++|
+ c = E
+ |
+ *c@p2
