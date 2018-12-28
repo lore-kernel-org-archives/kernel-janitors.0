@@ -1,41 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 20 Dec 2018 17:08:05 +0000
-Subject: [PATCH][next] scsi: lpfc: replace snprintf with strscpy
-Message-Id: <20181220170805.17802-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 28 Dec 2018 06:53:53 +0000
+Subject: [PATCH v2 -next] crypto: chelsio - remove set but not used variables 'adap'
+Message-Id: <1545980033-196068-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545979302-111921-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1545979302-111921-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <jsmart2021@gmail.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Using snprintf without a format specifier is potentially risky if the
-string phba->ModelDesc contains format specifiers. Replace this with
-the safer and more efficient strscpy.
+drivers/crypto/chelsio/chcr_algo.c: In function 'chcr_device_init':
+drivers/crypto/chelsio/chcr_algo.c:1371:18: warning:
+ variable 'adap' set but not used [-Wunused-but-set-variable]
 
-Cleans up clang warning:
-drivers/scsi/lpfc/lpfc_scsi.c:4543:31: warning: format string is not a
-string literal (potentially insecure) [-Wformat-security]
+It not used since commit a1c6fd4308d3 ("crypto: chelsio - Update ntx queue
+received from cxgb4")
 
-Fixes: 5021267af132 ("scsi: lpfc: Adding ability to reset chip via pci bus reset")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/lpfc/lpfc_scsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: fix title
+---
+ drivers/crypto/chelsio/chcr_algo.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-index b4f1a840b3b4..7b0cce3b42ed 100644
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -4540,7 +4540,7 @@ lpfc_info(struct Scsi_Host *host)
- 	memset(lpfcinfobuf, 0, sizeof(lpfcinfobuf));
- 	if (phba && phba->pcidev){
- 		/* Model Description */
--		scnprintf(tmp, sizeof(tmp), phba->ModelDesc);
-+		strscpy(tmp, phba->ModelDesc, sizeof(tmp));
- 		if (strlcat(lpfcinfobuf, tmp, sizeof(lpfcinfobuf)) > 		    sizeof(lpfcinfobuf))
- 			goto buffer_done;
--- 
-2.19.1
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index bcef765..c8cd2d3 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -1368,7 +1368,6 @@ static int chcr_aes_decrypt(struct ablkcipher_request *req)
+ static int chcr_device_init(struct chcr_context *ctx)
+ {
+ 	struct uld_ctx *u_ctx = NULL;
+-	struct adapter *adap;
+ 	unsigned int id;
+ 	int txq_perchan, txq_idx, ntxq;
+ 	int err = 0, rxq_perchan, rxq_idx;
+@@ -1382,7 +1381,6 @@ static int chcr_device_init(struct chcr_context *ctx)
+ 			goto out;
+ 		}
+ 		ctx->dev = &u_ctx->dev;
+-		adap = padap(ctx->dev);
+ 		ntxq = u_ctx->lldi.ntxq;
+ 		rxq_perchan = u_ctx->lldi.nrxq / u_ctx->lldi.nchan;
+ 		txq_perchan = ntxq / u_ctx->lldi.nchan;
