@@ -1,54 +1,51 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Sat, 29 Dec 2018 05:25:04 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sat, 29 Dec 2018 06:19:35 +0000
 Subject: Re: [PATCH 00/20] drop useless LIST_HEAD
-Message-Id: <20181229052504.GA16315@magnolia>
+Message-Id: <alpine.DEB.2.21.1812290717010.2673@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
  <CAKR_QVJefW1vxYb7-qiU8=0YdbFghYo15SK2eGjOC-dntRfyYA@mail.gmail.com>
  <alpine.DEB.2.21.1812232304130.2940@hadrien>
  <CAKR_QVLeZBL43W4x1mzcfcakSZyyh9L81vgUMxfnSccKawEfdg@mail.gmail.com>
- <20181227134055.GA2272@kadam>
-In-Reply-To: <20181227134055.GA2272@kadam>
+ <20181227134055.GA2272@kadam> <20181229052504.GA16315@magnolia>
+In-Reply-To: <20181229052504.GA16315@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-wireless@vger.kernel.org, linux-nfs@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-btrfs@vger.kernel.org, dmaengine@vger.kernel.org, xen-devel@lists.xenproject.org, Dan Williams <dan.j.williams@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tom Psyborg <pozega.tomislav@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-wireless@vger.kernel.org, linux-nfs@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, xen-devel@lists.xenproject.org, Dan Williams <dan.j.williams@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tom Psyborg <pozega.tomislav@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-On Thu, Dec 27, 2018 at 04:40:55PM +0300, Dan Carpenter wrote:
-> On Tue, Dec 25, 2018 at 11:12:20PM +0100, Tom Psyborg wrote:
-> > there was discussion about this just some days ago. CC 4-5 lists is
-> > more than enough
-> > 
-> 
-> I don't know who you were discussing this with...
-> 
-> You should CC the 0th patch to all the mailinglists.  That much is a
-> clear rule.
-> 
-> For the rest, Julia's position is the more conservative one.  I was in
-> a conversation in RL and they were like, "CC everyone for all the
-> patches".  It depends on the context, of course.  If the patches are
-> dependent on each other then you *have* to CC everyone for everything.
 
-Agreed.  Ms. Lawall, sending "Cover letter + all relevant XFS patches"
-(as you did) was exactly the right thing for us xfs types. :)
 
-For that matter, we prefer to receive through linux-xfs more patches
-than necessary (one can send the entire series if one is unsure) than to
-go wanting for more context.
+On Fri, 28 Dec 2018, Darrick J. Wong wrote:
 
---D
+> On Thu, Dec 27, 2018 at 04:40:55PM +0300, Dan Carpenter wrote:
+> > On Tue, Dec 25, 2018 at 11:12:20PM +0100, Tom Psyborg wrote:
+> > > there was discussion about this just some days ago. CC 4-5 lists is
+> > > more than enough
+> > >
+> >
+> > I don't know who you were discussing this with...
+> >
+> > You should CC the 0th patch to all the mailinglists.  That much is a
+> > clear rule.
+> >
+> > For the rest, Julia's position is the more conservative one.  I was in
+> > a conversation in RL and they were like, "CC everyone for all the
+> > patches".  It depends on the context, of course.  If the patches are
+> > dependent on each other then you *have* to CC everyone for everything.
+>
+> Agreed.  Ms. Lawall, sending "Cover letter + all relevant XFS patches"
+> (as you did) was exactly the right thing for us xfs types. :)
+>
+> For that matter, we prefer to receive through linux-xfs more patches
+> than necessary (one can send the entire series if one is unsure) than to
+> go wanting for more context.
 
-> If we really have other clear rules, then it should be encoded into
-> get_maintainer.pl so that it's automatic.
-> 
-> My other question is why do the linux-arm-kernel@lists.infradead.org
-> people feel like they need to be CC'd about every driver???  I always
-> remove them from the CC list unless it's an arch/arm issue.
-> 
-> regards,
-> dan carpenter
-> 
-> PS:  Please, no more top posting.
-> 
+Thanks for the confirmation.  I was planning to ignore the 4-5 advice,
+because there is no way in this case to make a meaningful 4-5 list
+suggestion - it's either all or nothing.  But 20 patches at once is
+perhaps a lot as well.  In this case, I just wanted to get rid of the
+whole issue at once.
+
+julia
