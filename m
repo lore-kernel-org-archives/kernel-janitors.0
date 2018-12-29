@@ -1,56 +1,47 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 28 Dec 2018 06:43:00 +0000
-Subject: Re: [PATCH -next] crypto: chelsio - CHECK-remove set but not used variables 'adap'
-Message-Id: <cd4d42db-3c03-1345-7bf5-5b5ece495324@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 29 Dec 2018 16:42:22 +0000
+Subject: [PATCH] octeontx2-af: Fix a resource leak in an error handling path in 'cgx_probe()'
+Message-Id: <20181229164222.15791-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545979302-111921-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545979302-111921-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harsh Jain <harsh@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Sorry, Pls ignore this, the title need respin.
+If an error occurs after the call to 'pci_alloc_irq_vectors()', we must
+call 'pci_free_irq_vectors()' in order to avoid a	resource leak.
 
-On 2018/12/28 14:41, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/crypto/chelsio/chcr_algo.c: In function 'chcr_device_init':
-> drivers/crypto/chelsio/chcr_algo.c:1371:18: warning:
->  variable 'adap' set but not used [-Wunused-but-set-variable]
-> 
-> It not used since commit a1c6fd4308d3 ("crypto: chelsio - Update ntx queue
-> received from cxgb4")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/crypto/chelsio/chcr_algo.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-> index bcef765..c8cd2d3 100644
-> --- a/drivers/crypto/chelsio/chcr_algo.c
-> +++ b/drivers/crypto/chelsio/chcr_algo.c
-> @@ -1368,7 +1368,6 @@ static int chcr_aes_decrypt(struct ablkcipher_request *req)
->  static int chcr_device_init(struct chcr_context *ctx)
->  {
->  	struct uld_ctx *u_ctx = NULL;
-> -	struct adapter *adap;
->  	unsigned int id;
->  	int txq_perchan, txq_idx, ntxq;
->  	int err = 0, rxq_perchan, rxq_idx;
-> @@ -1382,7 +1381,6 @@ static int chcr_device_init(struct chcr_context *ctx)
->  			goto out;
->  		}
->  		ctx->dev = &u_ctx->dev;
-> -		adap = padap(ctx->dev);
->  		ntxq = u_ctx->lldi.ntxq;
->  		rxq_perchan = u_ctx->lldi.nrxq / u_ctx->lldi.nchan;
->  		txq_perchan = ntxq / u_ctx->lldi.nchan;
-> 
-> 
-> 
-> 
-> .
-> 
+The same sequence is already in place in the corresponding 'cgx_remove()'
+function.
+
+Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index 742f0c1f60df..6d55e3d0b7ea 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -825,7 +825,7 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (!cgx->cgx_cmd_workq) {
+ 		dev_err(dev, "alloc workqueue failed for cgx cmd");
+ 		err = -ENOMEM;
+-		goto err_release_regions;
++		goto err_free_irq_vectors;
+ 	}
+ 
+ 	list_add(&cgx->cgx_list, &cgx_list);
+@@ -841,6 +841,8 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ err_release_lmac:
+ 	cgx_lmac_exit(cgx);
+ 	list_del(&cgx->cgx_list);
++err_free_irq_vectors:
++	pci_free_irq_vectors(pdev);
+ err_release_regions:
+ 	pci_release_regions(pdev);
+ err_disable_device:
+-- 
+2.19.1
