@@ -1,28 +1,33 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Sun, 23 Dec 2018 13:28:08 +0000
-Subject: Re: [1/5] powerpc/4xx: Combine four seq_printf() calls into two in ocm_debugfs_show()
-Message-Id: <43N38S6v33z9sP9@ozlabs.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 30 Dec 2018 13:46:21 +0000
+Subject: [PATCH] crypto: virtio: clean up indentation, replace spaces with tab
+Message-Id: <20181230134621.7502-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <90e9f81b-25ad-cf02-663c-50a9997d9d53@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Gonglei <arei.gonglei@huawei.com>, "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, virtualization@lists.linux-foundation.org, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2018-01-11 at 18:00:33 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 Jan 2018 18:08:08 +0100
-> 
-> Some data were printed into a sequence by four separate function calls.
-> Print the same data by two single function calls instead.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to powerpc next, thanks.
+A statement is indented with spaces and not indented enough, fix this
+replacing spaces with a tab.
 
-https://git.kernel.org/powerpc/c/b52106a040e6f86848b05be1b43174
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/virtio/virtio_crypto_algs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-cheers
+diff --git a/drivers/crypto/virtio/virtio_crypto_algs.c b/drivers/crypto/virtio/virtio_crypto_algs.c
+index 2c573d1aaa64..0704833ece92 100644
+--- a/drivers/crypto/virtio/virtio_crypto_algs.c
++++ b/drivers/crypto/virtio/virtio_crypto_algs.c
+@@ -406,7 +406,7 @@ __virtio_crypto_ablkcipher_do_req(struct virtio_crypto_sym_request *vc_sym_req,
+ 	} else {
+ 		req_data->header.session_id  			cpu_to_le64(ctx->dec_sess_info.session_id);
+-	    req_data->header.opcode +		req_data->header.opcode  			cpu_to_le32(VIRTIO_CRYPTO_CIPHER_DECRYPT);
+ 	}
+ 	req_data->u.sym_req.op_type = cpu_to_le32(VIRTIO_CRYPTO_SYM_OP_CIPHER);
+-- 
+2.19.1
