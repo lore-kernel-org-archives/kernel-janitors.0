@@ -1,65 +1,46 @@
-From: Mike Rapoport <rppt@linux.ibm.com>
-Date: Tue, 04 Dec 2018 07:47:58 +0000
-Subject: Re: [PATCH 1/3] mm: add include files so that function definitions have a prototype
-Message-Id: <20181204074757.GF26700@rapoport-lnx>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 30 Dec 2018 13:26:40 +0000
+Subject: [PATCH] mt76: make const array 'data' static, shrinks object size
+Message-Id: <20181230132640.6916-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
-In-Reply-To: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Adeodato =?iso-8859-1?Q?Sim=F3?= <dato@net.com.org.es>
-Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Matthias Brugger <matthias.bgg@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 02:14:22AM -0300, Adeodato Sim=F3 wrote:
-> Previously, rodata_test(), usercopy_warn(), and usercopy_abort() were
-> defined without a matching prototype. Detected by -Wmissing-prototypes
-> GCC flag.
->=20
-> Signed-off-by: Adeodato Sim=F3 <dato@net.com.org.es>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+Don't populate the const array 'data' on the stack but instead
+make it static. Makes the object code smaller by 78 bytes:
 
-> ---
-> I started poking at this after kernel-janitors got the suggestion[1]
-> to look into the -Wmissing-prototypes warnings.
->=20
-> Thanks for considering!
->=20
-> [1]: https://www.spinics.net/lists/linux-kernel-janitors/msg43981.html
->=20
->  mm/rodata_test.c | 1 +
->  mm/usercopy.c    | 1 +
->  2 files changed, 2 insertions(+)
->=20
-> diff --git a/mm/rodata_test.c b/mm/rodata_test.c
-> index d908c8769b48..01306defbd1b 100644
-> --- a/mm/rodata_test.c
-> +++ b/mm/rodata_test.c
-> @@ -11,6 +11,7 @@
->   */
->  #define pr_fmt(fmt) "rodata_test: " fmt
->=20
-> +#include <linux/rodata_test.h>
->  #include <linux/uaccess.h>
->  #include <asm/sections.h>
->=20
-> diff --git a/mm/usercopy.c b/mm/usercopy.c
-> index 852eb4e53f06..f487ba4888df 100644
-> --- a/mm/usercopy.c
-> +++ b/mm/usercopy.c
-> @@ -20,6 +20,7 @@
->  #include <linux/sched/task.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/thread_info.h>
-> +#include <linux/uaccess.h>
->  #include <linux/atomic.h>
->  #include <linux/jump_label.h>
->  #include <asm/sections.h>
-> --=20
-> 2.19.2
->=20
+Before:
+   text    data     bss     dec     hex filename
+   5438    1080       0    6518    1976 mediatek/mt76/mt76x2/usb_mcu.o
 
---=20
-Sincerely yours,
-Mike.
+After:
+   text    data     bss     dec     hex filename
+   5296    1144       0    6440    1928 mediatek/mt76/mt76x2/usb_mcu.o
+
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt76x2/usb_mcu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/usb_mcu.c b/drivers/net/wireless/mediatek/mt76/mt76x2/usb_mcu.c
+index 45a95ee3a415..152d41fe9ff5 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2/usb_mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2/usb_mcu.c
+@@ -39,7 +39,7 @@ static void mt76x2u_mcu_load_ivb(struct mt76x02_dev *dev)
+ static void mt76x2u_mcu_enable_patch(struct mt76x02_dev *dev)
+ {
+ 	struct mt76_usb *usb = &dev->mt76.usb;
+-	const u8 data[] = {
++	static const u8 data[] = {
+ 		0x6f, 0xfc, 0x08, 0x01,
+ 		0x20, 0x04, 0x00, 0x00,
+ 		0x00, 0x09, 0x00,
+-- 
+2.19.1
