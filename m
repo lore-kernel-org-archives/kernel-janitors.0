@@ -1,33 +1,36 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 11 Dec 2018 09:52:12 +0000
-Subject: Re: [PATCH][clk-next] clk: imx: remove redundant initialization of ret to zero
-Message-Id: <149a5898-5df0-c363-c9e5-5d64f0f98906@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Dec 2018 15:53:13 +0000
+Subject: [PATCH 6/8] scsi: pm80xx: reduce indentation
+Message-Id: <1546185195-25676-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181209150832.9366-1-colin.king@canonical.com>
- <20181211094812.GB3116@kadam>
-In-Reply-To: <20181211094812.GB3116@kadam>
+References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Jack Wang <jinpu.wang@profitbricks.com>
+Cc: kernel-janitors@vger.kernel.org, lindar_liu@usish.com, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/12/2018 09:48, Dan Carpenter wrote:
-> On Sun, Dec 09, 2018 at 03:08:32PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The initialization of ret is redundant as it is being re-assigned to
->> the return value from the call to imx8m_clk_composite_compute_dividers.
->> Clean this up by removing the initialization.
->>
-> 
-> Just curious, is there a static checker which complains about this as
-> dead code?
+Delete tab aligning a statement with the right hand side of a
+preceding assignment rather than the left hand side.
 
-If I recall correctly, cppcheck, but I may be wrong, I use several
-different tools.
+Found with the help of Coccinelle.
 
-> 
-> regards,
-> dan carpenter
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/scsi/pm8001/pm8001_sas.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index b3be49d41375..44b630aceb12 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -657,7 +657,7 @@ static int pm8001_dev_found_notify(struct domain_device *dev)
+ 		if (dev->dev_type = SAS_SATA_DEV) {
+ 			pm8001_device->attached_phy  				dev->rphy->identify.phy_identifier;
+-				flag = 1; /* directly sata*/
++			flag = 1; /* directly sata*/
+ 		}
+ 	} /*register this device to HBA*/
+ 	PM8001_DISC_DBG(pm8001_ha, pm8001_printk("Found device\n"));
