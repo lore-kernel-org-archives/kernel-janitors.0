@@ -1,17 +1,36 @@
-From: "Mr. Muller Dieter" <lmaita@umc.edu.ve>
-Date: Fri, 07 Dec 2018 14:13:59 +0000
-Subject: Urgently need money? We can help you!
-Message-Id: <20181207141451.468D1468D24F@mail.umc.edu.ve>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Dec 2018 15:53:14 +0000
+Subject: [PATCH 7/8] drm/msm/dsi: reduce indentation
+Message-Id: <1546185195-25676-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: keyrings@vger.kernel.org
+To: Rob Clark <robdclark@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Urgently need money? We can help you!
-Are you by the current situation in trouble or threatens you in trouble?
-In this way, we give you the ability to take a new development.
-As a rich person I feel obliged to assist people who are struggling to give them a chance. Everyone deserved a second chance and since the Government fails, it will have to come from others.
-No amount is too crazy for us and the maturity we determine by mutual agreement.
-No surprises, no extra costs, but just the agreed amounts and nothing else.
-Don't wait any longer and comment on this post. Please specify the amount you want to borrow and we will contact you with all the possibilities. contact us today at stewarrt.lf01@gmail.com
+Delete tab aligning a statement with the right hand side of a
+preceding assignment rather than the left hand side.
+
+Found with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+index 1760483b247e..4d8785282c6c 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+@@ -355,7 +355,7 @@ int msm_dsi_dphy_timing_calc_v3(struct msm_dsi_dphy_timing *timing,
+ 	} else {
+ 		timing->shared_timings.clk_pre  			linear_inter(tmax, tmin, pcnt2, 0, false);
+-			timing->shared_timings.clk_pre_inc_by_2 = 0;
++		timing->shared_timings.clk_pre_inc_by_2 = 0;
+ 	}
+ 
+ 	timing->ta_go = 3;
