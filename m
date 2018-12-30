@@ -1,42 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Dec 2018 19:11:16 +0000
-Subject: [PATCH][next] x86/fault: fix sign-extend of a unsigned that has been promoted to an int
-Message-Id: <20181222191116.21831-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Dec 2018 15:53:07 +0000
+Subject: [PATCH 0/8] reduce indentation
+Message-Id: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Zorik Machulsky <zorik-vV1OtcyAfmbQT0dZR+AlfA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, intel-wired-lan-qjLDD68F18P21nG7glBr7A@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Saeed Bishara <saeedb-vV1OtcyAfmbQT0dZR+AlfA@public.gmane.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+These patches fix cases where a subsequent statement is aligned
+with the right hand side of an assignment rather than the left
+hand side.  This was done using the following semantic match
+(http://coccinelle.lip6.fr/).  It has a lot of false positives,
+because Coccinelle doesn't record the difference between a space
+and a tab, but these issues are easy to skip over.
 
-The shifting of desc.base2 by 24 bits will end up with a sign extension
-error if the bit 7 of desc.base2 is set.  This because desc.base2 is
-promoted to type int and then sign extended to an unsigned long, causing
-the upper bits 32 bits to be set on the sign extension.  Fix this by
-casting desc.base2 to unsigned long before the shift.
+// <smpl>
+@r@
+expression x,e;
+statement S;
+position p0,p1,p2;
+@@
+x@p0 = e@p1;
+S@p2
 
-Detected by CoverityScan, CID#1475635 ("Unintended sign extension")
+@script:ocaml@
+p0 << r.p0;
+p1 << r.p1;
+p2 << r.p2;
+@@
+if ((List.hd p0).col < (List.hd p1).col &&
+    (List.hd p1).col = (List.hd p2).col)
+then Coccilib.print_main "" p1
+// </smpl>
 
-Fixes: a1a371c468f7 ("x86/fault: Decode page fault OOPSes better")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2ff25ad33233..9d5c75f02295 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -595,7 +595,7 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
- 		return;
- 	}
- 
--	addr = desc.base0 | (desc.base1 << 16) | (desc.base2 << 24);
-+	addr = desc.base0 | (desc.base1 << 16) | ((unsigned long)desc.base2 << 24);
- #ifdef CONFIG_X86_64
- 	addr |= ((u64)desc.base3 << 32);
- #endif
--- 
-2.19.1
+ drivers/firmware/stratix10-svc.c              |   12 ++++++------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c         |    2 +-
+ drivers/iommu/msm_iommu.c                     |    8 ++++----
+ drivers/net/ethernet/amazon/ena/ena_eth_com.c |    4 ++--
+ drivers/net/ethernet/intel/i40e/i40e_main.c   |    2 +-
+ drivers/scsi/pm8001/pm8001_sas.c              |    2 +-
+ drivers/staging/rtl8192e/rtl8192e/rtl_wx.c    |    6 +++---
+ drivers/usb/gadget/udc/snps_udc_core.c        |   17 ++++++++---------
+ 8 files changed, 26 insertions(+), 27 deletions(-)
