@@ -1,51 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Dec 2018 09:12:02 +0000
-Subject: [PATCH] Staging: wilc1000: unlock on error in init_chip()
-Message-Id: <20181221091202.GH2735@kadam>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Dec 2018 15:53:11 +0000
+Subject: [PATCH 4/8] firmware: stratix10-svc: reduce indentation
+Message-Id: <1546185195-25676-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-When there is an error in init_bus() then we need to call release_bus()
-before we return.
+Delete tab aligning a statement with the right hand side of a
+preceding assignment rather than the left hand side.
 
-Fixes: c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11 driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Found with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/wilc1000/wilc_wlan.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/firmware/stratix10-svc.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
-index 3c5e9e030cad..489e5a5038f8 100644
---- a/drivers/staging/wilc1000/wilc_wlan.c
-+++ b/drivers/staging/wilc1000/wilc_wlan.c
-@@ -1252,21 +1252,22 @@ static u32 init_chip(struct net_device *dev)
- 		ret = wilc->hif_func->hif_read_reg(wilc, 0x1118, &reg);
- 		if (!ret) {
- 			netdev_err(dev, "fail read reg 0x1118\n");
--			return ret;
-+			goto release;
- 		}
- 		reg |= BIT(0);
- 		ret = wilc->hif_func->hif_write_reg(wilc, 0x1118, reg);
- 		if (!ret) {
- 			netdev_err(dev, "fail write reg 0x1118\n");
--			return ret;
-+			goto release;
- 		}
- 		ret = wilc->hif_func->hif_write_reg(wilc, 0xc0000, 0x71);
- 		if (!ret) {
- 			netdev_err(dev, "fail write reg 0xc0000\n");
--			return ret;
-+			goto release;
- 		}
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index 6e6514825ad0..ec99eed3edea 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -766,12 +766,12 @@ int stratix10_svc_send(struct stratix10_svc_chan *chan, void *msg)
+ 					      (void *)chan->ctrl,
+ 					      cpu_to_node(cpu),
+ 					      "svc_smc_hvc_thread");
+-			if (IS_ERR(chan->ctrl->task)) {
+-				dev_err(chan->ctrl->dev,
+-					"fails to create svc_smc_hvc_thread\n");
+-				kfree(p_data);
+-				return -EINVAL;
+-			}
++		if (IS_ERR(chan->ctrl->task)) {
++			dev_err(chan->ctrl->dev,
++				"fails to create svc_smc_hvc_thread\n");
++			kfree(p_data);
++			return -EINVAL;
++		}
+ 		kthread_bind(chan->ctrl->task, cpu);
+ 		wake_up_process(chan->ctrl->task);
  	}
- 
-+release:
- 	release_bus(wilc, WILC_BUS_RELEASE_ONLY);
- 
- 	return ret;
--- 
-2.17.1
