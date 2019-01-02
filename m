@@ -1,58 +1,35 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 25 Jan 2019 07:54:41 +0000
-Subject: Re: [PATCH -next] MIPS: fix debugfs_simple_attr.cocci warnings
-Message-Id: <20190125075441.GA14522@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Jan 2019 10:55:31 +0000
+Subject: Re: [PATCH -next] mm: Mark 'stack_vm_area' with __maybe_unused
+Message-Id: <20190102105531.GI3781@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1548384137-171488-1-git-send-email-yuehaibing@huawei.com>
- <20190125071159.GA11891@kroah.com>
- <efbbf61d-0c4a-e7f6-8ce1-b5e6417afff1@huawei.com>
-In-Reply-To: <efbbf61d-0c4a-e7f6-8ce1-b5e6417afff1@huawei.com>
+References: <1545965190-2381-1-git-send-email-yuehaibing@huawei.com>
+ <20181228085804.GR16738@dhcp22.suse.cz>
+In-Reply-To: <20181228085804.GR16738@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Marcos Paulo de Souza <marcos.souza.org@gmail.com>, David Windsor <dave@nullcore.net>, Roman Gushchin <guro@fb.com>, Andrew Morton <akpm@linux-foundation.org>, "Eric W. Biederman" <ebiederm@xmission.com>, Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 03:43:21PM +0800, YueHaibing wrote:
-> On 2019/1/25 15:11, Greg Kroah-Hartman wrote:
-> > On Fri, Jan 25, 2019 at 02:42:17AM +0000, YueHaibing wrote:
-> >> Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
-> >> for debugfs files.
-> >>
-> >> Semantic patch information:
-> >> Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-> >> imposes some significant overhead as compared to
-> >> DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
-> > 
-> > What kind of overhead is this adding, and how are you measuring it?
+On Fri, Dec 28, 2018 at 09:58:04AM +0100, Michal Hocko wrote:
+> On Fri 28-12-18 02:46:30, YueHaibing wrote:
+> > Fixes gcc '-Wunused-but-set-variable' warning when
+> > CONFIG_VMAP_STACK is not set:
 > 
-> The log message on the commit introducing the semantic patch says the
-> following:
+> Isn't this warning disabled? I can see the following
+> # These warnings generated too much noise in a regular build.
+> # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+> KBUILD_CFLAGS += -Wno-unused-but-set-variable
 > 
-> commit 5103068eaca2 ("debugfs, coccinelle: check for obsolete DEFINE_SIMPLE_ATTRIBUTE() usage")
+> in the main makefile. IMHO this warning doesn't really give us much.
 > 
->     In order to protect against file removal races, debugfs files created via
->     debugfs_create_file() now get wrapped by a struct file_operations at their
->     opening.
-> 
->     If the original struct file_operations are known to be safe against removal
->     races by themselves already, the proxy creation may be bypassed by creating
->     the files through debugfs_create_file_unsafe().
-> 
->     In order to help debugfs users who use the common
->       DEFINE_SIMPLE_ATTRIBUTE() + debugfs_create_file()
->     idiom to transition to removal safe struct file_operations, the helper
->     macro DEFINE_DEBUGFS_ATTRIBUTE() has been introduced.
-> 
->     Thus, the preferred strategy is to use
->       DEFINE_DEBUGFS_ATTRIBUTE() + debugfs_create_file_unsafe()
->     now.
 
+It would be nice to enable that warning.  YueHaibing and Colin King have
+been whittling away at the problematic code...
 
-That is true.  So, are you saying that you "know" when you remove these
-files everything is safe?  Are you seeing some sort of problem with
-these files as-is?  If not, why change them to the "unsafe" method?
+YueHaibing, how many of these warnings do we have remaining on an
+allmodoconfig?
 
-thanks,
-
-greg k-h
+regards,
+dan carpenter
