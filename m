@@ -1,109 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 24 Jan 2019 19:29:09 +0000
-Subject: Applied "ASoC: Intel: make const arrays static, reduces object code size" to the asoc tree
-Message-Id: <20190124192909.A68721121B6F@debutante.sirena.org.uk>
+From: Dimitri Sivanich <sivanich@hpe.com>
+Date: Wed, 02 Jan 2019 13:53:29 +0000
+Subject: Re: [PATCH] gru: clean up indentation issue, remove spaces
+Message-Id: <20190102135329.GB9199@hpe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190124173735.13669-1-colin.king@canonical.com>
-In-Reply-To: <20190124173735.13669-1-colin.king@canonical.com>
+References: <20181221224419.15284-1-colin.king@canonical.com>
+In-Reply-To: <20181221224419.15284-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jie Yang <yang.jie@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, Mark Brown <broonie@kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Dimitri Sivanich <sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+Acked-by: Dimitri Sivanich <sivanich@hpe.com>
 
-   ASoC: Intel: make const arrays static, reduces object code size
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 4ffdca62e2deee7a27613571c9bd18c95b8eac84 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 24 Jan 2019 17:37:35 +0000
-Subject: [PATCH] ASoC: Intel: make const arrays static, reduces object code
- size
-
-Don't populate the const arrays on the stack but instead make
-it static. Makes the object code smaller, for example:
-
-Before:
-   text    data     bss     dec     hex filename
-  14107    8832     224   23163    5a7b bytcht_es8316.o
-
-After:
-   text    data     bss     dec     hex filename
-  14015    8896     224   23135    5a5f bytcht_es8316.o
-
-(gcc version 8.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/boards/bytcht_es8316.c | 2 +-
- sound/soc/intel/boards/bytcr_rt5640.c  | 2 +-
- sound/soc/intel/boards/bytcr_rt5651.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/intel/boards/bytcht_es8316.c b/sound/soc/intel/boards/bytcht_es8316.c
-index fa9c4cf97686..1364e4e601d8 100644
---- a/sound/soc/intel/boards/bytcht_es8316.c
-+++ b/sound/soc/intel/boards/bytcht_es8316.c
-@@ -437,7 +437,7 @@ static const struct acpi_gpio_mapping byt_cht_es8316_gpios[] = {
- 
- static int snd_byt_cht_es8316_mc_probe(struct platform_device *pdev)
- {
--	const char * const mic_name[] = { "in1", "in2" };
-+	static const char * const mic_name[] = { "in1", "in2" };
- 	struct byt_cht_es8316_private *priv;
- 	struct device *dev = &pdev->dev;
- 	struct snd_soc_acpi_mach *mach;
-diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
-index ca8b4d5ff70f..a79466c8fb29 100644
---- a/sound/soc/intel/boards/bytcr_rt5640.c
-+++ b/sound/soc/intel/boards/bytcr_rt5640.c
-@@ -1149,7 +1149,7 @@ struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
- 
- static int snd_byt_rt5640_mc_probe(struct platform_device *pdev)
- {
--	const char * const map_name[] = { "dmic1", "dmic2", "in1", "in3" };
-+	static const char * const map_name[] = { "dmic1", "dmic2", "in1", "in3" };
- 	const struct dmi_system_id *dmi_id;
- 	struct byt_rt5640_private *priv;
- 	struct snd_soc_acpi_mach *mach;
-diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-index b618d984e2d5..e6945d11c8ab 100644
---- a/sound/soc/intel/boards/bytcr_rt5651.c
-+++ b/sound/soc/intel/boards/bytcr_rt5651.c
-@@ -919,7 +919,7 @@ struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
- 
- static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
- {
--	const char * const mic_name[] = { "dmic", "in1", "in2", "in12" };
-+	static const char * const mic_name[] = { "dmic", "in1", "in2", "in12" };
- 	struct byt_rt5651_private *priv;
- 	struct snd_soc_acpi_mach *mach;
- 	struct device *codec_dev;
--- 
-2.20.1
+On Fri, Dec 21, 2018 at 10:44:19PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are a couple of statements that have extra spaces in the identation,
+> fix this by removing them.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/misc/sgi-gru/grufault.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+> index 93be82fc338a..2ec5808ba464 100644
+> --- a/drivers/misc/sgi-gru/grufault.c
+> +++ b/drivers/misc/sgi-gru/grufault.c
+> @@ -616,8 +616,8 @@ irqreturn_t gru_intr_mblade(int irq, void *dev_id)
+>  	for_each_possible_blade(blade) {
+>  		if (uv_blade_nr_possible_cpus(blade))
+>  			continue;
+> -		 gru_intr(0, blade);
+> -		 gru_intr(1, blade);
+> +		gru_intr(0, blade);
+> +		gru_intr(1, blade);
+>  	}
+>  	return IRQ_HANDLED;
+>  }
+> -- 
+> 2.19.1
+> 
