@@ -1,35 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 02 Jan 2019 09:37:03 +0000
-Subject: [PATCH][next] cgroup: fix spelling mistake "paramter" -> "parameter"
-Message-Id: <20190102093703.32506-1-colin.king@canonical.com>
+From: David Sterba <dsterba@suse.cz>
+Date: Wed, 02 Jan 2019 16:40:48 +0000
+Subject: Re: [PATCH 11/20] Btrfs: drop useless LIST_HEAD
+Message-Id: <20190102164048.GZ23615@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1545555435-24576-12-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-12-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tejun Heo <tj@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Chris Mason <clm@fb.com>, kernel-janitors@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Dec 23, 2018 at 09:57:06AM +0100, Julia Lawall wrote:
+> Drop LIST_HEAD where the variable it declares is never used.
+> 
+> The uses were removed in 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC
+> handling for balance"), but not the declaration.
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> identifier x;
+> @@
+> - LIST_HEAD(x);
+>   ... when != x
+> // </smpl>
+> 
+> Fixes: 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC handling for balance")
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-There is a spelling mistake in the message in a cg_invalf call, fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/cgroup/cgroup-v1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index e20a08ce9655..e72699dec620 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -1019,7 +1019,7 @@ int cgroup1_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_name:
- 		/* blocked by boot param? */
- 		if (cgroup_no_v1_named)
--			return cg_invalf(fc, "cgroup1: Blocked by boot paramter");
-+			return cg_invalf(fc, "cgroup1: Blocked by boot parameter");
- 		/* Can't specify an empty name */
- 		if (!param->size)
- 			return cg_invalf(fc, "cgroup1: Empty name");
--- 
-2.19.1
+Added to patch queue, thanks. I've dropepd the Fixes: line as it's not
+really a fix that would need to go to stable. The original commit is
+mentioned in the changelog which is IMHO sufficient.
