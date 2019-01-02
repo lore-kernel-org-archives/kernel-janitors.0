@@ -1,7 +1,7 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 25 Jan 2019 14:54:25 +0000
-Subject: [PATCH] selftests/seccomp: fix test failure on s390x because of positive error return Content-Type: 
-Message-Id: <20190125145425.7039-1-colin.king@canonical.com>
+Date: Wed, 02 Jan 2019 09:54:03 +0000
+Subject: [PATCH][next] x86/mpx/selftests: fix spelling mistake "succeded" -> "succeeded"
+Message-Id: <20190102095403.513-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,47 +10,25 @@ To: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The error return being placed in regs.SYSCALL_RET is currently positive and
-this is causing test failures on s390x. The return value should be -EPERM
-rather than EPERM otherwise a failure is not detected and errno is not set
-accordingly on s390x.
+There is a spelling mistake eprintf error message, fix it.
 
-Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/testing/selftests/seccomp/seccomp_bpf.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/testing/selftests/x86/mpx-mini-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 496a9a8c773a..957344884360 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -1706,7 +1706,7 @@ void change_syscall(struct __test_metadata *_metadata,
- #ifdef SYSCALL_NUM_RET_SHARE_REG
- 		TH_LOG("Can't modify syscall return on this architecture");
- #else
--		regs.SYSCALL_RET = EPERM;
-+		regs.SYSCALL_RET = -EPERM;
- #endif
- 
- #ifdef HAVE_GETREGS
-@@ -1850,7 +1850,7 @@ TEST_F(TRACE_syscall, ptrace_syscall_dropped)
- 					   true);
- 
- 	/* Tracer should skip the open syscall, resulting in EPERM. */
--	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
-+	EXPECT_SYSCALL_RETURN(-EPERM, syscall(__NR_openat));
- }
- 
- TEST_F(TRACE_syscall, syscall_allowed)
-@@ -1894,7 +1894,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
- 	ASSERT_EQ(0, ret);
- 
- 	/* gettid has been skipped and an altered return value stored. */
--	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
-+	EXPECT_SYSCALL_RETURN(-EPERM, syscall(__NR_gettid));
- 	EXPECT_NE(self->mytid, syscall(__NR_gettid));
- }
- 
+diff --git a/tools/testing/selftests/x86/mpx-mini-test.c b/tools/testing/selftests/x86/mpx-mini-test.c
+index 50f7e9272481..bf1bb15b6fbe 100644
+--- a/tools/testing/selftests/x86/mpx-mini-test.c
++++ b/tools/testing/selftests/x86/mpx-mini-test.c
+@@ -1503,7 +1503,7 @@ void check_mpx_insns_and_tables(void)
+ 		exit(20);
+ 	}
+ 	if (successes != total_nr_tests) {
+-		eprintf("ERROR: succeded fewer than number of tries (%d != %d)\n",
++		eprintf("ERROR: succeeded fewer than number of tries (%d != %d)\n",
+ 				successes, total_nr_tests);
+ 		exit(21);
+ 	}
 -- 
 2.19.1
