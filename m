@@ -1,42 +1,57 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 18 Jan 2019 10:56:54 +0000
-Subject: Re: [PATCH v2 -next] crypto: brcm - Fix some set-but-not-used warning
-Message-Id: <20190118105654.p355fqvz4hhva33h@gondor.apana.org.au>
+From: Jinpu Wang <jinpu.wang@cloud.ionos.com>
+Date: Wed, 02 Jan 2019 07:27:50 +0000
+Subject: Re: [PATCH 6/8] scsi: pm80xx: reduce indentation
+Message-Id: <CAMGffEkWoK_tgndeEa-TYFy+wbFyKW4B_rBcqC=HTB+FcV=Sjw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545968644-191671-1-git-send-email-yuehaibing@huawei.com>
- <1547014278-93847-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1547014278-93847-1-git-send-email-yuehaibing@huawei.com>
+References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr> <1546185195-25676-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546185195-25676-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Eric Biggers <ebiggers@google.com>, Gilad Ben-Yossef <gilad@benyossef.com>, Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>, Stefan Agner <stefan@agner.ch>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jack Wang <jinpu.wang@profitbricks.com>, kernel-janitors@vger.kernel.org, lindar_liu <lindar_liu@usish.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>, linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 06:11:18AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/crypto/bcm/cipher.c: In function 'handle_ahash_req':
-> drivers/crypto/bcm/cipher.c:720:15: warning:
->  variable 'chunk_start' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/crypto/bcm/cipher.c: In function 'spu_rx_callback':
-> drivers/crypto/bcm/cipher.c:1679:31: warning:
->  variable 'areq' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/crypto/bcm/cipher.c:1678:22: warning:
->  variable 'ctx' set but not used [-Wunused-but-set-variable]
-> 
-> Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>
+On Sun, Dec 30, 2018 at 5:29 PM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>
+> Delete tab aligning a statement with the right hand side of a
+> preceding assignment rather than the left hand side.
+>
+> Found with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Thanks, Julia.
+Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+>
 > ---
-> v2: add Fixes tag
-> ---
->  drivers/crypto/bcm/cipher.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+>  drivers/scsi/pm8001/pm8001_sas.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+> index b3be49d41375..44b630aceb12 100644
+> --- a/drivers/scsi/pm8001/pm8001_sas.c
+> +++ b/drivers/scsi/pm8001/pm8001_sas.c
+> @@ -657,7 +657,7 @@ static int pm8001_dev_found_notify(struct domain_device *dev)
+>                 if (dev->dev_type = SAS_SATA_DEV) {
+>                         pm8001_device->attached_phy >                                 dev->rphy->identify.phy_identifier;
+> -                               flag = 1; /* directly sata*/
+> +                       flag = 1; /* directly sata*/
+>                 }
+>         } /*register this device to HBA*/
+>         PM8001_DISC_DBG(pm8001_ha, pm8001_printk("Found device\n"));
+>
 
-Patch applied.  Thanks.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Jack Wang
+Linux Kernel Developer
+
+1&1 IONOS Cloud GmbH | Greifswalder Str. 207 | 10405 Berlin | Germany
+Phone: +49 30 57700-8042 | Fax: +49 30 57700-8598
+E-mail: jinpu.wang@cloud.ionos.com | Web: www.ionos.de
+
+
+Head Office: Berlin, Germany
+District Court Berlin Charlottenburg, Registration number: HRB 125506 B
+Executive Management: Christoph Steffens, Matthias Steinberg, Achim Weiss
+
+Member of United Internet
