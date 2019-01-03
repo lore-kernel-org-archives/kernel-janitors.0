@@ -1,35 +1,52 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Wed, 02 Jan 2019 06:15:47 +0000
-Subject: Re: [PATCH 14/20] dmaengine: st_fdma: drop useless LIST_HEAD
-Message-Id: <20190102060347.GG7581@vkoul-mobl>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Thu, 03 Jan 2019 12:45:45 +0000
+Subject: [PATCH 05/29] perf trace: Use correct SECCOMP prefix spelling, "SECOMP_*" -> "SECCOMP_*"
+Message-Id: <20190103124609.29672-6-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190103124609.29672-1-acme@kernel.org>
+In-Reply-To: <20190103124609.29672-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Patrice Chotard <patrice.chotard@st.com>, kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-On 23-12-18, 09:57, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
-> 
-> The declarations were introduced with the file, but the declared
-> variables were not used.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
-> 
-> Fixes: 6b4cd727eaf1 ("dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+The spelling of the SECCOMP is incorrect, fix these.
 
+Signed-off-by: Colin King <colin.king@canonical.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: c65c83ffe904 ("perf trace: Allow asking for not suppressing common string prefixes")
+Link: http://lkml.kernel.org/r/20181221084809.6108-1-colin.king@canonical.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/seccomp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/trace/beauty/seccomp.c b/tools/perf/trace/beauty/seccomp.c
+index 4600c28a3cfe..637722e2796b 100644
+--- a/tools/perf/trace/beauty/seccomp.c
++++ b/tools/perf/trace/beauty/seccomp.c
+@@ -9,7 +9,7 @@
+ static size_t syscall_arg__scnprintf_seccomp_op(char *bf, size_t size, struct syscall_arg *arg)
+ {
+ 	bool show_prefix = arg->show_string_prefix;
+-	const char *prefix = "SECOMP_SET_MODE_";
++	const char *prefix = "SECCOMP_SET_MODE_";
+ 	int op = arg->val;
+ 	size_t printed = 0;
+ 
+@@ -34,7 +34,7 @@ static size_t syscall_arg__scnprintf_seccomp_flags(char *bf, size_t size,
+ 						   struct syscall_arg *arg)
+ {
+ 	bool show_prefix = arg->show_string_prefix;
+-	const char *prefix = "SECOMP_FILTER_FLAG_";
++	const char *prefix = "SECCOMP_FILTER_FLAG_";
+ 	int printed = 0, flags = arg->val;
+ 
+ #define	P_FLAG(n) \
 -- 
-~Vinod
+2.19.2
