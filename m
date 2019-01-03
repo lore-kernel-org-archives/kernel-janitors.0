@@ -1,40 +1,49 @@
-From: shuah <shuah@kernel.org>
-Date: Wed, 23 Jan 2019 15:07:53 +0000
-Subject: Re: [PATCH][V2] selftests: cpu-hotplug: fix case where CPUs offline > CPUs present
-Message-Id: <c18c3293-631d-2deb-794d-b7057ea2c50d@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Jan 2019 11:38:11 +0000
+Subject: [PATCH] ext4: Fix some error pointer dereferences
+Message-Id: <20190103113811.GA13543@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190110123802.13832-1-colin.king@canonical.com>
- <abb5a36f-e513-e3ba-3286-4cc2026ef580@canonical.com>
-In-Reply-To: <abb5a36f-e513-e3ba-3286-4cc2026ef580@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 1/23/19 6:25 AM, Colin Ian King wrote:
-> ping?
-> 
-> On 10/01/2019 12:38, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The cpu-hotplug test assumes that we can offline the maximum CPU as
->> described by /sys/devices/system/cpu/offline.  However, in the case
->> where the number of CPUs exceeds like kernel configuration then
->> the offline count can be greater than the present count and we end
->> up trying to test the offlining of a CPU that is not available to
->> offline.  Fix this by testing the maximum present CPU instead.
->>
->> Also, the test currently offlines the CPU and does not online it,
->> so fix this by onlining the CPU after the test.
->>
->> Fixes: d89dffa976bc ("fault-injection: add selftests for cpu and memory hotplug")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>
->> ---
->>
->> V2: remove some debug and an empty line
+We can't pass error pointers to brelse().
 
-Sorry for the delay. I will take this for 5.0-rc5
+Fixes: fb265c9cb49e ("ext4: add ext4_sb_bread() to disambiguate ENOMEM cases")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/ext4/xattr.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-thanks,
--- Shuah
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 7fddd519adae..6ddbbe21fdd8 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -829,6 +829,7 @@ int ext4_get_inode_usage(struct inode *inode, qsize_t *usage)
+ 		bh = ext4_sb_bread(inode->i_sb, EXT4_I(inode)->i_file_acl, REQ_PRIO);
+ 		if (IS_ERR(bh)) {
+ 			ret = PTR_ERR(bh);
++			bh = NULL;
+ 			goto out;
+ 		}
+ 
+@@ -2903,6 +2904,7 @@ int ext4_xattr_delete_inode(handle_t *handle, struct inode *inode,
+ 			if (error = -EIO)
+ 				EXT4_ERROR_INODE(inode, "block %llu read error",
+ 						 EXT4_I(inode)->i_file_acl);
++			bh = NULL;
+ 			goto cleanup;
+ 		}
+ 		error = ext4_xattr_check_block(inode, bh);
+@@ -3059,6 +3061,7 @@ ext4_xattr_block_cache_find(struct inode *inode,
+ 		if (IS_ERR(bh)) {
+ 			if (PTR_ERR(bh) = -ENOMEM)
+ 				return NULL;
++			bh = NULL;
+ 			EXT4_ERROR_INODE(inode, "block %lu read error",
+ 					 (unsigned long)ce->e_value);
+ 		} else if (ext4_xattr_cmp(header, BHDR(bh)) = 0) {
+-- 
+2.17.1
