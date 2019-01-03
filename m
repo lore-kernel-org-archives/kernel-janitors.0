@@ -1,91 +1,57 @@
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 09 Jan 2019 15:45:59 +0000
-Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
-Message-Id: <CAKaJLVum=eOgsnsaoNzp4WJ7NpAekeuKH2C8Cbk57z0Oy0GM=w@mail.gmail.com>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Date: Thu, 03 Jan 2019 23:58:10 +0000
+Subject: Re: [PATCH 3/8] i40e: increase indentation
+Message-Id: <2320c3ac2267d17ee9fc9ff3e3df60b7ca405590.camel@intel.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-oOAF8TjtRf0aCJUZCgtF"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181030202713.26203-1-semen.protsenko@linaro.org>
- <CAKaJLVu0h5woVtN5=Mh38ajACBZZQ3JHfRhkjNrwMwYXHEG-NQ@mail.gmail.com>
- <CAHp75Vd-ydncUWQtc8ziLpCMJRFCvjV=ueKB0wRgn7W-pnV09Q@mail.gmail.com>
- <20181121181042.4gzuniz2vzjikpwc@cs.cmu.edu> <CAKaJLVs4MUws7sPPdDk7hnjZ+Z1V0V6bGt=eWn=gsF_B+yULeg@mail.gmail.com>
- <CAKaJLVvHZwJHu_uZuUDtCZrD7EKY-5xpGhNZN7cQ2M4Bz9osDA@mail.gmail.com> <308CF0BD-90AE-45D2-BAF9-D297A530B0F4@cs.cmu.edu>
-In-Reply-To: <308CF0BD-90AE-45D2-BAF9-D297A530B0F4@cs.cmu.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
+         <1546185195-25676-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546185195-25676-4-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+
+
+--=-oOAF8TjtRf0aCJUZCgtF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, 2018-12-30 at 16:53 +0100, Julia Lawall wrote:
+> Convert spaces to tabs to get correct alignment.
+>=20
+> Found with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/net/ethernet/intel/i40e/i40e_main.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+
+Dave, since this is apart of a series, please feel free to commit this
+patch with the series.
+
+--=-oOAF8TjtRf0aCJUZCgtF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-To: Jan Harkes <jaharkes@cs.cmu.edu>
-Cc: hch@lst.de, Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, Praneeth Bajjuri <praneeth@ti.com>, Ruslan Bilovol <ruslan.bilovol@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Hi Jan,
+-----BEGIN PGP SIGNATURE-----
 
-Can you please clarify on this patch? As I can see v5.0-rc1 is out
-now, which means merge window is closed, but I can't see this patch in
-linux-mainline yet. Do you need any additional steps from my side
-(like rebasing, etc)?
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlwuoZIACgkQ5W/vlVpL
+7c4q4Q/9HV1bScv5PDC+lpElx2jqV1XUfal/HCgE6Ygfkq9iFdXQhVaOmo00jHJm
+hX+dhCMU9sulZBtXK93z65pvhPHcurBYdfpoddp5i5meUiqO4mgSqpLC1T1dM5z+
+Zg/v5/Yhqyrt3KyoUa1bC9HcIzvKcTrSXsdtIa9eDimhAztduZ0iXWfGa/YBCp10
+Un36XBEYb71HqcQs0QYYFeaGKoTCBITTr59amLWvZQWNn2x0kWcGAp6TDL6GElrQ
+vZwpiw1vdD2JmGYUh8N1JDK4jHnX3xJhcD+JYgW99uvkMAmPpOZ/U8x1Z+hfMWWp
+4pxY6BmwlwGdKcF5A45P9gRI8H6YAslFXW9lQ5QQCreGPAhHsT1m0g38YzeBt18R
+v8D3B86PYebk5LjU1kXT3VlpQo2EfYiQ71oAWgF6s9ryV/L4JRw68sCwH2xi7wua
+E6OoGgfpqOHmx/KmzCgIiW2aGkPj5l0BxmSpgEVfiTjJCBJSDItiVxUj3kAYfokW
+5Ju6vVtWElv6TWzeMEulGDyX2VvFwIOzVQdCG8Wqy7jtRqU50iasQ+VfwzIytIqJ
+2RNh6umRHryCLIQIngPxhX9KgpUa6hII9Huq3PVcQJMfkWMtk0UAxypP1fItSoQr
+z/TCtc+BwVFt/aJnujvO/qFOsV8WR688wZuLcqU2yKLbRaDkP94=
+=GIKR
+-----END PGP SIGNATURE-----
 
-Thanks!
-
-On Thu, Nov 22, 2018 at 12:49 AM Jan Harkes <jaharkes@cs.cmu.edu> wrote:
->
-> That actually makes a lot of sense.
->
-> Jan
->
-> On November 21, 2018 2:39:03 PM EST, Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >+ Jan Harkes back to "To:" list, slipped away somehow...
-> >
-> >On Wed, Nov 21, 2018 at 9:36 PM Sam Protsenko
-> ><semen.protsenko@linaro.org> wrote:
-> >>
-> >> On Wed, Nov 21, 2018 at 8:10 PM Jan Harkes <jaharkes@cs.cmu.edu>
-> >wrote:
-> >> >
-> >> > On Wed, Nov 21, 2018 at 06:41:13PM +0200, Andy Shevchenko wrote:
-> >> > > I'm not sure how you managed to miss people in this list (perhaps
-> >by
-> >> > > default you have suppress all Cc in your Git configuration), but
-> >I
-> >> > > guess we may gently ask Christoph to apply this in case Jan will
-> >not
-> >> > > appear.
-> >> >
-> >> > You have got to give me a little more than 10 minutes to respond
-> >before
-> >> > assuming that I would not appear... I don't think I've ignored any
-> >> > previous emails on this subject and the only issues has been some
-> >people
-> >> > not receiving my responses for unknown reasons (agressive spam
-> >filter?).
-> >> >
-> >> > I have no problem with this patch, have it sitting with some other
-> >> > non-urgent patches and in case it doesn't appear upstream it should
-> >> > piggyback with whatever I have to send.
-> >> >
-> >>
-> >> Thanks, Jan, really appreciate it. We need this patch to fix our
-> >tests
-> >> with allmodconfig configuration (in Linaro CI loops).
-> >>
-> >> > I still don't know why the bare-metal toolchain couldn't just add a
-> >> > -D__linux__.  I understand that this define is expected to be
-> >always
-> >> > present while compiling kernel headers so that there is no good
-> >reason
-> >> > to even bother testing for it, which is why I have no issue with
-> >the
-> >> > patch. But it seems it would make your life a lot easier if you had
-> >it
-> >> > defined.
-> >> >
-> >>
-> >> As I understand it, from toolchain's point of view, if __linux__ is
-> >> defined then it means that the program is being built *for* Linux
-> >> (i.e. we can use Linux specific features, ABI, like syscalls).
-> >> Checking this definition can make sense in uapi headers, but in
-> >kernel
-> >> code we shouldn't use it (as kernel is baremetal program and not
-> >> compiled for some OS). I presume that's why __linux__ is not defined
-> >> in bare-metal toolchains (as those don't provide Linux specific
-> >> features, libc, etc).
-> >>
-> >> > Jan
-> >> >
+--=-oOAF8TjtRf0aCJUZCgtF--
