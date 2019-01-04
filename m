@@ -1,34 +1,32 @@
-From: Eran Ben Elisha <eranbe@mellanox.com>
-Date: Mon, 21 Jan 2019 11:28:34 +0000
-Subject: Re: [PATCH net-next] devlink: Fix error return code in devlink_health_buffer_prepare_skb()
-Message-Id: <a95dbe8d-507c-616d-3509-8e38c9500df8@mellanox.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 04 Jan 2019 20:46:26 +0000
+Subject: Re: [PATCH] octeontx2-af: Fix a resource leak in an error handling path in 'cgx_probe()'
+Message-Id: <20190104.124626.1177296586022194416.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1548058881-147159-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1548058881-147159-1-git-send-email-weiyongjun1@huawei.com>
+References: <20181229164222.15791-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20181229164222.15791-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Jiri Pirko <jiri@mellanox.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: christophe.jaillet@wanadoo.fr
+Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-DQoNCk9uIDEvMjEvMjAxOSAxMDoyMSBBTSwgV2VpIFlvbmdqdW4gd3JvdGU6DQo+IEZpeCB0byBy
-ZXR1cm4gYSBuZWdhdGl2ZSBlcnJvciBjb2RlIC1FTVNHU0laRSBmcm9tIHRoZSBlcnJvciBoYW5k
-bGluZw0KPiBjYXNlLCBvdGhlcndpc2UgMCBvciB1bmluaXRpYWxpemVkIHZhbHVlIG1heSBiZSBy
-ZXR1cm5lZC4NCj4gDQo+IEZpeGVzOiBjYjVjY2ZiZTczYjMgKCJkZXZsaW5rOiBBZGQgaGVhbHRo
-IGJ1ZmZlciBzdXBwb3J0IikNCj4gU2lnbmVkLW9mZi1ieTogV2VpIFlvbmdqdW4gPHdlaXlvbmdq
-dW4xQGh1YXdlaS5jb20+DQoNClRoYW5rcyBmb3IgdGhlIGZpeCENCkhvd2V2ZXIsIEkgYW0gd29y
-a2luZyB0byByZXBsYWNlIHRoaXMgZW50aXJlIGNvZGUgc2VjdGlvbiwgd2lsbCBzcXVhc2ggDQp5
-b3VyIHBhdGNoIHRvIHRoZSBuZXcgY29kZS4NCg0KPiAtLS0NCj4gICBuZXQvY29yZS9kZXZsaW5r
-LmMgfCA0ICsrKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAxIGRlbGV0
-aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbmV0L2NvcmUvZGV2bGluay5jIGIvbmV0L2NvcmUv
-ZGV2bGluay5jDQo+IGluZGV4IDYwMjQ4YTUuLjBkNGM3NzQgMTAwNjQ0DQo+IC0tLSBhL25ldC9j
-b3JlL2RldmxpbmsuYw0KPiArKysgYi9uZXQvY29yZS9kZXZsaW5rLmMNCj4gQEAgLTQwMDgsOCAr
-NDAwOCwxMCBAQCB2b2lkIGRldmxpbmtfaGVhbHRoX2J1ZmZlcl9uZXN0X2NhbmNlbChzdHJ1Y3Qg
-ZGV2bGlua19oZWFsdGhfYnVmZmVyICpidWZmZXIpDQo+ICAgCQljYXNlIERFVkxJTktfQVRUUl9I
-RUFMVEhfQlVGRkVSX09CSkVDVF9WQUxVRToNCj4gICAJCWNhc2UgREVWTElOS19BVFRSX0hFQUxU
-SF9CVUZGRVJfT0JKRUNUX1ZBTFVFX0FSUkFZOg0KPiAgIAkJCWJ1ZmZlcl9ubGF0dHJbaV0gPSBu
-bGFfbmVzdF9zdGFydChza2IsIGRlc2MtPmF0dHJ0eXBlKTsNCj4gLQkJCWlmICghYnVmZmVyX25s
-YXR0cltpXSkNCj4gKwkJCWlmICghYnVmZmVyX25sYXR0cltpXSkgew0KPiArCQkJCWVyciA9IC1F
-TVNHU0laRTsNCj4gICAJCQkJZ290byBubGFfcHV0X2ZhaWx1cmU7DQo+ICsJCQl9DQo+ICAgCQkJ
-aSsrOw0KPiAgIAkJCWJyZWFrOw0KPiAgIAkJY2FzZSBERVZMSU5LX0FUVFJfSEVBTFRIX0JVRkZF
-Ul9PQkpFQ1RfVkFMVUVfREFUQToNCj4gDQo+IA0KPiANCg=
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 29 Dec 2018 17:42:22 +0100
+
+> If an error occurs after the call to 'pci_alloc_irq_vectors()', we must
+> call 'pci_free_irq_vectors()' in order to avoid a	resource leak.
+> 
+> The same sequence is already in place in the corresponding 'cgx_remove()'
+> function.
+> 
+> Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Applied and queued up for -stable.
+
+Please fix the date and time on your computer, putting improper dates into
+the email headers of your patch postings makes your patch appear out
+of order in my patchwork queue.
+
+Thank you.
