@@ -1,38 +1,47 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 17 Jan 2019 03:13:12 +0000
-Subject: [PATCH v2] virt_wifi: remove duplicated include from virt_wifi.c
-Message-Id: <1547694792-65647-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Jan 2019 17:43:49 +0000
+Subject: [PATCH] usb: host: u132-hcd: fix a couple of indentation issues
+Message-Id: <20190104174349.9318-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545274285-143886-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545274285-143886-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jia-Ju Bai <baijiaju1990@gmail.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+There are two statements that are indented incorrectly and need
+to be moved to a new line.  Fix these.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2: fix prefix to 'virt_wifi:'
----
- drivers/net/wireless/virt_wifi.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/usb/host/u132-hcd.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
-index 64b2186..245d4d0 100644
---- a/drivers/net/wireless/virt_wifi.c
-+++ b/drivers/net/wireless/virt_wifi.c
-@@ -14,11 +14,6 @@
- #include <linux/etherdevice.h>
- #include <linux/module.h>
- 
--#include <net/cfg80211.h>
--#include <net/rtnetlink.h>
--#include <linux/etherdevice.h>
--#include <linux/module.h>
--
- static struct wiphy *common_wiphy;
- 
- struct virt_wifi_wiphy_priv {
+diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
+index 5b8a3d9530c4..934584f0a20a 100644
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@ -2477,7 +2477,8 @@ static int u132_endp_urb_dequeue(struct u132 *u132, struct u132_endp *endp,
+ 				spin_unlock_irqrestore(&endp->queue_lock.slock,
+ 					irqs);
+ 				kfree(urbq);
+-			} urb->error_count = 0;
++			}
++			urb->error_count = 0;
+ 			usb_hcd_giveback_urb(hcd, urb, status);
+ 			return 0;
+ 		} else if (list_empty(&endp->urb_more)) {
+@@ -2982,7 +2983,8 @@ static int u132_remove(struct platform_device *pdev)
+ 			while (rings-- > 0) {
+ 				struct u132_ring *ring = &u132->ring[rings];
+ 				u132_ring_cancel_work(u132, ring);
+-			} while (endps-- > 0) {
++			}
++			while (endps-- > 0) {
+ 				struct u132_endp *endp = u132->endp[endps];
+ 				if (endp)
+ 					u132_endp_cancel_work(u132, endp);
+-- 
+2.19.1
