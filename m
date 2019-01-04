@@ -1,38 +1,36 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 16 Jan 2019 10:39:21 +0000
-Subject: [PATCH v3] binderfs: fix error return code in binderfs_fill_super()
-Message-Id: <1547635161-62311-1-git-send-email-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Jan 2019 17:59:41 +0000
+Subject: [PATCH] USB: musb: fix indentation issue on a return statement
+Message-Id: <20190104175941.9669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547627642-96450-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1547627642-96450-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, maco@android.com, joel@joelfernandes.org, christian@brauner.io
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix to return a negative error code -ENOMEM from the new_inode() and
-d_make_root() error handling cases instead of 0, as done elsewhere in
-this function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 849d540ddfcd ("binderfs: implement "max" mount option")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+A return statement is indented one level too far, fix this by removing
+a tab.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v1 -> v2: move 'ret = -ENOMEM' out of if
-v2 -> v3: use correct fixes commit
----
- drivers/android/binderfs.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/musb/musb_host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 9518e2e..e4ff4c3 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -518,6 +518,7 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index b59ce9ad14ce..0b1eb15b6b08 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -1283,7 +1283,7 @@ void musb_host_tx(struct musb *musb, u8 epnum)
+ 					MUSB_TXCSR_H_WZC_BITS
+ 					| MUSB_TXCSR_TXPKTRDY);
+ 		}
+-			return;
++		return;
+ 	}
  
- 	sb->s_fs_info = info;
- 
-+	ret = -ENOMEM;
- 	inode = new_inode(sb);
- 	if (!inode)
- 		goto err_without_dentry;
+ done:
+-- 
+2.19.1
