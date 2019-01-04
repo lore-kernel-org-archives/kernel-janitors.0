@@ -1,56 +1,35 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 06 Jan 2019 01:41:06 +0000
-Subject: Re: [PATCH] scripts/coccinelle: check for redeclaration
-Message-Id: <CAK7LNATBxp8osBd7np5p7m699CaUVHD--r_-5-dCQvdJpQBpzg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Jan 2019 17:10:25 +0000
+Subject: [PATCH] scsi: gdth: fix indentation issue, remove a tab
+Message-Id: <20190104171025.8448-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1546008541-3175-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1546008541-3175-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michal Marek <michal.lkml@markovi.net>, "Jason A . Donenfeld" <zx2c4@kernel.org>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, cocci@systeme.lip6.fr
+To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Achim Leubner <achim_leubner@adaptec.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Dec 29, 2018 at 10:32 AM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->
-> Avoid reporting on the use of an iterator index variable when
-> the variable is redeclared.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
+A goto statement is indented incorrectly, fix this by removing a tab.
 
-Applied to linux-kbuild. Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/gdth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
->  scripts/coccinelle/iterators/use_after_iter.cocci |    3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/scripts/coccinelle/iterators/use_after_iter.cocci b/scripts/coccinelle/iterators/use_after_iter.cocci
-> index ce8cc9c..66a1140 100644
-> --- a/scripts/coccinelle/iterators/use_after_iter.cocci
-> +++ b/scripts/coccinelle/iterators/use_after_iter.cocci
-> @@ -35,6 +35,7 @@ iterator name hlist_for_each_entry_from;
->  iterator name hlist_for_each_entry_safe;
->  statement S;
->  position p1,p2;
-> +type T;
->  @@
->
->  (
-> @@ -125,6 +126,8 @@ sizeof(<+...c...+>)
->  |
->   &c->member
->  |
-> +T c;
-> +|
->  c = E
->  |
->  *c@p2
->
-
-
+diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
+index 194c294f9b6c..159a4e301c4d 100644
+--- a/drivers/scsi/gdth.c
++++ b/drivers/scsi/gdth.c
+@@ -5039,7 +5039,7 @@ static int gdth_pci_probe_one(gdth_pci_str *pcistr, gdth_ha_str **ha_out)
+ 		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) {
+ 			printk(KERN_WARNING "GDT-PCI %d: "
+ 				"Unable to set 32-bit DMA\n", ha->hanum);
+-				goto out_free_coal_stat;
++			goto out_free_coal_stat;
+ 		}
+ 	} else {
+ 		shp->max_cmd_len = 16;
 -- 
-Best Regards
-Masahiro Yamada
+2.19.1
