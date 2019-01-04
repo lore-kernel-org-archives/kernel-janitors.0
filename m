@@ -1,32 +1,38 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 16 Jan 2019 16:09:44 +0000
-Subject: Re: [PATCH] mac80211-next: remove set but not used variable 'w_priv'
-Message-Id: <87r2dc4m9j.fsf@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Jan 2019 06:47:03 +0000
+Subject: [PATCH] nfsd: fix an IS_ERR() vs NULL check
+Message-Id: <20190104064703.GB30627@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545274318-144187-1-git-send-email-yuehaibing@huawei.com>
-        <65a8caf2-98c0-cf43-f63b-d89ed556111f@huawei.com>
-In-Reply-To: <65a8caf2-98c0-cf43-f63b-d89ed556111f@huawei.com>
-        (yuehaibing@huawei.com's message of "Wed, 16 Jan 2019 20:24:23 +0800")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>, NeilBrown <neilb@suse.com>
+Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> writes:
+The get_backchannel_cred() used to return error pointers on error but
+now it returns NULL pointers.
 
-> ping...
->
-> On 2018/12/20 10:51, YueHaibing wrote:
->> Fixes gcc '-Wunused-but-set-variable' warning:
->> 
->> drivers/net/wireless/virt_wifi.c: In function 'virt_wifi_net_device_stop':
->> drivers/net/wireless/virt_wifi.c:432:31: warning:
->>  variable 'w_priv' set but not used [-Wunused-but-set-variable]
->> 
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 97f68c6b02e0 ("SUNRPC: add 'struct cred *' to auth_cred and rpc_cre")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/nfsd/nfs4callback.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Same here, the prefix should be "virt_wifi:".
-
+diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+index c74e4538d0eb..9b38dab1c21b 100644
+--- a/fs/nfsd/nfs4callback.c
++++ b/fs/nfsd/nfs4callback.c
+@@ -913,9 +913,9 @@ static int setup_callback_client(struct nfs4_client *clp, struct nfs4_cb_conn *c
+ 		return PTR_ERR(client);
+ 	}
+ 	cred = get_backchannel_cred(clp, client, ses);
+-	if (IS_ERR(cred)) {
++	if (!cred) {
+ 		rpc_shutdown_client(client);
+-		return PTR_ERR(cred);
++		return -ENOMEM;
+ 	}
+ 	clp->cl_cb_client = client;
+ 	clp->cl_cb_cred = cred;
 -- 
-Kalle Valo
+2.17.1
