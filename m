@@ -1,37 +1,38 @@
-From: Mel Gorman <mgorman@techsingularity.net>
-Date: Wed, 09 Jan 2019 10:15:51 +0000
-Subject: Re: [PATCH -next] mm, compaction: remove set but not used variables 'a, b, c'
-Message-Id: <20190109101551.GR31517@techsingularity.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 05 Jan 2019 13:06:07 +0000
+Subject: [PATCH 1/2] xprtrdma: Fix error code in rpcrdma_buffer_create()
+Message-Id: <20190105130607.GB3288@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547002967-6127-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1547002967-6127-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 03:02:47AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> mm/compaction.c: In function 'compact_zone':
-> mm/compaction.c:2063:22: warning:
->  variable 'c' set but not used [-Wunused-but-set-variable]
-> mm/compaction.c:2063:19: warning:
->  variable 'b' set but not used [-Wunused-but-set-variable]
-> mm/compaction.c:2063:16: warning:
->  variable 'a' set but not used [-Wunused-but-set-variable]
-> 
-> This never used since 94d5992baaa5 ("mm, compaction: finish pageblock
-> scanning on contention")
-> 
+This should return -ENOMEM if __alloc_workqueue_key() fails, but it
+returns success.
 
-Dang. This is left-over debugging code that got accidentally merged
-during a rebase.  Andrew, can you pick this up as a fix to the mmotm
-patch mm-compaction-finish-pageblock-scanning-on-contention.patch please?
+Fixes: 6d2d0ee27c7a ("xprtrdma: Replace rpcrdma_receive_wq with a per-xprt workqueue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/sunrpc/xprtrdma/verbs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks YueHaibing.
-
+diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
+index 7749a2bf6887..3dde05892c8e 100644
+--- a/net/sunrpc/xprtrdma/verbs.c
++++ b/net/sunrpc/xprtrdma/verbs.c
+@@ -1113,8 +1113,10 @@ rpcrdma_buffer_create(struct rpcrdma_xprt *r_xprt)
+ 						WQ_MEM_RECLAIM | WQ_HIGHPRI,
+ 						0,
+ 			r_xprt->rx_xprt.address_strings[RPC_DISPLAY_ADDR]);
+-	if (!buf->rb_completion_wq)
++	if (!buf->rb_completion_wq) {
++		rc = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	return 0;
+ out:
 -- 
-Mel Gorman
-SUSE Labs
+2.17.1
