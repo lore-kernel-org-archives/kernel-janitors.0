@@ -1,59 +1,34 @@
-From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Date: Sun, 20 Jan 2019 18:54:56 +0000
-Subject: Re: [-next] um: Remove duplicated include from vector_user.c
-Message-Id: <cff7d34e-7afa-70cc-427d-ebeaa1e65e73@cambridgegreys.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 05 Jan 2019 18:18:03 +0000
+Subject: [PATCH] cifs: Fix a tiny potential memory leak
+Message-Id: <20190105181803.GD3288@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc: kernel-janitors@vger.kernel.org, linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+The most recent "it" allocation is leaked on this error path.  I
+believe that small allocations always succeed in current kernels so
+this doesn't really affect run time.
 
+Fixes: 54be1f6c1c37 ("cifs: Add DFS cache routines")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/cifs/dfs_cache.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 1/3/19 3:12 AM, YueHaibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   arch/um/drivers/vector_user.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-> index d2c17dd..b3f7b3c 100644
-> --- a/arch/um/drivers/vector_user.c
-> +++ b/arch/um/drivers/vector_user.c
-> @@ -16,14 +16,12 @@
->   #include <sys/types.h>
->   #include <sys/stat.h>
->   #include <fcntl.h>
-> -#include <sys/types.h>
->   #include <sys/socket.h>
->   #include <net/ethernet.h>
->   #include <netinet/ip.h>
->   #include <netinet/ether.h>
->   #include <linux/if_ether.h>
->   #include <linux/if_packet.h>
-> -#include <sys/socket.h>
->   #include <sys/wait.h>
->   #include <sys/uio.h>
->   #include <linux/virtio_net.h>
-> @@ -31,7 +29,6 @@
->   #include <stdlib.h>
->   #include <os.h>
->   #include <um_malloc.h>
-> -#include <sys/uio.h>
->   #include "vector_user.h"
->   
->   #define ID_GRE 0
-> 
-
-Reviewed-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
--- 
-Anton R. Ivanov
-
-Cambridge Greys Limited, England and Wales company No 10273661
-http://www.cambridgegreys.com/
+diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
+index cd63c4a70875..09b7d0d4f6e4 100644
+--- a/fs/cifs/dfs_cache.c
++++ b/fs/cifs/dfs_cache.c
+@@ -776,6 +776,7 @@ static int get_tgt_list(const struct dfs_cache_entry *ce,
+ 		it->it_name = kstrndup(t->t_name, strlen(t->t_name),
+ 				       GFP_KERNEL);
+ 		if (!it->it_name) {
++			kfree(it);
+ 			rc = -ENOMEM;
+ 			goto err_free_it;
+ 		}
+--
+2.17.1
