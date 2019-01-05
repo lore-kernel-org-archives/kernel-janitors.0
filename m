@@ -1,24 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 18 Jan 2019 22:03:21 +0000
-Subject: Re: [PATCH] net: jme: fix indentation issues
-Message-Id: <20190118.140321.466556663933901527.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 05 Jan 2019 12:25:29 +0000
+Subject: [PATCH] cifs: Fix a debug message
+Message-Id: <20190105122529.GA3288@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190117000326.29632-1-colin.king@canonical.com>
-In-Reply-To: <20190117000326.29632-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: cooldavid@cooldavid.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Jan 2019 00:03:26 +0000
+This debug message was never shown because it was checking for NULL
+returns but extract_hostname() returns error pointers.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two lines that have indentation issues, fix these. Also remove
-> an empty line.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 93d5cb517db3 ("cifs: Add support for failover in cifs_reconnect()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/cifs/connect.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Applied to net-next.
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index f66529679ca2..683310f26171 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -433,9 +433,10 @@ static void reconn_inval_dfs_target(struct TCP_Server_Info *server,
+ 	kfree(server->hostname);
+ 
+ 	server->hostname = extract_hostname(name);
+-	if (!server->hostname) {
+-		cifs_dbg(FYI, "%s: failed to extract hostname from target: %d\n",
+-			 __func__, -ENOMEM);
++	if (IS_ERR(server->hostname)) {
++		cifs_dbg(FYI,
++			 "%s: failed to extract hostname from target: %ld\n",
++			 __func__, PTR_ERR(server->hostname));
+ 	}
+ }
+ 
+-- 
+2.17.1
