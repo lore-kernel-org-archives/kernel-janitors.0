@@ -1,40 +1,56 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 16 Jan 2019 10:42:59 +0000
-Subject: [PATCH v4] binderfs: fix error return code in binderfs_fill_super()
-Message-Id: <1547635379-63581-1-git-send-email-weiyongjun1@huawei.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sun, 06 Jan 2019 01:41:06 +0000
+Subject: Re: [PATCH] scripts/coccinelle: check for redeclaration
+Message-Id: <CAK7LNATBxp8osBd7np5p7m699CaUVHD--r_-5-dCQvdJpQBpzg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547635161-62311-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1547635161-62311-1-git-send-email-weiyongjun1@huawei.com>
+References: <1546008541-3175-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546008541-3175-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, maco@android.com, joel@joelfernandes.org, christian@brauner.io
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, "Jason A . Donenfeld" <zx2c4@kernel.org>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, cocci@systeme.lip6.fr
 
-Fix to return a negative error code -ENOMEM from the new_inode() and
-d_make_root() error handling cases instead of 0, as done elsewhere in
-this function.
+On Sat, Dec 29, 2018 at 10:32 AM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>
+> Avoid reporting on the use of an iterator index variable when
+> the variable is redeclared.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
 
-Fixes: 849d540ddfcd ("binderfs: implement "max" mount option")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Christian Brauner <christian@brauner.io>
----
-v1 -> v2: move 'ret = -ENOMEM' out of if
-v2 -> v3: use correct fixes commit
-v3 -> v4: add reviewed-by
----
- drivers/android/binderfs.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 9518e2e..e4ff4c3 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -518,6 +518,7 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	sb->s_fs_info = info;
- 
-+	ret = -ENOMEM;
- 	inode = new_inode(sb);
- 	if (!inode)
- 		goto err_without_dentry;
+Applied to linux-kbuild. Thanks!
+
+
+>  scripts/coccinelle/iterators/use_after_iter.cocci |    3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/scripts/coccinelle/iterators/use_after_iter.cocci b/scripts/coccinelle/iterators/use_after_iter.cocci
+> index ce8cc9c..66a1140 100644
+> --- a/scripts/coccinelle/iterators/use_after_iter.cocci
+> +++ b/scripts/coccinelle/iterators/use_after_iter.cocci
+> @@ -35,6 +35,7 @@ iterator name hlist_for_each_entry_from;
+>  iterator name hlist_for_each_entry_safe;
+>  statement S;
+>  position p1,p2;
+> +type T;
+>  @@
+>
+>  (
+> @@ -125,6 +126,8 @@ sizeof(<+...c...+>)
+>  |
+>   &c->member
+>  |
+> +T c;
+> +|
+>  c = E
+>  |
+>  *c@p2
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
