@@ -1,35 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Jan 2019 17:10:25 +0000
-Subject: [PATCH] scsi: gdth: fix indentation issue, remove a tab
-Message-Id: <20190104171025.8448-1-colin.king@canonical.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sun, 06 Jan 2019 01:41:18 +0000
+Subject: Re: [PATCH] scripts: coccinelle: boolinit: drop warnings on named constants
+Message-Id: <CAK7LNARH8-96wcZhMmgZCzxQCMQpQPaqmDHVSYbGkHnHhjQtCw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1546064056-15569-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546064056-15569-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Achim Leubner <achim_leubner@adaptec.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, cocci@systeme.lip6.fr
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, Dec 29, 2018 at 10:14 PM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>
+> Coccinelle doesn't always have access to the values of named
+> (#define) constants, and they may likely often be bound to true
+> and false values anyway, resulting in false positives.  So stop
+> warning about them.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A goto statement is indented incorrectly, fix this by removing a tab.
+Applied to linux-kbuild. Thanks!
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/gdth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index 194c294f9b6c..159a4e301c4d 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -5039,7 +5039,7 @@ static int gdth_pci_probe_one(gdth_pci_str *pcistr, gdth_ha_str **ha_out)
- 		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) {
- 			printk(KERN_WARNING "GDT-PCI %d: "
- 				"Unable to set 32-bit DMA\n", ha->hanum);
--				goto out_free_coal_stat;
-+			goto out_free_coal_stat;
- 		}
- 	} else {
- 		shp->max_cmd_len = 16;
+> ---
+>  scripts/coccinelle/misc/boolinit.cocci |    5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/scripts/coccinelle/misc/boolinit.cocci b/scripts/coccinelle/misc/boolinit.cocci
+> index b0584a3..aabb581 100644
+> --- a/scripts/coccinelle/misc/boolinit.cocci
+> +++ b/scripts/coccinelle/misc/boolinit.cocci
+> @@ -136,9 +136,14 @@ position p1;
+>  @r4 depends on !patch@
+>  bool b;
+>  position p2;
+> +identifier i;
+>  constant c != {0,1};
+>  @@
+> +(
+> + b = i
+> +|
+>  *b@p2 = c
+> +)
+>
+>  @script:python depends on org@
+>  p << r1.p;
+>
+
+
 -- 
-2.19.1
+Best Regards
+Masahiro Yamada
