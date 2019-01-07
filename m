@@ -1,31 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 07 Jan 2019 18:41:48 +0000
+From: "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+Date: Mon, 07 Jan 2019 22:21:47 +0000
 Subject: Re: [PATCH 2/2] xprtrdma: Double free in rpcrdma_sendctxs_create()
-Message-Id: <20190107184148.GC3253@kadam>
+Message-Id: <d3c36bfdf67dd7f6774f3ff7849a8392e14793d1.camel@netapp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190105130648.GC3288@kadam>
- <0CEEB35A-2083-4888-9035-8A9ADF22E8E3@oracle.com>
-In-Reply-To: <0CEEB35A-2083-4888-9035-8A9ADF22E8E3@oracle.com>
+         <0CEEB35A-2083-4888-9035-8A9ADF22E8E3@oracle.com>
+         <20190107172253.GA7196@fieldses.org>
+In-Reply-To: <20190107172253.GA7196@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Bruce Fields <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "bfields@fieldses.org" <bfields@fieldses.org>, "chuck.lever@oracle.com" <chuck.lever@oracle.com>
+Cc: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "jlayton@kernel.org" <jlayton@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Sat, Jan 05, 2019 at 11:24:45AM -0500, Chuck Lever wrote:
-> 
-> > On Jan 5, 2019, at 8:06 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > 
-> > The clean up is handled by the caller, rpcrdma_buffer_create(), so this
-> > call to rpcrdma_sendctxs_destroy() leads to a double free.
-> 
-> True. This fix is adequate, but I'm wondering if rpcrdma_sendctxs_destroy
-> should be made more careful about being called twice. Hm.
-> 
-
-I actually wrote the patch like that originally, but then this way made
-for an easier patch description so I re-wrote it.  Let me send the other
-patch and you can apply that or both if you want.
-
-regards,
-dan carpenter
+DQpPbiBNb24sIDIwMTktMDEtMDcgYXQgMTI6MjIgLTA1MDAsIEJydWNlIEZpZWxkcyB3cm90ZToN
+Cj4gT24gU2F0LCBKYW4gMDUsIDIwMTkgYXQgMTE6MjQ6NDVBTSAtMDUwMCwgQ2h1Y2sgTGV2ZXIg
+d3JvdGU6DQo+ID4gPiBPbiBKYW4gNSwgMjAxOSwgYXQgODowNiBBTSwgRGFuIENhcnBlbnRlciA8
+ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiA+ID4gd3JvdGU6DQo+ID4gPiANCj4gPiA+IFRo
+ZSBjbGVhbiB1cCBpcyBoYW5kbGVkIGJ5IHRoZSBjYWxsZXIsIHJwY3JkbWFfYnVmZmVyX2NyZWF0
+ZSgpLCBzbyB0aGlzDQo+ID4gPiBjYWxsIHRvIHJwY3JkbWFfc2VuZGN0eHNfZGVzdHJveSgpIGxl
+YWRzIHRvIGEgZG91YmxlIGZyZWUuDQo+ID4gDQo+ID4gVHJ1ZS4gVGhpcyBmaXggaXMgYWRlcXVh
+dGUsIGJ1dCBJJ20gd29uZGVyaW5nIGlmIHJwY3JkbWFfc2VuZGN0eHNfZGVzdHJveQ0KPiA+IHNo
+b3VsZCBiZSBtYWRlIG1vcmUgY2FyZWZ1bCBhYm91dCBiZWluZyBjYWxsZWQgdHdpY2UuIEhtLg0K
+PiA+IA0KPiA+IFJldmlld2VkLWJ5OiBDaHVjayBMZXZlciA8Y2h1Y2subGV2ZXJAb3JhY2xlLmNv
+bT4NCj4gDQo+IEknbSBhc3N1bWluZyBUcm9uZCBvciBBbm5hIHdpbGwgcGljayB0aGlzIHVwLi0t
+Yi4NCg0KWWVhaCwgSSdsbCB0YWtlIHRoaXMgb25lIGFuZCAxLzIgZm9yIGEgNS4wLXJjLiAgSSBt
+aWdodCBzYXZlIHRoZSBhZGRpdGlvbmFsDQpjbGVhbnVwIHBhdGNoIERhbiBzZW50IGZvciA1LjEN
+Cg0KQW5uYQ0KDQo+IA0KPiA+IA0KPiA+ID4gRml4ZXM6IGFlNzI5NTBhYmY5OSAoInhwcnRyZG1h
+OiBBZGQgZGF0YSBzdHJ1Y3R1cmUgdG8gbWFuYWdlIFJETUEgU2VuZA0KPiA+ID4gYXJndW1lbnRz
+IikNCj4gPiA+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3Jh
+Y2xlLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gbmV0L3N1bnJwYy94cHJ0cmRtYS92ZXJicy5jIHwg
+NiArLS0tLS0NCj4gPiA+IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgNSBkZWxldGlv
+bnMoLSkNCj4gPiA+IA0KPiA+ID4gZGlmZiAtLWdpdCBhL25ldC9zdW5ycGMveHBydHJkbWEvdmVy
+YnMuYyBiL25ldC9zdW5ycGMveHBydHJkbWEvdmVyYnMuYw0KPiA+ID4gaW5kZXggM2RkZTA1ODky
+YzhlLi40OTk0ZTc1OTQ1YjggMTAwNjQ0DQo+ID4gPiAtLS0gYS9uZXQvc3VucnBjL3hwcnRyZG1h
+L3ZlcmJzLmMNCj4gPiA+ICsrKyBiL25ldC9zdW5ycGMveHBydHJkbWEvdmVyYnMuYw0KPiA+ID4g
+QEAgLTg0NSwxNyArODQ1LDEzIEBAIHN0YXRpYyBpbnQgcnBjcmRtYV9zZW5kY3R4c19jcmVhdGUo
+c3RydWN0DQo+ID4gPiBycGNyZG1hX3hwcnQgKnJfeHBydCkNCj4gPiA+IAlmb3IgKGkgPSAwOyBp
+IDw9IGJ1Zi0+cmJfc2NfbGFzdDsgaSsrKSB7DQo+ID4gPiAJCXNjID0gcnBjcmRtYV9zZW5kY3R4
+X2NyZWF0ZSgmcl94cHJ0LT5yeF9pYSk7DQo+ID4gPiAJCWlmICghc2MpDQo+ID4gPiAtCQkJZ290
+byBvdXRfZGVzdHJveTsNCj4gPiA+ICsJCQlyZXR1cm4gLUVOT01FTTsNCj4gPiA+IA0KPiA+ID4g
+CQlzYy0+c2NfeHBydCA9IHJfeHBydDsNCj4gPiA+IAkJYnVmLT5yYl9zY19jdHhzW2ldID0gc2M7
+DQo+ID4gPiAJfQ0KPiA+ID4gDQo+ID4gPiAJcmV0dXJuIDA7DQo+ID4gPiAtDQo+ID4gPiAtb3V0
+X2Rlc3Ryb3k6DQo+ID4gPiAtCXJwY3JkbWFfc2VuZGN0eHNfZGVzdHJveShidWYpOw0KPiA+ID4g
+LQlyZXR1cm4gLUVOT01FTTsNCj4gPiA+IH0NCj4gPiA+IA0KPiA+ID4gLyogVGhlIHNlbmRjdHgg
+cXVldWUgaXMgbm90IGd1YXJhbnRlZWQgdG8gaGF2ZSBhIHNpemUgdGhhdCBpcyBhDQo+ID4gPiAt
+LSANCj4gPiA+IDIuMTcuMQ0KPiA+ID4gDQo+ID4gDQo+ID4gLS0NCj4gPiBDaHVjayBMZXZlcg0K
+PiA+IA0KPiA+IA0K
