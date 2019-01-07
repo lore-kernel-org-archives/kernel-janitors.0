@@ -1,167 +1,83 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 07 Jan 2019 23:22:49 +0000
-Subject: [PATCH] staging: rtl8192e: fix various indentation issues
-Message-Id: <20190107232249.13590-1-colin.king@canonical.com>
+Date: Mon, 07 Jan 2019 22:59:28 +0000
+Subject: [PATCH] i40e: clean up several indentation issues
+Message-Id: <20190107225928.12855-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S . Miller" <davem@davemloft.net>, devel@driverdev.osuosl.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are several statements that have indentation issues, fix these.
+There are several statements that have incorrect levels of indentation,
+fix these.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 8 ++++----
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c   | 6 +++---
- drivers/staging/rtl8192e/rtl8192e/rtl_dm.c     | 2 +-
- drivers/staging/rtl8192e/rtl8192e/rtl_wx.c     | 2 +-
- drivers/staging/rtl8192e/rtl819x_BAProc.c      | 6 +++---
- drivers/staging/rtl8192e/rtllib_crypt_tkip.c   | 2 +-
- drivers/staging/rtl8192e/rtllib_rx.c           | 2 +-
- 7 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_ethtool.c     | 8 ++++----
+ drivers/net/ethernet/intel/i40e/i40e_main.c        | 6 +++---
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-index 1c6ed5b2a6f9..19bb04b3f097 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-@@ -660,9 +660,9 @@ static void _rtl92e_hwconfig(struct net_device *dev)
- 	case WIRELESS_MODE_AUTO:
- 	case WIRELESS_MODE_N_24G:
- 		regBwOpMode = BW_OPMODE_20MHZ;
--			regRATR = RATE_ALL_CCK | RATE_ALL_OFDM_AG |
--				  RATE_ALL_OFDM_1SS | RATE_ALL_OFDM_2SS;
--			regRRSR = RATE_ALL_CCK | RATE_ALL_OFDM_AG;
-+		regRATR = RATE_ALL_CCK | RATE_ALL_OFDM_AG |
-+			  RATE_ALL_OFDM_1SS | RATE_ALL_OFDM_2SS;
-+		regRRSR = RATE_ALL_CCK | RATE_ALL_OFDM_AG;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+index a6bc7847346b..fe84f054f0c1 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+@@ -2440,10 +2440,10 @@ static int i40e_set_phys_id(struct net_device *netdev,
+ 	default:
  		break;
- 	case WIRELESS_MODE_N_5G:
- 		regBwOpMode = BW_OPMODE_5G;
-@@ -961,7 +961,7 @@ static void _rtl92e_net_update(struct net_device *dev)
- 	net = &priv->rtllib->current_network;
- 	rtl92e_config_rate(dev, &rate_config);
- 	priv->dot11CurrentPreambleMode = PREAMBLE_AUTO;
--	 priv->basic_rate = rate_config &= 0x15f;
-+	priv->basic_rate = rate_config &= 0x15f;
- 	rtl92e_writew(dev, BSSIDR, *(u16 *)net->bssid);
- 	rtl92e_writel(dev, BSSIDR + 2, *(u32 *)(net->bssid + 2));
+ 	}
+-		if (ret)
+-			return -ENOENT;
+-		else
+-			return 0;
++	if (ret)
++		return -ENOENT;
++	else
++		return 0;
+ }
  
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-index 96f265eee007..7031f6833b8b 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -436,7 +436,7 @@ static int _rtl92e_qos_handle_probe_response(struct r8192_priv *priv,
- 				network->qos_data.param_count)) {
- 			network->qos_data.old_param_count  				network->qos_data.param_count;
--	priv->rtllib->wmm_acm = network->qos_data.wmm_acm;
-+			priv->rtllib->wmm_acm = network->qos_data.wmm_acm;
- 			schedule_work(&priv->qos_activate);
- 			RT_TRACE(COMP_QOS,
- 				 "QoS parameters change call qos_activate\n");
-@@ -1573,7 +1573,7 @@ static void _rtl92e_free_rx_ring(struct net_device *dev)
- 			pci_unmap_single(priv->pdev,
- 				*((dma_addr_t *)skb->cb),
- 				priv->rxbuffersize, PCI_DMA_FROMDEVICE);
--				kfree_skb(skb);
-+			kfree_skb(skb);
- 		}
+ /* NOTE: i40e hardware uses a conversion factor of 2 for Interrupt
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 4d40878e395a..76dac65bf0ca 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -3610,7 +3610,7 @@ static void i40e_configure_msi_and_legacy(struct i40e_vsi *vsi)
+ 		      (I40E_QUEUE_TYPE_TX
+ 		       << I40E_QINT_TQCTL_NEXTQ_TYPE_SHIFT);
  
- 		pci_free_consistent(priv->pdev,
-@@ -2515,7 +2515,7 @@ static int _rtl92e_pci_probe(struct pci_dev *pdev,
- 	if (dev_alloc_name(dev, ifname) < 0) {
- 		RT_TRACE(COMP_INIT,
- 			 "Oops: devname already taken! Trying wlan%%d...\n");
--			dev_alloc_name(dev, ifname);
-+		dev_alloc_name(dev, ifname);
+-	       wr32(hw, I40E_QINT_TQCTL(nextqp), val);
++		wr32(hw, I40E_QINT_TQCTL(nextqp), val);
  	}
  
- 	RT_TRACE(COMP_INIT, "Driver probe completed1\n");
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-index 9bf95bd0ad13..157bcee34067 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-@@ -996,7 +996,7 @@ static void _rtl92e_dm_check_tx_power_tracking_tssi(struct net_device *dev)
- 	tx_power_track_counter++;
- 
- 
--	 if (tx_power_track_counter >= 180) {
-+	if (tx_power_track_counter >= 180) {
- 		schedule_delayed_work(&priv->txpower_tracking_wq, 0);
- 		tx_power_track_counter = 0;
- 	}
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-index 843e874b8a06..1899dbb2c957 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-@@ -738,7 +738,7 @@ static int _rtl92e_wx_set_enc(struct net_device *dev,
- 
- 		else if (wrqu->encoding.length = 0xd) {
- 			ieee->pairwise_key_type = KEY_TYPE_WEP104;
--				rtl92e_enable_hw_security_config(dev);
-+			rtl92e_enable_hw_security_config(dev);
- 			rtl92e_set_key(dev, key_idx, key_idx, KEY_TYPE_WEP104,
- 				       zero_addr[key_idx], 0, hwkey);
- 			rtl92e_set_swcam(dev, key_idx, key_idx, KEY_TYPE_WEP104,
-diff --git a/drivers/staging/rtl8192e/rtl819x_BAProc.c b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-index 687dbb04ed2e..2d330d2bbf6d 100644
---- a/drivers/staging/rtl8192e/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192e/rtl819x_BAProc.c
-@@ -139,7 +139,7 @@ static struct sk_buff *rtllib_DELBA(struct rtllib_device *ieee, u8 *dst,
- {
- 	union delba_param_set DelbaParamSet;
- 	struct sk_buff *skb = NULL;
--	 struct rtllib_hdr_3addr *Delba = NULL;
-+	struct rtllib_hdr_3addr *Delba = NULL;
- 	u8 *tag = NULL;
- 	u16 len = 6 + ieee->tx_headroom;
- 
-@@ -316,7 +316,7 @@ int rtllib_rx_ADDBAReq(struct rtllib_device *ieee, struct sk_buff *skb)
- 
- int rtllib_rx_ADDBARsp(struct rtllib_device *ieee, struct sk_buff *skb)
- {
--	 struct rtllib_hdr_3addr *rsp = NULL;
-+	struct rtllib_hdr_3addr *rsp = NULL;
- 	struct ba_record *pPendingBA, *pAdmittedBA;
- 	struct tx_ts_record *pTS = NULL;
- 	u8 *dst = NULL, *pDialogToken = NULL, *tag = NULL;
-@@ -420,7 +420,7 @@ int rtllib_rx_ADDBARsp(struct rtllib_device *ieee, struct sk_buff *skb)
- 
- int rtllib_rx_DELBA(struct rtllib_device *ieee, struct sk_buff *skb)
- {
--	 struct rtllib_hdr_3addr *delba = NULL;
-+	struct rtllib_hdr_3addr *delba = NULL;
- 	union delba_param_set *pDelBaParamSet = NULL;
- 	u8 *dst = NULL;
- 
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-index f38f1f74fcd6..55da8c9dfe50 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-@@ -285,7 +285,7 @@ static void tkip_mixing_phase2(u8 *WEPSeed, const u8 *TK, const u16 *TTAK,
- static int rtllib_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- {
- 	struct rtllib_tkip_data *tkey = priv;
--		int len;
-+	int len;
- 	u8 *pos;
- 	struct rtllib_hdr_4addr *hdr;
- 	struct cb_desc *tcb_desc = (struct cb_desc *)(skb->cb +
-diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index fa580ce1cf43..501ded929329 100644
---- a/drivers/staging/rtl8192e/rtllib_rx.c
-+++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -913,7 +913,7 @@ static size_t rtllib_rx_get_hdrlen(struct rtllib_device *ieee,
- 		rx_stats->bContainHTC = true;
+ 	val = I40E_QINT_TQCTL_CAUSE_ENA_MASK		      |
+@@ -8131,8 +8131,8 @@ static int i40e_handle_lldp_event(struct i40e_pf *pf,
+ 		i40e_service_event_schedule(pf);
+ 	} else {
+ 		i40e_pf_unquiesce_all_vsi(pf);
+-	set_bit(__I40E_CLIENT_SERVICE_REQUESTED, pf->state);
+-	set_bit(__I40E_CLIENT_L2_CHANGE, pf->state);
++		set_bit(__I40E_CLIENT_SERVICE_REQUESTED, pf->state);
++		set_bit(__I40E_CLIENT_L2_CHANGE, pf->state);
  	}
  
--	 if (RTLLIB_QOS_HAS_SEQ(fc))
-+	if (RTLLIB_QOS_HAS_SEQ(fc))
- 		rx_stats->bIsQosData = true;
+ exit:
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 2ac23ebfbf31..46054634e68c 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -3384,8 +3384,8 @@ static int i40e_vc_add_cloud_filter(struct i40e_vf *vf, u8 *msg)
+ 		dev_info(&pf->pdev->dev,
+ 			 "VF %d: Invalid input/s, can't apply cloud filter\n",
+ 			 vf->vf_id);
+-			aq_ret = I40E_ERR_PARAM;
+-			goto err;
++		aq_ret = I40E_ERR_PARAM;
++		goto err;
+ 	}
  
- 	return hdrlen;
+ 	cfilter = kzalloc(sizeof(*cfilter), GFP_KERNEL);
 -- 
 2.19.1
