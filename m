@@ -1,24 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 16 Jan 2019 22:05:55 +0000
-Subject: Re: [PATCH] net: sungem: fix indentation, remove a tab
-Message-Id: <20190116.140555.669632993872320742.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Jan 2019 17:15:15 +0000
+Subject: [PATCH] cifs: fix memory leak of an allocated cifs_ntsd structure
+Message-Id: <20190107171515.4537-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190114154125.18455-1-colin.king@canonical.com>
-In-Reply-To: <20190114154125.18455-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 14 Jan 2019 15:41:25 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The declaration of variable 'found' is one level too deep, fix this by
-> removing a tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The call to SMB2_queary_acl can allocate memory to pntsd and also
+return a failure via a call to SMB2_query_acl (and then query_info).
+This occurs when query_info allocates the structure and then in
+query_info the call to smb2_validate_and_copy_iov fails. Currently the
+failure just returns without kfree'ing pntsd hence causing a memory
+leak.  Fix this by kfree'ing pntsd before returning.
 
-Applied to net-next.
+Detected by CoverityScan, CID#1457059 ("Resource Leak")
+
+Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getacl functions")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smb2ops.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index cf7eb891804f..6d71958ad2cb 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2238,8 +2238,10 @@ get_smb2_acl_by_fid(struct cifs_sb_info *cifs_sb,
+ 	cifs_put_tlink(tlink);
+ 
+ 	cifs_dbg(FYI, "%s: rc = %d ACL len %d\n", __func__, rc, *pacllen);
+-	if (rc)
++	if (rc) {
++		kfree(pntsd);
+ 		return ERR_PTR(rc);
++	}
+ 	return pntsd;
+ 
+ }
+-- 
+2.19.1
