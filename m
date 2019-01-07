@@ -1,32 +1,39 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Wed, 02 Jan 2019 06:16:04 +0000
-Subject: Re: [PATCH 17/20] dmaengine: pl330: drop useless LIST_HEAD
-Message-Id: <20190102060404.GH7581@vkoul-mobl>
+From: Manish Rangankar <mrangankar@marvell.com>
+Date: Mon, 07 Jan 2019 11:01:19 +0000
+Subject: RE: [EXT] [PATCH] scsi: bnx2i: fix indentation issue, remove a tab
+Message-Id: <DM5PR18MB2134A42C00C81B9C2168AAEFD8890@DM5PR18MB2134.namprd18.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190104170224.8147-1-colin.king@canonical.com>
+In-Reply-To: <20190104170224.8147-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Dan Williams <dan.j.williams@intel.com>, kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "QLogic-Storage-Upstream@qlogic.com" <QLogic-Storage-Upstream@qlogic.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 23-12-18, 09:57, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
-> 
-> The variable has not been used since the function was introduced
-> in 740aa95703c5 ("dmaengine: pl330: Split device_control").
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
-
-Applied, thanks
-
--- 
-~Vinod
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIDxjb2xpbi5r
+aW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IEZyaWRheSwgSmFudWFyeSA0LCAyMDE5IDEwOjMy
+IFBNDQo+IFRvOiBRTG9naWMtU3RvcmFnZS1VcHN0cmVhbUBxbG9naWMuY29tOyBKYW1lcyBFIC4g
+SiAuIEJvdHRvbWxleQ0KPiA8amVqYkBsaW51eC5pYm0uY29tPjsgTWFydGluIEsgLiBQZXRlcnNl
+biA8bWFydGluLnBldGVyc2VuQG9yYWNsZS5jb20+Ow0KPiBsaW51eC1zY3NpQHZnZXIua2VybmVs
+Lm9yZw0KPiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVs
+QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbRVhUXSBbUEFUQ0hdIHNjc2k6IGJueDJpOiBm
+aXggaW5kZW50YXRpb24gaXNzdWUsIHJlbW92ZSBhIHRhYg0KPiANCj4gRXh0ZXJuYWwgRW1haWwN
+Cj4gDQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gRXh0ZXJuYWwgRW1haWwNCj4gDQo+IEZyb206IENvbGlu
+IElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGUgcmV0dXJuIHN0
+YXRlbWVudCBpcyBpbmRlbnRlZCBpbmNvcnJlY3RseSwgZml4IHRoaXMgYnkgcmVtb3ZpbmcgYSBz
+aW5nbGUgdGFiLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtp
+bmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3Njc2kvYm54MmkvYm54MmlfaXNj
+c2kuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlv
+bigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS9ibngyaS9ibngyaV9pc2NzaS5j
+IGIvZHJpdmVycy9zY3NpL2JueDJpL2JueDJpX2lzY3NpLmMNCj4gaW5kZXggNjljNzU0MjZjNWVi
+Li5jNWZhNWYzYjAwZTkgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc2NzaS9ibngyaS9ibngyaV9p
+c2NzaS5jDQo+ICsrKyBiL2RyaXZlcnMvc2NzaS9ibngyaS9ibngyaV9pc2NzaS5jDQo+IEBAIC01
+NzcsNyArNTc3LDcgQEAgc3RhdGljIHZvaWQgYm54MmlfZnJlZV9tcF9iZHQoc3RydWN0IGJueDJp
+X2hiYSAqaGJhKQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGJhLT5kdW1t
+eV9idWZmZXIsIGhiYS0+ZHVtbXlfYnVmX2RtYSk7DQo+ICAgICAgICAgICAgICAgICBoYmEtPmR1
+bW15X2J1ZmZlciA9IE5VTEw7DQo+ICAgICAgICAgfQ0KPiAtICAgICAgICAgICAgICAgcmV0dXJu
+Ow0KPiArICAgICAgIHJldHVybjsNCj4gIH0NCj4gDQo+ICAvKioNCj4gLS0NCj4gMi4xOS4xDQoN
+ClRoYW5rcw0KQWNrZWQtYnk6IE1hbmlzaCBSYW5nYW5rYXIgPG1yYW5nYW5rYXJAbWFydmVsbC5j
+b20+DQoNCg=
