@@ -1,25 +1,46 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 14 Jan 2019 07:40:17 +0000
-Subject: Generating identifiers similar to UUIDs but without dashes
-Message-Id: <c7463786-82f1-01c8-7f47-e784f2602209@web.de>
+From: <Yasunari.Takiguchi@sony.com>
+Date: Mon, 07 Jan 2019 02:25:03 +0000
+Subject: RE: [PATCH][next] media: cxd2880-spi: fix two memory leaks of dvb_spi
+Message-Id: <02699364973B424C83A42A84B04FDA850B34D9CB@JPYOKXMS113.jp.sony.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181222141226.15775-1-colin.king@canonical.com>
+In-Reply-To: <20181222141226.15775-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: colin.king@canonical.com, mchehab@kernel.org, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Yasunari.Takiguchi@sony.com
 
-Hello,
-
-The file “/proc/sys/kernel/random/uuid” provides a bit of useful data.
-The formal definition of the string representation for universally unique
-identifiers requires the use of four dashes for the concatenation of fields.
-https://tools.ietf.org/html/rfc4122#page-4
-https://stackoverflow.com/questions/24481801/is-uuid-without-dashes-hyphens-valid#answer-24484051
-
-Now I am looking again for possibilities to generate reasonably unique
-identifiers also without these dashes.
-Can any data processing benefit from the avoidance of such extra characters?
-
-Regards,
-Markus
+SGkgQ29saW4NCg0KVGhhbmtzIGZvciBmaW5kaW5nIHRoYXQuDQpBY2tlZC1ieTogWWFzdW5hcmkg
+VGFraWd1Y2hpIDxZYXN1bmFyaS5UYWtpZ3VjaGlAc29ueS5jb20+44CADQoNClRha2lndWNoaQ0K
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IENvbGluIEtpbmcgW21haWx0
+bzpjb2xpbi5raW5nQGNhbm9uaWNhbC5jb21dDQo+IFNlbnQ6IFNhdHVyZGF5LCBEZWNlbWJlciAy
+MiwgMjAxOCAxMToxMiBQTQ0KPiBUbzogVGFraWd1Y2hpLCBZYXN1bmFyaSAoU1NTKTsgTWF1cm8g
+Q2FydmFsaG8gQ2hlaGFiOw0KPiBsaW51eC1tZWRpYUB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtl
+cm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmcNCj4gU3ViamVjdDogW1BBVENIXVtuZXh0XSBtZWRpYTogY3hkMjg4MC1zcGk6IGZpeCB0d28g
+bWVtb3J5IGxlYWtzIG9mIGR2Yl9zcGkNCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xp
+bi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGVyZSBhcmUgdHdvIHJldHVybiBwYXRocyB0
+aGF0IGRvIG5vdCBrZnJlZSBkdmJfc3BpLiBGaXggdGhlIG1lbW9yeQ0KPiBsZWFrcyBieSByZXR1
+cm5pbmcgdmlhIHRoZSBleGl0IGxhYmVsIGZhaWxfYWRhcHRlciB0aGF0IHdpbGwgZnJlZQ0KPiBk
+dmlfc3BpLg0KPiANCj4gRGV0ZWN0ZWQgYnkgQ292ZXJpdHlTY2FuLCBDSUQjMTQ3NTk5MSAoIlJl
+c291cmNlIExlYWsiKQ0KPiANCj4gRml4ZXM6IGNiNDk2Y2Q0NzJhZiAoIm1lZGlhOiBjeGQyODgw
+LXNwaTogQWRkIG9wdGlvbmFsIHZjYyByZWd1bGF0b3IiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xp
+biBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMv
+bWVkaWEvc3BpL2N4ZDI4ODAtc3BpLmMgfCAxMCArKysrKystLS0tDQo+ICAxIGZpbGUgY2hhbmdl
+ZCwgNiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvbWVkaWEvc3BpL2N4ZDI4ODAtc3BpLmMNCj4gYi9kcml2ZXJzL21lZGlhL3NwaS9jeGQy
+ODgwLXNwaS5jDQo+IGluZGV4IGQ1YzQzM2UyMGQ0YS4uMzQ5OWM5MGRjNjk1IDEwMDY0NA0KPiAt
+LS0gYS9kcml2ZXJzL21lZGlhL3NwaS9jeGQyODgwLXNwaS5jDQo+ICsrKyBiL2RyaXZlcnMvbWVk
+aWEvc3BpL2N4ZDI4ODAtc3BpLmMNCj4gQEAgLTUyMiwxMyArNTIyLDE1IEBAIGN4ZDI4ODBfc3Bp
+X3Byb2JlKHN0cnVjdCBzcGlfZGV2aWNlICpzcGkpDQo+IA0KPiAgCWR2Yl9zcGktPnZjY19zdXBw
+bHkgPSBkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0aW9uYWwoJnNwaS0+ZGV2LA0KPiAidmNjIik7DQo+
+ICAJaWYgKElTX0VSUihkdmJfc3BpLT52Y2Nfc3VwcGx5KSkgew0KPiAtCQlpZiAoUFRSX0VSUihk
+dmJfc3BpLT52Y2Nfc3VwcGx5KSA9PSAtRVBST0JFX0RFRkVSKQ0KPiAtCQkJcmV0dXJuIC1FUFJP
+QkVfREVGRVI7DQo+ICsJCWlmIChQVFJfRVJSKGR2Yl9zcGktPnZjY19zdXBwbHkpID09IC1FUFJP
+QkVfREVGRVIpIHsNCj4gKwkJCXJldCA9IC1FUFJPQkVfREVGRVI7DQo+ICsJCQlnb3RvIGZhaWxf
+YWRhcHRlcjsNCj4gKwkJfQ0KPiAgCQlkdmJfc3BpLT52Y2Nfc3VwcGx5ID0gTlVMTDsNCj4gIAl9
+IGVsc2Ugew0KPiAgCQlyZXQgPSByZWd1bGF0b3JfZW5hYmxlKGR2Yl9zcGktPnZjY19zdXBwbHkp
+Ow0KPiAtCQlpZiAocmV0KQ0KPiAtCQkJcmV0dXJuIHJldDsNCj4gKwkJaWYgKHJldCkNCj4gKwkJ
+CWdvdG8gZmFpbF9hZGFwdGVyOw0KPiAgCX0NCj4gDQo+ICAJZHZiX3NwaS0+c3BpID0gc3BpOw0K
+PiAtLQ0KPiAyLjE5LjENCg0K
