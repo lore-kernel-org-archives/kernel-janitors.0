@@ -1,26 +1,38 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Mon, 14 Jan 2019 10:12:07 +0000
-Subject: Re: powerpc/powernv/npu: Allocate enough memory in pnv_try_setup_npu_table_group()
-Message-Id: <43dTm76tdhz9sDB@ozlabs.org>
+From: Juergen Gross <jgross@suse.com>
+Date: Tue, 08 Jan 2019 06:58:07 +0000
+Subject: Re: [PATCH 13/20] xenbus: drop useless LIST_HEAD
+Message-Id: <168d6809-80e0-d639-19a1-eab2ee47765e@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190109102328.GB5476@kadam>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1545555435-24576-14-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-14-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc: Alistair Popple <alistair@popple.id.au>, Mark Hairgrove <mhairgrove@nvidia.com>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-09 at 10:23:29 UTC, Dan Carpenter wrote:
-> There is a typo so we accidentally allocate enough memory for a pointer
-> when we wanted to allocate enough for a struct.
+On 23/12/2018 09:57, Julia Lawall wrote:
+> Drop LIST_HEAD where the variable it declares is never used.
 > 
-> Fixes: 0bd971676e68 ("powerpc/powernv/npu: Add compound IOMMU groups")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> Acked-by: Balbir Singh <bsingharora@gmail.com>
+> The declarations were introduced with the file, but the declared
+> variables were not used.
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> identifier x;
+> @@
+> - LIST_HEAD(x);
+>   ... when != x
+> // </smpl>
+> 
+> Fixes: 1107ba885e46 ("xen: add xenfs to allow usermode <-> Xen interaction")
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied to powerpc fixes, thanks.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-https://git.kernel.org/powerpc/c/d7b6cc199b2dea602b4a2a681cf6d322
 
-cheers
+Juergen
