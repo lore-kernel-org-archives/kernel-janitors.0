@@ -1,49 +1,47 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 22 Jan 2019 07:47:54 +0000
-Subject: Re: [PATCH -next] mmc: sdhci-esdhc-imx: fix return value check in sdhci_esdhc_imx_probe()
-Message-Id: <CAPDyKFo3rj3MbZfUUSwj64Gg-jdkJND0ERDjW-ELUVrjR2Go5w@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 09 Jan 2019 12:10:37 +0000
+Subject: [PATCH -next] dmaengine: xilinx_dma: remove set but not used variable 'tail_segment'
+Message-Id: <1547035837-87800-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547617491-60322-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1547617491-60322-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, BOUGH CHEN <haibo.chen@nxp.com>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Michal Simek <michal.simek@xilinx.com>, Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>, Andrea Merello <andrea.merello@gmail.com>, Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On Wed, 16 Jan 2019 at 06:38, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> In case of error, the function devm_kzalloc() returns NULL pointer not
-> ERR_PTR(). The IS_ERR() test in the return value check should be
-> replaced with NULL test.
->
-> Fixes: fadac7488064 ("mmc: sdhci-esdhc-imx: add CMDQ support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied for next, thanks!
+drivers/dma/xilinx/xilinx_dma.c: In function 'xilinx_vdma_start_transfer':
+drivers/dma/xilinx/xilinx_dma.c:1104:33: warning:
+ variable 'tail_segment' set but not used [-Wunused-but-set-variable]
 
-Kind regards
-Uffe
+It not used since commit b8349172b400 ("dmaengine: xilinx_dma: Drop SG support
+for VDMA IP")
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/dma/xilinx/xilinx_dma.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 75ad824..fad6007 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -1500,8 +1500,8 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
->         if (imx_data->socdata->flags & ESDHC_FLAG_CQHCI) {
->                 host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
->                 cq_host = devm_kzalloc(&pdev->dev, sizeof(*cq_host), GFP_KERNEL);
-> -               if (IS_ERR(cq_host)) {
-> -                       err = PTR_ERR(cq_host);
-> +               if (!cq_host) {
-> +                       err = -ENOMEM;
->                         goto disable_ahb_clk;
->                 }
->
->
->
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index d9431af..c8acd34 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -1101,7 +1101,6 @@ static void xilinx_vdma_start_transfer(struct xilinx_dma_chan *chan)
+ 	struct xilinx_vdma_config *config = &chan->config;
+ 	struct xilinx_dma_tx_descriptor *desc, *tail_desc;
+ 	u32 reg, j;
+-	struct xilinx_vdma_tx_segment *tail_segment;
+ 	struct xilinx_vdma_tx_segment *segment, *last = NULL;
+ 	int i = 0;
+ 
+@@ -1120,9 +1119,6 @@ static void xilinx_vdma_start_transfer(struct xilinx_dma_chan *chan)
+ 	tail_desc = list_last_entry(&chan->pending_list,
+ 				    struct xilinx_dma_tx_descriptor, node);
+ 
+-	tail_segment = list_last_entry(&tail_desc->segments,
+-				       struct xilinx_vdma_tx_segment, node);
+-
+ 	/* Configure the hardware using info in the config structure */
+ 	if (chan->has_vflip) {
+ 		reg = dma_read(chan, XILINX_VDMA_REG_ENABLE_VERTICAL_FLIP);
