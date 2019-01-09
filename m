@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 18 Jan 2019 22:03:15 +0000
-Subject: Re: [PATCH] net: vxge: fix indentation issue
-Message-Id: <20190118.140315.2111683750667863105.davem@davemloft.net>
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Wed, 09 Jan 2019 18:35:02 +0000
+Subject: Re: [PATCH -next] clk: imx: fix potential NULL dereference in imx8qxp_lpcg_clk_probe()
+Message-Id: <154705890283.15366.13108584006669963345@swboyd.mtv.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190116235910.29277-1-colin.king@canonical.com>
-In-Reply-To: <20190116235910.29277-1-colin.king@canonical.com>
+References: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jdmason@kudzu.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Jan 2019 23:59:10 +0000
-
-> From: Colin Ian King <colin.king@canonical.com>
+Quoting Wei Yongjun (2018-12-17 22:43:09)
+> platform_get_resource() may fail and return NULL, so we should
+> better check it's return value to avoid a NULL pointer dereference
+> a bit later in the code.
 > 
-> There is a goto statement that indented too deeply, fix it.
+> This is detected by Coccinelle semantic patch.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> @@
+> expression pdev, res, n, t, e, e1, e2;
+> @@
+> 
+> res = platform_get_resource(pdev, t, n);
+> + if (!res)
+> +   return -EINVAL;
+> ... when != res == NULL
+> e = devm_ioremap(e1, res->start, e2);
+> 
+> Fixes: 1e3121bfe51a ("clk: imx: add imx8qxp lpcg driver")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-Applied to net-next.
+Applied to clk-fixes
