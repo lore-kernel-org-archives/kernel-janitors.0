@@ -1,36 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Jan 2019 17:02:24 +0000
-Subject: [PATCH] scsi: bnx2i: fix indentation issue, remove a tab
-Message-Id: <20190104170224.8147-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 09 Jan 2019 03:32:05 +0000
+Subject: Re: [PATCH] scsi: bnx2i: fix indentation issue, remove a tab
+Message-Id: <yq14lai4ibu.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190104170224.8147-1-colin.king@canonical.com>
+In-Reply-To: <20190104170224.8147-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 4 Jan 2019 17:02:24 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The return statement is indented incorrectly, fix this by removing a
-single tab.
+Colin,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/bnx2i/bnx2i_iscsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The return statement is indented incorrectly, fix this by removing a
+> single tab.
 
-diff --git a/drivers/scsi/bnx2i/bnx2i_iscsi.c b/drivers/scsi/bnx2i/bnx2i_iscsi.c
-index 69c75426c5eb..c5fa5f3b00e9 100644
---- a/drivers/scsi/bnx2i/bnx2i_iscsi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_iscsi.c
-@@ -577,7 +577,7 @@ static void bnx2i_free_mp_bdt(struct bnx2i_hba *hba)
- 				  hba->dummy_buffer, hba->dummy_buf_dma);
- 		hba->dummy_buffer = NULL;
- 	}
--		return;
-+	return;
- }
- 
- /**
+Applied to 5.1/scsi-queue, thanks!
+
 -- 
-2.19.1
+Martin K. Petersen	Oracle Linux Engineering
