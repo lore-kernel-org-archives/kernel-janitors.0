@@ -1,75 +1,34 @@
-From: Liang Yang <liang.yang@amlogic.com>
-Date: Wed, 30 Jan 2019 09:43:19 +0000
-Subject: Re: [PATCH][next] mtd: rawnand: meson: fix missing assignment of ret on a call to meson_chip_buffer_
-Message-Id: <30e51df9-d1ad-9066-41e0-d8ee6aa3ad4a@amlogic.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 09 Jan 2019 08:36:51 +0000
+Subject: [PATCH -next] ASoC: Intel: bytcht_es8316: Set correct platform drvdata in snd_byt_cht_es8316_mc_prob
+Message-Id: <1547023011-8321-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190129105757.19138-1-colin.king@canonical.com>
- <aeadd16e-ed46-28f2-15de-66d1d9f1ed11@amlogic.com>
- <20190130103250.4080a3b3@xps13>
- <25109367-14bc-90b1-f0a9-ad65aac46bf8@canonical.com>
-In-Reply-To: <25109367-14bc-90b1-f0a9-ad65aac46bf8@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin Ian King <colin.king@canonical.com>, Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Miquel, Colin,
+The snd_byt_cht_es8316_mc_remove() use the platform drvdata as a type
+of 'struct byt_cht_es8316_private', but snd_byt_cht_es8316_mc_probe() set
+it to 'struct snd_soc_card', fix to pass correct platform drvdata to
+platform_set_drvdata().
 
-On 2019/1/30 17:34, Colin Ian King wrote:
-> On 30/01/2019 09:32, Miquel Raynal wrote:
->> Hi Liang, Colin,
->>
->> Liang Yang <liang.yang@amlogic.com> wrote on Wed, 30 Jan 2019 17:26:49
->> +0800:
->>
->>> Hi Colin,
->>>
->>> On 2019/1/29 18:57, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> The call to meson_chip_buffer_init is not assigning ret, however, ret
->>>> is being checked for failure. Fix this by adding in the missing assign=
-ment.
->>>>
->>>> Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAN=
-D flash controller")
->>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>> ---
->>>>    drivers/mtd/nand/raw/meson_nand.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/=
-meson_nand.c
->>>> index e858d58d97b0..b9c543d1054c 100644
->>>> --- a/drivers/mtd/nand/raw/meson_nand.c
->>>> +++ b/drivers/mtd/nand/raw/meson_nand.c
->>>> @@ -1206,7 +1206,7 @@ static int meson_nand_attach_chip(struct nand_ch=
-ip *nand)
->>>>    		dev_err(nfc->dev, "16bits bus width not supported");
->>>>    		return -EINVAL;
->>>>    	}
->>>> -	meson_chip_buffer_init(nand);
->>>> +	ret =3D meson_chip_buffer_init(nand);
->>>
->>> Looks good to me:
->>>
->>> Acked-by: Liang Yang <liang.yang@amlogic.com>
->>
->> This is nand/next material, so if you don't mind I would like to squash
->> the two fixes you sent into the original commit inserting the driver.
->=20
-> Sure, ok with me, squashing them makes sense.
->=20
-> Colin
+Fixes: 0d3e91da0750 ("ASoC: Intel: bytcht_es8316: Add external speaker mux support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/intel/boards/bytcht_es8316.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ok.
-
->>
->>
->> Thanks,
->> Miqu=C3=A8l
->>
->=20
-> .
->=20
+diff --git a/sound/soc/intel/boards/bytcht_es8316.c b/sound/soc/intel/boards/bytcht_es8316.c
+index cdf2061..42111d8 100644
+--- a/sound/soc/intel/boards/bytcht_es8316.c
++++ b/sound/soc/intel/boards/bytcht_es8316.c
+@@ -538,7 +538,7 @@ static int snd_byt_cht_es8316_mc_probe(struct platform_device *pdev)
+ 		dev_err(dev, "snd_soc_register_card failed: %d\n", ret);
+ 		return ret;
+ 	}
+-	platform_set_drvdata(pdev, &byt_cht_es8316_card);
++	platform_set_drvdata(pdev, priv);
+ 	return 0;
+ }
