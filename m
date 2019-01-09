@@ -1,33 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Jan 2019 21:35:00 +0000
-Subject: Re: [PATCH] XArray: Fix a math problem in xa_is_err()
-Message-Id: <20190115213500.GJ4504@kadam>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 09 Jan 2019 02:56:46 +0000
+Subject: [PATCH -next] mm, compaction: remove set but not used variables 'a, b, c'
+Message-Id: <1547002967-6127-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190115195241.GB1074@kadam>
- <20190115210726.GC6310@bombadil.infradead.org>
-In-Reply-To: <20190115210726.GC6310@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@techsingularity.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 01:07:26PM -0800, Matthew Wilcox wrote:
-> On Tue, Jan 15, 2019 at 10:52:41PM +0300, Dan Carpenter wrote:
-> > @@ -177,7 +177,8 @@ static inline bool xa_is_internal(const void *entry)
-> >  static inline bool xa_is_err(const void *entry)
-> >  {
-> >  	return unlikely(xa_is_internal(entry) &&
-> > -			(unsigned long)entry >= -((MAX_ERRNO << 2) + 2));
-> > +			(unsigned long)entry >> > +				(((unsigned long)(-MAX_ERRNO << 2) + 2)));
-> >  }
-> 
-> Ugh all the brackets, I'm not surprised I got it wrong.  How about this
-> instead; does it make your static checker happy?
-> 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I wasn't a super fan of that expression either...  I think your code
-will work, and if not then it's the checker which needs fixing.  Thanks!
+mm/compaction.c: In function 'compact_zone':
+mm/compaction.c:2063:22: warning:
+ variable 'c' set but not used [-Wunused-but-set-variable]
+mm/compaction.c:2063:19: warning:
+ variable 'b' set but not used [-Wunused-but-set-variable]
+mm/compaction.c:2063:16: warning:
+ variable 'a' set but not used [-Wunused-but-set-variable]
 
-regards,
-dan carpenter
+This never used since 94d5992baaa5 ("mm, compaction: finish pageblock
+scanning on contention")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ mm/compaction.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index f73fe07..529f19a 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2060,7 +2060,6 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
+ 	unsigned long last_migrated_pfn;
+ 	const bool sync = cc->mode != MIGRATE_ASYNC;
+ 	bool update_cached;
+-	unsigned long a, b, c;
+ 
+ 	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
+ 	ret = compaction_suitable(cc->zone, cc->order, cc->alloc_flags,
+@@ -2106,10 +2105,6 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
+ 			cc->whole_zone = true;
+ 	}
+ 
+-	a = cc->migrate_pfn;
+-	b = cc->free_pfn;
+-	c = (cc->free_pfn - cc->migrate_pfn) / pageblock_nr_pages;
+-
+ 	last_migrated_pfn = 0;
+ 
+ 	/*
