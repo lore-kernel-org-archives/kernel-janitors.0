@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 17 Jan 2019 23:37:54 +0000
-Subject: Re: [PATCH] wan: dscc4: fix various indentation issues
-Message-Id: <20190117.153754.1511039008931995766.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Jan 2019 10:23:29 +0000
+Subject: [PATCH] powerpc/powernv/npu: Allocate enough memory in pnv_try_setup_npu_table_group()
+Message-Id: <20190109102328.GB5476@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190116170817.22383-1-colin.king@canonical.com>
-In-Reply-To: <20190116170817.22383-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: romieu@fr.zoreil.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc: Mark Hairgrove <mhairgrove@nvidia.com>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Alistair Popple <alistair@popple.id.au>, linuxppc-dev@lists.ozlabs.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Jan 2019 17:08:17 +0000
+There is a typo so we accidentally allocate enough memory for a pointer
+when we wanted to allocate enough for a struct.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are some lines that have indentation issues, fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 0bd971676e68 ("powerpc/powernv/npu: Add compound IOMMU groups")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ arch/powerpc/platforms/powernv/npu-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to net-next.
+diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
+index d7f742ed48ba..3f58c7dbd581 100644
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -564,7 +564,7 @@ struct iommu_table_group *pnv_try_setup_npu_table_group(struct pnv_ioda_pe *pe)
+ 		}
+ 	} else {
+ 		/* Create a group for 1 GPU and attached NPUs for POWER8 */
+-		pe->npucomp = kzalloc(sizeof(pe->npucomp), GFP_KERNEL);
++		pe->npucomp = kzalloc(sizeof(*pe->npucomp), GFP_KERNEL);
+ 		table_group = &pe->npucomp->table_group;
+ 		table_group->ops = &pnv_npu_peers_ops;
+ 		iommu_register_group(table_group, hose->global_number,
+-- 
+2.17.1
