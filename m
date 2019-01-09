@@ -1,44 +1,33 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 17 Jan 2019 14:56:23 +0000
-Subject: Re: [PATCH] cw1200: fix indentation issues
-Message-Id: <1fa8b078-1db9-d109-e8e5-f05dc0e48fd6@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Jan 2019 10:50:07 +0000
+Subject: [PATCH net] selftests/txtimestamp: Fix an equals vs assign bug
+Message-Id: <20190109105007.GA14518@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190117143623.29363-1-colin.king@canonical.com>
- <87sgxrpc6q.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <87sgxrpc6q.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Solomon Peachy <pizza@shaftnet.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 17/01/2019 14:54, Kalle Valo wrote:
-> Colin King <colin.king@canonical.com> writes:
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There are two lines that have indentation issues, fix these.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/net/wireless/st/cw1200/fwio.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/wireless/st/cw1200/fwio.c b/drivers/net/wireless/st/cw1200/fwio.c
->> index 30e7646d04af..b7881232499c 100644
->> --- a/drivers/net/wireless/st/cw1200/fwio.c
->> +++ b/drivers/net/wireless/st/cw1200/fwio.c
->> @@ -465,8 +465,8 @@ int cw1200_load_firmware(struct cw1200_common *priv)
->>  
->>  	if (!(val32 & ST90TDS_CONFIG_ACCESS_MODE_BIT)) {
->>  		pr_err("Device is already in QUEUE mode!\n");
->> -			ret = -EINVAL;
->> -			goto out;
->> +		ret = -EINVAL;
->> +		goto out;
-> 
-> Just out of curiosity, how do you find these?
-> 
-smatch, grep for "warn: inconsistent indenting"
+This should be = instead of =.
 
-Colin
+Fixes: b52354aa068e ("selftests: expand txtimestamp with ipv6 dgram + raw and pf_packet")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ tools/testing/selftests/networking/timestamping/txtimestamp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/networking/timestamping/txtimestamp.c b/tools/testing/selftests/networking/timestamping/txtimestamp.c
+index 2e563d17cf0c..d1bbafb16f47 100644
+--- a/tools/testing/selftests/networking/timestamping/txtimestamp.c
++++ b/tools/testing/selftests/networking/timestamping/txtimestamp.c
+@@ -240,7 +240,7 @@ static void __recv_errmsg_cmsg(struct msghdr *msg, int payload_len)
+ 			    cm->cmsg_type = IP_RECVERR) ||
+ 			   (cm->cmsg_level = SOL_IPV6 &&
+ 			    cm->cmsg_type = IPV6_RECVERR) ||
+-			   (cm->cmsg_level = SOL_PACKET &&
++			   (cm->cmsg_level = SOL_PACKET &&
+ 			    cm->cmsg_type = PACKET_TX_TIMESTAMP)) {
+ 			serr = (void *) CMSG_DATA(cm);
+ 			if (serr->ee_errno != ENOMSG ||
+-- 
+2.17.1
