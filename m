@@ -1,57 +1,48 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Thu, 10 Jan 2019 07:20:06 +0000
-Subject: Re: [PATCH -next v2] ASoC: Intel: bytcht_es8316: use correct drvdata in snd_byt_cht_es8316_mc_remove
-Message-Id: <7d35c9d9-f244-d010-68e9-e68d58331172@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 09 Jan 2019 02:20:16 +0000
+Subject: [PATCH -next] ALSA: usb-audio: Remove set but not used variable 'first_ch_bits'
+Message-Id: <1547000416-144563-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547023011-8321-1-git-send-email-weiyongjun1@huawei.com>
- <1547084589-40006-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1547084589-40006-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, Ruslan Bilovol <ruslan.bilovol@gmail.com>, Andrew Chant <achant@google.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 10-01-19 02:43, Wei Yongjun wrote:
-> The snd_byt_cht_es8316_mc_remove() use the platform drvdata as a type
-> of 'struct byt_cht_es8316_private', but snd_byt_cht_es8316_mc_probe()
-> set it to 'struct snd_soc_card', as suggested by Dan Carpenter, fix
-> the usage in snd_byt_cht_es8316_mc_remove().
-> 
-> Fixes: 0d3e91da0750 ("ASoC: Intel: bytcht_es8316: Add external speaker mux support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+sound/usb/mixer.c: In function 'parse_audio_feature_unit':
+sound/usb/mixer.c:1838:28: warning:
+ variable 'first_ch_bits' set but not used [-Wunused-but-set-variable]
 
-Thank you for catching this, patch looks good to me:
+It never used since 2.6
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/usb/mixer.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Regards,
-
-Hans
-
-
-> ---
-> v1 -> v2: fix snd_byt_cht_es8316_mc_remove() instead, suggested by Dan.
-> ---
->   sound/soc/intel/boards/bytcht_es8316.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/boards/bytcht_es8316.c b/sound/soc/intel/boards/bytcht_es8316.c
-> index cdf2061..fa9c4cf 100644
-> --- a/sound/soc/intel/boards/bytcht_es8316.c
-> +++ b/sound/soc/intel/boards/bytcht_es8316.c
-> @@ -544,7 +544,8 @@ static int snd_byt_cht_es8316_mc_probe(struct platform_device *pdev)
->   
->   static int snd_byt_cht_es8316_mc_remove(struct platform_device *pdev)
->   {
-> -	struct byt_cht_es8316_private *priv = platform_get_drvdata(pdev);
-> +	struct snd_soc_card *card = platform_get_drvdata(pdev);
-> +	struct byt_cht_es8316_private *priv = snd_soc_card_get_drvdata(card);
->   
->   	gpiod_put(priv->speaker_en_gpio);
->   	return 0;
-> 
-> 
-> 
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index e7d441d..8ad1a24 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1835,7 +1835,7 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
+ {
+ 	int channels, i, j;
+ 	struct usb_audio_term iterm;
+-	unsigned int master_bits, first_ch_bits;
++	unsigned int master_bits;
+ 	int err, csize;
+ 	struct uac_feature_unit_descriptor *hdr = _ftr;
+ 	__u8 *bmaControls;
+@@ -1926,10 +1926,6 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
+ 		break;
+ 
+ 	}
+-	if (channels > 0)
+-		first_ch_bits = snd_usb_combine_bytes(bmaControls + csize, csize);
+-	else
+-		first_ch_bits = 0;
+ 
+ 	if (state->mixer->protocol = UAC_VERSION_1) {
+ 		/* check all control types */
