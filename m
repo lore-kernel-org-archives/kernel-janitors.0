@@ -1,43 +1,38 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 09 Jan 2019 12:06:41 +0000
-Subject: [PATCH -next] staging: wilc1000: remove set but not used variable 'msa'
-Message-Id: <1547035601-84566-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Jan 2019 13:02:30 +0000
+Subject: [PATCH] [PATCH] rapidio: Potential oops in riocm_ch_listen()
+Message-Id: <20190110130230.GB27017@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+If riocm_get_channel() fails, then we should just return -EINVAL.
+Calling riocm_put_channel() will trigger a NULL dereference and
+generally we should call put() if the get() didn't succeed.
 
-drivers/staging/wilc1000/host_interface.c: In function 'wilc_parse_network_info':
-drivers/staging/wilc1000/host_interface.c:748:16: warning:
- variable 'msa' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/wilc1000/host_interface.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/rapidio/rio_cm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index 5dae6e7..c05c120 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -745,7 +745,7 @@ static s32 wilc_parse_network_info(u8 *msg_buffer,
- {
- 	struct network_info *info;
- 	struct ieee80211_mgmt *mgt;
--	u8 *wid_val, *msa, *ies;
-+	u8 *wid_val, *ies;
- 	u16 wid_len, rx_len, ies_len;
- 	u8 msg_type;
- 	size_t offset;
-@@ -764,7 +764,6 @@ static s32 wilc_parse_network_info(u8 *msg_buffer,
+diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
+index bad0e0ea4f30..cf45829585cb 100644
+--- a/drivers/rapidio/rio_cm.c
++++ b/drivers/rapidio/rio_cm.c
+@@ -1215,7 +1215,9 @@ static int riocm_ch_listen(u16 ch_id)
+ 	riocm_debug(CHOP, "(ch_%d)", ch_id);
  
- 	info->rssi = wid_val[0];
- 
--	msa = &wid_val[1];
- 	mgt = (struct ieee80211_mgmt *)&wid_val[1];
- 	rx_len = wid_len - 1;
- 
+ 	ch = riocm_get_channel(ch_id);
+-	if (!ch || !riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
++	if (!ch)
++		return -EINVAL;
++	if (!riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
+ 		ret = -EINVAL;
+ 	riocm_put_channel(ch);
+ 	return ret;
+-- 
+2.17.1
