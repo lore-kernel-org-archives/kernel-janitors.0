@@ -1,7 +1,7 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 10 Jan 2019 11:34:46 +0000
+Date: Thu, 10 Jan 2019 11:35:22 +0000
 Subject: Re: [PATCH net-next] cw1200: fix missing unlock on error in cw1200_hw_scan()
-Message-Id: <20190110113446.99CA960386@smtp.codeaurora.org>
+Message-Id: <20190110113522.D437D608A5@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1545474894-124328-1-git-send-email-weiyongjun1@huawei.com>
 In-Reply-To: <1545474894-124328-1-git-send-email-weiyongjun1@huawei.com>
@@ -20,8 +20,9 @@ Wei Yongjun <weiyongjun1@huawei.com> wrote:
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > Acked-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-cw1200 patches go to wireless-drivers-next, not net-next. In the future please
-don't mark them for net-next to avoid any confusion.
+Patch applied to wireless-drivers-next.git, thanks.
+
+51c8d24101c7 cw1200: fix missing unlock on error in cw1200_hw_scan()
 
 -- 
 https://patchwork.kernel.org/patch/10741431/
