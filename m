@@ -1,28 +1,48 @@
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Tue, 22 Jan 2019 19:47:17 +0000
-Subject: Re: [PATCH] lib/test_kmod: Potential double free in error handling
-Message-Id: <20190122194716.GC11489@garbanzo.do-not-panic.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Date: Thu, 10 Jan 2019 14:07:20 +0000
+Subject: Re: [PATCH -next] gpio: pca953x: Make symbol 'pca953x_i2c_regmap' static
+Message-Id: <52902326-baf8-d6b5-52e3-0442fdaebc87@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190121140011.GA14283@kadam>
-In-Reply-To: <20190121140011.GA14283@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 05:00:11PM +0300, Dan Carpenter wrote:
-> There is a copy and paste bug so we set "config->test_driver" to NULL
-> twice instead of setting "config->test_fs".  Smatch complains that it
-> leads to a double free:
+On 1/10/19 3:07 PM, Wei Yongjun wrote:
+> Fixes the following sparse warning:
 > 
-> lib/test_kmod.c:840 __kmod_config_init() warn: 'config->test_fs' double freed
+> drivers/gpio/gpio-pca953x.c:292:28: warning:
+>  symbol 'pca953x_i2c_regmap' was not declared. Should it be static?
 > 
-> Fixes: d9c6a72d6fa2 ("kmod: add test driver to stress test the module loader")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fixes: 49427232764d ("gpio: pca953x: Perform basic regmap conversion")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Thanks!
+Nice, thanks.
+Reviewed-by: Marek Vasut <marex@denx.de>
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+For future reference, how did you run sparse to detect this ?
 
- Luis
+> ---
+>  drivers/gpio/gpio-pca953x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 83617fd..0dc9641 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -289,7 +289,7 @@ static bool pca953x_volatile_register(struct device *dev, unsigned int reg)
+>  	return pca953x_check_register(chip, reg, bank);
+>  }
+>  
+> -const struct regmap_config pca953x_i2c_regmap = {
+> +static const struct regmap_config pca953x_i2c_regmap = {
+>  	.reg_bits = 8,
+>  	.val_bits = 8,
+> 
+> 
+> 
+
+
+-- 
+Best regards,
+Marek Vasut
