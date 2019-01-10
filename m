@@ -1,45 +1,36 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 03 Jan 2019 03:12:41 +0000
-Subject: [PATCH -next] um: Remove duplicated include from vector_user.c
-Message-Id: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 10 Jan 2019 11:32:59 +0000
+Subject: Re: [PATCH] ray_cs: fix array out-of-bounds access
+Message-Id: <20190110113300.4CE44608FC@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181220140550.18853-1-colin.king@canonical.com>
+In-Reply-To: <20181220140550.18853-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, YueHaibing <yuehaibing@huawei.com>
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-Remove duplicated include.
+Colin King <colin.king@canonical.com> wrote:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- arch/um/drivers/vector_user.c | 3 ---
- 1 file changed, 3 deletions(-)
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently array element org[3] is being accessed, however the array is
+> only 3 elements in size, so this looks like an off-by-one out-of-bounds
+> error. Fix this by using org[2], which I believe was the original
+> intent.
+> 
+> This issue has existed in the driver back in the pre-git days, so no
+> idea when it was introduced.
+> 
+> Detected by CoverityScan, CID#711344 ("Out-of-bounds read")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-index d2c17dd..b3f7b3c 100644
---- a/arch/um/drivers/vector_user.c
-+++ b/arch/um/drivers/vector_user.c
-@@ -16,14 +16,12 @@
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
--#include <sys/types.h>
- #include <sys/socket.h>
- #include <net/ethernet.h>
- #include <netinet/ip.h>
- #include <netinet/ether.h>
- #include <linux/if_ether.h>
- #include <linux/if_packet.h>
--#include <sys/socket.h>
- #include <sys/wait.h>
- #include <sys/uio.h>
- #include <linux/virtio_net.h>
-@@ -31,7 +29,6 @@
- #include <stdlib.h>
- #include <os.h>
- #include <um_malloc.h>
--#include <sys/uio.h>
- #include "vector_user.h"
- 
- #define ID_GRE 0
+Patch applied to wireless-drivers-next.git, thanks.
+
+72255c807156 ray_cs: fix array out-of-bounds access
+
+-- 
+https://patchwork.kernel.org/patch/10738943/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
