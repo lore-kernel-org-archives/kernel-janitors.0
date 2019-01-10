@@ -1,33 +1,40 @@
-From: James Morris <jmorris@namei.org>
-Date: Fri, 18 Jan 2019 19:47:15 +0000
-Subject: Re: [PATCH -next] LSM: Make some functions static
-Message-Id: <alpine.LRH.2.21.1901190647060.581@namei.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 10 Jan 2019 01:43:09 +0000
+Subject: [PATCH -next v2] ASoC: Intel: bytcht_es8316: use correct drvdata in snd_byt_cht_es8316_mc_remove()
+Message-Id: <1547084589-40006-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547617472-60140-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1547617472-60140-1-git-send-email-weiyongjun1@huawei.com>
+References: <1547023011-8321-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1547023011-8321-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019, Wei Yongjun wrote:
+The snd_byt_cht_es8316_mc_remove() use the platform drvdata as a type
+of 'struct byt_cht_es8316_private', but snd_byt_cht_es8316_mc_probe()
+set it to 'struct snd_soc_card', as suggested by Dan Carpenter, fix
+the usage in snd_byt_cht_es8316_mc_remove().
 
-> Fixes the following sparse warnings:
-> 
-> security/security.c:533:5: warning:
->  symbol 'lsm_task_alloc' was not declared. Should it be static?
-> security/security.c:554:5: warning:
->  symbol 'lsm_ipc_alloc' was not declared. Should it be static?
-> security/security.c:575:5: warning:
->  symbol 'lsm_msg_msg_alloc' was not declared. Should it be static?
-> 
-> Fixes: f4ad8f2c4076 ("LSM: Infrastructure management of the task security")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 0d3e91da0750 ("ASoC: Intel: bytcht_es8316: Add external speaker mux support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 -> v2: fix snd_byt_cht_es8316_mc_remove() instead, suggested by Dan.
+---
+ sound/soc/intel/boards/bytcht_es8316.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-
--- 
-James Morris
-<jmorris@namei.org>
+diff --git a/sound/soc/intel/boards/bytcht_es8316.c b/sound/soc/intel/boards/bytcht_es8316.c
+index cdf2061..fa9c4cf 100644
+--- a/sound/soc/intel/boards/bytcht_es8316.c
++++ b/sound/soc/intel/boards/bytcht_es8316.c
+@@ -544,7 +544,8 @@ static int snd_byt_cht_es8316_mc_probe(struct platform_device *pdev)
+ 
+ static int snd_byt_cht_es8316_mc_remove(struct platform_device *pdev)
+ {
+-	struct byt_cht_es8316_private *priv = platform_get_drvdata(pdev);
++	struct snd_soc_card *card = platform_get_drvdata(pdev);
++	struct byt_cht_es8316_private *priv = snd_soc_card_get_drvdata(card);
+ 
+ 	gpiod_put(priv->speaker_en_gpio);
+ 	return 0;
