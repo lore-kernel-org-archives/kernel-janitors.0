@@ -1,37 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Jan 2019 12:01:13 +0000
-Subject: Re: [PATCH][next] drivers: base: swnode: check if swnode is null before dereferencing it
-Message-Id: <20190102120113.GN3781@kadam>
+Date: Thu, 10 Jan 2019 13:00:19 +0000
+Subject: [PATCH] RDMA/bnxt_re: fix a size calculation
+Message-Id: <20190110130019.GA27017@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181222124333.13561-1-colin.king@canonical.com>
-In-Reply-To: <20181222124333.13561-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 12:43:33PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The macro to_software_mode can potentially return NULL, so also add
-> a null check on the swnode before dereferencing it to avoid any null
-> pointer dereferences.
-> 
-> Detected by CoverityScan, CID#1476052 ("Explicit null dereferenced")
-> 
-> Fixes: 59abd83672f7 ("drivers: base: Introducing software nodes to the firmware node framework")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This is from static analysis not from testing.  Depending on the value
+of rcfw->cmdq_depth, then this might not cause an issue at runtime.
 
-to_software_mode() can't return NULL though...
+The BITS_TO_LONGS() macro tells us how many longs it take to hold a
+bitmap.  In other words, it divides by the number if bits per long and
+rounds up.  Then we want to take that number and multiple by
+sizeof(long) to get the number of bytes to allocate.
 
-We shouldn't change the code just to make the static checker happy.
+The code here does the multiplication first so the rounding up is done
+in the wrong place.  So imagine we want to allocate 1 bit, then
+"(1 * 8) / 64 = 1" when we round up.  But it should be
+"(1 / 64) * 8 = 8".  In other words, because of the rounding difference
+we might allocate up to "sizeof(long) - 1" bytes fewer than intended.
 
-Sometimes if we just silence every static checker warning maybe we will
-fix some bugs in the middle of silencing all the false positive, but
-Smatch is almost at the stage of being able to parse this code
-correctly.  Maybe by the end of the year.  So let's hold off and then
-think about taking the fix everything approach next year.
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+index 326805461265..742346ea5b0d 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+@@ -684,8 +684,7 @@ int bnxt_qplib_enable_rcfw_channel(struct pci_dev *pdev,
+ 	/* General */
+ 	rcfw->seq_num = 0;
+ 	set_bit(FIRMWARE_FIRST_FLAG, &rcfw->flags);
+-	bmap_size = BITS_TO_LONGS(rcfw->cmdq_depth *
+-				  sizeof(unsigned long));
++	bmap_size = BITS_TO_LONGS(rcfw->cmdq_depth) * sizeof(unsigned long);
+ 	rcfw->cmdq_bitmap = kzalloc(bmap_size, GFP_KERNEL);
+ 	if (!rcfw->cmdq_bitmap)
+ 		return -ENOMEM;
+-- 
+2.17.1
