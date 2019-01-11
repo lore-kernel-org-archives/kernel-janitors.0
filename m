@@ -1,59 +1,49 @@
-From: yuyufen <yuyufen@huawei.com>
-Date: Tue, 29 Jan 2019 03:27:23 +0000
-Subject: Re: [PATCH] floppy: check_events callback should not return a negative number
-Message-Id: <0c53dcac-94db-a8a7-addf-673c29abe068@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Jan 2019 09:59:19 +0000
+Subject: [PATCH] mm, swap: Potential NULL dereference in get_swap_page_of_type()
+Message-Id: <20190111095919.GA1757@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190128090646.44747-1-yuyufen@huawei.com>
- <20190128131942.GH1795@kadam>
-In-Reply-To: <20190128131942.GH1795@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: axboe@kernel.dk, osandov@fb.com, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Shaohua Li <shli@kernel.org>
+Cc: Huang Ying <ying.huang@intel.com>, Daniel Jordan <daniel.m.jordan@oracle.com>, Dave Hansen <dave.hansen@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Omar Sandoval <osandov@fb.com>, Tejun Heo <tj@kernel.org>, Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
+Smatch complains that the NULL checks on "si" aren't consistent.  This
+seems like a real bug because we have not ensured that the type is
+valid and so "si" can be NULL.
 
+Fixes: ec8acf20afb8 ("swap: add per-partition lock for swapfile")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ mm/swapfile.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-On 2019/1/28 21:19, Dan Carpenter wrote:
-> On Mon, Jan 28, 2019 at 05:06:46PM +0800, Yufen Yu wrote:
->> Since .check_events interface return an unsigned int value,
->> floppy_check_events() should not return a negative error number.
->> Otherwise, disk_check_events() may process wiht an unexpected path.
->>
->> fixes: a0c80efe5956 ("floppy: fix lock_fdc() signal handling")
->> Signed-off-by: Yufen Yu <yuyufen@huawei.com>
->> ---
->>   drivers/block/floppy.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
->> index 6f2856c6d0f2..55481b40df9a 100644
->> --- a/drivers/block/floppy.c
->> +++ b/drivers/block/floppy.c
->> @@ -4075,7 +4075,7 @@ static unsigned int floppy_check_events(struct gendisk *disk,
->>   
->>   	if (time_after(jiffies, UDRS->last_checked + UDP->checkfreq)) {
->>   		if (lock_fdc(drive))
->> -			return -EINTR;
->> +			return 0;
-> The patch is correct, but I wish the commit message had said what the
-> run time impact of the patch is.  Or sometimes it's hard to say what the
-> run time impact is, but it could have at least said why returning zero
-> is correct.  Say something like:
->
->    floppy_check_events() is supposed to return bit flags to say which
->    events occured.  We should return zero to say that no event flags are
->    set.  Only BIT(0) and BIT(1) are used in the caller.  This code
->    returns -4u  here so both BIT(0) and BIT(1) are clear.  So this patch
->    shouldn't affect runtime, but it obviously is still worth fixing.
-
-OK. Thanks a lot for your suggestion.
-
-thanks,
-Yufen
-
-> regards,
-> dan carpenter
->
-> .
->
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index f0edf7244256..21e92c757205 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1048,9 +1048,12 @@ swp_entry_t get_swap_page_of_type(int type)
+ 	struct swap_info_struct *si;
+ 	pgoff_t offset;
+ 
++	if (type >= nr_swapfiles)
++		goto fail;
++
+ 	si = swap_info[type];
+ 	spin_lock(&si->lock);
+-	if (si && (si->flags & SWP_WRITEOK)) {
++	if (si->flags & SWP_WRITEOK) {
+ 		atomic_long_dec(&nr_swap_pages);
+ 		/* This is called for allocating swap entry, not cache */
+ 		offset = scan_swap_map(si, 1);
+@@ -1061,6 +1064,7 @@ swp_entry_t get_swap_page_of_type(int type)
+ 		atomic_long_inc(&nr_swap_pages);
+ 	}
+ 	spin_unlock(&si->lock);
++fail:
+ 	return (swp_entry_t) {0};
+ }
+ 
+-- 
+2.17.1
