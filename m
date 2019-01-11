@@ -1,36 +1,26 @@
-From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
-Date: Fri, 11 Jan 2019 18:43:47 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] i40e: clean up several indentation issues
-Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3510A4@ORSMSX104.amr.corp.intel.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 11 Jan 2019 06:31:48 +0000
+Subject: Re: [PATCH -next] crypto: ux500 catch dma submission error
+Message-Id: <20190111063148.q6zah2ms3d5n7yrp@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190107225928.12855-1-colin.king@canonical.com>
-In-Reply-To: <20190107225928.12855-1-colin.king@canonical.com>
+References: <1545977433-125317-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1545977433-125317-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Markus Elfring <elfring@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nathan Chancellor <natechancellor@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Colin King
-> Sent: Monday, January 7, 2019 2:59 PM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
-> <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH] i40e: clean up several indentation issues
+On Fri, Dec 28, 2018 at 06:10:33AM +0000, YueHaibing wrote:
+> Test cookie return by dmaengine_submit() and return error if any.
 > 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are several statements that have incorrect levels of indentation, fix
-> these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/net/ethernet/intel/i40e/i40e_ethtool.c     | 8 ++++----
->  drivers/net/ethernet/intel/i40e/i40e_main.c        | 6 +++---
->  drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 4 ++--
->  3 files changed, 9 insertions(+), 9 deletions(-)
+>  drivers/crypto/ux500/cryp/cryp_core.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
