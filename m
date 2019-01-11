@@ -1,7 +1,7 @@
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Date: Fri, 11 Jan 2019 05:45:02 +0000
-Subject: RE: [PATCH -next] gpio: pca953x: Make symbol 'pca953x_i2c_regmap' static
-Message-Id: <6AADFAC011213A4C87B956458587ADB40205DDA3@dggeml512-mbx.china.huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Jan 2019 08:17:27 +0000
+Subject: Re: [PATCH -next] gpio: pca953x: Make symbol 'pca953x_i2c_regmap' static
+Message-Id: <CACRpkdZG5Cktkpos0nkxp6Q2ccEtG9r7YFxfcM=kxA1rq2aWcQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <52902326-baf8-d6b5-52e3-0442fdaebc87@gmail.com>
 In-Reply-To: <52902326-baf8-d6b5-52e3-0442fdaebc87@gmail.com>
@@ -10,21 +10,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PiA+Pg0KPiA+PiBPbiAxLzEwLzE5IDM6MDcgUE0sIFdlaSBZb25nanVuIHdyb3RlOg0KPiA+Pj4g
-Rml4ZXMgdGhlIGZvbGxvd2luZyBzcGFyc2Ugd2FybmluZzoNCj4gPj4+DQo+ID4+PiBkcml2ZXJz
-L2dwaW8vZ3Bpby1wY2E5NTN4LmM6MjkyOjI4OiB3YXJuaW5nOg0KPiA+Pj4gIHN5bWJvbCAncGNh
-OTUzeF9pMmNfcmVnbWFwJyB3YXMgbm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUgc3RhdGljPw0K
-PiA+Pj4NCj4gPj4+IEZpeGVzOiA0OTQyNzIzMjc2NGQgKCJncGlvOiBwY2E5NTN4OiBQZXJmb3Jt
-IGJhc2ljIHJlZ21hcCBjb252ZXJzaW9uIikNCj4gPj4+IFNpZ25lZC1vZmYtYnk6IFdlaSBZb25n
-anVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KPiA+Pg0KPiA+PiBOaWNlLCB0aGFua3MuDQo+
-ID4+IFJldmlld2VkLWJ5OiBNYXJlayBWYXN1dCA8bWFyZXhAZGVueC5kZT4NCj4gPj4NCj4gPj4g
-Rm9yIGZ1dHVyZSByZWZlcmVuY2UsIGhvdyBkaWQgeW91IHJ1biBzcGFyc2UgdG8gZGV0ZWN0IHRo
-aXMgPw0KPiA+DQo+ID4NCj4gPiBJIGhhdmUgYSBzY3JpcHQgd2hpY2ggcnVuIHNwYXJzZSBldmVy
-eWRheSBvbiBlYWNoIGNoYW5nZWQgZmlsZQ0KPiA+IG9mIGxpbnV4LW5leHQuZ2l0IHRyZWUuIFNv
-IG1vc3Qgb2YgdGhpcyBpc3N1ZXMgY2FuIGJlIGRldGVjdGVkLg0KPiANCj4gQ2FuIHlvdSBzaGFy
-ZSB0aGF0IHNjcmlwdCA/IEknbSBzdXJlIG90aGVycyBjYW4gYmVuZWZpdCBmcm9tIHRoYXQgdG9v
-Lg0KDQpTdXJlLCB0aGUgc2NyaXB0IGV4aXN0cyBpbiBteSBnaXRodWIsIGFzIGEgcGFydCBvZiBv
-dXIgYXV0b21hdGVkIHBhdGNoIHN5c3RlbS4NCmh0dHBzOi8vZ2l0aHViLmNvbS93ZWl5ai9kcGF0
-Y2gtZGV2ZWwvYmxvYi9tYXN0ZXIvZHBhdGNoL2NvcmUvY2hlY2tzcGFyc2UucHkNCg0KV2UgYXJl
-IGNvbnNpZGVyaW5nIG1ha2luZyBpdCBhcyBhIHB1YmxpYyBzeXN0ZW0sIGJ1dCBzdGlsbCBub3Qg
-cmVhZHkuDQoNCj4gDQo+IC0tDQo+IEJlc3QgcmVnYXJkcywNCj4gTWFyZWsgVmFzdXQNCg=
+On Thu, Jan 10, 2019 at 3:01 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+
+> Fixes the following sparse warning:
+>
+> drivers/gpio/gpio-pca953x.c:292:28: warning:
+>  symbol 'pca953x_i2c_regmap' was not declared. Should it be static?
+>
+> Fixes: 49427232764d ("gpio: pca953x: Perform basic regmap conversion")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+
+Patch applied for fixes with Marek's ACK, awesome sparsing!
+
+Yours,
+Linus Walleij
