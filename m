@@ -1,81 +1,44 @@
-From: Liang Yang <liang.yang@amlogic.com>
-Date: Wed, 30 Jan 2019 09:27:10 +0000
-Subject: Re: [PATCH][next] mtd: rawnand: meson:: make several functions static
-Message-Id: <a1f6dfbd-3434-be6a-c623-794398393609@amlogic.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 11 Jan 2019 06:31:12 +0000
+Subject: Re: [PATCH -next] crypto: chtls - remove set but not used variables 'err, adap, request, hws'
+Message-Id: <20190111063112.celuobsvgo6jjius@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190129124429.19829-1-colin.king@canonical.com>
-In-Reply-To: <20190129124429.19829-1-colin.king@canonical.com>
+References: <1545099974-39327-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1545099974-39327-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Boris Brezillon <bbrezillon@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Kevin Hilman <khilman@baylibre.com>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Harsh Jain <harsh@chelsio.com>, Dan Carpenter <dan.carpenter@oracle.com>, Atul Gupta <atul.gupta@chelsio.com>, Michael Werner <werner@chelsio.com>, Kees Cook <keescook@chromium.org>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
-
-On 2019/1/29 20:44, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Tue, Dec 18, 2018 at 02:26:14AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> There are several functions that are local to the source and do
-> not need to be in global scope, so make them static.
+> drivers/crypto/chelsio/chtls/chtls_io.c: In function 'csk_wait_memory':
+> drivers/crypto/chelsio/chtls/chtls_io.c:925:6: warning:
+>  variable 'sndbuf' set but not used [-Wunused-but-set-variable]
 > 
-> Cleans up sparse warnings.
+> drivers/crypto/chelsio/chtls/chtls_io.c: In function 'chtls_pt_recvmsg':
+> drivers/crypto/chelsio/chtls/chtls_io.c:1411:6: warning:
+>  variable 'request' set but not used [-Wunused-but-set-variable]
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> drivers/crypto/chelsio/chtls/chtls_io.c:1407:18: warning:
+>  variable 'adap' set but not used [-Wunused-but-set-variable]
+> 
+> drivers/crypto/chelsio/chtls/chtls_io.c: In function 'chtls_recvmsg':
+> drivers/crypto/chelsio/chtls/chtls_io.c:1701:6: warning:
+>  variable 'request' set but not used [-Wunused-but-set-variable]
+> 
+> drivers/crypto/chelsio/chtls/chtls_io.c:1697:20: warning:
+>  variable 'hws' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->   drivers/mtd/nand/raw/meson_nand.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
-> index b9c543d1054c..9557bd94dcd2 100644
-> --- a/drivers/mtd/nand/raw/meson_nand.c
-> +++ b/drivers/mtd/nand/raw/meson_nand.c
-> @@ -829,14 +829,14 @@ static int meson_nfc_read_oob(struct nand_chip *nand, int page)
->   	return meson_nfc_read_page_hwecc(nand, NULL, 1, page);
->   }
->   
-> -bool meson_nfc_is_buffer_dma_safe(const void *buffer)
-> +static bool meson_nfc_is_buffer_dma_safe(const void *buffer)
->   {
->   	if (virt_addr_valid(buffer) && (!object_is_on_stack(buffer)))
->   		return true;
->   	return false;
->   }
->   
-> -void *
-> +static void *
->   meson_nand_op_get_dma_safe_input_buf(const struct nand_op_instr *instr)
->   {
->   	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
-> @@ -848,7 +848,7 @@ meson_nand_op_get_dma_safe_input_buf(const struct nand_op_instr *instr)
->   	return kzalloc(instr->ctx.data.len, GFP_KERNEL);
->   }
->   
-> -void
-> +static void
->   meson_nand_op_put_dma_safe_input_buf(const struct nand_op_instr *instr,
->   				     void *buf)
->   {
-> @@ -863,7 +863,7 @@ meson_nand_op_put_dma_safe_input_buf(const struct nand_op_instr *instr,
->   	kfree(buf);
->   }
->   
-> -void *
-> +static void *
->   meson_nand_op_get_dma_safe_output_buf(const struct nand_op_instr *instr)
->   {
->   	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
-> @@ -876,7 +876,7 @@ meson_nand_op_get_dma_safe_output_buf(const struct nand_op_instr *instr)
->   		       instr->ctx.data.len, GFP_KERNEL);
->   }
->   
-> -void
-> +static void
->   meson_nand_op_put_dma_safe_output_buf(const struct nand_op_instr *instr,
->   				      const void *buf)
->   {
-> 
+>  drivers/crypto/chelsio/chtls/chtls_io.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
 
-Looks good to me:
-
-Acked-by: Liang Yang <liang.yang@amlogic.com>
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
