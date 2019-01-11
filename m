@@ -1,30 +1,35 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Wed, 02 Jan 2019 06:16:23 +0000
-Subject: Re: [PATCH 18/20] dmaengine: sa11x0: drop useless LIST_HEAD
-Message-Id: <20190102060423.GI7581@vkoul-mobl>
+From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
+Date: Fri, 11 Jan 2019 18:44:57 +0000
+Subject: RE: [Intel-wired-lan] [PATCH 3/8] i40e: increase indentation
+Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3510B4@ORSMSX104.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1546185195-25676-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1546185195-25676-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Dan Williams <dan.j.williams@intel.com>, kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On 23-12-18, 09:57, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares has never been
-> used.
+> -----Original Message-----
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Julia Lawall
+> Sent: Sunday, December 30, 2018 7:53 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
+> Cc: intel-wired-lan@lists.osuosl.org; kernel-janitors@vger.kernel.org; David
+> S. Miller <davem@davemloft.net>; linux-kernel@vger.kernel.org;
+> netdev@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH 3/8] i40e: increase indentation
 > 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+> Convert spaces to tabs to get correct alignment.
 > 
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
+> Found with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/net/ethernet/intel/i40e/i40e_main.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks
-
--- 
-~Vinod
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
