@@ -1,7 +1,7 @@
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Date: Fri, 11 Jan 2019 01:50:23 +0000
-Subject: RE: [PATCH -next] gpio: pca953x: Make symbol 'pca953x_i2c_regmap' static
-Message-Id: <6AADFAC011213A4C87B956458587ADB40205DB6B@dggeml512-mbx.china.huawei.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Date: Fri, 11 Jan 2019 02:33:44 +0000
+Subject: Re: [PATCH -next] gpio: pca953x: Make symbol 'pca953x_i2c_regmap' static
+Message-Id: <929295cb-9562-54cb-c889-bb714916c732@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <52902326-baf8-d6b5-52e3-0442fdaebc87@gmail.com>
 In-Reply-To: <52902326-baf8-d6b5-52e3-0442fdaebc87@gmail.com>
@@ -10,34 +10,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PiBGcm9tOiBNYXJlayBWYXN1dCBbbWFpbHRvOm1hcmVrLnZhc3V0QGdtYWlsLmNvbV0NCj4gU2Vu
-dDogVGh1cnNkYXksIEphbnVhcnkgMTAsIDIwMTkgMTA6MDcgUE0NCj4gVG86IHdlaXlvbmdqdW4g
-KEEpIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPjsgTGludXMgV2FsbGVpag0KPiA8bGludXMud2Fs
-bGVpakBsaW5hcm8ub3JnPjsgQmFydG9zeiBHb2xhc3pld3NraQ0KPiA8YmdvbGFzemV3c2tpQGJh
-eWxpYnJlLmNvbT4NCj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnOyBrZXJuZWwtamFu
-aXRvcnNAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggLW5leHRdIGdwaW86
-IHBjYTk1M3g6IE1ha2Ugc3ltYm9sDQo+ICdwY2E5NTN4X2kyY19yZWdtYXAnIHN0YXRpYw0KPiAN
-Cj4gT24gMS8xMC8xOSAzOjA3IFBNLCBXZWkgWW9uZ2p1biB3cm90ZToNCj4gPiBGaXhlcyB0aGUg
-Zm9sbG93aW5nIHNwYXJzZSB3YXJuaW5nOg0KPiA+DQo+ID4gZHJpdmVycy9ncGlvL2dwaW8tcGNh
-OTUzeC5jOjI5MjoyODogd2FybmluZzoNCj4gPiAgc3ltYm9sICdwY2E5NTN4X2kyY19yZWdtYXAn
-IHdhcyBub3QgZGVjbGFyZWQuIFNob3VsZCBpdCBiZSBzdGF0aWM/DQo+ID4NCj4gPiBGaXhlczog
-NDk0MjcyMzI3NjRkICgiZ3BpbzogcGNhOTUzeDogUGVyZm9ybSBiYXNpYyByZWdtYXAgY29udmVy
-c2lvbiIpDQo+ID4gU2lnbmVkLW9mZi1ieTogV2VpIFlvbmdqdW4gPHdlaXlvbmdqdW4xQGh1YXdl
-aS5jb20+DQo+IA0KPiBOaWNlLCB0aGFua3MuDQo+IFJldmlld2VkLWJ5OiBNYXJlayBWYXN1dCA8
-bWFyZXhAZGVueC5kZT4NCj4gDQo+IEZvciBmdXR1cmUgcmVmZXJlbmNlLCBob3cgZGlkIHlvdSBy
-dW4gc3BhcnNlIHRvIGRldGVjdCB0aGlzID8NCg0KDQpJIGhhdmUgYSBzY3JpcHQgd2hpY2ggcnVu
-IHNwYXJzZSBldmVyeWRheSBvbiBlYWNoIGNoYW5nZWQgZmlsZQ0Kb2YgbGludXgtbmV4dC5naXQg
-dHJlZS4gU28gbW9zdCBvZiB0aGlzIGlzc3VlcyBjYW4gYmUgZGV0ZWN0ZWQuDQoNCj4gDQo+ID4g
-LS0tDQo+ID4gIGRyaXZlcnMvZ3Bpby9ncGlvLXBjYTk1M3guYyB8IDIgKy0NCj4gPiAgMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tcGNhOTUzeC5jIGIvZHJpdmVycy9ncGlvL2dwaW8tcGNh
-OTUzeC5jDQo+ID4gaW5kZXggODM2MTdmZC4uMGRjOTY0MSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
-ZXJzL2dwaW8vZ3Bpby1wY2E5NTN4LmMNCj4gPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1wY2E5
-NTN4LmMNCj4gPiBAQCAtMjg5LDcgKzI4OSw3IEBAIHN0YXRpYyBib29sIHBjYTk1M3hfdm9sYXRp
-bGVfcmVnaXN0ZXIoc3RydWN0IGRldmljZQ0KPiAqZGV2LCB1bnNpZ25lZCBpbnQgcmVnKQ0KPiA+
-ICAJcmV0dXJuIHBjYTk1M3hfY2hlY2tfcmVnaXN0ZXIoY2hpcCwgcmVnLCBiYW5rKTsNCj4gPiAg
-fQ0KPiA+DQo+ID4gLWNvbnN0IHN0cnVjdCByZWdtYXBfY29uZmlnIHBjYTk1M3hfaTJjX3JlZ21h
-cCA9IHsNCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCByZWdtYXBfY29uZmlnIHBjYTk1M3hfaTJj
-X3JlZ21hcCA9IHsNCj4gPiAgCS5yZWdfYml0cyA9IDgsDQo+ID4gIAkudmFsX2JpdHMgPSA4LA0K
-PiA+DQo+ID4NCj4gPg0KPiANCj4gDQo+IC0tDQo+IEJlc3QgcmVnYXJkcywNCj4gTWFyZWsgVmFz
-dXQNCg=
+On 1/11/19 2:50 AM, weiyongjun (A) wrote:
+>> From: Marek Vasut [mailto:marek.vasut@gmail.com]
+>> Sent: Thursday, January 10, 2019 10:07 PM
+>> To: weiyongjun (A) <weiyongjun1@huawei.com>; Linus Walleij
+>> <linus.walleij@linaro.org>; Bartosz Golaszewski
+>> <bgolaszewski@baylibre.com>
+>> Cc: linux-gpio@vger.kernel.org; kernel-janitors@vger.kernel.org
+>> Subject: Re: [PATCH -next] gpio: pca953x: Make symbol
+>> 'pca953x_i2c_regmap' static
+>>
+>> On 1/10/19 3:07 PM, Wei Yongjun wrote:
+>>> Fixes the following sparse warning:
+>>>
+>>> drivers/gpio/gpio-pca953x.c:292:28: warning:
+>>>  symbol 'pca953x_i2c_regmap' was not declared. Should it be static?
+>>>
+>>> Fixes: 49427232764d ("gpio: pca953x: Perform basic regmap conversion")
+>>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>>
+>> Nice, thanks.
+>> Reviewed-by: Marek Vasut <marex@denx.de>
+>>
+>> For future reference, how did you run sparse to detect this ?
+> 
+> 
+> I have a script which run sparse everyday on each changed file
+> of linux-next.git tree. So most of this issues can be detected.
+
+Can you share that script ? I'm sure others can benefit from that too.
+
+-- 
+Best regards,
+Marek Vasut
