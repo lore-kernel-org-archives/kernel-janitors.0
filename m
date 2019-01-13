@@ -1,62 +1,123 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 17 Jan 2019 00:34:25 +0000
-Subject: Re: [PATCH] fix a couple of indentation issues and remove assignment in if statements
-Message-Id: <91ca2065-a3d0-d163-6f28-8cdeb5c693b8@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Jan 2019 08:47:42 +0000
+Subject: [PATCH 2/4] drm/imx: imx-ldb: add missing of_node_puts
+Message-Id: <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190117003333.30605-1-colin.king@canonical.com>
-In-Reply-To: <20190117003333.30605-1-colin.king@canonical.com>
+References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Bah, forgot to fix up the subject line properly. V3. Coming.
+The device node iterators perform an of_node_get on each
+iteration, so a jump out of the loop requires an of_node_put.
 
-On 17/01/2019 00:33, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is an if statement and a return statement that are incorrectly
-> indented. Fix these.  Also replace the assignment-in-if statements
-> to assignment followed by an if to keep to the coding style.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: also clean up the assignment-in-if statements too
-> 
-> ---
-> 
->  drivers/net/sb1000.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/sb1000.c b/drivers/net/sb1000.c
-> index 7820fced33f6..941cfa8f1c2a 100644
-> --- a/drivers/net/sb1000.c
-> +++ b/drivers/net/sb1000.c
-> @@ -535,17 +535,20 @@ sb1000_activate(const int ioaddr[], const char* name)
->  	int status;
->  
->  	ssleep(1);
-> -	if ((status = card_send_command(ioaddr, name, Command0, st)))
-> +	status = card_send_command(ioaddr, name, Command0, st);
-> +	if (status)
->  		return status;
-> -	if ((status = card_send_command(ioaddr, name, Command1, st)))
-> +	status = card_send_command(ioaddr, name, Command1, st);
-> +	if (status)
->  		return status;
->  	if (st[3] != 0xf1) {
-> -    	if ((status = sb1000_start_get_set_command(ioaddr, name)))
-> +		status = sb1000_start_get_set_command(ioaddr, name);
-> +		if (status)
->  			return status;
->  		return -EIO;
->  	}
->  	udelay(1000);
-> -    return sb1000_start_get_set_command(ioaddr, name);
-> +	return sb1000_start_get_set_command(ioaddr, name);
->  }
->  
->  /* get SB1000 firmware version */
-> 
+Move the initialization channel->child = child; down to just
+before the call to imx_ldb_register so that intervening failures
+don't need to clear it.  Add a label at the end of the function to
+do all the of_node_puts.
+
+The semantic patch that finds part of this problem is as follows
+(http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
+
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
+*  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+This changes the semantics, with respect to the availability of the child
+field, and has not been tested.
+
+ drivers/gpu/drm/imx/imx-ldb.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/imx/imx-ldb.c b/drivers/gpu/drm/imx/imx-ldb.c
+index 2c5bbe3..e31e263 100644
+--- a/drivers/gpu/drm/imx/imx-ldb.c
++++ b/drivers/gpu/drm/imx/imx-ldb.c
+@@ -643,8 +643,10 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 		int bus_format;
+ 
+ 		ret = of_property_read_u32(child, "reg", &i);
+-		if (ret || i < 0 || i > 1)
+-			return -EINVAL;
++		if (ret || i < 0 || i > 1) {
++			ret = -EINVAL;
++			goto free_child;
++		}
+ 
+ 		if (!of_device_is_available(child))
+ 			continue;
+@@ -657,7 +659,6 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 		channel = &imx_ldb->channel[i];
+ 		channel->ldb = imx_ldb;
+ 		channel->chno = i;
+-		channel->child = child;
+ 
+ 		/*
+ 		 * The output port is port@4 with an external 4-port mux or
+@@ -667,13 +668,13 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 						  imx_ldb->lvds_mux ? 4 : 2, 0,
+ 						  &channel->panel, &channel->bridge);
+ 		if (ret && ret != -ENODEV)
+-			return ret;
++			goto free_child;
+ 
+ 		/* panel ddc only if there is no bridge */
+ 		if (!channel->bridge) {
+ 			ret = imx_ldb_panel_ddc(dev, channel, child);
+ 			if (ret)
+-				return ret;
++				goto free_child;
+ 		}
+ 
+ 		bus_format = of_get_bus_format(dev, child);
+@@ -689,18 +690,26 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 		if (bus_format < 0) {
+ 			dev_err(dev, "could not determine data mapping: %d\n",
+ 				bus_format);
+-			return bus_format;
++			ret = bus_format;
++			goto free_child;
+ 		}
+ 		channel->bus_format = bus_format;
++		channel->child = child;
+ 
+ 		ret = imx_ldb_register(drm, channel);
+-		if (ret)
+-			return ret;
++		if (ret) {
++			channel->child = NULL;
++			goto free_child;
++		}
+ 	}
+ 
+ 	dev_set_drvdata(dev, imx_ldb);
+ 
+ 	return 0;
++
++free_child:
++	of_node_put(child);
++	return ret;
+ }
+ 
+ static void imx_ldb_unbind(struct device *dev, struct device *master,
