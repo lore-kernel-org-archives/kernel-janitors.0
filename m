@@ -1,34 +1,20 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 02 Jan 2019 09:54:03 +0000
-Subject: [PATCH][next] x86/mpx/selftests: fix spelling mistake "succeded" -> "succeeded"
-Message-Id: <20190102095403.513-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Jan 2019 09:44:48 +0000
+Subject: [PATCH 0/3] add missing of_node_put
+Message-Id: <1547372691-28324-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The result of of_graph_get_remote_port_parent needs an of_node_put,
+even if it is not available.
 
-There is a spelling mistake eprintf error message, fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/testing/selftests/x86/mpx-mini-test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/x86/mpx-mini-test.c b/tools/testing/selftests/x86/mpx-mini-test.c
-index 50f7e9272481..bf1bb15b6fbe 100644
---- a/tools/testing/selftests/x86/mpx-mini-test.c
-+++ b/tools/testing/selftests/x86/mpx-mini-test.c
-@@ -1503,7 +1503,7 @@ void check_mpx_insns_and_tables(void)
- 		exit(20);
- 	}
- 	if (successes != total_nr_tests) {
--		eprintf("ERROR: succeded fewer than number of tries (%d != %d)\n",
-+		eprintf("ERROR: succeeded fewer than number of tries (%d != %d)\n",
- 				successes, total_nr_tests);
- 		exit(21);
- 	}
--- 
-2.19.1
+ drivers/gpu/drm/meson/meson_drv.c     |    9 +++++++--
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c |    1 +
+ drivers/of/property.c                 |    1 +
+ 3 files changed, 9 insertions(+), 2 deletions(-)
