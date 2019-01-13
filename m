@@ -1,67 +1,69 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Jan 2019 12:53:19 +0000
-Subject: [PATCH] scsi: dpt_i2o: clean up indentation issues, remove spaces
-Message-Id: <20190123125319.17193-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Jan 2019 08:47:41 +0000
+Subject: [PATCH 1/4] drm/mediatek: add missing of_node_puts
+Message-Id: <1547369264-24831-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: CK Hu <ck.hu@mediatek.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The device node iterators perform an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
-There are several lines where the indentation has an extra space,
-fix this by removing the spaces.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+identifier l;
+@@
+
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/scsi/dpt_i2o.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index 70d1a18278af..f9560a183c12 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -877,8 +877,8 @@ static void adpt_i2o_sys_shutdown(void)
- 	adpt_hba *pHba, *pNext;
- 	struct adpt_i2o_post_wait_data *p1, *old;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 6422e99..b9205bf 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -522,12 +522,15 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 			comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
+ 			if (!comp) {
+ 				ret = -ENOMEM;
++				of_node_put(node);
+ 				goto err_node;
+ 			}
  
--	 printk(KERN_INFO"Shutting down Adaptec I2O controllers.\n");
--	 printk(KERN_INFO"   This could take a few minutes if there are many devices attached\n");
-+	printk(KERN_INFO "Shutting down Adaptec I2O controllers.\n");
-+	printk(KERN_INFO "   This could take a few minutes if there are many devices attached\n");
- 	/* Delete all IOPs from the controller chain */
- 	/* They should have already been released by the
- 	 * scsi-core
-@@ -901,7 +901,7 @@ static void adpt_i2o_sys_shutdown(void)
- //	spin_unlock_irqrestore(&adpt_post_wait_lock, flags);
- 	adpt_post_wait_queue = NULL;
+ 			ret = mtk_ddp_comp_init(dev, node, comp, comp_id, NULL);
+-			if (ret)
++			if (ret) {
++				of_node_put(node);
+ 				goto err_node;
++			}
  
--	 printk(KERN_INFO "Adaptec I2O controllers down.\n");
-+	printk(KERN_INFO "Adaptec I2O controllers down.\n");
- }
- 
- static int adpt_install_hba(struct scsi_host_template* sht, struct pci_dev* pDev)
-@@ -3427,7 +3427,7 @@ static int adpt_i2o_issue_params(int cmd, adpt_hba* pHba, int tid,
- 		return -((res[1] >> 16) & 0xFF); /* -BlockStatus */
- 	}
- 
--	 return 4 + ((res[1] & 0x0000FFFF) << 2); /* bytes used in resblk */ 
-+	return 4 + ((res[1] & 0x0000FFFF) << 2); /* bytes used in resblk */
- }
- 
- 
-@@ -3500,8 +3500,8 @@ static int adpt_i2o_enable_hba(adpt_hba* pHba)
- 
- static int adpt_i2o_systab_send(adpt_hba* pHba)
- {
--	 u32 msg[12];
--	 int ret;
-+	u32 msg[12];
-+	int ret;
- 
- 	msg[0] = I2O_MESSAGE_SIZE(12) | SGL_OFFSET_6;
- 	msg[1] = I2O_CMD_SYS_TAB_SET<<24 | HOST_TID<<12 | ADAPTER_TID;
--- 
-2.19.1
+ 			private->ddp_comp[comp_id] = comp;
+ 		}
