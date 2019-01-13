@@ -1,44 +1,75 @@
-From: Michal Hocko <mhocko@kernel.org>
-Date: Thu, 03 Jan 2019 15:32:09 +0000
-Subject: Re: [PATCH -next] mm: Mark 'stack_vm_area' with __maybe_unused
-Message-Id: <20190103153209.GT31793@dhcp22.suse.cz>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Jan 2019 08:47:44 +0000
+Subject: [PATCH 4/4] drm/sun4i: backend: add missing of_node_puts
+Message-Id: <1547369264-24831-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545965190-2381-1-git-send-email-yuehaibing@huawei.com>
- <20181228085804.GR16738@dhcp22.suse.cz>
- <20190102105531.GI3781@kadam>
- <ae41ee4b-4e3f-d39b-1ad8-40d0096b713d@huawei.com>
-In-Reply-To: <ae41ee4b-4e3f-d39b-1ad8-40d0096b713d@huawei.com>
+References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Marcos Paulo de Souza <marcos.souza.org@gmail.com>, David Windsor <dave@nullcore.net>, Roman Gushchin <guro@fb.com>, Andrew Morton <akpm@linux-foundation.org>, "Eric W. Biederman" <ebiederm@xmission.com>, Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
 
-On Wed 02-01-19 19:40:15, YueHaibing wrote:
-> On 2019/1/2 18:55, Dan Carpenter wrote:
-> > On Fri, Dec 28, 2018 at 09:58:04AM +0100, Michal Hocko wrote:
-> >> On Fri 28-12-18 02:46:30, YueHaibing wrote:
-> >>> Fixes gcc '-Wunused-but-set-variable' warning when
-> >>> CONFIG_VMAP_STACK is not set:
-> >>
-> >> Isn't this warning disabled? I can see the following
-> >> # These warnings generated too much noise in a regular build.
-> >> # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
-> >> KBUILD_CFLAGS += -Wno-unused-but-set-variable
-> >>
-> >> in the main makefile. IMHO this warning doesn't really give us much.
-> >>
-> > 
-> > It would be nice to enable that warning.  YueHaibing and Colin King have
-> > been whittling away at the problematic code...
-> > 
-> > YueHaibing, how many of these warnings do we have remaining on an
-> > allmodoconfig?
-> 
-> about 1300+
+The device node iterators perform an of_node_get on each
+iteration, so a jump out of the loop requires an of_node_put.
 
-This is way too much. Is any of them actually pointing to a real bug?
+Remote and port also have augmented reference counts, so drop them
+on each iteration and at the end of the function, respectively.
+Remote is only used for the address it contains, not for the
+contents of that address, so the reference count can be dropped
+immediately.
 
--- 
-Michal Hocko
-SUSE Labs
+The semantic patch that fixes the first part of this problem is
+as follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
+
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/gpu/drm/sun4i/sun4i_backend.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index 9e9255e..a021bab 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -786,17 +786,18 @@ static struct sun4i_frontend *sun4i_backend_find_frontend(struct sun4i_drv *drv,
+ 		remote = of_graph_get_remote_port_parent(ep);
+ 		if (!remote)
+ 			continue;
++		of_node_put(remote);
+ 
+ 		/* does this node match any registered engines? */
+ 		list_for_each_entry(frontend, &drv->frontend_list, list) {
+ 			if (remote = frontend->node) {
+-				of_node_put(remote);
+ 				of_node_put(port);
++				of_node_put(ep);
+ 				return frontend;
+ 			}
+ 		}
+ 	}
+-
++	of_node_put(port);
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
