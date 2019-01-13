@@ -1,77 +1,180 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Tue, 22 Jan 2019 22:50:35 +0000
-Subject: Re: [PATCH -next] i2c: imx: Fix inconsistent IS_ERR and PTR_ERR in i2c_imx_dma_request()
-Message-Id: <20190122225035.ppp7njqqwb4nz6pp@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="bzf4g6etpjcm7b4b"
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Sun, 13 Jan 2019 20:23:23 +0000
+Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
+Message-Id: <20190113202323.co7upmn5fg32b7gn@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547694894-69589-1-git-send-email-yuehaibing@huawei.com>
- <e8c15a2a-6b59-42bb-0a1f-2ab53c01b0d6@axentia.se>
-In-Reply-To: <e8c15a2a-6b59-42bb-0a1f-2ab53c01b0d6@axentia.se>
-To: Peter Rosin <peda@axentia.se>
-Cc: "eha@deif.com" <eha@deif.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, YueHaibing <yuehaibing@huawei.com>, "linux@rempel-privat.de" <linux@rempel-privat.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, "linux-imx@nxp.com" <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
+ <20181016123541.GW31561@phenom.ffwll.local>
+ <20181017124315.khhlykapxnug6ej6@smtp.gmail.com>
+ <CAKMK7uF0ucof6gwAiY1SSp5oHt3BZ18Jkui5ugvkZc4u-NOJoA@mail.gmail.com>
+In-Reply-To: <CAKMK7uF0ucof6gwAiY1SSp5oHt3BZ18Jkui5ugvkZc4u-NOJoA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: kernel-janitors@vger.kernel.org, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Sean Paul <sean@poorly.run>
 
+Hi,
 
---bzf4g6etpjcm7b4b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I resend this patch for CI via “intel-gfx@lists.freedesktop.org” as
+Daniel suggested, and I got a feedback that reported an issue as can be
+seen here:
 
-On Thu, Jan 17, 2019 at 11:03:20AM +0000, Peter Rosin wrote:
-> On 2019-01-17 04:14, YueHaibing wrote:
-> > Change the call to PTR_ERR to access the value just tested by IS_ERR.
-> >=20
-> > Fixes: 5b3a23a3cc94 ("i2c: imx: notify about real errors on dma i2c_imx=
-_dma_request")
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  drivers/i2c/busses/i2c-imx.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> > index 09b1245..42fed40 100644
-> > --- a/drivers/i2c/busses/i2c-imx.c
-> > +++ b/drivers/i2c/busses/i2c-imx.c
-> > @@ -287,7 +287,7 @@ static int i2c_imx_dma_request(struct imx_i2c_struc=
-t *i2c_imx,
-> > =20
-> >  	dma->chan_tx =3D dma_request_chan(dev, "tx");
-> >  	if (IS_ERR(dma->chan_tx)) {
-> > -		ret =3D PTR_ERR(dma->chan_rx);
-> > +		ret =3D PTR_ERR(dma->chan_tx);
-> >  		if (ret !=3D -ENODEV && ret !=3D -EPROBE_DEFER)
-> >  			dev_err(dev, "can't request DMA tx channel (%d)\n", ret);
-> >  		goto fail_al;
-> >=20
-> >=20
-> >=20
->=20
-> You were beaten to it by Laurentiu Tudor, who sent the same patch [1] sho=
-rtly
-> before you.
+   https://patchwork.freedesktop.org/series/51147/
 
-Yes, but his Fixes: tag was wrong, so I applied this patch with Uwe's
-tag moved to here.
+After a careful analysis of what happened, I concluded that the problem
+is related to the function “igt_wait_for_vblank_count()” in “igt_kms.c”.
+This function has the following assert:
 
+   igt_assert(drmWaitVBlank(drm_fd, &wait_vbl) = 0)
 
---bzf4g6etpjcm7b4b
-Content-Type: application/pgp-signature; name="signature.asc"
+This function only checks if everything went well with the
+drmWaitVBlank() operation and does not make any other validation. IMHO
+the patch is correct, and the problem pointed out by CI is not related
+to this change.
 
------BEGIN PGP SIGNATURE-----
+Make sense?
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxHnjoACgkQFA3kzBSg
-KbaUpg//eQX7ebREIrIr4wer9VQip7SotcnGF5RgdbqTHI57lULD8NS0Pal6AqPi
-aSxg6Aqr26fRosl5vR0nN15Qxjmn069hR2Kxnb2YPn+j5+D29iopEjHAUdsTqxAB
-ZZr9BzYMxGlXxN4Rm8nT4q4+T1KBJ4+ZOqwNKZxELq1EM+4GolCqr3QxZkYfWJVK
-kUg0QcKn5sE53OlmAtPi7n+S+bn1XP71dLe+ibvxudL2mFFY2OYuQrT0VuDsbq8Q
-JPeE5f0FWZ7kEuIadrN4KYiQ4W9wbv8i2ZkbjS2IJniq2SSDuP8aztDOYiHBsot9
-3ZFLhABn0fBcI7UdHXaMtN6oIISZqH8jverqHht5D5iaH+YBfPOo3f6+Fs9rx7UA
-P7/lgTE7kGDZJ3YuKwKJUk8sDWIeZnsZrz+2bu7FxEOgUGMSmNtQM8Pv1lS4NYoJ
-npiBzmZAEBdWxj4AiH/dbb9UVXlMWKrs5yR4OhprtRZqvUJTCqf1dOtJjG37bY5x
-J0n84JHj4nZBtaIXO9DnZd/5w2sQMq25IQG9tlkICV83yHYLOJN6b/PmpFqCyxn7
-rlGnTiEP/A3szglwcLqp31b/cIRNJ4Mj2Xrd0ZV6w2QVwI0oaTuwo8Nw7SKL6gp+
-NVIt0HUOK0RlO7tlnejxXl+/Ih+w015L9uHam3LSROlG5cA7QDQ=
-=yLqc
------END PGP SIGNATURE-----
+Best Regards
 
---bzf4g6etpjcm7b4b--
+On 10/17, Daniel Vetter wrote:
+> On Wed, Oct 17, 2018 at 2:43 PM Rodrigo Siqueira
+> <rodrigosiqueiramelo@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > First of all, thanks to all for the reviewers and feedbacks.
+> >
+> > On 10/16, Daniel Vetter wrote:
+> > > On Mon, Oct 15, 2018 at 02:05:29PM -0300, Rodrigo Siqueira wrote:
+> > > > For historical reason, the function drm_wait_vblank_ioctl always return
+> > > > -EINVAL if something gets wrong. This scenario limits the flexibility
+> > > > for the userspace make detailed verification of the problem and take
+> > > > some action. In particular, the validation of “if (!dev->irq_enabled)”
+> > > > in the drm_wait_vblank_ioctl is responsible for checking if the driver
+> > > > support vblank or not. If the driver does not support VBlank, the
+> > > > function drm_wait_vblank_ioctl returns EINVAL which does not represent
+> > > > the real issue; this patch changes this behavior by return EOPNOTSUPP.
+> > > > Additionally, some operations are unsupported by this function, and
+> > > > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
+> > > > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
+> > > > libdrm, which is used by many compositors; because of this, it is
+> > > > important to check if this change breaks any compositor. In this sense,
+> > > > the following projects were examined:
+> > > >
+> > > > * Drm-hwcomposer
+> > > > * Kwin
+> > > > * Sway
+> > > > * Wlroots
+> > > > * Wayland-core
+> > > > * Weston
+> > > > * Xorg (67 different drivers)
+> > > >
+> > > > For each repository the verification happened in three steps:
+> > > >
+> > > > * Update the main branch
+> > > > * Look for any occurrence "drmWaitVBlank" with the command:
+> > > >   git grep -n "drmWaitVBlank"
+> > > > * Look in the git history of the project with the command:
+> > > >   git log -SdrmWaitVBlank
+> > > >
+> > > > Finally, none of the above projects validate the use of EINVAL which
+> > > > make safe, at least for these projects, to change the return values.
+> > > >
+> > > > Change since V1:
+> > > >  Daniel Vetter and Chris Wilson
+> > > >  - Replace ENOTTY by EOPNOTSUPP
+> > > >  - Return EINVAL if the parameters are wrong
+> > > >
+> > > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> > >
+> > > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > >
+> > > Can you pls also let intel-gfx-ci test this patch? You just need to
+> > > include intel-gfx@lists.freedesktop.org in your recipient list.
+> >
+> > I did know about intel-gfx-ci, really nice:)
+> >
+> > Should I CC this mailing list if I send patches to the DRM core, amdgpu,
+> > i915, vc4, vgem, and virtio-gpu? I suppose that IGT is running on the
+> > CI, right?
+> 
+> It's only intel gpus (well and one special amd one) running igt on a
+> _lot_ of different machines.
+> 
+> > Another question, do I need to send a V3 with intel-gfx-ci?
+> 
+> If the patch-set is unchanged people use the "FOR CI" subject prefix
+> when resending, instead of incrementing the version number.
+> 
+> > > For merging, since you plan to stick around doing kms stuff a bit: Want
+> > > commit rights for drm-misc?
+> > >
+> > > https://drm.pages.freedesktop.org/maintainer-tools/getting-started.html
+> >
+> > Yes, I want :)
+> > I will need some guidance, in the beginning, to get confident about the
+> > processes. If you can help me with this, I will be glad to play around
+> > with 'dim' and the merging tasks.
+> 
+> Sure, just ping me on irc. First you need a freedesktop.org ssh account:
+> 
+> https://www.freedesktop.org/wiki/AccountRequests/
+> 
+> You need to request access to the drm-misc group. Once you have the
+> bugzilla, pls ping me so I can ack it.
+> 
+> Thanks, Daniel
+> 
+> >
+> > Best Regards
+> >
+> > > Cheers, Daniel
+> > >
+> > > > ---
+> > > >  drivers/gpu/drm/drm_vblank.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> > > > index 98e091175921..80f5a3bb427e 100644
+> > > > --- a/drivers/gpu/drm/drm_vblank.c
+> > > > +++ b/drivers/gpu/drm/drm_vblank.c
+> > > > @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+> > > >     unsigned int flags, pipe, high_pipe;
+> > > >
+> > > >     if (!dev->irq_enabled)
+> > > > -           return -EINVAL;
+> > > > +           return -EOPNOTSUPP;
+> > > >
+> > > >     if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+> > > > -           return -EINVAL;
+> > > > +           return -EOPNOTSUPP;
+> > > >
+> > > >     if (vblwait->request.type &
+> > > >         ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
+> > > > --
+> > > > 2.19.1
+> > >
+> > > --
+> > > Daniel Vetter
+> > > Software Engineer, Intel Corporation
+> > > http://blog.ffwll.ch
+> >
+> > --
+> > Rodrigo Siqueira
+> > https://siqueira.tech
+> > https://twitter.com/siqueirajordao
+> > Graduate Student
+> > Department of Computer Science
+> > University of São Paulo
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> 
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
