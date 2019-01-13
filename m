@@ -1,72 +1,54 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Date: Wed, 23 Jan 2019 18:38:55 +0000
-Subject: Re: [PATCH -next] evm: remove set but not used variable 'xattr'
-Message-Id: <1548268735.3971.6.camel@linux.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Jan 2019 09:44:49 +0000
+Subject: [PATCH 1/3] drm: rcar-du: add missing of_node_put
+Message-Id: <1547372691-28324-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1544867636-59276-1-git-send-email-yuehaibing@huawei.com>
-         <1544868370-83459-1-git-send-email-yuehaibing@huawei.com>
-         <9bdb64b6-501e-cd37-d4ab-a041ac25e738@huawei.com>
-In-Reply-To: <9bdb64b6-501e-cd37-d4ab-a041ac25e738@huawei.com>
+References: <1547372691-28324-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1547372691-28324-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: YueHaibing <yuehaibing@huawei.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-On Thu, 2019-01-17 at 16:21 +0800, YueHaibing wrote:
-> ping...
->=20
-> On 2018/12/15 18:06, YueHaibing wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> >=20
-> > security/integrity/evm/evm_main.c: In function 'init_evm':
-> > security/integrity/evm/evm_main.c:566:21: warning:
-> >  variable 'xattr' set but not used [-Wunused-but-set-variable]
-> >=20
-> > It never used since commit 21af76631476 ("EVM: turn evm_config_xattrnam=
-es
-> > into a list")
-> >=20
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-Thank you. =C2=A0This patch is now queued in the next-integrity branch of
-https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Mimi
+// <smpl>
+@r exists@
+local idexpression e;
+expression x;
+@@
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e = NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
+// </smpl>
 
-> > ---
-> >  security/integrity/evm/evm_main.c | 6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
-> >=20
-> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm=
-/evm_main.c
-> > index 5ecaa3d..b6d9f14 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -563,7 +563,6 @@ static int __init init_evm(void)
-> >  {
-> >  	int error;
-> >  	struct list_head *pos, *q;
-> > -	struct xattr_list *xattr;
-> > =20
-> >  	evm_init_config();
-> > =20
-> > @@ -580,11 +579,8 @@ static int __init init_evm(void)
-> >  error:
-> >  	if (error !=3D 0) {
-> >  		if (!list_empty(&evm_config_xattrnames)) {
-> > -			list_for_each_safe(pos, q, &evm_config_xattrnames) {
-> > -				xattr =3D list_entry(pos, struct xattr_list,
-> > -						   list);
-> > +			list_for_each_safe(pos, q, &evm_config_xattrnames)
-> >  				list_del(pos);
-> > -			}
-> >  		}
-> >  	}
-> >=20
-> >=20
-> >=20
-> >=20
-> > .
-> >=20
->=20
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 9c7007d..bc3fcb3 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		dev_dbg(rcdu->dev,
+ 			"connected entity %pOF is disabled, skipping\n",
+ 			entity);
++		of_node_put(entity);
+ 		return -ENODEV;
+ 	}
+ 
