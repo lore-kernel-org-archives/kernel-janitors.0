@@ -1,25 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 04 Jan 2019 06:01:27 +0000
-Subject: Re: [PATCH 6/8] scsi: pm80xx: reduce indentation
-Message-Id: <yq1r2dt6jwo.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Jan 2019 15:41:25 +0000
+Subject: [PATCH] net: sungem: fix indentation, remove a tab
+Message-Id: <20190114154125.18455-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1546185195-25676-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1546185195-25676-7-git-send-email-Julia.Lawall@lip6.fr> (Julia
-        Lawall's message of "Sun, 30 Dec 2018 16:53:13 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jack Wang <jinpu.wang@profitbricks.com>, kernel-janitors@vger.kernel.org, lindar_liu@usish.com, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Julia,
+The declaration of variable 'found' is one level too deep, fix this by
+removing a tab.
 
-> Delete tab aligning a statement with the right hand side of a
-> preceding assignment rather than the left hand side.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/sun/sungem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.21/scsi-fixes, thanks!
-
+diff --git a/drivers/net/ethernet/sun/sungem.c b/drivers/net/ethernet/sun/sungem.c
+index b9221fc1674d..3e7631160384 100644
+--- a/drivers/net/ethernet/sun/sungem.c
++++ b/drivers/net/ethernet/sun/sungem.c
+@@ -2760,7 +2760,7 @@ static void get_gem_mac_nonobp(struct pci_dev *pdev, unsigned char *dev_addr)
+ 	void __iomem *p = pci_map_rom(pdev, &size);
+ 
+ 	if (p) {
+-			int found;
++		int found;
+ 
+ 		found = readb(p) = 0x55 &&
+ 			readb(p + 1) = 0xaa &&
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.19.1
