@@ -1,41 +1,40 @@
-From: Tero Kristo <t-kristo@ti.com>
-Date: Thu, 24 Jan 2019 19:50:33 +0000
-Subject: Re: [PATCH v2] clk: ti: Fix error handling in ti_clk_parse_divider_data()
-Message-Id: <2d7a3290-44b3-94ad-076e-fda869480edf@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Jan 2019 15:48:34 +0000
+Subject: [PATCH] ieee802154: mcr20a: fix indentation, remove tabs
+Message-Id: <20190114154834.18693-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190115194625.GA1074@kadam>
- <154835786296.136743.12154336975596919287@swboyd.mtv.corp.google.com>
-In-Reply-To: <154835786296.136743.12154336975596919287@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Boyd <sboyd@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Xue Liu <liuxuenetmail@gmail.com>, Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>, "David S . Miller" <davem@davemloft.net>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 24/01/2019 21:24, Stephen Boyd wrote:
-> Quoting Dan Carpenter (2019-01-15 11:46:25)
->> The ti_clk_parse_divider_data() function is only called from
->> _get_div_table_from_setup().  That function doesn't look at the return
->> value but instead looks at the "*table" pointer.  In this case, if the
->> kcalloc() fails then *table is NULL (which means success).  It should
->> instead be an error pointer.
->>
->> The ti_clk_parse_divider_data() function has two callers.  One checks
->> for errors and the other doesn't.  I have fixed it so now both handle
->> errors.
->>
->> Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
-> 
-> Applied to clk-fixes
-> 
-> I'm going to add Tero's ack to this because it isn't really that
-> different.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Yeah, thats ok. Thanks Stephen.
+The are a couple of statments that are one level too deep, fix this by
+removing tabs.
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ieee802154/mcr20a.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
+index 44de81e5f140..c589f5ae75bb 100644
+--- a/drivers/net/ieee802154/mcr20a.c
++++ b/drivers/net/ieee802154/mcr20a.c
+@@ -905,9 +905,9 @@ mcr20a_irq_clean_complete(void *context)
+ 		}
+ 		break;
+ 	case (DAR_IRQSTS1_RXIRQ | DAR_IRQSTS1_SEQIRQ):
+-			/* rx is starting */
+-			dev_dbg(printdev(lp), "RX is starting\n");
+-			mcr20a_handle_rx(lp);
++		/* rx is starting */
++		dev_dbg(printdev(lp), "RX is starting\n");
++		mcr20a_handle_rx(lp);
+ 		break;
+ 	case (DAR_IRQSTS1_RXIRQ | DAR_IRQSTS1_TXIRQ | DAR_IRQSTS1_SEQIRQ):
+ 		if (lp->is_tx) {
+-- 
+2.19.1
