@@ -1,7 +1,7 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 14 Jan 2019 18:13:57 +0000
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Date: Mon, 14 Jan 2019 22:01:24 +0000
 Subject: Re: [PATCH 1/3 v2] drm: rcar-du: add missing of_node_put
-Message-Id: <10676089.h4Wfvzvksh@avalon>
+Message-Id: <d492e274-fc01-98eb-4f99-a6af611d4c30@ideasonboard.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.DEB.2.20.1901141743510.3522@hadrien>
 In-Reply-To: <alpine.DEB.2.20.1901141743510.3522@hadrien>
@@ -9,13 +9,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hi Julia,
 
-Thank you for the patch.
-
-On Monday, 14 January 2019 18:44:56 EET Julia Lawall wrote:
+On 14/01/2019 16:44, Julia Lawall wrote:
 > Add an of_node_put when the result of of_graph_get_remote_port_parent is
 > not available.
 > 
@@ -36,44 +34,42 @@ On Monday, 14 January 2019 18:44:56 EET Julia Lawall wrote:
 >     when != of_fwnode_handle(e)
 > (
 > return e;
-> 
+> |
 > *return ...;
 > )
 > // </smpl>
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Thankyou for the update.
 
-and applied to my tree.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
+
+> 
 > ---
 > v2: Add the second of_node_put(entity);, as suggested by Kieran Bingham.
 > 
 >  drivers/gpu/drm/rcar-du/rcar_du_kms.c |    2 ++
 >  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index 9c7007d..f9a90ff 100644
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> index 9c7007d..f9a90ff 100644
 > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
 > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> @@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct
-> rcar_du_device *rcdu, dev_dbg(rcdu->dev,
+> @@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+>  		dev_dbg(rcdu->dev,
 >  			"connected entity %pOF is disabled, skipping\n",
 >  			entity);
 > +		of_node_put(entity);
 >  		return -ENODEV;
 >  	}
 > 
-> @@ -366,6 +367,7 @@ static int rcar_du_encoders_init_one(struct
-> rcar_du_device *rcdu, dev_warn(rcdu->dev,
+> @@ -366,6 +367,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+>  		dev_warn(rcdu->dev,
 >  			 "no encoder found for endpoint %pOF, skipping\n",
 >  			 ep->local_node);
 > +		of_node_put(entity);
 >  		return -ENODEV;
 >  	}
-
--- 
-Regards,
-
-Laurent Pinchart
+> 
