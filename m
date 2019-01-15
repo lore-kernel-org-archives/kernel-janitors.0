@@ -1,21 +1,70 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 23 Jan 2019 04:09:25 +0000
-Subject: Re: [PATCH net-next] devlink: Add missing check of nlmsg_put
-Message-Id: <20190122.200925.576430874901041067.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Jan 2019 19:46:25 +0000
+Subject: [PATCH v2] clk: ti: Fix error handling in ti_clk_parse_divider_data()
+Message-Id: <20190115194625.GA1074@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1548063293-17855-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1548063293-17855-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <20190115070149.wpiyqw5vqqqsapxt@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: jiri@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 21 Jan 2019 09:34:53 +0000
+The ti_clk_parse_divider_data() function is only called from
+_get_div_table_from_setup().  That function doesn't look at the return
+value but instead looks at the "*table" pointer.  In this case, if the
+kcalloc() fails then *table is NULL (which means success).  It should
+instead be an error pointer.
 
-> nlmsg_put may fail, this fix add a check of its return value.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The ti_clk_parse_divider_data() function has two callers.  One checks
+for errors and the other doesn't.  I have fixed it so now both handle
+errors.
 
-Applied.
+Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  I somehow didn't compile the v1 of this patch so it had a couple
+     stupid bugs.  I'm very sorry.
+
+ drivers/clk/ti/divider.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 8d77090ad94a..0241450f3eb3 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ 	num_dividers = i;
+ 
+ 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
+-	if (!tmp)
++	if (!tmp) {
++		*table = ERR_PTR(-ENOMEM);
+ 		return -ENOMEM;
++	}
+ 
+ 	valid_div = 0;
+ 	*width = 0;
+@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ {
+ 	struct clk_omap_divider *div;
+ 	struct clk_omap_reg *reg;
++	int ret;
+ 
+ 	if (!setup)
+ 		return NULL;
+@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+ 
+ 	div->table = _get_div_table_from_setup(setup, &div->width);
++	if (IS_ERR(div->table)) {
++		ret = PTR_ERR(div->table);
++		kfree(div);
++		return ERR_PTR(ret);
++	}
++
+ 
+ 	div->shift = setup->bit_shift;
+ 	div->latch = -EINVAL;
+-- 
+2.17.1
