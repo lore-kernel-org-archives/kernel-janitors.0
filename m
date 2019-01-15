@@ -1,47 +1,35 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 03 Jan 2019 03:12:18 +0000
-Subject: [PATCH -next] PCI: amlogic: Use PTR_ERR_OR_ZERO
-Message-Id: <1546485138-142830-1-git-send-email-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Jan 2019 19:54:54 +0000
+Subject: [PATCH] media: s5k4ecgx: delete a bogus error message
+Message-Id: <20190115195454.GC1074@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yue Wang <yue.wang@Amlogic.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Kevin
- Hilman <khilman@baylibre.com>
-Cc: linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sangwook Lee <sangwook.lee@linaro.org>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+This function prints an error message on success.  I don't have the
+hardware, I just noticed this while reading the code.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 8b99312b7214 ("[media] Add v4l2 subdev driver for S5K4ECGX sensor")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/pci/controller/dwc/pci-meson.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/media/i2c/s5k4ecgx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index 241ebe0..51cf20c 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -181,10 +181,7 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
+diff --git a/drivers/media/i2c/s5k4ecgx.c b/drivers/media/i2c/s5k4ecgx.c
+index 79aa2740edc4..79c1894c2c83 100644
+--- a/drivers/media/i2c/s5k4ecgx.c
++++ b/drivers/media/i2c/s5k4ecgx.c
+@@ -263,8 +263,6 @@ static int s5k4ecgx_read(struct i2c_client *client, u32 addr, u16 *val)
+ 		ret = s5k4ecgx_i2c_write(client, REG_CMDRD_ADDRL, low);
+ 	if (!ret)
+ 		ret = s5k4ecgx_i2c_read(client, REG_CMDBUF0_ADDR, val);
+-	if (!ret)
+-		dev_err(&client->dev, "Failed to execute read command\n");
  
- 	/* Meson SoC has two PCI controllers use same phy register*/
- 	mp->mem_res.phy_base = meson_pcie_get_mem_shared(pdev, mp, "phy");
--	if (IS_ERR(mp->mem_res.phy_base))
--		return PTR_ERR(mp->mem_res.phy_base);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(mp->mem_res.phy_base);
+ 	return ret;
  }
- 
- static void meson_pcie_power_on(struct meson_pcie *mp)
-@@ -258,10 +255,7 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
- 		return PTR_ERR(res->general_clk);
- 
- 	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
--	if (IS_ERR(res->clk))
--		return PTR_ERR(res->clk);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(res->clk);
- }
- 
- static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
+-- 
+2.17.1
