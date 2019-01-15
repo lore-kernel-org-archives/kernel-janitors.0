@@ -1,52 +1,67 @@
-From: Chuck Lever <chuck.lever@oracle.com>
-Date: Wed, 16 Jan 2019 15:18:37 +0000
-Subject: Re: [PATCH net-next] xprtrdma: Fix error return code in rpcrdma_buffer_create()
-Message-Id: <84778E0E-6A51-4348-94C6-57110599DAD3@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Jan 2019 07:01:49 +0000
+Subject: [PATCH] clk: ti: Fix error handling in ti_clk_parse_divider_data()
+Message-Id: <20190115070149.wpiyqw5vqqqsapxt@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547635124-62243-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1547635124-62243-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <154706313779.15366.12078258980663060364@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, Bruce Fields <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The ti_clk_parse_divider_data() function is only called from
+_get_div_table_from_setup().  That function doesn't look at the return
+value but instead looks at the "*table" pointer.  In this case, if the
+kcalloc() fails then *table is NULL (which means success).  It should
+instead be an error pointer.
 
+The ti_clk_parse_divider_data() function has two callers.  One checks
+for errors and the other doesn't.  I have fixed it so now both handle
+errors.
 
-On Jan 16, 2019, at 5:38 AM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/clk/ti/divider.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-> Fix to return a negative error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 6d2d0ee27c7a ("xprtrdma: Replace rpcrdma_receive_wq with a per-xprt workqueue")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-
-I thought we'd already fixed this one, but:
-
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-
-
-> ---
-> net/sunrpc/xprtrdma/verbs.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
-> index 7749a2b..3dde058 100644
-> --- a/net/sunrpc/xprtrdma/verbs.c
-> +++ b/net/sunrpc/xprtrdma/verbs.c
-> @@ -1113,8 +1113,10 @@ struct rpcrdma_req *
-> 						WQ_MEM_RECLAIM | WQ_HIGHPRI,
-> 						0,
-> 			r_xprt->rx_xprt.address_strings[RPC_DISPLAY_ADDR]);
-> -	if (!buf->rb_completion_wq)
-> +	if (!buf->rb_completion_wq) {
-> +		rc = -ENOMEM;
-> 		goto out;
-> +	}
-> 
-> 	return 0;
-> out:
-
-
---
-Chuck Lever
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 8d77090ad94a..4c48ef424ad5 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ 	num_dividers = i;
+ 
+ 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
+-	if (!tmp)
++	if (!tmp) {
++		*table = PTR_ERR(-ENOMEM);
+ 		return -ENOMEM;
++	}
+ 
+ 	valid_div = 0;
+ 	*width = 0;
+@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ {
+ 	struct clk_omap_divider *div;
+ 	struct clk_omap_reg *reg;
++	int ret;
+ 
+ 	if (!setup)
+ 		return NULL;
+@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+ 
+ 	div->table = _get_div_table_from_setup(setup, &div->width);
++	if (IS_ERR(div->table)) {
++		ret = PTR_ERR(div->table);
++		kfree(div);
++		return ret;
++	}
++
+ 
+ 	div->shift = setup->bit_shift;
+ 	div->latch = -EINVAL;
+-- 
+2.11.0
