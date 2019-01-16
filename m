@@ -1,23 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 16 Jan 2019 22:03:52 +0000
-Subject: Re: [PATCH] bnx2x: fix various indentation issues
-Message-Id: <20190116.140352.554500140177001885.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Jan 2019 18:53:16 +0000
+Subject: [PATCH] igb: fix various indentation issues
+Message-Id: <20190116185316.24814-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190114151516.17744-1-colin.king@canonical.com>
-In-Reply-To: <20190114151516.17744-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: ariel.elior@cavium.com, sudarsana.kalluru@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 14 Jan 2019 15:15:16 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are lines that have indentation issues, fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There are some lines that have indentation issues, fix these
 
-Applied to net-next.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/igb/igb_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
+index 7426060b678f..179fe6d2c660 100644
+--- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
++++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
+@@ -3158,8 +3158,8 @@ static int igb_set_eee(struct net_device *netdev,
+ 	} else if (!edata->eee_enabled) {
+ 		dev_err(&adapter->pdev->dev,
+ 			"Setting EEE options are not supported with EEE disabled\n");
+-			return -EINVAL;
+-		}
++		return -EINVAL;
++	}
+ 
+ 	adapter->eee_advert = ethtool_adv_to_mmd_eee_adv_t(edata->advertised);
+ 	if (hw->dev_spec._82575.eee_disable != !edata->eee_enabled) {
+-- 
+2.19.1
