@@ -1,86 +1,40 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 09 Jan 2019 05:58:14 +0000
-Subject: Re: [PATCH -next] crypto: brcm - Fix some set-but-not-used warning
-Message-Id: <362516b3-0f1c-282b-a6fe-f094f6ea0db1@huawei.com>
+From: Thomas Hellstrom <thellstrom@vmware.com>
+Date: Wed, 16 Jan 2019 05:35:05 +0000
+Subject: Re: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'srf'
+Message-Id: <fa71970ceec73faff082008820389a9ad1a8f5be.camel@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545968644-191671-1-git-send-email-yuehaibing@huawei.com>
- <CAAFb_vocPLiiPeV210Y-CMj7cVdfQx4OvDzaygkihzJzXhj2NA@mail.gmail.com>
-In-Reply-To: <CAAFb_vocPLiiPeV210Y-CMj7cVdfQx4OvDzaygkihzJzXhj2NA@mail.gmail.com>
+References: <1547603735-148124-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1547603735-148124-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, Gilad Ben-Yossef <gilad@benyossef.com>, Stefan Agner <stefan@agner.ch>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>, "syeh@vmware.com" <syeh@vmware.com>, "airlied@linux.ie" <airlied@linux.ie>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-On 2019/1/9 13:35, Raveendra Padasalagi wrote:
-> Hi YueHaibing,
-> 
-> Please add below fixes tag in the commit message,
-> Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
-> 
-> Otherwise patch looks good to me.
-
-Ok, will send v2, Thanks.
-
-> 
-> -Raveendra
-> 
-> On Fri, Dec 28, 2018 at 9:07 AM YueHaibing <yuehaibing@huawei.com> wrote:
->>
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/crypto/bcm/cipher.c: In function 'handle_ahash_req':
->> drivers/crypto/bcm/cipher.c:720:15: warning:
->>  variable 'chunk_start' set but not used [-Wunused-but-set-variable]
->>
->> drivers/crypto/bcm/cipher.c: In function 'spu_rx_callback':
->> drivers/crypto/bcm/cipher.c:1679:31: warning:
->>  variable 'areq' set but not used [-Wunused-but-set-variable]
->>
->> drivers/crypto/bcm/cipher.c:1678:22: warning:
->>  variable 'ctx' set but not used [-Wunused-but-set-variable]
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/crypto/bcm/cipher.c | 6 +-----
->>  1 file changed, 1 insertion(+), 5 deletions(-)
->>
->> diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
->> index c9393ff..9a66c29 100644
->> --- a/drivers/crypto/bcm/cipher.c
->> +++ b/drivers/crypto/bcm/cipher.c
->> @@ -717,7 +717,7 @@ static int handle_ahash_req(struct iproc_reqctx_s *rctx)
->>          */
->>         unsigned int new_data_len;
->>
->> -       unsigned int chunk_start = 0;
->> +       unsigned int __maybe_unused chunk_start = 0;
->>         u32 db_size;     /* Length of data field, incl gcm and hash padding */
->>         int pad_len = 0; /* total pad len, including gcm, hash, stat padding */
->>         u32 data_pad_len = 0;   /* length of GCM/CCM padding */
->> @@ -1675,8 +1675,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
->>         struct spu_hw *spu = &iproc_priv.spu;
->>         struct brcm_message *mssg = msg;
->>         struct iproc_reqctx_s *rctx;
->> -       struct iproc_ctx_s *ctx;
->> -       struct crypto_async_request *areq;
->>         int err = 0;
->>
->>         rctx = mssg->ctx;
->> @@ -1686,8 +1684,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
->>                 err = -EFAULT;
->>                 goto cb_finish;
->>         }
->> -       areq = rctx->parent;
->> -       ctx = rctx->ctx;
->>
->>         /* process the SPU status */
->>         err = spu->spu_status_process(rctx->msg_buf.rx_stat);
->>
->>
->>
->>
->>
-> 
-> .
-> 
+WXVlLA0KDQpUaGFua3MsDQpSZXZpZXdlZC1ieTogVGhvbWFzIEhlbGxzdHJvbSA8dGhlbGxzdHJv
+bUB2bXdhcmUuY29tPg0KDQpXaWxsIGluY2x1ZGUgaW4gdGhlIG5leHQgLW5leHQgcHVsbC4NCi9U
+aG9tYXMNCg0KDQpPbiBXZWQsIDIwMTktMDEtMTYgYXQgMDE6NTUgKzAwMDAsIFl1ZUhhaWJpbmcg
+d3JvdGU6DQo+IEZpeGVzIGdjYyAnLVd1bnVzZWQtYnV0LXNldC12YXJpYWJsZScgd2FybmluZzoN
+Cj4gDQo+IGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N1cmZhY2UuYzogSW4gZnVuY3Rp
+b24NCj4gJ3Ztd19od19zdXJmYWNlX2Rlc3Ryb3knOg0KPiBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4
+L3Ztd2dmeF9zdXJmYWNlLmM6MzM1OjIyOiB3YXJuaW5nOg0KPiAgdmFyaWFibGUgJ3NyZicgc2V0
+IGJ1dCBub3QgdXNlZCBbLVd1bnVzZWQtYnV0LXNldC12YXJpYWJsZV0NCj4gDQo+IEl0IG5ldmVy
+IHVzZWQgc2luY2UgY29tbWl0IDU0MzgzMWNmYzk3NiDDr8K8XiJkcm0vdm13Z2Z4OiBCcmVhayBv
+dXQNCj4gc3VyZmFjZSBhbmQNCj4gY29udGV4dCBtYW5hZ2VtZW50IHRvIHNlcGFyYXRlIGZpbGVz
+IikNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFl1ZUhhaWJpbmcgPHl1ZWhhaWJpbmdAaHVhd2VpLmNv
+bT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMgfCAy
+IC0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMNCj4gYi9kcml2ZXJzL2dw
+dS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMNCj4gaW5kZXggODBhMDFjZC4uM2I2OTc2ZSAx
+MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3VyZmFjZS5jDQo+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N1cmZhY2UuYw0KPiBAQCAtMzMy
+LDcgKzMzMiw2IEBAIHN0YXRpYyB2b2lkIHZtd19od19zdXJmYWNlX2Rlc3Ryb3koc3RydWN0DQo+
+IHZtd19yZXNvdXJjZSAqcmVzKQ0KPiAgew0KPiAgDQo+ICAJc3RydWN0IHZtd19wcml2YXRlICpk
+ZXZfcHJpdiA9IHJlcy0+ZGV2X3ByaXY7DQo+IC0Jc3RydWN0IHZtd19zdXJmYWNlICpzcmY7DQo+
+ICAJdm9pZCAqY21kOw0KPiAgDQo+ICAJaWYgKHJlcy0+ZnVuYy0+ZGVzdHJveSA9PSB2bXdfZ2Jf
+c3VyZmFjZV9kZXN0cm95KSB7DQo+IEBAIC0zNTksNyArMzU4LDYgQEAgc3RhdGljIHZvaWQgdm13
+X2h3X3N1cmZhY2VfZGVzdHJveShzdHJ1Y3QNCj4gdm13X3Jlc291cmNlICpyZXMpDQo+ICAJCSAq
+Lw0KPiAgDQo+ICAJCW11dGV4X2xvY2soJmRldl9wcml2LT5jbWRidWZfbXV0ZXgpOw0KPiAtCQlz
+cmYgPSB2bXdfcmVzX3RvX3NyZihyZXMpOw0KPiAgCQlkZXZfcHJpdi0+dXNlZF9tZW1vcnlfc2l6
+ZSAtPSByZXMtPmJhY2t1cF9zaXplOw0KPiAgCQltdXRleF91bmxvY2soJmRldl9wcml2LT5jbWRi
+dWZfbXV0ZXgpOw0KPiAgCX0NCj4gDQo+IA0KPiANCg=
