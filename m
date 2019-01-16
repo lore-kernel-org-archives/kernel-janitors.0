@@ -1,67 +1,94 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Mon, 21 Jan 2019 09:09:39 +0000
-Subject: Re: [PATCH -next] drm/stm: ltdc: remove set but not used variable 'src_h'
-Message-Id: <CA+M3ks6Q+hU9jjAbu6qkMqb0knALbBYonS0kRjyFQd_gcSgE=A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Jan 2019 17:08:17 +0000
+Subject: [PATCH] wan: dscc4: fix various indentation issues
+Message-Id: <20190116170817.22383-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538131180-34108-1-git-send-email-yuehaibing@huawei.com>
- <1548059241-148022-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1548059241-148022-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Philippe Cornu <philippe.cornu@st.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yannick Fertre <yannick.fertre@st.com>, Vincent Abriou <vincent.abriou@st.com>, linux-stm32@st-md-mailman.stormreply.com, Linux ARM <linux-arm-kernel@lists.infradead.org>, Alexandre Torgue <alexandre.torgue@st.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Francois Romieu <romieu@fr.zoreil.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le lun. 21 janv. 2019 à 09:21, YueHaibing <yuehaibing@huawei.com> a écrit :
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/stm/ltdc.c: In function 'ltdc_plane_atomic_check':
-> drivers/gpu/drm/stm/ltdc.c:694:13: warning:
->  variable 'src_y' set but not used [-Wunused-but-set-variable]
->   u32 src_x, src_y, src_w, src_h;
->              ^
->              ^
-> drivers/gpu/drm/stm/ltdc.c:694:6: warning:
->  variable 'src_x' set but not used [-Wunused-but-set-variable]
->   u32 src_x, src_y, src_w, src_h;
->       ^
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied on drm-misc-next,
+There are some lines that have indentation issues, fix these.
 
-Thanks,
-Benjamin
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wan/dscc4.c | 50 ++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-> ---
->  drivers/gpu/drm/stm/ltdc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-> index 61dd661..a91e041 100644
-> --- a/drivers/gpu/drm/stm/ltdc.c
-> +++ b/drivers/gpu/drm/stm/ltdc.c
-> @@ -691,7 +691,7 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
->                                    struct drm_plane_state *state)
->  {
->         struct drm_framebuffer *fb = state->fb;
-> -       u32 src_x, src_y, src_w, src_h;
-> +       u32 src_w, src_h;
->
->         DRM_DEBUG_DRIVER("\n");
->
-> @@ -699,8 +699,6 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
->                 return 0;
->
->         /* convert src_ from 16:16 format */
-> -       src_x = state->src_x >> 16;
-> -       src_y = state->src_y >> 16;
->         src_w = state->src_w >> 16;
->         src_h = state->src_h >> 16;
->
->
->
->
->
->
+diff --git a/drivers/net/wan/dscc4.c b/drivers/net/wan/dscc4.c
+index c0b0f525c87c..d5dc823f781e 100644
+--- a/drivers/net/wan/dscc4.c
++++ b/drivers/net/wan/dscc4.c
+@@ -456,16 +456,16 @@ static int state_check(u32 state, struct dscc4_dev_priv *dpriv,
+ 	int ret = 0;
+ 
+ 	if (debug > 1) {
+-	if (SOURCE_ID(state) != dpriv->dev_id) {
+-		printk(KERN_DEBUG "%s (%s): Source Id=%d, state=%08x\n",
+-		       dev->name, msg, SOURCE_ID(state), state );
++		if (SOURCE_ID(state) != dpriv->dev_id) {
++			printk(KERN_DEBUG "%s (%s): Source Id=%d, state=%08x\n",
++			       dev->name, msg, SOURCE_ID(state), state);
+ 			ret = -1;
+-	}
+-	if (state & 0x0df80c00) {
+-		printk(KERN_DEBUG "%s (%s): state=%08x (UFO alert)\n",
+-		       dev->name, msg, state);
++		}
++		if (state & 0x0df80c00) {
++			printk(KERN_DEBUG "%s (%s): state=%08x (UFO alert)\n",
++			       dev->name, msg, state);
+ 			ret = -1;
+-	}
++		}
+ 	}
+ 	return ret;
+ }
+@@ -1760,25 +1760,25 @@ static void dscc4_rx_irq(struct dscc4_pci_priv *priv,
+ 	} else { /* SccEvt */
+ 		if (debug > 1) {
+ 			//FIXME: verifier la presence de tous les evenements
+-		static struct {
+-			u32 mask;
+-			const char *irq_name;
+-		} evts[] = {
+-			{ 0x00008000, "TIN"},
+-			{ 0x00000020, "RSC"},
+-			{ 0x00000010, "PCE"},
+-			{ 0x00000008, "PLLA"},
+-			{ 0, NULL}
+-		}, *evt;
+-
+-		for (evt = evts; evt->irq_name; evt++) {
+-			if (state & evt->mask) {
++			static struct {
++				u32 mask;
++				const char *irq_name;
++			} evts[] = {
++				{ 0x00008000, "TIN"},
++				{ 0x00000020, "RSC"},
++				{ 0x00000010, "PCE"},
++				{ 0x00000008, "PLLA"},
++				{ 0, NULL}
++			}, *evt;
++
++			for (evt = evts; evt->irq_name; evt++) {
++				if (state & evt->mask) {
+ 					printk(KERN_DEBUG "%s: %s\n",
+-						dev->name, evt->irq_name);
+-				if (!(state &= ~evt->mask))
+-					goto try;
++					       dev->name, evt->irq_name);
++					if (!(state &= ~evt->mask))
++						goto try;
++				}
+ 			}
+-		}
+ 		} else {
+ 			if (!(state &= ~0x0000c03c))
+ 				goto try;
+-- 
+2.19.1
