@@ -1,35 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Jan 2019 15:28:59 +0000
-Subject: [PATCH] rtlwifi: rtl818x: fix indentation issue
-Message-Id: <20190117152859.6873-1-colin.king@canonical.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Date: Thu, 17 Jan 2019 16:52:28 +0000
+Subject: Re: [PATCH] rtlwifi: rtl818x: fix indentation issue
+Message-Id: <20190117165227.GA30898@tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190117152859.6873-1-colin.king@canonical.com>
+In-Reply-To: <20190117152859.6873-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Jan 17, 2019 at 03:28:59PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a statement that is indented too deeply. Fix this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-There is a statement that is indented too deeply. Fix this.
+Acked-by: John W. Linville <linville@tuxdriver.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
-index 225c1c8851cc..e2b1bfbcfbd4 100644
---- a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
-+++ b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
-@@ -803,7 +803,7 @@ static void rtl8180_config_cardbus(struct ieee80211_hw *dev)
- 		rtl818x_iowrite16(priv, FEMR_SE, 0xffff);
- 	} else {
- 		reg16 = rtl818x_ioread16(priv, &priv->map->FEMR);
--			reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
-+		reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
- 		rtl818x_iowrite16(priv, &priv->map->FEMR, reg16);
- 	}
- 
 -- 
-2.19.1
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
