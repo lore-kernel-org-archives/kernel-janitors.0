@@ -1,123 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Jan 2019 08:47:42 +0000
-Subject: [PATCH 2/4] drm/imx: imx-ldb: add missing of_node_puts
-Message-Id: <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Date: Thu, 17 Jan 2019 14:00:38 +0000
+Subject: Re: [PATCH 2/4] drm/imx: imx-ldb: add missing of_node_puts
+Message-Id: <1547733638.4009.11.camel@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
+         <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-The device node iterators perform an of_node_get on each
-iteration, so a jump out of the loop requires an of_node_put.
+Hi Julia,
 
-Move the initialization channel->child = child; down to just
-before the call to imx_ldb_register so that intervening failures
-don't need to clear it.  Add a label at the end of the function to
-do all the of_node_puts.
+On Sun, 2019-01-13 at 09:47 +0100, Julia Lawall wrote:
+> The device node iterators perform an of_node_get on each
+> iteration, so a jump out of the loop requires an of_node_put.
+> 
+> Move the initialization channel->child = child; down to just
+> before the call to imx_ldb_register so that intervening failures
+> don't need to clear it.  Add a label at the end of the function to
+> do all the of_node_puts.
 
-The semantic patch that finds part of this problem is as follows
-(http://coccinelle.lip6.fr):
+Thank you, I've applied the patch to the imx-drm/fixes branch.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-*  return ...;
-)
-   ...
- }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-This changes the semantics, with respect to the availability of the child
-field, and has not been tested.
-
- drivers/gpu/drm/imx/imx-ldb.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/imx/imx-ldb.c b/drivers/gpu/drm/imx/imx-ldb.c
-index 2c5bbe3..e31e263 100644
---- a/drivers/gpu/drm/imx/imx-ldb.c
-+++ b/drivers/gpu/drm/imx/imx-ldb.c
-@@ -643,8 +643,10 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 		int bus_format;
- 
- 		ret = of_property_read_u32(child, "reg", &i);
--		if (ret || i < 0 || i > 1)
--			return -EINVAL;
-+		if (ret || i < 0 || i > 1) {
-+			ret = -EINVAL;
-+			goto free_child;
-+		}
- 
- 		if (!of_device_is_available(child))
- 			continue;
-@@ -657,7 +659,6 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 		channel = &imx_ldb->channel[i];
- 		channel->ldb = imx_ldb;
- 		channel->chno = i;
--		channel->child = child;
- 
- 		/*
- 		 * The output port is port@4 with an external 4-port mux or
-@@ -667,13 +668,13 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 						  imx_ldb->lvds_mux ? 4 : 2, 0,
- 						  &channel->panel, &channel->bridge);
- 		if (ret && ret != -ENODEV)
--			return ret;
-+			goto free_child;
- 
- 		/* panel ddc only if there is no bridge */
- 		if (!channel->bridge) {
- 			ret = imx_ldb_panel_ddc(dev, channel, child);
- 			if (ret)
--				return ret;
-+				goto free_child;
- 		}
- 
- 		bus_format = of_get_bus_format(dev, child);
-@@ -689,18 +690,26 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 		if (bus_format < 0) {
- 			dev_err(dev, "could not determine data mapping: %d\n",
- 				bus_format);
--			return bus_format;
-+			ret = bus_format;
-+			goto free_child;
- 		}
- 		channel->bus_format = bus_format;
-+		channel->child = child;
- 
- 		ret = imx_ldb_register(drm, channel);
--		if (ret)
--			return ret;
-+		if (ret) {
-+			channel->child = NULL;
-+			goto free_child;
-+		}
- 	}
- 
- 	dev_set_drvdata(dev, imx_ldb);
- 
- 	return 0;
-+
-+free_child:
-+	of_node_put(child);
-+	return ret;
- }
- 
- static void imx_ldb_unbind(struct device *dev, struct device *master,
+regards
+Philipp
