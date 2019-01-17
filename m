@@ -1,65 +1,70 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Tue, 29 Jan 2019 21:04:33 +0000
-Subject: Re: [PATCH] drm/nouveau: fix missing break in switch statement
-Message-Id: <c1026416-6cab-725d-b13d-bebc1c3a7583@embeddedor.com>
+From: Adeodato =?utf-8?B?U2ltw7M=?= <dato@net.com.org.es>
+Date: Thu, 17 Jan 2019 10:36:02 +0000
+Subject: Re: [PATCH 1/3] mm: add include files so that function definitions have a prototype
+Message-Id: <20190117103602.GA6243@relativists.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181008204736.8941-1-colin.king@canonical.com>
- <63660e1c-1075-80a0-6b11-5f1a8cb253fc@embeddedor.com>
-In-Reply-To: <63660e1c-1075-80a0-6b11-5f1a8cb253fc-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>
+References: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
+In-Reply-To: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org
 
+Hello,
 
+Any chance these three patches of mine (reviewed by Mike Rapoport) 
+will get merged?
 
-On 1/29/19 2:49 PM, Gustavo A. R. Silva wrote:
+Thanks for considering,
+
+-d
+
+P.S.: If they already got merged, I apologize—I couldn't find a 
+repo for mm. (I checked master and next.)
+
+On Tue, Dec 4, 2018 at 02:14 -0300, Adeodato Simó <dato@net.com.org.es> wrote:
+> Previously, rodata_test(), usercopy_warn(), and usercopy_abort() were
+> defined without a matching prototype. Detected by -Wmissing-prototypes
+> GCC flag.
 > 
+> Signed-off-by: Adeodato Simó <dato@net.com.org.es>
+> ---
+> I started poking at this after kernel-janitors got the suggestion[1]
+> to look into the -Wmissing-prototypes warnings.
 > 
-> On 10/8/18 3:47 PM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The NOUVEAU_GETPARAM_PCI_DEVICE case is missing a break statement and falls
->> through to the following NOUVEAU_GETPARAM_BUS_TYPE case and may end up
->> re-assigning the getparam->value to an undesired value. Fix this by adding
->> in the missing break.
->>
->> Detected by CoverityScan, CID#1460507 ("Missing break in switch")
->>
->> Fixes: 359088d5b8ec ("drm/nouveau: remove trivial cases of nvxx_device() usage")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Thanks for considering!
 > 
-> Reviewed-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> [1]: https://www.spinics.net/lists/linux-kernel-janitors/msg43981.html
 > 
-> Friendly ping:
+>  mm/rodata_test.c | 1 +
+>  mm/usercopy.c    | 1 +
+>  2 files changed, 2 insertions(+)
 > 
-> Who can take this?
+> diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+> index d908c8769b48..01306defbd1b 100644
+> --- a/mm/rodata_test.c
+> +++ b/mm/rodata_test.c
+> @@ -11,6 +11,7 @@
+>   */
+>  #define pr_fmt(fmt) "rodata_test: " fmt
+>  
+> +#include <linux/rodata_test.h>
+>  #include <linux/uaccess.h>
+>  #include <asm/sections.h>
+>  
+> diff --git a/mm/usercopy.c b/mm/usercopy.c
+> index 852eb4e53f06..f487ba4888df 100644
+> --- a/mm/usercopy.c
+> +++ b/mm/usercopy.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/sched/task.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/thread_info.h>
+> +#include <linux/uaccess.h>
+>  #include <linux/atomic.h>
+>  #include <linux/jump_label.h>
+>  #include <asm/sections.h>
+> -- 
+> 2.19.2
 > 
-
-BTW, this should be tagged for stable:
-
-Cc: stable@vger.kernel.org
-
-Thanks
---
-Gustavo
-
-
->> ---
->>  drivers/gpu/drm/nouveau/nouveau_abi16.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nouveau_abi16.c b/drivers/gpu/drm/nouveau/nouveau_abi16.c
->> index e67a471331b5..6ec745873bc5 100644
->> --- a/drivers/gpu/drm/nouveau/nouveau_abi16.c
->> +++ b/drivers/gpu/drm/nouveau/nouveau_abi16.c
->> @@ -214,6 +214,7 @@ nouveau_abi16_ioctl_getparam(ABI16_IOCTL_ARGS)
->>  			WARN_ON(1);
->>  			break;
->>  		}
->> +		break;
->>  	case NOUVEAU_GETPARAM_FB_SIZE:
->>  		getparam->value = drm->gem.vram_available;
->>  		break;
->>
