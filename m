@@ -1,91 +1,38 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 10 Jan 2019 12:32:16 +0000
-Subject: NACK: [PATCH] selftests: cpu-hotplug: fix case where CPUs offline > CPUs present
-Message-Id: <49c597d3-65e6-3cde-ee43-906d8951aa90@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 17 Jan 2019 03:13:12 +0000
+Subject: [PATCH v2] virt_wifi: remove duplicated include from virt_wifi.c
+Message-Id: <1547694792-65647-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190110113725.12369-1-colin.king@canonical.com>
-In-Reply-To: <20190110113725.12369-1-colin.king@canonical.com>
+References: <1545274285-143886-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1545274285-143886-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/01/2019 11:37, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The cpu-hotplug test assumes that we can offline the maximum CPU as
-> described by /sys/devices/system/cpu/offline.  However, in the case
-> where the number of CPUs exceeds like kernel configuration then
-> the offline count can be greater than the present count and we end
-> up trying to test the offlining of a CPU that is not available to
-> offline.  Fix this by testing the maximum present CPU instead.
-> 
-> Also, the test currently offlines the CPU and does not online it,
-> so fix this by onlining the CPU after the test.
-> 
-> Fixes: d89dffa976bc ("fault-injection: add selftests for cpu and memory hotplug")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  .../selftests/cpu-hotplug/cpu-on-off-test.sh      | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh b/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-> index bab13dd025a6..8670fb38a40e 100755
-> --- a/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-> +++ b/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-> @@ -31,12 +31,17 @@ prerequisite()
->  	echo "CPU online/offline summary:"
->  	online_cpus=`cat $SYSFS/devices/system/cpu/online`
->  	online_max=${online_cpus##*-}
-> +	echo "online_cpus = $online_cpus online_max = $online_max"
+Remove duplicated include.
 
-Bother, forgot to remove this debug.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix prefix to 'virt_wifi:'
+---
+ drivers/net/wireless/virt_wifi.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
->  
->  	if [[ "$online_cpus" = "$online_max" ]]; then
->  		echo "$msg: since there is only one cpu: $online_cpus"
->  		exit $ksft_skip
->  	fi
->  
-> +	present_cpus=`cat $SYSFS/devices/system/cpu/present`
-> +	present_max=${present_cpus##*-}
-> +	echo "present_cpus = $present_cpus present_max = $present_max"
-> +
->  	echo -e "\t Cpus in online state: $online_cpus"
->  
->  	offline_cpus=`cat $SYSFS/devices/system/cpu/offline`
-> @@ -46,6 +51,7 @@ prerequisite()
->  		offline_max=${offline_cpus##*-}
->  	fi
->  	echo -e "\t Cpus in offline state: $offline_cpus"
-> +
-
-Ugh, I added a whitespace
-
->  }
->  
->  #
-> @@ -151,6 +157,8 @@ online_cpus=0
->  online_max=0
->  offline_cpus=0
->  offline_max=0
-> +present_cpus=0
-> +present_max=0
->  
->  while getopts e:ahp: opt; do
->  	case $opt in
-> @@ -190,9 +198,10 @@ if [ $allcpus -eq 0 ]; then
->  	online_cpu_expect_success $online_max
->  
->  	if [[ $offline_cpus -gt 0 ]]; then
-> -		echo -e "\t offline to online to offline: cpu $offline_max"
-> -		online_cpu_expect_success $offline_max
-> -		offline_cpu_expect_success $offline_max
-> +		echo -e "\t offline to online to offline: cpu $present_max"
-> +		online_cpu_expect_success $present_max
-> +		offline_cpu_expect_success $present_max
-> +		online_cpu $present_max
->  	fi
->  	exit 0
->  else
-> 
+diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
+index 64b2186..245d4d0 100644
+--- a/drivers/net/wireless/virt_wifi.c
++++ b/drivers/net/wireless/virt_wifi.c
+@@ -14,11 +14,6 @@
+ #include <linux/etherdevice.h>
+ #include <linux/module.h>
+ 
+-#include <net/cfg80211.h>
+-#include <net/rtnetlink.h>
+-#include <linux/etherdevice.h>
+-#include <linux/module.h>
+-
+ static struct wiphy *common_wiphy;
+ 
+ struct virt_wifi_wiphy_priv {
