@@ -1,23 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 29 Jan 2019 05:42:35 +0000
-Subject: Re: [PATCH] scsi: hpsa: clean up two indentation issues
-Message-Id: <yq1va28dnp0.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Jan 2019 14:36:23 +0000
+Subject: [PATCH] cw1200: fix indentation issues
+Message-Id: <20190117143623.29363-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190122151830.7230-1-colin.king@canonical.com>
-In-Reply-To: <20190122151830.7230-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 22 Jan 2019 15:18:30 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Solomon Peachy <pizza@shaftnet.org>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+There are two lines that have indentation issues, fix these.
 
-> There are two statements that are indented incorrectly. Fix these.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/st/cw1200/fwio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to 5.1/scsi-queue, thanks.
-
+diff --git a/drivers/net/wireless/st/cw1200/fwio.c b/drivers/net/wireless/st/cw1200/fwio.c
+index 30e7646d04af..b7881232499c 100644
+--- a/drivers/net/wireless/st/cw1200/fwio.c
++++ b/drivers/net/wireless/st/cw1200/fwio.c
+@@ -465,8 +465,8 @@ int cw1200_load_firmware(struct cw1200_common *priv)
+ 
+ 	if (!(val32 & ST90TDS_CONFIG_ACCESS_MODE_BIT)) {
+ 		pr_err("Device is already in QUEUE mode!\n");
+-			ret = -EINVAL;
+-			goto out;
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	switch (priv->hw_type)  {
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.19.1
