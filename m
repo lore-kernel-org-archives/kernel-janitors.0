@@ -1,50 +1,44 @@
-From: Tyler Hicks <tyhicks@canonical.com>
-Date: Tue, 29 Jan 2019 22:37:35 +0000
-Subject: Re: [PATCH] ecryptfs: re-order a condition for static checkers
-Message-Id: <20190129223734.GB29425@lindsey>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 17 Jan 2019 03:17:03 +0000
+Subject: [PATCH v2] virt_wifi: remove set but not used variable 'w_priv'
+Message-Id: <1547695023-71081-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545274318-144187-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1545274318-144187-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2018-12-14 14:51:13, Dan Carpenter wrote:
-> Can we merge this patch?  KASAN will probably complain about this as
-> well, I think...
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Yes, my apologies for the way too long delay. I just noticed that
-there's another commit of yours that I left sitting in the ecryptfs next
-branch from last year and never pushed it up. I'll get both commits in
-and will return to keeping a better eye on ecryptfs submissions.
+drivers/net/wireless/virt_wifi.c: In function 'virt_wifi_net_device_stop':
+drivers/net/wireless/virt_wifi.c:432:31: warning:
+ variable 'w_priv' set but not used [-Wunused-but-set-variable]
 
-Thanks!
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix prefix to 'virt_wifi:'
+---
+ drivers/net/wireless/virt_wifi.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Tyler
-
-> 
-> regards,
-> dan carpenter
-> 
-> On Wed, Aug 22, 2018 at 01:43:59PM +0300, Dan Carpenter wrote:
-> > Static checkers complain that we are using "s->i" as an offset before
-> > we check whether it is within bounds.  It doesn't matter much but we
-> > can easily swap the order of the checks to make everyone happy.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
-> > index e74fe84d0886..624ff4409c61 100644
-> > --- a/fs/ecryptfs/keystore.c
-> > +++ b/fs/ecryptfs/keystore.c
-> > @@ -1063,8 +1063,9 @@ ecryptfs_parse_tag_70_packet(char **filename, size_t *filename_size,
-> >  		       "rc = [%d]\n", __func__, rc);
-> >  		goto out_free_unlock;
-> >  	}
-> > -	while (s->decrypted_filename[s->i] != '\0'
-> > -	       && s->i < s->block_aligned_filename_size)
-> > +
-> > +	while (s->i < s->block_aligned_filename_size &&
-> > +	       s->decrypted_filename[s->i] != '\0')
-> >  		s->i++;
-> >  	if (s->i = s->block_aligned_filename_size) {
-> >  		printk(KERN_WARNING "%s: Invalid tag 70 packet; could not "
+diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
+index 64b2186..ea10f58 100644
+--- a/drivers/net/wireless/virt_wifi.c
++++ b/drivers/net/wireless/virt_wifi.c
+@@ -429,13 +429,11 @@ static int virt_wifi_net_device_open(struct net_device *dev)
+ static int virt_wifi_net_device_stop(struct net_device *dev)
+ {
+ 	struct virt_wifi_netdev_priv *n_priv = netdev_priv(dev);
+-	struct virt_wifi_wiphy_priv *w_priv;
+ 
+ 	n_priv->is_up = false;
+ 
+ 	if (!dev->ieee80211_ptr)
+ 		return 0;
+-	w_priv = wiphy_priv(dev->ieee80211_ptr->wiphy);
+ 
+ 	virt_wifi_cancel_scan(dev->ieee80211_ptr->wiphy);
+ 	virt_wifi_cancel_connect(dev);
