@@ -1,40 +1,35 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Date: Wed, 16 Jan 2019 15:31:36 +0000
-Subject: Re: [PATCH] drm/etnaviv: NULL vs IS_ERR() buf in etnaviv_core_dump()
-Message-Id: <1547652696.4339.38.camel@pengutronix.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Jan 2019 15:28:59 +0000
+Subject: [PATCH] rtlwifi: rtl818x: fix indentation issue
+Message-Id: <20190117152859.6873-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190114104946.GA22444@kadam>
-In-Reply-To: <20190114104946.GA22444@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Russell King <linux+etnaviv@armlinux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Montag, den 14.01.2019, 13:49 +0300 schrieb Dan Carpenter:
-> The etnaviv_gem_get_pages() never returns NULL.  It returns error
-> pointers on error.
-> 
-> Fixes: a8c21a5451d8 ("drm/etnaviv: add initial etnaviv DRM driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied to etnaviv/next.
+There is a statement that is indented too deeply. Fix this.
 
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_dump.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_dump.c
-> b/drivers/gpu/drm/etnaviv/etnaviv_dump.c
-> index 3fbb4855396c..33854c94cb85 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_dump.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_dump.c
-> @@ -215,7 +215,7 @@ void etnaviv_core_dump(struct etnaviv_gpu *gpu)
->  		mutex_lock(&obj->lock);
->  		pages = etnaviv_gem_get_pages(obj);
->  		mutex_unlock(&obj->lock);
-> -		if (pages) {
-> +		if (!IS_ERR(pages)) {
->  			int j;
->  
->  			iter.hdr->data[0] = bomap - bomap_start;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
+index 225c1c8851cc..e2b1bfbcfbd4 100644
+--- a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
++++ b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
+@@ -803,7 +803,7 @@ static void rtl8180_config_cardbus(struct ieee80211_hw *dev)
+ 		rtl818x_iowrite16(priv, FEMR_SE, 0xffff);
+ 	} else {
+ 		reg16 = rtl818x_ioread16(priv, &priv->map->FEMR);
+-			reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
++		reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
+ 		rtl818x_iowrite16(priv, &priv->map->FEMR, reg16);
+ 	}
+ 
+-- 
+2.19.1
