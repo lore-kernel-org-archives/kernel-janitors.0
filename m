@@ -1,19 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 Jan 2019 08:41:44 +0000
-Subject: Re: [PATCH v2] floppy: check_events callback should not return a negative number
-Message-Id: <20190129084144.GD1773@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Jan 2019 00:33:33 +0000
+Subject: [PATCH] fix a couple of indentation issues and remove assignment in if statements
+Message-Id: <20190117003333.30605-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190129083404.47318-1-yuyufen@huawei.com>
-In-Reply-To: <20190129083404.47318-1-yuyufen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yufen Yu <yuyufen@huawei.com>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is an if statement and a return statement that are incorrectly
+indented. Fix these.  Also replace the assignment-in-if statements
+to assignment followed by an if to keep to the coding style.
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: also clean up the assignment-in-if statements too
+
+---
+
+ drivers/net/sb1000.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/sb1000.c b/drivers/net/sb1000.c
+index 7820fced33f6..941cfa8f1c2a 100644
+--- a/drivers/net/sb1000.c
++++ b/drivers/net/sb1000.c
+@@ -535,17 +535,20 @@ sb1000_activate(const int ioaddr[], const char* name)
+ 	int status;
+ 
+ 	ssleep(1);
+-	if ((status = card_send_command(ioaddr, name, Command0, st)))
++	status = card_send_command(ioaddr, name, Command0, st);
++	if (status)
+ 		return status;
+-	if ((status = card_send_command(ioaddr, name, Command1, st)))
++	status = card_send_command(ioaddr, name, Command1, st);
++	if (status)
+ 		return status;
+ 	if (st[3] != 0xf1) {
+-    	if ((status = sb1000_start_get_set_command(ioaddr, name)))
++		status = sb1000_start_get_set_command(ioaddr, name);
++		if (status)
+ 			return status;
+ 		return -EIO;
+ 	}
+ 	udelay(1000);
+-    return sb1000_start_get_set_command(ioaddr, name);
++	return sb1000_start_get_set_command(ioaddr, name);
+ }
+ 
+ /* get SB1000 firmware version */
+-- 
+2.19.1
