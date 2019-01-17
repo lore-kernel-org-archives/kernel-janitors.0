@@ -1,56 +1,32 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 26 Jan 2019 01:37:52 +0000
-Subject: Re: [PATCH -next] btrfs: qgroup: Fix inconsistent IS_ERR and PTR_ERR
-Message-Id: <904a130c-1f9b-2d67-1096-258d3c8bd52e@huawei.com>
+Date: Thu, 17 Jan 2019 03:14:54 +0000
+Subject: [PATCH -next] i2c: imx: Fix inconsistent IS_ERR and PTR_ERR in i2c_imx_dma_request()
+Message-Id: <1547694894-69589-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1548381009-80383-1-git-send-email-yuehaibing@huawei.com>
- <87ac97b6-2b14-9b48-ed28-4d0cbce7322f@gmx.com>
-In-Reply-To: <87ac97b6-2b14-9b48-ed28-4d0cbce7322f@gmx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
-Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com, peda@axentia.se, wsa+renesas@sang-engineering.com, u.kleine-koenig@pengutronix.de, l.stach@pengutronix.de, eha@deif.com, linux@rempel-privat.de
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+Change the call to PTR_ERR to access the value just tested by IS_ERR.
 
+Fixes: 5b3a23a3cc94 ("i2c: imx: notify about real errors on dma i2c_imx_dma_request")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/i2c/busses/i2c-imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2019/1/25 9:59, Qu Wenruo wrote:
-> 
-> 
-> On 2019/1/25 上午9:50, YueHaibing wrote:
->> Change the call to PTR_ERR to access the value just tested by IS_ERR.
->>
->> Fixes: 2b35a512e9cf ("btrfs: qgroup: Use delayed subtree rescan for balance")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  fs/btrfs/qgroup.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
->> index 8559ed9..16d7ec8 100644
->> --- a/fs/btrfs/qgroup.c
->> +++ b/fs/btrfs/qgroup.c
->> @@ -3931,7 +3931,7 @@ int btrfs_qgroup_trace_subtree_after_cow(struct btrfs_trans_handle *trans,
->>  				   block->reloc_generation, block->level,
->>  				   &block->first_key);
->>  	if (IS_ERR(reloc_eb)) {
->> -		ret = PTR_ERR(subv_eb);
->> +		ret = PTR_ERR(reloc_eb);
-> 
-> Nice catch.
-> 
-> I'll fold the this fix in my original patch if it's OK for you.
-
-Ok, sure.
-
-> 
-> Thanks,
-> Qu
-> 
->>  		reloc_eb = NULL;
->>  		goto free_out;
->>  	}
->>
->>
->>
-> 
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 09b1245..42fed40 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -287,7 +287,7 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 
+ 	dma->chan_tx = dma_request_chan(dev, "tx");
+ 	if (IS_ERR(dma->chan_tx)) {
+-		ret = PTR_ERR(dma->chan_rx);
++		ret = PTR_ERR(dma->chan_tx);
+ 		if (ret != -ENODEV && ret != -EPROBE_DEFER)
+ 			dev_err(dev, "can't request DMA tx channel (%d)\n", ret);
+ 		goto fail_al;
