@@ -1,37 +1,59 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Wed, 02 Jan 2019 16:40:48 +0000
-Subject: Re: [PATCH 11/20] Btrfs: drop useless LIST_HEAD
-Message-Id: <20190102164048.GZ23615@twin.jikos.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Jan 2019 00:35:43 +0000
+Subject: [PATCH][V3] sb1000: fix a couple of indentation issues and remove assignment in if statements
+Message-Id: <20190117003543.30718-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
- <1545555435-24576-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-12-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Chris Mason <clm@fb.com>, kernel-janitors@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 09:57:06AM +0100, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
-> 
-> The uses were removed in 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC
-> handling for balance"), but not the declaration.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
-> 
-> Fixes: 3fd0a5585eb9 ("Btrfs: Metadata ENOSPC handling for balance")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Added to patch queue, thanks. I've dropepd the Fixes: line as it's not
-really a fix that would need to go to stable. The original commit is
-mentioned in the changelog which is IMHO sufficient.
+There is an if statement and a return statement that are incorrectly
+indented. Fix these.  Also replace the assignment-in-if statements
+to assignment followed by an if to keep to the coding style.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: also clean up the assignment-in-if statements too
+V3: add missing sb1000 in subject line missing from V2.
+
+---
+
+ drivers/net/sb1000.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/sb1000.c b/drivers/net/sb1000.c
+index 7820fced33f6..941cfa8f1c2a 100644
+--- a/drivers/net/sb1000.c
++++ b/drivers/net/sb1000.c
+@@ -535,17 +535,20 @@ sb1000_activate(const int ioaddr[], const char* name)
+ 	int status;
+ 
+ 	ssleep(1);
+-	if ((status = card_send_command(ioaddr, name, Command0, st)))
++	status = card_send_command(ioaddr, name, Command0, st);
++	if (status)
+ 		return status;
+-	if ((status = card_send_command(ioaddr, name, Command1, st)))
++	status = card_send_command(ioaddr, name, Command1, st);
++	if (status)
+ 		return status;
+ 	if (st[3] != 0xf1) {
+-    	if ((status = sb1000_start_get_set_command(ioaddr, name)))
++		status = sb1000_start_get_set_command(ioaddr, name);
++		if (status)
+ 			return status;
+ 		return -EIO;
+ 	}
+ 	udelay(1000);
+-    return sb1000_start_get_set_command(ioaddr, name);
++	return sb1000_start_get_set_command(ioaddr, name);
+ }
+ 
+ /* get SB1000 firmware version */
+-- 
+2.19.1
