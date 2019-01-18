@@ -1,44 +1,35 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 17 Jan 2019 03:17:03 +0000
-Subject: [PATCH v2] virt_wifi: remove set but not used variable 'w_priv'
-Message-Id: <1547695023-71081-1-git-send-email-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 Jan 2019 23:12:31 +0000
+Subject: [PATCH] wlcore: clean up an indentation issue
+Message-Id: <20190118231231.31577-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545274318-144187-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545274318-144187-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Tony Lindgren <tony@atomide.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/net/wireless/virt_wifi.c: In function 'virt_wifi_net_device_stop':
-drivers/net/wireless/virt_wifi.c:432:31: warning:
- variable 'w_priv' set but not used [-Wunused-but-set-variable]
+There is a goto statement that is missing a tab for indentation. Fix this.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2: fix prefix to 'virt_wifi:'
----
- drivers/net/wireless/virt_wifi.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wireless/ti/wlcore/cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
-index 64b2186..ea10f58 100644
---- a/drivers/net/wireless/virt_wifi.c
-+++ b/drivers/net/wireless/virt_wifi.c
-@@ -429,13 +429,11 @@ static int virt_wifi_net_device_open(struct net_device *dev)
- static int virt_wifi_net_device_stop(struct net_device *dev)
- {
- 	struct virt_wifi_netdev_priv *n_priv = netdev_priv(dev);
--	struct virt_wifi_wiphy_priv *w_priv;
+diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti/wlcore/cmd.c
+index 903968735a74..348be0aed97e 100644
+--- a/drivers/net/wireless/ti/wlcore/cmd.c
++++ b/drivers/net/wireless/ti/wlcore/cmd.c
+@@ -1427,7 +1427,7 @@ int wl1271_cmd_set_sta_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
+ 	ret = wl1271_cmd_send(wl, CMD_SET_KEYS, cmd, sizeof(*cmd), 0);
+ 	if (ret < 0) {
+ 		wl1271_warning("could not set keys");
+-	goto out;
++		goto out;
+ 	}
  
- 	n_priv->is_up = false;
- 
- 	if (!dev->ieee80211_ptr)
- 		return 0;
--	w_priv = wiphy_priv(dev->ieee80211_ptr->wiphy);
- 
- 	virt_wifi_cancel_scan(dev->ieee80211_ptr->wiphy);
- 	virt_wifi_cancel_connect(dev);
+ out:
+-- 
+2.19.1
