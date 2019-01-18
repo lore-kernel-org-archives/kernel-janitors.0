@@ -1,40 +1,32 @@
-From: Eran Ben Elisha <eranbe@mellanox.com>
-Date: Wed, 23 Jan 2019 09:52:14 +0000
-Subject: Re: [PATCH net-next] devlink: Use after free in devlink_health_reporter_destroy()
-Message-Id: <ec2f175e-06ac-e823-6db3-571fcd32385f@mellanox.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 18 Jan 2019 14:23:47 +0000
+Subject: [PATCH -next] selinux: Fix error return code in policydb_read()
+Message-Id: <1547821427-157169-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190123094434.GB26018@kadam>
-In-Reply-To: <20190123094434.GB26018@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jiri Pirko <jiri@mellanox.com>
-Cc: "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, peter enderborg <peter.enderborg@sony.com>, Kent Overstreet <kent.overstreet@gmail.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Ondrej Mosnacek <omosnace@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, selinux@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-DQoNCk9uIDEvMjMvMjAxOSAxMTo0NCBBTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gVGhpcyBj
-YWxscyBrZnJlZShyZXBvcnRlcik7IGJlZm9yZSBkZXJlZmVyZW5jaW5nIHJlcG9ydGVyIG9uIHRo
-ZSBuZXh0DQo+IGxpbmUgd2hlbiBpdCBkb2VzIG11dGV4X3VubG9jaygmcmVwb3J0ZXItPmRldmxp
-bmstPmxvY2spOw0KPiANCj4gRml4ZXM6IDg4MGVlODJmMDMxMyAoImRldmxpbms6IEFkZCBoZWFs
-dGggcmVwb3J0ZXIgY3JlYXRlL2Rlc3Ryb3kgZnVuY3Rpb25hbGl0eSIpDQo+IFNpZ25lZC1vZmYt
-Ynk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KSGksIHRoYW5r
-cyBmb3IgdGhlIGZpeC4NCkl0IGlzIGlkZW50aWNhbCB0byBvbmUgSSBwb3N0ZWQgeWVzdGVyZGF5
-Lg0KaHR0cHM6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC8xMDI5MzU4Lw0KDQo+IC0tLQ0K
-PiAgIG5ldC9jb3JlL2RldmxpbmsuYyB8IDYgKysrKy0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDQg
-aW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9uZXQvY29y
-ZS9kZXZsaW5rLmMgYi9uZXQvY29yZS9kZXZsaW5rLmMNCj4gaW5kZXggNjAyNDhhNTNjMGFkLi5k
-ZWNjY2UxMzI4NWEgMTAwNjQ0DQo+IC0tLSBhL25ldC9jb3JlL2RldmxpbmsuYw0KPiArKysgYi9u
-ZXQvY29yZS9kZXZsaW5rLmMNCj4gQEAgLTQyMjMsMTQgKzQyMjMsMTYgQEAgRVhQT1JUX1NZTUJP
-TF9HUEwoZGV2bGlua19oZWFsdGhfcmVwb3J0ZXJfY3JlYXRlKTsNCj4gICB2b2lkDQo+ICAgZGV2
-bGlua19oZWFsdGhfcmVwb3J0ZXJfZGVzdHJveShzdHJ1Y3QgZGV2bGlua19oZWFsdGhfcmVwb3J0
-ZXIgKnJlcG9ydGVyKQ0KPiAgIHsNCj4gLQltdXRleF9sb2NrKCZyZXBvcnRlci0+ZGV2bGluay0+
-bG9jayk7DQo+ICsJc3RydWN0IGRldmxpbmsgKmRldmxpbmsgPSByZXBvcnRlci0+ZGV2bGluazsN
-Cj4gKw0KPiArCW11dGV4X2xvY2soJmRldmxpbmstPmxvY2spOw0KPiAgIAlsaXN0X2RlbCgmcmVw
-b3J0ZXItPmxpc3QpOw0KPiAgIAlkZXZsaW5rX2hlYWx0aF9idWZmZXJzX2Rlc3Ryb3kocmVwb3J0
-ZXItPmR1bXBfYnVmZmVyc19hcnJheSwNCj4gICAJCQkJICAgICAgIERFVkxJTktfSEVBTFRIX1NJ
-WkVfVE9fQlVGRkVSUyhyZXBvcnRlci0+b3BzLT5kdW1wX3NpemUpKTsNCj4gICAJZGV2bGlua19o
-ZWFsdGhfYnVmZmVyc19kZXN0cm95KHJlcG9ydGVyLT5kaWFnbm9zZV9idWZmZXJzX2FycmF5LA0K
-PiAgIAkJCQkgICAgICAgREVWTElOS19IRUFMVEhfU0laRV9UT19CVUZGRVJTKHJlcG9ydGVyLT5v
-cHMtPmRpYWdub3NlX3NpemUpKTsNCj4gICAJa2ZyZWUocmVwb3J0ZXIpOw0KPiAtCW11dGV4X3Vu
-bG9jaygmcmVwb3J0ZXItPmRldmxpbmstPmxvY2spOw0KPiArCW11dGV4X3VubG9jaygmZGV2bGlu
-ay0+bG9jayk7DQo+ICAgfQ0KPiAgIEVYUE9SVF9TWU1CT0xfR1BMKGRldmxpbmtfaGVhbHRoX3Jl
-cG9ydGVyX2Rlc3Ryb3kpOw0KPiAgIA0KPiANCg=
+Fix to return a negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
+
+Fixes: 31696241e96e ("selinux: convert to kvmalloc")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ security/selinux/ss/policydb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 6b576e5..ef616dd 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -2490,6 +2490,7 @@ int policydb_read(struct policydb *p, void *fp)
+ 	if (rc)
+ 		goto bad;
+ 
++	rc = -ENOMEM;
+ 	p->type_attr_map_array = kvcalloc(p->p_types.nprim,
+ 					  sizeof(*p->type_attr_map_array),
+ 					  GFP_KERNEL);
