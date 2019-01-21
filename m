@@ -1,44 +1,32 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 11 Jan 2019 06:31:12 +0000
-Subject: Re: [PATCH -next] crypto: chtls - remove set but not used variables 'err, adap, request, hws'
-Message-Id: <20190111063112.celuobsvgo6jjius@gondor.apana.org.au>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 21 Jan 2019 07:53:13 +0000
+Subject: [PATCH -next] staging: rtl8712: drop pointless static qualifier in r8712_efuse_pg_packet_write()
+Message-Id: <1548057193-130411-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545099974-39327-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545099974-39327-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Harsh Jain <harsh@chelsio.com>, Dan Carpenter <dan.carpenter@oracle.com>, Atul Gupta <atul.gupta@chelsio.com>, Michael Werner <werner@chelsio.com>, Kees Cook <keescook@chromium.org>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Straube <straube.linux@gmail.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 02:26:14AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/crypto/chelsio/chtls/chtls_io.c: In function 'csk_wait_memory':
-> drivers/crypto/chelsio/chtls/chtls_io.c:925:6: warning:
->  variable 'sndbuf' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/crypto/chelsio/chtls/chtls_io.c: In function 'chtls_pt_recvmsg':
-> drivers/crypto/chelsio/chtls/chtls_io.c:1411:6: warning:
->  variable 'request' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/crypto/chelsio/chtls/chtls_io.c:1407:18: warning:
->  variable 'adap' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/crypto/chelsio/chtls/chtls_io.c: In function 'chtls_recvmsg':
-> drivers/crypto/chelsio/chtls/chtls_io.c:1701:6: warning:
->  variable 'request' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/crypto/chelsio/chtls/chtls_io.c:1697:20: warning:
->  variable 'hws' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/crypto/chelsio/chtls/chtls_io.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
+There is no need to have the 'intrepeat_times' variable static since new
+value always be assigned before use it.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/rtl8712/rtl8712_efuse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8712/rtl8712_efuse.c b/drivers/staging/rtl8712/rtl8712_efuse.c
+index 8bc45ff..39eb743 100644
+--- a/drivers/staging/rtl8712/rtl8712_efuse.c
++++ b/drivers/staging/rtl8712/rtl8712_efuse.c
+@@ -358,7 +358,7 @@ u8 r8712_efuse_pg_packet_write(struct _adapter *padapter, const u8 offset,
+ 	u8 pg_header = 0;
+ 	u16 efuse_addr = 0, curr_size = 0;
+ 	u8 efuse_data, target_word_cnts = 0;
+-	static int repeat_times;
++	int repeat_times;
+ 	int sub_repeat;
+ 	u8 bResult = true;
+ 
