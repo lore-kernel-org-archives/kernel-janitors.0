@@ -1,38 +1,24 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Tue, 08 Jan 2019 06:58:07 +0000
-Subject: Re: [PATCH 13/20] xenbus: drop useless LIST_HEAD
-Message-Id: <168d6809-80e0-d639-19a1-eab2ee47765e@suse.com>
+From: Mercy Kings <mercykings01@gmail.com>
+Date: Mon, 21 Jan 2019 18:19:58 +0000
+Subject: Dearest Friend
+Message-Id: <CALnHs9rTqOGMeUJt4U6Pat3_eR7=Gkd2Ohzw8X=uDpj+9RFi2w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
- <1545555435-24576-14-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-14-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 23/12/2018 09:57, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
-> 
-> The declarations were introduced with the file, but the declared
-> variables were not used.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
-> 
-> Fixes: 1107ba885e46 ("xen: add xenfs to allow usermode <-> Xen interaction")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Dearest One
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+First i thanks your attention to me, I am mercy kings My parents
+Mr.and Mrs.kings were assassinated here in IVORY COAST. Before my
+Before my father's death he had (USD $5.9M) Five Million Nine Hundred
+Thousand United State Dollars deposited in a bank here in Abidjan. I
+want you to do me a favour to receive these funds to a safe account
+in your country or any safer place as the beneficiary. I want to come
+over to your country for the safety of my life from the hands of this
+wicked assassins.I have plans to do investment in your country, like
+real estate and industrial production This is my reason for writing to
+you.
 
-
-Juergen
+Your sister mercy kings.
