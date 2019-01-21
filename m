@@ -1,31 +1,32 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 22 Jan 2019 16:53:55 +0000
-Subject: Re: [PATCH -next] rtc: sd3078: make symbol 'sd3078_driver' static
-Message-Id: <20190122165355.GA16702@piout.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 21 Jan 2019 09:34:53 +0000
+Subject: [PATCH net-next] devlink: Add missing check of nlmsg_put
+Message-Id: <1548063293-17855-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547607681-5873-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1547607681-5873-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Dianlong Li <long17.cool@163.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>, "David S. Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 16/01/2019 03:01:21+0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
-> 
-> drivers/rtc/rtc-sd3078.c:218:19: warning:
->  symbol 'sd3078_driver' was not declared. Should it be static?
-> 
-> Fixes: 1d67a232105b ("rtc: sd3078: new driver.")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/rtc/rtc-sd3078.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-Applied, thanks.
+nlmsg_put may fail, this fix add a check of its return value.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/core/devlink.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index 60248a5..059575c 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -4086,6 +4086,9 @@ void devlink_health_buffer_nest_cancel(struct devlink_health_buffer *buffer)
+ 		return -ENOMEM;
+ 	nlh = nlmsg_put(skb, info->snd_portid, info->snd_seq,
+ 			NLMSG_DONE, 0, flags | NLM_F_MULTI);
++	if (!nlh)
++		goto nla_put_failure;
++
+ 	err = genlmsg_reply(skb, info);
+ 	if (err)
+ 		return err;
