@@ -1,36 +1,34 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 21 Jan 2019 08:21:21 +0000
-Subject: [PATCH net-next] devlink: Fix error return code in devlink_health_buffer_prepare_skb()
-Message-Id: <1548058881-147159-1-git-send-email-weiyongjun1@huawei.com>
+From: Eran Ben Elisha <eranbe@mellanox.com>
+Date: Mon, 21 Jan 2019 11:28:34 +0000
+Subject: Re: [PATCH net-next] devlink: Fix error return code in devlink_health_buffer_prepare_skb()
+Message-Id: <a95dbe8d-507c-616d-3509-8e38c9500df8@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1548058881-147159-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1548058881-147159-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Pirko <jiri@mellanox.com>, Eran Ben Elisha <eranbe@mellanox.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>, Jiri Pirko <jiri@mellanox.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Fix to return a negative error code -EMSGSIZE from the error handling
-case, otherwise 0 or uninitialized value may be returned.
-
-Fixes: cb5ccfbe73b3 ("devlink: Add health buffer support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- net/core/devlink.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/core/devlink.c b/net/core/devlink.c
-index 60248a5..0d4c774 100644
---- a/net/core/devlink.c
-+++ b/net/core/devlink.c
-@@ -4008,8 +4008,10 @@ void devlink_health_buffer_nest_cancel(struct devlink_health_buffer *buffer)
- 		case DEVLINK_ATTR_HEALTH_BUFFER_OBJECT_VALUE:
- 		case DEVLINK_ATTR_HEALTH_BUFFER_OBJECT_VALUE_ARRAY:
- 			buffer_nlattr[i] = nla_nest_start(skb, desc->attrtype);
--			if (!buffer_nlattr[i])
-+			if (!buffer_nlattr[i]) {
-+				err = -EMSGSIZE;
- 				goto nla_put_failure;
-+			}
- 			i++;
- 			break;
- 		case DEVLINK_ATTR_HEALTH_BUFFER_OBJECT_VALUE_DATA:
+DQoNCk9uIDEvMjEvMjAxOSAxMDoyMSBBTSwgV2VpIFlvbmdqdW4gd3JvdGU6DQo+IEZpeCB0byBy
+ZXR1cm4gYSBuZWdhdGl2ZSBlcnJvciBjb2RlIC1FTVNHU0laRSBmcm9tIHRoZSBlcnJvciBoYW5k
+bGluZw0KPiBjYXNlLCBvdGhlcndpc2UgMCBvciB1bmluaXRpYWxpemVkIHZhbHVlIG1heSBiZSBy
+ZXR1cm5lZC4NCj4gDQo+IEZpeGVzOiBjYjVjY2ZiZTczYjMgKCJkZXZsaW5rOiBBZGQgaGVhbHRo
+IGJ1ZmZlciBzdXBwb3J0IikNCj4gU2lnbmVkLW9mZi1ieTogV2VpIFlvbmdqdW4gPHdlaXlvbmdq
+dW4xQGh1YXdlaS5jb20+DQoNClRoYW5rcyBmb3IgdGhlIGZpeCENCkhvd2V2ZXIsIEkgYW0gd29y
+a2luZyB0byByZXBsYWNlIHRoaXMgZW50aXJlIGNvZGUgc2VjdGlvbiwgd2lsbCBzcXVhc2ggDQp5
+b3VyIHBhdGNoIHRvIHRoZSBuZXcgY29kZS4NCg0KPiAtLS0NCj4gICBuZXQvY29yZS9kZXZsaW5r
+LmMgfCA0ICsrKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAxIGRlbGV0
+aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbmV0L2NvcmUvZGV2bGluay5jIGIvbmV0L2NvcmUv
+ZGV2bGluay5jDQo+IGluZGV4IDYwMjQ4YTUuLjBkNGM3NzQgMTAwNjQ0DQo+IC0tLSBhL25ldC9j
+b3JlL2RldmxpbmsuYw0KPiArKysgYi9uZXQvY29yZS9kZXZsaW5rLmMNCj4gQEAgLTQwMDgsOCAr
+NDAwOCwxMCBAQCB2b2lkIGRldmxpbmtfaGVhbHRoX2J1ZmZlcl9uZXN0X2NhbmNlbChzdHJ1Y3Qg
+ZGV2bGlua19oZWFsdGhfYnVmZmVyICpidWZmZXIpDQo+ICAgCQljYXNlIERFVkxJTktfQVRUUl9I
+RUFMVEhfQlVGRkVSX09CSkVDVF9WQUxVRToNCj4gICAJCWNhc2UgREVWTElOS19BVFRSX0hFQUxU
+SF9CVUZGRVJfT0JKRUNUX1ZBTFVFX0FSUkFZOg0KPiAgIAkJCWJ1ZmZlcl9ubGF0dHJbaV0gPSBu
+bGFfbmVzdF9zdGFydChza2IsIGRlc2MtPmF0dHJ0eXBlKTsNCj4gLQkJCWlmICghYnVmZmVyX25s
+YXR0cltpXSkNCj4gKwkJCWlmICghYnVmZmVyX25sYXR0cltpXSkgew0KPiArCQkJCWVyciA9IC1F
+TVNHU0laRTsNCj4gICAJCQkJZ290byBubGFfcHV0X2ZhaWx1cmU7DQo+ICsJCQl9DQo+ICAgCQkJ
+aSsrOw0KPiAgIAkJCWJyZWFrOw0KPiAgIAkJY2FzZSBERVZMSU5LX0FUVFJfSEVBTFRIX0JVRkZF
+Ul9PQkpFQ1RfVkFMVUVfREFUQToNCj4gDQo+IA0KPiANCg=
