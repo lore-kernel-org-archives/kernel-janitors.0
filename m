@@ -1,40 +1,44 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Wed, 16 Jan 2019 05:35:05 +0000
-Subject: Re: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'srf'
-Message-Id: <fa71970ceec73faff082008820389a9ad1a8f5be.camel@vmware.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 22 Jan 2019 14:37:55 +0000
+Subject: [PATCH] net: amd8111e: clean up two minor indentation issues
+Message-Id: <20190122143755.32527-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547603735-148124-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1547603735-148124-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>, "syeh@vmware.com" <syeh@vmware.com>, "airlied@linux.ie" <airlied@linux.ie>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-WXVlLA0KDQpUaGFua3MsDQpSZXZpZXdlZC1ieTogVGhvbWFzIEhlbGxzdHJvbSA8dGhlbGxzdHJv
-bUB2bXdhcmUuY29tPg0KDQpXaWxsIGluY2x1ZGUgaW4gdGhlIG5leHQgLW5leHQgcHVsbC4NCi9U
-aG9tYXMNCg0KDQpPbiBXZWQsIDIwMTktMDEtMTYgYXQgMDE6NTUgKzAwMDAsIFl1ZUhhaWJpbmcg
-d3JvdGU6DQo+IEZpeGVzIGdjYyAnLVd1bnVzZWQtYnV0LXNldC12YXJpYWJsZScgd2FybmluZzoN
-Cj4gDQo+IGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N1cmZhY2UuYzogSW4gZnVuY3Rp
-b24NCj4gJ3Ztd19od19zdXJmYWNlX2Rlc3Ryb3knOg0KPiBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4
-L3Ztd2dmeF9zdXJmYWNlLmM6MzM1OjIyOiB3YXJuaW5nOg0KPiAgdmFyaWFibGUgJ3NyZicgc2V0
-IGJ1dCBub3QgdXNlZCBbLVd1bnVzZWQtYnV0LXNldC12YXJpYWJsZV0NCj4gDQo+IEl0IG5ldmVy
-IHVzZWQgc2luY2UgY29tbWl0IDU0MzgzMWNmYzk3NiDDr8K8XiJkcm0vdm13Z2Z4OiBCcmVhayBv
-dXQNCj4gc3VyZmFjZSBhbmQNCj4gY29udGV4dCBtYW5hZ2VtZW50IHRvIHNlcGFyYXRlIGZpbGVz
-IikNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFl1ZUhhaWJpbmcgPHl1ZWhhaWJpbmdAaHVhd2VpLmNv
-bT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMgfCAy
-IC0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMNCj4gYi9kcml2ZXJzL2dw
-dS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMNCj4gaW5kZXggODBhMDFjZC4uM2I2OTc2ZSAx
-MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3VyZmFjZS5jDQo+
-ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N1cmZhY2UuYw0KPiBAQCAtMzMy
-LDcgKzMzMiw2IEBAIHN0YXRpYyB2b2lkIHZtd19od19zdXJmYWNlX2Rlc3Ryb3koc3RydWN0DQo+
-IHZtd19yZXNvdXJjZSAqcmVzKQ0KPiAgew0KPiAgDQo+ICAJc3RydWN0IHZtd19wcml2YXRlICpk
-ZXZfcHJpdiA9IHJlcy0+ZGV2X3ByaXY7DQo+IC0Jc3RydWN0IHZtd19zdXJmYWNlICpzcmY7DQo+
-ICAJdm9pZCAqY21kOw0KPiAgDQo+ICAJaWYgKHJlcy0+ZnVuYy0+ZGVzdHJveSA9PSB2bXdfZ2Jf
-c3VyZmFjZV9kZXN0cm95KSB7DQo+IEBAIC0zNTksNyArMzU4LDYgQEAgc3RhdGljIHZvaWQgdm13
-X2h3X3N1cmZhY2VfZGVzdHJveShzdHJ1Y3QNCj4gdm13X3Jlc291cmNlICpyZXMpDQo+ICAJCSAq
-Lw0KPiAgDQo+ICAJCW11dGV4X2xvY2soJmRldl9wcml2LT5jbWRidWZfbXV0ZXgpOw0KPiAtCQlz
-cmYgPSB2bXdfcmVzX3RvX3NyZihyZXMpOw0KPiAgCQlkZXZfcHJpdi0+dXNlZF9tZW1vcnlfc2l6
-ZSAtPSByZXMtPmJhY2t1cF9zaXplOw0KPiAgCQltdXRleF91bmxvY2soJmRldl9wcml2LT5jbWRi
-dWZfbXV0ZXgpOw0KPiAgCX0NCj4gDQo+IA0KPiANCg=
+From: Colin Ian King <colin.king@canonical.com>
+
+Two statements are incorrecly indented, fix these by removing a space.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/amd/amd8111e.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/amd/amd8111e.c b/drivers/net/ethernet/amd/amd8111e.c
+index a90080f12e67..b9632928496e 100644
+--- a/drivers/net/ethernet/amd/amd8111e.c
++++ b/drivers/net/ethernet/amd/amd8111e.c
+@@ -435,7 +435,7 @@ static int amd8111e_restart(struct net_device *dev)
+ 	int i,reg_val;
+ 
+ 	/* stop the chip */
+-	 writel(RUN, mmio + CMD0);
++	writel(RUN, mmio + CMD0);
+ 
+ 	if(amd8111e_init_ring(dev))
+ 		return -ENOMEM;
+@@ -1720,7 +1720,7 @@ static void amd8111e_config_ipg(struct timer_list *t)
+ 		writew((u32)tmp_ipg, mmio + IPG);
+ 		writew((u32)(tmp_ipg - IFS1_DELTA), mmio + IFS1);
+ 	}
+-	 mod_timer(&lp->ipg_data.ipg_timer, jiffies + IPG_CONVERGE_JIFFIES);
++	mod_timer(&lp->ipg_data.ipg_timer, jiffies + IPG_CONVERGE_JIFFIES);
+ 	return;
+ 
+ }
+-- 
+2.19.1
