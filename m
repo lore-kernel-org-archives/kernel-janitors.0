@@ -1,44 +1,51 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 25 Jan 2019 01:45:54 +0000
-Subject: [PATCH -next] extcon: ptn5150: Fix return value check in ptn5150_i2c_probe()
-Message-Id: <1548380754-67031-1-git-send-email-weiyongjun1@huawei.com>
+From: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Date: Tue, 22 Jan 2019 10:00:57 +0000
+Subject: Re: drm/komeda: Fix a signedness bug
+Message-Id: <20190122100042.GA21770@james-ThinkStation-P300>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190121135952.GA14103@kadam>
+In-Reply-To: <20190121135952.GA14103@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Liviu Dudau <Liviu.Dudau@arm.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-In case of error, the function devm_gpiod_get() returns ERR_PTR() and
-never returns NULL. The NULL test in the return value check should be
-replaced with IS_ERR().
+On Mon, Jan 21, 2019 at 04:59:52PM +0300, Dan Carpenter wrote:
+> The mdev->irq value comes from platform_get_irq() so it can't be more
+> than INT_MAX and if it's unsigned then it breaks the error handling in
+> komeda_parse_dt().
+>
+> Fixes: 29e56aec911d ("drm/komeda: Add DT parsing")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> index a0bf7050037a..a52da6180c69 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> @@ -82,7 +82,7 @@ struct komeda_dev {
+>  struct clk *mclk;
+>
+>  /** @irq: irq number */
+> -u32 irq;
+> +int irq;
+>
 
-Fixes: 58963276749e ("extcon: Add support for ptn5150 extcon driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/extcon/extcon-ptn5150.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Hi Dan:
 
-diff --git a/drivers/extcon/extcon-ptn5150.c b/drivers/extcon/extcon-ptn5150.c
-index 155620b..8217fdc 100644
---- a/drivers/extcon/extcon-ptn5150.c
-+++ b/drivers/extcon/extcon-ptn5150.c
-@@ -240,14 +240,14 @@ static int ptn5150_i2c_probe(struct i2c_client *i2c,
- 	info->dev = &i2c->dev;
- 	info->i2c = i2c;
- 	info->int_gpiod = devm_gpiod_get(&i2c->dev, "int", GPIOD_IN);
--	if (!info->int_gpiod) {
-+	if (IS_ERR(info->int_gpiod)) {
- 		dev_err(dev, "failed to get INT GPIO\n");
--		return -EINVAL;
-+		return PTR_ERR(info->int_gpiod);
- 	}
- 	info->vbus_gpiod = devm_gpiod_get(&i2c->dev, "vbus", GPIOD_IN);
--	if (!info->vbus_gpiod) {
-+	if (IS_ERR(info->vbus_gpiod)) {
- 		dev_err(dev, "failed to get VBUS GPIO\n");
--		return -EINVAL;
-+		return PTR_ERR(info->vbus_gpiod);
- 	}
- 	ret = gpiod_direction_output(info->vbus_gpiod, 0);
- 	if (ret) {
+    Thank you.
+
+    Liviu and I discussed this problem, and we decided to fix it by
+
+    Remove IRQ parsing from initial series:
+    https://patchwork.freedesktop.org/patch/277409/
+
+    And add it back when add the fully IRQ handling:
+    https://patchwork.freedesktop.org/patch/279491/
+
+>  int n_pipelines;
+>  struct komeda_pipeline *pipelines[KOMEDA_MAX_PIPELINES];
+IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
