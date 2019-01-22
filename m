@@ -1,36 +1,44 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 18 Jan 2019 20:42:44 +0000
-Subject: Re: [PATCH -next] RDMA/qedr: remove set but not used variable 'ib_ctx'
-Message-Id: <20190118204244.GA32665@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 22 Jan 2019 15:18:30 +0000
+Subject: [PATCH] scsi: hpsa: clean up two indentation issues
+Message-Id: <20190122151830.7230-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547695307-134798-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1547695307-134798-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 03:21:47AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/hw/qedr/verbs.c: In function 'qedr_create_srq':
-> drivers/infiniband/hw/qedr/verbs.c:1436:22: warning:
->  variable 'ib_ctx' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/infiniband/hw/qedr/verbs.c: In function 'qedr_create_user_qp':
-> drivers/infiniband/hw/qedr/verbs.c:1701:22: warning:
->  variable 'ib_ctx' set but not used [-Wunused-but-set-variable]
-> 
-> It not used since commit b0ea0fa5435f ("IB/{core,hw}: Have ib_umem_get extract
-> the ib_ucontext from ib_udata")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/infiniband/hw/qedr/verbs.c | 6 ------
->  1 file changed, 6 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-I added a fixes line
+There are two statements that are indented incorrectly. Fix these.
 
-Applied to for-next thanks
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/hpsa.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Jason
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index ff67ef5d5347..5284444fdd10 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -1327,7 +1327,7 @@ static int hpsa_scsi_add_entry(struct ctlr_info *h,
+ 		dev_warn(&h->pdev->dev, "physical device with no LUN=0,"
+ 			" suspect firmware bug or unsupported hardware "
+ 			"configuration.\n");
+-			return -1;
++		return -1;
+ 	}
+ 
+ lun_assigned:
+@@ -4110,7 +4110,7 @@ static int hpsa_gather_lun_info(struct ctlr_info *h,
+ 			"maximum logical LUNs (%d) exceeded.  "
+ 			"%d LUNs ignored.\n", HPSA_MAX_LUN,
+ 			*nlogicals - HPSA_MAX_LUN);
+-			*nlogicals = HPSA_MAX_LUN;
++		*nlogicals = HPSA_MAX_LUN;
+ 	}
+ 	if (*nlogicals + *nphysicals > HPSA_MAX_PHYS_LUN) {
+ 		dev_warn(&h->pdev->dev,
+-- 
+2.19.1
