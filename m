@@ -1,53 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Jan 2019 08:54:55 +0000
-Subject: Re: [PATCH -next] binderfs: fix error return code in binderfs_fill_super()
-Message-Id: <20190116085455.GD4482@kadam>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 23 Jan 2019 06:19:18 +0000
+Subject: [PATCH net-next] net: stmmac: Fix return value check in qcom_ethqos_probe()
+Message-Id: <1548224358-83281-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547607664-5612-1-git-send-email-weiyongjun1@huawei.com>
- <20190116062546.ufoeresnwz3wyxiu@brauner.io>
-In-Reply-To: <20190116062546.ufoeresnwz3wyxiu@brauner.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Brauner <christian@brauner.io>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, tkjos@android.com, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, arve@android.com, joel@joelfernandes.org, maco@android.com
+To: Vinod Koul <vkoul@kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jan 16, 2019 at 07:25:47AM +0100, Christian Brauner wrote:
-> On Wed, Jan 16, 2019 at 03:01:04AM +0000, Wei Yongjun wrote:
-> > Fix to return a negative error code -ENOMEM from the new_inode() and
-> > d_make_root() error handling cases instead of 0, as done elsewhere in
-> > this function.
-> > 
-> > Fixes: 3ad20fe393b3 ("binder: implement binderfs")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/android/binderfs.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-> > index 9518e2e..2bf4b2b 100644
-> > --- a/drivers/android/binderfs.c
-> > +++ b/drivers/android/binderfs.c
-> > @@ -519,8 +519,10 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
-> >  	sb->s_fs_info = info;
-> >  
-> >  	inode = new_inode(sb);
-> > -	if (!inode)
-> > +	if (!inode) {
-> > +		ret = -ENOMEM;
-> 
-> Hey, thanks for the patch. Just a nit:
-> can you please just do?
-> 
-> 	ret = -ENOMEM;
->         inode = new_inode(sb);
-> 
-> This is more consistent with how we do it everywhere else and let's us
-> avoid shoving ret = -ENOMEM into two places.
-> 
+In case of error, the function devm_clk_get() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-Btw, your style is why you have this bug.  I don't have strong feelings
-about this either way, I'm just pointing it out.
+Fixes: a7c30e62d4b8 ("net: stmmac: Add driver for Qualcomm ethqos")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 30724bd..7ec8954 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -473,8 +473,8 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+ 	ethqos->por = of_device_get_match_data(&pdev->dev);
+ 
+ 	ethqos->rgmii_clk = devm_clk_get(&pdev->dev, "rgmii");
+-	if (!ethqos->rgmii_clk) {
+-		ret = -ENOMEM;
++	if (IS_ERR(ethqos->rgmii_clk)) {
++		ret = PTR_ERR(ethqos->rgmii_clk);
+ 		goto err_mem;
+ 	}
