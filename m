@@ -1,49 +1,44 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 24 Jan 2019 17:28:40 +0000
-Subject: Re: [PATCH] drm/nouveau/pmu: don't print reply values if exec is false
-Message-Id: <2ca59545-bc45-8f85-6a32-e8f495a74b57@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 23 Jan 2019 01:56:31 +0000
+Subject: [PATCH -next] perf: xgene: Remove set but not used variable 'config'
+Message-Id: <1548208591-46158-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181219152949.14669-1-colin.king@canonical.com>
-In-Reply-To: <20181219152949.14669-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Tai Nguyen <ttnguyen@apm.com>
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-ping?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 19/12/2018 15:29, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the uninitialized values in the array reply are printed out
-> when exec is false and nvkm_pmu_send has not updated the array. Avoid
-> confusion by only dumping out these values if they have been actually
-> updated.
-> 
-> Detected by CoverityScan, CID#1271291 ("Uninitialized scaler variable")
-> Fixes: ebb58dc2ef8c ("drm/nouveau/pmu: rename from pwr (no binary change)")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-> index 11b28b086a06..7b052879af72 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-> @@ -88,10 +88,10 @@ nvkm_memx_fini(struct nvkm_memx **pmemx, bool exec)
->  	if (exec) {
->  		nvkm_pmu_send(pmu, reply, PROC_MEMX, MEMX_MSG_EXEC,
->  			      memx->base, finish);
-> +		nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
-> +			   reply[0], reply[1]);
->  	}
->  
-> -	nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
-> -		   reply[0], reply[1]);
->  	kfree(memx);
->  	return 0;
->  }
-> 
+drivers/perf/xgene_pmu.c: In function 'xgene_perf_stop':
+drivers/perf/xgene_pmu.c:1055:6: warning:
+ variable 'config' set but not used [-Wunused-but-set-variable]
+
+It never used since introduction.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/perf/xgene_pmu.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
+index d4ec048..27574e8 100644
+--- a/drivers/perf/xgene_pmu.c
++++ b/drivers/perf/xgene_pmu.c
+@@ -1052,7 +1052,6 @@ static void xgene_perf_start(struct perf_event *event, int flags)
+ static void xgene_perf_stop(struct perf_event *event, int flags)
+ {
+ 	struct hw_perf_event *hw = &event->hw;
+-	u64 config;
+ 
+ 	if (hw->state & PERF_HES_UPTODATE)
+ 		return;
+@@ -1064,7 +1063,6 @@ static void xgene_perf_stop(struct perf_event *event, int flags)
+ 	if (hw->state & PERF_HES_UPTODATE)
+ 		return;
+ 
+-	config = hw->config;
+ 	xgene_perf_read(event);
+ 	hw->state |= PERF_HES_UPTODATE;
+ }
