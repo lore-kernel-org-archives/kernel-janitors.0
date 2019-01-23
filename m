@@ -1,36 +1,38 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 10 Jan 2019 11:32:59 +0000
-Subject: Re: [PATCH] ray_cs: fix array out-of-bounds access
-Message-Id: <20190110113300.4CE44608FC@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Jan 2019 09:37:55 +0000
+Subject: [PATCH] drm/komeda: Off by one in komeda_fb_get_pixel_addr()
+Message-Id: <20190123093755.GA26018@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181220140550.18853-1-colin.king@canonical.com>
-In-Reply-To: <20181220140550.18853-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: "James (Qian) Wang" <james.qian.wang@arm.com>
+Cc: David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Colin King <colin.king@canonical.com> wrote:
+The > should be >= to avoid an off by one bug.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently array element org[3] is being accessed, however the array is
-> only 3 elements in size, so this looks like an off-by-one out-of-bounds
-> error. Fix this by using org[2], which I believe was the original
-> intent.
-> 
-> This issue has existed in the driver back in the pre-git days, so no
-> idea when it was introduced.
-> 
-> Detected by CoverityScan, CID#711344 ("Out-of-bounds read")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: c46c24bb6b11 ("drm/komeda: Add komeda_framebuffer")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
 
-Patch applied to wireless-drivers-next.git, thanks.
+I'm 98% sure this is correct, but please review it carefully because I'm
+not 100% positive.
 
-72255c807156 ray_cs: fix array out-of-bounds access
+ drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
+index 4ddd5314ca23..23ee74d42239 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
+@@ -144,7 +144,7 @@ komeda_fb_get_pixel_addr(struct komeda_fb *kfb, int x, int y, int plane)
+ 	const struct drm_gem_cma_object *obj;
+ 	u32 plane_x, plane_y, cpp, pitch, offset;
+ 
+-	if (plane > fb->format->num_planes) {
++	if (plane >= fb->format->num_planes) {
+ 		DRM_DEBUG_KMS("Out of max plane num.\n");
+ 		return -EINVAL;
+ 	}
 -- 
-https://patchwork.kernel.org/patch/10738943/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
