@@ -1,36 +1,67 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Jan 2019 13:59:52 +0000
-Subject: [PATCH] drm/komeda: Fix a signedness bug
-Message-Id: <20190121135952.GA14103@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 23 Jan 2019 12:53:19 +0000
+Subject: [PATCH] scsi: dpt_i2o: clean up indentation issues, remove spaces
+Message-Id: <20190123125319.17193-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James (Qian) Wang" <james.qian.wang@arm.com>
-Cc: David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The mdev->irq value comes from platform_get_irq() so it can't be more
-than INT_MAX and if it's unsigned then it breaks the error handling in
-komeda_parse_dt().
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 29e56aec911d ("drm/komeda: Add DT parsing")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There are several lines where the indentation has an extra space,
+fix this by removing the spaces.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/arm/display/komeda/komeda_dev.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/dpt_i2o.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-index a0bf7050037a..a52da6180c69 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-@@ -82,7 +82,7 @@ struct komeda_dev {
- 	struct clk *mclk;
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index 70d1a18278af..f9560a183c12 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -877,8 +877,8 @@ static void adpt_i2o_sys_shutdown(void)
+ 	adpt_hba *pHba, *pNext;
+ 	struct adpt_i2o_post_wait_data *p1, *old;
  
- 	/** @irq: irq number */
--	u32 irq;
-+	int irq;
+-	 printk(KERN_INFO"Shutting down Adaptec I2O controllers.\n");
+-	 printk(KERN_INFO"   This could take a few minutes if there are many devices attached\n");
++	printk(KERN_INFO "Shutting down Adaptec I2O controllers.\n");
++	printk(KERN_INFO "   This could take a few minutes if there are many devices attached\n");
+ 	/* Delete all IOPs from the controller chain */
+ 	/* They should have already been released by the
+ 	 * scsi-core
+@@ -901,7 +901,7 @@ static void adpt_i2o_sys_shutdown(void)
+ //	spin_unlock_irqrestore(&adpt_post_wait_lock, flags);
+ 	adpt_post_wait_queue = NULL;
  
- 	int n_pipelines;
- 	struct komeda_pipeline *pipelines[KOMEDA_MAX_PIPELINES];
+-	 printk(KERN_INFO "Adaptec I2O controllers down.\n");
++	printk(KERN_INFO "Adaptec I2O controllers down.\n");
+ }
+ 
+ static int adpt_install_hba(struct scsi_host_template* sht, struct pci_dev* pDev)
+@@ -3427,7 +3427,7 @@ static int adpt_i2o_issue_params(int cmd, adpt_hba* pHba, int tid,
+ 		return -((res[1] >> 16) & 0xFF); /* -BlockStatus */
+ 	}
+ 
+-	 return 4 + ((res[1] & 0x0000FFFF) << 2); /* bytes used in resblk */ 
++	return 4 + ((res[1] & 0x0000FFFF) << 2); /* bytes used in resblk */
+ }
+ 
+ 
+@@ -3500,8 +3500,8 @@ static int adpt_i2o_enable_hba(adpt_hba* pHba)
+ 
+ static int adpt_i2o_systab_send(adpt_hba* pHba)
+ {
+-	 u32 msg[12];
+-	 int ret;
++	u32 msg[12];
++	int ret;
+ 
+ 	msg[0] = I2O_MESSAGE_SIZE(12) | SGL_OFFSET_6;
+ 	msg[1] = I2O_CMD_SYS_TAB_SET<<24 | HOST_TID<<12 | ADAPTER_TID;
 -- 
-2.17.1
+2.19.1
