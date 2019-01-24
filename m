@@ -1,41 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 31 Jan 2019 14:08:20 +0000
-Subject: [PATCH] mtd: part: fix incorrect format specifier for an unsigned long long
-Message-Id: <20190131140820.7422-1-colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 24 Jan 2019 16:54:28 +0000
+Subject: Re: [PATCH] HID: elan: Make array buf static, shrinks object size
+Message-Id: <11666348-f50a-719f-89d6-d90b0a1ea8f7@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180926084150.17514-1-colin.king@canonical.com>
+In-Reply-To: <20180926084150.17514-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <bbrezillon@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+ping?
 
-An unsigned long long is being formatted with %lld instead of the unsigned
-version %llu. Fix this.
-
-Clean up cppcheck warning:
-%lld in format string (no. 1) requires 'long long' but the argument type
-is 'unsigned long long'.
-
-Fixes: a62c24d75529 ("mtd: part: Add sysfs variable for offset of partition")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mtd/mtdpart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
-index 60104e1079c5..cca681b1a514 100644
---- a/drivers/mtd/mtdpart.c
-+++ b/drivers/mtd/mtdpart.c
-@@ -568,7 +568,7 @@ static ssize_t mtd_partition_offset_show(struct device *dev,
- {
- 	struct mtd_info *mtd = dev_get_drvdata(dev);
- 	struct mtd_part *part = mtd_to_part(mtd);
--	return snprintf(buf, PAGE_SIZE, "%lld\n", part->offset);
-+	return snprintf(buf, PAGE_SIZE, "%llu\n", part->offset);
- }
- 
- static DEVICE_ATTR(offset, S_IRUGO, mtd_partition_offset_show, NULL);
--- 
-2.20.1
+On 26/09/2018 09:41, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array buf on the stack but instead make it
+> static. Makes the object code smaller by 43 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    7769	   1520	      0	   9289	   2449	drivers/hid/hid-elan.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    7662	   1584	      0	   9246	   241e	drivers/hid/hid-elan.o
+> 
+> (gcc version 8.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/hid/hid-elan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
+> index 07e26c3567eb..05377eec2cb2 100644
+> --- a/drivers/hid/hid-elan.c
+> +++ b/drivers/hid/hid-elan.c
+> @@ -393,7 +393,7 @@ static int elan_start_multitouch(struct hid_device *hdev)
+>  	 * This byte sequence will enable multitouch mode and disable
+>  	 * mouse emulation
+>  	 */
+> -	const unsigned char buf[] = { 0x0D, 0x00, 0x03, 0x21, 0x00 };
+> +	static const unsigned char buf[] = { 0x0D, 0x00, 0x03, 0x21, 0x00 };
+>  	unsigned char *dmabuf = kmemdup(buf, sizeof(buf), GFP_KERNEL);
+>  
+>  	if (!dmabuf)
+> 
