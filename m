@@ -1,25 +1,50 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 29 Jan 2019 06:33:31 +0000
-Subject: Re: [PATCH] scsi: 53c700: pass correct "dev" to dma_alloc_attrs()
-Message-Id: <yq1k1ioc6ro.fsf@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 24 Jan 2019 16:49:04 +0000
+Subject: Re: [PATCH] fpga: mgr: altera-ps-spi: make array dummy static, shrinks object size
+Message-Id: <580295c8-9779-3246-fced-1538b9e66f68@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190124103327.GB25529@kadam>
-In-Reply-To: <20190124103327.GB25529@kadam>
+References: <20181129231016.4580-1-colin.king@canonical.com>
+In-Reply-To: <20181129231016.4580-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+ping?
 
-Dan,
-
-> The "hostdata->dev" pointer is NULL here.  We set "hostdata->dev = dev;"
-> later in the function and we also use "hostdata->dev" when we call
-> dma_free_attrs() in NCR_700_release().
->
-> This bug predates git version control.
-
-Applied to 5.0/scsi-fixes, thank you!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+On 29/11/2018 23:10, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the const array dummy on the stack but instead
+> make it static. Makes the object code smaller by 26 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    7371	   2032	      0	   9403	   24bb	drivers/fpga/altera-ps-spi.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    7281	   2096	      0	   9377	   24a1	drivers/fpga/altera-ps-spi.o
+> 
+> (gcc version 8.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/fpga/altera-ps-spi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
+> index 8c18beec6b57..678d0115f840 100644
+> --- a/drivers/fpga/altera-ps-spi.c
+> +++ b/drivers/fpga/altera-ps-spi.c
+> @@ -205,7 +205,7 @@ static int altera_ps_write_complete(struct fpga_manager *mgr,
+>  				    struct fpga_image_info *info)
+>  {
+>  	struct altera_ps_conf *conf = mgr->priv;
+> -	const char dummy[] = {0};
+> +	static const char dummy[] = {0};
+>  	int ret;
+>  
+>  	if (gpiod_get_value_cansleep(conf->status)) {
+> 
