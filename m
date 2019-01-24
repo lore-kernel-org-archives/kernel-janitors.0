@@ -1,83 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 07 Jan 2019 22:59:28 +0000
-Subject: [PATCH] i40e: clean up several indentation issues
-Message-Id: <20190107225928.12855-1-colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 24 Jan 2019 17:27:44 +0000
+Subject: Re: [PATCH] drm/nouveau/bios/ramcfg: fix missing parentheses when calculating RON
+Message-Id: <c39bd8e8-478f-698c-0746-b41c323fd1d1@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181125170918.8088-1-colin.king@canonical.com>
+In-Reply-To: <20181125170918.8088-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+ping?
 
-There are several statements that have incorrect levels of indentation,
-fix these.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/intel/i40e/i40e_ethtool.c     | 8 ++++----
- drivers/net/ethernet/intel/i40e/i40e_main.c        | 6 +++---
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 4 ++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-index a6bc7847346b..fe84f054f0c1 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-@@ -2440,10 +2440,10 @@ static int i40e_set_phys_id(struct net_device *netdev,
- 	default:
- 		break;
- 	}
--		if (ret)
--			return -ENOENT;
--		else
--			return 0;
-+	if (ret)
-+		return -ENOENT;
-+	else
-+		return 0;
- }
- 
- /* NOTE: i40e hardware uses a conversion factor of 2 for Interrupt
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 4d40878e395a..76dac65bf0ca 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -3610,7 +3610,7 @@ static void i40e_configure_msi_and_legacy(struct i40e_vsi *vsi)
- 		      (I40E_QUEUE_TYPE_TX
- 		       << I40E_QINT_TQCTL_NEXTQ_TYPE_SHIFT);
- 
--	       wr32(hw, I40E_QINT_TQCTL(nextqp), val);
-+		wr32(hw, I40E_QINT_TQCTL(nextqp), val);
- 	}
- 
- 	val = I40E_QINT_TQCTL_CAUSE_ENA_MASK		      |
-@@ -8131,8 +8131,8 @@ static int i40e_handle_lldp_event(struct i40e_pf *pf,
- 		i40e_service_event_schedule(pf);
- 	} else {
- 		i40e_pf_unquiesce_all_vsi(pf);
--	set_bit(__I40E_CLIENT_SERVICE_REQUESTED, pf->state);
--	set_bit(__I40E_CLIENT_L2_CHANGE, pf->state);
-+		set_bit(__I40E_CLIENT_SERVICE_REQUESTED, pf->state);
-+		set_bit(__I40E_CLIENT_L2_CHANGE, pf->state);
- 	}
- 
- exit:
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index 2ac23ebfbf31..46054634e68c 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -3384,8 +3384,8 @@ static int i40e_vc_add_cloud_filter(struct i40e_vf *vf, u8 *msg)
- 		dev_info(&pf->pdev->dev,
- 			 "VF %d: Invalid input/s, can't apply cloud filter\n",
- 			 vf->vf_id);
--			aq_ret = I40E_ERR_PARAM;
--			goto err;
-+		aq_ret = I40E_ERR_PARAM;
-+		goto err;
- 	}
- 
- 	cfilter = kzalloc(sizeof(*cfilter), GFP_KERNEL);
--- 
-2.19.1
+On 25/11/2018 17:09, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently, the expression for calculating RON is always going to result
+> in zero no matter the value of ram->mr[1] because the ! operator has
+> higher precedence than the shift >> operator.  I believe the missing
+> parentheses around the expression before appying the ! operator will
+> result in the desired result.
+> 
+> [ Note, not tested ]
+> 
+> Detected by CoveritScan, CID#1324005 ("Operands don't affect result")
+> 
+> Fixes: c25bf7b6155c ("drm/nouveau/bios/ramcfg: Separate out RON pull value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
+> index 60ece0a8a2e1..1d2d6bae73cd 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
+> @@ -87,7 +87,7 @@ nvkm_gddr3_calc(struct nvkm_ram *ram)
+>  		WR  = (ram->next->bios.timing[2] & 0x007f0000) >> 16;
+>  		/* XXX: Get these values from the VBIOS instead */
+>  		DLL = !(ram->mr[1] & 0x1);
+> -		RON = !(ram->mr[1] & 0x300) >> 8;
+> +		RON = !((ram->mr[1] & 0x300) >> 8);
+>  		break;
+>  	default:
+>  		return -ENOSYS;
+> 
