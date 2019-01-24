@@ -1,70 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Jan 2019 19:46:25 +0000
-Subject: [PATCH v2] clk: ti: Fix error handling in ti_clk_parse_divider_data()
-Message-Id: <20190115194625.GA1074@kadam>
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Thu, 24 Jan 2019 19:24:22 +0000
+Subject: Re: [PATCH v2] clk: ti: Fix error handling in ti_clk_parse_divider_data()
+Message-Id: <154835786296.136743.12154336975596919287@swboyd.mtv.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190115070149.wpiyqw5vqqqsapxt@kili.mountain>
+References: <20190115194625.GA1074@kadam>
+In-Reply-To: <20190115194625.GA1074@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The ti_clk_parse_divider_data() function is only called from
-_get_div_table_from_setup().  That function doesn't look at the return
-value but instead looks at the "*table" pointer.  In this case, if the
-kcalloc() fails then *table is NULL (which means success).  It should
-instead be an error pointer.
+Quoting Dan Carpenter (2019-01-15 11:46:25)
+> The ti_clk_parse_divider_data() function is only called from
+> _get_div_table_from_setup().  That function doesn't look at the return
+> value but instead looks at the "*table" pointer.  In this case, if the
+> kcalloc() fails then *table is NULL (which means success).  It should
+> instead be an error pointer.
+> 
+> The ti_clk_parse_divider_data() function has two callers.  One checks
+> for errors and the other doesn't.  I have fixed it so now both handle
+> errors.
+> 
+> Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
 
-The ti_clk_parse_divider_data() function has two callers.  One checks
-for errors and the other doesn't.  I have fixed it so now both handle
-errors.
+Applied to clk-fixes
 
-Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2:  I somehow didn't compile the v1 of this patch so it had a couple
-     stupid bugs.  I'm very sorry.
-
- drivers/clk/ti/divider.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 8d77090ad94a..0241450f3eb3 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
- 	num_dividers = i;
- 
- 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
--	if (!tmp)
-+	if (!tmp) {
-+		*table = ERR_PTR(-ENOMEM);
- 		return -ENOMEM;
-+	}
- 
- 	valid_div = 0;
- 	*width = 0;
-@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- {
- 	struct clk_omap_divider *div;
- 	struct clk_omap_reg *reg;
-+	int ret;
- 
- 	if (!setup)
- 		return NULL;
-@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
- 
- 	div->table = _get_div_table_from_setup(setup, &div->width);
-+	if (IS_ERR(div->table)) {
-+		ret = PTR_ERR(div->table);
-+		kfree(div);
-+		return ERR_PTR(ret);
-+	}
-+
- 
- 	div->shift = setup->bit_shift;
- 	div->latch = -EINVAL;
--- 
-2.17.1
+I'm going to add Tero's ack to this because it isn't really that
+different.
