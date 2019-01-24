@@ -1,82 +1,52 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 25 Jan 2019 17:43:47 +0000
-Subject: Re: [PATCH][V2] selftests/seccomp: fix test failure on s390x because of
-Message-Id: <CAGXu5jLaXLNq_EGffGkadXAONYmqmg7ypDhf7MGN-X++5TJXDQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Jan 2019 10:29:40 +0000
+Subject: [PATCH] scsi: bnx2fc: Fix error handling in probe()
+Message-Id: <20190124102940.GA25529@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190125145526.7106-1-colin.king@canonical.com>
-In-Reply-To: <20190125145526.7106-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 3:55 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The error return being placed in regs.SYSCALL_RET is currently positive and
-> this is causing test failures on s390x. The return value should be -EPERM
-> rather than EPERM otherwise a failure is not detected and errno is not set
-> accordingly on s390x.
+There are two issues here.  First if cmgr->hba is not set early enough
+then it leads to a NULL dereference.  Second if we don't completely
+initialize cmgr->io_bdt_pool[] then we end up dereferencing
+uninitialized pointers.
 
-Ah, hm, interesting. Yes, the selftest was accidentally encoding the
-wrong details. However, I think the test for the result is a bit more
-broken. EPERM is 1, so there isn't even a sanity check that the result
-is getting passed down (the -1 from syscall won't tell us if the errno
-actually landed too, so we need to check that with something that
-isn't EPERM).
+Fixes: 853e2bd2103a ("[SCSI] bnx2fc: Broadcom FCoE offload driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/bnx2fc/bnx2fc_io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Let me send a patch to test on s390...
-
--Kees
-
-
->
-> Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->
-> V2: remove misplaced Content-Type and Content-Transfer-Encoding fields
->
-> ---
->  tools/testing/selftests/seccomp/seccomp_bpf.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> index 496a9a8c773a..957344884360 100644
-> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> @@ -1706,7 +1706,7 @@ void change_syscall(struct __test_metadata *_metadata,
->  #ifdef SYSCALL_NUM_RET_SHARE_REG
->                 TH_LOG("Can't modify syscall return on this architecture");
->  #else
-> -               regs.SYSCALL_RET = EPERM;
-> +               regs.SYSCALL_RET = -EPERM;
->  #endif
->
->  #ifdef HAVE_GETREGS
-> @@ -1850,7 +1850,7 @@ TEST_F(TRACE_syscall, ptrace_syscall_dropped)
->                                            true);
->
->         /* Tracer should skip the open syscall, resulting in EPERM. */
-> -       EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
-> +       EXPECT_SYSCALL_RETURN(-EPERM, syscall(__NR_openat));
->  }
->
->  TEST_F(TRACE_syscall, syscall_allowed)
-> @@ -1894,7 +1894,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
->         ASSERT_EQ(0, ret);
->
->         /* gettid has been skipped and an altered return value stored. */
-> -       EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
-> +       EXPECT_SYSCALL_RETURN(-EPERM, syscall(__NR_gettid));
->         EXPECT_NE(self->mytid, syscall(__NR_gettid));
->  }
->
-> --
-> 2.19.1
->
-
-
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
+index 350257c13a5b..bc9f2a2365f4 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -240,6 +240,7 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 		return NULL;
+ 	}
+ 
++	cmgr->hba = hba;
+ 	cmgr->free_list = kcalloc(arr_sz, sizeof(*cmgr->free_list),
+ 				  GFP_KERNEL);
+ 	if (!cmgr->free_list) {
+@@ -256,7 +257,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 		goto mem_err;
+ 	}
+ 
+-	cmgr->hba = hba;
+ 	cmgr->cmds = (struct bnx2fc_cmd **)(cmgr + 1);
+ 
+ 	for (i = 0; i < arr_sz; i++)  {
+@@ -295,7 +295,7 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 
+ 	/* Allocate pool of io_bdts - one for each bnx2fc_cmd */
+ 	mem_size = num_ios * sizeof(struct io_bdt *);
+-	cmgr->io_bdt_pool = kmalloc(mem_size, GFP_KERNEL);
++	cmgr->io_bdt_pool = kzalloc(mem_size, GFP_KERNEL);
+ 	if (!cmgr->io_bdt_pool) {
+ 		printk(KERN_ERR PFX "failed to alloc io_bdt_pool\n");
+ 		goto mem_err;
 -- 
-Kees Cook
+2.17.1
