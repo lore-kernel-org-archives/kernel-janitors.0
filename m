@@ -1,45 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Jan 2019 13:10:04 +0000
-Subject: [PATCH] scsi: qlogicfas408: clean up a couple of indentation issues
-Message-Id: <20190123131004.24460-1-colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 24 Jan 2019 17:28:40 +0000
+Subject: Re: [PATCH] drm/nouveau/pmu: don't print reply values if exec is false
+Message-Id: <2ca59545-bc45-8f85-6a32-e8f495a74b57@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20181219152949.14669-1-colin.king@canonical.com>
+In-Reply-To: <20181219152949.14669-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+ping?
 
-An if statement is indented correctly and an outb statement has
-a redundant empty comment and incorrect indentation. Fix these.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/qlogicfas408.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/qlogicfas408.c b/drivers/scsi/qlogicfas408.c
-index 8b471a925b43..136681ad18a5 100644
---- a/drivers/scsi/qlogicfas408.c
-+++ b/drivers/scsi/qlogicfas408.c
-@@ -139,7 +139,7 @@ static int ql_pdma(struct qlogicfas408_priv *priv, int phase, char *request, int
- 	} else {		/* out */
- #if QL_TURBO_PDMA
- 		rtrc(4)
--		    if (reqlen >= 128 && inb(qbase + 8) & 0x10) {	/* empty */
-+		if (reqlen >= 128 && inb(qbase + 8) & 0x10) {	/* empty */
- 			outsl(qbase + 4, request, 32);
- 			reqlen -= 128;
- 			request += 128;
-@@ -240,7 +240,7 @@ static void ql_icmd(struct scsi_cmnd *cmd)
- 	outb(0x40 | qlcfg8 | priv->qinitid, qbase + 8);
- 	outb(qlcfg7, qbase + 7);
- 	outb(qlcfg6, qbase + 6);
--	 /**/ outb(qlcfg5, qbase + 5);	/* select timer */
-+	outb(qlcfg5, qbase + 5);	/* select timer */
- 	outb(qlcfg9 & 7, qbase + 9);	/* prescaler */
- /*	outb(0x99, qbase + 5);	*/
- 	outb(scmd_id(cmd), qbase + 4);
--- 
-2.19.1
+On 19/12/2018 15:29, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the uninitialized values in the array reply are printed out
+> when exec is false and nvkm_pmu_send has not updated the array. Avoid
+> confusion by only dumping out these values if they have been actually
+> updated.
+> 
+> Detected by CoverityScan, CID#1271291 ("Uninitialized scaler variable")
+> Fixes: ebb58dc2ef8c ("drm/nouveau/pmu: rename from pwr (no binary change)")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
+> index 11b28b086a06..7b052879af72 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
+> @@ -88,10 +88,10 @@ nvkm_memx_fini(struct nvkm_memx **pmemx, bool exec)
+>  	if (exec) {
+>  		nvkm_pmu_send(pmu, reply, PROC_MEMX, MEMX_MSG_EXEC,
+>  			      memx->base, finish);
+> +		nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
+> +			   reply[0], reply[1]);
+>  	}
+>  
+> -	nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
+> -		   reply[0], reply[1]);
+>  	kfree(memx);
+>  	return 0;
+>  }
+> 
