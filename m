@@ -1,225 +1,109 @@
-From: Daniel Jordan <daniel.m.jordan@oracle.com>
-Date: Thu, 31 Jan 2019 02:44:10 +0000
-Subject: [PATCH v2] mm, swap: bounds check swap_info array accesses to avoid NULL derefs
-Message-Id: <20190131024410.29859-1-daniel.m.jordan@oracle.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 24 Jan 2019 19:29:09 +0000
+Subject: Applied "ASoC: Intel: make const arrays static, reduces object code size" to the asoc tree
+Message-Id: <20190124192909.A68721121B6F@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190131015231.e6lggsi2ug77qr6c@ca-dmjordan1.us.oracle.com>
-In-Reply-To: <20190131015231.e6lggsi2ug77qr6c@ca-dmjordan1.us.oracle.com>
+References: <20190124173735.13669-1-colin.king@canonical.com>
+In-Reply-To: <20190124173735.13669-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akpm@linux-foundation.org
-Cc: dan.carpenter@oracle.com, andrea.parri@amarulasolutions.com, shli@kernel.org, ying.huang@intel.com, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, osandov@fb.com, tj@kernel.org, ak@linux.intel.com, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, paulmck@linux.ibm.com, stern@rowland.harvard.edu, peterz@infradead.org, will.deacon@arm.com, daniel.m.jordan@oracle.com
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jie Yang <yang.jie@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, Mark Brown <broonie@kernel.org>
 
-Dan Carpenter reports a potential NULL dereference in
-get_swap_page_of_type:
+The patch
 
-  Smatch complains that the NULL checks on "si" aren't consistent.  This
-  seems like a real bug because we have not ensured that the type is
-  valid and so "si" can be NULL.
+   ASoC: Intel: make const arrays static, reduces object code size
 
-Add the missing check for NULL, taking care to use a read barrier to
-ensure CPU1 observes CPU0's updates in the correct order:
+has been applied to the asoc tree at
 
-     CPU0                           CPU1
-     alloc_swap_info()              if (type >= nr_swapfiles)
-       swap_info[type] = p              /* handle invalid entry */
-       smp_wmb()                    smp_rmb()
-       ++nr_swapfiles               p = swap_info[type]
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Without smp_rmb, CPU1 might observe CPU0's write to nr_swapfiles before
-CPU0's write to swap_info[type] and read NULL from swap_info[type].
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Ying Huang noticed other places in swapfile.c don't order these reads
-properly.  Introduce swap_type_to_swap_info to encourage correct usage.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Use READ_ONCE and WRITE_ONCE to follow the Linux Kernel Memory Model
-(see tools/memory-model/Documentation/explanation.txt).
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-This ordering need not be enforced in places where swap_lock is held
-(e.g. si_swapinfo) because swap_lock serializes updates to nr_swapfiles
-and the swap_info array.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Fixes: ec8acf20afb8 ("swap: add per-partition lock for swapfile")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Omar Sandoval <osandov@fb.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Will Deacon <will.deacon@arm.com>
+Thanks,
+Mark
+
+From 4ffdca62e2deee7a27613571c9bd18c95b8eac84 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 24 Jan 2019 17:37:35 +0000
+Subject: [PATCH] ASoC: Intel: make const arrays static, reduces object code
+ size
+
+Don't populate the const arrays on the stack but instead make
+it static. Makes the object code smaller, for example:
+
+Before:
+   text    data     bss     dec     hex filename
+  14107    8832     224   23163    5a7b bytcht_es8316.o
+
+After:
+   text    data     bss     dec     hex filename
+  14015    8896     224   23135    5a5f bytcht_es8316.o
+
+(gcc version 8.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ sound/soc/intel/boards/bytcht_es8316.c | 2 +-
+ sound/soc/intel/boards/bytcr_rt5640.c  | 2 +-
+ sound/soc/intel/boards/bytcr_rt5651.c  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-v1 -> v2
- - Rebased to latest mainline per Andrew
- - Added tags from Andrea and Peter (thanks)
- - Fixed loop conditions as Peter suggested and converted a few more
-   places to use swap_type_to_swap_info; retained tags since changes
-   were minor
- - Added a Suggested-by for Ying
- - Amended changelog after Dan's comment
-
- mm/swapfile.c | 51 +++++++++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 22 deletions(-)
-
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index dbac1d49469d..67f60e051814 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -98,6 +98,15 @@ static atomic_t proc_poll_event = ATOMIC_INIT(0);
+diff --git a/sound/soc/intel/boards/bytcht_es8316.c b/sound/soc/intel/boards/bytcht_es8316.c
+index fa9c4cf97686..1364e4e601d8 100644
+--- a/sound/soc/intel/boards/bytcht_es8316.c
++++ b/sound/soc/intel/boards/bytcht_es8316.c
+@@ -437,7 +437,7 @@ static const struct acpi_gpio_mapping byt_cht_es8316_gpios[] = {
  
- atomic_t nr_rotate_swap = ATOMIC_INIT(0);
- 
-+static struct swap_info_struct *swap_type_to_swap_info(int type)
-+{
-+	if (type >= READ_ONCE(nr_swapfiles))
-+		return NULL;
-+
-+	smp_rmb();	/* Pairs with smp_wmb in alloc_swap_info. */
-+	return READ_ONCE(swap_info[type]);
-+}
-+
- static inline unsigned char swap_count(unsigned char ent)
+ static int snd_byt_cht_es8316_mc_probe(struct platform_device *pdev)
  {
- 	return ent & ~SWAP_HAS_CACHE;	/* may include COUNT_CONTINUED flag */
-@@ -1044,12 +1053,14 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_size)
- /* The only caller of this function is now suspend routine */
- swp_entry_t get_swap_page_of_type(int type)
+-	const char * const mic_name[] = { "in1", "in2" };
++	static const char * const mic_name[] = { "in1", "in2" };
+ 	struct byt_cht_es8316_private *priv;
+ 	struct device *dev = &pdev->dev;
+ 	struct snd_soc_acpi_mach *mach;
+diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
+index ca8b4d5ff70f..a79466c8fb29 100644
+--- a/sound/soc/intel/boards/bytcr_rt5640.c
++++ b/sound/soc/intel/boards/bytcr_rt5640.c
+@@ -1149,7 +1149,7 @@ struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
+ 
+ static int snd_byt_rt5640_mc_probe(struct platform_device *pdev)
  {
--	struct swap_info_struct *si;
-+	struct swap_info_struct *si = swap_type_to_swap_info(type);
- 	pgoff_t offset;
+-	const char * const map_name[] = { "dmic1", "dmic2", "in1", "in3" };
++	static const char * const map_name[] = { "dmic1", "dmic2", "in1", "in3" };
+ 	const struct dmi_system_id *dmi_id;
+ 	struct byt_rt5640_private *priv;
+ 	struct snd_soc_acpi_mach *mach;
+diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
+index b618d984e2d5..e6945d11c8ab 100644
+--- a/sound/soc/intel/boards/bytcr_rt5651.c
++++ b/sound/soc/intel/boards/bytcr_rt5651.c
+@@ -919,7 +919,7 @@ struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
  
--	si = swap_info[type];
-+	if (!si)
-+		goto fail;
-+
- 	spin_lock(&si->lock);
--	if (si && (si->flags & SWP_WRITEOK)) {
-+	if (si->flags & SWP_WRITEOK) {
- 		atomic_long_dec(&nr_swap_pages);
- 		/* This is called for allocating swap entry, not cache */
- 		offset = scan_swap_map(si, 1);
-@@ -1060,6 +1071,7 @@ swp_entry_t get_swap_page_of_type(int type)
- 		atomic_long_inc(&nr_swap_pages);
- 	}
- 	spin_unlock(&si->lock);
-+fail:
- 	return (swp_entry_t) {0};
- }
- 
-@@ -1071,9 +1083,9 @@ static struct swap_info_struct *__swap_info_get(swp_entry_t entry)
- 	if (!entry.val)
- 		goto out;
- 	type = swp_type(entry);
--	if (type >= nr_swapfiles)
-+	p = swap_type_to_swap_info(type);
-+	if (!p)
- 		goto bad_nofile;
--	p = swap_info[type];
- 	if (!(p->flags & SWP_USED))
- 		goto bad_device;
- 	offset = swp_offset(entry);
-@@ -1697,10 +1709,9 @@ int swap_type_of(dev_t device, sector_t offset, struct block_device **bdev_p)
- sector_t swapdev_block(int type, pgoff_t offset)
+ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
  {
- 	struct block_device *bdev;
-+	struct swap_info_struct *si = swap_type_to_swap_info(type);
- 
--	if ((unsigned int)type >= nr_swapfiles)
--		return 0;
--	if (!(swap_info[type]->flags & SWP_WRITEOK))
-+	if (!si || !(si->flags & SWP_WRITEOK))
- 		return 0;
- 	return map_swap_entry(swp_entry(type, offset), &bdev);
- }
-@@ -2258,7 +2269,7 @@ static sector_t map_swap_entry(swp_entry_t entry, struct block_device **bdev)
- 	struct swap_extent *se;
- 	pgoff_t offset;
- 
--	sis = swap_info[swp_type(entry)];
-+	sis = swp_swap_info(entry);
- 	*bdev = sis->bdev;
- 
- 	offset = swp_offset(entry);
-@@ -2700,9 +2711,7 @@ static void *swap_start(struct seq_file *swap, loff_t *pos)
- 	if (!l)
- 		return SEQ_START_TOKEN;
- 
--	for (type = 0; type < nr_swapfiles; type++) {
--		smp_rmb();	/* read nr_swapfiles before swap_info[type] */
--		si = swap_info[type];
-+	for (type = 0; (si = swap_type_to_swap_info(type)); type++) {
- 		if (!(si->flags & SWP_USED) || !si->swap_map)
- 			continue;
- 		if (!--l)
-@@ -2722,9 +2731,7 @@ static void *swap_next(struct seq_file *swap, void *v, loff_t *pos)
- 	else
- 		type = si->type + 1;
- 
--	for (; type < nr_swapfiles; type++) {
--		smp_rmb();	/* read nr_swapfiles before swap_info[type] */
--		si = swap_info[type];
-+	for (; (si = swap_type_to_swap_info(type)); type++) {
- 		if (!(si->flags & SWP_USED) || !si->swap_map)
- 			continue;
- 		++*pos;
-@@ -2831,14 +2838,14 @@ static struct swap_info_struct *alloc_swap_info(void)
- 	}
- 	if (type >= nr_swapfiles) {
- 		p->type = type;
--		swap_info[type] = p;
-+		WRITE_ONCE(swap_info[type], p);
- 		/*
- 		 * Write swap_info[type] before nr_swapfiles, in case a
- 		 * racing procfs swap_start() or swap_next() is reading them.
- 		 * (We never shrink nr_swapfiles, we never free this entry.)
- 		 */
- 		smp_wmb();
--		nr_swapfiles++;
-+		WRITE_ONCE(nr_swapfiles, nr_swapfiles + 1);
- 	} else {
- 		kvfree(p);
- 		p = swap_info[type];
-@@ -3358,7 +3365,7 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
- {
- 	struct swap_info_struct *p;
- 	struct swap_cluster_info *ci;
--	unsigned long offset, type;
-+	unsigned long offset;
- 	unsigned char count;
- 	unsigned char has_cache;
- 	int err = -EINVAL;
-@@ -3366,10 +3373,10 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
- 	if (non_swap_entry(entry))
- 		goto out;
- 
--	type = swp_type(entry);
--	if (type >= nr_swapfiles)
-+	p = swp_swap_info(entry);
-+	if (!p)
- 		goto bad_file;
--	p = swap_info[type];
-+
- 	offset = swp_offset(entry);
- 	if (unlikely(offset >= p->max))
- 		goto out;
-@@ -3466,7 +3473,7 @@ int swapcache_prepare(swp_entry_t entry)
- 
- struct swap_info_struct *swp_swap_info(swp_entry_t entry)
- {
--	return swap_info[swp_type(entry)];
-+	return swap_type_to_swap_info(swp_type(entry));
- }
- 
- struct swap_info_struct *page_swap_info(struct page *page)
+-	const char * const mic_name[] = { "dmic", "in1", "in2", "in12" };
++	static const char * const mic_name[] = { "dmic", "in1", "in2", "in12" };
+ 	struct byt_rt5651_private *priv;
+ 	struct snd_soc_acpi_mach *mach;
+ 	struct device *codec_dev;
 -- 
 2.20.1
