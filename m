@@ -1,71 +1,32 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Wed, 16 Jan 2019 08:59:13 +0000
-Subject: Re: [PATCH 4/4] drm/sun4i: backend: add missing of_node_puts
-Message-Id: <20190116085913.j2ju3mj75x5bqppm@flea>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="dunppgcxmo5qgg5l"
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 25 Jan 2019 01:50:09 +0000
+Subject: [PATCH -next] btrfs: qgroup: Fix inconsistent IS_ERR and PTR_ERR
+Message-Id: <1548381009-80383-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
- <1547369264-24831-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1547369264-24831-5-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Change the call to PTR_ERR to access the value just tested by IS_ERR.
 
---dunppgcxmo5qgg5l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 2b35a512e9cf ("btrfs: qgroup: Use delayed subtree rescan for balance")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/btrfs/qgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, Jan 13, 2019 at 09:47:44AM +0100, Julia Lawall wrote:
-> The device node iterators perform an of_node_get on each
-> iteration, so a jump out of the loop requires an of_node_put.
->=20
-> Remote and port also have augmented reference counts, so drop them
-> on each iteration and at the end of the function, respectively.
-> Remote is only used for the address it contains, not for the
-> contents of that address, so the reference count can be dropped
-> immediately.
->=20
-> The semantic patch that fixes the first part of this problem is
-> as follows (http://coccinelle.lip6.fr):
->=20
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> iterator name for_each_child_of_node;
-> @@
->=20
->  for_each_available_child_of_node(root, child) {
->    ... when !=3D of_node_put(child)
->        when !=3D e =3D child
-> +  of_node_put(child);
-> ?  break;
->    ...
-> }
-> ... when !=3D child
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---dunppgcxmo5qgg5l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXD7yYQAKCRDj7w1vZxhR
-xYlyAQDwvaT1Fd85U90xXfnNEaXT0VONYRQBfzXkZ5deO8x8igEA+PXurQWESJMf
-cVGPanmyDaAWOtjRbYLKr4Tkn8cthAk=
-=7q2T
------END PGP SIGNATURE-----
-
---dunppgcxmo5qgg5l--
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index 8559ed9..16d7ec8 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3931,7 +3931,7 @@ int btrfs_qgroup_trace_subtree_after_cow(struct btrfs_trans_handle *trans,
+ 				   block->reloc_generation, block->level,
+ 				   &block->first_key);
+ 	if (IS_ERR(reloc_eb)) {
+-		ret = PTR_ERR(subv_eb);
++		ret = PTR_ERR(reloc_eb);
+ 		reloc_eb = NULL;
+ 		goto free_out;
+ 	}
