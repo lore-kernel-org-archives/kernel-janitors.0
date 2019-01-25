@@ -1,36 +1,23 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 11 Jan 2019 06:32:06 +0000
-Subject: Re: [PATCH v2 -next] crypto: chelsio - remove set but not used variables 'adap'
-Message-Id: <20190111063206.fhdvukubaqjjayiv@gondor.apana.org.au>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Fri, 25 Jan 2019 15:53:28 +0000
+Subject: Re: [PATCH] HID: elan: Make array buf static, shrinks object size
+Message-Id: <nycvar.YFH.7.76.1901251653080.6626@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545979302-111921-1-git-send-email-yuehaibing@huawei.com>
- <1545980033-196068-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1545980033-196068-1-git-send-email-yuehaibing@huawei.com>
+References: <20180926084150.17514-1-colin.king@canonical.com> <11666348-f50a-719f-89d6-d90b0a1ea8f7@canonical.com>
+In-Reply-To: <11666348-f50a-719f-89d6-d90b0a1ea8f7@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Harsh Jain <harsh@chelsio.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 06:53:53AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/crypto/chelsio/chcr_algo.c: In function 'chcr_device_init':
-> drivers/crypto/chelsio/chcr_algo.c:1371:18: warning:
->  variable 'adap' set but not used [-Wunused-but-set-variable]
-> 
-> It not used since commit a1c6fd4308d3 ("crypto: chelsio - Update ntx queue
-> received from cxgb4")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: fix title
-> ---
->  drivers/crypto/chelsio/chcr_algo.c | 2 --
->  1 file changed, 2 deletions(-)
+On Thu, 24 Jan 2019, Colin Ian King wrote:
 
-Patch applied.  Thanks.
+> ping?
+
+I don't think I've ever seen the original patch in my inbox. Could you 
+please just resend it?
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Jiri Kosina
+SUSE Labs
