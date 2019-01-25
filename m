@@ -1,31 +1,44 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Fri, 04 Jan 2019 16:10:22 +0000
-Subject: Re: [PATCH -next] xen/pvcalls: remove set but not used variable 'intf'
-Message-Id: <f90e002d-3808-157d-d8a7-a716c461f74c@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 25 Jan 2019 01:57:19 +0000
+Subject: [PATCH -next] scsi: csiostor: Remove set but not used variable 'pln'
+Message-Id: <1548381439-97080-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1546581820-123466-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1546581820-123466-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Juergen Gross <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 1/4/19 1:03 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/xen/pvcalls-back.c: In function 'pvcalls_sk_state_change':
-> drivers/xen/pvcalls-back.c:286:28: warning:
->  variable 'intf' set but not used [-Wunused-but-set-variable]
->
-> It not used since e6587cdbd732 ("pvcalls-back: set -ENOTCONN in
-> pvcalls_conn_back_read")
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+drivers/scsi/csiostor/csio_attr.c: In function 'csio_fcoe_free_vnp':
+drivers/scsi/csiostor/csio_attr.c:500:21: warning:
+ variable 'pln' set but not used [-Wunused-but-set-variable]
 
-and applied to for-linus-4.21.
+It never used since introduction.
 
-Thanks.
--boris
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/csiostor/csio_attr.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/scsi/csiostor/csio_attr.c b/drivers/scsi/csiostor/csio_attr.c
+index 9bd2bd8..200e500 100644
+--- a/drivers/scsi/csiostor/csio_attr.c
++++ b/drivers/scsi/csiostor/csio_attr.c
+@@ -497,7 +497,6 @@
+ static int
+ csio_fcoe_free_vnp(struct csio_hw *hw, struct csio_lnode *ln)
+ {
+-	struct csio_lnode *pln;
+ 	struct csio_mb  *mbp;
+ 	struct fw_fcoe_vnp_cmd *rsp;
+ 	int ret = 0;
+@@ -514,8 +513,6 @@
+ 		goto out;
+ 	}
+ 
+-	pln = ln->pln;
+-
+ 	csio_fcoe_vnp_free_init_mb(ln, mbp, CSIO_MB_DEFAULT_TMO,
+ 				   ln->fcf_flowid, ln->vnp_flowid,
+ 				   NULL);
