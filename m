@@ -1,44 +1,44 @@
-From: Dimitri Sivanich <sivanich@hpe.com>
-Date: Wed, 02 Jan 2019 13:53:29 +0000
-Subject: Re: [PATCH] gru: clean up indentation issue, remove spaces
-Message-Id: <20190102135329.GB9199@hpe.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 25 Jan 2019 01:45:54 +0000
+Subject: [PATCH -next] extcon: ptn5150: Fix return value check in ptn5150_i2c_probe()
+Message-Id: <1548380754-67031-1-git-send-email-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181221224419.15284-1-colin.king@canonical.com>
-In-Reply-To: <20181221224419.15284-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Dimitri Sivanich <sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Dimitri Sivanich <sivanich@hpe.com>
+In case of error, the function devm_gpiod_get() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-On Fri, Dec 21, 2018 at 10:44:19PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a couple of statements that have extra spaces in the identation,
-> fix this by removing them.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/misc/sgi-gru/grufault.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
-> index 93be82fc338a..2ec5808ba464 100644
-> --- a/drivers/misc/sgi-gru/grufault.c
-> +++ b/drivers/misc/sgi-gru/grufault.c
-> @@ -616,8 +616,8 @@ irqreturn_t gru_intr_mblade(int irq, void *dev_id)
->  	for_each_possible_blade(blade) {
->  		if (uv_blade_nr_possible_cpus(blade))
->  			continue;
-> -		 gru_intr(0, blade);
-> -		 gru_intr(1, blade);
-> +		gru_intr(0, blade);
-> +		gru_intr(1, blade);
->  	}
->  	return IRQ_HANDLED;
->  }
-> -- 
-> 2.19.1
-> 
+Fixes: 58963276749e ("extcon: Add support for ptn5150 extcon driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/extcon/extcon-ptn5150.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/extcon/extcon-ptn5150.c b/drivers/extcon/extcon-ptn5150.c
+index 155620b..8217fdc 100644
+--- a/drivers/extcon/extcon-ptn5150.c
++++ b/drivers/extcon/extcon-ptn5150.c
+@@ -240,14 +240,14 @@ static int ptn5150_i2c_probe(struct i2c_client *i2c,
+ 	info->dev = &i2c->dev;
+ 	info->i2c = i2c;
+ 	info->int_gpiod = devm_gpiod_get(&i2c->dev, "int", GPIOD_IN);
+-	if (!info->int_gpiod) {
++	if (IS_ERR(info->int_gpiod)) {
+ 		dev_err(dev, "failed to get INT GPIO\n");
+-		return -EINVAL;
++		return PTR_ERR(info->int_gpiod);
+ 	}
+ 	info->vbus_gpiod = devm_gpiod_get(&i2c->dev, "vbus", GPIOD_IN);
+-	if (!info->vbus_gpiod) {
++	if (IS_ERR(info->vbus_gpiod)) {
+ 		dev_err(dev, "failed to get VBUS GPIO\n");
+-		return -EINVAL;
++		return PTR_ERR(info->vbus_gpiod);
+ 	}
+ 	ret = gpiod_direction_output(info->vbus_gpiod, 0);
+ 	if (ret) {
