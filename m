@@ -1,29 +1,32 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Thu, 17 Jan 2019 14:00:38 +0000
-Subject: Re: [PATCH 2/4] drm/imx: imx-ldb: add missing of_node_puts
-Message-Id: <1547733638.4009.11.camel@pengutronix.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 26 Jan 2019 12:05:38 +0000
+Subject: [PATCH -next] drm/xen-front: Drop pointless static qualifier in fb_destroy()
+Message-Id: <1548504338-114487-1-git-send-email-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
-         <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+There is no need to have the 'struct drm_framebuffer *fb' variable
+static since new value always be assigned before use it.
 
-On Sun, 2019-01-13 at 09:47 +0100, Julia Lawall wrote:
-> The device node iterators perform an of_node_get on each
-> iteration, so a jump out of the loop requires an of_node_put.
-> 
-> Move the initialization channel->child = child; down to just
-> before the call to imx_ldb_register so that intervening failures
-> don't need to clear it.  Add a label at the end of the function to
-> do all the of_node_puts.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/xen/xen_drm_front_kms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you, I've applied the patch to the imx-drm/fixes branch.
-
-regards
-Philipp
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.c b/drivers/gpu/drm/xen/xen_drm_front_kms.c
+index 860da05..c2955d3 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_kms.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_kms.c
+@@ -54,7 +54,7 @@ static void fb_destroy(struct drm_framebuffer *fb)
+ 	  const struct drm_mode_fb_cmd2 *mode_cmd)
+ {
+ 	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+-	static struct drm_framebuffer *fb;
++	struct drm_framebuffer *fb;
+ 	struct drm_gem_object *gem_obj;
+ 	int ret;
+ 
