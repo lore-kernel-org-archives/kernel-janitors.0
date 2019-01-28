@@ -1,32 +1,31 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 26 Jan 2019 12:05:38 +0000
-Subject: [PATCH -next] drm/xen-front: Drop pointless static qualifier in fb_destroy()
-Message-Id: <1548504338-114487-1-git-send-email-yuehaibing@huawei.com>
+From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+Date: Mon, 28 Jan 2019 06:36:08 +0000
+Subject: Re: [PATCH -next] drm/xen-front: Drop pointless static qualifier in fb_destroy()
+Message-Id: <4c371af3-8856-39a7-d06e-6b55749567e5@epam.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1548504338-114487-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1548504338-114487-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "xen-devel@lists.xen.org" <xen-devel@lists.xen.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-There is no need to have the 'struct drm_framebuffer *fb' variable
-static since new value always be assigned before use it.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/xen/xen_drm_front_kms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.c b/drivers/gpu/drm/xen/xen_drm_front_kms.c
-index 860da05..c2955d3 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_kms.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_kms.c
-@@ -54,7 +54,7 @@ static void fb_destroy(struct drm_framebuffer *fb)
- 	  const struct drm_mode_fb_cmd2 *mode_cmd)
- {
- 	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
--	static struct drm_framebuffer *fb;
-+	struct drm_framebuffer *fb;
- 	struct drm_gem_object *gem_obj;
- 	int ret;
- 
+T24gMS8yNi8xOSAyOjA1IFBNLCBZdWVIYWliaW5nIHdyb3RlOg0KPiBUaGVyZSBpcyBubyBuZWVk
+IHRvIGhhdmUgdGhlICdzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYicgdmFyaWFibGUNCj4gc3Rh
+dGljIHNpbmNlIG5ldyB2YWx1ZSBhbHdheXMgYmUgYXNzaWduZWQgYmVmb3JlIHVzZSBpdC4NCj4N
+Cj4gU2lnbmVkLW9mZi1ieTogWXVlSGFpYmluZyA8eXVlaGFpYmluZ0BodWF3ZWkuY29tPg0KR29v
+ZCBjYXRjaCwgdGhhbmsgeW91IQ0KUmV2aWV3ZWQtYnk6IE9sZWtzYW5kciBBbmRydXNoY2hlbmtv
+IDxvbGVrc2FuZHJfYW5kcnVzaGNoZW5rb0BlcGFtLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9n
+cHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2ttcy5jIHwgMiArLQ0KPiAgIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2ttcy5jIGIvZHJpdmVycy9ncHUvZHJtL3hlbi94
+ZW5fZHJtX2Zyb250X2ttcy5jDQo+IGluZGV4IDg2MGRhMDUuLmMyOTU1ZDMgMTAwNjQ0DQo+IC0t
+LSBhL2RyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9rbXMuYw0KPiArKysgYi9kcml2
+ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfa21zLmMNCj4gQEAgLTU0LDcgKzU0LDcgQEAg
+c3RhdGljIHZvaWQgZmJfZGVzdHJveShzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikNCj4gICAJ
+ICBjb25zdCBzdHJ1Y3QgZHJtX21vZGVfZmJfY21kMiAqbW9kZV9jbWQpDQo+ICAgew0KPiAgIAlz
+dHJ1Y3QgeGVuX2RybV9mcm9udF9kcm1faW5mbyAqZHJtX2luZm8gPSBkZXYtPmRldl9wcml2YXRl
+Ow0KPiAtCXN0YXRpYyBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYjsNCj4gKwlzdHJ1Y3QgZHJt
+X2ZyYW1lYnVmZmVyICpmYjsNCj4gICAJc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW1fb2JqOw0K
+PiAgIAlpbnQgcmV0Ow0KPiAgIA0KPg0KPg0KPg0KPg0KPg0K
