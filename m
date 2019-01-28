@@ -1,44 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 22 Jan 2019 15:18:30 +0000
-Subject: [PATCH] scsi: hpsa: clean up two indentation issues
-Message-Id: <20190122151830.7230-1-colin.king@canonical.com>
+From: <Don.Brace@microchip.com>
+Date: Mon, 28 Jan 2019 16:18:33 +0000
+Subject: RE: [PATCH] scsi: hpsa: clean up two indentation issues
+Message-Id: <SN6PR11MB2767CD2DC52BC47972BF7E33E1960@SN6PR11MB2767.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190122151830.7230-1-colin.king@canonical.com>
+In-Reply-To: <20190122151830.7230-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
+To: colin.king@canonical.com, don.brace@microsemi.com, jejb@linux.ibm.com, martin.petersen@oracle.com, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There are two statements that are indented incorrectly. Fix these.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/hpsa.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index ff67ef5d5347..5284444fdd10 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -1327,7 +1327,7 @@ static int hpsa_scsi_add_entry(struct ctlr_info *h,
- 		dev_warn(&h->pdev->dev, "physical device with no LUN=0,"
- 			" suspect firmware bug or unsupported hardware "
- 			"configuration.\n");
--			return -1;
-+		return -1;
- 	}
- 
- lun_assigned:
-@@ -4110,7 +4110,7 @@ static int hpsa_gather_lun_info(struct ctlr_info *h,
- 			"maximum logical LUNs (%d) exceeded.  "
- 			"%d LUNs ignored.\n", HPSA_MAX_LUN,
- 			*nlogicals - HPSA_MAX_LUN);
--			*nlogicals = HPSA_MAX_LUN;
-+		*nlogicals = HPSA_MAX_LUN;
- 	}
- 	if (*nlogicals + *nphysicals > HPSA_MAX_PHYS_LUN) {
- 		dev_warn(&h->pdev->dev,
--- 
-2.19.1
+DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogbGludXgtc2NzaS1vd25lckB2Z2Vy
+Lmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1zY3NpLW93bmVyQHZnZXIua2VybmVsLm9yZ10gT24g
+QmVoYWxmIE9mIENvbGluIEtpbmcNClNlbnQ6IFR1ZXNkYXksIEphbnVhcnkgMjIsIDIwMTkgOTox
+OSBBTQ0KVG86IERvbiBCcmFjZSA8ZG9uLmJyYWNlQG1pY3Jvc2VtaS5jb20+OyBKYW1lcyBFIC4g
+SiAuIEJvdHRvbWxleSA8amVqYkBsaW51eC5pYm0uY29tPjsgTWFydGluIEsgLiBQZXRlcnNlbiA8
+bWFydGluLnBldGVyc2VuQG9yYWNsZS5jb20+OyBlc2Muc3RvcmFnZWRldkBtaWNyb3NlbWkuY29t
+OyBsaW51eC1zY3NpQHZnZXIua2VybmVsLm9yZw0KQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNClN1YmplY3Q6IFtQQVRDSF0g
+c2NzaTogaHBzYTogY2xlYW4gdXAgdHdvIGluZGVudGF0aW9uIGlzc3Vlcw0KDQpGcm9tOiBDb2xp
+biBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpUaGVyZSBhcmUgdHdvIHN0
+YXRlbWVudHMgdGhhdCBhcmUgaW5kZW50ZWQgaW5jb3JyZWN0bHkuIEZpeCB0aGVzZS4NCg0KU2ln
+bmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCi0t
+LQ0KIGRyaXZlcnMvc2NzaS9ocHNhLmMgfCA0ICsrLS0NCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNl
+cnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zY3NpL2hw
+c2EuYyBiL2RyaXZlcnMvc2NzaS9ocHNhLmMgaW5kZXggZmY2N2VmNWQ1MzQ3Li41Mjg0NDQ0ZmRk
+MTAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Njc2kvaHBzYS5jDQorKysgYi9kcml2ZXJzL3Njc2kv
+aHBzYS5jDQpAQCAtMTMyNyw3ICsxMzI3LDcgQEAgc3RhdGljIGludCBocHNhX3Njc2lfYWRkX2Vu
+dHJ5KHN0cnVjdCBjdGxyX2luZm8gKmgsDQogCQlkZXZfd2FybigmaC0+cGRldi0+ZGV2LCAicGh5
+c2ljYWwgZGV2aWNlIHdpdGggbm8gTFVOPTAsIg0KIAkJCSIgc3VzcGVjdCBmaXJtd2FyZSBidWcg
+b3IgdW5zdXBwb3J0ZWQgaGFyZHdhcmUgIg0KIAkJCSJjb25maWd1cmF0aW9uLlxuIik7DQotCQkJ
+cmV0dXJuIC0xOw0KKwkJcmV0dXJuIC0xOw0KIAl9DQogDQogbHVuX2Fzc2lnbmVkOg0KQEAgLTQx
+MTAsNyArNDExMCw3IEBAIHN0YXRpYyBpbnQgaHBzYV9nYXRoZXJfbHVuX2luZm8oc3RydWN0IGN0
+bHJfaW5mbyAqaCwNCiAJCQkibWF4aW11bSBsb2dpY2FsIExVTnMgKCVkKSBleGNlZWRlZC4gICIN
+CiAJCQkiJWQgTFVOcyBpZ25vcmVkLlxuIiwgSFBTQV9NQVhfTFVOLA0KIAkJCSpubG9naWNhbHMg
+LSBIUFNBX01BWF9MVU4pOw0KLQkJCSpubG9naWNhbHMgPSBIUFNBX01BWF9MVU47DQorCQkqbmxv
+Z2ljYWxzID0gSFBTQV9NQVhfTFVOOw0KIAl9DQogCWlmICgqbmxvZ2ljYWxzICsgKm5waHlzaWNh
+bHMgPiBIUFNBX01BWF9QSFlTX0xVTikgew0KIAkJZGV2X3dhcm4oJmgtPnBkZXYtPmRldiwNCi0t
+DQoyLjE5LjENCg0KQWNrZWQtYnk6IERvbiBCcmFjZSA8ZG9uLmJyYWNlQG1pY3Jvc2VtaS5jb20+
+Pw0KDQo
