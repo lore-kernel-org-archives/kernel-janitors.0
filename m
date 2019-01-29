@@ -1,52 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Jan 2019 10:29:40 +0000
-Subject: [PATCH] scsi: bnx2fc: Fix error handling in probe()
-Message-Id: <20190124102940.GA25529@kadam>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 29 Jan 2019 06:31:44 +0000
+Subject: Re: [PATCH] scsi: bnx2fc: Fix error handling in probe()
+Message-Id: <yq1o980c6un.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190124102940.GA25529@kadam>
+In-Reply-To: <20190124102940.GA25529@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-There are two issues here.  First if cmgr->hba is not set early enough
-then it leads to a NULL dereference.  Second if we don't completely
-initialize cmgr->io_bdt_pool[] then we end up dereferencing
-uninitialized pointers.
 
-Fixes: 853e2bd2103a ("[SCSI] bnx2fc: Broadcom FCoE offload driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/scsi/bnx2fc/bnx2fc_io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Dan,
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
-index 350257c13a5b..bc9f2a2365f4 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_io.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
-@@ -240,6 +240,7 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
- 		return NULL;
- 	}
- 
-+	cmgr->hba = hba;
- 	cmgr->free_list = kcalloc(arr_sz, sizeof(*cmgr->free_list),
- 				  GFP_KERNEL);
- 	if (!cmgr->free_list) {
-@@ -256,7 +257,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
- 		goto mem_err;
- 	}
- 
--	cmgr->hba = hba;
- 	cmgr->cmds = (struct bnx2fc_cmd **)(cmgr + 1);
- 
- 	for (i = 0; i < arr_sz; i++)  {
-@@ -295,7 +295,7 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
- 
- 	/* Allocate pool of io_bdts - one for each bnx2fc_cmd */
- 	mem_size = num_ios * sizeof(struct io_bdt *);
--	cmgr->io_bdt_pool = kmalloc(mem_size, GFP_KERNEL);
-+	cmgr->io_bdt_pool = kzalloc(mem_size, GFP_KERNEL);
- 	if (!cmgr->io_bdt_pool) {
- 		printk(KERN_ERR PFX "failed to alloc io_bdt_pool\n");
- 		goto mem_err;
+> There are two issues here.  First if cmgr->hba is not set early enough
+> then it leads to a NULL dereference.  Second if we don't completely
+> initialize cmgr->io_bdt_pool[] then we end up dereferencing
+> uninitialized pointers.
+
+Applied to 5.0/scsi-fixes, thanks!
+
 -- 
-2.17.1
+Martin K. Petersen	Oracle Linux Engineering
