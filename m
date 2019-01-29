@@ -1,50 +1,73 @@
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 05 Jan 2019 23:55:01 +0000
-Subject: Re: [PATCH] cifs: Fix a tiny potential memory leak
-Message-Id: <CAH2r5msWUhvbS_c3f0fuLpmfU-xfd6ngo75QRstbnVg+J0BgyQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 29 Jan 2019 12:44:29 +0000
+Subject: [PATCH][next] mtd: rawnand: meson:: make several functions static
+Message-Id: <20190129124429.19829-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190105181803.GD3288@kadam>
-In-Reply-To: <20190105181803.GD3288@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liang Yang <liang.yang@amlogic.com>, Boris Brezillon <bbrezillon@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Kevin Hilman <khilman@baylibre.com>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-thx
+There are several functions that are local to the source and do
+not need to be in global scope, so make them static.
 
-On Sat, Jan 5, 2019 at 12:19 PM Dan Carpenter via samba-technical
-<samba-technical@lists.samba.org> wrote:
->
-> The most recent "it" allocation is leaked on this error path.  I
-> believe that small allocations always succeed in current kernels so
-> this doesn't really affect run time.
->
-> Fixes: 54be1f6c1c37 ("cifs: Add DFS cache routines")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/cifs/dfs_cache.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
-> index cd63c4a70875..09b7d0d4f6e4 100644
-> --- a/fs/cifs/dfs_cache.c
-> +++ b/fs/cifs/dfs_cache.c
-> @@ -776,6 +776,7 @@ static int get_tgt_list(const struct dfs_cache_entry *ce,
->                 it->it_name = kstrndup(t->t_name, strlen(t->t_name),
->                                        GFP_KERNEL);
->                 if (!it->it_name) {
-> +                       kfree(it);
->                         rc = -ENOMEM;
->                         goto err_free_it;
->                 }
-> --
-> 2.17.1
->
+Cleans up sparse warnings.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/nand/raw/meson_nand.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
+index b9c543d1054c..9557bd94dcd2 100644
+--- a/drivers/mtd/nand/raw/meson_nand.c
++++ b/drivers/mtd/nand/raw/meson_nand.c
+@@ -829,14 +829,14 @@ static int meson_nfc_read_oob(struct nand_chip *nand, int page)
+ 	return meson_nfc_read_page_hwecc(nand, NULL, 1, page);
+ }
+ 
+-bool meson_nfc_is_buffer_dma_safe(const void *buffer)
++static bool meson_nfc_is_buffer_dma_safe(const void *buffer)
+ {
+ 	if (virt_addr_valid(buffer) && (!object_is_on_stack(buffer)))
+ 		return true;
+ 	return false;
+ }
+ 
+-void *
++static void *
+ meson_nand_op_get_dma_safe_input_buf(const struct nand_op_instr *instr)
+ {
+ 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
+@@ -848,7 +848,7 @@ meson_nand_op_get_dma_safe_input_buf(const struct nand_op_instr *instr)
+ 	return kzalloc(instr->ctx.data.len, GFP_KERNEL);
+ }
+ 
+-void
++static void
+ meson_nand_op_put_dma_safe_input_buf(const struct nand_op_instr *instr,
+ 				     void *buf)
+ {
+@@ -863,7 +863,7 @@ meson_nand_op_put_dma_safe_input_buf(const struct nand_op_instr *instr,
+ 	kfree(buf);
+ }
+ 
+-void *
++static void *
+ meson_nand_op_get_dma_safe_output_buf(const struct nand_op_instr *instr)
+ {
+ 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
+@@ -876,7 +876,7 @@ meson_nand_op_get_dma_safe_output_buf(const struct nand_op_instr *instr)
+ 		       instr->ctx.data.len, GFP_KERNEL);
+ }
+ 
+-void
++static void
+ meson_nand_op_put_dma_safe_output_buf(const struct nand_op_instr *instr,
+ 				      const void *buf)
+ {
 -- 
-Thanks,
-
-Steve
+2.19.1
