@@ -1,29 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 17 Jan 2019 19:47:53 +0000
-Subject: Re: [PATCH] atm: he: fix sign-extension overflow on large shift
-Message-Id: <20190117.114753.495905826813982221.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 29 Jan 2019 05:53:20 +0000
+Subject: Re: [PATCH] ath10k: snoc: remove set but not used variable 'ar_snoc'
+Message-Id: <4b16caf3-9a25-99d0-5b35-f27d6e5a5c65@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190115180338.32357-1-colin.king@canonical.com>
-In-Reply-To: <20190115180338.32357-1-colin.king@canonical.com>
+References: <1536200965-121172-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536200965-121172-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 15 Jan 2019 18:03:38 +0000
+ping...
 
-> From: Colin Ian King <colin.king@canonical.com>
+On 2018/9/6 10:29, YueHaibing wrote:
+> From: Yue Haibing <yuehaibing@huawei.com>
 > 
-> Shifting the 1 by exp by an int can lead to sign-extension overlow when
-> exp is 31 since 1 is an signed int and sign-extending this result to an
-> unsigned long long will set the upper 32 bits.  Fix this by shifting an
-> unsigned long.
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Detected by cppcheck:
-> (warning) Shifting signed 32-bit value by 31 bits is undefined behaviour
+> drivers/net/wireless/ath/ath10k/snoc.c: In function 'ath10k_snoc_tx_pipe_cleanup':
+> drivers/net/wireless/ath/ath10k/snoc.c:681:22: warning:
+>  variable 'ar_snoc' set but not used [-Wunused-but-set-variable]
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Applied.
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/wireless/ath/ath10k/snoc.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+> index fa1843a..2d6ae00 100644
+> --- a/drivers/net/wireless/ath/ath10k/snoc.c
+> +++ b/drivers/net/wireless/ath/ath10k/snoc.c
+> @@ -678,13 +678,11 @@ static void ath10k_snoc_tx_pipe_cleanup(struct ath10k_snoc_pipe *snoc_pipe)
+>  {
+>  	struct ath10k_ce_pipe *ce_pipe;
+>  	struct ath10k_ce_ring *ce_ring;
+> -	struct ath10k_snoc *ar_snoc;
+>  	struct sk_buff *skb;
+>  	struct ath10k *ar;
+>  	int i;
+>  
+>  	ar = snoc_pipe->hif_ce_state;
+> -	ar_snoc = ath10k_snoc_priv(ar);
+>  	ce_pipe = snoc_pipe->ce_hdl;
+>  	ce_ring = ce_pipe->src_ring;
+> 
+> 
+> .
+> 
