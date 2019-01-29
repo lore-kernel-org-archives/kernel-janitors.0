@@ -1,38 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Jan 2019 13:02:30 +0000
-Subject: [PATCH] [PATCH] rapidio: Potential oops in riocm_ch_listen()
-Message-Id: <20190110130230.GB27017@kadam>
+From: Tyler Hicks <tyhicks@canonical.com>
+Date: Tue, 29 Jan 2019 22:37:35 +0000
+Subject: Re: [PATCH] ecryptfs: re-order a condition for static checkers
+Message-Id: <20190129223734.GB29425@lindsey>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alexandre.bounine@idt.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: kernel-janitors@vger.kernel.org
 
-If riocm_get_channel() fails, then we should just return -EINVAL.
-Calling riocm_put_channel() will trigger a NULL dereference and
-generally we should call put() if the get() didn't succeed.
+On 2018-12-14 14:51:13, Dan Carpenter wrote:
+> Can we merge this patch?  KASAN will probably complain about this as
+> well, I think...
 
-Fixes: b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/rapidio/rio_cm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes, my apologies for the way too long delay. I just noticed that
+there's another commit of yours that I left sitting in the ecryptfs next
+branch from last year and never pushed it up. I'll get both commits in
+and will return to keeping a better eye on ecryptfs submissions.
 
-diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
-index bad0e0ea4f30..cf45829585cb 100644
---- a/drivers/rapidio/rio_cm.c
-+++ b/drivers/rapidio/rio_cm.c
-@@ -1215,7 +1215,9 @@ static int riocm_ch_listen(u16 ch_id)
- 	riocm_debug(CHOP, "(ch_%d)", ch_id);
- 
- 	ch = riocm_get_channel(ch_id);
--	if (!ch || !riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
-+	if (!ch)
-+		return -EINVAL;
-+	if (!riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
- 		ret = -EINVAL;
- 	riocm_put_channel(ch);
- 	return ret;
--- 
-2.17.1
+Thanks!
+
+Tyler
+
+> 
+> regards,
+> dan carpenter
+> 
+> On Wed, Aug 22, 2018 at 01:43:59PM +0300, Dan Carpenter wrote:
+> > Static checkers complain that we are using "s->i" as an offset before
+> > we check whether it is within bounds.  It doesn't matter much but we
+> > can easily swap the order of the checks to make everyone happy.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> > diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+> > index e74fe84d0886..624ff4409c61 100644
+> > --- a/fs/ecryptfs/keystore.c
+> > +++ b/fs/ecryptfs/keystore.c
+> > @@ -1063,8 +1063,9 @@ ecryptfs_parse_tag_70_packet(char **filename, size_t *filename_size,
+> >  		       "rc = [%d]\n", __func__, rc);
+> >  		goto out_free_unlock;
+> >  	}
+> > -	while (s->decrypted_filename[s->i] != '\0'
+> > -	       && s->i < s->block_aligned_filename_size)
+> > +
+> > +	while (s->i < s->block_aligned_filename_size &&
+> > +	       s->decrypted_filename[s->i] != '\0')
+> >  		s->i++;
+> >  	if (s->i = s->block_aligned_filename_size) {
+> >  		printk(KERN_WARNING "%s: Invalid tag 70 packet; could not "
