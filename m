@@ -1,7 +1,7 @@
 From: Liang Yang <liang.yang@amlogic.com>
-Date: Wed, 30 Jan 2019 05:20:56 +0000
+Date: Wed, 30 Jan 2019 09:27:10 +0000
 Subject: Re: [PATCH][next] mtd: rawnand: meson:: make several functions static
-Message-Id: <848004e3-aaad-3ffd-424f-3dba503f8874@amlogic.com>
+Message-Id: <a1f6dfbd-3434-be6a-c623-794398393609@amlogic.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190129124429.19829-1-colin.king@canonical.com>
 In-Reply-To: <20190129124429.19829-1-colin.king@canonical.com>
@@ -11,7 +11,7 @@ Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>, Boris Brezillon <bbrezillon@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Kevin Hilman <khilman@baylibre.com>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Colin,
+Hi Colin,
 
 On 2019/1/29 20:44, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
@@ -21,7 +21,6 @@ On 2019/1/29 20:44, Colin King wrote:
 > 
 > Cleans up sparse warnings.
 > 
-ok. thanks
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
 >   drivers/mtd/nand/raw/meson_nand.c | 10 +++++-----
@@ -76,3 +75,7 @@ ok. thanks
 >   				      const void *buf)
 >   {
 > 
+
+Looks good to me:
+
+Acked-by: Liang Yang <liang.yang@amlogic.com>
