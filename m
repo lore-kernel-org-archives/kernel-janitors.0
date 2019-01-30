@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Jan 2019 07:28:46 +0000
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed, 30 Jan 2019 09:13:16 +0000
 Subject: Re: [PATCH] mm, swap: bounds check swap_info accesses to avoid NULL derefs
-Message-Id: <20190130072846.GA2010@kadam>
+Message-Id: <20190130091316.GC2278@hirez.programming.kicks-ass.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190114222529.43zay6r242ipw5jb@ca-dmjordan1.us.oracle.com>
  <20190115002305.15402-1-daniel.m.jordan@oracle.com>
@@ -10,7 +10,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: akpm@linux-foundation.org, andrea.parri@amarulasolutions.com, shli@kernel.org, ying.huang@intel.com, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, osandov@fb.com, tj@kernel.org, ak@linux.intel.com, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, paulmck@linux.ibm.com, stern@rowland.harvard.edu, peterz@infradead.org, will.deacon@arm.com
+Cc: akpm@linux-foundation.org, dan.carpenter@oracle.com, andrea.parri@amarulasolutions.com, shli@kernel.org, ying.huang@intel.com, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, osandov@fb.com, tj@kernel.org, ak@linux.intel.com, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, paulmck@linux.ibm.com, stern@rowland.harvard.edu, will.deacon@arm.com
 
 On Mon, Jan 14, 2019 at 07:23:05PM -0500, Daniel Jordan wrote:
 > Dan Carpenter reports a potential NULL dereference in
@@ -47,32 +47,69 @@ On Mon, Jan 14, 2019 at 07:23:05PM -0500, Daniel Jordan wrote:
 > Fixes: ec8acf20afb8 ("swap: add per-partition lock for swapfile")
 > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 > Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Dan Carpenter <dan.carpenter@oracle.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Omar Sandoval <osandov@fb.com>
-> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> 
-> ---
-> 
-> I'd appreciate it if someone more familiar with memory barriers could
-> check this over.  Thanks.
-> 
-> Probably no need for stable, this is all theoretical.
-> 
 
-The NULL dereference part is not theoretical.  It require CAP_SYS_ADMIN
-so it's not a huge deal, but you could trigger it from snapshot_ioctl()
-with SNAPSHOT_ALLOC_SWAP_PAGE.
+A few comments below, but:
 
-regards,
-dan carpenter
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+> +static struct swap_info_struct *swap_type_to_swap_info(int type)
+> +{
+> +	if (type >= READ_ONCE(nr_swapfiles))
+> +		return NULL;
+> +
+> +	smp_rmb();	/* Pairs with smp_wmb in alloc_swap_info. */
+> +	return READ_ONCE(swap_info[type]);
+> +}
+
+> @@ -2799,9 +2810,9 @@ static void *swap_start(struct seq_file *swap, loff_t *pos)
+>  	if (!l)
+>  		return SEQ_START_TOKEN;
+>  
+> -	for (type = 0; type < nr_swapfiles; type++) {
+> +	for (type = 0; type < READ_ONCE(nr_swapfiles); type++) {
+>  		smp_rmb();	/* read nr_swapfiles before swap_info[type] */
+> -		si = swap_info[type];
+> +		si = READ_ONCE(swap_info[type]);
+>  		if (!(si->flags & SWP_USED) || !si->swap_map)
+>  			continue;
+>  		if (!--l)
+> @@ -2821,9 +2832,9 @@ static void *swap_next(struct seq_file *swap, void *v, loff_t *pos)
+>  	else
+>  		type = si->type + 1;
+>  
+> -	for (; type < nr_swapfiles; type++) {
+> +	for (; type < READ_ONCE(nr_swapfiles); type++) {
+>  		smp_rmb();	/* read nr_swapfiles before swap_info[type] */
+> -		si = swap_info[type];
+> +		si = READ_ONCE(swap_info[type]);
+>  		if (!(si->flags & SWP_USED) || !si->swap_map)
+>  			continue;
+>  		++*pos;
+
+You could write those like:
+
+	for (; (si = swap_type_to_swap_info(type)); type++)
+
+> @@ -2930,14 +2941,14 @@ static struct swap_info_struct *alloc_swap_info(void)
+>  	}
+>  	if (type >= nr_swapfiles) {
+>  		p->type = type;
+> -		swap_info[type] = p;
+> +		WRITE_ONCE(swap_info[type], p);
+>  		/*
+>  		 * Write swap_info[type] before nr_swapfiles, in case a
+>  		 * racing procfs swap_start() or swap_next() is reading them.
+>  		 * (We never shrink nr_swapfiles, we never free this entry.)
+>  		 */
+>  		smp_wmb();
+> -		nr_swapfiles++;
+> +		WRITE_ONCE(nr_swapfiles, nr_swapfiles + 1);
+>  	} else {
+>  		kvfree(p);
+>  		p = swap_info[type];
+
+It is also possible to write this with smp_load_acquire() /
+smp_store_release(). ARM64/RISC-V might benefit from that, OTOH ARM
+won't like that much.
+
+Dunno what would be better.
