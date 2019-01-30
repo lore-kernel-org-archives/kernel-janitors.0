@@ -1,7 +1,7 @@
 From: Liang Yang <liang.yang@amlogic.com>
-Date: Wed, 30 Jan 2019 05:20:41 +0000
+Date: Wed, 30 Jan 2019 09:26:49 +0000
 Subject: Re: [PATCH][next] mtd: rawnand: meson: fix missing assignment of ret on a call to meson_chip_buffer_
-Message-Id: <ec92a9c0-8b9f-2551-69a4-72e12b1ce3e2@amlogic.com>
+Message-Id: <aeadd16e-ed46-28f2-15de-66d1d9f1ed11@amlogic.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190129105757.19138-1-colin.king@canonical.com>
 In-Reply-To: <20190129105757.19138-1-colin.king@canonical.com>
@@ -11,7 +11,7 @@ Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>, Boris Brezillon <bbrezillon@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Kevin Hilman <khilman@baylibre.com>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Colin,
+Hi Colin,
 
 On 2019/1/29 18:57, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
@@ -19,8 +19,6 @@ On 2019/1/29 18:57, Colin King wrote:
 > The call to meson_chip_buffer_init is not assigning ret, however, ret
 > is being checked for failure. Fix this by adding in the missing assignment.
 > 
-ok. thanks for your time.
-
 > Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
@@ -36,7 +34,13 @@ ok. thanks for your time.
 >   		return -EINVAL;
 >   	}
 > -	meson_chip_buffer_init(nand);
-> +	ret = meson_chip_buffer_init(nand); >   	if (ret)
+> +	ret = meson_chip_buffer_init(nand);
+
+Looks good to me:
+
+Acked-by: Liang Yang <liang.yang@amlogic.com>
+
+>   	if (ret)
 >   		return -ENOMEM;
 >   
 > 
