@@ -1,70 +1,46 @@
-From: Adeodato =?utf-8?B?U2ltw7M=?= <dato@net.com.org.es>
-Date: Thu, 17 Jan 2019 10:36:02 +0000
-Subject: Re: [PATCH 1/3] mm: add include files so that function definitions have a prototype
-Message-Id: <20190117103602.GA6243@relativists.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 31 Jan 2019 15:19:21 +0000
+Subject: [PATCH -next] RDMA/hns: Remove set but not used variable 'rst'
+Message-Id: <20190131151921.40349-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
-In-Reply-To: <466ad4ebe5d788e7be6a14fbbcaaa9596bac7141.1543899764.git.dato@net.com.org.es>
+References: <1538132393-54509-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1538132393-54509-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hello,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Any chance these three patches of mine (reviewed by Mike Rapoport) 
-will get merged?
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c: In function 'hns_roce_v2_qp_flow_control_init':
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c:4384:33: warning:
+ variable 'rst' set but not used [-Wunused-but-set-variable]
 
-Thanks for considering,
+It never used since introduction.
 
--d
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-P.S.: If they already got merged, I apologize—I couldn't find a 
-repo for mm. (I checked master and next.)
-
-On Tue, Dec 4, 2018 at 02:14 -0300, Adeodato Simó <dato@net.com.org.es> wrote:
-> Previously, rodata_test(), usercopy_warn(), and usercopy_abort() were
-> defined without a matching prototype. Detected by -Wmissing-prototypes
-> GCC flag.
-> 
-> Signed-off-by: Adeodato Simó <dato@net.com.org.es>
-> ---
-> I started poking at this after kernel-janitors got the suggestion[1]
-> to look into the -Wmissing-prototypes warnings.
-> 
-> Thanks for considering!
-> 
-> [1]: https://www.spinics.net/lists/linux-kernel-janitors/msg43981.html
-> 
->  mm/rodata_test.c | 1 +
->  mm/usercopy.c    | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/mm/rodata_test.c b/mm/rodata_test.c
-> index d908c8769b48..01306defbd1b 100644
-> --- a/mm/rodata_test.c
-> +++ b/mm/rodata_test.c
-> @@ -11,6 +11,7 @@
->   */
->  #define pr_fmt(fmt) "rodata_test: " fmt
->  
-> +#include <linux/rodata_test.h>
->  #include <linux/uaccess.h>
->  #include <asm/sections.h>
->  
-> diff --git a/mm/usercopy.c b/mm/usercopy.c
-> index 852eb4e53f06..f487ba4888df 100644
-> --- a/mm/usercopy.c
-> +++ b/mm/usercopy.c
-> @@ -20,6 +20,7 @@
->  #include <linux/sched/task.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/thread_info.h>
-> +#include <linux/uaccess.h>
->  #include <linux/atomic.h>
->  #include <linux/jump_label.h>
->  #include <asm/sections.h>
-> -- 
-> 2.19.2
-> 
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 5c483b437bdd..f1badcd244d1 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -4381,7 +4381,7 @@ static int hns_roce_v2_destroy_qp(struct ib_qp *ibqp)
+ static int hns_roce_v2_qp_flow_control_init(struct hns_roce_dev *hr_dev,
+ 						struct hns_roce_qp *hr_qp)
+ {
+-	struct hns_roce_sccc_clr_done *rst, *resp;
++	struct hns_roce_sccc_clr_done *resp;
+ 	struct hns_roce_sccc_clr *clr;
+ 	struct hns_roce_cmq_desc desc;
+ 	int ret, i;
+@@ -4390,7 +4390,6 @@ static int hns_roce_v2_qp_flow_control_init(struct hns_roce_dev *hr_dev,
+ 
+ 	/* set scc ctx clear done flag */
+ 	hns_roce_cmq_setup_basic_desc(&desc, HNS_ROCE_OPC_RESET_SCCC, false);
+-	rst = (struct hns_roce_sccc_clr_done *)desc.data;
+ 	ret =  hns_roce_cmq_send(hr_dev, &desc, 1);
+ 	if (ret) {
+ 		dev_err(hr_dev->dev, "Reset SCC ctx  failed(%d)\n", ret);
