@@ -1,53 +1,25 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Thu, 03 Jan 2019 20:07:56 +0000
-Subject: Re: [PATCH -next] hwspinlock: fix return value check in stm32_hwspinlock_probe()
-Message-Id: <20190103200755.GD31596@builder>
+From: "Huang\, Ying" <ying.huang@intel.com>
+Date: Thu, 31 Jan 2019 02:48:29 +0000
+Subject: About swapoff race patch  (was Re: [PATCH] mm, swap: bounds check swap_info accesses to avoid NULL d
+Message-Id: <87tvhpy22q.fsf_-_@yhuang-dev.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1546498950-105456-1-git-send-email-weiyongjun1@huawei.com>
- <16205f0c-3514-731c-e948-38695e3a525d@st.com>
-In-Reply-To: <16205f0c-3514-731c-e948-38695e3a525d@st.com>
+References: <20190114222529.43zay6r242ipw5jb@ca-dmjordan1.us.oracle.com>
+	<20190115002305.15402-1-daniel.m.jordan@oracle.com>
+	<20190129222622.440a6c3af63c57f0aa5c09ca@linux-foundation.org>
+In-Reply-To: <20190129222622.440a6c3af63c57f0aa5c09ca@linux-foundation.org>
+	(Andrew Morton's message of "Tue, 29 Jan 2019 22:26:22 -0800")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin GAIGNARD <benjamin.gaignard@st.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>, dan.carpenter@oracle.com, andrea.parri@amarulasolutions.com, shli@kernel.org, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, osandov@fb.com, tj@kernel.org, ak@linux.intel.com, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, paulmck@linux.ibm.com, stern@rowland.harvard.edu, peterz@infradead.org, will.deacon@arm.com
 
-On Thu 03 Jan 02:06 PST 2019, Benjamin GAIGNARD wrote:
+Andrew Morton <akpm@linux-foundation.org> writes:
+> mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch is very
+> stuck so can you please redo this against mainline?
 
-> 
-> On 1/3/19 8:02 AM, Wei Yongjun wrote:
-> > In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> > and never returns NULL. The NULL test in the return value check should
-> > be replaced with IS_ERR().
-> >
-> > Fixes: f24fcff1d267 ("hwspinlock: add STM32 hwspinlock device")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Acked-by: Benjamin Gaignard <benjamin.gaignard@gmail.com>
+Allow me to be off topic, this patch has been in mm tree for quite some
+time, what can I do to help this be merged upstream?
 
-Thanks for the fix and the review!
-
-Regards,
-Bjorn
-
-> > ---
-> >   drivers/hwspinlock/stm32_hwspinlock.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
-> > index 34a8e00..4418392 100644
-> > --- a/drivers/hwspinlock/stm32_hwspinlock.c
-> > +++ b/drivers/hwspinlock/stm32_hwspinlock.c
-> > @@ -57,8 +57,8 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
-> >   
-> >   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >   	io_base = devm_ioremap_resource(&pdev->dev, res);
-> > -	if (!io_base)
-> > -		return -ENOMEM;
-> > +	if (IS_ERR(io_base))
-> > +		return PTR_ERR(io_base);
-> >   
-> >   	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
-> >   	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
-> >
-> >
-> >
+Best Regards,
+Huang, Ying
