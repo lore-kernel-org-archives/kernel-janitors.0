@@ -1,32 +1,35 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Tue, 05 Feb 2019 19:05:22 +0000
-Subject: Re: [PATCH][next] mtd: rawnand: meson:: make several functions static
-Message-Id: <20190205200522.7e2748bb@xps13>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Feb 2019 10:41:59 +0000
+Subject: [PATCH][drm-next] drm/amd/amdgpu: fix spelling mistake "matech" -> "match"
+Message-Id: <20190201104159.19215-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190129124429.19829-1-colin.king@canonical.com>
-In-Reply-To: <20190129124429.19829-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Liang Yang <liang.yang@amlogic.com>, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin King <colin.king@canonical.com> wrote on Tue, 29 Jan 2019
-12:44:29 +0000:
+There is a spelling mistake in a dev_err message. Fix it.
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There are several functions that are local to the source and do
-> not need to be in global scope, so make them static.
->=20
-> Cleans up sparse warnings.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Merged in nand/next with the original commit.
-
-
-Thanks,
-Miqu=C3=A8l
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+index dac187454b33..2ae25095e501 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+@@ -129,7 +129,7 @@ int amdgpu_xgmi_add_device(struct amdgpu_device *adev)
+ 	if (!hive) {
+ 		ret = -EINVAL;
+ 		dev_err(adev->dev,
+-			"XGMI: node 0x%llx, can not matech hive 0x%llx in the hive list.\n",
++			"XGMI: node 0x%llx, can not match hive 0x%llx in the hive list.\n",
+ 			adev->gmc.xgmi.node_id, adev->gmc.xgmi.hive_id);
+ 		goto exit;
+ 	}
+-- 
+2.20.1
