@@ -1,65 +1,29 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 05 Feb 2019 09:58:54 +0000
-Subject: Re: [PATCH] ASoC: wcd9335: remove some unnecessary NULL checks
-Message-Id: <0eb6bff2-83fd-af03-13be-ff79f16e9e9a@linaro.org>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 01 Feb 2019 12:19:31 +0000
+Subject: Re: [PATCH] cw1200: fix indentation issues
+Message-Id: <20190201121931.86EC860710@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190205090927.GA20372@kadam>
-In-Reply-To: <20190205090927.GA20372@kadam>
+References: <20190117143623.29363-1-colin.king@canonical.com>
+In-Reply-To: <20190117143623.29363-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Solomon Peachy <pizza@shaftnet.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Colin King <colin.king@canonical.com> wrote:
 
-
-On 05/02/2019 09:09, Dan Carpenter wrote:
-> These are arrays, not pointers, and they can't be NULL.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Thanks Dan,
-
-There is already a patch on list to fix this:
-https://patchwork.kernel.org/patch/10787281/
-
-thanks,
-srini
-
-> ---
->   sound/soc/codecs/wcd9335.c | 20 ++++++++------------
->   1 file changed, 8 insertions(+), 12 deletions(-)
+> There are two lines that have indentation issues, fix these.
 > 
-> diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
-> index 3878187bb512..981f88a5f615 100644
-> --- a/sound/soc/codecs/wcd9335.c
-> +++ b/sound/soc/codecs/wcd9335.c
-> @@ -2001,20 +2001,16 @@ static int wcd9335_set_channel_map(struct snd_soc_dai *dai,
->   		return -EINVAL;
->   	}
->   
-> -	if (wcd->rx_chs) {
-> -		wcd->num_rx_port = rx_num;
-> -		for (i = 0; i < rx_num; i++) {
-> -			wcd->rx_chs[i].ch_num = rx_slot[i];
-> -			INIT_LIST_HEAD(&wcd->rx_chs[i].list);
-> -		}
-> +	wcd->num_rx_port = rx_num;
-> +	for (i = 0; i < rx_num; i++) {
-> +		wcd->rx_chs[i].ch_num = rx_slot[i];
-> +		INIT_LIST_HEAD(&wcd->rx_chs[i].list);
->   	}
->   
-> -	if (wcd->tx_chs) {
-> -		wcd->num_tx_port = tx_num;
-> -		for (i = 0; i < tx_num; i++) {
-> -			wcd->tx_chs[i].ch_num = tx_slot[i];
-> -			INIT_LIST_HEAD(&wcd->tx_chs[i].list);
-> -		}
-> +	wcd->num_tx_port = tx_num;
-> +	for (i = 0; i < tx_num; i++) {
-> +		wcd->tx_chs[i].ch_num = tx_slot[i];
-> +		INIT_LIST_HEAD(&wcd->tx_chs[i].list);
->   	}
->   
->   	return 0;
-> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+b0535d502d18 cw1200: fix indentation issues
+
+-- 
+https://patchwork.kernel.org/patch/10768357/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
