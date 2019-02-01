@@ -1,35 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 04 Feb 2019 15:31:05 +0000
-Subject: [PATCH][next] ASoC: mediatek: btcvsd: fix spelling mistake "offest" -> "offset"
-Message-Id: <20190204153105.20214-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 01 Feb 2019 12:27:31 +0000
+Subject: Re: [PATCH] wlcore: clean up an indentation issue
+Message-Id: <20190201122731.2F68660867@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190118231231.31577-1-colin.king@canonical.com>
+In-Reply-To: <20190118231231.31577-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, KaiChieh Chuang <kaichieh.chuang@mediatek.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Tony Lindgren <tony@atomide.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-There is a spelling mistake in a dev_warn message. Fix this.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a goto statement that is missing a tab for indentation. Fix this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/mediatek/common/mtk-btcvsd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/sound/soc/mediatek/common/mtk-btcvsd.c b/sound/soc/mediatek/common/mtk-btcvsd.c
-index 349a9120a0dd..e408c1b270ab 100644
---- a/sound/soc/mediatek/common/mtk-btcvsd.c
-+++ b/sound/soc/mediatek/common/mtk-btcvsd.c
-@@ -1309,7 +1309,7 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
- 					 offset,
- 					 ARRAY_SIZE(offset));
- 	if (ret) {
--		dev_warn(dev, "%s(), get offest fail, ret %d\n", __func__, ret);
-+		dev_warn(dev, "%s(), get offset fail, ret %d\n", __func__, ret);
- 		return ret;
- 	}
- 	btcvsd->infra_misc_offset = offset[0];
+112ec26fcdc5 wlcore: clean up an indentation issue
+
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/10771801/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
