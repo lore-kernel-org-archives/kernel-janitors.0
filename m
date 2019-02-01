@@ -1,84 +1,36 @@
-From: "Huang\, Ying" <ying.huang@intel.com>
-Date: Mon, 11 Feb 2019 01:02:45 +0000
-Subject: Re: About swapoff race patch  (was Re: [PATCH] mm, swap: bounds check swap_info accesses to avoid NU
-Message-Id: <87sgwvqgqy.fsf@yhuang-dev.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Feb 2019 08:30:09 +0000
+Subject: [PATCH 2/3] mtd: rawnand: meson: fix a loop in meson_nand_bch_mode()
+Message-Id: <20190201083009.GD8459@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190114222529.43zay6r242ipw5jb@ca-dmjordan1.us.oracle.com>
-	<20190115002305.15402-1-daniel.m.jordan@oracle.com>
-	<20190129222622.440a6c3af63c57f0aa5c09ca@linux-foundation.org>
-	<87tvhpy22q.fsf_-_@yhuang-dev.intel.com>
-	<20190131124655.96af1eb7e2f7bb0905527872@linux-foundation.org>
-	<alpine.LSU.2.11.1902041257390.4682@eggly.anvils>
-	<20190207234244.GA6429@andrea>
-In-Reply-To: <20190207234244.GA6429@andrea> (Andrea Parri's message of "Fri, 8
-	Feb 2019 01:28:29 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Daniel Jordan <daniel.m.jordan@oracle.com>, dan.carpenter@oracle.com, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, osandov@fb.com, tj@kernel.org, ak@linux.intel.com, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, paulmck@linux.ibm.com, stern@rowland.harvard.edu, peterz@infradead.org, willy@infradead.org, will.deacon@arm.com
+To: Liang Yang <liang.yang@amlogic.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-amlogic@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
-Andrea Parri <andrea.parri@amarulasolutions.com> writes:
+There is a sizeof() vs ARRAY_SIZE() bug here.  We want the number of
+elements in the array, not the number of bytes.  It means we potentially
+read beyond the end of the array.
 
-> Hi Huang, Ying,
->
-> On Mon, Feb 04, 2019 at 01:37:00PM -0800, Hugh Dickins wrote:
->> On Thu, 31 Jan 2019, Andrew Morton wrote:
->> > On Thu, 31 Jan 2019 10:48:29 +0800 "Huang\, Ying" <ying.huang@intel.com> wrote:
->> > > Andrew Morton <akpm@linux-foundation.org> writes:
->> > > > mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch is very
->> > > > stuck so can you please redo this against mainline?
->> > > 
->> > > Allow me to be off topic, this patch has been in mm tree for quite some
->> > > time, what can I do to help this be merged upstream?
->
-> [...]
->
->
->> 
->> Wow, yes, it's about a year old.
->> 
->> > 
->> > I have no evidence that it has been reviewed, for a start.  I've asked
->> > Hugh to look at it.
->> 
->> I tried at the weekend.  Usual story: I don't like it at all, the
->> ever-increasing complexity there, but certainly understand the need
->> for that fix, and have not managed to think up anything better -
->> and now I need to switch away, sorry.
->
-> FWIW, I do agree with Hugh about "the need for that fix": AFAIU, that
-> (mainline) code is naively buggy _and_ "this patch":
->
->   http://lkml.kernel.org/r/20180223060010.954-1-ying.huang@intel.com
->
-> "redone on top of mainline" seems both correct and appropriate to me.
+Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mtd/nand/raw/meson_nand.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!  Because the patch needs to go through -mm tree, so I will
-rebase the patch on top of the head of -mm tree.
->
->> (I was originally horrified by the stop_machine() added in swapon and
->> swapoff, but perhaps I'm remembering a distant past of really stopping
->> the machine: stop_machine() today looked reasonable, something to avoid
->> generally like lru_add_drain_all(), but not as shameful as I thought.)
->
-> AFAIC_find_on_LKML, we have three different fixes (at least!): resp.,
->
->   1. refcount(-based),
->   2. RCU,
->   3. stop_machine();
->
-> (3) appears to be the less documented/relied-upon/tested among these;
-> I'm not aware of definitive reasons forcing us to reject (1) and (2).
-
-Because swapoff() is a really cold path, while page fault handler is a
-really hot path.  (3) can minimize the overhead of the hot path.
-
-Best Regards,
-Huang, Ying
-
->   Andrea
->
->
->> 
->> Hugh
+diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
+index 94c90be7e1e0..0d93d0b9c1af 100644
+--- a/drivers/mtd/nand/raw/meson_nand.c
++++ b/drivers/mtd/nand/raw/meson_nand.c
+@@ -1143,7 +1143,7 @@ static int meson_nand_bch_mode(struct nand_chip *nand)
+ 	if (nand->ecc.strength > 60 || nand->ecc.strength < 8)
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < sizeof(meson_ecc); i++) {
++	for (i = 0; i < ARRAY_SIZE(meson_ecc); i++) {
+ 		if (meson_ecc[i].strength = nand->ecc.strength) {
+ 			meson_chip->bch_mode = meson_ecc[i].bch;
+ 			return 0;
+-- 
+2.17.1
