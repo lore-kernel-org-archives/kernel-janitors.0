@@ -1,26 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 19 Feb 2019 21:25:18 +0000
-Subject: Re: [PATCH v3] net: ns83820: code cleanup for ns83820_probe_phy()
-Message-Id: <20190219.132518.1189223469188800915.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 01 Feb 2019 09:18:41 +0000
+Subject: [PATCH -next] gpio: tqmx86: Drop unnecessary gpiochip_remove in tqmx86_gpio_probe()
+Message-Id: <20190201091841.152704-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219090635.134457-1-maowenan@huawei.com>
-In-Reply-To: <20190219090635.134457-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, john.fastabend@gmail.com, hawk@kernel.org, jakub.kicinski@netronome.com, daniel@iogearbox.net, ast@kernel.org, julia.lawall@lip6.fr
+To: kernel-janitors@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 19 Feb 2019 17:06:35 +0800
+It's not necessary to remove gpio_chip which added with
+devm_gpiochip_add_data().
 
-> This patch is to do code cleanup for ns83820_probe_phy().
-> It deletes unused variable 'first' and commented out code.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  v2->v3: delte unused variable 'first'; change subject from 
->  "net: ns83820: drop pointless static qualifier in ns83820_probe_phy()" to
->  "net: ns83820: code cleanup for ns83820_probe_phy()". 
+Fixes: b868db94a6a7 ("gpio: tqmx86: Add GPIO from for this IO controller")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-tqmx86.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Applied to net-next.
+diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
+index 6f7250c6f597..33dbe483f92f 100644
+--- a/drivers/gpio/gpio-tqmx86.c
++++ b/drivers/gpio/gpio-tqmx86.c
+@@ -291,7 +291,7 @@ static int tqmx86_gpio_probe(struct platform_device *pdev)
+ 					   IRQ_TYPE_EDGE_BOTH);
+ 		if (ret) {
+ 			dev_err(dev, "Could not add irq chip\n");
+-			goto out_remove;
++			goto out_pm_dis;
+ 		}
+ 
+ 		gpiochip_set_chained_irqchip(chip, irq_chip,
+@@ -309,8 +309,6 @@ static int tqmx86_gpio_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-out_remove:
+-	gpiochip_remove(&gpio->chip);
+ out_pm_dis:
+ 	pm_runtime_disable(&pdev->dev);
