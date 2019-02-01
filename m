@@ -1,38 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Feb 2019 07:46:58 +0000
-Subject: Re: [PATCH][V2][next] regulator: axp20x: check rdev is null before dereferencing it
-Message-Id: <20190215074658.GF2326@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Feb 2019 18:06:42 +0000
+Subject: [PATCH][media-next] media: vb2: remove unused variable i
+Message-Id: <20190201180642.14328-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181222113159.31029-1-colin.king@canonical.com>
- <CAGb2v6597uiPec=BPvTZgppxF2upTa_zKHq+QSbddyMGJAd7uA@mail.gmail.com>
-In-Reply-To: <CAGb2v6597uiPec=BPvTZgppxF2upTa_zKHq+QSbddyMGJAd7uA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 11:37:40AM +0800, Chen-Yu Tsai wrote:
-> On Sat, Dec 22, 2018 at 7:32 PM Colin King <colin.king@canonical.com> wrote:
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently rdev is dereferenced when assigning desc before rdev is null
-> > checked, hence there is a potential null pointer dereference on rdev.
-> > Fix this by null checking rdev first.
-> >
-> > Detected by CoverityScan, CID#1476031 ("Dereference before null check")
-> >
-> > Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> This patch somehow fell through the cracks. Sorry about that.
-> 
-> Both are really false positives.
+From: Colin Ian King <colin.king@canonical.com>
 
-I don't like when people use the word "false positive" like this.  The
-code doesn't checks for NULL after a dereference so that's a nonsense
-to do.  The correct thing is to remove the NULL check.
+Variable i is declared and never used. Fix this by removing it.
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/common/videobuf2/videobuf2-core.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+index e07b6bdb6982..34cc87ca8d59 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -1769,7 +1769,6 @@ EXPORT_SYMBOL_GPL(vb2_wait_for_all_buffers);
+ static void __vb2_dqbuf(struct vb2_buffer *vb)
+ {
+ 	struct vb2_queue *q = vb->vb2_queue;
+-	unsigned int i;
+ 
+ 	/* nothing to do if the buffer is already dequeued */
+ 	if (vb->state = VB2_BUF_STATE_DEQUEUED)
+-- 
+2.20.1
