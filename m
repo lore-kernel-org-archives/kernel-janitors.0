@@ -1,49 +1,26 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 20 Feb 2019 03:31:50 +0000
-Subject: [PATCH -next] drm/amdgpu: remove set but not used variables 'vm, bo'
-Message-Id: <20190220033150.163019-1-yuehaibing@huawei.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Fri, 01 Feb 2019 05:06:02 +0000
+Subject: Re: [PATCH -next] soc: bcm: bcm2835-pm: Make local symbol static
+Message-Id: <20190201050602.27265-1-f.fainelli@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
+References: <1547617457-60066-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1547617457-60066-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oded Gabbay <oded.gabbay@gmail.com>, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch
-Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: bcm-kernel-feedback-list@broadcom.com, Wei Yongjun <weiyongjun1@huawei.com>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Ray Jui <rjui@broadcom.com>, =?iso-8859-1?q?Scott=0A?= Branden <sbranden@broadcom.com>, Rob Herring <robh@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Wed, 16 Jan 2019 05:44:17 +0000, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> Fixes the following sparse warning:
+> 
+> drivers/soc/bcm/bcm2835-power.c:556:32: warning:
+>  symbol 'bcm2835_reset_ops' was not declared. Should it be static?
+> 
+> Fixes: 670c672608a1 ("soc: bcm: bcm2835-pm: Add support for power domains under a new binding.")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c: In function 'update_gpuvm_pte':
-drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:840:20: warning:
- variable 'bo' set but not used [-Wunused-but-set-variable]
-
-drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:838:20: warning:
- variable 'vm' set but not used [-Wunused-but-set-variable]
-
-They're never used since introduction in a46a2cd103a8 ("drm/amdgpu: Add GPUVM
-memory management functions for KFD")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-index d7b10d79f1de..63daf758cd03 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-@@ -837,13 +837,7 @@ static int update_gpuvm_pte(struct amdgpu_device *adev,
- 		struct amdgpu_sync *sync)
- {
- 	int ret;
--	struct amdgpu_vm *vm;
--	struct amdgpu_bo_va *bo_va;
--	struct amdgpu_bo *bo;
--
--	bo_va = entry->bo_va;
--	vm = bo_va->base.vm;
--	bo = bo_va->base.bo;
-+	struct amdgpu_bo_va *bo_va = entry->bo_va;
- 
- 	/* Update the page tables  */
- 	ret = amdgpu_vm_bo_update(adev, bo_va, false);
+Applied to drivers/next, thanks!
+--
+Florian
