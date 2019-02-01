@@ -1,65 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Feb 2019 13:20:32 +0000
-Subject: [PATCH 01/12] arm-cci: add missing of_node_put after of_device_is_available
-Message-Id: <1550928043-14889-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Feb 2019 08:29:22 +0000
+Subject: [PATCH 1/3] mtd: rawnand: meson: Fix a limit test in meson_nfc_select_chip()
+Message-Id: <20190201082922.GC8459@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, robin.murphy@arm.com
-Cc: kernel-janitors@vger.kernel.org
+To: Liang Yang <liang.yang@amlogic.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-amlogic@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
-Add an of_node_put when a tested device node is not available.
+This test is off by one because the > should be >= and it's also testing
+against the wrong limit.  The MAX_CE_NUM is the maximum size that
+meson_chip->sels[] is allowed to be but meson_chip->nsels is the actual
+size.
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-identifier f;
-local idexpression e;
-expression x;
-@@
-
-e = f(...);
-... when != of_node_put(e)
-    when != x = e
-    when != e = x
-    when any
-if (<+...of_device_is_available(e)...+>) {
-  ... when != of_node_put(e)
-(
-  return e;
-|
-+ of_node_put(e);
-  return ...;
-)
-}
-// </smpl>
-
-Fixes: 896ddd600ba4 ("drivers: bus: check cci device tree node status")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND flash controller ")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-This file doesn't seem to have a maintainer.
+ drivers/mtd/nand/raw/meson_nand.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/bus/arm-cci.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff -u -p a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
---- a/drivers/bus/arm-cci.c
-+++ b/drivers/bus/arm-cci.c
-@@ -538,8 +538,10 @@ static int cci_probe(void)
- 	struct resource res;
+diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
+index e858d58d97b0..94c90be7e1e0 100644
+--- a/drivers/mtd/nand/raw/meson_nand.c
++++ b/drivers/mtd/nand/raw/meson_nand.c
+@@ -225,7 +225,7 @@ static void meson_nfc_select_chip(struct nand_chip *nand, int chip)
+ 	struct meson_nfc *nfc = nand_get_controller_data(nand);
+ 	int ret, value;
  
- 	np = of_find_matching_node(NULL, arm_cci_matches);
--	if (!of_device_is_available(np))
-+	if (!of_device_is_available(np)) {
-+		of_node_put(np);
- 		return -ENODEV;
-+	}
+-	if (chip < 0 || WARN_ON_ONCE(chip > MAX_CE_NUM))
++	if (chip < 0 || WARN_ON_ONCE(chip >= meson_chip->nsels))
+ 		return;
  
- 	ret = of_address_to_resource(np, 0, &res);
- 	if (!ret) {
+ 	nfc->param.chip_select = meson_chip->sels[chip] ? NAND_CE1 : NAND_CE0;
+-- 
+2.17.1
