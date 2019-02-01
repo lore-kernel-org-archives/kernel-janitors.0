@@ -1,34 +1,36 @@
-From: Nick Crews <ncrews@chromium.org>
-Date: Thu, 21 Feb 2019 19:09:06 +0000
-Subject: Re: [PATCH -next] platform/chrome: Fix off-by-one error in wilco_ec/debugfs.c
-Message-Id: <CAHX4x851YhO8CmzMheM6bOv2+Y0jX8ZVY011CuuvO0qH-FPAGQ@mail.gmail.com>
+From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+Date: Fri, 01 Feb 2019 08:55:47 +0000
+Subject: Re: [PATCH -next] drm/xen-front: Drop pointless static qualifier in fb_destroy()
+Message-Id: <abc50111-8924-dbfa-9f5d-16f102f30cac@epam.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190220215826.44366-1-ncrews@chromium.org> <a0cf4649-e06f-aded-55ad-893560c2414a@collabora.com>
- <CAHX4x87KP9QsnX-vAwyEs45tXngbiSSq+vrByj01S-LpUdO40g@mail.gmail.com> <20190221070704.GD1711@kadam>
-In-Reply-To: <20190221070704.GD1711@kadam>
+References: <1548504338-114487-1-git-send-email-yuehaibing@huawei.com>
+ <4c371af3-8856-39a7-d06e-6b55749567e5@epam.com>
+In-Reply-To: <4c371af3-8856-39a7-d06e-6b55749567e5@epam.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Duncan Laurie <dlaurie@chromium.org>
+To: YueHaibing <yuehaibing@huawei.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "xen-devel@lists.xen.org" <xen-devel@lists.xen.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Thanks Dan, noted.
-
-On Thu, Feb 21, 2019 at 11:31 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Wed, Feb 20, 2019 at 03:15:18PM -0700, Nick Crews wrote:
-> > Fixing something after it's already in the tree was a new
-> > process for me, so I tried to copy other people's examples. Please
-> > let me know if there's anything else I should do something different
-> > next time.
->
-> I seldom mention how much I like Reported-by tags because it makes me
-> seem needy...  Also in this case it doesn't matter because it's going to
-> get folded into the original patch so it's going to be lost anyway.  But
-> since you're asking process questions, the Reported-by cookie is nice.
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> regards,
-> dan carpenter
->
+T24gMS8yOC8xOSA4OjM2IEFNLCBPbGVrc2FuZHIgQW5kcnVzaGNoZW5rbyB3cm90ZToNCj4gT24g
+MS8yNi8xOSAyOjA1IFBNLCBZdWVIYWliaW5nIHdyb3RlOg0KPj4gVGhlcmUgaXMgbm8gbmVlZCB0
+byBoYXZlIHRoZSAnc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmInIHZhcmlhYmxlDQo+PiBzdGF0
+aWMgc2luY2UgbmV3IHZhbHVlIGFsd2F5cyBiZSBhc3NpZ25lZCBiZWZvcmUgdXNlIGl0Lg0KPj4N
+Cj4+IFNpZ25lZC1vZmYtYnk6IFl1ZUhhaWJpbmcgPHl1ZWhhaWJpbmdAaHVhd2VpLmNvbT4NCj4g
+R29vZCBjYXRjaCwgdGhhbmsgeW91IQ0KPiBSZXZpZXdlZC1ieTogT2xla3NhbmRyIEFuZHJ1c2hj
+aGVua28gPG9sZWtzYW5kcl9hbmRydXNoY2hlbmtvQGVwYW0uY29tPg0KSWYgbm9ib2R5IG9iamVj
+dHMgSSdsbCBhcHBseSB0aGlzIHRvIGRybS1taXNjLWZpeGVzIG5leHQgTW9uZGF5DQo+PiAtLS0N
+Cj4+IMKgIGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9rbXMuYyB8IDIgKy0NCj4+
+IMKgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPj4NCj4+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfa21zLmMgDQo+
+PiBiL2RyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9rbXMuYw0KPj4gaW5kZXggODYw
+ZGEwNS4uYzI5NTVkMyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2Ry
+bV9mcm9udF9rbXMuYw0KPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250
+X2ttcy5jDQo+PiBAQCAtNTQsNyArNTQsNyBAQCBzdGF0aWMgdm9pZCBmYl9kZXN0cm95KHN0cnVj
+dCBkcm1fZnJhbWVidWZmZXIgKmZiKQ0KPj4gwqDCoMKgwqDCoMKgwqAgY29uc3Qgc3RydWN0IGRy
+bV9tb2RlX2ZiX2NtZDIgKm1vZGVfY21kKQ0KPj4gwqAgew0KPj4gwqDCoMKgwqDCoCBzdHJ1Y3Qg
+eGVuX2RybV9mcm9udF9kcm1faW5mbyAqZHJtX2luZm8gPSBkZXYtPmRldl9wcml2YXRlOw0KPj4g
+LcKgwqDCoCBzdGF0aWMgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmI7DQo+PiArwqDCoMKgIHN0
+cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiOw0KPj4gwqDCoMKgwqDCoCBzdHJ1Y3QgZHJtX2dlbV9v
+YmplY3QgKmdlbV9vYmo7DQo+PiDCoMKgwqDCoMKgIGludCByZXQ7DQo+Pg0KPj4NCj4+DQo+Pg0K
+Pj4NCg=
