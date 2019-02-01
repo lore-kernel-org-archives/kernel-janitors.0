@@ -1,38 +1,34 @@
-From: Max Gurtovoy <maxg@mellanox.com>
-Date: Tue, 26 Feb 2019 10:24:56 +0000
-Subject: Re: [PATCH] IB/iser: Fix some error handling in iser_fast_reg_fmr()
-Message-Id: <f7c748b7-f1bf-6e11-252c-b1b3254f5b9d@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Feb 2019 08:32:26 +0000
+Subject: [PATCH net-next] net: hns3: Check for allocation failure
+Message-Id: <20190201083226.GF8459@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190220054041.GB25196@kadam>
-In-Reply-To: <20190220054041.GB25196@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
+Cc: Salil Mehta <salil.mehta@huawei.com>, "David S. Miller" <davem@davemloft.net>, Peng Li <lipeng321@huawei.com>, Jian Shen <shenjian15@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>, Fuyun Liang <liangfuyun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We should return -ENOMEM if the kcalloc() fails.
 
-On 2/25/2019 11:27 PM, Sagi Grimberg wrote:
->
->> but the below fix is the correct one for future code as well 
->> (ib_dma_map_sg returns int and not unsigned int):
->>
->> diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.h 
->> b/drivers/infiniband/ulp/iser/iscsi_iser.h
->> index 0bf8512..def8cfe 100644
->> --- a/drivers/infiniband/ulp/iser/iscsi_iser.h
->> +++ b/drivers/infiniband/ulp/iser/iscsi_iser.h
->> @@ -205,7 +205,7 @@ struct iser_data_buf {
->>      struct scatterlist *sg;
->>      int                size;
->>      unsigned long      data_len;
->> -   unsigned int       dma_nents;
->> +   int                dma_nents;
->>   };
->>
->>
->> thoughts ?
->
-> That's fine as well, care to send a patch?
+Fixes: d174ea75c96a ("net: hns3: add statistics for PFC frames and MAC control frame")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-Done, please see it in the mailing list.
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index ae8336c18264..afd9a0176923 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -343,6 +343,8 @@ static int hclge_mac_update_stats_complete(struct hclge_dev *hdev, u32 desc_num)
+ 	int ret;
+ 
+ 	desc = kcalloc(desc_num, sizeof(struct hclge_desc), GFP_KERNEL);
++	if (!desc)
++		return -ENOMEM;
+ 	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_OPC_STATS_MAC_ALL, true);
+ 	ret = hclge_cmd_send(&hdev->hw, desc, desc_num);
+ 	if (ret) {
+-- 
+2.17.1
