@@ -1,49 +1,42 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Fri, 22 Feb 2019 19:48:15 +0000
-Subject: Re: [bug report] rocker: Check Handle PORT_PRE_BRIDGE_FLAGS
-Message-Id: <13275337-b090-c7ec-f5ab-3e5e658a675e@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Feb 2019 08:24:06 +0000
+Subject: [PATCH net] ethtool: remove unnecessary check in ethtool_get_regs()
+Message-Id: <20190201082406.GA8459@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190222194627.GA30893@kadam>
-In-Reply-To: <20190222194627.GA30893@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Wenwen Wang <wang6495@umn.edu>, Boris Pismenny <borisp@mellanox.com>, Ilya Lesokhin <ilyal@mellanox.com>, Edward Cree <ecree@solarflare.com>, Michal Kubecek <mkubecek@suse.cz>, Yury Norov <ynorov@caviumnetworks.com>, Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2/22/19 11:46 AM, Dan Carpenter wrote:
-> Hello Florian Fainelli,
-> 
-> The patch 93700458ff63: "rocker: Check Handle PORT_PRE_BRIDGE_FLAGS"
-> from Feb 20, 2019, leads to the following static checker warning:
-> 
-> 	drivers/net/ethernet/rocker/rocker_main.c:2087 rocker_port_attr_set()
-> 	warn: missing break? reassigning 'err'
-> 
-> drivers/net/ethernet/rocker/rocker_main.c
->     2069 static int rocker_port_attr_set(struct net_device *dev,
->     2070 				const struct switchdev_attr *attr,
->     2071 				struct switchdev_trans *trans)
->     2072 {
->     2073 	struct rocker_port *rocker_port = netdev_priv(dev);
->     2074 	int err = 0;
->     2075 
->     2076 	switch (attr->id) {
->     2077 	case SWITCHDEV_ATTR_ID_PORT_STP_STATE:
->     2078 		err = rocker_world_port_attr_stp_state_set(rocker_port,
->     2079 							   attr->u.stp_state,
->     2080 							   trans);
->     2081 		break;
->     2082 	case SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS:
->     2083 		err = rocker_world_port_attr_pre_bridge_flags_set(rocker_port,
->     2084 							      attr->u.brport_flags,
->     2085 							      trans);
-> 
-> I think you wanted a break here.  Or a /* fall through */ comment.
+We recently changed this function in commit f9fc54d313fa ("ethtool:
+check the return value of get_regs_len") such that if "reglen" is zero
+we return directly.  That means we can remove this condition as well.
 
-It's fixed with this commit:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/core/ethtool.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/commit/?idz25c6c0aac85bbc50d3ce49cd08888adb14508b
-
-thanks for your report!
+diff --git a/net/core/ethtool.c b/net/core/ethtool.c
+index 158264f7cfaf..3fe6e9da3579 100644
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -1348,12 +1348,9 @@ static int ethtool_get_regs(struct net_device *dev, char __user *useraddr)
+ 	if (regs.len > reglen)
+ 		regs.len = reglen;
+ 
+-	regbuf = NULL;
+-	if (reglen) {
+-		regbuf = vzalloc(reglen);
+-		if (!regbuf)
+-			return -ENOMEM;
+-	}
++	regbuf = vzalloc(reglen);
++	if (!regbuf)
++		return -ENOMEM;
+ 
+ 	ops->get_regs(dev, &regs, regbuf);
+ 
 -- 
-Florian
+2.17.1
