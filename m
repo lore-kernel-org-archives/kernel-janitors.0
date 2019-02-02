@@ -1,26 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 17 Feb 2019 02:14:35 +0000
-Subject: Re: [PATCH] atm: clean up vcc_seq_next()
-Message-Id: <20190216.181435.357732120744308938.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 11:37:07 +0000
+Subject: [PATCH] bna: fix indentation issue on call to bfa_ioc_pf_failed
+Message-Id: <20190202113707.18005-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190214065635.GA21768@kadam>
-In-Reply-To: <20190214065635.GA21768@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: joe@perches.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rasesh Mody <rmody@marvell.com>, Sudarsana Kalluru <skalluru@marvell.com>, GR-Linux-NIC-Dev@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Feb 2019 09:56:35 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> It's confusing to call PTR_ERR(v).  The PTR_ERR() function is basically
-> a fancy cast to long so it makes you wonder, was IS_ERR() intended?  But
-> that doesn't make sense because vcc_walk() doesn't return error
-> pointers.
-> 
-> This patch doesn't affect runtime, it's just a cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The call to bfa_ioc_pf_failed is indented too far, fix this by
+removing a tab.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/brocade/bna/bfa_ioc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/brocade/bna/bfa_ioc.c b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+index cbc9175d74c5..84741d288ffa 100644
+--- a/drivers/net/ethernet/brocade/bna/bfa_ioc.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+@@ -743,7 +743,7 @@ bfa_iocpf_sm_hwinit(struct bfa_iocpf *iocpf, enum iocpf_event event)
+ 
+ 	case IOCPF_E_TIMEOUT:
+ 		bfa_nw_ioc_hw_sem_release(ioc);
+-			bfa_ioc_pf_failed(ioc);
++		bfa_ioc_pf_failed(ioc);
+ 		bfa_fsm_set_state(iocpf, bfa_iocpf_sm_initfail_sync);
+ 		break;
+ 
+-- 
+2.20.1
