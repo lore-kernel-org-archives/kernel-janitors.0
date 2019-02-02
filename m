@@ -1,23 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 23 Feb 2019 21:47:50 +0000
-Subject: Re: [PATCH net v3] net: set static variable an initial value in atl2_probe()
-Message-Id: <20190223.134750.1319881896395311657.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 11:45:26 +0000
+Subject: [PATCH] atheros: atl2: fix an indentaion issue on a return statement
+Message-Id: <20190202114526.18510-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190222065723.193392-1-maowenan@huawei.com>
-In-Reply-To: <20190222065723.193392-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: kernel-janitors@vger.kernel.org, chris.snook@gmail.com, jcliburn@gmail.com, dan.carpenter@oracle.com, netdev@vger.kernel.org
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Fri, 22 Feb 2019 14:57:23 +0800
+From: Colin Ian King <colin.king@canonical.com>
 
-> cards_found is a static variable, but when it enters atl2_probe(),
-> cards_found is set to zero, the value is not consistent with last probe,
-> so next behavior is not our expect.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+A return statment is not indented correctly, fix this by adding an
+extra tab.
 
-Applied and queued up for -stable, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/atheros/atlx/atl2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
+index c44e95255aa1..a7337a6d507d 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl2.c
++++ b/drivers/net/ethernet/atheros/atlx/atl2.c
+@@ -2946,7 +2946,7 @@ static int atl2_validate_option(int *value, struct atl2_option *opt)
+ 			if (*value = ent->i) {
+ 				if (ent->str[0] != '\0')
+ 					printk(KERN_INFO "%s\n", ent->str);
+-			return 0;
++				return 0;
+ 			}
+ 		}
+ 		break;
+-- 
+2.20.1
