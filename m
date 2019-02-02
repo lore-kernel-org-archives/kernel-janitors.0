@@ -1,37 +1,58 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 05 Feb 2019 21:59:39 +0000
-Subject: Re: [PATCH] rtc: rtc-ds1672: fix unintended sign extension
-Message-Id: <20190205215939.GJ24598@piout.net>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 22:12:41 +0000
+Subject: Re: [PATCH][next] media: staging: intel-ipu3: fix unsigned comparison with < 0
+Message-Id: <cd6d1624-bd6a-9b04-0975-1a5508fd7781@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190205180449.28749-1-colin.king@canonical.com>
-In-Reply-To: <20190205180449.28749-1-colin.king@canonical.com>
+References: <20181222114951.31503-1-colin.king@canonical.com>
+In-Reply-To: <20181222114951.31503-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/02/2019 18:04:49+0000, Colin King wrote:
+ping?
+
+On 22/12/2018 11:49, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-> the top bit of the u8 is set then the following conversion to an unsigned
-> long will sign extend the value causing the upper 32 bits to be set in
-> the result.
+> The comparison css->pipes[pipe].bindex < 0 is always false because
+> bindex is an unsigned int.  Fix this by using a signed integer for
+> the comparison.
 > 
-> Fix this by casting the u8 value to an unsigned long before the shift.
+> Detected by CoverityScan, CID#1476023 ("Unsigned compared against 0")
 > 
-> Detected by CoverityScan, CID#138801 ("Unintended sign extension")
-> 
-> Fixes: edf1aaa31fc5 ("[PATCH] RTC subsystem: DS1672 driver")
+> Fixes: f5f2e4273518 ("media: staging/intel-ipu3: Add css pipeline programming")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/rtc/rtc-ds1672.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/staging/media/ipu3/ipu3-css.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-Applied, thanks.
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> diff --git a/drivers/staging/media/ipu3/ipu3-css.c b/drivers/staging/media/ipu3/ipu3-css.c
+> index 44c55639389a..b9354d2bb692 100644
+> --- a/drivers/staging/media/ipu3/ipu3-css.c
+> +++ b/drivers/staging/media/ipu3/ipu3-css.c
+> @@ -1751,7 +1751,7 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
+>  					&q[IPU3_CSS_QUEUE_OUT].fmt.mpix;
+>  	struct v4l2_pix_format_mplane *const vf >  					&q[IPU3_CSS_QUEUE_VF].fmt.mpix;
+> -	int i, s;
+> +	int i, s, ret;
+>  
+>  	/* Adjust all formats, get statistics buffer sizes and formats */
+>  	for (i = 0; i < IPU3_CSS_QUEUES; i++) {
+> @@ -1826,12 +1826,12 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
+>  	s = (bds->height - gdc->height) / 2 - FILTER_SIZE;
+>  	env->height = s < MIN_ENVELOPE ? MIN_ENVELOPE : s;
+>  
+> -	css->pipes[pipe].bindex > -		ipu3_css_find_binary(css, pipe, q, r);
+> -	if (css->pipes[pipe].bindex < 0) {
+> +	ret = ipu3_css_find_binary(css, pipe, q, r);
+> +	if (ret < 0) {
+>  		dev_err(css->dev, "failed to find suitable binary\n");
+>  		return -EINVAL;
+>  	}
+> +	css->pipes[pipe].bindex = ret;
+>  
+>  	dev_dbg(css->dev, "Binary index %d for pipe %d found.",
+>  		css->pipes[pipe].bindex, pipe);
+> 
