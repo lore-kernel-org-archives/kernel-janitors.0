@@ -1,79 +1,41 @@
-From: maowenan <maowenan@huawei.com>
-Date: Fri, 22 Feb 2019 03:17:52 +0000
-Subject: Re: [PATCH] net: drop pointless static qualifier in atl2_probe()
-Message-Id: <e325b40e-d822-797c-0865-b0f7e5b1561a@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 21:59:16 +0000
+Subject: [PATCH] staging: comedi: dt2811: fix integer overflow in multiply
+Message-Id: <20190202215916.25753-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219143252.134824-1-maowenan@huawei.com>
-In-Reply-To: <20190219143252.134824-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Multiplying two unsigned ints leads to an unsigned int result. The
+intention is that the result is a unsigned long long, so to fix the
+overflow cast the div to an unsigned long long to ensure that the
+multiplication is on unsigned long longs to avoid overflow.
 
-On 2019/2/19 22:34, Dan Carpenter wrote:
-> On Tue, Feb 19, 2019 at 10:32:52PM +0800, Mao Wenan wrote:
->> There is no need to have the 'T *v' variable static
->> since new value always be assigned before use it.
->>
->> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->> ---
->>  drivers/net/ethernet/atheros/atlx/atl2.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
->> index bb41becb6609..6bd686b26837 100644
->> --- a/drivers/net/ethernet/atheros/atlx/atl2.c
->> +++ b/drivers/net/ethernet/atheros/atlx/atl2.c
->> @@ -1335,13 +1335,11 @@ static int atl2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>  {
->>  	struct net_device *netdev;
->>  	struct atl2_adapter *adapter;
->> -	static int cards_found;
->> +	int cards_found = 0;
->>  	unsigned long mmio_start;
->>  	int mmio_len;
->>  	int err;
->>  
->> -	cards_found = 0;
-> 
-> You're sending patches too quickly and you're not thinking about what
-> you're doing.   If someone asks you to redo a patch, that should take
-> over night to accomplish when you take time to think about what you're
-> doing, but you have sent several versions of a patch in the same day.
-> 
-> This one is obviously wrong, but please take some time and slow down
-> before resending.
+Detected by CoverityScan, CID#1357597 ("Unintentioal integer overflow")
 
-I'm sorry for this, I have checked again, that the fixes will be as below:
+Fixes: f2975a9b2ab9 ("staging: comedi: dt2811: add async command support for AI subdevice")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/comedi/drivers/dt2811.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
-index bb41becb6609..31ff1e0d1baa 100644
---- a/drivers/net/ethernet/atheros/atlx/atl2.c
-+++ b/drivers/net/ethernet/atheros/atlx/atl2.c
-@@ -1335,13 +1335,11 @@ static int atl2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
-        struct net_device *netdev;
-        struct atl2_adapter *adapter;
--       static int cards_found;
-+       static int cards_found = 0;
-        unsigned long mmio_start;
-        int mmio_len;
-        int err;
-
--       cards_found = 0;
--
-        err = pci_enable_device(pdev);
-        if (err)
-                return err;
-
-
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-> .
-> 
+diff --git a/drivers/staging/comedi/drivers/dt2811.c b/drivers/staging/comedi/drivers/dt2811.c
+index 05207a519755..820e75f850ff 100644
+--- a/drivers/staging/comedi/drivers/dt2811.c
++++ b/drivers/staging/comedi/drivers/dt2811.c
+@@ -323,7 +323,8 @@ static unsigned int dt2811_ns_to_timer(unsigned int *nanosec,
+ 		for (_mult = 0; _mult <= 7; _mult++) {
+ 			unsigned int div = dt2811_clk_dividers[_div];
+ 			unsigned int mult = dt2811_clk_multipliers[_mult];
+-			unsigned long long divider = div * mult;
++			unsigned long long divider +				(unsigned long long)div * mult;
+ 			unsigned int divisor = DT2811_TMRCTR_MANTISSA(_div) |
+ 					       DT2811_TMRCTR_EXPONENT(_mult);
+ 
+-- 
+2.20.1
