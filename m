@@ -1,23 +1,43 @@
-From: Nadav Amit <namit@vmware.com>
-Date: Mon, 11 Feb 2019 19:12:40 +0000
-Subject: Re: [PATCH] vmw_balloon: release lock on error in vmballoon_reset()
-Message-Id: <A3173F98-AE61-48DF-8AA8-6757C3C086F7@vmware.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 11:41:29 +0000
+Subject: [PATCH] atl1c: fix indentation issue on an if statement
+Message-Id: <20190202114129.18275-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190211184545.GC22106@kadam>
-In-Reply-To: <20190211184545.GC22106@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Julien Freche <jfreche@vmware.com>, Xavier Deguillard <xdeguillard@vmware.com>, Pv-drivers <Pv-drivers@vmware.com>, Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-PiBPbiBGZWIgMTEsIDIwMTksIGF0IDEwOjQ1IEFNLCBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVu
-dGVyQG9yYWNsZS5jb20+IHdyb3RlOg0KPiANCj4gV2UgYWRkZWQgc29tZSBsb2NraW5nIHRvIHRo
-aXMgZnVuY3Rpb24gYnV0IGZvcmdvdCB0byBkcm9wIHRoZSBsb2NrIG9uDQo+IHRoZXNlIHR3byBl
-cnJvciBwYXRocy4gIFRoaXMgYnVnIHdvdWxkIGxlYWQgdG8gYW4gaW1tZWRpYXRlIGRlYWRsb2Nr
-Lg0KPiANCj4gRml4ZXM6IGM3YjM2OTBmYjE1MiAoInZtd19iYWxsb29uOiBzdGF0cyByZXdvcmsi
-KQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5j
-b20+DQoNCkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQpSZXZpZXdlZC1ieTogTmFkYXYgQW1p
-dCA8bmFtaXRAdm13YXJlLmNvbT4NCg0KLS0NCg0KWWVzLCBJIHNjcmV3ZWQgdXAuIFRoYW5rcyBm
-b3IgY2F0Y2hpbmcgaXQhDQoNCknigJlsbCBnbyB0byBjaGVjayB3aHkgbXkgZXJyb3IgaW5qZWN0
-aW9uIHRlc3RzIGRpZG7igJl0IGNhdGNoIGl0Lg0KDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+An if statement is indented one level too deep, fix this by removing
+the extra tabs. Also add some spaces to the dev_warn arguments to clean
+up checkpatch warnings.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/atheros/atl1c/atl1c_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+index 3a3b35b5df67..03cdab8d4ab7 100644
+--- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
++++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+@@ -1833,10 +1833,10 @@ static void atl1c_clean_rx_irq(struct atl1c_adapter *adapter,
+ 		atl1c_clean_rrd(rrd_ring, rrs, rfd_num);
+ 		if (rrs->word3 & (RRS_RX_ERR_SUM | RRS_802_3_LEN_ERR)) {
+ 			atl1c_clean_rfd(rfd_ring, rrs, rfd_num);
+-				if (netif_msg_rx_err(adapter))
+-					dev_warn(&pdev->dev,
+-						"wrong packet! rrs word3 is %x\n",
+-						rrs->word3);
++			if (netif_msg_rx_err(adapter))
++				dev_warn(&pdev->dev,
++					 "wrong packet! rrs word3 is %x\n",
++					 rrs->word3);
+ 			continue;
+ 		}
+ 
+-- 
+2.20.1
