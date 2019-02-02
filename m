@@ -1,56 +1,50 @@
-From: Ben Skeggs <skeggsb@gmail.com>
-Date: Thu, 21 Feb 2019 22:11:02 +0000
-Subject: Re: [Nouveau] [PATCH -next] drm/nouveau/dmem: remove set but not used variable 'drm'
-Message-Id: <CACAvsv7C2pbruAOGM_8f3yyzxhvCgQoKARRRkTzJenEwYc0zTg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 22:34:49 +0000
+Subject: [PATCH] staging: most: cdev: add missing check for cdev_add failure
+Message-Id: <20190202223449.26554-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190221033851.70331-1-yuehaibing@huawei.com>
-In-Reply-To: <20190221033851.70331-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 at 13:41, YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/nouveau/nouveau_dmem.c: In function 'nouveau_dmem_free':
-> drivers/gpu/drm/nouveau/nouveau_dmem.c:103:22: warning:
->  variable 'drm' set but not used [-Wunused-but-set-variable]
->   struct nouveau_drm *drm;
->                       ^
-Thanks!  Merged.
+From: Colin Ian King <colin.king@canonical.com>
 
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/nouveau/nouveau_dmem.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> index aa9fec80492d..900a302b7ce9 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> @@ -100,12 +100,10 @@ static void
->  nouveau_dmem_free(struct hmm_devmem *devmem, struct page *page)
->  {
->         struct nouveau_dmem_chunk *chunk;
-> -       struct nouveau_drm *drm;
->         unsigned long idx;
->
->         chunk = (void *)hmm_devmem_page_get_drvdata(page);
->         idx = page_to_pfn(page) - chunk->pfn_first;
-> -       drm = chunk->drm;
->
->         /*
->          * FIXME:
->
->
->
->
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+Currently the call to cdev_add is missing a check for failure. Fix this by
+checking for failure and exiting via a new error path that ensures the
+allocated comp_channel struct is kfree'd.
+
+Detected by CoverityScan, CID#1462359 ("Unchecked return value")
+
+Fixes: 9bc79bbcd0c5 ("Staging: most: add MOST driver's aim-cdev module")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/most/cdev/cdev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/most/cdev/cdev.c b/drivers/staging/most/cdev/cdev.c
+index ea64aabda94e..f2b347cda8b7 100644
+--- a/drivers/staging/most/cdev/cdev.c
++++ b/drivers/staging/most/cdev/cdev.c
+@@ -453,7 +453,9 @@ static int comp_probe(struct most_interface *iface, int channel_id,
+ 	c->devno = MKDEV(comp.major, current_minor);
+ 	cdev_init(&c->cdev, &channel_fops);
+ 	c->cdev.owner = THIS_MODULE;
+-	cdev_add(&c->cdev, c->devno, 1);
++	retval = cdev_add(&c->cdev, c->devno, 1);
++	if (retval < 0)
++		goto err_free_c;
+ 	c->iface = iface;
+ 	c->cfg = cfg;
+ 	c->channel_id = channel_id;
+@@ -485,6 +487,7 @@ static int comp_probe(struct most_interface *iface, int channel_id,
+ 	list_del(&c->list);
+ err_del_cdev_and_free_channel:
+ 	cdev_del(&c->cdev);
++err_free_c:
+ 	kfree(c);
+ err_remove_ida:
+ 	ida_simple_remove(&comp.minor_id, current_minor);
+-- 
+2.20.1
