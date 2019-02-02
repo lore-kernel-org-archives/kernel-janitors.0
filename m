@@ -1,48 +1,86 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 16 Feb 2019 09:20:41 +0000
-Subject: Re: [Cocci] [v5] coccinelle: semantic code search for missingput_device()
-Message-Id: <8ba4643b-496e-597f-32e1-c14b8e46880c@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 10:40:52 +0000
+Subject: [PATCH] scsi: aacraid: clean up some indentation and formatting issues
+Message-Id: <20190202104052.16552-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201902161633004137519@zte.com.cn>
- <alpine.DEB.2.21.1902160934400.3212@hadrien>
- <992b8c6f-614d-b379-6352-30b36ac9d0d8@web.de>
- <20190216090658.lsfhvtllwnzj3675@ninjato>
-In-Reply-To: <20190216090658.lsfhvtllwnzj3675@ninjato>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->>> We don't need perfection.
->>
->> I guess that you noticed in the meantime that I dare to propose
->> more software development efforts in such a direction.
->
-> Yes, this is noticable.
+From: Colin Ian King <colin.king@canonical.com>
 
-I am curious then if remaining change suggestions will be picked up
-by more software developers and reviewers.
+There are several issues with badly indented statements. Fix these
+and clean up the formatting.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aacraid/commsup.c | 25 +++++++++++++------------
+ drivers/scsi/aacraid/linit.c   |  3 +--
+ drivers/scsi/aacraid/src.c     |  2 +-
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
-> It is your choice, however, other people may have their reasons
-> for other choices...
-
-Yes, of course.
-
-
->>> We need more to eliminate the memory leaks.
->
-> ... like this one.
->
->> Will this view evolve into further helpful and constructive clarifications?
->
-> Given my above, what is the evaluation of the same question to yourself?
-
-* I hope that my contributions can improve the situation also
-  for this software area.
-
-* Existing development tools will evolve further as usual.
-
-Regards,
-Markus
+diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+index d5a6aa9676c8..0bdc6b0f725f 100644
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -1376,18 +1376,19 @@ static void aac_handle_aif(struct aac_dev * dev, struct fib * fibptr)
+ 
+ 	container = 0;
+ retry_next:
+-	if (device_config_needed = NOTHING)
+-	for (; container < dev->maximum_num_containers; ++container) {
+-		if ((dev->fsa_dev[container].config_waiting_on = 0) &&
+-			(dev->fsa_dev[container].config_needed != NOTHING) &&
+-			time_before(jiffies, dev->fsa_dev[container].config_waiting_stamp + AIF_SNIFF_TIMEOUT)) {
+-			device_config_needed -				dev->fsa_dev[container].config_needed;
+-			dev->fsa_dev[container].config_needed = NOTHING;
+-			channel = CONTAINER_TO_CHANNEL(container);
+-			id = CONTAINER_TO_ID(container);
+-			lun = CONTAINER_TO_LUN(container);
+-			break;
++	if (device_config_needed = NOTHING) {
++		for (; container < dev->maximum_num_containers; ++container) {
++			if ((dev->fsa_dev[container].config_waiting_on = 0) &&
++			    (dev->fsa_dev[container].config_needed != NOTHING) &&
++			    time_before(jiffies, dev->fsa_dev[container].config_waiting_stamp + AIF_SNIFF_TIMEOUT)) {
++				device_config_needed +					dev->fsa_dev[container].config_needed;
++				dev->fsa_dev[container].config_needed = NOTHING;
++				channel = CONTAINER_TO_CHANNEL(container);
++				id = CONTAINER_TO_ID(container);
++				lun = CONTAINER_TO_LUN(container);
++				break;
++			}
+ 		}
+ 	}
+ 	if (device_config_needed = NOTHING)
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index 7e56a11836c1..e977b459f823 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -852,8 +852,7 @@ static u8 aac_eh_tmf_hard_reset_fib(struct aac_hba_map_info *info,
+ 
+ 	address = (u64)fib->hw_error_pa;
+ 	rst->error_ptr_hi = cpu_to_le32((u32)(address >> 32));
+-	rst->error_ptr_lo = cpu_to_le32
+-		((u32)(address & 0xffffffff));
++	rst->error_ptr_lo = cpu_to_le32((u32)(address & 0xffffffff));
+ 	rst->error_length = cpu_to_le32(FW_ERROR_BUFFER_SIZE);
+ 	fib->hbacmd_size = sizeof(*rst);
+ 
+diff --git a/drivers/scsi/aacraid/src.c b/drivers/scsi/aacraid/src.c
+index 8377aec0649d..97bb9e9d201c 100644
+--- a/drivers/scsi/aacraid/src.c
++++ b/drivers/scsi/aacraid/src.c
+@@ -1157,7 +1157,7 @@ static int aac_src_soft_reset(struct aac_dev *dev)
+ 		dev_err(&dev->pdev->dev, "%s: %s status = %d", __func__,
+ 			state_str[state], rc);
+ 
+-return rc;
++	return rc;
+ }
+ /**
+  *  aac_srcv_init	-	initialize an SRCv card
+-- 
+2.20.1
