@@ -1,37 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 17 Feb 2019 22:20:04 +0000
-Subject: [PATCH] staging: rtlwifi: fix spelling mistake: "Hightest" -> "Highest"
-Message-Id: <20190217222004.15850-1-colin.king@canonical.com>
+From: "Huang\, Ying" <ying.huang@intel.com>
+Date: Sat, 02 Feb 2019 07:14:17 +0000
+Subject: Re: About swapoff race patch  (was Re: [PATCH] mm, swap: bounds check swap_info accesses to avoid NU
+Message-Id: <87zhreu0fq.fsf@yhuang-dev.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180510150741.20677-1-colin.king@canonical.com>
-In-Reply-To: <20180510150741.20677-1-colin.king@canonical.com>
+References: <20190114222529.43zay6r242ipw5jb@ca-dmjordan1.us.oracle.com>
+	<20190115002305.15402-1-daniel.m.jordan@oracle.com>
+	<20190129222622.440a6c3af63c57f0aa5c09ca@linux-foundation.org>
+	<87tvhpy22q.fsf_-_@yhuang-dev.intel.com>
+	<20190131124655.96af1eb7e2f7bb0905527872@linux-foundation.org>
+In-Reply-To: <20190131124655.96af1eb7e2f7bb0905527872@linux-foundation.org>
+	(Andrew Morton's message of "Thu, 31 Jan 2019 12:46:55 -0800")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>, dan.carpenter@oracle.com, andrea.parri@amarulasolutions.com, shli@kernel.org, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, osandov@fb.com, tj@kernel.org, ak@linux.intel.com, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, paulmck@linux.ibm.com, stern@rowland.harvard.edu, peterz@infradead.org, will.deacon@arm.com
 
-From: Colin Ian King <colin.king@canonical.com>
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-Trivial fix to spelling mistake in ODM_RT_TRACE message text, fix it.
+> On Thu, 31 Jan 2019 10:48:29 +0800 "Huang\, Ying" <ying.huang@intel.com> wrote:
+>
+>> Andrew Morton <akpm@linux-foundation.org> writes:
+>> > mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch is very
+>> > stuck so can you please redo this against mainline?
+>> 
+>> Allow me to be off topic, this patch has been in mm tree for quite some
+>> time, what can I do to help this be merged upstream?
+>
+> I have no evidence that it has been reviewed, for a start.  I've asked
+> Hugh to look at it.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtlwifi/phydm/phydm_rainfo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Got it!  I will try to find some people to review it.
 
-diff --git a/drivers/staging/rtlwifi/phydm/phydm_rainfo.c b/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
-index b46791a727c7..ed740a93c8b6 100644
---- a/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
-+++ b/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
-@@ -124,7 +124,7 @@ void odm_c2h_ra_para_report_handler(void *dm_void, u8 *cmd_buf, u8 cmd_len)
- 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  %d\n",
- 				     "VHT_EN =", cmd_buf[4]);
- 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  %d\n",
--				     "Hightest rate =", cmd_buf[5]);
-+				     "Highest rate =", cmd_buf[5]);
- 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  0x%x\n",
- 				     "Lowest rate =", cmd_buf[6]);
- 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  0x%x\n",
--- 
-2.20.1
+Best Regards,
+Huang, Ying
