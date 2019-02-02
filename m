@@ -1,44 +1,55 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 15 Feb 2019 12:18:17 +0000
-Subject: Re: [PATCH -next] usb: host: oxu210hp-hcd: remove set but not used variables 'uframes, transfer_buff
-Message-Id: <8432c416-b0ae-b533-d077-21e7ffd3b3b1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Feb 2019 22:56:27 +0000
+Subject: [PATCH] staging: rtl8192u: fix a null pointer dereference on a null dev pointer
+Message-Id: <20190202225627.27116-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190215031709.86920-1-yuehaibing@huawei.com>
-In-Reply-To: <20190215031709.86920-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Colin Ian King <colin.king@canonical.com>
-Cc: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Whitmore <johnfwhitmore@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There is an earlier null check on pointer dev which implies it may be null,
+however the assignment of pointer pref and the call to free_ieee82011 on
+a null dev can cause null pointer dereference errors.  Fix this by moving
+the assignment of priv and the the call to free_ieee80211 into the block of
+code that performs the null dev sanity check.
 
-On 2019/2/15 16:11, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 15.02.2019 6:17, YueHaibing wrote:
-> 
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/usb/host/oxu210hp-hcd.c: In function 'scan_periodic':
->> drivers/usb/host/oxu210hp-hcd.c:2256:13: warning:
->>   variable 'uframes' set but not used [-Wunused-but-set-variable]
->>
->> drivers/usb/host/oxu210hp-hcd.c: In function 'oxu_urb_enqueue':
->> drivers/usb/host/oxu210hp-hcd.c:2835:6: warning:
->>   variable 'transfer_buffer_length' set but not used [-Wunused-but-set-variable]
->>
->> It never used since introduction.
-> 
->    "It's" or even better, "they are"?
+Detected by CoverityScan, CID#143078 ("Dereference after null check")
 
-Ok, will fix it, Thanks!
+Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8192u/r8192U_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> 
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> [...]
-> 
-> MBR, Sergei
-> 
-> 
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 0ac0bbf7d923..4741a29326ea 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -4955,9 +4955,10 @@ static void rtl8192_cancel_deferred_work(struct r8192_priv *priv)
+ static void rtl8192_usb_disconnect(struct usb_interface *intf)
+ {
+ 	struct net_device *dev = usb_get_intfdata(intf);
+-	struct r8192_priv *priv = ieee80211_priv(dev);
+ 
+ 	if (dev) {
++		struct r8192_priv *priv = ieee80211_priv(dev);
++
+ 		unregister_netdev(dev);
+ 
+ 		RT_TRACE(COMP_DOWN,
+@@ -4969,8 +4970,8 @@ static void rtl8192_usb_disconnect(struct usb_interface *intf)
+ 		priv->pFirmware = NULL;
+ 		rtl8192_usb_deleteendpoints(dev);
+ 		usleep_range(10000, 11000);
++		free_ieee80211(dev);
+ 	}
+-	free_ieee80211(dev);
+ 	RT_TRACE(COMP_DOWN, "wlan driver removed\n");
+ }
+ 
+-- 
+2.20.1
