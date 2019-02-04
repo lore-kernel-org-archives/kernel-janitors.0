@@ -1,33 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 19 Feb 2019 22:15:57 +0000
-Subject: Re: [PATCH][next] ptp_qoriq: don't pass a large struct by value but instead pass it by reference
-Message-Id: <20190219.141557.284906726764572414.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 Feb 2019 14:10:05 +0000
+Subject: [PATCH] soc: fsl: dpio: Use after free in dpaa2_dpio_remove()
+Message-Id: <20190204141005.GA915@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219142120.11347-1-colin.king@canonical.com>
-In-Reply-To: <20190219142120.11347-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netdev@vger.kernel.org, richardcochran@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, leoyang.li@nxp.com, claudiu.manoil@nxp.com, yangbo.lu@nxp.com, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+To: Roy Pledge <Roy.Pledge@nxp.com>, Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Li Yang <leoyang.li@nxp.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Feb 2019 14:21:20 +0000
+The dpaa2_io_down(priv->io) call frees "priv->io" so I've shifted the
+code around a little bit to avoid the use after free.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Passing the struct ptp_clock_info caps by parameter is passing over 130 bytes
-> of data by value on the stack. Optimize this by passing it by reference instead.
-> Also shinks the object code size:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   12596	   2160	     64	  14820	   39e4	drivers/ptp/ptp_qoriq.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   12567	   2160	     64	  14791	   39c7	drivers/ptp/ptp_qoriq.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 991e873223e9 ("soc: fsl: dpio: use a cpumask to identify which cpus are unused")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/soc/fsl/dpio/dpio-driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good, applied, thanks.
+diff --git a/drivers/soc/fsl/dpio/dpio-driver.c b/drivers/soc/fsl/dpio/dpio-driver.c
+index 2d4af32a0dec..a28799b62d53 100644
+--- a/drivers/soc/fsl/dpio/dpio-driver.c
++++ b/drivers/soc/fsl/dpio/dpio-driver.c
+@@ -220,12 +220,12 @@ static int dpaa2_dpio_remove(struct fsl_mc_device *dpio_dev)
+ 
+ 	dev = &dpio_dev->dev;
+ 	priv = dev_get_drvdata(dev);
++	cpu = dpaa2_io_get_cpu(priv->io);
+ 
+ 	dpaa2_io_down(priv->io);
+ 
+ 	dpio_teardown_irqs(dpio_dev);
+ 
+-	cpu = dpaa2_io_get_cpu(priv->io);
+ 	cpumask_set_cpu(cpu, cpus_unused_mask);
+ 
+ 	err = dpio_open(dpio_dev->mc_io, 0, dpio_dev->obj_desc.id,
+-- 
+2.17.1
