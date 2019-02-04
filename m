@@ -1,24 +1,42 @@
-From: David Miller <davem@redhat.com>
-Date: Sun, 03 Feb 2019 04:14:58 +0000
-Subject: Re: [PATCH] bna: fix indentation issue on call to bfa_ioc_pf_failed
-Message-Id: <20190202.201458.1447579059028146414.davem@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 Feb 2019 18:24:29 +0000
+Subject: [PATCH] Staging: rtl8723bs: remove some dead code
+Message-Id: <20190204182343.GA8823@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190202113707.18005-1-colin.king@canonical.com>
-In-Reply-To: <20190202113707.18005-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: rmody@marvell.com, skalluru@marvell.com, GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat,  2 Feb 2019 11:37:07 +0000
+"psecnetwork" is the address of &psecuritypriv->sec_bss.  Since
+->sec_bss isn't the first member of the struct that means that
+"psecnetwork" can't be NULL.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to bfa_ioc_pf_failed is indented too far, fix this by
-> removing a tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We can just remove this dead code.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_cmd.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+index ea2c187e56bd..91520ca3bbad 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
++++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+@@ -835,14 +835,6 @@ u8 rtw_joinbss_cmd(struct adapter  *padapter, struct wlan_network *pnetwork)
+ 	}
+ 
+ 	psecnetwork = (struct wlan_bssid_ex *)&psecuritypriv->sec_bss;
+-	if (psecnetwork = NULL) {
+-		kfree(pcmd);
+-		res = _FAIL;
+-
+-		RT_TRACE(_module_rtl871x_cmd_c_, _drv_err_, ("rtw_joinbss_cmd :psecnetwork = NULL!!!\n"));
+-
+-		goto exit;
+-	}
+ 
+ 	memset(psecnetwork, 0, t_len);
+ 
+-- 
+2.17.1
