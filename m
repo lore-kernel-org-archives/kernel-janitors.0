@@ -1,59 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 04 Feb 2019 13:20:44 +0000
-Subject: [PATCH] mm/hmm: potential deadlock in nonblocking code
-Message-Id: <20190204132043.GA16485@kadam>
+From: Matthew Wilcox <willy@infradead.org>
+Date: Mon, 04 Feb 2019 13:42:03 +0000
+Subject: Re: [PATCH] mm/hmm: potential deadlock in nonblocking code
+Message-Id: <20190204134203.GB21860@bombadil.infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190204132043.GA16485@kadam>
+In-Reply-To: <20190204132043.GA16485@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
-Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-There is a deadlock bug when these functions are used in nonblocking
-mode.  The else side is only meant to be taken in when the code is
-used in blocking mode.  But the way it's written now, if we manage to
-take the lock without blocking then we try to take it a second time in
-the else statement which leads to a deadlock.
+On Mon, Feb 04, 2019 at 04:20:44PM +0300, Dan Carpenter wrote:
+>  
+> -	if (!nrange->blockable && !mutex_trylock(&hmm->lock)) {
+> -		ret = -EAGAIN;
+> -		goto out;
+> +	if (!nrange->blockable) {
+> +		if (!mutex_trylock(&hmm->lock)) {
+> +			ret = -EAGAIN;
+> +			goto out;
+> +		}
+>  	} else
+>  		mutex_lock(&hmm->lock);
 
-Fixes: a3402cb621c1 ("mm/hmm: improve driver API to work and wait over a range")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- mm/hmm.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+I think this would be more readable written as:
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index e14e0aa4d2cb..3b97bb087b28 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -207,9 +207,11 @@ static int hmm_invalidate_range_start(struct mmu_notifier *mn,
- 	update.event = HMM_UPDATE_INVALIDATE;
- 	update.blockable = nrange->blockable;
- 
--	if (!nrange->blockable && !mutex_trylock(&hmm->lock)) {
--		ret = -EAGAIN;
--		goto out;
-+	if (!nrange->blockable) {
-+		if (!mutex_trylock(&hmm->lock)) {
-+			ret = -EAGAIN;
-+			goto out;
-+		}
- 	} else
- 		mutex_lock(&hmm->lock);
- 	hmm->notifiers++;
-@@ -222,9 +224,11 @@ static int hmm_invalidate_range_start(struct mmu_notifier *mn,
- 	mutex_unlock(&hmm->lock);
- 
- 
--	if (!nrange->blockable && !down_read_trylock(&hmm->mirrors_sem)) {
--		ret = -EAGAIN;
--		goto out;
-+	if (!nrange->blockable) {
-+		if (!down_read_trylock(&hmm->mirrors_sem)) {
-+			ret = -EAGAIN;
-+			goto out;
-+		}
- 	} else
- 		down_read(&hmm->mirrors_sem);
- 	list_for_each_entry(mirror, &hmm->mirrors, list) {
--- 
-2.17.1
+	ret = -EAGAIN;
+	if (nrange->blockable)
+		mutex_lock(&hmm->lock);
+	else if (!mutex_trylock(&hmm->lock))
+		goto out;
+
+but it'll be up to Jerome.
