@@ -1,55 +1,37 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 19 Feb 2019 16:40:45 +0000
-Subject: Re: [PATCH][next] vhost: only return early if ret indicates an error or no iovecs have been processe
-Message-Id: <4145121c-83b8-e4a4-6c95-ee0151ac70c0@canonical.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Date: Tue, 05 Feb 2019 19:05:45 +0000
+Subject: Re: [PATCH][next] mtd: rawnand: meson: fix missing assignment of ret on a call to meson_chip_buffer_
+Message-Id: <20190205200545.2952f548@xps13>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219135713.10426-1-colin.king@canonical.com>
- <20190219113510-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20190219113510-mutt-send-email-mst@kernel.org>
+References: <20190129105757.19138-1-colin.king@canonical.com>
+In-Reply-To: <20190129105757.19138-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Liang Yang <liang.yang@amlogic.com>, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
 
-On 19/02/2019 16:35, Michael S. Tsirkin wrote:
-> On Tue, Feb 19, 2019 at 01:57:13PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the loop that calls log_write_hva on each iovec is never
->> executed because of an incorrect error check on the return from the
->> call to translate_desc.  The check should be checking for a -ve error
->> return and because it makes no sense to iterate over zero items, the
->> checks should also check for zero too.
->>
->> Detected by CoverityScan, CID#1476969 ("Logically dead code")
->>
->> Fixes: cc5e71075947 ("vhost: log dirty page correctly")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Jason posted a similar patch recently.
-> 
-> Are you happy with that one?
+Hi Colin,
 
-Sure, ignore mine, I was late to the party.
+Colin King <colin.king@canonical.com> wrote on Tue, 29 Jan 2019
+10:57:57 +0000:
 
-> 
->> ---
->>  drivers/vhost/vhost.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->> index 24a129fcdd61..a9a1709a859a 100644
->> --- a/drivers/vhost/vhost.c
->> +++ b/drivers/vhost/vhost.c
->> @@ -1788,7 +1788,7 @@ static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
->>  
->>  	ret = translate_desc(vq, (uintptr_t)vq->used + used_offset,
->>  			     len, iov, 64, VHOST_ACCESS_WO);
->> -	if (ret)
->> +	if (ret <= 0)
->>  		return ret;
->>  
->>  	for (i = 0; i < ret; i++) {
->> -- 
->> 2.20.1
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The call to meson_chip_buffer_init is not assigning ret, however, ret
+> is being checked for failure. Fix this by adding in the missing assignmen=
+t.
+>=20
+> Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND f=
+lash controller")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/mtd/nand/raw/meson_nand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+
+Merged in nand/next with the original commit.
+
+
+Thanks,
+Miqu=C3=A8l
