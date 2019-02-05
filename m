@@ -1,55 +1,53 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 28 Feb 2019 02:41:41 +0000
-Subject: Re: [PATCH -next] drm/ttm: remove set but not used variable 'bdev'
-Message-Id: <CADnq5_OJnArPi3FvGO_a_q8_qQu2uSLaBA=SqZKH0HkvVdLJLA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Feb 2019 09:09:27 +0000
+Subject: [PATCH] ASoC: wcd9335: remove some unnecessary NULL checks
+Message-Id: <20190205090927.GA20372@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218135935.132773-1-yuehaibing@huawei.com>
-In-Reply-To: <20190218135935.132773-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Christian Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Junwei Zhang <Jerry.Zhang@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>
 
-Applied.  Thanks!
+These are arrays, not pointers, and they can't be NULL.
 
-On Tue, Feb 19, 2019 at 3:22 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/ttm/ttm_execbuf_util.c: In function 'ttm_eu_fence_buffer_objects':
-> drivers/gpu/drm/ttm/ttm_execbuf_util.c:191:24: warning:
->  variable 'bdev' set but not used [-Wunused-but-set-variable]
->
-> It's not used any more and can be removed.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/ttm/ttm_execbuf_util.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/ttm/ttm_execbuf_util.c b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-> index 93860346c426..0075eb9a0b52 100644
-> --- a/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-> +++ b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-> @@ -188,13 +188,11 @@ void ttm_eu_fence_buffer_objects(struct ww_acquire_ctx *ticket,
->         struct ttm_validate_buffer *entry;
->         struct ttm_buffer_object *bo;
->         struct ttm_bo_global *glob;
-> -       struct ttm_bo_device *bdev;
->
->         if (list_empty(list))
->                 return;
->
->         bo = list_first_entry(list, struct ttm_validate_buffer, head)->bo;
-> -       bdev = bo->bdev;
->         glob = bo->bdev->glob;
->
->         spin_lock(&glob->lru_lock);
->
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/codecs/wcd9335.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index 3878187bb512..981f88a5f615 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -2001,20 +2001,16 @@ static int wcd9335_set_channel_map(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (wcd->rx_chs) {
+-		wcd->num_rx_port = rx_num;
+-		for (i = 0; i < rx_num; i++) {
+-			wcd->rx_chs[i].ch_num = rx_slot[i];
+-			INIT_LIST_HEAD(&wcd->rx_chs[i].list);
+-		}
++	wcd->num_rx_port = rx_num;
++	for (i = 0; i < rx_num; i++) {
++		wcd->rx_chs[i].ch_num = rx_slot[i];
++		INIT_LIST_HEAD(&wcd->rx_chs[i].list);
+ 	}
+ 
+-	if (wcd->tx_chs) {
+-		wcd->num_tx_port = tx_num;
+-		for (i = 0; i < tx_num; i++) {
+-			wcd->tx_chs[i].ch_num = tx_slot[i];
+-			INIT_LIST_HEAD(&wcd->tx_chs[i].list);
+-		}
++	wcd->num_tx_port = tx_num;
++	for (i = 0; i < tx_num; i++) {
++		wcd->tx_chs[i].ch_num = tx_slot[i];
++		INIT_LIST_HEAD(&wcd->tx_chs[i].list);
+ 	}
+ 
+ 	return 0;
+-- 
+2.17.1
