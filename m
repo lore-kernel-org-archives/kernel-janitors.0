@@ -1,69 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 04 Feb 2019 16:17:05 +0000
-Subject: Applied "ASoC: mediatek: btcvsd: fix spelling mistake "offest" -> "offset"" to the asoc tree
-Message-Id: <20190204161705.9E221440083@finisterre.ee.mobilebroadband>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Feb 2019 09:07:18 +0000
+Subject: [PATCH] dlm: Fix test for -ERESTARTSYS
+Message-Id: <20190205090718.GA20043@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190204153105.20214-1-colin.king@canonical.com>
-In-Reply-To: <20190204153105.20214-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, KaiChieh Chuang <kaichieh.chuang@mediatek.com>
+To: kernel-janitors@vger.kernel.org
 
-The patch
+The minus sign is missing so this condition is never true.
 
-   ASoC: mediatek: btcvsd: fix spelling mistake "offest" -> "offset"
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 766cc4965a3a2a8a62e70e9d98e1d946a71368d5 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 4 Feb 2019 15:31:05 +0000
-Subject: [PATCH] ASoC: mediatek: btcvsd: fix spelling mistake "offest" ->
- "offset"
-
-There is a spelling mistake in a dev_warn message. Fix this.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 5c1597bfeb2c ("dlm: retry wait_event_interruptible in event of ERESTARTSYS")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- sound/soc/mediatek/common/mtk-btcvsd.c | 2 +-
+Static analysis.  Not tested.
+
+ fs/dlm/lockspace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/mediatek/common/mtk-btcvsd.c b/sound/soc/mediatek/common/mtk-btcvsd.c
-index 349a9120a0dd..e408c1b270ab 100644
---- a/sound/soc/mediatek/common/mtk-btcvsd.c
-+++ b/sound/soc/mediatek/common/mtk-btcvsd.c
-@@ -1309,7 +1309,7 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
- 					 offset,
- 					 ARRAY_SIZE(offset));
- 	if (ret) {
--		dev_warn(dev, "%s(), get offest fail, ret %d\n", __func__, ret);
-+		dev_warn(dev, "%s(), get offset fail, ret %d\n", __func__, ret);
- 		return ret;
- 	}
- 	btcvsd->infra_misc_offset = offset[0];
+diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
+index 7aae23afdd3a..738136a762d4 100644
+--- a/fs/dlm/lockspace.c
++++ b/fs/dlm/lockspace.c
+@@ -213,7 +213,7 @@ static int do_uevent(struct dlm_ls *ls, int in)
+ 	do {
+ 		error = wait_event_interruptible(ls->ls_uevent_wait,
+ 						 test_and_clear_bit(LSFL_UEVENT_WAIT, &ls->ls_flags));
+-	} while (error = ERESTARTSYS);
++	} while (error = -ERESTARTSYS);
+ 
+ 	log_rinfo(ls, "group event done %d %d", error, ls->ls_uevent_result);
+ 
 -- 
-2.20.1
+2.17.1
