@@ -1,44 +1,44 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Date: Mon, 18 Feb 2019 08:39:53 +0000
-Subject: Re: [PATCH] KVM: arm/arm64: fix spelling mistake: "auxilary" -> "auxiliary"
-Message-Id: <20190218083953.2e8e6ed4@why.wild-wind.fr.eu.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 05 Feb 2019 18:04:49 +0000
+Subject: [PATCH] rtc: rtc-ds1672: fix unintended sign extension
+Message-Id: <20190205180449.28749-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190217223626.16686-1-colin.king@canonical.com>
-In-Reply-To: <20190217223626.16686-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 17 Feb 2019 22:36:26 +0000
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a kvm_err error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  virt/kvm/arm/arm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> index 7fcc1c8c4020..99c37384ba7b 100644
-> --- a/virt/kvm/arm/arm.c
-> +++ b/virt/kvm/arm/arm.c
-> @@ -1563,7 +1563,7 @@ static int init_hyp_mode(void)
->  
->  	err = hyp_map_aux_data();
->  	if (err)
-> -		kvm_err("Cannot map host auxilary data: %d\n", err);
-> +		kvm_err("Cannot map host auxiliary data: %d\n", err);
->  
->  	return 0;
->  
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Applied, thanks.
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-	M.
+Detected by CoverityScan, CID#138801 ("Unintended sign extension")
+
+Fixes: edf1aaa31fc5 ("[PATCH] RTC subsystem: DS1672 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-ds1672.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-ds1672.c b/drivers/rtc/rtc-ds1672.c
+index 9caaccccaa57..b1ebca099b0d 100644
+--- a/drivers/rtc/rtc-ds1672.c
++++ b/drivers/rtc/rtc-ds1672.c
+@@ -58,7 +58,8 @@ static int ds1672_get_datetime(struct i2c_client *client, struct rtc_time *tm)
+ 		"%s: raw read data - counters=%02x,%02x,%02x,%02x\n",
+ 		__func__, buf[0], buf[1], buf[2], buf[3]);
+ 
+-	time = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	time = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++	       (buf[1] << 8) | buf[0];
+ 
+ 	rtc_time_to_tm(time, tm);
+ 
 -- 
-Without deviation from the norm, progress is not possible.
+2.20.1
