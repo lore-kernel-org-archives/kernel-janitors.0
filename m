@@ -1,28 +1,44 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 18 Feb 2019 10:25:08 +0000
-Subject: Re: [PATCH] mac80211: mesh: fix missing unlock on error in table_path_del()
-Message-Id: <20190218102508.wiflqxvfyxqcss2y@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Feb 2019 10:25:03 +0000
+Subject: [PATCH] net: sxgbe: fix unintended sign extension
+Message-Id: <20190206102503.16929-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218065216.155259-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190218065216.155259-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>, Girish K S <ks.giri@samsung.com>, Vipul Pandya <vipul.pandya@samsung.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 06:52:16AM +0000, Wei Yongjun wrote:
-> spin_lock_bh() is used in table_path_del() but rcu_read_unlock()
-> is used for unlocking. Fix it by using spin_unlock_bh() instead
-> of rcu_read_unlock() in the error handling case.
-> 
-> Fixes: b4c3fbe63601 ("mac80211: Use linked list instead of rhashtable walk for mesh tables")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Thanks for catching this!
+Fix this by casting the u8 value to an unsigned long before the shift.
+
+Detected by CoverityScan, CID#1195586 ("Unintended sign extension")
+
+Fixes: 1edb9ca69e8a ("net: sxgbe: add basic framework for Samsung 10Gb ethernet driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+index 6d22dd500790..51fe161e5da9 100644
+--- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
++++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+@@ -1822,7 +1822,8 @@ static void sxgbe_set_umac_addr(void __iomem *ioaddr, unsigned char *addr,
+ 	 * is RO.
+ 	 */
+ 	writel(data | SXGBE_HI_REG_AE, ioaddr + SXGBE_ADDR_HIGH(reg_n));
+-	data = (addr[3] << 24) | (addr[2] << 16) | (addr[1] << 8) | addr[0];
++	data = ((unsigned long)addr[3] << 24) | (addr[2] << 16) |
++		(addr[1] << 8) | addr[0];
+ 	writel(data, ioaddr + SXGBE_ADDR_LOW(reg_n));
+ }
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.20.1
