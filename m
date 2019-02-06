@@ -1,64 +1,91 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 19 Feb 2019 08:42:14 +0000
-Subject: [PATCH v2] net: ns83820: drop pointless static qualifier in ns83820_probe_phy()
-Message-Id: <20190219084214.96202-1-maowenan@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Feb 2019 09:50:53 +0000
+Subject: [PATCH] rtc: 88pm860x: fix unintended sign extension
+Message-Id: <20190206095053.12894-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.1902190929250.2570@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1902190929250.2570@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, john.fastabend@gmail.com, hawk@kernel.org, jakub.kicinski@netronome.com, daniel@iogearbox.net, ast@kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There is no need to have the 'int first' static
-since new value always be assigned before use it.
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch cleans up the codes in ns83820_probe_phy() as well.
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Fix this by casting the u8 value to an unsigned long before the shift.
+
+Detected by CoverityScan, CID#144925-144928 ("Unintended sign extension")
+
+Fixes: 008b30408c40 ("mfd: Add rtc support to 88pm860x")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- v1->v2: delete unused codes.
- drivers/net/ethernet/natsemi/ns83820.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+ drivers/rtc/rtc-88pm860x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
-index 958fced4dacf..37694f6843fe 100644
---- a/drivers/net/ethernet/natsemi/ns83820.c
-+++ b/drivers/net/ethernet/natsemi/ns83820.c
-@@ -1869,23 +1869,11 @@ static unsigned ns83820_mii_write_reg(struct ns83820 *dev, unsigned phy, unsigne
- static void ns83820_probe_phy(struct net_device *ndev)
- {
- 	struct ns83820 *dev = PRIV(ndev);
--	static int first;
-+	int first;
- 	int i;
- #define MII_PHYIDR1	0x02
- #define MII_PHYIDR2	0x03
+diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
+index 01ffc0ef8033..d25282b4a7dd 100644
+--- a/drivers/rtc/rtc-88pm860x.c
++++ b/drivers/rtc/rtc-88pm860x.c
+@@ -115,11 +115,13 @@ static int pm860x_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
  
--#if 0
--	if (!first) {
--		unsigned tmp;
--		ns83820_mii_read_reg(dev, 1, 0x09);
--		ns83820_mii_write_reg(dev, 1, 0x10, 0x0d3e);
--
--		tmp = ns83820_mii_read_reg(dev, 1, 0x00);
--		ns83820_mii_write_reg(dev, 1, 0x00, tmp | 0x8000);
--		udelay(1300);
--		ns83820_mii_read_reg(dev, 1, 0x09);
--	}
--#endif
- 	first = 1;
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -145,7 +147,8 @@ static int pm860x_rtc_set_time(struct device *dev, struct rtc_time *tm)
  
- 	for (i=1; i<2; i++) {
-@@ -1894,9 +1882,6 @@ static void ns83820_probe_phy(struct net_device *ndev)
- 		a = ns83820_mii_read_reg(dev, i, MII_PHYIDR1);
- 		b = ns83820_mii_read_reg(dev, i, MII_PHYIDR2);
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -170,10 +173,12 @@ static int pm860x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
  
--		//printk("%s: phy %d: 0x%04x 0x%04x\n",
--		//	ndev->name, i, a, b);
--
- 		for (j=0; j<0x16; j+=4) {
- 			dprintk("%s: [0x%02x] %04x %04x %04x %04x\n",
- 				ndev->name, j,
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_EXPIRE1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -198,11 +203,13 @@ static int pm860x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
+ 
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
 -- 
 2.20.1
