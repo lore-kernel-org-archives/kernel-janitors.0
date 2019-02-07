@@ -1,60 +1,69 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 16 Feb 2019 07:39:06 +0000
-Subject: [PATCH -next] scsi: qedi: Remove set but not used variable 'cls_sess'
-Message-Id: <20190216073906.31264-1-yuehaibing@huawei.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 07 Feb 2019 12:16:05 +0000
+Subject: Applied "ASoC: codecs: jz4725b: fix spelling mistake "Deemphatize" -> "Deemphasize"" to the asoc tre
+Message-Id: <20190207121605.476781127EF9@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190207092642.6655-1-colin.king@canonical.com>
+In-Reply-To: <20190207092642.6655-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Paul Cercueil <paul@crapouillou.net>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The patch
 
-drivers/scsi/qedi/qedi_fw.c: In function 'qedi_tmf_resp_work':
-drivers/scsi/qedi/qedi_fw.c:158:28: warning:
- variable 'cls_sess' set but not used [-Wunused-but-set-variable]
+   ASoC: codecs: jz4725b: fix spelling mistake "Deemphatize" -> "Deemphasize"
 
-drivers/scsi/qedi/qedi_fw.c: In function 'qedi_tmf_work':
-drivers/scsi/qedi/qedi_fw.c:1370:28: warning:
- variable 'cls_sess' set but not used [-Wunused-but-set-variable]
+has been applied to the asoc tree at
 
-It's never used since introduction.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6c3e6302364aa5d152e0f5f81d550fdbc7bb8d38 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 7 Feb 2019 09:26:42 +0000
+Subject: [PATCH] ASoC: codecs: jz4725b: fix spelling mistake "Deemphatize" ->
+ "Deemphasize"
+
+There is a spelling mistake in the SOC_SINGLE control name. Fix this.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/scsi/qedi/qedi_fw.c | 4 ----
- 1 file changed, 4 deletions(-)
+ sound/soc/codecs/jz4725b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qedi/qedi_fw.c b/drivers/scsi/qedi/qedi_fw.c
-index e2a995a6e8e7..651c3a6b74ed 100644
---- a/drivers/scsi/qedi/qedi_fw.c
-+++ b/drivers/scsi/qedi/qedi_fw.c
-@@ -155,12 +155,10 @@ static void qedi_tmf_resp_work(struct work_struct *work)
- 	struct iscsi_conn *conn = qedi_conn->cls_conn->dd_data;
- 	struct iscsi_session *session = conn->session;
- 	struct iscsi_tm_rsp *resp_hdr_ptr;
--	struct iscsi_cls_session *cls_sess;
- 	int rval = 0;
+diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
+index e3dba92f30bd..24b1b23b99c9 100644
+--- a/sound/soc/codecs/jz4725b.c
++++ b/sound/soc/codecs/jz4725b.c
+@@ -161,7 +161,7 @@ static const struct snd_kcontrol_new jz4725b_codec_controls[] = {
+ 	SOC_SINGLE("Master Playback Switch", JZ4725B_CODEC_REG_CR1,
+ 		   REG_CR1_DAC_MUTE_OFFSET, 1, 1),
  
- 	set_bit(QEDI_CONN_FW_CLEANUP, &qedi_conn->flags);
- 	resp_hdr_ptr =  (struct iscsi_tm_rsp *)qedi_cmd->tmf_resp_buf;
--	cls_sess = iscsi_conn_to_session(qedi_conn->cls_conn);
+-	SOC_SINGLE("Deemphatize Filter Playback Switch",
++	SOC_SINGLE("Deemphasize Filter Playback Switch",
+ 		   JZ4725B_CODEC_REG_CR2,
+ 		   REG_CR2_DAC_DEEMP_OFFSET, 1, 0),
  
- 	iscsi_block_session(session->cls_session);
- 	rval = qedi_cleanup_all_io(qedi, qedi_conn, qedi_cmd->task, true);
-@@ -1367,7 +1365,6 @@ static void qedi_tmf_work(struct work_struct *work)
- 	struct qedi_conn *qedi_conn = qedi_cmd->conn;
- 	struct qedi_ctx *qedi = qedi_conn->qedi;
- 	struct iscsi_conn *conn = qedi_conn->cls_conn->dd_data;
--	struct iscsi_cls_session *cls_sess;
- 	struct qedi_work_map *list_work = NULL;
- 	struct iscsi_task *mtask;
- 	struct qedi_cmd *cmd;
-@@ -1378,7 +1375,6 @@ static void qedi_tmf_work(struct work_struct *work)
- 
- 	mtask = qedi_cmd->task;
- 	tmf_hdr = (struct iscsi_tm *)mtask->hdr;
--	cls_sess = iscsi_conn_to_session(qedi_conn->cls_conn);
- 	set_bit(QEDI_CONN_FW_CLEANUP, &qedi_conn->flags);
- 
- 	ctask = iscsi_itt_to_task(conn, tmf_hdr->rtt);
+-- 
+2.20.1
