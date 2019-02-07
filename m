@@ -1,33 +1,46 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 25 Feb 2019 12:38:49 +0000
-Subject: [PATCH] cfg80211: Use kmemdup in cfg80211_gen_new_ie()
-Message-Id: <20190225123849.50574-1-yuehaibing@huawei.com>
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Date: Thu, 07 Feb 2019 16:40:57 +0000
+Subject: [PATCH 2/4] scripts: mkdebian: allow renaming generated debian/rules
+Message-Id: <1549557659-19137-3-git-send-email-info@metux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1549557659-19137-1-git-send-email-info@metux.net>
+In-Reply-To: <1549557659-19137-1-git-send-email-info@metux.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, yamada.masahiro@socionext.com, michal.lkml@markovi.net
 
-Use kmemdup rather than duplicating its implementation
+Add new environment variable KDEB_RULES for controlling where the
+generated debian rules are written to. By defaults, it's debian/rules,
+but packagers might override it for providing their own rules file.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- net/wireless/scan.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ scripts/package/mkdebian | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index 287518c6caa4..04d888628f29 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -190,10 +190,9 @@ static size_t cfg80211_gen_new_ie(const u8 *ie, size_t ielen,
- 	/* copy subelement as we need to change its content to
- 	 * mark an ie after it is processed.
- 	 */
--	sub_copy = kmalloc(subie_len, gfp);
-+	sub_copy = kmemdup(subelement, subie_len, gfp);
- 	if (!sub_copy)
- 		return 0;
--	memcpy(sub_copy, subelement, subie_len);
- 
- 	pos = &new_ie[0];
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index edcad61..ff226be 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -99,6 +99,9 @@ kernel_headers_packagename=3Dlinux-headers-$version
+ dbg_packagename=3D$packagename-dbg
+ debarch set_debarch
++if [ -z "$KDEB_RULES" ]; then
++    KDEB_RULES=DEbian/rules
++fi
+=20
+ if [ "$ARCH" =3D "um" ] ; then
+ 	packagename=3Duser-mode-linux-$version
+@@ -202,7 +205,7 @@ Description: Linux kernel debugging symbols for $version
+  all the necessary debug symbols for the kernel and its modules.
+ EOF
+=20
+-cat <<EOF > debian/rules
++cat <<EOF > $KDEB_RULES
+ #!$(command -v $MAKE) -f
+=20
+ build:
+--=20
+1.9.1
