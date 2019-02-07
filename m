@@ -1,35 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 Feb 2019 09:26:42 +0000
-Subject: [PATCH][next] ASoC: codecs: jz4725b: fix spelling mistake "Deemphatize" -> "Deemphasize"
-Message-Id: <20190207092642.6655-1-colin.king@canonical.com>
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Date: Thu, 07 Feb 2019 16:40:55 +0000
+Subject: RFC: refactoring the deb build
+Message-Id: <1549557659-19137-1-git-send-email-info@metux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Paul Cercueil <paul@crapouillou.net>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, yamada.masahiro@socionext.com, michal.lkml@markovi.net
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello folks,
 
-There is a spelling mistake in the SOC_SINGLE control name. Fix this.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/jz4725b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+here are some patches for build process that allow building debian packages
+right the usual canonical way (eg. via dpkg-buildpackage or dck-buildpackage),
+instead 'manually' setting up the build environment and calling make.
+So, from a debian native perspective, turning it from head onto feet ;-)
 
-diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
-index e3dba92f30bd..24b1b23b99c9 100644
---- a/sound/soc/codecs/jz4725b.c
-+++ b/sound/soc/codecs/jz4725b.c
-@@ -161,7 +161,7 @@ static const struct snd_kcontrol_new jz4725b_codec_controls[] = {
- 	SOC_SINGLE("Master Playback Switch", JZ4725B_CODEC_REG_CR1,
- 		   REG_CR1_DAC_MUTE_OFFSET, 1, 1),
- 
--	SOC_SINGLE("Deemphatize Filter Playback Switch",
-+	SOC_SINGLE("Deemphasize Filter Playback Switch",
- 		   JZ4725B_CODEC_REG_CR2,
- 		   REG_CR2_DAC_DEEMP_OFFSET, 1, 0),
- 
--- 
-2.20.1
+dpkg-buildpackage + friends expect the debian/rules file being present in
+the unpacked source tree and driving the actual build (the 'deb-pkg' make
+target does that quite the opposite way). Obviously, 'make deb-pkg' can't
+be used directly, as it would destroy our debian/rules file ...
+
+To archieve this, I've done several things:
+
+* place .config file to the source tree (not in this patch queue)
+* add some helper targets to the toplevel makefile, so we can just ask
+  for certain things, eg. version, arch, etc, that we need later
+* fix some missing dependencies in the generated debian/control file
+* change scripts/package/mkdebian so that the name of the generated rules
+  file name can be changed via environment
+* a generic debian/rules file for driving the build
+
+The last patch isn't really meant to be merged yet (need to change the
+deb-pkg rule to not overwrite debian/rules anymore) - just including it
+for illustration.
+
+What do you think about this ?
+
+
+--mtx
