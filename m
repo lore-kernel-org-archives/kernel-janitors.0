@@ -1,46 +1,51 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Fri, 22 Feb 2019 21:00:42 +0000
-Subject: Re: [PATCH] ipmi_si: Potential array underflow in hotmod_handler()y
-Message-Id: <20190222210042.GE2549@minyard.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Feb 2019 12:11:41 +0000
+Subject: [PATCH] rsi:  fix indentation issue with a code block
+Message-Id: <20190207121141.28336-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190222195530.GA306@kadam>
-In-Reply-To: <20190222195530.GA306@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>, Siva Rebbagondla <siva8118@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 10:55:30PM +0300, Dan Carpenter wrote:
-> The "ival" variable needs to signed so that we don't read before the
-> start of the str[] array.  This would only happen the user passed in a
-> module parameter that was just comprised of space characters.
+From: Colin Ian King <colin.king@canonical.com>
 
-That was quick, I just uploaded that to linux-next yesterday.  Thanks
-for this, yes you are right.  Added to my queue.
+There is a block of code that is indented at the wrong level. Fix this
+with extra tabbing.
 
--corey
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> 
-> Fixes: e80444ae4fc3 ("ipmi_si: Switch hotmod to use a platform device")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/char/ipmi/ipmi_si_hotmod.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/ipmi/ipmi_si_hotmod.c b/drivers/char/ipmi/ipmi_si_hotmod.c
-> index 1433055a9705..03140f6cdf6f 100644
-> --- a/drivers/char/ipmi/ipmi_si_hotmod.c
-> +++ b/drivers/char/ipmi/ipmi_si_hotmod.c
-> @@ -187,7 +187,8 @@ static int hotmod_handler(const char *val, const struct kernel_param *kp)
->  	char *str = kstrdup(val, GFP_KERNEL), *curr, *next;
->  	int  rv;
->  	struct ipmi_plat_data h;
-> -	unsigned int len, ival;
-> +	unsigned int len;
-> +	int ival;
->  
->  	if (!str)
->  		return -ENOMEM;
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index aded1ae4fad5..747d96e14bcd 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -810,15 +810,15 @@ static void rsi_mac80211_bss_info_changed(struct ieee80211_hw *hw,
+ 		adapter->ps_info.dtim_interval_duration = bss->dtim_period;
+ 		adapter->ps_info.listen_interval = conf->listen_interval;
+ 
+-	/* If U-APSD is updated, send ps parameters to firmware */
+-	if (bss->assoc) {
+-		if (common->uapsd_bitmap) {
+-			rsi_dbg(INFO_ZONE, "Configuring UAPSD\n");
+-			rsi_conf_uapsd(adapter, vif);
++		/* If U-APSD is updated, send ps parameters to firmware */
++		if (bss->assoc) {
++			if (common->uapsd_bitmap) {
++				rsi_dbg(INFO_ZONE, "Configuring UAPSD\n");
++				rsi_conf_uapsd(adapter, vif);
++			}
++		} else {
++			common->uapsd_bitmap = 0;
+ 		}
+-	} else {
+-		common->uapsd_bitmap = 0;
+-	}
+ 	}
+ 
+ 	if (changed & BSS_CHANGED_CQM) {
+-- 
+2.20.1
