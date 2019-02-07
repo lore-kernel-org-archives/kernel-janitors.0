@@ -1,10 +1,8 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 17 Feb 2019 22:40:11 +0000
-Subject: [PATCH] kvm: selftests: fix spelling mistake "begining" -> "beginning"
-Message-Id: <20190217224011.16949-1-colin.king@canonical.com>
+Date: Thu, 07 Feb 2019 12:59:06 +0000
+Subject: [PATCH] mmc: cb710: fix indentation issue in if block
+Message-Id: <20190207125906.3084-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181013154105.5999-1-colin.king@canonical.com>
-In-Reply-To: <20181013154105.5999-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,26 +10,70 @@ To: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in the message test of a TEST_ASSERT macro,
-fix it.
+There is an if block that is not indented, fix this.  Also add a
+break statement on the default case to clean up a cppcheck warning.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/testing/selftests/kvm/lib/elf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/cb710-mmc.c | 42 +++++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/lib/elf.c b/tools/testing/selftests/kvm/lib/elf.c
-index 5eb857584aa3..53c48f7587d3 100644
---- a/tools/testing/selftests/kvm/lib/elf.c
-+++ b/tools/testing/selftests/kvm/lib/elf.c
-@@ -141,7 +141,7 @@ void kvm_vm_elf_load(struct kvm_vm *vm, const char *filename,
- 		offset = hdr.e_phoff + (n1 * hdr.e_phentsize);
- 		offset_rv = lseek(fd, offset, SEEK_SET);
- 		TEST_ASSERT(offset_rv = offset,
--			"Failed to seek to begining of program header %u,\n"
-+			"Failed to seek to beginning of program header %u,\n"
- 			"  filename: %s\n"
- 			"  rv: %jd errno: %i",
- 			n1, filename, (intmax_t) offset_rv, errno);
+diff --git a/drivers/mmc/host/cb710-mmc.c b/drivers/mmc/host/cb710-mmc.c
+index 1087b4c79cd6..4c477dcd2ada 100644
+--- a/drivers/mmc/host/cb710-mmc.c
++++ b/drivers/mmc/host/cb710-mmc.c
+@@ -566,30 +566,32 @@ static void cb710_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 
+ 	cb710_mmc_select_clock_divider(mmc, ios->clock);
+ 
+-	if (ios->power_mode != reader->last_power_mode)
+-	switch (ios->power_mode) {
+-	case MMC_POWER_ON:
+-		err = cb710_mmc_powerup(slot);
+-		if (err) {
+-			dev_warn(cb710_slot_dev(slot),
+-				"powerup failed (%d)- retrying\n", err);
+-			cb710_mmc_powerdown(slot);
+-			udelay(1);
++	if (ios->power_mode != reader->last_power_mode) {
++		switch (ios->power_mode) {
++		case MMC_POWER_ON:
+ 			err = cb710_mmc_powerup(slot);
+-			if (err)
++			if (err) {
+ 				dev_warn(cb710_slot_dev(slot),
+-					"powerup retry failed (%d) - expect errors\n",
++					"powerup failed (%d)- retrying\n", err);
++				cb710_mmc_powerdown(slot);
++				udelay(1);
++				err = cb710_mmc_powerup(slot);
++				if (err)
++					dev_warn(cb710_slot_dev(slot),
++						"powerup retry failed (%d) - expect errors\n",
+ 					err);
++			}
++			reader->last_power_mode = MMC_POWER_ON;
++			break;
++		case MMC_POWER_OFF:
++			cb710_mmc_powerdown(slot);
++			reader->last_power_mode = MMC_POWER_OFF;
++			break;
++		case MMC_POWER_UP:
++		default:
++			/* ignore */
++			break;
+ 		}
+-		reader->last_power_mode = MMC_POWER_ON;
+-		break;
+-	case MMC_POWER_OFF:
+-		cb710_mmc_powerdown(slot);
+-		reader->last_power_mode = MMC_POWER_OFF;
+-		break;
+-	case MMC_POWER_UP:
+-	default:
+-		/* ignore */;
+ 	}
+ 
+ 	cb710_mmc_enable_4bit_data(slot, ios->bus_width != MMC_BUS_WIDTH_1);
 -- 
 2.20.1
