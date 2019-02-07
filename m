@@ -1,29 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Feb 2019 18:01:31 +0000
-Subject: Re: [PATCH v2] tools/libbpf: signedness bug in btf_dedup_ref_type()
-Message-Id: <20190228180131.GE9806@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Feb 2019 09:39:02 +0000
+Subject: [PATCH] iio: adc: ads124s08: fix spelling mistake "converions" -> "conversions"
+Message-Id: <20190207093902.7081-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a34432d0-b838-c004-ef79-052cd50996c0@fb.com>
- <20190228175035.GA30148@kadam>
- <20190228175300.GB9508@kernel.org>
-In-Reply-To: <20190228175300.GB9508@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andriin@fb.com>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Dan Murphy <dmurphy@ti.com>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 28, 2019 at 02:53:00PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Thu, Feb 28, 2019 at 08:50:35PM +0300, Dan Carpenter escreveu:
-> > The "ref_type_id" variable needs to be signed for the error handling
-> > to work.
-> 
-> Does the infiniband signedness change comes as a bonus? :-)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Oh wow...  :P
+There is a spelling mistake in several dev_err messages. Fix these.
 
-Let me resend v3.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/adc/ti-ads124s08.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/iio/adc/ti-ads124s08.c b/drivers/iio/adc/ti-ads124s08.c
+index c2cf58908fc8..53f17e4f2f23 100644
+--- a/drivers/iio/adc/ti-ads124s08.c
++++ b/drivers/iio/adc/ti-ads124s08.c
+@@ -232,7 +232,7 @@ static int ads124s_read_raw(struct iio_dev *indio_dev,
+ 
+ 		ret = ads124s_write_cmd(indio_dev, ADS124S08_START_CONV);
+ 		if (ret) {
+-			dev_err(&priv->spi->dev, "Start converions failed\n");
++			dev_err(&priv->spi->dev, "Start conversions failed\n");
+ 			goto out;
+ 		}
+ 
+@@ -246,7 +246,7 @@ static int ads124s_read_raw(struct iio_dev *indio_dev,
+ 
+ 		ret = ads124s_write_cmd(indio_dev, ADS124S08_STOP_CONV);
+ 		if (ret) {
+-			dev_err(&priv->spi->dev, "Stop converions failed\n");
++			dev_err(&priv->spi->dev, "Stop conversions failed\n");
+ 			goto out;
+ 		}
+ 
+@@ -283,12 +283,12 @@ static irqreturn_t ads124s_trigger_handler(int irq, void *p)
+ 
+ 		ret = ads124s_write_cmd(indio_dev, ADS124S08_START_CONV);
+ 		if (ret)
+-			dev_err(&priv->spi->dev, "Start ADC converions failed\n");
++			dev_err(&priv->spi->dev, "Start ADC conversions failed\n");
+ 
+ 		buffer[j] = ads124s_read(indio_dev, scan_index);
+ 		ret = ads124s_write_cmd(indio_dev, ADS124S08_STOP_CONV);
+ 		if (ret)
+-			dev_err(&priv->spi->dev, "Stop ADC converions failed\n");
++			dev_err(&priv->spi->dev, "Stop ADC conversions failed\n");
+ 
+ 		j++;
+ 	}
+-- 
+2.20.1
