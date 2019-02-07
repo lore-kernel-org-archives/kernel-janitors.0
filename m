@@ -1,67 +1,99 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 13 Feb 2019 11:53:33 +0000
-Subject: Applied "ASoC: cs35l36: Remove unused including <linux/version.h>" to the asoc tree
-Message-Id: <20190213115333.E6EA01128158@debutante.sirena.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Feb 2019 12:44:07 +0000
+Subject: [PATCH] scsi: mpt fusion: fix indentation issues
+Message-Id: <20190207124407.2365-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190213014332.148775-1-yuehaibing@huawei.com>
-In-Reply-To: <20190213014332.148775-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Mark Brown <broonie@kernel.org>, Brian Austin <brian.austin@cirrus.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org@alsa-project.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: cs35l36: Remove unused including <linux/version.h>
+There are several statements and code blocks there are incorrectly
+indented. Fix these.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 51bef0f378f39ed0604296354b964e3919161396 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 13 Feb 2019 01:43:32 +0000
-Subject: [PATCH] ASoC: cs35l36: Remove unused including <linux/version.h>
-
-Remove including <linux/version.h> that don't need it.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/cs35l36.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/message/fusion/mptctl.c   |  2 +-
+ drivers/message/fusion/mptsas.c   | 40 +++++++++++++++----------------
+ drivers/message/fusion/mptscsih.c |  2 +-
+ 3 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
-index 4f880a678812..e374fffb7e17 100644
---- a/sound/soc/codecs/cs35l36.c
-+++ b/sound/soc/codecs/cs35l36.c
-@@ -8,7 +8,6 @@
+diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+index 8d22d6134a89..0f73f95ba33a 100644
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -565,7 +565,7 @@ mptctl_event_process(MPT_ADAPTER *ioc, EventNotificationReply_t *pEvReply)
+ 	 * TODO - this define is not in MPI spec yet,
+ 	 * but they plan to set it to 0x21
+ 	 */
+-	 if (event = 0x21 ) {
++	if (event = 0x21) {
+ 		ioc->aen_event_read_flag=1;
+ 		dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "Raised SIGIO to application\n",
+ 		    ioc->name));
+diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
+index 612cb5bc1333..e2de8ea17b95 100644
+--- a/drivers/message/fusion/mptsas.c
++++ b/drivers/message/fusion/mptsas.c
+@@ -2928,27 +2928,27 @@ mptsas_exp_repmanufacture_info(MPT_ADAPTER *ioc,
+ 	if (ioc->sas_mgmt.status & MPT_MGMT_STATUS_RF_VALID) {
+ 		u8 *tmp;
  
- #include <linux/module.h>
- #include <linux/moduleparam.h>
--#include <linux/version.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/delay.h>
+-	smprep = (SmpPassthroughReply_t *)ioc->sas_mgmt.reply;
+-	if (le16_to_cpu(smprep->ResponseDataLength) !-		sizeof(struct rep_manu_reply))
+-			goto out_free;
+-
+-	manufacture_reply = data_out + sizeof(struct rep_manu_request);
+-	strncpy(edev->vendor_id, manufacture_reply->vendor_id,
+-		SAS_EXPANDER_VENDOR_ID_LEN);
+-	strncpy(edev->product_id, manufacture_reply->product_id,
+-		SAS_EXPANDER_PRODUCT_ID_LEN);
+-	strncpy(edev->product_rev, manufacture_reply->product_rev,
+-		SAS_EXPANDER_PRODUCT_REV_LEN);
+-	edev->level = manufacture_reply->sas_format;
+-	if (manufacture_reply->sas_format) {
+-		strncpy(edev->component_vendor_id,
+-			manufacture_reply->component_vendor_id,
++		smprep = (SmpPassthroughReply_t *)ioc->sas_mgmt.reply;
++		if (le16_to_cpu(smprep->ResponseDataLength) !+		    sizeof(struct rep_manu_reply))
++			goto out_free;
++
++		manufacture_reply = data_out + sizeof(struct rep_manu_request);
++		strncpy(edev->vendor_id, manufacture_reply->vendor_id,
++			SAS_EXPANDER_VENDOR_ID_LEN);
++		strncpy(edev->product_id, manufacture_reply->product_id,
++			SAS_EXPANDER_PRODUCT_ID_LEN);
++		strncpy(edev->product_rev, manufacture_reply->product_rev,
++			SAS_EXPANDER_PRODUCT_REV_LEN);
++		edev->level = manufacture_reply->sas_format;
++		if (manufacture_reply->sas_format) {
++			strncpy(edev->component_vendor_id,
++				manufacture_reply->component_vendor_id,
+ 				SAS_EXPANDER_COMPONENT_VENDOR_ID_LEN);
+-		tmp = (u8 *)&manufacture_reply->component_id;
+-		edev->component_id = tmp[0] << 8 | tmp[1];
+-		edev->component_revision_id -			manufacture_reply->component_revision_id;
++			tmp = (u8 *)&manufacture_reply->component_id;
++			edev->component_id = tmp[0] << 8 | tmp[1];
++			edev->component_revision_id +				manufacture_reply->component_revision_id;
+ 		}
+ 	} else {
+ 		printk(MYIOC_s_ERR_FMT
+diff --git a/drivers/message/fusion/mptscsih.c b/drivers/message/fusion/mptscsih.c
+index 6ba07c7feb92..587b5daf74b4 100644
+--- a/drivers/message/fusion/mptscsih.c
++++ b/drivers/message/fusion/mptscsih.c
+@@ -1934,7 +1934,7 @@ mptscsih_host_reset(struct scsi_cmnd *SCpnt)
+ 	/*  If our attempts to reset the host failed, then return a failed
+ 	 *  status.  The host will be taken off line by the SCSI mid-layer.
+ 	 */
+-    retval = mpt_Soft_Hard_ResetHandler(ioc, CAN_SLEEP);
++	retval = mpt_Soft_Hard_ResetHandler(ioc, CAN_SLEEP);
+ 	if (retval < 0)
+ 		status = FAILED;
+ 	else
 -- 
 2.20.1
