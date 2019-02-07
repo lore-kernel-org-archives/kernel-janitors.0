@@ -1,72 +1,72 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 13 Feb 2019 11:53:29 +0000
-Subject: Applied "ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static" to the asoc tree
-Message-Id: <20190213115329.9F9DE1128158@debutante.sirena.org.uk>
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Date: Thu, 07 Feb 2019 16:40:59 +0000
+Subject: [PATCH 4/4] debian: add generic rule file
+Message-Id: <1549557659-19137-5-git-send-email-info@metux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190213062956.146536-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190213062956.146536-1-weiyongjun1@huawei.com>
+References: <1549557659-19137-1-git-send-email-info@metux.net>
+In-Reply-To: <1549557659-19137-1-git-send-email-info@metux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Girdwood <lgirdwood@gmail.com>, Liam@sirena.org.uk, Guenter Roeck <groeck@chromium.org>, Jaroslav@sirena.org.uk, Mark Brown <broonie@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, Cheng-Yi Chiang <cychiang@chromium.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, yamada.masahiro@socionext.com, michal.lkml@markovi.net
 
-The patch
+Adding a generic debian rule file, so we can build the directly
+via usual Debian package build tools (eg. git-buildpackage,
+dck-buildpackage, etc). It expects the .config file already
+placed in the source tree.
 
-   ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a4cbb465bcc98f1c5740c887d4be3a68f1a47279 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 13 Feb 2019 06:29:56 +0000
-Subject: [PATCH] ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
-
-Fixes the following sparse warning:
-
-sound/soc/codecs/cros_ec_codec.c:209:27: warning:
- symbol 'cros_ec_dai' was not declared. Should it be static?
-
-Fixes: b291f42a3718 ("ASoC: cros_ec_codec: Add codec driver for Cros EC")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The rule file contains a rule for creating debian/control and
+other metadata - this is done similar to the 'deb-pkg' make rule,
+scripts/packaging/mkdebian.
 ---
- sound/soc/codecs/cros_ec_codec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .gitignore   |  1 +
+ debian/rules | 26 ++++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100755 debian/rules
 
-diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
-index b14100b6a939..99a3af8a15ff 100644
---- a/sound/soc/codecs/cros_ec_codec.c
-+++ b/sound/soc/codecs/cros_ec_codec.c
-@@ -206,7 +206,7 @@ static const struct snd_soc_dai_ops cros_ec_i2s_dai_ops = {
- 	.set_fmt = cros_ec_i2s_set_dai_fmt,
- };
+diff --git a/.gitignore b/.gitignore
+index a20ac26..2d8081f 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -68,6 +68,7 @@ modules.builtin
+ # Debian directory (make deb-pkg)
+ #
+ /debian/
++!/debian/rules
  
--struct snd_soc_dai_driver cros_ec_dai[] = {
-+static struct snd_soc_dai_driver cros_ec_dai[] = {
- 	{
- 		.name = "cros_ec_codec I2S",
- 		.id = 0,
+ #
+ # Snap directory (make snap-pkg)
+diff --git a/debian/rules b/debian/rules
+new file mode 100755
+index 0000000..eeb58f7
+--- /dev/null
++++ b/debian/rules
+@@ -0,0 +1,26 @@
++#!/usr/bin/make -f
++
++export MAKE
++export KERNELARCH           = $(shell $(MAKE) kernelarch)
++export KERNELRELEASE        = $(shell $(MAKE) kernelrelease)
++export KBUILD_DEBARCH       = $(shell dpkg-architecture -qDEB_HOST_ARCH)
++export KBUILD_BUILD_VERSION = $(shell $(MAKE) kernellocalversion)
++export KDEB_RULES           = debian/rules.auto
++export KDEB_SOURCENAME      = linux-source
++export ARCH                 = $(KERNELARCH)
++
++debian/control debian/changelong debian/arch debian/copyright:
++debian/control:
++	./scripts/package/mkdebian
++
++build:	debian/control
++	$(MAKE) KERNELRELEASE=$(KERNELRELEASE) ARCH=$(KERNELARCH) KBUILD_BUILD_VERSION=$(KBUILD_BUILD_VERSION) KBUILD_SRC+
++binary-arch:	debian/control
++	$(MAKE) KERNELRELEASE=$(KERNELRELEASE) ARCH=$(KERNELARCH) KBUILD_BUILD_VERSION=$(KBUILD_BUILD_VERSION) KBUILD_SRC= intdeb-pkg
++
++clean:
++	rm -rf debian/*tmp debian/files debian/changelog debian/control debian/copyright debian/rules.auto debian/arch
++	$(MAKE) clean
++
++binary: binary-arch
 -- 
-2.20.1
+1.9.1
