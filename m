@@ -1,37 +1,35 @@
-From: Leo Li <leoyang.li@nxp.com>
-Date: Tue, 19 Feb 2019 20:56:56 +0000
-Subject: RE: [PATCH][next] soc: fsl: dpio: fix memory leak of a struct qbman on error exit path
-Message-Id: <AM6PR04MB586338893C089939732092468F7C0@AM6PR04MB5863.eurprd04.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Feb 2019 13:13:11 +0000
+Subject: [PATCH] netfilter: conntrack: fix indentation issue
+Message-Id: <20190207131311.3725-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219140517.10709-1-colin.king@canonical.com>
-In-Reply-To: <20190219140517.10709-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Roy Pledge <roy.pledge@nxp.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBGZWJydWFyeSAxOSwgMjAx
-OSA4OjA1IEFNDQo+IFRvOiBSb3kgUGxlZGdlIDxyb3kucGxlZGdlQG54cC5jb20+OyBMZW8gTGkg
-PGxlb3lhbmcubGlAbnhwLmNvbT47DQo+IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9y
-c0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVj
-dDogW1BBVENIXVtuZXh0XSBzb2M6IGZzbDogZHBpbzogZml4IG1lbW9yeSBsZWFrIG9mIGEgc3Ry
-dWN0IHFibWFuIG9uDQo+IGVycm9yIGV4aXQgcGF0aA0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtp
-bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IEN1cnJlbnRseSB0aGUgZXJyb3Ig
-Y2hlY2sgZm9yIGEgbnVsbCByZWcgbGVha3MgYSBzdHJ1Y3QgcWJtYW4gdGhhdCB3YXMNCj4gYWxs
-b2NhdGVkIGVhcmxpZXIuIEZpeCB0aGlzIGJ5IGtmcmVlJ2luZyBwIG9uIHRoZSBlcnJvciBleGl0
-IHBhdGguDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
-YW5vbmljYWwuY29tPg0KDQpBcHBsaWVkIGZvciBuZXh0LiAgVGhhbmtzLg0KDQo+IC0tLQ0KPiAg
-ZHJpdmVycy9zb2MvZnNsL2RwaW8vcWJtYW4tcG9ydGFsLmMgfCAxICsNCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL2ZzbC9k
-cGlvL3FibWFuLXBvcnRhbC5jDQo+IGIvZHJpdmVycy9zb2MvZnNsL2RwaW8vcWJtYW4tcG9ydGFs
-LmMNCj4gaW5kZXggMGJkZGI4NWMwYWU1Li41YTczMzk3YWU3OWUgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvc29jL2ZzbC9kcGlvL3FibWFuLXBvcnRhbC5jDQo+ICsrKyBiL2RyaXZlcnMvc29jL2Zz
-bC9kcGlvL3FibWFuLXBvcnRhbC5jDQo+IEBAIC0xODAsNiArMTgwLDcgQEAgc3RydWN0IHFibWFu
-X3N3cCAqcWJtYW5fc3dwX2luaXQoY29uc3Qgc3RydWN0DQo+IHFibWFuX3N3cF9kZXNjICpkKQ0K
-PiAgCXJlZyA9IHFibWFuX3JlYWRfcmVnaXN0ZXIocCwgUUJNQU5fQ0lOSF9TV1BfQ0ZHKTsNCj4g
-IAlpZiAoIXJlZykgew0KPiAgCQlwcl9lcnIoInFibWFuOiB0aGUgcG9ydGFsIGlzIG5vdCBlbmFi
-bGVkIVxuIik7DQo+ICsJCWtmcmVlKHApOw0KPiAgCQlyZXR1cm4gTlVMTDsNCj4gIAl9DQo+IA0K
-PiAtLQ0KPiAyLjIwLjENCg0K
+From: Colin Ian King <colin.king@canonical.com>
+
+A statement in an if block is not indented correctly. Fix this.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netfilter/nf_conntrack_netlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+index 8071bb04a849..349b42a65c8a 100644
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -2675,7 +2675,7 @@ static int ctnetlink_exp_dump_mask(struct sk_buff *skb,
+ 	ret = ctnetlink_dump_tuples_ip(skb, &m);
+ 	if (ret >= 0) {
+ 		l4proto = nf_ct_l4proto_find(tuple->dst.protonum);
+-	ret = ctnetlink_dump_tuples_proto(skb, &m, l4proto);
++		ret = ctnetlink_dump_tuples_proto(skb, &m, l4proto);
+ 	}
+ 	rcu_read_unlock();
+ 
+-- 
+2.20.1
