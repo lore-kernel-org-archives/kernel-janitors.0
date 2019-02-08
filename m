@@ -1,36 +1,59 @@
-From: Trond Myklebust <trondmy@hammerspace.com>
-Date: Thu, 21 Feb 2019 22:40:52 +0000
-Subject: Re: [PATCH 15/20] NFS: drop useless LIST_HEAD
-Message-Id: <81b0b3c72ebb7fc97c3166d945f82ee4184ed657.camel@hammerspace.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Feb 2019 16:03:33 +0000
+Subject: [PATCH] gma500: fix some indentation issues
+Message-Id: <20190208160333.24637-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
-         <1545555435-24576-16-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1545555435-24576-16-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>
-Cc: "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gU3VuLCAyMDE4LTEyLTIzIGF0IDA5OjU3ICswMTAwLCBKdWxpYSBMYXdhbGwgd3JvdGU6DQo+
-IERyb3AgTElTVF9IRUFEIHdoZXJlIHRoZSB2YXJpYWJsZSBpdCBkZWNsYXJlcyBoYXMgbmV2ZXIN
-Cj4gYmVlbiB1c2VkLg0KPiANCj4gVGhlIHNlbWFudGljIHBhdGNoIHRoYXQgZml4ZXMgdGhpcyBw
-cm9ibGVtIGlzIGFzIGZvbGxvd3M6DQo+IChodHRwOi8vY29jY2luZWxsZS5saXA2LmZyLykNCj4g
-DQo+IC8vIDxzbXBsPg0KPiBAQA0KPiBpZGVudGlmaWVyIHg7DQo+IEBADQo+IC0gTElTVF9IRUFE
-KHgpOw0KPiAgIC4uLiB3aGVuICE9IHgNCj4gLy8gPC9zbXBsPg0KPiANCj4gRml4ZXM6IDBlMjAx
-NjJlZDFlOSAoIk5GU3Y0LjEgVXNlIE1EUyBhdXRoIGZsYXZvciBmb3IgZGF0YSBzZXJ2ZXINCj4g
-Y29ubmVjdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6IEp1bGlhIExhd2FsbCA8SnVsaWEuTGF3YWxs
-QGxpcDYuZnI+DQo+IA0KPiAtLS0NCj4gU3VjY2Vzc2Z1bGx5IDAtZGF5IHRlc3RlZCBvbiAxNTEg
-Y29uZmlndXJhdGlvbnMuDQo+IA0KPiAgZnMvbmZzL25mczRjbGllbnQuYyB8ICAgIDEgLQ0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9mcy9uZnMv
-bmZzNGNsaWVudC5jIGIvZnMvbmZzL25mczRjbGllbnQuYw0KPiBpbmRleCAyNTQ4NDA1ZGExZjcu
-LjczNWMxMDU2YTkxYyAxMDA2NDQNCj4gLS0tIGEvZnMvbmZzL25mczRjbGllbnQuYw0KPiArKysg
-Yi9mcy9uZnMvbmZzNGNsaWVudC5jDQo+IEBAIC0xNDUsNyArMTQ1LDYgQEAgc3RhdGljIHZvaWQN
-Cj4gIG5mczRfc2h1dGRvd25fZHNfY2xpZW50cyhzdHJ1Y3QgbmZzX2NsaWVudCAqY2xwKQ0KPiAg
-ew0KPiAgCXN0cnVjdCBuZnM0X2RzX3NlcnZlciAqZHNzOw0KPiAtCUxJU1RfSEVBRChzaHV0ZG93
-bl9saXN0KTsNCj4gIA0KPiAgCXdoaWxlICghbGlzdF9lbXB0eSgmY2xwLT5jbF9kc19jbGllbnRz
-KSkgew0KPiAgCQlkc3MgPSBsaXN0X2VudHJ5KGNscC0+Y2xfZHNfY2xpZW50cy5uZXh0LA0KPiAN
-Cg0KVGhhbmtzIEp1bGlhISBBcHBsaWVkIHRvIG15IGxpbnV4LW5leHQgYnJhbmNoIGZvciBpbmNs
-dXNpb24gaW4gdGhlIDUuMQ0KbWVyZ2Ugd2luZG93Lg0KDQotLSANClRyb25kIE15a2xlYnVzdA0K
-TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0
-QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg=
+From: Colin Ian King <colin.king@canonical.com>
+
+There are several statements that are indented incorrectly. Fix these.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/gma500/cdv_intel_dp.c | 5 ++---
+ drivers/gpu/drm/gma500/mid_bios.c     | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+index 90ed20083009..52b18410fdef 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+@@ -1528,8 +1528,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *encoder)
+ 	clock_recovery = false;
+ 
+ 	DRM_DEBUG_KMS("Start train\n");
+-		reg = DP | DP_LINK_TRAIN_PAT_1;
+-
++	reg = DP | DP_LINK_TRAIN_PAT_1;
+ 
+ 	for (;;) {
+ 		/* Use intel_dp->train_set[0] to set the voltage and pre emphasis values */
+@@ -1604,7 +1603,7 @@ cdv_intel_dp_complete_link_train(struct gma_encoder *encoder)
+ 	channel_eq = false;
+ 
+ 	DRM_DEBUG_KMS("\n");
+-		reg = DP | DP_LINK_TRAIN_PAT_2;
++	reg = DP | DP_LINK_TRAIN_PAT_2;
+ 
+ 	for (;;) {
+ 
+diff --git a/drivers/gpu/drm/gma500/mid_bios.c b/drivers/gpu/drm/gma500/mid_bios.c
+index 237041a37532..0b47c1b202db 100644
+--- a/drivers/gpu/drm/gma500/mid_bios.c
++++ b/drivers/gpu/drm/gma500/mid_bios.c
+@@ -63,7 +63,7 @@ static void mid_get_fuse_settings(struct drm_device *dev)
+ 		 dev_priv->iLVDS_enable ? "LVDS display" : "MIPI display");
+ 
+ 	 /* Prevent runtime suspend at start*/
+-	 if (dev_priv->iLVDS_enable) {
++	if (dev_priv->iLVDS_enable) {
+ 		dev_priv->is_lvds_on = true;
+ 		dev_priv->is_mipi_on = false;
+ 	} else {
+-- 
+2.20.1
