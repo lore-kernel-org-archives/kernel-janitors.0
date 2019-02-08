@@ -1,29 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 01 Feb 2019 12:27:31 +0000
-Subject: Re: [PATCH] wlcore: clean up an indentation issue
-Message-Id: <20190201122731.2F68660867@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Feb 2019 15:52:59 +0000
+Subject: [PATCH] usb: host: oxu210hp-hcd: fix indentation issue
+Message-Id: <20190208155259.11702-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190118231231.31577-1-colin.king@canonical.com>
-In-Reply-To: <20190118231231.31577-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Tony Lindgren <tony@atomide.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a goto statement that is missing a tab for indentation. Fix this.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+A statement is indented too deeply, fix this by removing a tab.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/host/oxu210hp-hcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-112ec26fcdc5 wlcore: clean up an indentation issue
-
+diff --git a/drivers/usb/host/oxu210hp-hcd.c b/drivers/usb/host/oxu210hp-hcd.c
+index c5e6e8d0b5ef..f06a291f05f8 100644
+--- a/drivers/usb/host/oxu210hp-hcd.c
++++ b/drivers/usb/host/oxu210hp-hcd.c
+@@ -1323,7 +1323,7 @@ static struct list_head *qh_urb_transaction(struct oxu_hcd *oxu,
+ 	}
+ 
+ 	/* by default, enable interrupt on urb completion */
+-		qtd->hw_token |= cpu_to_le32(QTD_IOC);
++	qtd->hw_token |= cpu_to_le32(QTD_IOC);
+ 	return head;
+ 
+ cleanup:
 -- 
-https://patchwork.kernel.org/patch/10771801/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
