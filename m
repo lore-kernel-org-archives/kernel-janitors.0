@@ -1,29 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 20 Feb 2019 17:55:11 +0000
-Subject: Re: [PATCH][next] rtlwifi: rtl8192ce: fix typo, "PairwiseENcAlgorithm" -> "PairwiseEncAlgorithm"
-Message-Id: <20190220175512.00096607EF@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Feb 2019 09:00:09 +0000
+Subject: [PATCH] rsi: fix a typo in a debug message
+Message-Id: <20190209090009.GA4865@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190220092727.17119-1-colin.king@canonical.com>
-In-Reply-To: <20190220092727.17119-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Cc: Siva Rebbagondla <siva8118@gmail.com>, linux-wireless@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+There is a \b (backspace) character in the message that wasn't intended.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is an uppercase 'N' that should be a lowercase 'n', fix this.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-0421dd4167ec rtlwifi: rtl8192ce: fix typo, "PairwiseENcAlgorithm" -> "PairwiseEncAlgorithm"
-
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index aded1ae4fad5..1dbc0fbbef3f 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -285,7 +285,7 @@ static void rsi_mac80211_cancel_hw_scan(struct ieee80211_hw *hw,
+ 			common->bgscan_en = false;
+ 		info.aborted = false;
+ 		ieee80211_scan_completed(adapter->hw, &info);
+-		rsi_dbg(INFO_ZONE, "Back ground scan cancelled\b\n");
++		rsi_dbg(INFO_ZONE, "Back ground scan cancelled\n");
+ 	}
+ 	common->hwscan = NULL;
+ 	mutex_unlock(&common->mutex);
 -- 
-https://patchwork.kernel.org/patch/10821751/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
