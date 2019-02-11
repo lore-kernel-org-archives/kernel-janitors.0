@@ -1,29 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Feb 2019 07:48:01 +0000
-Subject: Re: [PATCH] fs/coda: get rid of CODA_ALLOC()
-Message-Id: <20190214074801.GC2304@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Feb 2019 13:34:15 +0000
+Subject: [PATCH][next] RDMA/bnxt_re: fix or'ing of data into an uninitialized struct member
+Message-Id: <20190211133415.9020-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190214065848.GB21768@kadam>
- <alpine.DEB.2.21.1902140804170.2466@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1902140804170.2466@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, codalist@telemann.coda.cs.cmu.edu, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 08:04:43AM +0100, Julia Lawall wrote:
-> 
-> 
-> On Thu, 14 Feb 2019, Dan Carpenter wrote:
-> 
-> > These days we have kvzalloc() so we can delete CODA_ALLOC().
-> 
-> Maybe it would be better to get rid fo CODA_FREE as well?
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Actually, you're right.  CODA_FREE() is especially weird  without a
-CODA_ALLOC().  But let me send that as a second patch.
+The struct member comp_mask has not been initialized however a bit
+pattern is being bitwise or'd into the member and hence other bit
+fields in comp_mask may contain any garbage from the stack. Fix this
+by making the bitwise or into an assignment.
 
-regards,
-dan carpenter
+Fixes: 95b86d1c91ad ("RDMA/bnxt_re: Update kernel user abi to pass chip context")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index 1d7469e23cde..de5cb9a61a78 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -3720,7 +3720,7 @@ struct ib_ucontext *bnxt_re_alloc_ucontext(struct ib_device *ibdev,
+ 	}
+ 	spin_lock_init(&uctx->sh_lock);
+ 
+-	resp.comp_mask |= BNXT_RE_UCNTX_CMASK_HAVE_CCTX;
++	resp.comp_mask = BNXT_RE_UCNTX_CMASK_HAVE_CCTX;
+ 	chip_met_rev_num = rdev->chip_ctx.chip_num;
+ 	chip_met_rev_num |= ((u32)rdev->chip_ctx.chip_rev & 0xFF) <<
+ 			     BNXT_RE_CHIP_ID0_CHIP_REV_SFT;
+-- 
+2.20.1
