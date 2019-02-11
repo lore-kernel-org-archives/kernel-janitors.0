@@ -1,52 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Feb 2019 18:45:45 +0000
-Subject: [PATCH] vmw_balloon: release lock on error in vmballoon_reset()
-Message-Id: <20190211184545.GC22106@kadam>
+From: Nadav Amit <namit@vmware.com>
+Date: Mon, 11 Feb 2019 19:12:40 +0000
+Subject: Re: [PATCH] vmw_balloon: release lock on error in vmballoon_reset()
+Message-Id: <A3173F98-AE61-48DF-8AA8-6757C3C086F7@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190211184545.GC22106@kadam>
+In-Reply-To: <20190211184545.GC22106@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julien Freche <jfreche@vmware.com>, Xavier Deguillard <xdeguillard@vmware.com>, Nadav Amit <namit@vmware.com>
-Cc: "VMware, Inc." <pv-drivers@vmware.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Julien Freche <jfreche@vmware.com>, Xavier Deguillard <xdeguillard@vmware.com>, Pv-drivers <Pv-drivers@vmware.com>, Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We added some locking to this function but forgot to drop the lock on
-these two error paths.  This bug would lead to an immediate deadlock.
-
-Fixes: c7b3690fb152 ("vmw_balloon: stats rework")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/misc/vmw_balloon.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 6542a7711cac..ad807d5a3141 100644
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1330,7 +1330,7 @@ static void vmballoon_reset(struct vmballoon *b)
- 	vmballoon_pop(b);
- 
- 	if (vmballoon_send_start(b, VMW_BALLOON_CAPABILITIES))
--		return;
-+		goto unlock;
- 
- 	if ((b->capabilities & VMW_BALLOON_BATCHED_CMDS) != 0) {
- 		if (vmballoon_init_batching(b)) {
-@@ -1341,7 +1341,7 @@ static void vmballoon_reset(struct vmballoon *b)
- 			 * The guest will retry in one second.
- 			 */
- 			vmballoon_send_start(b, 0);
--			return;
-+			goto unlock;
- 		}
- 	} else if ((b->capabilities & VMW_BALLOON_BASIC_CMDS) != 0) {
- 		vmballoon_deinit_batching(b);
-@@ -1357,6 +1357,7 @@ static void vmballoon_reset(struct vmballoon *b)
- 	if (vmballoon_send_guest_id(b))
- 		pr_err("failed to send guest ID to the host\n");
- 
-+unlock:
- 	up_write(&b->conf_sem);
- }
- 
--- 
-2.17.1
+PiBPbiBGZWIgMTEsIDIwMTksIGF0IDEwOjQ1IEFNLCBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVu
+dGVyQG9yYWNsZS5jb20+IHdyb3RlOg0KPiANCj4gV2UgYWRkZWQgc29tZSBsb2NraW5nIHRvIHRo
+aXMgZnVuY3Rpb24gYnV0IGZvcmdvdCB0byBkcm9wIHRoZSBsb2NrIG9uDQo+IHRoZXNlIHR3byBl
+cnJvciBwYXRocy4gIFRoaXMgYnVnIHdvdWxkIGxlYWQgdG8gYW4gaW1tZWRpYXRlIGRlYWRsb2Nr
+Lg0KPiANCj4gRml4ZXM6IGM3YjM2OTBmYjE1MiAoInZtd19iYWxsb29uOiBzdGF0cyByZXdvcmsi
+KQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5j
+b20+DQoNCkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQpSZXZpZXdlZC1ieTogTmFkYXYgQW1p
+dCA8bmFtaXRAdm13YXJlLmNvbT4NCg0KLS0NCg0KWWVzLCBJIHNjcmV3ZWQgdXAuIFRoYW5rcyBm
+b3IgY2F0Y2hpbmcgaXQhDQoNCknigJlsbCBnbyB0byBjaGVjayB3aHkgbXkgZXJyb3IgaW5qZWN0
+aW9uIHRlc3RzIGRpZG7igJl0IGNhdGNoIGl0Lg0KDQo
