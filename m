@@ -1,34 +1,34 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 19 Feb 2019 15:14:50 +0000
-Subject: Re: [PATCH] libertas_tf: remove set but not used variable 'flags'
-Message-Id: <20190219151450.2A3F9608D2@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Feb 2019 18:32:10 +0000
+Subject: [PATCH] btrfs: drop the lock on error in btrfs_dev_replace_cancel()
+Message-Id: <20190211183209.GA13934@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190213014917.164506-1-yuehaibing@huawei.com>
-In-Reply-To: <20190213014917.164506-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Colin Ian King <colin.king@canonical.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Anand Jain <anand.jain@oracle.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+We should drop the lock on this error path.  This is from static
+analysis and I don't know if it's possible to hit this error path in
+real life.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/marvell/libertas_tf/main.c: In function 'lbtf_rx':
-> drivers/net/wireless/marvell/libertas_tf/main.c:554:15: warning:
->  variable 'flags' set but not used [-Wunused-but-set-variable]
-> 
-> It never used and can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Steve deRosier <derosier@cal-sierra.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/btrfs/dev-replace.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-e97cb6ea71b0 libertas_tf: remove set but not used variable 'flags'
-
+diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+index 13863354ff9d..ee193c5222b2 100644
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -862,6 +862,7 @@ int btrfs_dev_replace_cancel(struct btrfs_fs_info *fs_info)
+ 			btrfs_destroy_dev_replace_tgtdev(tgt_device);
+ 		break;
+ 	default:
++		up_write(&dev_replace->rwsem);
+ 		result = -EINVAL;
+ 	}
+ 
 -- 
-https://patchwork.kernel.org/patch/10808997/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
