@@ -1,71 +1,52 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 18 Feb 2019 15:15:43 +0000
-Subject: [PATCH v2 -next] staging: rtl8192e: Remove set but not used variables 'broad_addr, stype'
-Message-Id: <20190218151543.145958-1-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Feb 2019 18:45:45 +0000
+Subject: [PATCH] vmw_balloon: release lock on error in vmballoon_reset()
+Message-Id: <20190211184545.GC22106@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218123359.83746-1-yuehaibing@huawei.com>
-In-Reply-To: <20190218123359.83746-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Himadri Pandya <himadri18.07@gmail.com>, "David S. Miller" <davem@davemloft.net>, Colin Ian King <colin.king@canonical.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julien Freche <jfreche@vmware.com>, Xavier Deguillard <xdeguillard@vmware.com>, Nadav Amit <namit@vmware.com>
+Cc: "VMware, Inc." <pv-drivers@vmware.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+We added some locking to this function but forgot to drop the lock on
+these two error paths.  This bug would lead to an immediate deadlock.
 
-drivers/staging/rtl8192e/rtl8192e/rtl_core.c: In function '_rtl92e_tx':
-drivers/staging/rtl8192e/rtl8192e/rtl_core.c:1732:28: warning:
- variable 'broad_addr' set but not used [-Wunused-but-set-variable]
-
-drivers/staging/rtl8192e/rtl8192e/rtl_core.c:1731:24: warning:
- variable 'stype' set but not used [-Wunused-but-set-variable]
-
-This remove unnessesary bool variable 'multi_addr, broad_addr, uni_addr'
-Also 'stype' never used and  can be removed.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: c7b3690fb152 ("vmw_balloon: stats rework")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2: remove unnessesary bool variable 'multi_addr,uni_addr'
----
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ drivers/misc/vmw_balloon.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-index c145b689175c..253f1911a3f4 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -1728,8 +1728,7 @@ static short _rtl92e_tx(struct net_device *dev, struct sk_buff *skb)
- 				    MAX_DEV_ADDR_SIZE);
- 	struct tx_desc *pdesc = NULL;
- 	struct rtllib_hdr_1addr *header = NULL;
--	u16 fc = 0, type = 0, stype = 0;
--	bool  multi_addr = false, broad_addr = false, uni_addr = false;
-+	u16 fc = 0, type = 0;
- 	u8 *pda_addr = NULL;
- 	int   idx;
- 	u32 fwinfo_size = 0;
-@@ -1747,22 +1746,14 @@ static short _rtl92e_tx(struct net_device *dev, struct sk_buff *skb)
- 	header = (struct rtllib_hdr_1addr *)(((u8 *)skb->data) + fwinfo_size);
- 	fc = le16_to_cpu(header->frame_ctl);
- 	type = WLAN_FC_GET_TYPE(fc);
--	stype = WLAN_FC_GET_STYPE(fc);
- 	pda_addr = header->addr1;
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index 6542a7711cac..ad807d5a3141 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -1330,7 +1330,7 @@ static void vmballoon_reset(struct vmballoon *b)
+ 	vmballoon_pop(b);
  
- 	if (is_broadcast_ether_addr(pda_addr))
--		broad_addr = true;
-+		priv->stats.txbytesbroadcast += skb->len - fwinfo_size;
- 	else if (is_multicast_ether_addr(pda_addr))
--		multi_addr = true;
--	else
--		uni_addr = true;
--
--	if (uni_addr)
--		priv->stats.txbytesunicast += skb->len - fwinfo_size;
--	else if (multi_addr)
- 		priv->stats.txbytesmulticast += skb->len - fwinfo_size;
- 	else
--		priv->stats.txbytesbroadcast += skb->len - fwinfo_size;
-+		priv->stats.txbytesunicast += skb->len - fwinfo_size;
+ 	if (vmballoon_send_start(b, VMW_BALLOON_CAPABILITIES))
+-		return;
++		goto unlock;
  
- 	spin_lock_irqsave(&priv->irq_th_lock, flags);
- 	ring = &priv->tx_ring[tcb_desc->queue_index];
+ 	if ((b->capabilities & VMW_BALLOON_BATCHED_CMDS) != 0) {
+ 		if (vmballoon_init_batching(b)) {
+@@ -1341,7 +1341,7 @@ static void vmballoon_reset(struct vmballoon *b)
+ 			 * The guest will retry in one second.
+ 			 */
+ 			vmballoon_send_start(b, 0);
+-			return;
++			goto unlock;
+ 		}
+ 	} else if ((b->capabilities & VMW_BALLOON_BASIC_CMDS) != 0) {
+ 		vmballoon_deinit_batching(b);
+@@ -1357,6 +1357,7 @@ static void vmballoon_reset(struct vmballoon *b)
+ 	if (vmballoon_send_guest_id(b))
+ 		pr_err("failed to send guest ID to the host\n");
+ 
++unlock:
+ 	up_write(&b->conf_sem);
+ }
+ 
+-- 
+2.17.1
