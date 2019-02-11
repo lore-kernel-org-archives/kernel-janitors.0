@@ -1,24 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Feb 2019 18:42:36 +0000
-Subject: Re: [PATCH] btrfs: Silence a static checker locking warning
-Message-Id: <20190211183231.GA5436@kadam>
+Date: Mon, 11 Feb 2019 18:45:14 +0000
+Subject: [PATCH] f2fs: don't allow negative ->write_io_size_bits
+Message-Id: <20190211184514.GA22212@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190209090254.GC4865@kadam>
- <20190211163612.GW2900@suse.cz>
-In-Reply-To: <20190211163612.GW2900@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dsterba@suse.cz, Chris Mason <clm@fb.com>, Jeff Mahoney <jeffm@suse.com>, Josef Bacik <josef@toxicpanda.com>, kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Feb 11, 2019 at 05:36:13PM +0100, David Sterba wrote:
-> > I have re-written the code though to make it cleaner and
-> > to silence the static checkers.
-> 
-> Maybe there's something new the static checker needs to learn.
+We put an upper bound on ->write_io_size_bits but we don't have a lower
+bound.
 
-Gar.  Yes.  You're right.  I hadn't thought about that read locks could
-nest.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3ec11d392a5e..2db2d38e2aca 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -586,7 +586,7 @@ static int parse_options(struct super_block *sb, char *options)
+ 		case Opt_io_size_bits:
+ 			if (args->from && match_int(args, &arg))
+ 				return -EINVAL;
+-			if (arg > __ilog2_u32(BIO_MAX_PAGES)) {
++			if (arg < 0 || arg > __ilog2_u32(BIO_MAX_PAGES)) {
+ 				f2fs_msg(sb, KERN_WARNING,
+ 					"Not support %d, larger than %d",
+ 					1 << arg, BIO_MAX_PAGES);
+-- 
+2.17.1
