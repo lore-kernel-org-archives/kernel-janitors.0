@@ -1,63 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Feb 2019 13:20:43 +0000
-Subject: [PATCH 12/12] drivers: firmware: psci: add missing of_node_put after of_device_is_available
-Message-Id: <1550928043-14889-13-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Feb 2019 13:51:18 +0000
+Subject: [PATCH] drm/nouveau/falcon: fix a few indentation issues
+Message-Id: <20190212135118.8498-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add an of_node_put when a tested device node is not available.
+From: Colin Ian King <colin.king@canonical.com>
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+There are a few statements that are indented incorrectly. Fix these.
 
-// <smpl>
-@@
-identifier f;
-local idexpression e;
-expression x;
-@@
-
-e = f(...);
-... when != of_node_put(e)
-    when != x = e
-    when != e = x
-    when any
-if (<+...of_device_is_available(e)...+>) {
-  ... when != of_node_put(e)
-(
-  return e;
-|
-+ of_node_put(e);
-  return ...;
-)
-}
-// </smpl>
-
-Fixes: d09a0011ec0d5 ("drivers: psci: Allow PSCI node to be disabled")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/firmware/psci.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff -u -p a/drivers/firmware/psci.c b/drivers/firmware/psci.c
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -677,8 +677,10 @@ int __init psci_dt_init(void)
+diff --git a/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c b/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c
+index 771e16a16267..a8bee1e046aa 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c
++++ b/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c
+@@ -269,7 +269,7 @@ cmd_write(struct nvkm_msgqueue *priv, struct nvkm_msgqueue_hdr *cmd,
+ 		commit = false;
+ 	}
  
- 	np = of_find_matching_node_and_match(NULL, psci_of_match, &matched_np);
+-	   cmd_queue_close(priv, queue, commit);
++	cmd_queue_close(priv, queue, commit);
  
--	if (!np || !of_device_is_available(np))
-+	if (!np || !of_device_is_available(np)) {
-+		of_node_put(np);
- 		return -ENODEV;
-+	}
+ 	return ret;
+ }
+@@ -347,7 +347,7 @@ nvkm_msgqueue_post(struct nvkm_msgqueue *priv, enum msgqueue_msg_priority prio,
+ 	ret = cmd_write(priv, cmd, queue);
+ 	if (ret) {
+ 		seq->state = SEQ_STATE_PENDING;
+-		      msgqueue_seq_release(priv, seq);
++		msgqueue_seq_release(priv, seq);
+ 	}
  
- 	init_fn = (psci_initcall_t)matched_np->data;
- 	return init_fn(np);
+ 	return ret;
+@@ -373,7 +373,7 @@ msgqueue_msg_handle(struct nvkm_msgqueue *priv, struct nvkm_msgqueue_hdr *hdr)
+ 	if (seq->completion)
+ 		complete(seq->completion);
+ 
+-	   msgqueue_seq_release(priv, seq);
++	msgqueue_seq_release(priv, seq);
+ 
+ 	return 0;
+ }
+-- 
+2.20.1
