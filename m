@@ -1,28 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Feb 2019 13:34:36 +0000
-Subject: Re: [PATCH] cifs: Clean up an error code in cifs_root_iget()
-Message-Id: <20190228133435.GB9806@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Feb 2019 11:22:33 +0000
+Subject: [PATCH][next] RDMA: fix allocation failure on pointer pd
+Message-Id: <20190212112233.25667-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190228052659.GA3253@kadam>
- <CAH2r5ms1+5Kj_qmWx3oww7Af_rfiCSBbkGos_gqieqH7jW98BQ@mail.gmail.com>
-In-Reply-To: <CAH2r5ms1+5Kj_qmWx3oww7Af_rfiCSBbkGos_gqieqH7jW98BQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>
+To: Leon Romanovsky <leonro@mellanox.com>, Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 11:44:14PM -0600, Steve French wrote:
-> Won't that change behavior and cause the success case (server returned
-> 0, and does support POSIX and &inode pointer is ok) to now return
-> -EINVAL.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-You're right.  I'm really sorry.  I don't know why I misread the code...
+The null check on an allocation failure on pd is currently checking
+if pd is non-null rather than null. Fix this by adding the missing !
+operator.
 
-Also looking at it now, this was a false positive in Smatch.  I have
-been working on that code in the past couple days and I don't have the
-warning in my latest build.
+Fixes: 21a428a019c9 ("RDMA: Handle PD allocations by IB/core")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+index a18b88c95995..77c3678f4829 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -745,7 +745,7 @@ static int hns_roce_v1_rsv_lp_qp(struct hns_roce_dev *hr_dev)
+ 
+ 	ibdev = &hr_dev->ib_dev;
+ 	pd = rdma_zalloc_drv_obj(ibdev, ib_pd);
+-	if (pd)
++	if (!pd)
+ 		goto alloc_mem_failed;
+ 
+ 	pd->device  = ibdev;
+-- 
+2.20.1
