@@ -1,35 +1,40 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 17 Feb 2019 22:26:05 +0000
-Subject: [PATCH] [media] wl128x: fix spelling mistake: "Swtich" -> "Switch"
-Message-Id: <20190217222605.16182-1-colin.king@canonical.com>
+Date: Tue, 12 Feb 2019 13:34:44 +0000
+Subject: [PATCH] video: fbdev: savage: fix indentation issue
+Message-Id: <20190212133444.7669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: Antonino Daplas <adaplas@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a fmdbg debug message. Fix it.
+The indentation in the if statement is not indented correctly, fix
+this with extra level of indentation.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/radio/wl128x/fmdrv_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/savage/savagefb_driver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
-index 800d69c3f80b..e1c218b23d9e 100644
---- a/drivers/media/radio/wl128x/fmdrv_common.c
-+++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -908,7 +908,7 @@ static void fm_irq_afjump_setfreq(struct fmdev *fmdev)
- 	u16 frq_index;
- 	u16 payload;
+diff --git a/drivers/video/fbdev/savage/savagefb_driver.c b/drivers/video/fbdev/savage/savagefb_driver.c
+index c09d7426cd92..47b78f0138c3 100644
+--- a/drivers/video/fbdev/savage/savagefb_driver.c
++++ b/drivers/video/fbdev/savage/savagefb_driver.c
+@@ -2155,9 +2155,9 @@ static int savage_init_fb_info(struct fb_info *info, struct pci_dev *dev,
  
--	fmdbg("Swtich to %d KHz\n", fmdev->rx.stat_info.af_cache[fmdev->rx.afjump_idx]);
-+	fmdbg("Switch to %d KHz\n", fmdev->rx.stat_info.af_cache[fmdev->rx.afjump_idx]);
- 	frq_index = (fmdev->rx.stat_info.af_cache[fmdev->rx.afjump_idx] -
- 	     fmdev->rx.region.bot_freq) / FM_FREQ_MUL;
- 
+ 		err = fb_alloc_cmap(&info->cmap, NR_PALETTE, 0);
+ 		if (!err)
+-		info->flags |= FBINFO_HWACCEL_COPYAREA |
+-	                       FBINFO_HWACCEL_FILLRECT |
+-		               FBINFO_HWACCEL_IMAGEBLIT;
++			info->flags |= FBINFO_HWACCEL_COPYAREA |
++				       FBINFO_HWACCEL_FILLRECT |
++				       FBINFO_HWACCEL_IMAGEBLIT;
+ 	}
+ #endif
+ 	return err;
 -- 
 2.20.1
