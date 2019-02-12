@@ -1,25 +1,105 @@
-From: David Miller <davem@redhat.com>
-Date: Sun, 03 Feb 2019 04:15:04 +0000
-Subject: Re: [PATCH] atl1c: fix indentation issue on an if statement
-Message-Id: <20190202.201504.696180725335612120.davem@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Feb 2019 14:05:08 +0000
+Subject: [PATCH] drm/amdgpu: fix several indentation issues
+Message-Id: <20190212140508.9296-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190202114129.18275-1-colin.king@canonical.com>
-In-Reply-To: <20190202114129.18275-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat,  2 Feb 2019 11:41:29 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An if statement is indented one level too deep, fix this by removing
-> the extra tabs. Also add some spaces to the dev_warn arguments to clean
-> up checkpatch warnings.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There are several statements that are incorrectly indented. Fix these.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c              | 2 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c                | 2 +-
+ drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c               | 2 +-
+ drivers/gpu/drm/amd/amdgpu/si.c                      | 2 +-
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c | 2 +-
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c   | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+index bc62bf41b7e9..b65e18101108 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+@@ -207,7 +207,7 @@ int amdgpu_driver_load_kms(struct drm_device *dev, unsigned long flags)
+ 	if (!r) {
+ 		acpi_status = amdgpu_acpi_init(adev);
+ 		if (acpi_status)
+-		dev_dbg(&dev->pdev->dev,
++			dev_dbg(&dev->pdev->dev,
+ 				"Error during ACPI methods call\n");
+ 	}
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+index db443ec53d3a..bea32f076b91 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+@@ -2980,7 +2980,7 @@ static int dce_v6_0_pageflip_irq(struct amdgpu_device *adev,
+ 				 struct amdgpu_irq_src *source,
+ 				 struct amdgpu_iv_entry *entry)
+ {
+-		unsigned long flags;
++	unsigned long flags;
+ 	unsigned crtc_id;
+ 	struct amdgpu_crtc *amdgpu_crtc;
+ 	struct amdgpu_flip_work *works;
+diff --git a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
+index 221f26e50322..c69d51598cfe 100644
+--- a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
++++ b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
+@@ -32,7 +32,7 @@
+ 
+ static u32 nbio_v7_4_get_rev_id(struct amdgpu_device *adev)
+ {
+-    u32 tmp = RREG32_SOC15(NBIO, 0, mmRCC_DEV0_EPF0_STRAP0);
++	u32 tmp = RREG32_SOC15(NBIO, 0, mmRCC_DEV0_EPF0_STRAP0);
+ 
+ 	tmp &= RCC_DEV0_EPF0_STRAP0__STRAP_ATI_REV_ID_DEV0_F0_MASK;
+ 	tmp >>= RCC_DEV0_EPF0_STRAP0__STRAP_ATI_REV_ID_DEV0_F0__SHIFT;
+diff --git a/drivers/gpu/drm/amd/amdgpu/si.c b/drivers/gpu/drm/amd/amdgpu/si.c
+index 79c1a9bbcc21..9d8df68893b9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/si.c
++++ b/drivers/gpu/drm/amd/amdgpu/si.c
+@@ -1436,7 +1436,7 @@ static int si_common_early_init(void *handle)
+ 			AMD_CG_SUPPORT_UVD_MGCG |
+ 			AMD_CG_SUPPORT_HDP_LS |
+ 			AMD_CG_SUPPORT_HDP_MGCG;
+-			adev->pg_flags = 0;
++		adev->pg_flags = 0;
+ 		adev->external_rev_id = (adev->rev_id = 0) ? 1 :
+ 					(adev->rev_id = 1) ? 5 : 6;
+ 		break;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c
+index d138ddae563d..58f5589aaf12 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_powertune.c
+@@ -1211,7 +1211,7 @@ int smu7_power_control_set_level(struct pp_hwmgr *hwmgr)
+ 				hwmgr->platform_descriptor.TDPAdjustment :
+ 				(-1 * hwmgr->platform_descriptor.TDPAdjustment);
+ 
+-		 if (hwmgr->chip_id > CHIP_TONGA)
++		if (hwmgr->chip_id > CHIP_TONGA)
+ 			target_tdp = ((100 + adjust_percent) * (int)(cac_table->usTDP * 256)) / 100;
+ 		else
+ 			target_tdp = ((100 + adjust_percent) * (int)(cac_table->usConfigurableTDP * 256)) / 100;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
+index 0769b1ec562b..aad79affb081 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
+@@ -3456,7 +3456,7 @@ static int vega20_apply_clocks_adjust_rules(struct pp_hwmgr *hwmgr)
+ 	disable_mclk_switching = ((1 < hwmgr->display_config->num_display) &&
+                            !hwmgr->display_config->multi_monitor_in_sync) ||
+                             vblank_too_short;
+-    latency = hwmgr->display_config->dce_tolerable_mclk_in_active_latency;
++	latency = hwmgr->display_config->dce_tolerable_mclk_in_active_latency;
+ 
+ 	/* gfxclk */
+ 	dpm_table = &(data->dpm_table.gfx_table);
+-- 
+2.20.1
