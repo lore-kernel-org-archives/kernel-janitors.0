@@ -1,72 +1,40 @@
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Date: Thu, 07 Feb 2019 16:40:59 +0000
-Subject: [PATCH 4/4] debian: add generic rule file
-Message-Id: <1549557659-19137-5-git-send-email-info@metux.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Feb 2019 13:46:16 +0000
+Subject: [PATCH] regulator: max77802-regulator: fix indentation in if statement
+Message-Id: <20190212134616.8270-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1549557659-19137-1-git-send-email-info@metux.net>
-In-Reply-To: <1549557659-19137-1-git-send-email-info@metux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, yamada.masahiro@socionext.com, michal.lkml@markovi.net
+To: Javier Martinez Canillas <javier@dowhile0.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Adding a generic debian rule file, so we can build the directly
-via usual Debian package build tools (eg. git-buildpackage,
-dck-buildpackage, etc). It expects the .config file already
-placed in the source tree.
+From: Colin Ian King <colin.king@canonical.com>
 
-The rule file contains a rule for creating debian/control and
-other metadata - this is done similar to the 'deb-pkg' make rule,
-scripts/packaging/mkdebian.
+There are several lines in an if statement that are not indented
+correctly. Fix these by removing the tabs.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .gitignore   |  1 +
- debian/rules | 26 ++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
- create mode 100755 debian/rules
+ drivers/regulator/max77802-regulator.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/.gitignore b/.gitignore
-index a20ac26..2d8081f 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -68,6 +68,7 @@ modules.builtin
- # Debian directory (make deb-pkg)
- #
- /debian/
-+!/debian/rules
+diff --git a/drivers/regulator/max77802-regulator.c b/drivers/regulator/max77802-regulator.c
+index c30cf5c9f2de..ea7b50397300 100644
+--- a/drivers/regulator/max77802-regulator.c
++++ b/drivers/regulator/max77802-regulator.c
+@@ -248,9 +248,9 @@ static int max77802_set_ramp_delay_2bit(struct regulator_dev *rdev,
+ 	unsigned int ramp_value;
  
- #
- # Snap directory (make snap-pkg)
-diff --git a/debian/rules b/debian/rules
-new file mode 100755
-index 0000000..eeb58f7
---- /dev/null
-+++ b/debian/rules
-@@ -0,0 +1,26 @@
-+#!/usr/bin/make -f
-+
-+export MAKE
-+export KERNELARCH           = $(shell $(MAKE) kernelarch)
-+export KERNELRELEASE        = $(shell $(MAKE) kernelrelease)
-+export KBUILD_DEBARCH       = $(shell dpkg-architecture -qDEB_HOST_ARCH)
-+export KBUILD_BUILD_VERSION = $(shell $(MAKE) kernellocalversion)
-+export KDEB_RULES           = debian/rules.auto
-+export KDEB_SOURCENAME      = linux-source
-+export ARCH                 = $(KERNELARCH)
-+
-+debian/control debian/changelong debian/arch debian/copyright:
-+debian/control:
-+	./scripts/package/mkdebian
-+
-+build:	debian/control
-+	$(MAKE) KERNELRELEASE=$(KERNELRELEASE) ARCH=$(KERNELARCH) KBUILD_BUILD_VERSION=$(KBUILD_BUILD_VERSION) KBUILD_SRC+
-+binary-arch:	debian/control
-+	$(MAKE) KERNELRELEASE=$(KERNELRELEASE) ARCH=$(KERNELARCH) KBUILD_BUILD_VERSION=$(KBUILD_BUILD_VERSION) KBUILD_SRC= intdeb-pkg
-+
-+clean:
-+	rm -rf debian/*tmp debian/files debian/changelog debian/control debian/copyright debian/rules.auto debian/arch
-+	$(MAKE) clean
-+
-+binary: binary-arch
+ 	if (id > MAX77802_BUCK4) {
+-			dev_warn(&rdev->dev,
+-				 "%s: regulator: ramp delay not supported\n",
+-				 rdev->desc->name);
++		dev_warn(&rdev->dev,
++			 "%s: regulator: ramp delay not supported\n",
++			 rdev->desc->name);
+ 		return -EINVAL;
+ 	}
+ 	ramp_value = max77802_find_ramp_value(rdev, ramp_table_77802_2bit,
 -- 
-1.9.1
+2.20.1
