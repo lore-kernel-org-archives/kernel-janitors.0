@@ -1,56 +1,58 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 15 Feb 2019 13:02:05 +0000
-Subject: Re: [PATCH v5] Coccinelle: semantic code search for missing put_device()
-Message-Id: <alpine.DEB.2.20.1902151400440.3617@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-662799820-1550235726=:3617"
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 13 Feb 2019 15:40:53 +0000
+Subject: Re: [PATCH v3] coccinelle: semantic patch for missing put_device()
+Message-Id: <63ed130e-7764-3fc6-88b5-5965bf12c790@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550217319-40418-1-git-send-email-wen.yang99@zte.com.cn>
- <94e4b3e6-87a4-aea2-dfef-44d308f0fb4f@web.de>
-In-Reply-To: <94e4b3e6-87a4-aea2-dfef-44d308f0fb4f@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
-
---8323329-662799820-1550235726=:3617
+References: <1550039015-5587-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1550039015-5587-1-git-send-email-wen.yang99@zte.com.cn>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Xue Zhihong <xue.zhihong@zte.com.cn>, Wen Yang <yellowriver2010@hotmail.com>, Coccinelle <cocci@systeme.lip6.fr>
+
+> Reviewed-by: Markus Elfring <Markus.Elfring@web.de>
+
+I have got doubts that my code review comments qualify already
+for this tag.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=1f947a7a011fcceb14cb912f5481a53b18f1879a#n565
 
 
+> Cc: cocci@systeme.lip6.fr
 
-On Fri, 15 Feb 2019, Markus Elfring wrote:
+I assume that Masahiro Yamada will also need to get explicitly informed
+for a possible patch integration.
 
-> > +@search exists@
-> > +local idexpression id;
-> > +expression x,e,e1;
-> > +position p1,p2;
-> > +type T,T1,T2,T3;
-> > +@@
-> > +
-> > +id = of_find_device_by_node@p1(x)
-> > +... when != e = id
-> > +if (id == NULL || ...) { ... return ...; }
-> > +... when != put_device(&id->dev)
-> …
-> > +    when != if (id) { ... put_device(&id->dev) ... }
-> …
->
-> I would interpret this SmPL code in the way that the if statement
-> for the pointer check is “optional” in this line.
-> Is it an extra and redundant SmPL specification when the reference
-> release function could eventually be found just anywhere within
-> an implementation?
 
-The proposed when code is correct.  It is not redundant, because it checks
-for a particular control-flow pattern.
+> v3->v2:
+> - reduction of a bit of redundant C code within SmPL search specifications.
+> - consider the message construction without using the extra Python variable “msg”
 
-julia
+I find it nice that you would like to take this information into account.
 
->
->
-> Will a need evolve to develop a similar source code search approach
-> for safer resource management with other function combinations?
->
-> Regards,
-> Markus
->
---8323329-662799820-1550235726=:3617--
+
+> +    when != e4 = (T1)platform_get_drvdata(id)
+> +(
+> +
+
+Should a blank line be omitted at such a source code place?
+
+
+> +  return
+> +(    id
+> +|    (T2)dev_get_drvdata(&id->dev)
+> +|    (T3)platform_get_drvdata(id)
+> +);
+
+It seems that you would like to express a different coding style.
+Would anybody like to reconsider the position once more for semicolons
+in nested disjunctions for such a SmPL search specification?
+
+
+> +coccilib.report.print_report(p2[0], "ERROR: missing put_device; of_find_device_by_node on line " + p1[0].line + " and return without releasing.")
+
+Your willingness for such a rearrangement is interesting.
+How do you think about to move the long message parameter to a subsequent line?
+
+Regards,
+Markus
