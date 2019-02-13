@@ -1,27 +1,35 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 18 Feb 2019 08:40:57 +0000
-Subject: Re: [PATCH][V3] regulator: axp20x: remove a redundant null check on rdev
-Message-Id: <CAGb2v65JsDOMoUy8E1NbM8ccob7B110hZLbO18+3oS-i6m9w+A@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 13 Feb 2019 06:29:56 +0000
+Subject: [PATCH -next] ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
+Message-Id: <20190213062956.146536-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190215094554.28593-1-colin.king@canonical.com>
-In-Reply-To: <20190215094554.28593-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Cheng-Yi Chiang <cychiang@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Guenter Roeck <groeck@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Benson Leung <bleung@chromium.org>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 5:46 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently rdev is dereferenced when assigning desc before rdev is null
-> checked, this is leading to static analysis warnings.  However, rdev
-> can never be null, so the null check is redundant and can be removed.
->
-> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
->
-> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes the following sparse warning:
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+sound/soc/codecs/cros_ec_codec.c:209:27: warning:
+ symbol 'cros_ec_dai' was not declared. Should it be static?
+
+Fixes: b291f42a3718 ("ASoC: cros_ec_codec: Add codec driver for Cros EC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/codecs/cros_ec_codec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
+index b14100b6a939..99a3af8a15ff 100644
+--- a/sound/soc/codecs/cros_ec_codec.c
++++ b/sound/soc/codecs/cros_ec_codec.c
+@@ -206,7 +206,7 @@ static const struct snd_soc_dai_ops cros_ec_i2s_dai_ops = {
+ 	.set_fmt = cros_ec_i2s_set_dai_fmt,
+ };
+ 
+-struct snd_soc_dai_driver cros_ec_dai[] = {
++static struct snd_soc_dai_driver cros_ec_dai[] = {
+ 	{
+ 		.name = "cros_ec_codec I2S",
+ 		.id = 0,
