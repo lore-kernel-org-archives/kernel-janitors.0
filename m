@@ -1,27 +1,39 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 19 Feb 2019 15:08:36 +0000
-Subject: Re: [PATCH] rsi: fix a typo in a debug message
-Message-Id: <20190219150836.D43B9608CD@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 13 Feb 2019 13:53:35 +0000
+Subject: [PATCH] scsi: qla2xxx: remove redundant null check on pointer sess
+Message-Id: <20190213135335.4790-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190209090009.GA4865@kadam>
-In-Reply-To: <20190209090009.GA4865@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Siva Rebbagondla <siva8118@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> There is a \b (backspace) character in the message that wasn't intended.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The null check on pointer sess and the subsequent call is redundant
+as sess is null on all the the paths that lead to the out_term2 label.
+Hence the null check and the call can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Detected by CoverityScan, CID#1420663 ("Logically dead code")
 
-e8242ad03883 rsi: fix a typo in a debug message
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qla2xxx/qla_target.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 6b8c655d9eb4..9af329a5ed90 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -6396,8 +6396,6 @@ static void qlt_tmr_work(struct qla_tgt *tgt,
+ 	return;
+ 
+ out_term2:
+-	if (sess)
+-		ha->tgt.tgt_ops->put_sess(sess);
+ 	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
+ out_term:
+ 	qlt_send_term_exchange(ha->base_qpair, NULL, &prm->tm_iocb2, 1, 0);
 -- 
-https://patchwork.kernel.org/patch/10804409/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
