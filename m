@@ -1,49 +1,51 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Sat, 16 Feb 2019 00:53:18 +0000
-Subject: Re: [PATCH -next] drm: Remove set but not used variable 'gem'
-Message-Id: <87sgwowo3l.fsf@anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Feb 2019 08:59:31 +0000
+Subject: [PATCH 3/3 net-next] test_objagg: Uninitialized variable in error handling
+Message-Id: <20190213085931.GD14113@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190215033507.103232-1-yuehaibing@huawei.com>
-In-Reply-To: <20190215033507.103232-1-yuehaibing@huawei.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <20190213085650.GB14113@kadam>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+We need to set the error message on this path otherwise some of the
+callers, such as test_hints_case(), print from an uninitialized pointer.
 
-YueHaibing <yuehaibing@huawei.com> writes:
+We had a similar bug earlier and set "errmsg" to NULL in the caller,
+test_delta_action_item().  That code is no longer required so I have
+removed it.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/vc4/vc4_txp.c: In function 'vc4_txp_connector_atomic_check':
-> drivers/gpu/drm/vc4/vc4_txp.c:252:29: warning:
->  variable 'gem' set but not used [-Wunused-but-set-variable]
->   struct drm_gem_cma_object *gem;
->                              ^
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 9069a3817d82 ("lib: objagg: implement optimization hints assembly and use hints for object creation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/test_objagg.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Pushed to drm-misc-next. Thanks!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlxnXv4ACgkQtdYpNtH8
-nugKehAAjTju4cJ6fEKTf7p7P9vo0gKzTV8/A69CykEWmN3N8vBf6wGefP3BmlZw
-vFafNsFqv3Wrpa6EHfwxGiCOhpVaioNWhW/oTpzUvZvuAV6K59MwMxU+faAfOWXl
-0+n8HLmfrLlzdbcCPDl9JpFtUJA/mpLn4sDyTCvTCpLzk3G9yrqA0hArGrZ7lvHe
-s6/C9ViytSHpiGoGielkiC/r6WEqV3GO2RcK1ozOngCMrXiKdIYSySCYwXEYNUwz
-tnTIGURkQuw5DnN+N7qj0HvMDvku/3qS7LTXHaBOr6Bqd7qwCD3zlxRn+sFnbnZZ
-EfM6mdB9JyhEgMzpyRzECAH1bDyVSvD2oKgoOIcRQhEayB+zgK41SsOgYYOwRR65
-7obqVZcR1h3YME6GW1HVeoQiviSO9DT/5sfLAVz4sZF+b+uIy5AKd27c2KvxcniB
-oWYr6NCfvETyxt0FpefeNQiabRMEbhtu+Mk6uSfhN1z7hvUuSIRPnHxquIYT2pbW
-fwHu94qcH6Q/UmAmT+rLvI01/ChyXCijS1xEcq6IVKqDpavzIlhQYCUY/ImsA/rc
-Q2q6yH58d7x4wVndMv0iwmMWXSjLs16RGqO4W19eOr6RCH/PfOZFgVmaaFDVDPm1
-t8fMHaegXMUBb6Jrou33PxvAvdliSZDJWK4oCZochUGbLidfnMw=
-=Ydk4
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/lib/test_objagg.c b/lib/test_objagg.c
+index 3dd45777b13c..72c1abfa154d 100644
+--- a/lib/test_objagg.c
++++ b/lib/test_objagg.c
+@@ -745,8 +745,10 @@ static int check_expect_stats(struct objagg *objagg,
+ 	int err;
+ 
+ 	stats = objagg_stats_get(objagg);
+-	if (IS_ERR(stats))
++	if (IS_ERR(stats)) {
++		*errmsg = "objagg_stats_get() failed.";
+ 		return PTR_ERR(stats);
++	}
+ 	err = __check_expect_stats(stats, expect_stats, errmsg);
+ 	objagg_stats_put(stats);
+ 	return err;
+@@ -786,7 +788,6 @@ static int test_delta_action_item(struct world *world,
+ 	if (err)
+ 		goto errout;
+ 
+-	errmsg = NULL;
+ 	err = check_expect_stats(objagg, &action_item->expect_stats, &errmsg);
+ 	if (err) {
+ 		pr_err("Key %u: Stats: %s\n", action_item->key_id, errmsg);
+-- 
+2.17.1
