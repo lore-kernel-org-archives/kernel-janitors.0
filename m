@@ -1,27 +1,38 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Tue, 12 Feb 2019 16:13:29 +0000
-Subject: Re: [PATCH v2] floppy: check_events callback should not return a negative number
-Message-Id: <8bf64920-f0fe-b9da-8759-0d05a0fa39e0@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Feb 2019 08:56:50 +0000
+Subject: [PATCH 1/3 net-next] lib: objagg: Fix an error code in objagg_hints_get()
+Message-Id: <20190213085650.GB14113@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190129083404.47318-1-yuyufen@huawei.com>
-In-Reply-To: <20190129083404.47318-1-yuyufen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yufen Yu <yuyufen@huawei.com>, dan.carpenter@oracle.com
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: netdev@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>, kernel-janitors@vger.kernel.org
 
-On 1/29/19 1:34 AM, Yufen Yu wrote:
-> floppy_check_events() is supposed to return bit flags to say which
-> events occured. We should return zero to say that no event flags are
-> set.  Only BIT(0) and BIT(1) are used in the caller. And .check_events
-> interface also expect to return an unsigned int value.
-> 
-> However, after commit a0c80efe5956, it may return -EINTR (-4u).
-> Here, both BIT(0) and BIT(1) are cleared. So this patch shouldn't
-> affect runtime, but it obviously is still worth fixing.
+We need to set the error code on this path otherwise we return
+ERR_PTR(0) which would result in a NULL dereference in the caller.
 
-Applied, thanks.
+Fixes: 9069a3817d82 ("lib: objagg: implement optimization hints assembly and use hints for object creation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/objagg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/lib/objagg.c b/lib/objagg.c
+index 781f41c3c47d..d552ec9c60ed 100644
+--- a/lib/objagg.c
++++ b/lib/objagg.c
+@@ -968,8 +968,10 @@ struct objagg_hints *objagg_hints_get(struct objagg *objagg,
+ 	if (err)
+ 		goto err_fillup_hints;
+ 
+-	if (WARN_ON(objagg_hints->node_count != objagg->obj_count))
++	if (WARN_ON(objagg_hints->node_count != objagg->obj_count)) {
++		err = -EINVAL;
+ 		goto err_node_count_check;
++	}
+ 
+ 	return objagg_hints;
+ 
 -- 
-Jens Axboe
+2.17.1
