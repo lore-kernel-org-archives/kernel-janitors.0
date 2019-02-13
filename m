@@ -1,31 +1,39 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Mon, 11 Feb 2019 22:35:28 +0000
-Subject: Re: [PATCH][next] RDMA/bnxt_re: fix or'ing of data into an uninitialized struct member
-Message-Id: <20190211223528.GA7770@ziepe.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Feb 2019 08:23:04 +0000
+Subject: [PATCH net] net: dsa: bcm_sf2: potential array overflow in bcm_sf2_sw_suspend()
+Message-Id: <20190213082304.GA14113@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190211133415.9020-1-colin.king@canonical.com>
-In-Reply-To: <20190211133415.9020-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: Vivien Didelot <vivien.didelot@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:34:15PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The struct member comp_mask has not been initialized however a bit
-> pattern is being bitwise or'd into the member and hence other bit
-> fields in comp_mask may contain any garbage from the stack. Fix this
-> by making the bitwise or into an assignment.
-> 
-> Fixes: 95b86d1c91ad ("RDMA/bnxt_re: Update kernel user abi to pass chip context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-By: Devesh Sharma <devesh.sharma@broadcom.com>
-> ---
->  drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The value of ->num_ports comes from bcm_sf2_sw_probe() and it is less
+than or equal to DSA_MAX_PORTS.  The ds->ports[] array is used inside
+the dsa_is_user_port() and dsa_is_cpu_port() functions.  The ds->ports[]
+array is allocated in dsa_switch_alloc() and it has ds->num_ports
+elements so this leads to a static checker warning about a potential out
+of bounds read.
 
-Applied to for-next thanks
+Fixes: 8cfa94984c9c ("net: dsa: bcm_sf2: add suspend/resume callbacks")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/dsa/bcm_sf2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jason
+diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
+index 5193da67dcdc..98696a88fa1c 100644
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -690,7 +690,7 @@ static int bcm_sf2_sw_suspend(struct dsa_switch *ds)
+ 	 * port, the other ones have already been disabled during
+ 	 * bcm_sf2_sw_setup
+ 	 */
+-	for (port = 0; port < DSA_MAX_PORTS; port++) {
++	for (port = 0; port < ds->num_ports; port++) {
+ 		if (dsa_is_user_port(ds, port) || dsa_is_cpu_port(ds, port))
+ 			bcm_sf2_port_disable(ds, port, NULL);
+ 	}
+-- 
+2.17.1
