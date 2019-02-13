@@ -1,36 +1,72 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 21 Feb 2019 10:46:36 +0000
-Subject: [PATCH][next] iio: st_accel: remove redundant unsigned less than zero check
-Message-Id: <20190221104636.1922-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 13 Feb 2019 11:53:29 +0000
+Subject: Applied "ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static" to the asoc tree
+Message-Id: <20190213115329.9F9DE1128158@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190213062956.146536-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190213062956.146536-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Girdwood <lgirdwood@gmail.com>, Liam@sirena.org.uk, Guenter Roeck <groeck@chromium.org>, Jaroslav@sirena.org.uk, Mark Brown <broonie@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, Cheng-Yi Chiang <cychiang@chromium.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-The check that variable val is less than zero is redundant since val
-is an unsigned int and hence can never be less than zero. Remove it.
+   ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From a4cbb465bcc98f1c5740c887d4be3a68f1a47279 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 13 Feb 2019 06:29:56 +0000
+Subject: [PATCH] ASoC: cros_ec_codec: Make symbol 'cros_ec_dai' static
+
+Fixes the following sparse warning:
+
+sound/soc/codecs/cros_ec_codec.c:209:27: warning:
+ symbol 'cros_ec_dai' was not declared. Should it be static?
+
+Fixes: b291f42a3718 ("ASoC: cros_ec_codec: Add codec driver for Cros EC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/iio/accel/st_accel_core.c | 2 +-
+ sound/soc/codecs/cros_ec_codec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/accel/st_accel_core.c b/drivers/iio/accel/st_accel_core.c
-index a3c0916479fa..9930edf423bf 100644
---- a/drivers/iio/accel/st_accel_core.c
-+++ b/drivers/iio/accel/st_accel_core.c
-@@ -992,7 +992,7 @@ static int apply_acpi_orientation(struct iio_dev *indio_dev,
- 			goto out;
+diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
+index b14100b6a939..99a3af8a15ff 100644
+--- a/sound/soc/codecs/cros_ec_codec.c
++++ b/sound/soc/codecs/cros_ec_codec.c
+@@ -206,7 +206,7 @@ static const struct snd_soc_dai_ops cros_ec_i2s_dai_ops = {
+ 	.set_fmt = cros_ec_i2s_set_dai_fmt,
+ };
  
- 		val = elements[i].integer.value;
--		if (val < 0 || val > 2)
-+		if (val > 2)
- 			goto out;
- 
- 		/* Avoiding full matrix multiplication, we simply reorder the
+-struct snd_soc_dai_driver cros_ec_dai[] = {
++static struct snd_soc_dai_driver cros_ec_dai[] = {
+ 	{
+ 		.name = "cros_ec_codec I2S",
+ 		.id = 0,
 -- 
 2.20.1
