@@ -1,19 +1,19 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 19 Feb 2019 15:50:22 +0000
-Subject: Applied "ASoC: dapm: Potential small memory leak in dapm_cnew_widget()" to the asoc tree
-Message-Id: <20190219155022.A1E3211284C2@debutante.sirena.org.uk>
+Date: Wed, 13 Feb 2019 11:53:33 +0000
+Subject: Applied "ASoC: cs35l36: Remove unused including <linux/version.h>" to the asoc tree
+Message-Id: <20190213115333.E6EA01128158@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219120427.GA26719@kadam>
-In-Reply-To: <20190219120427.GA26719@kadam>
+References: <20190213014332.148775-1-yuehaibing@huawei.com>
+In-Reply-To: <20190213014332.148775-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Mark Brown <broonie@kernel.org>, Brian Austin <brian.austin@cirrus.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org@alsa-project.org
 
 The patch
 
-   ASoC: dapm: Potential small memory leak in dapm_cnew_widget()
+   ASoC: cs35l36: Remove unused including <linux/version.h>
 
 has been applied to the asoc tree at
 
@@ -38,35 +38,30 @@ to this mail.
 Thanks,
 Mark
 
-From a6d9cef30eb11b2de8cbfed9065e3dc5b1f829a8 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 Feb 2019 15:04:27 +0300
-Subject: [PATCH] ASoC: dapm: Potential small memory leak in dapm_cnew_widget()
+From 51bef0f378f39ed0604296354b964e3919161396 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 13 Feb 2019 01:43:32 +0000
+Subject: [PATCH] ASoC: cs35l36: Remove unused including <linux/version.h>
 
-We should free "w" on the error path.
+Remove including <linux/version.h> that don't need it.
 
-Fixes: 199ed3e81c49 ("ASoC: dapm: fix use-after-free issue with dailink sname")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-dapm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/codecs/cs35l36.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index dea6fc2353e4..1ec06ef6d161 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -332,8 +332,10 @@ static inline struct snd_soc_dapm_widget *dapm_cnew_widget(
- 	 */
- 	if (_widget->sname) {
- 		w->sname = kstrdup_const(_widget->sname, GFP_KERNEL);
--		if (!w->sname)
-+		if (!w->sname) {
-+			kfree(w);
- 			return NULL;
-+		}
- 	}
- 	return w;
- }
+diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
+index 4f880a678812..e374fffb7e17 100644
+--- a/sound/soc/codecs/cs35l36.c
++++ b/sound/soc/codecs/cs35l36.c
+@@ -8,7 +8,6 @@
+ 
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/version.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
 -- 
 2.20.1
