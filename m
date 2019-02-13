@@ -1,68 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 02 Feb 2019 10:30:35 +0000
-Subject: [PATCH] scsi: mvsas: clean up a few indentation issues
-Message-Id: <20190202103035.16043-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 13 Feb 2019 06:29:44 +0000
+Subject: [PATCH -next] ASoC: mediatek: mt8183: make some functions static
+Message-Id: <20190213062944.146366-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, Shunli Wang <shunli.wang@mediatek.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes the following sparse warnings:
 
-There are a few statements that are not indented correctly,
-so fix these. Also add empty line between variable declaration and
-first statements in functions. Also remove whitespace between *
-and mvi_dev to clean up a cppcheck warning.
+sound/soc/mediatek/mt8183/mt8183-dai-i2s.c:966:5: warning:
+ symbol 'mt8183_dai_i2s_get_share' was not declared. Should it be static?
+sound/soc/mediatek/mt8183/mt8183-dai-i2s.c:986:5: warning:
+ symbol 'mt8183_dai_i2s_set_priv' was not declared. Should it be static?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: a94aec035a12 ("ASoC: mediatek: mt8183: add platform driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/scsi/mvsas/mv_64xx.c | 3 ++-
- drivers/scsi/mvsas/mv_94xx.c | 3 ++-
- drivers/scsi/mvsas/mv_sas.c  | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
+ sound/soc/mediatek/mt8183/mt8183-dai-i2s.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/mvsas/mv_64xx.c b/drivers/scsi/mvsas/mv_64xx.c
-index b757d389e32f..2c699bc785a8 100644
---- a/drivers/scsi/mvsas/mv_64xx.c
-+++ b/drivers/scsi/mvsas/mv_64xx.c
-@@ -678,7 +678,8 @@ static u32 mvs_64xx_spi_read_data(struct mvs_info *mvi)
- static void mvs_64xx_spi_write_data(struct mvs_info *mvi, u32 data)
+diff --git a/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c b/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c
+index c25024f72e72..777e93d70bea 100644
+--- a/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c
++++ b/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c
+@@ -963,7 +963,7 @@ static const struct mtk_afe_i2s_priv mt8183_i2s_priv[DAI_I2S_NUM] = {
+ 	},
+ };
+ 
+-int mt8183_dai_i2s_get_share(struct mtk_base_afe *afe)
++static int mt8183_dai_i2s_get_share(struct mtk_base_afe *afe)
  {
- 	void __iomem *regs = mvi->regs_ex;
--	 iow32(SPI_DATA_REG_64XX, data);
-+
-+	iow32(SPI_DATA_REG_64XX, data);
+ 	struct mt8183_afe_private *afe_priv = afe->platform_priv;
+ 	const struct device_node *of_node = afe->dev->of_node;
+@@ -983,7 +983,7 @@ int mt8183_dai_i2s_get_share(struct mtk_base_afe *afe)
+ 	return 0;
  }
  
- 
-diff --git a/drivers/scsi/mvsas/mv_94xx.c b/drivers/scsi/mvsas/mv_94xx.c
-index eb5471bc7263..68b5b5f39a03 100644
---- a/drivers/scsi/mvsas/mv_94xx.c
-+++ b/drivers/scsi/mvsas/mv_94xx.c
-@@ -946,7 +946,8 @@ static u32 mvs_94xx_spi_read_data(struct mvs_info *mvi)
- static void mvs_94xx_spi_write_data(struct mvs_info *mvi, u32 data)
+-int mt8183_dai_i2s_set_priv(struct mtk_base_afe *afe)
++static int mt8183_dai_i2s_set_priv(struct mtk_base_afe *afe)
  {
- 	void __iomem *regs = mvi->regs_ex - 0x10200;
--	 mw32(SPI_RD_DATA_REG_94XX, data);
-+
-+	mw32(SPI_RD_DATA_REG_94XX, data);
- }
- 
- 
-diff --git a/drivers/scsi/mvsas/mv_sas.c b/drivers/scsi/mvsas/mv_sas.c
-index 311d23c727ce..e205e4057e6f 100644
---- a/drivers/scsi/mvsas/mv_sas.c
-+++ b/drivers/scsi/mvsas/mv_sas.c
-@@ -1422,7 +1422,7 @@ int mvs_I_T_nexus_reset(struct domain_device *dev)
- {
- 	unsigned long flags;
- 	int rc = TMF_RESP_FUNC_FAILED;
--    struct mvs_device * mvi_dev = (struct mvs_device *)dev->lldd_dev;
-+	struct mvs_device *mvi_dev = (struct mvs_device *)dev->lldd_dev;
- 	struct mvs_info *mvi = mvi_dev->mvi_info;
- 
- 	if (mvi_dev->dev_status != MVS_DEV_EH)
--- 
-2.20.1
+ 	struct mt8183_afe_private *afe_priv = afe->platform_priv;
+ 	struct mtk_afe_i2s_priv *i2s_priv;
