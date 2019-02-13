@@ -1,37 +1,38 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Thu, 07 Feb 2019 20:53:50 +0000
-Subject: Re: [PATCH] rtc: pm8xxx: fix unintended sign extension
-Message-Id: <20190207205350.GM4719@piout.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Feb 2019 08:58:20 +0000
+Subject: [PATCH 2/3 net-next] test_objagg: Test the correct variable
+Message-Id: <20190213085820.GC14113@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190206103102.19345-1-colin.king@canonical.com>
-In-Reply-To: <20190206103102.19345-1-colin.king@canonical.com>
+In-Reply-To: <20190213085650.GB14113@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/02/2019 10:31:02+0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-> the top bit of the u8 is set then the following conversion to an unsigned
-> long will sign extend the value causing the upper 32 bits to be set in
-> the result.
-> 
-> Fix this by casting the u8 value to an unsigned long before the shift.
-> 
-> Detected by CoverityScan, CID#1309693 ("Unintended sign extension")
-> 
-> Fixes: 9a9a54ad7aa2 ("drivers/rtc: add support for Qualcomm PMIC8xxx RTC")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-pm8xxx.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-Applied, thanks.
+There is a typo here.  We intended to check "objagg2" but we instead
+test "objagg" which is not an error pointer.
 
+Fixes: 9069a3817d82 ("lib: objagg: implement optimization hints assembly and use hints for object creation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/test_objagg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/test_objagg.c b/lib/test_objagg.c
+index 3744573b6365..3dd45777b13c 100644
+--- a/lib/test_objagg.c
++++ b/lib/test_objagg.c
+@@ -952,8 +952,8 @@ static int test_hints_case(const struct hints_case *hints_case)
+ 	}
+ 
+ 	objagg2 = objagg_create(&delta_ops, hints, &world2);
+-	if (IS_ERR(objagg))
+-		return PTR_ERR(objagg);
++	if (IS_ERR(objagg2))
++		return PTR_ERR(objagg2);
+ 
+ 	for (i = 0; i < hints_case->key_ids_count; i++) {
+ 		objagg_obj = world_obj_get(&world2, objagg2,
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.1
