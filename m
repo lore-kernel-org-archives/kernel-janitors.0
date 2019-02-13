@@ -1,38 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Feb 2019 14:30:55 +0000
-Subject: [PATCH][next] block: don't dereference a potential null bio pointer until is has been null checked
-Message-Id: <20190219143055.11633-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 13 Feb 2019 01:43:32 +0000
+Subject: [PATCH -next] ASoC: cs35l36: Remove unused including <linux/version.h>
+Message-Id: <20190213014332.148775-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brian Austin <brian.austin@cirrus.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Remove including <linux/version.h> that don't need it.
 
-The bio pointer is being null checked hence it can be potentially
-null, however earlier it is being derefefenced on the assignment of
-front_seg_size.  Avoid the dereference issue by only assigning
-front_seg_size after bios has been null sanity checked.
-
-Fixes: dcebd755926b ("block: use bio_for_each_bvec() to compute multi-page bvec count")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- block/blk-merge.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/cs35l36.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index bed065904677..1bec20fbe465 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -379,6 +379,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
- 		return 1;
- 	}
+diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
+index 4f880a678812..e374fffb7e17 100644
+--- a/sound/soc/codecs/cs35l36.c
++++ b/sound/soc/codecs/cs35l36.c
+@@ -8,7 +8,6 @@
  
-+	front_seg_size = bio->bi_seg_front_size;
- 	fbio = bio;
- 	seg_size = 0;
- 	nr_phys_segs = 0;
--- 
-2.20.1
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/version.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
