@@ -1,22 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 Feb 2019 18:02:25 +0000
-Subject: Re: [PATCH net-next] net: hns3: Check for allocation failure
-Message-Id: <20190201.100225.1478232033973170808.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Feb 2019 06:56:35 +0000
+Subject: [PATCH] atm: clean up vcc_seq_next()
+Message-Id: <20190214065635.GA21768@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190201083226.GF8459@kadam>
-In-Reply-To: <20190201083226.GF8459@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: yisen.zhuang@huawei.com, liuzhongzhu@huawei.com, salil.mehta@huawei.com, lipeng321@huawei.com, shenjian15@huawei.com, tanhuazhong@huawei.com, linyunsheng@huawei.com, liangfuyun1@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Joe Perches <joe@perches.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 1 Feb 2019 11:32:26 +0300
+It's confusing to call PTR_ERR(v).  The PTR_ERR() function is basically
+a fancy cast to long so it makes you wonder, was IS_ERR() intended?  But
+that doesn't make sense because vcc_walk() doesn't return error
+pointers.
 
-> We should return -ENOMEM if the kcalloc() fails.
-> 
-> Fixes: d174ea75c96a ("net: hns3: add statistics for PFC frames and MAC control frame")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch doesn't affect runtime, it's just a cleanup.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/atm/proc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/atm/proc.c b/net/atm/proc.c
+index 0b0495a41bbe..d79221fd4dae 100644
+--- a/net/atm/proc.c
++++ b/net/atm/proc.c
+@@ -134,7 +134,8 @@ static void vcc_seq_stop(struct seq_file *seq, void *v)
+ static void *vcc_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+ 	v = vcc_walk(seq, 1);
+-	*pos += !!PTR_ERR(v);
++	if (v)
++		(*pos)++;
+ 	return v;
+ }
+ 
+-- 
+2.17.1
