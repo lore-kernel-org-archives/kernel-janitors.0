@@ -1,49 +1,36 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 20 Feb 2019 12:56:14 +0000
-Subject: [PATCH -next] mptfusion: remove set but not used variable 'req_idx, frameOffset'
-Message-Id: <20190220125614.47474-1-yuehaibing@huawei.com>
+Date: Thu, 14 Feb 2019 08:50:30 +0000
+Subject: [PATCH v2 -next] swiotlb: drop pointless static qualifier in swiotlb_create_debugfs()
+Message-Id: <20190214090408.76071-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190214014147.108653-1-yuehaibing@huawei.com>
+In-Reply-To: <20190214014147.108653-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/message/fusion/mptspi.c: In function 'mptspi_writeIOCPage4':
-drivers/message/fusion/mptspi.c:262:9: warning:
- variable 'frameOffset' set but not used [-Wunused-but-set-variable]
-
-drivers/message/fusion/mptspi.c:261:9: warning:
- variable 'req_idx' set but not used [-Wunused-but-set-variable]
-
-They're never used and can be removed.
+There is no need to have the 'struct dentry *d_swiotlb_usage' variable
+static since new value always be assigned before use it.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/message/fusion/mptspi.c | 5 -----
- 1 file changed, 5 deletions(-)
+v2: fix patch title
+---
+ kernel/dma/swiotlb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/message/fusion/mptspi.c b/drivers/message/fusion/mptspi.c
-index 7172b0b16bdd..eabc4de5816c 100644
---- a/drivers/message/fusion/mptspi.c
-+++ b/drivers/message/fusion/mptspi.c
-@@ -258,8 +258,6 @@ mptspi_writeIOCPage4(MPT_SCSI_HOST *hd, u8 channel , u8 id)
- 	IOCPage4_t		*IOCPage4Ptr;
- 	MPT_FRAME_HDR		*mf;
- 	dma_addr_t		 dataDma;
--	u16			 req_idx;
--	u32			 frameOffset;
- 	u32			 flagsLength;
- 	int			 ii;
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index a7b53786db9f..02fa517c47d9 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -689,7 +689,7 @@ swiotlb_dma_supported(struct device *hwdev, u64 mask)
  
-@@ -276,9 +274,6 @@ mptspi_writeIOCPage4(MPT_SCSI_HOST *hd, u8 channel , u8 id)
- 	 */
- 	pReq = (Config_t *)mf;
+ static int __init swiotlb_create_debugfs(void)
+ {
+-	static struct dentry *d_swiotlb_usage;
++	struct dentry *d_swiotlb_usage;
+ 	struct dentry *ent;
  
--	req_idx = le16_to_cpu(mf->u.frame.hwhdr.msgctxu.fld.req_idx);
--	frameOffset = ioc->req_sz - sizeof(IOCPage4_t);
--
- 	/* Complete the request frame (same for all requests).
- 	 */
- 	pReq->Action = MPI_CONFIG_ACTION_PAGE_WRITE_CURRENT;
+ 	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
