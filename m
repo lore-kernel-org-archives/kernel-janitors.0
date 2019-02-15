@@ -1,33 +1,46 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 28 Feb 2019 08:39:40 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8723be: Remove set but not used variable 'b_last_is_cur_rdlstate'
-Message-Id: <20190228083941.24EC26133A@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 Feb 2019 09:45:54 +0000
+Subject: [PATCH][V3] regulator: axp20x: remove a redundant null check on rdev
+Message-Id: <20190215094554.28593-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190227022321.7623-1-yuehaibing@huawei.com>
-In-Reply-To: <20190227022321.7623-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/realtek/rtlwifi/rtl8723be/dm.c: In function 'rtl8723be_dm_check_edca_turbo':
-> drivers/net/wireless/realtek/rtlwifi/rtl8723be/dm.c:998:7: warning:
->  variable 'b_last_is_cur_rdlstate' set but not used [-Wunused-but-set-variable]
-> 
-> It's never used and can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Currently rdev is dereferenced when assigning desc before rdev is null
+checked, this is leading to static analysis warnings.  However, rdev
+can never be null, so the null check is redundant and can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Detected by CoverityScan, CID#1476031 ("Dereference before null check")
 
-f32150565601 rtlwifi: rtl8723be: Remove set but not used variable 'b_last_is_cur_rdlstate'
+Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
+--
+
+V2: Fix 2nd occurrance of this thinko
+V3: Remove null check, Dan Carpenter noted that rdev can never be null.
+---
+ drivers/regulator/axp20x-regulator.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 6d081c8321a1..db1750df579d 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -372,9 +372,6 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
+ 	const int *slew_rates;
+ 	int rate_count = 0;
+ 
+-	if (!rdev)
+-		return -EINVAL;
+-
+ 	desc = rdev->desc;
+ 
+ 	switch (axp20x->variant) {
 -- 
-https://patchwork.kernel.org/patch/10830999/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
