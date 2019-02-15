@@ -1,30 +1,62 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 08 Feb 2019 15:31:43 +0000
-Subject: Re: [PATCH] rsi:  fix indentation issue with a code block
-Message-Id: <20190208153144.5945B60791@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 Feb 2019 15:11:53 +0000
+Subject: [PATCH][next] mlxsw: core: fix spelling mistake "temprature" -> "temperature"
+Message-Id: <20190215151153.17206-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190207121141.28336-1-colin.king@canonical.com>
-In-Reply-To: <20190207121141.28336-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Siva Rebbagondla <siva8118@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a block of code that is indented at the wrong level. Fix this
-> with extra tabbing.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is a spelling mistake in several dev_err messages, fix these.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-34025a1056a3 rsi: fix indentation issue with a code block
-
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
+index f1ada4cdbd6b..6956bbebe2f1 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
+@@ -208,7 +208,7 @@ static ssize_t mlxsw_hwmon_module_temp_show(struct device *dev,
+ 			    1);
+ 	err = mlxsw_reg_query(mlxsw_hwmon->core, MLXSW_REG(mtbr), mtbr_pl);
+ 	if (err) {
+-		dev_err(dev, "Failed to query module temprature sensor\n");
++		dev_err(dev, "Failed to query module temperature sensor\n");
+ 		return err;
+ 	}
+ 
+@@ -251,7 +251,7 @@ static ssize_t mlxsw_hwmon_module_temp_fault_show(struct device *dev,
+ 			    1);
+ 	err = mlxsw_reg_query(mlxsw_hwmon->core, MLXSW_REG(mtbr), mtbr_pl);
+ 	if (err) {
+-		dev_err(dev, "Failed to query module temprature sensor\n");
++		dev_err(dev, "Failed to query module temperature sensor\n");
+ 		return err;
+ 	}
+ 
+@@ -291,7 +291,7 @@ mlxsw_hwmon_module_temp_critical_show(struct device *dev,
+ 	err = mlxsw_env_module_temp_thresholds_get(mlxsw_hwmon->core, module,
+ 						   SFP_TEMP_HIGH_WARN, &temp);
+ 	if (err) {
+-		dev_err(dev, "Failed to query module temprature thresholds\n");
++		dev_err(dev, "Failed to query module temperature thresholds\n");
+ 		return err;
+ 	}
+ 
+@@ -314,7 +314,7 @@ mlxsw_hwmon_module_temp_emergency_show(struct device *dev,
+ 	err = mlxsw_env_module_temp_thresholds_get(mlxsw_hwmon->core, module,
+ 						   SFP_TEMP_HIGH_ALARM, &temp);
+ 	if (err) {
+-		dev_err(dev, "Failed to query module temprature thresholds\n");
++		dev_err(dev, "Failed to query module temperature thresholds\n");
+ 		return err;
+ 	}
+ 
 -- 
-https://patchwork.kernel.org/patch/10801013/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
