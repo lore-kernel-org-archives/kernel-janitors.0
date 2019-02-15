@@ -1,49 +1,72 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 01 Feb 2019 20:27:57 +0000
-Subject: Re: [PATCH][drm-next] drm/amd/amdgpu: fix spelling mistake "matech" -> "match"
-Message-Id: <CADnq5_ObHBu6=zZ3Lr0E1AvwwqA3bd8RCQyddc6n188karCTDQ@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 15 Feb 2019 07:11:18 +0000
+Subject: Re: [v4] coccinelle: semantic patch for missing put_device()
+Message-Id: <c7fc1e2e-306f-9c2f-e271-0c8de9128720@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190201104159.19215-1-colin.king@canonical.com>
-In-Reply-To: <20190201104159.19215-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+References: <201902151422261425412@zte.com.cn>
+ <alpine.DEB.2.21.1902150723110.2896@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1902150723110.2896@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: David Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Julia Lawall <julia.lawall@lip6.fr>, Wen Yang <wen.yang99@zte.com.cn>
+Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Cheng Shengyu <cheng.shengyu@zte.com.cn>, cocci@systeme.lip6.fr
 
-On Fri, Feb 1, 2019 at 5:42 AM Colin King <colin.king@canonical.com> wrote:
+>>>> In a function, for variables returned by calling of_find_device_by_node(),
+>>> Do variables really get returned?
+>>> The provided pointer should usually be stored somewhere.
+>>
+>> Thank you very much, we will consider this situation and  submit a next version to fix it.
 >
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a dev_err message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> I don't know what Markus is talking about here,
 
-Applied.  thanks!
+I find that my feedback contained details for two items.
 
-Alex
+1. I suggested another adjustment for a wording in the evolving
+   commit description.
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+2. Should any more case distinctions be taken into account for the data
+   storage of function return values so that the shown source code search
+   approach can become safer?
+
+
+> so I'm not sure that a change is needed.
+
+I am curious if there is a need for further clarifications then.
+
+
+>>>> + "ERROR: missing put_device;"
+>>> Will change confidence considerations result in another fine-tuning for this message?
+>>
+>> Thank you, we will change "ERROR" to "WARNING".
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-> index dac187454b33..2ae25095e501 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-> @@ -129,7 +129,7 @@ int amdgpu_xgmi_add_device(struct amdgpu_device *adev)
->         if (!hive) {
->                 ret = -EINVAL;
->                 dev_err(adev->dev,
-> -                       "XGMI: node 0x%llx, can not matech hive 0x%llx in the hive list.\n",
-> +                       "XGMI: node 0x%llx, can not match hive 0x%llx in the hive list.\n",
->                         adev->gmc.xgmi.node_id, adev->gmc.xgmi.hive_id);
->                 goto exit;
->         }
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> I think ERROR is fine.
+
+I have got a different software development view for the possible
+severity information.
+
+
+> If it is a real positive than it is a real problem.
+
+I can agree to this information.
+
+You specified also a precondition.
+How should be achieved that the source code analysis will not point
+false positives out?
+
+
+> Warning is for things that look ugly,
+
+I am also curious on how views will evolve around such ugliness.
+
+
+> but don't have any impact on the execution.
+
+I find such a restriction questionable.
+
+
+Would you like to share any more ideas for safe data flow analysis
+(eventually also together with your software)?
+
+Regards,
+Markus
