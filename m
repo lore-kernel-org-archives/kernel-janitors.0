@@ -1,70 +1,60 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 15 Feb 2019 09:52:32 +0000
-Subject: [PATCH][V2] scsi: qla2xxx: remove redundant null check on pointer sess
-Message-Id: <20190215095232.28852-1-colin.king@canonical.com>
+From: Himanshu Madhani <hmadhani@marvell.com>
+Date: Fri, 15 Feb 2019 22:38:59 +0000
+Subject: Re: [PATCH][V2] scsi: qla2xxx: remove redundant null check on pointer sess
+Message-Id: <80C50389-AFD5-474C-8737-F13B7E4E0B9D@marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190215095232.28852-1-colin.king@canonical.com>
+In-Reply-To: <20190215095232.28852-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "qla2xxx-upstream@qlogic.com" <qla2xxx-upstream@qlogic.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The null check on pointer sess and the subsequent call is redundant
-as sess is null on all the the paths that lead to the out_term2 label.
-Hence the null check and the call can be removed.  Also remove the
-redundant setting of sess to NULL as this is not required now.
-
-Detected by CoverityScan, CID#1420663 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-
-V2: Remove the redundant settings of sess to NULL, thanks to
-Dan Carpenter for spotting this.
-
----
- drivers/scsi/qla2xxx/qla_target.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 6b8c655d9eb4..33131446b327 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -6343,7 +6343,7 @@ static void qlt_tmr_work(struct qla_tgt *tgt,
- 	struct atio_from_isp *a = &prm->tm_iocb2;
- 	struct scsi_qla_host *vha = tgt->vha;
- 	struct qla_hw_data *ha = vha->hw;
--	struct fc_port *sess = NULL;
-+	struct fc_port *sess;
- 	unsigned long flags;
- 	uint8_t *s_id = NULL; /* to hide compiler warnings */
- 	int rc;
-@@ -6369,7 +6369,6 @@ static void qlt_tmr_work(struct qla_tgt *tgt,
- 			goto out_term2;
- 	} else {
- 		if (sess->deleted) {
--			sess = NULL;
- 			goto out_term2;
- 		}
- 
-@@ -6377,7 +6376,6 @@ static void qlt_tmr_work(struct qla_tgt *tgt,
- 			ql_dbg(ql_dbg_tgt_tmr, vha, 0xf020,
- 			    "%s: kref_get fail %8phC\n",
- 			     __func__, sess->port_name);
--			sess = NULL;
- 			goto out_term2;
- 		}
- 	}
-@@ -6396,8 +6394,6 @@ static void qlt_tmr_work(struct qla_tgt *tgt,
- 	return;
- 
- out_term2:
--	if (sess)
--		ha->tgt.tgt_ops->put_sess(sess);
- 	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
- out_term:
- 	qlt_send_term_exchange(ha->base_qpair, NULL, &prm->tm_iocb2, 1, 0);
--- 
-2.20.1
+SGkgQ29saW4sDQoNCu+7v09uIDIvMTUvMTksIDE6NTIgQU0sICJDb2xpbiBLaW5nIiA8Y29saW4u
+a2luZ0BjYW5vbmljYWwuY29tPiB3cm90ZToNCg0KICAgIEV4dGVybmFsIEVtYWlsDQogICAgDQog
+ICAgRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCiAgICAN
+CiAgICBUaGUgbnVsbCBjaGVjayBvbiBwb2ludGVyIHNlc3MgYW5kIHRoZSBzdWJzZXF1ZW50IGNh
+bGwgaXMgcmVkdW5kYW50DQogICAgYXMgc2VzcyBpcyBudWxsIG9uIGFsbCB0aGUgdGhlIHBhdGhz
+IHRoYXQgbGVhZCB0byB0aGUgb3V0X3Rlcm0yIGxhYmVsLg0KICAgIEhlbmNlIHRoZSBudWxsIGNo
+ZWNrIGFuZCB0aGUgY2FsbCBjYW4gYmUgcmVtb3ZlZC4gIEFsc28gcmVtb3ZlIHRoZQ0KICAgIHJl
+ZHVuZGFudCBzZXR0aW5nIG9mIHNlc3MgdG8gTlVMTCBhcyB0aGlzIGlzIG5vdCByZXF1aXJlZCBu
+b3cuDQogICAgDQogICAgRGV0ZWN0ZWQgYnkgQ292ZXJpdHlTY2FuLCBDSUQjMTQyMDY2MyAoIkxv
+Z2ljYWxseSBkZWFkIGNvZGUiKQ0KICAgIA0KICAgIFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBL
+aW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQogICAgLS0tDQogICAgDQogICAgVjI6IFJl
+bW92ZSB0aGUgcmVkdW5kYW50IHNldHRpbmdzIG9mIHNlc3MgdG8gTlVMTCwgdGhhbmtzIHRvDQog
+ICAgRGFuIENhcnBlbnRlciBmb3Igc3BvdHRpbmcgdGhpcy4NCiAgICANCiAgICAtLS0NCiAgICAg
+ZHJpdmVycy9zY3NpL3FsYTJ4eHgvcWxhX3RhcmdldC5jIHwgNiArLS0tLS0NCiAgICAgMSBmaWxl
+IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA1IGRlbGV0aW9ucygtKQ0KICAgIA0KICAgIGRpZmYg
+LS1naXQgYS9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmMgYi9kcml2ZXJzL3Njc2kv
+cWxhMnh4eC9xbGFfdGFyZ2V0LmMNCiAgICBpbmRleCA2YjhjNjU1ZDllYjQuLjMzMTMxNDQ2YjMy
+NyAxMDA2NDQNCiAgICAtLS0gYS9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmMNCiAg
+ICArKysgYi9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmMNCiAgICBAQCAtNjM0Myw3
+ICs2MzQzLDcgQEAgc3RhdGljIHZvaWQgcWx0X3Rtcl93b3JrKHN0cnVjdCBxbGFfdGd0ICp0Z3Qs
+DQogICAgICAgICAgICBzdHJ1Y3QgYXRpb19mcm9tX2lzcCAqYSA9ICZwcm0tPnRtX2lvY2IyOw0K
+ICAgICAgICAgICAgc3RydWN0IHNjc2lfcWxhX2hvc3QgKnZoYSA9IHRndC0+dmhhOw0KICAgICAg
+ICAgICAgc3RydWN0IHFsYV9od19kYXRhICpoYSA9IHZoYS0+aHc7DQogICAgLSAgICAgICBzdHJ1
+Y3QgZmNfcG9ydCAqc2VzcyA9IE5VTEw7DQogICAgKyAgICAgICBzdHJ1Y3QgZmNfcG9ydCAqc2Vz
+czsNCiAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7DQogICAgICAgICAgICB1aW50OF90
+ICpzX2lkID0gTlVMTDsgLyogdG8gaGlkZSBjb21waWxlciB3YXJuaW5ncyAqLw0KICAgICAgICAg
+ICAgaW50IHJjOw0KICAgIEBAIC02MzY5LDcgKzYzNjksNiBAQCBzdGF0aWMgdm9pZCBxbHRfdG1y
+X3dvcmsoc3RydWN0IHFsYV90Z3QgKnRndCwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBn
+b3RvIG91dF90ZXJtMjsNCiAgICAgICAgICAgIH0gZWxzZSB7DQogICAgICAgICAgICAgICAgICAg
+IGlmIChzZXNzLT5kZWxldGVkKSB7DQogICAgLSAgICAgICAgICAgICAgICAgICAgICAgc2VzcyA9
+IE5VTEw7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgZ290byBvdXRfdGVybTI7DQogICAg
+ICAgICAgICAgICAgICAgIH0NCiAgICANCiAgICBAQCAtNjM3Nyw3ICs2Mzc2LDYgQEAgc3RhdGlj
+IHZvaWQgcWx0X3Rtcl93b3JrKHN0cnVjdCBxbGFfdGd0ICp0Z3QsDQogICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgcWxfZGJnKHFsX2RiZ190Z3RfdG1yLCB2aGEsIDB4ZjAyMCwNCiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIiVzOiBrcmVmX2dldCBmYWlsICU4cGhDXG4iLA0KICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgX19mdW5jX18sIHNlc3MtPnBvcnRfbmFtZSk7
+DQogICAgLSAgICAgICAgICAgICAgICAgICAgICAgc2VzcyA9IE5VTEw7DQogICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgZ290byBvdXRfdGVybTI7DQogICAgICAgICAgICAgICAgICAgIH0NCiAg
+ICAgICAgICAgIH0NCiAgICBAQCAtNjM5Niw4ICs2Mzk0LDYgQEAgc3RhdGljIHZvaWQgcWx0X3Rt
+cl93b3JrKHN0cnVjdCBxbGFfdGd0ICp0Z3QsDQogICAgICAgICAgICByZXR1cm47DQogICAgDQog
+ICAgIG91dF90ZXJtMjoNCiAgICAtICAgICAgIGlmIChzZXNzKQ0KICAgIC0gICAgICAgICAgICAg
+ICBoYS0+dGd0LnRndF9vcHMtPnB1dF9zZXNzKHNlc3MpOw0KICAgICAgICAgICAgc3Bpbl91bmxv
+Y2tfaXJxcmVzdG9yZSgmaGEtPnRndC5zZXNzX2xvY2ssIGZsYWdzKTsNCiAgICAgb3V0X3Rlcm06
+DQogICAgICAgICAgICBxbHRfc2VuZF90ZXJtX2V4Y2hhbmdlKGhhLT5iYXNlX3FwYWlyLCBOVUxM
+LCAmcHJtLT50bV9pb2NiMiwgMSwgMCk7DQogICAgLS0NCiAgICAyLjIwLjENCiAgICANClRoYW5r
+cyBmb3IgdGhlIFBhdGNoLiBMb29rcyBnb29kDQoNCkFja2VkLWJ5OiBIaW1hbnNodSBNYWRoYW5p
+IDxobWFkaGFuaUBtYXJ2ZWxsLmNvbT4NCiAgICANCg0K
