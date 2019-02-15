@@ -1,56 +1,50 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 15 Feb 2019 15:38:22 +0000
+Date: Fri, 15 Feb 2019 21:42:59 +0000
 Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to "falling back"
-Message-Id: <20190215153822.oszldcxoxk2mssli@ninjato>
+Message-Id: <20190215214259.lijzlwaelm3najwr@ninjato>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6pztjuawutxj44df"
+Content-Type: multipart/mixed; boundary="cydg23admer3cmh5"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190215153126.18575-1-colin.king@canonical.com>
- <20190215153245.GA7374@ulmo>
- <da6cdd39-b021-7834-f3a4-46feceeb66c4@canonical.com>
-In-Reply-To: <da6cdd39-b021-7834-f3a4-46feceeb66c4@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190215153126.18575-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---6pztjuawutxj44df
+--cydg23admer3cmh5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 15, 2019 at 03:33:58PM +0000, Colin Ian King wrote:
-> On 15/02/2019 15:32, Thierry Reding wrote:
-> > On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> The phrasing in two dev_err messages is using fallbacking which
-> >> os less understandable than "falling back", so fix this up.
-> >=20
-> > os -> is, otherwise:
+On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 >=20
-> Oops, can that be fixed up when it's applied.
+> The phrasing in two dev_err messages is using fallbacking which
+> os less understandable than "falling back", so fix this up.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Yes.
+Applied to for-next, thanks!
 
 
---6pztjuawutxj44df
+--cydg23admer3cmh5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxm3OoACgkQFA3kzBSg
-KbZ2+A//V8yxCnyJ34e2GPkX+XQ9xnbos8BNwpHpU4ilnMujqO5Kxd5oJRX15PR7
-L7EniEzKHnXpHXO6Sfwl7Rr4K2fOmcobkjsHSISVZhMFcjkoAHkgldsbx2R0PUz2
-LcZcujSMXimHZktW+ypDwDS505WKsUm0fUkmW0+MCiEVCAPs+o4OutipbpQOz2jm
-e0SrlGjeeSWkb0/Sf3aXOKngCkAakRBW3uVZT1ddt2JNZK2+OsSrhxXd/BU8uCzq
-jB33DcO5aR+scdHoC8wB4dec8i96HD9D8yL9X9PDa/U8vhCNGe54dJKdLyDA8vVr
-MAdnZt/AGnYJ0PsINE9QG8NFafWul5Ovi4YOAR6hDP7Gbt1fGJs2QtUYPfsrnkPY
-nlvZUuPsjiwNGTkY52zqHG8wCKG+QMV8NhMlGLBOusGHD0N9Fmt3V0KcarYH9Pxd
-g7Ln1vwQqu8mM6gPPC+tWOEcGnyPD4oHeOIayzLWs3N2tJ4WFxc0OYZeFLABXFST
-TexeX/9BYxX4Z1U+WE/dgAslbAS+mhctaGTGOdifaQBHsxN92b7Nqbet1qoB60cT
-t952/VlgIx0jz2OKNFVHCK+2kUGfkAoXX9RASOhoi/6RFnO+qaSBxC2hZiq+lAkk
-OvZcuA5fLKDODePqq54W9Wzr4CF9iqIA5MpCGfgim2BRzKbRvFo=
-=+6Od
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxnMl4ACgkQFA3kzBSg
+KbbuyQ/+MbAm4ZxfTLByL3Bler1Blvc9fJOX5r3PFhmKT4oKXhC9i21188LEW7VY
+hXcoZT9xpQtBjzUpo+1M5SyHXBF60gY9CFbrogQ18qbyJxW5KfxIoJbwPHLRZ0kQ
+aawr+Qo3pBm8X/+NwMuSTlNxcUHN4jhNZ1Od1mwvmqln5O1WTVCXzNQYCrE3ifyi
+kLCL4/Y0FHjTZrYksUFMYUA3uYhoaKb8xBNW4qxrETclEJSEvne5MN+K4WIbO/90
++DDz+83dX1Xnn7Eyy5j1WQ+eRgswoKl8K9iOlCcXVlgejXgOCYthbdLGdQRqZdq8
+89BuXvZygaPNvaAoIhZ5xZmQc5z20g7pUOS3MghwSCwUELK2AweHd7CwSvaxz4YD
+ptm9vdwlvbHBnMT3TXjwLFdgtF/uLhpmcuXLv6VHx4e4LM7OMXvvRu+uOUOvpgX9
+g5pYhZRLT7+Xr6piQDZ1AYDGYrzH0WBM6VDz7uHq38I8JTWDNmrIhgA/QP3eqtqW
+J5wGxFdyz8yX+dTHCOtANTxjYNKgAMe1zCHYtvBSz6/eI6srZ0r/kN94sV9mlYwK
+AkoFzQoMgOFTJGGBkoHsmD+9uYoySbUpIukt+CmUCJo7/9aE8qGq656jz6tlZst+
++xao2NUDWhENDjEFWQdkxlShUDnd0UT1miMH43vCl6bp772RjtE=
+=3c33
 -----END PGP SIGNATURE-----
 
---6pztjuawutxj44df--
+--cydg23admer3cmh5--
