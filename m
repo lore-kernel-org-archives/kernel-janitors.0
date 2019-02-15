@@ -1,59 +1,47 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 28 Feb 2019 02:47:23 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'vbi_time_out'
-Message-Id: <CADnq5_McbtEZVjyrP+E1ORx8UKMhmPmK2C5rSmcbDCothx0g-w@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 15 Feb 2019 03:35:07 +0000
+Subject: [PATCH -next] drm: Remove set but not used variable 'gem'
+Message-Id: <20190215033507.103232-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190226054828.120809-1-yuehaibing@huawei.com>
-In-Reply-To: <20190226054828.120809-1-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+References: <1536646814-186429-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536646814-186429-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: Chunming Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "Gustavo A. R. Silva" <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "Deucher,
- Alexander" <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, "Quan, Evan" <evan.quan-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, Christian Koenig <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Applied.  thanks!
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Tue, Feb 26, 2019 at 12:36 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/amd/amdgpu/si_dpm.c: In function 'si_program_response_times':
-> drivers/gpu/drm/amd/amdgpu/si_dpm.c:4101:29: warning:
->  variable 'backbias_response_time' set but not used [-Wunused-but-set-variable]
->
-> It's never used since introduction in 841686df9f7d ("drm/amdgpu: add SI DPM
-> support (v4)"), so can be removed
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/si_dpm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/si_dpm.c b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-> index 41e01a7f57a4..d57e75e5c71f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-> @@ -4098,14 +4098,13 @@ static int si_notify_smc_display_change(struct amdgpu_device *adev,
->
->  static void si_program_response_times(struct amdgpu_device *adev)
->  {
-> -       u32 voltage_response_time, backbias_response_time, acpi_delay_time, vbi_time_out;
-> +       u32 voltage_response_time, acpi_delay_time, vbi_time_out;
->         u32 vddc_dly, acpi_dly, vbi_dly;
->         u32 reference_clock;
->
->         si_write_smc_soft_register(adev, SI_SMC_SOFT_REGISTER_mvdd_chg_time, 1);
->
->         voltage_response_time = (u32)adev->pm.dpm.voltage_response_time;
-> -       backbias_response_time = (u32)adev->pm.dpm.backbias_response_time;
->
->         if (voltage_response_time = 0)
->                 voltage_response_time = 1000;
->
->
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+drivers/gpu/drm/vc4/vc4_txp.c: In function 'vc4_txp_connector_atomic_check':
+drivers/gpu/drm/vc4/vc4_txp.c:252:29: warning:
+ variable 'gem' set but not used [-Wunused-but-set-variable]
+  struct drm_gem_cma_object *gem;
+                             ^
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/vc4/vc4_txp.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
+index aa279b5b0de7..afb1c4ec4f18 100644
+--- a/drivers/gpu/drm/vc4/vc4_txp.c
++++ b/drivers/gpu/drm/vc4/vc4_txp.c
+@@ -249,7 +249,6 @@ static int vc4_txp_connector_atomic_check(struct drm_connector *conn,
+ 					struct drm_connector_state *conn_state)
+ {
+ 	struct drm_crtc_state *crtc_state;
+-	struct drm_gem_cma_object *gem;
+ 	struct drm_framebuffer *fb;
+ 	int i;
+ 
+@@ -275,8 +274,6 @@ static int vc4_txp_connector_atomic_check(struct drm_connector *conn,
+ 	if (i = ARRAY_SIZE(drm_fmts))
+ 		return -EINVAL;
+ 
+-	gem = drm_fb_cma_get_gem_obj(fb, 0);
+-
+ 	/* Pitch must be aligned on 16 bytes. */
+ 	if (fb->pitches[0] & GENMASK(3, 0))
+ 		return -EINVAL;
