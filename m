@@ -1,53 +1,36 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Fri, 08 Feb 2019 09:52:07 +0000
-Subject: Re: [PATCH] drm/etnaviv: potential NULL dereference
-Message-Id: <CAH9NwWer6CsQCJwWvRRh173UZ_FveVk3dzyotcnsCkx4RBKUVQ@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 16 Feb 2019 01:20:55 +0000
+Subject: [PATCH -next] ASoC: samsung: i2s: Fix return value check in i2s_create_secondary_device()
+Message-Id: <20190216012055.79622-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190205090816.GA20168@kadam>
-In-Reply-To: <20190205090816.GA20168@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, The etnaviv authors <etnaviv@lists.freedesktop.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Russell King <linux+etnaviv@armlinux.org.uk>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Am Di., 5. Feb. 2019 um 10:09 Uhr schrieb Dan Carpenter
-<dan.carpenter@oracle.com>:
->
-> The etnaviv_gem_prime_get_sg_table() is supposed to return error
-> pointers.  Otherwise it can lead to a NULL dereference when it's called
-> from drm_gem_map_dma_buf().
->
-> Fixes: 5f4a4a73f437 ("drm/etnaviv: fix gem_prime_get_sg_table to return new SG table")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In case of error, the function platform_device_register_simple() returns
+ERR_PTR() and never returns NULL. The NULL test in the return value
+check should be replaced with IS_ERR().
 
-Reviewed-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+Fixes: 7196c64c7d0c ("ASoC: samsung: i2s: Restore support for the secondary PCM")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/samsung/i2s.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-> index 0566171f8df2..f21529e635e3 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-> @@ -15,7 +15,7 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
->         int npages = obj->size >> PAGE_SHIFT;
->
->         if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
-> -               return NULL;
-> +               return ERR_PTR(-EINVAL);
->
->         return drm_prime_pages_to_sg(etnaviv_obj->pages, npages);
->  }
-> --
-> 2.17.1
->
-
-
--- 
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 72f0cb7abb30..15844c00c3cd 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1342,8 +1342,8 @@ static int i2s_create_secondary_device(struct samsung_i2s_priv *priv)
+ 	int ret;
+ 
+ 	pdev = platform_device_register_simple("samsung-i2s-sec", -1, NULL, 0);
+-	if (!pdev)
+-		return -ENOMEM;
++	if (IS_ERR(pdev))
++		return PTR_ERR(pdev);
+ 
+ 	ret = device_attach(&pdev->dev);
+ 	if (ret < 0) {
