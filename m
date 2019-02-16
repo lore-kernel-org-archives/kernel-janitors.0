@@ -1,30 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 17 Feb 2019 23:32:31 +0000
-Subject: Re: [PATCH net-next] net: dsa: bcm_sf2: Remove set but not used variables 'v6_spec, v6_m_spec'
-Message-Id: <20190217.153231.2303870907333639025.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 16 Feb 2019 02:24:38 +0000
+Subject: [PATCH -next] media: vimc: remove set but not used variable 'frame_size'
+Message-Id: <20190216022438.32242-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190215023647.146445-1-yuehaibing@huawei.com>
-In-Reply-To: <20190215023647.146445-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Helen Koike <helen.koike@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 15 Feb 2019 02:36:47 +0000
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/dsa/bcm_sf2_cfp.c: In function 'bcm_sf2_cfp_ipv6_rule_set':
-> drivers/net/dsa/bcm_sf2_cfp.c:606:40: warning:
->  variable 'v6_m_spec' set but not used [-Wunused-but-set-variable]
-> drivers/net/dsa/bcm_sf2_cfp.c:606:30: warning:
->  variable 'v6_spec' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more after commit e4f7ef54cbd8 ("dsa: bcm_sf2: use flow_rule
-> infrastructure")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+drivers/media/platform/vimc/vimc-sensor.c: In function 'vimc_sen_process_frame':
+drivers/media/platform/vimc/vimc-sensor.c:208:15: warning:
+ variable 'frame_size' set but not used [-Wunused-but-set-variable]
 
-Applied, thanks.
+It's never used since introduction.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/media/platform/vimc/vimc-sensor.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+index 93961a1e694f..59195f262623 100644
+--- a/drivers/media/platform/vimc/vimc-sensor.c
++++ b/drivers/media/platform/vimc/vimc-sensor.c
+@@ -204,13 +204,6 @@ static void *vimc_sen_process_frame(struct vimc_ent_device *ved,
+ {
+ 	struct vimc_sen_device *vsen = container_of(ved, struct vimc_sen_device,
+ 						    ved);
+-	const struct vimc_pix_map *vpix;
+-	unsigned int frame_size;
+-
+-	/* Calculate the frame size */
+-	vpix = vimc_pix_map_by_code(vsen->mbus_format.code);
+-	frame_size = vsen->mbus_format.width * vpix->bpp *
+-		     vsen->mbus_format.height;
+ 
+ 	tpg_fill_plane_buffer(&vsen->tpg, 0, 0, vsen->frame);
+ 	return vsen->frame;
