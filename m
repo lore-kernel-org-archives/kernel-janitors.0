@@ -1,30 +1,34 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Thu, 14 Feb 2019 21:48:23 +0000
-Subject: Re: [PATCH -next] RDMA/iwpm: Remove set but not used variable 'msg_seq'
-Message-Id: <20190214214823.GA15690@ziepe.ca>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 16 Feb 2019 01:35:56 +0000
+Subject: [PATCH -next] ASoC: wm8741: Make function 'wm8741_mute' static
+Message-Id: <20190216013556.117839-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190214015710.131712-1-yuehaibing@huawei.com>
-In-Reply-To: <20190214015710.131712-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Sergej Sawazki <sergej@taudac.com>, Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, patches@opensource.cirrus.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 01:57:10AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/core/iwpm_util.c: In function 'iwpm_send_hello':
-> drivers/infiniband/core/iwpm_util.c:811:6: warning:
->  variable 'msg_seq' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in commit b0bad9ad514f ("RDMA/IWPM: Support
-> no port mapping requirements")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/infiniband/core/iwpm_util.c | 2 --
->  1 file changed, 2 deletions(-)
+Fixes the following sparse warning:
 
-applied to for-next, thanks
+sound/soc/codecs/wm8741.c:371:5: warning:
+ symbol 'wm8741_mute' was not declared. Should it be static?
 
-Jason
+Fixes: 36b1599340b5 ("ASoC: wm8741: Add digital mute callback")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/codecs/wm8741.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/wm8741.c b/sound/soc/codecs/wm8741.c
+index a4b8c459ea57..546ea735f534 100644
+--- a/sound/soc/codecs/wm8741.c
++++ b/sound/soc/codecs/wm8741.c
+@@ -368,7 +368,7 @@ static int wm8741_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ 	return 0;
+ }
+ 
+-int wm8741_mute(struct snd_soc_dai *codec_dai, int mute)
++static int wm8741_mute(struct snd_soc_dai *codec_dai, int mute)
+ {
+ 	struct snd_soc_component *component = codec_dai->component;
