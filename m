@@ -1,60 +1,42 @@
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 28 Feb 2019 17:44:45 +0000
-Subject: Re: [PATCH] tools/libbpf: signedness bug in btf_dedup_ref_type()
-Message-Id: <CAEf4Bzav1hBca6gQdxJH=TD33AP13d1V9xij8qP8TLWvQLkN5A@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 16 Feb 2019 03:36:18 +0000
+Subject: [PATCH -next] IB/qib: Remove unused variable 'locked'
+Message-Id: <20190216033618.116680-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190228054627.GC3253@kadam> <a34432d0-b838-c004-ef79-052cd50996c0@fb.com>
- <20190228133605.GC9806@kadam>
-In-Reply-To: <20190228133605.GC9806@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Yonghong Song <yhs@fb.com>, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andriin@fb.com>, Daniel Borkmann <daniel@iogearbox.net>, Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Feb 28, 2019 at 5:37 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Thu, Feb 28, 2019 at 06:58:29AM +0000, Yonghong Song wrote:
-> >
-> >
-> > On 2/27/19 9:46 PM, Dan Carpenter wrote:
-> > > The "ref_type_id" variable needs to be signed for the error handling
-> > > to work.
-> > >
-> > > Fixes: d5caef5b5655 ("btf: add BTF types deduplication algorithm")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > > This goes through the BPF tree probably, although it does apply to
-> > > net-next.
-> > >
-> > >   tools/lib/bpf/btf.c | 3 ++-
-> > >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > > index 68b50e9bbde1..8faed5386124 100644
-> > > --- a/tools/lib/bpf/btf.c
-> > > +++ b/tools/lib/bpf/btf.c
-> > > @@ -2326,7 +2326,8 @@ static int btf_dedup_ref_type(struct btf_dedup *d, __u32 type_id)
-> > >     struct btf_type *t, *cand;
-> > >     /* if we don't find equivalent type, then we are representative type */
-> > >     __u32 new_id = type_id;
-> > > -   __u32 h, ref_type_id;
-> > > +   __u32 h; > +    int ref_type_id;
-> >
-> > nit. Maybe you can change to
-> >       int ref_type_id;
-> >       __u32 h;
-> > to maintain kernel declaration reverse christmas tree convention?
-> >
->
-> Yes.  Thanks.  Let me resend.
->
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks for catching and fixing this! With Yonghong's suggestion, you can add:
+drivers/infiniband/hw/qib/qib_user_pages.c: In function 'qib_get_user_pages':
+drivers/infiniband/hw/qib/qib_user_pages.c:103:16: warning:
+ variable 'locked' set but not used [-Wunused-but-set-variable]
+ 
+It's never used since introduction.
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/hw/qib/qib_user_pages.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-> regards,
-> dan carpenter
->
+diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+index ef8bcf366ddc..a5be36c07451 100644
+--- a/drivers/infiniband/hw/qib/qib_user_pages.c
++++ b/drivers/infiniband/hw/qib/qib_user_pages.c
+@@ -100,12 +100,12 @@ int qib_map_page(struct pci_dev *hwdev, struct page *page, dma_addr_t *daddr)
+ int qib_get_user_pages(unsigned long start_page, size_t num_pages,
+ 		       struct page **p)
+ {
+-	unsigned long locked, lock_limit;
++	unsigned long lock_limit;
+ 	size_t got;
+ 	int ret;
+ 
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-	locked = atomic64_add_return(num_pages, &current->mm->pinned_vm);
++	atomic64_add_return(num_pages, &current->mm->pinned_vm);
+ 
+ 	if (num_pages > lock_limit && !capable(CAP_IPC_LOCK)) {
+ 		ret = -ENOMEM;
