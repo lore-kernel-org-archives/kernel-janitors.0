@@ -1,23 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 Feb 2019 17:59:33 +0000
-Subject: Re: [PATCH net] ethtool: remove unnecessary check in ethtool_get_regs()
-Message-Id: <20190201.095933.386906135442329993.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 16 Feb 2019 01:36:03 +0000
+Subject: [PATCH -next] rtc: wilco_ec: Make some functions static
+Message-Id: <20190216013603.117969-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190201082406.GA8459@kadam>
-In-Reply-To: <20190201082406.GA8459@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: linyunsheng@huawei.com, f.fainelli@gmail.com, wang6495@umn.edu, borisp@mellanox.com, ilyal@mellanox.com, ecree@solarflare.com, mkubecek@suse.cz, ynorov@caviumnetworks.com, jakub.kicinski@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Nick Crews <ncrews@chromium.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 1 Feb 2019 11:24:06 +0300
+Fixes the following sparse warnings:
 
-> We recently changed this function in commit f9fc54d313fa ("ethtool:
-> check the return value of get_regs_len") such that if "reglen" is zero
-> we return directly.  That means we can remove this condition as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/rtc/rtc-wilco-ec.c:72:5: warning:
+ symbol 'wilco_ec_rtc_read' was not declared. Should it be static?
+drivers/rtc/rtc-wilco-ec.c:106:5: warning:
+ symbol 'wilco_ec_rtc_write' was not declared. Should it be static?
 
-Applied to net-next, thanks.
+Fixes: 79c4ec4869b5 ("platform/chrome: wilco_ec: Add RTC driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/rtc/rtc-wilco-ec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+index 35cc56114c1c..e62bda0cb53e 100644
+--- a/drivers/rtc/rtc-wilco-ec.c
++++ b/drivers/rtc/rtc-wilco-ec.c
+@@ -69,7 +69,7 @@ struct ec_rtc_write {
+ 	u8 weekday;
+ } __packed;
+ 
+-int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
++static int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
+ 	u8 param = EC_CMOS_TOD_READ;
+@@ -103,7 +103,7 @@ int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+ 	return 0;
+ }
+ 
+-int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
++static int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
+ 	struct ec_rtc_write rtc;
