@@ -1,72 +1,33 @@
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 28 Feb 2019 11:17:01 +0000
-Subject: Re: [PATCH 05/12] tee: optee: add missing of_node_put after of_device_is_available
-Message-Id: <CAHUa44HdtbAocBgc3gj5RZZPQs_uf85XnDsgUKfGPuzi+H0Z7w@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 16 Feb 2019 09:47:10 +0000
+Subject: [PATCH net-next] cfg80211: pmsr: use eth_broadcast_addr() to assign broadcast address
+Message-Id: <20190216094710.127182-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr> <1550928043-14889-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: johannes@sipsolutions.net, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-Hi Julia,
-On Sat, Feb 23, 2019 at 2:58 PM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->
-> Add an of_node_put when a tested device node is not available.
->
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
->
-> // <smpl>
-> @@
-> identifier f;
-> local idexpression e;
-> expression x;
-> @@
->
-> e = f(...);
-> ... when != of_node_put(e)
->     when != x = e
->     when != e = x
->     when any
-> if (<+...of_device_is_available(e)...+>) {
->   ... when != of_node_put(e)
-> (
->   return e;
-> |
-> + of_node_put(e);
->   return ...;
-> )
-> }
-> // </smpl>
->
-> Fixes: db878f76b9ff ("tee: optee: take DT status property into account")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  drivers/tee/optee/core.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff -u -p a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-> --- a/drivers/tee/optee/core.c
-> +++ b/drivers/tee/optee/core.c
-> @@ -703,8 +703,10 @@ static int __init optee_driver_init(void
->                 return -ENODEV;
->
->         np = of_find_matching_node(fw_np, optee_match);
-> -       if (!np || !of_device_is_available(np))
-> +       if (!np || !of_device_is_available(np)) {
-> +               of_node_put(np);
->                 return -ENODEV;
-> +       }
->
->         optee = optee_probe(np);
->         of_node_put(np);
->
+This patch is to use eth_broadcast_addr() to assign broadcast address
+insetad of memset().
 
-Applied.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ net/wireless/pmsr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Jens
+diff --git a/net/wireless/pmsr.c b/net/wireless/pmsr.c
+index de9286703280..21139b82749f 100644
+--- a/net/wireless/pmsr.c
++++ b/net/wireless/pmsr.c
+@@ -258,7 +258,7 @@ int nl80211_pmsr_start(struct sk_buff *skb, struct genl_info *info)
+ 	} else {
+ 		memcpy(req->mac_addr, nla_data(info->attrs[NL80211_ATTR_MAC]),
+ 		       ETH_ALEN);
+-		memset(req->mac_addr_mask, 0xff, ETH_ALEN);
++		eth_broadcast_addr(req->mac_addr_mask);
+ 	}
+ 
+ 	idx = 0;
+-- 
+2.20.1
