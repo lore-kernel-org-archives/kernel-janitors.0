@@ -1,46 +1,44 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 18 Feb 2019 08:45:14 +0000
-Subject: [PATCH -next] drm/radeon: remove set but not used variable 'vbi_time_out'
-Message-Id: <20190218084514.194011-1-yuehaibing@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 16 Feb 2019 08:19:55 +0000
+Subject: [PATCH] net: sched: using kfree_rcu() to simplify the code
+Message-Id: <20190216081955.93243-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1541678023-143862-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1541678023-143862-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch
-Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The callback function of call_rcu() just calls a kfree(), so we
+can use kfree_rcu() instead of call_rcu() + callback function.
 
-drivers/gpu/drm/radeon/si_dpm.c: In function 'si_program_response_times':
-drivers/gpu/drm/radeon/si_dpm.c:3640:29: warning:
- variable 'backbias_response_time' set but not used [-Wunused-but-set-variable]
-
-It never used since introduction.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/gpu/drm/radeon/si_dpm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/sched/sch_api.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
-index 0a785ef0ab66..de8bd245497f 100644
---- a/drivers/gpu/drm/radeon/si_dpm.c
-+++ b/drivers/gpu/drm/radeon/si_dpm.c
-@@ -3637,14 +3637,13 @@ static int si_notify_smc_display_change(struct radeon_device *rdev,
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index 7e4d1cc..53b25b8 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -526,11 +526,6 @@ static struct qdisc_size_table *qdisc_get_stab(struct nlattr *opt,
+ 	return stab;
+ }
  
- static void si_program_response_times(struct radeon_device *rdev)
+-static void stab_kfree_rcu(struct rcu_head *head)
+-{
+-	kfree(container_of(head, struct qdisc_size_table, rcu));
+-}
+-
+ void qdisc_put_stab(struct qdisc_size_table *tab)
  {
--	u32 voltage_response_time, backbias_response_time, acpi_delay_time, vbi_time_out;
-+	u32 voltage_response_time, acpi_delay_time, vbi_time_out;
- 	u32 vddc_dly, acpi_dly, vbi_dly;
- 	u32 reference_clock;
+ 	if (!tab)
+@@ -538,7 +533,7 @@ void qdisc_put_stab(struct qdisc_size_table *tab)
  
- 	si_write_smc_soft_register(rdev, SI_SMC_SOFT_REGISTER_mvdd_chg_time, 1);
- 
- 	voltage_response_time = (u32)rdev->pm.dpm.voltage_response_time;
--	backbias_response_time = (u32)rdev->pm.dpm.backbias_response_time;
- 
- 	if (voltage_response_time = 0)
- 		voltage_response_time = 1000;
+ 	if (--tab->refcnt = 0) {
+ 		list_del(&tab->list);
+-		call_rcu(&tab->rcu, stab_kfree_rcu);
++		kfree_rcu(tab, rcu);
+ 	}
+ }
+ EXPORT_SYMBOL(qdisc_put_stab);
