@@ -1,55 +1,35 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 28 Feb 2019 06:39:10 +0000
-Subject: Re: [PATCH 08/12] crypto: add missing of_node_put after of_device_is_available
-Message-Id: <20190228063910.yntbq4s7mdinp2ao@gondor.apana.org.au>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 16 Feb 2019 01:51:09 +0000
+Subject: [PATCH net-next] igc: Make function igc_write_rss_indir_tbl() static
+Message-Id: <20190216020442.14206-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
- <1550928043-14889-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Sasha Neftin <sasha.neftin@intel.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 02:20:39PM +0100, Julia Lawall wrote:
-> Add an of_node_put when a tested device node is not available.
-> 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> identifier f;
-> local idexpression e;
-> expression x;
-> @@
-> 
-> e = f(...);
-> ... when != of_node_put(e)
->     when != x = e
->     when != e = x
->     when any
-> if (<+...of_device_is_available(e)...+>) {
->   ... when != of_node_put(e)
-> (
->   return e;
-> |
-> + of_node_put(e);
->   return ...;
-> )
-> }
-> // </smpl>
-> 
-> Fixes: 5343e674f32fb ("crypto4xx: integrate ppc4xx-rng into crypto4xx")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/crypto/amcc/crypto4xx_trng.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Fixes the following sparse warning:
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+drivers/net/ethernet/intel/igc/igc_ethtool.c:646:6: warning:
+ symbol 'igc_write_rss_indir_tbl' was not declared. Should it be static?
+
+Fixes: 8c5ad0dae93c ("igc: Add ethtool support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/intel/igc/igc_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+index eff37a6c0afa..544239422577 100644
+--- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
++++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+@@ -643,7 +643,7 @@ static int igc_set_coalesce(struct net_device *netdev,
+ 	return 0;
+ }
+ 
+-void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
++static void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
+ {
+ 	struct igc_hw *hw = &adapter->hw;
+ 	u32 reg = IGC_RETA(0);
