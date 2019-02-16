@@ -1,34 +1,34 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Date: Mon, 18 Feb 2019 02:57:26 +0000
-Subject: RE: [PATCH] USB: renesas_usbhs: fix spelling mistake "doens't" -> "doesn't"
-Message-Id: <TY2PR01MB4812BB4DEA0983E1A1E940B6D8630@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 16 Feb 2019 08:16:06 +0000
+Subject: [PATCH net-next] netfilter: ipt_CLUSTERIP: make symbol 'cip_netdev_notifier' static
+Message-Id: <20190216081606.91596-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190217224418.17163-1-colin.king@canonical.com>
-In-Reply-To: <20190217224418.17163-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Taehee Yoo <ap420073@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SGksDQoNCj4gRnJvbTogQ29saW4gS2luZywgU2VudDogTW9uZGF5LCBGZWJydWFyeSAxOCwgMjAx
-OSA3OjQ0IEFNDQo+IA0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmlj
-YWwuY29tPg0KPiANCj4gVGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgZGV2X2VyciBt
-ZXNzYWdlLiBGaXggaXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaCENCg0KQWNr
-ZWQtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNv
-bT4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiAtLS0NCj4gIGRyaXZl
-cnMvdXNiL3JlbmVzYXNfdXNiaHMvbW9kX2hvc3QuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvdXNiL3JlbmVzYXNfdXNiaHMvbW9kX2hvc3QuYyBiL2RyaXZlcnMvdXNiL3JlbmVzYXNfdXNi
-aHMvbW9kX2hvc3QuYw0KPiBpbmRleCA0ZTU5YzY0OWRiODEuLmRkZDNiZTQ4Zjk0OCAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy91c2IvcmVuZXNhc191c2Jocy9tb2RfaG9zdC5jDQo+ICsrKyBiL2Ry
-aXZlcnMvdXNiL3JlbmVzYXNfdXNiaHMvbW9kX2hvc3QuYw0KPiBAQCAtMzQwLDcgKzM0MCw3IEBA
-IHN0YXRpYyB2b2lkIHVzYmhzaF9waXBlX2RldGFjaChzdHJ1Y3QgdXNiaHNoX2hwcml2ICpocHJp
-diwNCj4gIAlwaXBlID0gdXNiaHNoX3VlcF90b19waXBlKHVlcCk7DQo+IA0KPiAgCWlmICh1bmxp
-a2VseSghcGlwZSkpIHsNCj4gLQkJZGV2X2VycihkZXYsICJ1ZXAgZG9lbnMndCBoYXZlIHBpcGVc
-biIpOw0KPiArCQlkZXZfZXJyKGRldiwgInVlcCBkb2Vzbid0IGhhdmUgcGlwZVxuIik7DQo+ICAJ
-fSBlbHNlIGlmICgxID09IHVlcC0+Y291bnRlci0tKSB7IC8qIGxhc3QgdXNlciAqLw0KPiAgCQlz
-dHJ1Y3QgdXNiX2hvc3RfZW5kcG9pbnQgKmVwID0gdXNiaHNoX3VlcF90b19lcCh1ZXApOw0KPiAg
-CQlzdHJ1Y3QgdXNiaHNoX2RldmljZSAqdWRldiA9IHVzYmhzaF91ZXBfdG9fdWRldih1ZXApOw0K
-PiAtLQ0KPiAyLjIwLjENCg0K
+Fixes the following sparse warnings:
+
+net/ipv4/netfilter/ipt_CLUSTERIP.c:867:23: warning:
+ symbol 'cip_netdev_notifier' was not declared. Should it be static?
+
+Fixes: 5a86d68bcf02 ("netfilter: ipt_CLUSTERIP: fix deadlock in netns exit routine")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index b61977d..91b369b 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -864,7 +864,7 @@ static void clusterip_net_exit(struct net *net)
+ 	.size = sizeof(struct clusterip_net),
+ };
+ 
+-struct notifier_block cip_netdev_notifier = {
++static struct notifier_block cip_netdev_notifier = {
+ 	.notifier_call = clusterip_netdev_event
+ };
