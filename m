@@ -1,25 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 17 Feb 2019 23:55:52 +0000
-Subject: Re: [PATCH net-next] net: hns3: make function hclge_set_all_vf_rst() static
-Message-Id: <20190217.155552.1131617512362422475.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 16 Feb 2019 05:55:40 +0000
+Subject: [PATCH -next] platform/chrome: Make function wilco_ec_transfer() static
+Message-Id: <20190216060910.139768-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190216081552.91298-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190216081552.91298-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, tanhuazhong@huawei.com, linyunsheng@huawei.com, lipeng321@huawei.com, shenjian15@huawei.com, liangfuyun1@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benson Leung <bleung@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Duncan Laurie <dlaurie@google.com>, Nick Crews <ncrews@chromium.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Sat, 16 Feb 2019 08:15:52 +0000
+Fixes the following sparse warning:
 
-> Fixes the following sparse warning:
-> 
-> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:2431:5: warning:
->  symbol 'hclge_set_all_vf_rst' was not declared. Should it be static?
-> 
-> Fixes: aa5c4f175be6 ("net: hns3: add reset handling for VF when doing PF reset")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+drivers/platform/chrome/wilco_ec/mailbox.c:126:5: warning:
+ symbol 'wilco_ec_transfer' was not declared. Should it be static?
 
-Applied, thank you.
+Fixes: 436dad4fda10 ("platform/chrome: Add new driver for Wilco EC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/platform/chrome/wilco_ec/mailbox.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/chrome/wilco_ec/mailbox.c b/drivers/platform/chrome/wilco_ec/mailbox.c
+index c7028488e575..f6ff29a11f1a 100644
+--- a/drivers/platform/chrome/wilco_ec/mailbox.c
++++ b/drivers/platform/chrome/wilco_ec/mailbox.c
+@@ -123,8 +123,9 @@ static void wilco_ec_prepare(struct wilco_ec_message *msg,
+  * Context: ec->mailbox_lock should be held while using this function.
+  * Return: number of bytes received or negative error code on failure.
+  */
+-int wilco_ec_transfer(struct wilco_ec_device *ec, struct wilco_ec_message *msg,
+-		      struct wilco_ec_request *rq)
++static int wilco_ec_transfer(struct wilco_ec_device *ec,
++			     struct wilco_ec_message *msg,
++			     struct wilco_ec_request *rq)
+ {
+ 	struct wilco_ec_response *rs;
+ 	u8 checksum;
