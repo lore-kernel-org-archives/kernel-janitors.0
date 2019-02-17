@@ -1,36 +1,55 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 14 Feb 2019 08:50:30 +0000
-Subject: [PATCH v2 -next] swiotlb: drop pointless static qualifier in swiotlb_create_debugfs()
-Message-Id: <20190214090408.76071-1-yuehaibing@huawei.com>
+From: "Neftin, Sasha" <sasha.neftin@intel.com>
+Date: Sun, 17 Feb 2019 10:59:42 +0000
+Subject: Re: [Intel-wired-lan] [PATCH net-next] igc: Make function igc_write_rss_indir_tbl() static
+Message-Id: <a07f9ed6-b4b8-7ad2-552e-7f1288e547b2@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190214014147.108653-1-yuehaibing@huawei.com>
-In-Reply-To: <20190214014147.108653-1-yuehaibing@huawei.com>
+References: <20190216020442.14206-1-weiyongjun1@huawei.com>
+ <6ef2f327-8dc6-4c86-f42d-4aa7508d19f5@intel.com>
+In-Reply-To: <6ef2f327-8dc6-4c86-f42d-4aa7508d19f5@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wei Yongjun <weiyongjun1@huawei.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org
 
-There is no need to have the 'struct dentry *d_swiotlb_usage' variable
-static since new value always be assigned before use it.
+On 2/17/2019 12:06, Neftin, Sasha wrote:
+> On 2/16/2019 04:04, Wei Yongjun wrote:
+>> Fixes the following sparse warning:
+>>
+>> drivers/net/ethernet/intel/igc/igc_ethtool.c:646:6: warning:
+>>   symbol 'igc_write_rss_indir_tbl' was not declared. Should it be static?
+>>
+>> Fixes: 8c5ad0dae93c ("igc: Add ethtool support")
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>> ---
+>>   drivers/net/ethernet/intel/igc/igc_ethtool.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c 
+>> b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+>> index eff37a6c0afa..544239422577 100644
+>> --- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
+>> +++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+>> @@ -643,7 +643,7 @@ static int igc_set_coalesce(struct net_device 
+>> *netdev,
+>>       return 0;
+>>   }
+>> -void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
+>> +static void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
+>>   {
+>>       struct igc_hw *hw = &adapter->hw;
+>>       u32 reg = IGC_RETA(0);
+>>
+>>
+>> NACK
+> 'igc_write_rss_indir_tbl' method declared in igc.h file. This method 
+> used in both igc_ethtool.c and igc_main.c and can't be a 'static'
+> __
+please, refer to commit 429abdf0cd3c... (Add multiple receive queues 
+control supporting)
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: fix patch title
----
- kernel/dma/swiotlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index a7b53786db9f..02fa517c47d9 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -689,7 +689,7 @@ swiotlb_dma_supported(struct device *hwdev, u64 mask)
- 
- static int __init swiotlb_create_debugfs(void)
- {
--	static struct dentry *d_swiotlb_usage;
-+	struct dentry *d_swiotlb_usage;
- 	struct dentry *ent;
- 
- 	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
+_____________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
