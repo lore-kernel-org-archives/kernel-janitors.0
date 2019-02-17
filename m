@@ -1,70 +1,35 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Mon, 25 Feb 2019 04:41:41 +0000
-Subject: Re: [PATCH 10/12] cpufreq: ap806: add missing of_node_put after of_device_is_available
-Message-Id: <20190225042941.wypmh4kikcgmebn3@vireshk-i7>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 17 Feb 2019 22:48:30 +0000
+Subject: [PATCH] ASoC: fsi: fix spelling mistake "doens't" -> "doesn't"
+Message-Id: <20190217224830.17355-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
- <1550928043-14889-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, Gregory Clement <gregory.clement@bootlin.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 23-02-19, 14:20, Julia Lawall wrote:
-> Add an of_node_put when a tested device node is not available.
-> 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> identifier f;
-> local idexpression e;
-> expression x;
-> @@
-> 
-> e = f(...);
-> ... when != of_node_put(e)
->     when != x = e
->     when != e = x
->     when any
-> if (<+...of_device_is_available(e)...+>) {
->   ... when != of_node_put(e)
-> (
->   return e;
-> |
-> + of_node_put(e);
->   return ...;
-> )
-> }
-> // </smpl>
-> 
-> Fixes: f525a670533d9 ("cpufreq: ap806: add cpufreq driver for Armada 8K")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/cpufreq/armada-8k-cpufreq.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/cpufreq/armada-8k-cpufreq.c b/drivers/cpufreq/armada-8k-cpufreq.c
-> --- a/drivers/cpufreq/armada-8k-cpufreq.c
-> +++ b/drivers/cpufreq/armada-8k-cpufreq.c
-> @@ -128,8 +128,10 @@ static int __init armada_8k_cpufreq_init
->  	struct cpumask cpus;
->  
->  	node = of_find_compatible_node(NULL, NULL, "marvell,ap806-cpu-clock");
-> -	if (!node || !of_device_is_available(node))
-> +	if (!node || !of_device_is_available(node)) {
-> +		of_node_put(node);
->  		return -ENODEV;
-> +	}
->  
->  	nb_cpus = num_possible_cpus();
->  	freq_tables = kcalloc(nb_cpus, sizeof(*freq_tables), GFP_KERNEL);
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied. Thanks.
+There is a spelling mistake in a dev_err message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/sh/fsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
+index 285afbafa662..3447dbdba1f1 100644
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@ -780,7 +780,7 @@ static int fsi_clk_init(struct device *dev,
+ 			return -EINVAL;
+ 		}
+ 		if (clock->div = clock->own) {
+-			dev_err(dev, "cpu doens't support div clock\n");
++			dev_err(dev, "cpu doesn't support div clock\n");
+ 			return -EINVAL;
+ 		}
+ 	}
 -- 
-viresh
+2.20.1
