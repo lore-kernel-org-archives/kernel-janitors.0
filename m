@@ -1,23 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Feb 2019 07:29:14 +0000
-Subject: Re: [PATCH 2/2] test_firmware: silence underflow warning in test_dev_config_update_u8()
-Message-Id: <20190222072913.GH1711@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 17 Feb 2019 22:32:22 +0000
+Subject: [PATCH] tracing: fix spelling mistake: "analagous" -> "analogous"
+Message-Id: <20190217223222.16479-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190221183700.GA1737@kadam>
- <20190221183826.GA30993@kadam>
- <20190221105458.409d1968961962079c54b815@linux-foundation.org>
- <20190221191855.GB1737@kadam>
- <20190221115426.f616100906d989eda93d66dc@linux-foundation.org>
-In-Reply-To: <20190221115426.f616100906d989eda93d66dc@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I've looked at this some more and I don't think it's a good idea to
-change the type of U8_MAX.  Right now INT_MAX is int and USHRT_MAX is
-unsigned short etc.  That's the only intuitive thing for them to be.
+From: Colin Ian King <colin.king@canonical.com>
 
-regards,
-dan carpenter
+There is a spelling mistake in the mini-howto help text. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index f380139e972c..4dd8a52a71e0 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4740,7 +4740,7 @@ static const char readme_msg[]  	"\t    unchanged.\n\n"
+ 	"\t    The enable_hist and disable_hist triggers can be used to\n"
+ 	"\t    have one event conditionally start and stop another event's\n"
+-	"\t    already-attached hist trigger.  The syntax is analagous to\n"
++	"\t    already-attached hist trigger.  The syntax is analogous to\n"
+ 	"\t    the enable_event and disable_event triggers.\n"
+ #endif
+ ;
+-- 
+2.20.1
