@@ -1,50 +1,49 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 15 Feb 2019 21:42:59 +0000
-Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to "falling back"
-Message-Id: <20190215214259.lijzlwaelm3najwr@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cydg23admer3cmh5"
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 17 Feb 2019 09:50:05 +0000
+Subject: Re: [PATCH v6] coccinelle: semantic code search for missing put_device()
+Message-Id: <8e7ba7c0-b7fe-a1f0-d28b-0c716ecbcfdb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190215153126.18575-1-colin.king@canonical.com>
-In-Reply-To: <20190215153126.18575-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com>
+In-Reply-To: <HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wen Yang <yellowriver2010@hotmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
+
+> +@search exists@
+> +local idexpression id;
+> +expression x,e,e1;
+> +position p1,p2;
+> +type T,T1,T2;
+> +@@
+> +
+> +id = of_find_device_by_node@p1(x)
+> +... when != e = id
+
+I suggest to increase your software development attention also for
+another implementation detail.
+Source code analysis triggers challenges for safe data flow handling.
+the semantic patch language supports search specifications for
+the exclusion of specific assignments.
+
+Does this SmPL code contain a questionable order for the source
+and target metavariables?
+Can the following variant be more appropriate?
+
++ ... when != id = e
 
 
---cydg23admer3cmh5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +if (id = NULL || ...) { ... return ...; }
+> +... when != put_device(&id->dev)
+> +    when != platform_device_put(id)
+> +    when != of_dev_put(id)
+> +    when != if (id) { ... put_device(&id->dev) ... }
+> +    when != e1 = (T)id
 
-On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The phrasing in two dev_err messages is using fallbacking which
-> os less understandable than "falling back", so fix this up.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Would you like to avoid that the return value from the shown function call
+gets overwritten in the variable before it was used once at least
+(when a bit of extra C code is tolerated before a null pointer check)?
 
-Applied to for-next, thanks!
-
-
---cydg23admer3cmh5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxnMl4ACgkQFA3kzBSg
-KbbuyQ/+MbAm4ZxfTLByL3Bler1Blvc9fJOX5r3PFhmKT4oKXhC9i21188LEW7VY
-hXcoZT9xpQtBjzUpo+1M5SyHXBF60gY9CFbrogQ18qbyJxW5KfxIoJbwPHLRZ0kQ
-aawr+Qo3pBm8X/+NwMuSTlNxcUHN4jhNZ1Od1mwvmqln5O1WTVCXzNQYCrE3ifyi
-kLCL4/Y0FHjTZrYksUFMYUA3uYhoaKb8xBNW4qxrETclEJSEvne5MN+K4WIbO/90
-+DDz+83dX1Xnn7Eyy5j1WQ+eRgswoKl8K9iOlCcXVlgejXgOCYthbdLGdQRqZdq8
-89BuXvZygaPNvaAoIhZ5xZmQc5z20g7pUOS3MghwSCwUELK2AweHd7CwSvaxz4YD
-ptm9vdwlvbHBnMT3TXjwLFdgtF/uLhpmcuXLv6VHx4e4LM7OMXvvRu+uOUOvpgX9
-g5pYhZRLT7+Xr6piQDZ1AYDGYrzH0WBM6VDz7uHq38I8JTWDNmrIhgA/QP3eqtqW
-J5wGxFdyz8yX+dTHCOtANTxjYNKgAMe1zCHYtvBSz6/eI6srZ0r/kN94sV9mlYwK
-AkoFzQoMgOFTJGGBkoHsmD+9uYoySbUpIukt+CmUCJo7/9aE8qGq656jz6tlZst+
-+xao2NUDWhENDjEFWQdkxlShUDnd0UT1miMH43vCl6bp772RjtE=
-=3c33
------END PGP SIGNATURE-----
-
---cydg23admer3cmh5--
+Regards,
+Markus
