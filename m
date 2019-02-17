@@ -1,22 +1,37 @@
-From: Jan Harkes <jaharkes@cs.cmu.edu>
-Date: Thu, 14 Feb 2019 17:10:34 +0000
-Subject: Re: [PATCH 2] coda: get rid of CODA_FREE()
-Message-Id: <20190214171019.fhvwee2ngiqqb3pi@cs.cmu.edu>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 17 Feb 2019 22:20:04 +0000
+Subject: [PATCH] staging: rtlwifi: fix spelling mistake: "Hightest" -> "Highest"
+Message-Id: <20190217222004.15850-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.1902140804170.2466@hadrien>
- <20190214083822.GA28623@kadam>
-In-Reply-To: <20190214083822.GA28623@kadam>
+References: <20180510150741.20677-1-colin.king@canonical.com>
+In-Reply-To: <20180510150741.20677-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 11:38:22AM +0300, Dan Carpenter wrote:
-> The CODA_FREE() macro just calls kvfree().  We can call that directly
-> instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-Added these to my (getting long) list of things that I really should get
-upstreamed sometime soon now.
+Trivial fix to spelling mistake in ODM_RT_TRACE message text, fix it.
 
-Jan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtlwifi/phydm/phydm_rainfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtlwifi/phydm/phydm_rainfo.c b/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
+index b46791a727c7..ed740a93c8b6 100644
+--- a/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
++++ b/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
+@@ -124,7 +124,7 @@ void odm_c2h_ra_para_report_handler(void *dm_void, u8 *cmd_buf, u8 cmd_len)
+ 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  %d\n",
+ 				     "VHT_EN =", cmd_buf[4]);
+ 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  %d\n",
+-				     "Hightest rate =", cmd_buf[5]);
++				     "Highest rate =", cmd_buf[5]);
+ 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  0x%x\n",
+ 				     "Lowest rate =", cmd_buf[6]);
+ 			ODM_RT_TRACE(dm, ODM_FW_DEBUG_TRACE, "%5s  0x%x\n",
+-- 
+2.20.1
