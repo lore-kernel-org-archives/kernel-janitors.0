@@ -1,75 +1,35 @@
-From: Steve Magnani <steve.magnani@digidescorp.com>
-Date: Wed, 20 Feb 2019 11:27:34 +0000
-Subject: Re: [PATCH][udf-next] udf: don't call mark_buffer_dirty on a null bh pointer
-Message-Id: <C9E129B8-B914-4E9B-8AAF-76C64E9D8F8B@digidescorp.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 17 Feb 2019 22:36:26 +0000
+Subject: [PATCH] KVM: arm/arm64: fix spelling mistake: "auxilary" -> "auxiliary"
+Message-Id: <20190217223626.16686-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219114403.24771-1-colin.king@canonical.com> <20190219140240.GA31849@quack2.suse.cz> <aef899da-4dc1-1e40-30c9-fc2ca87f2380@digidescorp.com> <20190220095015.GB27474@quack2.suse.cz>
-In-Reply-To: <20190220095015.GB27474@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: Colin King <colin.king@canonical.com>, Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christoffer Dall <christoffer.dall@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Feb 20, 2019, at 3:50 AM, Jan Kara <jack@suse.cz> wrote:
-> 
->> On Tue 19-02-19 08:17:09, Steve Magnani wrote:
->>> On 2/19/19 8:02 AM, Jan Kara wrote:
->>>> On Tue 19-02-19 11:44:03, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>> 
->>>> There is a null check on the pointer bh to avoid a null pointer dereference
->>>> on bh->b_data however later bh is passed to mark_buffer_dirty that can also
->>>> cause a null pointer dereference on bh.  Avoid this potential null pointer
->>>> dereference by moving the call to mark_buffer_dirty inside the null checked
->>>> block.
->>>> 
->>>> Fixes: e8b4274735e4 ("udf: finalize integrity descriptor before writeback")
->>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> Thanks for the patch! In fact it is the 'if (bh)' check that's
->>> unnecessarily defensive (we cannot have sbi->s_lvid_dirty and
->>> !sbi->s_lvid_bh). So I'll just drop that check (attached patch).
->>> 
->>>                                Honza
->>> 
->>>> ---
->>>>  fs/udf/super.c | 12 ++++++------
->>>>  1 file changed, 6 insertions(+), 6 deletions(-)
->>>> 
->>>> diff --git a/fs/udf/super.c b/fs/udf/super.c
->>>> index a6940d90bedd..b7e9a83d39db 100644
->>>> --- a/fs/udf/super.c
->>>> +++ b/fs/udf/super.c
->>>> @@ -2336,13 +2336,13 @@ static int udf_sync_fs(struct super_block *sb, int wait)
->>>>              lvid = (struct logicalVolIntegrityDesc *)bh->b_data;
->>>>              udf_finalize_lvid(lvid);
->>>> -        }
->>>> -        /*
->>>> -         * Blockdevice will be synced later so we don't have to submit
->>>> -         * the buffer for IO
->>>> -         */
->>>> -        mark_buffer_dirty(bh);
->>>> +            /*
->>>> +             * Blockdevice will be synced later so we don't have
->>>> +             * to submit the buffer for IO
->>>> +             */
->>>> +            mark_buffer_dirty(bh);
->>>> +        }
->>>>          sbi->s_lvid_dirty = 0;
->>>>      }
->>>>      mutex_unlock(&sbi->s_alloc_mutex);
->>>> -- 
->>>> 2.20.1
->>>> 
->> Reviewed-by: Steven J. Magnani <steve@digidescorp.com>
-> 
-> Is this Reviewed-by for my fixup or the Colin's? Because I've decided to
-> rather remove the 'if (bh)' check completely since it is pointless...
-> 
->                                Honza
-> -- 
+There is a spelling mistake in a kvm_err error message. Fix it.
 
-Sorry, I realized on rereading that this could be ambiguous. The R-B is for your patch.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ virt/kvm/arm/arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Steve
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index 7fcc1c8c4020..99c37384ba7b 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1563,7 +1563,7 @@ static int init_hyp_mode(void)
+ 
+ 	err = hyp_map_aux_data();
+ 	if (err)
+-		kvm_err("Cannot map host auxilary data: %d\n", err);
++		kvm_err("Cannot map host auxiliary data: %d\n", err);
+ 
+ 	return 0;
+ 
+-- 
+2.20.1
