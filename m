@@ -1,34 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Feb 2019 06:36:41 +0000
-Subject: [PATCH] media: ivtv: update *pos correctly in ivtv_read_pos()
-Message-Id: <20190222063641.GB12250@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 17 Feb 2019 07:42:58 +0000
+Subject: =?UTF-8?B?UmU6IOetlOWkjTogW3Y2XSBjb2NjaW5lbGxlOiBzZW1hbnRpYyBjb2Rl?= =?UTF-8?Q?_search_for_missing_p
+Message-Id: <766c87f0-fef2-0997-b0a4-3d3d26711b79@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com>
+ <52c3fdf6-0d04-eed5-da57-ef7d1008c291@web.de>
+ <HK0PR02MB3634E4B3441651D4F7737399B2620@HK0PR02MB3634.apcprd02.prod.outlook.com>
+In-Reply-To: <HK0PR02MB3634E4B3441651D4F7737399B2620@HK0PR02MB3634.apcprd02.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Walls <awalls@md.metrocast.net>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wen Yang <yellowriver2010@hotmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
 
-We had intended to update *pos, but the current code is a no-op.
+> But please also refer to the examples of coccinelle, such as:
+> http://coccinelle.lip6.fr/rules/kmalloc.html
+> and
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/coccinelle/free/pci_free_consistent.cocci
 
-Fixes: 1a0adaf37c30 ("V4L/DVB (5345): ivtv driver for Conexant cx23416/cx23415 MPEG encoder/decoder")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/media/pci/ivtv/ivtv-fileops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These scripts for the semantic patch language show some software design possibilities.
+They contain implementation details which can be also worth for additional
+development considerations.
+Will systematic refactoring become more interesting?
 
-diff --git a/drivers/media/pci/ivtv/ivtv-fileops.c b/drivers/media/pci/ivtv/ivtv-fileops.c
-index 6196daae4b3e..043ac0ae9ed0 100644
---- a/drivers/media/pci/ivtv/ivtv-fileops.c
-+++ b/drivers/media/pci/ivtv/ivtv-fileops.c
-@@ -420,7 +420,7 @@ static ssize_t ivtv_read_pos(struct ivtv_stream *s, char __user *ubuf, size_t co
- 
- 	IVTV_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
- 	if (rc > 0)
--		pos += rc;
-+		*pos += rc;
- 	return rc;
- }
- 
--- 
-2.17.1
+
+> You will find that there are differences between coccinelle and c.
+
+Would you like to discuss any of them further?
+
+Regards,
+Markus
