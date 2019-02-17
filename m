@@ -1,37 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Feb 2019 05:39:13 +0000
-Subject: [PATCH] scsi: qla2xxx: check for kstrtol() failure
-Message-Id: <20190220053913.GA25196@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 17 Feb 2019 22:26:05 +0000
+Subject: [PATCH] [media] wl128x: fix spelling mistake: "Swtich" -> "Switch"
+Message-Id: <20190217222605.16182-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The error handling was unintentionally left out so it introduces a
-Smatch static checker warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-    drivers/scsi/qla2xxx/qla_attr.c:1655 qla2x00_port_speed_store()
-    error: uninitialized symbol 'type'.
+There is a spelling mistake in a fmdbg debug message. Fix it.
 
-Fixes: a7b9ca7fc87a ("scsi: qla2xxx: Add support for setting port speed")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/qla2xxx/qla_attr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/radio/wl128x/fmdrv_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
-index 2eb1ae721a7d..f928c4d3a1ef 100644
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -1652,6 +1652,8 @@ qla2x00_port_speed_store(struct device *dev, struct device_attribute *attr,
- 	}
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index 800d69c3f80b..e1c218b23d9e 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -908,7 +908,7 @@ static void fm_irq_afjump_setfreq(struct fmdev *fmdev)
+ 	u16 frq_index;
+ 	u16 payload;
  
- 	rval = kstrtol(buf, 10, &type);
-+	if (rval)
-+		return rval;
- 	speed = type;
- 	if (type = 40 || type = 80 || type = 160 ||
- 	    type = 320) {
+-	fmdbg("Swtich to %d KHz\n", fmdev->rx.stat_info.af_cache[fmdev->rx.afjump_idx]);
++	fmdbg("Switch to %d KHz\n", fmdev->rx.stat_info.af_cache[fmdev->rx.afjump_idx]);
+ 	frq_index = (fmdev->rx.stat_info.af_cache[fmdev->rx.afjump_idx] -
+ 	     fmdev->rx.region.bot_freq) / FM_FREQ_MUL;
+ 
 -- 
-2.17.1
+2.20.1
