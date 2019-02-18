@@ -1,54 +1,45 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 04 Feb 2019 14:15:23 +0000
-Subject: Re: [PATCH] staging: rtl8192u: fix a null pointer dereference on a null dev pointer
-Message-Id: <8bad22a0-5ddc-2ab3-6319-77dcf96e3be6@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 08:59:47 +0000
+Subject: [PATCH -next] crypto: marvell - Remove set but not used variable 'ivsize'
+Message-Id: <20190218085947.3800-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190202225627.27116-1-colin.king@canonical.com>
- <20190203113137.GB2563@kadam>
-In-Reply-To: <20190203113137.GB2563@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Whitmore <johnfwhitmore@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 03/02/2019 11:31, Dan Carpenter wrote:
-> On Sat, Feb 02, 2019 at 10:56:27PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There is an earlier null check on pointer dev which implies it may be null,
->> however the assignment of pointer pref and the call to free_ieee82011 on
->> a null dev can cause null pointer dereference errors.  Fix this by moving
->> the assignment of priv and the the call to free_ieee80211 into the block of
->> code that performs the null dev sanity check.
->>
->> Detected by CoverityScan, CID#143078 ("Dereference after null check")
->>
->> Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/staging/rtl8192u/r8192U_core.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
->> index 0ac0bbf7d923..4741a29326ea 100644
->> --- a/drivers/staging/rtl8192u/r8192U_core.c
->> +++ b/drivers/staging/rtl8192u/r8192U_core.c
->> @@ -4955,9 +4955,10 @@ static void rtl8192_cancel_deferred_work(struct r8192_priv *priv)
->>  static void rtl8192_usb_disconnect(struct usb_interface *intf)
->>  {
->>  	struct net_device *dev = usb_get_intfdata(intf);
->> -	struct r8192_priv *priv = ieee80211_priv(dev);
->>  
->>  	if (dev) {
->> +		struct r8192_priv *priv = ieee80211_priv(dev);
-> 
-> "dev" can't actually be NULL.  Look how we call usb_set_intfdata() in
-> probe().  It's better to remove the check instead.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Yep, good point. I'll send a V2.
+drivers/crypto/marvell/cipher.c: In function 'mv_cesa_skcipher_dma_req_init':
+drivers/crypto/marvell/cipher.c:325:15: warning:
+ variable 'ivsize' set but not used [-Wunused-but-set-variable]
 
-> 
-> regards,
-> dan carpenter
-> 
+It's not used any more after 0c99620f0ac1 ("crypto: marvell - Use an unique
+pool to copy results of requests")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/marvell/cipher.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/crypto/marvell/cipher.c b/drivers/crypto/marvell/cipher.c
+index 066830dcc53e..fb279b3a1ca1 100644
+--- a/drivers/crypto/marvell/cipher.c
++++ b/drivers/crypto/marvell/cipher.c
+@@ -322,7 +322,6 @@ static int mv_cesa_skcipher_dma_req_init(struct skcipher_request *req,
+ 	struct mv_cesa_skcipher_dma_iter iter;
+ 	bool skip_ctx = false;
+ 	int ret;
+-	unsigned int ivsize;
+ 
+ 	basereq->chain.first = NULL;
+ 	basereq->chain.last = NULL;
+@@ -381,7 +380,6 @@ static int mv_cesa_skcipher_dma_req_init(struct skcipher_request *req,
+ 	} while (mv_cesa_skcipher_req_iter_next_op(&iter));
+ 
+ 	/* Add output data for IV */
+-	ivsize = crypto_skcipher_ivsize(crypto_skcipher_reqtfm(req));
+ 	ret = mv_cesa_dma_add_result_op(&basereq->chain, CESA_SA_CFG_SRAM_OFFSET,
+ 				    CESA_SA_DATA_SRAM_OFFSET,
+ 				    CESA_TDMA_SRC_IN_SRAM, flags);
