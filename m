@@ -1,42 +1,57 @@
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Date: Thu, 07 Feb 2019 16:40:55 +0000
-Subject: RFC: refactoring the deb build
-Message-Id: <1549557659-19137-1-git-send-email-info@metux.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 14:50:26 +0000
+Subject: [PATCH v2 -next] ASoC: stm32: sai: remove set but not used variables 'mask, cr1'
+Message-Id: <20190218145026.142805-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190218134836.107220-1-yuehaibing@huawei.com>
+In-Reply-To: <20190218134836.107220-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, yamada.masahiro@socionext.com, michal.lkml@markovi.net
+To: Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: alsa-devel@alsa-project.org, YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-Hello folks,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
+sound/soc/stm/stm32_sai_sub.c: In function 'stm32_sai_configure_clock':
+sound/soc/stm/stm32_sai_sub.c:902:11: warning:
+ variable 'mask' set but not used [-Wunused-but-set-variable]
+sound/soc/stm/stm32_sai_sub.c:902:6: warning:
+ variable 'cr1' set but not used [-Wunused-but-set-variable]
 
-here are some patches for build process that allow building debian packages
-right the usual canonical way (eg. via dpkg-buildpackage or dck-buildpackage),
-instead 'manually' setting up the build environment and calling make.
-So, from a debian native perspective, turning it from head onto feet ;-)
+It's not used any more after 8307b2afd386 ("ASoC: stm32: sai: set sai as
+mclk clock provider")
 
-dpkg-buildpackage + friends expect the debian/rules file being present in
-the unpacked source tree and driving the actual build (the 'deb-pkg' make
-target does that quite the opposite way). Obviously, 'make deb-pkg' can't
-be used directly, as it would destroy our debian/rules file ...
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: remove unnessesary if branch.
+---
+ sound/soc/stm/stm32_sai_sub.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-To archieve this, I've done several things:
-
-* place .config file to the source tree (not in this patch queue)
-* add some helper targets to the toplevel makefile, so we can just ask
-  for certain things, eg. version, arch, etc, that we need later
-* fix some missing dependencies in the generated debian/control file
-* change scripts/package/mkdebian so that the name of the generated rules
-  file name can be changed via environment
-* a generic debian/rules file for driving the build
-
-The last patch isn't really meant to be merged yet (need to change the
-deb-pkg rule to not overwrite debian/rules anymore) - just including it
-for illustration.
-
-What do you think about this ?
-
-
---mtx
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index d4825700b63f..f9297228c41c 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -898,7 +898,7 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 				     struct snd_pcm_hw_params *params)
+ {
+ 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
+-	int cr1, mask, div = 0;
++	int div = 0;
+ 	int sai_clk_rate, mclk_ratio, den;
+ 	unsigned int rate = params_rate(params);
+ 
+@@ -943,10 +943,8 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 		} else {
+ 			if (sai->mclk_rate) {
+ 				mclk_ratio = sai->mclk_rate / rate;
+-				if (mclk_ratio = 512) {
+-					mask = SAI_XCR1_OSR;
+-					cr1 = SAI_XCR1_OSR;
+-				} else if (mclk_ratio != 256) {
++				if ((mclk_ratio != 512) &&
++				    (mclk_ratio != 256)) {
+ 					dev_err(cpu_dai->dev,
+ 						"Wrong mclk ratio %d\n",
+ 						mclk_ratio);
