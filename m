@@ -1,31 +1,35 @@
-From: <Tudor.Ambarus@microchip.com>
-Date: Wed, 20 Feb 2019 20:51:32 +0000
-Subject: Re: [PATCH][next] mtd: spi-nor: cadence-quadspi: fix spelling mistake: "Couldnt't" -> "Couldn't"
-Message-Id: <1dfae650-fd74-b1ad-3175-f7497214fc39@microchip.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 18 Feb 2019 06:52:44 +0000
+Subject: [PATCH -next] clk: tegra: dfll: Make symbol 'tegra210_cpu_cvb_tables' static
+Message-Id: <20190218070609.167535-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190215151547.17532-1-colin.king@canonical.com>
-In-Reply-To: <20190215151547.17532-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, marek.vasut@gmail.com, dwmw2@infradead.org, computersforpeace@gmail.com, bbrezillon@kernel.org, richard@nod.at, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-DQoNCk9uIDAyLzE1LzIwMTkgMDU6MTUgUE0sIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENv
-bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGVyZSBpcyBh
-IHNwZWxsaW5nIG1pc3Rha2UgaW4gYSBkZXZfZXJyb3IgbWVzc2FnZS4gRml4IGl0Lg0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4N
-Cg0KUmV2aWV3ZWQtYnk6IFR1ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNv
-bT4NCg0KPiAtLS0NCj4gIGRyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMgfCAy
-ICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4g
-DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNwaS5jIGIv
-ZHJpdmVycy9tdGQvc3BpLW5vci9jYWRlbmNlLXF1YWRzcGkuYw0KPiBpbmRleCA1NjUxMmMwMzY4
-ZjkuLjc5MjYyODc1MGVlYyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRl
-bmNlLXF1YWRzcGkuYw0KPiArKysgYi9kcml2ZXJzL210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNw
-aS5jDQo+IEBAIC0xMjQ5LDcgKzEyNDksNyBAQCBzdGF0aWMgaW50IGNxc3BpX3NldHVwX2ZsYXNo
-KHN0cnVjdCBjcXNwaV9zdCAqY3FzcGksIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApDQo+ICANCj4g
-IAlkZGF0YSA9IG9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YShkZXYpOw0KPiAgCWlmICghZGRhdGEp
-IHsNCj4gLQkJZGV2X2VycihkZXYsICJDb3VsZG50J3QgZmluZCBkcml2ZXIgZGF0YVxuIik7DQo+
-ICsJCWRldl9lcnIoZGV2LCAiQ291bGRuJ3QgZmluZCBkcml2ZXIgZGF0YVxuIik7DQo+ICAJCXJl
-dHVybiAtRUlOVkFMOw0KPiAgCX0NCj4gIAlod2NhcHMubWFzayA9IGRkYXRhLT5od2NhcHNfbWFz
-azsNCj4gDQo
+Fixes the following sparse warning:
+
+drivers/clk/tegra/clk-tegra124-dfll-fcpu.c:244:18: warning:
+ symbol 'tegra210_cpu_cvb_tables' was not declared. Should it be static?
+
+Fixes: 2b2dbc2f94e5 ("clk: tegra: dfll: add CVB tables for Tegra210")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 4b6dd2b3767f..e8ec42bf8638 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -241,7 +241,7 @@ static const unsigned long tegra210_cpu_max_freq_table[] = {
+ 		{          0UL,	{       0, 0, 0 } }, \
+ 	}
+ 
+-struct cvb_table tegra210_cpu_cvb_tables[] = {
++static struct cvb_table tegra210_cpu_cvb_tables[] = {
+ 	{
+ 		.speedo_id = 10,
+ 		.process_id = 0,
