@@ -1,26 +1,46 @@
-From: Gerd Hoffmann <kraxel@redhat.com>
-Date: Thu, 21 Feb 2019 12:05:45 +0000
-Subject: Re: [PATCH -next] drm/qxl: remove set but not used variable 'bo_old'
-Message-Id: <20190221120545.dnllvgdszdk4yf5z@sirius.home.kraxel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 08:45:14 +0000
+Subject: [PATCH -next] drm/radeon: remove set but not used variable 'vbi_time_out'
+Message-Id: <20190218084514.194011-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218085459.196470-1-yuehaibing@huawei.com>
-In-Reply-To: <20190218085459.196470-1-yuehaibing@huawei.com>
+References: <1541678023-143862-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541678023-143862-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, virtualization@lists.linux-foundation.org, spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch
+Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 08:54:59AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/gpu/drm/qxl/qxl_display.c: In function 'qxl_primary_atomic_update':
-> drivers/gpu/drm/qxl/qxl_display.c:538:17: warning:
->  variable 'bo_old' set but not used [-Wunused-but-set-variable]
-> 
-> It's not used any more after 4979904c62b9 ("drm/qxl: use shadow bo directly")
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Pushed to drm-misc-next.
+drivers/gpu/drm/radeon/si_dpm.c: In function 'si_program_response_times':
+drivers/gpu/drm/radeon/si_dpm.c:3640:29: warning:
+ variable 'backbias_response_time' set but not used [-Wunused-but-set-variable]
 
-thanks,
-  Gerd
+It never used since introduction.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/radeon/si_dpm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
+index 0a785ef0ab66..de8bd245497f 100644
+--- a/drivers/gpu/drm/radeon/si_dpm.c
++++ b/drivers/gpu/drm/radeon/si_dpm.c
+@@ -3637,14 +3637,13 @@ static int si_notify_smc_display_change(struct radeon_device *rdev,
+ 
+ static void si_program_response_times(struct radeon_device *rdev)
+ {
+-	u32 voltage_response_time, backbias_response_time, acpi_delay_time, vbi_time_out;
++	u32 voltage_response_time, acpi_delay_time, vbi_time_out;
+ 	u32 vddc_dly, acpi_dly, vbi_dly;
+ 	u32 reference_clock;
+ 
+ 	si_write_smc_soft_register(rdev, SI_SMC_SOFT_REGISTER_mvdd_chg_time, 1);
+ 
+ 	voltage_response_time = (u32)rdev->pm.dpm.voltage_response_time;
+-	backbias_response_time = (u32)rdev->pm.dpm.backbias_response_time;
+ 
+ 	if (voltage_response_time = 0)
+ 		voltage_response_time = 1000;
