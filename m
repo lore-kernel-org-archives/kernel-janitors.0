@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 Feb 2019 18:49:22 +0000
+Date: Mon, 18 Feb 2019 18:52:29 +0000
 Subject: Applied "ASoC: cs35l36: Make some symbols static" to the asoc tree
-Message-Id: <20190218184922.395091128008@debutante.sirena.org.uk>
+Message-Id: <20190218185229.B34E61128008@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190218074653.181365-1-weiyongjun1@huawei.com>
 In-Reply-To: <20190218074653.181365-1-weiyongjun1@huawei.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: James Schulman <james.schulman@cirrus.com>, Mark Brown <broonie@kernel.org>, Brian Austin <brian.austin@cirrus.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>James Schulman <james.schulman@cirrus.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org@alsa-project.org
+Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>, James Schulman <james.schulman@cirrus.com>
 
 The patch
 
