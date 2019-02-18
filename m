@@ -1,23 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 06 Feb 2019 22:03:39 +0000
-Subject: Re: [PATCH net] net: dsa: Fix NULL checking in dsa_slave_set_eee()
-Message-Id: <20190206.140339.924202706474639419.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 13:57:43 +0000
+Subject: [PATCH -next] mm: fix set but not used warning
+Message-Id: <20190218135743.131904-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190206153514.GA11033@kadam>
-In-Reply-To: <20190206153514.GA11033@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Toshi Kani <toshi.kani@hpe.com>, Will Deacon <will.deacon@arm.com>, Chintan Pandya <cpandya@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 6 Feb 2019 18:35:15 +0300
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> This function can't succeed if dp->pl is NULL.  It will Oops inside the
-> call to return phylink_ethtool_get_eee(dp->pl, e);
-> 
-> Fixes: 1be52e97ed3e ("dsa: slave: eee: Allow ports to use phylink")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+lib/ioremap.c: In function 'ioremap_page_range':
+lib/ioremap.c:203:16: warning:
+ variable 'start' set but not used [-Wunused-but-set-variable]
 
-Applied and queued up for -stable.
+flush_cache_vmap may no need param, so add __maybe_unused fix this warning.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ lib/ioremap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/ioremap.c b/lib/ioremap.c
+index 063213685563..d1c7a488e731 100644
+--- a/lib/ioremap.c
++++ b/lib/ioremap.c
+@@ -200,7 +200,7 @@ int ioremap_page_range(unsigned long addr,
+ 		       unsigned long end, phys_addr_t phys_addr, pgprot_t prot)
+ {
+ 	pgd_t *pgd;
+-	unsigned long start;
++	unsigned long __maybe_unused start;
+ 	unsigned long next;
+ 	int err;
