@@ -1,106 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 Feb 2019 18:52:29 +0000
-Subject: Applied "ASoC: cs35l36: Make some symbols static" to the asoc tree
-Message-Id: <20190218185229.B34E61128008@debutante.sirena.org.uk>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 12:19:54 +0000
+Subject: [PATCH net-next] bnx2x: Remove set but not used variable 'mfw_vn'
+Message-Id: <20190218121954.78928-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218074653.181365-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190218074653.181365-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>, James Schulman <james.schulman@cirrus.com>
+To: Ariel Elior <aelior@marvell.com>, Sudarsana Kalluru <skalluru@marvell.com>, "David S . Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-   ASoC: cs35l36: Make some symbols static
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c: In function 'bnx2x_get_hwinfo':
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:11940:10: warning:
+ variable 'mfw_vn' set but not used [-Wunused-but-set-variable]
 
-has been applied to the asoc tree at
+It's never used since introduction.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b2c02c63ac254530cffe3a7dc7d4e433da1b3a67 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 18 Feb 2019 07:46:53 +0000
-Subject: [PATCH] ASoC: cs35l36: Make some symbols static
-
-Fixes the following sparse warnings:
-
-sound/soc/codecs/cs35l36.c:135:20: warning:
- symbol 'cs35l36_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:248:6: warning:
- symbol 'cs35l36_readable_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:398:6: warning:
- symbol 'cs35l36_precious_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:410:6: warning:
- symbol 'cs35l36_volatile_reg' was not declared. Should it be static?
-
-Fixes: 6ba9dd6c893b ("ASoC: cs35l36: Add support for Cirrus CS35L36 Amplifier")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: James Schulman <james.schulman@cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/codecs/cs35l36.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
-index e374fffb7e17..dc8cf61b9db8 100644
---- a/sound/soc/codecs/cs35l36.c
-+++ b/sound/soc/codecs/cs35l36.c
-@@ -131,7 +131,7 @@ static const struct cs35l36_pll_config cs35l36_pll_sysclk[] = {
- 	{27000000,	0x3F, 0x0A},
- };
- 
--struct reg_default cs35l36_reg[] = {
-+static struct reg_default cs35l36_reg[] = {
- 	{CS35L36_TESTKEY_CTRL,			0x00000000},
- 	{CS35L36_USERKEY_CTL,			0x00000000},
- 	{CS35L36_OTP_CTRL1,			0x00002460},
-@@ -244,7 +244,7 @@ struct reg_default cs35l36_reg[] = {
- 	{CS35L36_PAC_INT7_CTRL,			0x00000001},
- };
- 
--bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index 3b5b47e98c73..7c47be215a34 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -11998,7 +11998,7 @@ static void validate_set_si_mode(struct bnx2x *bp)
+ static int bnx2x_get_hwinfo(struct bnx2x *bp)
  {
- 	switch (reg) {
- 	case CS35L36_SW_RESET:
-@@ -394,7 +394,7 @@ bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
- 	}
- }
+ 	int /*abs*/func = BP_ABS_FUNC(bp);
+-	int vn, mfw_vn;
++	int vn;
+ 	u32 val = 0, val2 = 0;
+ 	int rc = 0;
  
--bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_TESTKEY_CTRL:
-@@ -406,7 +406,7 @@ bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
- 	}
- }
+@@ -12083,12 +12083,10 @@ static int bnx2x_get_hwinfo(struct bnx2x *bp)
+ 	/*
+ 	 * Initialize MF configuration
+ 	 */
+-
+ 	bp->mf_ov = 0;
+ 	bp->mf_mode = 0;
+ 	bp->mf_sub_mode = 0;
+ 	vn = BP_VN(bp);
+-	mfw_vn = BP_FW_MB_IDX(bp);
  
--bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_SW_RESET:
--- 
-2.20.1
+ 	if (!CHIP_IS_E1(bp) && !BP_NOMCP(bp)) {
+ 		BNX2X_DEV_INFO("shmem2base 0x%x, size %d, mfcfg offset %d\n",
