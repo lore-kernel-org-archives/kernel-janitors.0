@@ -1,45 +1,52 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Date: Wed, 27 Feb 2019 12:20:36 +0000
-Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: make const array static
-Message-Id: <a10c5be3-9223-a1b7-a3d5-22d7ec6542eb@samsung.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 07:52:26 +0000
+Subject: [PATCH] rtl818x_pci: Remove set but not used variables 'io_addr, mem_addr'
+Message-Id: <20190218075226.183964-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190226165938epcas2p2aba05bf0a7b1b992ff2f71c0bfcffb6a@epcas2p2.samsung.com>
-        <20190226165932.17528-1-colin.king@canonical.com>
-In-Reply-To: <20190226165932.17528-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, "John W. Linville" <linville@tuxdriver.com>, Colin Ian King <colin.king@canonical.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 26.02.2019 17:59, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the const array ti_sn_bridge_supply_names on the
-> stack but instead make it static.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-=C2=A0--
-Regards
-Andrzej
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/brid=
-ge/ti-sn65dsi86.c
-> index f72ee137e5f1..4c2ca4e39be5 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> @@ -211,7 +211,7 @@ static struct ti_sn_bridge *bridge_to_ti_sn_bridge(st=
-ruct drm_bridge *bridge)
->  static int ti_sn_bridge_parse_regulators(struct ti_sn_bridge *pdata)
->  {
->  	unsigned int i;
-> -	const char * const ti_sn_bridge_supply_names[] =3D {
-> +	static const char * const ti_sn_bridge_supply_names[] =3D {
->  		"vcca", "vcc", "vccio", "vpll",
->  	};
-> =20
+drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c: In function 'rtl8180_probe':
+drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c:1727:15: warning:
+ variable 'io_addr' set but not used [-Wunused-but-set-variable]
+
+drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c:1726:16: warning:
+ variable 'mem_addr' set but not used [-Wunused-but-set-variable]
+
+They're never used since introduction.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
+index e2b1bfbcfbd4..d5f65372356b 100644
+--- a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
++++ b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
+@@ -1723,8 +1723,8 @@ static int rtl8180_probe(struct pci_dev *pdev,
+ {
+ 	struct ieee80211_hw *dev;
+ 	struct rtl8180_priv *priv;
+-	unsigned long mem_addr, mem_len;
+-	unsigned int io_addr, io_len;
++	unsigned long mem_len;
++	unsigned int io_len;
+ 	int err;
+ 	const char *chip_name, *rf_name = NULL;
+ 	u32 reg;
+@@ -1743,9 +1743,7 @@ static int rtl8180_probe(struct pci_dev *pdev,
+ 		goto err_disable_dev;
+ 	}
+ 
+-	io_addr = pci_resource_start(pdev, 0);
+ 	io_len = pci_resource_len(pdev, 0);
+-	mem_addr = pci_resource_start(pdev, 1);
+ 	mem_len = pci_resource_len(pdev, 1);
+ 
+ 	if (mem_len < sizeof(struct rtl818x_csr) ||
