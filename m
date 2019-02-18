@@ -1,8 +1,10 @@
 From: Mao Wenan <maowenan@huawei.com>
-Date: Mon, 18 Feb 2019 13:59:00 +0000
-Subject: [PATCH] fs: drop pointless static qualifier in bd_mount()
-Message-Id: <20190218135900.132676-1-maowenan@huawei.com>
+Date: Mon, 18 Feb 2019 14:14:17 +0000
+Subject: [PATCH] fs: drop pointless static qualifier in bdev_cache_init()
+Message-Id: <20190218141417.134355-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190218135900.132676-1-maowenan@huawei.com>
+In-Reply-To: <20190218135900.132676-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
