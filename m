@@ -1,34 +1,53 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 19 Feb 2019 15:08:01 +0000
-Subject: Re: [PATCH] brcmfmac: remove set but not used variable 'old_state'
-Message-Id: <20190219150802.012256071A@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 13:31:03 +0000
+Subject: [PATCH -next] Input: ti_am335x_tsc - remove set but not used variable 'tscadc_dev'
+Message-Id: <20190218133103.93973-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218080846.187942-1-yuehaibing@huawei.com>
-In-Reply-To: <20190218080846.187942-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c: In function 'brcmf_usb_state_change':
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:578:6: warning:
->  variable 'old_state' set but not used [-Wunused-but-set-variable]
-> 
-> It's never used and can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+drivers/input/touchscreen/ti_am335x_tsc.c: In function 'titsc_suspend':
+drivers/input/touchscreen/ti_am335x_tsc.c:510:24: warning:
+ variable 'tscadc_dev' set but not used [-Wunused-but-set-variable]
 
-Patch applied to wireless-drivers-next.git, thanks.
+drivers/input/touchscreen/ti_am335x_tsc.c: In function 'titsc_resume':
+drivers/input/touchscreen/ti_am335x_tsc.c:527:24: warning:
+ variable 'tscadc_dev' set but not used [-Wunused-but-set-variable]
 
-e4d1b2716b88 brcmfmac: remove set but not used variable 'old_state'
+It's not used any more after 333e07ec4b33 ("Input: ti_am335x_tsc: Mark TSC
+device as wakeup source")
 
--- 
-https://patchwork.kernel.org/patch/10817429/
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/input/touchscreen/ti_am335x_tsc.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
+index 9e8684ab48f4..83e685557a19 100644
+--- a/drivers/input/touchscreen/ti_am335x_tsc.c
++++ b/drivers/input/touchscreen/ti_am335x_tsc.c
+@@ -507,10 +507,8 @@ static int titsc_remove(struct platform_device *pdev)
+ static int __maybe_unused titsc_suspend(struct device *dev)
+ {
+ 	struct titsc *ts_dev = dev_get_drvdata(dev);
+-	struct ti_tscadc_dev *tscadc_dev;
+ 	unsigned int idle;
+ 
+-	tscadc_dev = ti_tscadc_dev_get(to_platform_device(dev));
+ 	if (device_may_wakeup(dev)) {
+ 		titsc_writel(ts_dev, REG_IRQSTATUS, TSC_IRQENB_MASK);
+ 		idle = titsc_readl(ts_dev, REG_IRQENABLE);
+@@ -524,9 +522,7 @@ static int __maybe_unused titsc_suspend(struct device *dev)
+ static int __maybe_unused titsc_resume(struct device *dev)
+ {
+ 	struct titsc *ts_dev = dev_get_drvdata(dev);
+-	struct ti_tscadc_dev *tscadc_dev;
+ 
+-	tscadc_dev = ti_tscadc_dev_get(to_platform_device(dev));
+ 	if (device_may_wakeup(dev)) {
+ 		titsc_writel(ts_dev, REG_IRQWAKEUP,
+ 				0x00);
