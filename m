@@ -1,38 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 11 Feb 2019 13:49:21 +0000
-Subject: [PATCH] tools: ffs-aio-example: fix uninitialized boolean variable 'ready'
-Message-Id: <20190211134921.11975-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 18 Feb 2019 18:49:41 +0000
+Subject: Applied "ASoC: fsi: fix spelling mistake "doens't" -> "doesn't"" to the asoc tree
+Message-Id: <20190218184941.E31E11128008@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190217224830.17355-1-colin.king@canonical.com>
+In-Reply-To: <20190217224830.17355-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robert Baldyga <r.baldyga@samsung.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
+The patch
+
+   ASoC: fsi: fix spelling mistake "doens't" -> "doesn't"
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From cb8cdb6f3344bcb472640d2f5f956dbde0bfd509 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Sun, 17 Feb 2019 22:48:30 +0000
+Subject: [PATCH] ASoC: fsi: fix spelling mistake "doens't" -> "doesn't"
 
-The boolean variable is uninitialized and is only set if file
-descriptor ep0 is ready. Fix this by ensuring the variable is
-initialized by setting it to false.
+There is a spelling mistake in a dev_err message. Fix it.
 
-Fixes: b34e08d5c706 ("tools: usb: aio example applications")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c | 2 +-
+ sound/soc/sh/fsi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c b/tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
-index aaca1f44e788..1dda6e816b3c 100644
---- a/tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
-+++ b/tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
-@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
- 
- 	struct io_buffer iobuf[2];
- 	int actual = 0;
--	bool ready;
-+	bool ready = false;
- 
- 	if (argc != 2) {
- 		printf("ffs directory not specified!\n");
+diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
+index aa7e902f0c02..db929b00ae5e 100644
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@ -780,7 +780,7 @@ static int fsi_clk_init(struct device *dev,
+ 			return -EINVAL;
+ 		}
+ 		if (clock->div = clock->own) {
+-			dev_err(dev, "cpu doens't support div clock\n");
++			dev_err(dev, "cpu doesn't support div clock\n");
+ 			return -EINVAL;
+ 		}
+ 	}
 -- 
 2.20.1
