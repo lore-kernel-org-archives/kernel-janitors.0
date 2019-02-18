@@ -1,50 +1,48 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 18 Feb 2019 08:15:46 +0000
-Subject: [PATCH net-next] yellowfin: fix remove set but not used variable warning
-Message-Id: <20190218081546.189509-1-yuehaibing@huawei.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 18 Feb 2019 20:13:37 +0000
+Subject: Re: [PATCH net-next] yellowfin: fix remove set but not used variable warning
+Message-Id: <20190218.121337.147896114474592034.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190218081546.189509-1-yuehaibing@huawei.com>
+In-Reply-To: <20190218081546.189509-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Yang Wei <yang.wei9@zte.com.cn>
-Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yuehaibing@huawei.com
+Cc: yang.wei9@zte.com.cn, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 08:15:46 +0000
 
-drivers/net/ethernet/packetengines/yellowfin.c: In function 'yellowfin_rx':
-drivers/net/ethernet/packetengines/yellowfin.c:1053:18: warning:
- variable 'yf_size' set but not used [-Wunused-but-set-variable]
+> @@ -1050,8 +1050,11 @@ static int yellowfin_rx(struct net_device *dev)
+>  		struct sk_buff *rx_skb = yp->rx_skbuff[entry];
+>  		s16 frame_status;
+>  		u16 desc_status;
+> -		int data_size, yf_size;
+> +		int data_size;
+>  		u8 *buf_addr;
+> +#ifdef YF_PROTOTYPE
+> +		int yf_size = sizeof(struct yellowfin_desc);
+> +#endif
 
-This puts the variable declaration into the YF_PROTOTYPE macro.
+This is just silly.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/packetengines/yellowfin.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Please move this variable declaration and initialization into the
+YF_PROTOTYPE basic block in the code below it, like this:
 
-diff --git a/drivers/net/ethernet/packetengines/yellowfin.c b/drivers/net/ethernet/packetengines/yellowfin.c
-index 6f8d6584f809..edc8cc7f0d0d 100644
---- a/drivers/net/ethernet/packetengines/yellowfin.c
-+++ b/drivers/net/ethernet/packetengines/yellowfin.c
-@@ -1050,8 +1050,11 @@ static int yellowfin_rx(struct net_device *dev)
- 		struct sk_buff *rx_skb = yp->rx_skbuff[entry];
- 		s16 frame_status;
- 		u16 desc_status;
--		int data_size, yf_size;
-+		int data_size;
- 		u8 *buf_addr;
-+#ifdef YF_PROTOTYPE
-+		int yf_size = sizeof(struct yellowfin_desc);
-+#endif
- 
- 		if(!desc->result_status)
- 			break;
-@@ -1068,8 +1071,6 @@ static int yellowfin_rx(struct net_device *dev)
- 		if (--boguscnt < 0)
- 			break;
- 
--		yf_size = sizeof(struct yellowfin_desc);
--
- 		if ( ! (desc_status & RX_EOP)) {
- 			if (data_size != 0)
- 				netdev_warn(dev, "Oversized Ethernet frame spanned multiple buffers, status %04x, data_size %d!\n",
+#ifdef YF_PROTOTYPE		/* Support for prototype hardware errata. */
+		} else if ((yp->flags & HasMACAddrBug)  &&
+			int yf_size = sizeof(struct yellowfin_desc);
+
+			!ether_addr_equal(le32_to_cpu(yp->rx_ring_dma +
+						      entry * yf_size),
+					  dev->dev_addr) &&
+			!ether_addr_equal(le32_to_cpu(yp->rx_ring_dma +
+						      entry * yf_size),
+					  "\377\377\377\377\377\377")) {
+			if (bogus_rx++ = 0)
+				netdev_warn(dev, "Bad frame to %pM\n",
+					    buf_addr);
+#endif
+
+Thanks.
