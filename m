@@ -1,63 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Feb 2019 13:20:34 +0000
-Subject: [PATCH 03/12] PowerPC-83xx: add missing of_node_put after of_device_is_available
-Message-Id: <1550928043-14889-4-git-send-email-Julia.Lawall@lip6.fr>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 08:42:32 +0000
+Subject: [PATCH -next] floppy: remove set but not used variable 'q'
+Message-Id: <20190218084232.193878-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Scott Wood <oss@buserror.net>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Jiri Kosina <jikos@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add an of_node_put when a tested device node is not available.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+drivers/block/floppy.c: In function 'request_done':
+drivers/block/floppy.c:2233:24: warning:
+ variable 'q' set but not used [-Wunused-but-set-variable]
 
-// <smpl>
-@@
-identifier f;
-local idexpression e;
-expression x;
-@@
+It's never used and can be removed.
 
-e = f(...);
-... when != of_node_put(e)
-    when != x = e
-    when != e = x
-    when any
-if (<+...of_device_is_available(e)...+>) {
-  ... when != of_node_put(e)
-(
-  return e;
-|
-+ of_node_put(e);
-  return ...;
-)
-}
-// </smpl>
-
-Fixes: c026c98739c7e ("powerpc/83xx: Do not configure or probe disabled FSL DR USB controllers")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/powerpc/platforms/83xx/usb.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/block/floppy.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff -u -p a/arch/powerpc/platforms/83xx/usb.c b/arch/powerpc/platforms/83xx/usb.c
---- a/arch/powerpc/platforms/83xx/usb.c
-+++ b/arch/powerpc/platforms/83xx/usb.c
-@@ -221,8 +221,10 @@ int mpc837x_usb_cfg(void)
- 	int ret = 0;
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index 55481b40df9a..95f608d1a098 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -2230,7 +2230,6 @@ static void floppy_end_request(struct request *req, blk_status_t error)
+ static void request_done(int uptodate)
+ {
+ 	struct request *req = current_req;
+-	struct request_queue *q;
+ 	int block;
+ 	char msg[sizeof("request done ") + sizeof(int) * 3];
  
- 	np = of_find_compatible_node(NULL, NULL, "fsl-usb2-dr");
--	if (!np || !of_device_is_available(np))
-+	if (!np || !of_device_is_available(np)) {
-+		of_node_put(np);
- 		return -ENODEV;
-+	}
- 	prop = of_get_property(np, "phy_type", NULL);
+@@ -2243,8 +2242,6 @@ static void request_done(int uptodate)
+ 		return;
+ 	}
  
- 	if (!prop || (strcmp(prop, "ulpi") && strcmp(prop, "serial"))) {
+-	q = req->q;
+-
+ 	if (uptodate) {
+ 		/* maintain values for invalidation on geometry
+ 		 * change */
