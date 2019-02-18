@@ -1,34 +1,91 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 28 Feb 2019 08:40:57 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8192se: Remove set but not used variable 'seg_ptr'
-Message-Id: <20190228084058.0B1AF60CF0@smtp.codeaurora.org>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 18 Feb 2019 18:49:17 +0000
+Subject: Applied "ASoC: stm32: sai: remove set but not used variables 'mask, cr1'" to the asoc tree
+Message-Id: <20190218184917.CDEC21128008@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190227022347.7927-1-yuehaibing@huawei.com>
-In-Reply-To: <20190227022347.7927-1-yuehaibing@huawei.com>
+References: <20190218145026.142805-1-yuehaibing@huawei.com>
+In-Reply-To: <20190218145026.142805-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: YueHaibing <yuehaibing@huawei.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jaroslav Kysela <perex@perex.cz>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+The patch
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c: In function '_rtl92s_firmware_downloadcode':
-> drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c:139:17: warning:
->  variable 'seg_ptr' set but not used [-Wunused-but-set-variable]
-> 
-> It's not used after commit 59ae1d127ac0 ("networking: introduce and use
-> skb_put_data()")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+   ASoC: stm32: sai: remove set but not used variables 'mask, cr1'
 
-Patch applied to wireless-drivers-next.git, thanks.
+has been applied to the asoc tree at
 
-037e0c5df649 rtlwifi: rtl8192se: Remove set but not used variable 'seg_ptr'
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 70605450fd42060783b0072a61a30f42a74f2917 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 14:50:26 +0000
+Subject: [PATCH] ASoC: stm32: sai: remove set but not used variables 'mask,
+ cr1'
+
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+sound/soc/stm/stm32_sai_sub.c: In function 'stm32_sai_configure_clock':
+sound/soc/stm/stm32_sai_sub.c:902:11: warning:
+ variable 'mask' set but not used [-Wunused-but-set-variable]
+sound/soc/stm/stm32_sai_sub.c:902:6: warning:
+ variable 'cr1' set but not used [-Wunused-but-set-variable]
+
+It's not used any more after 8307b2afd386 ("ASoC: stm32: sai: set sai as
+mclk clock provider")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/stm/stm32_sai_sub.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index d4825700b63f..f9297228c41c 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -898,7 +898,7 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 				     struct snd_pcm_hw_params *params)
+ {
+ 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
+-	int cr1, mask, div = 0;
++	int div = 0;
+ 	int sai_clk_rate, mclk_ratio, den;
+ 	unsigned int rate = params_rate(params);
+ 
+@@ -943,10 +943,8 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 		} else {
+ 			if (sai->mclk_rate) {
+ 				mclk_ratio = sai->mclk_rate / rate;
+-				if (mclk_ratio = 512) {
+-					mask = SAI_XCR1_OSR;
+-					cr1 = SAI_XCR1_OSR;
+-				} else if (mclk_ratio != 256) {
++				if ((mclk_ratio != 512) &&
++				    (mclk_ratio != 256)) {
+ 					dev_err(cpu_dai->dev,
+ 						"Wrong mclk ratio %d\n",
+ 						mclk_ratio);
 -- 
-https://patchwork.kernel.org/patch/10831003/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
