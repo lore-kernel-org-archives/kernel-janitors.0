@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 Feb 2019 18:49:17 +0000
+Date: Mon, 18 Feb 2019 18:52:25 +0000
 Subject: Applied "ASoC: stm32: sai: remove set but not used variables 'mask, cr1'" to the asoc tree
-Message-Id: <20190218184917.CDEC21128008@debutante.sirena.org.uk>
+Message-Id: <20190218185225.691B01128008@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190218145026.142805-1-yuehaibing@huawei.com>
 In-Reply-To: <20190218145026.142805-1-yuehaibing@huawei.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: YueHaibing <yuehaibing@huawei.com>
-Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jaroslav Kysela <perex@perex.cz>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org
 
 The patch
 
