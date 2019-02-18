@@ -1,75 +1,52 @@
-From: Jerome Glisse <jglisse@redhat.com>
-Date: Mon, 11 Feb 2019 19:11:34 +0000
-Subject: Re: [PATCH v2] mm/hmm: potential deadlock in nonblocking code
-Message-Id: <20190211191133.GB3908@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 08:54:59 +0000
+Subject: [PATCH -next] drm/qxl: remove set but not used variable 'bo_old'
+Message-Id: <20190218085459.196470-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190204132043.GA16485@kadam>
- <20190204182304.GA8756@kadam>
-In-Reply-To: <20190204182304.GA8756@kadam>
+References: <1541821486-40631-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541821486-40631-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: YueHaibing <yuehaibing@huawei.com>, virtualization@lists.linux-foundation.org, spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 09:24:21PM +0300, Dan Carpenter wrote:
-> There is a deadlock bug when these functions are used in nonblocking
-> mode.
->=20
-> The else side of the if/else statement is only meant to be taken in when
-> the code is used in blocking mode.  But, unfortunately, the way the
-> code is now, if we're in non-blocking mode and we succeed in taking the
-> lock then we do the else statement.  The else side tries to take lock a
-> second time which results in a deadlock.
->=20
-> Fixes: a3402cb621c1 ("mm/hmm: improve driver API to work and wait over a =
-range")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: J=E9r=F4me Glisse <jglisse@redhat.com>
+drivers/gpu/drm/qxl/qxl_display.c: In function 'qxl_primary_atomic_update':
+drivers/gpu/drm/qxl/qxl_display.c:538:17: warning:
+ variable 'bo_old' set but not used [-Wunused-but-set-variable]
 
-> ---
-> V2: improve the style and tweak the commit description
->=20
->  hmm.c |   15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
->=20
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index e14e0aa4d2cb..3c9781037918 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -207,11 +207,12 @@ static int hmm_invalidate_range_start(struct mmu_no=
-tifier *mn,
->  	update.event =3D HMM_UPDATE_INVALIDATE;
->  	update.blockable =3D nrange->blockable;
-> =20
-> -	if (!nrange->blockable && !mutex_trylock(&hmm->lock)) {
-> +	if (nrange->blockable)
-> +		mutex_lock(&hmm->lock);
-> +	else if (!mutex_trylock(&hmm->lock)) {
->  		ret =3D -EAGAIN;
->  		goto out;
-> -	} else
-> -		mutex_lock(&hmm->lock);
-> +	}
->  	hmm->notifiers++;
->  	list_for_each_entry(range, &hmm->ranges, list) {
->  		if (update.end < range->start || update.start >=3D range->end)
-> @@ -221,12 +222,12 @@ static int hmm_invalidate_range_start(struct mmu_no=
-tifier *mn,
->  	}
->  	mutex_unlock(&hmm->lock);
-> =20
-> -
-> -	if (!nrange->blockable && !down_read_trylock(&hmm->mirrors_sem)) {
-> +	if (nrange->blockable)
-> +		down_read(&hmm->mirrors_sem);
-> +	else if (!down_read_trylock(&hmm->mirrors_sem)) {
->  		ret =3D -EAGAIN;
->  		goto out;
-> -	} else
-> -		down_read(&hmm->mirrors_sem);
-> +	}
->  	list_for_each_entry(mirror, &hmm->mirrors, list) {
->  		int ret;
-> =20
+It's not used any more after 4979904c62b9 ("drm/qxl: use shadow bo directly")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/qxl/qxl_display.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+index 08c725544a2f..8b319ebbb0fb 100644
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -535,7 +535,7 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+ {
+ 	struct qxl_device *qdev = plane->dev->dev_private;
+ 	struct qxl_bo *bo = gem_to_qxl_bo(plane->state->fb->obj[0]);
+-	struct qxl_bo *bo_old, *primary;
++	struct qxl_bo *primary;
+ 	struct drm_clip_rect norect = {
+ 	    .x1 = 0,
+ 	    .y1 = 0,
+@@ -544,12 +544,6 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+ 	};
+ 	uint32_t dumb_shadow_offset = 0;
+ 
+-	if (old_state->fb) {
+-		bo_old = gem_to_qxl_bo(old_state->fb->obj[0]);
+-	} else {
+-		bo_old = NULL;
+-	}
+-
+ 	primary = bo->shadow ? bo->shadow : bo;
+ 
+ 	if (!primary->is_primary) {
