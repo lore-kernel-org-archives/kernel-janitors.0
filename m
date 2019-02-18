@@ -1,21 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 Feb 2019 06:04:28 +0000
-Subject: Re: [PATCH net-next] net: sched: remove duplicated include from cls_api.c
-Message-Id: <20190213.220428.1450248431303320169.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 18 Feb 2019 09:31:54 +0000
+Subject: [PATCH] carl9170: clean up a clamp() call
+Message-Id: <20190218093154.GC7712@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190213014200.120305-1-yuehaibing@huawei.com>
-In-Reply-To: <20190213014200.120305-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 13 Feb 2019 01:42:00 +0000
+The parameter order for clamp is supposed to be clamp(value, low, high).
+When we write it in this order it's equivalent to
+min(head->plcp[3] & 0x7f, 75) which works in this context where the min
+is zero.  But it's not a correct use of the API.
 
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/ath/carl9170/rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/drivers/net/wireless/ath/carl9170/rx.c b/drivers/net/wireless/ath/carl9170/rx.c
+index f7c2f19e81c1..8e154f6364a3 100644
+--- a/drivers/net/wireless/ath/carl9170/rx.c
++++ b/drivers/net/wireless/ath/carl9170/rx.c
+@@ -427,7 +427,7 @@ static int carl9170_rx_mac_status(struct ar9170 *ar,
+ 		if (head->plcp[6] & 0x80)
+ 			status->enc_flags |= RX_ENC_FLAG_SHORT_GI;
+ 
+-		status->rate_idx = clamp(0, 75, head->plcp[3] & 0x7f);
++		status->rate_idx = clamp(head->plcp[3] & 0x7f, 0, 75);
+ 		status->encoding = RX_ENC_HT;
+ 		break;
+ 
+-- 
+2.17.1
