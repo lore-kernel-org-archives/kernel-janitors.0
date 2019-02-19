@@ -1,53 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Feb 2019 13:51:18 +0000
-Subject: [PATCH] drm/nouveau/falcon: fix a few indentation issues
-Message-Id: <20190212135118.8498-1-colin.king@canonical.com>
+Date: Tue, 19 Feb 2019 14:30:55 +0000
+Subject: [PATCH][next] block: don't dereference a potential null bio pointer until is has been null checked
+Message-Id: <20190219143055.11633-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are a few statements that are indented incorrectly. Fix these.
+The bio pointer is being null checked hence it can be potentially
+null, however earlier it is being derefefenced on the assignment of
+front_seg_size.  Avoid the dereference issue by only assigning
+front_seg_size after bios has been null sanity checked.
 
+Fixes: dcebd755926b ("block: use bio_for_each_bvec() to compute multi-page bvec count")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ block/blk-merge.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c b/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c
-index 771e16a16267..a8bee1e046aa 100644
---- a/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/falcon/msgqueue.c
-@@ -269,7 +269,7 @@ cmd_write(struct nvkm_msgqueue *priv, struct nvkm_msgqueue_hdr *cmd,
- 		commit = false;
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index bed065904677..1bec20fbe465 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -379,6 +379,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 		return 1;
  	}
  
--	   cmd_queue_close(priv, queue, commit);
-+	cmd_queue_close(priv, queue, commit);
- 
- 	return ret;
- }
-@@ -347,7 +347,7 @@ nvkm_msgqueue_post(struct nvkm_msgqueue *priv, enum msgqueue_msg_priority prio,
- 	ret = cmd_write(priv, cmd, queue);
- 	if (ret) {
- 		seq->state = SEQ_STATE_PENDING;
--		      msgqueue_seq_release(priv, seq);
-+		msgqueue_seq_release(priv, seq);
- 	}
- 
- 	return ret;
-@@ -373,7 +373,7 @@ msgqueue_msg_handle(struct nvkm_msgqueue *priv, struct nvkm_msgqueue_hdr *hdr)
- 	if (seq->completion)
- 		complete(seq->completion);
- 
--	   msgqueue_seq_release(priv, seq);
-+	msgqueue_seq_release(priv, seq);
- 
- 	return 0;
- }
++	front_seg_size = bio->bi_seg_front_size;
+ 	fbio = bio;
+ 	seg_size = 0;
+ 	nr_phys_segs = 0;
 -- 
 2.20.1
