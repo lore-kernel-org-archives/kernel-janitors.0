@@ -1,27 +1,25 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 19 Feb 2019 08:29:41 +0000
+Date: Tue, 19 Feb 2019 09:30:21 +0000
 Subject: Re: [v6] coccinelle: semantic code search for missing put_device()
-Message-Id: <31a0ea02-4005-23a4-8030-47319504e84a@web.de>
+Message-Id: <98bf31c1-16f2-1058-14e3-cf3e67be06f6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201902191014156680299@zte.com.cn>
-In-Reply-To: <201902191014156680299@zte.com.cn>
+References: <201902191709341581016@zte.com.cn>
+In-Reply-To: <201902191709341581016@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wen Yang <wen.yang99@zte.com.cn>, Julia Lawall <julia.lawall@lip6.fr>
+To: Wen Yang <wen.yang99@zte.com.cn>
 Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Cheng Shengyu <cheng.shengyu@zte.com.cn>, cocci@systeme.lip6.fr
 
-> Do you have any other questions?
+>> Will corrections become relevant for specifications in (assignment) exclusions
+>> of the second SmPL ellipsis in the discussed script?
+>
+> Let's do some experiments with the code in the current kernel.
 
-Obviously, yes.
+It seems that you provided additional information for the adjustment
+of when specifications according to the first SmPL ellipsis.
 
-I am curious if this development discussion and code review will trigger
-further software adjustments.
-I guess that you will need additional time to reconsider specific items
-from recent feedback.
-
-Will corrections become relevant for specifications in (assignment) exclusions
-of the second SmPL ellipsis in the discussed script?
+Other details are still in the waiting queue for the desired software clarification.
 
 Regards,
 Markus
