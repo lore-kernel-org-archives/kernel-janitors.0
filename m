@@ -1,33 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 28 Feb 2019 08:40:31 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8723ae: Remove set but not used variable 'bt_retry_cnt'
-Message-Id: <20190228084033.62C0260EA5@smtp.codeaurora.org>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 19 Feb 2019 07:53:29 +0000
+Subject: [PATCH] net: ns83820: drop pointless static qualifier in ns83820_probe_phy()
+Message-Id: <20190219080659.89732-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190227022334.7750-1-yuehaibing@huawei.com>
-In-Reply-To: <20190227022334.7750-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, john.fastabend@gmail.com, hawk@kernel.org, jakub.kicinski@netronome.com, daniel@iogearbox.net, ast@kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+There is no need to have the 'int first' static
+since new value always be assigned before use it.
+The old codes of first dereferencing this variable have
+been commented out. So it is useless with 'static int first'.
+/*
+if (!first) {
+ ...
+}
+*/
+first = 1;
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c: In function '_rtl8723e_dm_bt_coexist_2_ant':
-> drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c:1408:5: warning:
->  variable 'bt_retry_cnt' set but not used [-Wunused-but-set-variable]
-> 
-> It's never used and can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/ethernet/natsemi/ns83820.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-85c6ac33c87c rtlwifi: rtl8723ae: Remove set but not used variable 'bt_retry_cnt'
-
+diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
+index 958fced4dacf..fb064df3a1a6 100644
+--- a/drivers/net/ethernet/natsemi/ns83820.c
++++ b/drivers/net/ethernet/natsemi/ns83820.c
+@@ -1869,7 +1869,7 @@ static unsigned ns83820_mii_write_reg(struct ns83820 *dev, unsigned phy, unsigne
+ static void ns83820_probe_phy(struct net_device *ndev)
+ {
+ 	struct ns83820 *dev = PRIV(ndev);
+-	static int first;
++	int first;
+ 	int i;
+ #define MII_PHYIDR1	0x02
+ #define MII_PHYIDR2	0x03
 -- 
-https://patchwork.kernel.org/patch/10831001/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
