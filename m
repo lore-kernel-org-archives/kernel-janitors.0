@@ -1,35 +1,83 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 18 Jan 2019 23:12:31 +0000
-Subject: [PATCH] wlcore: clean up an indentation issue
-Message-Id: <20190118231231.31577-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Feb 2019 19:37:02 +0000
+Subject: [bug report] platform/chrome: wilco_ec: Add support for raw commands in debugfs
+Message-Id: <20190219193702.GA16050@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Tony Lindgren <tony@atomide.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Nick Crews,
 
-There is a goto statement that is missing a tab for indentation. Fix this.
+The patch 6d9f76dd4b35: "platform/chrome: wilco_ec: Add support for
+raw commands in debugfs" from Feb 8, 2019, leads to the following
+static checker warning:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ti/wlcore/cmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	drivers/platform/chrome/wilco_ec/debugfs.c:150 raw_write()
+	warn: 'ret - 3' negative one (off by one?)
 
-diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti/wlcore/cmd.c
-index 903968735a74..348be0aed97e 100644
---- a/drivers/net/wireless/ti/wlcore/cmd.c
-+++ b/drivers/net/wireless/ti/wlcore/cmd.c
-@@ -1427,7 +1427,7 @@ int wl1271_cmd_set_sta_key(struct wl1271 *wl, struct wl12xx_vif *wlvif,
- 	ret = wl1271_cmd_send(wl, CMD_SET_KEYS, cmd, sizeof(*cmd), 0);
- 	if (ret < 0) {
- 		wl1271_warning("could not set keys");
--	goto out;
-+		goto out;
- 	}
- 
- out:
--- 
-2.19.1
+drivers/platform/chrome/wilco_ec/debugfs.c
+    119 static ssize_t raw_write(struct file *file, const char __user *user_buf,
+    120 			 size_t count, loff_t *ppos)
+    121 {
+    122 	char *buf = debug_info->formatted_data;
+    123 	struct wilco_ec_message msg;
+    124 	u8 request_data[TYPE_AND_DATA_SIZE];
+    125 	ssize_t kcount;
+    126 	int ret;
+    127 
+    128 	if (count > FORMATTED_BUFFER_SIZE)
+    129 		return -EINVAL;
+    130 
+    131 	kcount = simple_write_to_buffer(buf, FORMATTED_BUFFER_SIZE, ppos,
+    132 					user_buf, count);
+    133 	if (kcount < 0)
+    134 		return kcount;
+    135 
+    136 	ret = parse_hex_sentence(buf, kcount, request_data, TYPE_AND_DATA_SIZE);
+    137 	if (ret < 0)
+    138 		return ret;
+    139 	/* Need at least two bytes for message type */
+    140 	if (ret < 2)
+                    ^^^^^^^
+Assume "ret = 2".
+
+    141 		return -EINVAL;
+    142 
+    143 	/* Clear response data buffer */
+    144 	memset(debug_info->raw_data, '\0', EC_MAILBOX_DATA_SIZE_EXTENDED);
+    145 
+    146 	msg.type = request_data[0] << 8 | request_data[1];
+    147 	msg.flags = WILCO_EC_FLAG_RAW;
+    148 	msg.command = ret > 2 ? request_data[2] : 0;
+                ^^^^^^^^^^^^^
+So command is zero.
+    149 	msg.request_data = ret > 3 ? request_data + 3 : 0;
+--> 150 	msg.request_size = ret - 3;
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+And request_size is u32max.
+
+    151 	msg.response_data = debug_info->raw_data;
+    152 	msg.response_size = EC_MAILBOX_DATA_SIZE;
+    153 
+    154 	/* Telemetry commands use extended response data */
+    155 	if (msg.type = WILCO_EC_MSG_TELEMETRY_LONG) {
+    156 		msg.flags |= WILCO_EC_FLAG_EXTENDED_DATA;
+    157 		msg.response_size = EC_MAILBOX_DATA_SIZE_EXTENDED;
+    158 	}
+    159 
+    160 	ret = wilco_ec_mailbox(debug_info->ec, &msg);
+                                                       ^^^^
+It leads to memory corruption when we do the memmove() in
+wilco_ec_prepare().
+
+    161 	if (ret < 0)
+    162 		return ret;
+    163 	debug_info->response_size = ret;
+    164 
+    165 	return count;
+    166 }
+
+regards,
+dan carpenter
