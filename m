@@ -1,36 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Feb 2019 14:05:17 +0000
-Subject: [PATCH][next] soc: fsl: dpio: fix memory leak of a struct qbman on error exit path
-Message-Id: <20190219140517.10709-1-colin.king@canonical.com>
+From: Leo Li <leoyang.li@nxp.com>
+Date: Tue, 19 Feb 2019 20:56:56 +0000
+Subject: RE: [PATCH][next] soc: fsl: dpio: fix memory leak of a struct qbman on error exit path
+Message-Id: <AM6PR04MB586338893C089939732092468F7C0@AM6PR04MB5863.eurprd04.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190219140517.10709-1-colin.king@canonical.com>
+In-Reply-To: <20190219140517.10709-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roy Pledge <Roy.Pledge@nxp.com>, Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Roy Pledge <roy.pledge@nxp.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the error check for a null reg leaks a struct qbman
-that was allocated earlier. Fix this by kfree'ing p on the error exit
-path.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/soc/fsl/dpio/qbman-portal.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/fsl/dpio/qbman-portal.c b/drivers/soc/fsl/dpio/qbman-portal.c
-index 0bddb85c0ae5..5a73397ae79e 100644
---- a/drivers/soc/fsl/dpio/qbman-portal.c
-+++ b/drivers/soc/fsl/dpio/qbman-portal.c
-@@ -180,6 +180,7 @@ struct qbman_swp *qbman_swp_init(const struct qbman_swp_desc *d)
- 	reg = qbman_read_register(p, QBMAN_CINH_SWP_CFG);
- 	if (!reg) {
- 		pr_err("qbman: the portal is not enabled!\n");
-+		kfree(p);
- 		return NULL;
- 	}
- 
--- 
-2.20.1
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyA8Y29s
+aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBGZWJydWFyeSAxOSwgMjAx
+OSA4OjA1IEFNDQo+IFRvOiBSb3kgUGxlZGdlIDxyb3kucGxlZGdlQG54cC5jb20+OyBMZW8gTGkg
+PGxlb3lhbmcubGlAbnhwLmNvbT47DQo+IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBs
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9y
+c0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVj
+dDogW1BBVENIXVtuZXh0XSBzb2M6IGZzbDogZHBpbzogZml4IG1lbW9yeSBsZWFrIG9mIGEgc3Ry
+dWN0IHFibWFuIG9uDQo+IGVycm9yIGV4aXQgcGF0aA0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtp
+bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IEN1cnJlbnRseSB0aGUgZXJyb3Ig
+Y2hlY2sgZm9yIGEgbnVsbCByZWcgbGVha3MgYSBzdHJ1Y3QgcWJtYW4gdGhhdCB3YXMNCj4gYWxs
+b2NhdGVkIGVhcmxpZXIuIEZpeCB0aGlzIGJ5IGtmcmVlJ2luZyBwIG9uIHRoZSBlcnJvciBleGl0
+IHBhdGguDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
+YW5vbmljYWwuY29tPg0KDQpBcHBsaWVkIGZvciBuZXh0LiAgVGhhbmtzLg0KDQo+IC0tLQ0KPiAg
+ZHJpdmVycy9zb2MvZnNsL2RwaW8vcWJtYW4tcG9ydGFsLmMgfCAxICsNCj4gIDEgZmlsZSBjaGFu
+Z2VkLCAxIGluc2VydGlvbigrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL2ZzbC9k
+cGlvL3FibWFuLXBvcnRhbC5jDQo+IGIvZHJpdmVycy9zb2MvZnNsL2RwaW8vcWJtYW4tcG9ydGFs
+LmMNCj4gaW5kZXggMGJkZGI4NWMwYWU1Li41YTczMzk3YWU3OWUgMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvc29jL2ZzbC9kcGlvL3FibWFuLXBvcnRhbC5jDQo+ICsrKyBiL2RyaXZlcnMvc29jL2Zz
+bC9kcGlvL3FibWFuLXBvcnRhbC5jDQo+IEBAIC0xODAsNiArMTgwLDcgQEAgc3RydWN0IHFibWFu
+X3N3cCAqcWJtYW5fc3dwX2luaXQoY29uc3Qgc3RydWN0DQo+IHFibWFuX3N3cF9kZXNjICpkKQ0K
+PiAgCXJlZyA9IHFibWFuX3JlYWRfcmVnaXN0ZXIocCwgUUJNQU5fQ0lOSF9TV1BfQ0ZHKTsNCj4g
+IAlpZiAoIXJlZykgew0KPiAgCQlwcl9lcnIoInFibWFuOiB0aGUgcG9ydGFsIGlzIG5vdCBlbmFi
+bGVkIVxuIik7DQo+ICsJCWtmcmVlKHApOw0KPiAgCQlyZXR1cm4gTlVMTDsNCj4gIAl9DQo+IA0K
+PiAtLQ0KPiAyLjIwLjENCg0K
