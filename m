@@ -1,51 +1,105 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Thu, 21 Feb 2019 15:54:31 +0000
-Subject: Re: [PATCH][xfs-next] xfs: fix uninitialized error variable
-Message-Id: <20190221155431.GQ32253@magnolia>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 19 Feb 2019 13:45:10 +0000
+Subject: [PATCH v4] net: ns83820: code cleanup for ns83820_probe_phy()
+Message-Id: <20190219134510.51835-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190221112224.3748-1-colin.king@canonical.com>
-In-Reply-To: <20190221112224.3748-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>, Dave Chinner <dchinner@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, john.fastabend@gmail.com, hawk@kernel.org, jakub.kicinski@netronome.com, daniel@iogearbox.net, ast@kernel.org, julia.lawall@lip6.fr, wharms@bfs.de
 
-On Thu, Feb 21, 2019 at 11:22:24AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A previous commit removed the initialization of variable 'error' to zero,
-> and can cause a bogus error return.  This occurs when error contains a
-> non-zero garbage value and the call to xchk_should_terminate detects a
-> pending fatal signal and checks for a zero error before setting it
-> to -EAGAIN. Fix the issue by initializing error to zero.
-> 
-> Fixes: b9454fe056bd ("xfs: clean up the inode cluster checking in the inobt scrub")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This patch is to do code cleanup for ns83820_probe_phy().
+It deletes unused variable 'first', commented out code,
+and the pointless 'for' loop.
 
-Thank you for the cleanup!
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+---
+ v3->v4: delete pointless 'for' loop, variable 'i', and so on.
+ drivers/net/ethernet/natsemi/ns83820.c | 70 ++++++++------------------
+ 1 file changed, 21 insertions(+), 49 deletions(-)
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/xfs/scrub/ialloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/scrub/ialloc.c b/fs/xfs/scrub/ialloc.c
-> index 2c9dad2b61b1..700114f79a7d 100644
-> --- a/fs/xfs/scrub/ialloc.c
-> +++ b/fs/xfs/scrub/ialloc.c
-> @@ -161,7 +161,7 @@ xchk_iallocbt_check_cluster_ifree(
->  	bool				irec_free;
->  	bool				ino_inuse;
->  	bool				freemask_ok;
-> -	int				error;
-> +	int				error = 0;
->  
->  	if (xchk_should_terminate(bs->sc, &error))
->  		return error;
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
+index 958fced4dacf..959c0fa37d75 100644
+--- a/drivers/net/ethernet/natsemi/ns83820.c
++++ b/drivers/net/ethernet/natsemi/ns83820.c
+@@ -1869,56 +1869,28 @@ static unsigned ns83820_mii_write_reg(struct ns83820 *dev, unsigned phy, unsigne
+ static void ns83820_probe_phy(struct net_device *ndev)
+ {
+ 	struct ns83820 *dev = PRIV(ndev);
+-	static int first;
+-	int i;
+-#define MII_PHYIDR1	0x02
+-#define MII_PHYIDR2	0x03
+-
+-#if 0
+-	if (!first) {
+-		unsigned tmp;
+-		ns83820_mii_read_reg(dev, 1, 0x09);
+-		ns83820_mii_write_reg(dev, 1, 0x10, 0x0d3e);
+-
+-		tmp = ns83820_mii_read_reg(dev, 1, 0x00);
+-		ns83820_mii_write_reg(dev, 1, 0x00, tmp | 0x8000);
+-		udelay(1300);
+-		ns83820_mii_read_reg(dev, 1, 0x09);
+-	}
+-#endif
+-	first = 1;
+-
+-	for (i=1; i<2; i++) {
+-		int j;
+-		unsigned a, b;
+-		a = ns83820_mii_read_reg(dev, i, MII_PHYIDR1);
+-		b = ns83820_mii_read_reg(dev, i, MII_PHYIDR2);
+-
+-		//printk("%s: phy %d: 0x%04x 0x%04x\n",
+-		//	ndev->name, i, a, b);
+-
+-		for (j=0; j<0x16; j+=4) {
+-			dprintk("%s: [0x%02x] %04x %04x %04x %04x\n",
+-				ndev->name, j,
+-				ns83820_mii_read_reg(dev, i, 0 + j),
+-				ns83820_mii_read_reg(dev, i, 1 + j),
+-				ns83820_mii_read_reg(dev, i, 2 + j),
+-				ns83820_mii_read_reg(dev, i, 3 + j)
+-				);
+-		}
+-	}
+-	{
+-		unsigned a, b;
+-		/* read firmware version: memory addr is 0x8402 and 0x8403 */
+-		ns83820_mii_write_reg(dev, 1, 0x16, 0x000d);
+-		ns83820_mii_write_reg(dev, 1, 0x1e, 0x810e);
+-		a = ns83820_mii_read_reg(dev, 1, 0x1d);
+-
+-		ns83820_mii_write_reg(dev, 1, 0x16, 0x000d);
+-		ns83820_mii_write_reg(dev, 1, 0x1e, 0x810e);
+-		b = ns83820_mii_read_reg(dev, 1, 0x1d);
+-		dprintk("version: 0x%04x 0x%04x\n", a, b);
++	int j;
++	unsigned a, b;
++
++	for (j = 0; j < 0x16; j += 4) {
++		dprintk("%s: [0x%02x] %04x %04x %04x %04x\n",
++			ndev->name, j,
++			ns83820_mii_read_reg(dev, 1, 0 + j),
++			ns83820_mii_read_reg(dev, 1, 1 + j),
++			ns83820_mii_read_reg(dev, 1, 2 + j),
++			ns83820_mii_read_reg(dev, 1, 3 + j)
++			);
+ 	}
++
++	/* read firmware version: memory addr is 0x8402 and 0x8403 */
++	ns83820_mii_write_reg(dev, 1, 0x16, 0x000d);
++	ns83820_mii_write_reg(dev, 1, 0x1e, 0x810e);
++	a = ns83820_mii_read_reg(dev, 1, 0x1d);
++
++	ns83820_mii_write_reg(dev, 1, 0x16, 0x000d);
++	ns83820_mii_write_reg(dev, 1, 0x1e, 0x810e);
++	b = ns83820_mii_read_reg(dev, 1, 0x1d);
++	dprintk("version: 0x%04x 0x%04x\n", a, b);
+ }
+ #endif
+ 
+-- 
+2.20.1
