@@ -1,44 +1,37 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 26 Feb 2019 13:41:21 +0000
-Subject: [PATCH][next] scsi: lpfc: ensure error is set to -ENODEV on failing exit paths
-Message-Id: <20190226134121.23650-1-colin.king@canonical.com>
+Date: Tue, 19 Feb 2019 14:53:49 +0000
+Subject: [PATCH][next] phy: ti-pipe3: fix missing bit-wise or operator when assigning val
+Message-Id: <20190219145349.12316-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.de>, James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-A previous commit assigned error to the return value from the call to
-dma_set_mask_and_coherent and on the non-failure path error is zero. The
-subsequent error return paths now return 0 instead of -ENODEV causing
-failures to now be ignored.  Fix this by setting error to -ENODEV before
-these exit paths. This is indentical to an earlier fix in function
-lpfc_sli_pci_mem_setup but accidentally omitted for the function
-lpfc_sli4_pci_mem_setup.
+There seems to be a missing bit-wise or operator when setting val,
+fix this by adding it in.
 
-Detected by cppcheck ("(warning) Identical condition 'error', second
-condition is always false")
-
-Fixes: 56de8357049c ("scsi: lpfc: fix calls to dma_set_mask_and_coherent()")
+Fixes: 2796ceb0c18a ("phy: ti-pipe3: Update pcie phy settings")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/lpfc/lpfc_init.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/ti/phy-ti-pipe3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 3b5873f6751e..e88c606317e1 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -10064,6 +10064,7 @@ lpfc_sli4_pci_mem_setup(struct lpfc_hba *phba)
- 		error = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 	if (error)
- 		return error;
-+	error = -ENODEV;
+diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
+index 68ce4a082b9b..693acc167351 100644
+--- a/drivers/phy/ti/phy-ti-pipe3.c
++++ b/drivers/phy/ti/phy-ti-pipe3.c
+@@ -303,7 +303,7 @@ static void ti_pipe3_calibrate(struct ti_pipe3 *phy)
  
- 	/*
- 	 * The BARs and register set definitions and offset locations are
+ 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY);
+ 	val &= ~(INTERFACE_MASK | LOSD_MASK | MEM_PLLDIV);
+-	val = (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
++	val |= (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
+ 	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY, val);
+ 
+ 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_DIGITAL_MODES);
 -- 
 2.20.1
