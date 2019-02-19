@@ -1,36 +1,33 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 18 Feb 2019 13:57:43 +0000
-Subject: [PATCH -next] mm: fix set but not used warning
-Message-Id: <20190218135743.131904-1-yuehaibing@huawei.com>
+From: "Kani, Toshi" <toshi.kani@hpe.com>
+Date: Tue, 19 Feb 2019 18:28:30 +0000
+Subject: Re: [PATCH -next] mm: fix set but not used warning
+Message-Id: <7425c8905127ddd078500d4c14a2147bd00422a0.camel@hpe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190218135743.131904-1-yuehaibing@huawei.com>
+In-Reply-To: <20190218135743.131904-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Toshi Kani <toshi.kani@hpe.com>, Will Deacon <will.deacon@arm.com>, Chintan Pandya <cpandya@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "yuehaibing@huawei.com" <yuehaibing@huawei.com>, "cpandya@codeaurora.org" <cpandya@codeaurora.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "will.deacon@arm.com" <will.deacon@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-lib/ioremap.c: In function 'ioremap_page_range':
-lib/ioremap.c:203:16: warning:
- variable 'start' set but not used [-Wunused-but-set-variable]
-
-flush_cache_vmap may no need param, so add __maybe_unused fix this warning.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- lib/ioremap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index 063213685563..d1c7a488e731 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -200,7 +200,7 @@ int ioremap_page_range(unsigned long addr,
- 		       unsigned long end, phys_addr_t phys_addr, pgprot_t prot)
- {
- 	pgd_t *pgd;
--	unsigned long start;
-+	unsigned long __maybe_unused start;
- 	unsigned long next;
- 	int err;
+T24gTW9uLCAyMDE5LTAyLTE4IGF0IDEzOjU3ICswMDAwLCBZdWVIYWliaW5nIHdyb3RlOg0KPiBG
+aXhlcyBnY2MgJy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGUnIHdhcm5pbmc6DQo+IA0KPiBsaWIv
+aW9yZW1hcC5jOiBJbiBmdW5jdGlvbiAnaW9yZW1hcF9wYWdlX3JhbmdlJzoNCj4gbGliL2lvcmVt
+YXAuYzoyMDM6MTY6IHdhcm5pbmc6DQo+ICB2YXJpYWJsZSAnc3RhcnQnIHNldCBidXQgbm90IHVz
+ZWQgWy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGVdDQo+IA0KPiBmbHVzaF9jYWNoZV92bWFwIG1h
+eSBubyBuZWVkIHBhcmFtLCBzbyBhZGQgX19tYXliZV91bnVzZWQgZml4IHRoaXMgd2FybmluZy4N
+Cg0KSSB0aGluayBmbHVzaF9jYWNoZV92bWFwIHNob3VsZCBoYXZlIGEgcHJvcGVyIHByb3RvdHlw
+ZSB3aXRoDQpfX21heWJlX3VudXNlZCBmb3IgaXRzIGFyZ3MuICBCdXQsIHRoZXJlIGFyZSBzbyBt
+YW55IGFyY2gtc3BlY2lmaWMNCmRlZmluaXRpb25zIGF0IGdsYWNlLCBhbmQgSSBhbSBub3Qgc3Vy
+ZSBob3cgbWFuYWdlYWJsZSBzdWNoIGNoYW5nZSBpcywNCnRob3VnaC4uLg0KDQpUaGFua3MsDQot
+VG9zaGkNCg0KPiANCj4gU2lnbmVkLW9mZi1ieTogWXVlSGFpYmluZyA8eXVlaGFpYmluZ0BodWF3
+ZWkuY29tPg0KPiAtLS0NCj4gIGxpYi9pb3JlbWFwLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9saWIv
+aW9yZW1hcC5jIGIvbGliL2lvcmVtYXAuYw0KPiBpbmRleCAwNjMyMTM2ODU1NjMuLmQxYzdhNDg4
+ZTczMSAxMDA2NDQNCj4gLS0tIGEvbGliL2lvcmVtYXAuYw0KPiArKysgYi9saWIvaW9yZW1hcC5j
+DQo+IEBAIC0yMDAsNyArMjAwLDcgQEAgaW50IGlvcmVtYXBfcGFnZV9yYW5nZSh1bnNpZ25lZCBs
+b25nIGFkZHIsDQo+ICAJCSAgICAgICB1bnNpZ25lZCBsb25nIGVuZCwgcGh5c19hZGRyX3QgcGh5
+c19hZGRyLCBwZ3Byb3RfdCBwcm90KQ0KPiAgew0KPiAgCXBnZF90ICpwZ2Q7DQo+IC0JdW5zaWdu
+ZWQgbG9uZyBzdGFydDsNCj4gKwl1bnNpZ25lZCBsb25nIF9fbWF5YmVfdW51c2VkIHN0YXJ0Ow0K
+PiAgCXVuc2lnbmVkIGxvbmcgbmV4dDsNCj4gIAlpbnQgZXJyOw0KPiANCj4gDQo+IA0K
