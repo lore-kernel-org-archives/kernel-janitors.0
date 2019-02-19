@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 19 Feb 2019 12:40:50 +0000
+From: Walter Harms <wharms@bfs.de>
+Date: Tue, 19 Feb 2019 12:42:03 +0000
 Subject: Re: [PATCH v3] net: ns83820: code cleanup for ns83820_probe_phy()
-Message-Id: <5C6BF952.1000603@bfs.de>
+Message-Id: <715767253.151509.1550580124264@ox-groupware.bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190219090635.134457-1-maowenan@huawei.com>
 In-Reply-To: <20190219090635.134457-1-maowenan@huawei.com>
@@ -10,7 +10,6 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mao Wenan <maowenan@huawei.com>
 Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, john.fastabend@gmail.com, hawk@kernel.org, jakub.kicinski@netronome.com, daniel@iogearbox.net, ast@kernel.org, julia.lawall@lip6.fr
-
 
 
 Am 19.02.2019 10:06, schrieb Mao Wenan:
@@ -25,11 +24,13 @@ Am 19.02.2019 10:06, schrieb Mao Wenan:
 >  drivers/net/ethernet/natsemi/ns83820.c | 18 ------------------
 >  1 file changed, 18 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
+> diff --git a/drivers/net/ethernet/natsemi/ns83820.c
+> b/drivers/net/ethernet/natsemi/ns83820.c
 > index 958fced4dacf..955d34a6f0d8 100644
 > --- a/drivers/net/ethernet/natsemi/ns83820.c
 > +++ b/drivers/net/ethernet/natsemi/ns83820.c
-> @@ -1869,34 +1869,16 @@ static unsigned ns83820_mii_write_reg(struct ns83820 *dev, unsigned phy, unsigne
+> @@ -1869,34 +1869,16 @@ static unsigned ns83820_mii_write_reg(struct ns83820
+> *dev, unsigned phy, unsigne
 >  static void ns83820_probe_phy(struct net_device *ndev)
 >  {
 >  	struct ns83820 *dev = PRIV(ndev);
@@ -53,6 +54,14 @@ Am 19.02.2019 10:06, schrieb Mao Wenan:
 > -	first = 1;
 > -
 >  	for (i=1; i<2; i++) {
+
+
+the loop here seems also pointless, so you can eliminate i.
+(or did i muss something ?)
+
+just my 2 cents,
+re,
+ wh
 >  		int j;
 >  		unsigned a, b;
 >  		a = ns83820_mii_read_reg(dev, i, MII_PHYIDR1);
