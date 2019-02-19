@@ -1,46 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 Feb 2019 14:40:30 +0000
-Subject: Re: [PATCH][next][V2] block: don't dereference a potential null bio pointer until is has been null c
-Message-Id: <20190219144030.GL17104@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 19 Feb 2019 11:44:03 +0000
+Subject: [PATCH][udf-next] udf: don't call mark_buffer_dirty on a null bh pointer
+Message-Id: <20190219114403.24771-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219143702.11926-1-colin.king@canonical.com>
-In-Reply-To: <20190219143702.11926-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jan Kara <jack@suse.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 02:37:02PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The bio pointer is being null checked hence it can be potentially null,
-> however earlier it is being derefefenced on the assignment of front_seg_size.
-> Avoid the dereference issue by only assigning front_seg_size after bios has
-> been null sanity checked.
-> 
-> Fixes: dcebd755926b ("block: use bio_for_each_bvec() to compute multi-page bvec count")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: remove front_seg_size assignment when it is declared
-> 
-> ---
->  block/blk-merge.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index bed065904677..096947413ea9 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -363,7 +363,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
->  	struct bio_vec bv, bvprv = { NULL };
->  	int prev = 0;
->  	unsigned int seg_size, nr_phys_segs;
-> -	unsigned front_seg_size = bio->bi_seg_front_size;
-> +	unsigned front_seg_size;
+From: Colin Ian King <colin.king@canonical.com>
 
-Smatch says bio is non-NULL but I didn't verify by hand.
+There is a null check on the pointer bh to avoid a null pointer dereference
+on bh->b_data however later bh is passed to mark_buffer_dirty that can also
+cause a null pointer dereference on bh.  Avoid this potential null pointer
+dereference by moving the call to mark_buffer_dirty inside the null checked
+block.
 
-regards,
-dan carpenter
+Fixes: e8b4274735e4 ("udf: finalize integrity descriptor before writeback")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/udf/super.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index a6940d90bedd..b7e9a83d39db 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -2336,13 +2336,13 @@ static int udf_sync_fs(struct super_block *sb, int wait)
+ 
+ 			lvid = (struct logicalVolIntegrityDesc *)bh->b_data;
+ 			udf_finalize_lvid(lvid);
+-		}
+ 
+-		/*
+-		 * Blockdevice will be synced later so we don't have to submit
+-		 * the buffer for IO
+-		 */
+-		mark_buffer_dirty(bh);
++			/*
++			 * Blockdevice will be synced later so we don't have
++			 * to submit the buffer for IO
++			 */
++			mark_buffer_dirty(bh);
++		}
+ 		sbi->s_lvid_dirty = 0;
+ 	}
+ 	mutex_unlock(&sbi->s_alloc_mutex);
+-- 
+2.20.1
