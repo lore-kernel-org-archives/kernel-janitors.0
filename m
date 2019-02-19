@@ -1,8 +1,10 @@
 From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 19 Feb 2019 14:32:52 +0000
+Date: Tue, 19 Feb 2019 14:33:21 +0000
 Subject: [PATCH] net: drop pointless static qualifier in atl2_probe()
-Message-Id: <20190219143252.134824-1-maowenan@huawei.com>
+Message-Id: <20190219143321.135089-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190219143252.134824-1-maowenan@huawei.com>
+In-Reply-To: <20190219143252.134824-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
