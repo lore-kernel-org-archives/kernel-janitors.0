@@ -1,37 +1,39 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Thu, 07 Feb 2019 20:53:22 +0000
-Subject: Re: [PATCH] rtc: 88pm860x: fix unintended sign extension
-Message-Id: <20190207205322.GK4719@piout.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 19 Feb 2019 14:32:52 +0000
+Subject: [PATCH] net: drop pointless static qualifier in atl2_probe()
+Message-Id: <20190219143252.134824-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190206095053.12894-1-colin.king@canonical.com>
-In-Reply-To: <20190206095053.12894-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 06/02/2019 09:50:53+0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-> the top bit of the u8 is set then the following conversion to an unsigned
-> long will sign extend the value causing the upper 32 bits to be set in
-> the result.
-> 
-> Fix this by casting the u8 value to an unsigned long before the shift.
-> 
-> Detected by CoverityScan, CID#144925-144928 ("Unintended sign extension")
-> 
-> Fixes: 008b30408c40 ("mfd: Add rtc support to 88pm860x")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-88pm860x.c | 21 ++++++++++++++-------
->  1 file changed, 14 insertions(+), 7 deletions(-)
-> 
-Applied, thanks.
+There is no need to have the 'T *v' variable static
+since new value always be assigned before use it.
 
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/ethernet/atheros/atlx/atl2.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
+index bb41becb6609..6bd686b26837 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl2.c
++++ b/drivers/net/ethernet/atheros/atlx/atl2.c
+@@ -1335,13 +1335,11 @@ static int atl2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	struct net_device *netdev;
+ 	struct atl2_adapter *adapter;
+-	static int cards_found;
++	int cards_found = 0;
+ 	unsigned long mmio_start;
+ 	int mmio_len;
+ 	int err;
+ 
+-	cards_found = 0;
+-
+ 	err = pci_enable_device(pdev);
+ 	if (err)
+ 		return err;
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.20.1
