@@ -1,46 +1,41 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 13 Feb 2019 06:29:44 +0000
-Subject: [PATCH -next] ASoC: mediatek: mt8183: make some functions static
-Message-Id: <20190213062944.146366-1-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 19 Feb 2019 12:10:42 +0000
+Subject: [PATCH] drm/imx: fix resource leak of struct drm_display_mode mode
+Message-Id: <20190219121042.6584-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, Shunli Wang <shunli.wang@mediatek.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
+To: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+From: Colin Ian King <colin.king@canonical.com>
 
-sound/soc/mediatek/mt8183/mt8183-dai-i2s.c:966:5: warning:
- symbol 'mt8183_dai_i2s_get_share' was not declared. Should it be static?
-sound/soc/mediatek/mt8183/mt8183-dai-i2s.c:986:5: warning:
- symbol 'mt8183_dai_i2s_set_priv' was not declared. Should it be static?
+Currently when the call to of_get_drm_display_mode fails the error return
+path does not free an earlier allocated struct drm_display_mode, causing
+a memory leak. Fix this by kfree'ing mode before returning.
 
-Fixes: a94aec035a12 ("ASoC: mediatek: mt8183: add platform driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 76ecd9c9fb24 ("drm/imx: parallel-display: check return code from of_get_drm_display_mode()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/mediatek/mt8183/mt8183-dai-i2s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/imx/parallel-display.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c b/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c
-index c25024f72e72..777e93d70bea 100644
---- a/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c
-+++ b/sound/soc/mediatek/mt8183/mt8183-dai-i2s.c
-@@ -963,7 +963,7 @@ static const struct mtk_afe_i2s_priv mt8183_i2s_priv[DAI_I2S_NUM] = {
- 	},
- };
+diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx/parallel-display.c
+index 1a76de1e8e7b..10eb70577f76 100644
+--- a/drivers/gpu/drm/imx/parallel-display.c
++++ b/drivers/gpu/drm/imx/parallel-display.c
+@@ -69,8 +69,10 @@ static int imx_pd_connector_get_modes(struct drm_connector *connector)
+ 		ret = of_get_drm_display_mode(np, &imxpd->mode,
+ 					      &imxpd->bus_flags,
+ 					      OF_USE_NATIVE_MODE);
+-		if (ret)
++		if (ret) {
++			kfree(mode);
+ 			return ret;
++		}
  
--int mt8183_dai_i2s_get_share(struct mtk_base_afe *afe)
-+static int mt8183_dai_i2s_get_share(struct mtk_base_afe *afe)
- {
- 	struct mt8183_afe_private *afe_priv = afe->platform_priv;
- 	const struct device_node *of_node = afe->dev->of_node;
-@@ -983,7 +983,7 @@ int mt8183_dai_i2s_get_share(struct mtk_base_afe *afe)
- 	return 0;
- }
- 
--int mt8183_dai_i2s_set_priv(struct mtk_base_afe *afe)
-+static int mt8183_dai_i2s_set_priv(struct mtk_base_afe *afe)
- {
- 	struct mt8183_afe_private *afe_priv = afe->platform_priv;
- 	struct mtk_afe_i2s_priv *i2s_priv;
+ 		drm_mode_copy(mode, &imxpd->mode);
+ 		mode->type |= DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+-- 
+2.20.1
