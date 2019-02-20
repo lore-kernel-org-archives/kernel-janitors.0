@@ -1,27 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 19 Feb 2019 22:11:00 +0000
-Subject: Re: [PATCH v4] net: ns83820: code cleanup for ns83820_probe_phy()
-Message-Id: <20190219.141100.1059737970253170004.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 20 Feb 2019 12:32:02 +0000
+Subject: [PATCH v2 -next] btrfs: Remove unnecessary casts in btrfs_read_root_item
+Message-Id: <20190220123202.43256-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219134510.51835-1-maowenan@huawei.com>
-In-Reply-To: <20190219134510.51835-1-maowenan@huawei.com>
+References: <20190220030840.188854-1-yuehaibing@huawei.com>
+In-Reply-To: <20190220030840.188854-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, john.fastabend@gmail.com, hawk@kernel.org, jakub.kicinski@netronome.com, daniel@iogearbox.net, ast@kernel.org, julia.lawall@lip6.fr, wharms@bfs.de
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 19 Feb 2019 21:45:10 +0800
+There is a messy cast here:
+	min_t(int, len, (int)sizeof(*item)));
 
-> This patch is to do code cleanup for ns83820_probe_phy().
-> It deletes unused variable 'first', commented out code,
-> and the pointless 'for' loop.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
-> ---
->  v3->v4: delete pointless 'for' loop, variable 'i', and so on.
+min_t() should normally cast to unsigned.  It's not possible for
+"len" to be negative, but if it were then we definitely
+wouldn't want to pass negatives to read_extent_buffer().  Also there
+is an extra cast.
 
-Before pushing out I realized I applied v3 instead of this v4, but
-that's now fixed up.
+This patch shouldn't affect runtime, it's just a clean up.
+
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: modify commit message as Dan suggested 
+---
+ fs/btrfs/root-tree.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
+index 02d1a57af78b..893d12fbfda0 100644
+--- a/fs/btrfs/root-tree.c
++++ b/fs/btrfs/root-tree.c
+@@ -21,12 +21,12 @@ static void btrfs_read_root_item(struct extent_buffer *eb, int slot,
+ 				struct btrfs_root_item *item)
+ {
+ 	uuid_le uuid;
+-	int len;
++	u32 len;
+ 	int need_reset = 0;
+ 
+ 	len = btrfs_item_size_nr(eb, slot);
+ 	read_extent_buffer(eb, item, btrfs_item_ptr_offset(eb, slot),
+-			min_t(int, len, (int)sizeof(*item)));
++			   min_t(u32, len, sizeof(*item)));
+ 	if (len < sizeof(*item))
+ 		need_reset = 1;
+ 	if (!need_reset && btrfs_root_generation(item)
