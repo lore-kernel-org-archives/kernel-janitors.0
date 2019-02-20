@@ -1,32 +1,49 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 22 Feb 2019 05:46:32 +0000
-Subject: [PATCH -next] spi: sifive: Remove redundant dev_err call in sifive_spi_probe()
-Message-Id: <20190222054632.4610-1-weiyongjun1@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 20 Feb 2019 12:56:14 +0000
+Subject: [PATCH -next] mptfusion: remove set but not used variable 'req_idx, frameOffset'
+Message-Id: <20190220125614.47474-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, Palmer Dabbelt <palmer@sifive.com>, Paul Walmsley <paul.walmsley@sifive.com>
-Cc: kernel-janitors@vger.kernel.org, linux-riscv@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-spi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+drivers/message/fusion/mptspi.c: In function 'mptspi_writeIOCPage4':
+drivers/message/fusion/mptspi.c:262:9: warning:
+ variable 'frameOffset' set but not used [-Wunused-but-set-variable]
+
+drivers/message/fusion/mptspi.c:261:9: warning:
+ variable 'req_idx' set but not used [-Wunused-but-set-variable]
+
+They're never used and can be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/spi/spi-sifive.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/message/fusion/mptspi.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
-index 961307c4a613..81c5a0363073 100644
---- a/drivers/spi/spi-sifive.c
-+++ b/drivers/spi/spi-sifive.c
-@@ -310,7 +310,6 @@ static int sifive_spi_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	spi->regs = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(spi->regs)) {
--		dev_err(&pdev->dev, "Unable to map IO resources\n");
- 		ret = PTR_ERR(spi->regs);
- 		goto put_master;
- 	}
+diff --git a/drivers/message/fusion/mptspi.c b/drivers/message/fusion/mptspi.c
+index 7172b0b16bdd..eabc4de5816c 100644
+--- a/drivers/message/fusion/mptspi.c
++++ b/drivers/message/fusion/mptspi.c
+@@ -258,8 +258,6 @@ mptspi_writeIOCPage4(MPT_SCSI_HOST *hd, u8 channel , u8 id)
+ 	IOCPage4_t		*IOCPage4Ptr;
+ 	MPT_FRAME_HDR		*mf;
+ 	dma_addr_t		 dataDma;
+-	u16			 req_idx;
+-	u32			 frameOffset;
+ 	u32			 flagsLength;
+ 	int			 ii;
+ 
+@@ -276,9 +274,6 @@ mptspi_writeIOCPage4(MPT_SCSI_HOST *hd, u8 channel , u8 id)
+ 	 */
+ 	pReq = (Config_t *)mf;
+ 
+-	req_idx = le16_to_cpu(mf->u.frame.hwhdr.msgctxu.fld.req_idx);
+-	frameOffset = ioc->req_sz - sizeof(IOCPage4_t);
+-
+ 	/* Complete the request frame (same for all requests).
+ 	 */
+ 	pReq->Action = MPI_CONFIG_ACTION_PAGE_WRITE_CURRENT;
