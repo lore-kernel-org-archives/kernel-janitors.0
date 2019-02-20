@@ -1,23 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 Feb 2019 06:13:39 +0000
-Subject: Re: [PATCH 1/3 net-next] lib: objagg: Fix an error code in objagg_hints_get()
-Message-Id: <20190213.221339.674810113139257631.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 20 Feb 2019 02:55:20 +0000
+Subject: [PATCH -next] btrfs: Fix type conversion in btrfs_read_root_item
+Message-Id: <20190220030840.188854-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190213085650.GB14113@kadam>
-In-Reply-To: <20190213085650.GB14113@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiri@mellanox.com, netdev@vger.kernel.org, idosch@mellanox.com, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Feb 2019 11:56:50 +0300
+btrfs_item_size_nr return value is u32, convert it to int may result
+in truncation.Also read_extent_buffer expect a unsigned param, so
+min_t should use type u32 to compare.
 
-> We need to set the error code on this path otherwise we return
-> ERR_PTR(0) which would result in a NULL dereference in the caller.
-> 
-> Fixes: 9069a3817d82 ("lib: objagg: implement optimization hints assembly and use hints for object creation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 8ea05e3a4262 ("Btrfs: introduce subvol uuids and times")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/btrfs/root-tree.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
+index 02d1a57af78b..893d12fbfda0 100644
+--- a/fs/btrfs/root-tree.c
++++ b/fs/btrfs/root-tree.c
+@@ -21,12 +21,12 @@ static void btrfs_read_root_item(struct extent_buffer *eb, int slot,
+ 				struct btrfs_root_item *item)
+ {
+ 	uuid_le uuid;
+-	int len;
++	u32 len;
+ 	int need_reset = 0;
+ 
+ 	len = btrfs_item_size_nr(eb, slot);
+ 	read_extent_buffer(eb, item, btrfs_item_ptr_offset(eb, slot),
+-			min_t(int, len, (int)sizeof(*item)));
++			   min_t(u32, len, sizeof(*item)));
+ 	if (len < sizeof(*item))
+ 		need_reset = 1;
+ 	if (!need_reset && btrfs_root_generation(item)
