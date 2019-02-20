@@ -1,55 +1,49 @@
-From: Chao Yu <chao@kernel.org>
-Date: Thu, 14 Feb 2019 16:09:42 +0000
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't allow negative ->write_io_size_bits
-Message-Id: <a1862cab-ee56-660e-7c7d-664cf7e8c222@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 20 Feb 2019 03:31:50 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variables 'vm, bo'
+Message-Id: <20190220033150.163019-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190211184514.GA22212@kadam>
- <8f0cfae7-eb14-5e94-ad49-cfae222ce553@huawei.com>
- <05f4eed5-8b71-e97f-464a-72f8c5ae804d@huawei.com>
- <20190213094615.GE5458@kadam>
-In-Reply-To: <20190213094615.GE5458@kadam>
+References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Oded Gabbay <oded.gabbay@gmail.com>, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2019-2-13 17:46, Dan Carpenter wrote:
-> On Wed, Feb 13, 2019 at 04:49:57PM +0800, Chao Yu wrote:
->> On 2019/2/13 11:32, Chao Yu wrote:
->>> On 2019/2/12 2:45, Dan Carpenter wrote:
->>>> We put an upper bound on ->write_io_size_bits but we don't have a lower
->>>> bound.
->>>
->>> Oh, lower bound, I think there are more cases didn't consider that,
->>> let me check it.
->>
->> Sorry, one missing case:
->>
->> Shouldn't it be:
->>
->> if (arg <= 0 || arg > __ilog2_u32(BIO_MAX_PAGES)) {
->>          ^
-> 
-> It wouldn't be hard for me to redo my patch, but I don't know enough to
-> say if zero is invalid and I don't want to get blamed for that...  Can
-> you do it, since you're better able to test the change?
-> 
-> So let's drop this patch, and then could you give me Reported-by credit
-> instead?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-No problem. :)
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c: In function 'update_gpuvm_pte':
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:840:20: warning:
+ variable 'bo' set but not used [-Wunused-but-set-variable]
 
-Thanks,
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:838:20: warning:
+ variable 'vm' set but not used [-Wunused-but-set-variable]
 
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+They're never used since introduction in a46a2cd103a8 ("drm/amdgpu: Add GPUVM
+memory management functions for KFD")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+index d7b10d79f1de..63daf758cd03 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+@@ -837,13 +837,7 @@ static int update_gpuvm_pte(struct amdgpu_device *adev,
+ 		struct amdgpu_sync *sync)
+ {
+ 	int ret;
+-	struct amdgpu_vm *vm;
+-	struct amdgpu_bo_va *bo_va;
+-	struct amdgpu_bo *bo;
+-
+-	bo_va = entry->bo_va;
+-	vm = bo_va->base.vm;
+-	bo = bo_va->base.bo;
++	struct amdgpu_bo_va *bo_va = entry->bo_va;
+ 
+ 	/* Update the page tables  */
+ 	ret = amdgpu_vm_bo_update(adev, bo_va, false);
