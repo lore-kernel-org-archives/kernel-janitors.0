@@ -1,19 +1,35 @@
-From: Matthew Wilcox <willy@infradead.org>
-Date: Mon, 18 Feb 2019 14:32:38 +0000
-Subject: Re: [PATCH] fs: drop pointless static qualifier in bdev_cache_init()
-Message-Id: <20190218143238.GR12668@bombadil.infradead.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 20 Feb 2019 09:34:58 +0000
+Subject: [PATCH -next] hwrng: make symbol 'optee_rng_id_table' static
+Message-Id: <20190220093458.159208-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218141417.134355-1-maowenan@huawei.com>
-In-Reply-To: <20190218141417.134355-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sumit Garg <sumit.garg@linaro.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 10:14:17PM +0800, Mao Wenan wrote:
-> There is no need to have the struct vfsmount *bd_mnt with static
-> since new value always be assigned before use it.
+Fixes the following sparse warning:
 
-No.  The point is to keep a copy of bd_mnt around.  Putting it on the
-stack would lead to it being overwritten.
+drivers/char/hw_random/optee-rng.c:265:35: warning:
+ symbol 'optee_rng_id_table' was not declared. Should it be static?
+
+Fixes: 5fe8b1cc6a03 ("hwrng: add OP-TEE based rng driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/char/hw_random/optee-rng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+index 2b9fc8ac5500..3a4dd6fc9ff4 100644
+--- a/drivers/char/hw_random/optee-rng.c
++++ b/drivers/char/hw_random/optee-rng.c
+@@ -262,7 +262,7 @@ static int optee_rng_remove(struct device *dev)
+ 	return 0;
+ }
+ 
+-const struct tee_client_device_id optee_rng_id_table[] = {
++static const struct tee_client_device_id optee_rng_id_table[] = {
+ 	{UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
+ 		   0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64)},
+ 	{}
