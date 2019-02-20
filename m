@@ -1,65 +1,47 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 16 Feb 2019 09:38:17 +0000
-Subject: Re: [PATCH -next] media: vimc: remove set but not used variable 'frame_size'
-Message-Id: <ae50788b-ba39-db3e-4d94-cc13ba09e6bb@huawei.com>
+From: Nick Crews <ncrews@chromium.org>
+Date: Wed, 20 Feb 2019 21:58:27 +0000
+Subject: [PATCH -next] platform/chrome: Fix off-by-one error in wilco_ec/debugfs.c
+Message-Id: <20190220215826.44366-1-ncrews@chromium.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190216022438.32242-1-yuehaibing@huawei.com>
- <3f24847f-0557-5660-19de-1ef003f15524@xs4all.nl>
-In-Reply-To: <3f24847f-0557-5660-19de-1ef003f15524@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>, Helen Koike <helen.koike@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: bleung@chromium.org, enric.balletbo@collabora.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com, dlaurie@chromium.org, ncrews@chromium.org
 
+Before, in debugfs.c it was possible to supply only the message type,
+and not supply any other arguments when sending raw commands. However,
+this is never used by the EC, and it led to an underflow error. Now,
+just don't allow too short of a command, we will never need
+that anyways.
 
-On 2019/2/16 17:25, Hans Verkuil wrote:
-> On 2/16/19 3:24 AM, YueHaibing wrote:
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/media/platform/vimc/vimc-sensor.c: In function 'vimc_sen_process_frame':
->> drivers/media/platform/vimc/vimc-sensor.c:208:15: warning:
->>  variable 'frame_size' set but not used [-Wunused-but-set-variable]
->>
->> It's never used since introduction.
-> 
-> A patch for this is already pending in a pull request.
+Fixes: 46c7fd06f8c9 ("platform/chrome: wilco_ec: Add support for raw commands in debugfs")
+Signed-off-by: Nick Crews <ncrews@chromium.org>
+---
+ drivers/platform/chrome/wilco_ec/debugfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thank you for info.
-
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/media/platform/vimc/vimc-sensor.c | 7 -------
->>  1 file changed, 7 deletions(-)
->>
->> diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
->> index 93961a1e694f..59195f262623 100644
->> --- a/drivers/media/platform/vimc/vimc-sensor.c
->> +++ b/drivers/media/platform/vimc/vimc-sensor.c
->> @@ -204,13 +204,6 @@ static void *vimc_sen_process_frame(struct vimc_ent_device *ved,
->>  {
->>  	struct vimc_sen_device *vsen = container_of(ved, struct vimc_sen_device,
->>  						    ved);
->> -	const struct vimc_pix_map *vpix;
->> -	unsigned int frame_size;
->> -
->> -	/* Calculate the frame size */
->> -	vpix = vimc_pix_map_by_code(vsen->mbus_format.code);
->> -	frame_size = vsen->mbus_format.width * vpix->bpp *
->> -		     vsen->mbus_format.height;
->>  
->>  	tpg_fill_plane_buffer(&vsen->tpg, 0, 0, vsen->frame);
->>  	return vsen->frame;
->>
->>
->>
-> 
-> 
-> .
-> 
+diff --git a/drivers/platform/chrome/wilco_ec/debugfs.c b/drivers/platform/chrome/wilco_ec/debugfs.c
+index 46ff3b6c46c7..c090db2cd5be 100644
+--- a/drivers/platform/chrome/wilco_ec/debugfs.c
++++ b/drivers/platform/chrome/wilco_ec/debugfs.c
+@@ -136,8 +136,8 @@ static ssize_t raw_write(struct file *file, const char __user *user_buf,
+ 	ret = parse_hex_sentence(buf, kcount, request_data, TYPE_AND_DATA_SIZE);
+ 	if (ret < 0)
+ 		return ret;
+-	/* Need at least two bytes for message type */
+-	if (ret < 2)
++	/* Need at least two bytes for message type and one for command */
++	if (ret < 3)
+ 		return -EINVAL;
+ 
+ 	/* Clear response data buffer */
+@@ -145,7 +145,7 @@ static ssize_t raw_write(struct file *file, const char __user *user_buf,
+ 
+ 	msg.type = request_data[0] << 8 | request_data[1];
+ 	msg.flags = WILCO_EC_FLAG_RAW;
+-	msg.command = ret > 2 ? request_data[2] : 0;
++	msg.command = request_data[2];
+ 	msg.request_data = ret > 3 ? request_data + 3 : 0;
+ 	msg.request_size = ret - 3;
+ 	msg.response_data = debug_info->raw_data;
