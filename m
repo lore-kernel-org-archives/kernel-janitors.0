@@ -1,7 +1,7 @@
-From: Davidlohr Bueso <dave@stgolabs.net>
-Date: Sun, 17 Feb 2019 21:33:36 +0000
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Wed, 20 Feb 2019 21:43:29 +0000
 Subject: Re: [PATCH -next] IB/qib: Remove unused variable 'locked'
-Message-Id: <20190217213336.urmffkfq6xtidqtj@linux-r8p5>
+Message-Id: <20190220214329.GA15474@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190216033618.116680-1-yuehaibing@huawei.com>
 In-Reply-To: <20190216033618.116680-1-yuehaibing@huawei.com>
@@ -10,16 +10,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 15 Feb 2019, Jason Gunthorpe wrote:
->This looks just wrong... The algorithm should look like the one in umem
+On Sat, Feb 16, 2019 at 04:15:52AM -0800, Davidlohr Bueso wrote:
 
-On another note, and considering infiniband (core) is allowed on most
-archs, do we want to relax the ordering guarantees from the compound
-atomic64_inc_return(pinned_vm) in ib_umem_get()?
+> [PATCH] drivers/IB,qib: Fix pinned/locked limit check in qib_get_user_pages()
+> 
+> The current check does not take into account the previous value of
+> pinned_vm; thus it is quite bogus as is. Fix this by checking the
+> new value after the (optimistic) atomic inc.
+> 
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> --
+> drivers/infiniband/hw/qib/qib_user_pages.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looking at IB core and some of the drivers I don't see any particular
-constraints on the order the pinned_vm is touched - so ll/sc based archs
-could benefit with atomic64_inc_return_relaxed().
+Applied to for-next thanks
 
-Thanks,
-Davidlohr
+Jason
