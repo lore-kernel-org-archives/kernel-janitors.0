@@ -1,43 +1,45 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 15 Feb 2019 10:00:27 +0000
-Subject: Re: [PATCH] video: fbdev: vesafb: fix indentation issue
-Message-Id: <6b0d55253ce61f1b7a068689ae9db597aaf5d30a.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Feb 2019 18:38:26 +0000
+Subject: [PATCH 2/2] test_firmware: silence underflow warning in test_dev_config_update_u8()
+Message-Id: <20190221183826.GA30993@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190212132905.7307-1-colin.king@canonical.com>
-In-Reply-To: <20190212132905.7307-1-colin.king@canonical.com>
+In-Reply-To: <20190221183700.GA1737@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Tue, 2019-02-12 at 13:29 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a couple of statements that are indented too deeply, fix
-> this by removing tabs. Also add a space after a comma to clean up
-> a cppcheck warning.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/video/fbdev/vesafb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/vesafb.c b/drivers/video/fbdev/vesafb.c
-> index 528fe917dd49..b7388e25aa2a 100644
-> --- a/drivers/video/fbdev/vesafb.c
-> +++ b/drivers/video/fbdev/vesafb.c
-> @@ -336,8 +336,8 @@ static int vesafb_probe(struct platform_device *dev)
->  		printk(KERN_INFO "vesafb: pmi: set display start = %p, set palette = %p\n",pmi_start,pmi_pal);
->  		if (pmi_base[3]) {
->  			printk(KERN_INFO "vesafb: pmi: ports = ");
-> -				for (i = pmi_base[3]/2; pmi_base[i] != 0xffff; i++)
-> -					printk("%x ",pmi_base[i]);
-> +			for (i = pmi_base[3]/2; pmi_base[i] != 0xffff; i++)
-> +				printk("%x ", pmi_base[i]);
->  			printk("\n");
->  			if (pmi_base[i] != 0xffff) {
->  				/*
+We put an upper bound on "new" but we don't check for negatives. In
+this case the underflow doesn't matter very much, but we may as well
+make the static checker happy.
 
-Perhaps you could also use pr_cont too because otherwise this
-emits each printk on separate lines.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/test_firmware.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index 7222093ee00b..5911b0f1a715 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -326,15 +326,12 @@ static ssize_t test_dev_config_show_int(char *buf, int cfg)
+ static int test_dev_config_update_u8(const char *buf, size_t size, u8 *cfg)
+ {
+ 	int ret;
+-	long new;
++	u8 new;
+ 
+-	ret = kstrtol(buf, 10, &new);
++	ret = kstrtou8(buf, 10, &new);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (new > U8_MAX)
+-		return -EINVAL;
+-
+ 	mutex_lock(&test_fw_mutex);
+ 	*(u8 *)cfg = new;
+ 	mutex_unlock(&test_fw_mutex);
+-- 
+2.17.1
