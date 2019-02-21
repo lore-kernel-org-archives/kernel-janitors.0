@@ -1,45 +1,40 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Tue, 19 Feb 2019 15:59:07 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: dapm: Potential small memory leak in dapm_cnew_widget()
-Message-Id: <d9db594e-7f29-b663-5920-aaab6e77d553@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 21 Feb 2019 11:22:24 +0000
+Subject: [PATCH][xfs-next] xfs: fix uninitialized error variable
+Message-Id: <20190221112224.3748-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190219120427.GA26719@kadam>
-In-Reply-To: <20190219120427.GA26719@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>, Dave Chinner <dchinner@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2/19/19 6:04 AM, Dan Carpenter wrote:
-> We should free "w" on the error path.
->
-> Fixes: 199ed3e81c49 ("ASoC: dapm: fix use-after-free issue with dailink sname")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A previous commit removed the initialization of variable 'error' to zero,
+and can cause a bogus error return.  This occurs when error contains a
+non-zero garbage value and the call to xchk_should_terminate detects a
+pending fatal signal and checks for a zero error before setting it
+to -EAGAIN. Fix the issue by initializing error to zero.
 
-Good catch, thanks.
+Fixes: b9454fe056bd ("xfs: clean up the inode cluster checking in the inobt scrub")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/xfs/scrub/ialloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
-
-> ---
->   sound/soc/soc-dapm.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-> index dea6fc2353e4..1ec06ef6d161 100644
-> --- a/sound/soc/soc-dapm.c
-> +++ b/sound/soc/soc-dapm.c
-> @@ -332,8 +332,10 @@ static inline struct snd_soc_dapm_widget *dapm_cnew_widget(
->   	 */
->   	if (_widget->sname) {
->   		w->sname = kstrdup_const(_widget->sname, GFP_KERNEL);
-> -		if (!w->sname)
-> +		if (!w->sname) {
-> +			kfree(w);
->   			return NULL;
-> +		}
->   	}
->   	return w;
->   }
+diff --git a/fs/xfs/scrub/ialloc.c b/fs/xfs/scrub/ialloc.c
+index 2c9dad2b61b1..700114f79a7d 100644
+--- a/fs/xfs/scrub/ialloc.c
++++ b/fs/xfs/scrub/ialloc.c
+@@ -161,7 +161,7 @@ xchk_iallocbt_check_cluster_ifree(
+ 	bool				irec_free;
+ 	bool				ino_inuse;
+ 	bool				freemask_ok;
+-	int				error;
++	int				error = 0;
+ 
+ 	if (xchk_should_terminate(bs->sc, &error))
+ 		return error;
+-- 
+2.20.1
