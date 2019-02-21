@@ -1,35 +1,49 @@
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Date: Thu, 07 Feb 2019 16:40:58 +0000
-Subject: [PATCH 3/4] scripts: mkdebian: fix dependencies
-Message-Id: <1549557659-19137-4-git-send-email-info@metux.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Feb 2019 18:37:00 +0000
+Subject: [PATCH 1/2] test_firmware: remove some dead code
+Message-Id: <20190221183700.GA1737@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1549557659-19137-1-git-send-email-info@metux.net>
-In-Reply-To: <1549557659-19137-1-git-send-email-info@metux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, yamada.masahiro@socionext.com, michal.lkml@markovi.net
+To: Andrew Morton <akpm@linux-foundation.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-We missed some build dependencies in the generated debian/control file.
+The test_fw_config->reqs allocation succeeded so these addresses can't
+be NULL.  Also on the second error path, we forgot to set
+"rc = -ENOMEM;".
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- scripts/package/mkdebian | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_firmware.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index ff226be..1caaf0b 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -173,7 +173,7 @@ Source: $sourcename
- Section: kernel
- Priority: optional
- Maintainer: $maintainer
--Build-Depends: bc, kmod, cpio
-+Build-Depends: bc, kmod, cpio, bison, libelf-dev, libssl-dev, flex
- Homepage: http://www.kernel.org/
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index 7cab9a9869ac..7222093ee00b 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -631,11 +631,6 @@ static ssize_t trigger_batched_requests_store(struct device *dev,
  
- Package: $packagename
+ 	for (i = 0; i < test_fw_config->num_requests; i++) {
+ 		req = &test_fw_config->reqs[i];
+-		if (!req) {
+-			WARN_ON(1);
+-			rc = -ENOMEM;
+-			goto out_bail;
+-		}
+ 		req->fw = NULL;
+ 		req->idx = i;
+ 		req->name = test_fw_config->name;
+@@ -737,10 +732,6 @@ ssize_t trigger_batched_requests_async_store(struct device *dev,
+ 
+ 	for (i = 0; i < test_fw_config->num_requests; i++) {
+ 		req = &test_fw_config->reqs[i];
+-		if (!req) {
+-			WARN_ON(1);
+-			goto out_bail;
+-		}
+ 		req->name = test_fw_config->name;
+ 		req->fw = NULL;
+ 		req->idx = i;
 -- 
-1.9.1
+2.17.1
