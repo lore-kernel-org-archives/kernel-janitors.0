@@ -1,35 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Feb 2019 06:32:26 +0000
-Subject: [PATCH] media: staging/imx7: Fix an error code in mipi_csis_clk_get()
-Message-Id: <20190222063226.GA12101@kadam>
+From: Trond Myklebust <trondmy@hammerspace.com>
+Date: Thu, 21 Feb 2019 22:40:52 +0000
+Subject: Re: [PATCH 15/20] NFS: drop useless LIST_HEAD
+Message-Id: <81b0b3c72ebb7fc97c3166d945f82ee4184ed657.camel@hammerspace.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+         <1545555435-24576-16-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-16-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rui Miguel Silva <rmfrfs@gmail.com>
-Cc: Steve Longerbeam <slongerbeam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>
+Cc: "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We accidentally return IS_ERR(), which is 1, instead of the PTR_ERR()
-which is the negative error code.
-
-Fixes: 7807063b862b ("media: staging/imx7: add MIPI CSI-2 receiver subdev for i.MX7")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/staging/media/imx/imx7-mipi-csis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/media/imx/imx7-mipi-csis.c b/drivers/staging/media/imx/imx7-mipi-csis.c
-index f4674de09e83..4ac0be9e4487 100644
---- a/drivers/staging/media/imx/imx7-mipi-csis.c
-+++ b/drivers/staging/media/imx/imx7-mipi-csis.c
-@@ -491,7 +491,7 @@ static int mipi_csis_clk_get(struct csi_state *state)
- 
- 	state->wrap_clk = devm_clk_get(dev, "wrap");
- 	if (IS_ERR(state->wrap_clk))
--		return IS_ERR(state->wrap_clk);
-+		return PTR_ERR(state->wrap_clk);
- 
- 	/* Set clock rate */
- 	ret = clk_set_rate(state->wrap_clk, state->clk_frequency);
--- 
-2.17.1
+T24gU3VuLCAyMDE4LTEyLTIzIGF0IDA5OjU3ICswMTAwLCBKdWxpYSBMYXdhbGwgd3JvdGU6DQo+
+IERyb3AgTElTVF9IRUFEIHdoZXJlIHRoZSB2YXJpYWJsZSBpdCBkZWNsYXJlcyBoYXMgbmV2ZXIN
+Cj4gYmVlbiB1c2VkLg0KPiANCj4gVGhlIHNlbWFudGljIHBhdGNoIHRoYXQgZml4ZXMgdGhpcyBw
+cm9ibGVtIGlzIGFzIGZvbGxvd3M6DQo+IChodHRwOi8vY29jY2luZWxsZS5saXA2LmZyLykNCj4g
+DQo+IC8vIDxzbXBsPg0KPiBAQA0KPiBpZGVudGlmaWVyIHg7DQo+IEBADQo+IC0gTElTVF9IRUFE
+KHgpOw0KPiAgIC4uLiB3aGVuICE9IHgNCj4gLy8gPC9zbXBsPg0KPiANCj4gRml4ZXM6IDBlMjAx
+NjJlZDFlOSAoIk5GU3Y0LjEgVXNlIE1EUyBhdXRoIGZsYXZvciBmb3IgZGF0YSBzZXJ2ZXINCj4g
+Y29ubmVjdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6IEp1bGlhIExhd2FsbCA8SnVsaWEuTGF3YWxs
+QGxpcDYuZnI+DQo+IA0KPiAtLS0NCj4gU3VjY2Vzc2Z1bGx5IDAtZGF5IHRlc3RlZCBvbiAxNTEg
+Y29uZmlndXJhdGlvbnMuDQo+IA0KPiAgZnMvbmZzL25mczRjbGllbnQuYyB8ICAgIDEgLQ0KPiAg
+MSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9mcy9uZnMv
+bmZzNGNsaWVudC5jIGIvZnMvbmZzL25mczRjbGllbnQuYw0KPiBpbmRleCAyNTQ4NDA1ZGExZjcu
+LjczNWMxMDU2YTkxYyAxMDA2NDQNCj4gLS0tIGEvZnMvbmZzL25mczRjbGllbnQuYw0KPiArKysg
+Yi9mcy9uZnMvbmZzNGNsaWVudC5jDQo+IEBAIC0xNDUsNyArMTQ1LDYgQEAgc3RhdGljIHZvaWQN
+Cj4gIG5mczRfc2h1dGRvd25fZHNfY2xpZW50cyhzdHJ1Y3QgbmZzX2NsaWVudCAqY2xwKQ0KPiAg
+ew0KPiAgCXN0cnVjdCBuZnM0X2RzX3NlcnZlciAqZHNzOw0KPiAtCUxJU1RfSEVBRChzaHV0ZG93
+bl9saXN0KTsNCj4gIA0KPiAgCXdoaWxlICghbGlzdF9lbXB0eSgmY2xwLT5jbF9kc19jbGllbnRz
+KSkgew0KPiAgCQlkc3MgPSBsaXN0X2VudHJ5KGNscC0+Y2xfZHNfY2xpZW50cy5uZXh0LA0KPiAN
+Cg0KVGhhbmtzIEp1bGlhISBBcHBsaWVkIHRvIG15IGxpbnV4LW5leHQgYnJhbmNoIGZvciBpbmNs
+dXNpb24gaW4gdGhlIDUuMQ0KbWVyZ2Ugd2luZG93Lg0KDQotLSANClRyb25kIE15a2xlYnVzdA0K
+TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0
+QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg=
