@@ -1,28 +1,35 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 18 Feb 2019 11:04:37 +0000
-Subject: Re: [PATCH -next] ASoC: samsung: i2s: Fix return value check in i2s_create_secondary_device()
-Message-Id: <282ae8b4-f86f-2254-0956-3cc3b4915bbf@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Feb 2019 06:29:02 +0000
+Subject: [PATCH] RDMA/core: Fix a WARN() message
+Message-Id: <20190222062902.GB30993@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190216012055.79622-1-weiyongjun1@huawei.com>
-        <CGME20190218110447epcas1p3bb248ada6447551c1ca19f2d6af40bc4@epcas1p3.samsung.com>
-In-Reply-To: <20190216012055.79622-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 2/16/19 02:20, Wei Yongjun wrote:
-> In case of error, the function platform_device_register_simple() returns
-> ERR_PTR() and never returns NULL. The NULL test in the return value
-> check should be replaced with IS_ERR().
+The first parameter of WARN_ONCE() is a condition, then following
+parameters are the message.  In this case, we left out the condition so
+it will just print the ops->type string.
 
-Thanks for the patch, it looks good but I have already prepared other
-fix that removes the platform_device_register_simple() call entirely: 
+Fixes: 3856ec4b93c9 ("RDMA/core: Add RDMA_NLDEV_CMD_NEWLINK/DELLINK support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/core/nldev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-"ASoC: samsung: i2s: Fix multiple "IIS multi" devices initialization"
-https://www.spinics.net/lists/kernel/msg3045092.html
-
+diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
+index 5e94dc87f04f..660a192a44a3 100644
+--- a/drivers/infiniband/core/nldev.c
++++ b/drivers/infiniband/core/nldev.c
+@@ -1223,7 +1223,7 @@ void rdma_link_register(struct rdma_link_ops *ops)
+ {
+ 	down_write(&link_ops_rwsem);
+ 	if (link_ops_get(ops->type)) {
+-		WARN_ONCE("Duplicate rdma_link_ops! %s\n", ops->type);
++		WARN_ONCE(1, "Duplicate rdma_link_ops! %s\n", ops->type);
+ 		goto out;
+ 	}
+ 	list_add(&ops->list, &link_ops);
 -- 
-Thanks,
-Sylwester
+2.17.1
