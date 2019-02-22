@@ -1,31 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 06 Feb 2019 19:52:41 +0000
-Subject: Re: [PATCH] net: sxgbe: fix unintended sign extension
-Message-Id: <20190206.115241.1549120165262106425.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Feb 2019 06:31:51 +0000
+Subject: [PATCH] ASoC: cs35l36: Fix an IS_ERR() vs NULL checking bug
+Message-Id: <20190222063151.GC30993@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190206102503.16929-1-colin.king@canonical.com>
-In-Reply-To: <20190206102503.16929-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: bh74.an@samsung.com, ks.giri@samsung.com, vipul.pandya@samsung.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brian Austin <brian.austin@cirrus.com>, James Schulman <james.schulman@cirrus.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  6 Feb 2019 10:25:03 +0000
+The irq_get_irq_data() function doesn't return error pointers, it
+returns NULL.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-> the top bit of the u8 is set then the following conversion to an unsigned
-> long will sign extend the value causing the upper 32 bits to be set in
-> the result.
+Fixes: 6ba9dd6c893b ("ASoC: cs35l36: Add support for Cirrus CS35L36 Amplifier")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/codecs/cs35l36.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-We feed this into a writel() which truncates to a 32-bit value, so nothing
-bad can happen here.
-
-This is a very canonical way to code up something like this, it works
-properly in all situations, and therefore I'd rather not add all of
-these fat ugly looking casts.
-
-Thank you.
+diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
+index e374fffb7e17..901d57491218 100644
+--- a/sound/soc/codecs/cs35l36.c
++++ b/sound/soc/codecs/cs35l36.c
+@@ -1845,9 +1845,9 @@ static int cs35l36_i2c_probe(struct i2c_client *i2c_client,
+ 		cs35l36_apply_vpbr_config(cs35l36);
+ 
+ 	irq_d = irq_get_irq_data(i2c_client->irq);
+-	if (IS_ERR(irq_d)) {
++	if (!irq_d) {
+ 		dev_err(&i2c_client->dev, "Invalid IRQ: %d\n", i2c_client->irq);
+-		ret = PTR_ERR(irq_d);
++		ret = -ENODEV;
+ 		goto err;
+ 	}
+ 
+-- 
+2.17.1
