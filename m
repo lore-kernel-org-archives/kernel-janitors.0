@@ -1,41 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Feb 2019 12:10:42 +0000
-Subject: [PATCH] drm/imx: fix resource leak of struct drm_display_mode mode
-Message-Id: <20190219121042.6584-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 22 Feb 2019 05:46:32 +0000
+Subject: [PATCH -next] spi: sifive: Remove redundant dev_err call in sifive_spi_probe()
+Message-Id: <20190222054632.4610-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Palmer Dabbelt <palmer@sifive.com>, Paul Walmsley <paul.walmsley@sifive.com>
+Cc: kernel-janitors@vger.kernel.org, linux-riscv@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-spi@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Currently when the call to of_get_drm_display_mode fails the error return
-path does not free an earlier allocated struct drm_display_mode, causing
-a memory leak. Fix this by kfree'ing mode before returning.
-
-Fixes: 76ecd9c9fb24 ("drm/imx: parallel-display: check return code from of_get_drm_display_mode()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/gpu/drm/imx/parallel-display.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/spi/spi-sifive.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx/parallel-display.c
-index 1a76de1e8e7b..10eb70577f76 100644
---- a/drivers/gpu/drm/imx/parallel-display.c
-+++ b/drivers/gpu/drm/imx/parallel-display.c
-@@ -69,8 +69,10 @@ static int imx_pd_connector_get_modes(struct drm_connector *connector)
- 		ret = of_get_drm_display_mode(np, &imxpd->mode,
- 					      &imxpd->bus_flags,
- 					      OF_USE_NATIVE_MODE);
--		if (ret)
-+		if (ret) {
-+			kfree(mode);
- 			return ret;
-+		}
- 
- 		drm_mode_copy(mode, &imxpd->mode);
- 		mode->type |= DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
--- 
-2.20.1
+diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
+index 961307c4a613..81c5a0363073 100644
+--- a/drivers/spi/spi-sifive.c
++++ b/drivers/spi/spi-sifive.c
+@@ -310,7 +310,6 @@ static int sifive_spi_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	spi->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(spi->regs)) {
+-		dev_err(&pdev->dev, "Unable to map IO resources\n");
+ 		ret = PTR_ERR(spi->regs);
+ 		goto put_master;
+ 	}
