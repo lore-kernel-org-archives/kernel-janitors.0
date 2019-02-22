@@ -1,69 +1,34 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 26 Feb 2019 12:07:07 +0000
-Subject: Applied "spi: sifive: Remove redundant dev_err call in sifive_spi_probe()" to the spi tree
-Message-Id: <20190226120707.0798011284E3@debutante.sirena.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Feb 2019 06:36:41 +0000
+Subject: [PATCH] media: ivtv: update *pos correctly in ivtv_read_pos()
+Message-Id: <20190222063641.GB12250@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190222054632.4610-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org
+To: Andy Walls <awalls@md.metrocast.net>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+We had intended to update *pos, but the current code is a no-op.
 
-   spi: sifive: Remove redundant dev_err call in sifive_spi_probe()
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From daad4d2a0a60b0b2879e66194100b43c41e96ca9 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 22 Feb 2019 05:46:32 +0000
-Subject: [PATCH] spi: sifive: Remove redundant dev_err call in
- sifive_spi_probe()
-
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 1a0adaf37c30 ("V4L/DVB (5345): ivtv driver for Conexant cx23416/cx23415 MPEG encoder/decoder")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/spi/spi-sifive.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/pci/ivtv/ivtv-fileops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
-index ebca3fc4d345..93ec2c6cdbfd 100644
---- a/drivers/spi/spi-sifive.c
-+++ b/drivers/spi/spi-sifive.c
-@@ -310,7 +310,6 @@ static int sifive_spi_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	spi->regs = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(spi->regs)) {
--		dev_err(&pdev->dev, "Unable to map IO resources\n");
- 		ret = PTR_ERR(spi->regs);
- 		goto put_master;
- 	}
+diff --git a/drivers/media/pci/ivtv/ivtv-fileops.c b/drivers/media/pci/ivtv/ivtv-fileops.c
+index 6196daae4b3e..043ac0ae9ed0 100644
+--- a/drivers/media/pci/ivtv/ivtv-fileops.c
++++ b/drivers/media/pci/ivtv/ivtv-fileops.c
+@@ -420,7 +420,7 @@ static ssize_t ivtv_read_pos(struct ivtv_stream *s, char __user *ubuf, size_t co
+ 
+ 	IVTV_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
+ 	if (rc > 0)
+-		pos += rc;
++		*pos += rc;
+ 	return rc;
+ }
+ 
 -- 
-2.20.1
+2.17.1
