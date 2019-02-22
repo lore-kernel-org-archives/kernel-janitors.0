@@ -1,23 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 17 Feb 2019 23:52:06 +0000
-Subject: Re: [PATCH net-next] net: sgi: use GFP_ATOMIC under spin lock
-Message-Id: <20190217.155206.75010948411009821.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 22 Feb 2019 06:57:23 +0000
+Subject: [PATCH net v3] net: set static variable an initial value in atl2_probe()
+Message-Id: <20190222065723.193392-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190216014809.142801-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190216014809.142801-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: yang.wei9@zte.com.cn, mcgrof@kernel.org, yuehaibing@huawei.com, hch@lst.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, chris.snook@gmail.com, jcliburn@gmail.com, dan.carpenter@oracle.com, netdev@vger.kernel.org, davem@davemloft.net
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Sat, 16 Feb 2019 01:48:09 +0000
+cards_found is a static variable, but when it enters atl2_probe(),
+cards_found is set to zero, the value is not consistent with last probe,
+so next behavior is not our expect.
 
-> The function meth_init_tx_ring() is called from meth_tx_timeout(),
-> in which spin_lock is held, so we should use GFP_ATOMIC instead.
-> 
-> Fixes: 8d4c28fbc284 ("meth: pass struct device to DMA API functions")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: change the subject from "net: drop pointless static qualifier in atl2_probe()"
+ to "net: set static variable an initial value in atl2_probe()";
+ keep 'static' for variable cards_found.  
+ v2->v3: change patch description, and send patch to netdev mail list.
 
-Applied.
+ drivers/net/ethernet/atheros/atlx/atl2.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
+index bb41becb6609..31ff1e0d1baa 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl2.c
++++ b/drivers/net/ethernet/atheros/atlx/atl2.c
+@@ -1335,13 +1335,11 @@ static int atl2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	struct net_device *netdev;
+ 	struct atl2_adapter *adapter;
+-	static int cards_found;
++	static int cards_found = 0;
+ 	unsigned long mmio_start;
+ 	int mmio_len;
+ 	int err;
+ 
+-	cards_found = 0;
+-
+ 	err = pci_enable_device(pdev);
+ 	if (err)
+ 		return err;
+-- 
+2.20.1
