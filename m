@@ -1,63 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Feb 2019 13:20:38 +0000
-Subject: [PATCH 07/12] drm: omapdrm: add missing of_node_put after of_device_is_available
-Message-Id: <1550928043-14889-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Feb 2019 06:37:02 +0000
+Subject: [PATCH] media: cx18: update *pos correctly in cx18_read_pos()
+Message-Id: <20190222063702.GC12250@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Andy Walls <awalls@md.metrocast.net>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add an of_node_put when a tested device node is not available.
+We should be updating *pos.  The current code is a no-op.
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-identifier f;
-local idexpression e;
-expression x;
-@@
-
-e = f(...);
-... when != of_node_put(e)
-    when != x = e
-    when != e = x
-    when any
-if (<+...of_device_is_available(e)...+>) {
-  ... when != of_node_put(e)
-(
-  return e;
-|
-+ of_node_put(e);
-  return ...;
-)
-}
-// </smpl>
-
-Fixes: f2dd36ac9974c ("OMAPDSS: move 'compatible' converter to omapdss driver")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: 1c1e45d17b66 ("V4L/DVB (7786): cx18: new driver for the Conexant CX23418 MPEG encoder chip")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/pci/cx18/cx18-fileops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
---- a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-+++ b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-@@ -192,8 +192,10 @@ static int __init omapdss_boot_init(void
+diff --git a/drivers/media/pci/cx18/cx18-fileops.c b/drivers/media/pci/cx18/cx18-fileops.c
+index a3f44e30f821..88c2f3bea2b6 100644
+--- a/drivers/media/pci/cx18/cx18-fileops.c
++++ b/drivers/media/pci/cx18/cx18-fileops.c
+@@ -484,7 +484,7 @@ static ssize_t cx18_read_pos(struct cx18_stream *s, char __user *ubuf,
  
- 	dss = of_find_matching_node(NULL, omapdss_of_match);
+ 	CX18_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
+ 	if (rc > 0)
+-		pos += rc;
++		*pos += rc;
+ 	return rc;
+ }
  
--	if (dss = NULL || !of_device_is_available(dss))
-+	if (dss = NULL || !of_device_is_available(dss)) {
-+		of_node_put(dss);
- 		return 0;
-+	}
- 
- 	omapdss_walk_device(dss, true);
- 
+-- 
+2.17.1
