@@ -1,27 +1,63 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 19 Feb 2019 00:48:02 +0000
-Subject: Re: [PATCH net-next] bnx2x: Remove set but not used variable 'mfw_vn'
-Message-Id: <20190218.164802.605932576907030600.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Feb 2019 13:20:41 +0000
+Subject: [PATCH 10/12] cpufreq: ap806: add missing of_node_put after of_device_is_available
+Message-Id: <1550928043-14889-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218121954.78928-1-yuehaibing@huawei.com>
-In-Reply-To: <20190218121954.78928-1-yuehaibing@huawei.com>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: aelior@marvell.com, skalluru@marvell.com, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, Gregory Clement <gregory.clement@bootlin.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 18 Feb 2019 12:19:54 +0000
+Add an of_node_put when a tested device node is not available.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c: In function 'bnx2x_get_hwinfo':
-> drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:11940:10: warning:
->  variable 'mfw_vn' set but not used [-Wunused-but-set-variable]
-> 
-> It's never used since introduction.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Applied, thanks.
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
+
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
+
+Fixes: f525a670533d9 ("cpufreq: ap806: add cpufreq driver for Armada 8K")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/cpufreq/armada-8k-cpufreq.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/cpufreq/armada-8k-cpufreq.c b/drivers/cpufreq/armada-8k-cpufreq.c
+--- a/drivers/cpufreq/armada-8k-cpufreq.c
++++ b/drivers/cpufreq/armada-8k-cpufreq.c
+@@ -128,8 +128,10 @@ static int __init armada_8k_cpufreq_init
+ 	struct cpumask cpus;
+ 
+ 	node = of_find_compatible_node(NULL, NULL, "marvell,ap806-cpu-clock");
+-	if (!node || !of_device_is_available(node))
++	if (!node || !of_device_is_available(node)) {
++		of_node_put(node);
+ 		return -ENODEV;
++	}
+ 
+ 	nb_cpus = num_possible_cpus();
+ 	freq_tables = kcalloc(nb_cpus, sizeof(*freq_tables), GFP_KERNEL);
