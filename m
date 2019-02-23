@@ -1,36 +1,63 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 19 Feb 2019 15:09:44 +0000
-Subject: Re: [PATCH] rsi: remove set but not used variables 'info, vif'
-Message-Id: <20190219150944.1C579608C6@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Feb 2019 13:20:36 +0000
+Subject: [PATCH 05/12] tee: optee: add missing of_node_put after of_device_is_available
+Message-Id: <1550928043-14889-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190218075156.183879-1-yuehaibing@huawei.com>
-In-Reply-To: <20190218075156.183879-1-yuehaibing@huawei.com>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Siva Rebbagondla <siva8118@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+Add an of_node_put when a tested device node is not available.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/rsi/rsi_91x_main.c: In function 'rsi_prepare_skb':
-> drivers/net/wireless/rsi/rsi_91x_main.c:127:24: warning:
->  variable 'vif' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/net/wireless/rsi/rsi_91x_main.c:124:28: warning:
->  variable 'info' set but not used [-Wunused-but-set-variable]
-> 
-> They're not used any more since 160ee2a11ce0 ("rsi: fill rx_params only once.")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Patch applied to wireless-drivers-next.git, thanks.
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
 
-6f6e4f98ee52 rsi: remove set but not used variables 'info, vif'
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
 
--- 
-https://patchwork.kernel.org/patch/10817423/
+Fixes: db878f76b9ff ("tee: optee: take DT status property into account")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+---
+ drivers/tee/optee/core.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -703,8 +703,10 @@ static int __init optee_driver_init(void
+ 		return -ENODEV;
+ 
+ 	np = of_find_matching_node(fw_np, optee_match);
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
+ 
+ 	optee = optee_probe(np);
+ 	of_node_put(np);
