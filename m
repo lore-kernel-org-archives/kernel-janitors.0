@@ -1,62 +1,65 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 15 Feb 2019 06:55:14 +0000
-Subject: Re: [PATCH v4] coccinelle: semantic patch for missing put_device()
-Message-Id: <alpine.DEB.2.21.1902150754380.2896@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Feb 2019 13:20:32 +0000
+Subject: [PATCH 01/12] arm-cci: add missing of_node_put after of_device_is_available
+Message-Id: <1550928043-14889-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: 1550126293-27839-1-git-send-email-wen.yang99@zte.com.cn,
- 201902151422261425412@zte.com.cn,
- alpine.DEB.2.21.1902150723110.2896@hadrien <201902151452197117145@zte.com.cn>
-In-Reply-To: <201902151452197117145@zte.com.cn>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wen.yang99@zte.com.cn
-Cc: wang.yi59@zte.com.cn, kernel-janitors@vger.kernel.org, michal.lkml@markovi.net, yellowriver2010@hotmail.com, nicolas.palix@imag.fr, linux-kernel@vger.kernel.org, cheng.shengyu@zte.com.cn, cocci@systeme.lip6.fr
+To: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, robin.murphy@arm.com
+Cc: kernel-janitors@vger.kernel.org
 
+Add an of_node_put when a tested device node is not available.
 
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-On Fri, 15 Feb 2019, wen.yang99@zte.com.cn wrote:
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
 
-> Hi Julia, thank you very much.
->
-> > > >> In a function, for variables returned by calling of_find_device_by_node(),
-> > > > Do variables really get returned?
-> > > > The provided pointer should usually be stored somewhere.
-> > >
-> > > Thank you very much, we will consider this situation and submit a next version to fix it.
-> >
-> > I don't know what Markus is talking about here, so I'm not sure that a
-> > change is needed.
->
-> I think Markus means that we need to deal with two situations:
-> 1,  The return value of of_find_device_by_node () is assigned to a variable, such as:
-> pdev = of_find_device_by_node(np);
-> 2,  The return value of of_find_device_by_node() is assigned to a variable in a structure, such as:
-> dev->pdev = of_find_device_by_node(args.np);
->
-> So I plan to modify the following to capture both cases:
-> -local idexpression id;
-> +expression id;
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
 
-I'm not sure that this is a good idea.  There is likely no need for a put
-in the latter case.
+Fixes: 896ddd600ba4 ("drivers: bus: check cci device tree node status")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-julia
+---
+This file doesn't seem to have a maintainer.
 
-> ...
-> id = of_find_device_by_node@p1(x)
->
-> > > >> + "ERROR: missing put_device;"
-> > > >Will change confidence considerations result in another fine-tuning for this message?
-> > >
-> > > Thank you, we will change "ERROR" to "WARNING".
-> >
-> > I think ERROR is fine. If it is a real positive than it is a real
-> > problem. Warning is for things that look ugly, but don't have any impact
-> > on the execution.
->
-> OK, I will keep it.
-> Thanks.
->
-> Regards,
-> Wen
+ drivers/bus/arm-cci.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+--- a/drivers/bus/arm-cci.c
++++ b/drivers/bus/arm-cci.c
+@@ -538,8 +538,10 @@ static int cci_probe(void)
+ 	struct resource res;
+ 
+ 	np = of_find_matching_node(NULL, arm_cci_matches);
+-	if (!of_device_is_available(np))
++	if (!of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
+ 
+ 	ret = of_address_to_resource(np, 0, &res);
+ 	if (!ret) {
