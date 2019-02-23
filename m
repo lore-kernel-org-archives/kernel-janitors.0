@@ -1,45 +1,63 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 14 Feb 2019 01:51:52 +0000
-Subject: [PATCH -next] scsi: lpfc: Remove set but not used variable 'phys_id'
-Message-Id: <20190214015152.124072-1-yuehaibing@huawei.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Feb 2019 13:20:38 +0000
+Subject: [PATCH 07/12] drm: omapdrm: add missing of_node_put after of_device_is_available
+Message-Id: <1550928043-14889-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Add an of_node_put when a tested device node is not available.
 
-drivers/scsi/lpfc/lpfc_init.c: In function 'lpfc_cpu_affinity_check':
-drivers/scsi/lpfc/lpfc_init.c:10599:19: warning:
- variable 'phys_id' set but not used [-Wunused-but-set-variable]
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-It never used since introduction in commit 6a828b0f6192 ("scsi: lpfc: Support
-non-uniform allocation of MSIX vectors to hardware queues")
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
+
+Fixes: f2dd36ac9974c ("OMAPDSS: move 'compatible' converter to omapdss driver")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/scsi/lpfc/lpfc_init.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 900edae7ccc4..1ec1ec0d11de 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -10596,7 +10596,7 @@ lpfc_find_hyper(struct lpfc_hba *phba, int cpu,
- static void
- lpfc_cpu_affinity_check(struct lpfc_hba *phba, int vectors)
- {
--	int i, cpu, idx, phys_id;
-+	int i, cpu, idx;
- 	int max_phys_id, min_phys_id;
- 	int max_core_id, min_core_id;
- 	struct lpfc_vector_map_info *cpup;
-@@ -10614,7 +10614,6 @@ lpfc_cpu_affinity_check(struct lpfc_hba *phba, int vectors)
- 	min_phys_id = 0xffff;
- 	max_core_id = 0;
- 	min_core_id = 0xffff;
--	phys_id = 0;
+diff -u -p a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
+--- a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
++++ b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
+@@ -192,8 +192,10 @@ static int __init omapdss_boot_init(void
  
- 	/* Update CPU map with physical id and core id of each CPU */
- 	for_each_present_cpu(cpu) {
+ 	dss = of_find_matching_node(NULL, omapdss_of_match);
+ 
+-	if (dss = NULL || !of_device_is_available(dss))
++	if (dss = NULL || !of_device_is_available(dss)) {
++		of_node_put(dss);
+ 		return 0;
++	}
+ 
+ 	omapdss_walk_device(dss, true);
+ 
