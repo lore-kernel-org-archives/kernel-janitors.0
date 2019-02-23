@@ -1,71 +1,63 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Mon, 18 Feb 2019 16:52:00 +0000
-Subject: Re: [PATCH] scsi: mvumi: fix 32 bit shift of a 32 bit unsigned int
-Message-Id: <439942520.147366.1550508720799@ox-groupware.bfs.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Feb 2019 13:20:33 +0000
+Subject: [PATCH 02/12] drm/tegra: rgb: add missing of_node_put after of_device_is_available
+Message-Id: <1550928043-14889-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190216144424.21438-1-colin.king@canonical.com>
-In-Reply-To: <20190216144424.21438-1-colin.king@canonical.com>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am 18.02.2019 15:24, schrieb Dan Carpenter:
-> On Mon, Feb 18, 2019 at 01:42:02PM +0100, Walter Harms wrote:
->> Am 18.02.2019 10:37, schrieb Dan Carpenter:
->>> On Sat, Feb 16, 2019 at 05:27:16PM +0100, Walter Harms wrote:
->>>> Am 16.02.2019 15:44, schrieb Colin King:
->>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>
->>>>> Currently m_sg->baseaddr_h (a 32 bit unsigned int) is being shifted by a
->>>>> total of 32 bits; this always produces a 0 result.  Fix this by casting
->>>>> it to a dma_addr_t (a 64 bit unsigned int) before performing the shift.
->>>>>
->>>>> Detected by CoverityScan, CID#147270 ("Operands don't affect result")
->>>>>
->>>>> Fixes: f0c568a478f0 ("[SCSI] mvumi: Add Marvell UMI driver")
->>>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>>> ---
->>>>>  drivers/scsi/mvumi.c | 2 +-
->>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/scsi/mvumi.c b/drivers/scsi/mvumi.c
->>>>> index 36f64205ecfa..d3582accfd09 100644
->>>>> --- a/drivers/scsi/mvumi.c
->>>>> +++ b/drivers/scsi/mvumi.c
->>>>> @@ -313,7 +313,7 @@ static void mvumi_delete_internal_cmd(struct mvumi_hba
->>>>> *mhba,
->>>>>  			sgd_getsz(mhba, m_sg, size);
->>>>>  
->>>>>  			phy_addr = (dma_addr_t) m_sg->baseaddr_l |
->>>>> -				(dma_addr_t) ((m_sg->baseaddr_h << 16) << 16);
->>>>> +				(((dma_addr_t) m_sg->baseaddr_h << 16) << 16);
->>>>>  
->>>>>  			dma_free_coherent(&mhba->pdev->dev, size, cmd->data_buf,
->>>>>  								phy_addr);
->>>>
->>>> i would suggest to try a version with less casts to make it more readable
->>>> like this untested suggestion:
->>>>
->>>> phy_addr =(m_sg->baseaddr_h << 16)| m_sg->baseaddr_l;
->>>> phy_addr <<= 16;
->>>>
->>>
->>> That would be a behavior change but it also might be a bugfix?  Why
->>> doesn't the code just do:
->>>
->>> 	phy_addr = ((dma_addr_t)m_sg->baseaddr_h << 32) | m_sg->baseaddr_l;
->>>
->>
->> phy_addr = ((dma_addr_t)m_sg->baseaddr_h << 32) | m_sg->baseaddr_l<<16;
->                                                                     ^^^^
-> In the original code, we don't do this shift.
-> 
+Add an of_node_put when a tested device node is not available.
 
-You are right, my bad, sorry
-my brain made it into 16bit values.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-on the other side it shows my point that things must be obvious as possible,
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
 
-re,
- wh
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
+
+Fixes: d8f4a9eda0067 ("drm: Add NVIDIA Tegra20 support")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/tegra/rgb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -221,8 +221,10 @@ int tegra_dc_rgb_probe(struct tegra_dc *
+ 	int err;
+ 
+ 	np = of_get_child_by_name(dc->dev->of_node, "rgb");
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
+ 
+ 	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+ 	if (!rgb)
