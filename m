@@ -1,28 +1,63 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 26 Feb 2019 17:07:47 +0000
-Subject: Re: [PATCH net-next] mlxsw: spectrum: remove set but not used variable 'autoneg_status'
-Message-Id: <20190226.090747.197822470039781854.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Feb 2019 13:20:34 +0000
+Subject: [PATCH 03/12] PowerPC-83xx: add missing of_node_put after of_device_is_available
+Message-Id: <1550928043-14889-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190225020328.42510-1-yuehaibing@huawei.com>
-In-Reply-To: <20190225020328.42510-1-yuehaibing@huawei.com>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Scott Wood <oss@buserror.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 25 Feb 2019 02:03:28 +0000
+Add an of_node_put when a tested device node is not available.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/mellanox/mlxsw/spectrum.c: In function 'mlxsw_sp_port_get_link_ksettings':
-> drivers/net/ethernet/mellanox/mlxsw/spectrum.c:3062:5: warning:
->  variable 'autoneg_status' set but not used [-Wunused-but-set-variable]
-> 
-> It's not used since commit 475b33cb66c9 ("mlxsw: spectrum: Remove unsupported
-> eth_proto_lp_advertise field in PTYS")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Applied.
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
+
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
+
+Fixes: c026c98739c7e ("powerpc/83xx: Do not configure or probe disabled FSL DR USB controllers")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/powerpc/platforms/83xx/usb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff -u -p a/arch/powerpc/platforms/83xx/usb.c b/arch/powerpc/platforms/83xx/usb.c
+--- a/arch/powerpc/platforms/83xx/usb.c
++++ b/arch/powerpc/platforms/83xx/usb.c
+@@ -221,8 +221,10 @@ int mpc837x_usb_cfg(void)
+ 	int ret = 0;
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl-usb2-dr");
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
+ 	prop = of_get_property(np, "phy_type", NULL);
+ 
+ 	if (!prop || (strcmp(prop, "ulpi") && strcmp(prop, "serial"))) {
