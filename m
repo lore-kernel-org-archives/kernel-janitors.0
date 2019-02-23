@@ -1,45 +1,23 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Fri, 22 Feb 2019 06:57:23 +0000
-Subject: [PATCH net v3] net: set static variable an initial value in atl2_probe()
-Message-Id: <20190222065723.193392-1-maowenan@huawei.com>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 23 Feb 2019 21:47:50 +0000
+Subject: Re: [PATCH net v3] net: set static variable an initial value in atl2_probe()
+Message-Id: <20190223.134750.1319881896395311657.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190222065723.193392-1-maowenan@huawei.com>
+In-Reply-To: <20190222065723.193392-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, chris.snook@gmail.com, jcliburn@gmail.com, dan.carpenter@oracle.com, netdev@vger.kernel.org, davem@davemloft.net
+To: maowenan@huawei.com
+Cc: kernel-janitors@vger.kernel.org, chris.snook@gmail.com, jcliburn@gmail.com, dan.carpenter@oracle.com, netdev@vger.kernel.org
 
-cards_found is a static variable, but when it enters atl2_probe(),
-cards_found is set to zero, the value is not consistent with last probe,
-so next behavior is not our expect.
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 22 Feb 2019 14:57:23 +0800
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v1->v2: change the subject from "net: drop pointless static qualifier in atl2_probe()"
- to "net: set static variable an initial value in atl2_probe()";
- keep 'static' for variable cards_found.  
- v2->v3: change patch description, and send patch to netdev mail list.
+> cards_found is a static variable, but when it enters atl2_probe(),
+> cards_found is set to zero, the value is not consistent with last probe,
+> so next behavior is not our expect.
+> 
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
 
- drivers/net/ethernet/atheros/atlx/atl2.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
-index bb41becb6609..31ff1e0d1baa 100644
---- a/drivers/net/ethernet/atheros/atlx/atl2.c
-+++ b/drivers/net/ethernet/atheros/atlx/atl2.c
-@@ -1335,13 +1335,11 @@ static int atl2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	struct net_device *netdev;
- 	struct atl2_adapter *adapter;
--	static int cards_found;
-+	static int cards_found = 0;
- 	unsigned long mmio_start;
- 	int mmio_len;
- 	int err;
- 
--	cards_found = 0;
--
- 	err = pci_enable_device(pdev);
- 	if (err)
- 		return err;
--- 
-2.20.1
+Applied and queued up for -stable, thanks.
