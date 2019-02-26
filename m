@@ -1,40 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Feb 2019 13:34:44 +0000
-Subject: [PATCH] video: fbdev: savage: fix indentation issue
-Message-Id: <20190212133444.7669-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 26 Feb 2019 12:07:09 +0000
+Subject: Applied "spi: sifive: Remove spi_master_put in sifive_spi_remove()" to the spi tree
+Message-Id: <20190226120709.3F17E11284E3@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20190222054616.4523-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonino Daplas <adaplas@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, Yash Shah <yash.shah@sifive.com>, Mark Brown <broonie@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-The indentation in the if statement is not indented correctly, fix
-this with extra level of indentation.
+   spi: sifive: Remove spi_master_put in sifive_spi_remove()
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 049e5feae18fe07df0687dc14582f338dde3fb56 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 22 Feb 2019 05:46:16 +0000
+Subject: [PATCH] spi: sifive: Remove spi_master_put in sifive_spi_remove()
+
+The call to spi_master_put() in sifive_spi_remove() is redundant since
+the master is registered using devm_spi_register_master() and no
+reference hold by using spi_master_get() in sifive_spi_remove().
+
+This is detected by Coccinelle semantic patch.
+
+Fixes: 484a9a68d669 ("spi: sifive: Add driver for the SiFive SPI controller")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/video/fbdev/savage/savagefb_driver.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi-sifive.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/savage/savagefb_driver.c b/drivers/video/fbdev/savage/savagefb_driver.c
-index c09d7426cd92..47b78f0138c3 100644
---- a/drivers/video/fbdev/savage/savagefb_driver.c
-+++ b/drivers/video/fbdev/savage/savagefb_driver.c
-@@ -2155,9 +2155,9 @@ static int savage_init_fb_info(struct fb_info *info, struct pci_dev *dev,
+diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
+index 961307c4a613..ebca3fc4d345 100644
+--- a/drivers/spi/spi-sifive.c
++++ b/drivers/spi/spi-sifive.c
+@@ -424,7 +424,6 @@ static int sifive_spi_remove(struct platform_device *pdev)
  
- 		err = fb_alloc_cmap(&info->cmap, NR_PALETTE, 0);
- 		if (!err)
--		info->flags |= FBINFO_HWACCEL_COPYAREA |
--	                       FBINFO_HWACCEL_FILLRECT |
--		               FBINFO_HWACCEL_IMAGEBLIT;
-+			info->flags |= FBINFO_HWACCEL_COPYAREA |
-+				       FBINFO_HWACCEL_FILLRECT |
-+				       FBINFO_HWACCEL_IMAGEBLIT;
- 	}
- #endif
- 	return err;
+ 	/* Disable all the interrupts just in case */
+ 	sifive_spi_write(spi, SIFIVE_SPI_REG_IE, 0);
+-	spi_master_put(master);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
