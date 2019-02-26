@@ -1,39 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 15 Feb 2019 08:19:54 +0000
-Subject: Re: [v4] coccinelle: semantic patch for missing put_device()
-Message-Id: <8041ca90-5328-19ea-633e-e0b591c5723f@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 26 Feb 2019 16:59:32 +0000
+Subject: [PATCH] drm/bridge: ti-sn65dsi86: make const array static
+Message-Id: <20190226165932.17528-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201902151452197117145@zte.com.cn>
- <alpine.DEB.2.21.1902150754380.2896@hadrien>
- <f4bc7f71-efee-5e0f-3209-82681ddc85be@web.de>
- <alpine.DEB.2.21.1902150900270.2896@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1902150900270.2896@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
+To: Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> The whole goal of the semantic patch is to ensure that put_device is
-> called when needed.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for this clarification.
+Don't populate the const array ti_sn_bridge_supply_names on the
+stack but instead make it static.
 
-The software development goal seems to be clear to some degree.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> If the value is stored in a structure,
-
-Will any further means become relevant for the discussed data processing?
-
-
-> then someone else will likely take care of calling put_device later
-> when the structure is destroyed.
-
-Such a view is reasonable.
-
-Are there any additional source code analysis and software development challenges
-to consider for safer resource management?
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index f72ee137e5f1..4c2ca4e39be5 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -211,7 +211,7 @@ static struct ti_sn_bridge *bridge_to_ti_sn_bridge(struct drm_bridge *bridge)
+ static int ti_sn_bridge_parse_regulators(struct ti_sn_bridge *pdata)
+ {
+ 	unsigned int i;
+-	const char * const ti_sn_bridge_supply_names[] = {
++	static const char * const ti_sn_bridge_supply_names[] = {
+ 		"vcca", "vcc", "vccio", "vpll",
+ 	};
+ 
+-- 
+2.20.1
