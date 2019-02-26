@@ -1,22 +1,23 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 26 Feb 2019 12:07:09 +0000
-Subject: Applied "spi: sifive: Remove spi_master_put in sifive_spi_remove()" to the spi tree
-Message-Id: <20190226120709.3F17E11284E3@debutante.sirena.org.uk>
+Date: Tue, 26 Feb 2019 12:06:33 +0000
+Subject: Applied "ASoC: cs35l36: Fix an IS_ERR() vs NULL checking bug" to the asoc tree
+Message-Id: <20190226120633.88F7511284F0@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190222054616.4523-1-weiyongjun1@huawei.com>
+References: <20190222063151.GC30993@kadam>
+In-Reply-To: <20190222063151.GC30993@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, Yash Shah <yash.shah@sifive.com>, Mark Brown <broonie@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, James Schulman <james.schulman@cirrus.com>, Mark Brown <broonie@kernel.org>
 
 The patch
 
-   spi: sifive: Remove spi_master_put in sifive_spi_remove()
+   ASoC: cs35l36: Fix an IS_ERR() vs NULL checking bug
 
-has been applied to the spi tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -37,35 +38,37 @@ to this mail.
 Thanks,
 Mark
 
-From 049e5feae18fe07df0687dc14582f338dde3fb56 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 22 Feb 2019 05:46:16 +0000
-Subject: [PATCH] spi: sifive: Remove spi_master_put in sifive_spi_remove()
+From eb23dcd20e91fe97679257dc4d195a707b4a0d1a Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Feb 2019 09:31:51 +0300
+Subject: [PATCH] ASoC: cs35l36: Fix an IS_ERR() vs NULL checking bug
 
-The call to spi_master_put() in sifive_spi_remove() is redundant since
-the master is registered using devm_spi_register_master() and no
-reference hold by using spi_master_get() in sifive_spi_remove().
+The irq_get_irq_data() function doesn't return error pointers, it
+returns NULL.
 
-This is detected by Coccinelle semantic patch.
-
-Fixes: 484a9a68d669 ("spi: sifive: Add driver for the SiFive SPI controller")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 6ba9dd6c893b ("ASoC: cs35l36: Add support for Cirrus CS35L36 Amplifier")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-sifive.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/codecs/cs35l36.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
-index 961307c4a613..ebca3fc4d345 100644
---- a/drivers/spi/spi-sifive.c
-+++ b/drivers/spi/spi-sifive.c
-@@ -424,7 +424,6 @@ static int sifive_spi_remove(struct platform_device *pdev)
+diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
+index dc8cf61b9db8..e9b5f76f27a8 100644
+--- a/sound/soc/codecs/cs35l36.c
++++ b/sound/soc/codecs/cs35l36.c
+@@ -1845,9 +1845,9 @@ static int cs35l36_i2c_probe(struct i2c_client *i2c_client,
+ 		cs35l36_apply_vpbr_config(cs35l36);
  
- 	/* Disable all the interrupts just in case */
- 	sifive_spi_write(spi, SIFIVE_SPI_REG_IE, 0);
--	spi_master_put(master);
+ 	irq_d = irq_get_irq_data(i2c_client->irq);
+-	if (IS_ERR(irq_d)) {
++	if (!irq_d) {
+ 		dev_err(&i2c_client->dev, "Invalid IRQ: %d\n", i2c_client->irq);
+-		ret = PTR_ERR(irq_d);
++		ret = -ENODEV;
+ 		goto err;
+ 	}
  
- 	return 0;
- }
 -- 
 2.20.1
