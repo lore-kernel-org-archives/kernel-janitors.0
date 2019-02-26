@@ -1,43 +1,47 @@
-From: "Neftin, Sasha" <sasha.neftin@intel.com>
-Date: Sun, 17 Feb 2019 10:06:21 +0000
-Subject: Re: [PATCH net-next] igc: Make function igc_write_rss_indir_tbl() static
-Message-Id: <6ef2f327-8dc6-4c86-f42d-4aa7508d19f5@intel.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 26 Feb 2019 05:48:28 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'vbi_time_out'
+Message-Id: <20190226054828.120809-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190216020442.14206-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190216020442.14206-1-weiyongjun1@huawei.com>
+References: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, gustavo@embeddedor.com, keescook@chromium.org, Rex.Zhu@amd.com, evan.quan@amd.com, ray.huang@amd.com
+Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2/16/2019 04:04, Wei Yongjun wrote:
-> Fixes the following sparse warning:
-> 
-> drivers/net/ethernet/intel/igc/igc_ethtool.c:646:6: warning:
->   symbol 'igc_write_rss_indir_tbl' was not declared. Should it be static?
-> 
-> Fixes: 8c5ad0dae93c ("igc: Add ethtool support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/net/ethernet/intel/igc/igc_ethtool.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c b/drivers/net/ethernet/intel/igc/igc_ethtool.c
-> index eff37a6c0afa..544239422577 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
-> @@ -643,7 +643,7 @@ static int igc_set_coalesce(struct net_device *netdev,
->   	return 0;
->   }
->   
-> -void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
-> +static void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
->   {
->   	struct igc_hw *hw = &adapter->hw;
->   	u32 reg = IGC_RETA(0);
-> 
-> 
-> NACK
-'igc_write_rss_indir_tbl' method declared in igc.h file. This method 
-used in both igc_ethtool.c and igc_main.c and can't be a 'static'
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/gpu/drm/amd/amdgpu/si_dpm.c: In function 'si_program_response_times':
+drivers/gpu/drm/amd/amdgpu/si_dpm.c:4101:29: warning:
+ variable 'backbias_response_time' set but not used [-Wunused-but-set-variable]
+
+It's never used since introduction in 841686df9f7d ("drm/amdgpu: add SI DPM
+support (v4)"), so can be removed
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/si_dpm.c b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+index 41e01a7f57a4..d57e75e5c71f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+@@ -4098,14 +4098,13 @@ static int si_notify_smc_display_change(struct amdgpu_device *adev,
+ 
+ static void si_program_response_times(struct amdgpu_device *adev)
+ {
+-	u32 voltage_response_time, backbias_response_time, acpi_delay_time, vbi_time_out;
++	u32 voltage_response_time, acpi_delay_time, vbi_time_out;
+ 	u32 vddc_dly, acpi_dly, vbi_dly;
+ 	u32 reference_clock;
+ 
+ 	si_write_smc_soft_register(adev, SI_SMC_SOFT_REGISTER_mvdd_chg_time, 1);
+ 
+ 	voltage_response_time = (u32)adev->pm.dpm.voltage_response_time;
+-	backbias_response_time = (u32)adev->pm.dpm.backbias_response_time;
+ 
+ 	if (voltage_response_time = 0)
+ 		voltage_response_time = 1000;
