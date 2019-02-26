@@ -1,42 +1,44 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 13 Feb 2019 13:25:59 +0000
-Subject: [PATCH] media: exynos4-is: remove redundant check on type
-Message-Id: <20190213132559.30900-1-colin.king@canonical.com>
+Date: Tue, 26 Feb 2019 13:41:21 +0000
+Subject: [PATCH][next] scsi: lpfc: ensure error is set to -ENODEV on failing exit paths
+Message-Id: <20190226134121.23650-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Hannes Reinecke <hare@suse.de>, James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The check to see if type is V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE is redundant
-as this has been already checked at the start of the function and if
-it's not that value then -ENOSYS is returned. Hence the sprintf can be
-replaced by a simpler string copy.
+A previous commit assigned error to the return value from the call to
+dma_set_mask_and_coherent and on the non-failure path error is zero. The
+subsequent error return paths now return 0 instead of -ENODEV causing
+failures to now be ignored.  Fix this by setting error to -ENODEV before
+these exit paths. This is indentical to an earlier fix in function
+lpfc_sli_pci_mem_setup but accidentally omitted for the function
+lpfc_sli4_pci_mem_setup.
 
-Detected by CoverityScan, CID#1309450 ("Logically dead code")
+Detected by cppcheck ("(warning) Identical condition 'error', second
+condition is always false")
 
+Fixes: 56de8357049c ("scsi: lpfc: fix calls to dma_set_mask_and_coherent()")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/scsi/lpfc/lpfc_init.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index de6bd28f7e31..bb35a2017f21 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -606,9 +606,7 @@ int fimc_isp_video_device_register(struct fimc_isp *isp,
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 3b5873f6751e..e88c606317e1 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -10064,6 +10064,7 @@ lpfc_sli4_pci_mem_setup(struct lpfc_hba *phba)
+ 		error = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (error)
+ 		return error;
++	error = -ENODEV;
  
- 	vdev = &iv->ve.vdev;
- 	memset(vdev, 0, sizeof(*vdev));
--	snprintf(vdev->name, sizeof(vdev->name), "fimc-is-isp.%s",
--			type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE ?
--			"capture" : "output");
-+	strscpy(vdev->name, "fimc-is-isp.capture", sizeof(vdev->name));
- 	vdev->queue = q;
- 	vdev->fops = &isp_video_fops;
- 	vdev->ioctl_ops = &isp_video_ioctl_ops;
+ 	/*
+ 	 * The BARs and register set definitions and offset locations are
 -- 
 2.20.1
