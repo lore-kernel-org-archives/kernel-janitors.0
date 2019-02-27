@@ -1,39 +1,49 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Fri, 15 Feb 2019 00:31:36 +0000
-Subject: Re: [PATCH net] net: dsa: bcm_sf2: potential array overflow in bcm_sf2_sw_suspend()
-Message-Id: <34584cb4-f012-c7c1-6cc9-6bbede46109b@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 27 Feb 2019 02:23:47 +0000
+Subject: [PATCH] rtlwifi: rtl8192se: Remove set but not used variable 'seg_ptr'
+Message-Id: <20190227022347.7927-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190213082304.GA14113@kadam>
- <20190213.221323.1768150771970232999.davem@davemloft.net>
-In-Reply-To: <20190213.221323.1768150771970232999.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, dan.carpenter@oracle.com
-Cc: andrew@lunn.ch, vivien.didelot@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, Larry Finger <Larry.Finger@lwfinger.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2/13/19 10:13 PM, David Miller wrote:
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Wed, 13 Feb 2019 11:23:04 +0300
-> 
->> The value of ->num_ports comes from bcm_sf2_sw_probe() and it is less
->> than or equal to DSA_MAX_PORTS.  The ds->ports[] array is used inside
->> the dsa_is_user_port() and dsa_is_cpu_port() functions.  The ds->ports[]
->> array is allocated in dsa_switch_alloc() and it has ds->num_ports
->> elements so this leads to a static checker warning about a potential out
->> of bounds read.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-This would not happen here because bcm_sf2 calls b53_switch_alloc()
-which does allocate the full port range (not for a good reason), but
-it's good to fix that anyways.
+drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c: In function '_rtl92s_firmware_downloadcode':
+drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c:139:17: warning:
+ variable 'seg_ptr' set but not used [-Wunused-but-set-variable]
 
->>
->> Fixes: 8cfa94984c9c ("net: dsa: bcm_sf2: add suspend/resume callbacks")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Applied.
-> 
+It's not used after commit 59ae1d127ac0 ("networking: introduce and use
+skb_put_data()")
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
--- 
-Florian
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c
+index faa307a0b148..541b7881735e 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.c
+@@ -136,7 +136,6 @@ static bool _rtl92s_firmware_downloadcode(struct ieee80211_hw *hw,
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	struct sk_buff *skb;
+ 	struct rtl_tcb_desc *tcb_desc;
+-	unsigned char *seg_ptr;
+ 	u16 frag_threshold = MAX_FIRMWARE_CODE_SIZE;
+ 	u16 frag_length, frag_offset = 0;
+ 	u16 extra_descoffset = 0;
+@@ -166,9 +165,8 @@ static bool _rtl92s_firmware_downloadcode(struct ieee80211_hw *hw,
+ 		if (!skb)
+ 			return false;
+ 		skb_reserve(skb, extra_descoffset);
+-		seg_ptr = skb_put_data(skb,
+-				       code_virtual_address + frag_offset,
+-				       (u32)(frag_length - extra_descoffset));
++		skb_put_data(skb, code_virtual_address + frag_offset,
++			     (u32)(frag_length - extra_descoffset));
+ 
+ 		tcb_desc = (struct rtl_tcb_desc *)(skb->cb);
+ 		tcb_desc->queue_index = TXCMD_QUEUE;
