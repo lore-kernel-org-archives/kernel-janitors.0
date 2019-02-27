@@ -1,25 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 Feb 2019 18:00:37 +0000
-Subject: Re: [PATCH net] skge: potential memory corruption in skge_get_regs()
-Message-Id: <20190201.100037.598653933076417364.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 27 Feb 2019 02:23:34 +0000
+Subject: [PATCH] rtlwifi: rtl8723ae: Remove set but not used variable 'bt_retry_cnt'
+Message-Id: <20190227022334.7750-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190201082816.GB8459@kadam>
-In-Reply-To: <20190201082816.GB8459@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: mlindner@marvell.com, stephen@networkplumber.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, Larry Finger <Larry.Finger@lwfinger.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 1 Feb 2019 11:28:16 +0300
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> The "p" buffer is 0x4000 bytes long.  B3_RI_WTO_R1 is 0x190.  The value
-> of "regs->len" is in the 1-0x4000 range.  The bug here is that
-> "regs->len - B3_RI_WTO_R1" can be a negative value which would lead to
-> memory corruption and an abrupt crash.
-> 
-> Fixes: c3f8be961808 ("[PATCH] skge: expand ethtool debug register dump")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c: In function '_rtl8723e_dm_bt_coexist_2_ant':
+drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c:1408:5: warning:
+ variable 'bt_retry_cnt' set but not used [-Wunused-but-set-variable]
 
-Applied.
+It's never used and can be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c
+index a6b31dae5691..680198280f8f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c
+@@ -1405,7 +1405,6 @@ static void rtl8723e_dm_bt_reset_action_profile_state(struct ieee80211_hw *hw)
+ static void _rtl8723e_dm_bt_coexist_2_ant(struct ieee80211_hw *hw)
+ {
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+-	u8 bt_retry_cnt;
+ 	u8 bt_info_original;
+ 	RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_DMESG,
+ 		"[BTCoex] Get bt info by fw!!\n");
+@@ -1417,7 +1416,6 @@ static void _rtl8723e_dm_bt_coexist_2_ant(struct ieee80211_hw *hw)
+ 				"[BTCoex] c2h for bt_info not rcvd yet!!\n");
+ 	}
+ 
+-	bt_retry_cnt = hal_coex_8723.bt_retry_cnt;
+ 	bt_info_original = hal_coex_8723.c2h_bt_info_original;
+ 
+ 	/* when bt inquiry or page scan, we have to set h2c 0x25 */
