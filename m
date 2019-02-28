@@ -1,63 +1,27 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Feb 2019 13:20:37 +0000
-Subject: [PATCH 06/12] omapfb: add missing of_node_put after of_device_is_available
-Message-Id: <1550928043-14889-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Thu, 28 Feb 2019 06:28:57 +0000
+Subject: Re: [PATCH] crypto: stm32 - drop pointless static qualifier in stm32_hash_remove()
+Message-Id: <20190228062857.rtxuq6lwns4cqu6m@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20190218144900.142544-1-maowenan@huawei.com>
+In-Reply-To: <20190218144900.142544-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Mao Wenan <maowenan@huawei.com>
+Cc: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, mcoquelin.stm32@gmail.com, clabbe.montjoie@gmail.com, gilad@benyossef.com, ebiggers@google.com, keescook@chromium.org, alexandre.torgue@st.com
 
-Add an of_node_put when a tested device node is not available.
+On Mon, Feb 18, 2019 at 10:49:00PM +0800, Mao Wenan wrote:
+> There is no need to have the struct stm32_hash_dev *hdev static
+> since new value always be assigned before use it.
+> 
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  drivers/crypto/stm32/stm32-hash.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-identifier f;
-local idexpression e;
-expression x;
-@@
-
-e = f(...);
-... when != of_node_put(e)
-    when != x = e
-    when != e = x
-    when any
-if (<+...of_device_is_available(e)...+>) {
-  ... when != of_node_put(e)
-(
-  return e;
-|
-+ of_node_put(e);
-  return ...;
-)
-}
-// </smpl>
-
-Fixes: f76ee892a99e6 ("omapfb: copy omapdss & displays for omapfb")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff -u -p a/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c b/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c
---- a/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c
-@@ -193,8 +193,10 @@ static int __init omapdss_boot_init(void
- 
- 	dss = of_find_matching_node(NULL, omapdss_of_match);
- 
--	if (dss = NULL || !of_device_is_available(dss))
-+	if (dss = NULL || !of_device_is_available(dss)) {
-+		of_node_put(dss);
- 		return 0;
-+	}
- 
- 	omapdss_walk_device(dss, true);
- 
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
