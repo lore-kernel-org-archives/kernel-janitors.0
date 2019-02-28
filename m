@@ -1,26 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 16 Feb 2019 03:32:41 +0000
-Subject: Re: [PATCH][V2] scsi: qla2xxx: remove redundant null check on pointer sess
-Message-Id: <yq1imxkmmqu.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Feb 2019 05:35:51 +0000
+Subject: [PATCH] ubi: wl: Silence uninitialized variable warning
+Message-Id: <20190228053551.GB3253@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190215095232.28852-1-colin.king@canonical.com>
-In-Reply-To: <20190215095232.28852-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 15 Feb 2019 09:52:32 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: Boris Brezillon <bbrezillon@kernel.org>, kernel-janitors@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
+This condition needs to be fipped around because "err" is uninitialized
+when "force" is set.  The Smatch static analysis tool complains and
+UBsan will also complain at runtime.
 
-Colin,
+Fixes: 663586c0a892 ("ubi: Expose the bitrot interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mtd/ubi/wl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The null check on pointer sess and the subsequent call is redundant as
-> sess is null on all the the paths that lead to the out_term2 label.
-> Hence the null check and the call can be removed.  Also remove the
-> redundant setting of sess to NULL as this is not required now.
-
-Applied to 5.1/scsi-queue, thanks!
-
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 40f838d54b0f..2709dc02fc24 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1517,7 +1517,7 @@ int ubi_bitflip_check(struct ubi_device *ubi, int pnum, int force)
+ 		mutex_unlock(&ubi->buf_mutex);
+ 	}
+ 
+-	if (err = UBI_IO_BITFLIPS || force) {
++	if (force || err = UBI_IO_BITFLIPS) {
+ 		/*
+ 		 * Okay, bit flip happened, let's figure out what we can do.
+ 		 */
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
