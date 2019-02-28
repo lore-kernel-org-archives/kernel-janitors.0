@@ -1,28 +1,39 @@
-From: maowenan <maowenan@huawei.com>
-Date: Fri, 22 Feb 2019 06:54:33 +0000
-Subject: Re: [PATCH v2] net: set static variable an initial value in atl2_probe()
-Message-Id: <653c83df-bf63-ffb7-9afa-1383e140ac70@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Feb 2019 05:46:27 +0000
+Subject: [PATCH] tools/libbpf: signedness bug in btf_dedup_ref_type()
+Message-Id: <20190228054627.GC3253@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190222054012.194038-1-maowenan@huawei.com>
-In-Reply-To: <20190222054012.194038-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andriin@fb.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The "ref_type_id" variable needs to be signed for the error handling
+to work.
 
+Fixes: d5caef5b5655 ("btf: add BTF types deduplication algorithm")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This goes through the BPF tree probably, although it does apply to
+net-next.
 
-On 2019/2/22 14:28, Dan Carpenter wrote:
-> You need to send this to netdev.
-OK, I have done that.
-> 
-> On Fri, Feb 22, 2019 at 01:40:12PM +0800, Mao Wenan wrote:
->> cards_found is a static variable, but when it enters atl2_probe(),
->> cards_found is set to zero, the value is not consistent with it in the heap,
->> so next behavior is not our expect.
->>
-> 
-> This seems reasonable.  Does this do anything besides let you configure
-> multiple cards in different ways using module parameters?
+ tools/lib/bpf/btf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I think this need to develop new interface by using module parameters.
+diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+index 68b50e9bbde1..8faed5386124 100644
+--- a/tools/lib/bpf/btf.c
++++ b/tools/lib/bpf/btf.c
+@@ -2326,7 +2326,8 @@ static int btf_dedup_ref_type(struct btf_dedup *d, __u32 type_id)
+ 	struct btf_type *t, *cand;
+ 	/* if we don't find equivalent type, then we are representative type */
+ 	__u32 new_id = type_id;
+-	__u32 h, ref_type_id;
++	__u32 h;
++	int ref_type_id;
+ 
+ 	if (d->map[type_id] = BTF_IN_PROGRESS_ID)
+ 		return -ELOOP;
+-- 
+2.17.1
