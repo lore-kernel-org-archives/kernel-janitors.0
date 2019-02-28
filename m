@@ -1,39 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Feb 2019 05:46:27 +0000
-Subject: [PATCH] tools/libbpf: signedness bug in btf_dedup_ref_type()
-Message-Id: <20190228054627.GC3253@kadam>
+From: Yonghong Song <yhs@fb.com>
+Date: Thu, 28 Feb 2019 06:58:29 +0000
+Subject: Re: [PATCH] tools/libbpf: signedness bug in btf_dedup_ref_type()
+Message-Id: <a34432d0-b838-c004-ef79-052cd50996c0@fb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190228054627.GC3253@kadam>
+In-Reply-To: <20190228054627.GC3253@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andriin@fb.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andriin@fb.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The "ref_type_id" variable needs to be signed for the error handling
-to work.
-
-Fixes: d5caef5b5655 ("btf: add BTF types deduplication algorithm")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This goes through the BPF tree probably, although it does apply to
-net-next.
-
- tools/lib/bpf/btf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-index 68b50e9bbde1..8faed5386124 100644
---- a/tools/lib/bpf/btf.c
-+++ b/tools/lib/bpf/btf.c
-@@ -2326,7 +2326,8 @@ static int btf_dedup_ref_type(struct btf_dedup *d, __u32 type_id)
- 	struct btf_type *t, *cand;
- 	/* if we don't find equivalent type, then we are representative type */
- 	__u32 new_id = type_id;
--	__u32 h, ref_type_id;
-+	__u32 h;
-+	int ref_type_id;
- 
- 	if (d->map[type_id] = BTF_IN_PROGRESS_ID)
- 		return -ELOOP;
--- 
-2.17.1
+DQoNCk9uIDIvMjcvMTkgOTo0NiBQTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gVGhlICJyZWZf
+dHlwZV9pZCIgdmFyaWFibGUgbmVlZHMgdG8gYmUgc2lnbmVkIGZvciB0aGUgZXJyb3IgaGFuZGxp
+bmcNCj4gdG8gd29yay4NCj4gDQo+IEZpeGVzOiBkNWNhZWY1YjU2NTUgKCJidGY6IGFkZCBCVEYg
+dHlwZXMgZGVkdXBsaWNhdGlvbiBhbGdvcml0aG0iKQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2Fy
+cGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+IC0tLQ0KPiBUaGlzIGdvZXMgdGhy
+b3VnaCB0aGUgQlBGIHRyZWUgcHJvYmFibHksIGFsdGhvdWdoIGl0IGRvZXMgYXBwbHkgdG8NCj4g
+bmV0LW5leHQuDQo+IA0KPiAgIHRvb2xzL2xpYi9icGYvYnRmLmMgfCAzICsrLQ0KPiAgIDEgZmls
+ZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1n
+aXQgYS90b29scy9saWIvYnBmL2J0Zi5jIGIvdG9vbHMvbGliL2JwZi9idGYuYw0KPiBpbmRleCA2
+OGI1MGU5YmJkZTEuLjhmYWVkNTM4NjEyNCAxMDA2NDQNCj4gLS0tIGEvdG9vbHMvbGliL2JwZi9i
+dGYuYw0KPiArKysgYi90b29scy9saWIvYnBmL2J0Zi5jDQo+IEBAIC0yMzI2LDcgKzIzMjYsOCBA
+QCBzdGF0aWMgaW50IGJ0Zl9kZWR1cF9yZWZfdHlwZShzdHJ1Y3QgYnRmX2RlZHVwICpkLCBfX3Uz
+MiB0eXBlX2lkKQ0KPiAgIAlzdHJ1Y3QgYnRmX3R5cGUgKnQsICpjYW5kOw0KPiAgIAkvKiBpZiB3
+ZSBkb24ndCBmaW5kIGVxdWl2YWxlbnQgdHlwZSwgdGhlbiB3ZSBhcmUgcmVwcmVzZW50YXRpdmUg
+dHlwZSAqLw0KPiAgIAlfX3UzMiBuZXdfaWQgPSB0eXBlX2lkOw0KPiAtCV9fdTMyIGgsIHJlZl90
+eXBlX2lkOw0KPiArCV9fdTMyIGg7ID4gKwlpbnQgcmVmX3R5cGVfaWQ7DQoNCm5pdC4gTWF5YmUg
+eW91IGNhbiBjaGFuZ2UgdG8NCglpbnQgcmVmX3R5cGVfaWQ7DQoJX191MzIgaDsNCnRvIG1haW50
+YWluIGtlcm5lbCBkZWNsYXJhdGlvbiByZXZlcnNlIGNocmlzdG1hcyB0cmVlIGNvbnZlbnRpb24/
+DQoNCj4gICANCj4gICAJaWYgKGQtPm1hcFt0eXBlX2lkXSA9PSBCVEZfSU5fUFJPR1JFU1NfSUQp
+DQo+ICAgCQlyZXR1cm4gLUVMT09QOw0KPiANCg=
