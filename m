@@ -1,53 +1,49 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Fri, 22 Mar 2019 13:13:48 +0000
-Subject: Re: [Openipmi-developer] [PATCH] ipmi_si: remove an unused variable in try_smi_init()
-Message-Id: <20190322131348.GE2628@minyard.net>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Date: Fri, 01 Mar 2019 19:07:21 +0000
+Subject: Re: [PATCH] soc: qcom: cmd-db: Fix an error code in cmd_db_dev_probe()
+Message-Id: <20190301190721.GA27005@builder>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190228054849.GD3253@kadam>
+In-Reply-To: <20190228054849.GD3253@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andy Gross <andy.gross@linaro.org>, Mahesh Sivasubramanian <msivasub@codeaurora.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 09:54:26AM +0300, Dan Carpenter wrote:
-> The "init_name" variable isn't used any more after commit 90b2d4f15ff7
-> ("ipmi_si: Remove hacks for adding a dummy platform devices").
+On Wed 27 Feb 21:48 PST 2019, Dan Carpenter wrote:
+
+> The memremap() function doesn't return error pointers, it returns NULL.
+> This code is returning "ret = PTR_ERR(NULL);" which is success, but it
+> should return -ENOMEM.
 > 
+> Fixes: 312416d9171a ("drivers: qcom: add command DB driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Queued for 5.1, thanks.
-
--corey
-
 > ---
->  drivers/char/ipmi/ipmi_si_intf.c | 2 --
->  1 file changed, 2 deletions(-)
+
+Thanks Dan, picking this up.
+
+Regards,
+Bjorn
+
+>  drivers/soc/qcom/cmd-db.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> index b1732882b97e..f124a2d2bb9f 100644
-> --- a/drivers/char/ipmi/ipmi_si_intf.c
-> +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> @@ -1931,7 +1931,6 @@ static int try_smi_init(struct smi_info *new_smi)
->  {
->  	int rv = 0;
->  	int i;
-> -	char *init_name = NULL;
->  
->  	pr_info("Trying %s-specified %s state machine at %s address 0x%lx, slave address 0x%x, irq %d\n",
->  		ipmi_addr_src_to_str(new_smi->io.addr_source),
-> @@ -2073,7 +2072,6 @@ static int try_smi_init(struct smi_info *new_smi)
->  		new_smi->io.io_cleanup = NULL;
+> diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
+> index c701b3b010f1..f6c3d17b05c7 100644
+> --- a/drivers/soc/qcom/cmd-db.c
+> +++ b/drivers/soc/qcom/cmd-db.c
+> @@ -248,8 +248,8 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
 >  	}
 >  
-> -	kfree(init_name);
->  	return rv;
->  }
->  
+>  	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WB);
+> -	if (IS_ERR_OR_NULL(cmd_db_header)) {
+> -		ret = PTR_ERR(cmd_db_header);
+> +	if (!cmd_db_header) {
+> +		ret = -ENOMEM;
+>  		cmd_db_header = NULL;
+>  		return ret;
+>  	}
 > -- 
 > 2.17.1
 > 
-> 
-> 
-> _______________________________________________
-> Openipmi-developer mailing list
-> Openipmi-developer@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/openipmi-developer
