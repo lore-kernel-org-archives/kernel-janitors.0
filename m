@@ -1,47 +1,41 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Sun, 31 Mar 2019 18:38:22 +0000
-Subject: Re: [PATCH] leds: blinkm: clean up double assignment to data->i2c_addr
-Message-Id: <20190331183822.GA7642@amd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vtzGhvizbBRQ85DL"
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Mar 2019 22:23:38 +0000
+Subject: [PATCH][next] HID: uclogic: remove redudant duplicated null check on ver_ptr
+Message-Id: <20190302222338.8023-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330203757.8877-1-colin.king@canonical.com>
-In-Reply-To: <20190330203757.8877-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Currently ver_ptr is being null checked twice, once before calling
+usb_string and once afterwards.  The second null check is redundant
+and can be removed, remove it.
 
-On Sat 2019-03-30 20:37:57, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently data->i2c_addr is being assigned twice, first with the
-> value 0x09 and then immediately afterwards with the value 0x08.
-> The first assignment is redundant and can be removed.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Detected by CoverityScan, CID#1477308 ("Logically dead code")
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-uclogic-params.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlyhCR4ACgkQMOfwapXb+vIs9wCfSrbnqR8+G1kt7IDQ4GohkC+Y
-Fb8AoLZDxEbCOlhvhnD0E/a1kGA7v1Fx
-=YKgB
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
+index 7710d9f957da..0187c9f8fc22 100644
+--- a/drivers/hid/hid-uclogic-params.c
++++ b/drivers/hid/hid-uclogic-params.c
+@@ -735,10 +735,6 @@ static int uclogic_params_huion_init(struct uclogic_params *params,
+ 		goto cleanup;
+ 	}
+ 	rc = usb_string(udev, 201, ver_ptr, ver_len);
+-	if (ver_ptr = NULL) {
+-		rc = -ENOMEM;
+-		goto cleanup;
+-	}
+ 	if (rc = -EPIPE) {
+ 		*ver_ptr = '\0';
+ 	} else if (rc < 0) {
+-- 
+2.20.1
