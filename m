@@ -1,39 +1,48 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Sun, 31 Mar 2019 14:38:33 +0000
-Subject: Re: [PATCH -next] serial: sprd: Fix a copy-paste err in sprd_request_dma()
-Message-Id: <CAMz4kuLZJOYb8JLZW+0_uETkLD1An1-cbyy5vTMk3XY+UOSYng@mail.gmail.com>
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Date: Sat, 02 Mar 2019 19:42:11 +0000
+Subject: Re: [PATCH] staging: speakup: i18n: fix spelling mistake "phoneticly" -> "phonetically"
+Message-Id: <20190302194211.4aj6r3dr4hahbnqi@function>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330014724.184531-1-yuehaibing@huawei.com>
-In-Reply-To: <20190330014724.184531-1-yuehaibing@huawei.com>
+References: <20181128161232.14907-1-colin.king@canonical.com>
+In-Reply-To: <20181128161232.14907-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 30 Mar 2019 at 09:36, YueHaibing <yuehaibing@huawei.com> wrote:
->
-> when dma_request_chan rx_dma fails, dev_err log should print rx_dma
-> err log.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Hello,
+
+Colin King, le mer. 28 nov. 2018 16:12:32 +0000, a ecrit:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in array speakup_default_msgs at index
+> MSG_FUNCNAME_SPELL_WORD_PHONETICALLY, fix this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+We never got any feedback from the speakup mailing list, I guess fixing
+the typo is fine.
+
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+
 > ---
->  drivers/tty/serial/sprd_serial.c | 2 +-
+>  drivers/staging/speakup/i18n.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-> index 6aebd77cd3c0..73d71a4e6c0c 100644
-> --- a/drivers/tty/serial/sprd_serial.c
-> +++ b/drivers/tty/serial/sprd_serial.c
-> @@ -506,7 +506,7 @@ static void sprd_request_dma(struct uart_port *port)
->         sp->rx_dma.chn = dma_request_chan(port->dev, "rx");
->         if (IS_ERR(sp->rx_dma.chn)) {
->                 dev_err(port->dev, "request RX DMA channel failed, ret = %ld\n",
-> -                       PTR_ERR(sp->tx_dma.chn));
-> +                       PTR_ERR(sp->rx_dma.chn));
-
-Thanks for fixing the mistake.
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
-
--- 
-Baolin Wang
-Best Regards
+> 
+> diff --git a/drivers/staging/speakup/i18n.c b/drivers/staging/speakup/i18n.c
+> index cea8707653f5..ee240d36f947 100644
+> --- a/drivers/staging/speakup/i18n.c
+> +++ b/drivers/staging/speakup/i18n.c
+> @@ -336,7 +336,7 @@ static char *speakup_default_msgs[MSG_LAST_INDEX] = {
+>  	[MSG_FUNCNAME_SPELL_DELAY_DEC] = "spell delay decrement",
+>  	[MSG_FUNCNAME_SPELL_DELAY_INC] = "spell delay increment",
+>  	[MSG_FUNCNAME_SPELL_WORD] = "spell word",
+> -	[MSG_FUNCNAME_SPELL_WORD_PHONETICALLY] = "spell word phoneticly",
+> +	[MSG_FUNCNAME_SPELL_WORD_PHONETICALLY] = "spell word phonetically",
+>  	[MSG_FUNCNAME_TONE_DEC] = "tone decrement",
+>  	[MSG_FUNCNAME_TONE_INC] = "tone increment",
+>  	[MSG_FUNCNAME_VOICE_DEC] = "voice decrement",
+> -- 
+> 2.19.1
+> 
