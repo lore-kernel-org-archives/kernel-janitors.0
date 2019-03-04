@@ -1,117 +1,73 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 02 Mar 2019 23:06:36 +0000
-Subject: [PATCH][next] RDMA/nes: remove redundant check on udata
-Message-Id: <20190302230637.8624-1-colin.king@canonical.com>
+From: Leon Romanovsky <leon@kernel.org>
+Date: Mon, 04 Mar 2019 06:36:23 +0000
+Subject: Re: [PATCH][next] RDMA/nes: remove redundant check on udata
+Message-Id: <20190304063623.GA15253@mtr-leonro.mtl.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Ma2pZxZcUUd0eybH"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Faisal Latif <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190302230637.8624-1-colin.king@canonical.com>
+In-Reply-To: <20190302230637.8624-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Faisal Latif <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The non-null check on udata is redundant as this check was performed
-just a few statements earlier and the check is always true as udata
-must be non-null at this point. Remove redundant the check on udata
-and the redundant else part that can never be executed.
+--Ma2pZxZcUUd0eybH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Detected by CoverityScan, CID#1477317 ("Logically dead code")
+On Sat, Mar 02, 2019 at 11:06:36PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The non-null check on udata is redundant as this check was performed
+> just a few statements earlier and the check is always true as udata
+> must be non-null at this point. Remove redundant the check on udata
+> and the redundant else part that can never be executed.
+>
+> Detected by CoverityScan, CID#1477317 ("Logically dead code")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/infiniband/hw/nes/nes_verbs.c | 73 +++++++++++++--------------
+>  1 file changed, 34 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
+> index 828e4af3f951..526092d435df 100644
+> --- a/drivers/infiniband/hw/nes/nes_verbs.c
+> +++ b/drivers/infiniband/hw/nes/nes_verbs.c
+> @@ -1039,53 +1039,48 @@ static struct ib_qp *nes_create_qp(struct ib_pd *ibpd,
+>  				}
+>  				if (req.user_qp_buffer)
+>  					nesqp->nesuqp_addr = req.user_qp_buffer;
+> -				if (udata) {
+> -					nesqp->user_mode = 1;
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/nes/nes_verbs.c | 73 +++++++++++++--------------
- 1 file changed, 34 insertions(+), 39 deletions(-)
+It was single place where user_mode was set, you should continue and
+remove all code which depends on "if (nesqp->user_mode)".
 
-diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
-index 828e4af3f951..526092d435df 100644
---- a/drivers/infiniband/hw/nes/nes_verbs.c
-+++ b/drivers/infiniband/hw/nes/nes_verbs.c
-@@ -1039,53 +1039,48 @@ static struct ib_qp *nes_create_qp(struct ib_pd *ibpd,
- 				}
- 				if (req.user_qp_buffer)
- 					nesqp->nesuqp_addr = req.user_qp_buffer;
--				if (udata) {
--					nesqp->user_mode = 1;
--					if (virt_wqs) {
--						err = 1;
--						list_for_each_entry(nespbl, &nes_ucontext->qp_reg_mem_list, list) {
--							if (nespbl->user_base = (unsigned long )req.user_wqe_buffers) {
--								list_del(&nespbl->list);
--								err = 0;
--								nes_debug(NES_DBG_QP, "Found PBL for virtual QP. nespbl=%p. user_base=0x%lx\n",
--									  nespbl, nespbl->user_base);
--								break;
--							}
--						}
--						if (err) {
--							nes_debug(NES_DBG_QP, "Didn't Find PBL for virtual QP. address = %llx.\n",
--								  (long long unsigned int)req.user_wqe_buffers);
--							nes_free_resource(nesadapter, nesadapter->allocated_qps, qp_num);
--							kfree(nesqp->allocated_buffer);
--							return ERR_PTR(-EFAULT);
-+
-+				nesqp->user_mode = 1;
-+				if (virt_wqs) {
-+					err = 1;
-+					list_for_each_entry(nespbl, &nes_ucontext->qp_reg_mem_list, list) {
-+						if (nespbl->user_base = (unsigned long )req.user_wqe_buffers) {
-+							list_del(&nespbl->list);
-+							err = 0;
-+							nes_debug(NES_DBG_QP, "Found PBL for virtual QP. nespbl=%p. user_base=0x%lx\n",
-+								  nespbl, nespbl->user_base);
-+							break;
- 						}
- 					}
--
--					nesqp->mmap_sq_db_index -						find_next_zero_bit(nes_ucontext->allocated_wqs,
--								   NES_MAX_USER_WQ_REGIONS, nes_ucontext->first_free_wq);
--					/* nes_debug(NES_DBG_QP, "find_first_zero_biton wqs returned %u\n",
--							nespd->mmap_db_index); */
--					if (nesqp->mmap_sq_db_index >= NES_MAX_USER_WQ_REGIONS) {
--						nes_debug(NES_DBG_QP,
--							  "db index > max user regions, failing create QP\n");
-+					if (err) {
-+						nes_debug(NES_DBG_QP, "Didn't Find PBL for virtual QP. address = %llx.\n",
-+							  (long long unsigned int)req.user_wqe_buffers);
- 						nes_free_resource(nesadapter, nesadapter->allocated_qps, qp_num);
--						if (virt_wqs) {
--							pci_free_consistent(nesdev->pcidev, nespbl->pbl_size, nespbl->pbl_vbase,
--									    nespbl->pbl_pbase);
--							kfree(nespbl);
--						}
- 						kfree(nesqp->allocated_buffer);
--						return ERR_PTR(-ENOMEM);
-+						return ERR_PTR(-EFAULT);
- 					}
--					set_bit(nesqp->mmap_sq_db_index, nes_ucontext->allocated_wqs);
--					nes_ucontext->mmap_nesqp[nesqp->mmap_sq_db_index] = nesqp;
--					nes_ucontext->first_free_wq = nesqp->mmap_sq_db_index + 1;
--				} else {
-+				}
-+
-+				nesqp->mmap_sq_db_index +					find_next_zero_bit(nes_ucontext->allocated_wqs,
-+							   NES_MAX_USER_WQ_REGIONS, nes_ucontext->first_free_wq);
-+				/* nes_debug(NES_DBG_QP, "find_first_zero_biton wqs returned %u\n",
-+						nespd->mmap_db_index); */
-+				if (nesqp->mmap_sq_db_index >= NES_MAX_USER_WQ_REGIONS) {
-+					nes_debug(NES_DBG_QP,
-+						  "db index > max user regions, failing create QP\n");
- 					nes_free_resource(nesadapter, nesadapter->allocated_qps, qp_num);
-+					if (virt_wqs) {
-+						pci_free_consistent(nesdev->pcidev, nespbl->pbl_size, nespbl->pbl_vbase,
-+								    nespbl->pbl_pbase);
-+						kfree(nespbl);
-+					}
- 					kfree(nesqp->allocated_buffer);
--					return ERR_PTR(-EFAULT);
-+					return ERR_PTR(-ENOMEM);
- 				}
-+				set_bit(nesqp->mmap_sq_db_index, nes_ucontext->allocated_wqs);
-+				nes_ucontext->mmap_nesqp[nesqp->mmap_sq_db_index] = nesqp;
-+				nes_ucontext->first_free_wq = nesqp->mmap_sq_db_index + 1;
- 			}
- 			err = (!virt_wqs) ? nes_setup_mmap_qp(nesqp, nesvnic, sq_size, rq_size) :
- 					nes_setup_virt_qp(nesqp, nespbl, nesvnic, sq_size, rq_size);
--- 
-2.20.1
+I looked on the change which triggered Coverity warning and looks like
+your commit message should include this Fixes line:
+Fixes: 899444505473 ("IB/{hw,sw}: Remove 'uobject->context' dependency in object creation APIs")
+
+Thanks
+
+--Ma2pZxZcUUd0eybH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcfMdnAAoJEORje4g2clin/0gP/3wzVBGqLbp+ZEORDYZus7nq
+xalQQ6UDevH70HB6XnxeApRH/qBfwntDhN5H0qqt1SP3E9xCuZh/1Hb2PofB8HgR
+H25DCA1pEihrLufrcU8ttGhEJk8JP19tCtqybpa4zAWLFXlO9f7Bn0vqAf8kzdoD
+dSuCCed5xj+10IHeR9oDsPm4wDXu1eAKKHD4tuRxicHkgkxuPTC2iipiUBXxfJB2
+UUVitYv9cg40SBRTQp5mjMnS4ZF+ItX7nWXmL9R+tCxsg8RIFXelfV5tjNIcA25I
+jVaQHHDxZM+vIy55K3Fcwl4XOT18ec3648pyoDVqz2EzlKqqOiCgTldoLKd2uPWk
+JSh+rWEZ5c6db93KloQpqkD42ZcPWkhOo6Bn3w5JFrud74kHS/HAHqzgTBjFNsOG
+SHUPOpfpelCku/eMTUiWI+wiuecD9CDrzlY65QGJLok8WxYPjexHDMaJTx3ZYzBm
+YiQ0e0Fpco24hL9Ft/1giw/eG8J5vGdo+ks6gdkJp3bRRM6kG1OpsaCpcKhhbtUF
+eqasCPqJ/3EzfqR0OW0iECx4ArDOYsLB2h8pEVAwIx5XI3bsdfDbf5O7Mqs7EZFS
+C/hxZr7A0HPCnPk+uUKkzFKjGadF9DXgqxBNksHrbd2u3vKeQfF+Mn1xIo28lem5
+HLtqDwjiVXPdoJFRwhEY
+=wQRA
+-----END PGP SIGNATURE-----
+
+--Ma2pZxZcUUd0eybH--
