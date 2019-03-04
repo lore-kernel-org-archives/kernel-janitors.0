@@ -1,57 +1,38 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Sun, 31 Mar 2019 09:36:16 +0000
-Subject: Re: [PATCH] spi: oc-tiny: fix negative loop bound error on for loop
-Message-Id: <88c53375-5727-c865-05ba-829b6e7d5128@codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 04 Mar 2019 00:57:11 +0000
+Subject: [PATCH net-next] mt76: fix return value check in mt76_wmac_probe()
+Message-Id: <20190304011000.62693-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330212300.11675-1-colin.king@canonical.com>
-In-Reply-To: <20190330212300.11675-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mediatek@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-On 3/31/2019 2:53 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the for-loop using an unsigned int for the loop counter
-> which is problematic when comparing it to the signed int
-> gt->gpio_cs_count.  This is an issue because if the signed int is
-> negative (for example, the call to of_gpio_count failed) then
-> the negative loop bound is implicitly cast to an unsigned int on
-> the comparison to loop counter i and will yield a very large value,
-> eventually causing an array bounds overflow on hw->gpio_cs.
->
-> Fix this by simply making the loop counter i a signed int;
->
-> Fixes: ca632f556697 ("spi: reorganize drivers")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/spi/spi-oc-tiny.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-oc-tiny.c b/drivers/spi/spi-oc-tiny.c
-> index 085f580be7ec..81f74b938dc9 100644
-> --- a/drivers/spi/spi-oc-tiny.c
-> +++ b/drivers/spi/spi-oc-tiny.c
-> @@ -206,7 +206,7 @@ static int tiny_spi_of_probe(struct platform_device *pdev)
->   {
->   	struct tiny_spi *hw = platform_get_drvdata(pdev);
->   	struct device_node *np = pdev->dev.of_node;
-> -	unsigned int i;
-> +	int i;
+Fixes: c8846e101502 ("mt76: add driver for MT7603E and MT7628/7688")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt7603/soc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Same issue, here as well like your other patch. you are putting wrapper 
-over a original issue by not checking the returned value.
-Please fix that in both patches.
-
-
-
-Thanks.
-Mukesh
-
->   	u32 val;
->   
->   	if (!np)
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7603/soc.c b/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
+index e13fea80d970..b920be1f5718 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
+@@ -23,9 +23,9 @@ mt76_wmac_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mem_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!mem_base) {
++	if (IS_ERR(mem_base)) {
+ 		dev_err(&pdev->dev, "Failed to get memory resource\n");
+-		return -EINVAL;
++		return PTR_ERR(mem_base);
+ 	}
+ 
+ 	mdev = mt76_alloc_device(&pdev->dev, sizeof(*dev), &mt7603_ops,
