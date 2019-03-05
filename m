@@ -1,36 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Mar 2019 14:32:15 +0000
-Subject: [PATCH] phy: tegra: xusb: testing the wrong variable in probe()
-Message-Id: <20190328143214.GP32590@kadam>
+Date: Tue, 05 Mar 2019 11:46:55 +0000
+Subject: [bug report] misc: rtsx: Enable OCP for rts522a rts524a rts525a rts5260
+Message-Id: <20190305114655.GA17506@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The "usb2->clk" pointer is not an error pointer.  We meant to test
-"priv->usb2_trk_clk" instead.
+Hello RickyWu,
 
-Fixes: b8998e928030 ("phy: tegra: xusb: Add Tegra186 support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/phy/tegra/xusb-tegra186.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The patch bede03a579b3: "misc: rtsx: Enable OCP for rts522a rts524a
+rts525a rts5260" from Feb 19, 2019, leads to the following static
+checker warning:
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 11ad6e4e4711..a627fe0b8e54 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -467,8 +467,8 @@ tegra186_usb2_pad_probe(struct tegra_xusb_padctl *padctl,
- 	}
- 
- 	priv->usb2_trk_clk = devm_clk_get(&pad->dev, "trk");
--	if (IS_ERR(usb2->clk)) {
--		err = PTR_ERR(usb2->clk);
-+	if (IS_ERR(priv->usb2_trk_clk)) {
-+		err = PTR_ERR(priv->usb2_trk_clk);
- 		dev_dbg(&pad->dev, "failed to get usb2 trk clock: %d\n", err);
- 		goto unregister;
- 	}
--- 
-2.17.1
+	drivers/misc/cardreader/rts5260.c:707 rts5260_init_params()
+	'0x50 | 0x50' has '0x50' set on both sides
+
+drivers/misc/cardreader/rts5260.c
+    694 	/* init latency of active, idle, L1OFF to 60us, 300us, 3ms */
+    695 	option->ltr_active_latency = LTR_ACTIVE_LATENCY_DEF;
+    696 	option->ltr_idle_latency = LTR_IDLE_LATENCY_DEF;
+    697 	option->ltr_l1off_latency = LTR_L1OFF_LATENCY_DEF;
+    698 	option->dev_aspm_mode = DEV_ASPM_DYNAMIC;
+    699 	option->l1_snooze_delay = L1_SNOOZE_DELAY_DEF;
+    700 	option->ltr_l1off_sspwrgate = LTR_L1OFF_SSPWRGATE_5250_DEF;
+    701 	option->ltr_l1off_snooze_sspwrgate     702 		LTR_L1OFF_SNOOZE_SSPWRGATE_5250_DEF;
+    703 
+    704 	option->ocp_en = 1;
+    705 	if (option->ocp_en)
+    706 		hw_param->interrupt_en |= SD_OC_INT_EN;
+--> 707 	hw_param->ocp_glitch =  SDVIO_OCP_GLITCH_800U | SDVIO_OCP_GLITCH_800U;
+                                        ^^^^^^^^^^^^^^^^^^^^^
+This used to be SD_OCP_GLITCH_10M but now it's SDVIO_OCP_GLITCH_800U
+on both sides.
+
+    708 	option->sd_400mA_ocp_thd = RTS5260_DVCC_OCP_THD_550;
+    709 	option->sd_800mA_ocp_thd = RTS5260_DVCC_OCP_THD_970;
+    710 }
+
+regards,
+dan carpenter
