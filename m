@@ -1,49 +1,44 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 12 Mar 2019 12:06:09 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: Fix a small typo in qla_bsg.c
-Message-Id: <alpine.DEB.2.20.1903121305220.4097@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 05 Mar 2019 17:31:13 +0000
+Subject: [PATCH][bpf-next] bpf: hbm: fix spelling mistake "deault" -> "default"
+Message-Id: <20190305173113.26119-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190312115313.GA12695@machine1>
-In-Reply-To: <20190312115313.GA12695@machine1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Milan P. Gandhi" <mgandhi@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, qla2xxx-upstream@qlogic.com, jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There are a couple of typos, fix these.
 
-On Tue, 12 Mar 2019, Milan P. Gandhi wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ samples/bpf/hbm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> This patch fixes a minor formatting issue with comment section and a
-> typo for 'iiDMA' cmd in drivers/scsi/qla2xxx/qla_bsg.c
-
-This seems to be two completely unrelated changes.  The subject line
-promises only one change, and indeed only one change per patch would have
-been better.  You should make a series.
-
-julia
-
->
-> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
-> ---
-> diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
-> index 17d42658ad9a..2353be988907 100644
-> --- a/drivers/scsi/qla2xxx/qla_bsg.c
-> +++ b/drivers/scsi/qla2xxx/qla_bsg.c
-> @@ -1,4 +1,4 @@
-> -	/*
-> +/*
->   * QLogic Fibre Channel HBA Driver
->   * Copyright (c)  2003-2014 QLogic Corporation
->   *
-> @@ -1354,7 +1354,7 @@ qla24xx_iidma(struct bsg_job *bsg_job)
->
->  	if (rval) {
->  		ql_log(ql_log_warn, vha, 0x704c,
-> -		    "iIDMA cmd failed for %8phN -- "
-> +		    "iiDMA cmd failed for %8phN -- "
->  		    "%04x %x %04x %04x.\n", fcport->port_name,
->  		    rval, fcport->fp_speed, mb[0], mb[1]);
->  		rval = (DID_ERROR << 16);
->
+diff --git a/samples/bpf/hbm.c b/samples/bpf/hbm.c
+index 8408ccb7409f..a79828ab273f 100644
+--- a/samples/bpf/hbm.c
++++ b/samples/bpf/hbm.c
+@@ -18,7 +18,7 @@
+  *		Default is /hbm1
+  *    -r <rate>	Rate limit in Mbps
+  *    -s	Get HBM stats (marked, dropped, etc.)
+- *    -t <time>	Exit after specified seconds (deault is 0)
++ *    -t <time>	Exit after specified seconds (default is 0)
+  *    -w	Work conserving flag. cgroup can increase its bandwidth
+  *		beyond the rate limit specified while there is available
+  *		bandwidth. Current implementation assumes there is only
+@@ -376,7 +376,7 @@ static void Usage(void)
+ 	       "               Default is /hbm1\n"
+ 	       "    -r <rate>  Rate in Mbps\n"
+ 	       "    -s         Update HBM stats\n"
+-	       "    -t <time>  Exit after specified seconds (deault is 0)\n"
++	       "    -t <time>  Exit after specified seconds (default is 0)\n"
+ 	       "    -w	       Work conserving flag. cgroup can increase\n"
+ 	       "               bandwidth beyond the rate limit specified\n"
+ 	       "               while there is available bandwidth. Current\n"
+-- 
+2.20.1
