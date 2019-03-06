@@ -1,41 +1,37 @@
-From: "Barr.Augusto Daniel." <chamberlawyer6@gmail.com>
-Date: Mon, 25 Mar 2019 10:11:43 +0000
-Subject: Attention Dear,
-Message-Id: <CAP+Od_k46874d95PEqJ-5wK9gR2HTVEu8QvDA1nB9-8SukWLaw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Mar 2019 07:27:43 +0000
+Subject: [PATCH] media: wl128x: Fix an error code in fm_download_firmware()
+Message-Id: <20190306072743.GB2625@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We forgot to set "ret" on this error path.
+
+Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/media/radio/wl128x/fmdrv_common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index 3c8987af3772..1614809f7d35 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -1268,8 +1268,9 @@ static int fm_download_firmware(struct fmdev *fmdev, const u8 *fw_name)
+ 
+ 		switch (action->type) {
+ 		case ACTION_SEND_COMMAND:	/* Send */
+-			if (fmc_send_cmd(fmdev, 0, 0, action->data,
+-						action->size, NULL, NULL))
++			ret = fmc_send_cmd(fmdev, 0, 0, action->data,
++					   action->size, NULL, NULL);
++			if (ret)
+ 				goto rel_fw;
+ 
+ 			cmd_cnt++;
 -- 
-Attention Dear,
-
-I am personal representative to my late client, a national of your
-country, and the CEO of his own Construction Company here in Benin
-Republic West Africa. On the 27th of May 2015, my client, His wife and
-their only daughter were involved in a car accident Along express-high
-way, Unfortunately, they all lost their lives.
-
-Before his death the Ministry of public works and Transport Benin
-(MTPT) owed him the sum of Ten Million Eight Hundred Thousand United
-States Dollar Only) US$10.800.000 Only, for a contract he executed for
-the Ministry before his death.
-
-After these several unsuccessful attempts, I decided I want to present
-you as the next of kin for the inheritance fund transfer to your
-account for onward sharing between the both of us 50% to you and 50%
-for me. I guarantee that this will be executed under a legitimate
-arrangement that will protect you from any breach of the law. to
-enable me give you more details.Please kindly reply through my private
-email box for more information, overchambers@gmail.com
-
-Your Full Name and Address,
-Your Age : Occupation and Position,
-Your Private Email : Address
-Your Telephone and Mobile for Communication Purpose
-
-I await your reply via my private email:overchambers@gmail.com
-
-Best Regards.
-Augusto Daniel Esq.
+2.17.1
