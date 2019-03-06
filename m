@@ -1,24 +1,38 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 14 Mar 2019 11:02:30 +0000
-Subject: Re: [PATCH] scsi: lpfc: Fix error codes in lpfc_sli4_pci_mem_setup()
-Message-Id: <yq136npoh15.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Mar 2019 07:26:33 +0000
+Subject: [PATCH] mt76: Fix an IS_ERR() vs NULL check in mt76_wmac_probe()
+Message-Id: <20190306072633.GA2625@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190307053344.GA4517@kadam>
-In-Reply-To: <20190307053344.GA4517@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>
+Cc: Lorenzo Bianconi <lorenzo.bianconi83-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+The devm_ioremap_resource() function never returns NULL, it returns
+error pointers.
 
-Dan,
+Fixes: c8846e101502 ("mt76: add driver for MT7603E and MT7628/7688")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt7603/soc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> It used to be that "error" was set to -ENODEV at the start of the
-> function but we shifted some code around an now "error" is set to zero
-> for most error paths.  There is a mix of direct returns and "goto out"
-> but I changed everything to direct returns for consistency.
-
-Applied to 5.1/scsi-queue, thanks!
-
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7603/soc.c b/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
+index e13fea80d970..b920be1f5718 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
+@@ -23,9 +23,9 @@ mt76_wmac_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mem_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!mem_base) {
++	if (IS_ERR(mem_base)) {
+ 		dev_err(&pdev->dev, "Failed to get memory resource\n");
+-		return -EINVAL;
++		return PTR_ERR(mem_base);
+ 	}
+ 
+ 	mdev = mt76_alloc_device(&pdev->dev, sizeof(*dev), &mt7603_ops,
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
