@@ -1,36 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 21 Mar 2019 09:19:57 +0000
-Subject: [PATCH] drm/amd/powerplay: Off by one in vega20_get_smu_msg_index()
-Message-Id: <20190321091957.GA2793@kadam>
+From: Adam Ford <aford173@gmail.com>
+Date: Thu, 07 Mar 2019 20:13:29 +0000
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+Message-Id: <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
+ <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+ <20180430092947.GC2270@ulmo>
+In-Reply-To: <20180430092947.GC2270@ulmo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Kevin Wang <Kevin1.Wang-5C7GfCeVMHo@public.gmane.org>
-Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Chengming Gui <Jack.Gui-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Likun Gao <Likun.Gao-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Hoan Tran <hotran@apm.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, linux-tegra@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-The > should be >= so that we don't read one element beyond the end of
-the vega20_message_map[] array.
+On Mon, Apr 30, 2018 at 4:30 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
+> > On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
+> > <grygorii.strashko@ti.com> wrote:
+> > > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
+> > >>
+> > >> We should get drvdata from struct device directly. Going via
+> > >> platform_device is an unneeded step back and forth.
+> > >>
+> > >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > >> ---
+> > >>
+> > >> Build tested only. buildbot is happy. Please apply individually.
+> > >
+> > >
+> > > for gpio-omap.c:
+> > > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> >
+> > Hm I only see the responses not the actual patch, I guess I will find it
+> > sooner or later.
+> >
+> > Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
+>
+> I had the same problem, turned out this got classified as spam by Google
+> for some reason. Maybe try your spam folder?
 
-Fixes: 3ec3c931489f ("drm/amd/powerplay: implement smu vega20_message_map for vega20")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/amd/powerplay/vega20_ppt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+It's been almost a year later, and several Linux revisions, and this
+still seems stuck somewhere/somehow.
 
-diff --git a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-index 7e9e8ad9a300..31cd7b9d4dad 100644
---- a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-@@ -132,7 +132,8 @@ static int vega20_message_map[SMU_MSG_MAX_COUNT] = {
- static int vega20_get_smu_msg_index(struct smu_context *smc, uint32_t index)
- {
- 	int val;
--	if (index > SMU_MSG_MAX_COUNT)
-+
-+	if (index >= SMU_MSG_MAX_COUNT)
- 		return -EINVAL;
- 
- 	val = vega20_message_map[index];
--- 
-2.17.1
+adam
+>
+> Thierry
