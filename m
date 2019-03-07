@@ -1,73 +1,136 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Mon, 04 Mar 2019 06:36:23 +0000
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 07 Mar 2019 10:23:28 +0000
 Subject: Re: [PATCH][next] RDMA/nes: remove redundant check on udata
-Message-Id: <20190304063623.GA15253@mtr-leonro.mtl.com>
+Message-Id: <815dea03-ef9a-39c0-3ec5-cdd58a545911@canonical.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Ma2pZxZcUUd0eybH"
+Content-Type: multipart/mixed; boundary="myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190302230637.8624-1-colin.king@canonical.com>
-In-Reply-To: <20190302230637.8624-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
+ <20190304063623.GA15253@mtr-leonro.mtl.com>
+In-Reply-To: <20190304063623.GA15253@mtr-leonro.mtl.com>
+To: Leon Romanovsky <leon@kernel.org>
 Cc: Faisal Latif <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ
+Content-Type: multipart/mixed; boundary="V9KKqdNrC9BAndZvoI3I7vIj8KsaMunRc";
+ protected-headers="v1"
+From: Colin Ian King <colin.king@canonical.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Faisal Latif <faisal.latif@intel.com>, Doug Ledford
+ <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <815dea03-ef9a-39c0-3ec5-cdd58a545911@canonical.com>
+Subject: Re: [PATCH][next] RDMA/nes: remove redundant check on udata
+References: <20190302230637.8624-1-colin.king@canonical.com>
+ <20190304063623.GA15253@mtr-leonro.mtl.com>
+In-Reply-To: <20190304063623.GA15253@mtr-leonro.mtl.com>
 
---Ma2pZxZcUUd0eybH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--V9KKqdNrC9BAndZvoI3I7vIj8KsaMunRc
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 02, 2019 at 11:06:36PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The non-null check on udata is redundant as this check was performed
-> just a few statements earlier and the check is always true as udata
-> must be non-null at this point. Remove redundant the check on udata
-> and the redundant else part that can never be executed.
->
-> Detected by CoverityScan, CID#1477317 ("Logically dead code")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/nes/nes_verbs.c | 73 +++++++++++++--------------
->  1 file changed, 34 insertions(+), 39 deletions(-)
->
-> diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
-> index 828e4af3f951..526092d435df 100644
-> --- a/drivers/infiniband/hw/nes/nes_verbs.c
-> +++ b/drivers/infiniband/hw/nes/nes_verbs.c
-> @@ -1039,53 +1039,48 @@ static struct ib_qp *nes_create_qp(struct ib_pd *ibpd,
->  				}
->  				if (req.user_qp_buffer)
->  					nesqp->nesuqp_addr = req.user_qp_buffer;
-> -				if (udata) {
-> -					nesqp->user_mode = 1;
+On 04/03/2019 06:36, Leon Romanovsky wrote:
+> On Sat, Mar 02, 2019 at 11:06:36PM +0000, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The non-null check on udata is redundant as this check was performed
+>> just a few statements earlier and the check is always true as udata
+>> must be non-null at this point. Remove redundant the check on udata
+>> and the redundant else part that can never be executed.
+>>
+>> Detected by CoverityScan, CID#1477317 ("Logically dead code")
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/infiniband/hw/nes/nes_verbs.c | 73 +++++++++++++-------------=
+-
+>>  1 file changed, 34 insertions(+), 39 deletions(-)
+>>
+>> diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniban=
+d/hw/nes/nes_verbs.c
+>> index 828e4af3f951..526092d435df 100644
+>> --- a/drivers/infiniband/hw/nes/nes_verbs.c
+>> +++ b/drivers/infiniband/hw/nes/nes_verbs.c
+>> @@ -1039,53 +1039,48 @@ static struct ib_qp *nes_create_qp(struct ib_p=
+d *ibpd,
+>>  				}
+>>  				if (req.user_qp_buffer)
+>>  					nesqp->nesuqp_addr =3D req.user_qp_buffer;
+>> -				if (udata) {
+>> -					nesqp->user_mode =3D 1;
+>=20
+> It was single place where user_mode was set, you should continue and
+> remove all code which depends on "if (nesqp->user_mode)".
 
-It was single place where user_mode was set, you should continue and
-remove all code which depends on "if (nesqp->user_mode)".
+This is not the only place where user_mode is being set; we currently hav=
+e:
 
-I looked on the change which triggered Coverity warning and looks like
-your commit message should include this Fixes line:
-Fixes: 899444505473 ("IB/{hw,sw}: Remove 'uobject->context' dependency in object creation APIs")
 
-Thanks
+        if (udata) {
+                if (ib_copy_from_udata(&req, udata, sizeof(struct
+nes_create_qp_req))) {
+                        nes_free_resource(nesadapter,
+nesadapter->allocated_qps, qp_num);
+                        kfree(nesqp->allocated_buffer);
+                        nes_debug(NES_DBG_QP, "ib_copy_from_udata()
+Failed \n");
+                        return ERR_PTR(-EFAULT);
+                }
+                if (req.user_wqe_buffers) {
+                        virt_wqs =3D 1;
+                }
+                if (req.user_qp_buffer)
+                        nesqp->nesuqp_addr =3D req.user_qp_buffer;
+                if (udata) {
+                        nesqp->user_mode =3D 1;
+			...
 
---Ma2pZxZcUUd0eybH
+
+and I'm just removing the redudant 2nd if (udata) check, so the
+nesqp->user_mode =3D 1 assignment is still being kept hence it's not
+correct to remove all the if (nesqp->user_mode) releated code.
+
+
+>=20
+> I looked on the change which triggered Coverity warning and looks like
+> your commit message should include this Fixes line:
+> Fixes: 899444505473 ("IB/{hw,sw}: Remove 'uobject->context' dependency =
+in object creation APIs")
+
+Can that be added to the patch before it's applied?
+
+>=20
+> Thanks
+>=20
+
+Colin
+
+
+--V9KKqdNrC9BAndZvoI3I7vIj8KsaMunRc--
+
+--myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJcfMdnAAoJEORje4g2clin/0gP/3wzVBGqLbp+ZEORDYZus7nq
-xalQQ6UDevH70HB6XnxeApRH/qBfwntDhN5H0qqt1SP3E9xCuZh/1Hb2PofB8HgR
-H25DCA1pEihrLufrcU8ttGhEJk8JP19tCtqybpa4zAWLFXlO9f7Bn0vqAf8kzdoD
-dSuCCed5xj+10IHeR9oDsPm4wDXu1eAKKHD4tuRxicHkgkxuPTC2iipiUBXxfJB2
-UUVitYv9cg40SBRTQp5mjMnS4ZF+ItX7nWXmL9R+tCxsg8RIFXelfV5tjNIcA25I
-jVaQHHDxZM+vIy55K3Fcwl4XOT18ec3648pyoDVqz2EzlKqqOiCgTldoLKd2uPWk
-JSh+rWEZ5c6db93KloQpqkD42ZcPWkhOo6Bn3w5JFrud74kHS/HAHqzgTBjFNsOG
-SHUPOpfpelCku/eMTUiWI+wiuecD9CDrzlY65QGJLok8WxYPjexHDMaJTx3ZYzBm
-YiQ0e0Fpco24hL9Ft/1giw/eG8J5vGdo+ks6gdkJp3bRRM6kG1OpsaCpcKhhbtUF
-eqasCPqJ/3EzfqR0OW0iECx4ArDOYsLB2h8pEVAwIx5XI3bsdfDbf5O7Mqs7EZFS
-C/hxZr7A0HPCnPk+uUKkzFKjGadF9DXgqxBNksHrbd2u3vKeQfF+Mn1xIo28lem5
-HLtqDwjiVXPdoJFRwhEY
-=wQRA
+iQIzBAEBCAAdFiEEcGLapPABucZhZwDPaMKH38aoAiYFAlyA8SEACgkQaMKH38ao
+AiZLhg/8DCRIoCDwHqdfnn7+FxVJzm2jnhm/Dm43Pygc4v6bIVuMiNtIKYcoj/S8
+XvZri29vTgth8VZBLx9oeAwkEWD/8QOVEPpvf6IBFZljEWlwRNyLKl/dkSsnOt3a
+IGH5TZntsieXELKeyFD8FStjOlU8A0klSakB3x57a1uvsOrT905ui/852ONi0/rg
+DPLnHdmMNxJdNGHbOFALMDDXiWthHX07Rj0c9P2WYgauTE80++uln08PfrVgYLZ9
+Jz6xTDb/RXhc75RRofLUGaBgfJlhI97UyfNBCXR3JdEUGGwsZkLyqbBSEOrkvBVX
+Nj0Vk5zRE1q/ilwwLfX6MbWEeHY4tZG2vh+nVUMFKwnSbqlLo2PBzWCMBK0b2/4i
+7W1MaVXxWYPkt1NqtfLbkVJlhND9rFIcgAfe5YQkGVkoSXqqp92t06EXrudfkVXX
+H6kYvAy8is3btUXVMKts1MJcF3XdQJ2Iua88Yeq3SpQefts8fU74HGCej6bQ0cV+
+oQO0p4sTWd6d8kqvSZvAr03VgJYa3XK9Wxz6FK3KpxXfVQVBJ+OTzNF/l1Zq5uvh
+/R9EvTNur4Bc/FIQVmgPtpcJov1CFuE9YvTBAE8fDnSj0HJ51Zg3ANKyd7YXGuij
+CGpkr5m/q1DE5pfh8YHJaQRsU99PEomeeMvlfp8uSj64vfMJxss=
+=F1uf
 -----END PGP SIGNATURE-----
 
---Ma2pZxZcUUd0eybH--
+--myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ--
