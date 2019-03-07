@@ -1,136 +1,78 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 07 Mar 2019 10:23:28 +0000
+From: Leon Romanovsky <leon@kernel.org>
+Date: Thu, 07 Mar 2019 17:01:08 +0000
 Subject: Re: [PATCH][next] RDMA/nes: remove redundant check on udata
-Message-Id: <815dea03-ef9a-39c0-3ec5-cdd58a545911@canonical.com>
+Message-Id: <20190307170108.GQ1789@mtr-leonro.mtl.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ"
+Content-Type: multipart/mixed; boundary="Ah40dssYA/cDqAW1"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190302230637.8624-1-colin.king@canonical.com>
  <20190304063623.GA15253@mtr-leonro.mtl.com>
-In-Reply-To: <20190304063623.GA15253@mtr-leonro.mtl.com>
-To: Leon Romanovsky <leon@kernel.org>
+ <815dea03-ef9a-39c0-3ec5-cdd58a545911@canonical.com>
+In-Reply-To: <815dea03-ef9a-39c0-3ec5-cdd58a545911@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
 Cc: Faisal Latif <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ
-Content-Type: multipart/mixed; boundary="V9KKqdNrC9BAndZvoI3I7vIj8KsaMunRc";
- protected-headers="v1"
-From: Colin Ian King <colin.king@canonical.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Faisal Latif <faisal.latif@intel.com>, Doug Ledford
- <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <815dea03-ef9a-39c0-3ec5-cdd58a545911@canonical.com>
-Subject: Re: [PATCH][next] RDMA/nes: remove redundant check on udata
-References: <20190302230637.8624-1-colin.king@canonical.com>
- <20190304063623.GA15253@mtr-leonro.mtl.com>
-In-Reply-To: <20190304063623.GA15253@mtr-leonro.mtl.com>
 
---V9KKqdNrC9BAndZvoI3I7vIj8KsaMunRc
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+--Ah40dssYA/cDqAW1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 04/03/2019 06:36, Leon Romanovsky wrote:
-> On Sat, Mar 02, 2019 at 11:06:36PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The non-null check on udata is redundant as this check was performed
->> just a few statements earlier and the check is always true as udata
->> must be non-null at this point. Remove redundant the check on udata
->> and the redundant else part that can never be executed.
->>
->> Detected by CoverityScan, CID#1477317 ("Logically dead code")
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/infiniband/hw/nes/nes_verbs.c | 73 +++++++++++++-------------=
--
->>  1 file changed, 34 insertions(+), 39 deletions(-)
->>
->> diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniban=
-d/hw/nes/nes_verbs.c
->> index 828e4af3f951..526092d435df 100644
->> --- a/drivers/infiniband/hw/nes/nes_verbs.c
->> +++ b/drivers/infiniband/hw/nes/nes_verbs.c
->> @@ -1039,53 +1039,48 @@ static struct ib_qp *nes_create_qp(struct ib_p=
-d *ibpd,
->>  				}
->>  				if (req.user_qp_buffer)
->>  					nesqp->nesuqp_addr =3D req.user_qp_buffer;
->> -				if (udata) {
->> -					nesqp->user_mode =3D 1;
->=20
-> It was single place where user_mode was set, you should continue and
-> remove all code which depends on "if (nesqp->user_mode)".
+On Thu, Mar 07, 2019 at 10:23:28AM +0000, Colin Ian King wrote:
+> On 04/03/2019 06:36, Leon Romanovsky wrote:
+> > On Sat, Mar 02, 2019 at 11:06:36PM +0000, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The non-null check on udata is redundant as this check was performed
+> >> just a few statements earlier and the check is always true as udata
+> >> must be non-null at this point. Remove redundant the check on udata
+> >> and the redundant else part that can never be executed.
+> >>
+> >> Detected by CoverityScan, CID#1477317 ("Logically dead code")
+> >>
+> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >> ---
+> >>  drivers/infiniband/hw/nes/nes_verbs.c | 73 +++++++++++++--------------
+> >>  1 file changed, 34 insertions(+), 39 deletions(-)
+> >>
+> >> diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
+> >> index 828e4af3f951..526092d435df 100644
+> >> --- a/drivers/infiniband/hw/nes/nes_verbs.c
+> >> +++ b/drivers/infiniband/hw/nes/nes_verbs.c
+> >> @@ -1039,53 +1039,48 @@ static struct ib_qp *nes_create_qp(struct ib_pd *ibpd,
+> >>  				}
+> >>  				if (req.user_qp_buffer)
+> >>  					nesqp->nesuqp_addr = req.user_qp_buffer;
+> >> -				if (udata) {
+> >> -					nesqp->user_mode = 1;
+> >
+> > It was single place where user_mode was set, you should continue and
+> > remove all code which depends on "if (nesqp->user_mode)".
+>
+> This is not the only place where user_mode is being set; we currently have:
 
-This is not the only place where user_mode is being set; we currently hav=
-e:
+ok, It doesn't matter, I'll clean it later with my memory allocation
+conversion patches.
 
+Thanks
 
-        if (udata) {
-                if (ib_copy_from_udata(&req, udata, sizeof(struct
-nes_create_qp_req))) {
-                        nes_free_resource(nesadapter,
-nesadapter->allocated_qps, qp_num);
-                        kfree(nesqp->allocated_buffer);
-                        nes_debug(NES_DBG_QP, "ib_copy_from_udata()
-Failed \n");
-                        return ERR_PTR(-EFAULT);
-                }
-                if (req.user_wqe_buffers) {
-                        virt_wqs =3D 1;
-                }
-                if (req.user_qp_buffer)
-                        nesqp->nesuqp_addr =3D req.user_qp_buffer;
-                if (udata) {
-                        nesqp->user_mode =3D 1;
-			...
-
-
-and I'm just removing the redudant 2nd if (udata) check, so the
-nesqp->user_mode =3D 1 assignment is still being kept hence it's not
-correct to remove all the if (nesqp->user_mode) releated code.
-
-
->=20
-> I looked on the change which triggered Coverity warning and looks like
-> your commit message should include this Fixes line:
-> Fixes: 899444505473 ("IB/{hw,sw}: Remove 'uobject->context' dependency =
-in object creation APIs")
-
-Can that be added to the patch before it's applied?
-
->=20
-> Thanks
->=20
-
-Colin
-
-
---V9KKqdNrC9BAndZvoI3I7vIj8KsaMunRc--
-
---myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ
+--Ah40dssYA/cDqAW1
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEcGLapPABucZhZwDPaMKH38aoAiYFAlyA8SEACgkQaMKH38ao
-AiZLhg/8DCRIoCDwHqdfnn7+FxVJzm2jnhm/Dm43Pygc4v6bIVuMiNtIKYcoj/S8
-XvZri29vTgth8VZBLx9oeAwkEWD/8QOVEPpvf6IBFZljEWlwRNyLKl/dkSsnOt3a
-IGH5TZntsieXELKeyFD8FStjOlU8A0klSakB3x57a1uvsOrT905ui/852ONi0/rg
-DPLnHdmMNxJdNGHbOFALMDDXiWthHX07Rj0c9P2WYgauTE80++uln08PfrVgYLZ9
-Jz6xTDb/RXhc75RRofLUGaBgfJlhI97UyfNBCXR3JdEUGGwsZkLyqbBSEOrkvBVX
-Nj0Vk5zRE1q/ilwwLfX6MbWEeHY4tZG2vh+nVUMFKwnSbqlLo2PBzWCMBK0b2/4i
-7W1MaVXxWYPkt1NqtfLbkVJlhND9rFIcgAfe5YQkGVkoSXqqp92t06EXrudfkVXX
-H6kYvAy8is3btUXVMKts1MJcF3XdQJ2Iua88Yeq3SpQefts8fU74HGCej6bQ0cV+
-oQO0p4sTWd6d8kqvSZvAr03VgJYa3XK9Wxz6FK3KpxXfVQVBJ+OTzNF/l1Zq5uvh
-/R9EvTNur4Bc/FIQVmgPtpcJov1CFuE9YvTBAE8fDnSj0HJ51Zg3ANKyd7YXGuij
-CGpkr5m/q1DE5pfh8YHJaQRsU99PEomeeMvlfp8uSj64vfMJxss=
-=F1uf
+iQIcBAEBAgAGBQJcgU5UAAoJEORje4g2clinhMYQAMVjNOhrTtcq5zyPak5Slih1
+fO1U0u7DXwIR4nyPd1Dim4+6/DsgX3Tzx7H7sjB+7kmBjQU/F0gppDuYvhH/+GA7
+zgcLhkHT9G52/fvH2CZPZNb2c9y1S3CweV2e4s4wr0bHSEjJ9UnfEdJQ6jRRS4/V
+gJlNWGM5Mv3f2GFmjpPeGGdmW7Z870y8aKS3TTTKt+YzcO7ArdJMfYS8LPSY2pds
+tbJdFnrrG4YE7wlpmfCkyOThaulnT12eKjR/Bmwrwv5vWPl+DrCrn0mZ/ZgGDIyV
+q/bNm5eRfIAt38pOFnC5vyAge8Pr3s05SW+rhqKGtVl4m0mbGumOEAKs5FZfT0iG
+ULAjcHyiZfb6aQrg5B9Mv5eWOok2q4OGzlG0R4QWrP8dnj4I6Gl1ZFwaL8T6qL+8
+ACfmtqZdR2PpHMf8YL7e/oNCRzGpZj9+w71r+cuBj6P44+PZbuDJ/PQ4mIoMUOII
+sIWMocbFOb6wPT+Hx5qFhrZncJpYlKYWTm5gy7zd9Mv4u3V8PYJjlzzXwSJSjupL
+XDdnwnBhpi7c2/28FrW6afd6qh+J2rYdQ2kP0DUL1Vvo6Ylxis3qy+Ce1CNLiQxN
+eS+F7d8MJHeQr+eU5nta3XAVHLLKWQy5VuIXCw36iuvBzXC/xCJIS/d7QUkNRX6c
+QMXOKHG/EXsJHpAn9S0m
+=aqqe
 -----END PGP SIGNATURE-----
 
---myIfY0JvAYSBM2eA8Dl78STvQBfRD0KHQ--
+--Ah40dssYA/cDqAW1--
