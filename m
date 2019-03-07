@@ -1,32 +1,36 @@
-From: Christopher Brannon <chris@the-brannons.com>
-Date: Sat, 02 Mar 2019 21:27:12 +0000
-Subject: Re: [PATCH] staging: speakup: i18n: fix spelling mistake "phoneticly" -> "phonetically"
-Message-Id: <20190302212712.E32277B0CF@hurricane.the-brannons.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Mar 2019 05:41:22 +0000
+Subject: [PATCH] xen, cpu_hotplug: Prevent an out of bounds access
+Message-Id: <20190307054122.GB4517@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181128161232.14907-1-colin.king@canonical.com> <20190302194211.4aj6r3dr4hahbnqi@function>
-In-Reply-To: <20190302194211.4aj6r3dr4hahbnqi@function>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Cc: Colin King <colin.king@canonical.com>, William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Alex Nixon <alex.nixon@citrix.com>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org, Stefano Stabellini <sstabellini@kernel.org>, kernel-janitors@vger.kernel.org
 
-Samuel Thibault writes:
-> Hello,
->
-> Colin King, le mer. 28 nov. 2018 16:12:32 +0000, a ecrit:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There is a spelling mistake in array speakup_default_msgs at index
-> > MSG_FUNCNAME_SPELL_WORD_PHONETICALLY, fix this.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> We never got any feedback from the speakup mailing list, I guess fixing
-> the typo is fine.
+The "cpu" variable comes from the sscanf() so Smatch marks it as
+untrusted data.  We can't pass a higher value than "nr_cpu_ids" to
+cpu_possible() or it results in an out of bounds access.
 
-I'm sure there were deliberate mis-spellings in Speakup error
-messages to accomodate pronunciation issues with older synths, but I
-have no idea whether this is one of them.  It's probably fine either way.
+Fixes: d68d82afd4c8 ("xen: implement CPU hotplugging")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/xen/cpu_hotplug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- Chris
+diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+index b1357aa4bc55..f192b6f42da9 100644
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -54,7 +54,7 @@ static int vcpu_online(unsigned int cpu)
+ }
+ static void vcpu_hotplug(unsigned int cpu)
+ {
+-	if (!cpu_possible(cpu))
++	if (cpu >= nr_cpu_ids || !cpu_possible(cpu))
+ 		return;
+ 
+ 	switch (vcpu_online(cpu)) {
+-- 
+2.17.1
