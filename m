@@ -1,51 +1,53 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Wed, 20 Mar 2019 09:13:44 +0000
-Subject: Re: [PATCH -next] drm/vboxvideo: Remove unused including <linux/version.h>
-Message-Id: <9607344f-7312-0ceb-7744-d3084efda16c@redhat.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 08 Mar 2019 13:55:59 +0000
+Subject: [PATCH serial] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
+Message-Id: <20190308140831.52463-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190320015429.86347-1-yuehaibing@huawei.com>
-In-Reply-To: <20190320015429.86347-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+Add the missing uart_unregister_driver() and i2c_del_driver() before return
+from sc16is7xx_init() in the error handling case.
 
-On 20-03-19 02:54, YueHaibing wrote:
-> Remove including <linux/version.h> that don't need it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/tty/serial/sc16is7xx.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Thank you for the patch, it looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-I will pick this up and push it to drm-misc-next
-
-Regards,
-
-Hans
-
-> ---
->   drivers/gpu/drm/vboxvideo/vbox_drv.h | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vboxvideo/vbox_drv.h b/drivers/gpu/drm/vboxvideo/vbox_drv.h
-> index 6dea8bf5f045..ece31f395540 100644
-> --- a/drivers/gpu/drm/vboxvideo/vbox_drv.h
-> +++ b/drivers/gpu/drm/vboxvideo/vbox_drv.h
-> @@ -14,7 +14,6 @@
->   #include <linux/io.h>
->   #include <linux/irqreturn.h>
->   #include <linux/string.h>
-> -#include <linux/version.h>
->   
->   #include <drm/drm_encoder.h>
->   #include <drm/drm_fb_helper.h>
-> 
-> 
-> 
-> 
-> 
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 268098681856..114e94f476c6 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1509,7 +1509,7 @@ static int __init sc16is7xx_init(void)
+ 	ret = i2c_add_driver(&sc16is7xx_i2c_uart_driver);
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx i2c --> %d\n", ret);
+-		return ret;
++		goto err_i2c;
+ 	}
+ #endif
+ 
+@@ -1517,10 +1517,18 @@ static int __init sc16is7xx_init(void)
+ 	ret = spi_register_driver(&sc16is7xx_spi_uart_driver);
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx spi --> %d\n", ret);
+-		return ret;
++		goto err_spi;
+ 	}
+ #endif
+ 	return ret;
++
++err_spi:
++#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
++	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
++#endif
++err_i2c:
++	uart_unregister_driver(&sc16is7xx_uart);
++	return ret;
+ }
+ module_init(sc16is7xx_init);
+ 
+-- 
+2.20.1
