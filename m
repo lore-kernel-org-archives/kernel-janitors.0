@@ -1,18 +1,16 @@
-From: maowenan <maowenan@huawei.com>
-Date: Fri, 08 Mar 2019 13:58:27 +0000
+From: Vladimir Zapolskiy <vz@mleia.com>
+Date: Fri, 08 Mar 2019 20:26:44 +0000
 Subject: Re: [PATCH serial] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
-Message-Id: <d4d29f26-03eb-1644-26ca-98ed4d450166@huawei.com>
+Message-Id: <d2888b44-2475-ebe1-bbc7-844147e9d11a@mleia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190308140933.55262-1-maowenan@huawei.com>
 In-Reply-To: <20190308140933.55262-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mao Wenan <maowenan@huawei.com>, gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-sorry for duplicate mail, please ignore this one.
-
-On 2019/3/8 22:09, Mao Wenan wrote:
+On 03/08/2019 04:09 PM, Mao Wenan wrote:
 > Add the missing uart_unregister_driver() and i2c_del_driver() before return
 > from sc16is7xx_init() in the error handling case.
 > 
@@ -55,3 +53,11 @@ On 2019/3/8 22:09, Mao Wenan wrote:
 >  module_init(sc16is7xx_init);
 >  
 > 
+
+Nice catch, thank you!
+
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+
+--
+Best wishes,
+Vladimir
