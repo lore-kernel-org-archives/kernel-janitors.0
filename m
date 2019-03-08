@@ -1,7 +1,7 @@
 From: Juergen Gross <jgross@suse.com>
-Date: Thu, 07 Mar 2019 07:12:21 +0000
+Date: Fri, 08 Mar 2019 17:16:38 +0000
 Subject: Re: [PATCH] xen, cpu_hotplug: Prevent an out of bounds access
-Message-Id: <51944e51-25e5-3aa2-6301-ba2d4d925bb5@suse.com>
+Message-Id: <ca3cd95b-a07d-254d-1e42-5a36686a805d@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190307054122.GB4517@kadam>
 In-Reply-To: <20190307054122.GB4517@kadam>
@@ -19,7 +19,7 @@ On 07/03/2019 06:41, Dan Carpenter wrote:
 > Fixes: d68d82afd4c8 ("xen: implement CPU hotplugging")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Pushed to xen/tip.git for-linus-5.1a
 
 
 Juergen
