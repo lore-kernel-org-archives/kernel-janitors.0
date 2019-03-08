@@ -1,23 +1,36 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 15 Mar 2019 14:19:27 +0000
-Subject: Re: [PATCH serial v3] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
-Message-Id: <20190315141927.GB29902@kroah.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 08 Mar 2019 14:23:10 +0000
+Subject: [PATCH] serial: sh-sci: Missing uart_unregister_driver() on error in sci_probe_single()
+Message-Id: <20190308142310.112914-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190311093959.86344-1-maowenan@huawei.com>
- <20190311121918.GD2412@kadam>
- <566a03ba-aae9-3169-5db3-3417d5eb60f9@huawei.com>
-In-Reply-To: <566a03ba-aae9-3169-5db3-3417d5eb60f9@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan <maowenan@huawei.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, jslaby@suse.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, vz@mleia.com
+To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 15, 2019 at 09:56:07PM +0800, maowenan wrote:
-> ping...
+Add the missing uart_unregister_driver() before return
+from sci_probe_single() in the error handling case.
 
-For what?  It's the middle of the merge window at the moment, you should
-have gotten an email from my scripts saying what happens at this point
-in time, right?
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/tty/serial/sh-sci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 64bbeb7d7e0c..dde4eac9d222 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3254,8 +3254,10 @@ static int sci_probe_single(struct platform_device *dev,
+ 	mutex_unlock(&sci_uart_registration_lock);
+ 
+ 	ret = sci_init_single(dev, sciport, index, p, false);
+-	if (ret)
++	if (ret) {
++		uart_unregister_driver(&sci_uart_driver);
+ 		return ret;
++	}
+ 
+ 	sciport->gpios = mctrl_gpio_init(&sciport->port, 0);
+ 	if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS)
+-- 
+2.20.1
