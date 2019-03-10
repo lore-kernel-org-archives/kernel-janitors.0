@@ -1,55 +1,60 @@
-From: "Neftin, Sasha" <sasha.neftin@intel.com>
-Date: Sun, 17 Feb 2019 10:59:42 +0000
-Subject: Re: [Intel-wired-lan] [PATCH net-next] igc: Make function igc_write_rss_indir_tbl() static
-Message-Id: <a07f9ed6-b4b8-7ad2-552e-7f1288e547b2@intel.com>
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Date: Sun, 10 Mar 2019 11:46:03 +0000
+Subject: [PATCH] staging: e1000: e1000_main.c: remove extern declarations in .c file.
+Message-Id: <20190310114558.GA23133@jiffies>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190216020442.14206-1-weiyongjun1@huawei.com>
- <6ef2f327-8dc6-4c86-f42d-4aa7508d19f5@intel.com>
-In-Reply-To: <6ef2f327-8dc6-4c86-f42d-4aa7508d19f5@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>, "davem@davemloft.net" <davem@davemloft.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On 2/17/2019 12:06, Neftin, Sasha wrote:
-> On 2/16/2019 04:04, Wei Yongjun wrote:
->> Fixes the following sparse warning:
->>
->> drivers/net/ethernet/intel/igc/igc_ethtool.c:646:6: warning:
->>   symbol 'igc_write_rss_indir_tbl' was not declared. Should it be static?
->>
->> Fixes: 8c5ad0dae93c ("igc: Add ethtool support")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->> ---
->>   drivers/net/ethernet/intel/igc/igc_ethtool.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c 
->> b/drivers/net/ethernet/intel/igc/igc_ethtool.c
->> index eff37a6c0afa..544239422577 100644
->> --- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
->> +++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
->> @@ -643,7 +643,7 @@ static int igc_set_coalesce(struct net_device 
->> *netdev,
->>       return 0;
->>   }
->> -void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
->> +static void igc_write_rss_indir_tbl(struct igc_adapter *adapter)
->>   {
->>       struct igc_hw *hw = &adapter->hw;
->>       u32 reg = IGC_RETA(0);
->>
->>
->> NACK
-> 'igc_write_rss_indir_tbl' method declared in igc.h file. This method 
-> used in both igc_ethtool.c and igc_main.c and can't be a 'static'
-> __
-please, refer to commit 429abdf0cd3c... (Add multiple receive queues 
-control supporting)
+This patch fixes the checkpatch.pl warning:
 
+WARNING: externs should be avoided in .c files
 
-_____________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+Some of the driver's function declared in e1000.h were declared a second
+time in e1000_main.c, triggering checkpatch.pl warnings.
+
+Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+---
+ drivers/net/ethernet/intel/e1000/e1000_main.c | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
+index 8fe9af0e2ab7..b3d5cd750dca 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -65,14 +65,6 @@ static const struct pci_device_id e1000_pci_tbl[] = {
+ 
+ MODULE_DEVICE_TABLE(pci, e1000_pci_tbl);
+ 
+-int e1000_up(struct e1000_adapter *adapter);
+-void e1000_down(struct e1000_adapter *adapter);
+-void e1000_reinit_locked(struct e1000_adapter *adapter);
+-void e1000_reset(struct e1000_adapter *adapter);
+-int e1000_setup_all_tx_resources(struct e1000_adapter *adapter);
+-int e1000_setup_all_rx_resources(struct e1000_adapter *adapter);
+-void e1000_free_all_tx_resources(struct e1000_adapter *adapter);
+-void e1000_free_all_rx_resources(struct e1000_adapter *adapter);
+ static int e1000_setup_tx_resources(struct e1000_adapter *adapter,
+ 				    struct e1000_tx_ring *txdr);
+ static int e1000_setup_rx_resources(struct e1000_adapter *adapter,
+@@ -81,7 +73,6 @@ static void e1000_free_tx_resources(struct e1000_adapter *adapter,
+ 				    struct e1000_tx_ring *tx_ring);
+ static void e1000_free_rx_resources(struct e1000_adapter *adapter,
+ 				    struct e1000_rx_ring *rx_ring);
+-void e1000_update_stats(struct e1000_adapter *adapter);
+ 
+ static int e1000_init_module(void);
+ static void e1000_exit_module(void);
+@@ -89,8 +80,6 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent);
+ static void e1000_remove(struct pci_dev *pdev);
+ static int e1000_alloc_queues(struct e1000_adapter *adapter);
+ static int e1000_sw_init(struct e1000_adapter *adapter);
+-int e1000_open(struct net_device *netdev);
+-int e1000_close(struct net_device *netdev);
+ static void e1000_configure_tx(struct e1000_adapter *adapter);
+ static void e1000_configure_rx(struct e1000_adapter *adapter);
+ static void e1000_setup_rctl(struct e1000_adapter *adapter);
+-- 
+2.20.1
