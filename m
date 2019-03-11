@@ -1,25 +1,42 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 19 Mar 2019 21:34:44 +0000
-Subject: Re: [PATCH 0/2] scsi: qla2xxx: Fix for a formatting issue and typo in qla_bsg.c
-Message-Id: <yq1ftriblaj.fsf@oracle.com>
+From: Mikulas Patocka <mikulas@twibright.com>
+Date: Mon, 11 Mar 2019 11:05:28 +0000
+Subject: [PATCH] hpfs: fix spelling mistake "partion" -> "partition"
+Message-Id: <alpine.DEB.2.20.1903111202460.3466@leontynka>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190312124937.GA13922@machine1>
-In-Reply-To: <20190312124937.GA13922@machine1> (Milan P. Gandhi's message of
-        "Tue, 12 Mar 2019 18:19:37 +0530")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Milan P. Gandhi" <mgandhi@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, qla2xxx-upstream@qlogic.com, jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, dan.carpenter@oracle.com
+To: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Milan,
+Trivial fix to spelling mistakes in comments
 
-> This patch series fixes below two formatting/typos in qla_bsg.c:
-> 1. Corrected alignment at the start of comment section
-> 2. Fixed 'iiDMA' cmd spelling
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mikulas Patocka <mikulas@twibright.com>
+---
+  fs/hpfs/hpfs.h | 8 ++++----
+  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Applied to 5.2/scsi-queue, thanks.
-
+diff --git a/fs/hpfs/hpfs.h b/fs/hpfs/hpfs.h
+index 823a328791c0..302f45101a96 100644
+--- a/fs/hpfs/hpfs.h
++++ b/fs/hpfs/hpfs.h
+@@ -120,11 +120,11 @@ struct hpfs_spare_block
+    u8 bad_sector: 1;			/* bad sector, corrupted disk (???) */
+    u8 bad_bitmap: 1;			/* bad bitmap */
+    u8 fast: 1;				/* partition was fast formatted */
+-  u8 old_wrote: 1;			/* old version wrote to partion */
+-  u8 old_wrote_1: 1;			/* old version wrote to partion (?) */
++  u8 old_wrote: 1;			/* old version wrote to partition */
++  u8 old_wrote_1: 1;			/* old version wrote to partition (?) */
+  #else
+-  u8 old_wrote_1: 1;			/* old version wrote to partion (?) */
+-  u8 old_wrote: 1;			/* old version wrote to partion */
++  u8 old_wrote_1: 1;			/* old version wrote to partition (?) */
++  u8 old_wrote: 1;			/* old version wrote to partition */
+    u8 fast: 1;				/* partition was fast formatted */
+    u8 bad_bitmap: 1;			/* bad bitmap */
+    u8 bad_sector: 1;			/* bad sector, corrupted disk (???) */
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
