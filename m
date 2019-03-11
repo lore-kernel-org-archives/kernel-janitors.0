@@ -1,84 +1,115 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 26 Mar 2019 09:58:06 +0000
-Subject: Re: [v5] coccinelle: semantic code search for missing put_device()
-Message-Id: <alpine.DEB.2.20.1903261057380.5021@hadrien>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 11 Mar 2019 09:39:59 +0000
+Subject: [PATCH serial v3] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
+Message-Id: <20190311093959.86344-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550217319-40418-1-git-send-email-wen.yang99@zte.com.cn>
- <CAK7LNASzd=bL1H34w-E_UD9x6w2=ObyS+EPDZ_jrvfV+ncw-yA@mail.gmail.com>
- <1691b160-5558-d4c3-afed-5773e115c5aa@web.de>
- <CAK7LNASVRbroW9_j1Kda3azHb6PzD3WyVAsKe0HfD1ri0RFPOQ@mail.gmail.com>
- <e2798cd9-1366-63a4-8638-037dc8a36618@web.de>
- <CAK7LNATjAsiSeZoTZ57zBHse0j5ZYY_12ZQ0gaF_oCziUWheOQ@mail.gmail.com>
-In-Reply-To: <CAK7LNATjAsiSeZoTZ57zBHse0j5ZYY_12ZQ0gaF_oCziUWheOQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, cocci@systeme.lip6.fr, Markus Elfring <Markus.Elfring@web.de>, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
+To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, vz@mleia.com, dan.carpenter@oracle.com
 
+Add the missing uart_unregister_driver() and i2c_del_driver() before
+return from sc16is7xx_init() in the error handling case.
 
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ v1->v2: fix compile warning if CONFIG_SERIAL_SC16IS7XX_SPI is not exist.
+ v2->v3: create functions for i2c and spi to do error handling as dan carpenter
+ suggestion.
+ drivers/tty/serial/sc16is7xx.c | 53 ++++++++++++++++++++++++----------
+ 1 file changed, 38 insertions(+), 15 deletions(-)
 
-On Tue, 26 Mar 2019, Masahiro Yamada wrote:
-
-> On Tue, Mar 26, 2019 at 6:06 PM Markus Elfring <Markus.Elfring@web.de> wrote:
-> >
-> > > When I searched "Wen Yang", v6 did not show up for some reasons.
-> > > https://lore.kernel.org/patchwork/project/lkml/list/?series=&submitter"638&state=*&q=&archive=&delegate> >
-> > I find such a situation also interesting somehow.
-> > I assume that there was another temporary technical difficulty involved
-> > with the Linux mailing list (and related information systems).
->
->
-> I think v6 fell into a crack somehow.
->
->
-> Check the LKML archive:
-> https://lkml.org/lkml/2019/2/16
->
->
-> I see your reply:
->
-> Re: [v6] coccinelle: semantic code search for missing put_device()Markus Elfring
->
->
-> But, I cannot find the v6 patch itself.
->
->
->
-> >
-> > > So, I just thought v5 was the latest one
-> > > and I was completely missing the context.
-> >
-> > Did any messages for the sixth (and seventh) script version reach you?
-> >
-> > https://lore.kernel.org/cocci/201902191014156680299@zte.com.cn/
->
->
-> I use both my corporate email address and Gmail,
-> and play it by ear.
->
->
-> I see it in my corporate mail box now.
-> It reached me probably because I subscribe to cocci@systeme.lip6.fr
-> with my socionext email address.
->
-> However, this time I only checked my Gmail box,
-> which subscribes to linux-kernel ML, but not cocci ML.
->
-> I just skimmed over the thread, then
-> I missed the fact you were giving some comments about v6.
->
->
->
-> > https://lore.kernel.org/lkml/1553321671-27749-1-git-send-email-wen.yang99@zte.com.cn/
->
->
-> Yes. I see this one.
->
-> I will apply it to fixes branch
-> if nobody sees a problem in it.
-
-This one is fine independent of anything else.
-
-thanks,
-julia
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 268098681856..8be3adaf4782 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1436,6 +1436,19 @@ static struct spi_driver sc16is7xx_spi_uart_driver = {
+ };
+ 
+ MODULE_ALIAS("spi:sc16is7xx");
++
++static int __init register_sc16is7xx_spi(void)
++{
++	return spi_register_driver(&sc16is7xx_spi_uart_driver);
++}
++
++static void __exit unregister_sc16is7xx_spi(void)
++{
++	spi_unregister_driver(&sc16is7xx_spi_uart_driver);
++}
++#else
++static int __init register_sc16is7xx_spi(void) { return 0; }
++static void __exit unregister_sc16is7xx_spi(void) {}
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_SC16IS7XX_I2C
+@@ -1493,6 +1506,18 @@ static struct i2c_driver sc16is7xx_i2c_uart_driver = {
+ 	.id_table	= sc16is7xx_i2c_id_table,
+ };
+ 
++static int __init register_sc16is7xx_i2c(void)
++{
++	return i2c_add_driver(&sc16is7xx_i2c_uart_driver);
++}
++
++static void __exit del_sc16is7xx_i2c(void)
++{
++	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
++}
++#else
++static int __init register_sc16is7xx_i2c(void) { return 0; }
++static void __exit del_sc16is7xx_i2c(void) {}
+ #endif
+ 
+ static int __init sc16is7xx_init(void)
+@@ -1505,34 +1530,32 @@ static int __init sc16is7xx_init(void)
+ 		return ret;
+ 	}
+ 
+-#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
+-	ret = i2c_add_driver(&sc16is7xx_i2c_uart_driver);
++	ret = register_sc16is7xx_i2c();
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx i2c --> %d\n", ret);
+-		return ret;
++		goto err_i2c;
+ 	}
+-#endif
+ 
+-#ifdef CONFIG_SERIAL_SC16IS7XX_SPI
+-	ret = spi_register_driver(&sc16is7xx_spi_uart_driver);
++	ret = register_sc16is7xx_spi();
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx spi --> %d\n", ret);
+-		return ret;
++		goto err_spi;
+ 	}
+-#endif
++
++	return ret;
++
++err_spi:
++	del_sc16is7xx_i2c();
++err_i2c:
++	uart_unregister_driver(&sc16is7xx_uart);
+ 	return ret;
+ }
+ module_init(sc16is7xx_init);
+ 
+ static void __exit sc16is7xx_exit(void)
+ {
+-#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
+-	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
+-#endif
+-
+-#ifdef CONFIG_SERIAL_SC16IS7XX_SPI
+-	spi_unregister_driver(&sc16is7xx_spi_uart_driver);
+-#endif
++	del_sc16is7xx_i2c();
++	unregister_sc16is7xx_spi();
+ 	uart_unregister_driver(&sc16is7xx_uart);
+ }
+ module_exit(sc16is7xx_exit);
+-- 
+2.20.1
