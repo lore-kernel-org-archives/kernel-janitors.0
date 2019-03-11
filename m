@@ -1,44 +1,78 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Mon, 11 Mar 2019 09:51:15 +0000
-Subject: [PATCH v2] serial: sh-sci: Missing uart_unregister_driver() on error in sci_probe_single()
-Message-Id: <20190311095115.156774-1-maowenan@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Mar 2019 12:46:16 +0000
+Subject: Re: [PATCH v2] serial: sh-sci: Missing uart_unregister_driver() on error in sci_probe_single()
+Message-Id: <20190311124616.GE2412@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190311095115.156774-1-maowenan@huawei.com>
+In-Reply-To: <20190311095115.156774-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dan.carpenter@oracle.com
+To: Mao Wenan <maowenan@huawei.com>
+Cc: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add the missing uart_unregister_driver() before return
-from sci_probe_single() in the error handling case.
+On Mon, Mar 11, 2019 at 05:51:15PM +0800, Mao Wenan wrote:
+> Add the missing uart_unregister_driver() before return
+> from sci_probe_single() in the error handling case.
+> 
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v1->v2: add uart_unregister_driver() if mctrl_gpio_init is failed.
- drivers/tty/serial/sh-sci.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Sorry, I didn't really look at the code when I saw the v1 patch.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 64bbeb7d7e0c..fb5034390795 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3254,12 +3254,16 @@ static int sci_probe_single(struct platform_device *dev,
- 	mutex_unlock(&sci_uart_registration_lock);
- 
- 	ret = sci_init_single(dev, sciport, index, p, false);
--	if (ret)
-+	if (ret) {
-+		uart_unregister_driver(&sci_uart_driver);
- 		return ret;
-+	}
- 
- 	sciport->gpios = mctrl_gpio_init(&sciport->port, 0);
--	if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS)
-+	if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS) {
-+		uart_unregister_driver(&sci_uart_driver);
- 		return PTR_ERR(sciport->gpios);
-+	}
- 
- 	if (sciport->has_rtscts) {
- 		if (!IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
--- 
-2.20.1
+There are other error paths, but actually the whole approach is wrong.
+Please, read my google plus post about error handling:
+
+https://plus.google.com/u/0/106378716002406849458/posts/1Ud9JbaYnPr
+
+But then the other rule I didn't mention in that post which applies
+here is that the error handling should "mirror" the allocation code
+so if you have:
+
+	if (foo) {
+		ret = allocate_one();
+		if (ret)
+			return ret;
+	}
+	ret = allocate_two();
+	if (ret)
+		goto free_one;
+
+The error handling should mirror the "if (foo) " condition.  Like this:
+
+free_one:
+	if (foo)
+		free_one();
+
+Even if you can do extra analysis and find that the "if (foo) " can
+be removed, you should leave there, because the mirroring helps human
+readers.
+
+In this case, the code is doing:
+
+drivers/tty/serial/sh-sci.c
+  3259                  return -EBUSY;
+  3260  
+  3261          mutex_lock(&sci_uart_registration_lock);
+  3262          if (!sci_uart_driver.state) {
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  3263                  ret = uart_register_driver(&sci_uart_driver);
+  3264                  if (ret) {
+  3265                          mutex_unlock(&sci_uart_registration_lock);
+  3266                          return ret;
+  3267                  }
+  3268          }
+  3269          mutex_unlock(&sci_uart_registration_lock);
+  3270  
+
+We would have to mirror the "if (!sci_uart_driver.state) {" code.
+
+But actually, we can't.
+
+The first driver to hit this code is supposed to load the
+sci_uart_driver.  We can't know if we are the last driver to stop using
+the sci_uart_driver so we can't know if we can free it.  This looks like
+a very ugly hack to me.  It should probably be using ref counters.
+
+regards,
+an carpenter
