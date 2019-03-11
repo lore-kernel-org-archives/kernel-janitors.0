@@ -1,37 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Mar 2019 14:18:41 +0000
-Subject: [PATCH] soc/fsl/qe: Fix an error code in qe_pin_request()
-Message-Id: <20190328141841.GN32590@kadam>
+From: maowenan <maowenan@huawei.com>
+Date: Mon, 11 Mar 2019 14:17:12 +0000
+Subject: Re: [PATCH] staging: davinci: drop pointless static qualifier in vpfe_resizer_init()
+Message-Id: <7021aa62-e311-edfc-68b2-3a5dba11118f@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190311141405.123611-1-maowenan@huawei.com>
+ <20190311140733.GG2434@kadam>
+In-Reply-To: <20190311140733.GG2434@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Qiang Zhao <qiang.zhao@nxp.com>, Grant Likely <grant.likely@secretlab.ca>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Li Yang <leoyang.li@nxp.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: gregkh@linuxfoundation.org, Julia.Lawall@lip6.fr, kimbrownkd@gmail.com, colin.king@canonical.com, hans.verkuil@cisco.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-We forgot to set "err" on this error path.
 
-Fixes: 1a2d397a6eb5 ("gpio/powerpc: Eliminate duplication of of_get_named_gpio_flags()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/soc/fsl/qe/gpio.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
-index 819bed0f5667..51b3a47b5a55 100644
---- a/drivers/soc/fsl/qe/gpio.c
-+++ b/drivers/soc/fsl/qe/gpio.c
-@@ -179,8 +179,10 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
- 	if (err < 0)
- 		goto err0;
- 	gc = gpio_to_chip(err);
--	if (WARN_ON(!gc))
-+	if (WARN_ON(!gc)) {
-+		err = -ENODEV;
- 		goto err0;
-+	}
- 
- 	if (!of_device_is_compatible(gc->of_node, "fsl,mpc8323-qe-pario-bank")) {
- 		pr_debug("%s: tried to get a non-qe pin\n", __func__);
--- 
-2.17.1
+On 2019/3/11 22:07, Dan Carpenter wrote:
+> On Mon, Mar 11, 2019 at 10:14:05PM +0800, Mao Wenan wrote:
+>> There is no need to have the 'T *v' variable static
+>> since new value always be assigned before use it.
+>>
+>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+>> ---
+>>  drivers/staging/media/davinci_vpfe/dm365_resizer.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+>> index 6098f43ac51b..a2a672d4615d 100644
+>> --- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+>> +++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+>> @@ -1881,7 +1881,7 @@ int vpfe_resizer_init(struct vpfe_resizer_device *vpfe_rsz,
+>>  	struct v4l2_subdev *sd = &vpfe_rsz->crop_resizer.subdev;
+>>  	struct media_pad *pads = &vpfe_rsz->crop_resizer.pads[0];
+>>  	struct media_entity *me = &sd->entity;
+>> -	static resource_size_t  res_len;
+>> +	resource_size_t  res_len;
+>                         ^
+> Could you remove the extra space character also, please.
+
+sure, I will do this, sorry, I don't pay attention to the old code style.
+> 
+>>  	struct resource *res;
+>>  	int ret;
+> 
+> regards,
+> dan carpenter
+> 
+> 
+> 
+> .
+> 
