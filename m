@@ -1,27 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 26 Mar 2019 18:39:57 +0000
-Subject: Re: [PATCH net-next v2] tipc: fix return value check in tipc_mcast_send_sync()
-Message-Id: <20190326.113957.1854463876541529497.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 11 Mar 2019 09:51:15 +0000
+Subject: [PATCH v2] serial: sh-sci: Missing uart_unregister_driver() on error in sci_probe_single()
+Message-Id: <20190311095115.156774-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190321085810.96037-1-weiyongjun1@huawei.com>
-        <20190325063109.173692-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190325063109.173692-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jon.maloy@ericsson.com, ying.xue@windriver.com, hoang.h.le@dektech.com.au, eric.dumazet@gmail.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org, hulkci@huawei.com
+To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dan.carpenter@oracle.com
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 25 Mar 2019 06:31:09 +0000
+Add the missing uart_unregister_driver() before return
+from sci_probe_single() in the error handling case.
 
-> Fix the return value check which testing the wrong variable
-> in tipc_mcast_send_sync().
-> 
-> Fixes: c55c8edafa91 ("tipc: smooth change between replicast and broadcast")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v1 -> v2: add reported-by
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: add uart_unregister_driver() if mctrl_gpio_init is failed.
+ drivers/tty/serial/sh-sci.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 64bbeb7d7e0c..fb5034390795 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3254,12 +3254,16 @@ static int sci_probe_single(struct platform_device *dev,
+ 	mutex_unlock(&sci_uart_registration_lock);
+ 
+ 	ret = sci_init_single(dev, sciport, index, p, false);
+-	if (ret)
++	if (ret) {
++		uart_unregister_driver(&sci_uart_driver);
+ 		return ret;
++	}
+ 
+ 	sciport->gpios = mctrl_gpio_init(&sciport->port, 0);
+-	if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS)
++	if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS) {
++		uart_unregister_driver(&sci_uart_driver);
+ 		return PTR_ERR(sciport->gpios);
++	}
+ 
+ 	if (sciport->has_rtscts) {
+ 		if (!IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
+-- 
+2.20.1
