@@ -1,54 +1,31 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 12 Mar 2019 07:14:37 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Tue, 12 Mar 2019 12:02:12 +0000
 Subject: Re: [PATCH net] staging: rtl8188eu: use is_zero_ether_addr() instead of memcmp()
-Message-Id: <alpine.DEB.2.21.1903120813460.2728@hadrien>
+Message-Id: <20190312120212.GA30183@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190309032600.98732-1-maowenan@huawei.com> <951c83d2-fa0d-11ed-96a9-cee620c9c096@huawei.com> <e192c19b35ba5a07ed6bea571546800cc3235282.camel@perches.com> <22e39cdc-6c66-f08a-f2b3-e2637e0b810b@huawei.com>
-In-Reply-To: <22e39cdc-6c66-f08a-f2b3-e2637e0b810b@huawei.com>
+References: <20190309032600.98732-1-maowenan@huawei.com>
+ <951c83d2-fa0d-11ed-96a9-cee620c9c096@huawei.com>
+In-Reply-To: <951c83d2-fa0d-11ed-96a9-cee620c9c096@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: maowenan <maowenan@huawei.com>
-Cc: Joe Perches <joe@perches.com>, Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, straube.linux@gmail.com, jananis37@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, davem@davemloft.net
+Cc: Larry.Finger@lwfinger.net, straube.linux@gmail.com, jananis37@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, davem@davemloft.net
 
+On Tue, Mar 12, 2019 at 02:29:29PM +0800, maowenan wrote:
+> ping...
+> 
+> On 2019/3/9 11:26, Mao Wenan wrote:
 
+What?  You got an automated email from my patch system saying that I can
+not do anything with this patch until after 5.1-rc1 is out, due to the
+merge window.  Why did that not answer the question ahead of time as to
+why this patch was not responded to?
 
-On Tue, 12 Mar 2019, maowenan wrote:
+Also, it's only been 3 days, please relax, for a clean-up patch, it can
+take weeks before they are reviewed as they are obvious at the bottom of
+everyone's priority queue.
 
->
->
-> On 2019/3/12 14:35, Joe Perches wrote:
-> > On Tue, 2019-03-12 at 14:29 +0800, maowenan wrote:
-> >> ping...
-> >>
-> >> On 2019/3/9 11:26, Mao Wenan wrote:
-> >>> Using is_zero_ether_addr() instead of directly use
-> >>> memcmp() to determine if the ethernet address is all
-> >>> zeros.
-> > []
-> >>> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> > []
-> >>> @@ -180,9 +180,8 @@ struct wlan_network *rtw_find_network(struct __queue *scanned_queue, u8 *addr)
-> >>>  {
-> >>>  	struct list_head *phead, *plist;
-> >>>  	struct wlan_network *pnetwork = NULL;
-> >>> -	u8 zero_addr[ETH_ALEN] = {0, 0, 0, 0, 0, 0};
-> >>>
-> >>> -	if (!memcmp(zero_addr, addr, ETH_ALEN)) {
-> >>> +	if (is_zero_ether_addr(addr)) {
-> >
-> > How did you verify that addr is __aligned(2)?
->
-> /**
->  * is_zero_ether_addr - Determine if give Ethernet address is all zeros.
->  * @addr: Pointer to a six-byte array containing the Ethernet address
->  *
->  * Return true if the address is all zeroes.
->  */
-> I think they are completely equivalent functions, no need to check addr is __aligned(2),
-> because addr may be defined as unsigned char MacAddress[ETH_ALEN]; the length is 6.
+so all is good, just wait.
 
-Perhaps you are confusing with eth_zero_addr, which is just a memset and
-has no alignment requirements.
-
-julia
+greg k-h
