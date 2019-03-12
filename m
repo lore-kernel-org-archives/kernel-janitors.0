@@ -1,29 +1,35 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 28 Mar 2019 01:39:58 +0000
-Subject: [PATCH -next] gpio: mlxbf: remove unused including <linux/version.h>
-Message-Id: <20190328013958.33849-1-yuehaibing@huawei.com>
+From: "Milan P. Gandhi" <mgandhi@redhat.com>
+Date: Tue, 12 Mar 2019 11:53:20 +0000
+Subject: [PATCH] scsi: qla2xxx: Fix a small typo in qla_bsg.c
+Message-Id: <20190312115313.GA12695@machine1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: qla2xxx-upstream@qlogic.com, jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove including <linux/version.h> that don't need it.
+This patch fixes a minor formatting issue with comment section and a
+typo for 'iiDMA' cmd in drivers/scsi/qla2xxx/qla_bsg.c
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
 ---
- drivers/gpio/gpio-mlxbf.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
-index d428f42be74f..894aaf55fc96 100644
---- a/drivers/gpio/gpio-mlxbf.c
-+++ b/drivers/gpio/gpio-mlxbf.c
-@@ -11,7 +11,6 @@
- #include <linux/pm.h>
- #include <linux/resource.h>
- #include <linux/types.h>
--#include <linux/version.h>
+diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+index 17d42658ad9a..2353be988907 100644
+--- a/drivers/scsi/qla2xxx/qla_bsg.c
++++ b/drivers/scsi/qla2xxx/qla_bsg.c
+@@ -1,4 +1,4 @@
+-	/*
++/*
+  * QLogic Fibre Channel HBA Driver
+  * Copyright (c)  2003-2014 QLogic Corporation
+  *
+@@ -1354,7 +1354,7 @@ qla24xx_iidma(struct bsg_job *bsg_job)
  
- /* Number of pins on BlueField */
- #define MLXBF_GPIO_NR 54
+ 	if (rval) {
+ 		ql_log(ql_log_warn, vha, 0x704c,
+-		    "iIDMA cmd failed for %8phN -- "
++		    "iiDMA cmd failed for %8phN -- "
+ 		    "%04x %x %04x %04x.\n", fcport->port_name,
+ 		    rval, fcport->fp_speed, mb[0], mb[1]);
+ 		rval = (DID_ERROR << 16);
