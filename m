@@ -1,45 +1,20 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Fri, 01 Mar 2019 15:29:21 +0000
-Subject: Re: [PATCH -next] PCI: aardvark: Make symbol 'advk_pci_bridge_emul_ops' static
-Message-Id: <20190301152921.GA7771@e107981-ln.cambridge.arm.com>
+From: "Milan P. Gandhi" <mgandhi@redhat.com>
+Date: Tue, 12 Mar 2019 12:49:54 +0000
+Subject: [PATCH 0/2] scsi: qla2xxx: Fix for a formatting issue and typo in qla_bsg.c
+Message-Id: <20190312124937.GA13922@machine1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190301065809.66046-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190301065809.66046-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Bjorn Helgaas <bhelgaas@google.com>, Zachary Zhang <zhangzg@marvell.com>, linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
+Cc: qla2xxx-upstream@qlogic.com, jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, dan.carpenter@oracle.com
 
-On Fri, Mar 01, 2019 at 06:58:09AM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warning:
-> 
-> drivers/pci/controller/pci-aardvark.c:469:28: warning:
->  symbol 'advk_pci_bridge_emul_ops' was not declared. Should it be static?
-> 
-> Fixes: 8a3ebd8de328 ("PCI: aardvark: Implement emulated root PCI bridge config space")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/pci/controller/pci-aardvark.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This patch series fixes below two formatting/typos in qla_bsg.c:
+1. Corrected alignment at the start of comment section
+2. Fixed 'iiDMA' cmd spelling
 
-Applied to pci/misc for v5.1, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> index 6eecae447af3..eb58dfdaba1b 100644
-> --- a/drivers/pci/controller/pci-aardvark.c
-> +++ b/drivers/pci/controller/pci-aardvark.c
-> @@ -466,7 +466,7 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
->  	}
->  }
->  
-> -struct pci_bridge_emul_ops advk_pci_bridge_emul_ops = {
-> +static struct pci_bridge_emul_ops advk_pci_bridge_emul_ops = {
->  	.read_pcie = advk_pci_bridge_emul_pcie_conf_read,
->  	.write_pcie = advk_pci_bridge_emul_pcie_conf_write,
->  };
-> 
-> 
-> 
+Thanks,
+Milan.
+---
+ drivers/scsi/qla2xxx/qla_bsg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
