@@ -1,43 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Mar 2019 11:46:55 +0000
-Subject: [bug report] misc: rtsx: Enable OCP for rts522a rts524a rts525a rts5260
-Message-Id: <20190305114655.GA17506@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 Mar 2019 23:08:38 +0000
+Subject: [PATCH] x86/lib: fix indentation issue, remove extra tab
+Message-Id: <20190314230838.18256-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello RickyWu,
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch bede03a579b3: "misc: rtsx: Enable OCP for rts522a rts524a
-rts525a rts5260" from Feb 19, 2019, leads to the following static
-checker warning:
+The increment of buff is indented one level too deeply, clean
+this up by removing a tab.
 
-	drivers/misc/cardreader/rts5260.c:707 rts5260_init_params()
-	'0x50 | 0x50' has '0x50' set on both sides
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/lib/csum-partial_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/misc/cardreader/rts5260.c
-    694 	/* init latency of active, idle, L1OFF to 60us, 300us, 3ms */
-    695 	option->ltr_active_latency = LTR_ACTIVE_LATENCY_DEF;
-    696 	option->ltr_idle_latency = LTR_IDLE_LATENCY_DEF;
-    697 	option->ltr_l1off_latency = LTR_L1OFF_LATENCY_DEF;
-    698 	option->dev_aspm_mode = DEV_ASPM_DYNAMIC;
-    699 	option->l1_snooze_delay = L1_SNOOZE_DELAY_DEF;
-    700 	option->ltr_l1off_sspwrgate = LTR_L1OFF_SSPWRGATE_5250_DEF;
-    701 	option->ltr_l1off_snooze_sspwrgate     702 		LTR_L1OFF_SNOOZE_SSPWRGATE_5250_DEF;
-    703 
-    704 	option->ocp_en = 1;
-    705 	if (option->ocp_en)
-    706 		hw_param->interrupt_en |= SD_OC_INT_EN;
---> 707 	hw_param->ocp_glitch =  SDVIO_OCP_GLITCH_800U | SDVIO_OCP_GLITCH_800U;
-                                        ^^^^^^^^^^^^^^^^^^^^^
-This used to be SD_OCP_GLITCH_10M but now it's SDVIO_OCP_GLITCH_800U
-on both sides.
-
-    708 	option->sd_400mA_ocp_thd = RTS5260_DVCC_OCP_THD_550;
-    709 	option->sd_800mA_ocp_thd = RTS5260_DVCC_OCP_THD_970;
-    710 }
-
-regards,
-dan carpenter
+diff --git a/arch/x86/lib/csum-partial_64.c b/arch/x86/lib/csum-partial_64.c
+index 9baca3e054be..e7925d668b68 100644
+--- a/arch/x86/lib/csum-partial_64.c
++++ b/arch/x86/lib/csum-partial_64.c
+@@ -94,7 +94,7 @@ static unsigned do_csum(const unsigned char *buff, unsigned len)
+ 				    : "m" (*(unsigned long *)buff), 
+ 				    "r" (zero),  "0" (result));
+ 				--count; 
+-					buff += 8;
++				buff += 8;
+ 			}
+ 			result = add32_with_carry(result>>32,
+ 						  result&0xffffffff); 
+-- 
+2.20.1
