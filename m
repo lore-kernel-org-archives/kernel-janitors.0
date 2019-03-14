@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 14 Mar 2019 23:22:33 +0000
+Date: Thu, 14 Mar 2019 23:26:03 +0000
 Subject: [PATCH] iio: adc: fix indentation issue, remove extra tab
-Message-Id: <20190314232233.25602-1-colin.king@canonical.com>
+Message-Id: <20190314232603.30531-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190314232233.25602-1-colin.king@canonical.com>
+In-Reply-To: <20190314232233.25602-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
