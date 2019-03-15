@@ -1,37 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 14 Mar 2019 23:26:03 +0000
-Subject: [PATCH] iio: adc: fix indentation issue, remove extra tab
-Message-Id: <20190314232603.30531-1-colin.king@canonical.com>
+From: "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>
+Date: Fri, 15 Mar 2019 09:25:38 +0000
+Subject: Re: [PATCH] iio: adc: fix indentation issue, remove extra tab
+Message-Id: <1552641938.13791.2.camel@analog.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190314232233.25602-1-colin.king@canonical.com>
-In-Reply-To: <20190314232233.25602-1-colin.king@canonical.com>
+References: <20190314232603.30531-1-colin.king@canonical.com>
+In-Reply-To: <20190314232603.30531-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefan Popa <stefan.popa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "colin.king@canonical.com" <colin.king@canonical.com>, "lars@metafoo.de" <lars@metafoo.de>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "Hennerich, Michael" <Michael.Hennerich@analog.com>, "jic23@kernel.org" <jic23@kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "knaack.h@gmx.de" <knaack.h@gmx.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-A return statement is indented one level too deeply; clean this
-up by removing a tab.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/iio/adc/ad7124.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 7d5e5311d8de..659ef37d5fe8 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -411,7 +411,7 @@ static int ad7124_init_channel_vref(struct ad7124_state *st,
- 			dev_err(&st->sd.spi->dev,
- 				"Error, trying to use external voltage reference without a %s regulator.\n",
- 				ad7124_ref_names[refsel]);
--				return PTR_ERR(st->vref[refsel]);
-+			return PTR_ERR(st->vref[refsel]);
- 		}
- 		st->channel_config[channel_number].vref_mv  			regulator_get_voltage(st->vref[refsel]);
--- 
-2.20.1
+T24gSm8sIDIwMTktMDMtMTQgYXQgMjM6MjYgKzAwMDAsIENvbGluIEtpbmcgd3JvdGU6DQo+IFtF
+eHRlcm5hbF0NCj4gDQo+IA0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5v
+bmljYWwuY29tPg0KPiANCj4gQSByZXR1cm4gc3RhdGVtZW50IGlzIGluZGVudGVkIG9uZSBsZXZl
+bCB0b28gZGVlcGx5OyBjbGVhbiB0aGlzDQo+IHVwIGJ5IHJlbW92aW5nIGEgdGFiLg0KPiANCj4g
+U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4N
+CkFja2VkLWJ5OiBTdGVmYW4gUG9wYSA8c3RlZmFuLnBvcGFAYW5hbG9nLmNvbT4NCg0KVGhhbmtz
+IQ0KDQo+IC0tLQ0KPiDCoGRyaXZlcnMvaWlvL2FkYy9hZDcxMjQuYyB8IDIgKy0NCj4gwqAxIGZp
+bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2lpby9hZGMvYWQ3MTI0LmMgYi9kcml2ZXJzL2lpby9hZGMvYWQ3MTI0LmMN
+Cj4gaW5kZXggN2Q1ZTUzMTFkOGRlLi42NTllZjM3ZDVmZTggMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvaWlvL2FkYy9hZDcxMjQuYw0KPiArKysgYi9kcml2ZXJzL2lpby9hZGMvYWQ3MTI0LmMNCj4g
+QEAgLTQxMSw3ICs0MTEsNyBAQCBzdGF0aWMgaW50IGFkNzEyNF9pbml0X2NoYW5uZWxfdnJlZihz
+dHJ1Y3QNCj4gYWQ3MTI0X3N0YXRlICpzdCwNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgZGV2X2Vycigmc3QtPnNkLnNwaS0+ZGV2LA0KPiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IkVycm9yLCB0cnlpbmcgdG8gdXNlIGV4dGVybmFsIHZvbHRhZ2UNCj4gcmVmZXJlbmNlIHdpdGhv
+dXQgYSAlcyByZWd1bGF0b3IuXG4iLA0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYWQ3MTI0X3JlZl9uYW1lc1tyZWZzZWxd
+KTsNCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgcmV0dXJuIFBUUl9FUlIoc3QtPnZyZWZbcmVmc2VsXSk7DQo+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIFBUUl9FUlIoc3Qt
+PnZyZWZbcmVmc2VsXSk7DQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQ0KPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHN0LT5jaGFubmVsX2NvbmZpZ1tjaGFubmVs
+X251bWJlcl0udnJlZl9tdiA9DQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoHJlZ3VsYXRvcl9nZXRfdm9sdGFnZShzdC0+dnJlZltyZWZzZWxdKTsNCj4g
+LS0NCj4gMi4yMC4xDQo+IA=
