@@ -1,46 +1,63 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 08 Mar 2019 10:30:17 +0000
-Subject: [PATCH] media: em28xx-input: make const array addr_list static
-Message-Id: <20190308103017.29114-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 15 Mar 2019 16:24:27 +0000
+Subject: Re: [PATCH] coccinelle: semantic patch for missing of_node_put
+Message-Id: <01690c3e-ffed-7a9a-a900-f2e534fd0c11@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1552616681-17985-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1552616681-17985-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+> +/// Find missing of_node_put
+> +///
+> +// Confidence: Moderate
 
-Don't populate the array addr_list on the stack but instead make it
-static. Makes the object code smaller by 20 bytes
+How much would you like to improve the situation around recurring software
+development concerns for such source code analysis approaches?
 
-Before:
-   text    data     bss     dec     hex filename^M
-  16929    3626     384   20939    51cb ../usb/em28xx/em28xx-input.o
 
-After:
-   text    data     bss     dec     hex filename^M
-  16829    3706     384   20919    51b7 ../usb/em28xx/em28xx-input.o
+> +virtual report
+> +virtual org
 
-(gcc version 8.3.0, aarch64)
+I would interpret the provided SmPL code in the way that it will not generate
+adjusted (patched) C code so far.
+Source code search results will be presented by these operation modes.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/em28xx/em28xx-input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How do you think about to exchange the word “patch” by “code search”
+at affected places (and in the subject) then?
 
-diff --git a/drivers/media/usb/em28xx/em28xx-input.c b/drivers/media/usb/em28xx/em28xx-input.c
-index f84a1208d5d3..d85ea1af6aa1 100644
---- a/drivers/media/usb/em28xx/em28xx-input.c
-+++ b/drivers/media/usb/em28xx/em28xx-input.c
-@@ -499,7 +499,7 @@ static int em28xx_probe_i2c_ir(struct em28xx *dev)
- 	 * at address 0x18, so if that address is needed for another board in
- 	 * the future, please put it after 0x1f.
- 	 */
--	const unsigned short addr_list[] = {
-+	static const unsigned short addr_list[] = {
- 		 0x1f, 0x30, 0x47, I2C_CLIENT_END
- 	};
- 
--- 
-2.20.1
+
+> +@r exists@
+> +local idexpression struct device_node *x;
+> +identifier f;
+> +statement S,S1,S2;
+> +expression e,e1;
+> +position p1,p2;
+> +type T,T1;
+> +@@
+> +
+> +(
+> +x = f@p1(...);
+
+How do you think about to express any more constraints for this function call?
+
+
+> +... when != e = (T)x
+
+Will it be safer to add another exclusion for the initial assignment target?
+
+
+> + when != if (x) { ... of_node_put(x) ... }
+
+I find the specification of this extra condition check questionable.
+
+
+
+Should Masahiro Yamada be explicitly notified also for this attempt
+to integrate another SmPL script?
+
+Regards,
+Markus
