@@ -1,49 +1,56 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Fri, 01 Mar 2019 19:07:21 +0000
-Subject: Re: [PATCH] soc: qcom: cmd-db: Fix an error code in cmd_db_dev_probe()
-Message-Id: <20190301190721.GA27005@builder>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 16 Mar 2019 22:26:57 +0000
+Subject: [PATCH] staging: rtl8723bs: remove unused code
+Message-Id: <20190316222657.7940-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190228054849.GD3253@kadam>
-In-Reply-To: <20190228054849.GD3253@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Gross <andy.gross@linaro.org>, Mahesh Sivasubramanian <msivasub@codeaurora.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Hans de Goede <hdegoede@redhat.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed 27 Feb 21:48 PST 2019, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The memremap() function doesn't return error pointers, it returns NULL.
-> This code is returning "ret = PTR_ERR(NULL);" which is success, but it
-> should return -ENOMEM.
-> 
-> Fixes: 312416d9171a ("drivers: qcom: add command DB driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+There are two final hunks of code that are only built
+if SDIO_DYNAMIC_ALLOC_MEM is defined however this is never
+defined and if it was the code would lead to dereferencing
+an uninitialized pointer oldmem.  It appears that a previous
+commit 1babeb0c3e59 ("Staging: rtl8723bs: Remove dead code")
+removed some of the dead code but not all of it. Clean this
+up by removing the final hunks.
 
-Thanks Dan, picking this up.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/hal/sdio_ops.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-Regards,
-Bjorn
-
->  drivers/soc/qcom/cmd-db.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-> index c701b3b010f1..f6c3d17b05c7 100644
-> --- a/drivers/soc/qcom/cmd-db.c
-> +++ b/drivers/soc/qcom/cmd-db.c
-> @@ -248,8 +248,8 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
->  	}
->  
->  	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WB);
-> -	if (IS_ERR_OR_NULL(cmd_db_header)) {
-> -		ret = PTR_ERR(cmd_db_header);
-> +	if (!cmd_db_header) {
-> +		ret = -ENOMEM;
->  		cmd_db_header = NULL;
->  		return ret;
->  	}
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+index 3fee34484577..92191e9789bb 100644
+--- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
++++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+@@ -428,9 +428,6 @@ static u32 sdio_read_port(
+ 	PSDIO_DATA psdio;
+ 	struct hal_com_data *hal;
+ 	u32 oldcnt;
+-#ifdef SDIO_DYNAMIC_ALLOC_MEM
+-	u8 *oldmem;
+-#endif
+ 	s32 err;
+ 
+ 
+@@ -447,13 +444,6 @@ static u32 sdio_read_port(
+ 
+ 	err = _sd_read(intfhdl, addr, cnt, mem);
+ 
+-#ifdef SDIO_DYNAMIC_ALLOC_MEM
+-	if ((oldcnt != cnt) && (oldmem)) {
+-		memcpy(oldmem, mem, oldcnt);
+-		kfree(mem);
+-	}
+-#endif
+-
+ 	if (err)
+ 		return _FAIL;
+ 	return _SUCCESS;
+-- 
+2.20.1
