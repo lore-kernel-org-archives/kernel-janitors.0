@@ -1,55 +1,55 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Wed, 27 Mar 2019 14:53:36 +0000
-Subject: Re: [PATCH v2 -next] ASoC: simple-card-utils: remove set but not used variable 'dai_name'
-Message-Id: <4611a8ee-4e89-b871-5151-588bd639a47d@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 16 Mar 2019 23:05:12 +0000
+Subject: [PATCH] IB/iser: remove uninitialized variable len
+Message-Id: <20190316230512.8933-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190323020838.107533-1-yuehaibing@huawei.com>
- <20190325031740.164364-1-yuehaibing@huawei.com>
-In-Reply-To: <20190325031740.164364-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sagi Grimberg <sagi@grimberg.me>, Max Gurtovoy <maxg@mellanox.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 3/25/2019 8:47 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> sound/soc/generic/simple-card-utils.c: In function 'asoc_simple_parse_clk':
-> sound/soc/generic/simple-card-utils.c:164:18: warning:
->   parameter 'dai_name' set but not used [-Wunused-but-set-parameter]
->
-> It's not used since commit 0580dde59438 ("ASoC: simple-card-utils: add
-> asoc_simple_debug_info()"), so can be removed.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+The variable len is not being inintialized and the uninitialized
+value is being returned. However, this return path is never reached
+because the default case in the switch statement returns -ENOSYS.
+Clean up the code by replacing the return -ENOSYS with a break
+for the default case and returning -ENOSYS at the end of the
+function.  This allows len to be removed.  Also remove redundant
+break that follows a return statement.
 
--Mukesh
-> ---
-> v2: fix patch title
-> ---
->   sound/soc/generic/simple-card-utils.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-> index 4ed68348f939..db1458a19985 100644
-> --- a/sound/soc/generic/simple-card-utils.c
-> +++ b/sound/soc/generic/simple-card-utils.c
-> @@ -173,10 +173,8 @@ int asoc_simple_parse_clk(struct device *dev,
->   	 * see
->   	 *	soc-core.c :: snd_soc_init_multicodec()
->   	 */
-> -	if (dlc) {
-> +	if (dlc)
->   		dai_of_node	= dlc->of_node;
-> -		dai_name	= dlc->dai_name;
-> -	}
->   
->   	/*
->   	 * Parse dai->sysclk come from "clocks = <&xxx>"
->
->
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/ulp/iser/iscsi_iser.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/ulp/iser/iscsi_iser.c
+index 8c707accd148..9c185a8dabd3 100644
+--- a/drivers/infiniband/ulp/iser/iscsi_iser.c
++++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
+@@ -763,7 +763,6 @@ static int iscsi_iser_get_ep_param(struct iscsi_endpoint *ep,
+ 				   enum iscsi_param param, char *buf)
+ {
+ 	struct iser_conn *iser_conn = ep->dd_data;
+-	int len;
+ 
+ 	switch (param) {
+ 	case ISCSI_PARAM_CONN_PORT:
+@@ -774,12 +773,10 @@ static int iscsi_iser_get_ep_param(struct iscsi_endpoint *ep,
+ 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
+ 				&iser_conn->ib_conn.cma_id->route.addr.dst_addr,
+ 				param, buf);
+-		break;
+ 	default:
+-		return -ENOSYS;
++		break;
+ 	}
+-
+-	return len;
++	return -ENOSYS;
+ }
+ 
+ /**
+-- 
+2.20.1
