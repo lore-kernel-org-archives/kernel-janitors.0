@@ -1,65 +1,51 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 30 Mar 2019 00:17:12 +0000
-Subject: [PATCH] platform/x86: alienware-wmi: fix kfree on potentially uninitialized pointer
-Message-Id: <20190330001712.8923-1-colin.king@canonical.com>
+Date: Sat, 16 Mar 2019 21:40:16 +0000
+Subject: [PATCH] hotplug/drc-info: ininitialize fndit to zero
+Message-Id: <20190316214016.6612-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, Bjorn Helgaas <bhelgaas@google.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the kfree of output.pointer can be potentially freeing
-an uninitalized pointer in the case where out_data is NULL. Fix this
-by reworking the case where out_data is not-null to perform the
-ACPI status check and also the kfree of outpoint.pointer in one block
-and hence ensuring the pointer is only freed when it has been used.
+Currently variable fndit is not initialized and contains a
+garbage value, later it is set to 1 if a drc entry is found.
+Ensure fndit is not containing garbage by initializing it to
+zero. Also remove an extraneous space at the end of an
+sprintf call.
 
-Also replace the if (ptr != NULL) idiom with just if (ptr).
+Detected by static analysis with cppcheck.
 
-Fixes: ff0e9f26288d ("platform/x86: alienware-wmi: Correct a memory leak")
+Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search ibm,drc-info property")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/platform/x86/alienware-wmi.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/pci/hotplug/rpaphp_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/alienware-wmi.c b/drivers/platform/x86/alienware-wmi.c
-index f10af5c383c5..c0d1555735cd 100644
---- a/drivers/platform/x86/alienware-wmi.c
-+++ b/drivers/platform/x86/alienware-wmi.c
-@@ -522,23 +522,22 @@ static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
+diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+index bcd5d357ca23..28213f44f64a 100644
+--- a/drivers/pci/hotplug/rpaphp_core.c
++++ b/drivers/pci/hotplug/rpaphp_core.c
+@@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+ 	struct of_drc_info drc;
+ 	const __be32 *value;
+ 	char cell_drc_name[MAX_DRC_NAME_LEN];
+-	int j, fndit;
++	int j, fndit = 0;
  
- 	input.length = (acpi_size) sizeof(*in_args);
- 	input.pointer = in_args;
--	if (out_data != NULL) {
-+	if (out_data) {
- 		output.length = ACPI_ALLOCATE_BUFFER;
- 		output.pointer = NULL;
- 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
- 					     command, &input, &output);
--	} else
-+		if (ACPI_SUCCESS(status)) {
-+			obj = (union acpi_object *)output.pointer;
-+			if (obj && obj->type = ACPI_TYPE_INTEGER)
-+				*out_data = (u32)obj->integer.value;
-+		}
-+		kfree(output.pointer);
-+	} else {
- 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
- 					     command, &input, NULL);
--
--	if (ACPI_SUCCESS(status) && out_data != NULL) {
--		obj = (union acpi_object *)output.pointer;
--		if (obj && obj->type = ACPI_TYPE_INTEGER)
--			*out_data = (u32) obj->integer.value;
- 	}
--	kfree(output.pointer);
- 	return status;
--
- }
+ 	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
+ 	if (info = NULL)
+@@ -254,7 +254,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+ 	/* Found it */
  
- /*
+ 	if (fndit)
+-		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
++		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
+ 			my_index);
+ 
+ 	if (((drc_name = NULL) ||
 -- 
 2.20.1
