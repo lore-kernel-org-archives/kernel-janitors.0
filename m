@@ -1,62 +1,51 @@
-From: "Huang, Ray" <Ray.Huang@amd.com>
-Date: Thu, 21 Mar 2019 06:42:44 +0000
-Subject: RE: [PATCH] drm/amd/powerplay: delete some dead code
-Message-Id: <MN2PR12MB33093EB678B90AE8B2970D26EC420@MN2PR12MB3309.namprd12.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 16 Mar 2019 22:57:09 +0000
+Subject: [PATCH] scsi: libcxgbi: remove uninitialized variable len
+Message-Id: <20190316225709.8630-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190321062707.GB21489@kadam>
-In-Reply-To: <20190321062707.GB21489@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "Deucher, Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>
-Cc: "Zhou, David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, "Gui,
- Jack" <Jack.Gui-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "Wang,
- Kevin(Yang)" <Kevin1.Wang-5C7GfCeVMHo@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "Gao, Likun" <Likun.Gao-5C7GfCeVMHo@public.gmane.org>, "Koenig,
- Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>
+To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, David Ahern <dsahern@gmail.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Thursday, March 21, 2019 2:27 PM
-> To: Deucher, Alexander <Alexander.Deucher@amd.com>
-> Cc: Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
-> <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; Daniel Vetter
-> <daniel@ffwll.ch>; Huang, Ray <Ray.Huang@amd.com>; Wang, Kevin(Yang)
-> <Kevin1.Wang@amd.com>; Gao, Likun <Likun.Gao@amd.com>; Gui, Jack
-> <Jack.Gui@amd.com>; amd-gfx@lists.freedesktop.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [PATCH] drm/amd/powerplay: delete some dead code
-> 
-> The "size" variable is unsigned.  We never pass invalid sizes to this function
-> and we already used it as an array offset earlier so it's too late to check here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, will apply it.
-Reviewed-by: Huang Rui <ray.huang@amd.com>
+The variable len is not being inintialized and the uninitialized
+value is being returned. However, this return path is never reached
+because the default case in the switch statement returns -ENOSYS.
+Clean up the code by replacing the return -ENOSYS with a break
+for the default case and returning -ENOSYS at the end of the
+function.  This allows len to be removed.
 
-> ---
->  drivers/gpu/drm/amd/powerplay/smu_v11_0.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-> b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-> index 17143888e37e..b602975563fc 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-> @@ -1668,9 +1668,6 @@ static int
-> smu_v11_0_set_power_profile_mode(struct smu_context *smu, long
-> *input
->  	}
-> 
->  	if (smu->power_profile_mode ==
-> PP_SMC_POWER_PROFILE_CUSTOM) {
-> -		if (size < 0)
-> -			return -EINVAL;
-> -
->  		ret = smu_v11_0_get_activity_monitor_coeff(smu,
->  							   (uint8_t
-> *)(&activity_monitor),
-> 
-> WORKLOAD_PPLIB_CUSTOM_BIT);
-> --
-> 2.17.1
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/cxgbi/libcxgbi.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+index 006372b3fba2..1d9115484503 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.c
++++ b/drivers/scsi/cxgbi/libcxgbi.c
+@@ -2310,7 +2310,6 @@ int cxgbi_get_ep_param(struct iscsi_endpoint *ep, enum iscsi_param param,
+ {
+ 	struct cxgbi_endpoint *cep = ep->dd_data;
+ 	struct cxgbi_sock *csk;
+-	int len;
+ 
+ 	log_debug(1 << CXGBI_DBG_ISCSI,
+ 		"cls_conn 0x%p, param %d.\n", ep, param);
+@@ -2328,9 +2327,9 @@ int cxgbi_get_ep_param(struct iscsi_endpoint *ep, enum iscsi_param param,
+ 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
+ 						 &csk->daddr, param, buf);
+ 	default:
+-		return -ENOSYS;
++		break;
+ 	}
+-	return len;
++	return -ENOSYS;
+ }
+ EXPORT_SYMBOL_GPL(cxgbi_get_ep_param);
+ 
+-- 
+2.20.1
