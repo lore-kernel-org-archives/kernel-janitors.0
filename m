@@ -1,32 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Mar 2019 11:12:57 +0000
-Subject: Re: [PATCH] Minor fix for comment section
-Message-Id: <20190312111257.GI2434@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 17 Mar 2019 23:21:24 +0000
+Subject: [PATCH] ALSA: opl3: fix mismatch between snd_opl3_drum_switch definition and declaration
+Message-Id: <20190317232124.7740-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190312092509.GA10303@machine1>
-In-Reply-To: <20190312092509.GA10303@machine1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 02:55:09PM +0530, Milan P. Gandhi wrote:
-> Corrected a small alignment issue with comment.
-> 
-> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Milan,
+The function snd_opl3_drum_switch declaration in the header file
+has the order of the two arguments on_off and vel swapped when
+compared to the definition arguments of vel and on_off.  Fix this
+by swapping them around to match the definition.
 
-This patch is basically fine, but there are a few people missing from
-the CC list.
+This error predates the git history, so no idea when this error
+was introduced.
 
-./scripts/get_maintainer.pl -f drivers/scsi/qla2xxx/qla_bsg.c
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/drivers/opl3/opl3_voice.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The subject needs to be updated as well because it doesn't have the
-subsystem prefix.  Use git log --oneline drivers/scsi/qla2xxx/qla_bsg.c
-to see what people are using as the prefix for that file.
-
-Update those two issues, and resend.
-
-regards,
-dan carpenter
+diff --git a/sound/drivers/opl3/opl3_voice.h b/sound/drivers/opl3/opl3_voice.h
+index 5b02bd49fde4..4e4ecc21760b 100644
+--- a/sound/drivers/opl3/opl3_voice.h
++++ b/sound/drivers/opl3/opl3_voice.h
+@@ -41,7 +41,7 @@ void snd_opl3_timer_func(struct timer_list *t);
+ 
+ /* Prototypes for opl3_drums.c */
+ void snd_opl3_load_drums(struct snd_opl3 *opl3);
+-void snd_opl3_drum_switch(struct snd_opl3 *opl3, int note, int on_off, int vel, struct snd_midi_channel *chan);
++void snd_opl3_drum_switch(struct snd_opl3 *opl3, int note, int vel, int on_off, struct snd_midi_channel *chan);
+ 
+ /* Prototypes for opl3_oss.c */
+ #if IS_ENABLED(CONFIG_SND_SEQUENCER_OSS)
+-- 
+2.20.1
