@@ -1,44 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Mar 2019 14:36:01 +0000
-Subject: [PATCH] crypto: caam/qi - Change a couple IS_ERR_OR_NULL() checks to IS_ERR()
-Message-Id: <20190328143601.GQ32590@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 17 Mar 2019 09:05:37 +0000
+Subject: Re: [v5] coccinelle: semantic code search for missing put_device()
+Message-Id: <3562454b-36ff-3729-8d7c-c98e2b3f5767@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1550217319-40418-1-git-send-email-wen.yang99@zte.com.cn>
+ <CAK7LNASzd=bL1H34w-E_UD9x6w2=ObyS+EPDZ_jrvfV+ncw-yA@mail.gmail.com>
+In-Reply-To: <CAK7LNASzd=bL1H34w-E_UD9x6w2=ObyS+EPDZ_jrvfV+ncw-yA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, Wen Yang <wen.yang99@zte.com.cn>, Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Cheng Shengyu <cheng.shengyu@zte.com.cn>, cocci@systeme.lip6.fr
 
-create_caam_req_fq() doesn't return NULL pointers so there is no need to
-check.  The NULL checks are problematic because it's hard to say how a
-NULL return should be handled, so removing the checks is a nice cleanup.
+> Applied to linux-kbuild.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/crypto/caam/qi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+How does this information fit to the published sixth version
+of the discussed script for the semantic patch language?
+https://lore.kernel.org/cocci/HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com/
+https://systeme.lip6.fr/pipermail/cocci/2019-February/005598.html
 
-diff --git a/drivers/crypto/caam/qi.c b/drivers/crypto/caam/qi.c
-index 7cb8b1755e57..9f08f84cca59 100644
---- a/drivers/crypto/caam/qi.c
-+++ b/drivers/crypto/caam/qi.c
-@@ -318,7 +318,7 @@ int caam_drv_ctx_update(struct caam_drv_ctx *drv_ctx, u32 *sh_desc)
- 	/* Create a new req FQ in parked state */
- 	new_fq = create_caam_req_fq(drv_ctx->qidev, drv_ctx->rsp_fq,
- 				    drv_ctx->context_a, 0);
--	if (IS_ERR_OR_NULL(new_fq)) {
-+	if (IS_ERR(new_fq)) {
- 		dev_err(qidev, "FQ allocation for shdesc update failed\n");
- 		return PTR_ERR(new_fq);
- 	}
-@@ -431,7 +431,7 @@ struct caam_drv_ctx *caam_drv_ctx_init(struct device *qidev,
- 	/* Attach request FQ */
- 	drv_ctx->req_fq = create_caam_req_fq(qidev, drv_ctx->rsp_fq, hwdesc,
- 					     QMAN_INITFQ_FLAG_SCHED);
--	if (IS_ERR_OR_NULL(drv_ctx->req_fq)) {
-+	if (IS_ERR(drv_ctx->req_fq)) {
- 		dev_err(qidev, "create_caam_req_fq failed\n");
- 		dma_unmap_single(qidev, hwdesc, size, DMA_BIDIRECTIONAL);
- 		kfree(drv_ctx);
--- 
-2.17.1
+Are possible changes still in the waiting queue for a seventh variant?
+https://lore.kernel.org/cocci/201902191014156680299@zte.com.cn/
+
+Regards,
+Markus
