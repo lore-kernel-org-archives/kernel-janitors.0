@@ -1,41 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 17 Mar 2019 23:21:24 +0000
-Subject: [PATCH] ALSA: opl3: fix mismatch between snd_opl3_drum_switch definition and declaration
-Message-Id: <20190317232124.7740-1-colin.king@canonical.com>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 18 Mar 2019 12:50:56 +0000
+Subject: Re: [PATCH] ALSA: opl3: fix mismatch between snd_opl3_drum_switch definition and declaration
+Message-Id: <s5ho968firz.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190317232124.7740-1-colin.king@canonical.com>
+In-Reply-To: <20190317232124.7740-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 18 Mar 2019 00:21:24 +0100,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The function snd_opl3_drum_switch declaration in the header file
+> has the order of the two arguments on_off and vel swapped when
+> compared to the definition arguments of vel and on_off.  Fix this
+> by swapping them around to match the definition.
+> 
+> This error predates the git history, so no idea when this error
+> was introduced.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The function snd_opl3_drum_switch declaration in the header file
-has the order of the two arguments on_off and vel swapped when
-compared to the definition arguments of vel and on_off.  Fix this
-by swapping them around to match the definition.
+Thanks, applied.
 
-This error predates the git history, so no idea when this error
-was introduced.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/drivers/opl3/opl3_voice.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/drivers/opl3/opl3_voice.h b/sound/drivers/opl3/opl3_voice.h
-index 5b02bd49fde4..4e4ecc21760b 100644
---- a/sound/drivers/opl3/opl3_voice.h
-+++ b/sound/drivers/opl3/opl3_voice.h
-@@ -41,7 +41,7 @@ void snd_opl3_timer_func(struct timer_list *t);
- 
- /* Prototypes for opl3_drums.c */
- void snd_opl3_load_drums(struct snd_opl3 *opl3);
--void snd_opl3_drum_switch(struct snd_opl3 *opl3, int note, int on_off, int vel, struct snd_midi_channel *chan);
-+void snd_opl3_drum_switch(struct snd_opl3 *opl3, int note, int vel, int on_off, struct snd_midi_channel *chan);
- 
- /* Prototypes for opl3_oss.c */
- #if IS_ENABLED(CONFIG_SND_SEQUENCER_OSS)
--- 
-2.20.1
+Takashi
