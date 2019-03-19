@@ -1,45 +1,207 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 03 Mar 2019 16:16:10 +0000
-Subject: Re: [PATCH][next] iio: st_accel: remove redundant unsigned less than zero check
-Message-Id: <20190303161610.43a03ffa@archlinux>
+From: George Spelvin <lkml@sdf.org>
+Date: Tue, 19 Mar 2019 08:15:57 +0000
+Subject: [RESEND PATCH v2 1/5] lib/sort: Make swap functions more generic
+Message-Id: <f24f932df3a7fa1973c1084154f1cea596bcf341.1552704200.git.lkml@sdf.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190221104636.1922-1-colin.king@canonical.com>
-In-Reply-To: <20190221104636.1922-1-colin.king@canonical.com>
+References: <cover.1552704200.git.lkml@sdf.org>
+In-Reply-To: <cover.1552704200.git.lkml@sdf.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: George Spelvin <lkml@sdf.org>, Andrey Abramov <st5pub@yandex.ru>, Geert Uytterhoeven <geert@linux-m68k.org>, Daniel Wagner <daniel.wagner@siemens.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Don Mullis <don.mullis@gmail.com>, Dave Chinner <dchinner@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, 21 Feb 2019 10:46:36 +0000
-Colin King <colin.king@canonical.com> wrote:
+Rather than having special-case swap functions for 4- and 8-byte objects,
+special-case aligned multiples of 4 or 8 bytes.  This speeds up most
+users of sort() by avoiding fallback to the byte copy loop.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check that variable val is less than zero is redundant since val
-> is an unsigned int and hence can never be less than zero. Remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied.
+Despite what commit ca96ab859ab4 ("lib/sort: Add 64 bit swap function")
+claims, very few users of sort() sort pointers (or pointer-sized
+objects); most sort structures containing at least two words.
+(E.g. drivers/acpi/fan.c:acpi_fan_get_fps() sorts an array of 40-byte
+struct acpi_fan_fps.)
 
-Thanks,
+The functions also got renamed to reflect the fact that they support
+multiple words.  In the great tradition of bikeshedding, the names were
+by far the most contentious issue during review of this patch series.
 
-Jonathan
+x86-64 code size 872 -> 886 bytes (+14)
 
-> ---
->  drivers/iio/accel/st_accel_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/accel/st_accel_core.c b/drivers/iio/accel/st_accel_core.c
-> index a3c0916479fa..9930edf423bf 100644
-> --- a/drivers/iio/accel/st_accel_core.c
-> +++ b/drivers/iio/accel/st_accel_core.c
-> @@ -992,7 +992,7 @@ static int apply_acpi_orientation(struct iio_dev *indio_dev,
->  			goto out;
->  
->  		val = elements[i].integer.value;
-> -		if (val < 0 || val > 2)
-> +		if (val > 2)
->  			goto out;
->  
->  		/* Avoiding full matrix multiplication, we simply reorder the
+Signed-off-by: George Spelvin <lkml@sdf.org>
+Acked-by: Andrey Abramov <st5pub@yandex.ru>
+Feedback-from: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Feedback-from: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Feedback-from: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ lib/sort.c | 135 +++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 105 insertions(+), 30 deletions(-)
+
+diff --git a/lib/sort.c b/lib/sort.c
+index d6b7a202b0b6..ec79eac85e21 100644
+--- a/lib/sort.c
++++ b/lib/sort.c
+@@ -11,35 +11,108 @@
+ #include <linux/export.h>
+ #include <linux/sort.h>
+ 
+-static int alignment_ok(const void *base, int align)
++/**
++ * is_aligned - is this pointer & size okay for word-wide copying?
++ * @base: pointer to data
++ * @size: size of each element
++ * @align: required aignment (typically 4 or 8)
++ *
++ * Returns true if elements can be copied using word loads and stores.
++ * The size must be a multiple of the alignment, and the base address must
++ * be if we do not have CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS.
++ *
++ * For some reason, gcc doesn't know to optimize "if (a & mask || b & mask)"
++ * to "if ((a | b) & mask)", so we do that by hand.
++ */
++__attribute_const__ __always_inline
++static bool is_aligned(const void *base, size_t size, unsigned char align)
+ {
+-	return IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) ||
+-		((unsigned long)base & (align - 1)) = 0;
++	unsigned char lsbits = (unsigned char)size;
++
++	(void)base;
++#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
++	lsbits |= (unsigned char)(uintptr_t)base;
++#endif
++	return (lsbits & (align - 1)) = 0;
+ }
+ 
+-static void u32_swap(void *a, void *b, int size)
++/**
++ * swap_words_32 - swap two elements in 32-bit chunks
++ * @a, @b: pointers to the elements
++ * @size: element size (must be a multiple of 4)
++ *
++ * Exchange the two objects in memory.  This exploits base+index addressing,
++ * which basically all CPUs have, to minimize loop overhead computations.
++ *
++ * For some reason, on x86 gcc 7.3.0 adds a redundant test of n at the
++ * bottom of the loop, even though the zero flag is stil valid from the
++ * subtract (since the intervening mov instructions don't alter the flags).
++ * Gcc 8.1.0 doesn't have that problem.
++ */
++static void swap_words_32(void *a, void *b, int size)
+ {
+-	u32 t = *(u32 *)a;
+-	*(u32 *)a = *(u32 *)b;
+-	*(u32 *)b = t;
+-}
+-
+-static void u64_swap(void *a, void *b, int size)
+-{
+-	u64 t = *(u64 *)a;
+-	*(u64 *)a = *(u64 *)b;
+-	*(u64 *)b = t;
+-}
+-
+-static void generic_swap(void *a, void *b, int size)
+-{
+-	char t;
++	size_t n = (unsigned int)size;
+ 
+ 	do {
+-		t = *(char *)a;
+-		*(char *)a++ = *(char *)b;
+-		*(char *)b++ = t;
+-	} while (--size > 0);
++		u32 t = *(u32 *)(a + (n -= 4));
++		*(u32 *)(a + n) = *(u32 *)(b + n);
++		*(u32 *)(b + n) = t;
++	} while (n);
++}
++
++/**
++ * swap_words_64 - swap two elements in 64-bit chunks
++ * @a, @b: pointers to the elements
++ * @size: element size (must be a multiple of 8)
++ *
++ * Exchange the two objects in memory.  This exploits base+index
++ * addressing, which basically all CPUs have, to minimize loop overhead
++ * computations.
++ *
++ * We'd like to use 64-bit loads if possible.  If they're not, emulating
++ * one requires base+index+4 addressing which x86 has but most other
++ * processors do not.  If CONFIG_64BIT, we definitely have 64-bit loads,
++ * but it's possible to have 64-bit loads without 64-bit pointers (e.g.
++ * x32 ABI).  Are there any cases the kernel needs to worry about?
++ */
++static void swap_words_64(void *a, void *b, int size)
++{
++	size_t n = (unsigned int)size;
++
++	do {
++#ifdef CONFIG_64BIT
++		u64 t = *(u64 *)(a + (n -= 8));
++		*(u64 *)(a + n) = *(u64 *)(b + n);
++		*(u64 *)(b + n) = t;
++#else
++		/* Use two 32-bit transfers to avoid base+index+4 addressing */
++		u32 t = *(u32 *)(a + (n -= 4));
++		*(u32 *)(a + n) = *(u32 *)(b + n);
++		*(u32 *)(b + n) = t;
++
++		t = *(u32 *)(a + (n -= 4));
++		*(u32 *)(a + n) = *(u32 *)(b + n);
++		*(u32 *)(b + n) = t;
++#endif
++	} while (n);
++}
++
++/**
++ * swap_bytes - swap two elements a byte at a time
++ * @a, @b: pointers to the elements
++ * @size: element size
++ *
++ * This is the fallback if alignment doesn't allow using larger chunks.
++ */
++static void swap_bytes(void *a, void *b, int size)
++{
++	size_t n = (unsigned int)size;
++
++	do {
++		char t = ((char *)a)[--n];
++		((char *)a)[n] = ((char *)b)[n];
++		((char *)b)[n] = t;
++	} while (n);
+ }
+ 
+ /**
+@@ -50,8 +123,10 @@ static void generic_swap(void *a, void *b, int size)
+  * @cmp_func: pointer to comparison function
+  * @swap_func: pointer to swap function or NULL
+  *
+- * This function does a heapsort on the given array. You may provide a
+- * swap_func function optimized to your element type.
++ * This function does a heapsort on the given array.  You may provide
++ * a swap_func function if you need to do something more than a memory
++ * copy (e.g. fix up pointers or auxiliary data), but the built-in swap
++ * isn't usually a bottleneck.
+  *
+  * Sorting time is O(n log n) both on average and worst-case. While
+  * qsort is about 20% faster on average, it suffers from exploitable
+@@ -67,12 +142,12 @@ void sort(void *base, size_t num, size_t size,
+ 	int i = (num/2 - 1) * size, n = num * size, c, r;
+ 
+ 	if (!swap_func) {
+-		if (size = 4 && alignment_ok(base, 4))
+-			swap_func = u32_swap;
+-		else if (size = 8 && alignment_ok(base, 8))
+-			swap_func = u64_swap;
++		if (is_aligned(base, size, 8))
++			swap_func = swap_words_64;
++		else if (is_aligned(base, size, 4))
++			swap_func = swap_words_32;
+ 		else
+-			swap_func = generic_swap;
++			swap_func = swap_bytes;
+ 	}
+ 
+ 	/* heapify */
+-- 
+2.20.1
