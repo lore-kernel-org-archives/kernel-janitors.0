@@ -1,17 +1,24 @@
-From: Mr Wong <ps.cachachuyug@06d01.mspz3.gob.ec>
-Date: Sat, 30 Mar 2019 07:54:11 +0000
-Subject: Re:Hello
-Message-Id: <20190330081011.A562023E59A4@06d01.mspz3.gob.ec>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 19 Mar 2019 21:11:57 +0000
+Subject: Re: [PATCH] scsi: qlogicfas408: clean up a couple of indentation issues
+Message-Id: <yq1wokubmci.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190123131004.24460-1-colin.king@canonical.com>
+In-Reply-To: <20190123131004.24460-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 23 Jan 2019 13:10:04 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello this is Mr Wong again from hongkong,Can we send the Swift as discuss best regards.
 
-Mr Wong Cheng
+Colin,
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+> An if statement is indented correctly and an outb statement has a
+> redundant empty comment and incorrect indentation. Fix these.
+
+Applied to 5.2/scsi-queue.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
