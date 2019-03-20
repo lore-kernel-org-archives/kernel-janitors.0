@@ -1,35 +1,34 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 27 Mar 2019 13:21:14 +0000
-Subject: Re: [PATCH] IB/iser: remove uninitialized variable len
-Message-Id: <20190327132114.GA13128@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Mar 2019 17:29:09 +0000
+Subject: [PATCH][next] drm/amd/powerplay: fix spelling mistake "unknow" -> "unknown"
+Message-Id: <20190320172909.10348-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190316230512.8933-1-colin.king@canonical.com>
-In-Reply-To: <20190316230512.8933-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>, Max Gurtovoy <maxg@mellanox.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Mar 16, 2019 at 11:05:12PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable len is not being inintialized and the uninitialized
-> value is being returned. However, this return path is never reached
-> because the default case in the switch statement returns -ENOSYS.
-> Clean up the code by replacing the return -ENOSYS with a break
-> for the default case and returning -ENOSYS at the end of the
-> function.  This allows len to be removed.  Also remove redundant
-> break that follows a return statement.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-> ---
->  drivers/infiniband/ulp/iser/iscsi_iser.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next
+There is a spelling mistake in pr_warn message; fix it.
 
-Thanks,
-Jason
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/smu_v11_0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+index 17143888e37e..026bebe6fb45 100644
+--- a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
++++ b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+@@ -2024,6 +2024,6 @@ void smu_v11_0_set_smu_funcs(struct smu_context *smu)
+ 		vega20_set_ppt_funcs(smu);
+ 		break;
+ 	default:
+-		pr_warn("Unknow asic for smu11\n");
++		pr_warn("Unknown asic for smu11\n");
+ 	}
+ }
+-- 
+2.20.1
