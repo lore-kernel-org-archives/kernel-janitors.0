@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 20 Mar 2019 21:22:04 +0000
+Date: Wed, 20 Mar 2019 21:22:05 +0000
 Subject: [PATCH][next] scsi: phy: mediatek: fix typo in author's email address
-Message-Id: <20190320212205.5726-1-colin.king@canonical.com>
+Message-Id: <20190320212205.5726-2-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190320212205.5726-1-colin.king@canonical.com>
+In-Reply-To: <20190320212205.5726-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
