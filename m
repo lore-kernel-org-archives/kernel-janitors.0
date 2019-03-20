@@ -1,26 +1,60 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Thu, 21 Mar 2019 13:31:12 +0000
-Subject: Re: [PATCH v2] drm/i915/selftests: fix NULL vs IS_ERR() check in mock_context_barrier()
-Message-Id: <155317507276.26447.12218949016591033751@skylake-alporthouse-com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Mar 2019 16:37:09 +0000
+Subject: [PATCH][next] scsi: target: fix unsigned comparision with less than zero
+Message-Id: <20190320163709.28767-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190321092451.GK2202@kadam> <87va0czguu.fsf@gaia.fi.intel.com>
-In-Reply-To: <87va0czguu.fsf@gaia.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>, Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Mika Kuoppala (2019-03-21 10:01:13)
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
-> 
-> > The mock_context() function returns NULL on error, it doesn't return
-> > error pointers.
-> >
-> > Fixes: 85fddf0b0027 ("drm/i915: Introduce a context barrier callback")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-And pushed, thanks for the fix!
--Chris
+Currently an error return is being assigned to an unsigned
+size_t varianle and then checked if the result is less than
+zero which will always be false.  Fix this by making ret
+ssize_t rather than a size_t.
+
+Fixes: 0322913cab79 ("scsi: target: Add device product id and revision configfs attributes")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/target/target_core_configfs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index 8f3faef235b5..3fe79875b3ac 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -1267,7 +1267,8 @@ static ssize_t target_wwn_vendor_id_store(struct config_item *item,
+ 	/* +2 to allow for a trailing (stripped) '\n' and null-terminator */
+ 	unsigned char buf[INQUIRY_VENDOR_LEN + 2];
+ 	char *stripped = NULL;
+-	size_t len, ret;
++	size_t len;
++	ssize_t ret;
+ 
+ 	len = strlcpy(buf, page, sizeof(buf));
+ 	if (len < sizeof(buf)) {
+@@ -1322,7 +1323,8 @@ static ssize_t target_wwn_product_id_store(struct config_item *item,
+ 	/* +2 to allow for a trailing (stripped) '\n' and null-terminator */
+ 	unsigned char buf[INQUIRY_MODEL_LEN + 2];
+ 	char *stripped = NULL;
+-	size_t len, ret;
++	size_t len;
++	ssize_t ret;
+ 
+ 	len = strlcpy(buf, page, sizeof(buf));
+ 	if (len < sizeof(buf)) {
+@@ -1377,7 +1379,8 @@ static ssize_t target_wwn_revision_store(struct config_item *item,
+ 	/* +2 to allow for a trailing (stripped) '\n' and null-terminator */
+ 	unsigned char buf[INQUIRY_REVISION_LEN + 2];
+ 	char *stripped = NULL;
+-	size_t len, ret;
++	size_t len;
++	ssize_t ret;
+ 
+ 	len = strlcpy(buf, page, sizeof(buf));
+ 	if (len < sizeof(buf)) {
+-- 
+2.20.1
