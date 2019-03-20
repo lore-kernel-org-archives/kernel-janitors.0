@@ -1,32 +1,24 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Wed, 20 Mar 2019 21:33:02 +0000
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Date: Wed, 20 Mar 2019 23:02:35 +0000
 Subject: Re: [PATCH][next] scsi: phy: mediatek: fix typo in author's email address
-Message-Id: <3e4f18e8-9324-e4c5-4b11-dc57eddd41e2@embeddedor.com>
+Message-Id: <1553122955.10179.169.camel@mhfsdcap03>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190320212205.5726-1-colin.king@canonical.com>
-In-Reply-To: <20190320212205.5726-1-colin.king@canonical.com>
+ <20190320212205.5726-2-colin.king@canonical.com>
+In-Reply-To: <20190320212205.5726-2-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Stanley Chu <stanley.chu@mediatek.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Kishon Vijay Abraham I <kishon@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Stanley Chu <stanley.chu@mediatek.com>, linux-arm-kernel@lists.infradead.org
 
+Hi Colin,
 
-
-On 3/20/19 4:22 PM, Colin King wrote:
+On Wed, 2019-03-20 at 21:22 +0000, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > There is a typo in the module author's email address. Fix this.
 > 
-
-This is priceless!
-
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Thanks, Colin.
---
-Gustavo
-
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
 >  drivers/phy/mediatek/phy-mtk-ufs.c | 2 +-
@@ -43,4 +35,7 @@ Gustavo
 > -MODULE_AUTHOR("Stanley Chu <stanley.chu@medaitek.com>");
 > +MODULE_AUTHOR("Stanley Chu <stanley.chu@mediatek.com>");
 >  MODULE_LICENSE("GPL v2");
-> 
+
+Thank you.
+
+Acked-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
