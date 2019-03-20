@@ -1,51 +1,38 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Thu, 28 Mar 2019 19:26:30 +0000
-Subject: Re: [PATCH] irqchip/irq-ls1x: Missing error code in ls1x_intc_of_init()
-Message-Id: <a90ad2ff-acc1-0baf-d7e4-1292bb1c8464@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Mar 2019 16:50:00 +0000
+Subject: [PATCH] scsi: mpt3sas: fix indentation issue
+Message-Id: <20190320165000.29340-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328143854.GN32613@kadam>
-In-Reply-To: <20190328143854.GN32613@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Marc Zyngier <marc.zyngier@arm.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 3/28/2019 8:08 PM, Dan Carpenter wrote:
-> We forgot to set "err" on this error path.
+There are a couple of statements that are incorrectly indented, fix
+these.
 
-What is "this" error path, please describe
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-like
-
-"Currently, when irq_domain_add_linear() fails, error code does not get 
-set due to which
-
-it return zero which is wrong.Fix it by setting appropriate error code."
-
-> Fixes: 9e543e22e204 ("irqchip: Add driver for Loongson-1 interrupt controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-
-Other wise change looks good .
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-
--Mukesh
-
-> ---
->   drivers/irqchip/irq-ls1x.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/irqchip/irq-ls1x.c b/drivers/irqchip/irq-ls1x.c
-> index 86b72fbd3b45..353111a10413 100644
-> --- a/drivers/irqchip/irq-ls1x.c
-> +++ b/drivers/irqchip/irq-ls1x.c
-> @@ -130,6 +130,7 @@ static int __init ls1x_intc_of_init(struct device_node *node,
->   					     NULL);
->   	if (!priv->domain) {
->   		pr_err("ls1x-irq: cannot add IRQ domain\n");
-> +		err = -ENOMEM;
->   		goto out_iounmap;
->   	}
->   
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 0aca627e21e8..9c7012f4c412 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -1523,8 +1523,8 @@ _base_process_reply_queue(struct adapter_reply_queue *reply_q)
+ 				reply_q->irq_poll_scheduled = true;
+ 				irq_poll_sched(&reply_q->irqpoll);
+ 			}
+-				atomic_dec(&reply_q->busy);
+-				return completed_cmds;
++			atomic_dec(&reply_q->busy);
++			return completed_cmds;
+ 		}
+ 		if (request_descript_type = MPI2_RPY_DESCRIPT_FLAGS_UNUSED)
+ 			goto out;
+-- 
+2.20.1
