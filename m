@@ -1,29 +1,116 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 28 Mar 2019 00:59:55 +0000
-Subject: Re: [PATCH] scsi: libcxgbi: remove uninitialized variable len
-Message-Id: <yq15zs3x184.fsf@oracle.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 20 Mar 2019 02:25:31 +0000
+Subject: [PATCH serial v4] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
+Message-Id: <20190320022531.189437-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190316225709.8630-1-colin.king@canonical.com>
-In-Reply-To: <20190316225709.8630-1-colin.king@canonical.com> (Colin King's
-        message of "Sat, 16 Mar 2019 22:57:09 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, David Ahern <dsahern@gmail.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Add the missing uart_unregister_driver() and i2c_del_driver() before
+return from sc16is7xx_init() in the error handling case.
 
-Colin,
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+Reviewed-by: Dan Carpeter <dan.carpenter@oracle.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: fix compile warning if CONFIG_SERIAL_SC16IS7XX_SPI is not exist.
+ v2->v3: create functions for i2c and spi to do error handling as dan carpenter suggestion.
+ v3->v4: As Greg suggestion, v4 is based on v1 and v3. 
+ drivers/tty/serial/sc16is7xx.c | 46 ++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
-> The variable len is not being inintialized and the uninitialized value
-> is being returned. However, this return path is never reached because
-> the default case in the switch statement returns -ENOSYS.  Clean up
-> the code by replacing the return -ENOSYS with a break for the default
-> case and returning -ENOSYS at the end of the function.  This allows
-> len to be removed.
-
-Not a fan of this ENOSYS business but I guess it's been that way
-forever. Applied to 5.2/scsi-queue, thanks.
-
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 09a183dfc526..810ad89d2fb8 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1434,6 +1434,19 @@ static struct spi_driver sc16is7xx_spi_uart_driver = {
+ };
+ 
+ MODULE_ALIAS("spi:sc16is7xx");
++
++static int __init register_sc16is7xx_spi(void)
++{
++	return spi_register_driver(&sc16is7xx_spi_uart_driver);
++}
++
++static void __exit unregister_sc16is7xx_spi(void)
++{
++	spi_unregister_driver(&sc16is7xx_spi_uart_driver);
++}
++#else
++static int __init register_sc16is7xx_spi(void) { return 0; }
++static void __exit unregister_sc16is7xx_spi(void) {}
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_SC16IS7XX_I2C
+@@ -1491,6 +1504,18 @@ static struct i2c_driver sc16is7xx_i2c_uart_driver = {
+ 	.id_table	= sc16is7xx_i2c_id_table,
+ };
+ 
++static int __init register_sc16is7xx_i2c(void)
++{
++	return i2c_add_driver(&sc16is7xx_i2c_uart_driver);
++}
++
++static void __exit del_sc16is7xx_i2c(void)
++{
++	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
++}
++#else
++static int __init register_sc16is7xx_i2c(void) { return 0; }
++static void __exit del_sc16is7xx_i2c(void) {}
+ #endif
+ 
+ static int __init sc16is7xx_init(void)
+@@ -1503,27 +1528,21 @@ static int __init sc16is7xx_init(void)
+ 		return ret;
+ 	}
+ 
+-#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
+-	ret = i2c_add_driver(&sc16is7xx_i2c_uart_driver);
++	ret = register_sc16is7xx_i2c();
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx i2c --> %d\n", ret);
+ 		goto err_i2c;
+ 	}
+-#endif
+ 
+-#ifdef CONFIG_SERIAL_SC16IS7XX_SPI
+-	ret = spi_register_driver(&sc16is7xx_spi_uart_driver);
++	ret = register_sc16is7xx_spi();
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx spi --> %d\n", ret);
+ 		goto err_spi;
+ 	}
+-#endif
+ 	return ret;
+ 
+ err_spi:
+-#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
+-	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
+-#endif
++	del_sc16is7xx_i2c();
+ err_i2c:
+ 	uart_unregister_driver(&sc16is7xx_uart);
+ 	return ret;
+@@ -1532,13 +1551,8 @@ module_init(sc16is7xx_init);
+ 
+ static void __exit sc16is7xx_exit(void)
+ {
+-#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
+-	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
+-#endif
+-
+-#ifdef CONFIG_SERIAL_SC16IS7XX_SPI
+-	spi_unregister_driver(&sc16is7xx_spi_uart_driver);
+-#endif
++	del_sc16is7xx_i2c();
++	unregister_sc16is7xx_spi();
+ 	uart_unregister_driver(&sc16is7xx_uart);
+ }
+ module_exit(sc16is7xx_exit);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
