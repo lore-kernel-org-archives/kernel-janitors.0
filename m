@@ -1,86 +1,39 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 28 Mar 2019 14:19:56 +0000
-Subject: Re: [PATCH] coccinelle: put_device: reduce false positives
-Message-Id: <alpine.DEB.2.21.1903281519470.2438@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-504337998-1553782797=:2438"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Mar 2019 06:28:22 +0000
+Subject: [PATCH] drm/amd/powerplay: Fix double unlock bug in smu_sys_set_pp_table()
+Message-Id: <20190321062822.GD21489@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1553321671-27749-1-git-send-email-wen.yang99@zte.com.cn>
- <179bbdd1-3fcb-bba5-52b3-7f96973c7650@web.de>
- <alpine.DEB.2.21.1903232104030.5660@hadrien> <20190326084512.GC32590@kadam>
- <alpine.DEB.2.20.1903261037320.5021@hadrien> <20190326101103.GH32613@kadam>
- <alpine.DEB.2.20.1903261115300.5021@hadrien>
- <CAK7LNAT9gKvEX9520Sd50vrS7Gug1JQCMx_TJO_KPQjhjPORXw@mail.gmail.com>
-In-Reply-To: <CAK7LNAT9gKvEX9520Sd50vrS7Gug1JQCMx_TJO_KPQjhjPORXw@mail.gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, cocci@systeme.lip6.fr, Markus Elfring <Markus.Elfring@web.de>, Wen Yang <wen.yang99@zte.com.cn>, Dan Carpenter <dan.carpenter@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Kevin Wang <kevin1.wang-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Chengming Gui <Jack.Gui-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Likun Gao <Likun.Gao-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+We already unlocked a few lines earlier so this code unlocks twice on
+the success path.
 
---8323329-504337998-1553782797=:2438
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Fixes: 5809d7420f97 ("drm/amd/powerplay: implement sysfs of pp_table for smu11 (v2)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not sure what this bug looks like at runtime, but it's slightly
+weird that no one noticed.  This is from static analysis and I haven't
+tested it myself.
 
+ drivers/gpu/drm/amd/powerplay/amdgpu_smu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-On Thu, 28 Mar 2019, Masahiro Yamada wrote:
-
-> On Tue, Mar 26, 2019 at 7:16 PM Julia Lawall <julia.lawall@lip6.fr> wrote:
-> >
-> >
-> >
-> > On Tue, 26 Mar 2019, Dan Carpenter wrote:
-> >
-> > > On Tue, Mar 26, 2019 at 10:38:43AM +0100, Julia Lawall wrote:
-> > > >
-> > > >
-> > > > On Tue, 26 Mar 2019, Dan Carpenter wrote:
-> > > >
-> > > > > On Sat, Mar 23, 2019 at 09:06:54PM +0100, Julia Lawall wrote:
-> > > > > >
-> > > > > >
-> > > > > > On Sat, 23 Mar 2019, Markus Elfring wrote:
-> > > > > >
-> > > > > > > > Don't complain about a return when this function returns "&pdev->dev".
-> > > > > > >
-> > > > > > > Would this information qualify to add the tag “Fixes” to the commit message?
-> > > > > >
-> > > > > > Fixes tags relate to stable kernels, so that one can see which stable
-> > > > > > kernels a particular patch should be propagated to.  There is no need to
-> > > > > > propagate patches on semantic patches to stable kernels.  People who run
-> > > > > > stable kernels are interested in their behavior, not the bug finding
-> > > > > > rules that they contain.
-> > > > >
-> > > > > The Fixes tag is not just about stable...  For example, we use them for
-> > > > > statistics to see how quickly bugs get fixed etc.
-> > > >
-> > > > OK.  But still do we need fixes tags for bug finding rules?  Perhaps if
-> > > > the previous version was really broken, and it would be really undesirable
-> > > > to use it.
-> > >
-> > > It's not worth resending a patch for that, but I probably would use the
-> > > fixes tag.  It depends on your definition of "bug" really...  I tell
-> > > people not to use Fixes for spelling mistakes and unused variables.  But
-> > > I do use the Fixes tag for things like "an off by one in a sanity check
-> > > which doesn't affect run time because the index is always correct".
-> >
-> > OK, thanks.
-> >
-> > julia
->
-> I added Fixes: tag,
-> and applied to linux-kbuild/fixes.
-
-Thanks!
-
-julia
-
->
-> Thanks.
->
-> --
-> Best Regards
-> Masahiro Yamada
->
---8323329-504337998-1553782797=:2438--
+diff --git a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
+index 00b7c885772b..7e8c74da6a74 100644
+--- a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
++++ b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
+@@ -187,6 +187,8 @@ int smu_sys_set_pp_table(struct smu_context *smu,  void *buf, size_t size)
+ 	if (ret)
+ 		pr_info("smu reset failed, ret = %d\n", ret);
+ 
++	return ret;
++
+ failed:
+ 	mutex_unlock(&smu->mutex);
+ 	return ret;
+-- 
+2.17.1
