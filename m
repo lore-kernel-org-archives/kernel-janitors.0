@@ -1,67 +1,163 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Mon, 25 Mar 2019 10:08:12 +0000
-Subject: Re: [PATCH] media: v4l2-ctrl: potential shift wrapping bugs
-Message-Id: <20190325100812.y64uflgitooe7pqm@kekkonen.localdomain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Mar 2019 08:33:35 +0000
+Subject: [PATCH] drm/i915/selftests: fix NULL vs IS_ERR() check in mock_context_barrier()
+Message-Id: <20190321083335.GA31210@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190325090626.GC16023@kadam>
-In-Reply-To: <20190325090626.GC16023@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Tomasz Figa <tfiga@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>, Keiichi Watanabe <keiichiw@chromium.org>, Smitha T Murthy <smitha.t@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>
 
-Hi Dan,
+The mock_context() function returns NULL on error, it doesn't return
+error pointers.
 
-Thanks for the patch.
+Fixes: 85fddf0b0027 ("drm/i915: Introduce a context barrier callback")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ .../gpu/drm/i915/selftests/i915_gem_context.c |  4 +-
+ drivers/staging/erofs/unzip_vle.c             | 70 ++++++++++---------
+ 2 files changed, 38 insertions(+), 36 deletions(-)
 
-On Mon, Mar 25, 2019 at 12:06:26PM +0300, Dan Carpenter wrote:
-> This code generates a static checker warning:
-> 
->     drivers/media/v4l2-core/v4l2-ctrls.c:2921 v4l2_querymenu()
->     warn: should '(1 << i)' be a 64 bit type?
-> 
-> The problem is that "ctrl->menu_skip_mask" is a u64 and we're only
-> testing the lower 32 bits.
-
-This seems to be caused by patch 0ba2aeb6dab8 ("[media] v4l2-ctrls:
-increase internal min/max/step/def to 64 bit"). Backporting the fix isn't
-likely really important --- the reason being no-one has figured this out
-previously, very probably so because there are no menus that long.
-
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index b79d3bbd8350..cee78485df02 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -1599,7 +1599,7 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
->  	case V4L2_CTRL_TYPE_INTEGER_MENU:
->  		if (ptr.p_s32[idx] < ctrl->minimum || ptr.p_s32[idx] > ctrl->maximum)
->  			return -ERANGE;
-> -		if (ctrl->menu_skip_mask & (1 << ptr.p_s32[idx]))
-> +		if (ctrl->menu_skip_mask & (1ULL << ptr.p_s32[idx]))
->  			return -EINVAL;
->  		if (ctrl->type = V4L2_CTRL_TYPE_MENU &&
->  		    ctrl->qmenu[ptr.p_s32[idx]][0] = '\0')
-> @@ -2918,7 +2918,7 @@ int v4l2_querymenu(struct v4l2_ctrl_handler *hdl, struct v4l2_querymenu *qm)
->  		return -EINVAL;
->  
->  	/* Use mask to see if this menu item should be skipped */
-> -	if (ctrl->menu_skip_mask & (1 << i))
-> +	if (ctrl->menu_skip_mask & (1ULL << i))
->  		return -EINVAL;
->  	/* Empty menu items should also be skipped */
->  	if (ctrl->type = V4L2_CTRL_TYPE_MENU) {
-
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_context.c b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
+index 4399ef9ebf15..a172dbd9cb9e 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
+@@ -1620,8 +1620,8 @@ static int mock_context_barrier(void *arg)
+ 	mutex_lock(&i915->drm.struct_mutex);
+ 
+ 	ctx = mock_context(i915, "mock");
+-	if (IS_ERR(ctx)) {
+-		err = PTR_ERR(ctx);
++	if (!ctx) {
++		err = -ENOMEM;
+ 		goto unlock;
+ 	}
+ 
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index c7b3b21123c1..a711bf61f60c 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -844,11 +844,9 @@ static void z_erofs_vle_unzip_kickoff(void *ptr, int bios)
+ static inline void z_erofs_vle_read_endio(struct bio *bio)
+ {
+ 	const blk_status_t err = bio->bi_status;
++	struct erofs_sb_info *sbi = NULL;
+ 	unsigned int i;
+ 	struct bio_vec *bvec;
+-#ifdef EROFS_FS_HAS_MANAGED_CACHE
+-	struct address_space *mc = NULL;
+-#endif
+ 	struct bvec_iter_all iter_all;
+ 
+ 	bio_for_each_segment_all(bvec, bio, i, iter_all) {
+@@ -858,20 +856,12 @@ static inline void z_erofs_vle_read_endio(struct bio *bio)
+ 		DBG_BUGON(PageUptodate(page));
+ 		DBG_BUGON(!page->mapping);
+ 
+-#ifdef EROFS_FS_HAS_MANAGED_CACHE
+-		if (unlikely(!mc && !z_erofs_is_stagingpage(page))) {
+-			struct inode *const inode = page->mapping->host;
+-			struct super_block *const sb = inode->i_sb;
+-
+-			mc = MNGD_MAPPING(EROFS_SB(sb));
+-		}
++		if (unlikely(!sbi && !z_erofs_is_stagingpage(page)))
++			sbi = EROFS_SB(page->mapping->host->i_sb);
+ 
+-		/*
+-		 * If mc has not gotten, it equals NULL,
+-		 * however, page->mapping never be NULL if working properly.
+-		 */
+-		cachemngd = (page->mapping = mc);
+-#endif
++		/* sbi should already be gotten if the page is managed */
++		if (sbi)
++			cachemngd = erofs_page_is_managed(sbi, page);
+ 
+ 		if (unlikely(err))
+ 			SetPageError(page);
+@@ -972,6 +962,7 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 	overlapped = false;
+ 	compressed_pages = grp->compressed_pages;
+ 
++	err = 0;
+ 	for (i = 0; i < clusterpages; ++i) {
+ 		unsigned int pagenr;
+ 
+@@ -981,26 +972,37 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 		DBG_BUGON(!page);
+ 		DBG_BUGON(!page->mapping);
+ 
+-		if (z_erofs_is_stagingpage(page))
+-			continue;
+-#ifdef EROFS_FS_HAS_MANAGED_CACHE
+-		if (page->mapping = MNGD_MAPPING(sbi)) {
+-			DBG_BUGON(!PageUptodate(page));
+-			continue;
+-		}
+-#endif
++		if (!z_erofs_is_stagingpage(page)) {
++			if (erofs_page_is_managed(sbi, page)) {
++				if (unlikely(!PageUptodate(page)))
++					err = -EIO;
++				continue;
++			}
++
++			/*
++			 * only if non-head page can be selected
++			 * for inplace decompression
++			 */
++			pagenr = z_erofs_onlinepage_index(page);
+ 
+-		/* only non-head page could be reused as a compressed page */
+-		pagenr = z_erofs_onlinepage_index(page);
++			DBG_BUGON(pagenr >= nr_pages);
++			DBG_BUGON(pages[pagenr]);
++			++sparsemem_pages;
++			pages[pagenr] = page;
+ 
+-		DBG_BUGON(pagenr >= nr_pages);
+-		DBG_BUGON(pages[pagenr]);
+-		++sparsemem_pages;
+-		pages[pagenr] = page;
++			overlapped = true;
++		}
+ 
+-		overlapped = true;
++		/* PG_error needs checking for inplaced and staging pages */
++		if (unlikely(PageError(page))) {
++			DBG_BUGON(PageUptodate(page));
++			err = -EIO;
++		}
+ 	}
+ 
++	if (unlikely(err))
++		goto out;
++
+ 	llen = (nr_pages << PAGE_SHIFT) - work->pageofs;
+ 
+ 	if (z_erofs_vle_workgrp_fmt(grp) = Z_EROFS_VLE_WORKGRP_FMT_PLAIN) {
+@@ -1044,10 +1046,9 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 	for (i = 0; i < clusterpages; ++i) {
+ 		page = compressed_pages[i];
+ 
+-#ifdef EROFS_FS_HAS_MANAGED_CACHE
+-		if (page->mapping = MNGD_MAPPING(sbi))
++		if (erofs_page_is_managed(sbi, page))
+ 			continue;
+-#endif
++
+ 		/* recycle all individual staging pages */
+ 		(void)z_erofs_gather_if_stagingpage(page_pool, page);
+ 
+@@ -1198,6 +1199,7 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
+ 	if (page->mapping = mc) {
+ 		WRITE_ONCE(grp->compressed_pages[nr], page);
+ 
++		ClearPageError(page);
+ 		if (!PagePrivate(page)) {
+ 			/*
+ 			 * impossible to be !PagePrivate(page) for
 -- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.17.1
