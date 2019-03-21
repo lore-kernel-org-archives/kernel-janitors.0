@@ -1,61 +1,35 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Wed, 20 Mar 2019 22:12:57 +0000
-Subject: Re: [PATCH] hotplug/drc-info: ininitialize fndit to zero
-Message-Id: <20190320221257.GI251185@google.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 21 Mar 2019 08:54:36 +0000
+Subject: [PATCH -next] phy: tegra: xusb: fix typo in tegra186_usb2_pad_probe()
+Message-Id: <20190321085436.94975-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190316214016.6612-1-colin.king@canonical.com>
-In-Reply-To: <20190316214016.6612-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>
+To: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[+cc Michael B (original author)]
+Fix a typo in tegra186_usb2_pad_probe(), 'usb2->clk' should be
+'priv->usb2_trk_clk'.
 
-On Sat, Mar 16, 2019 at 09:40:16PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently variable fndit is not initialized and contains a
-> garbage value, later it is set to 1 if a drc entry is found.
-> Ensure fndit is not containing garbage by initializing it to
-> zero. Also remove an extraneous space at the end of an
-> sprintf call.
-> 
-> Detected by static analysis with cppcheck.
-> 
-> Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search ibm,drc-info property")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: b8998e928030 ("phy: tegra: xusb: Add Tegra186 support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/phy/tegra/xusb-tegra186.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Michael E, I assume you'll take this since you took the original?
-Let me know if you want me to.
-
-> ---
->  drivers/pci/hotplug/rpaphp_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-> index bcd5d357ca23..28213f44f64a 100644
-> --- a/drivers/pci/hotplug/rpaphp_core.c
-> +++ b/drivers/pci/hotplug/rpaphp_core.c
-> @@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
->  	struct of_drc_info drc;
->  	const __be32 *value;
->  	char cell_drc_name[MAX_DRC_NAME_LEN];
-> -	int j, fndit;
-> +	int j, fndit = 0;
->  
->  	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
->  	if (info = NULL)
-> @@ -254,7 +254,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
->  	/* Found it */
->  
->  	if (fndit)
-> -		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
-> +		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
->  			my_index);
->  
->  	if (((drc_name = NULL) ||
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index 11ad6e4e4711..a627fe0b8e54 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -467,8 +467,8 @@ tegra186_usb2_pad_probe(struct tegra_xusb_padctl *padctl,
+ 	}
+ 
+ 	priv->usb2_trk_clk = devm_clk_get(&pad->dev, "trk");
+-	if (IS_ERR(usb2->clk)) {
+-		err = PTR_ERR(usb2->clk);
++	if (IS_ERR(priv->usb2_trk_clk)) {
++		err = PTR_ERR(priv->usb2_trk_clk);
+ 		dev_dbg(&pad->dev, "failed to get usb2 trk clock: %d\n", err);
+ 		goto unregister;
+ 	}
