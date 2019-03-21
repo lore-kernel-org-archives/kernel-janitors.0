@@ -1,104 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Mar 2019 09:24:57 +0000
-Subject: Re: [PATCH serial v2] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
-Message-Id: <20190311092456.GC2412@kadam>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 21 Mar 2019 08:58:10 +0000
+Subject: [PATCH net-next] tipc: fix return value check in tipc_mcast_send_sync()
+Message-Id: <20190321085810.96037-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190309025037.116449-1-maowenan@huawei.com>
- <20190311074605.GB2434@kadam>
- <9f611db1-11e3-9e9b-e7f3-d3dcc83b57f7@huawei.com>
-In-Reply-To: <9f611db1-11e3-9e9b-e7f3-d3dcc83b57f7@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: maowenan <maowenan@huawei.com>
-Cc: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, vz@mleia.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>, Hoang Le <hoang.h.le@dektech.com.au>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 11, 2019 at 05:12:03PM +0800, maowenan wrote:
->=20
->=20
-> On 2019/3/11 15:46, Dan Carpenter wrote:
-> > On Sat, Mar 09, 2019 at 10:50:37AM +0800, Mao Wenan wrote:
-> >> Add the missing uart_unregister_driver() and i2c_del_driver() before r=
-eturn
-> >> from sc16is7xx_init() in the error handling case.
-> >>
-> >> Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
-> >> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> >> ---
-> >>  v1->v2: fix compile warning if CONFIG_SERIAL_SC16IS7XX_SPI is not exi=
-st.
-> >>  drivers/tty/serial/sc16is7xx.c | 14 ++++++++++++--
-> >>  1 file changed, 12 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16i=
-s7xx.c
-> >> index 268098681856..b9e5941ce767 100644
-> >> --- a/drivers/tty/serial/sc16is7xx.c
-> >> +++ b/drivers/tty/serial/sc16is7xx.c
-> >> @@ -1509,7 +1509,7 @@ static int __init sc16is7xx_init(void)
-> >>  	ret =3D i2c_add_driver(&sc16is7xx_i2c_uart_driver);
-> >>  	if (ret < 0) {
-> >>  		pr_err("failed to init sc16is7xx i2c --> %d\n", ret);
-> >> -		return ret;
-> >> +		goto err_i2c;
-> >>  	}
-> >>  #endif
-> >> =20
-> >> @@ -1517,10 +1517,20 @@ static int __init sc16is7xx_init(void)
-> >>  	ret =3D spi_register_driver(&sc16is7xx_spi_uart_driver);
-> >>  	if (ret < 0) {
-> >>  		pr_err("failed to init sc16is7xx spi --> %d\n", ret);
-> >> -		return ret;
-> >> +		goto err_spi;
-> >>  	}
-> >>  #endif
-> >>  	return ret;
-> >> +
-> >> +#ifdef CONFIG_SERIAL_SC16IS7XX_SPI
-> >> +err_spi:
-> >> +#endif
-> >> +#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
-> >> +	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
-> >> +err_i2c:
-> >> +#endif
-> >> +	uart_unregister_driver(&sc16is7xx_uart);
-> >> +	return ret;
-> >=20
-> > This is quite ulgy.  Why not create two functions:
-> >=20
-> > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is=
-7xx.c
-> > index 635178cf3eed..9986cb2479ad 100644
-> > --- a/drivers/tty/serial/sc16is7xx.c
-> > +++ b/drivers/tty/serial/sc16is7xx.c
-> > @@ -1491,6 +1491,21 @@ static struct i2c_driver sc16is7xx_i2c_uart_driv=
-er =3D {
-> >  	.id_table	=3D sc16is7xx_i2c_id_table,
-> >  };
-> > =20
-> > +static int __init register_sc16is7xx_i2c(void)
-> > +{
-> > +	return i2c_add_driver(&sc16is7xx_i2c_uart_driver);
-> > +}
-> > +
-> > +static void __exit del_sc16is7xx_i2c(void)
-> > +{
-> > +	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
-> > +}
-> > +
-> > +#else
-> > +
-> > +static int __init register_sc16is7xx_i2c(void) { return 0; }
-> > +static void __exit del_sc16is7xx_i2c(void) {}
-> > +
-> >  #endif
-> > =20
-> >  static int __init sc16is7xx_init(void)
-> >=20
-> > Then you can remove all the ifdefs.
-> ok=EF=BC=8C thank you, I will send v3. Do you mind Reviewed-by ?
+Fix the return value check which testing the wrong variable
+in tipc_mcast_send_sync().
 
-I'll add after I review the patch.  :)
+Fixes: c55c8edafa91 ("tipc: smooth change between replicast and broadcast")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ net/tipc/bcast.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+index 5264a8ff6e01..a41c0fa9c650 100644
+--- a/net/tipc/bcast.c
++++ b/net/tipc/bcast.c
+@@ -329,7 +329,7 @@ static int tipc_mcast_send_sync(struct net *net, struct sk_buff *skb,
+ 
+ 	/* Allocate dummy message */
+ 	_skb = tipc_buf_acquire(MCAST_H_SIZE, GFP_KERNEL);
+-	if (!skb)
++	if (!_skb)
+ 		return -ENOMEM;
+ 
+ 	/* Preparing for 'synching' header */
