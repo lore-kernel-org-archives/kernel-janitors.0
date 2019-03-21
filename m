@@ -1,61 +1,36 @@
-From: Jinpu Wang <jinpu.wang@cloud.ionos.com>
-Date: Sun, 31 Mar 2019 17:49:18 +0000
-Subject: Re: [PATCH 1/2] scsi: pm8001: clean up structurally dead code when PM8001_USE_MSIX is defined
-Message-Id: <CAMGffE=byzyhREomahYv9-VfiTYd2K3NoKPJc0p9K3f5fwUKPA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Mar 2019 09:24:51 +0000
+Subject: [PATCH v2] drm/i915/selftests: fix NULL vs IS_ERR() check in mock_context_barrier()
+Message-Id: <20190321092451.GK2202@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <822122908.274859.1553944071609@ox-groupware.bfs.de>
-In-Reply-To: <822122908.274859.1553944071609@ox-groupware.bfs.de>
+References: <8736ng1u4f.fsf@gaia.fi.intel.com>
+In-Reply-To: <8736ng1u4f.fsf@gaia.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Walter Harms <wharms@bfs.de>
-Cc: Colin King <colin.king@canonical.com>, Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu <lindar_liu@usish.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>
 
-On Sat, Mar 30, 2019 at 12:07 PM Walter Harms <wharms@bfs.de> wrote:
->
-> the ifdef jungle does not make thinks more readable. I am aware that
-> using neg is also not good but in this special case it seems helpful
-> to have only one branch, like:
->
-> static u32 pm80xx_chip_is_our_interupt(struct pm8001_hba_info *pm8001_ha)
-> {
-> #ifndef PM8001_USE_MSIX
->         u32 value;
->
->         value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
->         if (!value)
->                 return 0;
-> #endif
->         return 1;
->
->   }
->
-> just my 2 cents,
->
-> re,
->  wh
+The mock_context() function returns NULL on error, it doesn't return
+error pointers.
 
-Both version looks good to me, I've acked Colin's version.
+Fixes: 85fddf0b0027 ("drm/i915: Introduce a context barrier callback")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+V2: I accidentally sent a bunch of unrelated stuff...
 
-Thanks!
-
--- 
-Jack Wang
-Linux Kernel Developer
-
-1&1 IONOS Cloud GmbH | Greifswalder Str. 207 | 10405 Berlin | Germany
-Phone: +49 30 57700-8042 | Fax: +49 30 57700-8598
-E-mail: jinpu.wang@cloud.ionos.com | Web: www.ionos.de
-
-
-Head Office: Berlin, Germany
-District Court Berlin Charlottenburg, Registration number: HRB 125506 B
-Executive Management: Christoph Steffens, Matthias Steinberg, Achim Weiss
-
-Member of United Internet
-
-This e-mail may contain confidential and/or privileged information. If
-you are not the intended recipient of this e-mail, you are hereby
-notified that saving, distribution or use of the content of this
-e-mail in any way is prohibited. If you have received this e-mail in
-error, please notify the sender and delete the e-mail.
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_context.c b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
+index 4399ef9ebf15..a172dbd9cb9e 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
+@@ -1620,8 +1620,8 @@ static int mock_context_barrier(void *arg)
+ 	mutex_lock(&i915->drm.struct_mutex);
+ 
+ 	ctx = mock_context(i915, "mock");
+-	if (IS_ERR(ctx)) {
+-		err = PTR_ERR(ctx);
++	if (!ctx) {
++		err = -ENOMEM;
+ 		goto unlock;
+ 	}
+ 
