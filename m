@@ -1,44 +1,40 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 30 Mar 2019 02:26:26 +0000
-Subject: [PATCH -next] video: fbdev: remove set but not used variable 'size'
-Message-Id: <20190330022626.97340-1-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Mar 2019 06:54:26 +0000
+Subject: [PATCH] ipmi_si: remove an unused variable in try_smi_init()
+Message-Id: <20190322065426.GB12551@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kees Cook <keescook@chromium.org>, Ira Weiny <ira.weiny@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The "init_name" variable isn't used any more after commit 90b2d4f15ff7
+("ipmi_si: Remove hacks for adding a dummy platform devices").
 
-drivers/video/fbdev/pvr2fb.c: In function 'pvr2fb_init':
-drivers/video/fbdev/pvr2fb.c:1074:6: warning:
- variable 'size' set but not used [-Wunused-but-set-variable]
-
-It's not used since commit 9cd1c6743454 ("pvr2fb: Fix oops when
-pseudo_palette is written")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/video/fbdev/pvr2fb.c | 2 --
+ drivers/char/ipmi/ipmi_si_intf.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
-index 41390c8e0f67..4e4d6a0df978 100644
---- a/drivers/video/fbdev/pvr2fb.c
-+++ b/drivers/video/fbdev/pvr2fb.c
-@@ -1071,7 +1071,6 @@ static struct pvr2_board {
- static int __init pvr2fb_init(void)
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index b1732882b97e..f124a2d2bb9f 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -1931,7 +1931,6 @@ static int try_smi_init(struct smi_info *new_smi)
  {
- 	int i, ret = -ENODEV;
--	int size;
+ 	int rv = 0;
+ 	int i;
+-	char *init_name = NULL;
  
- #ifndef MODULE
- 	char *option = NULL;
-@@ -1080,7 +1079,6 @@ static int __init pvr2fb_init(void)
- 		return -ENODEV;
- 	pvr2fb_setup(option);
- #endif
--	size = sizeof(struct fb_info) + sizeof(struct pvr2fb_par) + 16 * sizeof(u32);
+ 	pr_info("Trying %s-specified %s state machine at %s address 0x%lx, slave address 0x%x, irq %d\n",
+ 		ipmi_addr_src_to_str(new_smi->io.addr_source),
+@@ -2073,7 +2072,6 @@ static int try_smi_init(struct smi_info *new_smi)
+ 		new_smi->io.io_cleanup = NULL;
+ 	}
  
- 	fb_info = framebuffer_alloc(sizeof(struct pvr2fb_par), NULL);
+-	kfree(init_name);
+ 	return rv;
+ }
+ 
+-- 
+2.17.1
