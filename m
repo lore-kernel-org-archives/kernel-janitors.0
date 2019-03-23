@@ -1,48 +1,55 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 21 Mar 2019 13:58:00 +0000
-Subject: Re: [PATCH][next] drm/amd/powerplay: fix spelling mistake "unknow" -> "unknown"
-Message-Id: <CADnq5_NXCeXkiXYy8pjSkJR6Dj6rqqt0P0pBJaUyRgkkzurg3g@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 23 Mar 2019 02:46:06 +0000
+Subject: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'fb_offset, fb_depth'
+Message-Id: <20190323024606.163683-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190320172909.10348-1-colin.king@canonical.com>
-In-Reply-To: <20190320172909.10348-1-colin.king@canonical.com>
+References: <1538739418-151469-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1538739418-151469-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Mar 20, 2019 at 1:29 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in pr_warn message; fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied.  thanks!
+drivers/gpu/drm/vmwgfx/vmwgfx_fb.c: In function 'vmw_fb_init':
+drivers/gpu/drm/vmwgfx/vmwgfx_fb.c:645:29: warning:
+ variable 'fb_offset' set but not used [-Wunused-but-set-variable]
 
-Alex
+drivers/gpu/drm/vmwgfx/vmwgfx_fb.c:645:19: warning:
+ variable 'fb_depth' set but not used [-Wunused-but-set-variable]
 
-> ---
->  drivers/gpu/drm/amd/powerplay/smu_v11_0.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-> index 17143888e37e..026bebe6fb45 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-> @@ -2024,6 +2024,6 @@ void smu_v11_0_set_smu_funcs(struct smu_context *smu)
->                 vega20_set_ppt_funcs(smu);
->                 break;
->         default:
-> -               pr_warn("Unknow asic for smu11\n");
-> +               pr_warn("Unknown asic for smu11\n");
->         }
->  }
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+They're not used any more, so can be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_fb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
+index 2a9112515f46..86efb91f5034 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
+@@ -642,12 +642,11 @@ int vmw_fb_init(struct vmw_private *vmw_priv)
+ 	struct vmw_fb_par *par;
+ 	struct fb_info *info;
+ 	unsigned fb_width, fb_height;
+-	unsigned fb_bpp, fb_depth, fb_offset, fb_pitch, fb_size;
++	unsigned fb_bpp, fb_pitch, fb_size;
+ 	struct drm_display_mode *init_mode;
+ 	int ret;
+ 
+ 	fb_bpp = 32;
+-	fb_depth = 24;
+ 
+ 	/* XXX As shouldn't these be as well. */
+ 	fb_width = min(vmw_priv->fb_max_width, (unsigned)2048);
+@@ -655,7 +654,6 @@ int vmw_fb_init(struct vmw_private *vmw_priv)
+ 
+ 	fb_pitch = fb_width * fb_bpp / 8;
+ 	fb_size = fb_pitch * fb_height;
+-	fb_offset = vmw_read(vmw_priv, SVGA_REG_FB_OFFSET);
+ 
+ 	info = framebuffer_alloc(sizeof(*par), device);
+ 	if (!info)
