@@ -1,46 +1,41 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Date: Fri, 29 Mar 2019 10:20:24 +0000
-Subject: RE: [PATCH] pinctrl: imx: remove an unnecessary NULL check
-Message-Id: <AM0PR04MB4211672CD657B1AE5B82F088805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 23 Mar 2019 01:56:47 +0000
+Subject: [PATCH -next] ASoC: simple-card-utils: remove set but not used variable ''
+Message-Id: <20190323020838.107533-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328144022.GO32613@kadam>
-In-Reply-To: <20190328144022.GO32613@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Thursday, March 28, 2019 10:40 PM
-> 
-> The address of "ipctl->pin_regs[pin_id]" can't be NULL.  It's the offset into an
-> array in the middle of a struct.  This patch removes the check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+sound/soc/generic/simple-card-utils.c: In function 'asoc_simple_parse_clk':
+sound/soc/generic/simple-card-utils.c:164:18: warning:
+ parameter 'dai_name' set but not used [-Wunused-but-set-parameter]
 
-Regards
-Dong Aisheng
+It's not used since commit 0580dde59438 ("ASoC: simple-card-utils: add
+asoc_simple_debug_info()"), so can be removed.
 
-> ---
->  drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
-> b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index 188001beb298..d2d4b8ffc08d 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -449,7 +449,7 @@ static void imx_pinconf_dbg_show(struct pinctrl_dev
-> *pctldev,
->  		}
->  	} else {
->  		pin_reg = &ipctl->pin_regs[pin_id];
-> -		if (!pin_reg || pin_reg->conf_reg == -1) {
-> +		if (pin_reg->conf_reg == -1) {
->  			seq_puts(s, "N/A");
->  			return;
->  		}
-> --
-> 2.17.1
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/generic/simple-card-utils.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index 4ed68348f939..db1458a19985 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -173,10 +173,8 @@ int asoc_simple_parse_clk(struct device *dev,
+ 	 * see
+ 	 *	soc-core.c :: snd_soc_init_multicodec()
+ 	 */
+-	if (dlc) {
++	if (dlc)
+ 		dai_of_node	= dlc->of_node;
+-		dai_name	= dlc->dai_name;
+-	}
+ 
+ 	/*
+ 	 * Parse dai->sysclk come from "clocks = <&xxx>"
