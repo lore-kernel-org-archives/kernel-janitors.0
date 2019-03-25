@@ -1,45 +1,69 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 25 Mar 2019 03:03:18 +0000
+From: Mukesh Ojha <mojha@codeaurora.org>
+Date: Mon, 25 Mar 2019 07:54:01 +0000
 Subject: Re: [PATCH -next] ASoC: simple-card-utils: remove set but not used variable ''
-Message-Id: <c216f899-fdfc-6f99-3f76-5ee64680b2fe@huawei.com>
+Message-Id: <6a0c2306-088f-cdbc-0730-60b899611c6f@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190323020838.107533-1-yuehaibing@huawei.com>
- <87a7hjitm0.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87a7hjitm0.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <20190323020838.107533-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2019/3/25 10:31, Kuninori Morimoto wrote:
-> 
-> Hi
-> 
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> sound/soc/generic/simple-card-utils.c: In function 'asoc_simple_parse_clk':
->> sound/soc/generic/simple-card-utils.c:164:18: warning:
->>  parameter 'dai_name' set but not used [-Wunused-but-set-parameter]
->>
->> It's not used since commit 0580dde59438 ("ASoC: simple-card-utils: add
->> asoc_simple_debug_info()"), so can be removed.
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
-> 
-> I think dai_name parameter itself is no longer needed for this function,
-> but, it will be removed if all driver switched to modern dai_link style.
-> So, it is not a big deal.
-> 
-> 	Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Thanks, yes, this just a code cleanup.
+On 3/23/2019 7:38 AM, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> sound/soc/generic/simple-card-utils.c: In function 'asoc_simple_parse_clk':
+> sound/soc/generic/simple-card-utils.c:164:18: warning:
+>   parameter 'dai_name' set but not used [-Wunused-but-set-parameter]
+>
+> It's not used since commit 0580dde59438 ("ASoC: simple-card-utils: add
 
-> 
-> Best regards
+
+I am not able to find this commit
+
+0580dde59438
+
+
+> asoc_simple_debug_info()"), so can be removed.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
-> Kuninori Morimoto
-> 
-> .
-> 
+>   sound/soc/generic/simple-card-utils.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+> index 4ed68348f939..db1458a19985 100644
+> --- a/sound/soc/generic/simple-card-utils.c
+> +++ b/sound/soc/generic/simple-card-utils.c
+> @@ -173,10 +173,8 @@ int asoc_simple_parse_clk(struct device *dev,
+>   	 * see
+>   	 *	soc-core.c :: snd_soc_init_multicodec()
+>   	 */
+> -	if (dlc) {
+> +	if (dlc)
+>   		dai_of_node	= dlc->of_node;
+> -		dai_name	= dlc->dai_name;
+
+I don't see any function like `asoc_simple_parse_clk`
+
+but instead this `asoc_simple_card_parse_clk` and there the variable is 
+used.
+
+Can you double check latest code base ?
+
+Thanks,
+Mukesh
+
+
+> -	}
+>   
+>   	/*
+>   	 * Parse dai->sysclk come from "clocks = <&xxx>"
+>
+>
+>
+>
+>
