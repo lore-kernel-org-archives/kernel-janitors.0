@@ -1,172 +1,46 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Fri, 29 Mar 2019 21:12:44 +0000
-Subject: Re: [PATCH] scsi: pm8001: clean up structurally dead code when PM8001_USE_MSIX is defined (part2)
-Message-Id: <2b2ad873-2303-62de-55cd-f63cc31a78b9@codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 25 Mar 2019 03:17:40 +0000
+Subject: [PATCH v2 -next] ASoC: simple-card-utils: remove set but not used variable 'dai_name'
+Message-Id: <20190325031740.164364-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190329153221.29238-1-colin.king@canonical.com>
- <0c08b258-e61d-60ee-7702-728fa96c435d@codeaurora.org>
-In-Reply-To: <0c08b258-e61d-60ee-7702-728fa96c435d@codeaurora.org>
+References: <20190323020838.107533-1-yuehaibing@huawei.com>
+In-Reply-To: <20190323020838.107533-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu@usish.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 3/30/2019 1:38 AM, Mukesh Ojha wrote:
->
-> On 3/29/2019 9:02 PM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> When macro PM8001_USE_MSIX is defined there is redundant dead code
->> call to pm8001_cr32.  Clean this up for the defined PM8001_USE_MSIX and
->> undefined PM8001_USE_MSIX cases.
->>
->> Also rename the functions pm8001_chip_is_our_interupt,
->> pm80xx_chip_is_our_interupt and function pointer is_our_interrupt
->> to fix spelling mistakes.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> It would be better if you could split this into two patch, one for 
-> dead code and other for renaming.
+sound/soc/generic/simple-card-utils.c: In function 'asoc_simple_parse_clk':
+sound/soc/generic/simple-card-utils.c:164:18: warning:
+ parameter 'dai_name' set but not used [-Wunused-but-set-parameter]
 
-Also, What is that part2 in the subject ? please remove that too.
+It's not used since commit 0580dde59438 ("ASoC: simple-card-utils: add
+asoc_simple_debug_info()"), so can be removed.
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+v2: fix patch title
+---
+ sound/soc/generic/simple-card-utils.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->
->
-> Otherwise change looks good.
->
-> Once you fix above you could include .
-> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
->
-> Cheers,
-> -Mukesh
->
->
->> ---
->>   drivers/scsi/pm8001/pm8001_hwi.c  | 11 ++++++-----
->>   drivers/scsi/pm8001/pm8001_init.c |  4 ++--
->>   drivers/scsi/pm8001/pm8001_sas.h  |  2 +-
->>   drivers/scsi/pm8001/pm80xx_hwi.c  | 11 ++++++-----
->>   4 files changed, 15 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/scsi/pm8001/pm8001_hwi.c 
->> b/drivers/scsi/pm8001/pm8001_hwi.c
->> index e4209091c1da..627075d00918 100644
->> --- a/drivers/scsi/pm8001/pm8001_hwi.c
->> +++ b/drivers/scsi/pm8001/pm8001_hwi.c
->> @@ -4623,17 +4623,18 @@ static int pm8001_chip_phy_ctl_req(struct 
->> pm8001_hba_info *pm8001_ha,
->>       return ret;
->>   }
->>   -static u32 pm8001_chip_is_our_interupt(struct pm8001_hba_info 
->> *pm8001_ha)
->> +static u32 pm8001_chip_is_our_interrupt(struct pm8001_hba_info 
->> *pm8001_ha)
->>   {
->> -    u32 value;
->>   #ifdef PM8001_USE_MSIX
->>       return 1;
->> -#endif
->> +#else
->> +    u32 value;
->> +
->>       value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
->>       if (value)
->>           return 1;
->>       return 0;
->> -
->> +#endif
->>   }
->>     /**
->> @@ -5119,7 +5120,7 @@ const struct pm8001_dispatch 
->> pm8001_8001_dispatch = {
->>       .chip_rst        = pm8001_hw_chip_rst,
->>       .chip_iounmap        = pm8001_chip_iounmap,
->>       .isr            = pm8001_chip_isr,
->> -    .is_our_interupt    = pm8001_chip_is_our_interupt,
->> +    .is_our_interrupt    = pm8001_chip_is_our_interrupt,
->>       .isr_process_oq        = process_oq,
->>       .interrupt_enable     = pm8001_chip_interrupt_enable,
->>       .interrupt_disable    = pm8001_chip_interrupt_disable,
->> diff --git a/drivers/scsi/pm8001/pm8001_init.c 
->> b/drivers/scsi/pm8001/pm8001_init.c
->> index a36060c23b37..3374f553c617 100644
->> --- a/drivers/scsi/pm8001/pm8001_init.c
->> +++ b/drivers/scsi/pm8001/pm8001_init.c
->> @@ -201,7 +201,7 @@ static irqreturn_t 
->> pm8001_interrupt_handler_msix(int irq, void *opaque)
->>         if (unlikely(!pm8001_ha))
->>           return IRQ_NONE;
->> -    if (!PM8001_CHIP_DISP->is_our_interupt(pm8001_ha))
->> +    if (!PM8001_CHIP_DISP->is_our_interrupt(pm8001_ha))
->>           return IRQ_NONE;
->>   #ifdef PM8001_USE_TASKLET
->> tasklet_schedule(&pm8001_ha->tasklet[irq_vector->irq_id]);
->> @@ -224,7 +224,7 @@ static irqreturn_t 
->> pm8001_interrupt_handler_intx(int irq, void *dev_id)
->>       pm8001_ha = sha->lldd_ha;
->>       if (unlikely(!pm8001_ha))
->>           return IRQ_NONE;
->> -    if (!PM8001_CHIP_DISP->is_our_interupt(pm8001_ha))
->> +    if (!PM8001_CHIP_DISP->is_our_interrupt(pm8001_ha))
->>           return IRQ_NONE;
->>     #ifdef PM8001_USE_TASKLET
->> diff --git a/drivers/scsi/pm8001/pm8001_sas.h 
->> b/drivers/scsi/pm8001/pm8001_sas.h
->> index f88b0d33c385..ac6d8e3f22de 100644
->> --- a/drivers/scsi/pm8001/pm8001_sas.h
->> +++ b/drivers/scsi/pm8001/pm8001_sas.h
->> @@ -197,7 +197,7 @@ struct pm8001_dispatch {
->>       int (*chip_ioremap)(struct pm8001_hba_info *pm8001_ha);
->>       void (*chip_iounmap)(struct pm8001_hba_info *pm8001_ha);
->>       irqreturn_t (*isr)(struct pm8001_hba_info *pm8001_ha, u8 vec);
->> -    u32 (*is_our_interupt)(struct pm8001_hba_info *pm8001_ha);
->> +    u32 (*is_our_interrupt)(struct pm8001_hba_info *pm8001_ha);
->>       int (*isr_process_oq)(struct pm8001_hba_info *pm8001_ha, u8 vec);
->>       void (*interrupt_enable)(struct pm8001_hba_info *pm8001_ha, u8 
->> vec);
->>       void (*interrupt_disable)(struct pm8001_hba_info *pm8001_ha, u8 
->> vec);
->> diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c 
->> b/drivers/scsi/pm8001/pm80xx_hwi.c
->> index 536d2b4384f8..301de40eb708 100644
->> --- a/drivers/scsi/pm8001/pm80xx_hwi.c
->> +++ b/drivers/scsi/pm8001/pm80xx_hwi.c
->> @@ -4617,17 +4617,18 @@ static int pm80xx_chip_phy_ctl_req(struct 
->> pm8001_hba_info *pm8001_ha,
->>       return pm8001_mpi_build_cmd(pm8001_ha, circularQ, opc, 
->> &payload, 0);
->>   }
->>   -static u32 pm80xx_chip_is_our_interupt(struct pm8001_hba_info 
->> *pm8001_ha)
->> +static u32 pm80xx_chip_is_our_interrupt(struct pm8001_hba_info 
->> *pm8001_ha)
->>   {
->> -    u32 value;
->>   #ifdef PM8001_USE_MSIX
->>       return 1;
->> -#endif
->> +#else
->> +    u32 value;
->> +
->>       value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
->>       if (value)
->>           return 1;
->>       return 0;
->> -
->> +#endif
->>   }
->>     /**
->> @@ -4724,7 +4725,7 @@ const struct pm8001_dispatch 
->> pm8001_80xx_dispatch = {
->>       .chip_rst        = pm80xx_hw_chip_rst,
->>       .chip_iounmap        = pm8001_chip_iounmap,
->>       .isr            = pm80xx_chip_isr,
->> -    .is_our_interupt    = pm80xx_chip_is_our_interupt,
->> +    .is_our_interrupt    = pm80xx_chip_is_our_interrupt,
->>       .isr_process_oq        = process_oq,
->>       .interrupt_enable    = pm80xx_chip_interrupt_enable,
->>       .interrupt_disable    = pm80xx_chip_interrupt_disable,
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index 4ed68348f939..db1458a19985 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -173,10 +173,8 @@ int asoc_simple_parse_clk(struct device *dev,
+ 	 * see
+ 	 *	soc-core.c :: snd_soc_init_multicodec()
+ 	 */
+-	if (dlc) {
++	if (dlc)
+ 		dai_of_node	= dlc->of_node;
+-		dai_name	= dlc->dai_name;
+-	}
+ 
+ 	/*
+ 	 * Parse dai->sysclk come from "clocks = <&xxx>"
