@@ -1,32 +1,58 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 26 Mar 2019 15:10:26 +0000
-Subject: Re: [PATCH][next] RDMA/nes: remove redundant check on udata
-Message-Id: <20190326151026.GA9743@ziepe.ca>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 25 Mar 2019 09:26:31 +0000
+Subject: [PATCH v2 -next] drm/virtio: remove set but not used variable 'vgdev'
+Message-Id: <20190325092631.152060-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190302230637.8624-1-colin.king@canonical.com>
-In-Reply-To: <20190302230637.8624-1-colin.king@canonical.com>
+References: <20190320020308.12745-1-yuehaibing@huawei.com>
+In-Reply-To: <20190320020308.12745-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Faisal Latif <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Mar 02, 2019 at 11:06:36PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The non-null check on udata is redundant as this check was performed
-> just a few statements earlier and the check is always true as udata
-> must be non-null at this point. Remove redundant the check on udata
-> and the redundant else part that can never be executed.
-> 
-> Detected by CoverityScan, CID#1477317 ("Logically dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/nes/nes_verbs.c | 73 +++++++++++++--------------
->  1 file changed, 34 insertions(+), 39 deletions(-)
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied to for-next
+drivers/gpu/drm/virtio/virtgpu_ttm.c: In function 'virtio_gpu_init_mem_type':
+drivers/gpu/drm/virtio/virtgpu_ttm.c:117:28: warning:
+ variable 'vgdev' set but not used [-Wunused-but-set-variable]
 
-Thanks,
-Jason
+drivers/gpu/drm/virtio/virtgpu_ttm.c: In function 'virtio_gpu_bo_swap_notify':
+drivers/gpu/drm/virtio/virtgpu_ttm.c:300:28: warning:
+ variable 'vgdev' set but not used [-Wunused-but-set-variable]
+
+It is never used since introduction in dc5698e80cf7 ("Add virtio gpu driver.")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix patch prefix
+---
+ drivers/gpu/drm/virtio/virtgpu_ttm.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+index d6225ba20b30..eb007c2569d8 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+@@ -114,10 +114,6 @@ static const struct ttm_mem_type_manager_func virtio_gpu_bo_manager_func = {
+ static int virtio_gpu_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
+ 				    struct ttm_mem_type_manager *man)
+ {
+-	struct virtio_gpu_device *vgdev;
+-
+-	vgdev = virtio_gpu_get_vgdev(bdev);
+-
+ 	switch (type) {
+ 	case TTM_PL_SYSTEM:
+ 		/* System memory */
+@@ -297,10 +293,8 @@ static void virtio_gpu_bo_move_notify(struct ttm_buffer_object *tbo,
+ static void virtio_gpu_bo_swap_notify(struct ttm_buffer_object *tbo)
+ {
+ 	struct virtio_gpu_object *bo;
+-	struct virtio_gpu_device *vgdev;
+ 
+ 	bo = container_of(tbo, struct virtio_gpu_object, tbo);
+-	vgdev = (struct virtio_gpu_device *)bo->gem_base.dev->dev_private;
+ 
+ 	if (bo->pages)
+ 		virtio_gpu_object_free_sg_table(bo);
