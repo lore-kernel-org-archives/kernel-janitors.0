@@ -1,55 +1,44 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 23 Mar 2019 02:46:06 +0000
-Subject: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'fb_offset, fb_depth'
-Message-Id: <20190323024606.163683-1-yuehaibing@huawei.com>
+From: Deepak Singh Rawat <drawat@vmware.com>
+Date: Mon, 25 Mar 2019 17:26:36 +0000
+Subject: Re: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'fb_offset, fb_depth'
+Message-Id: <53a45c6dc200247288ce70a22c06e2f1db4c5497.camel@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538739418-151469-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538739418-151469-1-git-send-email-yuehaibing@huawei.com>
+References: <20190323024606.163683-1-yuehaibing@huawei.com>
+In-Reply-To: <20190323024606.163683-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/gpu/drm/vmwgfx/vmwgfx_fb.c: In function 'vmw_fb_init':
-drivers/gpu/drm/vmwgfx/vmwgfx_fb.c:645:29: warning:
- variable 'fb_offset' set but not used [-Wunused-but-set-variable]
-
-drivers/gpu/drm/vmwgfx/vmwgfx_fb.c:645:19: warning:
- variable 'fb_depth' set but not used [-Wunused-but-set-variable]
-
-They're not used any more, so can be removed.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_fb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
-index 2a9112515f46..86efb91f5034 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fb.c
-@@ -642,12 +642,11 @@ int vmw_fb_init(struct vmw_private *vmw_priv)
- 	struct vmw_fb_par *par;
- 	struct fb_info *info;
- 	unsigned fb_width, fb_height;
--	unsigned fb_bpp, fb_depth, fb_offset, fb_pitch, fb_size;
-+	unsigned fb_bpp, fb_pitch, fb_size;
- 	struct drm_display_mode *init_mode;
- 	int ret;
- 
- 	fb_bpp = 32;
--	fb_depth = 24;
- 
- 	/* XXX As shouldn't these be as well. */
- 	fb_width = min(vmw_priv->fb_max_width, (unsigned)2048);
-@@ -655,7 +654,6 @@ int vmw_fb_init(struct vmw_private *vmw_priv)
- 
- 	fb_pitch = fb_width * fb_bpp / 8;
- 	fb_size = fb_pitch * fb_height;
--	fb_offset = vmw_read(vmw_priv, SVGA_REG_FB_OFFSET);
- 
- 	info = framebuffer_alloc(sizeof(*par), device);
- 	if (!info)
+VGhhbmtzIGZvciBkb2luZyB0aGlzLg0KDQpSZXZpZXdlZC1ieTogRGVlcGFrIFJhd2F0IDxkcmF3
+YXRAdm13YXJlLmNvbT4NCg0KT24gU2F0LCAyMDE5LTAzLTIzIGF0IDAyOjQ2ICswMDAwLCBZdWVI
+YWliaW5nIHdyb3RlOg0KPiBGaXhlcyBnY2MgJy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGUnIHdh
+cm5pbmc6DQo+IA0KPiBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9mYi5jOiBJbiBmdW5j
+dGlvbiAndm13X2ZiX2luaXQnOg0KPiBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9mYi5j
+OjY0NToyOTogd2FybmluZzoNCj4gIHZhcmlhYmxlICdmYl9vZmZzZXQnIHNldCBidXQgbm90IHVz
+ZWQgWy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGVdDQo+IA0KPiBkcml2ZXJzL2dwdS9kcm0vdm13
+Z2Z4L3Ztd2dmeF9mYi5jOjY0NToxOTogd2FybmluZzoNCj4gIHZhcmlhYmxlICdmYl9kZXB0aCcg
+c2V0IGJ1dCBub3QgdXNlZCBbLVd1bnVzZWQtYnV0LXNldC12YXJpYWJsZV0NCj4gDQo+IFRoZXkn
+cmUgbm90IHVzZWQgYW55IG1vcmUsIHNvIGNhbiBiZSByZW1vdmVkLg0KPiANCj4gU2lnbmVkLW9m
+Zi1ieTogWXVlSGFpYmluZyA8eXVlaGFpYmluZ0BodWF3ZWkuY29tPg0KPiAtLS0NCj4gIGRyaXZl
+cnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ZiLmMgfCA0ICstLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9mYi5jDQo+IGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dm
+eC92bXdnZnhfZmIuYw0KPiBpbmRleCAyYTkxMTI1MTVmNDYuLjg2ZWZiOTFmNTAzNCAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfZmIuYw0KPiArKysgYi9kcml2
+ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9mYi5jDQo+IEBAIC02NDIsMTIgKzY0MiwxMSBAQCBp
+bnQgdm13X2ZiX2luaXQoc3RydWN0IHZtd19wcml2YXRlICp2bXdfcHJpdikNCj4gIAlzdHJ1Y3Qg
+dm13X2ZiX3BhciAqcGFyOw0KPiAgCXN0cnVjdCBmYl9pbmZvICppbmZvOw0KPiAgCXVuc2lnbmVk
+IGZiX3dpZHRoLCBmYl9oZWlnaHQ7DQo+IC0JdW5zaWduZWQgZmJfYnBwLCBmYl9kZXB0aCwgZmJf
+b2Zmc2V0LCBmYl9waXRjaCwgZmJfc2l6ZTsNCj4gKwl1bnNpZ25lZCBmYl9icHAsIGZiX3BpdGNo
+LCBmYl9zaXplOw0KPiAgCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICppbml0X21vZGU7DQo+ICAJ
+aW50IHJldDsNCj4gIA0KPiAgCWZiX2JwcCA9IDMyOw0KPiAtCWZiX2RlcHRoID0gMjQ7DQo+ICAN
+Cj4gIAkvKiBYWFggQXMgc2hvdWxkbid0IHRoZXNlIGJlIGFzIHdlbGwuICovDQo+ICAJZmJfd2lk
+dGggPSBtaW4odm13X3ByaXYtPmZiX21heF93aWR0aCwgKHVuc2lnbmVkKTIwNDgpOw0KPiBAQCAt
+NjU1LDcgKzY1NCw2IEBAIGludCB2bXdfZmJfaW5pdChzdHJ1Y3Qgdm13X3ByaXZhdGUgKnZtd19w
+cml2KQ0KPiAgDQo+ICAJZmJfcGl0Y2ggPSBmYl93aWR0aCAqIGZiX2JwcCAvIDg7DQo+ICAJZmJf
+c2l6ZSA9IGZiX3BpdGNoICogZmJfaGVpZ2h0Ow0KPiAtCWZiX29mZnNldCA9IHZtd19yZWFkKHZt
+d19wcml2LCBTVkdBX1JFR19GQl9PRkZTRVQpOw0KPiAgDQo+ICAJaW5mbyA9IGZyYW1lYnVmZmVy
+X2FsbG9jKHNpemVvZigqcGFyKSwgZGV2aWNlKTsNCj4gIAlpZiAoIWluZm8pDQo+IA0KPiANCj4g
+DQoNCg=
