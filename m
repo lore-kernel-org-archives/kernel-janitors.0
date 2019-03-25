@@ -1,59 +1,52 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 23 Mar 2019 02:15:59 +0000
-Subject: [PATCH -next] pm8001: remove set but not used variables 'param, sas_ha'
-Message-Id: <20190323021559.113157-1-yuehaibing@huawei.com>
+From: Jinpu Wang <jinpu.wang@cloud.ionos.com>
+Date: Mon, 25 Mar 2019 07:58:35 +0000
+Subject: Re: [PATCH -next] pm8001: remove set but not used variables 'param, sas_ha'
+Message-Id: <CAMGffE=3PTXVeHevwC4xL4Or5xBje3UMaMHJdht14V2EAuEgAw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190323021559.113157-1-yuehaibing@huawei.com>
+In-Reply-To: <20190323021559.113157-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+snip
+On Sat, Mar 23, 2019 at 3:04 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/scsi/pm8001/pm8001_hwi.c: In function 'mpi_smp_completion':
+> drivers/scsi/pm8001/pm8001_hwi.c:2901:6: warning:
+>  variable 'param' set but not used [-Wunused-but-set-variable]
+>
+> drivers/scsi/pm8001/pm8001_hwi.c: In function 'pm8001_bytes_dmaed':
+> drivers/scsi/pm8001/pm8001_hwi.c:3247:24: warning:
+>  variable 'sas_ha' set but not used [-Wunused-but-set-variable]
+>
+> They're never used since introduction, so can be removed.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
 
-drivers/scsi/pm8001/pm8001_hwi.c: In function 'mpi_smp_completion':
-drivers/scsi/pm8001/pm8001_hwi.c:2901:6: warning:
- variable 'param' set but not used [-Wunused-but-set-variable]
+Thanks,
 
-drivers/scsi/pm8001/pm8001_hwi.c: In function 'pm8001_bytes_dmaed':
-drivers/scsi/pm8001/pm8001_hwi.c:3247:24: warning:
- variable 'sas_ha' set but not used [-Wunused-but-set-variable]
+-- 
+Jack Wang
+Linux Kernel Developer
 
-They're never used since introduction, so can be removed.
+1&1 IONOS Cloud GmbH | Greifswalder Str. 207 | 10405 Berlin | Germany
+Phone: +49 30 57700-8042 | Fax: +49 30 57700-8598
+E-mail: jinpu.wang@cloud.ionos.com | Web: www.ionos.de
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/pm8001/pm8001_hwi.c | 4 ----
- 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
-index e0fee3d91d23..e4209091c1da 100644
---- a/drivers/scsi/pm8001/pm8001_hwi.c
-+++ b/drivers/scsi/pm8001/pm8001_hwi.c
-@@ -2898,7 +2898,6 @@ static void mpi_sata_event(struct pm8001_hba_info *pm8001_ha , void *piomb)
- static void
- mpi_smp_completion(struct pm8001_hba_info *pm8001_ha, void *piomb)
- {
--	u32 param;
- 	struct sas_task *t;
- 	struct pm8001_ccb_info *ccb;
- 	unsigned long flags;
-@@ -2913,7 +2912,6 @@ mpi_smp_completion(struct pm8001_hba_info *pm8001_ha, void *piomb)
- 	tag = le32_to_cpu(psmpPayload->tag);
- 
- 	ccb = &pm8001_ha->ccb_info[tag];
--	param = le32_to_cpu(psmpPayload->param);
- 	t = ccb->task;
- 	ts = &t->task_status;
- 	pm8001_dev = ccb->device;
-@@ -3244,11 +3242,9 @@ void pm8001_bytes_dmaed(struct pm8001_hba_info *pm8001_ha, int i)
- {
- 	struct pm8001_phy *phy = &pm8001_ha->phy[i];
- 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
--	struct sas_ha_struct *sas_ha;
- 	if (!phy->phy_attached)
- 		return;
- 
--	sas_ha = pm8001_ha->sas;
- 	if (sas_phy->phy) {
- 		struct sas_phy *sphy = sas_phy->phy;
- 		sphy->negotiated_linkrate = sas_phy->linkrate;
+Head Office: Berlin, Germany
+District Court Berlin Charlottenburg, Registration number: HRB 125506 B
+Executive Management: Christoph Steffens, Matthias Steinberg, Achim Weiss
+
+Member of United Internet
+
+This e-mail may contain confidential and/or privileged information. If
+you are not the intended recipient of this e-mail, you are hereby
+notified that saving, distribution or use of the content of this
+e-mail in any way is prohibited. If you have received this e-mail in
+error, please notify the sender and delete the e-mail.
