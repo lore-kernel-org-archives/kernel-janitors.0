@@ -1,25 +1,40 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Fri, 08 Mar 2019 17:16:38 +0000
-Subject: Re: [PATCH] xen, cpu_hotplug: Prevent an out of bounds access
-Message-Id: <ca3cd95b-a07d-254d-1e42-5a36686a805d@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Mar 2019 09:17:26 +0000
+Subject: [PATCH] ntb_hw_switchtec: potential shift wrapping bug in switchtec_ntb_init_sndev()
+Message-Id: <20190325091726.GD16023@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190307054122.GB4517@kadam>
-In-Reply-To: <20190307054122.GB4517@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Alex Nixon <alex.nixon@citrix.com>
-Cc: xen-devel@lists.xenproject.org, Stefano Stabellini <sstabellini@kernel.org>, kernel-janitors@vger.kernel.org
+To: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Kelvin Cao <kelvin.cao@microsemi.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, kernel-janitors@vger.kernel.org
 
-On 07/03/2019 06:41, Dan Carpenter wrote:
-> The "cpu" variable comes from the sscanf() so Smatch marks it as
-> untrusted data.  We can't pass a higher value than "nr_cpu_ids" to
-> cpu_possible() or it results in an out of bounds access.
-> 
-> Fixes: d68d82afd4c8 ("xen: implement CPU hotplugging")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This code triggers a Smatch warning:
 
-Pushed to xen/tip.git for-linus-5.1a
+    drivers/ntb/hw/mscc/ntb_hw_switchtec.c:884 switchtec_ntb_init_sndev()
+    warn: should '(1 << sndev->peer_partition)' be a 64 bit type?
 
+The "part_map" and "tpart_vec" variables are u64 type so this seems like
+a valid warning.
 
-Juergen
+Fixes: 3df54c870f52 ("ntb_hw_switchtec: Allow using Switchtec NTB in multi-partition setups")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+index d905d368d28c..26a88731b0cb 100644
+--- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
++++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+@@ -881,7 +881,7 @@ static int switchtec_ntb_init_sndev(struct switchtec_ntb *sndev)
+ 		}
+ 
+ 		sndev->peer_partition = ffs(tpart_vec) - 1;
+-		if (!(part_map & (1 << sndev->peer_partition))) {
++		if (!(part_map & (1ULL << sndev->peer_partition))) {
+ 			dev_err(&sndev->stdev->dev,
+ 				"ntb target partition is not NT partition\n");
+ 			return -ENODEV;
+-- 
+2.17.1
