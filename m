@@ -1,58 +1,47 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Sun, 31 Mar 2019 14:33:14 +0000
-Subject: Re: [PATCH] net: dsa: fix negative loop bound error on for loop
-Message-Id: <20190331143314.GA20636@lunn.ch>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Mar 2019 08:56:59 +0000
+Subject: [PATCH] staging: vc04_services: Fix an error code in vchiq_probe()
+Message-Id: <20190325085659.GA16023@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330214241.15311-1-colin.king@canonical.com>
- <3723042a-88db-fa87-02ec-4ff231bbaff2@codeaurora.org>
-In-Reply-To: <3723042a-88db-fa87-02ec-4ff231bbaff2@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Colin King <colin.king@canonical.com>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Mar 31, 2019 at 03:25:47PM +0530, Mukesh Ojha wrote:
->=20
-> On 3/31/2019 3:12 AM, Colin King wrote:
-> >From: Colin Ian King <colin.king@canonical.com>
-> >
-> >Currently the for-loop using an unsigned int for the loop counter
-> >which is problematic when comparing it to the signed int count
-> >This is an issue because if the signed int is negative then
-> >the negative loop bound is implicitly cast to an unsigned int on
-> >the comparison to loop counter i and will yield a very large value,
-> >eventually causing an error when memmove/memcpy'ing outside the
-> >allocated region pointed to by ndata.
-> >
-> >Fix this by simply making the loop counter i a signed int;
-> >
-> >Fixes: f2f2356685bc ("net: dsa: move master ethtool code")
-> >Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >---
-> >  net/dsa/master.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> >diff --git a/net/dsa/master.c b/net/dsa/master.c
-> >index c58f33931be1..1b659647a303 100644
-> >--- a/net/dsa/master.c
-> >+++ b/net/dsa/master.c
-> >@@ -87,8 +87,7 @@ static void dsa_master_get_strings(struct net_device *=
-dev, uint32_t stringset,
-> >  	struct dsa_switch *ds =3D cpu_dp->ds;
-> >  	int port =3D cpu_dp->index;
-> >  	int len =3D ETH_GSTRING_LEN;
-> >-	int mcount =3D 0, count;
-> >-	unsigned int i;
-> >+	int mcount =3D 0, count, i;
->=20
-> This looks fine but why the return value checking for the negative will n=
-ot
-> be good here ?
-> =A0count =3D ds->ops->get_sset_count(ds, port, stringset);
+We need to set "err" on this error path.
 
-Hi Mukesh
+Fixes: 187ac53e590c ("staging: vchiq_arm: rework probe and init functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Is there a return value check for negative?
-
-   Andrew
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 804daf83be35..064d0db4c51e 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -3513,6 +3513,7 @@ static int vchiq_probe(struct platform_device *pdev)
+ 	struct device_node *fw_node;
+ 	const struct of_device_id *of_id;
+ 	struct vchiq_drvdata *drvdata;
++	struct device *vchiq_dev;
+ 	int err;
+ 
+ 	of_id = of_match_node(vchiq_of_match, pdev->dev.of_node);
+@@ -3547,9 +3548,12 @@ static int vchiq_probe(struct platform_device *pdev)
+ 		goto failed_platform_init;
+ 	}
+ 
+-	if (IS_ERR(device_create(vchiq_class, &pdev->dev, vchiq_devid,
+-				 NULL, "vchiq")))
++	vchiq_dev = device_create(vchiq_class, &pdev->dev, vchiq_devid, NULL,
++				  "vchiq");
++	if (IS_ERR(vchiq_dev)) {
++		err = PTR_ERR(vchiq_dev);
+ 		goto failed_device_create;
++	}
+ 
+ 	vchiq_debugfs_init();
+ 
+-- 
+2.17.1
