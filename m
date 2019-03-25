@@ -1,20 +1,35 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Sun, 10 Mar 2019 18:19:43 +0000
-Subject: Re: [PATCH] staging: e1000: e1000_main.c: remove extern declarations in .c file.
-Message-Id: <20190310181940.GA13925@jiffies>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Mar 2019 09:23:49 +0000
+Subject: [PATCH] drm/i915: Fix an error code in i915_gem_context_open()
+Message-Id: <20190325092349.GF16023@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190310114558.GA23133@jiffies>
- <20190310.110309.2001511079802999473.davem@davemloft.net>
-In-Reply-To: <20190310.110309.2001511079802999473.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Sun, Mar 10, 2019 at 11:03:09AM -0700, David Miller wrote:
-> 
-> "staging"?
+If gem_context_register() fails then "ctx" is a valid pointer, not an
+error pointer.  We should just return "err".
 
-"staging" was an error, someone explained me after I sent the patch, sorry for
-the inconvenience.
+Fixes: 3aa9945a528e ("drm/i915: Separate GEM context construction and registration to userspace")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/i915_gem_context.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_gem_context.c b/drivers/gpu/drm/i915/i915_gem_context.c
+index e6f594668245..25f267a03d3d 100644
+--- a/drivers/gpu/drm/i915/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/i915_gem_context.c
+@@ -709,7 +709,7 @@ int i915_gem_context_open(struct drm_i915_private *i915,
+ 	idr_destroy(&file_priv->context_idr);
+ 	mutex_destroy(&file_priv->vm_idr_lock);
+ 	mutex_destroy(&file_priv->context_idr_lock);
+-	return PTR_ERR(ctx);
++	return err;
+ }
+ 
+ void i915_gem_context_close(struct drm_file *file)
+-- 
+2.17.1
