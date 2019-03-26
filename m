@@ -1,46 +1,61 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 17 Mar 2019 17:27:06 +0000
-Subject: [PATCH] netfilter: nf_tables: remove unused parameter ctx
-Message-Id: <20190317172706.26050-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Mar 2019 05:12:07 +0000
+Subject: [PATCH] [media] wl128x: prevent two potential buffer overflows
+Message-Id: <20190326051207.GC20038@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Manjunatha Halli <manjunatha_halli@ti.com>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Smatch marks skb->data as untrusted so it warns that "evt_hdr->dlen"
+can copy up to 255 bytes and we only have room for two bytes.  Even
+if this comes from the firmware and we trust it, the new policy
+generally is just to fix it as kernel hardenning.
 
-Function nf_tables_set_desc_parse parameter ctx is not being used
-so remove it as it is redundant.
+I can't test this code so I tried to be very conservative.  I considered
+not allowing "evt_hdr->dlen = 1" because it doesn't initialize the
+whole variable but in the end I decided to allow it and manually
+initialized "asic_id" and "asic_ver" to zero.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- net/netfilter/nf_tables_api.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/radio/wl128x/fmdrv_common.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index faf6bd10a19f..e9d6f4c32a03 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -3434,8 +3434,7 @@ static int nf_tables_getset(struct net *net, struct sock *nlsk,
- 	return err;
- }
- 
--static int nf_tables_set_desc_parse(const struct nft_ctx *ctx,
--				    struct nft_set_desc *desc,
-+static int nf_tables_set_desc_parse(struct nft_set_desc *desc,
- 				    const struct nlattr *nla)
- {
- 	struct nlattr *da[NFTA_SET_DESC_MAX + 1];
-@@ -3561,7 +3560,7 @@ static int nf_tables_newset(struct net *net, struct sock *nlsk,
- 		policy = ntohl(nla_get_be32(nla[NFTA_SET_POLICY]));
- 
- 	if (nla[NFTA_SET_DESC] != NULL) {
--		err = nf_tables_set_desc_parse(&ctx, &desc, nla[NFTA_SET_DESC]);
-+		err = nf_tables_set_desc_parse(&desc, nla[NFTA_SET_DESC]);
- 		if (err < 0)
- 			return err;
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index 1614809f7d35..a1fcb80a2191 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -489,7 +489,8 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
+ 		return -EIO;
  	}
+ 	/* Send response data to caller */
+-	if (response != NULL && response_len != NULL && evt_hdr->dlen) {
++	if (response != NULL && response_len != NULL && evt_hdr->dlen &&
++	    evt_hdr->dlen <= payload_len) {
+ 		/* Skip header info and copy only response data */
+ 		skb_pull(skb, sizeof(struct fm_event_msg_hdr));
+ 		memcpy(response, skb->data, evt_hdr->dlen);
+@@ -583,6 +584,8 @@ static void fm_irq_handle_flag_getcmd_resp(struct fmdev *fmdev)
+ 		return;
+ 
+ 	fm_evt_hdr = (void *)skb->data;
++	if (fm_evt_hdr->dlen > sizeof(fmdev->irq_info.flag))
++		return;
+ 
+ 	/* Skip header info and copy only response data */
+ 	skb_pull(skb, sizeof(struct fm_event_msg_hdr));
+@@ -1309,7 +1312,7 @@ static int load_default_rx_configuration(struct fmdev *fmdev)
+ static int fm_power_up(struct fmdev *fmdev, u8 mode)
+ {
+ 	u16 payload;
+-	__be16 asic_id, asic_ver;
++	__be16 asic_id = 0, asic_ver = 0;
+ 	int resp_len, ret;
+ 	u8 fw_name[50];
+ 
 -- 
-2.20.1
+2.17.1
