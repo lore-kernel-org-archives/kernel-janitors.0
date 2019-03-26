@@ -1,35 +1,85 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 26 Mar 2019 09:14:02 +0000
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 26 Mar 2019 09:52:18 +0000
 Subject: Re: [v5] coccinelle: semantic code search for missing put_device()
-Message-Id: <87d91477-c17c-812d-d3b3-c809b3e68ce8@web.de>
+Message-Id: <CAK7LNATjAsiSeZoTZ57zBHse0j5ZYY_12ZQ0gaF_oCziUWheOQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1550217319-40418-1-git-send-email-wen.yang99@zte.com.cn>
  <CAK7LNASzd=bL1H34w-E_UD9x6w2=ObyS+EPDZ_jrvfV+ncw-yA@mail.gmail.com>
  <1691b160-5558-d4c3-afed-5773e115c5aa@web.de>
  <CAK7LNASVRbroW9_j1Kda3azHb6PzD3WyVAsKe0HfD1ri0RFPOQ@mail.gmail.com>
- <alpine.DEB.2.21.1903260818460.2463@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1903260818460.2463@hadrien>
+ <e2798cd9-1366-63a4-8638-037dc8a36618@web.de>
+In-Reply-To: <e2798cd9-1366-63a4-8638-037dc8a36618@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Yi Wang <wang.yi59@zte.com.cn>, kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, cocci@systeme.lip6.fr, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
 
->> So, I just thought v5 was the latest one
->> and I was completely missing the context.
+On Tue, Mar 26, 2019 at 6:06 PM Markus Elfring <Markus.Elfring@web.de> wrote:
 >
-> I think it is a minor detail
+> > When I searched "Wen Yang", v6 did not show up for some reasons.
+> > https://lore.kernel.org/patchwork/project/lkml/list/?series=&submitter"638&state=*&q=&archive=&delegate>
+> I find such a situation also interesting somehow.
+> I assume that there was another temporary technical difficulty involved
+> with the Linux mailing list (and related information systems).
 
-Additional implementation details were discussed also for this script
-of the semantic patch language.
+
+I think v6 fell into a crack somehow.
 
 
-> that will have no impact in practice.
+Check the LKML archive:
+https://lkml.org/lkml/2019/2/16
 
-It will take another while to understand the relevance for the circumstances
-of corresponding software adjustments better, won't it?
 
-Will mentioned change possibilities be repeated with other update steps?
+I see your reply:
 
-Regards,
-Markus
+Re: [v6] coccinelle: semantic code search for missing put_device()Markus Elfring
+
+
+But, I cannot find the v6 patch itself.
+
+
+
+>
+> > So, I just thought v5 was the latest one
+> > and I was completely missing the context.
+>
+> Did any messages for the sixth (and seventh) script version reach you?
+>
+> https://lore.kernel.org/cocci/201902191014156680299@zte.com.cn/
+
+
+I use both my corporate email address and Gmail,
+and play it by ear.
+
+
+I see it in my corporate mail box now.
+It reached me probably because I subscribe to cocci@systeme.lip6.fr
+with my socionext email address.
+
+However, this time I only checked my Gmail box,
+which subscribes to linux-kernel ML, but not cocci ML.
+
+I just skimmed over the thread, then
+I missed the fact you were giving some comments about v6.
+
+
+
+> https://lore.kernel.org/lkml/1553321671-27749-1-git-send-email-wen.yang99@zte.com.cn/
+
+
+Yes. I see this one.
+
+I will apply it to fixes branch
+if nobody sees a problem in it.
+
+
+>
+> Regards,
+> Markus
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
