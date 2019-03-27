@@ -1,28 +1,31 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 25 Mar 2019 15:49:31 +0000
-Subject: Re: [PATCH] ntb_hw_switchtec: potential shift wrapping bug in switchtec_ntb_init_sndev()
-Message-Id: <e2bc8cf0-8e3e-9335-e21b-4a9697e9c0ef@deltatee.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 27 Mar 2019 03:19:04 +0000
+Subject: [PATCH -next] drm/omap: Add NULL entry to the end of_device_id array
+Message-Id: <20190327031904.63046-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190325091726.GD16023@kadam>
-In-Reply-To: <20190325091726.GD16023@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Kelvin Cao <kelvin.cao@microsemi.com>
-Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, kernel-janitors@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks!
+Make sure of_device_id tables are NULL terminated
+Found by coccinelle spatch "misc/of_table.cocci"
 
-On 2019-03-25 3:17 a.m., Dan Carpenter wrote:
-> This code triggers a Smatch warning:
-> 
->     drivers/ntb/hw/mscc/ntb_hw_switchtec.c:884 switchtec_ntb_init_sndev()
->     warn: should '(1 << sndev->peer_partition)' be a 64 bit type?
-> 
-> The "part_map" and "tpart_vec" variables are u64 type so this seems like
-> a valid warning.
-> 
-> Fixes: 3df54c870f52 ("ntb_hw_switchtec: Allow using Switchtec NTB in multi-partition setups")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
+index 2b41c75ce988..e02aa8e70968 100644
+--- a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
++++ b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
+@@ -198,6 +198,7 @@ static const struct of_device_id omapdss_of_fixups_whitelist[] __initconst = {
+ 	{ .compatible = "toppoly,td028ttec1" },
+ 	{ .compatible = "tpo,td028ttec1" },
+ 	{ .compatible = "tpo,td043mtea1" },
++	{},
+ };
+ 
+ static int __init omapdss_boot_init(void)
