@@ -1,35 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Mar 2019 06:41:25 +0000
-Subject: [PATCH] drm: shmem: Off by one in drm_gem_shmem_fault()
-Message-Id: <20190322064125.GA12551@kadam>
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Date: Wed, 27 Mar 2019 10:05:30 +0000
+Subject: [PATCH v3] e1000: remove extern declarations in .c file.
+Message-Id: <20190327100526.GA954@qd-ubuntu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S. Miller" <davem@davemloft.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The shmem->pages[] array has "num_pages" elements so the > should be >to prevent reading beyond the end of the array.  The shmem->pages[]
-array is allocated in drm_gem_shmem_prime_import_sg_table().
+Fix the following checkpatch.pl warning:
 
-Fixes: 2194a63a818d ("drm: Add library for shmem backed GEM objects")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+WARNING: externs should be avoided in .c files
+
+Some of the driver's function declared in e1000.h were declared a second
+time in e1000_main.c, triggering checkpatch.pl warnings.
+
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
 ---
- drivers/gpu/drm/drm_gem_shmem_helper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ v2: Fix mail subject.
+ v3: Remove patch version details from patch.
+---
+ drivers/net/ethernet/intel/e1000/e1000_main.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 3750a982aaf6..1ee208c2c85e 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -408,7 +408,7 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
- 	loff_t num_pages = obj->size >> PAGE_SHIFT;
- 	struct page *page;
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
+index 8fe9af0e2ab7..b3d5cd750dca 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -65,14 +65,6 @@ static const struct pci_device_id e1000_pci_tbl[] = {
  
--	if (vmf->pgoff > num_pages || WARN_ON_ONCE(!shmem->pages))
-+	if (vmf->pgoff >= num_pages || WARN_ON_ONCE(!shmem->pages))
- 		return VM_FAULT_SIGBUS;
+ MODULE_DEVICE_TABLE(pci, e1000_pci_tbl);
  
- 	page = shmem->pages[vmf->pgoff];
+-int e1000_up(struct e1000_adapter *adapter);
+-void e1000_down(struct e1000_adapter *adapter);
+-void e1000_reinit_locked(struct e1000_adapter *adapter);
+-void e1000_reset(struct e1000_adapter *adapter);
+-int e1000_setup_all_tx_resources(struct e1000_adapter *adapter);
+-int e1000_setup_all_rx_resources(struct e1000_adapter *adapter);
+-void e1000_free_all_tx_resources(struct e1000_adapter *adapter);
+-void e1000_free_all_rx_resources(struct e1000_adapter *adapter);
+ static int e1000_setup_tx_resources(struct e1000_adapter *adapter,
+ 				    struct e1000_tx_ring *txdr);
+ static int e1000_setup_rx_resources(struct e1000_adapter *adapter,
+@@ -81,7 +73,6 @@ static void e1000_free_tx_resources(struct e1000_adapter *adapter,
+ 				    struct e1000_tx_ring *tx_ring);
+ static void e1000_free_rx_resources(struct e1000_adapter *adapter,
+ 				    struct e1000_rx_ring *rx_ring);
+-void e1000_update_stats(struct e1000_adapter *adapter);
+ 
+ static int e1000_init_module(void);
+ static void e1000_exit_module(void);
+@@ -89,8 +80,6 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent);
+ static void e1000_remove(struct pci_dev *pdev);
+ static int e1000_alloc_queues(struct e1000_adapter *adapter);
+ static int e1000_sw_init(struct e1000_adapter *adapter);
+-int e1000_open(struct net_device *netdev);
+-int e1000_close(struct net_device *netdev);
+ static void e1000_configure_tx(struct e1000_adapter *adapter);
+ static void e1000_configure_rx(struct e1000_adapter *adapter);
+ static void e1000_setup_rctl(struct e1000_adapter *adapter);
 -- 
 2.17.1
