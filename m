@@ -1,24 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 15 Mar 2019 18:58:28 +0000
-Subject: Re: [PATCH] drivers: net: atp: fix various indentation issues
-Message-Id: <20190315.115828.2058474851167237390.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 27 Mar 2019 16:15:20 +0000
+Subject: [PATCH] net: phy: mdio-bcm-unimac: remove redundant !timeout check
+Message-Id: <20190327161520.23064-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190314234713.8587-1-colin.king@canonical.com>
-In-Reply-To: <20190314234713.8587-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 14 Mar 2019 23:47:13 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a statement that is indented incorrectly; replace
-> spaces with a tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The check for zero timeout is always true at the end of the proceeding
+while loop; the only other exit path in the loop is if the unimac MDIO
+is not busy.  Remove the redundant zero timeout check and always
+return -ETIMEDOUT on this timeout return path.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/phy/mdio-bcm-unimac.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
+index 3a592629dc7e..4a28fb29adaa 100644
+--- a/drivers/net/phy/mdio-bcm-unimac.c
++++ b/drivers/net/phy/mdio-bcm-unimac.c
+@@ -92,10 +92,7 @@ static int unimac_mdio_poll(void *wait_func_data)
+ 		usleep_range(1000, 2000);
+ 	} while (--timeout);
+ 
+-	if (!timeout)
+-		return -ETIMEDOUT;
+-
+-	return 0;
++	return -ETIMEDOUT;
+ }
+ 
+ static int unimac_mdio_read(struct mii_bus *bus, int phy_id, int reg)
+-- 
+2.20.1
