@@ -1,40 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Mar 2019 11:47:46 +0000
-Subject: [PATCH] misc: rtsx: clean up some indenting
-Message-Id: <20190305114746.GA17627@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 27 Mar 2019 18:35:45 +0000
+Subject: [PATCH] cfg80211: remove redundant zero check on variable 'changed'
+Message-Id: <20190327183545.20631-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: RickyWu <ricky_wu@realtek.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These lines weren't indented far enough.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The zero check on variable changed is redundant as it must be
+between 1 and 3 at the end of the proceeding if statement block.
+Remove the redundant check.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/misc/cardreader/rts5260.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/wireless/wext-compat.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
-index da22bcb62b04..4a2589bdc8ce 100644
---- a/drivers/misc/cardreader/rts5260.c
-+++ b/drivers/misc/cardreader/rts5260.c
-@@ -455,13 +455,13 @@ static void rts5260_pwr_saving_setting(struct rtsx_pcr *pcr)
- 		pcr_dbg(pcr, "Set parameters for L1.2.");
- 		rtsx_pci_write_register(pcr, PWR_GLOBAL_CTRL,
- 					0xFF, PCIE_L1_2_EN);
--	rtsx_pci_write_register(pcr, RTS5260_DVCC_CTRL,
-+		rtsx_pci_write_register(pcr, RTS5260_DVCC_CTRL,
- 					RTS5260_DVCC_OCP_EN |
- 					RTS5260_DVCC_OCP_CL_EN,
- 					RTS5260_DVCC_OCP_EN |
- 					RTS5260_DVCC_OCP_CL_EN);
+diff --git a/net/wireless/wext-compat.c b/net/wireless/wext-compat.c
+index d522787c7354..46e4d69db845 100644
+--- a/net/wireless/wext-compat.c
++++ b/net/wireless/wext-compat.c
+@@ -353,9 +353,6 @@ static int cfg80211_wext_siwretry(struct net_device *dev,
+ 		changed |= WIPHY_PARAM_RETRY_SHORT;
+ 	}
  
--	rtsx_pci_write_register(pcr, PWR_FE_CTL,
-+		rtsx_pci_write_register(pcr, PWR_FE_CTL,
- 					0xFF, PCIE_L1_2_PD_FE_EN);
- 	} else if (lss_l1_1) {
- 		pcr_dbg(pcr, "Set parameters for L1.1.");
+-	if (!changed)
+-		return 0;
+-
+ 	err = rdev_set_wiphy_params(rdev, changed);
+ 	if (err) {
+ 		wdev->wiphy->retry_short = oshort;
 -- 
-2.17.1
+2.20.1
