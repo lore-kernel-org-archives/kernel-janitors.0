@@ -1,88 +1,48 @@
-From: maowenan <maowenan@huawei.com>
-Date: Mon, 11 Mar 2019 14:29:06 +0000
-Subject: Re: [PATCH v2] serial: sh-sci: Missing uart_unregister_driver() on error in sci_probe_single()
-Message-Id: <50cd311c-651c-5c82-a3f4-8b1faf20110b@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 27 Mar 2019 03:20:24 +0000
+Subject: [PATCH -next] btrfs: remove set but not used variable 'fs_devices'
+Message-Id: <20190327032024.63906-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190311095115.156774-1-maowenan@huawei.com>
- <20190311124616.GE2412@kadam>
-In-Reply-To: <20190311124616.GE2412@kadam>
+References: <1541643283-109411-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1541643283-109411-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
+fs/btrfs/volumes.c: In function 'btrfs_grow_device':
+fs/btrfs/volumes.c:2824:27: warning:
+ variable 'fs_devices' set but not used [-Wunused-but-set-variable]
 
-On 2019/3/11 20:46, Dan Carpenter wrote:
-> On Mon, Mar 11, 2019 at 05:51:15PM +0800, Mao Wenan wrote:
->> Add the missing uart_unregister_driver() before return
->> from sci_probe_single() in the error handling case.
->>
->> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->> ---
-> 
-> Sorry, I didn't really look at the code when I saw the v1 patch.
-> 
-> There are other error paths, but actually the whole approach is wrong.
-> Please, read my google plus post about error handling:
-> 
-> https://plus.google.com/u/0/106378716002406849458/posts/1Ud9JbaYnPr
-> 
-OK.
+It's not used after 6f32a50a232b ("btrfs: combine device update operations
+during transaction commit")
 
-> But then the other rule I didn't mention in that post which applies
-> here is that the error handling should "mirror" the allocation code
-> so if you have:
-> 
-> 	if (foo) {
-> 		ret = allocate_one();
-> 		if (ret)
-> 			return ret;
-> 	}
-> 	ret = allocate_two();
-> 	if (ret)
-> 		goto free_one;
-> 
-> The error handling should mirror the "if (foo) " condition.  Like this:
-> 
-> free_one:
-> 	if (foo)
-> 		free_one();
-> 
-> Even if you can do extra analysis and find that the "if (foo) " can
-> be removed, you should leave there, because the mirroring helps human
-> readers.
-> 
-> In this case, the code is doing:
-> 
-> drivers/tty/serial/sh-sci.c
->   3259                  return -EBUSY;
->   3260  
->   3261          mutex_lock(&sci_uart_registration_lock);
->   3262          if (!sci_uart_driver.state) {
->                     ^^^^^^^^^^^^^^^^^^^^^^
->   3263                  ret = uart_register_driver(&sci_uart_driver);
->   3264                  if (ret) {
->   3265                          mutex_unlock(&sci_uart_registration_lock);
->   3266                          return ret;
->   3267                  }
->   3268          }
->   3269          mutex_unlock(&sci_uart_registration_lock);
->   3270  
-> 
-> We would have to mirror the "if (!sci_uart_driver.state) {" code.
-> 
-> But actually, we can't.
-> 
-> The first driver to hit this code is supposed to load the
-> sci_uart_driver.  We can't know if we are the last driver to stop using
-> the sci_uart_driver so we can't know if we can free it.  This looks like
-> a very ugly hack to me.  It should probably be using ref counters.
-It seems something should be considered deeply.
-> 
-> regards,
-> an carpenter
-> 
-> .
-> 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/btrfs/volumes.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index afafc92e70e9..605230482009 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -2821,7 +2821,6 @@ int btrfs_grow_device(struct btrfs_trans_handle *trans,
+ {
+ 	struct btrfs_fs_info *fs_info = device->fs_info;
+ 	struct btrfs_super_block *super_copy = fs_info->super_copy;
+-	struct btrfs_fs_devices *fs_devices;
+ 	u64 old_total;
+ 	u64 diff;
+ 
+@@ -2840,8 +2839,6 @@ int btrfs_grow_device(struct btrfs_trans_handle *trans,
+ 		return -EINVAL;
+ 	}
+ 
+-	fs_devices = fs_info->fs_devices;
+-
+ 	btrfs_set_super_total_bytes(super_copy,
+ 			round_down(old_total + diff, fs_info->sectorsize));
+ 	device->fs_devices->total_rw_bytes += diff;
