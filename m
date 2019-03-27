@@ -1,28 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Mar 2019 11:36:59 +0000
-Subject: Re: [PATCH] Fix for a small typo
-Message-Id: <20190312113658.GK2434@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 27 Mar 2019 18:11:03 +0000
+Subject: [PATCH] scsi: qedi: remove declaration of nvm_image from stack
+Message-Id: <20190327181103.15677-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190312095149.GA10972@machine1>
-In-Reply-To: <20190312095149.GA10972@machine1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 04:50:07PM +0530, Milan P. Gandhi wrote:
-> On 3/12/19 4:46 PM, Dan Carpenter wrote:
-> > 1) Subject
-> > 2) No patch description.  (What type did you fix?)
-> > 3) CC list.
-> > 
-> 
-> Hi Dan, Julia,
-> 
-> Thanks for pointing it out.
-> Let me fix it quickly.
+From: Colin Ian King <colin.king@canonical.com>
 
-There is absolutely no need to rush.  Please go slowly.
+The nvm_image is a large struct qedi_nvm_iscsi_image object of
+over 24K so don't declare it on the stack just for a sizeof
+requirement; use sizeof on struct qedi_nvm_iscsi_image instead.
 
-regards,
-dan carpenter
+Fixes: c77a2fa3ff8f ("scsi: qedi: Add the CRC size within iSCSI NVM image")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qedi/qedi_main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index e74a62448ba4..e5db9a9954dc 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -1392,10 +1392,8 @@ static void qedi_free_nvm_iscsi_cfg(struct qedi_ctx *qedi)
+ 
+ static int qedi_alloc_nvm_iscsi_cfg(struct qedi_ctx *qedi)
+ {
+-	struct qedi_nvm_iscsi_image nvm_image;
+-
+ 	qedi->iscsi_image = dma_alloc_coherent(&qedi->pdev->dev,
+-					       sizeof(nvm_image),
++					       sizeof(struct qedi_nvm_iscsi_image),
+ 					       &qedi->nvm_buf_dma, GFP_KERNEL);
+ 	if (!qedi->iscsi_image) {
+ 		QEDI_ERR(&qedi->dbg_ctx, "Could not allocate NVM BUF.\n");
+@@ -2236,14 +2234,13 @@ static void qedi_boot_release(void *data)
+ static int qedi_get_boot_info(struct qedi_ctx *qedi)
+ {
+ 	int ret = 1;
+-	struct qedi_nvm_iscsi_image nvm_image;
+ 
+ 	QEDI_INFO(&qedi->dbg_ctx, QEDI_LOG_INFO,
+ 		  "Get NVM iSCSI CFG image\n");
+ 	ret = qedi_ops->common->nvm_get_image(qedi->cdev,
+ 					      QED_NVM_IMAGE_ISCSI_CFG,
+ 					      (char *)qedi->iscsi_image,
+-					      sizeof(nvm_image));
++					      sizeof(struct qedi_nvm_iscsi_image));
+ 	if (ret)
+ 		QEDI_ERR(&qedi->dbg_ctx,
+ 			 "Could not get NVM image. ret = %d\n", ret);
+-- 
+2.20.1
