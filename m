@@ -1,57 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 27 Mar 2019 18:11:03 +0000
-Subject: [PATCH] scsi: qedi: remove declaration of nvm_image from stack
-Message-Id: <20190327181103.15677-1-colin.king@canonical.com>
+From: Manish Rangankar <mrangankar@marvell.com>
+Date: Thu, 28 Mar 2019 05:53:15 +0000
+Subject: RE: [PATCH] scsi: qedi: remove declaration of nvm_image from stack
+Message-Id: <BYAPR18MB2485E6EE1193DE82178C05A3D8590@BYAPR18MB2485.namprd18.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190327181103.15677-1-colin.king@canonical.com>
+In-Reply-To: <20190327181103.15677-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "QLogic-Storage-Upstream@cavium.com" <QLogic-Storage-Upstream@cavium.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The nvm_image is a large struct qedi_nvm_iscsi_image object of
-over 24K so don't declare it on the stack just for a sizeof
-requirement; use sizeof on struct qedi_nvm_iscsi_image instead.
-
-Fixes: c77a2fa3ff8f ("scsi: qedi: Add the CRC size within iSCSI NVM image")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/qedi/qedi_main.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index e74a62448ba4..e5db9a9954dc 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -1392,10 +1392,8 @@ static void qedi_free_nvm_iscsi_cfg(struct qedi_ctx *qedi)
- 
- static int qedi_alloc_nvm_iscsi_cfg(struct qedi_ctx *qedi)
- {
--	struct qedi_nvm_iscsi_image nvm_image;
--
- 	qedi->iscsi_image = dma_alloc_coherent(&qedi->pdev->dev,
--					       sizeof(nvm_image),
-+					       sizeof(struct qedi_nvm_iscsi_image),
- 					       &qedi->nvm_buf_dma, GFP_KERNEL);
- 	if (!qedi->iscsi_image) {
- 		QEDI_ERR(&qedi->dbg_ctx, "Could not allocate NVM BUF.\n");
-@@ -2236,14 +2234,13 @@ static void qedi_boot_release(void *data)
- static int qedi_get_boot_info(struct qedi_ctx *qedi)
- {
- 	int ret = 1;
--	struct qedi_nvm_iscsi_image nvm_image;
- 
- 	QEDI_INFO(&qedi->dbg_ctx, QEDI_LOG_INFO,
- 		  "Get NVM iSCSI CFG image\n");
- 	ret = qedi_ops->common->nvm_get_image(qedi->cdev,
- 					      QED_NVM_IMAGE_ISCSI_CFG,
- 					      (char *)qedi->iscsi_image,
--					      sizeof(nvm_image));
-+					      sizeof(struct qedi_nvm_iscsi_image));
- 	if (ret)
- 		QEDI_ERR(&qedi->dbg_ctx,
- 			 "Could not get NVM image. ret = %d\n", ret);
--- 
-2.20.1
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IENvbGluIEtpbmcgPGNvbGlu
+LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gU2VudDogV2VkbmVzZGF5LCBNYXJjaCAyNywgMjAxOSAx
+MTo0MSBQTQ0KPiBUbzogUUxvZ2ljLVN0b3JhZ2UtVXBzdHJlYW1AY2F2aXVtLmNvbTsgSmFtZXMg
+RSAuIEogLiBCb3R0b21sZXkNCj4gPGplamJAbGludXguaWJtLmNvbT47IE1hcnRpbiBLIC4gUGV0
+ZXJzZW4gPG1hcnRpbi5wZXRlcnNlbkBvcmFjbGUuY29tPjsNCj4gbGludXgtc2NzaUB2Z2VyLmtl
+cm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBzY3NpOiBxZWRpOiByZW1v
+dmUgZGVjbGFyYXRpb24gb2YgbnZtX2ltYWdlIGZyb20gc3RhY2sNCj4gDQo+IEZyb206IENvbGlu
+IElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGUgbnZtX2ltYWdl
+IGlzIGEgbGFyZ2Ugc3RydWN0IHFlZGlfbnZtX2lzY3NpX2ltYWdlIG9iamVjdCBvZiBvdmVyIDI0
+Sw0KPiBzbyBkb24ndCBkZWNsYXJlIGl0IG9uIHRoZSBzdGFjayBqdXN0IGZvciBhIHNpemVvZiBy
+ZXF1aXJlbWVudDsgdXNlIHNpemVvZiBvbg0KPiBzdHJ1Y3QgcWVkaV9udm1faXNjc2lfaW1hZ2Ug
+aW5zdGVhZC4NCj4gDQo+IEZpeGVzOiBjNzdhMmZhM2ZmOGYgKCJzY3NpOiBxZWRpOiBBZGQgdGhl
+IENSQyBzaXplIHdpdGhpbiBpU0NTSSBOVk0gaW1hZ2UiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xp
+biBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMv
+c2NzaS9xZWRpL3FlZGlfbWFpbi5jIHwgNyArKy0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBp
+bnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+c2NzaS9xZWRpL3FlZGlfbWFpbi5jIGIvZHJpdmVycy9zY3NpL3FlZGkvcWVkaV9tYWluLmMNCj4g
+aW5kZXggZTc0YTYyNDQ4YmE0Li5lNWRiOWE5OTU0ZGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
+c2NzaS9xZWRpL3FlZGlfbWFpbi5jDQo+ICsrKyBiL2RyaXZlcnMvc2NzaS9xZWRpL3FlZGlfbWFp
+bi5jDQo+IEBAIC0xMzkyLDEwICsxMzkyLDggQEAgc3RhdGljIHZvaWQgcWVkaV9mcmVlX252bV9p
+c2NzaV9jZmcoc3RydWN0DQo+IHFlZGlfY3R4ICpxZWRpKQ0KPiANCj4gIHN0YXRpYyBpbnQgcWVk
+aV9hbGxvY19udm1faXNjc2lfY2ZnKHN0cnVjdCBxZWRpX2N0eCAqcWVkaSkgIHsNCj4gLQlzdHJ1
+Y3QgcWVkaV9udm1faXNjc2lfaW1hZ2UgbnZtX2ltYWdlOw0KPiAtDQo+ICAJcWVkaS0+aXNjc2lf
+aW1hZ2UgPSBkbWFfYWxsb2NfY29oZXJlbnQoJnFlZGktPnBkZXYtPmRldiwNCj4gLQkJCQkJICAg
+ICAgIHNpemVvZihudm1faW1hZ2UpLA0KPiArCQkJCQkgICAgICAgc2l6ZW9mKHN0cnVjdA0KPiBx
+ZWRpX252bV9pc2NzaV9pbWFnZSksDQo+ICAJCQkJCSAgICAgICAmcWVkaS0+bnZtX2J1Zl9kbWEs
+DQo+IEdGUF9LRVJORUwpOw0KPiAgCWlmICghcWVkaS0+aXNjc2lfaW1hZ2UpIHsNCj4gIAkJUUVE
+SV9FUlIoJnFlZGktPmRiZ19jdHgsICJDb3VsZCBub3QgYWxsb2NhdGUgTlZNDQo+IEJVRi5cbiIp
+OyBAQCAtMjIzNiwxNCArMjIzNCwxMyBAQCBzdGF0aWMgdm9pZCBxZWRpX2Jvb3RfcmVsZWFzZSh2
+b2lkDQo+ICpkYXRhKSAgc3RhdGljIGludCBxZWRpX2dldF9ib290X2luZm8oc3RydWN0IHFlZGlf
+Y3R4ICpxZWRpKSAgew0KPiAgCWludCByZXQgPSAxOw0KPiAtCXN0cnVjdCBxZWRpX252bV9pc2Nz
+aV9pbWFnZSBudm1faW1hZ2U7DQo+IA0KPiAgCVFFRElfSU5GTygmcWVkaS0+ZGJnX2N0eCwgUUVE
+SV9MT0dfSU5GTywNCj4gIAkJICAiR2V0IE5WTSBpU0NTSSBDRkcgaW1hZ2VcbiIpOw0KPiAgCXJl
+dCA9IHFlZGlfb3BzLT5jb21tb24tPm52bV9nZXRfaW1hZ2UocWVkaS0+Y2RldiwNCj4gIAkJCQkJ
+ICAgICAgUUVEX05WTV9JTUFHRV9JU0NTSV9DRkcsDQo+ICAJCQkJCSAgICAgIChjaGFyICopcWVk
+aS0+aXNjc2lfaW1hZ2UsDQo+IC0JCQkJCSAgICAgIHNpemVvZihudm1faW1hZ2UpKTsNCj4gKwkJ
+CQkJICAgICAgc2l6ZW9mKHN0cnVjdA0KPiBxZWRpX252bV9pc2NzaV9pbWFnZSkpOw0KPiAgCWlm
+IChyZXQpDQo+ICAJCVFFRElfRVJSKCZxZWRpLT5kYmdfY3R4LA0KPiAgCQkJICJDb3VsZCBub3Qg
+Z2V0IE5WTSBpbWFnZS4gcmV0ID0gJWRcbiIsIHJldCk7DQo+IC0tDQo+IDIuMjAuMQ0KDQpUaGFu
+a3MsDQpBY2tlZC1ieTogTWFuaXNoIFJhbmdhbmthciA8bXJhbmdhbmthckBtYXJ2ZWxsLmNvbT4N
+Cg=
