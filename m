@@ -1,22 +1,35 @@
-From: "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>
-Date: Tue, 26 Mar 2019 05:46:44 +0000
-Subject: Re: [PATCH] NTB: amd: Silence shift wrapping warning in amd_ntb_db_vector_mask()
-Message-Id: <af8b8b48-ad5e-75c2-d3fe-674b14a0b9af@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Mar 2019 14:17:42 +0000
+Subject: [PATCH] vlynq: Fix uninitialized error code in probe()
+Message-Id: <20190328141742.GM32590@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190325092326.GE16023@kadam>
-In-Reply-To: <20190325092326.GE16023@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gMy8yNS8yMDE5IDI6NTMgUE0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IFRoaXMgY29kZSB0
-cmlnZ2VycyBhIFNtYXRjaCB3YXJuaW5nOg0KPg0KPiAgICAgZHJpdmVycy9udGIvaHcvYW1kL250
-Yl9od19hbWQuYzozMzYgYW1kX250Yl9kYl92ZWN0b3JfbWFzaygpDQo+ICAgICB3YXJuOiBzaG91
-bGQgJygxIDw8IGRiX3ZlY3RvciknIGJlIGEgNjQgYml0IHR5cGU/DQo+DQo+IEkgZG9uJ3QgdGhp
-bmsgImRiX3ZlY3RvciIgY2FuIGJlIGhpZ2hlciB0aGFuIDE2IHNvIHRoaXMgZG9lc24ndCBhZmZl
-Y3QNCj4gcnVudGltZSwgYnV0IGl0J3MgbmljZSB0byBzaWxlbmNlIHRoZSBzdGF0aWMgY2hlY2tl
-ciB3YXJuaW5nIGFuZCB3ZQ0KPiBtaWdodCBpbmNyZWFzZSAibmRldi0+ZGJfY291bnQiIGluIHRo
-ZSBmdXR1cmUuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50
-ZXJAb3JhY2xlLmNvbT4NCkFja2VkLWJ5OiBTaHlhbSBTdW5kYXIgUyBLIDxTaHlhbS1zdW5kYXIu
-Uy1rQGFtZC5jb20+DQo
+The "result" variable isn't initialized on this error path.
+
+Fixes: 55e331cf7ebe ("drivers: add support for the TI VLYNQ bus")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/vlynq/vlynq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
+index c0227f9418eb..44d3485d1108 100644
+--- a/drivers/vlynq/vlynq.c
++++ b/drivers/vlynq/vlynq.c
+@@ -727,7 +727,8 @@ static int vlynq_probe(struct platform_device *pdev)
+ 	dev->local_irq = dev->irq_end - dev->irq_start;
+ 	dev->remote_irq = dev->local_irq - 1;
+ 
+-	if (device_register(&dev->dev))
++	result = device_register(&dev->dev);
++	if (result)
+ 		goto fail_register;
+ 	platform_set_drvdata(pdev, dev);
+ 
+-- 
+2.17.1
