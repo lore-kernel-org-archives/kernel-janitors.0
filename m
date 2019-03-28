@@ -1,35 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 Mar 2019 09:28:16 +0000
-Subject: [PATCH][next] ASoC: fsl: fix spelling mistake: "missign" -> "missing"
-Message-Id: <20190328092816.12883-1-colin.king@canonical.com>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Date: Thu, 28 Mar 2019 10:30:25 +0000
+Subject: Re: [PATCH][next] ASoC: fsl: fix spelling mistake: "missign" -> "missing"
+Message-Id: <acedd6b3-9234-390d-1626-ac02223c93cd@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190328092816.12883-1-colin.king@canonical.com>
+In-Reply-To: <20190328092816.12883-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Timur Tabi <timur@kernel.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+To: Colin King <colin.king@canonical.com>, Timur Tabi <timur@kernel.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_err message. Fix this.
+On 3/28/2019 2:58 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in a dev_err message. Fix this.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/fsl/imx-audmix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/imx-audmix.c b/sound/soc/fsl/imx-audmix.c
-index 72e37ca6cfbb..7983bd339c01 100644
---- a/sound/soc/fsl/imx-audmix.c
-+++ b/sound/soc/fsl/imx-audmix.c
-@@ -161,7 +161,7 @@ static int imx_audmix_probe(struct platform_device *pdev)
- 	}
- 
- 	if (!audmix_np) {
--		dev_err(&pdev->dev, "Missign DT node for parent device.\n");
-+		dev_err(&pdev->dev, "Missing DT node for parent device.\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.20.1
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+
+-Mukesh
+
+> ---
+>   sound/soc/fsl/imx-audmix.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/fsl/imx-audmix.c b/sound/soc/fsl/imx-audmix.c
+> index 72e37ca6cfbb..7983bd339c01 100644
+> --- a/sound/soc/fsl/imx-audmix.c
+> +++ b/sound/soc/fsl/imx-audmix.c
+> @@ -161,7 +161,7 @@ static int imx_audmix_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	if (!audmix_np) {
+> -		dev_err(&pdev->dev, "Missign DT node for parent device.\n");
+> +		dev_err(&pdev->dev, "Missing DT node for parent device.\n");
+>   		return -EINVAL;
+>   	}
+>   
