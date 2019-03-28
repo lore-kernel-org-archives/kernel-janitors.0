@@ -1,22 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 20 Mar 2019 18:05:01 +0000
-Subject: Re: [PATCH net-next] net: bridge: use eth_broadcast_addr() to assign broadcast address
-Message-Id: <20190320.110501.903028894297149241.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Mar 2019 14:16:09 +0000
+Subject: [PATCH] i2c: nomadik: remove an unnecessary NULL check in nmk_i2c_remove()
+Message-Id: <20190328141609.GL32590@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190320020657.31423-1-maowenan@huawei.com>
-In-Reply-To: <20190320020657.31423-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: bridge@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, nikolay@cumulusnetworks.com, roopa@cumulusnetworks.com
+To: kernel-janitors@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Wed, 20 Mar 2019 10:06:57 +0800
+"res" can't be NULL because it's a pointer to somewhere in the middle of
+the "adev" struct.  Also probe() succeeded so there is no need to check
+here.
 
-> This patch is to use eth_broadcast_addr() to assign broadcast address
-> insetad of memset().
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/i2c/busses/i2c-nomadik.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
+index 0ed5a41804dc..4f30a43b63da 100644
+--- a/drivers/i2c/busses/i2c-nomadik.c
++++ b/drivers/i2c/busses/i2c-nomadik.c
+@@ -1070,8 +1070,7 @@ static int nmk_i2c_remove(struct amba_device *adev)
+ 	/* disable the controller */
+ 	i2c_clr_bit(dev->virtbase + I2C_CR, I2C_CR_PE);
+ 	clk_disable_unprepare(dev->clk);
+-	if (res)
+-		release_mem_region(res->start, resource_size(res));
++	release_mem_region(res->start, resource_size(res));
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
