@@ -1,36 +1,36 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Mar 2019 14:40:56 +0000
-Subject: [PATCH] NFC: pn533: potential buffer overflow in pn533_target_found_type_a()
-Message-Id: <20190328144056.GR32590@kadam>
+Date: Thu, 28 Mar 2019 14:32:15 +0000
+Subject: [PATCH] phy: tegra: xusb: testing the wrong variable in probe()
+Message-Id: <20190328143214.GP32590@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch doesn't trust information that comes from skb->data.  It
-complains that "nfc_tgt->nfcid1_len" is a u8 so it could be up to 255
-bytes, but the destination buffer is only 10 bytes large.
+The "usb2->clk" pointer is not an error pointer.  We meant to test
+"priv->usb2_trk_clk" instead.
 
-Fixes: c3b1e1e8a76f ("NFC: Export NFCID1 from pn533")
+Fixes: b8998e928030 ("phy: tegra: xusb: Add Tegra186 support")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/nfc/pn533/pn533.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/tegra/xusb-tegra186.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
-index a0cc1cc45292..9f9bbf912687 100644
---- a/drivers/nfc/pn533/pn533.c
-+++ b/drivers/nfc/pn533/pn533.c
-@@ -724,6 +724,8 @@ static int pn533_target_found_type_a(struct nfc_target *nfc_tgt, u8 *tgt_data,
- 	nfc_tgt->sens_res = be16_to_cpu(tgt_type_a->sens_res);
- 	nfc_tgt->sel_res = tgt_type_a->sel_res;
- 	nfc_tgt->nfcid1_len = tgt_type_a->nfcid_len;
-+	if (nfc_tgt->nfcid1_len > sizeof(nfc_tgt->nfcid1))
-+		return -EINVAL;
- 	memcpy(nfc_tgt->nfcid1, tgt_type_a->nfcid_data, nfc_tgt->nfcid1_len);
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index 11ad6e4e4711..a627fe0b8e54 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -467,8 +467,8 @@ tegra186_usb2_pad_probe(struct tegra_xusb_padctl *padctl,
+ 	}
  
- 	return 0;
+ 	priv->usb2_trk_clk = devm_clk_get(&pad->dev, "trk");
+-	if (IS_ERR(usb2->clk)) {
+-		err = PTR_ERR(usb2->clk);
++	if (IS_ERR(priv->usb2_trk_clk)) {
++		err = PTR_ERR(priv->usb2_trk_clk);
+ 		dev_dbg(&pad->dev, "failed to get usb2 trk clock: %d\n", err);
+ 		goto unregister;
+ 	}
 -- 
 2.17.1
