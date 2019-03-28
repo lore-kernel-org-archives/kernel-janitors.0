@@ -1,63 +1,44 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Date: Fri, 08 Mar 2019 20:26:44 +0000
-Subject: Re: [PATCH serial] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
-Message-Id: <d2888b44-2475-ebe1-bbc7-844147e9d11a@mleia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Mar 2019 14:36:01 +0000
+Subject: [PATCH] crypto: caam/qi - Change a couple IS_ERR_OR_NULL() checks to IS_ERR()
+Message-Id: <20190328143601.GQ32590@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190308140933.55262-1-maowenan@huawei.com>
-In-Reply-To: <20190308140933.55262-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 03/08/2019 04:09 PM, Mao Wenan wrote:
-> Add the missing uart_unregister_driver() and i2c_del_driver() before return
-> from sc16is7xx_init() in the error handling case.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/tty/serial/sc16is7xx.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> index 268098681856..114e94f476c6 100644
-> --- a/drivers/tty/serial/sc16is7xx.c
-> +++ b/drivers/tty/serial/sc16is7xx.c
-> @@ -1509,7 +1509,7 @@ static int __init sc16is7xx_init(void)
->  	ret = i2c_add_driver(&sc16is7xx_i2c_uart_driver);
->  	if (ret < 0) {
->  		pr_err("failed to init sc16is7xx i2c --> %d\n", ret);
-> -		return ret;
-> +		goto err_i2c;
->  	}
->  #endif
->  
-> @@ -1517,10 +1517,18 @@ static int __init sc16is7xx_init(void)
->  	ret = spi_register_driver(&sc16is7xx_spi_uart_driver);
->  	if (ret < 0) {
->  		pr_err("failed to init sc16is7xx spi --> %d\n", ret);
-> -		return ret;
-> +		goto err_spi;
->  	}
->  #endif
->  	return ret;
-> +
-> +err_spi:
-> +#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
-> +	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
-> +#endif
-> +err_i2c:
-> +	uart_unregister_driver(&sc16is7xx_uart);
-> +	return ret;
->  }
->  module_init(sc16is7xx_init);
->  
-> 
+create_caam_req_fq() doesn't return NULL pointers so there is no need to
+check.  The NULL checks are problematic because it's hard to say how a
+NULL return should be handled, so removing the checks is a nice cleanup.
 
-Nice catch, thank you!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/crypto/caam/qi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
-
---
-Best wishes,
-Vladimir
+diff --git a/drivers/crypto/caam/qi.c b/drivers/crypto/caam/qi.c
+index 7cb8b1755e57..9f08f84cca59 100644
+--- a/drivers/crypto/caam/qi.c
++++ b/drivers/crypto/caam/qi.c
+@@ -318,7 +318,7 @@ int caam_drv_ctx_update(struct caam_drv_ctx *drv_ctx, u32 *sh_desc)
+ 	/* Create a new req FQ in parked state */
+ 	new_fq = create_caam_req_fq(drv_ctx->qidev, drv_ctx->rsp_fq,
+ 				    drv_ctx->context_a, 0);
+-	if (IS_ERR_OR_NULL(new_fq)) {
++	if (IS_ERR(new_fq)) {
+ 		dev_err(qidev, "FQ allocation for shdesc update failed\n");
+ 		return PTR_ERR(new_fq);
+ 	}
+@@ -431,7 +431,7 @@ struct caam_drv_ctx *caam_drv_ctx_init(struct device *qidev,
+ 	/* Attach request FQ */
+ 	drv_ctx->req_fq = create_caam_req_fq(qidev, drv_ctx->rsp_fq, hwdesc,
+ 					     QMAN_INITFQ_FLAG_SCHED);
+-	if (IS_ERR_OR_NULL(drv_ctx->req_fq)) {
++	if (IS_ERR(drv_ctx->req_fq)) {
+ 		dev_err(qidev, "create_caam_req_fq failed\n");
+ 		dma_unmap_single(qidev, hwdesc, size, DMA_BIDIRECTIONAL);
+ 		kfree(drv_ctx);
+-- 
+2.17.1
