@@ -1,51 +1,33 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Sat, 30 Mar 2019 16:50:45 +0000
-Subject: Re: [PATCH] PCI: rockchip: fix bitwise operations on status and ROCKCHIP_PCIE_EP_CMD_STATUS_IS
-Message-Id: <ae010bdd-b65a-fa4f-e364-bf0432555f6b@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Mar 2019 14:38:54 +0000
+Subject: [PATCH] irqchip/irq-ls1x: Missing error code in ls1x_intc_of_init()
+Message-Id: <20190328143854.GN32613@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330150910.9389-1-colin.king@canonical.com>
-In-Reply-To: <20190330150910.9389-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We forgot to set "err" on this error path.
 
-On 3/30/2019 8:39 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the bitwise operations on the u16 variable 'status' with
-> the setting ROCKCHIP_PCIE_EP_CMD_STATUS_IS are incorrect because
-> ROCKCHIP_PCIE_EP_CMD_STATUS_IS is 1UL<<19 which is wider than the
-> u16 variable.  Fix this by making status a u32.  (Not tested).
->
-> Fixes: cf590b078391 ("PCI: rockchip: Add EP driver for Rockchip PCIe controller")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/pci/controller/pcie-rockchip-ep.c | 2 +-
+Fixes: 9e543e22e204 ("irqchip: Add driver for Loongson-1 interrupt controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/irqchip/irq-ls1x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-Looks valid to me.
-
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-
-Cheers,
--Mukesh
-
-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> index a5d799e2dff2..d743b0a48988 100644
-> --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> @@ -350,7 +350,7 @@ static void rockchip_pcie_ep_assert_intx(struct rockchip_pcie_ep *ep, u8 fn,
->   	struct rockchip_pcie *rockchip = &ep->rockchip;
->   	u32 r = ep->max_regions - 1;
->   	u32 offset;
-> -	u16 status;
-> +	u32 status;
->   	u8 msg_code;
->   
->   	if (unlikely(ep->irq_pci_addr != ROCKCHIP_PCIE_EP_PCI_LEGACY_IRQ_ADDR ||
+diff --git a/drivers/irqchip/irq-ls1x.c b/drivers/irqchip/irq-ls1x.c
+index 86b72fbd3b45..353111a10413 100644
+--- a/drivers/irqchip/irq-ls1x.c
++++ b/drivers/irqchip/irq-ls1x.c
+@@ -130,6 +130,7 @@ static int __init ls1x_intc_of_init(struct device_node *node,
+ 					     NULL);
+ 	if (!priv->domain) {
+ 		pr_err("ls1x-irq: cannot add IRQ domain\n");
++		err = -ENOMEM;
+ 		goto out_iounmap;
+ 	}
+ 
+-- 
+2.17.1
