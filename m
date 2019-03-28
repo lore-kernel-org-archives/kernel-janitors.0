@@ -1,77 +1,80 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 21 Mar 2019 08:26:44 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: Fix double unlock bug in smu_sys_set_pp_table()
-Message-Id: <alpine.DEB.2.20.1903210925400.5292@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 Mar 2019 23:43:28 +0000
+Subject: [PATCH] scsi: pm8001: clean up structurally dead code when PM8001_USE_MSIX is defined
+Message-Id: <20190328234328.15860-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190321062822.GD21489@kadam>
- <MN2PR12MB3309B7C391B32EB8F5F87676EC420@MN2PR12MB3309.namprd12.prod.outlook.com>
- <alpine.DEB.2.20.1903210920230.5292@hadrien> <20190321082329.GV2227@kadam>
-In-Reply-To: <20190321082329.GV2227@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: "Zhou, David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, "Gui,
- Jack" <Jack.Gui-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "Wang,
- Kevin(Yang)" <Kevin1.Wang-5C7GfCeVMHo@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, "Huang, Ray" <Ray.Huang-5C7GfCeVMHo@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "Deucher,
- Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, "Gao, Likun" <Likun.Gao-5C7GfCeVMHo@public.gmane.org>, "Koenig, Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>
+To: Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu@usish.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+When macro PM8001_USE_MSIX is defined there are redundant dead code
+calls to pm8001_chip_intx_interrupt_{enable|disable}. Clean this up
+by compiling in the appropriate enable/disable handlers for the
+defined PM8001_USE_MSIX and undefined PM8001_USE_MSIX cases.
 
-On Thu, 21 Mar 2019, Dan Carpenter wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/pm8001/pm8001_hwi.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-> On Thu, Mar 21, 2019 at 09:20:38AM +0100, Julia Lawall wrote:
-> >
-> >
-> > On Thu, 21 Mar 2019, Huang, Ray wrote:
-> >
-> > > > -----Original Message-----
-> > > > From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> > > > Sent: Thursday, March 21, 2019 2:28 PM
-> > > > To: Deucher, Alexander <Alexander.Deucher@amd.com>; Wang, Kevin(Yang)
-> > > > <Kevin1.Wang@amd.com>
-> > > > Cc: Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
-> > > > <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; Daniel Vetter
-> > > > <daniel@ffwll.ch>; Huang, Ray <Ray.Huang@amd.com>; Gao, Likun
-> > > > <Likun.Gao@amd.com>; Gui, Jack <Jack.Gui@amd.com>; amd-
-> > > > gfx@lists.freedesktop.org; kernel-janitors@vger.kernel.org
-> > > > Subject: [PATCH] drm/amd/powerplay: Fix double unlock bug in
-> > > > smu_sys_set_pp_table()
-> > > >
-> > > > We already unlocked a few lines earlier so this code unlocks twice on the
-> > > > success path.
-> > > >
-> > > > Fixes: 5809d7420f97 ("drm/amd/powerplay: implement sysfs of pp_table for
-> > > > smu11 (v2)")
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >
-> > > Nice catch!  Thanks, Dan.
-> > > Kevin, could you please verify this patch.
-> > > Reviewed-by: Huang Rui <ray.huang@amd.com>
-> > >
-> > > > ---
-> > > > I'm not sure what this bug looks like at runtime, but it's slightly weird that no
-> > > > one noticed.  This is from static analysis and I haven't tested it myself.
-> > > >
-> > > >  drivers/gpu/drm/amd/powerplay/amdgpu_smu.c | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> > > > b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> > > > index 00b7c885772b..7e8c74da6a74 100644
-> > > > --- a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> > > > +++ b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> > > > @@ -187,6 +187,8 @@ int smu_sys_set_pp_table(struct smu_context *smu,
-> > > > void *buf, size_t size)
-> > > >  	if (ret)
-> > > >  		pr_info("smu reset failed, ret = %d\n", ret);
-> > > >
-> > > > +	return ret;
-> >
-> > Why not return 0?
->
-> It's not necessarily zero.
-
-Oops, I was looking at the invisble goto after the pr_info :)
-
-julia
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index e4209091c1da..7d81246a432b 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -1204,6 +1204,7 @@ void pm8001_chip_iounmap(struct pm8001_hba_info *pm8001_ha)
+ 	}
+ }
+ 
++#ifndef PM8001_USE_MSIX
+ /**
+  * pm8001_chip_interrupt_enable - enable PM8001 chip interrupt
+  * @pm8001_ha: our hba card information
+@@ -1225,6 +1226,8 @@ pm8001_chip_intx_interrupt_disable(struct pm8001_hba_info *pm8001_ha)
+ 	pm8001_cw32(pm8001_ha, 0, MSGU_ODMR, ODMR_MASK_ALL);
+ }
+ 
++#else
++
+ /**
+  * pm8001_chip_msix_interrupt_enable - enable PM8001 chip interrupt
+  * @pm8001_ha: our hba card information
+@@ -1256,6 +1259,7 @@ pm8001_chip_msix_interrupt_disable(struct pm8001_hba_info *pm8001_ha,
+ 	msi_index += MSIX_TABLE_BASE;
+ 	pm8001_cw32(pm8001_ha, 0,  msi_index, MSIX_INTERRUPT_DISABLE);
+ }
++#endif
+ 
+ /**
+  * pm8001_chip_interrupt_enable - enable PM8001 chip interrupt
+@@ -1266,10 +1270,9 @@ pm8001_chip_interrupt_enable(struct pm8001_hba_info *pm8001_ha, u8 vec)
+ {
+ #ifdef PM8001_USE_MSIX
+ 	pm8001_chip_msix_interrupt_enable(pm8001_ha, 0);
+-	return;
+-#endif
++#else
+ 	pm8001_chip_intx_interrupt_enable(pm8001_ha);
+-
++#endif
+ }
+ 
+ /**
+@@ -1281,10 +1284,9 @@ pm8001_chip_interrupt_disable(struct pm8001_hba_info *pm8001_ha, u8 vec)
+ {
+ #ifdef PM8001_USE_MSIX
+ 	pm8001_chip_msix_interrupt_disable(pm8001_ha, 0);
+-	return;
+-#endif
++#else
+ 	pm8001_chip_intx_interrupt_disable(pm8001_ha);
+-
++#endif
+ }
+ 
+ /**
+-- 
+2.20.1
