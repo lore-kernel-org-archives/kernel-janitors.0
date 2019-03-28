@@ -1,29 +1,34 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Tue, 12 Mar 2019 20:28:41 +0000
-Subject: Re: [PATCH 09/12] meson-gx-socinfo: add missing of_node_put after of_device_is_available
-Message-Id: <7hh8c7u9ae.fsf@baylibre.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Mar 2019 14:31:30 +0000
+Subject: [PATCH] drm/mediatek: Fix an error code in mtk_hdmi_dt_parse_pdata()
+Message-Id: <20190328143130.GO32590@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
- <1550928043-14889-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: CK Hu <ck.hu@mediatek.com>, Jie Qiu <jie.qiu@mediatek.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
 
-Julia Lawall <Julia.Lawall@lip6.fr> writes:
+We don't want to overwrite "ret", it already holds the correct error
+code.  The "regmap" variable might be a valid pointer as this point.
 
-> Add an of_node_put when a tested device node is not available.
+Fixes: 8f83f26891e1 ("drm/mediatek: Add HDMI support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-[...] 
-]
-
-> Fixes: a9daaba2965e8 ("soc: Add Amlogic SoC Information driver")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Patch applied,
-
-Thanks,
-
-Kevin
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index 915cc84621ae..543a25e5765e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -1480,7 +1480,6 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+ 	if (IS_ERR(regmap))
+ 		ret = PTR_ERR(regmap);
+ 	if (ret) {
+-		ret = PTR_ERR(regmap);
+ 		dev_err(dev,
+ 			"Failed to get system configuration registers: %d\n",
+ 			ret);
+-- 
+2.17.1
