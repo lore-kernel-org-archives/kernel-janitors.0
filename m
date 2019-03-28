@@ -1,36 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Mar 2019 14:27:58 +0000
-Subject: [PATCH] hw-breakpoints: fix missing break for SH_BREAKPOINT_READ
-Message-Id: <20190319142758.24856-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Mar 2019 14:18:41 +0000
+Subject: [PATCH] soc/fsl/qe: Fix an error code in qe_pin_request()
+Message-Id: <20190328141841.GN32590@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Frederic Weisbecker <frederic@kernel.org>, linux-sh@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Qiang Zhao <qiang.zhao@nxp.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Li Yang <leoyang.li@nxp.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+We forgot to set "err" on this error path.
 
-The SH_BREAKPOINT_READ case is missing a break and
-falling through to SH_BREAKPOINT_WRITE. Fix this.
-
-Fixes: 09a072947791 ("sh: hw-breakpoints: Add preliminary support for SH-4A UBC.")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 1a2d397a6eb5 ("gpio/powerpc: Eliminate duplication of of_get_named_gpio_flags()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- arch/sh/kernel/hw_breakpoint.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/fsl/qe/gpio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/sh/kernel/hw_breakpoint.c b/arch/sh/kernel/hw_breakpoint.c
-index bc96b16288c1..af6a65ac04cf 100644
---- a/arch/sh/kernel/hw_breakpoint.c
-+++ b/arch/sh/kernel/hw_breakpoint.c
-@@ -157,6 +157,7 @@ int arch_bp_generic_fields(int sh_len, int sh_type,
- 	switch (sh_type) {
- 	case SH_BREAKPOINT_READ:
- 		*gen_type = HW_BREAKPOINT_R;
-+		break;
- 	case SH_BREAKPOINT_WRITE:
- 		*gen_type = HW_BREAKPOINT_W;
- 		break;
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 819bed0f5667..51b3a47b5a55 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -179,8 +179,10 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
+ 	if (err < 0)
+ 		goto err0;
+ 	gc = gpio_to_chip(err);
+-	if (WARN_ON(!gc))
++	if (WARN_ON(!gc)) {
++		err = -ENODEV;
+ 		goto err0;
++	}
+ 
+ 	if (!of_device_is_compatible(gc->of_node, "fsl,mpc8323-qe-pario-bank")) {
+ 		pr_debug("%s: tried to get a non-qe pin\n", __func__);
 -- 
-2.20.1
+2.17.1
