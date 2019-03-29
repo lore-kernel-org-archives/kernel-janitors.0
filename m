@@ -1,46 +1,30 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 17 Mar 2019 22:47:03 +0000
-Subject: [PATCH] gpu: host1x: fix mismatch between function definitions and declarations
-Message-Id: <20190317224703.6706-1-colin.king@canonical.com>
+Date: Fri, 29 Mar 2019 23:44:21 +0000
+Subject: [PATCH 0/2][V2] scsi: pm8001: clean up code and fix spelling mistakes
+Message-Id: <20190329234423.5611-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+To: Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu@usish.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Three functions have arguments r and v swapped in their function
-declarations in the header file dev.h compared to their definitions
-in dev.c.  Swap the order in the header file to fix this.
+This is a re-working of an earlier patch; this version splits the
+original patch into two parts, one for the code clean up and the
+other to fix spelling mistakes.
 
-Fixes: f1b53c4e2c08 ("gpu: host1x: Add Tegra186 support")
-Fixes: 6579324a41cc ("gpu: host1x: Add channel support")
-Fixes: 754716874389 ("gpu: host1x: Add host1x driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/host1x/dev.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Colin Ian King (2):
+  scsi: pm8001: clean up structurally dead code when PM8001_USE_MSIX is
+    defined
+  scsi: pm8001: fix spelling mistake, interupt -> interrupt
 
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index 05216a7e4830..f85138229fbe 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -153,11 +153,11 @@ struct host1x {
- 	struct list_head list;
- };
- 
--void host1x_hypervisor_writel(struct host1x *host1x, u32 r, u32 v);
-+void host1x_hypervisor_writel(struct host1x *host1x, u32 v, u32 r);
- u32 host1x_hypervisor_readl(struct host1x *host1x, u32 r);
--void host1x_sync_writel(struct host1x *host1x, u32 r, u32 v);
-+void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r);
- u32 host1x_sync_readl(struct host1x *host1x, u32 r);
--void host1x_ch_writel(struct host1x_channel *ch, u32 r, u32 v);
-+void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r);
- u32 host1x_ch_readl(struct host1x_channel *ch, u32 r);
- 
- static inline void host1x_hw_syncpt_restore(struct host1x *host,
+ drivers/scsi/pm8001/pm8001_hwi.c  | 11 ++++++-----
+ drivers/scsi/pm8001/pm8001_init.c |  4 ++--
+ drivers/scsi/pm8001/pm8001_sas.h  |  2 +-
+ drivers/scsi/pm8001/pm80xx_hwi.c  | 11 ++++++-----
+ 4 files changed, 15 insertions(+), 13 deletions(-)
+
 -- 
 2.20.1
