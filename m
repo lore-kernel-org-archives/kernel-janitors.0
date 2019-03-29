@@ -1,77 +1,75 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 25 Mar 2019 07:58:04 +0000
-Subject: Re: [PATCH -next] ASoC: simple-card-utils: remove set but not used variable ''
-Message-Id: <ae41e273-1c0e-c178-cc94-7f0330b7559f@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Mar 2019 23:44:22 +0000
+Subject: [PATCH 1/2] scsi: pm8001: clean up structurally dead code when PM8001_USE_MSIX is defined
+Message-Id: <20190329234423.5611-2-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190323020838.107533-1-yuehaibing@huawei.com>
- <6a0c2306-088f-cdbc-0730-60b899611c6f@codeaurora.org>
-In-Reply-To: <6a0c2306-088f-cdbc-0730-60b899611c6f@codeaurora.org>
+References: <20190329234423.5611-1-colin.king@canonical.com>
+In-Reply-To: <20190329234423.5611-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mukesh Ojha <mojha@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu@usish.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2019/3/25 15:42, Mukesh Ojha wrote:
-> 
-> On 3/23/2019 7:38 AM, YueHaibing wrote:
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> sound/soc/generic/simple-card-utils.c: In function 'asoc_simple_parse_clk':
->> sound/soc/generic/simple-card-utils.c:164:18: warning:
->>   parameter 'dai_name' set but not used [-Wunused-but-set-parameter]
->>
->> It's not used since commit 0580dde59438 ("ASoC: simple-card-utils: add
-> 
-> 
-> I am not able to find this commit
-> 
-> 0580dde59438
+From: Colin Ian King <colin.king@canonical.com>
 
-It's now in linux-next tree.
+When macro PM8001_USE_MSIX is defined there is redundant dead code
+call to pm8001_cr32.  Clean this up for the defined PM8001_USE_MSIX and
+undefined PM8001_USE_MSIX cases.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id80dde59438686d60762b6da9229ebec693b94f
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/pm8001/pm8001_hwi.c | 7 ++++---
+ drivers/scsi/pm8001/pm80xx_hwi.c | 7 ++++---
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-> 
-> 
->> asoc_simple_debug_info()"), so can be removed.
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>   sound/soc/generic/simple-card-utils.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
->> index 4ed68348f939..db1458a19985 100644
->> --- a/sound/soc/generic/simple-card-utils.c
->> +++ b/sound/soc/generic/simple-card-utils.c
->> @@ -173,10 +173,8 @@ int asoc_simple_parse_clk(struct device *dev,
->>        * see
->>        *    soc-core.c :: snd_soc_init_multicodec()
->>        */
->> -    if (dlc) {
->> +    if (dlc)
->>           dai_of_node    = dlc->of_node;
->> -        dai_name    = dlc->dai_name;
-> 
-> I don't see any function like `asoc_simple_parse_clk`
-> 
-> but instead this `asoc_simple_card_parse_clk` and there the variable is used.
-> 
-> Can you double check latest code base ?
-> 
-> Thanks,
-> Mukesh
-> 
-> 
->> -    }
->>         /*
->>        * Parse dai->sysclk come from "clocks = <&xxx>"
->>
->>
->>
->>
->>
-> 
-> .
-> 
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index e4209091c1da..434498a78946 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -4625,15 +4625,16 @@ static int pm8001_chip_phy_ctl_req(struct pm8001_hba_info *pm8001_ha,
+ 
+ static u32 pm8001_chip_is_our_interupt(struct pm8001_hba_info *pm8001_ha)
+ {
+-	u32 value;
+ #ifdef PM8001_USE_MSIX
+ 	return 1;
+-#endif
++#else
++	u32 value;
++
+ 	value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
+ 	if (value)
+ 		return 1;
+ 	return 0;
+-
++#endif
+ }
+ 
+ /**
+diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c b/drivers/scsi/pm8001/pm80xx_hwi.c
+index 536d2b4384f8..4a176e60307f 100644
+--- a/drivers/scsi/pm8001/pm80xx_hwi.c
++++ b/drivers/scsi/pm8001/pm80xx_hwi.c
+@@ -4619,15 +4619,16 @@ static int pm80xx_chip_phy_ctl_req(struct pm8001_hba_info *pm8001_ha,
+ 
+ static u32 pm80xx_chip_is_our_interupt(struct pm8001_hba_info *pm8001_ha)
+ {
+-	u32 value;
+ #ifdef PM8001_USE_MSIX
+ 	return 1;
+-#endif
++#else
++	u32 value;
++
+ 	value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
+ 	if (value)
+ 		return 1;
+ 	return 0;
+-
++#endif
+ }
+ 
+ /**
+-- 
+2.20.1
