@@ -1,55 +1,25 @@
-From: Manish Rangankar <mrangankar@marvell.com>
-Date: Thu, 28 Mar 2019 05:53:15 +0000
-Subject: RE: [PATCH] scsi: qedi: remove declaration of nvm_image from stack
-Message-Id: <BYAPR18MB2485E6EE1193DE82178C05A3D8590@BYAPR18MB2485.namprd18.prod.outlook.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 29 Mar 2019 14:04:53 +0000
+Subject: Re: [PATCH] scsi: qedi: remove declaration of nvm_image from stack
+Message-Id: <yq1d0m9srne.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190327181103.15677-1-colin.king@canonical.com>
-In-Reply-To: <20190327181103.15677-1-colin.king@canonical.com>
+In-Reply-To: <20190327181103.15677-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 27 Mar 2019 18:11:03 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "QLogic-Storage-Upstream@cavium.com" <QLogic-Storage-Upstream@cavium.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IENvbGluIEtpbmcgPGNvbGlu
-LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gU2VudDogV2VkbmVzZGF5LCBNYXJjaCAyNywgMjAxOSAx
-MTo0MSBQTQ0KPiBUbzogUUxvZ2ljLVN0b3JhZ2UtVXBzdHJlYW1AY2F2aXVtLmNvbTsgSmFtZXMg
-RSAuIEogLiBCb3R0b21sZXkNCj4gPGplamJAbGludXguaWJtLmNvbT47IE1hcnRpbiBLIC4gUGV0
-ZXJzZW4gPG1hcnRpbi5wZXRlcnNlbkBvcmFjbGUuY29tPjsNCj4gbGludXgtc2NzaUB2Z2VyLmtl
-cm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBzY3NpOiBxZWRpOiByZW1v
-dmUgZGVjbGFyYXRpb24gb2YgbnZtX2ltYWdlIGZyb20gc3RhY2sNCj4gDQo+IEZyb206IENvbGlu
-IElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGUgbnZtX2ltYWdl
-IGlzIGEgbGFyZ2Ugc3RydWN0IHFlZGlfbnZtX2lzY3NpX2ltYWdlIG9iamVjdCBvZiBvdmVyIDI0
-Sw0KPiBzbyBkb24ndCBkZWNsYXJlIGl0IG9uIHRoZSBzdGFjayBqdXN0IGZvciBhIHNpemVvZiBy
-ZXF1aXJlbWVudDsgdXNlIHNpemVvZiBvbg0KPiBzdHJ1Y3QgcWVkaV9udm1faXNjc2lfaW1hZ2Ug
-aW5zdGVhZC4NCj4gDQo+IEZpeGVzOiBjNzdhMmZhM2ZmOGYgKCJzY3NpOiBxZWRpOiBBZGQgdGhl
-IENSQyBzaXplIHdpdGhpbiBpU0NTSSBOVk0gaW1hZ2UiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xp
-biBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMv
-c2NzaS9xZWRpL3FlZGlfbWFpbi5jIHwgNyArKy0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBp
-bnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-c2NzaS9xZWRpL3FlZGlfbWFpbi5jIGIvZHJpdmVycy9zY3NpL3FlZGkvcWVkaV9tYWluLmMNCj4g
-aW5kZXggZTc0YTYyNDQ4YmE0Li5lNWRiOWE5OTU0ZGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
-c2NzaS9xZWRpL3FlZGlfbWFpbi5jDQo+ICsrKyBiL2RyaXZlcnMvc2NzaS9xZWRpL3FlZGlfbWFp
-bi5jDQo+IEBAIC0xMzkyLDEwICsxMzkyLDggQEAgc3RhdGljIHZvaWQgcWVkaV9mcmVlX252bV9p
-c2NzaV9jZmcoc3RydWN0DQo+IHFlZGlfY3R4ICpxZWRpKQ0KPiANCj4gIHN0YXRpYyBpbnQgcWVk
-aV9hbGxvY19udm1faXNjc2lfY2ZnKHN0cnVjdCBxZWRpX2N0eCAqcWVkaSkgIHsNCj4gLQlzdHJ1
-Y3QgcWVkaV9udm1faXNjc2lfaW1hZ2UgbnZtX2ltYWdlOw0KPiAtDQo+ICAJcWVkaS0+aXNjc2lf
-aW1hZ2UgPSBkbWFfYWxsb2NfY29oZXJlbnQoJnFlZGktPnBkZXYtPmRldiwNCj4gLQkJCQkJICAg
-ICAgIHNpemVvZihudm1faW1hZ2UpLA0KPiArCQkJCQkgICAgICAgc2l6ZW9mKHN0cnVjdA0KPiBx
-ZWRpX252bV9pc2NzaV9pbWFnZSksDQo+ICAJCQkJCSAgICAgICAmcWVkaS0+bnZtX2J1Zl9kbWEs
-DQo+IEdGUF9LRVJORUwpOw0KPiAgCWlmICghcWVkaS0+aXNjc2lfaW1hZ2UpIHsNCj4gIAkJUUVE
-SV9FUlIoJnFlZGktPmRiZ19jdHgsICJDb3VsZCBub3QgYWxsb2NhdGUgTlZNDQo+IEJVRi5cbiIp
-OyBAQCAtMjIzNiwxNCArMjIzNCwxMyBAQCBzdGF0aWMgdm9pZCBxZWRpX2Jvb3RfcmVsZWFzZSh2
-b2lkDQo+ICpkYXRhKSAgc3RhdGljIGludCBxZWRpX2dldF9ib290X2luZm8oc3RydWN0IHFlZGlf
-Y3R4ICpxZWRpKSAgew0KPiAgCWludCByZXQgPSAxOw0KPiAtCXN0cnVjdCBxZWRpX252bV9pc2Nz
-aV9pbWFnZSBudm1faW1hZ2U7DQo+IA0KPiAgCVFFRElfSU5GTygmcWVkaS0+ZGJnX2N0eCwgUUVE
-SV9MT0dfSU5GTywNCj4gIAkJICAiR2V0IE5WTSBpU0NTSSBDRkcgaW1hZ2VcbiIpOw0KPiAgCXJl
-dCA9IHFlZGlfb3BzLT5jb21tb24tPm52bV9nZXRfaW1hZ2UocWVkaS0+Y2RldiwNCj4gIAkJCQkJ
-ICAgICAgUUVEX05WTV9JTUFHRV9JU0NTSV9DRkcsDQo+ICAJCQkJCSAgICAgIChjaGFyICopcWVk
-aS0+aXNjc2lfaW1hZ2UsDQo+IC0JCQkJCSAgICAgIHNpemVvZihudm1faW1hZ2UpKTsNCj4gKwkJ
-CQkJICAgICAgc2l6ZW9mKHN0cnVjdA0KPiBxZWRpX252bV9pc2NzaV9pbWFnZSkpOw0KPiAgCWlm
-IChyZXQpDQo+ICAJCVFFRElfRVJSKCZxZWRpLT5kYmdfY3R4LA0KPiAgCQkJICJDb3VsZCBub3Qg
-Z2V0IE5WTSBpbWFnZS4gcmV0ID0gJWRcbiIsIHJldCk7DQo+IC0tDQo+IDIuMjAuMQ0KDQpUaGFu
-a3MsDQpBY2tlZC1ieTogTWFuaXNoIFJhbmdhbmthciA8bXJhbmdhbmthckBtYXJ2ZWxsLmNvbT4N
-Cg=
+
+Colin,
+
+> The nvm_image is a large struct qedi_nvm_iscsi_image object of over
+> 24K so don't declare it on the stack just for a sizeof requirement;
+> use sizeof on struct qedi_nvm_iscsi_image instead.
+
+Applied to 5.1/scsi-fixes. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
