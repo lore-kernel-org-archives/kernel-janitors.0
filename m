@@ -1,24 +1,45 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 28 Mar 2019 01:02:47 +0000
-Subject: Re: [PATCH] scsi: mpt3sas: fix indentation issue
-Message-Id: <yq11s2rx13c.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 30 Mar 2019 21:42:41 +0000
+Subject: [PATCH] net: dsa: fix negative loop bound error on for loop
+Message-Id: <20190330214241.15311-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190320165000.29340-1-colin.king@canonical.com>
-In-Reply-To: <20190320165000.29340-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 20 Mar 2019 16:50:00 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Currently the for-loop using an unsigned int for the loop counter
+which is problematic when comparing it to the signed int count
+This is an issue because if the signed int is negative then
+the negative loop bound is implicitly cast to an unsigned int on
+the comparison to loop counter i and will yield a very large value,
+eventually causing an error when memmove/memcpy'ing outside the
+allocated region pointed to by ndata.
 
-> There are a couple of statements that are incorrectly indented, fix
-> these.
+Fix this by simply making the loop counter i a signed int;
 
-Applied to 5.2/scsi-queue, thanks!
+Fixes: f2f2356685bc ("net: dsa: move master ethtool code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/dsa/master.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/net/dsa/master.c b/net/dsa/master.c
+index c58f33931be1..1b659647a303 100644
+--- a/net/dsa/master.c
++++ b/net/dsa/master.c
+@@ -87,8 +87,7 @@ static void dsa_master_get_strings(struct net_device *dev, uint32_t stringset,
+ 	struct dsa_switch *ds = cpu_dp->ds;
+ 	int port = cpu_dp->index;
+ 	int len = ETH_GSTRING_LEN;
+-	int mcount = 0, count;
+-	unsigned int i;
++	int mcount = 0, count, i;
+ 	uint8_t pfx[4];
+ 	uint8_t *ndata;
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
