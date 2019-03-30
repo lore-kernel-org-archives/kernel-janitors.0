@@ -1,44 +1,36 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 30 Mar 2019 01:47:41 +0000
-Subject: [PATCH -next] scsi: qedf: Remove set but not used variable 'fr_len'
-Message-Id: <20190330014741.185130-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 30 Mar 2019 20:37:57 +0000
+Subject: [PATCH] leds: blinkm: clean up double assignment to data->i2c_addr
+Message-Id: <20190330203757.8877-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1539951177-184754-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539951177-184754-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jan-Simon Moeller <jansimon.moeller@gmx.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/scsi/qedf/qedf_fip.c: In function 'qedf_fcoe_send_vlan_req':
-drivers/scsi/qedf/qedf_fip.c:22:6: warning:
- variable 'fr_len' set but not used [-Wunused-but-set-variable]
+Currently data->i2c_addr is being assigned twice, first with the
+value 0x09 and then immediately afterwards with the value 0x08.
+The first assignment is redundant and can be removed.
 
-It's never used since introduction and can be removed.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/qedf/qedf_fip.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/leds/leds-blinkm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/qedf/qedf_fip.c b/drivers/scsi/qedf/qedf_fip.c
-index 766da74fa546..49d0724535e3 100644
---- a/drivers/scsi/qedf/qedf_fip.c
-+++ b/drivers/scsi/qedf/qedf_fip.c
-@@ -19,7 +19,6 @@ void qedf_fcoe_send_vlan_req(struct qedf_ctx *qedf)
- {
- 	struct sk_buff *skb;
- 	char *eth_fr;
--	int fr_len;
- 	struct fip_vlan *vlan;
- #define MY_FIP_ALL_FCF_MACS        ((__u8[6]) { 1, 0x10, 0x18, 1, 0, 2 })
- 	static u8 my_fcoe_all_fcfs[ETH_ALEN] = MY_FIP_ALL_FCF_MACS;
-@@ -29,7 +28,6 @@ void qedf_fcoe_send_vlan_req(struct qedf_ctx *qedf)
- 	if (!skb)
- 		return;
+diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+index 851c1920b63c..11b771fb933b 100644
+--- a/drivers/leds/leds-blinkm.c
++++ b/drivers/leds/leds-blinkm.c
+@@ -594,7 +594,6 @@ static int blinkm_probe(struct i2c_client *client,
+ 		goto exit;
+ 	}
  
--	fr_len = sizeof(*vlan);
- 	eth_fr = (char *)skb->data;
- 	vlan = (struct fip_vlan *)eth_fr;
+-	data->i2c_addr = 0x09;
+ 	data->i2c_addr = 0x08;
+ 	/* i2c addr  - use fake addr of 0x08 initially (real is 0x09) */
+ 	data->fw_ver = 0xfe;
+-- 
+2.20.1
