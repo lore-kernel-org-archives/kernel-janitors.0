@@ -1,46 +1,65 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 06 Mar 2019 08:50:11 +0000
-Subject: Re: [PATCH] mt76: Fix an IS_ERR() vs NULL check in mt76_wmac_probe()
-Message-Id: <875zswfku4.fsf@kamboji.qca.qualcomm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 30 Mar 2019 00:17:12 +0000
+Subject: [PATCH] platform/x86: alienware-wmi: fix kfree on potentially uninitialized pointer
+Message-Id: <20190330001712.8923-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190306072633.GA2625@kadam>
-In-Reply-To: <20190306072633.GA2625@kadam> (Dan Carpenter's message of "Wed, 6
-        Mar 2019 10:26:33 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>, Lorenzo Bianconi <lorenzo.bianconi83-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The devm_ioremap_resource() function never returns NULL, it returns
-> error pointers.
->
-> Fixes: c8846e101502 ("mt76: add driver for MT7603E and MT7628/7688")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/wireless/mediatek/mt76/mt7603/soc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt7603/soc.c b/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
-> index e13fea80d970..b920be1f5718 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7603/soc.c
-> @@ -23,9 +23,9 @@ mt76_wmac_probe(struct platform_device *pdev)
->  	}
->  
->  	mem_base = devm_ioremap_resource(&pdev->dev, res);
-> -	if (!mem_base) {
-> +	if (IS_ERR(mem_base)) {
->  		dev_err(&pdev->dev, "Failed to get memory resource\n");
-> -		return -EINVAL;
-> +		return PTR_ERR(mem_base);
->  	}
+Currently the kfree of output.pointer can be potentially freeing
+an uninitalized pointer in the case where out_data is NULL. Fix this
+by reworking the case where out_data is not-null to perform the
+ACPI status check and also the kfree of outpoint.pointer in one block
+and hence ensuring the pointer is only freed when it has been used.
 
-Wei already posted an identical patch:
+Also replace the if (ptr != NULL) idiom with just if (ptr).
 
-https://patchwork.kernel.org/patch/10837285/
+Fixes: ff0e9f26288d ("platform/x86: alienware-wmi: Correct a memory leak")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/alienware-wmi.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/platform/x86/alienware-wmi.c b/drivers/platform/x86/alienware-wmi.c
+index f10af5c383c5..c0d1555735cd 100644
+--- a/drivers/platform/x86/alienware-wmi.c
++++ b/drivers/platform/x86/alienware-wmi.c
+@@ -522,23 +522,22 @@ static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
+ 
+ 	input.length = (acpi_size) sizeof(*in_args);
+ 	input.pointer = in_args;
+-	if (out_data != NULL) {
++	if (out_data) {
+ 		output.length = ACPI_ALLOCATE_BUFFER;
+ 		output.pointer = NULL;
+ 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
+ 					     command, &input, &output);
+-	} else
++		if (ACPI_SUCCESS(status)) {
++			obj = (union acpi_object *)output.pointer;
++			if (obj && obj->type = ACPI_TYPE_INTEGER)
++				*out_data = (u32)obj->integer.value;
++		}
++		kfree(output.pointer);
++	} else {
+ 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
+ 					     command, &input, NULL);
+-
+-	if (ACPI_SUCCESS(status) && out_data != NULL) {
+-		obj = (union acpi_object *)output.pointer;
+-		if (obj && obj->type = ACPI_TYPE_INTEGER)
+-			*out_data = (u32) obj->integer.value;
+ 	}
+-	kfree(output.pointer);
+ 	return status;
+-
+ }
+ 
+ /*
 -- 
-Kalle Valo
+2.20.1
