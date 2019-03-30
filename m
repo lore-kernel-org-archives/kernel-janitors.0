@@ -1,50 +1,44 @@
-From: Adam Ford <aford173@gmail.com>
-Date: Thu, 07 Mar 2019 20:13:29 +0000
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-Id: <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 30 Mar 2019 02:26:26 +0000
+Subject: [PATCH -next] video: fbdev: remove set but not used variable 'size'
+Message-Id: <20190330022626.97340-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
-In-Reply-To: <20180430092947.GC2270@ulmo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Hoan Tran <hotran@apm.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, linux-tegra@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kees Cook <keescook@chromium.org>, Ira Weiny <ira.weiny@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org
 
-On Mon, Apr 30, 2018 at 4:30 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
-> > On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-> > <grygorii.strashko@ti.com> wrote:
-> > > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
-> > >>
-> > >> We should get drvdata from struct device directly. Going via
-> > >> platform_device is an unneeded step back and forth.
-> > >>
-> > >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > >> ---
-> > >>
-> > >> Build tested only. buildbot is happy. Please apply individually.
-> > >
-> > >
-> > > for gpio-omap.c:
-> > > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> >
-> > Hm I only see the responses not the actual patch, I guess I will find it
-> > sooner or later.
-> >
-> > Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
->
-> I had the same problem, turned out this got classified as spam by Google
-> for some reason. Maybe try your spam folder?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-It's been almost a year later, and several Linux revisions, and this
-still seems stuck somewhere/somehow.
+drivers/video/fbdev/pvr2fb.c: In function 'pvr2fb_init':
+drivers/video/fbdev/pvr2fb.c:1074:6: warning:
+ variable 'size' set but not used [-Wunused-but-set-variable]
 
-adam
->
-> Thierry
+It's not used since commit 9cd1c6743454 ("pvr2fb: Fix oops when
+pseudo_palette is written")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/video/fbdev/pvr2fb.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
+index 41390c8e0f67..4e4d6a0df978 100644
+--- a/drivers/video/fbdev/pvr2fb.c
++++ b/drivers/video/fbdev/pvr2fb.c
+@@ -1071,7 +1071,6 @@ static struct pvr2_board {
+ static int __init pvr2fb_init(void)
+ {
+ 	int i, ret = -ENODEV;
+-	int size;
+ 
+ #ifndef MODULE
+ 	char *option = NULL;
+@@ -1080,7 +1079,6 @@ static int __init pvr2fb_init(void)
+ 		return -ENODEV;
+ 	pvr2fb_setup(option);
+ #endif
+-	size = sizeof(struct fb_info) + sizeof(struct pvr2fb_par) + 16 * sizeof(u32);
+ 
+ 	fb_info = framebuffer_alloc(sizeof(struct pvr2fb_par), NULL);
