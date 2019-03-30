@@ -1,44 +1,44 @@
-From: Daniel Mack <daniel@zonque.org>
-Date: Sat, 23 Mar 2019 10:57:52 +0000
-Subject: Re: [PATCH -next] leds: lt3593: remove set but not used variable 'flags'
-Message-Id: <c3950792-694a-742b-90ff-7a5b503570b1@zonque.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 30 Mar 2019 01:47:41 +0000
+Subject: [PATCH -next] scsi: qedf: Remove set but not used variable 'fr_len'
+Message-Id: <20190330014741.185130-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190323024523.162210-1-yuehaibing@huawei.com>
-In-Reply-To: <20190323024523.162210-1-yuehaibing@huawei.com>
+References: <1539951177-184754-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539951177-184754-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 23/3/2019 11:51 AM, Pavel Machek wrote:
-> On Sat 2019-03-23 11:38:04, Daniel Mack wrote:
->> On 23/3/2019 11:34 AM, YueHaibing wrote:
->>> On 2019/3/23 18:25, Daniel Mack wrote:
->>>> On 23/3/2019 11:15 AM, Pavel Machek wrote:
->>
->>>>> If I look at code below, there's no difference between DEFSTATE_KEEP
->>>>> and DEFSTATE_ON, right? I can't see how it works.
->>>>
->>>> Ah, you're right. Yes, the "keep" branch needs to go away entirely.
->>>>
->>>> As the chip can't be queried for it's current state, the "keep" option
->>>> doesn't make sense. The only option in DT should be turn the LED on or
->>>> off at probe time. YueHaibing, can you add that to your patch?
->>>
->>> Ok. I will send v2 with this.
->>
->> Note that Jacek just applied a patch of mine that removes all pdata
->> handling from this driver. In order to avoid merge conflicts, you might
->> want to base your patch on top of that.
->>
-> 
-> Actually, Daniel, at this point I'd prefer you to take over this
-> patch. You have the hardware and you are already working on the
-> code...
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-YueHaibing's patch is fine except for the coding style issue. I can send
-a 2nd patch on top of that that removes the handling of "keep".
+drivers/scsi/qedf/qedf_fip.c: In function 'qedf_fcoe_send_vlan_req':
+drivers/scsi/qedf/qedf_fip.c:22:6: warning:
+ variable 'fr_len' set but not used [-Wunused-but-set-variable]
 
+It's never used since introduction and can be removed.
 
-Thanks,
-Daniel
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/qedf/qedf_fip.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/qedf/qedf_fip.c b/drivers/scsi/qedf/qedf_fip.c
+index 766da74fa546..49d0724535e3 100644
+--- a/drivers/scsi/qedf/qedf_fip.c
++++ b/drivers/scsi/qedf/qedf_fip.c
+@@ -19,7 +19,6 @@ void qedf_fcoe_send_vlan_req(struct qedf_ctx *qedf)
+ {
+ 	struct sk_buff *skb;
+ 	char *eth_fr;
+-	int fr_len;
+ 	struct fip_vlan *vlan;
+ #define MY_FIP_ALL_FCF_MACS        ((__u8[6]) { 1, 0x10, 0x18, 1, 0, 2 })
+ 	static u8 my_fcoe_all_fcfs[ETH_ALEN] = MY_FIP_ALL_FCF_MACS;
+@@ -29,7 +28,6 @@ void qedf_fcoe_send_vlan_req(struct qedf_ctx *qedf)
+ 	if (!skb)
+ 		return;
+ 
+-	fr_len = sizeof(*vlan);
+ 	eth_fr = (char *)skb->data;
+ 	vlan = (struct fip_vlan *)eth_fr;
