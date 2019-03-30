@@ -1,45 +1,44 @@
-From: Jinpu Wang <jinpu.wang@cloud.ionos.com>
-Date: Sun, 31 Mar 2019 17:43:49 +0000
-Subject: Re: [PATCH 2/2] scsi: pm8001: fix spelling mistake, interupt -> interrupt
-Message-Id: <CAMGffEmMjSc-juQcO9eQ6AVc9OTh8POd4Xi0SbVYtt5Fk=NyQw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 30 Mar 2019 21:23:00 +0000
+Subject: [PATCH] spi: oc-tiny: fix negative loop bound error on for loop
+Message-Id: <20190330212300.11675-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190329234423.5611-1-colin.king@canonical.com> <20190329234423.5611-3-colin.king@canonical.com>
-In-Reply-To: <20190329234423.5611-3-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu <lindar_liu@usish.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Mar 30, 2019 at 12:44 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Rename the functions pm8001_chip_is_our_interupt,
-> pm80xx_chip_is_our_interupt and function pointer is_our_interrupt
-> to fix spelling mistakes.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Thanks, Colin,
-Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the for-loop using an unsigned int for the loop counter
+which is problematic when comparing it to the signed int
+gt->gpio_cs_count.  This is an issue because if the signed int is
+negative (for example, the call to of_gpio_count failed) then
+the negative loop bound is implicitly cast to an unsigned int on
+the comparison to loop counter i and will yield a very large value,
+eventually causing an array bounds overflow on hw->gpio_cs.
+
+Fix this by simply making the loop counter i a signed int;
+
+Fixes: ca632f556697 ("spi: reorganize drivers")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/spi/spi-oc-tiny.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-oc-tiny.c b/drivers/spi/spi-oc-tiny.c
+index 085f580be7ec..81f74b938dc9 100644
+--- a/drivers/spi/spi-oc-tiny.c
++++ b/drivers/spi/spi-oc-tiny.c
+@@ -206,7 +206,7 @@ static int tiny_spi_of_probe(struct platform_device *pdev)
+ {
+ 	struct tiny_spi *hw = platform_get_drvdata(pdev);
+ 	struct device_node *np = pdev->dev.of_node;
+-	unsigned int i;
++	int i;
+ 	u32 val;
+ 
+ 	if (!np)
 -- 
-Jack Wang
-Linux Kernel Developer
-
-1&1 IONOS Cloud GmbH | Greifswalder Str. 207 | 10405 Berlin | Germany
-Phone: +49 30 57700-8042 | Fax: +49 30 57700-8598
-E-mail: jinpu.wang@cloud.ionos.com | Web: www.ionos.de
-
-
-Head Office: Berlin, Germany
-District Court Berlin Charlottenburg, Registration number: HRB 125506 B
-Executive Management: Christoph Steffens, Matthias Steinberg, Achim Weiss
-
-Member of United Internet
-
-This e-mail may contain confidential and/or privileged information. If
-you are not the intended recipient of this e-mail, you are hereby
-notified that saving, distribution or use of the content of this
-e-mail in any way is prohibited. If you have received this e-mail in
-error, please notify the sender and delete the e-mail.
+2.20.1
