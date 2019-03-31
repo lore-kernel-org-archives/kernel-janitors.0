@@ -1,7 +1,7 @@
 From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Sun, 31 Mar 2019 09:35:02 +0000
+Date: Sun, 31 Mar 2019 09:36:16 +0000
 Subject: Re: [PATCH] spi: oc-tiny: fix negative loop bound error on for loop
-Message-Id: <2461a0c8-9d60-d8c3-3021-4a97d91f70ee@codeaurora.org>
+Message-Id: <88c53375-5727-c865-05ba-829b6e7d5128@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190330212300.11675-1-colin.king@canonical.com>
 In-Reply-To: <20190330212300.11675-1-colin.king@canonical.com>
@@ -43,8 +43,8 @@ On 3/31/2019 2:53 AM, Colin King wrote:
 > +	int i;
 
 
-same here as well you are putting wrapper over a original issue by not 
-checking the returned value.
+Same issue, here as well like your other patch. you are putting wrapper 
+over a original issue by not checking the returned value.
 Please fix that in both patches.
 
 
