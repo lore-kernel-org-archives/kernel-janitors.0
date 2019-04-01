@@ -1,49 +1,71 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Tue, 16 Apr 2019 10:22:49 +0000
-Subject: Re: [PATCH] staging: comedi: adv_pci1710: fix spelling mistake: "droput" -> "dropout"
-Message-Id: <dbe5e3b9-0653-53ec-1371-88c29aed7b8d@mev.co.uk>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Date: Mon, 01 Apr 2019 12:50:39 +0000
+Subject: Re: [PATCH 04/12] phy: tegra: add missing of_node_put after of_device_is_available
+Message-Id: <bb2f2129-8d68-9a55-1bc4-f6ffc26677c5@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415174945.32712-1-colin.king@canonical.com>
-In-Reply-To: <20190415174945.32712-1-colin.king@canonical.com>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1550928043-14889-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 
-On 15/04/2019 18:49, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Looks good, thanks!
+On 2/23/2019 6:50 PM, Julia Lawall wrote:
+> Add an of_node_put when a tested device node is not available.
+>
+> The semantic patch that fixes this problem is as follows
+> (http://coccinelle.lip6.fr):
+>
+> // <smpl>
+> @@
+> identifier f;
+> local idexpression e;
+> expression x;
+> @@
+>
+> e = f(...);
+> ... when != of_node_put(e)
+>      when != x = e
+>      when != e = x
+>      when any
+> if (<+...of_device_is_available(e)...+>) {
+>    ... when != of_node_put(e)
+> (
+>    return e;
+> |
+> + of_node_put(e);
+>    return ...;
+> )
+> }
+> // </smpl>
+>
+> Fixes: 53d2a715c2403 ("phy: Add Tegra XUSB pad controller support")
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
-
+Cheers,
+-Mukesh
+>
 > ---
->   drivers/staging/comedi/drivers/adv_pci1710.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
-> index 6a93b04f1fdf..dbff0f7e7cf5 100644
-> --- a/drivers/staging/comedi/drivers/adv_pci1710.c
-> +++ b/drivers/staging/comedi/drivers/adv_pci1710.c
-> @@ -317,7 +317,7 @@ static int pci1710_ai_read_sample(struct comedi_device *dev,
->   		chan = sample >> 12;
->   		if (chan != devpriv->act_chanlist[cur_chan]) {
->   			dev_err(dev->class_dev,
-> -				"A/D data droput: received from channel %d, expected %d\n",
-> +				"A/D data dropout: received from channel %d, expected %d\n",
->   				chan, devpriv->act_chanlist[cur_chan]);
->   			return -ENODATA;
->   		}
-> 
-
-
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+>   drivers/phy/tegra/xusb.c |    4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff -u -p a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -260,8 +260,10 @@ tegra_xusb_pad_create(struct tegra_xusb_
+>   	int err;
+>   
+>   	np = tegra_xusb_find_pad_node(padctl, soc->name);
+> -	if (!np || !of_device_is_available(np))
+> +	if (!np || !of_device_is_available(np)) {
+> +		of_node_put(np);
+>   		return NULL;
+> +	}
+>   
+>   	pad = soc->ops->probe(padctl, soc, np);
+>   	if (IS_ERR(pad)) {
+>
