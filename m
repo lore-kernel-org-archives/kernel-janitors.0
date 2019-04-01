@@ -1,47 +1,71 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Mon, 15 Apr 2019 10:03:01 +0000
-Subject: Re: [PATCH] PCI: rockchip: fix bitwise operations on status and ROCKCHIP_PCIE_EP_CMD_STATUS_IS
-Message-Id: <20190415100301.GA12127@red-moon>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Date: Mon, 01 Apr 2019 12:49:30 +0000
+Subject: Re: [PATCH 02/12] drm/tegra: rgb: add missing of_node_put after of_device_is_available
+Message-Id: <d1555267-5ddd-fc31-ccee-769834728828@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330150910.9389-1-colin.king@canonical.com>
-In-Reply-To: <20190330150910.9389-1-colin.king@canonical.com>
+References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1550928043-14889-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Thierry Reding <thierry.reding@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Mar 30, 2019 at 03:09:10PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the bitwise operations on the u16 variable 'status' with
-> the setting ROCKCHIP_PCIE_EP_CMD_STATUS_IS are incorrect because
-> ROCKCHIP_PCIE_EP_CMD_STATUS_IS is 1UL<<19 which is wider than the
-> u16 variable.  Fix this by making status a u32.  (Not tested).
-> 
-> Fixes: cf590b078391 ("PCI: rockchip: Add EP driver for Rockchip PCIe controller")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+On 2/23/2019 6:50 PM, Julia Lawall wrote:
+> Add an of_node_put when a tested device node is not available.
+>
+> The semantic patch that fixes this problem is as follows
+> (http://coccinelle.lip6.fr):
+>
+> // <smpl>
+> @@
+> identifier f;
+> local idexpression e;
+> expression x;
+> @@
+>
+> e = f(...);
+> ... when != of_node_put(e)
+>      when != x = e
+>      when != e = x
+>      when any
+> if (<+...of_device_is_available(e)...+>) {
+>    ... when != of_node_put(e)
+> (
+>    return e;
+> |
+> + of_node_put(e);
+>    return ...;
+> )
+> }
+> // </smpl>
+>
+> Fixes: d8f4a9eda0067 ("drm: Add NVIDIA Tegra20 support")
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+
+Cheers,
+-Mukesh
+>
 > ---
->  drivers/pci/controller/pcie-rockchip-ep.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Applied to pci/rockchip for v5.2, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> index a5d799e2dff2..d743b0a48988 100644
-> --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> @@ -350,7 +350,7 @@ static void rockchip_pcie_ep_assert_intx(struct rockchip_pcie_ep *ep, u8 fn,
->  	struct rockchip_pcie *rockchip = &ep->rockchip;
->  	u32 r = ep->max_regions - 1;
->  	u32 offset;
-> -	u16 status;
-> +	u32 status;
->  	u8 msg_code;
->  
->  	if (unlikely(ep->irq_pci_addr != ROCKCHIP_PCIE_EP_PCI_LEGACY_IRQ_ADDR ||
-> -- 
-> 2.20.1
-> 
+>   drivers/gpu/drm/tegra/rgb.c |    4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff -u -p a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+> --- a/drivers/gpu/drm/tegra/rgb.c
+> +++ b/drivers/gpu/drm/tegra/rgb.c
+> @@ -221,8 +221,10 @@ int tegra_dc_rgb_probe(struct tegra_dc *
+>   	int err;
+>   
+>   	np = of_get_child_by_name(dc->dev->of_node, "rgb");
+> -	if (!np || !of_device_is_available(np))
+> +	if (!np || !of_device_is_available(np)) {
+> +		of_node_put(np);
+>   		return -ENODEV;
+> +	}
+>   
+>   	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+>   	if (!rgb)
+>
