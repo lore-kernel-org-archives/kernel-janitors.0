@@ -1,35 +1,66 @@
-From: <Eugen.Hristev@microchip.com>
-Date: Thu, 18 Apr 2019 06:21:19 +0000
-Subject: Re: [PATCH] media: atmel-isc: fix spelling mistake "profie" -> "profile"
-Message-Id: <ecaa2038-3df6-8fbe-ad7e-b8472c4fb32a@microchip.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Apr 2019 06:32:15 +0000
+Subject: Re: [PATCH] Bluetooth: hci_event: potential out of bounds parsing ADV events
+Message-Id: <20190401063215.GC32590@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190417163425.12826-1-colin.king@canonical.com>
-In-Reply-To: <20190417163425.12826-1-colin.king@canonical.com>
+References: <20190330072511.GA5502@kadam>
+ <f1baaa05-bd1d-f2cf-410a-7073e85412d3@gmail.com>
+ <b2a2b63a-c5f0-5d03-7516-668df6049c95@gmail.com>
+In-Reply-To: <b2a2b63a-c5f0-5d03-7516-668df6049c95@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, mchehab@kernel.org, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: hverkuil@xs4all.nl, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tomas Bortoli <tomasbortoli@gmail.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Jaganath Kanakkassery <jaganath.k.os@gmail.com>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SGkgQ29saW4sDQoNClRoYW5rcyBmb3IgeW91ciBwYXRjaCBidXQgSSB0aGluayB0aGlzIGNvbmZs
-aWN0cyB3aXRoIG15IHByZXZpb3VzIHBhdGNoIA0Kd2hpY2ggYWxyZWFkeSBjaGFuZ2VzIHRoaXMg
-dHlwbzoNCg0KaHR0cHM6Ly9naXQubGludXh0di5vcmcvaHZlcmt1aWwvbWVkaWFfdHJlZS5naXQv
-Y29tbWl0Lz9oPWZvci12NS4yYiZpZD1mNDliMzk3NDY0Mjk5MWZmZTNmNzI4YzUzMWI4ODgxNDE5
-ZGY2M2EwDQoNCnBhdGNod29yazoNCmh0dHBzOi8vcGF0Y2h3b3JrLmxpbnV4dHYub3JnL3BhdGNo
-LzU1MzE4Lw0KDQpOb3QgeWV0IG1lcmdlZCBpbnRvIG1lZGlhX3RyZWUgYnV0IG9uIGl0J3Mgd2F5
-IEkgYmVsaWV2ZS4uLg0KDQpFdWdlbg0KDQpPbiAxNy4wNC4yMDE5IDE5OjM0LCBDb2xpbiBLaW5n
-IHdyb3RlOg0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
-Pg0KPiANCj4gVGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgdjRsMl93YXJuIHdhcm5p
-bmcgbWVzc2FnZS4gRml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcg
-PGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9tZWRpYS9wbGF0
-Zm9ybS9hdG1lbC9hdG1lbC1pc2MuYyB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
-cnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlh
-L3BsYXRmb3JtL2F0bWVsL2F0bWVsLWlzYy5jIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9hdG1l
-bC9hdG1lbC1pc2MuYw0KPiBpbmRleCA5YTM5OWFhN2NhOTIuLmUzY2ZjZTA1ZDZiNiAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9hdG1lbC9hdG1lbC1pc2MuYw0KPiArKysg
-Yi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2F0bWVsL2F0bWVsLWlzYy5jDQo+IEBAIC0xMDExLDcg
-KzEwMTEsNyBAQCBzdGF0aWMgaW50IGlzY191cGRhdGVfcHJvZmlsZShzdHJ1Y3QgaXNjX2Rldmlj
-ZSAqaXNjKQ0KPiAgIAl9DQo+ICAgDQo+ICAgCWlmIChjb3VudGVyIDwgMCkgew0KPiAtCQl2NGwy
-X3dhcm4oJmlzYy0+djRsMl9kZXYsICJUaW1lIG91dCB0byB1cGRhdGUgcHJvZmllXG4iKTsNCj4g
-KwkJdjRsMl93YXJuKCZpc2MtPnY0bDJfZGV2LCAiVGltZSBvdXQgdG8gdXBkYXRlIHByb2ZpbGVc
-biIpOw0KPiAgIAkJcmV0dXJuIC1FVElNRURPVVQ7DQo+ICAgCX0NCj4gICANCj4gDQo
+On Sat, Mar 30, 2019 at 11:44:29PM +0100, Tomas Bortoli wrote:
+> Hi,
+> 
+> sorry for the multiple emails but I have checked again the code and
+> looks like process_adv_report() reads from ev->data for a size of
+> ev->length.
+> 
+> I attach a patch that applies the bound check to both
+> hci_le_ext_adv_report_evt() and hci_le_adv_report_evt().
+> 
+
+You're right that both need to be fixed.
+
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 609fd6871c5a..275926e0753e 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -5345,6 +5345,7 @@ static void hci_le_adv_report_evt(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+>  	u8 num_reports = skb->data[0];
+>  	void *ptr = &skb->data[1];
+> +	u8 *end = &skb->data[skb->len - 1];
+                             ^^^^^^^^^^^^
+>  
+>  	hci_dev_lock(hdev);
+>  
+> @@ -5352,6 +5353,9 @@ static void hci_le_adv_report_evt(struct hci_dev *hdev, struct sk_buff *skb)
+>  		struct hci_ev_le_advertising_info *ev = ptr;
+>  		s8 rssi;
+>  
+> +		if (ev->data + ev->length > end)
+
+No, this isn't right.  You've removed the + 1 and you've introduced an
+additional "sbk->len - 1" so we're off by two...  The test is supposed
+to be:
+
+	start + length_read > start + length_of_buffer
+
+So the end has to be &skb->data[skb->len].  The "+ 1" comes from later
+in the function when we do:
+
+		ptr += sizeof(*ev) + ev->length + 1;
+                                               ^^^^
+
+I don't where the "+ 1" comes from, but I know the condition and the
+increment should match.  We could use ev->data instead of
+"ptr + sizeof(*ev)" but to me, because the mysterious "+ 1" then it
+seems more readable to match the increment exactly...
+
+regards,
+dan carpenter
