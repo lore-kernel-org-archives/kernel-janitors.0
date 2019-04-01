@@ -1,55 +1,30 @@
-From: Damien Le Moal <Damien.LeMoal@wdc.com>
-Date: Wed, 10 Apr 2019 08:14:32 +0000
-Subject: Re: [PATCH v3] dm zoned: Silence a static checker warning
-Message-Id: <BYAPR04MB581696AA3EF70BE5328A9C95E72E0@BYAPR04MB5816.namprd04.prod.outlook.com>
+From: Gary R Hook <ghook@amd.com>
+Date: Mon, 01 Apr 2019 13:27:27 +0000
+Subject: Re: [PATCH -next] crypto: ccp - Use kmemdup in ccp_copy_and_save_keypart()
+Message-Id: <133b98b0-829e-ffa8-5fb9-ef952ef3c996@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190410081231.GA31089@kadam>
+References: <20190330014316.174072-1-yuehaibing@huawei.com>
+In-Reply-To: <20190330014316.174072-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alasdair Kergon <agk@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Mike Snitzer <snitzer@redhat.com>, Edwards <gedwards@ddn.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "dm-devel@redhat.com" <dm-devel@redhat.com>, Greg, Omar, Sandoval <osandov@fb.com>, Bart Van Assche <bvanassche@acm.org>
+To: YueHaibing <yuehaibing@huawei.com>, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>, "Hook, Gary" <Gary.Hook@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On 2019/04/10 17:13, Dan Carpenter wrote:
-> My static checker complains about this line from dmz_get_zoned_device()
-> 
-> 	aligned_capacity = dev->capacity & ~(blk_queue_zone_sectors(q) - 1);
-> 
-> The problem is that "aligned_capacity" and "dev->capacity" are sector_t
-> type (which is a u64 under most configs) but blk_queue_zone_sectors(q)
-> returns a u32 so the higher 32 bits in aligned_capacity are cleared to
-> zero.  This patch adds a cast to address the issue.
-> 
-> Fixes: 114e025968b5 ("dm zoned: ignore last smaller runt zone")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: The v1 patch declared blk_queue_zone_sectors() as sector_t but the
->     v2 cast added a cast to u64.
-> v3: Cast it to sector_t instead
-> 
->  drivers/md/dm-zoned-target.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/dm-zoned-target.c b/drivers/md/dm-zoned-target.c
-> index 8865c1709e16..51d029bbb740 100644
-> --- a/drivers/md/dm-zoned-target.c
-> +++ b/drivers/md/dm-zoned-target.c
-> @@ -643,7 +643,8 @@ static int dmz_get_zoned_device(struct dm_target *ti, char *path)
->  
->  	q = bdev_get_queue(dev->bdev);
->  	dev->capacity = i_size_read(dev->bdev->bd_inode) >> SECTOR_SHIFT;
-> -	aligned_capacity = dev->capacity & ~(blk_queue_zone_sectors(q) - 1);
-> +	aligned_capacity = dev->capacity &
-> +				~((sector_t)blk_queue_zone_sectors(q) - 1);
->  	if (ti->begin ||
->  	    ((ti->len != dev->capacity) && (ti->len != aligned_capacity))) {
->  		ti->error = "Partial mapping not supported";
-> 
-
-Thanks for fixing this !
-
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-
--- 
-Damien Le Moal
-Western Digital Research
+T24gMy8yOS8xOSA4OjQzIFBNLCBZdWVIYWliaW5nIHdyb3RlOg0KPiBVc2Uga21lbWR1cCByYXRo
+ZXIgdGhhbiBkdXBsaWNhdGluZyBpdHMgaW1wbGVtZW50YXRpb24NCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IFl1ZUhhaWJpbmcgPHl1ZWhhaWJpbmdAaHVhd2VpLmNvbT4NCg0KQWNrZWQtYnk6IEdhcnkg
+UiBIb29rIDxnYXJ5Lmhvb2tAYW1kLmNvbT4NCg0KPiAtLS0NCj4gICBkcml2ZXJzL2NyeXB0by9j
+Y3AvY2NwLWNyeXB0by1yc2EuYyB8IDMgKy0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3J5cHRv
+L2NjcC9jY3AtY3J5cHRvLXJzYS5jIGIvZHJpdmVycy9jcnlwdG8vY2NwL2NjcC1jcnlwdG8tcnNh
+LmMNCj4gaW5kZXggMGI4YWFiMDA5ZTdiLi44NDFhY2RmZmJjM2MgMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvY3J5cHRvL2NjcC9jY3AtY3J5cHRvLXJzYS5jDQo+ICsrKyBiL2RyaXZlcnMvY3J5cHRv
+L2NjcC9jY3AtY3J5cHRvLXJzYS5jDQo+IEBAIC0zNywxMCArMzcsOSBAQCBzdGF0aWMgaW5saW5l
+IGludCBjY3BfY29weV9hbmRfc2F2ZV9rZXlwYXJ0KHU4ICoqa3BidWYsIHVuc2lnbmVkIGludCAq
+a3BsZW4sDQo+ICAgCQlpZiAoYnVmW25za2lwXSkNCj4gICAJCQlicmVhazsNCj4gICAJKmtwbGVu
+ID0gc3ogLSBuc2tpcDsNCj4gLQkqa3BidWYgPSBremFsbG9jKCprcGxlbiwgR0ZQX0tFUk5FTCk7
+DQo+ICsJKmtwYnVmID0ga21lbWR1cChidWYgKyBuc2tpcCwgKmtwbGVuLCBHRlBfS0VSTkVMKTsN
+Cj4gICAJaWYgKCEqa3BidWYpDQo+ICAgCQlyZXR1cm4gLUVOT01FTTsNCj4gLQltZW1jcHkoKmtw
+YnVmLCBidWYgKyBuc2tpcCwgKmtwbGVuKTsNCj4gICANCj4gICAJcmV0dXJuIDA7DQo+ICAgfQ0K
+PiANCj4gDQo+IA0KDQo
