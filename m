@@ -1,19 +1,19 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 04 Apr 2019 08:16:27 +0000
-Subject: Applied "ASoC: sprd: Fix spelling mistake "faied" -> "failed"" to the asoc tree
-Message-Id: <20190404081627.D053A441D3C@finisterre.ee.mobilebroadband>
+Date: Mon, 01 Apr 2019 08:53:07 +0000
+Subject: Applied "ASoC: fsl: fix spelling mistake: "missign" -> "missing"" to the asoc tree
+Message-Id: <20190401085307.A2D25440082@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190404075603.11680-1-colin.king@canonical.com>
-In-Reply-To: <20190404075603.11680-1-colin.king@canonical.com>
+References: <20190328092816.12883-1-colin.king@canonical.com>
+In-Reply-To: <20190328092816.12883-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Nicolin Chen <nicoleotsuka@gmail.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Viorel Suman <viorel.suman@nxp.com>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
 
 The patch
 
-   ASoC: sprd: Fix spelling mistake "faied" -> "failed"
+   ASoC: fsl: fix spelling mistake: "missign" -> "missing"
 
 has been applied to the asoc tree at
 
@@ -38,39 +38,32 @@ to this mail.
 Thanks,
 Mark
 
-From 47fa5773f11c7cc9117d74ea5a18a22502d8f0f3 Mon Sep 17 00:00:00 2001
+From de70b2a581125a8a627db6fdc1d7f9c05536fe84 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 4 Apr 2019 08:56:03 +0100
-Subject: [PATCH] ASoC: sprd: Fix spelling mistake "faied" -> "failed"
+Date: Thu, 28 Mar 2019 09:28:16 +0000
+Subject: [PATCH] ASoC: fsl: fix spelling mistake: "missign" -> "missing"
 
-There are two identical spelling mistakes in dev_err messages. Fix them.
+There is a spelling mistake in a dev_err message. Fix this.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Viorel Suman <viorel.suman@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sprd/sprd-pcm-compress.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/fsl/imx-audmix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sprd/sprd-pcm-compress.c b/sound/soc/sprd/sprd-pcm-compress.c
-index 424e9834d093..6cddf551bc11 100644
---- a/sound/soc/sprd/sprd-pcm-compress.c
-+++ b/sound/soc/sprd/sprd-pcm-compress.c
-@@ -281,13 +281,13 @@ static int sprd_platform_compr_set_params(struct snd_compr_stream *cstream,
- 	 */
- 	ret = sprd_platform_compr_dma_config(cstream, params, 1);
- 	if (ret) {
--		dev_err(dev, "faied to config stage 1 DMA: %d\n", ret);
-+		dev_err(dev, "failed to config stage 1 DMA: %d\n", ret);
- 		return ret;
+diff --git a/sound/soc/fsl/imx-audmix.c b/sound/soc/fsl/imx-audmix.c
+index 72e37ca6cfbb..7983bd339c01 100644
+--- a/sound/soc/fsl/imx-audmix.c
++++ b/sound/soc/fsl/imx-audmix.c
+@@ -161,7 +161,7 @@ static int imx_audmix_probe(struct platform_device *pdev)
  	}
  
- 	ret = sprd_platform_compr_dma_config(cstream, params, 0);
- 	if (ret) {
--		dev_err(dev, "faied to config stage 0 DMA: %d\n", ret);
-+		dev_err(dev, "failed to config stage 0 DMA: %d\n", ret);
- 		goto config_err;
+ 	if (!audmix_np) {
+-		dev_err(&pdev->dev, "Missign DT node for parent device.\n");
++		dev_err(&pdev->dev, "Missing DT node for parent device.\n");
+ 		return -EINVAL;
  	}
  
 -- 
