@@ -1,44 +1,40 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 16 Apr 2019 09:18:50 +0000
-Subject: Re: [PATCH] [NETFILTER]: nf_conntrack_h323: fix spelling mistake "authenticaton" -> "authentication"
-Message-Id: <03212014-88b1-44c6-4cc1-562f2664680a@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 01 Apr 2019 03:19:31 +0000
+Subject: Re: [PATCH] spi: oc-tiny: fix negative loop bound error on for loop
+Message-Id: <20190401031931.GB2059@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="VrqPEDrXMn8OVzN4"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415114414.24600-1-colin.king@canonical.com>
- <90e0d4af-77c5-6e4b-a364-5b9e342c83be@codeaurora.org>
- <20190416091214.vjydcg3xblxtvosk@breakpoint.cc>
-In-Reply-To: <20190416091214.vjydcg3xblxtvosk@breakpoint.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Florian Westphal <fw@strlen.de>, Mukesh Ojha <mojha@codeaurora.org>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190330212300.11675-1-colin.king@canonical.com>
+In-Reply-To: <20190330212300.11675-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 16/04/2019 10:12, Florian Westphal wrote:
-> On 4/15/2019 5:14 PM, Colin King wrote:
->>> diff --git a/net/netfilter/nf_conntrack_h323_types.c b/net/netfilter/nf_conntrack_h323_types.c
->>> index d880f3523c1d..95a0b3d6b24d 100644
->>> --- a/net/netfilter/nf_conntrack_h323_types.c
->>> +++ b/net/netfilter/nf_conntrack_h323_types.c
->>> @@ -1109,7 +1109,7 @@ static const struct field_t _SecurityCapabilities[] = {	/* SEQUENCE */
->>>   	 _NonStandardParameter},
->>>   	{FNAME("encryption") CHOICE, 2, 3, 3, SKIP | EXT, 0,
->>>   	 _SecurityServiceMode},
->>> -	{FNAME("authenticaton") CHOICE, 2, 3, 3, SKIP | EXT, 0,
->>> +	{FNAME("authentication") CHOICE, 2, 3, 3, SKIP | EXT, 0,
->>>   	 _SecurityServiceMode},
->>>   	{FNAME("integrity") CHOICE, 2, 3, 3, SKIP | EXT, 0,
->>>   	 _SecurityServiceMode},
-> 
-> https://www.itu.int/ITU-T/formal-language/itu-t/h/h225-0/2009/H323-MESSAGES.html says:
-> 		         ...
-> SecurityCapabilities ::= SEQUENCE {
-> nonStandard    NonStandardParameter OPTIONAL,
-> encryption     SecurityServiceMode,
-> authenticaton  SecurityServiceMode,
-> integrity      SecurityServiceMode,
-> ...
-> }
-> 
-> so this spelling seems intentional.
-> 
-Ah, thanks for spotting that, my bad.
+
+--VrqPEDrXMn8OVzN4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sat, Mar 30, 2019 at 09:23:00PM +0000, Colin King wrote:
+
+> Fixes: ca632f556697 ("spi: reorganize drivers")
+
+Please think about the fixes tags you're applying, this is obviously not
+the source of the issue.
+
+--VrqPEDrXMn8OVzN4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyhg0IACgkQJNaLcl1U
+h9Cs6Qf9Fpbz2BMlEdLo7nS++JCHNNgHm4Bze8OKx/kUYqaoIGevJQa3I+XiiwdV
+gEiumPsY5r9I12LcUrzCS82kjns6BelBI8d+tDc/rQLwC2L/J8g6ykWbT7FW/2Op
+18R6ghzM+Ht99Yh2QlUm4GBF8iRw6WhUvdUlPIGRXK6abwJSR+4Pt7WpbB6ulFv2
+wwk4He5BTE3IQgRD2IrkWvFrx5YCTP2/x9ObdngJC3cMd/HehIF57JO3LKz9HmVL
+fVcODQ16aLBAF+Ju6U9C9aULv6gfMw5ueVQv7uWiq3mTNlrXqbgX+U4QBJVIhZR9
+6pQGzyzYs6+8TO7YnESyWZNgoaImJA==
+=Q9Dc
+-----END PGP SIGNATURE-----
+
+--VrqPEDrXMn8OVzN4--
