@@ -1,24 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 18 Apr 2019 17:44:38 +0000
-Subject: Re: [PATCH] net: ipv6: addrlabel: fix spelling mistake "requewst" -> "request"
-Message-Id: <20190418.104438.7078300107368123.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Apr 2019 13:30:38 +0000
+Subject: [PATCH] netfilter: nf_tables: prevent shift wrap in nft_chain_parse_hook()
+Message-Id: <20190402133038.GA18575@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190418103918.10729-1-colin.king@canonical.com>
-In-Reply-To: <20190418103918.10729-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 18 Apr 2019 11:39:18 +0100
+I believe that "hook->num" can be up to UINT_MAX so the shift has to
+be unsigned or shifting more than 31 is undefined.  It's possible that
+this leads to array overflow in nf_tables_addchain():
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a NL_SET_ERR_MSG_MOD error message,
-> fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+	ops->hook	= hook.type->hooks[ops->hooknum];
 
-Applied.
+Fixes: fe19c04ca137 ("netfilter: nf_tables: remove nhooks field from struct nft_af_info")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/netfilter/nf_tables_api.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index ef7772e976cc..b6e48fe7c776 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1545,7 +1545,7 @@ static int nft_chain_parse_hook(struct net *net,
+ 		if (IS_ERR(type))
+ 			return PTR_ERR(type);
+ 	}
+-	if (!(type->hook_mask & (1 << hook->num)))
++	if (!(type->hook_mask & (1U << hook->num)))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (type->type = NFT_CHAIN_T_NAT &&
+-- 
+2.17.1
