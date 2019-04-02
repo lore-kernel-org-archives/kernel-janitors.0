@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Tue, 02 Apr 2019 13:54:27 +0000
 Subject: Re: [1/7] cpufreq: ap806: Checking implementation of armada_8k_cpufreq_init()
-Message-Id: <bc7c03e2-798f-7ccc-4386-227a9e16611d@web.de>
+Message-Id: <7298cc5c-27e8-c71d-ddc9-553534e502ef@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1554082674-2049-2-git-send-email-wen.yang99@zte.com.cn>
 In-Reply-To: <1554082674-2049-2-git-send-email-wen.yang99@zte.com.cn>
