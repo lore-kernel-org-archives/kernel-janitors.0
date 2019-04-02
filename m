@@ -1,36 +1,27 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Date: Tue, 16 Apr 2019 13:02:01 +0000
-Subject: Re: [PATCH 01/12] arm-cci: add missing of_node_put after of_device_is_available
-Message-Id: <b50cffe8-5fe4-eb44-adf4-48bf8604943a@arm.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Apr 2019 13:54:27 +0000
+Subject: Re: [1/7] cpufreq: ap806: Checking implementation of armada_8k_cpufreq_init()
+Message-Id: <bc7c03e2-798f-7ccc-4386-227a9e16611d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-2-git-send-email-Julia.Lawall@lip6.fr>
- <2c56bdcb-9354-c719-13df-38b5f1974f10@web.de>
-In-Reply-To: <2c56bdcb-9354-c719-13df-38b5f1974f10@web.de>
+References: <1554082674-2049-2-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1554082674-2049-2-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, Julia Lawall <Julia.Lawall@lip6.fr>, linux@arm.linux.org.uk
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wen Yang <wen.yang99@zte.com.cn>, Gregory Clement <gregory.clement@bootlin.com>, Viresh Kumar <viresh.kumar@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On 14/04/2019 15:45, Markus Elfring wrote:
->> @@ -538,8 +538,10 @@  static int cci_probe(void)
->>   	struct resource res;
->>
->>   	np = of_find_matching_node(NULL, arm_cci_matches);
->> -	if (!of_device_is_available(np))
->> +	if (!of_device_is_available(np)) {
->> +		of_node_put(np);
->>   		return -ENODEV;
->> +	}
->>
->>   	ret = of_address_to_resource(np, 0, &res);
->>   	if (!ret) {
-> 
-> How do you think about to move this function call to an additional jump target
-> for the desired exception handling?
+> @@ -132,6 +132,7 @@ static int __init armada_8k_cpufreq_init(void)
+>  		of_node_put(node);
+>  		return -ENODEV;
+>  	}
+> +	of_node_put(node);
+>
+>  	nb_cpus = num_possible_cpus();
+>  	freq_tables = kcalloc(nb_cpus, sizeof(*freq_tables), GFP_KERNEL);
 
-TBH it looks like the whole thing could do with a bit of refactoring - 
-strictly we should probably be dropping the node reference in all the 
-other failure paths too.
+Would another null pointer check be safer for this memory allocation?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/cpufreq/armada-8k-cpufreq.c?id=05d08e2995cbe6efdb993482ee0d38a77040861a#n137
 
-Robin.
+Regards,
+Markus
