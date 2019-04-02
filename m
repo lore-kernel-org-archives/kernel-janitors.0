@@ -1,31 +1,46 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 25 Apr 2019 02:36:47 +0000
-Subject: [PATCH -next] HID: logitech-dj: check return value of hid_hw_raw_request()
-Message-Id: <20190425023647.67463-1-yuehaibing@huawei.com>
+From: CK Hu <ck.hu@mediatek.com>
+Date: Tue, 02 Apr 2019 01:43:03 +0000
+Subject: Re: [PATCH] drm/mediatek: Fix an error code in mtk_hdmi_dt_parse_pdata()
+Message-Id: <1554169383.20131.1.camel@mtksdaap41>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190328143130.GO32590@kadam>
+In-Reply-To: <20190328143130.GO32590@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jie Qiu <jie.qiu@mediatek.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
 
-hid_hw_raw_request may fails, we should return the
-return value to callers.
+Hi, Dan:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/hid/hid-logitech-dj.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 2019-03-28 at 17:31 +0300, Dan Carpenter wrote:
+> We don't want to overwrite "ret", it already holds the correct error
+> code.  The "regmap" variable might be a valid pointer as this point.
+> 
+> Fixes: 8f83f26891e1 ("drm/mediatek: Add HDMI support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 64e68ac871cb..a3e94f15213a 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -1131,7 +1131,7 @@ static int logi_dj_recv_query_hidpp_devices(struct dj_receiver_dev *djrcv_dev)
- 				    HID_REQ_SET_REPORT);
- 
- 	kfree(hidpp_report);
--	return 0;
-+	return retval;
- }
- 
- static int logi_dj_recv_query_paired_devices(struct dj_receiver_dev *djrcv_dev)
+Applied to mediatek-drm-fixes-5.1 [1], thanks.
+
+[1]
+https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-fixes-5.1
+
+Regards,
+CK
+
+> ---
+>  drivers/gpu/drm/mediatek/mtk_hdmi.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> index 915cc84621ae..543a25e5765e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> @@ -1480,7 +1480,6 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+>  	if (IS_ERR(regmap))
+>  		ret = PTR_ERR(regmap);
+>  	if (ret) {
+> -		ret = PTR_ERR(regmap);
+>  		dev_err(dev,
+>  			"Failed to get system configuration registers: %d\n",
+>  			ret);
