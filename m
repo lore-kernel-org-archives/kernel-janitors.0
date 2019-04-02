@@ -1,38 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 07 Apr 2019 01:18:34 +0000
-Subject: Re: [PATCH] tcp: remove redundant check on tskb
-Message-Id: <20190406.181834.995998216821289412.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Apr 2019 10:43:14 +0000
+Subject: Re: [PATCH 7/7] cpufreq: ppc_cbe: fix possible object reference leak
+Message-Id: <efe8fb3a-eb4a-a50a-c53a-0879a912fbd8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190404144603.27682-1-colin.king@canonical.com>
-In-Reply-To: <20190404144603.27682-1-colin.king@canonical.com>
+References: <1554082674-2049-8-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1554082674-2049-8-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Yi Wang <wang.yi59@zte.com.cn>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  4 Apr 2019 15:46:03 +0100
+> The call to of_get_cpu_node returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The non-null check on tskb is always false because it is in an else
-> path of a check on tskb and hence tskb is null in this code block.
-> This is check is therefore redundant and can be removed as well
-> as the label coalesc.
-> 
-> if (tsbk) {
->         ...
-> } else {
->         ...
->         if (unlikely(!skb)) {
->                 if (tskb)       /* can never be true, redundant code */
->                         goto coalesc;
->                 return;
->         }
-> }
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I would prefer a wording like the following.
 
-Applied to net-next.
+A reference counter was incremented for a CPU node by a call of
+the function “of_get_cpu_node”.
+Thus decrement it after the last usage.
+
+
+> Detected by coccinelle with the following warnings:
+
+I wonder about the shown duplicate notification.
+Can a single message be sufficient for the code search result
+in this source file?
+
+Regards,
+Markus
