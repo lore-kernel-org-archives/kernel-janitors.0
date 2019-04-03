@@ -1,22 +1,27 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Sat, 13 Apr 2019 12:58:15 +0000
-Subject: Re: [PATCH v2] netfilter: nf_tables: prevent shift wrap in nft_chain_parse_hook()
-Message-Id: <20190413125815.oiefilsilitqf2cm@salvia>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 03 Apr 2019 14:23:54 +0000
+Subject: Re: [5/7] cpufreq/pasemi: Checking implementation of pas_cpufreq_cpu_init()
+Message-Id: <c0c9c429-a09f-41ba-611d-123b64e410c8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190402133038.GA18575@kadam>
- <20190406052652.GA20963@kadam>
-In-Reply-To: <20190406052652.GA20963@kadam>
+References: <1554082674-2049-6-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1554082674-2049-6-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Yi Wang <wang.yi59@zte.com.cn>
 
-On Sat, Apr 06, 2019 at 08:26:52AM +0300, Dan Carpenter wrote:
-> I believe that "hook->num" can be up to UINT_MAX.  Shifting more than
-> 31 bits would is undefined in C but in practice it would lead to shift
-> wrapping.  That would lead to an array overflow in nf_tables_addchain():
-> 
-> 	ops->hook       = hook.type->hooks[ops->hooknum];
+> @@ -146,6 +146,7 @@  static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>
+>  	cpu = of_get_cpu_node(policy->cpu, NULL);
+>
+> +	of_node_put(cpu);
+>  	if (!cpu)
+>  		goto out;
 
-Applied, thanks.
+Can the statement “return -ENODEV” be nicer as exception handling
+in the if branch of this source code place?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/cpufreq/pasemi-cpufreq.c?id=bf97b82f37c6d90e16de001d0659644c57fa490d#n137
+
+Regards,
+Markus
