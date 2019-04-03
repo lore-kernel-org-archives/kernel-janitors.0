@@ -1,58 +1,45 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Tue, 30 Apr 2019 03:05:14 +0000
-Subject: Re: [PATCH -next] ASoC: sprd: Fix to use list_for_each_entry_safe() when delete items
-Message-Id: <CAMz4ku+v+DS_7N+6yWzqGQvn3KiW-3ACNbXL1W4YjWSmu3AxwA@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 03 Apr 2019 07:24:25 +0000
+Subject: [PATCH -next] fbdev: mxsfb: remove set but not used variable 'line_count'
+Message-Id: <20190403072425.42902-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190429123713.64280-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190429123713.64280-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Melchior Franz <melchior.franz@ginzinger.com>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org
 
-Hi,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Mon, 29 Apr 2019 at 20:27, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> Since we will remove items off the list using list_del() we need
-> to use a safe version of the list_for_each_entry() macro aptly named
-> list_for_each_entry_safe().
->
-> Fixes: d7bff893e04f ("ASoC: sprd: Add Spreadtrum multi-channel data transfer support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+drivers/video/fbdev/mxsfb.c: In function 'mxsfb_restore_mode':
+drivers/video/fbdev/mxsfb.c:633:11: warning:
+ variable 'line_count' set but not used [-Wunused-but-set-variable]
 
-Yes, thanks for your fixes.
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+It's never used since introduction in commit f0a523b5e5e2 ("video: Add i.MX23/28
+framebuffer driver") and can be removed.
 
-> ---
->  sound/soc/sprd/sprd-mcdt.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
-> index 28f5e649733d..df250f7f2b6f 100644
-> --- a/sound/soc/sprd/sprd-mcdt.c
-> +++ b/sound/soc/sprd/sprd-mcdt.c
-> @@ -978,12 +978,12 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
->
->  static int sprd_mcdt_remove(struct platform_device *pdev)
->  {
-> -       struct sprd_mcdt_chan *temp;
-> +       struct sprd_mcdt_chan *chan, *temp;
->
->         mutex_lock(&sprd_mcdt_list_mutex);
->
-> -       list_for_each_entry(temp, &sprd_mcdt_chan_list, list)
-> -               list_del(&temp->list);
-> +       list_for_each_entry_safe(chan, temp, &sprd_mcdt_chan_list, list)
-> +               list_del(&chan->list);
->
->         mutex_unlock(&sprd_mcdt_list_mutex);
->
->
->
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/video/fbdev/mxsfb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-
--- 
-Baolin Wang
-Best Regards
+diff --git a/drivers/video/fbdev/mxsfb.c b/drivers/video/fbdev/mxsfb.c
+index a017200a16b3..1fdd1eb38fe0 100644
+--- a/drivers/video/fbdev/mxsfb.c
++++ b/drivers/video/fbdev/mxsfb.c
+@@ -630,7 +630,6 @@ static int mxsfb_restore_mode(struct fb_info *fb_info,
+ 			struct fb_videomode *vmode)
+ {
+ 	struct mxsfb_info *host = fb_info->par;
+-	unsigned line_count;
+ 	unsigned period;
+ 	unsigned long pa, fbsize;
+ 	int bits_per_pixel, ofs, ret = 0;
+@@ -717,7 +716,6 @@ static int mxsfb_restore_mode(struct fb_info *fb_info,
+ 		writel(fb_info->fix.smem_start, host->base + host->devdata->next_buf);
+ 	}
+ 
+-	line_count = fb_info->fix.smem_len / fb_info->fix.line_length;
+ 	fb_info->fix.ypanstep = 1;
+ 
+ 	clk_prepare_enable(host->clk);
