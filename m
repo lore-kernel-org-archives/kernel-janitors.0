@@ -1,42 +1,55 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Tue, 09 Apr 2019 17:57:31 +0000
-Subject: Re: [PATCH][next] scsi: qla2xxx: fix spelling mistake "alredy" -> "already"
-Message-Id: <f03ae123-abef-9e3d-95df-fec1cb81b6c0@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Apr 2019 07:12:48 +0000
+Subject: [PATCH 1/2 net] NFC: nci: Add some bounds checking in nci_hci_cmd_received()
+Message-Id: <20190403071248.GA5758@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190408082014.1354-1-colin.king@canonical.com>
-In-Reply-To: <20190408082014.1354-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Christophe Ricard <christophe.ricard@gmail.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>
 
+This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
+corruption when handling SHDLC I-Frame commands").
 
-On 4/8/2019 1:50 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a ql_log message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+I'm not totally sure, but I think that commit description may have
+overstated the danger.  I was under the impression that this data came
+from the firmware?  If you can't trust your networking firmware, then
+you're already in trouble.
 
-Cheers,
--Mukesh
+Anyway, these days we add bounds checking where ever we can and we call
+it kernel hardening.  Better safe than sorry.
 
-> ---
->   drivers/scsi/qla2xxx/qla_nvme.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
-> index 1ca63e80a7fe..3a6160ca9b4a 100644
-> --- a/drivers/scsi/qla2xxx/qla_nvme.c
-> +++ b/drivers/scsi/qla2xxx/qla_nvme.c
-> @@ -205,7 +205,7 @@ static void qla_nvme_abort_work(struct work_struct *work)
->   	if (atomic_read(&sp->ref_count) = 0) {
->   		WARN_ON(1);
->   		ql_log(ql_log_info, fcport->vha, 0xffff,
-> -			"%s: command alredy aborted on sp: %p\n",
-> +			"%s: command already aborted on sp: %p\n",
->   			__func__, sp);
->   		return;
->   	}
+Fixes: 11f54f228643 ("NFC: nci: Add HCI over NCI protocol support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/nfc/nci/hci.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/net/nfc/nci/hci.c b/net/nfc/nci/hci.c
+index ddfc52ac1f9b..c0d323b58e73 100644
+--- a/net/nfc/nci/hci.c
++++ b/net/nfc/nci/hci.c
+@@ -312,6 +312,10 @@ static void nci_hci_cmd_received(struct nci_dev *ndev, u8 pipe,
+ 		create_info = (struct nci_hci_create_pipe_resp *)skb->data;
+ 		dest_gate = create_info->dest_gate;
+ 		new_pipe = create_info->pipe;
++		if (new_pipe >= NCI_HCI_MAX_PIPES) {
++			status = NCI_HCI_ANY_E_NOK;
++			goto exit;
++		}
+ 
+ 		/* Save the new created pipe and bind with local gate,
+ 		 * the description for skb->data[3] is destination gate id
+@@ -336,6 +340,10 @@ static void nci_hci_cmd_received(struct nci_dev *ndev, u8 pipe,
+ 			goto exit;
+ 		}
+ 		delete_info = (struct nci_hci_delete_pipe_noti *)skb->data;
++		if (delete_info->pipe >= NCI_HCI_MAX_PIPES) {
++			status = NCI_HCI_ANY_E_NOK;
++			goto exit;
++		}
+ 
+ 		ndev->hci_dev->pipes[delete_info->pipe].gate  						NCI_HCI_INVALID_GATE;
+-- 
+2.17.1
