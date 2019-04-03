@@ -1,28 +1,35 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 08 Apr 2019 06:40:15 +0000
-Subject: Re: [PATCH] crypto: caam/qi - Change a couple IS_ERR_OR_NULL() checks to IS_ERR()
-Message-Id: <20190408064015.yxyx6qxzus5o25n6@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Apr 2019 06:22:35 +0000
+Subject: [PATCH] aio: Fix an error code in __io_submit_one()
+Message-Id: <20190403062235.GA1343@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328143601.GQ32590@kadam>
-In-Reply-To: <20190328143601.GQ32590@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>, Aymen Sghaier <aymen.sghaier@nxp.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 05:36:01PM +0300, Dan Carpenter wrote:
-> create_caam_req_fq() doesn't return NULL pointers so there is no need to
-> check.  The NULL checks are problematic because it's hard to say how a
-> NULL return should be handled, so removing the checks is a nice cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/crypto/caam/qi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+This accidentally returns the wrong variable.  The "req->ki_eventfd"
+pointer is NULL so this return success.
 
-Patch applied.  Thanks.
+Fixes: 7316b49c2a11 ("aio: move sanity checks and request allocation to io_submit_one()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/aio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index a4cc2a1cccb7..7ccecaab487a 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1794,7 +1794,7 @@ static int __io_submit_one(struct kioctx *ctx, const struct iocb *iocb,
+ 		 */
+ 		eventfd = eventfd_ctx_fdget(iocb->aio_resfd);
+ 		if (IS_ERR(eventfd))
+-			return PTR_ERR(req->ki_eventfd);
++			return PTR_ERR(eventfd);
+ 
+ 		req->ki_eventfd = eventfd;
+ 	}
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
