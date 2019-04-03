@@ -1,44 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 23 Apr 2019 10:40:20 +0000
-Subject: [PATCH] i3c: Fix a shift wrap bug in i3c_bus_set_addr_slot_status()
-Message-Id: <20190423104020.GA3133@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 03 Apr 2019 13:50:44 +0000
+Subject: Re: [4/7] cpufreq: maple: Checking implementation of maple_cpufreq_init()
+Message-Id: <5d0e8f12-baaa-e4af-f1d2-03e0508e3fd1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1554082674-2049-5-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1554082674-2049-5-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <bbrezillon@kernel.org>
-Cc: linux-i3c@lists.infradead.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>
 
-The problem here is that addr can be I3C_BROADCAST_ADDR (126).  That
-means we're shifting by (126 * 2) % 64 which is 60.  The
-I3C_ADDR_SLOT_STATUS_MASK is an enum which is an unsigned int in GCC
-so shifts greater than 31 are undefined.
+> @@ -210,7 +210,7 @@  static int __init maple_cpufreq_init(void)
+>  	 */
+>  	valp = of_get_property(cpunode, "clock-frequency", NULL);
+>  	if (!valp)
+> -		return -ENODEV;
+> +		goto bail_noprops;
+>  	max_freq = (*valp)/1000;
+>  	maple_cpu_freqs[0].frequency = max_freq;
+>  	maple_cpu_freqs[1].frequency = max_freq/2;
 
-Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This patch is from static analysis.  I really know what *ptr is used for
-and I haven't tested the code.  The other question is would be testing
-this code on 32 bit systems.  Please review carefully.
+* How do you think about use the jump label “put_node” instead?
 
- drivers/i3c/master.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+* Would you like to reduce a bit of duplicate source code at the end
+  of this function?
+  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/cpufreq/maple-cpufreq.c?id=bf97b82f37c6d90e16de001d0659644c57fa490d#n232
 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 1412abcff010..5f4bd52121fe 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -385,8 +385,9 @@ static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
- 		return;
- 
- 	ptr = bus->addrslots + (bitpos / BITS_PER_LONG);
--	*ptr &= ~(I3C_ADDR_SLOT_STATUS_MASK << (bitpos % BITS_PER_LONG));
--	*ptr |= status << (bitpos % BITS_PER_LONG);
-+	*ptr &= ~((unsigned long)I3C_ADDR_SLOT_STATUS_MASK <<
-+						(bitpos % BITS_PER_LONG));
-+	*ptr |= (unsigned long)status << (bitpos % BITS_PER_LONG);
- }
- 
- static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
--- 
-2.18.0
+Regards,
+Markus
