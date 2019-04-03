@@ -1,54 +1,42 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 29 Apr 2019 19:29:14 +0000
-Subject: Re: [PATCH][next] drm/amd/display: fix incorrect null check on pointer
-Message-Id: <CADnq5_PwaZkbQ24vO=zi4HvMXTjayUKV3mnTiBt6X9AV=fXEBg@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 03 Apr 2019 07:24:45 +0000
+Subject: [PATCH -next] video: fbdev: atmel_lcdfb: remove set but not used variable 'pdata'
+Message-Id: <20190403072445.42983-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190426214811.12310-1-colin.king@canonical.com>
-In-Reply-To: <20190426214811.12310-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org
 
-On Fri, Apr 26, 2019 at 5:48 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently an allocation is being made but the allocation failure
-> check is being performed on another pointer. Fix this by checking
-> the correct pointer. Also use the normal kernel idiom for null
-> pointer checks.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 43e3ac8389ef ("drm/amd/display: Add function to copy DC streams")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied.  Thanks!
+drivers/video/fbdev/atmel_lcdfb.c: In function 'atmel_lcdfb_remove':
+drivers/video/fbdev/atmel_lcdfb.c:1255:28: warning:
+ variable 'pdata' set but not used [-Wunused-but-set-variable]
 
-Alex
+It's not used since commit 42110e91de7f ("video: atmel_lcdfb: introduce
+atmel_lcdfb_power_control")
 
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_stream.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-> index 6200df3edcd0..96e97d25d639 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-> @@ -168,7 +168,7 @@ struct dc_stream_state *dc_copy_stream(const struct dc_stream_state *stream)
->         struct dc_stream_state *new_stream;
->
->         new_stream = kzalloc(sizeof(struct dc_stream_state), GFP_KERNEL);
-> -       if (stream = NULL)
-> +       if (!new_stream)
->                 return NULL;
->
->         memcpy(new_stream, stream, sizeof(struct dc_stream_state));
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/video/fbdev/atmel_lcdfb.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+index b8786ff62b87..e67dfd94bf1d 100644
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -1252,12 +1252,10 @@ static int __exit atmel_lcdfb_remove(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct fb_info *info = dev_get_drvdata(dev);
+ 	struct atmel_lcdfb_info *sinfo;
+-	struct atmel_lcdfb_pdata *pdata;
+ 
+ 	if (!info || !info->par)
+ 		return 0;
+ 	sinfo = info->par;
+-	pdata = &sinfo->pdata;
+ 
+ 	cancel_work_sync(&sinfo->task);
+ 	exit_backlight(sinfo);
