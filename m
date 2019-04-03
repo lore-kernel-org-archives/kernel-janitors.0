@@ -1,37 +1,44 @@
-From: "Theodore Ts'o" <tytso@mit.edu>
-Date: Sun, 28 Apr 2019 13:21:26 +0000
-Subject: Re: [PATCH][next] unicode: fix dereference of a potentially null pointer
-Message-Id: <20190428132126.GB24089@mit.edu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Apr 2019 07:13:51 +0000
+Subject: [PATCH 2/2 net] nfc: nci: Potential off by one in ->pipes[] array
+Message-Id: <20190403071351.GB5758@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190426222237.13209-1-colin.king@canonical.com>
- <CAK7LNATC5b9yx79sF55hw1X9vZTJK8H+WsLRfy81_chZYRgTYw@mail.gmail.com>
- <85ef5mcrze.fsf@collabora.com>
-In-Reply-To: <85ef5mcrze.fsf@collabora.com>
+In-Reply-To: <20190403071248.GA5758@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Olaf Weber <olaf@sgi.com>, Gabriel Krisman Bertazi <krisman@collabora.co.uk>, Michal Marek <michal.lkml@markovi.net>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Colin King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>, Christophe Ricard <christophe.ricard@gmail.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 
-On Sun, Apr 28, 2019 at 07:02:45AM -0400, Gabriel Krisman Bertazi wrote:
-> > On Sat, Apr 27, 2019 at 7:22 AM Colin King <colin.king@canonical.com> wrote:
-> >>
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> The pointer 'tree' is deferenced when assigning pointer 'trie', however
-> >> trie is being null checked a few lines later, so it could potentially
-> >> be null. Fix the potential null pointer dereference by only dereferencing
-> >> it after it has been null checked.
-> >>
-> >> Addresses-Coverity: ("Dereference before null check")
-> >> Fixes: b08fcacaaaf4 ("unicode: introduce UTF-8 character database")
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Acked-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> Ted, can you pick this up directly for now?
+This is similar to commit e285d5bfb7e9 ("NFC: Fix the number of pipes")
+where we changed NFC_HCI_MAX_PIPES from 127 to 128.
 
-Ack, I've merged it into the the patch "unicode: introduce UTF-8
-character database".
+As the comment next to the define explains, the pipe identifier is 7
+bits long.  The highest possible pipe is 127, but the number of possible
+pipes is 128.  As the code is now, then there is potential for an
+out of bounds array access:
 
-						- Ted
+    net/nfc/nci/hci.c:297 nci_hci_cmd_received() warn: array off by one?
+    'ndev->hci_dev->pipes[pipe]' '0-127 = 127'
+
+Fixes: 11f54f228643 ("NFC: nci: Add HCI over NCI protocol support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ include/net/nfc/nci_core.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/net/nfc/nci_core.h b/include/net/nfc/nci_core.h
+index 87499b6b35d6..df5c69db68af 100644
+--- a/include/net/nfc/nci_core.h
++++ b/include/net/nfc/nci_core.h
+@@ -166,7 +166,7 @@ struct nci_conn_info {
+  * According to specification 102 622 chapter 4.4 Pipes,
+  * the pipe identifier is 7 bits long.
+  */
+-#define NCI_HCI_MAX_PIPES          127
++#define NCI_HCI_MAX_PIPES          128
+ 
+ struct nci_hci_gate {
+ 	u8 gate;
+-- 
+2.17.1
