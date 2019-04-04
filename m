@@ -1,33 +1,63 @@
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Sun, 28 Apr 2019 07:11:44 +0000
-Subject: Re: [PATCH] crypto: ccree: fix spelling mistake "protedcted" -> "protected"
-Message-Id: <CAOtvUMdHx4SK6CceCxfHOXic=bymA13HZMviuto98GysDwasMw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Apr 2019 14:46:03 +0000
+Subject: [PATCH] tcp: remove redundant check on tskb
+Message-Id: <20190404144603.27682-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190426131835.27258-1-colin.king@canonical.com>
-In-Reply-To: <20190426131835.27258-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 4:18 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a dev_dbg message, fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-By: Gilad Ben-Yossef <gilad@benyossef.com>
+The non-null check on tskb is always false because it is in an else
+path of a check on tskb and hence tskb is null in this code block.
+This is check is therefore redundant and can be removed as well
+as the label coalesc.
 
-Thanks!
+if (tsbk) {
+        ...
+} else {
+        ...
+        if (unlikely(!skb)) {
+                if (tskb)       /* can never be true, redundant code */
+                        goto coalesc;
+                return;
+        }
+}
 
-Gilad
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv4/tcp_output.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-
---
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-values of =CE=B2 will give rise to dom!
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index e265d1aeeb66..32061928b054 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3088,7 +3088,6 @@ void tcp_send_fin(struct sock *sk)
+ 		tskb = skb_rb_last(&sk->tcp_rtx_queue);
+ 
+ 	if (tskb) {
+-coalesce:
+ 		TCP_SKB_CB(tskb)->tcp_flags |= TCPHDR_FIN;
+ 		TCP_SKB_CB(tskb)->end_seq++;
+ 		tp->write_seq++;
+@@ -3104,11 +3103,9 @@ void tcp_send_fin(struct sock *sk)
+ 		}
+ 	} else {
+ 		skb = alloc_skb_fclone(MAX_TCP_HEADER, sk->sk_allocation);
+-		if (unlikely(!skb)) {
+-			if (tskb)
+-				goto coalesce;
++		if (unlikely(!skb))
+ 			return;
+-		}
++
+ 		INIT_LIST_HEAD(&skb->tcp_tsorted_anchor);
+ 		skb_reserve(skb, MAX_TCP_HEADER);
+ 		sk_forced_mem_schedule(sk, skb->truesize);
+-- 
+2.20.1
