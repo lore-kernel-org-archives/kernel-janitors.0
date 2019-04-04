@@ -1,44 +1,46 @@
-From: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Date: Thu, 04 Apr 2019 11:23:45 +0000
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Thu, 04 Apr 2019 11:32:13 +0000
 Subject: Re: [PATCH][next] opa_vnic: fix check on record->event, incorrect operator used
-Message-Id: <fb140949-383e-731b-95b1-c75c2f85dadd@intel.com>
+Message-Id: <20190404113213.GA2798@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190404100439.19696-1-colin.king@canonical.com>
-In-Reply-To: <20190404100439.19696-1-colin.king@canonical.com>
+ <fb140949-383e-731b-95b1-c75c2f85dadd@intel.com>
+In-Reply-To: <fb140949-383e-731b-95b1-c75c2f85dadd@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Colin King <colin.king@canonical.com>, Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 4/4/2019 6:04 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, Apr 04, 2019 at 07:23:45AM -0400, Dennis Dalessandro wrote:
+> On 4/4/2019 6:04 AM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The check on record->event is always true because the wrong operator
+> > is being used, used && instead of ||
+> > 
+> > Addresses-Coverity: ("Constant expression result")
+> > Fixes: fae7a699a925 ("opa_vnic: Convert vport_idr to XArray")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >   drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
+> > index 76cd09410d9a..be5befd92d16 100644
+> > +++ b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
+> > @@ -869,7 +869,7 @@ static void opa_vnic_event(struct ib_event_handler *handler,
+> >   	      record->event, dev_name(&record->device->dev),
+> >   	      record->element.port_num);
+> > -	if (record->event != IB_EVENT_PORT_ERR ||
+> > +	if (record->event != IB_EVENT_PORT_ERR &&
+> >   	    record->event != IB_EVENT_PORT_ACTIVE)
+> >   		return;
+> > 
 > 
-> The check on record->event is always true because the wrong operator
-> is being used, used && instead of ||
+> Missed this in code review. Thanks!
 > 
-> Addresses-Coverity: ("Constant expression result")
-> Fixes: fae7a699a925 ("opa_vnic: Convert vport_idr to XArray")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
-> index 76cd09410d9a..be5befd92d16 100644
-> --- a/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
-> +++ b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
-> @@ -869,7 +869,7 @@ static void opa_vnic_event(struct ib_event_handler *handler,
->   	      record->event, dev_name(&record->device->dev),
->   	      record->element.port_num);
->   
-> -	if (record->event != IB_EVENT_PORT_ERR ||
-> +	if (record->event != IB_EVENT_PORT_ERR &&
->   	    record->event != IB_EVENT_PORT_ACTIVE)
->   		return;
->   
-> 
+> Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
 
-Missed this in code review. Thanks!
+Applied to for-next, thanks
 
-Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Jason
