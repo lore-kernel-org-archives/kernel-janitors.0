@@ -1,64 +1,42 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Wed, 27 Mar 2019 10:05:30 +0000
-Subject: [PATCH v3] e1000: remove extern declarations in .c file.
-Message-Id: <20190327100526.GA954@qd-ubuntu>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Apr 2019 07:56:03 +0000
+Subject: [PATCH][next] ASoC: sprd: Fix spelling mistake "faied" -> "failed"
+Message-Id: <20190404075603.11680-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S. Miller" <davem@davemloft.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix the following checkpatch.pl warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-WARNING: externs should be avoided in .c files
+There are two identical spelling mistakes in dev_err messages. Fix them.
 
-Some of the driver's function declared in e1000.h were declared a second
-time in e1000_main.c, triggering checkpatch.pl warnings.
-
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- v2: Fix mail subject.
- v3: Remove patch version details from patch.
----
- drivers/net/ethernet/intel/e1000/e1000_main.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ sound/soc/sprd/sprd-pcm-compress.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index 8fe9af0e2ab7..b3d5cd750dca 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -65,14 +65,6 @@ static const struct pci_device_id e1000_pci_tbl[] = {
+diff --git a/sound/soc/sprd/sprd-pcm-compress.c b/sound/soc/sprd/sprd-pcm-compress.c
+index dc84257cffc2..e008525a6cb3 100644
+--- a/sound/soc/sprd/sprd-pcm-compress.c
++++ b/sound/soc/sprd/sprd-pcm-compress.c
+@@ -282,13 +282,13 @@ static int sprd_platform_compr_set_params(struct snd_compr_stream *cstream,
+ 	 */
+ 	ret = sprd_platform_compr_dma_config(cstream, params, 1);
+ 	if (ret) {
+-		dev_err(dev, "faied to config stage 1 DMA: %d\n", ret);
++		dev_err(dev, "failed to config stage 1 DMA: %d\n", ret);
+ 		return ret;
+ 	}
  
- MODULE_DEVICE_TABLE(pci, e1000_pci_tbl);
+ 	ret = sprd_platform_compr_dma_config(cstream, params, 0);
+ 	if (ret) {
+-		dev_err(dev, "faied to config stage 0 DMA: %d\n", ret);
++		dev_err(dev, "failed to config stage 0 DMA: %d\n", ret);
+ 		goto config_err;
+ 	}
  
--int e1000_up(struct e1000_adapter *adapter);
--void e1000_down(struct e1000_adapter *adapter);
--void e1000_reinit_locked(struct e1000_adapter *adapter);
--void e1000_reset(struct e1000_adapter *adapter);
--int e1000_setup_all_tx_resources(struct e1000_adapter *adapter);
--int e1000_setup_all_rx_resources(struct e1000_adapter *adapter);
--void e1000_free_all_tx_resources(struct e1000_adapter *adapter);
--void e1000_free_all_rx_resources(struct e1000_adapter *adapter);
- static int e1000_setup_tx_resources(struct e1000_adapter *adapter,
- 				    struct e1000_tx_ring *txdr);
- static int e1000_setup_rx_resources(struct e1000_adapter *adapter,
-@@ -81,7 +73,6 @@ static void e1000_free_tx_resources(struct e1000_adapter *adapter,
- 				    struct e1000_tx_ring *tx_ring);
- static void e1000_free_rx_resources(struct e1000_adapter *adapter,
- 				    struct e1000_rx_ring *rx_ring);
--void e1000_update_stats(struct e1000_adapter *adapter);
- 
- static int e1000_init_module(void);
- static void e1000_exit_module(void);
-@@ -89,8 +80,6 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent);
- static void e1000_remove(struct pci_dev *pdev);
- static int e1000_alloc_queues(struct e1000_adapter *adapter);
- static int e1000_sw_init(struct e1000_adapter *adapter);
--int e1000_open(struct net_device *netdev);
--int e1000_close(struct net_device *netdev);
- static void e1000_configure_tx(struct e1000_adapter *adapter);
- static void e1000_configure_rx(struct e1000_adapter *adapter);
- static void e1000_setup_rctl(struct e1000_adapter *adapter);
 -- 
-2.17.1
+2.20.1
