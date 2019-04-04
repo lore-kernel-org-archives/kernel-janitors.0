@@ -1,42 +1,32 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 11 Apr 2019 17:23:36 +0000
-Subject: Re: [PATCH -next] video: fbdev: atmel_lcdfb: remove set but not used variable 'pdata'
-Message-Id: <eb732f69-5f7e-899e-21f8-8dab1056c7ef@samsung.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 04 Apr 2019 10:15:04 +0000
+Subject: Re: [PATCH] iwlegacy: remove redundant assignment to *res
+Message-Id: <20190404101505.28B0E61B5F@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190403072445.42983-1-yuehaibing@huawei.com>
- <CGME20190403082107epcas2p2b26003b0a03a107f4c19abb6f4876f41@epcas2p2.samsung.com>
- <961c397f-1c3c-5f96-5281-3233b34088c3@microchip.com>
-In-Reply-To: <961c397f-1c3c-5f96-5281-3233b34088c3@microchip.com>
+References: <20190330201422.8024-1-colin.king@canonical.com>
+In-Reply-To: <20190330201422.8024-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas.Ferre@microchip.com, yuehaibing@huawei.com
-Cc: alexandre.belloni@bootlin.com, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Ludovic.Desroches@microchip.com, linux-arm-kernel@lists.infradead.org
+To: Colin King <colin.king@canonical.com>
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Colin King <colin.king@canonical.com> wrote:
 
-On 04/03/2019 10:20 AM, Nicolas.Ferre@microchip.com wrote:
-> On 03/04/2019 at 09:24, YueHaibing wrote:
->> External E-Mail
->>
->>
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/video/fbdev/atmel_lcdfb.c: In function 'atmel_lcdfb_remove':
->> drivers/video/fbdev/atmel_lcdfb.c:1255:28: warning:
->>   variable 'pdata' set but not used [-Wunused-but-set-variable]
->>
->> It's not used since commit 42110e91de7f ("video: atmel_lcdfb: introduce
->> atmel_lcdfb_power_control")
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Indeed:
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Currently 1 is being assigned to *res and then it is immediately
+> updated with the computed result.  The first assignment is
+> redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 
-Patch queued for v5.2, thanks.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+6603c5844a44 iwlegacy: remove redundant assignment to *res
+
+-- 
+https://patchwork.kernel.org/patch/10878565/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
