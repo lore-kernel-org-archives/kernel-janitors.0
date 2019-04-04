@@ -1,26 +1,63 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Date: Thu, 18 Apr 2019 06:18:05 +0000
-Subject: Re: [PATCH] RDMA/cxgb4: fix spelling mistake "immedate" -> "immediate"
-Message-Id: <20190418061801.GA5646@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Apr 2019 08:56:51 +0000
+Subject: [PATCH] ath6kl: add some bounds checking
+Message-Id: <20190404085651.GC20193@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190416143804.1518-1-colin.king@canonical.com>
-In-Reply-To: <20190416143804.1518-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Potnuri Bharat Teja <bharat@chelsio.com>, Doug Ledford <dledford@redhat.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 16, 2019 at 03:38:04PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a module parameter description. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/cxgb4/qp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The "ev->traffic_class" and "reply->ac" variables come from the network
+and they're used as an offset into the wmi->stream_exist_for_ac[] array.
+Those variables are u8 so they can be 0-255 but the stream_exist_for_ac[]
+array only has WMM_NUM_AC (4) elements.  We need to add a couple bounds
+checks to prevent array overflows.
 
-Applied to for-next, thanks
+I also modified one existing check from "if (traffic_class > 3) {" to
+"if (traffic_class >= WMM_NUM_AC) {" just to make them all consistent.
 
-Jason
+Fixes: bdcd81707973 (" Add ath6kl cleaned up driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/ath/ath6kl/wmi.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.c b/drivers/net/wireless/ath/ath6kl/wmi.c
+index 68854c45d0a4..9ab6aa9ded5c 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.c
++++ b/drivers/net/wireless/ath/ath6kl/wmi.c
+@@ -1176,6 +1176,10 @@ static int ath6kl_wmi_pstream_timeout_event_rx(struct wmi *wmi, u8 *datap,
+ 		return -EINVAL;
+ 
+ 	ev = (struct wmi_pstream_timeout_event *) datap;
++	if (ev->traffic_class >= WMM_NUM_AC) {
++		ath6kl_err("invalid traffic class: %d\n", ev->traffic_class);
++		return -EINVAL;
++	}
+ 
+ 	/*
+ 	 * When the pstream (fat pipe = AC) timesout, it means there were
+@@ -1517,6 +1521,10 @@ static int ath6kl_wmi_cac_event_rx(struct wmi *wmi, u8 *datap, int len,
+ 		return -EINVAL;
+ 
+ 	reply = (struct wmi_cac_event *) datap;
++	if (reply->ac >= WMM_NUM_AC) {
++		ath6kl_err("invalid AC: %d\n", reply->ac);
++		return -EINVAL;
++	}
+ 
+ 	if ((reply->cac_indication = CAC_INDICATION_ADMISSION_RESP) &&
+ 	    (reply->status_code != IEEE80211_TSPEC_STATUS_ADMISS_ACCEPTED)) {
+@@ -2633,7 +2641,7 @@ int ath6kl_wmi_delete_pstream_cmd(struct wmi *wmi, u8 if_idx, u8 traffic_class,
+ 	u16 active_tsids = 0;
+ 	int ret;
+ 
+-	if (traffic_class > 3) {
++	if (traffic_class >= WMM_NUM_AC) {
+ 		ath6kl_err("invalid traffic class: %d\n", traffic_class);
+ 		return -EINVAL;
+ 	}
+-- 
+2.17.1
