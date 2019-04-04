@@ -1,24 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 02 Apr 2019 17:56:41 +0000
-Subject: Re: [PATCH net-next] openvswitch: use after free in __ovs_ct_free_action()
-Message-Id: <20190402.105641.1982090676927808825.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Apr 2019 08:42:04 +0000
+Subject: [PATCH] remoteproc: silence an uninitialized variable warning
+Message-Id: <20190404084204.GA20193@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190402065314.GA14444@kadam>
-In-Reply-To: <20190402065314.GA14444@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: pshelar@ovn.org, yihung.wei@gmail.com, netdev@vger.kernel.org, dev@openvswitch.org, kernel-janitors@vger.kernel.org
+To: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 2 Apr 2019 09:53:14 +0300
+Smatch complains that "ret" might be uninitialized.  I can see why it
+generates the warning, but I don't know if it's actually possible.
+Anyway initializing "ret" here is harmless.
 
-> We free "ct_info->ct" and then use it on the next line when we pass it
-> to nf_ct_destroy_timeout().  This patch swaps the order to avoid the use
-> after free.
-> 
-> Fixes: 06bd2bdf19d2 ("openvswitch: Add timeout support to ct action")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/soc/qcom/mdt_loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index 1c488024c698..fc58d660692f 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -188,7 +188,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 
+ 	if (reloc_base)
+ 		*reloc_base = mem_reloc;
+-
++	ret = 0;
+ out:
+ 	kfree(fw_name);
+ 
+-- 
+2.17.1
