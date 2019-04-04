@@ -1,30 +1,41 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Mon, 01 Apr 2019 11:50:37 +0000
-Subject: Re: [PATCH] video: fbdev: savage: fix indentation issue
-Message-Id: <c3e89ae6-6a47-2d64-42b1-37548df1f170@samsung.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 04 Apr 2019 20:05:41 +0000
+Subject: Re: [PATCH 2/7] drm/meson: fix possible object reference leak
+Message-Id: <07090eca-640f-830c-7e55-22a486cd0002@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190212133451epcas2p23174f946cea09cabd29472e118fd4741@epcas2p2.samsung.com>
-        <20190212133444.7669-1-colin.king@canonical.com>
-In-Reply-To: <20190212133444.7669-1-colin.king@canonical.com>
+References: <1554307455-40361-3-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1554307455-40361-3-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Antonino Daplas <adaplas@gmail.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wen Yang <wen.yang99@zte.com.cn>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+
+> @@ -720,13 +720,10 @@ static bool meson_hdmi_connector_is_available(struct device *dev)
+>
+>  	/* If the endpoint node exists, consider it enabled */
+>  	remote = of_graph_get_remote_port(ep);
+> -	if (remote) {
+> -		of_node_put(ep);
+> -		return true;
+> -	}
+> -
+>  	of_node_put(ep);
+>  	of_node_put(remote);
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/meson/meson_dw_hdmi.c?id=61de49cb596710b918f7a80839f0b6de2017bc32#n712
+
+Can the order of these put calls matter (because of processor caches)?
 
 
-On 02/12/2019 02:34 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The indentation in the if statement is not indented correctly, fix
-> this with extra level of indentation.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> +	if (remote)
+> +		return true;
+>
+>  	return false;
 
-Patch queued for v5.2, thanks.
+Would the use of a ternary operator be more succinct here?
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
++	return remote ? true : false;
+
+Regards,
+Markus
