@@ -1,46 +1,51 @@
-From: CK Hu <ck.hu@mediatek.com>
-Date: Tue, 02 Apr 2019 01:43:03 +0000
-Subject: Re: [PATCH] drm/mediatek: Fix an error code in mtk_hdmi_dt_parse_pdata()
-Message-Id: <1554169383.20131.1.camel@mtksdaap41>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Apr 2019 10:04:05 +0000
+Subject: [PATCH 2/2] io_uring: Potential Oops in io_sq_offload_start()
+Message-Id: <20190404100405.GA27094@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328143130.GO32590@kadam>
-In-Reply-To: <20190328143130.GO32590@kadam>
+In-Reply-To: <20190404100218.GA26946@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jie Qiu <jie.qiu@mediatek.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>
+Cc: Amritha Nambiar <amritha.nambiar@intel.com>, Willem de Bruijn <willemb@google.com>, kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
 
-Hi, Dan:
+The "p->sq_thread_cpu" variable is an integer which comes from the user.
+We can't pass values greater than NR_CPUS to cpu_possible() or it could
+lead to an out of bound read and possibly an Oops.
 
-On Thu, 2019-03-28 at 17:31 +0300, Dan Carpenter wrote:
-> We don't want to overwrite "ret", it already holds the correct error
-> code.  The "regmap" variable might be a valid pointer as this point.
-> 
-> Fixes: 8f83f26891e1 ("drm/mediatek: Add HDMI support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The recently added cpu_possible_safe() function can handle unfiltered
+input so lets use that instead.  This patch also removes the call to
+array_index_nospec() since that is handled in cpu_possible_safe().
 
-Applied to mediatek-drm-fixes-5.1 [1], thanks.
+Fixes: 6c271ce2f1d5 ("io_uring: add submission polling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/io_uring.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-[1]
-https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-fixes-5.1
-
-Regards,
-CK
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_hdmi.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> index 915cc84621ae..543a25e5765e 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> @@ -1480,7 +1480,6 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
->  	if (IS_ERR(regmap))
->  		ret = PTR_ERR(regmap);
->  	if (ret) {
-> -		ret = PTR_ERR(regmap);
->  		dev_err(dev,
->  			"Failed to get system configuration registers: %d\n",
->  			ret);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c0fecb9d889f..9789887b0d36 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2240,16 +2240,13 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+ 		ctx->sq_thread_idle = HZ;
+ 
+ 	ret = -EINVAL;
+-	if (!cpu_possible(p->sq_thread_cpu))
++	if (!cpu_possible_safe(p->sq_thread_cpu))
+ 		goto err;
+ 
+ 	if (ctx->flags & IORING_SETUP_SQPOLL) {
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+-			int cpu;
+-
+-			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
+ 			ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
+-							ctx, cpu,
++							ctx, p->sq_thread_cpu,
+ 							"io_uring-sq");
+ 		} else {
+ 			ctx->sqo_thread = kthread_create(io_sq_thread, ctx,
+-- 
+2.17.1
