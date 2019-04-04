@@ -1,47 +1,33 @@
-From: Li Yang <leoyang.li@nxp.com>
-Date: Tue, 02 Apr 2019 23:02:08 +0000
-Subject: Re: [PATCH] soc/fsl/qe: Fix an error code in qe_pin_request()
-Message-Id: <CADRPPNS0XWqbkUwgpUy2Tkc6NvtZc9Yta=V9aw-WjzrY70JZ4Q@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 04 Apr 2019 21:05:03 +0000
+Subject: Re: [PATCH 5/7] drm/pl111: fix possible object reference leak
+Message-Id: <439634be-1704-703f-f975-98909b950224@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328141841.GN32590@kadam>
-In-Reply-To: <20190328141841.GN32590@kadam>
+References: <1554307455-40361-6-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1554307455-40361-6-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, kernel-janitors@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>
+To: Wen Yang <wen.yang99@zte.com.cn>, Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Yi Wang <wang.yi59@zte.com.cn>
 
-On Thu, Mar 28, 2019 at 9:21 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> We forgot to set "err" on this error path.
->
-> Fixes: 1a2d397a6eb5 ("gpio/powerpc: Eliminate duplication of of_get_named_gpio_flags()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> @@ -337,17 +338,20 @@ int pl111_versatile_init(struct device *dev, struct pl111_drm_dev_private *priv)
+>  		pdev = of_find_device_by_node(np);
+>  		if (!pdev) {
+>  			dev_err(dev, "can't find the sysreg device, deferring\n");
+> +			of_node_put(np);
+>  			return -EPROBE_DEFER;
+>  		}
+>  		map = dev_get_drvdata(&pdev->dev);
+>  		if (!map) {
+>  			dev_err(dev, "sysreg has not yet probed\n");
+>  			platform_device_put(pdev);
+> +			of_node_put(np);
+>  			return -EPROBE_DEFER;
+>  		}
 
-Applied to fix branch.  Thanks.
+How do you think about to move duplicate statements to an additional
+jump target for the desired exception handling?
 
 Regards,
-Leo
-> ---
->  drivers/soc/fsl/qe/gpio.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
-> index 819bed0f5667..51b3a47b5a55 100644
-> --- a/drivers/soc/fsl/qe/gpio.c
-> +++ b/drivers/soc/fsl/qe/gpio.c
-> @@ -179,8 +179,10 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
->         if (err < 0)
->                 goto err0;
->         gc = gpio_to_chip(err);
-> -       if (WARN_ON(!gc))
-> +       if (WARN_ON(!gc)) {
-> +               err = -ENODEV;
->                 goto err0;
-> +       }
->
->         if (!of_device_is_compatible(gc->of_node, "fsl,mpc8323-qe-pario-bank")) {
->                 pr_debug("%s: tried to get a non-qe pin\n", __func__);
-> --
-> 2.17.1
->
+Markus
