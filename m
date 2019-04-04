@@ -1,43 +1,35 @@
-From: shuah <shuah@kernel.org>
-Date: Thu, 25 Apr 2019 23:09:43 +0000
-Subject: Re: [PATCH] usbip: stub_rx: tidy the indenting in is_clear_halt_cmd()
-Message-Id: <e13158e8-296f-bcef-eb03-0ef0ef735a1d@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Apr 2019 07:58:57 +0000
+Subject: [PATCH][next] HID: intel-ish-hid: fix spelling mistake "multipe" -> "multiple"
+Message-Id: <20190404075857.12411-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190424095414.GB16664@mwanda>
-In-Reply-To: <20190424095414.GB16664@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Valentina Manea <valentina.manea.m@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, shuah <shuah@kernel.org>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On 4/24/19 3:54 AM, Dan Carpenter wrote:
-> There is an extra space character before the return statement.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/usb/usbip/stub_rx.c b/drivers/usb/usbip/stub_rx.c
-> index 97b09a42a10c..f3230bed18af 100644
-> --- a/drivers/usb/usbip/stub_rx.c
-> +++ b/drivers/usb/usbip/stub_rx.c
-> @@ -17,9 +17,9 @@ static int is_clear_halt_cmd(struct urb *urb)
->   
->   	req = (struct usb_ctrlrequest *) urb->setup_packet;
->   
-> -	 return (req->bRequest = USB_REQ_CLEAR_FEATURE) &&
-> -		 (req->bRequestType = USB_RECIP_ENDPOINT) &&
-> -		 (req->wValue = USB_ENDPOINT_HALT);
-> +	return (req->bRequest = USB_REQ_CLEAR_FEATURE) &&
-> +	       (req->bRequestType = USB_RECIP_ENDPOINT) &&
-> +	       (req->wValue = USB_ENDPOINT_HALT);
->   }
->   
->   static int is_set_interface_cmd(struct urb *urb)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch.
+There is a spelling mistake in a dev_err message, fix it.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/intel-ish-hid/ishtp-fw-loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
--- Shuah
+diff --git a/drivers/hid/intel-ish-hid/ishtp-fw-loader.c b/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
+index e770e220bd73..22ba21457035 100644
+--- a/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
++++ b/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
+@@ -525,7 +525,7 @@ static int ish_query_loader_prop(struct ishtp_cl_data *client_data,
+ 	if ((fw_info->ldr_capability.xfer_mode & LOADER_XFER_MODE_DIRECT_DMA) &&
+ 	    (fw_info->ldr_capability.max_dma_buf_size % L1_CACHE_BYTES)) {
+ 		dev_err(cl_data_to_dev(client_data),
+-			"Shim firmware loader buffer size %d should be multipe of cacheline\n",
++			"Shim firmware loader buffer size %d should be multiple of cacheline\n",
+ 			fw_info->ldr_capability.max_dma_buf_size);
+ 		return -EINVAL;
+ 	}
+-- 
+2.20.1
