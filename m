@@ -1,19 +1,38 @@
-From: Martin Lau <kafai@fb.com>
-Date: Mon, 29 Apr 2019 15:40:54 +0000
-Subject: Re: [PATCH net-next] bpf: Use PTR_ERR_OR_ZERO in bpf_fd_sk_storage_update_elem()
-Message-Id: <20190429154052.7qtxsqex5xure4a3@kafai-mbp.dhcp.thefacebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Apr 2019 10:04:39 +0000
+Subject: [PATCH][next] opa_vnic: fix check on record->event, incorrect operator used
+Message-Id: <20190404100439.19696-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190429135611.72640-1-yuehaibing@huawei.com>
- <20190429154017.j5yotcmvtw4fcbuo@kafai-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20190429154017.j5yotcmvtw4fcbuo@kafai-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>, Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 08:40:17AM -0700, Martin KaFai Lau wrote:
-> On Mon, Apr 29, 2019 at 01:56:11PM +0000, YueHaibing wrote:
-> > Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> Acked-by: Martin KaFai Lau <kafai@fb.com>
-btw, that should go to the bpf-next branch.
+From: Colin Ian King <colin.king@canonical.com>
+
+The check on record->event is always true because the wrong operator
+is being used, used && instead of ||
+
+Addresses-Coverity: ("Constant expression result")
+Fixes: fae7a699a925 ("opa_vnic: Convert vport_idr to XArray")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
+index 76cd09410d9a..be5befd92d16 100644
+--- a/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
++++ b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
+@@ -869,7 +869,7 @@ static void opa_vnic_event(struct ib_event_handler *handler,
+ 	      record->event, dev_name(&record->device->dev),
+ 	      record->element.port_num);
+ 
+-	if (record->event != IB_EVENT_PORT_ERR ||
++	if (record->event != IB_EVENT_PORT_ERR &&
+ 	    record->event != IB_EVENT_PORT_ACTIVE)
+ 		return;
+ 
+-- 
+2.20.1
