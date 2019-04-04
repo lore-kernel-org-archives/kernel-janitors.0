@@ -1,48 +1,39 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Date: Tue, 02 Apr 2019 19:05:36 +0000
-Subject: Re: [PATCH] leds: blinkm: clean up double assignment to data->i2c_addr
-Message-Id: <7360f559-7260-48b5-029d-e12a19bd967f@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Apr 2019 08:44:23 +0000
+Subject: [PATCH] mwifiex: prevent an array overflow
+Message-Id: <20190404084423.GB20193@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330203757.8877-1-colin.king@canonical.com>
-In-Reply-To: <20190330203757.8877-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>, Xinming Hu <huxm@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+The "rate_index" is only used as an index into the phist_data->rx_rate[]
+array in the mwifiex_hist_data_set() function.  That array has
+MWIFIEX_MAX_AC_RX_RATES (74) elements and it's used to generate some
+debugfs information.  The "rate_index" variable comes from the network
+skb->data[] and it is a u8 so it's in the 0-255 range.  We need to cap
+it to prevent an array overflow.
 
-Thank you for the patch.
+Fixes: cbf6e05527a7 ("mwifiex: add rx histogram statistics support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/marvell/mwifiex/cfp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On 3/30/19 9:37 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently data->i2c_addr is being assigned twice, first with the
-> value 0x09 and then immediately afterwards with the value 0x08.
-> The first assignment is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/leds/leds-blinkm.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
-> index 851c1920b63c..11b771fb933b 100644
-> --- a/drivers/leds/leds-blinkm.c
-> +++ b/drivers/leds/leds-blinkm.c
-> @@ -594,7 +594,6 @@ static int blinkm_probe(struct i2c_client *client,
->   		goto exit;
->   	}
->   
-> -	data->i2c_addr = 0x09;
->   	data->i2c_addr = 0x08;
->   	/* i2c addr  - use fake addr of 0x08 initially (real is 0x09) */
->   	data->fw_ver = 0xfe;
-> 
-
-Applied.
-
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfp.c b/drivers/net/wireless/marvell/mwifiex/cfp.c
+index bfe84e55df77..f1522fb1c1e8 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfp.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfp.c
+@@ -531,5 +531,8 @@ u8 mwifiex_adjust_data_rate(struct mwifiex_private *priv,
+ 		rate_index = (rx_rate > MWIFIEX_RATE_INDEX_OFDM0) ?
+ 			      rx_rate - 1 : rx_rate;
+ 
++	if (rate_index >= MWIFIEX_MAX_AC_RX_RATES)
++		rate_index = MWIFIEX_MAX_AC_RX_RATES - 1;
++
+ 	return rate_index;
+ }
 -- 
-Best regards,
-Jacek Anaszewski
+2.17.1
