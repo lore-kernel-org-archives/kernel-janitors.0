@@ -1,31 +1,34 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 25 Apr 2019 16:54:54 +0000
-Subject: Re: [PATCH] iwlegacy: fix spelling mistake "acumulative" -> "accumulative"
-Message-Id: <20190425165454.6694960388@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Apr 2019 08:15:29 +0000
+Subject: [PATCH] Documentation: bus: ti-sysc: fix spelling mistake "multipe" -> "multiple"
+Message-Id: <20190404081529.15394-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415103703.11254-1-colin.king@canonical.com>
-In-Reply-To: <20190415103703.11254-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tony Lindgren <tony@atomide.com>, Faiz Abbas <faiz_abbas@ti.com>, devicetree@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Fix spelling mistakes in rx stats text. I missed these from an earlier
-> round of fixing the same spelling mistake.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+There is a spelling mistake in the Documentation. Fix it.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ Documentation/devicetree/bindings/bus/ti-sysc.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-b9574ce1d05e iwlegacy: fix spelling mistake "acumulative" -> "accumulative"
-
+diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt b/Documentation/devicetree/bindings/bus/ti-sysc.txt
+index 85a23f551f02..8eec4c384000 100644
+--- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
++++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
+@@ -131,6 +131,6 @@ using offsets from l4_cfg second segment (0x4a000000 + 0x80000 = 0x4a0ab000):
+ 		};
+ 	};
+ 
+-Note that other SoCs, such as am335x can have multipe child devices. On am335x
++Note that other SoCs, such as am335x can have multiple child devices. On am335x
+ there are two MUSB instances, two USB PHY instances, and a single CPPI41 DMA
+ instance as children of a single interconnet target module.
 -- 
-https://patchwork.kernel.org/patch/10900491/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
