@@ -1,42 +1,32 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Tue, 16 Apr 2019 07:35:22 +0000
-Subject: Re: [PATCH] staging: wilc1000: fix spelling mistake "dissconect" -> "disconnect"
-Message-Id: <fe128fa2-7ba3-3d56-6b97-61bd98ebebc3@codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 04 Apr 2019 08:44:05 +0000
+Subject: [PATCH] aio: use kmem_cache_free() instead of kfree()
+Message-Id: <20190404084405.47992-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415163330.28166-1-colin.king@canonical.com>
-In-Reply-To: <20190415163330.28166-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+memory allocated by kmem_cache_alloc() should be freed using
+kmem_cache_free(), not kfree().
 
-On 4/15/2019 10:03 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a netdev_err error message, fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Fixes: fa0ca2aee3be ("deal with get_reqs_available() in aio_get_req() itself")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ fs/aio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
--Mukesh
-
-> ---
->   drivers/staging/wilc1000/host_interface.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-> index e1a35bb426f9..ed15bd1bcd56 100644
-> --- a/drivers/staging/wilc1000/host_interface.c
-> +++ b/drivers/staging/wilc1000/host_interface.c
-> @@ -774,7 +774,7 @@ int wilc_disconnect(struct wilc_vif *vif)
->   	result = wilc_send_config_pkt(vif, WILC_SET_CFG, &wid, 1,
->   				      wilc_get_vif_idx(vif));
->   	if (result) {
-> -		netdev_err(vif->ndev, "Failed to send dissconect\n");
-> +		netdev_err(vif->ndev, "Failed to send disconnect\n");
->   		return result;
->   	}
->   
+diff --git a/fs/aio.c b/fs/aio.c
+index a4cc2a1cccb7..93b1252d7f3c 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1034,7 +1034,7 @@ static inline struct aio_kiocb *aio_get_req(struct kioctx *ctx)
+ 		return NULL;
+ 
+ 	if (unlikely(!get_reqs_available(ctx))) {
+-		kfree(req);
++		kmem_cache_free(kiocb_cachep, req);
+ 		return NULL;
+ 	}
