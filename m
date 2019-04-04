@@ -1,53 +1,77 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 05 Apr 2019 16:33:44 +0000
-Subject: [PATCH] scsi: mptfusion: fix sign-extension on large shift of 1
-Message-Id: <20190405163344.7287-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 04 Apr 2019 08:16:27 +0000
+Subject: Applied "ASoC: sprd: Fix spelling mistake "faied" -> "failed"" to the asoc tree
+Message-Id: <20190404081627.D053A441D3C@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190404075603.11680-1-colin.king@canonical.com>
+In-Reply-To: <20190404075603.11680-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
+The patch
+
+   ASoC: sprd: Fix spelling mistake "faied" -> "failed"
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 47fa5773f11c7cc9117d74ea5a18a22502d8f0f3 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 4 Apr 2019 08:56:03 +0100
+Subject: [PATCH] ASoC: sprd: Fix spelling mistake "faied" -> "failed"
 
-Shifting the int value 1 can lead to sign-extension overflow when the shift
-is 31 bits and ending up with the upper 32 bits being set.  Fix this by
-shifting 1ULL instead of 1.
+There are two identical spelling mistakes in dev_err messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/message/fusion/mptsas.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/sprd/sprd-pcm-compress.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
-index 6a79cd0ebe2b..e6e9dffe1b5c 100644
---- a/drivers/message/fusion/mptsas.c
-+++ b/drivers/message/fusion/mptsas.c
-@@ -854,7 +854,7 @@ mptsas_setup_wide_ports(MPT_ADAPTER *ioc, struct mptsas_portinfo *port_info)
- 		    "%s: [%p]: deleting phy = %d\n",
- 		    ioc->name, __func__, port_details, i));
- 		port_details->num_phys--;
--		port_details->phy_bitmask &= ~ (1 << phy_info->phy_id);
-+		port_details->phy_bitmask &= ~(1ULL << phy_info->phy_id);
- 		memset(&phy_info->attached, 0, sizeof(struct mptsas_devinfo));
- 		if (phy_info->phy) {
- 			devtprintk(ioc, dev_printk(KERN_DEBUG,
-@@ -889,7 +889,7 @@ mptsas_setup_wide_ports(MPT_ADAPTER *ioc, struct mptsas_portinfo *port_info)
- 			port_details->port_info = port_info;
- 			if (phy_info->phy_id < 64 )
- 				port_details->phy_bitmask |-				    (1 << phy_info->phy_id);
-+				    (1ULL << phy_info->phy_id);
- 			phy_info->sas_port_add_phy=1;
- 			dsaswideprintk(ioc, printk(MYIOC_s_DEBUG_FMT "\t\tForming port\n\t\t"
- 			    "phy_id=%d sas_address=0x%018llX\n",
-@@ -931,7 +931,7 @@ mptsas_setup_wide_ports(MPT_ADAPTER *ioc, struct mptsas_portinfo *port_info)
- 			phy_info_cmp->port_details = port_details;
- 			if (phy_info_cmp->phy_id < 64 )
- 				port_details->phy_bitmask |-				(1 << phy_info_cmp->phy_id);
-+				(1ULL << phy_info_cmp->phy_id);
- 			port_details->num_phys++;
- 		}
+diff --git a/sound/soc/sprd/sprd-pcm-compress.c b/sound/soc/sprd/sprd-pcm-compress.c
+index 424e9834d093..6cddf551bc11 100644
+--- a/sound/soc/sprd/sprd-pcm-compress.c
++++ b/sound/soc/sprd/sprd-pcm-compress.c
+@@ -281,13 +281,13 @@ static int sprd_platform_compr_set_params(struct snd_compr_stream *cstream,
+ 	 */
+ 	ret = sprd_platform_compr_dma_config(cstream, params, 1);
+ 	if (ret) {
+-		dev_err(dev, "faied to config stage 1 DMA: %d\n", ret);
++		dev_err(dev, "failed to config stage 1 DMA: %d\n", ret);
+ 		return ret;
  	}
+ 
+ 	ret = sprd_platform_compr_dma_config(cstream, params, 0);
+ 	if (ret) {
+-		dev_err(dev, "faied to config stage 0 DMA: %d\n", ret);
++		dev_err(dev, "failed to config stage 0 DMA: %d\n", ret);
+ 		goto config_err;
+ 	}
+ 
 -- 
 2.20.1
