@@ -1,31 +1,23 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Date: Fri, 12 Apr 2019 19:00:16 +0000
-Subject: Re: [PATCH][next] RDMA/mlx5: check for error return in flow_rule rather than err
-Message-Id: <20190412142143.GA22222@mellanox.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 05 Apr 2019 10:58:17 +0000
+Subject: Re: [PATCH -next] gpio: mlxbf: remove unused including <linux/version.h>
+Message-Id: <CACRpkdY+HH1c7ZW+_3gqt6woATPFq-puJahG83J4P3j50pryZA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190412104017.25507-1-colin.king@canonical.com>
-In-Reply-To: <20190412104017.25507-1-colin.king@canonical.com>
+References: <20190328013958.33849-1-yuehaibing@huawei.com>
+In-Reply-To: <20190328013958.33849-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 12, 2019 at 11:40:17AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when the call to create_flow_rule_vport_sq fails, the error
-> check is being performed on err rather than on the return pointer
-> flow_rule.  The return flow_rule maybe NULL (which is not considered
-> an error) or an error code, so check for the error on flow_rule.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: d5ed8ac34cef ("RDMA/mlx5: Move default representors SQ steering to rule to modify QP")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/mlx5/qp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Mar 28, 2019 at 8:28 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-Applied to for-next, thanks
+> Remove including <linux/version.h> that don't need it.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Jason
+I put this on hold so Bartosz can apply it to his patch stack
+where the dependent patches are queued.
+
+Yours,
+Linus Walleij
