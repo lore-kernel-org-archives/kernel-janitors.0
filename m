@@ -1,49 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 30 Apr 2019 10:33:59 +0000
-Subject: [PATCH] staging: kpc2000: fix resource size calculation
-Message-Id: <20190430103359.GA7064@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Apr 2019 08:50:33 +0000
+Subject: Re: [1/5] powerpc/sparse: fix possible object reference leak
+Message-Id: <25ecfd6e-5dc8-a8d1-fe22-5de49136c956@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1553223955-7350-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1553223955-7350-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
 
-The code is calculating the resource size wrong because it should be
-inclusive of the "res->end" address.  In other words, "end - start + 1".
-We can just use the resource_size() function to do it correctly.
+> @@ -131,7 +131,7 @@  static int drc_index_to_cpu(u32 drc_index)
+>
+>  			of_read_drc_info_cell(&info, &value, &drc);
+>  			if (strncmp(drc.drc_type, "CPU", 3))
+> -				goto err;
+> +				goto err_of_node_put;
+>
+>  			if (drc_index > drc.last_drc_index) {
 
-Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/staging/kpc2000/kpc_i2c/i2c_driver.c | 2 +-
- drivers/staging/kpc2000/kpc_spi/spi_driver.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Can the jump label “put_node” be nicer here?
 
-diff --git a/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c b/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c
-index 6bb6ad4abe87..1fc30dc687f9 100644
---- a/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c
-+++ b/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c
-@@ -632,7 +632,7 @@ int pi2c_probe(struct platform_device *pldev)
-     priv->adapter.algo = &smbus_algorithm;
-     
-     res = platform_get_resource(pldev, IORESOURCE_MEM, 0);
--    priv->smba = (unsigned long)ioremap_nocache(res->start, res->end - res->start);
-+    priv->smba = (unsigned long)ioremap_nocache(res->start, resource_size(res));
-     
-     priv->pldev = pldev;
-     pldev->dev.platform_data = priv;
-diff --git a/drivers/staging/kpc2000/kpc_spi/spi_driver.c b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
-index b38149b752fb..e568dec04800 100644
---- a/drivers/staging/kpc2000/kpc_spi/spi_driver.c
-+++ b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
-@@ -452,7 +452,7 @@ kp_spi_probe(struct platform_device *pldev)
-         goto free_master;
-     }
-     
--    kpspi->phys = (unsigned long)ioremap_nocache(r->start, r->end - r->start);
-+    kpspi->phys = (unsigned long)ioremap_nocache(r->start, resource_size(r));
-     kpspi->base = (u64 __iomem *)kpspi->phys;
-     
-     status = spi_register_master(master);
--- 
-2.18.0
+Regards,
+Markus
