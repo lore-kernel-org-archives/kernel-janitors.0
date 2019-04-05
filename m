@@ -1,74 +1,38 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Mon, 01 Apr 2019 12:58:41 +0000
-Subject: Re: [PATCH 07/12] drm: omapdrm: add missing of_node_put after of_device_is_available
-Message-Id: <572cbf04-d97a-9807-75b5-2cf6f752667b@codeaurora.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Apr 2019 08:27:59 +0000
+Subject: Re: [PATCH 3/3] ethernet: ti: fix possible object reference leak
+Message-Id: <1a90f282-4664-f9e6-45d1-7b3b6a0a3104@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
- <1550928043-14889-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-8-git-send-email-Julia.Lawall@lip6.fr>
+References: <1553223849-7143-3-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1553223849-7143-3-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Wen Yang <wen.yang99@zte.com.cn>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>, Wingman Kwok <w-kwok2@ti.com>, Yi Wang <wang.yi59@zte.com.cn>
 
-
-On 2/23/2019 6:50 PM, Julia Lawall wrote:
-> Add an of_node_put when a tested device node is not available.
+> @@ -3657,12 +3657,16 @@  static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
 >
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
->
-> // <smpl>
-> @@
-> identifier f;
-> local idexpression e;
-> expression x;
-> @@
->
-> e = f(...);
-> ... when != of_node_put(e)
->      when != x = e
->      when != e = x
->      when any
-> if (<+...of_device_is_available(e)...+>) {
->    ... when != of_node_put(e)
-> (
->    return e;
-> |
-> + of_node_put(e);
->    return ...;
-> )
-> }
-> // </smpl>
->
-> Fixes: f2dd36ac9974c ("OMAPDSS: move 'compatible' converter to omapdss driver")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-
-Cheers,
--Mukesh
-
->
-> ---
->   drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c |    4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff -u -p a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-> --- a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-> +++ b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-> @@ -192,8 +192,10 @@ static int __init omapdss_boot_init(void
->   
->   	dss = of_find_matching_node(NULL, omapdss_of_match);
->   
-> -	if (dss = NULL || !of_device_is_available(dss))
-> +	if (dss = NULL || !of_device_is_available(dss)) {
-> +		of_node_put(dss);
->   		return 0;
+>  	ret = netcp_txpipe_init(&gbe_dev->tx_pipe, netcp_device,
+>  				gbe_dev->dma_chan_name, gbe_dev->tx_queue_id);
+> -	if (ret)
+> +	if (ret) {
+> +		of_node_put(interfaces);
+>  		return ret;
 > +	}
->   
->   	omapdss_walk_device(dss, true);
->   
 >
+>  	ret = netcp_txpipe_open(&gbe_dev->tx_pipe);
+> -	if (ret)
+> +	if (ret) {
+> +		of_node_put(interfaces);
+>  		return ret;
+> +	}
+>
+>  	/* Create network interfaces */
+>  	INIT_LIST_HEAD(&gbe_dev->gbe_intf_head);
+
+Would you like to move such duplicate statements to an additional jump target
+for the desired exception handling?
+
+Regards,
+Markus
