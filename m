@@ -1,58 +1,38 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Tue, 16 Apr 2019 13:29:36 +0000
-Subject: Re: [PATCH] reiserfs: fix spelling mistake "enrty" -> "entry"
-Message-Id: <240c2888-01a9-184f-7f29-eb603bdd36c4@codeaurora.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Apr 2019 07:54:45 +0000
+Subject: Re: [PATCH 1/3] net: xilinx: fix possible object reference leak
+Message-Id: <d2f169a0-b982-82ca-b2f1-963b8a579504@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190416112549.25175-1-colin.king@canonical.com>
-In-Reply-To: <20190416112549.25175-1-colin.king@canonical.com>
+References: <1553223849-7143-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1553223849-7143-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, reiserfs-devel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Wen Yang <wen.yang99@zte.com.cn>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, Anirudha Sarangi <anirudh@xilinx.com>, John Linn <John.Linn@xilinx.com>, linux-arm-kernel@lists.infradead.org
 
+> @@ -1575,12 +1575,14 @@  static int axienet_probe(struct platform_device =
+*pdev)
+>  	ret =3D of_address_to_resource(np, 0, &dmares);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "unable to get DMA resource\n");
+> +		of_node_put(np);
+>  		goto free_netdev;
+>  	}
+>  	lp->dma_regs =3D devm_ioremap_resource(&pdev->dev, &dmares);
+>  	if (IS_ERR(lp->dma_regs)) {
+>  		dev_err(&pdev->dev, "could not map DMA regs\n");
+>  		ret =3D PTR_ERR(lp->dma_regs);
+> +		of_node_put(np);
+>  		goto free_netdev;
+>  	}
 
-On 4/16/2019 4:55 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are a couple of spelling mistakes, fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+How do you think about to move these put calls to an additional
+jump target for the desired exception handling?
 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dr=
+ivers/net/ethernet/xilinx/xilinx_axienet_main.c?id=FA3a419d2f674b431d38748c=
+b58fb7da17ee8949#n1621
 
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-
-Cheers,
--Mukesh
-
-> ---
->   fs/reiserfs/lbalance.c | 2 +-
->   fs/reiserfs/namei.c    | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
-> index f5cebd70d903..e7cebd05a882 100644
-> --- a/fs/reiserfs/lbalance.c
-> +++ b/fs/reiserfs/lbalance.c
-> @@ -1164,7 +1164,7 @@ void leaf_cut_from_buffer(struct buffer_info *bi, int cut_item_num,
->   		if (pos_in_item = 0) {
->   			/* change key */
->   			RFALSE(cut_item_num,
-> -			       "when 0-th enrty of item is cut, that item must be first in the node, not %d-th",
-> +			       "when 0-th entry of item is cut, that item must be first in the node, not %d-th",
->   			       cut_item_num);
->   			/* change item key by key of first entry in the item */
->   			set_le_ih_k_offset(ih, deh_offset(B_I_DEH(bh, ih)));
-> diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-> index 97f3fc4fdd79..c97c36b4a31c 100644
-> --- a/fs/reiserfs/namei.c
-> +++ b/fs/reiserfs/namei.c
-> @@ -536,7 +536,7 @@ static int reiserfs_add_entry(struct reiserfs_transaction_handle *th,
->   		pathrelse(&path);
->   		return -EBUSY;
->   	}
-> -	/* adjust offset of directory enrty */
-> +	/* adjust offset of directory entry */
->   	put_deh_offset(deh, SET_GENERATION_NUMBER(deh_offset(deh), gen_number));
->   	set_cpu_key_k_offset(&entry_key, deh_offset(deh));
->   
+Regards,
+Markus
