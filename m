@@ -1,31 +1,45 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Mon, 01 Apr 2019 11:48:57 +0000
-Subject: Re: [PATCH] video: fbdev: vesafb: fix indentation issue
-Message-Id: <bc50205e-34f0-baee-a50f-7bb302327d21@samsung.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 06 Apr 2019 03:11:34 +0000
+Subject: [PATCH -next] staging: rtl8192e: Remove set but not used variable 'VenderID'
+Message-Id: <20190406031134.59419-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190212132918epcas1p4211cd6eb2d090c8ccd2996ee0d13ca78@epcas1p4.samsung.com>
-        <20190212132905.7307-1-colin.king@canonical.com>
-In-Reply-To: <20190212132905.7307-1-colin.king@canonical.com>
+References: <20190218123359.83746-1-yuehaibing@huawei.com>
+In-Reply-To: <20190218123359.83746-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 02/12/2019 02:29 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a couple of statements that are indented too deeply, fix
-> this by removing tabs. Also add a space after a comma to clean up
-> a cppcheck warning.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/staging/rtl8192e/rtl8192e/rtl_pci.c: In function 'rtl92e_check_adapter':
+drivers/staging/rtl8192e/rtl8192e/rtl_pci.c:36:6: warning:
+ variable 'VenderID' set but not used [-Wunused-but-set-variable]
+  u16 VenderID;
+      ^
 
-Patch queued for v5.2, thanks.
+It's never used and can be removed.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/rtl8192e/rtl8192e/rtl_pci.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c
+index bab41ab7c0a5..1d992d5c4e17 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c
+@@ -33,12 +33,10 @@ static void _rtl92e_parse_pci_configuration(struct pci_dev *pdev,
+ bool rtl92e_check_adapter(struct pci_dev *pdev, struct net_device *dev)
+ {
+ 	struct r8192_priv *priv = (struct r8192_priv *)rtllib_priv(dev);
+-	u16 VenderID;
+ 	u16 DeviceID;
+ 	u8  RevisionID;
+ 	u16 IrqLine;
+ 
+-	VenderID = pdev->vendor;
+ 	DeviceID = pdev->device;
+ 	RevisionID = pdev->revision;
+ 	pci_read_config_word(pdev, 0x3C, &IrqLine);
