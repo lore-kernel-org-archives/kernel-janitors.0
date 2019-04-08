@@ -1,22 +1,35 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Thu, 11 Apr 2019 09:41:08 +0000
-Subject: Re: [PATCH RESEND] fs: drop unused fput_atomic definition
-Message-Id: <7e482526-b6fd-0a2b-c0ea-94188d58be13@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 Apr 2019 08:20:14 +0000
+Subject: [PATCH][next] scsi: qla2xxx: fix spelling mistake "alredy" -> "already"
+Message-Id: <20190408082014.1354-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190411035352.19407-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20190411035352.19407-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>
-Cc: Elena Reshetova <elena.reshetova@intel.com>, Krystian Radlak <kradlak@exida.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+From: Colin Ian King <colin.king@canonical.com>
+
+There is a spelling mistake in a ql_log message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qla2xxx/qla_nvme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
+index 1ca63e80a7fe..3a6160ca9b4a 100644
+--- a/drivers/scsi/qla2xxx/qla_nvme.c
++++ b/drivers/scsi/qla2xxx/qla_nvme.c
+@@ -205,7 +205,7 @@ static void qla_nvme_abort_work(struct work_struct *work)
+ 	if (atomic_read(&sp->ref_count) = 0) {
+ 		WARN_ON(1);
+ 		ql_log(ql_log_info, fcport->vha, 0xffff,
+-			"%s: command alredy aborted on sp: %p\n",
++			"%s: command already aborted on sp: %p\n",
+ 			__func__, sp);
+ 		return;
+ 	}
 -- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+2.20.1
