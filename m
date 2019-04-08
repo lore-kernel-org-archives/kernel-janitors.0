@@ -1,23 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 17 Apr 2019 04:39:28 +0000
-Subject: Re: [PATCH] qed: fix spelling mistake "faspath" -> "fastpath"
-Message-Id: <20190416.213928.913668488475223155.davem@davemloft.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 08 Apr 2019 11:07:09 +0000
+Subject: Re: [PATCH] pinctrl: imx: remove an unnecessary NULL check
+Message-Id: <CACRpkdbu2S9gx4Vs3R6cMvGK2M+5-qzMXJYeWcw7MFf-LP3c5g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190416114317.28983-1-colin.king@canonical.com>
-In-Reply-To: <20190416114317.28983-1-colin.king@canonical.com>
+References: <20190328144022.GO32613@kadam>
+In-Reply-To: <20190328144022.GO32613@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: aelior@marvell.com, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 16 Apr 2019 12:43:17 +0100
+On Thu, Mar 28, 2019 at 3:40 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a DP_INFO message, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> The address of "ipctl->pin_regs[pin_id]" can't be NULL.  It's the offset
+> into an array in the middle of a struct.  This patch removes the check.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+Patch applied with Dong's ACK!
+
+Yours,
+Linus Walleij
