@@ -1,23 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 05 Apr 2019 10:58:17 +0000
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Mon, 08 Apr 2019 06:49:44 +0000
 Subject: Re: [PATCH -next] gpio: mlxbf: remove unused including <linux/version.h>
-Message-Id: <CACRpkdY+HH1c7ZW+_3gqt6woATPFq-puJahG83J4P3j50pryZA@mail.gmail.com>
+Message-Id: <CAMpxmJVjgpSEo5WPvC0hXJtE2AoP7D=-A58vFe5yeRcFfekmqA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190328013958.33849-1-yuehaibing@huawei.com>
 In-Reply-To: <20190328013958.33849-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 8:28 AM YueHaibing <yuehaibing@huawei.com> wrote:
-
-> Remove including <linux/version.h> that don't need it.
+pt., 5 kwi 2019 o 12:58 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
+=82(a):
 >
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> On Thu, Mar 28, 2019 at 8:28 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> > Remove including <linux/version.h> that don't need it.
+> >
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>
+> I put this on hold so Bartosz can apply it to his patch stack
+> where the dependent patches are queued.
+>
+> Yours,
+> Linus Walleij
 
-I put this on hold so Bartosz can apply it to his patch stack
-where the dependent patches are queued.
+Patch applied. I'll send a pull-request later today so we can sync our
+for-next trees.
 
-Yours,
-Linus Walleij
+Bart
