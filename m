@@ -1,33 +1,59 @@
-From: ChenGang <cg.chen@huawei.com>
-Date: Sat, 27 Apr 2019 13:13:24 +0000
-Subject: [PATCH 2/3] fs: ocfs: fix spelling mistake "hearbeat" -> "heartbeat"
-Message-Id: <1556370804-119280-1-git-send-email-cg.chen@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 08 Apr 2019 09:52:38 +0000
+Subject: [PATCH] media: pvrusb2: Prevent a buffer overflow
+Message-Id: <20190408095238.GA19971@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mark@fasheh.com, jlbec@evilplan.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com, ChenGang <cg.chen@huawei.com>
+To: Mike Isely <isely@pobox.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in comment, fix it.
+The ctrl_check_input() function is called from pvr2_ctrl_range_check().
+It's supposed to validate user supplied input and return true or false
+depending on whether the input is valid or not.  The problem is that
+negative shifts or shifts greater than 31 are undefined in C.  In
+practice with GCC they result in shift wrapping so this function returns
+true for some inputs which are not valid and this could result in a
+buffer overflow:
 
-Signed-off-by: ChenGang <cg.chen@huawei.com>
+    drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:205 pvr2_ctrl_get_valname()
+    warn: uncapped user index 'names[val]'
+
+The cptr->hdw->input_allowed_mask mask is configured in pvr2_hdw_create()
+and the highest valid bit is BIT(4).
+
+Fixes: 7fb20fa38caa ("V4L/DVB (7299): pvrusb2: Improve logic which handles input choice availability")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/ocfs2/cluster/quorum.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 ++
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/fs/ocfs2/cluster/quorum.c b/fs/ocfs2/cluster/quorum.c
-index af2e747..792132f 100644
---- a/fs/ocfs2/cluster/quorum.c
-+++ b/fs/ocfs2/cluster/quorum.c
-@@ -89,7 +89,7 @@ static void o2quo_fence_self(void)
- 	};
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
+index 25648add77e5..bd2b7a67b732 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
+@@ -50,6 +50,7 @@
+ #define PVR2_CVAL_INPUT_COMPOSITE 2
+ #define PVR2_CVAL_INPUT_SVIDEO 3
+ #define PVR2_CVAL_INPUT_RADIO 4
++#define PVR2_CVAL_INPUT_MAX PVR2_CVAL_INPUT_RADIO
+ 
+ enum pvr2_config {
+ 	pvr2_config_empty,    /* No configuration */
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+index 51112b7988e4..816c85786c2a 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+@@ -666,6 +666,8 @@ static int ctrl_get_input(struct pvr2_ctrl *cptr,int *vp)
+ 
+ static int ctrl_check_input(struct pvr2_ctrl *cptr,int v)
+ {
++	if (v < 0 || v > PVR2_CVAL_INPUT_MAX)
++		return 0;
+ 	return ((1 << v) & cptr->hdw->input_allowed_mask) != 0;
  }
  
--/* Indicate that a timeout occurred on a hearbeat region write. The
-+/* Indicate that a timeout occurred on a heartbeat region write. The
-  * other nodes in the cluster may consider us dead at that time so we
-  * want to "fence" ourselves so that we don't scribble on the disk
-  * after they think they've recovered us. This can't solve all
 -- 
-1.8.5.6
+2.17.1
