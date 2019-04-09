@@ -1,31 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 05 Apr 2019 21:23:04 +0000
-Subject: Re: [PATCH] Bluetooth: hci_event: potential out of bounds parsing ADV events
-Message-Id: <20190405212304.GW32613@kadam>
+Date: Tue, 09 Apr 2019 11:37:28 +0000
+Subject: [bug report] net: hns3: only support tc 0 for VF
+Message-Id: <20190409113727.GA14023@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190402063313.GA32613@kadam>
- <CAM_iQpW=X2X5A873nSPM7yLBiWZM+rsJk+uMpiOioYPFsFP9vg@mail.gmail.com>
- <20190402195537.GF32613@kadam>
- <CAM_iQpU2qwezhk8XdnX+kvUi8Oi0mwNxRuFOo8uGvjZaPZGNWA@mail.gmail.com>
- <20190404080627.GG32590@kadam>
- <CAM_iQpXLoSU5f4tGtwDt9=+AQ==4CfYhnxcOmKkmvB+Yd0KNfw@mail.gmail.com>
- <20190405204838.GR32590@kadam>
- <5344bfc8-ba02-c17f-c4cd-0418d48e6fdd@gmail.com>
- <20190405211414.GT32590@kadam>
- <CAAHj5qj3PciY8ngqSGzH3=TQcm5vCghb0Z_0Y3DFQjTLMUM-9Q@mail.gmail.com>
-In-Reply-To: <CAAHj5qj3PciY8ngqSGzH3=TQcm5vCghb0Z_0Y3DFQjTLMUM-9Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomas Bortoli <tomasbortoli@gmail.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, Jaganath Kanakkassery <jaganath.k.os@gmail.com>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-I only deleted one unlikely() from around an unlikely(!pskb_may_pull())
-check.  I made sure that the line numbers and debug symbols all stayed
-exactly the same...  I just re-ran my experiment with the same results.
+Hello Yunsheng Lin,
 
-It's weird that you're getting different object code.  This stuff isn't
-a new feature in GCC, it's at least 10 years old.
+The patch de67a690cc27: "net: hns3: only support tc 0 for VF" from
+Jan 31, 2019, leads to the following static checker warning:
+
+	drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c:549 hclge_tm_vport_tc_info_update()
+	warn: 'hdev->tm_info.pg_info[0]->bw_limit' 100000 can't fit into 65535 'vport->bw_limit'
+
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+    534 	if (kinfo->req_rss_size != kinfo->rss_size && kinfo->req_rss_size &&
+    535 	    kinfo->req_rss_size <= max_rss_size) {
+    536 		dev_info(&hdev->pdev->dev, "rss changes from %d to %d\n",
+    537 			 kinfo->rss_size, kinfo->req_rss_size);
+    538 		kinfo->rss_size = kinfo->req_rss_size;
+    539 	} else if (kinfo->rss_size > max_rss_size ||
+    540 		   (!kinfo->req_rss_size && kinfo->rss_size < max_rss_size)) {
+    541 		dev_info(&hdev->pdev->dev, "rss changes from %d to %d\n",
+    542 			 kinfo->rss_size, max_rss_size);
+    543 		kinfo->rss_size = max_rss_size;
+    544 	}
+    545 
+    546 	kinfo->num_tqps = kinfo->num_tc * kinfo->rss_size;
+    547 	vport->dwrr = 100;  /* 100 percent as init */
+    548 	vport->alloc_rss_size = kinfo->rss_size;
+--> 549 	vport->bw_limit = hdev->tm_info.pg_info[0].bw_limit;
+                ^^^^^^^^^^^^^^^
+An unsigned short is not large enough to hold HCLGE_ETHER_MAX_RATE (100000).
+
+    550 
+    551 	for (i = 0; i < HNAE3_MAX_TC; i++) {
+    552 		if (hdev->hw_tc_map & BIT(i) && i < kinfo->num_tc) {
+    553 			kinfo->tc_info[i].enable = true;
+    554 			kinfo->tc_info[i].tqp_offset = i * kinfo->rss_size;
+    555 			kinfo->tc_info[i].tqp_count = kinfo->rss_size;
+    556 			kinfo->tc_info[i].tc = i;
+    557 		} else {
 
 regards,
 dan carpenter
