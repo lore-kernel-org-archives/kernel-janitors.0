@@ -1,116 +1,49 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Sat, 06 Apr 2019 08:39:32 +0000
-Subject: Re: [PATCH -next] staging: rtlwifi: base: Remove set but not used variables
-Message-Id: <3180555a-a87a-0e39-3343-154a256bd530@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 09 Apr 2019 11:20:11 +0000
+Subject: [PATCH] brcmfmac: fix leak of mypkt on error return path
+Message-Id: <20190409112011.19546-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190406031225.60088-1-yuehaibing@huawei.com>
-In-Reply-To: <20190406031225.60088-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>, Sohil Ladhani <supertakumi86@gmail.com>, Cristian Sicilia <sicilia.cristian@gmail.com>, Luke Triantafyllidis <ltriant@cpan.org>, Nathan Chancellor <natechancellor@gmail.com>, Luca Coelho <luciano.coelho@intel.com>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 4/6/2019 8:42 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/staging/rtlwifi/base.c: In function 'rtl_tx_agg_stop':
-> drivers/staging/rtlwifi/base.c:1733:23: warning:
->   variable 'tid_data' set but not used [-Wunused-but-set-variable]
->
-> drivers/staging/rtlwifi/base.c: In function 'rtl_check_beacon_key':
-> drivers/staging/rtlwifi/base.c:2474:5: warning:
->   variable 'ds_param_len' set but not used [-Wunused-but-set-variable]
->
-> drivers/staging/rtlwifi/base.c:2472:5: warning:
->   variable 'ht_oper_len' set but not used [-Wunused-but-set-variable]
->
-> drivers/staging/rtlwifi/base.c:2470:5: warning:
->   variable 'ht_cap_len' set but not used [-Wunused-but-set-variable]
->
-> They are never used and can be removed.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Currently if the call to brcmf_sdiod_set_backplane_window fails then
+then error return path leaks mypkt. Fix this by returning by a new
+error path labelled 'out' that calls brcmu_pkt_buf_free_skb to free
+mypkt.
 
-Cheers,
--Mukesh
+Addresses-Coverity: ("Resource Leak")
+Fixes: a7c3aa1509e2 ("brcmfmac: Remove brcmf_sdiod_addrprep()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->   drivers/staging/rtlwifi/base.c | 18 ++++--------------
->   1 file changed, 4 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/staging/rtlwifi/base.c b/drivers/staging/rtlwifi/base.c
-> index b8358ebbf912..b8b89e4c54d4 100644
-> --- a/drivers/staging/rtlwifi/base.c
-> +++ b/drivers/staging/rtlwifi/base.c
-> @@ -1730,7 +1730,6 @@ int rtl_tx_agg_stop(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
->   		    struct ieee80211_sta *sta, u16 tid)
->   {
->   	struct rtl_priv *rtlpriv = rtl_priv(hw);
-> -	struct rtl_tid_data *tid_data;
->   	struct rtl_sta_info *sta_entry = NULL;
->   
->   	if (!sta)
-> @@ -1743,7 +1742,6 @@ int rtl_tx_agg_stop(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
->   		return -EINVAL;
->   
->   	sta_entry = (struct rtl_sta_info *)sta->drv_priv;
-> -	tid_data = &sta_entry->tids[tid];
->   	sta_entry->tids[tid].agg.agg_state = RTL_AGG_STOP;
->   
->   	ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
-> @@ -2467,11 +2465,8 @@ bool rtl_check_beacon_key(struct ieee80211_hw *hw, void *data, unsigned int len)
->   	struct rtl_beacon_keys bcn_key = {};
->   	struct rtl_beacon_keys *cur_bcn_key;
->   	u8 *ht_cap;
-> -	u8 ht_cap_len;
->   	u8 *ht_oper;
-> -	u8 ht_oper_len;
->   	u8 *ds_param;
-> -	u8 ds_param_len;
->   
->   	if (mac->opmode != NL80211_IFTYPE_STATION)
->   		return false;
-> @@ -2502,18 +2497,15 @@ bool rtl_check_beacon_key(struct ieee80211_hw *hw, void *data, unsigned int len)
->   	/***** Parsing DS Param IE ******/
->   	ds_param = rtl_find_ie(data, len - FCS_LEN, WLAN_EID_DS_PARAMS);
->   
-> -	if (ds_param && !(ds_param[1] < sizeof(*ds_param))) {
-> -		ds_param_len = ds_param[1];
-> +	if (ds_param && !(ds_param[1] < sizeof(*ds_param)))
->   		bcn_key.bcn_channel = ds_param[2];
-> -	} else {
-> +	else
->   		ds_param = NULL;
-> -	}
->   
->   	/***** Parsing HT Cap. IE ******/
->   	ht_cap = rtl_find_ie(data, len - FCS_LEN, WLAN_EID_HT_CAPABILITY);
->   
->   	if (ht_cap && !(ht_cap[1] < sizeof(*ht_cap))) {
-> -		ht_cap_len = ht_cap[1];
->   		ht_cap_ie = (struct ieee80211_ht_cap *)&ht_cap[2];
->   		bcn_key.ht_cap_info = ht_cap_ie->cap_info;
->   	} else  {
-> @@ -2523,12 +2515,10 @@ bool rtl_check_beacon_key(struct ieee80211_hw *hw, void *data, unsigned int len)
->   	/***** Parsing HT Info. IE ******/
->   	ht_oper = rtl_find_ie(data, len - FCS_LEN, WLAN_EID_HT_OPERATION);
->   
-> -	if (ht_oper && !(ht_oper[1] < sizeof(*ht_oper))) {
-> -		ht_oper_len = ht_oper[1];
-> +	if (ht_oper && !(ht_oper[1] < sizeof(*ht_oper)))
->   		ht_oper_ie = (struct ieee80211_ht_operation *)&ht_oper[2];
-> -	} else {
-> +	else
->   		ht_oper = NULL;
-> -	}
->   
->   	/* update bcn_key */
->   
->
->
->
->
->
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+index ec129864cc9c..f3d11e024e71 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+@@ -628,7 +628,7 @@ int brcmf_sdiod_send_buf(struct brcmf_sdio_dev *sdiodev, u8 *buf, uint nbytes)
+ 
+ 	err = brcmf_sdiod_set_backplane_window(sdiodev, addr);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	addr &= SBSDIO_SB_OFT_ADDR_MASK;
+ 	addr |= SBSDIO_SB_ACCESS_2_4B_FLAG;
+@@ -636,7 +636,7 @@ int brcmf_sdiod_send_buf(struct brcmf_sdio_dev *sdiodev, u8 *buf, uint nbytes)
+ 	if (!err)
+ 		err = brcmf_sdiod_skbuff_write(sdiodev, sdiodev->func2, addr,
+ 					       mypkt);
+-
++out:
+ 	brcmu_pkt_buf_free_skb(mypkt);
+ 
+ 	return err;
+-- 
+2.20.1
