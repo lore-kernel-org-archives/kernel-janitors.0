@@ -1,47 +1,62 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date: Fri, 12 Apr 2019 09:36:27 +0000
-Subject: Re: [PATCH] scsi: qedf: replace memset/memcpy with safer strscpy
-Message-Id: <1f51ff1c-bd1a-2b77-fd5f-77fb873111e9@rasmusvillemoes.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 09 Apr 2019 13:38:19 +0000
+Subject: [PATCH] scsi: cxgbi: remove redundant __kfree_skb call on skb
+Message-Id: <20190409133819.21127-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190412090552.26925-1-colin.king@canonical.com>
-In-Reply-To: <20190412090552.26925-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+To: Karen Xie <kxie@chelsio.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12/04/2019 11.05, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the qedf_dbg_* family of functions can overrun the end
-> of the source string if it is less than the destination buffer
-> length because of the use of a fixed sized memcpy. Replace the
-> memset/memcpy calls with the safer strscpy as this won't overrun
-> the end of the source string and it ensures the destination
-> string is always terminated with NUL.
-> 
-> Addresses-Coverity: ("Out-of-bounds access")
-> Fixes: 61d8658b4a43 ("scsi: qedf: Add QLogic FastLinQ offload FCoE driver framework.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/scsi/qedf/qedf_dbg.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/scsi/qedf/qedf_dbg.c b/drivers/scsi/qedf/qedf_dbg.c
-> index f2397ee9ba69..b491bebeaca9 100644
-> --- a/drivers/scsi/qedf/qedf_dbg.c
-> +++ b/drivers/scsi/qedf/qedf_dbg.c
-> @@ -17,8 +17,7 @@ qedf_dbg_err(struct qedf_dbg_ctx *qedf, const char *func, u32 line,
->  	struct va_format vaf;
->  	char nfunc[32];
->  
-> -	memset(nfunc, 0, sizeof(nfunc));
-> -	memcpy(nfunc, func, sizeof(nfunc) - 1);
-> +	strscpy(nfunc, func, sizeof(nfunc));
+From: Colin Ian King <colin.king@canonical.com>
 
-Why not drop the pointless nfunc and stack copying and just pass func as
-the %s parameter; these are only called via macros that pass __func__ as
-the func argument, and that is always a proper nul-terminated string.
+The error return path via label rel_resource checks for a non-null
+skb before free'ing it.  However, skb is always null at this exit
+path, so the null check and the free are redundant and can be removed.
+Removing this allows the original goto's to rel_resource to be cleaned
+up; the first can be replaced by a return of -EINVAL, the second can
+be replaced by a more appropriate -ENOMEM return since allow_wr has
+failed go allocate some memory.
 
-Rasmus
+Addresses-Coverity: ("Logically Dead Code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/cxgbi/cxgb3i/cxgb3i.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+index 75e1273a44b3..5a4387f437d5 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
++++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+@@ -979,14 +979,14 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	csk->atid = cxgb3_alloc_atid(t3dev, &t3_client, csk);
+ 	if (csk->atid < 0) {
+ 		pr_err("NO atid available.\n");
+-		goto rel_resource;
++		return -EINVAL;
+ 	}
+ 	cxgbi_sock_set_flag(csk, CTPF_HAS_ATID);
+ 	cxgbi_sock_get(csk);
+ 
+ 	skb = alloc_wr(sizeof(struct cpl_act_open_req), 0, GFP_KERNEL);
+ 	if (!skb)
+-		goto rel_resource;
++		return -ENOMEM;
+ 	skb->sk = (struct sock *)csk;
+ 	set_arp_failure_handler(skb, act_open_arp_failure);
+ 	csk->snd_win = cxgb3i_snd_win;
+@@ -1007,11 +1007,6 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	cxgbi_sock_set_state(csk, CTP_ACTIVE_OPEN);
+ 	send_act_open_req(csk, skb, csk->l2t);
+ 	return 0;
+-
+-rel_resource:
+-	if (skb)
+-		__kfree_skb(skb);
+-	return -EINVAL;
+ }
+ 
+ cxgb3_cpl_handler_func cxgb3i_cpl_handlers[NUM_CPL_CMDS] = {
+-- 
+2.20.1
