@@ -1,64 +1,53 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Sat, 06 Apr 2019 08:31:37 +0000
-Subject: Re: [PATCH -next] staging: rtlwifi: rtl8822be: Remove set but not used variable 'curtxbw_40mhz'
-Message-Id: <44fa9b63-699f-0203-2447-c8217cfbb803@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Apr 2019 11:29:24 +0000
+Subject: [PATCH] media: omap_vout: potential buffer overflow in vidioc_dqbuf()
+Message-Id: <20190409112924.GA13643@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190406031118.59321-1-yuehaibing@huawei.com>
-In-Reply-To: <20190406031118.59321-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ping-Ke Shih <pkshih@realtek.com>, Nathan Chancellor <natechancellor@gmail.com>, Nishka Dasgupta <nishka.dasgupta@yahoo.com>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Amber Jain <amber@ti.com>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Philipp Zabel <p.zabel@pengutronix.de>, Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>
+
+The "b->index" is a u32 the comes from the user in the ioctl.  It hasn't
+been checked.  We aren't supposed to use it but we're instead supposed
+to use the value that gets written to it when we call videobuf_dqbuf().
+
+The videobuf_dqbuf() first memsets it to zero and then re-initializes it
+inside the videobuf_status() function.  It's this final value which we
+want.
+
+Fixes: 72915e851da9 ("[media] V4L2: OMAP: VOUT: dma map and unmap v4l2 buffers in qbuf and dqbuf")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+UNTESTED!  I think I understand this code now, but I have struggled to
+read it correctly in the past.  Please review carefully.
 
 
-On 4/6/2019 8:41 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/staging/rtlwifi/rtl8822be/hw.c: In function 'rtl8822be_update_hal_rate_mask':
-> drivers/staging/rtlwifi/rtl8822be/hw.c:2144:5: warning:
->   variable 'curtxbw_40mhz' set but not used [-Wunused-but-set-variable]
->
-> It's never used and can be removed.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+ drivers/media/platform/omap/omap_vout.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Cheers,
--Mukesh
-
-> ---
->   drivers/staging/rtlwifi/rtl8822be/hw.c | 9 ++-------
->   1 file changed, 2 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/staging/rtlwifi/rtl8822be/hw.c b/drivers/staging/rtlwifi/rtl8822be/hw.c
-> index dac22c21f821..1de4e903a4de 100644
-> --- a/drivers/staging/rtlwifi/rtl8822be/hw.c
-> +++ b/drivers/staging/rtlwifi/rtl8822be/hw.c
-> @@ -2141,8 +2141,6 @@ static void rtl8822be_update_hal_rate_mask(struct ieee80211_hw *hw,
->   	u32 ratr_bitmap, ratr_bitmap_msb = 0;
->   	u8 ratr_index;
->   	enum wireless_mode wirelessmode = 0;
-> -	u8 curtxbw_40mhz > -		(sta->ht_cap.cap & IEEE80211_HT_CAP_SUP_WIDTH_20_40) ? 1 : 0;
->   	bool b_shortgi = false;
->   	u8 rate_mask[7];
->   	u8 macid = 0;
-> @@ -2153,11 +2151,8 @@ static void rtl8822be_update_hal_rate_mask(struct ieee80211_hw *hw,
->   
->   	RT_TRACE(rtlpriv, COMP_RATR, DBG_LOUD, "wireless mode = 0x%x\n",
->   		 wirelessmode);
-> -	if (mac->opmode = NL80211_IFTYPE_STATION ||
-> -	    mac->opmode = NL80211_IFTYPE_MESH_POINT) {
-> -		curtxbw_40mhz = mac->bw_40;
-> -	} else if (mac->opmode = NL80211_IFTYPE_AP ||
-> -		   mac->opmode = NL80211_IFTYPE_ADHOC)
-> +	if (mac->opmode = NL80211_IFTYPE_AP ||
-> +	    mac->opmode = NL80211_IFTYPE_ADHOC)
->   		macid = sta->aid + 1;
->   	if (wirelessmode = WIRELESS_MODE_N_5G ||
->   	    wirelessmode = WIRELESS_MODE_AC_5G ||
->
->
->
->
->
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index 37f0d7146dfa..15e38990e85a 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -1527,8 +1527,6 @@ static int vidioc_dqbuf(struct file *file, void *fh, struct v4l2_buffer *b)
+ 	unsigned long size;
+ 	struct videobuf_buffer *vb;
+ 
+-	vb = q->bufs[b->index];
+-
+ 	if (!vout->streaming)
+ 		return -EINVAL;
+ 
+@@ -1539,6 +1537,8 @@ static int vidioc_dqbuf(struct file *file, void *fh, struct v4l2_buffer *b)
+ 		/* Call videobuf_dqbuf for  blocking mode */
+ 		ret = videobuf_dqbuf(q, (struct v4l2_buffer *)b, 0);
+ 
++	vb = q->bufs[b->index];
++
+ 	addr = (unsigned long) vout->buf_phy_addr[vb->i];
+ 	size = (unsigned long) vb->size;
+ 	dma_unmap_single(vout->vid_dev->v4l2_dev.dev,  addr,
+-- 
+2.17.1
