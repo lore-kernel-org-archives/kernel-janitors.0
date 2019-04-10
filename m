@@ -1,48 +1,54 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Wed, 03 Apr 2019 20:49:50 +0000
-Subject: Re: [PATCH] i2c: nomadik: remove an unnecessary NULL check in nmk_i2c_remove()
-Message-Id: <20190403204950.r6ptd6qpritsgshr@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ojyuo72apf2wxnsx"
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 10 Apr 2019 02:47:42 +0000
+Subject: [PATCH -next] crypto: remove set but not used variable 'fini'
+Message-Id: <20190410024742.2103-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328141609.GL32590@kadam>
-In-Reply-To: <20190328141609.GL32590@kadam>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
---ojyuo72apf2wxnsx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/crypto/mxs-dcp.c: In function 'dcp_chan_thread_sha':
+drivers/crypto/mxs-dcp.c:707:11: warning:
+ variable 'fini' set but not used [-Wunused-but-set-variable]
 
-On Thu, Mar 28, 2019 at 05:16:09PM +0300, Dan Carpenter wrote:
-> "res" can't be NULL because it's a pointer to somewhere in the middle of
-> the "adev" struct.  Also probe() succeeded so there is no need to check
-> here.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's not used since commit d80771c08363 ("crypto: mxs-dcp - Fix wait
+logic on chan threads"),so can be removed.
 
-Applied to for-next, thanks!
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/mxs-dcp.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-
---ojyuo72apf2wxnsx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlylHG4ACgkQFA3kzBSg
-Kbb7zQ/7ByY3pF9Qvk1iebKYpjJdVNcJRsmdLzX4GGlKqeaquI0NXBjovHGpwzt2
-2hGebuLSVTbv1LJhoPzNjxE5uXq5j4dfAss7u7lBvU4xiqgyyxMR2dHgbF2jKjKg
-o7UvE/OFv91BGTx7pDNasIKzFfZSxhGoBZOuA8C1CxZrmOSaZsh8PnOmZFGfROjT
-Lm0it/ekr/j5mv51S7b105eW47DF1KiiiuVrTMeZEJQT7H6JpzE3r90Oq1g+8VCO
-HxIR9PD2m8XZ18pkYbX16kFPYQBCPdLckiQuwcz1zyeI28ubnvDHlu//4EuMsaYK
-U4B8jJ6ndhjKmUJXC4qUxepFRlyBNYD/dT48ABqeYwHB1yA0+6cgqe09Xo4x+kDt
-ADcriu0rSqT//buGrLgSb4J/+g3XbOupfjqOflBF8Nd7Bhm8+pP86RgYcglRw5bf
-1gAYUMLg+fp+qFzk8/hPaQyCijly8j5NXaE4fixiWKRbFARtnGvnxIhuREZJAvzy
-0jpMrFkodOolhAmUXNOD0iaUqD6XajtozpvhkJxpxHRVSDKyRGkl2lT7R8sSRlgG
-6CXs3MKV3HESqHLRN5IbfPK6RMzQdLAVSbjdAiTMjz4Isaia9TxjR7O9gge/3xGe
-bbiRpg12QIY6TFanZpQXrT/Qv3w8QL8eV7lANIceKksKwSaGZvg=
-=CSlK
------END PGP SIGNATURE-----
-
---ojyuo72apf2wxnsx--
+diff --git a/drivers/crypto/mxs-dcp.c b/drivers/crypto/mxs-dcp.c
+index 494cfc4272f3..b4429891e368 100644
+--- a/drivers/crypto/mxs-dcp.c
++++ b/drivers/crypto/mxs-dcp.c
+@@ -700,11 +700,7 @@ static int dcp_chan_thread_sha(void *data)
+ 
+ 	struct crypto_async_request *backlog;
+ 	struct crypto_async_request *arq;
+-
+-	struct dcp_sha_req_ctx *rctx;
+-
+-	struct ahash_request *req;
+-	int ret, fini;
++	int ret;
+ 
+ 	while (!kthread_should_stop()) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+@@ -725,11 +721,7 @@ static int dcp_chan_thread_sha(void *data)
+ 			backlog->complete(backlog, -EINPROGRESS);
+ 
+ 		if (arq) {
+-			req = ahash_request_cast(arq);
+-			rctx = ahash_request_ctx(req);
+-
+ 			ret = dcp_sha_req_to_buf(arq);
+-			fini = rctx->fini;
+ 			arq->complete(arq, ret);
+ 		}
+ 	}
