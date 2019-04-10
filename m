@@ -1,26 +1,40 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Thu, 04 Apr 2019 14:22:34 +0000
-Subject: Re: [PATCH][V2] Documentation: bus: ti-sysc: fix spelling mistakes "multipe" and "interconnet"
-Message-Id: <20190404142234.GF49658@atomide.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 Apr 2019 18:23:51 +0000
+Subject: [PATCH][next] iio: temperature: max31856: fix uninitialized error return
+Message-Id: <20190410182351.18352-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190404111657.21477-1-colin.king@canonical.com>
- <46156ce3-7b5d-2545-41f2-5816ae9c1a5a@codeaurora.org>
-In-Reply-To: <46156ce3-7b5d-2545-41f2-5816ae9c1a5a@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Colin King <colin.king@canonical.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Faiz Abbas <faiz_abbas@ti.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Paresh Chaudhary <paresh.chaudhary@rockwellcollins.com>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Mukesh Ojha <mojha@codeaurora.org> [190404 11:23]:
-> 
-> On 4/4/2019 4:46 PM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There is are a couple of spelling mistakes in the Documentation. Fix them.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks will pick this up for v5.2.
+Currently if mask is neither CHAN_INFO_RAW or CHAN_INFO_SCALE then
+then an uninitialized error return 'ret' is returned. Fix this by
+adding a default case that ensures -EINVAL is returned for this
+specific case.
 
-Regards,
+Addresses-Coverity: ("Uninitialized scalar variable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/temperature/max31856.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Tony
+diff --git a/drivers/iio/temperature/max31856.c b/drivers/iio/temperature/max31856.c
+index 6b67d6b95cf9..f184ba5601d9 100644
+--- a/drivers/iio/temperature/max31856.c
++++ b/drivers/iio/temperature/max31856.c
+@@ -210,6 +210,9 @@ static int max31856_read_raw(struct iio_dev *indio_dev,
+ 			return IIO_VAL_INT_PLUS_MICRO;
+ 		}
+ 		break;
++	default:
++		ret = -EINVAL;
++		break;
+ 	}
+ 
+ 	return ret;
+-- 
+2.20.1
