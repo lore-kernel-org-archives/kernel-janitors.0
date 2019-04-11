@@ -1,36 +1,43 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 29 Apr 2019 14:49:46 +0000
-Subject: Re: [PATCH] ath6kl: add some bounds checking
-Message-Id: <20190429144946.9D5E660134@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 11 Apr 2019 02:59:04 +0000
+Subject: [PATCH -next] memstick: remove set but not used variable 'data'
+Message-Id: <20190411025904.188152-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190404085651.GC20193@kadam>
-In-Reply-To: <20190404085651.GC20193@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>, ulf.hansson@linaro.org, axboe@kernel.dk, osandov@fb.com, hare@suse.de
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> The "ev->traffic_class" and "reply->ac" variables come from the network
-> and they're used as an offset into the wmi->stream_exist_for_ac[] array.
-> Those variables are u8 so they can be 0-255 but the stream_exist_for_ac[]
-> array only has WMM_NUM_AC (4) elements.  We need to add a couple bounds
-> checks to prevent array overflows.
-> 
-> I also modified one existing check from "if (traffic_class > 3) {" to
-> "if (traffic_class >= WMM_NUM_AC) {" just to make them all consistent.
-> 
-> Fixes: bdcd81707973 (" Add ath6kl cleaned up driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+drivers/memstick/host/jmb38x_ms.c: In function 'jmb38x_ms_issue_cmd':
+drivers/memstick/host/jmb38x_ms.c:371:17: warning:
+ variable 'data' set but not used [-Wunused-but-set-variable]
 
-Patch applied to ath-next branch of ath.git, thanks.
+It's never used since introduction and can be removed.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/memstick/host/jmb38x_ms.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-5d6751eaff67 ath6kl: add some bounds checking
-
--- 
-https://patchwork.kernel.org/patch/10885299/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
+index e3a5af65dbce..acec09813419 100644
+--- a/drivers/memstick/host/jmb38x_ms.c
++++ b/drivers/memstick/host/jmb38x_ms.c
+@@ -368,7 +368,6 @@ static int jmb38x_ms_transfer_data(struct jmb38x_ms_host *host)
+ static int jmb38x_ms_issue_cmd(struct memstick_host *msh)
+ {
+ 	struct jmb38x_ms_host *host = memstick_priv(msh);
+-	unsigned char *data;
+ 	unsigned int data_len, cmd, t_val;
+ 
+ 	if (!(STATUS_HAS_MEDIA & readl(host->addr + STATUS))) {
+@@ -400,8 +399,6 @@ static int jmb38x_ms_issue_cmd(struct memstick_host *msh)
+ 			cmd |= TPC_WAIT_INT;
+ 	}
+ 
+-	data = host->req->data;
+-
+ 	if (!no_dma)
+ 		host->cmd_flags |= DMA_DATA;
