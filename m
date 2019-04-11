@@ -1,36 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 08 Apr 2019 09:00:44 +0000
-Subject: [PATCH] tools/power turbostat: fix leak of file descriptor on error return path
-Message-Id: <20190408090044.5712-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Apr 2019 09:01:57 +0000
+Subject: [PATCH v2] media: omap_vout: potential buffer overflow in vidioc_dqbuf()
+Message-Id: <20190411090157.GA27624@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <eb4fe291-85b5-540b-c210-5e9fb051f2cc@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The "b->index" is a u32 the comes from the user in the ioctl.  It hasn't
+been checked.  We aren't supposed to use it but we're instead supposed
+to use the value that gets written to it when we call videobuf_dqbuf().
 
-Currently the error return path does not close the file fp and leaks
-a file descriptor. Fix this by closing the file.
+The videobuf_dqbuf() first memsets it to zero and then re-initializes it
+inside the videobuf_status() function.  It's this final value which we
+want.
 
-Fixes: 5ea7647b333f ("tools/power turbostat: Warn on bad ACPI LPIT data")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hans Verkuil pointed out that we need to check the return from
+videobuf_dqbuf().  I ended up doing a little cleanup related to that as
+well.
+
+Fixes: 72915e851da9 ("[media] V4L2: OMAP: VOUT: dma map and unmap v4l2 buffers in qbuf and dqbuf")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- tools/power/x86/turbostat/turbostat.c | 1 +
- 1 file changed, 1 insertion(+)
+v2: check videobuf_dqbuf() return
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index c7727be9719f..4e6e3f194d2c 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -2950,6 +2950,7 @@ int snapshot_sys_lpi_us(void)
- 	if (retval != 1) {
- 		fprintf(stderr, "Disabling Low Power Idle System output\n");
- 		BIC_NOT_PRESENT(BIC_SYS_LPI);
-+		fclose(fp);
- 		return -1;
- 	}
- 	fclose(fp);
+ drivers/media/platform/omap/omap_vout.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index 37f0d7146dfa..cb6a9e3946b6 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -1527,23 +1527,20 @@ static int vidioc_dqbuf(struct file *file, void *fh, struct v4l2_buffer *b)
+ 	unsigned long size;
+ 	struct videobuf_buffer *vb;
+ 
+-	vb = q->bufs[b->index];
+-
+ 	if (!vout->streaming)
+ 		return -EINVAL;
+ 
+-	if (file->f_flags & O_NONBLOCK)
+-		/* Call videobuf_dqbuf for non blocking mode */
+-		ret = videobuf_dqbuf(q, (struct v4l2_buffer *)b, 1);
+-	else
+-		/* Call videobuf_dqbuf for  blocking mode */
+-		ret = videobuf_dqbuf(q, (struct v4l2_buffer *)b, 0);
++	ret = videobuf_dqbuf(q, b, !!(file->f_flags & O_NONBLOCK));
++	if (ret)
++		return ret;
++
++	vb = q->bufs[b->index];
+ 
+ 	addr = (unsigned long) vout->buf_phy_addr[vb->i];
+ 	size = (unsigned long) vb->size;
+ 	dma_unmap_single(vout->vid_dev->v4l2_dev.dev,  addr,
+ 				size, DMA_TO_DEVICE);
+-	return ret;
++	return 0;
+ }
+ 
+ static int vidioc_streamon(struct file *file, void *fh, enum v4l2_buf_type i)
 -- 
-2.20.1
+2.17.1
