@@ -1,24 +1,58 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Wed, 24 Apr 2019 18:50:04 +0000
-Subject: Re: [PATCH] xenbus: drop useless LIST_HEAD in xenbus_write_watch() and xenbus_file_write()
-Message-Id: <f6ceb91a-394f-21a1-472e-8fb53d2f7cec@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Apr 2019 14:13:27 +0000
+Subject: [PATCH] qede: fix write to free'd pointer error and double free of ptp
+Message-Id: <20190412141327.2122-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190416040651.186468-1-maowenan@huawei.com>
-In-Reply-To: <20190416040651.186468-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, jgross@suse.com, sstabellini@kernel.org
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On 4/16/19 12:06 AM, Mao Wenan wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
->
-> The declarations were introduced with the file, but the declared
-> variables were not used.
->
-> Fixes: 1107ba885e469("xen: add xenfs to allow usermode <-> Xen interaction")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+The err2 error return path calls qede_ptp_disable that cleans up
+on an error and frees ptp. After this, the free'd ptp is dereferenced
+when ptp->clock is set to NULL and the code falls-through to error
+path err1 that frees ptp again.
 
-Applied to for-linus-5.2
+Fix this by calling qede_ptp_disable and exiting via an error
+return path that does not set ptp->clock or kfree ptp.
+
+Addresses-Coverity: ("Write to pointer after free")
+Fixes: 035744975aec ("qede: Add support for PTP resource locking.")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qede/qede_ptp.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ptp.c b/drivers/net/ethernet/qlogic/qede/qede_ptp.c
+index 5f3f42a25361..7923dbd3b810 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ptp.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ptp.c
+@@ -490,18 +490,17 @@ int qede_ptp_enable(struct qede_dev *edev, bool init_tc)
+ 
+ 	ptp->clock = ptp_clock_register(&ptp->clock_info, &edev->pdev->dev);
+ 	if (IS_ERR(ptp->clock)) {
+-		rc = -EINVAL;
+ 		DP_ERR(edev, "PTP clock registration failed\n");
+-		goto err2;
++		qede_ptp_disable(edev);
++		rc = -EINVAL;
++		goto err2;
+ 	}
+ 
+ 	return 0;
+ 
+-err2:
+-	qede_ptp_disable(edev);
+-	ptp->clock = NULL;
+ err1:
+ 	kfree(ptp);
++err2:
+ 	edev->ptp = NULL;
+ 
+ 	return rc;
+-- 
+2.20.1
