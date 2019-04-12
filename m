@@ -1,66 +1,75 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 30 Apr 2019 01:33:16 +0000
-Subject: Re: [PATCH v2 net-next] net: ethernet: ti: cpsw: Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe()
-Message-Id: <a2766de6-d0cd-d840-2546-33ce0b388585@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 12 Apr 2019 08:33:01 +0000
+Subject: [PATCH][V3] scsi: cxgbi: remove redundant __kfree_skb call on skb and free cst->atid
+Message-Id: <20190412083301.25503-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190429135650.72794-1-yuehaibing@huawei.com>
- <20190429143157.79035-1-yuehaibing@huawei.com>
- <alpine.DEB.2.21.1904291228000.2444@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1904291228000.2444@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Karen Xie <kxie@chelsio.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2019/4/30 0:30, Julia Lawall wrote:
-> 
-> 
-> On Mon, 29 Apr 2019, YueHaibing wrote:
-> 
->> Change the call to PTR_ERR to access the value just tested by IS_ERR.
-> 
-> I assume you didn't find the problem just looking through the code by
-> hand.  If you used a tool, it would be really good to acknowledge the tool
-> that was used.  The tools don't come for free, and you don't pay for them.
-> The only payment that you can offer is to acknowledge that the tool was
-> used, which helps justify that the tool is useful and what it is useful
-> for.
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry, I forgot edit the commit log and add this info.
+The error return path via label rel_resource checks for a non-null
+skb before free'ing it.  However, skb is always null at this exit
+path, so the null check and the free are redundant and can be removed.
+Removing this allows the original goto's to rel_resource to be cleaned
+up; the first can be replaced by a return of -EINVAL, the second can
+be replaced by a more appropriate -ENOMEM return and fix a memory
+leak by freeing csk->atid.
 
-It was detected by Coccinelle, I will add this and resend.
+Addresses-Coverity: ("Logically Dead Code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-> 
-> julia
-> 
->>
->> Fixes: 83a8471ba255 ("net: ethernet: ti: cpsw: refactor probe to group common hw initialization")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->> ---
->> v2: add Fixes tag
->> ---
->>  drivers/net/ethernet/ti/cpsw.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
->> index c3cba46fac9d..e37680654a13 100644
->> --- a/drivers/net/ethernet/ti/cpsw.c
->> +++ b/drivers/net/ethernet/ti/cpsw.c
->> @@ -2381,7 +2381,7 @@ static int cpsw_probe(struct platform_device *pdev)
->>
->>  	clk = devm_clk_get(dev, "fck");
->>  	if (IS_ERR(clk)) {
->> -		ret = PTR_ERR(mode);
->> +		ret = PTR_ERR(clk);
->>  		dev_err(dev, "fck is not found %d\n", ret);
->>  		return ret;
->>  	}
->>
->>
->>
->>
-> 
-> .
-> 
+V2: Ensure cst->atid is free'd to fix memory leak, thanks to
+    Walter Harms for spotting this mistake in V1.
+
+V3: Add missing cxgbi_sock_put, thanks to Dan Carpenter for
+    spotting this mistake in V2.
+---
+
+
+ drivers/scsi/cxgbi/cxgb3i/cxgb3i.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+index 75e1273a44b3..b8dd9e648dd0 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
++++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+@@ -979,14 +979,17 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	csk->atid = cxgb3_alloc_atid(t3dev, &t3_client, csk);
+ 	if (csk->atid < 0) {
+ 		pr_err("NO atid available.\n");
+-		goto rel_resource;
++		return -EINVAL;
+ 	}
+ 	cxgbi_sock_set_flag(csk, CTPF_HAS_ATID);
+ 	cxgbi_sock_get(csk);
+ 
+ 	skb = alloc_wr(sizeof(struct cpl_act_open_req), 0, GFP_KERNEL);
+-	if (!skb)
+-		goto rel_resource;
++	if (!skb) {
++		cxgb3_free_atid(t3dev, csk->atid);
++		cxgbi_sock_put(csk);
++		return -ENOMEM;
++	}
+ 	skb->sk = (struct sock *)csk;
+ 	set_arp_failure_handler(skb, act_open_arp_failure);
+ 	csk->snd_win = cxgb3i_snd_win;
+@@ -1007,11 +1010,6 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	cxgbi_sock_set_state(csk, CTP_ACTIVE_OPEN);
+ 	send_act_open_req(csk, skb, csk->l2t);
+ 	return 0;
+-
+-rel_resource:
+-	if (skb)
+-		__kfree_skb(skb);
+-	return -EINVAL;
+ }
+ 
+ cxgb3_cpl_handler_func cxgb3i_cpl_handlers[NUM_CPL_CMDS] = {
+-- 
+2.20.1
