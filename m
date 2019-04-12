@@ -1,68 +1,48 @@
-From: Damien Le Moal <Damien.LeMoal@wdc.com>
-Date: Wed, 10 Apr 2019 08:06:20 +0000
-Subject: Re: [dm-devel] [PATCH v2] dm zoned: Silence a static checker warning
-Message-Id: <BYAPR04MB5816FEE78EAE7806B8AB955AE72E0@BYAPR04MB5816.namprd04.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 12 Apr 2019 17:55:04 +0000
+Subject: [PATCH] IB/mlx5: add checking for "vf" from do_setvfinfo()
+Message-Id: <20190412175504.GA20857@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190410074735.GA28842@kadam>
-	<BYAPR04MB58160DF520B305A4328FC438E72E0@BYAPR04MB5816.namprd04.prod.outlook.com>
-	<20190410080305.GQ6070@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>, "Martin K.
-	Petersen" <martin.petersen@oracle.com>, Mike Snitzer <snitzer@redhat.com>, Greg Edwards <gedwards@ddn.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "dm-devel@redhat.com" <dm-devel@redhat.com>, Omar Sandoval <osandov@fb.com>, Alasdair Kergon <agk@redhat.com>, Bart Van Assche <bvanassche@acm.org>
+To: kernel-janitors@vger.kernel.org
 
-On 2019/04/10 17:03, Dan Carpenter wrote:
-> On Wed, Apr 10, 2019 at 07:56:14AM +0000, Damien Le Moal wrote:
->> On 2019/04/10 16:48, Dan Carpenter wrote:
->>> My static checker complains about this line from dmz_get_zoned_device()
->>>
->>> 	aligned_capacity = dev->capacity & ~(blk_queue_zone_sectors(q) - 1);
->>>
->>> The problem is that "aligned_capacity" and "dev->capacity" are sector_t
->>> type (which is a u64) but blk_queue_zone_sectors(q) returns a u32 so the
->>> higher 32 bits in "aligned_capacity" are always cleared to zero.  This
->>> patch adds a cast to u64 to address this issue.
->>>
->>> Fixes: 114e025968b5 ("dm zoned: ignore last smaller runt zone")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> ---
->>> v2: In v1 I changed blk_queue_zone_sectors() to return a sector_t type,
->>> but in v2 I just add a cast.  The v2 fix would end up going through
->>> different maintainers and reviewers so the CC list has grown...
->>>
->>> Original discussion: https://marc.info/?l=kernel-janitors&m=155487663405737&w=2
->>>
->>>  drivers/md/dm-zoned-target.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/md/dm-zoned-target.c b/drivers/md/dm-zoned-target.c
->>> index 8865c1709e16..b6cb44fa946d 100644
->>> --- a/drivers/md/dm-zoned-target.c
->>> +++ b/drivers/md/dm-zoned-target.c
->>> @@ -643,7 +643,8 @@ static int dmz_get_zoned_device(struct dm_target *ti, char *path)
->>>  
->>>  	q = bdev_get_queue(dev->bdev);
->>>  	dev->capacity = i_size_read(dev->bdev->bd_inode) >> SECTOR_SHIFT;
->>> -	aligned_capacity = dev->capacity & ~(blk_queue_zone_sectors(q) - 1);
->>> +	aligned_capacity = dev->capacity &
->>> +				~((u64)blk_queue_zone_sectors(q) - 1);
->>
->> sector_t is an u64 only if CONFIG_LBDAF is defined (I think this option is going
->> away though). Otherwise it is an unsigned long which would be u32 on 32 bits
->> arch. Not a problem in terms of arithmetic, but why not cast to sector_t directly ?
->>
-> 
-> I would have prefered to do that but I didn't have strong feelings
-> either way.  I am always slight annoyed when people don't just copy and
-> paste my code when I tell them how to fix a patch so I decided to go
-> with your version...  :P
+My static checker complains that these "vf" variables come from the
+user in do_setvfinfo() and haven't been checked to make sure they're
+valid.
 
-I proposed u64 cast without checking sector_t definition.
-After doing that, I liked your sector_t cast more than my own misinformed
-proposal :)
+Fixes: eff901d30e6c ("IB/mlx5: Implement callbacks for manipulating VFs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Untested static checker stuff.  Please review carefully.
 
+ drivers/infiniband/hw/mlx5/ib_virt.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/infiniband/hw/mlx5/ib_virt.c b/drivers/infiniband/hw/mlx5/ib_virt.c
+index 649a3364f838..9a8eebe3d462 100644
+--- a/drivers/infiniband/hw/mlx5/ib_virt.c
++++ b/drivers/infiniband/hw/mlx5/ib_virt.c
+@@ -56,6 +56,9 @@ int mlx5_ib_get_vf_config(struct ib_device *device, int vf, u8 port,
+ 	struct mlx5_hca_vport_context *rep;
+ 	int err;
+ 
++	if (vf < 0 || vf >= pci_sriov_get_totalvfs(mdev->pdev))
++		return -EINVAL;
++
+ 	rep = kzalloc(sizeof(*rep), GFP_KERNEL);
+ 	if (!rep)
+ 		return -ENOMEM;
+@@ -99,6 +102,9 @@ int mlx5_ib_set_vf_link_state(struct ib_device *device, int vf,
+ 	struct mlx5_vf_context *vfs_ctx = mdev->priv.sriov.vfs_ctx;
+ 	int err;
+ 
++	if (vf < 0 || vf >= pci_sriov_get_totalvfs(mdev->pdev))
++		return -EINVAL;
++
+ 	in = kzalloc(sizeof(*in), GFP_KERNEL);
+ 	if (!in)
+ 		return -ENOMEM;
 -- 
-Damien Le Moal
-Western Digital Research
+2.17.1
