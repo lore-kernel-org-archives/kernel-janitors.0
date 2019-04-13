@@ -1,45 +1,38 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Mon, 15 Apr 2019 14:53:28 +0000
-Subject: Re: [PATCH] wimax/i2400m: fix spelling mistake "accesibility" -> "accessibility"
-Message-Id: <95c23c24-cb22-ab5f-52f8-a22a428c9a2f@codeaurora.org>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 13 Apr 2019 13:44:59 +0000
+Subject: [PATCH] HID: fix compiling error in u2fzero_probe()
+Message-Id: <20190413134459.76045-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415101555.10584-1-colin.king@canonical.com>
-In-Reply-To: <20190415101555.10584-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jikos@kernel.org, benjamin.tissoires@redhat.com, maowenan@huawei.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
+There is one compiling error in u2fzero_probe()->u2fzero_init_hwrng(),
+this is because HW_RANDOM is not set.
 
-On 4/15/2019 3:45 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the I2400M_MS_ACCESSIBILITY_ERROR message
-> string, fix this.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/hid/hid-u2fzero.o: In function `u2fzero_probe':
+hid-u2fzero.c:(.text+0xc70): undefined reference to `devm_hwrng_register'
 
+Fixes: 42337b9d4d958("HID: add driver for U2F Zero built-in LED and RNG")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/hid/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-
-Cheers,
--Mukesh
-
-> ---
->   drivers/net/wimax/i2400m/control.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
-> index ef298d8525c5..6837fac3987b 100644
-> --- a/drivers/net/wimax/i2400m/control.c
-> +++ b/drivers/net/wimax/i2400m/control.c
-> @@ -254,7 +254,7 @@ static const struct
->   	[I2400M_MS_ILLEGAL_VALUE] = { "illegal value", -EINVAL },
->   	[I2400M_MS_MISSING_PARAMS] = { "missing parameters", -ENOMSG },
->   	[I2400M_MS_VERSION_ERROR] = { "bad version", -EIO },
-> -	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accesibility error", -EIO },
-> +	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accessibility error", -EIO },
->   	[I2400M_MS_BUSY] = { "busy", -EBUSY },
->   	[I2400M_MS_CORRUPTED_TLV] = { "corrupted TLV", -EILSEQ },
->   	[I2400M_MS_UNINITIALIZED] = { "uninitialized", -EILSEQ },
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 4dc1035..76d8206 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -1017,6 +1017,7 @@ config HID_U2FZERO
+ 	tristate "U2F Zero LED and RNG support"
+ 	depends on USB_HID
+ 	depends on LEDS_CLASS
++	depends on HW_RANDOM
+ 	help
+ 	  Support for the LED of the U2F Zero device.
+ 
+-- 
+2.7.4
