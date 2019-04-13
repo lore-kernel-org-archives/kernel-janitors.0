@@ -1,52 +1,40 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 09 Apr 2019 07:51:38 +0000
-Subject: Re: [PATCH][next] acpi/hmat: fix uninitialized pointer dereference on pointer 'target'
-Message-Id: <CAJZ5v0gxx_4nRS6R8ACfKG7C-eRMh+hXa7WkNYoMzqOTA2WqJQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 13 Apr 2019 16:00:26 +0000
+Subject: [PATCH] RDMA/cxgb4: fix null pointer dereference on alloc_skb failure
+Message-Id: <20190413160026.5873-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190405141215.2079-1-colin.king@canonical.com>
-In-Reply-To: <20190405141215.2079-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Keith Busch <keith.busch@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Potnuri Bharat Teja <bharat@chelsio.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 5, 2019 at 4:12 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer 'target' is not initialized and is only assigned when the
-> ACPI_HMAT_MEMORY_PD_VALID bit in p->flags is set.  There is a later null
-> check on target that leads to an uninitialized pointer read and
-> dereference when assigning target->processor_pxm when target contains a
-> non-null garbage value.  Fix this by initializing targer to null.
->
-> Fixes: 665ac7e92757 ("acpi/hmat: Register processor domain to its memory")
-> Addresses-Coverity: ("Uninitialized pointer read")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Currently if alloc_skb fails to allocate the skb a null skb is passed
+to t4_set_arp_err_handler and this ends up dereferencing the null skb.
+Avoid the null pointer dereference by checking for a null skb and
+returning early.
 
-Greg, since the patch fixed by this one is in your tree, can you apply
-this too, please?
+Addresses-Coverity: ("Dereference null return")
+Fixes: b38a0ad8ec11 ("RDMA/cxgb4: Set arp error handler for PASS_ACCEPT_RPL messages")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/cxgb4/cm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  drivers/acpi/hmat/hmat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
-> index b7824a0309f7..b275016ff648 100644
-> --- a/drivers/acpi/hmat/hmat.c
-> +++ b/drivers/acpi/hmat/hmat.c
-> @@ -366,7 +366,7 @@ static int __init hmat_parse_proximity_domain(union acpi_subtable_headers *heade
->                                               const unsigned long end)
->  {
->         struct acpi_hmat_proximity_domain *p = (void *)header;
-> -       struct memory_target *target;
-> +       struct memory_target *target = NULL;
->
->         if (p->header.length != sizeof(*p)) {
->                 pr_notice("HMAT: Unexpected address range header length: %d\n",
-> --
-> 2.20.1
->
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index 1e68d87b663d..0f3b1193d5f8 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -460,6 +460,8 @@ static struct sk_buff *get_skb(struct sk_buff *skb, int len, gfp_t gfp)
+ 		skb_reset_transport_header(skb);
+ 	} else {
+ 		skb = alloc_skb(len, gfp);
++		if (!skb)
++			return NULL;
+ 	}
+ 	t4_set_arp_err_handler(skb, NULL, NULL);
+ 	return skb;
+-- 
+2.20.1
