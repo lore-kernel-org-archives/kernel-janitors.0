@@ -1,69 +1,31 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 17 Apr 2019 16:42:13 +0000
-Subject: Applied "ASoC: hdmi-codec: fix spelling mistake "plalform" -> "platform"" to the asoc tree
-Message-Id: <20190417164213.952B91128FC7@debutante.sirena.org.uk>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 14 Apr 2019 16:12:09 +0000
+Subject: Re: [PATCH 09/12] meson-gx-socinfo: add missing of_node_put after of_device_is_available
+Message-Id: <80bcfd1f-f7db-5d2a-a96b-4b63d2c97138@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190417162628.10976-1-colin.king@canonical.com>
-In-Reply-To: <20190417162628.10976-1-colin.king@canonical.com>
+References: <1550928043-14889-10-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1550928043-14889-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+> @@ -123,8 +123,10 @@  static int __init meson_gx_socinfo_init(
+>  		return -ENODEV;
+>
+>  	/* check if interface is enabled */
+> -	if (!of_device_is_available(np))
+> +	if (!of_device_is_available(np)) {
+> +		of_node_put(np);
+>  		return -ENODEV;
+> +	}
+>
+>  	/* check if chip-id is available */
+>  	if (!of_property_read_bool(np, "amlogic,has-chip-id"))
 
-   ASoC: hdmi-codec: fix spelling mistake "plalform" -> "platform"
+How do you think about to adjust the exception handling in this function
+implementation a bit more according to the Linux coding style?
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 7d8cdb818571ca019cf909bd737e549895b9a0d9 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 17 Apr 2019 17:26:28 +0100
-Subject: [PATCH] ASoC: hdmi-codec: fix spelling mistake "plalform" ->
- "platform"
-
-There is a spelling mistake in a dev_err message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/hdmi-codec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 35df73e42cbc..b9d9dde9fbaf 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -757,7 +757,7 @@ static int hdmi_codec_probe(struct platform_device *pdev)
- 	dev_dbg(dev, "%s()\n", __func__);
- 
- 	if (!hcd) {
--		dev_err(dev, "%s: No plalform data\n", __func__);
-+		dev_err(dev, "%s: No platform data\n", __func__);
- 		return -EINVAL;
- 	}
- 
--- 
-2.20.1
+Regards,
+Markus
