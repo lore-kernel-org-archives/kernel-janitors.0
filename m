@@ -1,35 +1,35 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 23 Apr 2019 17:10:28 +0000
-Subject: Re: [PATCH net] 6lowpan: Off by one handling ->nexthdr
-Message-Id: <18F5B032-F127-4EB9-8DB8-F760C6455431@holtmann.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Apr 2019 12:52:04 +0000
+Subject: [PATCH] platform/x86: thinkpad_acpi: fix spelling mistake "capabilites" -> "capabilities"
+Message-Id: <20190415125204.7386-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190403053416.GA21913@kadam>
-In-Reply-To: <20190403053416.GA21913@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexander Aring <alex.aring@gmail.com>, Jukka Rissanen <jukka.rissanen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-> NEXTHDR_MAX is 255.  What happens here is that we take a u8 value
-> "hdr->nexthdr" from the network and then look it up in
-> lowpan_nexthdr_nhcs[].  The problem is that if hdr->nexthdr is 0xff then
-> we read one element beyond the end of the array so the array needs to
-> be one element larger.
-> 
-> Fixes: 92aa7c65d295 ("6lowpan: add generic nhc layer interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is the only place which uses the NEXTHDR_MAX define, so I considered
-> changing that to 256 instead.  Either fix would work.
-> 
-> net/6lowpan/nhc.c  | 2 +-
-> 1 files changed, 1 insertions(+), 1 deletions(-)
+There is a spelling mistake in a module parameter description. Fix it.
 
-patch has been applied to bluetooth-next tree.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards
-
-Marcel
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 57d9ae9d8e56..9192b686e9a6 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -10269,7 +10269,7 @@ MODULE_PARM_DESC(volume_mode,
+ 
+ module_param_named(volume_capabilities, volume_capabilities, uint, 0444);
+ MODULE_PARM_DESC(volume_capabilities,
+-		 "Selects the mixer capabilites: 0=auto, 1=volume and mute, 2=mute only");
++		 "Selects the mixer capabilities: 0=auto, 1=volume and mute, 2=mute only");
+ 
+ module_param_named(volume_control, volume_control_allowed, bool, 0444);
+ MODULE_PARM_DESC(volume_control,
+-- 
+2.20.1
