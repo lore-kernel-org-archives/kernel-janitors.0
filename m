@@ -1,25 +1,55 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 04 Apr 2019 03:14:57 +0000
-Subject: Re: [PATCH 0/2][V2] scsi: pm8001: clean up code and fix spelling mistakes
-Message-Id: <yq1zhp6tqa6.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Apr 2019 10:37:03 +0000
+Subject: [PATCH] iwlegacy: fix spelling mistake "acumulative" -> "accumulative"
+Message-Id: <20190415103703.11254-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190329234423.5611-1-colin.king@canonical.com>
-In-Reply-To: <20190329234423.5611-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 29 Mar 2019 23:44:21 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu@usish.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Fix spelling mistakes in rx stats text. I missed these from an earlier
+round of fixing the same spelling mistake.
 
-> This is a re-working of an earlier patch; this version splits the
-> original patch into two parts, one for the code clean up and the other
-> to fix spelling mistakes.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlegacy/3945-debug.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Applied to 5.2/scsi-queue, thanks.
-
+diff --git a/drivers/net/wireless/intel/iwlegacy/3945-debug.c b/drivers/net/wireless/intel/iwlegacy/3945-debug.c
+index a2960032be81..4b912e707f38 100644
+--- a/drivers/net/wireless/intel/iwlegacy/3945-debug.c
++++ b/drivers/net/wireless/intel/iwlegacy/3945-debug.c
+@@ -185,7 +185,7 @@ il3945_ucode_rx_stats_read(struct file *file, char __user *user_buf,
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
+ 		      "%-32s     current"
+-		      "acumulative       delta         max\n",
++		      "accumulative      delta         max\n",
+ 		      "Statistics_Rx - CCK:");
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
+@@ -273,7 +273,7 @@ il3945_ucode_rx_stats_read(struct file *file, char __user *user_buf,
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
+ 		      "%-32s     current"
+-		      "acumulative       delta         max\n",
++		      "accumulative      delta         max\n",
+ 		      "Statistics_Rx - GENERAL:");
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
+@@ -346,7 +346,7 @@ il3945_ucode_tx_stats_read(struct file *file, char __user *user_buf,
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
+ 		      "%-32s     current"
+-		      "acumulative       delta         max\n",
++		      "accumulative      delta         max\n",
+ 		      "Statistics_Tx:");
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
+@@ -447,7 +447,7 @@ il3945_ucode_general_stats_read(struct file *file, char __user *user_buf,
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
+ 		      "%-32s     current"
+-		      "acumulative       delta         max\n",
++		      "accumulative      delta         max\n",
+ 		      "Statistics_General:");
+ 	pos + 	    scnprintf(buf + pos, bufsz - pos,
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
