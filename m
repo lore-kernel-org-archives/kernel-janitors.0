@@ -1,41 +1,37 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Thu, 18 Apr 2019 19:15:46 +0000
-Subject: Re: [PATCH] ARM: kprobes: fix spelling mistake "undefeined" -> "undefined"
-Message-Id: <c0144664-aa17-7ae1-dedb-ec2723682f56@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Apr 2019 16:33:30 +0000
+Subject: [PATCH] staging: wilc1000: fix spelling mistake "dissconect" -> "disconnect"
+Message-Id: <20190415163330.28166-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190418173857.31285-1-colin.king@canonical.com>
-In-Reply-To: <20190418173857.31285-1-colin.king@canonical.com>
+References: <0168c840-e962-53ce-4b30-705a5c80730c@microchip.com>
+In-Reply-To: <0168c840-e962-53ce-4b30-705a5c80730c@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 4/18/2019 11:08 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake on the TEST_UNSUPPORTED macro. Fix this.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+There is a spelling mistake in a netdev_err error message, fix it.
 
-Cheers,
--Mukesh
-> ---
->   arch/arm/probes/kprobes/test-thumb.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/probes/kprobes/test-thumb.c b/arch/arm/probes/kprobes/test-thumb.c
-> index b683b4517458..6841909757cd 100644
-> --- a/arch/arm/probes/kprobes/test-thumb.c
-> +++ b/arch/arm/probes/kprobes/test-thumb.c
-> @@ -787,7 +787,7 @@ CONDITION_INSTRUCTIONS(22,
->   
->   	TEST_UNSUPPORTED(__inst_thumb32(0xf7f08000) " @ smc #0")
->   
-> -	TEST_UNSUPPORTED(__inst_thumb32(0xf7f0a000) " @ undefeined")
-> +	TEST_UNSUPPORTED(__inst_thumb32(0xf7f0a000) " @ undefined")
->   
->   	TEST_BF(  "b.w	2f")
->   	TEST_BB(  "b.w	2b")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wilc1000/host_interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index e1a35bb426f9..ed15bd1bcd56 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -774,7 +774,7 @@ int wilc_disconnect(struct wilc_vif *vif)
+ 	result = wilc_send_config_pkt(vif, WILC_SET_CFG, &wid, 1,
+ 				      wilc_get_vif_idx(vif));
+ 	if (result) {
+-		netdev_err(vif->ndev, "Failed to send dissconect\n");
++		netdev_err(vif->ndev, "Failed to send disconnect\n");
+ 		return result;
+ 	}
+ 
+-- 
+2.20.1
