@@ -1,23 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 08 Apr 2019 11:07:09 +0000
-Subject: Re: [PATCH] pinctrl: imx: remove an unnecessary NULL check
-Message-Id: <CACRpkdbu2S9gx4Vs3R6cMvGK2M+5-qzMXJYeWcw7MFf-LP3c5g@mail.gmail.com>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Date: Mon, 15 Apr 2019 14:53:28 +0000
+Subject: Re: [PATCH] wimax/i2400m: fix spelling mistake "accesibility" -> "accessibility"
+Message-Id: <95c23c24-cb22-ab5f-52f8-a22a428c9a2f@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328144022.GO32613@kadam>
-In-Reply-To: <20190328144022.GO32613@kadam>
+References: <20190415101555.10584-1-colin.king@canonical.com>
+In-Reply-To: <20190415101555.10584-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 3:40 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> The address of "ipctl->pin_regs[pin_id]" can't be NULL.  It's the offset
-> into an array in the middle of a struct.  This patch removes the check.
+On 4/15/2019 3:45 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> There is a spelling mistake in the I2400M_MS_ACCESSIBILITY_ERROR message
+> string, fix this.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Patch applied with Dong's ACK!
 
-Yours,
-Linus Walleij
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+
+Cheers,
+-Mukesh
+
+> ---
+>   drivers/net/wimax/i2400m/control.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
+> index ef298d8525c5..6837fac3987b 100644
+> --- a/drivers/net/wimax/i2400m/control.c
+> +++ b/drivers/net/wimax/i2400m/control.c
+> @@ -254,7 +254,7 @@ static const struct
+>   	[I2400M_MS_ILLEGAL_VALUE] = { "illegal value", -EINVAL },
+>   	[I2400M_MS_MISSING_PARAMS] = { "missing parameters", -ENOMSG },
+>   	[I2400M_MS_VERSION_ERROR] = { "bad version", -EIO },
+> -	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accesibility error", -EIO },
+> +	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accessibility error", -EIO },
+>   	[I2400M_MS_BUSY] = { "busy", -EBUSY },
+>   	[I2400M_MS_CORRUPTED_TLV] = { "corrupted TLV", -EILSEQ },
+>   	[I2400M_MS_UNINITIALIZED] = { "uninitialized", -EILSEQ },
