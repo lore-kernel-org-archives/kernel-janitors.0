@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 15 Apr 2019 09:32:31 +0000
+Date: Mon, 15 Apr 2019 09:46:10 +0000
 Subject: Re: [PATCH] IB/mlx5: add checking for "vf" from do_setvfinfo()
-Message-Id: <20190415093231.GN6095@kadam>
+Message-Id: <20190415094610.GO6095@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190412175504.GA20857@kadam>
 In-Reply-To: <20190412175504.GA20857@kadam>
@@ -51,21 +51,10 @@ On Fri, Apr 12, 2019 at 08:25:05PM +0000, Parav Pandit wrote:
 > And all the VF operations at ndo ops level and at driver level should be changed from int to u32.
 > After that vf < 0 check is not needed.
 > 
-> >  	rep = kzalloc(sizeof(*rep), GFP_KERNEL);
-> >  	if (!rep)
-> >  		return -ENOMEM;
-> > @@ -99,6 +102,9 @@ int mlx5_ib_set_vf_link_state(struct ib_device *device,
-> > int vf,
-> >  	struct mlx5_vf_context *vfs_ctx = mdev->priv.sriov.vfs_ctx;
-> >  	int err;
-> > 
-> > +	if (vf < 0 || vf >= pci_sriov_get_totalvfs(mdev->pdev))
-> > +		return -EINVAL;
-> > +
-> We are currently working on a patch to post in mid-May to not have access to pdev in this file.
-> If the vf > desired value, HCA firmware should be failing this command too.
 
-I'm not sure what you want me to do with this information.  :P
+I've been thinking about this and I don't think it's a good idea.  It
+just makes backporting the fix a lot more complicated.  It might be a
+good idea as a cleanup later though.
 
 regards,
 dan carpenter
