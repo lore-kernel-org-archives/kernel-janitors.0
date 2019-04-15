@@ -1,31 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 14 Apr 2019 15:25:24 +0000
-Subject: Re: [PATCH 03/12] PowerPC-83xx: add missing of_node_put after of_device_is_available
-Message-Id: <7643aab3-e16c-20ba-6949-f2dea2dfa2f0@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Apr 2019 12:40:21 +0000
+Subject: [PATCH] crypto: caam: fix spelling mistake "cannote" -> "cannot"
+Message-Id: <20190415124021.4659-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1550928043-14889-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1550928043-14889-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Mukesh Ojha <mojha@codeaurora.org>, Scott Wood <oss@buserror.net>, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+To: =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>, Aymen Sghaier <aymen.sghaier@nxp.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> @@ -221,8 +221,10 @@ int mpc837x_usb_cfg(void)
->  	int ret = 0;
->
->  	np = of_find_compatible_node(NULL, NULL, "fsl-usb2-dr");
-> -	if (!np || !of_device_is_available(np))
-> +	if (!np || !of_device_is_available(np)) {
-> +		of_node_put(np);
->  		return -ENODEV;
-> +	}
->  	prop = of_get_property(np, "phy_type", NULL);
->
->  	if (!prop || (strcmp(prop, "ulpi") && strcmp(prop, "serial"))) {
+From: Colin Ian King <colin.king@canonical.com>
 
-How do you think about to adjust the exception handling in this function
-implementation a bit more according to the Linux coding style?
+There is a spelling mistake in an error message in the qi_error_list
+array. Fix this.
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/caam/error.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/caam/error.c b/drivers/crypto/caam/error.c
+index 21a70fd32f5d..a4129a35a330 100644
+--- a/drivers/crypto/caam/error.c
++++ b/drivers/crypto/caam/error.c
+@@ -138,7 +138,7 @@ static const struct {
+ 	{ 0x46, "Annotation length exceeds offset (reuse mode)"},
+ 	{ 0x48, "Annotation output enabled but ASA limited by ASAR (reuse mode)"},
+ 	{ 0x49, "Data offset correction exceeds input frame data length (reuse mode)"},
+-	{ 0x4B, "Annotation output enabled but ASA cannote be expanded (frame list)"},
++	{ 0x4B, "Annotation output enabled but ASA cannot be expanded (frame list)"},
+ 	{ 0x51, "Unsupported IF reuse mode"},
+ 	{ 0x52, "Unsupported FL use mode"},
+ 	{ 0x53, "Unsupported RJD use mode"},
+-- 
+2.20.1
