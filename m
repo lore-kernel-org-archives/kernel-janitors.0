@@ -1,44 +1,35 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Thu, 04 Apr 2019 11:48:12 +0000
-Subject: Re: [PATCH][next] opa_vnic: fix check on record->event, incorrect operator used
-Message-Id: <4a9f82a4-b9d2-d8c7-1a61-9a3b3318ff49@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Apr 2019 14:42:18 +0000
+Subject: [PATCH] apparmor: fix spelling mistake "immutible" -> "immutable"
+Message-Id: <20190416144218.1842-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190404100439.19696-1-colin.king@canonical.com>
-In-Reply-To: <20190404100439.19696-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+To: John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 4/4/2019 3:34 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check on record->event is always true because the wrong operator
-> is being used, used && instead of ||
->
-> Addresses-Coverity: ("Constant expression result")
-> Fixes: fae7a699a925 ("opa_vnic: Convert vport_idr to XArray")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+There is a spelling mistake in an information message string, fix it.
 
-Cheers,
--Mukesh
-> ---
->   drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
-> index 76cd09410d9a..be5befd92d16 100644
-> --- a/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
-> +++ b/drivers/infiniband/ulp/opa_vnic/opa_vnic_vema.c
-> @@ -869,7 +869,7 @@ static void opa_vnic_event(struct ib_event_handler *handler,
->   	      record->event, dev_name(&record->device->dev),
->   	      record->element.port_num);
->   
-> -	if (record->event != IB_EVENT_PORT_ERR ||
-> +	if (record->event != IB_EVENT_PORT_ERR &&
->   	    record->event != IB_EVENT_PORT_ACTIVE)
->   		return;
->   
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/apparmor/policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index 71a3e6291478..04f2480e8374 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -587,7 +587,7 @@ static int replacement_allowed(struct aa_profile *profile, int noreplace,
+ {
+ 	if (profile) {
+ 		if (profile->label.flags & FLAG_IMMUTIBLE) {
+-			*info = "cannot replace immutible profile";
++			*info = "cannot replace immutable profile";
+ 			return -EPERM;
+ 		} else if (noreplace) {
+ 			*info = "profile already exists";
+-- 
+2.20.1
