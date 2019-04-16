@@ -1,33 +1,44 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Date: Tue, 16 Apr 2019 11:06:22 +0000
-Subject: Re: [PATCH] RDMA/cxgb4: fix null pointer dereference on alloc_skb failure
-Message-Id: <20190416110618.GA15844@mellanox.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 16 Apr 2019 03:56:19 +0000
+Subject: [PATCH] xenbus: drop useless LIST_HEAD in xenbus_write_watch() and xenbus_file_write()
+Message-Id: <20190416040651.186468-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190413160026.5873-1-colin.king@canonical.com>
-In-Reply-To: <20190413160026.5873-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Potnuri Bharat Teja <bharat@chelsio.com>, Doug Ledford <dledford@redhat.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: boris.ostrovsky@oracle.com, jgross@suse.com, sstabellini@kernel.org
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Apr 13, 2019 at 05:00:26PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if alloc_skb fails to allocate the skb a null skb is passed
-> to t4_set_arp_err_handler and this ends up dereferencing the null skb.
-> Avoid the null pointer dereference by checking for a null skb and
-> returning early.
-> 
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: b38a0ad8ec11 ("RDMA/cxgb4: Set arp error handler for PASS_ACCEPT_RPL messages")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Potnuri Bharat Teja <bharat@chelsio.com>
-> ---
->  drivers/infiniband/hw/cxgb4/cm.c | 2 ++
->  1 file changed, 2 insertions(+)
+Drop LIST_HEAD where the variable it declares is never used.
 
-Applied to for-next
+The declarations were introduced with the file, but the declared
+variables were not used.
 
-Thanks,
-Jason
+Fixes: 1107ba885e469("xen: add xenfs to allow usermode <-> Xen interaction")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/xen/xenbus/xenbus_dev_frontend.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/xen/xenbus/xenbus_dev_frontend.c b/drivers/xen/xenbus/xenbus_dev_frontend.c
+index 0782ff3..faf452d 100644
+--- a/drivers/xen/xenbus/xenbus_dev_frontend.c
++++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
+@@ -465,7 +465,6 @@ static int xenbus_write_watch(unsigned msg_type, struct xenbus_file_priv *u)
+ 	struct watch_adapter *watch;
+ 	char *path, *token;
+ 	int err, rc;
+-	LIST_HEAD(staging_q);
+ 
+ 	path = u->u.buffer + sizeof(u->u.msg);
+ 	token = memchr(path, 0, u->u.msg.len);
+@@ -523,7 +522,6 @@ static ssize_t xenbus_file_write(struct file *filp,
+ 	uint32_t msg_type;
+ 	int rc = len;
+ 	int ret;
+-	LIST_HEAD(staging_q);
+ 
+ 	/*
+ 	 * We're expecting usermode to be writing properly formed
+-- 
+2.7.4
