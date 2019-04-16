@@ -1,55 +1,35 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Sat, 06 Apr 2019 08:34:37 +0000
-Subject: Re: [PATCH -next] staging: rtl8192e: Remove set but not used variable 'VenderID'
-Message-Id: <1a4f101a-6bb1-821b-2130-6590b8048948@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Apr 2019 11:43:17 +0000
+Subject: [PATCH] qed: fix spelling mistake "faspath" -> "fastpath"
+Message-Id: <20190416114317.28983-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190406031134.59419-1-yuehaibing@huawei.com>
-In-Reply-To: <20190406031134.59419-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 4/6/2019 8:41 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/staging/rtl8192e/rtl8192e/rtl_pci.c: In function 'rtl92e_check_adapter':
-> drivers/staging/rtl8192e/rtl8192e/rtl_pci.c:36:6: warning:
->   variable 'VenderID' set but not used [-Wunused-but-set-variable]
->    u16 VenderID;
->        ^
->
-> It's never used and can be removed.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+There is a spelling mistake in a DP_INFO message, fix it.
 
-Cheers,
--Mukesh
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_sriov.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->   drivers/staging/rtl8192e/rtl8192e/rtl_pci.c | 2 --
->   1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c
-> index bab41ab7c0a5..1d992d5c4e17 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.c
-> @@ -33,12 +33,10 @@ static void _rtl92e_parse_pci_configuration(struct pci_dev *pdev,
->   bool rtl92e_check_adapter(struct pci_dev *pdev, struct net_device *dev)
->   {
->   	struct r8192_priv *priv = (struct r8192_priv *)rtllib_priv(dev);
-> -	u16 VenderID;
->   	u16 DeviceID;
->   	u8  RevisionID;
->   	u16 IrqLine;
->   
-> -	VenderID = pdev->vendor;
->   	DeviceID = pdev->device;
->   	RevisionID = pdev->revision;
->   	pci_read_config_word(pdev, 0x3C, &IrqLine);
->
->
->
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sriov.c b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
+index 9faaa6df78ed..2f318aaf2b05 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
+@@ -1591,7 +1591,7 @@ static void qed_iov_vf_mbx_acquire(struct qed_hwfn *p_hwfn,
+ 			p_vfdev->eth_fp_hsi_minor = ETH_HSI_VER_NO_PKT_LEN_TUNN;
+ 		} else {
+ 			DP_INFO(p_hwfn,
+-				"VF[%d] needs fastpath HSI %02x.%02x, which is incompatible with loaded FW's faspath HSI %02x.%02x\n",
++				"VF[%d] needs fastpath HSI %02x.%02x, which is incompatible with loaded FW's fastpath HSI %02x.%02x\n",
+ 				vf->abs_vf_id,
+ 				req->vfdev_info.eth_fp_hsi_major,
+ 				req->vfdev_info.eth_fp_hsi_minor,
+-- 
+2.20.1
