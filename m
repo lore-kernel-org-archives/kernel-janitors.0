@@ -1,31 +1,35 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Mon, 08 Apr 2019 06:49:44 +0000
-Subject: Re: [PATCH -next] gpio: mlxbf: remove unused including <linux/version.h>
-Message-Id: <CAMpxmJVjgpSEo5WPvC0hXJtE2AoP7D=-A58vFe5yeRcFfekmqA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Apr 2019 18:05:56 +0000
+Subject: [PATCH] mfd: ab8500-debugfs: fix spelling mistake "intefer" -> "interfere"
+Message-Id: <20190416180556.18458-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190328013958.33849-1-yuehaibing@huawei.com>
-In-Reply-To: <20190328013958.33849-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-pt., 5 kwi 2019 o 12:58 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
-=82(a):
->
-> On Thu, Mar 28, 2019 at 8:28 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> > Remove including <linux/version.h> that don't need it.
-> >
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->
-> I put this on hold so Bartosz can apply it to his patch stack
-> where the dependent patches are queued.
->
-> Yours,
-> Linus Walleij
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied. I'll send a pull-request later today so we can sync our
-for-next trees.
+There is a spelling mistake in a dev_warn message, fix this.
 
-Bart
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mfd/ab8500-debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
+index 8d652b2f9d14..8394a0712ac6 100644
+--- a/drivers/mfd/ab8500-debugfs.c
++++ b/drivers/mfd/ab8500-debugfs.c
+@@ -1600,7 +1600,7 @@ static int ab8500_modem_show(struct seq_file *s, void *p)
+ 	u32 reg;
+ 
+ 	ab8500 = dev_get_drvdata(dev->parent);
+-	dev_warn(dev, "WARNING! This operation can interfer with modem side\n"
++	dev_warn(dev, "WARNING! This operation can interfere with modem side\n"
+ 		"and should only be done with care\n");
+ 
+ 	err = abx500_get_register_interruptible(dev,
+-- 
+2.20.1
