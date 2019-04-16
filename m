@@ -1,45 +1,37 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 03 Apr 2019 22:27:52 +0000
-Subject: Re: [PATCH] platform/x86: alienware-wmi: fix kfree on potentially uninitialized pointer
-Message-Id: <f649f63e-9dc5-8c8d-39ab-cf624f75c550@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Apr 2019 11:59:26 +0000
+Subject: [PATCH] drm/amdgpu: fix spelling mistake "gateing" -> "gating"
+Message-Id: <20190416115926.32669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190330001712.8923-1-colin.king@canonical.com>
- <20190403220200.GC39081@wrath>
- <424c2bba-1e17-3131-c15b-44462c57e22d@canonical.com>
- <20190403222626.GA11745@wrath>
-In-Reply-To: <20190403222626.GA11745@wrath>
+References: <20181126150228.8578-1-colin.king@canonical.com>
+In-Reply-To: <20181126150228.8578-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/04/2019 23:26, Darren Hart wrote:
-> On Wed, Apr 03, 2019 at 11:05:12PM +0100, Colin Ian King wrote:
->> On 03/04/2019 23:02, Darren Hart wrote:
->>> On Sat, Mar 30, 2019 at 12:17:12AM +0000, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> Currently the kfree of output.pointer can be potentially freeing
->>>> an uninitalized pointer in the case where out_data is NULL. Fix this
->>>> by reworking the case where out_data is not-null to perform the
->>>> ACPI status check and also the kfree of outpoint.pointer in one block
->>>> and hence ensuring the pointer is only freed when it has been used.
->>>>
->>>> Also replace the if (ptr != NULL) idiom with just if (ptr).
->>>>
->>>> Fixes: ff0e9f26288d ("platform/x86: alienware-wmi: Correct a memory leak")
->>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>
->>> Thanks for the catch Colin, queued for testing.
->>>
->>> Did you trigger this error or detect it via review or static analysis?
->>>
->> Static analysis, I'm now running a licensed version of Coverity on one
->> of our servers.
-> 
-> We typically include the tool used to identify such bugs, and I see several such
-> tags for Coverity in the logs. Was there a reason not to include that tag? If
-> just an oversight, can you provide that tag and I'll amend the commit.
-> 
-I didn't have an external coverity CID# number so I omitted it this time.
+From: Colin Ian King <colin.king@canonical.com>
+
+There is a spelling mistake in a DRM_INFO message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/vce_v2_0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c b/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c
+index bed78a778e3f..40363ca6c5f1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c
+@@ -283,7 +283,7 @@ static int vce_v2_0_stop(struct amdgpu_device *adev)
+ 	}
+ 
+ 	if (vce_v2_0_wait_for_idle(adev)) {
+-		DRM_INFO("VCE is busy, Can't set clock gateing");
++		DRM_INFO("VCE is busy, Can't set clock gating");
+ 		return 0;
+ 	}
+ 
+-- 
+2.20.1
