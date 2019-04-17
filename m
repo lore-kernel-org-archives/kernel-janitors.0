@@ -1,57 +1,46 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Apr 2019 02:31:12 +0000
-Subject: [PATCH -next] regulator: stm32-pwr: Make some symbols static
-Message-Id: <20190417023112.162916-1-weiyongjun1@huawei.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 17 Apr 2019 16:38:36 +0000
+Subject: Re: [PATCH -next] regulator: stm32-pwr: Make some symbols static
+Message-Id: <20190417163836.GA1675@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="u3/rZRmxL6MmkK24"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Pascal PAILLET-LME <p.paillet@st.com>
-Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20190417023112.162916-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190417023112.162916-1-weiyongjun1@huawei.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Pascal PAILLET-LME <p.paillet@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-Fixes the following sparse warnings:
 
-drivers/regulator/stm32-pwr.c:35:5: warning:
- symbol 'ready_mask_table' was not declared. Should it be static?
-drivers/regulator/stm32-pwr.c:47:5: warning:
- symbol 'stm32_pwr_reg_is_ready' was not declared. Should it be static?
-drivers/regulator/stm32-pwr.c:57:5: warning:
- symbol 'stm32_pwr_reg_is_enabled' was not declared. Should it be static?
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 6cdae8173f67 ("regulator: Add support for stm32 power regulators")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/regulator/stm32-pwr.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Wed, Apr 17, 2019 at 02:31:12AM +0000, Wei Yongjun wrote:
+> Fixes the following sparse warnings:
+>=20
+> drivers/regulator/stm32-pwr.c:35:5: warning:
+>  symbol 'ready_mask_table' was not declared. Should it be static?
+> drivers/regulator/stm32-pwr.c:47:5: warning:
+>  symbol 'stm32_pwr_reg_is_ready' was not declared. Should it be static?
+> drivers/regulator/stm32-pwr.c:57:5: warning:
+>  symbol 'stm32_pwr_reg_is_enabled' was not declared. Should it be static?
 
-diff --git a/drivers/regulator/stm32-pwr.c b/drivers/regulator/stm32-pwr.c
-index e434b26d4c8b..222d593d76a2 100644
---- a/drivers/regulator/stm32-pwr.c
-+++ b/drivers/regulator/stm32-pwr.c
-@@ -32,7 +32,7 @@ enum {
- 	STM32PWR_REG_NUM_REGS
- };
- 
--u32 ready_mask_table[STM32PWR_REG_NUM_REGS] = {
-+static u32 ready_mask_table[STM32PWR_REG_NUM_REGS] = {
- 	[PWR_REG11] = REG_1_1_RDY,
- 	[PWR_REG18] = REG_1_8_RDY,
- 	[PWR_USB33] = USB_3_3_RDY,
-@@ -44,7 +44,7 @@ struct stm32_pwr_reg {
- 	u32 ready_mask;
- };
- 
--int stm32_pwr_reg_is_ready(struct regulator_dev *rdev)
-+static int stm32_pwr_reg_is_ready(struct regulator_dev *rdev)
- {
- 	struct stm32_pwr_reg *priv = rdev_get_drvdata(rdev);
- 	u32 val;
-@@ -54,7 +54,7 @@ int stm32_pwr_reg_is_ready(struct regulator_dev *rdev)
- 	return (val & priv->ready_mask);
- }
- 
--int stm32_pwr_reg_is_enabled(struct regulator_dev *rdev)
-+static int stm32_pwr_reg_is_enabled(struct regulator_dev *rdev)
- {
- 	struct stm32_pwr_reg *priv = rdev_get_drvdata(rdev);
- 	u32 val;
+Someone already sent a patch for this.
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAly3VosACgkQJNaLcl1U
+h9BTqgf/efTFfwbNwPOEnavpH8p2CUDIke5R4NB5EjkTYY54sng9TIrP1IpX8Yhy
+ZJoFYdGz47bHsXupVE0UAHCFrX9KTPR02Lfh0+9qI1ry7WNUQ+kWkP1Z7PW5b7XJ
+G2gy7ecZTbfWUAs2H4o2/qhZl5HYWCPKujb+Qyg+lRBLgOxACMATdkij99sujOz4
+YnR3FwPKVNHUL8TwaBA78WAiXITVAZ7xycUumhMLG/5TvuXd8NqtNg1pd1aOaHPJ
+RBVi/L1QnP6L1lNJCvzr4Xm7nmwSCd01vJbIQ5bllhKaxjOHd9ogd4A58tAXvpAQ
+EY5uP6rktrhnM4Mbv/Me24ddT4lfpA==
+=drWu
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
