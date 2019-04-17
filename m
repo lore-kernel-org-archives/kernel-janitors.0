@@ -1,21 +1,46 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Fri, 05 Apr 2019 00:14:45 +0000
-Subject: Re: [PATCH] aio: use kmem_cache_free() instead of kfree()
-Message-Id: <20190405001444.GH2217@ZenIV.linux.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Apr 2019 12:08:22 +0000
+Subject: [PATCH] staging: rtlwifi: fix spelling mistake "notity" -> "notify"
+Message-Id: <20190417120822.21771-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190404084405.47992-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190404084405.47992-1-weiyongjun1@huawei.com>
+References: <20180510150741.20677-1-colin.king@canonical.com>
+In-Reply-To: <20180510150741.20677-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 04, 2019 at 08:44:05AM +0000, Wei Yongjun wrote:
-> memory allocated by kmem_cache_alloc() should be freed using
-> kmem_cache_free(), not kfree().
-> 
-> Fixes: fa0ca2aee3be ("deal with get_reqs_available() in aio_get_req() itself")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied
+There are two spelling mistake in RT_TRACE messages. Fix them.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtlwifi/btcoexist/halbtc8822b1ant.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtlwifi/btcoexist/halbtc8822b1ant.c b/drivers/staging/rtlwifi/btcoexist/halbtc8822b1ant.c
+index ade271cb4aab..32c797430512 100644
+--- a/drivers/staging/rtlwifi/btcoexist/halbtc8822b1ant.c
++++ b/drivers/staging/rtlwifi/btcoexist/halbtc8822b1ant.c
+@@ -4730,7 +4730,7 @@ void ex_btc8822b1ant_media_status_notify(struct btc_coexist *btcoexist, u8 type)
+ 		if (wifi_under_b_mode) {
+ 			RT_TRACE(
+ 				rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+-				"[BTCoex], ********** (media status notity under b mode) **********\n");
++				"[BTCoex], ********** (media status notify under b mode) **********\n");
+ 			btcoexist->btc_write_1byte(btcoexist, 0x6cd,
+ 						   0x00); /* CCK Tx */
+ 			btcoexist->btc_write_1byte(btcoexist, 0x6cf,
+@@ -4738,7 +4738,7 @@ void ex_btc8822b1ant_media_status_notify(struct btc_coexist *btcoexist, u8 type)
+ 		} else {
+ 			RT_TRACE(
+ 				rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+-				"[BTCoex], ********** (media status notity not under b mode) **********\n");
++				"[BTCoex], ********** (media status notify not under b mode) **********\n");
+ 			btcoexist->btc_write_1byte(btcoexist, 0x6cd,
+ 						   0x00); /* CCK Tx */
+ 			btcoexist->btc_write_1byte(btcoexist, 0x6cf,
+-- 
+2.20.1
