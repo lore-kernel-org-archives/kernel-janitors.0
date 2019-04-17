@@ -1,41 +1,45 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Thu, 18 Apr 2019 19:14:11 +0000
-Subject: Re: [PATCH] drm/nouveau/fb/ramgk104: fix spelling mistake "sucessfully" -> "successfully"
-Message-Id: <e979e0ac-62e7-1b5e-6542-2db3debebb32@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Apr 2019 13:43:04 +0000
+Subject: [PATCH] scsi: qedi: fix spelling mistake "oflload" -> "offload"
+Message-Id: <20190417134304.10979-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190418165345.20909-1-colin.king@canonical.com>
-In-Reply-To: <20190418165345.20909-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+To: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 4/18/2019 10:23 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a nvkm_debug message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+There are a couple of spelling mistakes in some kernel alert messages.
+Fix these.
 
-Cheers,
--Mukesh
-> ---
->   drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c
-> index 8bcb7e79a0cb..456aed1f2a02 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c
-> @@ -1070,7 +1070,7 @@ gk104_ram_calc_xits(struct gk104_ram *ram, struct nvkm_ram_data *next)
->   			nvkm_error(subdev, "unable to calc plls\n");
->   			return -EINVAL;
->   		}
-> -		nvkm_debug(subdev, "sucessfully calced PLLs for clock %i kHz"
-> +		nvkm_debug(subdev, "successfully calced PLLs for clock %i kHz"
->   				" (refclock: %i kHz)\n", next->freq, ret);
->   	} else {
->   		/* calculate refpll coefficients */
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qedi/qedi_iscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
+index 6d6d6013e35b..e4391ee2c27a 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.c
++++ b/drivers/scsi/qedi/qedi_iscsi.c
+@@ -579,7 +579,7 @@ static int qedi_conn_start(struct iscsi_cls_conn *cls_conn)
+ 	rval = qedi_iscsi_update_conn(qedi, qedi_conn);
+ 	if (rval) {
+ 		iscsi_conn_printk(KERN_ALERT, conn,
+-				  "conn_start: FW oflload conn failed.\n");
++				  "conn_start: FW offload conn failed.\n");
+ 		rval = -EINVAL;
+ 		goto start_err;
+ 	}
+@@ -590,7 +590,7 @@ static int qedi_conn_start(struct iscsi_cls_conn *cls_conn)
+ 	rval = iscsi_conn_start(cls_conn);
+ 	if (rval) {
+ 		iscsi_conn_printk(KERN_ALERT, conn,
+-				  "iscsi_conn_start: FW oflload conn failed!!\n");
++				  "iscsi_conn_start: FW offload conn failed!!\n");
+ 	}
+ 
+ start_err:
+-- 
+2.20.1
