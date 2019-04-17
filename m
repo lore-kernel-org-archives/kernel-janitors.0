@@ -1,36 +1,37 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 11 Apr 2019 15:45:46 +0000
-Subject: Re: [PATCH -next] video: fbdev: remove set but not used variable 'size'
-Message-Id: <068ec894-c1f1-1e89-3c5d-0dc28ddc0982@samsung.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Apr 2019 02:30:59 +0000
+Subject: [PATCH -next] regulator: stm32-pwr: Fix return value check in stm32_pwr_regulator_probe()
+Message-Id: <20190417023059.162828-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190330021509epcas4p47a2e10cc5ad02812441a3eae3814a950@epcas4p4.samsung.com>
- <20190330022626.97340-1-yuehaibing@huawei.com>
-In-Reply-To: <20190330022626.97340-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-fbdev@vger.kernel.org, Kees Cook <keescook@chromium.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>, Ira Weiny <ira.weiny@intel.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Pascal PAILLET-LME <p.paillet@st.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
 
+In case of error, the function of_iomap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-On 03/30/2019 03:26 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/video/fbdev/pvr2fb.c: In function 'pvr2fb_init':
-> drivers/video/fbdev/pvr2fb.c:1074:6: warning:
->  variable 'size' set but not used [-Wunused-but-set-variable]
-> 
-> It's not used since commit 9cd1c6743454 ("pvr2fb: Fix oops when
-> pseudo_palette is written")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 6cdae8173f67 ("regulator: Add support for stm32 power regulators")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/regulator/stm32-pwr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patch queued for v5.2 with minor change in the patch summary
-("video: fbdev: pvr2fb: remove set but not used variable 'size'"),
-thanks.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/regulator/stm32-pwr.c b/drivers/regulator/stm32-pwr.c
+index e434b26d4c8b..d4b9d6accfad 100644
+--- a/drivers/regulator/stm32-pwr.c
++++ b/drivers/regulator/stm32-pwr.c
+@@ -140,9 +140,9 @@ static int stm32_pwr_regulator_probe(struct platform_device *pdev)
+ 	int i, ret = 0;
+ 
+ 	base = of_iomap(np, 0);
+-	if (IS_ERR(base)) {
++	if (!base) {
+ 		dev_err(&pdev->dev, "Unable to map IO memory\n");
+-		return PTR_ERR(base);
++		return -ENOMEM;
+ 	}
+ 
+ 	config.dev = &pdev->dev;
