@@ -1,23 +1,45 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Fri, 12 Apr 2019 15:43:49 +0000
-Subject: Re: [PATCH -next] bus: ti-sysc: Use PTR_ERR_OR_ZERO in sysc_init_resets()
-Message-Id: <20190412154349.GX2839@atomide.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Apr 2019 10:55:39 +0000
+Subject: [PATCH] perf test: fix spelling mistake "leadking" -> "leaking"
+Message-Id: <20190417105539.5902-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190411024708.123605-1-yuehaibing@huawei.com>
-In-Reply-To: <20190411024708.123605-1-yuehaibing@huawei.com>
+References: <20181129103133.17353-1-colin.king@canonical.com>
+In-Reply-To: <20181129103133.17353-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Faiz Abbas <faiz_abbas@ti.com>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* YueHaibing <yuehaibing@huawei.com> [190411 02:36]:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks but I'll rather skip this one as I find it a bit hard
-to read unless there's some reasoning other than compress
-few lines out of the code.
+There are a couple of spelling mistakes in test assert messages. Fix them.
 
-Regards,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/perf/tests/dso-data.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-TOny
+diff --git a/tools/perf/tests/dso-data.c b/tools/perf/tests/dso-data.c
+index 7f6c52021e41..946ab4b63acd 100644
+--- a/tools/perf/tests/dso-data.c
++++ b/tools/perf/tests/dso-data.c
+@@ -304,7 +304,7 @@ int test__dso_data_cache(struct test *test __maybe_unused, int subtest __maybe_u
+ 	/* Make sure we did not leak any file descriptor. */
+ 	nr_end = open_files_cnt();
+ 	pr_debug("nr start %ld, nr stop %ld\n", nr, nr_end);
+-	TEST_ASSERT_VAL("failed leadking files", nr = nr_end);
++	TEST_ASSERT_VAL("failed leaking files", nr = nr_end);
+ 	return 0;
+ }
+ 
+@@ -380,6 +380,6 @@ int test__dso_data_reopen(struct test *test __maybe_unused, int subtest __maybe_
+ 	/* Make sure we did not leak any file descriptor. */
+ 	nr_end = open_files_cnt();
+ 	pr_debug("nr start %ld, nr stop %ld\n", nr, nr_end);
+-	TEST_ASSERT_VAL("failed leadking files", nr = nr_end);
++	TEST_ASSERT_VAL("failed leaking files", nr = nr_end);
+ 	return 0;
+ }
+-- 
+2.20.1
