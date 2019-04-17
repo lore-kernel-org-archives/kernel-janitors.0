@@ -1,37 +1,69 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 17 Apr 2019 02:30:59 +0000
-Subject: [PATCH -next] regulator: stm32-pwr: Fix return value check in stm32_pwr_regulator_probe()
-Message-Id: <20190417023059.162828-1-weiyongjun1@huawei.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 17 Apr 2019 16:42:13 +0000
+Subject: Applied "ASoC: hdmi-codec: fix spelling mistake "plalform" -> "platform"" to the asoc tree
+Message-Id: <20190417164213.952B91128FC7@debutante.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190417162628.10976-1-colin.king@canonical.com>
+In-Reply-To: <20190417162628.10976-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Pascal PAILLET-LME <p.paillet@st.com>
-Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
 
-In case of error, the function of_iomap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+The patch
 
-Fixes: 6cdae8173f67 ("regulator: Add support for stm32 power regulators")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+   ASoC: hdmi-codec: fix spelling mistake "plalform" -> "platform"
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7d8cdb818571ca019cf909bd737e549895b9a0d9 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 17 Apr 2019 17:26:28 +0100
+Subject: [PATCH] ASoC: hdmi-codec: fix spelling mistake "plalform" ->
+ "platform"
+
+There is a spelling mistake in a dev_err message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/stm32-pwr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/hdmi-codec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/stm32-pwr.c b/drivers/regulator/stm32-pwr.c
-index e434b26d4c8b..d4b9d6accfad 100644
---- a/drivers/regulator/stm32-pwr.c
-+++ b/drivers/regulator/stm32-pwr.c
-@@ -140,9 +140,9 @@ static int stm32_pwr_regulator_probe(struct platform_device *pdev)
- 	int i, ret = 0;
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index 35df73e42cbc..b9d9dde9fbaf 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -757,7 +757,7 @@ static int hdmi_codec_probe(struct platform_device *pdev)
+ 	dev_dbg(dev, "%s()\n", __func__);
  
- 	base = of_iomap(np, 0);
--	if (IS_ERR(base)) {
-+	if (!base) {
- 		dev_err(&pdev->dev, "Unable to map IO memory\n");
--		return PTR_ERR(base);
-+		return -ENOMEM;
+ 	if (!hcd) {
+-		dev_err(dev, "%s: No plalform data\n", __func__);
++		dev_err(dev, "%s: No platform data\n", __func__);
+ 		return -EINVAL;
  	}
  
- 	config.dev = &pdev->dev;
+-- 
+2.20.1
