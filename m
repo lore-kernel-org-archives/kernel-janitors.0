@@ -1,62 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Apr 2019 09:46:27 +0000
-Subject: [PATCH v3 resend] media: davinci/vpbe: array underflow in vpbe_enum_outputs()
-Message-Id: <20190424094627.GB15818@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Apr 2019 16:26:28 +0000
+Subject: [PATCH] ASoC: hdmi-codec: fix spelling mistake "plalform" -> "platform"
+Message-Id: <20190417162628.10976-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20180517090550.GB4250@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
-the problem is that "temp_index" can be negative.  This patch changes
-the types to unsigned to address this array underflow bug.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+There is a spelling mistake in a dev_err message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-I sent this patch last May but somehow the spam filters on the lists
-must have eaten it.  I didn't get a copy from the kernel-janitors list.
-The only trace I have of my original patch is that the maintainer Acked
-it.  Resending.
+ sound/soc/codecs/hdmi-codec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: In the first version, I clamped output->index to 0-INT_MAX for every
-    driver.  In v2, I only changed the vpbe.h driver header file.
-v3: In v3 I changed the header and the .c file (All three versions of
-    patch "worked", they just had philosophical and style issues).
-
- drivers/media/platform/davinci/vpbe.c | 2 +-
- include/media/davinci/vpbe.h          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 8339163a5231..4e24f5d781f4 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -104,7 +104,7 @@ static int vpbe_enum_outputs(struct vpbe_device *vpbe_dev,
- 			     struct v4l2_output *output)
- {
- 	struct vpbe_config *cfg = vpbe_dev->cfg;
--	int temp_index = output->index;
-+	unsigned int temp_index = output->index;
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index 35df73e42cbc..b9d9dde9fbaf 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -757,7 +757,7 @@ static int hdmi_codec_probe(struct platform_device *pdev)
+ 	dev_dbg(dev, "%s()\n", __func__);
  
- 	if (temp_index >= cfg->num_outputs)
+ 	if (!hcd) {
+-		dev_err(dev, "%s: No plalform data\n", __func__);
++		dev_err(dev, "%s: No platform data\n", __func__);
  		return -EINVAL;
-diff --git a/include/media/davinci/vpbe.h b/include/media/davinci/vpbe.h
-index 5c31a7682492..f76d2f25a824 100644
---- a/include/media/davinci/vpbe.h
-+++ b/include/media/davinci/vpbe.h
-@@ -92,7 +92,7 @@ struct vpbe_config {
- 	struct encoder_config_info *ext_encoders;
- 	/* amplifier information goes here */
- 	struct amp_config_info *amp;
--	int num_outputs;
-+	unsigned int num_outputs;
- 	/* Order is venc outputs followed by LCD and then external encoders */
- 	struct vpbe_output *outputs;
- };
+ 	}
+ 
 -- 
-2.18.0
+2.20.1
