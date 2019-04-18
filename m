@@ -1,52 +1,36 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Tue, 30 Apr 2019 02:54:51 +0000
-Subject: Re: [PATCH -next] ASoC: sprd: Fix return value check in sprd_mcdt_probe()
-Message-Id: <CAMz4kuJtMAyjbPR0Yf_FN1fhDwSi5=0WAgD_BNEuTB5GhcTYxQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 18 Apr 2019 10:39:18 +0000
+Subject: [PATCH] net: ipv6: addrlabel: fix spelling mistake "requewst" -> "request"
+Message-Id: <20190418103918.10729-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190429122512.59242-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190429122512.59242-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 29 Apr 2019 at 20:15, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
->
-> Fixes: d7bff893e04f ("ASoC: sprd: Add Spreadtrum multi-channel data transfer support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for fixing my mistake.
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+There is a spelling mistake in a NL_SET_ERR_MSG_MOD error message,
+fix it.
 
-> ---
->  sound/soc/sprd/sprd-mcdt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
-> index 28f5e649733d..e9318d7a4810 100644
-> --- a/sound/soc/sprd/sprd-mcdt.c
-> +++ b/sound/soc/sprd/sprd-mcdt.c
-> @@ -951,8 +951,8 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
->
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         mcdt->base = devm_ioremap_resource(&pdev->dev, res);
-> -       if (!mcdt->base)
-> -               return -ENOMEM;
-> +       if (IS_ERR(mcdt->base))
-> +               return PTR_ERR(mcdt->base);
->
->         mcdt->dev = &pdev->dev;
->         spin_lock_init(&mcdt->lock);
->
->
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv6/addrlabel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/net/ipv6/addrlabel.c b/net/ipv6/addrlabel.c
+index d43d076c98f5..1766325423b5 100644
+--- a/net/ipv6/addrlabel.c
++++ b/net/ipv6/addrlabel.c
+@@ -476,7 +476,7 @@ static int ip6addrlbl_valid_dump_req(const struct nlmsghdr *nlh,
+ 	}
+ 
+ 	if (nlmsg_attrlen(nlh, sizeof(*ifal))) {
+-		NL_SET_ERR_MSG_MOD(extack, "Invalid data after header for address label dump requewst");
++		NL_SET_ERR_MSG_MOD(extack, "Invalid data after header for address label dump request");
+ 		return -EINVAL;
+ 	}
+ 
 -- 
-Baolin Wang
-Best Regards
+2.20.1
