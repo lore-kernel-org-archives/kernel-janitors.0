@@ -1,46 +1,87 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 17 Apr 2019 16:38:36 +0000
-Subject: Re: [PATCH -next] regulator: stm32-pwr: Make some symbols static
-Message-Id: <20190417163836.GA1675@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="u3/rZRmxL6MmkK24"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 18 Apr 2019 12:20:41 +0000
+Subject: [PATCH] staging: rtl8723bs: hal: fix spelling mistake "singal" -> "signal"
+Message-Id: <20190418122041.12896-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190417023112.162916-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190417023112.162916-1-weiyongjun1@huawei.com>
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Pascal PAILLET-LME <p.paillet@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are multiple spelling mistakes in variable names, fix these.
 
-On Wed, Apr 17, 2019 at 02:31:12AM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warnings:
->=20
-> drivers/regulator/stm32-pwr.c:35:5: warning:
->  symbol 'ready_mask_table' was not declared. Should it be static?
-> drivers/regulator/stm32-pwr.c:47:5: warning:
->  symbol 'stm32_pwr_reg_is_ready' was not declared. Should it be static?
-> drivers/regulator/stm32-pwr.c:57:5: warning:
->  symbol 'stm32_pwr_reg_is_enabled' was not declared. Should it be static?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/hal/hal_com.c      | 18 +++++++++---------
+ drivers/staging/rtl8723bs/include/rtw_recv.h |  4 ++--
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-Someone already sent a patch for this.
-
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAly3VosACgkQJNaLcl1U
-h9BTqgf/efTFfwbNwPOEnavpH8p2CUDIke5R4NB5EjkTYY54sng9TIrP1IpX8Yhy
-ZJoFYdGz47bHsXupVE0UAHCFrX9KTPR02Lfh0+9qI1ry7WNUQ+kWkP1Z7PW5b7XJ
-G2gy7ecZTbfWUAs2H4o2/qhZl5HYWCPKujb+Qyg+lRBLgOxACMATdkij99sujOz4
-YnR3FwPKVNHUL8TwaBA78WAiXITVAZ7xycUumhMLG/5TvuXd8NqtNg1pd1aOaHPJ
-RBVi/L1QnP6L1lNJCvzr4Xm7nmwSCd01vJbIQ5bllhKaxjOHd9ogd4A58tAXvpAQ
-EY5uP6rktrhnM4Mbv/Me24ddT4lfpA==
-=drWu
------END PGP SIGNATURE-----
-
---u3/rZRmxL6MmkK24--
+diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
+index f1c91483ca07..e5f1153527b9 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_com.c
++++ b/drivers/staging/rtl8723bs/hal/hal_com.c
+@@ -1618,14 +1618,14 @@ void rtw_get_raw_rssi_info(void *sel, struct adapter *padapter)
+ 	isCCKrate = psample_pkt_rssi->data_rate <= DESC_RATE11M;
+ 
+ 	if (isCCKrate)
+-		psample_pkt_rssi->mimo_singal_strength[0] = psample_pkt_rssi->pwdball;
++		psample_pkt_rssi->mimo_signal_strength[0] = psample_pkt_rssi->pwdball;
+ 
+ 	for (rf_path = 0; rf_path < pHalData->NumTotalRFPath; rf_path++) {
+ 		DBG_871X_SEL_NL(
+ 			sel,
+-			"RF_PATH_%d =>singal_strength:%d(%%), singal_quality:%d(%%)\n",
+-			rf_path, psample_pkt_rssi->mimo_singal_strength[rf_path],
+-			psample_pkt_rssi->mimo_singal_quality[rf_path]
++			"RF_PATH_%d =>signal_strength:%d(%%), signal_quality:%d(%%)\n",
++			rf_path, psample_pkt_rssi->mimo_signal_strength[rf_path],
++			psample_pkt_rssi->mimo_signal_quality[rf_path]
+ 		);
+ 
+ 		if (!isCCKrate) {
+@@ -1651,11 +1651,11 @@ void rtw_dump_raw_rssi_info(struct adapter *padapter)
+ 	isCCKrate = psample_pkt_rssi->data_rate <= DESC_RATE11M;
+ 
+ 	if (isCCKrate)
+-		psample_pkt_rssi->mimo_singal_strength[0] = psample_pkt_rssi->pwdball;
++		psample_pkt_rssi->mimo_signal_strength[0] = psample_pkt_rssi->pwdball;
+ 
+ 	for (rf_path = 0; rf_path < pHalData->NumTotalRFPath; rf_path++) {
+-		DBG_871X("RF_PATH_%d =>singal_strength:%d(%%), singal_quality:%d(%%)"
+-			, rf_path, psample_pkt_rssi->mimo_singal_strength[rf_path], psample_pkt_rssi->mimo_singal_quality[rf_path]);
++		DBG_871X("RF_PATH_%d =>signal_strength:%d(%%), signal_quality:%d(%%)"
++			, rf_path, psample_pkt_rssi->mimo_signal_strength[rf_path], psample_pkt_rssi->mimo_signal_quality[rf_path]);
+ 
+ 		if (!isCCKrate) {
+ 			printk(", rx_ofdm_pwr:%d(dBm), rx_ofdm_snr:%d(dB)\n",
+@@ -1682,8 +1682,8 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
+ 	psample_pkt_rssi->pwr_all = pPhyInfo->recv_signal_power;
+ 
+ 	for (rf_path = 0; rf_path < pHalData->NumTotalRFPath; rf_path++) {
+-		psample_pkt_rssi->mimo_singal_strength[rf_path] = pPhyInfo->rx_mimo_signal_strength[rf_path];
+-		psample_pkt_rssi->mimo_singal_quality[rf_path] = pPhyInfo->rx_mimo_signal_quality[rf_path];
++		psample_pkt_rssi->mimo_signal_strength[rf_path] = pPhyInfo->rx_mimo_signal_strength[rf_path];
++		psample_pkt_rssi->mimo_signal_quality[rf_path] = pPhyInfo->rx_mimo_signal_quality[rf_path];
+ 		if (!isCCKrate) {
+ 			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
+ 			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
+diff --git a/drivers/staging/rtl8723bs/include/rtw_recv.h b/drivers/staging/rtl8723bs/include/rtw_recv.h
+index 7d54cf211315..5de946e66302 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_recv.h
++++ b/drivers/staging/rtl8723bs/include/rtw_recv.h
+@@ -120,8 +120,8 @@ struct rx_raw_rssi
+ 	u8 pwdball;
+ 	s8 pwr_all;
+ 
+-	u8 mimo_singal_strength[4];/*  in 0~100 index */
+-	u8 mimo_singal_quality[4];
++	u8 mimo_signal_strength[4];/*  in 0~100 index */
++	u8 mimo_signal_quality[4];
+ 
+ 	s8 ofdm_pwr[4];
+ 	u8 ofdm_snr[4];
+-- 
+2.20.1
