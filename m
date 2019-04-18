@@ -1,46 +1,37 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Mon, 15 Apr 2019 09:03:03 +0000
-Subject: Re: [PATCH] HID: fix compiling error in u2fzero_probe()
-Message-Id: <nycvar.YFH.7.76.1904151102250.9803@cbobk.fhfr.pm>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 18 Apr 2019 17:38:57 +0000
+Subject: [PATCH] ARM: kprobes: fix spelling mistake "undefeined" -> "undefined"
+Message-Id: <20190418173857.31285-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190413134459.76045-1-maowenan@huawei.com>
-In-Reply-To: <20190413134459.76045-1-maowenan@huawei.com>
+References: <20180510160239.21091-1-colin.king@canonical.com>
+In-Reply-To: <20180510160239.21091-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: benjamin.tissoires@redhat.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, Andrej Shadura <andrew.shadura@collabora.co.uk>
+To: Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 13 Apr 2019, Mao Wenan wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> There is one compiling error in u2fzero_probe()->u2fzero_init_hwrng(),
-> this is because HW_RANDOM is not set.
-> 
-> drivers/hid/hid-u2fzero.o: In function `u2fzero_probe':
-> hid-u2fzero.c:(.text+0xc70): undefined reference to `devm_hwrng_register'
-> 
-> Fixes: 42337b9d4d958("HID: add driver for U2F Zero built-in LED and RNG")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/hid/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 4dc1035..76d8206 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -1017,6 +1017,7 @@ config HID_U2FZERO
->  	tristate "U2F Zero LED and RNG support"
->  	depends on USB_HID
->  	depends on LEDS_CLASS
-> +	depends on HW_RANDOM
+There is a spelling mistake on the TEST_UNSUPPORTED macro. Fix this.
 
-[ CCing Andrej ]
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/arm/probes/kprobes/test-thumb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This was supposed to be sent by Andrej (together with other fixes), but 
-you beat him to it. Applied, thanks.
-
+diff --git a/arch/arm/probes/kprobes/test-thumb.c b/arch/arm/probes/kprobes/test-thumb.c
+index b683b4517458..6841909757cd 100644
+--- a/arch/arm/probes/kprobes/test-thumb.c
++++ b/arch/arm/probes/kprobes/test-thumb.c
+@@ -787,7 +787,7 @@ CONDITION_INSTRUCTIONS(22,
+ 
+ 	TEST_UNSUPPORTED(__inst_thumb32(0xf7f08000) " @ smc #0")
+ 
+-	TEST_UNSUPPORTED(__inst_thumb32(0xf7f0a000) " @ undefeined")
++	TEST_UNSUPPORTED(__inst_thumb32(0xf7f0a000) " @ undefined")
+ 
+ 	TEST_BF(  "b.w	2f")
+ 	TEST_BB(  "b.w	2b")
 -- 
-Jiri Kosina
-SUSE Labs
+2.20.1
