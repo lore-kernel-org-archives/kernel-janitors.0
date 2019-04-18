@@ -1,59 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 08 Apr 2019 09:52:38 +0000
-Subject: [PATCH] media: pvrusb2: Prevent a buffer overflow
-Message-Id: <20190408095238.GA19971@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 18 Apr 2019 11:06:22 +0000
+Subject: [PATCH] drm/i915: fix spelling mistake "resseting" -> "resetting"
+Message-Id: <20190418110622.11452-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Isely <isely@pobox.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The ctrl_check_input() function is called from pvr2_ctrl_range_check().
-It's supposed to validate user supplied input and return true or false
-depending on whether the input is valid or not.  The problem is that
-negative shifts or shifts greater than 31 are undefined in C.  In
-practice with GCC they result in shift wrapping so this function returns
-true for some inputs which are not valid and this could result in a
-buffer overflow:
+From: Colin Ian King <colin.king@canonical.com>
 
-    drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:205 pvr2_ctrl_get_valname()
-    warn: uncapped user index 'names[val]'
+There is a spelling mistake in a gvt_dbg_core debug message. Fix it.
 
-The cptr->hdw->input_allowed_mask mask is configured in pvr2_hdw_create()
-and the highest valid bit is BIT(4).
-
-Fixes: 7fb20fa38caa ("V4L/DVB (7299): pvrusb2: Improve logic which handles input choice availability")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 ++
- drivers/media/usb/pvrusb2/pvrusb2-hdw.h | 1 +
- 2 files changed, 3 insertions(+)
+ drivers/gpu/drm/i915/gvt/vgpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-index 25648add77e5..bd2b7a67b732 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-@@ -50,6 +50,7 @@
- #define PVR2_CVAL_INPUT_COMPOSITE 2
- #define PVR2_CVAL_INPUT_SVIDEO 3
- #define PVR2_CVAL_INPUT_RADIO 4
-+#define PVR2_CVAL_INPUT_MAX PVR2_CVAL_INPUT_RADIO
+diff --git a/drivers/gpu/drm/i915/gvt/vgpu.c b/drivers/gpu/drm/i915/gvt/vgpu.c
+index 44ce3c2b9ac1..d1e818f2b521 100644
+--- a/drivers/gpu/drm/i915/gvt/vgpu.c
++++ b/drivers/gpu/drm/i915/gvt/vgpu.c
+@@ -533,7 +533,7 @@ void intel_gvt_reset_vgpu_locked(struct intel_vgpu *vgpu, bool dmlr,
+ 	intel_engine_mask_t resetting_eng = dmlr ? ALL_ENGINES : engine_mask;
  
- enum pvr2_config {
- 	pvr2_config_empty,    /* No configuration */
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index 51112b7988e4..816c85786c2a 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -666,6 +666,8 @@ static int ctrl_get_input(struct pvr2_ctrl *cptr,int *vp)
+ 	gvt_dbg_core("------------------------------------------\n");
+-	gvt_dbg_core("resseting vgpu%d, dmlr %d, engine_mask %08x\n",
++	gvt_dbg_core("resetting vgpu%d, dmlr %d, engine_mask %08x\n",
+ 		     vgpu->id, dmlr, engine_mask);
  
- static int ctrl_check_input(struct pvr2_ctrl *cptr,int v)
- {
-+	if (v < 0 || v > PVR2_CVAL_INPUT_MAX)
-+		return 0;
- 	return ((1 << v) & cptr->hdw->input_allowed_mask) != 0;
- }
- 
+ 	vgpu->resetting_eng = resetting_eng;
 -- 
-2.17.1
+2.20.1
