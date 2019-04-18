@@ -1,35 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 17 Apr 2019 16:34:25 +0000
-Subject: [PATCH] media: atmel-isc: fix spelling mistake "profie" -> "profile"
-Message-Id: <20190417163425.12826-1-colin.king@canonical.com>
+From: <Eugen.Hristev@microchip.com>
+Date: Thu, 18 Apr 2019 06:21:19 +0000
+Subject: Re: [PATCH] media: atmel-isc: fix spelling mistake "profie" -> "profile"
+Message-Id: <ecaa2038-3df6-8fbe-ad7e-b8472c4fb32a@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190417163425.12826-1-colin.king@canonical.com>
+In-Reply-To: <20190417163425.12826-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eugen Hristev <eugen.hristev@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com, mchehab@kernel.org, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: hverkuil@xs4all.nl, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in a v4l2_warn warning message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/atmel/atmel-isc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/atmel/atmel-isc.c b/drivers/media/platform/atmel/atmel-isc.c
-index 9a399aa7ca92..e3cfce05d6b6 100644
---- a/drivers/media/platform/atmel/atmel-isc.c
-+++ b/drivers/media/platform/atmel/atmel-isc.c
-@@ -1011,7 +1011,7 @@ static int isc_update_profile(struct isc_device *isc)
- 	}
- 
- 	if (counter < 0) {
--		v4l2_warn(&isc->v4l2_dev, "Time out to update profie\n");
-+		v4l2_warn(&isc->v4l2_dev, "Time out to update profile\n");
- 		return -ETIMEDOUT;
- 	}
- 
--- 
-2.20.1
+SGkgQ29saW4sDQoNClRoYW5rcyBmb3IgeW91ciBwYXRjaCBidXQgSSB0aGluayB0aGlzIGNvbmZs
+aWN0cyB3aXRoIG15IHByZXZpb3VzIHBhdGNoIA0Kd2hpY2ggYWxyZWFkeSBjaGFuZ2VzIHRoaXMg
+dHlwbzoNCg0KaHR0cHM6Ly9naXQubGludXh0di5vcmcvaHZlcmt1aWwvbWVkaWFfdHJlZS5naXQv
+Y29tbWl0Lz9oPWZvci12NS4yYiZpZD1mNDliMzk3NDY0Mjk5MWZmZTNmNzI4YzUzMWI4ODgxNDE5
+ZGY2M2EwDQoNCnBhdGNod29yazoNCmh0dHBzOi8vcGF0Y2h3b3JrLmxpbnV4dHYub3JnL3BhdGNo
+LzU1MzE4Lw0KDQpOb3QgeWV0IG1lcmdlZCBpbnRvIG1lZGlhX3RyZWUgYnV0IG9uIGl0J3Mgd2F5
+IEkgYmVsaWV2ZS4uLg0KDQpFdWdlbg0KDQpPbiAxNy4wNC4yMDE5IDE5OjM0LCBDb2xpbiBLaW5n
+IHdyb3RlOg0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
+Pg0KPiANCj4gVGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgdjRsMl93YXJuIHdhcm5p
+bmcgbWVzc2FnZS4gRml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcg
+PGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9tZWRpYS9wbGF0
+Zm9ybS9hdG1lbC9hdG1lbC1pc2MuYyB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
+cnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlh
+L3BsYXRmb3JtL2F0bWVsL2F0bWVsLWlzYy5jIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9hdG1l
+bC9hdG1lbC1pc2MuYw0KPiBpbmRleCA5YTM5OWFhN2NhOTIuLmUzY2ZjZTA1ZDZiNiAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9hdG1lbC9hdG1lbC1pc2MuYw0KPiArKysg
+Yi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2F0bWVsL2F0bWVsLWlzYy5jDQo+IEBAIC0xMDExLDcg
+KzEwMTEsNyBAQCBzdGF0aWMgaW50IGlzY191cGRhdGVfcHJvZmlsZShzdHJ1Y3QgaXNjX2Rldmlj
+ZSAqaXNjKQ0KPiAgIAl9DQo+ICAgDQo+ICAgCWlmIChjb3VudGVyIDwgMCkgew0KPiAtCQl2NGwy
+X3dhcm4oJmlzYy0+djRsMl9kZXYsICJUaW1lIG91dCB0byB1cGRhdGUgcHJvZmllXG4iKTsNCj4g
+KwkJdjRsMl93YXJuKCZpc2MtPnY0bDJfZGV2LCAiVGltZSBvdXQgdG8gdXBkYXRlIHByb2ZpbGVc
+biIpOw0KPiAgIAkJcmV0dXJuIC1FVElNRURPVVQ7DQo+ICAgCX0NCj4gICANCj4gDQo
