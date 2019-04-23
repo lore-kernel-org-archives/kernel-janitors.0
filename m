@@ -1,44 +1,35 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Thu, 18 Apr 2019 14:15:42 +0000
-Subject: Re: [PATCH] char/ipmi: fix spelling mistake "receieved_messages" -> "received_messages"
-Message-Id: <20190418141542.GH2479@minyard.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Apr 2019 14:50:22 +0000
+Subject: [PATCH] Bluetooth: hci_h5: fix spelling mistake "sliped" -> "slipped"
+Message-Id: <20190423145022.9821-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190418101502.9748-1-colin.king@canonical.com>
-In-Reply-To: <20190418101502.9748-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Aishwarya Pant <aishpant@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 18, 2019 at 11:15:02AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the documentation. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, queued for 5.2
+There is a spelling mistake in a BT_DBG debug message. Fix it.
 
--corey
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/bluetooth/hci_h5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  Documentation/ABI/testing/sysfs-devices-platform-ipmi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-platform-ipmi b/Documentation/ABI/testing/sysfs-devices-platform-ipmi
-> index 2a781e7513b7..afb5db856e1c 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-platform-ipmi
-> +++ b/Documentation/ABI/testing/sysfs-devices-platform-ipmi
-> @@ -212,7 +212,7 @@ Description:
->  					Messages may be broken into parts if
->  					they are long.
->  
-> -		receieved_messages:	(RO) Number of message responses
-> +		received_messages:	(RO) Number of message responses
->  					received.
->  
->  		received_message_parts: (RO) Number of message fragments
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
+index 069d1c8fde73..3f02ae560120 100644
+--- a/drivers/bluetooth/hci_h5.c
++++ b/drivers/bluetooth/hci_h5.c
+@@ -536,7 +536,7 @@ static void h5_unslip_one_byte(struct h5 *h5, unsigned char c)
+ 	skb_put_data(h5->rx_skb, byte, 1);
+ 	h5->rx_pending--;
+ 
+-	BT_DBG("unsliped 0x%02hhx, rx_pending %zu", *byte, h5->rx_pending);
++	BT_DBG("unslipped 0x%02hhx, rx_pending %zu", *byte, h5->rx_pending);
+ }
+ 
+ static void h5_reset_rx(struct h5 *h5)
+-- 
+2.20.1
