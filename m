@@ -1,55 +1,32 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 14 Apr 2019 12:53:54 +0000
-Subject: Re: [PATCH][next] iio: temperature: max31856: fix uninitialized error return
-Message-Id: <20190414135354.0d3a462e@archlinux>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Apr 2019 09:54:14 +0000
+Subject: [PATCH] usbip: stub_rx: tidy the indenting in is_clear_halt_cmd()
+Message-Id: <20190424095414.GB16664@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190410182351.18352-1-colin.king@canonical.com>
-In-Reply-To: <20190410182351.18352-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Paresh Chaudhary <paresh.chaudhary@rockwellcollins.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Valentina Manea <valentina.manea.m@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 10 Apr 2019 19:23:51 +0100
-Colin King <colin.king@canonical.com> wrote:
+There is an extra space character before the return statement.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if mask is neither CHAN_INFO_RAW or CHAN_INFO_SCALE then
-> then an uninitialized error return 'ret' is returned. Fix this by
-> adding a default case that ensures -EINVAL is returned for this
-> specific case.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Thanks Colin,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Dan / smatch caught this one as well, but as you sent a patch
-yours gets applied.
-
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/temperature/max31856.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iio/temperature/max31856.c b/drivers/iio/temperature/max31856.c
-> index 6b67d6b95cf9..f184ba5601d9 100644
-> --- a/drivers/iio/temperature/max31856.c
-> +++ b/drivers/iio/temperature/max31856.c
-> @@ -210,6 +210,9 @@ static int max31856_read_raw(struct iio_dev *indio_dev,
->  			return IIO_VAL_INT_PLUS_MICRO;
->  		}
->  		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
->  	}
->  
->  	return ret;
+diff --git a/drivers/usb/usbip/stub_rx.c b/drivers/usb/usbip/stub_rx.c
+index 97b09a42a10c..f3230bed18af 100644
+--- a/drivers/usb/usbip/stub_rx.c
++++ b/drivers/usb/usbip/stub_rx.c
+@@ -17,9 +17,9 @@ static int is_clear_halt_cmd(struct urb *urb)
+ 
+ 	req = (struct usb_ctrlrequest *) urb->setup_packet;
+ 
+-	 return (req->bRequest = USB_REQ_CLEAR_FEATURE) &&
+-		 (req->bRequestType = USB_RECIP_ENDPOINT) &&
+-		 (req->wValue = USB_ENDPOINT_HALT);
++	return (req->bRequest = USB_REQ_CLEAR_FEATURE) &&
++	       (req->bRequestType = USB_RECIP_ENDPOINT) &&
++	       (req->wValue = USB_ENDPOINT_HALT);
+ }
+ 
+ static int is_set_interface_cmd(struct urb *urb)
