@@ -1,119 +1,88 @@
-From: Parav Pandit <parav@mellanox.com>
-Date: Tue, 23 Apr 2019 22:32:11 +0000
-Subject: RE: [PATCH] IB/mlx5: add checking for "vf" from do_setvfinfo()
-Message-Id: <AM4PR0501MB2260ADC1DA37E87D01979969D1230@AM4PR0501MB2260.eurprd05.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Apr 2019 14:08:20 +0000
+Subject: Re: [PATCH] IB/mlx5: add checking for "vf" from do_setvfinfo()
+Message-Id: <20190424140820.GB14798@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190412175504.GA20857@kadam>
-In-Reply-To: <20190412175504.GA20857@kadam>
+ <VI1PR0501MB22714D465D6CD60511FDFFD5D1280@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+ <20190415094610.GO6095@kadam>
+ <VI1PR0501MB22713CCB1141529CCB6934B1D12B0@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+ <20190416082112.GA27670@kadam>
+ <AM4PR0501MB22609E4C9D126A096DD7F614D1240@AM4PR0501MB2260.eurprd05.prod.outlook.com>
+ <20190420095102.GA14798@kadam>
+ <VI1PR0501MB22713B232B3CF42B849F959BD1220@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+ <20190423154943.GC14820@kadam>
+ <AM4PR0501MB2260ADC1DA37E87D01979969D1230@AM4PR0501MB2260.eurprd05.prod.outlook.com>
+In-Reply-To: <AM4PR0501MB2260ADC1DA37E87D01979969D1230@AM4PR0501MB2260.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Parav Pandit <parav@mellanox.com>, netdev@vger.kernel.org
+Cc: Leon Romanovsky <leon@kernel.org>, Eli Cohen <eli@mellanox.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Hi Dan,
+I think I'm just going to ask netdev for an opinion on this.  It could
+be that we're just reading the code wrong...
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Tuesday, April 23, 2019 10:50 AM
-> To: Parav Pandit <parav@mellanox.com>
-> Cc: Leon Romanovsky <leon@kernel.org>; Eli Cohen <eli@mellanox.com>;
-> Doug Ledford <dledford@redhat.com>; Jason Gunthorpe <jgg@ziepe.ca>;
-> linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: Re: [PATCH] IB/mlx5: add checking for "vf" from do_setvfinfo()
-> 
-> On Mon, Apr 22, 2019 at 03:09:00PM +0000, Parav Pandit wrote:
-> > Hi Dan,
-> >
-> > > -----Original Message-----
-> > > From: Dan Carpenter <dan.carpenter@oracle.com>
-> > > Sent: Monday, April 22, 2019 3:09 AM
-> > > To: Parav Pandit <parav@mellanox.com>
-> > > Cc: Leon Romanovsky <leon@kernel.org>; Eli Cohen
-> <eli@mellanox.com>;
-> > > Doug Ledford <dledford@redhat.com>; Jason Gunthorpe <jgg@ziepe.ca>;
-> > > linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > > Subject: Re: [PATCH] IB/mlx5: add checking for "vf" from
-> > > do_setvfinfo()
-> > >
-> > > On Tue, Apr 16, 2019 at 10:54:42PM +0000, Parav Pandit wrote:
-> > > > > Yeah.  But the call tree here is:
-> > > > >
-> > > > > do_setvfinfo()
-> > > > > -> ops->ndo_get_vf_config()
-> > > > >    -> rtnl_fill_vfinfo()
-> > > > >       -> dev->netdev_ops->ndo_get_vf_config(dev, vfs_num, &ivi)
-> > > > >          -> ipoib_get_vf_config()
-> > > > >             -> ib_get_vf_config
-> > > > >                -> device->ops.get_vf_config(device, vf, port,
-> > > > > info);
-> > > > >
-> > > > > Changing the ->ndo_get_vf_config() pointer means you have to
-> > > > > update
-> > > > > 20 functions in various drivers.  It becomes quite involved.  We
-> > > > > should apply this simple self contained fix then worry about
-> > > > > doing other
-> > > cleanups later.
-> > > > >
-> > > > But if a static checker is run on following functions, they need
-> > > > for vf < 0
-> > > check.
-> > > >
-> > > > i40e_ndo_get_vf_config
-> > > > mlx5e_get_vf_config
-> > > > bnxt_get_vf_config
-> > > > etc and few more.
-> > >
-> > > I checked again to see if it was "20 functions" or if it was "etc
-> > > and few more"...  It turns out its only 18 functions because I
-> > > double counted two functions at first.  Here is the list:
-> > >
-> > > be_get_vf_config
-> > > bnx2x_get_vf_config
-> > > bnxt_get_vf_config
-> > > cxgb4_mgmt_get_vf_config
-> > > efx_sriov_get_vf_config
-> > > fm10k_ndo_get_vf_config
-> > > i40e_ndo_get_vf_config
-> > > ice_get_vf_cfg
-> > > igb_ndo_get_vf_config
-> > > ipoib_get_vf_config
-> > > ixgbe_ndo_get_vf_config
-> > > liquidio_get_vf_config
-> > > mlx4_en_get_vf_config
-> > > mlx5e_get_vf_config
-> > > nfp_app_get_vf_config
-> > > nsim_get_vf_config
-> > > qede_get_vf_config
-> > > qlcnic_sriov_get_vf_config
-> > >
-> > > But you also have to update the call tress as well...  It's really
-> > > very involved.  I seriously did look at how to do this and the
-> > > original patch is the Right Thing To Do [tm].  I've probably sent
-> > > around 92 underflow patches and sometimes I would definitely agree
-> > > with you that changing the type is the right fix but not in this case.
-> > >
-> > Do you plan to fix all the above functions for < 0?
-> > There are other several other ndo_get_vf_* functions who need < 0 check.
-> What about them?
-> > Will you fix them as well?
-> 
-> Oh wow...  I'm looking at these now and there are a lot of bugs.  You are
-> right.  To be honest, though, I'm tempted to just add a check for negatives in
-> the core...  I know you don't like that...
-> 
-> My static analysis was supposed to catch these underflows.  It's the end of
-> the day for me, but I will get this working tomorrow.
-> 
-We just make num_vfs to u32 in core and in drivers.
-This will eliminate < 0 check. From user space value coming is u32 via netlink.
-This makes things clear, forward looking.
+I'm getting a lot of Smatch warning about buffer underflows.  The
+problem is that Smatch marks everything from nla_data() as unknown and
+untrusted user data.  In do_setvfinfo() we get the "->vf" values from
+nla_data().  It starts as u32, but all the function pointers in
+net_device_ops use it as a signed integer.  Most of the functions return
+-EINVAL if "vf" is negative but there are at least 48 which potentially
+use negative values as an offset into an array.
 
-> > Instead of doing all those fixes, why not use right u32 data type to
-> eliminate < 0 check?
-> >
-> > What about sriov getting disabled right after > vf check passes?
-> 
-> I don't know the subsystem well enough to answer this question.  What do
-> you suggest?
-> 
-I don't think > num_vfs check is needed. Device is expected to fail commands for VFs which are not valid.
+To me making "vf" a u32 throughout seems like a good idea but it's an
+extensive patch and I'm not really able to test it at all.  But maybe
+there is a better place to check for negatives.  Or maybe we are already
+checking for negatives and I haven't seen it.  (I don't know this code
+very well at all).
+
+regards,
+dan carpenter
+
+drivers/net/ethernet/emulex/benet/be_main.c:1955 be_clear_vf_tvt() error: buffer underflow 'adapter->vf_cfg' 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:1904 be_get_vf_config() error: buffer underflow 'adapter->vf_cfg' 's32min-s32max'
+drivers/net/ethernet/emulex/benet/be_main.c:2095 be_set_vf_link_state() error: buffer underflow 'adapter->vf_cfg' 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:1863 be_set_vf_mac() error: buffer underflow 'adapter->vf_cfg' 's32min-s32max'
+drivers/net/ethernet/emulex/benet/be_main.c:2103 be_set_vf_spoofchk() error: buffer underflow 'adapter->vf_cfg' 's32min-s32max'
+drivers/net/ethernet/emulex/benet/be_main.c:1926 be_set_vf_tvt() error: buffer underflow 'adapter->vf_cfg' 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:2067 be_set_vf_tx_rate() error: buffer underflow 'adapter->vf_cfg' 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:1984 be_set_vf_vlan() error: buffer underflow 'adapter->vf_cfg' 's32min-s32max'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:2281 bnx2x_post_vf_bulletin() error: buffer underflow 'bp->vfdb->vfs' 's32min-63'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:1523 bnx2x_set_vf_link_state() error: buffer underflow 'bp->vfdb->vfs' 's32min-s32max'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:2963 bnx2x_set_vf_spoofchk() error: buffer underflow 'bp->vfdb->vfs' 's32min-s32max'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:2589 bnx2x_vf_op_prep() error: buffer underflow 'bp->vfdb->vfs' 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:202 bnxt_get_vf_config() error: buffer underflow 'bp->pf.vf' 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:309 bnxt_set_vf_bw() error: buffer underflow 'bp->pf.vf' 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:349 bnxt_set_vf_link_state() error: buffer underflow 'bp->pf.vf' 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:244 bnxt_set_vf_mac() error: buffer underflow 'bp->pf.vf' 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:96 bnxt_set_vf_spoofchk() error: buffer underflow 'bp->pf.vf' 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:180 bnxt_set_vf_trust() error: buffer underflow 'bp->pf.vf' 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:280 bnxt_set_vf_vlan() error: buffer underflow 'bp->pf.vf' 's32min-65534'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2736 cxgb4_mgmt_get_vf_config() error: buffer underflow 'adap->vfinfo' 's32min-254'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2923 cxgb4_mgmt_set_vf_link_state() error: buffer underflow 'adap->vfinfo' 's32min-254'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2723 cxgb4_mgmt_set_vf_mac() error: buffer underflow 'adap->vfinfo' 's32min-s32max'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2797 cxgb4_mgmt_set_vf_rate() error: buffer underflow 'adap->vfinfo' 's32min-254'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2875 cxgb4_mgmt_set_vf_vlan() error: buffer underflow 'adap->vfinfo' 's32min-254'
+drivers/net/ethernet/freescale/enetc/enetc_pf.c:377 enetc_pf_set_vf_mac() error: buffer underflow 'pf->vf_state' 's32min-2147483646'
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:7069 hclge_set_vf_vlan_filter() error: buffer underflow 'hdev->vport' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4223 i40e_ndo_get_vf_config() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4177 i40e_ndo_set_vf_bw() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4287 i40e_ndo_set_vf_link_state() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:3895 i40e_ndo_set_vf_mac() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4041 i40e_ndo_set_vf_port_vlan() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4357 i40e_ndo_set_vf_spoofchk() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4420 i40e_ndo_set_vf_trust() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:3862 i40e_validate_vf() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:2678 ice_get_vf_cfg() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:2879 ice_set_vf_link_state() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:2792 ice_set_vf_mac() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:2246 ice_set_vf_port_vlan() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:2731 ice_set_vf_spoofchk() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:2839 ice_set_vf_trust() error: buffer underflow 'pf->vf' 's32min-2147483646'
+drivers/infiniband/hw/mlx5/ib_virt.c:114 mlx5_ib_set_vf_link_state() error: buffer underflow 'vfs_ctx' 's32min-s32max'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:2005 qlcnic_sriov_get_vf_config() error: buffer underflow 'sriov->vf_info' 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:1832 qlcnic_sriov_set_vf_mac() error: buffer underflow 'sriov->vf_info' 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:2036 qlcnic_sriov_set_vf_spoofchk() error: buffer underflow 'sriov->vf_info' 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:1864 qlcnic_sriov_set_vf_tx_rate() error: buffer underflow 'sriov->vf_info' 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:1937 qlcnic_sriov_set_vf_vlan() error: buffer underflow 'sriov->vf_info' 's32min-254'
