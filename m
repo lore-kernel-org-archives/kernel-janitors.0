@@ -1,105 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 23 Apr 2019 15:10:17 +0000
-Subject: [PATCH][next] powerpc/mm: fix spelling mistake "Outisde" -> "Outside"
-Message-Id: <20190423151017.14429-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Apr 2019 09:53:24 +0000
+Subject: [bug report] dpaa2-eth: Add flow steering support without masking
+Message-Id: <20190424095324.GA16664@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Ioana Ciocoi Radulescu,
 
-There are several identical spelling mistakes in warning messages,
-fix these.
+The patch 2d6802374c69: "dpaa2-eth: Add flow steering support without
+masking" from Apr 16, 2019, leads to the following static checker
+warning:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/powerpc/mm/hash_utils_64.c  | 4 ++--
- arch/powerpc/mm/pgtable-hash64.c | 2 +-
- arch/powerpc/mm/pgtable-radix.c  | 6 +++---
- arch/powerpc/mm/pgtable_64.c     | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+	drivers/net/ethernet/freescale/dpaa2/dpaa2-ethtool.c:503 do_cls_rule()
+	warn: was expecting a 64 bit value instead of '0'
 
-diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils_64.c
-index f727197de713..6eb89643ce58 100644
---- a/arch/powerpc/mm/hash_utils_64.c
-+++ b/arch/powerpc/mm/hash_utils_64.c
-@@ -784,7 +784,7 @@ int hash__create_section_mapping(unsigned long start, unsigned long end, int nid
- 	int rc;
- 
- 	if (end >= H_VMALLOC_START) {
--		pr_warn("Outisde the supported range\n");
-+		pr_warn("Outside the supported range\n");
- 		return -1;
- 	}
- 
-@@ -932,7 +932,7 @@ static void __init htab_initialize(void)
- 		    base, size, prot);
- 
- 		if ((base + size) >= H_VMALLOC_START) {
--			pr_warn("Outisde the supported range\n");
-+			pr_warn("Outside the supported range\n");
- 			continue;
- 		}
- 
-diff --git a/arch/powerpc/mm/pgtable-hash64.c b/arch/powerpc/mm/pgtable-hash64.c
-index d934de4e2b3a..097a3b3538b1 100644
---- a/arch/powerpc/mm/pgtable-hash64.c
-+++ b/arch/powerpc/mm/pgtable-hash64.c
-@@ -115,7 +115,7 @@ int __meminit hash__vmemmap_create_mapping(unsigned long start,
- 	int rc;
- 
- 	if ((start + page_size) >= H_VMEMMAP_END) {
--		pr_warn("Outisde the supported range\n");
-+		pr_warn("Outside the supported range\n");
- 		return -1;
- 	}
- 
-diff --git a/arch/powerpc/mm/pgtable-radix.c b/arch/powerpc/mm/pgtable-radix.c
-index e6d5065b0bc8..fcb0169e2d32 100644
---- a/arch/powerpc/mm/pgtable-radix.c
-+++ b/arch/powerpc/mm/pgtable-radix.c
-@@ -341,7 +341,7 @@ void __init radix_init_pgtable(void)
- 		 */
- 
- 		if ((reg->base + reg->size) >= RADIX_VMALLOC_START) {
--			pr_warn("Outisde the supported range\n");
-+			pr_warn("Outside the supported range\n");
- 			continue;
- 		}
- 
-@@ -902,7 +902,7 @@ static void __meminit remove_pagetable(unsigned long start, unsigned long end)
- int __meminit radix__create_section_mapping(unsigned long start, unsigned long end, int nid)
- {
- 	if (end >= RADIX_VMALLOC_START) {
--		pr_warn("Outisde the supported range\n");
-+		pr_warn("Outside the supported range\n");
- 		return -1;
- 	}
- 
-@@ -934,7 +934,7 @@ int __meminit radix__vmemmap_create_mapping(unsigned long start,
- 	int ret;
- 
- 	if ((start + page_size) >= RADIX_VMEMMAP_END) {
--		pr_warn("Outisde the supported range\n");
-+		pr_warn("Outside the supported range\n");
- 		return -1;
- 	}
- 
-diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
-index 72f58c076e26..95ad2a09501c 100644
---- a/arch/powerpc/mm/pgtable_64.c
-+++ b/arch/powerpc/mm/pgtable_64.c
-@@ -122,7 +122,7 @@ void __iomem *__ioremap_at(phys_addr_t pa, void *ea, unsigned long size, pgprot_
- 		return NULL;
- 
- 	if ((ea + size) >= (void *)IOREMAP_END) {
--		pr_warn("Outisde the supported range\n");
-+		pr_warn("Outside the supported range\n");
- 		return NULL;
- 	}
- 
--- 
-2.20.1
+drivers/net/ethernet/freescale/dpaa2/dpaa2-ethtool.c
+   486  static int do_cls_rule(struct net_device *net_dev,
+   487                         struct ethtool_rx_flow_spec *fs,
+   488                         bool add)
+   489  {
+   490          struct dpaa2_eth_priv *priv = netdev_priv(net_dev);
+   491          struct device *dev = net_dev->dev.parent;
+   492          struct dpni_rule_cfg rule_cfg = { 0 };
+   493          struct dpni_fs_action_cfg fs_act = { 0 };
+   494          dma_addr_t key_iova;
+   495          u64 fields = 0;
+   496          void *key_buf;
+   497          int err;
+   498  
+   499          if (fs->ring_cookie != RX_CLS_FLOW_DISC &&
+   500              fs->ring_cookie >= dpaa2_eth_queue_count(priv))
+   501                  return -EINVAL;
+   502  
+   503          rule_cfg.key_size = dpaa2_eth_cls_key_size(DPAA2_ETH_DIST_ALL);
+                                                           ^^^^^^^^^^^^^^^^^^
+This is UINT_MAX but we probably wanted to pass U64_MAX.
+
+   504  
+   505          /* allocate twice the key size, for the actual key and for mask */
+   506          key_buf = kzalloc(rule_cfg.key_size * 2, GFP_KERNEL);
+   507          if (!key_buf)
+   508                  return -ENOMEM;
+
+See also:
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:2870 dpaa2_eth_set_default_cls() warn: was expecting a 64 bit value instead of '0'
+
+regards,
+dan carpenter
