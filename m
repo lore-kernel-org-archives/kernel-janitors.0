@@ -1,48 +1,59 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Thu, 04 Apr 2019 08:12:21 +0000
-Subject: Re: [PATCH][next] ASoC: sprd: Fix spelling mistake "faied" -> "failed"
-Message-Id: <c2339d07-4b8b-070c-6741-0bd2a9b34aeb@codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 25 Apr 2019 15:10:44 +0000
+Subject: [PATCH -next] serial: milbeaut_usio: Fix error handling in probe and remove
+Message-Id: <20190425151044.105045-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190404075603.11680-1-colin.king@canonical.com>
-In-Reply-To: <20190404075603.11680-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+devm_clk_get() is used so there is no reason to explicitly call
+clk_put() in probe or remove functions. Also remove duplicate assign
+for port->membase.
 
-On 4/4/2019 1:26 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are two identical spelling mistakes in dev_err messages. Fix them.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Fixes: ba44dc043004 ("serial: Add Milbeaut serial control")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/tty/serial/milbeaut_usio.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-Cheers,
--Mukesh
-> ---
->   sound/soc/sprd/sprd-pcm-compress.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/sound/soc/sprd/sprd-pcm-compress.c b/sound/soc/sprd/sprd-pcm-compress.c
-> index dc84257cffc2..e008525a6cb3 100644
-> --- a/sound/soc/sprd/sprd-pcm-compress.c
-> +++ b/sound/soc/sprd/sprd-pcm-compress.c
-> @@ -282,13 +282,13 @@ static int sprd_platform_compr_set_params(struct snd_compr_stream *cstream,
->   	 */
->   	ret = sprd_platform_compr_dma_config(cstream, params, 1);
->   	if (ret) {
-> -		dev_err(dev, "faied to config stage 1 DMA: %d\n", ret);
-> +		dev_err(dev, "failed to config stage 1 DMA: %d\n", ret);
->   		return ret;
->   	}
->   
->   	ret = sprd_platform_compr_dma_config(cstream, params, 0);
->   	if (ret) {
-> -		dev_err(dev, "faied to config stage 0 DMA: %d\n", ret);
-> +		dev_err(dev, "failed to config stage 0 DMA: %d\n", ret);
->   		goto config_err;
->   	}
->   
+diff --git a/drivers/tty/serial/milbeaut_usio.c b/drivers/tty/serial/milbeaut_usio.c
+index d303b7d4bb20..b960d531300c 100644
+--- a/drivers/tty/serial/milbeaut_usio.c
++++ b/drivers/tty/serial/milbeaut_usio.c
+@@ -525,8 +525,6 @@ static int mlb_usio_probe(struct platform_device *pdev)
+ 		ret = -ENODEV;
+ 		goto failed;
+ 	}
+-	port->mapbase = res->start;
+-	port->membase = ioremap(res->start, (res->end - res->start + 1));
+ 	port->membase = devm_ioremap(&pdev->dev, res->start,
+ 				resource_size(res));
+ 
+@@ -548,16 +546,12 @@ static int mlb_usio_probe(struct platform_device *pdev)
+ 	ret = uart_add_one_port(&mlb_usio_uart_driver, port);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Adding port failed: %d\n", ret);
+-		goto failed1;
++		goto failed;
+ 	}
+ 	return 0;
+ 
+-failed1:
+-	iounmap(port->membase);
+-
+ failed:
+ 	clk_disable_unprepare(clk);
+-	clk_put(clk);
+ 
+ 	return ret;
+ }
+@@ -569,7 +563,6 @@ static int mlb_usio_remove(struct platform_device *pdev)
+ 
+ 	uart_remove_one_port(&mlb_usio_uart_driver, port);
+ 	clk_disable_unprepare(clk);
+-	clk_put(clk);
+ 
+ 	return 0;
+ }
