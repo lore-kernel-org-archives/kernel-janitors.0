@@ -1,39 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 Apr 2019 08:44:23 +0000
-Subject: [PATCH] mwifiex: prevent an array overflow
-Message-Id: <20190404084423.GB20193@kadam>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 25 Apr 2019 16:50:46 +0000
+Subject: Re: [PATCH] mwifiex: prevent an array overflow
+Message-Id: <20190425165046.EBF8160388@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190404084423.GB20193@kadam>
+In-Reply-To: <20190404084423.GB20193@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <amitkarwar@gmail.com>, Xinming Hu <huxm@marvell.com>
-Cc: Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Xinming Hu <huxm@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "rate_index" is only used as an index into the phist_data->rx_rate[]
-array in the mwifiex_hist_data_set() function.  That array has
-MWIFIEX_MAX_AC_RX_RATES (74) elements and it's used to generate some
-debugfs information.  The "rate_index" variable comes from the network
-skb->data[] and it is a u8 so it's in the 0-255 range.  We need to cap
-it to prevent an array overflow.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Fixes: cbf6e05527a7 ("mwifiex: add rx histogram statistics support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/marvell/mwifiex/cfp.c | 3 +++
- 1 file changed, 3 insertions(+)
+> The "rate_index" is only used as an index into the phist_data->rx_rate[]
+> array in the mwifiex_hist_data_set() function.  That array has
+> MWIFIEX_MAX_AC_RX_RATES (74) elements and it's used to generate some
+> debugfs information.  The "rate_index" variable comes from the network
+> skb->data[] and it is a u8 so it's in the 0-255 range.  We need to cap
+> it to prevent an array overflow.
+> 
+> Fixes: cbf6e05527a7 ("mwifiex: add rx histogram statistics support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfp.c b/drivers/net/wireless/marvell/mwifiex/cfp.c
-index bfe84e55df77..f1522fb1c1e8 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfp.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfp.c
-@@ -531,5 +531,8 @@ u8 mwifiex_adjust_data_rate(struct mwifiex_private *priv,
- 		rate_index = (rx_rate > MWIFIEX_RATE_INDEX_OFDM0) ?
- 			      rx_rate - 1 : rx_rate;
- 
-+	if (rate_index >= MWIFIEX_MAX_AC_RX_RATES)
-+		rate_index = MWIFIEX_MAX_AC_RX_RATES - 1;
-+
- 	return rate_index;
- }
+Patch applied to wireless-drivers-next.git, thanks.
+
+b4c35c17227f mwifiex: prevent an array overflow
+
 -- 
-2.17.1
+https://patchwork.kernel.org/patch/10885297/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
