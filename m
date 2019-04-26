@@ -1,37 +1,35 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 01 Apr 2019 20:04:20 +0000
-Subject: Re: Coccinelle: put_device: reduce false positives
-Message-Id: <alpine.DEB.2.21.1904012203490.2530@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Apr 2019 13:18:35 +0000
+Subject: [PATCH] crypto: ccree: fix spelling mistake "protedcted" -> "protected"
+Message-Id: <20190426131835.27258-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1553321671-27749-1-git-send-email-wen.yang99@zte.com.cn>
- <179bbdd1-3fcb-bba5-52b3-7f96973c7650@web.de>
- <alpine.DEB.2.21.1903232104030.5660@hadrien> <20190326084512.GC32590@kadam>
- <alpine.DEB.2.20.1903261037320.5021@hadrien> <20190326101103.GH32613@kadam>
- <alpine.DEB.2.20.1903261115300.5021@hadrien>
- <CAK7LNAT9gKvEX9520Sd50vrS7Gug1JQCMx_TJO_KPQjhjPORXw@mail.gmail.com>
- <94e2410b-d474-be9e-a69f-3851e609eed3@web.de>
-In-Reply-To: <94e2410b-d474-be9e-a69f-3851e609eed3@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr, Wen Yang <wen.yang99@zte.com.cn>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Gilad Ben-Yossef <gilad@benyossef.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a spelling mistake in a dev_dbg message, fix it.
 
-On Mon, 1 Apr 2019, Markus Elfring wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/ccree/cc_cipher.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > I added Fixes: tag,
-> > and applied to linux-kbuild/fixes.
->
-> Will this extension trigger further adjustments for similar SmPL scripts?
->
-> Example:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/scripts/coccinelle/free/pci_free_consistent.cocci?id=F7b167113753e95ae6138=
-3e234f8d10142782ace
-
-If there are false positives caused by this or other scripts, feel free to
-submit a patch.
-
-julia
+diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
+index d9f8cd543ee3..c9a40bc39698 100644
+--- a/drivers/crypto/ccree/cc_cipher.c
++++ b/drivers/crypto/ccree/cc_cipher.c
+@@ -368,7 +368,7 @@ static int cc_cipher_sethkey(struct crypto_skcipher *sktfm, const u8 *key,
+ 		else /* Must be SM4 since due to sethkey registration */
+ 			ctx_p->cpp.alg = CC_CPP_SM4;
+ 		ctx_p->key_type = CC_POLICY_PROTECTED_KEY;
+-		dev_dbg(dev, "policy protedcted key alg: %d slot: %d.\n",
++		dev_dbg(dev, "policy protected key alg: %d slot: %d.\n",
+ 			ctx_p->cpp.alg, ctx_p->cpp.slot);
+ 		break;
+ 
+-- 
+2.20.1
