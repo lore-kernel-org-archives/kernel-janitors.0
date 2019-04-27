@@ -1,35 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 16 Apr 2019 10:57:51 +0000
-Subject: [PATCH] x86/Kconfig: fix spelling mistake "effectivness" -> "effectiveness"
-Message-Id: <20190416105751.18899-1-colin.king@canonical.com>
+From: ChenGang <cg.chen@huawei.com>
+Date: Sat, 27 Apr 2019 13:13:24 +0000
+Subject: [PATCH 2/3] fs: ocfs: fix spelling mistake "hearbeat" -> "heartbeat"
+Message-Id: <1556370804-119280-1-git-send-email-cg.chen@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mark@fasheh.com, jlbec@evilplan.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com, ChenGang <cg.chen@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+There is a spelling mistake in comment, fix it.
 
-The Kconfig text contains a spelling mistake, fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: ChenGang <cg.chen@huawei.com>
 ---
- arch/x86/Kconfig | 2 +-
+ fs/ocfs2/cluster/quorum.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index bbd26f68ef56..baefe76481b8 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1502,7 +1502,7 @@ config X86_CPA_STATISTICS
- 	depends on DEBUG_FS
- 	---help---
- 	  Expose statistics about the Change Page Attribute mechanims, which
--	  helps to determine the effectivness of preserving large and huge
-+	  helps to determine the effectiveness of preserving large and huge
- 	  page mappings when mapping protections are changed.
+diff --git a/fs/ocfs2/cluster/quorum.c b/fs/ocfs2/cluster/quorum.c
+index af2e747..792132f 100644
+--- a/fs/ocfs2/cluster/quorum.c
++++ b/fs/ocfs2/cluster/quorum.c
+@@ -89,7 +89,7 @@ static void o2quo_fence_self(void)
+ 	};
+ }
  
- config ARCH_HAS_MEM_ENCRYPT
+-/* Indicate that a timeout occurred on a hearbeat region write. The
++/* Indicate that a timeout occurred on a heartbeat region write. The
+  * other nodes in the cluster may consider us dead at that time so we
+  * want to "fence" ourselves so that we don't scribble on the disk
+  * after they think they've recovered us. This can't solve all
 -- 
-2.20.1
+1.8.5.6
