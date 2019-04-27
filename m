@@ -1,31 +1,33 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Apr 2019 13:50:44 +0000
-Subject: Re: [4/7] cpufreq: maple: Checking implementation of maple_cpufreq_init()
-Message-Id: <5d0e8f12-baaa-e4af-f1d2-03e0508e3fd1@web.de>
+From: ChenGang <cg.chen@huawei.com>
+Date: Sat, 27 Apr 2019 13:13:51 +0000
+Subject: [PATCH 3/3] fs: ocfs: fix spelling mistake from "hearbeating" -> "heartbeating"
+Message-Id: <1556370831-119324-1-git-send-email-cg.chen@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1554082674-2049-5-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1554082674-2049-5-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wen Yang <wen.yang99@zte.com.cn>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mark@fasheh.com, jlbec@evilplan.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com, ChenGang <cg.chen@huawei.com>
 
-> @@ -210,7 +210,7 @@  static int __init maple_cpufreq_init(void)
->  	 */
->  	valp = of_get_property(cpunode, "clock-frequency", NULL);
->  	if (!valp)
-> -		return -ENODEV;
-> +		goto bail_noprops;
->  	max_freq = (*valp)/1000;
->  	maple_cpu_freqs[0].frequency = max_freq;
->  	maple_cpu_freqs[1].frequency = max_freq/2;
+There is a spelling mistake in comment, fix it.
 
-* How do you think about use the jump label “put_node” instead?
+Signed-off-by: ChenGang <cg.chen@huawei.com>
+---
+ fs/ocfs2/cluster/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* Would you like to reduce a bit of duplicate source code at the end
-  of this function?
-  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/cpufreq/maple-cpufreq.c?id=bf97b82f37c6d90e16de001d0659644c57fa490d#n232
-
-Regards,
-Markus
+diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+index e9f236a..7a43c04 100644
+--- a/fs/ocfs2/cluster/tcp.c
++++ b/fs/ocfs2/cluster/tcp.c
+@@ -1776,7 +1776,7 @@ static void o2net_hb_node_up_cb(struct o2nm_node *node, int node_num,
+ 		(msecs_to_jiffies(o2net_reconnect_delay()) + 1);
+ 
+ 	if (node_num != o2nm_this_node()) {
+-		/* believe it or not, accept and node hearbeating testing
++		/* believe it or not, accept and node heartbeating testing
+ 		 * can succeed for this node before we got here.. so
+ 		 * only use set_nn_state to clear the persistent error
+ 		 * if that hasn't already happened */
+-- 
+1.8.5.6
