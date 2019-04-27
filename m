@@ -1,40 +1,33 @@
-From: David Howells <dhowells@redhat.com>
-Date: Fri, 12 Apr 2019 10:19:51 +0000
-Subject: Re: [PATCH] dns: remove redundant zero length namelen check
-Message-Id: <17756.1555064391@warthog.procyon.org.uk>
+From: ChenGang <cg.chen@huawei.com>
+Date: Sat, 27 Apr 2019 12:22:35 +0000
+Subject: [PATCH] fs: ocfs: fix spelling mistake "heartbeart" -> "heartbeat"
+Message-Id: <1556367755-118120-1-git-send-email-cg.chen@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190411.140203.1367510571263899902.davem@davemloft.net> <20190409125912.11600-1-colin.king@canonical.com>
-In-Reply-To: <20190411.140203.1367510571263899902.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: dhowells@redhat.com, colin.king@canonical.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mark@fasheh.com, jlbec@evilplan.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, ocfs2-devel@oss.oracle.com, ChenGang <cg.chen@huawei.com>
 
-David Miller <davem@davemloft.net> wrote:
+There is a spelling mistake in o2hb_do_disk_heartbeat debug message.Fix it.
 
-> > The zero namelen check is redundant as it has already been checked
-> > for zero at the start of the function.  Remove the redundant check.
-> > 
-> > Addresses-Coverity: ("Logically Dead Code")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Applied to net-next.
-> 
-> However it does look like two sets of semantics were considered.
-> In one case rejecting a zero namelen and in another having it
-> mean whatever the strings length is modulo the max of 256.
+Signed-off-by: ChenGang <cg.chen@huawei.com>
+---
+ fs/ocfs2/cluster/heartbeat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It probably makes sense to merge the:
-
-	if (namelen < 3 || namelen > 255)
-		return -EINVAL;
-
-check into the earlier:
-
-	if (!name || namelen = 0)
-		return -EINVAL;
-
-check too.
-
-David
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index f3c20b2..e4e7df1 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -1198,7 +1198,7 @@ static int o2hb_do_disk_heartbeat(struct o2hb_region *reg)
+ 	if (atomic_read(&reg->hr_steady_iterations) != 0) {
+ 		if (atomic_dec_and_test(&reg->hr_unsteady_iterations)) {
+ 			printk(KERN_NOTICE "o2hb: Unable to stabilize "
+-			       "heartbeart on region %s (%s)\n",
++			       "heartbeat on region %s (%s)\n",
+ 			       config_item_name(&reg->hr_item),
+ 			       reg->hr_dev_name);
+ 			atomic_set(&reg->hr_steady_iterations, 0);
+-- 
+1.8.5.6
