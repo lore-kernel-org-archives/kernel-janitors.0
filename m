@@ -1,54 +1,42 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 19 Apr 2019 15:05:11 +0000
-Subject: Re: [PATCH] drm/amd/amdgpu: fix spelling mistake "recieve" -> "receive"
-Message-Id: <CADnq5_PF+1fVOXaZh=F7tw=YzB48b1qHJHW56nEFhvUygQPd0Q@mail.gmail.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Date: Mon, 29 Apr 2019 12:19:40 +0000
+Subject: Re: [PATCH -next] usb: typec: ucsi: ccg: fix missing unlock on error in ccg_cmd_write_flash_row()
+Message-Id: <20190429121940.GA15384@kuha.fi.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190418102510.10253-1-colin.king@canonical.com>
- <541d2a2a-bcdf-5c4f-b075-7ca128757a45@codeaurora.org>
-In-Reply-To: <541d2a2a-bcdf-5c4f-b075-7ca128757a45@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mukesh Ojha <mojha@codeaurora.org>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Colin King <colin.king@canonical.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ajay Gupta <ajayg@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 18, 2019 at 1:58 PM Mukesh Ojha <mojha@codeaurora.org> wrote:
->
->
-> On 4/18/2019 3:55 PM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a spelling mistake in a pr_err message. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+On Mon, Apr 29, 2019 at 12:26:30PM +0000, Wei Yongjun wrote:
+> Add the missing unlock before return from function ccg_cmd_write_flash_row()
+> in the error handling case.
+> 
+> Fixes: 5c9ae5a87573 ("usb: typec: ucsi: ccg: add firmware flashing support")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Applied.  thanks!
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Alex
+> ---
+>  drivers/usb/typec/ucsi/ucsi_ccg.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index 4632b91a04a6..9d46aa9e4e35 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -631,6 +631,7 @@ ccg_cmd_write_flash_row(struct ucsi_ccg *uc, u16 row,
+>  	ret = i2c_master_send(client, buf, CCG4_ROW_SIZE + 2);
+>  	if (ret != CCG4_ROW_SIZE + 2) {
+>  		dev_err(uc->dev, "REG_FLASH_RW_MEM write fail %d\n", ret);
+> +		mutex_unlock(&uc->lock);
+>  		return ret < 0 ? ret : -EIO;
+>  	}
+> 
+> 
 
+thanks,
 
->
-> Cheers,
-> -Mukesh
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-> > index 6a0fcd67662a..aef9d059ae52 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-> > @@ -515,7 +515,7 @@ static void xgpu_vi_mailbox_flr_work(struct work_struct *work)
-> >
-> >       /* wait until RCV_MSG become 3 */
-> >       if (xgpu_vi_poll_msg(adev, IDH_FLR_NOTIFICATION_CMPL)) {
-> > -             pr_err("failed to recieve FLR_CMPL\n");
-> > +             pr_err("failed to receive FLR_CMPL\n");
-> >               return;
-> >       }
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+-- 
+heikki
