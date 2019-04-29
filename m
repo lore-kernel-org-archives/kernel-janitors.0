@@ -1,29 +1,40 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 25 Apr 2019 07:50:09 +0000
-Subject: Re: [PATCH] crypto: caam: fix spelling mistake "cannote" -> "cannot"
-Message-Id: <20190425075009.sqgsmomc7n7csr2x@gondor.apana.org.au>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 29 Apr 2019 12:37:13 +0000
+Subject: [PATCH -next] ASoC: sprd: Fix to use list_for_each_entry_safe() when delete items
+Message-Id: <20190429123713.64280-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415124021.4659-1-colin.king@canonical.com>
-In-Reply-To: <20190415124021.4659-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>, Aymen Sghaier <aymen.sghaier@nxp.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 01:40:21PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in an error message in the qi_error_list
-> array. Fix this.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/caam/error.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Since we will remove items off the list using list_del() we need
+to use a safe version of the list_for_each_entry() macro aptly named
+list_for_each_entry_safe().
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: d7bff893e04f ("ASoC: sprd: Add Spreadtrum multi-channel data transfer support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/sprd/sprd-mcdt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
+index 28f5e649733d..df250f7f2b6f 100644
+--- a/sound/soc/sprd/sprd-mcdt.c
++++ b/sound/soc/sprd/sprd-mcdt.c
+@@ -978,12 +978,12 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
+ 
+ static int sprd_mcdt_remove(struct platform_device *pdev)
+ {
+-	struct sprd_mcdt_chan *temp;
++	struct sprd_mcdt_chan *chan, *temp;
+ 
+ 	mutex_lock(&sprd_mcdt_list_mutex);
+ 
+-	list_for_each_entry(temp, &sprd_mcdt_chan_list, list)
+-		list_del(&temp->list);
++	list_for_each_entry_safe(chan, temp, &sprd_mcdt_chan_list, list)
++		list_del(&chan->list);
+ 
+ 	mutex_unlock(&sprd_mcdt_list_mutex);
