@@ -1,23 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Apr 2019 01:46:38 +0000
-Subject: Re: [PATCH] net: atheros: fix spelling mistake "underun" -> "underrun"
-Message-Id: <20190423.184638.1865975884895623350.davem@davemloft.net>
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Mon, 29 Apr 2019 13:56:03 +0000
+Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe()
+Message-Id: <20190429135603.GI10772@lunn.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190423143007.5353-1-colin.king@canonical.com>
-In-Reply-To: <20190423143007.5353-1-colin.king@canonical.com>
+References: <20190429135650.72794-1-yuehaibing@huawei.com>
+In-Reply-To: <20190429135650.72794-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 23 Apr 2019 15:30:07 +0100
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Mon, Apr 29, 2019 at 01:56:50PM +0000, YueHaibing wrote:
+> Change the call to PTR_ERR to access the value just tested by IS_ERR.
 > 
-> There are spelling mistakes in structure elements, fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Applied.
+Please could you add a Fixes: tag.
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
