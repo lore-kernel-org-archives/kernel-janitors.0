@@ -1,58 +1,36 @@
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Date: Tue, 09 Apr 2019 11:40:39 +0000
-Subject: Re: [PATCH] brcmfmac: fix leak of mypkt on error return path
-Message-Id: <77f41e34-8358-f22b-615d-15de7c091ff7@broadcom.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 29 Apr 2019 12:25:12 +0000
+Subject: [PATCH -next] ASoC: sprd: Fix return value check in sprd_mcdt_probe()
+Message-Id: <20190429122512.59242-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190409112011.19546-1-colin.king@canonical.com>
-In-Reply-To: <20190409112011.19546-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 4/9/2019 1:20 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if the call to brcmf_sdiod_set_backplane_window fails then
-> then error return path leaks mypkt. Fix this by returning by a new
-> error path labelled 'out' that calls brcmu_pkt_buf_free_skb to free
-> mypkt.
-> 
-> Addresses-Coverity: ("Resource Leak")
-> Fixes: a7c3aa1509e2 ("brcmfmac: Remove brcmf_sdiod_addrprep()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-> index ec129864cc9c..f3d11e024e71 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-> @@ -628,7 +628,7 @@ int brcmf_sdiod_send_buf(struct brcmf_sdio_dev *sdiodev, u8 *buf, uint nbytes)
->   
->   	err = brcmf_sdiod_set_backplane_window(sdiodev, addr);
->   	if (err)
-> -		return err;
-> +		goto out;
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Actually seems you can just get rid of the if statement entirely as 
-below it skips brcmf_sdiod_skbuff_write() when an error occurred so no 
-label is necessary.
+Fixes: d7bff893e04f ("ASoC: sprd: Add Spreadtrum multi-channel data transfer support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/sprd/sprd-mcdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Arend
-
->   	addr &= SBSDIO_SB_OFT_ADDR_MASK;
->   	addr |= SBSDIO_SB_ACCESS_2_4B_FLAG;
-> @@ -636,7 +636,7 @@ int brcmf_sdiod_send_buf(struct brcmf_sdio_dev *sdiodev, u8 *buf, uint nbytes)
->   	if (!err)
->   		err = brcmf_sdiod_skbuff_write(sdiodev, sdiodev->func2, addr,
->   					       mypkt);
-> -
-> +out:
->   	brcmu_pkt_buf_free_skb(mypkt);
->   
->   	return err;
-> 
+diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
+index 28f5e649733d..e9318d7a4810 100644
+--- a/sound/soc/sprd/sprd-mcdt.c
++++ b/sound/soc/sprd/sprd-mcdt.c
+@@ -951,8 +951,8 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mcdt->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!mcdt->base)
+-		return -ENOMEM;
++	if (IS_ERR(mcdt->base))
++		return PTR_ERR(mcdt->base);
+ 
+ 	mcdt->dev = &pdev->dev;
+ 	spin_lock_init(&mcdt->lock);
