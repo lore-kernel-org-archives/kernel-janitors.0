@@ -1,38 +1,40 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 05 Apr 2019 08:27:59 +0000
-Subject: Re: [PATCH 3/3] ethernet: ti: fix possible object reference leak
-Message-Id: <1a90f282-4664-f9e6-45d1-7b3b6a0a3104@web.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 29 Apr 2019 13:58:12 +0000
+Subject: [PATCH] mac80211: remove set but not used variable 'old'
+Message-Id: <20190429140754.76537-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1553223849-7143-3-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1553223849-7143-3-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wen Yang <wen.yang99@zte.com.cn>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>, Wingman Kwok <w-kwok2@ti.com>, Yi Wang <wang.yi59@zte.com.cn>
+To: Johannes Berg <johannes@sipsolutions.net>, alexander@wetzel-home.de
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-> @@ -3657,12 +3657,16 @@  static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
->
->  	ret = netcp_txpipe_init(&gbe_dev->tx_pipe, netcp_device,
->  				gbe_dev->dma_chan_name, gbe_dev->tx_queue_id);
-> -	if (ret)
-> +	if (ret) {
-> +		of_node_put(interfaces);
->  		return ret;
-> +	}
->
->  	ret = netcp_txpipe_open(&gbe_dev->tx_pipe);
-> -	if (ret)
-> +	if (ret) {
-> +		of_node_put(interfaces);
->  		return ret;
-> +	}
->
->  	/* Create network interfaces */
->  	INIT_LIST_HEAD(&gbe_dev->gbe_intf_head);
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Would you like to move such duplicate statements to an additional jump target
-for the desired exception handling?
+net/mac80211/key.c: In function 'ieee80211_set_tx_key':
+net/mac80211/key.c:271:24: warning:
+ variable 'old' set but not used [-Wunused-but-set-variable]
 
-Regards,
-Markus
+It is not used since introduction in
+commit 96fc6efb9ad9 ("mac80211: IEEE 802.11 Extended Key ID support")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/mac80211/key.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/net/mac80211/key.c b/net/mac80211/key.c
+index 20bf9db7a388..89f09a09efdb 100644
+--- a/net/mac80211/key.c
++++ b/net/mac80211/key.c
+@@ -268,11 +268,9 @@ int ieee80211_set_tx_key(struct ieee80211_key *key)
+ {
+ 	struct sta_info *sta = key->sta;
+ 	struct ieee80211_local *local = key->local;
+-	struct ieee80211_key *old;
+ 
+ 	assert_key_lock(local);
+ 
+-	old = key_mtx_dereference(local, sta->ptk[sta->ptk_idx]);
+ 	sta->ptk_idx = key->conf.keyidx;
+ 	ieee80211_check_fast_xmit(sta);
