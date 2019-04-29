@@ -1,63 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 Apr 2019 08:56:51 +0000
-Subject: [PATCH] ath6kl: add some bounds checking
-Message-Id: <20190404085651.GC20193@kadam>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 29 Apr 2019 14:49:46 +0000
+Subject: Re: [PATCH] ath6kl: add some bounds checking
+Message-Id: <20190429144946.9D5E660134@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190404085651.GC20193@kadam>
+In-Reply-To: <20190404085651.GC20193@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "ev->traffic_class" and "reply->ac" variables come from the network
-and they're used as an offset into the wmi->stream_exist_for_ac[] array.
-Those variables are u8 so they can be 0-255 but the stream_exist_for_ac[]
-array only has WMM_NUM_AC (4) elements.  We need to add a couple bounds
-checks to prevent array overflows.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-I also modified one existing check from "if (traffic_class > 3) {" to
-"if (traffic_class >= WMM_NUM_AC) {" just to make them all consistent.
+> The "ev->traffic_class" and "reply->ac" variables come from the network
+> and they're used as an offset into the wmi->stream_exist_for_ac[] array.
+> Those variables are u8 so they can be 0-255 but the stream_exist_for_ac[]
+> array only has WMM_NUM_AC (4) elements.  We need to add a couple bounds
+> checks to prevent array overflows.
+> 
+> I also modified one existing check from "if (traffic_class > 3) {" to
+> "if (traffic_class >= WMM_NUM_AC) {" just to make them all consistent.
+> 
+> Fixes: bdcd81707973 (" Add ath6kl cleaned up driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Fixes: bdcd81707973 (" Add ath6kl cleaned up driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/ath/ath6kl/wmi.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/net/wireless/ath/ath6kl/wmi.c b/drivers/net/wireless/ath/ath6kl/wmi.c
-index 68854c45d0a4..9ab6aa9ded5c 100644
---- a/drivers/net/wireless/ath/ath6kl/wmi.c
-+++ b/drivers/net/wireless/ath/ath6kl/wmi.c
-@@ -1176,6 +1176,10 @@ static int ath6kl_wmi_pstream_timeout_event_rx(struct wmi *wmi, u8 *datap,
- 		return -EINVAL;
- 
- 	ev = (struct wmi_pstream_timeout_event *) datap;
-+	if (ev->traffic_class >= WMM_NUM_AC) {
-+		ath6kl_err("invalid traffic class: %d\n", ev->traffic_class);
-+		return -EINVAL;
-+	}
- 
- 	/*
- 	 * When the pstream (fat pipe = AC) timesout, it means there were
-@@ -1517,6 +1521,10 @@ static int ath6kl_wmi_cac_event_rx(struct wmi *wmi, u8 *datap, int len,
- 		return -EINVAL;
- 
- 	reply = (struct wmi_cac_event *) datap;
-+	if (reply->ac >= WMM_NUM_AC) {
-+		ath6kl_err("invalid AC: %d\n", reply->ac);
-+		return -EINVAL;
-+	}
- 
- 	if ((reply->cac_indication = CAC_INDICATION_ADMISSION_RESP) &&
- 	    (reply->status_code != IEEE80211_TSPEC_STATUS_ADMISS_ACCEPTED)) {
-@@ -2633,7 +2641,7 @@ int ath6kl_wmi_delete_pstream_cmd(struct wmi *wmi, u8 if_idx, u8 traffic_class,
- 	u16 active_tsids = 0;
- 	int ret;
- 
--	if (traffic_class > 3) {
-+	if (traffic_class >= WMM_NUM_AC) {
- 		ath6kl_err("invalid traffic class: %d\n", traffic_class);
- 		return -EINVAL;
- 	}
+5d6751eaff67 ath6kl: add some bounds checking
+
 -- 
-2.17.1
+https://patchwork.kernel.org/patch/10885299/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
