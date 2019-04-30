@@ -1,25 +1,47 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 30 Apr 2019 09:35:26 +0000
-Subject: Re: [PATCH -next] serial: milbeaut_usio: Fix error handling in probe and remove
-Message-Id: <20190430093526.GB2269@kadam>
+Date: Tue, 30 Apr 2019 10:44:19 +0000
+Subject: [PATCH] net: dsa: bcm_sf2: fix buffer overflow doing set_rxnfc
+Message-Id: <20190430104419.GA9096@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190425151044.105045-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190425151044.105045-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 03:10:44PM +0000, Wei Yongjun wrote:
-> devm_clk_get() is used so there is no reason to explicitly call
-> clk_put() in probe or remove functions.
+The "fs->location" is a u32 that comes from the user in ethtool_set_rxnfc().
+We can't pass unclamped values to test_bit() or it results in an out of
+bounds access beyond the end of the bitmap.
 
-Your patch is correct, but next time the patch description should be
-more clear that this is a double free.  To me the patch description
-sounded like it was just tidying up or something instead of fixing a
-crash.  It might feel rude to say that the original code will crash, but
-we are all human so introducing crashing bugs is not something to be
-embarrassed about.
+Fixes: 7318166cacad ("net: dsa: bcm_sf2: Add support for ethtool::rxnfc")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/dsa/bcm_sf2_cfp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/dsa/bcm_sf2_cfp.c b/drivers/net/dsa/bcm_sf2_cfp.c
+index e6234d209787..4212bc4a5f31 100644
+--- a/drivers/net/dsa/bcm_sf2_cfp.c
++++ b/drivers/net/dsa/bcm_sf2_cfp.c
+@@ -886,6 +886,9 @@ static int bcm_sf2_cfp_rule_set(struct dsa_switch *ds, int port,
+ 	     fs->m_ext.data[1]))
+ 		return -EINVAL;
+ 
++	if (fs->location != RX_CLS_LOC_ANY && fs->location >= CFP_NUM_RULES)
++		return -EINVAL;
++
+ 	if (fs->location != RX_CLS_LOC_ANY &&
+ 	    test_bit(fs->location, priv->cfp.used))
+ 		return -EBUSY;
+@@ -974,6 +977,9 @@ static int bcm_sf2_cfp_rule_del(struct bcm_sf2_priv *priv, int port, u32 loc)
+ 	struct cfp_rule *rule;
+ 	int ret;
+ 
++	if (loc >= CFP_NUM_RULES)
++		return -EINVAL;
++
+ 	/* Refuse deleting unused rules, and those that are not unique since
+ 	 * that could leave IPv6 rules with one of the chained rule in the
+ 	 * table.
+-- 
+2.18.0
