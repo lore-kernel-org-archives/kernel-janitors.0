@@ -1,20 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Apr 2019 13:17:21 +0000
-Subject: Re: [3/7] cpufreq: kirkwood: fix possible object reference leak
-Message-Id: <89d2a2bd-ea72-6280-2fd2-c1475b400c67@web.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 30 Apr 2019 01:55:24 +0000
+Subject: [PATCH v3 net-next] net: ethernet: ti: cpsw: Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe()
+Message-Id: <20190430015524.50997-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1554082674-2049-4-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1554082674-2049-4-git-send-email-wen.yang99@zte.com.cn>
+References: <20190429143157.79035-1-yuehaibing@huawei.com>
+In-Reply-To: <20190429143157.79035-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wen Yang <wen.yang99@zte.com.cn>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Yi Wang <wang.yi59@zte.com.cn>
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, julia.lawall@lip6.fr
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> and also do some cleanup:
+Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe,
+The proper pointer to use is clk instead of mode.
 
-Would it be safer to integrate this source code adjustment
-by another update step?
+This issue was detected with the help of Coccinelle.
 
-Regards,
-Markus
+Fixes: 83a8471ba255 ("net: ethernet: ti: cpsw: refactor probe to group common hw initialization")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+v3: Fix commit log
+v2: add Fixes tag
+---
+ drivers/net/ethernet/ti/cpsw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index c3cba46fac9d..e37680654a13 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -2381,7 +2381,7 @@ static int cpsw_probe(struct platform_device *pdev)
+ 
+ 	clk = devm_clk_get(dev, "fck");
+ 	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(mode);
++		ret = PTR_ERR(clk);
+ 		dev_err(dev, "fck is not found %d\n", ret);
+ 		return ret;
+ 	}
