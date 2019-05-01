@@ -1,62 +1,37 @@
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Date: Thu, 09 May 2019 14:15:54 +0000
-Subject: Re: [PATCH -next] usb: gadget: udc: lpc32xx: fix return value check in lpc32xx_udc_probe()
-Message-Id: <CA+rxa6oh+Qxo5aLgW11vrAvuu7t7JAFONC6b0+kxRx9rwCmjhg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 May 2019 12:57:17 +0000
+Subject: [PATCH][next] dm: remove redundant unsigned comparison to less than zero
+Message-Id: <20190501125717.5695-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190504070407.56915-1-weiyongjun1@huawei.com>
- <5a3a89cf-eee3-136c-1c5a-58024e946a24@mleia.com>
-In-Reply-To: <5a3a89cf-eee3-136c-1c5a-58024e946a24@mleia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Variable block is an unsigned long long hence the less than zero
+comparison is always false, hence it is redundant and can be removed.
 
-On Sat, May 4, 2019 at 8:17 AM Vladimir Zapolskiy <vz@mleia.com> wrote:
->
-> Hi Wei Yongjun,
->
-> On 05/04/2019 10:04 AM, Wei Yongjun wrote:
-> > In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> > and never returns NULL. The NULL test in the return value check should
-> > be replaced with IS_ERR().
-> >
-> > This issue was detected by using the Coccinelle software.
-> >
-> > Fixes: 408b56ca5c8e ("usb: gadget: udc: lpc32xx: simplify probe")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/usb/gadget/udc/lpc32xx_udc.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-> > index d8f1c60793ed..00fb79c6d025 100644
-> > --- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-> > +++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-> > @@ -3070,9 +3070,9 @@ static int lpc32xx_udc_probe(struct platform_device *pdev)
-> >       }
-> >
-> >       udc->udp_baseaddr = devm_ioremap_resource(dev, res);
-> > -     if (!udc->udp_baseaddr) {
-> > +     if (IS_ERR(udc->udp_baseaddr)) {
-> >               dev_err(udc->dev, "IO map failure\n");
-> > -             return -ENOMEM;
-> > +             return PTR_ERR(udc->udp_baseaddr);
-> >       }
-> >
-> >       /* Get USB device clock */
->
-> thank you for the change, it is a correct fix.
->
-> I do suppose that dev_err() in the context can be evenly removed, but
-> likely it should be another change.
->
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
->
-> --
-> Best wishes,
-> Vladimir
+Addresses-Coverity: ("Unsigned compared against 0")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/dm-dust.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm-dust.c b/drivers/md/dm-dust.c
+index 178587bdc626..e739092bfc65 100644
+--- a/drivers/md/dm-dust.c
++++ b/drivers/md/dm-dust.c
+@@ -411,7 +411,7 @@ static int dust_message(struct dm_target *ti, unsigned int argc, char **argv,
+ 
+ 		block = tmp;
+ 		sector_div(size, dd->sect_per_block);
+-		if (block > size || block < 0) {
++		if (block > size) {
+ 			DMERR("selected block value out of range");
+ 			return result;
+ 		}
+-- 
+2.20.1
