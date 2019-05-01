@@ -1,38 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 May 2019 18:59:24 +0000
-Subject: [PATCH] media: cx23885: remove redundant assignment to err
-Message-Id: <20190530185924.9206-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 01 May 2019 15:25:53 +0000
+Subject: Re: [PATCH] brcm80211: potential NULL dereference in brcmf_cfg80211_vndr_cmds_dcmd_handler()
+Message-Id: <20190501152553.5D75960735@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190424095218.GB16450@mwanda>
+In-Reply-To: <20190424095218.GB16450@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-The variable err is assigned with a value that is never read and
-it is re-assigned a new value later on.  The assignment is redundant
-and can be removed.
+> If "ret_len" is negative then it could lead to a NULL dereference.
+> 
+> The "ret_len" value comes from nl80211_vendor_cmd(), if it's negative
+> then we don't allocate the "dcmd_buf" buffer.  Then we pass "ret_len" to
+> brcmf_fil_cmd_data_set() where it is cast to a very high u32 value.
+> Most of the functions in that call tree check whether the buffer we pass
+> is NULL but there are at least a couple places which don't such as
+> brcmf_dbg_hex_dump() and brcmf_msgbuf_query_dcmd().  We memcpy() to and
+> from the buffer so it would result in a NULL dereference.
+> 
+> The fix is to change the types so that "ret_len" can't be negative.  (If
+> we memcpy() zero bytes to NULL, that's a no-op and doesn't cause an
+> issue).
+> 
+> Fixes: 1bacb0487d0e ("brcmfmac: replace cfg80211 testmode with vendor command")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/cx23885/cx23885-dvb.c | 2 --
- 1 file changed, 2 deletions(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/media/pci/cx23885/cx23885-dvb.c b/drivers/media/pci/cx23885/cx23885-dvb.c
-index e2e63f05645e..13595fcb6a40 100644
---- a/drivers/media/pci/cx23885/cx23885-dvb.c
-+++ b/drivers/media/pci/cx23885/cx23885-dvb.c
-@@ -2657,8 +2657,6 @@ int cx23885_dvb_register(struct cx23885_tsport *port)
- 			dev->pci_bus,
- 			dev->pci_slot);
- 
--		err = -ENODEV;
--
- 		/* dvb stuff */
- 		/* We have to init the queue for each frontend on a port. */
- 		pr_info("%s: cx23885 based dvb card\n", dev->name);
+e025da3d7aa4 brcm80211: potential NULL dereference in brcmf_cfg80211_vndr_cmds_dcmd_handler()
+
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/10914427/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
