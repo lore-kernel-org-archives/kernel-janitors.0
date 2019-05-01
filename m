@@ -1,7 +1,7 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Wed, 01 May 2019 11:56:29 +0000
-Subject: Re: [PATCH][next] ASoC: SOF: Intel: fix spelling mistake "incompatble" -> "incompatible"
-Message-Id: <21cd03b5-c5be-dc93-cabb-980def737f87@codeaurora.org>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date: Wed, 01 May 2019 12:16:17 +0000
+Subject: Re: [alsa-devel] [PATCH][next] ASoC: SOF: Intel: fix spelling mistake "incompatble" -> "incompatible
+Message-Id: <7aff79bd-e0d5-a10b-7443-6f27ea1f47c7@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190501102308.30390-1-colin.king@canonical.com>
 In-Reply-To: <20190501102308.30390-1-colin.king@canonical.com>
@@ -12,20 +12,22 @@ To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, 
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
-On 5/1/2019 3:53 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a hda_dsp_rom_msg message, fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 
-Cheers,
--Mukesh
+On 5/1/19 5:23 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a hda_dsp_rom_msg message, fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+
+Thanks for the fix!
+
 > ---
 >   sound/soc/sof/intel/hda.c | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
->
+> 
 > diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
 > index b8fc19790f3b..84baf275b467 100644
 > --- a/sound/soc/sof/intel/hda.c
@@ -39,3 +41,4 @@ Cheers,
 >   	{HDA_DSP_ROM_UNHANDLED_INTERRUPT, "error: unhandled interrupt"},
 >   	{HDA_DSP_ROM_MEMORY_HOLE_ECC, "error: ECC memory hole"},
 >   	{HDA_DSP_ROM_KERNEL_EXCEPTION, "error: kernel exception"},
+> 
