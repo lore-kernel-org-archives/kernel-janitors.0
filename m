@@ -1,36 +1,30 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Wed, 15 May 2019 12:12:48 +0000
-Subject: Spelling fixes for new people to get involved
-Message-Id: <20190515121247.GF24212@zn.tnic>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 01 May 2019 18:29:48 +0000
+Subject: Re: [PATCH v3 net-next] net: ethernet: ti: cpsw: Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe()
+Message-Id: <20190501.142948.1053446771181544161.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190429143157.79035-1-yuehaibing@huawei.com>
+        <20190430015524.50997-1-yuehaibing@huawei.com>
+In-Reply-To: <20190430015524.50997-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: yuehaibing@huawei.com
+Cc: grygorii.strashko@ti.com, ivan.khoronzhuk@linaro.org, andrew@lunn.ch, ilias.apalodimas@linaro.org, julia.lawall@lip6.fr, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 30 Apr 2019 01:55:24 +0000
 
-if you grep the kernel tree for the word "compliment":
+> Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe,
+> The proper pointer to use is clk instead of mode.
+> 
+> This issue was detected with the help of Coccinelle.
+> 
+> Fixes: 83a8471ba255 ("net: ethernet: ti: cpsw: refactor probe to group common hw initialization")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+> v3: Fix commit log
+> v2: add Fixes tag
 
-$ git grep compliment
-arch/nios2/include/asm/asm-macros.h:126: * Tests the bit in reg2 and then compliments the bit in reg2.
-arch/nios2/include/asm/asm-macros.h:189: * Tests the bit in reg2 and then compliments the bit in reg2.
-arch/nios2/include/asm/asm-macros.h:202: * Tests the bit in reg2 and then compliments the bit in reg2.
-arch/powerpc/platforms/pseries/mobility.c:82:    * A negative value is also the two's compliment of the actual value.
-drivers/block/rsxx/config.c:48:  * Return the compliment of the CRC to ensure compatibility
-drivers/block/skd_main.c:2039:  /* Note that the compliment of mask is written. A 1-bit means
-...
-
-you'll see that in almost all cases, the word the author meant to use
-was "complement", with an 'e'.
-
-I think the respective maintainer wouldn't mind a patch fixing that in their
-driver/subsystem. :-)
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Applied.
