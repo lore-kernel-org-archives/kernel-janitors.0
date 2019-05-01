@@ -1,22 +1,35 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Mon, 13 May 2019 11:17:14 +0000
-Subject: Re: [PATCH] Staging: vc04_services: Fix a couple error codes
-Message-Id: <bdb03bff-f5e5-ef29-b009-ff9072347af1@i2se.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 May 2019 10:23:08 +0000
+Subject: [PATCH][next] ASoC: SOF: Intel: fix spelling mistake "incompatble" -> "incompatible"
+Message-Id: <20190501102308.30390-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190513110718.GA15764@mwanda>
-In-Reply-To: <20190513110718.GA15764@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Keyon Jie <yang.jie@linux.intel.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 13.05.19 13:07, Dan Carpenter wrote:
-> These are accidentally returning positive EINVAL instead of negative
-> -EINVAL.  Some of the callers treat positive values as success.
->
-> Fixes: 7b3ad5abf027 ("staging: Import the BCM2835 MMAL-based V4L2 camera driver.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Good catch
+There is a spelling mistake in a hda_dsp_rom_msg message, fix it.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/sof/intel/hda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index b8fc19790f3b..84baf275b467 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -54,7 +54,7 @@ static const struct hda_dsp_msg_code hda_dsp_rom_msg[] = {
+ 	{HDA_DSP_ROM_L2_CACHE_ERROR, "error: L2 cache error"},
+ 	{HDA_DSP_ROM_LOAD_OFFSET_TO_SMALL, "error: load offset too small"},
+ 	{HDA_DSP_ROM_API_PTR_INVALID, "error: API ptr invalid"},
+-	{HDA_DSP_ROM_BASEFW_INCOMPAT, "error: base fw incompatble"},
++	{HDA_DSP_ROM_BASEFW_INCOMPAT, "error: base fw incompatible"},
+ 	{HDA_DSP_ROM_UNHANDLED_INTERRUPT, "error: unhandled interrupt"},
+ 	{HDA_DSP_ROM_MEMORY_HOLE_ECC, "error: ECC memory hole"},
+ 	{HDA_DSP_ROM_KERNEL_EXCEPTION, "error: kernel exception"},
+-- 
+2.20.1
