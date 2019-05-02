@@ -1,40 +1,74 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 31 May 2019 13:39:26 +0000
-Subject: [PATCH] staging: vc04_services: remove redundant assignment to pointer service
-Message-Id: <20190531133926.17644-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 02 May 2019 02:18:02 +0000
+Subject: Applied "ASoC: sprd: Fix return value check in sprd_mcdt_probe()" to the asoc tree
+Message-Id: <20190502021803.0F5F9441D41@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190429122512.59242-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190429122512.59242-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: alsa-devel@alsa-project.org, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Takashi Iwai <tiwai@suse.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Pointer service is being set to NULL however this value is never
-read and so the assignment is redundant and can be removed.
+   ASoC: sprd: Fix return value check in sprd_mcdt_probe()
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7c88b92816dfe5eab224b96577b50ac00b4be68a Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 29 Apr 2019 12:25:12 +0000
+Subject: [PATCH] ASoC: sprd: Fix return value check in sprd_mcdt_probe()
+
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
+
+Fixes: d7bff893e04f ("ASoC: sprd: Add Spreadtrum multi-channel data transfer support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../staging/vc04_services/interface/vchiq_arm/vchiq_shim.c    | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/sprd/sprd-mcdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c
-index 13910d205fce..17a4f2c8d8b1 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c
-@@ -639,10 +639,8 @@ int32_t vchi_service_close(const VCHI_SERVICE_HANDLE_T handle)
+diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
+index 28f5e649733d..e9318d7a4810 100644
+--- a/sound/soc/sprd/sprd-mcdt.c
++++ b/sound/soc/sprd/sprd-mcdt.c
+@@ -951,8 +951,8 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
  
- 	if (service) {
- 		VCHIQ_STATUS_T status = vchiq_close_service(service->handle);
--		if (status = VCHIQ_SUCCESS) {
-+		if (status = VCHIQ_SUCCESS)
- 			service_free(service);
--			service = NULL;
--		}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mcdt->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!mcdt->base)
+-		return -ENOMEM;
++	if (IS_ERR(mcdt->base))
++		return PTR_ERR(mcdt->base);
  
- 		ret = vchiq_status_to_vchi(status);
- 	}
+ 	mcdt->dev = &pdev->dev;
+ 	spin_lock_init(&mcdt->lock);
 -- 
 2.20.1
