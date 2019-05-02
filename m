@@ -1,51 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 May 2019 11:38:58 +0000
-Subject: [bug report] rapidio: add mport char device driver
-Message-Id: <20190528113858.GA6670@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 May 2019 11:33:40 +0000
+Subject: [PATCH][next] ASoC: SOF: remove redundant null checks of dai
+Message-Id: <20190502113340.8688-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Alexandre Bounine,
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch e8de370188d0: "rapidio: add mport char device driver" from
-Mar 22, 2016, leads to the following static checker warning:
+Currently there are two null checks of pointer dai in function
+sof_connect_dai_widget and yet there is no null check of dai
+at the end of the function when checking !dai->name.  The latter
+would be a null pointer deference if dai is null (as picked up
+by static analysis), however the function is only ever called
+when dai is successfully allocated, so the null checks are
+redundant. Clean up the code by removing the null checks.
 
-	drivers/rapidio/devices/rio_mport_cdev.c:1694 rio_mport_add_riodev()
-	warn: '__dynamic_pr_debug' unterminated user string 'dev_info.name'
+Addresses-Coverity: ("Dereference after null check")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/sof/topology.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-drivers/rapidio/devices/rio_mport_cdev.c
-  1676  static int rio_mport_add_riodev(struct mport_cdev_priv *priv,
-  1677                                     void __user *arg)
-  1678  {
-  1679          struct mport_dev *md = priv->md;
-  1680          struct rio_rdev_info dev_info;
-  1681          struct rio_dev *rdev;
-  1682          struct rio_switch *rswitch = NULL;
-  1683          struct rio_mport *mport;
-  1684          size_t size;
-  1685          u32 rval;
-  1686          u32 swpinfo = 0;
-  1687          u16 destid;
-  1688          u8 hopcount;
-  1689          int err;
-  1690  
-  1691          if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
-                                    ^^^^^^^^
-  1692                  return -EFAULT;
-  1693  
-  1694          rmcd_debug(RDEV, "name:%s ct:0x%x did:0x%x hc:0x%x", dev_info.name,
-                                                                     ^^^^^^^^^^^^^
-The user might have forgotten to NUL terminate this string.
-
-  1695                     dev_info.comptag, dev_info.destid, dev_info.hopcount);
-  1696  
-  1697          if (bus_find_device_by_name(&rio_bus_type, NULL, dev_info.name)) {
-  1698                  rmcd_debug(RDEV, "device %s already exists", dev_info.name);
-  1699                  return -EEXIST;
-  1700          }
-
-regards,
-dan carpenter
+diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
+index 2b9de1b97447..1f71857298a9 100644
+--- a/sound/soc/sof/topology.c
++++ b/sound/soc/sof/topology.c
+@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
+ 		switch (w->id) {
+ 		case snd_soc_dapm_dai_out:
+ 			rtd->cpu_dai->capture_widget = w;
+-			if (dai)
+-				dai->name = rtd->dai_link->name;
++			dai->name = rtd->dai_link->name;
+ 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
+ 				w->name, rtd->dai_link->name);
+ 			break;
+ 		case snd_soc_dapm_dai_in:
+ 			rtd->cpu_dai->playback_widget = w;
+-			if (dai)
+-				dai->name = rtd->dai_link->name;
++			dai->name = rtd->dai_link->name;
+ 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
+ 				w->name, rtd->dai_link->name);
+ 			break;
+-- 
+2.20.1
