@@ -1,59 +1,80 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 28 May 2019 07:54:16 +0000
-Subject: [PATCH -next v3 1/2] staging: kpc2000: report error status to spi core
-Message-Id: <20190528080214.18382-2-maowenan@huawei.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 02 May 2019 02:18:02 +0000
+Subject: Applied "ASoC: sprd: Fix to use list_for_each_entry_safe() when delete items" to the asoc tree
+Message-Id: <20190502021802.767DF441D3F@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190525081321.121294-1-maowenan@huawei.com>
- <20190528080214.18382-1-maowenan@huawei.com>
-In-Reply-To: <20190528080214.18382-1-maowenan@huawei.com>
+References: <20190429123713.64280-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190429123713.64280-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jeremy@azazel.net
-Cc: thesven73@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, matt.sickler@daktronics.com, Mao Wenan <maowenan@huawei.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: alsa-devel@alsa-project.org, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Takashi Iwai <tiwai@suse.com>
 
-There is an error condition that's not reported to
-the spi core in kp_spi_transfer_one_message().
-It should restore status value to m->status, and
-return it in error path.
+The patch
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+   ASoC: sprd: Fix to use list_for_each_entry_safe() when delete items
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 81a812c98b6eda7e3101305d57354433e3edc541 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 29 Apr 2019 12:37:13 +0000
+Subject: [PATCH] ASoC: sprd: Fix to use list_for_each_entry_safe() when delete
+ items
+
+Since we will remove items off the list using list_del() we need
+to use a safe version of the list_for_each_entry() macro aptly named
+list_for_each_entry_safe().
+
+Fixes: d7bff893e04f ("ASoC: sprd: Add Spreadtrum multi-channel data transfer support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/staging/kpc2000/kpc2000_spi.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/soc/sprd/sprd-mcdt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
-index 075ae4fafa7d..628a447642ad 100644
---- a/drivers/staging/kpc2000/kpc2000_spi.c
-+++ b/drivers/staging/kpc2000/kpc2000_spi.c
-@@ -374,7 +374,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
-     list_for_each_entry(transfer, &m->transfers, transfer_list) {
-         if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
-             status = -EINVAL;
--            break;
-+            goto error;
-         }
-         
-         /* transfer */
-@@ -412,7 +412,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
-             
-             if (count != transfer->len) {
-                 status = -EIO;
--                break;
-+                goto error;
-             }
-         }
-         
-@@ -430,6 +430,10 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
-     /* done work */
-     spi_finalize_current_message(master);
-     return 0;
-+
-+ error:
-+    m->status = status;
-+    return status;
- }
+diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
+index e9318d7a4810..7448015a4935 100644
+--- a/sound/soc/sprd/sprd-mcdt.c
++++ b/sound/soc/sprd/sprd-mcdt.c
+@@ -978,12 +978,12 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
  
- static void
+ static int sprd_mcdt_remove(struct platform_device *pdev)
+ {
+-	struct sprd_mcdt_chan *temp;
++	struct sprd_mcdt_chan *chan, *temp;
+ 
+ 	mutex_lock(&sprd_mcdt_list_mutex);
+ 
+-	list_for_each_entry(temp, &sprd_mcdt_chan_list, list)
+-		list_del(&temp->list);
++	list_for_each_entry_safe(chan, temp, &sprd_mcdt_chan_list, list)
++		list_del(&chan->list);
+ 
+ 	mutex_unlock(&sprd_mcdt_list_mutex);
+ 
 -- 
 2.20.1
