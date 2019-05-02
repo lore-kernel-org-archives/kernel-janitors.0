@@ -1,45 +1,71 @@
-From: David Howells <dhowells@redhat.com>
-Date: Sun, 12 May 2019 07:45:41 +0000
-Subject: [PATCH 1/2] afs: Fix incorrect error handling in afs_xattr_get_acl()
-Message-Id: <155764714099.24080.1233326575922058381.stgit@warthog.procyon.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 02 May 2019 02:18:01 +0000
+Subject: Applied "ASoC: SOF: Intel: fix spelling mistake "incompatble" -> "incompatible"" to the asoc tree
+Message-Id: <20190502021801.515C4441D3D@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190501102308.30390-1-colin.king@canonical.com>
+In-Reply-To: <20190501102308.30390-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Joe Perches <joe@perches.com>joe@perches.com, jaltman@auristor.com, linux-afs@lists.infradead.org, dhowells@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Keyon Jie <yang.jie@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>
 
-Fix incorrect error handling in afs_xattr_get_acl() where there appears to
-be a redundant assignment before return, but in fact the return should be a
-goto to the error handling at the end of the function.
+The patch
 
-Fixes: 260f082bae6d ("afs: Get an AFS3 ACL as an xattr")
-Addresses-Coverity: ("Unused Value")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Joe Perches <joe@perches.com>
+   ASoC: SOF: Intel: fix spelling mistake "incompatble" -> "incompatible"
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 07f80454369e5a8141dbbf4ae0a535230f223f2b Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 1 May 2019 11:23:08 +0100
+Subject: [PATCH] ASoC: SOF: Intel: fix spelling mistake "incompatble" ->
+ "incompatible"
+
+There is a spelling mistake in a hda_dsp_rom_msg message, fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ sound/soc/sof/intel/hda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- fs/afs/xattr.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
-index c81f85003fc7..b6c44e75b361 100644
---- a/fs/afs/xattr.c
-+++ b/fs/afs/xattr.c
-@@ -71,11 +71,10 @@ static int afs_xattr_get_acl(const struct xattr_handler *handler,
- 	if (ret = 0) {
- 		ret = acl->size;
- 		if (size > 0) {
--			ret = -ERANGE;
--			if (acl->size > size)
--				return -ERANGE;
--			memcpy(buffer, acl->data, acl->size);
--			ret = acl->size;
-+			if (acl->size <= size)
-+				memcpy(buffer, acl->data, acl->size);
-+			else
-+				ret = -ERANGE;
- 		}
- 		kfree(acl);
- 	}
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index b8fc19790f3b..84baf275b467 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -54,7 +54,7 @@ static const struct hda_dsp_msg_code hda_dsp_rom_msg[] = {
+ 	{HDA_DSP_ROM_L2_CACHE_ERROR, "error: L2 cache error"},
+ 	{HDA_DSP_ROM_LOAD_OFFSET_TO_SMALL, "error: load offset too small"},
+ 	{HDA_DSP_ROM_API_PTR_INVALID, "error: API ptr invalid"},
+-	{HDA_DSP_ROM_BASEFW_INCOMPAT, "error: base fw incompatble"},
++	{HDA_DSP_ROM_BASEFW_INCOMPAT, "error: base fw incompatible"},
+ 	{HDA_DSP_ROM_UNHANDLED_INTERRUPT, "error: unhandled interrupt"},
+ 	{HDA_DSP_ROM_MEMORY_HOLE_ECC, "error: ECC memory hole"},
+ 	{HDA_DSP_ROM_KERNEL_EXCEPTION, "error: kernel exception"},
+-- 
+2.20.1
