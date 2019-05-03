@@ -1,55 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Apr 2019 07:01:08 +0000
-Subject: [bug report] cxgb4: Add support for ndo_get_vf_config
-Message-Id: <20190402070108.GA15171@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 May 2019 12:10:17 +0000
+Subject: [PATCH] net: rds: fix spelling mistake "syctl" -> "sysctl"
+Message-Id: <20190503121017.5227-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Hariprasad Shenai,
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch 661dbeb9d6e6: "cxgb4: Add support for ndo_get_vf_config"
-from Sep 2, 2016, leads to the following static checker warning:
+There is a spelling mistake in a pr_warn warning. Fix it.
 
-	drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2723 cxgb4_mgmt_set_vf_mac()
-	warn: uncapped user index 'adap->vfinfo[vf]'
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rds/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-    2705 static int cxgb4_mgmt_set_vf_mac(struct net_device *dev, int vf, u8 *mac)
-                                                                  ^^^^^^
-"vf" comes from skb->data so it's marked as untrusted in do_setvfinfo().
-
-    2706 {
-    2707 	struct port_info *pi = netdev_priv(dev);
-    2708 	struct adapter *adap = pi->adapter;
-    2709 	int ret;
-    2710 
-    2711 	/* verify MAC addr is valid */
-    2712 	if (!is_valid_ether_addr(mac)) {
-    2713 		dev_err(pi->adapter->pdev_dev,
-    2714 			"Invalid Ethernet address %pM for VF %d\n",
-    2715 			mac, vf);
-    2716 		return -EINVAL;
-    2717 	}
-    2718 
-    2719 	dev_info(pi->adapter->pdev_dev,
-    2720 		 "Setting MAC %pM on VF %d\n", mac, vf);
-    2721 	ret = t4_set_vf_mac_acl(adap, vf + 1, 1, mac);
-                                              ^^^^^^
-It looks to me like an invalid "vf" can still return success...
-
-    2722 	if (!ret)
---> 2723 		ether_addr_copy(adap->vfinfo[vf].vf_mac_addr, mac);
-                                        ^^^^^^^^^^^^^^^^
-->vfinfo is allocated in cxgb4_iov_configure().
-
-    2724 	return ret;
-    2725 }
-
-There are a bunch of these bugs in different drivers.  Some drivers do
-check "vf" and some don't.  I'm not posisitive on the rules here.
-
-regards,
-dan carpenter
+diff --git a/net/rds/tcp.c b/net/rds/tcp.c
+index faf726e00e27..66121bc6f34e 100644
+--- a/net/rds/tcp.c
++++ b/net/rds/tcp.c
+@@ -551,7 +551,7 @@ static __net_init int rds_tcp_init_net(struct net *net)
+ 		tbl = kmemdup(rds_tcp_sysctl_table,
+ 			      sizeof(rds_tcp_sysctl_table), GFP_KERNEL);
+ 		if (!tbl) {
+-			pr_warn("could not set allocate syctl table\n");
++			pr_warn("could not set allocate sysctl table\n");
+ 			return -ENOMEM;
+ 		}
+ 		rtn->ctl_table = tbl;
+-- 
+2.20.1
