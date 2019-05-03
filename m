@@ -1,41 +1,46 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Fri, 10 May 2019 10:25:27 +0000
-Subject: Re: [PATCH][V2] reset: remove redundant null check on pointer dev
-Message-Id: <1557483927.7859.3.camel@pengutronix.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2019 13:09:13 +0000
+Subject: [PATCH] mt76: mt7615: Use after free in mt7615_mcu_set_bcn()
+Message-Id: <20190503130909.GI29695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190510095832.28233-1-colin.king@canonical.com>
-         <CAMpxmJWyVZ2hHE=1tu5NgSzEHZKD2pBo8KUXg1CLUaB-WX4KHQ@mail.gmail.com>
-In-Reply-To: <CAMpxmJWyVZ2hHE=1tu5NgSzEHZKD2pBo8KUXg1CLUaB-WX4KHQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>, Ryder Lee <ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Lorenzo Bianconi <lorenzo.bianconi83-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roy Luo <royluo-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Fri, 2019-05-10 at 12:14 +0200, Bartosz Golaszewski wrote:
-> pt., 10 maj 2019 o 11:58 Colin King <colin.king@canonical.com> napisa=C5=
-=82(a):
-> >=20
-> > From: Colin Ian King <colin.king@canonical.com>
-> >=20
-> > Pointer dev is being dereferenced when passed to the inlined
-> > functon dev_name, however, dev is later being null checked
-> > so at first this seems like a potential null pointer dereference.
-> >=20
-> > In fact, _reset_control_get_from_lookup is only ever called from
-> > __reset_control_get, right after checking dev->of_node hence
-> > dev can never be null.  Clean this up by removing the redundant
-> > null check.
-> >=20
-> > Thanks to Philipp Zabel for spotting that dev can never be null.
-> >=20
-> > Addresses-Coverity: ("Dereference before null check")
-> > Fixes: 6691dffab0ab ("reset: add support for non-DT systems")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-[...]
-> Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+We dereference "skb" when we assign:
 
-Thank you both, applied to reset/fixes.
+	req.pkt_len = cpu_to_le16(MT_TXD_SIZE + skb->len);
+                                                ^^^^^^^^
+So this patch just moves the dev_kfree_skb() down a bit to avoid the
+use after free.
 
-regards
-Philipp
+Fixes: 04b8e65922f6 ("mt76: add mac80211 driver for MT7615 PCIe-based chipsets")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt7615/mcu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+index ea67c6022fe6..dc1301effa24 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+@@ -1270,7 +1270,6 @@ int mt7615_mcu_set_bcn(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+ 	mt7615_mac_write_txwi(dev, (__le32 *)(req.pkt), skb, wcid, NULL,
+ 			      0, NULL);
+ 	memcpy(req.pkt + MT_TXD_SIZE, skb->data, skb->len);
+-	dev_kfree_skb(skb);
+ 
+ 	req.omac_idx = mvif->omac_idx;
+ 	req.enable = en;
+@@ -1281,6 +1280,7 @@ int mt7615_mcu_set_bcn(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+ 	req.pkt_len = cpu_to_le16(MT_TXD_SIZE + skb->len);
+ 	req.tim_ie_pos = cpu_to_le16(MT_TXD_SIZE + tim_off);
+ 
++	dev_kfree_skb(skb);
+ 	skb = mt7615_mcu_msg_alloc(&req, sizeof(req));
+ 
+ 	return mt7615_mcu_msg_send(dev, skb, MCU_EXT_CMD_BCN_OFFLOAD,
+-- 
+2.18.0
