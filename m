@@ -1,30 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 May 2019 19:43:00 +0000
-Subject: Re: [PATCH] soc: fsl: qe: gpio: Fix an error code in qe_pin_request()
-Message-Id: <20190503194300.GG2269@kadam>
+Date: Fri, 03 May 2019 12:50:51 +0000
+Subject: [PATCH 2/2 net-next] net: ll_temac: remove an unnecessary condition
+Message-Id: <20190503125051.GG29695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190503131551.GB1236@mwanda>
- <CADRPPNTGovYXL8vo7B6d73xu5BzpZBJLV=sGXK9HXrad-3HMeg@mail.gmail.com>
-In-Reply-To: <CADRPPNTGovYXL8vo7B6d73xu5BzpZBJLV=sGXK9HXrad-3HMeg@mail.gmail.com>
+In-Reply-To: <20190503125024.GF29695@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Li Yang <leoyang.li@nxp.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, kernel-janitors@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>
+To: "David S. Miller" <davem@davemloft.net>, Esben Haabendal <esben@geanix.com>
+Cc: Michal Simek <michal.simek@xilinx.com>, Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 03, 2019 at 01:45:07PM -0500, Li Yang wrote:
-> On Fri, May 3, 2019 at 8:19 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > There was a missing error code in this path.  It meant that we returned
-> > ERR_PTR(0) which is NULL and would result in a NULL dereference in the
-> > caller.
-> 
-> Thanks Dan.  An early version of this patch has been included in a
-> pending pull request to arm-soc.
-> https://lkml.org/lkml/2019/5/1/506
+The "pdata->mdio_bus_id" is unsigned so this condition is always true.
+This patch just removes it.
 
-Oops.  Sorry, I switched computers and forgot to copy my old outbox
-over.  :(
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/xilinx/ll_temac_mdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_mdio.c b/drivers/net/ethernet/xilinx/ll_temac_mdio.c
+index c2a11703bc6d..a4667326f745 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_mdio.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_mdio.c
+@@ -99,7 +99,7 @@ int temac_mdio_setup(struct temac_local *lp, struct platform_device *pdev)
+ 		of_address_to_resource(np, 0, &res);
+ 		snprintf(bus->id, MII_BUS_ID_SIZE, "%.8llx",
+ 			 (unsigned long long)res.start);
+-	} else if (pdata && pdata->mdio_bus_id >= 0) {
++	} else if (pdata) {
+ 		snprintf(bus->id, MII_BUS_ID_SIZE, "%.8llx",
+ 			 pdata->mdio_bus_id);
+ 	}
+-- 
+2.18.0
