@@ -1,27 +1,39 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 13 May 2019 22:31:29 +0000
-Subject: Re: [PATCH] scsi: qedi: remove memset/memcpy to nfunc and use func instead
-Message-Id: <yq1d0kmgf5q.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2019 12:28:39 +0000
+Subject: [PATCH] net/mlx5: potential error pointer dereference in error handling
+Message-Id: <20190503122839.GB29695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190412094829.15868-1-colin.king@canonical.com>
-        <20190420040554.41888-1-yuehaibing@huawei.com>
-In-Reply-To: <20190420040554.41888-1-yuehaibing@huawei.com> (Yue Haibing's
-        message of "Sat, 20 Apr 2019 12:05:54 +0800")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: QLogic-Storage-Upstream@cavium.com, jejb@linux.ibm.com, martin.petersen@oracle.com, mojha@codeaurora.org, skashyap@marvell.com, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+The error handling was a bit flipped around.  If the mlx5_create_flow_group()
+function failed then it would have resulted in dereferencing "fg" when
+it was an error pointer.
 
-Yue,
+Fixes: 80f09dfc237f ("net/mlx5: Eswitch, enable RoCE loopback traffic")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/rdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> KASAN report this:
->
-> BUG: KASAN: global-out-of-bounds in qedi_dbg_err+0xda/0x330 [qedi]
-> Read of size 31 at addr ffffffffc12b0ae0 by task syz-executor.0/2429
-
-Applied to 5.2/scsi-queue. Thanks!
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/rdma.c b/drivers/net/ethernet/mellanox/mlx5/core/rdma.c
+index 86f77456f873..401441aefbcb 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/rdma.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/rdma.c
+@@ -106,10 +106,10 @@ static int mlx5_rdma_enable_roce_steering(struct mlx5_core_dev *dev)
+ 
+ 	return 0;
+ 
+-destroy_flow_table:
+-	mlx5_destroy_flow_table(ft);
+ destroy_flow_group:
+ 	mlx5_destroy_flow_group(fg);
++destroy_flow_table:
++	mlx5_destroy_flow_table(ft);
+ free:
+ 	kvfree(spec);
+ 	kvfree(flow_group_in);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.18.0
