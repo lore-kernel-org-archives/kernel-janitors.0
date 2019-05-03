@@ -1,32 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 08 May 2019 20:58:08 +0000
-Subject: Re: [PATCH] net: dsa: sja1105: Don't return a negative in u8 sja1105_stp_state_get
-Message-Id: <20190508.135808.610382717397984273.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2019 12:50:24 +0000
+Subject: [PATCH 1/2 net-next] net: ll_temac: Fix an NULL vs IS_ERR() check in temac_open()
+Message-Id: <20190503125024.GF29695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190508203225.13275-1-olteanv@gmail.com>
-In-Reply-To: <20190508203225.13275-1-olteanv@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: olteanv@gmail.com
-Cc: dan.carpenter@oracle.com, f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Esben Haabendal <esben@geanix.com>
+Cc: Michal Simek <michal.simek@xilinx.com>, Andrew Lunn <andrew@lunn.ch>, Yang Wei <yang.wei9@zte.com.cn>, YueHaibing <yuehaibing@huawei.com>, Luis Chamberlain <mcgrof@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
-Date: Wed,  8 May 2019 23:32:25 +0300
+The phy_connect() function doesn't return NULL pointers.  It returns
+error pointers on error, so I have updated the check.
 
-> Dan Carpenter says:
-> 
-> The patch 640f763f98c2: "net: dsa: sja1105: Add support for Spanning
-> Tree Protocol" from May 5, 2019, leads to the following static
-> checker warning:
-> 
->         drivers/net/dsa/sja1105/sja1105_main.c:1073 sja1105_stp_state_get()
->         warn: signedness bug returning '(-22)'
-> 
-> The caller doesn't check for negative errors anyway.
-> 
-> Fixes: 640f763f98c2: ("net: dsa: sja1105: Add support for Spanning Tree Protocol")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Fixes: 8425c41d1ef7 ("net: ll_temac: Extend support to non-device-tree platforms")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index 1003ee14c833..bcb97fbf5b54 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -927,9 +927,9 @@ static int temac_open(struct net_device *ndev)
+ 	} else if (strlen(lp->phy_name) > 0) {
+ 		phydev = phy_connect(lp->ndev, lp->phy_name, temac_adjust_link,
+ 				     lp->phy_interface);
+-		if (!phydev) {
++		if (IS_ERR(phydev)) {
+ 			dev_err(lp->dev, "phy_connect() failed\n");
+-			return -ENODEV;
++			return PTR_ERR(phydev);
+ 		}
+ 		phy_start(phydev);
+ 	}
+-- 
+2.18.0
