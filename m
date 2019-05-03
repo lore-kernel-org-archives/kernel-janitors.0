@@ -1,53 +1,38 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Fri, 17 May 2019 19:35:00 +0000
-Subject: [PATCH 02/73] perf test: Fix spelling mistake "leadking" -> "leaking"
-Message-Id: <20190517193611.4974-3-acme@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2019 12:30:09 +0000
+Subject: [PATCH] SUNRPC: Fix an error code in gss_alloc_msg()
+Message-Id: <20190503123009.GC29695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190517193611.4974-1-acme@kernel.org>
-In-Reply-To: <20190517193611.4974-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Mukesh Ojha <mojha@codeaurora.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neilb@suse.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If kstrdup_const() then this function returns zero (success) but it
+should return -ENOMEM.
 
-There are a couple of spelling mistakes in test assert messages. Fix them.
-
-Signed-off-by: Colin King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190417105539.5902-1-colin.king@canonical.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: ac83228a7101 ("SUNRPC: Use namespace of listening daemon in the client AUTH_GSS upcall")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- tools/perf/tests/dso-data.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sunrpc/auth_gss/auth_gss.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/dso-data.c b/tools/perf/tests/dso-data.c
-index 7f6c52021e41..946ab4b63acd 100644
---- a/tools/perf/tests/dso-data.c
-+++ b/tools/perf/tests/dso-data.c
-@@ -304,7 +304,7 @@ int test__dso_data_cache(struct test *test __maybe_unused, int subtest __maybe_u
- 	/* Make sure we did not leak any file descriptor. */
- 	nr_end = open_files_cnt();
- 	pr_debug("nr start %ld, nr stop %ld\n", nr, nr_end);
--	TEST_ASSERT_VAL("failed leadking files", nr = nr_end);
-+	TEST_ASSERT_VAL("failed leaking files", nr = nr_end);
- 	return 0;
- }
- 
-@@ -380,6 +380,6 @@ int test__dso_data_reopen(struct test *test __maybe_unused, int subtest __maybe_
- 	/* Make sure we did not leak any file descriptor. */
- 	nr_end = open_files_cnt();
- 	pr_debug("nr start %ld, nr stop %ld\n", nr, nr_end);
--	TEST_ASSERT_VAL("failed leadking files", nr = nr_end);
-+	TEST_ASSERT_VAL("failed leaking files", nr = nr_end);
- 	return 0;
- }
+diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
+index b2cbc83d39c7..06fe17c2aea1 100644
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -553,8 +553,10 @@ gss_alloc_msg(struct gss_auth *gss_auth,
+ 	gss_msg->auth = gss_auth;
+ 	if (service_name) {
+ 		gss_msg->service_name = kstrdup_const(service_name, GFP_NOFS);
+-		if (!gss_msg->service_name)
++		if (!gss_msg->service_name) {
++			err = -ENOMEM;
+ 			goto err_put_pipe_version;
++		}
+ 	}
+ 	return gss_msg;
+ err_put_pipe_version:
 -- 
-2.20.1
+2.18.0
