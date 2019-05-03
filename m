@@ -1,57 +1,49 @@
-From: Liviu Dudau <liviu.dudau@arm.com>
-Date: Fri, 03 May 2019 14:41:14 +0000
-Subject: Re: [PATCH] drm/komeda: Potential error pointer dereference
-Message-Id: <20190503144114.GF15144@e110455-lin.cambridge.arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2019 12:39:48 +0000
+Subject: [PATCH net] net: atm: clean up a range check
+Message-Id: <20190503123948.GD29695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190503122525.GA29695@mwanda>
-In-Reply-To: <20190503122525.GA29695@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, "James (Qian) Wang" <james.qian.wang@arm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S. Miller" <davem@davemloft.net>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, David Woodhouse <dwmw2@infradead.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 03, 2019 at 03:25:25PM +0300, Dan Carpenter wrote:
-> We need to check whether drm_atomic_get_crtc_state() returns an error
-> pointer before dereferencing "crtc_st".
-> 
-> Fixes: 7d31b9e7a550 ("drm/komeda: Add komeda_plane/plane_helper_funcs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The code works fine but the problem is that check for negatives is a
+no-op:
 
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+	if (arg < 0)
+		i = 0;
 
-I'll pull this and send it as a fix after -rc1.
+The "i" value isn't used.  We immediately overwrite it with:
 
-Best regards,
-Liviu
+	i = array_index_nospec(arg, MAX_LEC_ITF);
 
-> ---
->  drivers/gpu/drm/arm/display/komeda/komeda_plane.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> index 07ed0cc1bc44..c7e5fc6e5500 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> @@ -64,7 +64,7 @@ komeda_plane_atomic_check(struct drm_plane *plane,
->  		return 0;
->  
->  	crtc_st = drm_atomic_get_crtc_state(state->state, state->crtc);
-> -	if (!crtc_st->enable) {
-> +	if (IS_ERR(crtc_st) || !crtc_st->enable) {
->  		DRM_DEBUG_ATOMIC("Cannot update plane on a disabled CRTC.\n");
->  		return -EINVAL;
->  	}
-> -- 
-> 2.18.0
-> 
+The array_index_nospec() macro returns zero if "arg" is out of bounds so
+this works, but the dead code is confusing and it doesn't look very
+intentional.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This applies to net, but it's just a clean up.
+
+ net/atm/lec.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index ad4f829193f0..a0311493b01b 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -726,9 +726,7 @@ static int lecd_attach(struct atm_vcc *vcc, int arg)
+ 	struct lec_priv *priv;
+ 
+ 	if (arg < 0)
+-		i = 0;
+-	else
+-		i = arg;
++		arg = 0;
+ 	if (arg >= MAX_LEC_ITF)
+ 		return -EINVAL;
+ 	i = array_index_nospec(arg, MAX_LEC_ITF);
 -- 
-==========
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.18.0
