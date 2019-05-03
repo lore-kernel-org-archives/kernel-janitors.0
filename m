@@ -1,30 +1,25 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 May 2019 18:29:48 +0000
-Subject: Re: [PATCH v3 net-next] net: ethernet: ti: cpsw: Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe()
-Message-Id: <20190501.142948.1053446771181544161.davem@davemloft.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Fri, 03 May 2019 06:59:22 +0000
+Subject: Re: [PATCH][next] powerpc/mm: fix spelling mistake "Outisde" -> "Outside"
+Message-Id: <44wNKQ4DqFz9sB8@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190429143157.79035-1-yuehaibing@huawei.com>
-        <20190430015524.50997-1-yuehaibing@huawei.com>
-In-Reply-To: <20190430015524.50997-1-yuehaibing@huawei.com>
+In-Reply-To: <20190423151017.14429-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: grygorii.strashko@ti.com, ivan.khoronzhuk@linaro.org, andrew@lunn.ch, ilias.apalodimas@linaro.org, julia.lawall@lip6.fr, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 30 Apr 2019 01:55:24 +0000
-
-> Fix inconsistent IS_ERR and PTR_ERR in cpsw_probe,
-> The proper pointer to use is clk instead of mode.
+On Tue, 2019-04-23 at 15:10:17 UTC, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> This issue was detected with the help of Coccinelle.
+> There are several identical spelling mistakes in warning messages,
+> fix these.
 > 
-> Fixes: 83a8471ba255 ("net: ethernet: ti: cpsw: refactor probe to group common hw initialization")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> ---
-> v3: Fix commit log
-> v2: add Fixes tag
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+Applied to powerpc next, thanks.
+
+https://git.kernel.org/powerpc/c/f341d89790b0b7f99ca7835e0cf7de10
+
+cheers
