@@ -1,82 +1,90 @@
-From: maowenan <maowenan@huawei.com>
-Date: Mon, 27 May 2019 02:33:27 +0000
-Subject: =?UTF-8?Q?Re:_[PATCH_net]_staging:_Remove_set_but_not_used_variable?= =?UTF-8?B?IOKAmHN0YXR1c+KAmQ==
-Message-Id: <05c9bfac-c3ad-5889-8f47-0e6f53844a76@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2019 13:10:11 +0000
+Subject: [bug report] phy: renesas: phy-rcar-gen2: Add support for r8a77470
+Message-Id: <20190503131010.GJ29695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190525042642.78482-1-maowenan@huawei.com>
- <CAGngYiX04W+-jxqnWUD6CLh8LAr61FhtADGM0zbGcdeArqzC-Q@mail.gmail.com>
-In-Reply-To: <CAGngYiX04W+-jxqnWUD6CLh8LAr61FhtADGM0zbGcdeArqzC-Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sven Van Asbroeck <thesven73@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Jeremy Sowden <jeremy@azazel.net>, devel@driverdev.osuosl.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Matt Sickler <matt.sickler@daktronics.com>
+To: kernel-janitors@vger.kernel.org
 
+Hello Biju Das,
 
+The patch b7187e001a10: "phy: renesas: phy-rcar-gen2: Add support for
+r8a77470" from Apr 10, 2019, leads to the following static checker
+warning:
 
-On 2019/5/25 20:59, Sven Van Asbroeck wrote:
-> On Sat, May 25, 2019 at 12:20 AM Mao Wenan <maowenan@huawei.com> wrote:
->>
->> The variable 'status' is not used any more, remve it.
-> 
->>      /* do the transfers for this message */
->>      list_for_each_entry(transfer, &m->transfers, transfer_list) {
->>          if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
->> -            status = -EINVAL;
->>              break;
->>          }
-> 
-> This looks like an error condition that's not reported to the spi core.
-> 
-> Instead of removing the status variable (which also removes the error value!),
-> maybe this should be reported to the spi core instead ?
-> 
-> Other spi drivers appear to do the following on the error path:
-> m->status = status;
-> return status;
+	drivers/phy/renesas/phy-rcar-gen2.c:403 rcar_gen2_phy_probe()
+	warn: array off by one? 'data->select_value[channel_num]'
 
-I have reviewed the code again, and it is good idea to store m->status in error path, like below?
+drivers/phy/renesas/phy-rcar-gen2.c
+   262  static const u32 pci_select_value[][PHYS_PER_CHANNEL] = {
+   263          [0]     = { USBHS_UGCTRL2_USB0SEL_PCI, USBHS_UGCTRL2_USB0SEL_HS_USB },
+   264          [2]     = { USBHS_UGCTRL2_USB2SEL_PCI, USBHS_UGCTRL2_USB2SEL_USB30 },
 
-@@ -374,7 +374,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
-     list_for_each_entry(transfer, &m->transfers, transfer_list) {
-         if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
-             status = -EINVAL;
--            break;
-+            goto error;
-         }
+This select array has three elements.
 
-         /* transfer */
-@@ -412,7 +412,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+   265  };
+   266  
+   267  static const u32 usb20_select_value[][PHYS_PER_CHANNEL] = {
+   268          { USBHS_UGCTRL2_USB0SEL_USB20, USBHS_UGCTRL2_USB0SEL_HS_USB20 },
 
-             if (count != transfer->len) {
-                 status = -EIO;
--                break;
-+                goto error;
-             }
-         }
+But this one only has two.
 
+   269  };
+   270  
+   271  static const struct rcar_gen2_phy_data rcar_gen2_usb_phy_data = {
+   272          .gen2_phy_ops = &rcar_gen2_phy_ops,
+   273          .select_value = pci_select_value,
+   274  };
+   275  
+   276  static const struct rcar_gen2_phy_data rz_g1c_usb_phy_data = {
+   277          .gen2_phy_ops = &rz_g1c_phy_ops,
+   278          .select_value = usb20_select_value,
+   279  };
 
-...
+[ snip ]
 
-     /* done work */
-     spi_finalize_current_message(master);
-     return 0;
-+
-+ error:
-+    m->status = status;
-+    return status;
+   382          for_each_child_of_node(dev->of_node, np) {
+   383                  struct rcar_gen2_channel *channel = drv->channels + i;
+   384                  u32 channel_num;
+   385                  int error, n;
+   386  
+   387                  channel->of_node = np;
+   388                  channel->drv = drv;
+   389                  channel->selected_phy = -1;
+   390  
+   391                  error = of_property_read_u32(np, "reg", &channel_num);
+   392                  if (error || channel_num > 2) {
+                                     ^^^^^^^^^^^^^^^
+The code seems to assume they all have 3 elements
 
- }
+   393                          dev_err(dev, "Invalid \"reg\" property\n");
+   394                          return error;
+   395                  }
+   396                  channel->select_mask = select_mask[channel_num];
+   397  
+   398                  for (n = 0; n < PHYS_PER_CHANNEL; n++) {
+   399                          struct rcar_gen2_phy *phy = &channel->phys[n];
+   400  
+   401                          phy->channel = channel;
+   402                          phy->number = n;
+   403                          phy->select_value = data->select_value[channel_num][n];
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Smatch warning.
 
+   404  
+   405                          phy->phy = devm_phy_create(dev, NULL,
+   406                                                     data->gen2_phy_ops);
+   407                          if (IS_ERR(phy->phy)) {
+   408                                  dev_err(dev, "Failed to create PHY\n");
+   409                                  return PTR_ERR(phy->phy);
+   410                          }
+   411                          phy_set_drvdata(phy->phy, phy);
+   412                  }
+   413  
+   414                  i++;
+   415          }
 
-> 
->>
->> @@ -370,7 +368,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
->>
->>              if (count != transfer->len) {
->> -                status = -EIO;
->>                  break;
-> 
-> Same issue here.
-> 
-> 
+regards,
+dan carpenter
