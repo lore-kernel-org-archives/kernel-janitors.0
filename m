@@ -1,23 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 22 May 2019 19:14:51 +0000
-Subject: Re: [PATCH net] mISDN: Fix indenting in dsp_cmx.c
-Message-Id: <20190522.121451.712557703691236298.davem@davemloft.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 03 May 2019 06:10:46 +0000
+Subject: Re: [PATCH] crypto: ccree: fix spelling mistake "protedcted" -> "protected"
+Message-Id: <20190503061046.k5ea763tpa6xw2yt@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190521094256.GA11899@mwanda>
-In-Reply-To: <20190521094256.GA11899@mwanda>
+References: <20190426131835.27258-1-colin.king@canonical.com>
+In-Reply-To: <20190426131835.27258-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: isdn@linux-pingi.de, joe@perches.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Gilad Ben-Yossef <gilad@benyossef.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 May 2019 12:42:56 +0300
-
-> We used a script to indent this code back in 2012, but I guess it got
-> confused by the ifdefs and added some extra tabs.  This patch removes
-> them.
+On Fri, Apr 26, 2019 at 02:18:35PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> There is a spelling mistake in a dev_dbg message, fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/crypto/ccree/cc_cipher.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
