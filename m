@@ -1,27 +1,25 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Tue, 28 May 2019 14:38:14 +0000
-Subject: Re: [PATCH] net/mlx5: potential error pointer dereference in error handling
-Message-Id: <20190528143814.GQ4633@mtr-leonro.mtl.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2019 11:43:34 +0000
+Subject: Re: [PATCH v2 2/2] io_uring: Potential Oops in io_sq_offload_start()
+Message-Id: <20190503114334.GA16540@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190503122839.GB29695@mwanda>
-In-Reply-To: <20190503122839.GB29695@mwanda>
+References: <20190404104527.GX4038@hirez.programming.kicks-ass.net>
+ <20190408081513.GB15239@kadam>
+ <20190430092619.GC2239@kadam>
+In-Reply-To: <20190430092619.GC2239@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>
+Cc: Amritha Nambiar <amritha.nambiar@intel.com>, Willem de Bruijn <willemb@google.com>, kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
 
-On Fri, May 03, 2019 at 03:28:39PM +0300, Dan Carpenter wrote:
-> The error handling was a bit flipped around.  If the mlx5_create_flow_group()
-> function failed then it would have resulted in dereferencing "fg" when
-> it was an error pointer.
->
-> Fixes: 80f09dfc237f ("net/mlx5: Eswitch, enable RoCE loopback traffic")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/rdma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Apr 30, 2019 at 12:26:19PM +0300, Dan Carpenter wrote:
+> The io_uring patches are slated for v5.7 so we should figure out a
+> solution for this bug.
+> 
 
-Sorry for the delay, applied to mlx5-next branch.
-6cc070bdf07c net/mlx5: potential error pointer dereference in error handling
+Never mind.  We merged a different fix.  975554b03edd
+("io_uring: fix SQPOLL cpu validation").
 
-Thanks
+regards,
+dan carpenter
