@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 03 May 2019 06:21:31 +0000
+Date: Fri, 03 May 2019 06:23:33 +0000
 Subject: Applied "ASoC: SOF: remove redundant null checks of dai" to the asoc tree
-Message-Id: <20190503062131.2120C441D69@finisterre.ee.mobilebroadband>
+Message-Id: <20190503062333.68D31441D59@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190502113340.8688-1-colin.king@canonical.com>
 In-Reply-To: <20190502113340.8688-1-colin.king@canonical.com>
