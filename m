@@ -1,37 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 May 2019 13:16:51 +0000
-Subject: [PATCH] soc: ixp4xx: qmgr: Fix an NULL vs IS_ERR() check in probe
-Message-Id: <20190503131651.GC1236@mwanda>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 04 May 2019 11:59:13 +0000
+Subject: Re: [PATCH] soc: ixp4xx: qmgr: Fix an NULL vs IS_ERR() check in probe
+Message-Id: <CACRpkdajJgP6zAYOw3zRVjtPj-dEoA0ZtrMerPMkxW046aEQ7w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190503131651.GC1236@mwanda>
+In-Reply-To: <20190503131651.GC1236@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Halasa <khalasa@piap.pl>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Krzysztof Halasa <khalasa@piap.pl>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The devm_ioremap_resource() function doesn't retunr NULL, it returns
-error pointers.
+On Fri, May 3, 2019 at 3:17 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Fixes: ecc133c6da60 ("soc: ixp4xx: qmgr: Pass resources")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/soc/ixp4xx/ixp4xx-qmgr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The devm_ioremap_resource() function doesn't retunr NULL, it returns
+> error pointers.
+>
+> Fixes: ecc133c6da60 ("soc: ixp4xx: qmgr: Pass resources")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/soc/ixp4xx/ixp4xx-qmgr.c b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-index 13a8a13c9b01..bb90670ec160 100644
---- a/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-+++ b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-@@ -385,8 +385,8 @@ static int ixp4xx_qmgr_probe(struct platform_device *pdev)
- 	if (!res)
- 		return -ENODEV;
- 	qmgr_regs = devm_ioremap_resource(dev, res);
--	if (!qmgr_regs)
--		return -ENOMEM;
-+	if (IS_ERR(qmgr_regs))
-+		return PTR_ERR(qmgr_regs);
- 
- 	irq1 = platform_get_irq(pdev, 0);
- 	if (irq1 <= 0)
--- 
-2.18.0
+Good catch! Patch applied.
+
+I will make sure this fix lands in ARM SoC for v5.2.
+
+Yours,
+Linus Walleij
