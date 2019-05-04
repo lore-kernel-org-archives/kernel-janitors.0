@@ -1,48 +1,39 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Thu, 16 May 2019 13:56:10 +0000
-Subject: Re: [PATCH] RDMA/nldev: add check for null return from call to nlmsg_put
-Message-Id: <20190516135610.GB6026@mtr-leonro.mtl.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 04 May 2019 16:48:29 +0000
+Subject: [PATCH] scsi: bnx2fc: fix incorrect cast to u64 on shift operation
+Message-Id: <20190504164829.26631-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190516131215.20411-1-colin.king@canonical.com>
-In-Reply-To: <20190516131215.20411-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 02:12:15PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> It is possible that nlmsg_put can return a null pointer, currently
-> this will lead to a null pointer dereference when passing a null
-> nlh pointer to nlmsg_end.  Fix this by adding a null pointer check.
->
-> Addresses-Coverity: ("Dereference null return value")
-> Fixes: cb7e0e130503 ("RDMA/core: Add interface to read device namespace sharing mode")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/core/nldev.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
-> index 69188cbbd99b..4dc43b6c5a28 100644
-> --- a/drivers/infiniband/core/nldev.c
-> +++ b/drivers/infiniband/core/nldev.c
-> @@ -1367,6 +1367,10 @@ static int nldev_sys_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
->  			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV,
->  					 RDMA_NLDEV_CMD_SYS_GET),
->  			0, 0);
+From: Colin Ian King <colin.king@canonical.com>
 
-It is impossible situation due to "0" in payload field above.
+Currently an int is being shifted and the result is being cast to a u64
+which leads to undefined behaviour if the shift is more than 31 bits. Fix
+this by casting the integer value 1 to u64 before the shift operation.
 
-> +	if (!nlh) {
-> +		nlmsg_free(msg);
-> +		return -EMSGSIZE;
-> +	}
->
->  	err = nla_put_u8(msg, RDMA_NLDEV_SYS_ATTR_NETNS_MODE,
->  			 (u8)ib_devices_shared_netns);
-> --
-> 2.20.1
->
+Addresses-Coverity: ("Bad shift operation")
+Fixes: 7b594769120b ("[SCSI] bnx2fc: Handle REC_TOV error code from firmware")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/bnx2fc/bnx2fc_hwi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+index 19734ec7f42e..747f019fb393 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+@@ -830,7 +830,7 @@ static void bnx2fc_process_unsol_compl(struct bnx2fc_rport *tgt, u16 wqe)
+ 			((u64)err_entry->data.err_warn_bitmap_hi << 32) |
+ 			(u64)err_entry->data.err_warn_bitmap_lo;
+ 		for (i = 0; i < BNX2FC_NUM_ERR_BITS; i++) {
+-			if (err_warn_bit_map & (u64) (1 << i)) {
++			if (err_warn_bit_map & ((u64)1 << i)) {
+ 				err_warn = i;
+ 				break;
+ 			}
+-- 
+2.20.1
