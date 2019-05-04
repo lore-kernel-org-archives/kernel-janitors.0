@@ -1,45 +1,40 @@
-From: Li Yang <leoyang.li@nxp.com>
-Date: Wed, 29 May 2019 20:53:15 +0000
-Subject: Re: [PATCH][next] soc: fsl: fix spelling mistake "Firmaware" -> "Firmware"
-Message-Id: <CADRPPNS5EbVrQ_ayvs=s7fYAc4JM1DfNeXwrmCXMvk6HzPouEQ@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 04 May 2019 06:54:38 +0000
+Subject: [PATCH -next] usb: gadget: udc: lpc32xx: fix return value check in lpc32xx_udc_probe()
+Message-Id: <20190504070407.56915-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190521085624.13665-1-colin.king@canonical.com>
-In-Reply-To: <20190521085624.13665-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, lkml <linux-kernel@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain
+ Lemieux <slemieux.tyco@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, May 21, 2019 at 3:57 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a pr_err message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Applied.  Thanks!
+This issue was detected by using the Coccinelle software.
 
-Regards,
-Leo
-> ---
->  drivers/soc/fsl/dpaa2-console.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/fsl/dpaa2-console.c b/drivers/soc/fsl/dpaa2-console.c
-> index 9168d8ddc932..27243f706f37 100644
-> --- a/drivers/soc/fsl/dpaa2-console.c
-> +++ b/drivers/soc/fsl/dpaa2-console.c
-> @@ -73,7 +73,7 @@ static u64 get_mc_fw_base_address(void)
->
->         mcfbaregs = ioremap(mc_base_addr.start, resource_size(&mc_base_addr));
->         if (!mcfbaregs) {
-> -               pr_err("could not map MC Firmaware Base registers\n");
-> +               pr_err("could not map MC Firmware Base registers\n");
->                 return 0;
->         }
->
-> --
-> 2.20.1
->
+Fixes: 408b56ca5c8e ("usb: gadget: udc: lpc32xx: simplify probe")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/gadget/udc/lpc32xx_udc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
+index d8f1c60793ed..00fb79c6d025 100644
+--- a/drivers/usb/gadget/udc/lpc32xx_udc.c
++++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+@@ -3070,9 +3070,9 @@ static int lpc32xx_udc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	udc->udp_baseaddr = devm_ioremap_resource(dev, res);
+-	if (!udc->udp_baseaddr) {
++	if (IS_ERR(udc->udp_baseaddr)) {
+ 		dev_err(udc->dev, "IO map failure\n");
+-		return -ENOMEM;
++		return PTR_ERR(udc->udp_baseaddr);
+ 	}
+ 
+ 	/* Get USB device clock */
