@@ -1,43 +1,42 @@
-From: Mathieu Malaterre <malat@debian.org>
-Date: Fri, 24 May 2019 10:33:39 +0000
-Subject: [PATCH] clocksource: Move inline keyword to the beginning of function declarations
-Message-Id: <20190524103339.28787-1-malat@debian.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 04 May 2019 16:12:43 +0000
+Subject: [PATCH] i3c: fix undefined behaviour of a shift of an int by more than 31 places
+Message-Id: <20190504161243.18879-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Mathieu Malaterre <malat@debian.org>, John Stultz <john.stultz@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+To: Boris Brezillon <bbrezillon@kernel.org>, linux-i3c@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The inline keyword was not at the beginning of the function declarations.
-Fix the following warnings triggered when using W=1:
+From: Colin Ian King <colin.king@canonical.com>
 
-  kernel/time/clocksource.c:108:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
-  kernel/time/clocksource.c:113:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
+Currently the shift of two enum ints by more than 31 places on
+can result in undefined behaviour with 64 bit longs. Fix this by
+casting the ints to unsigned long before the shift.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Addresses-Coverity: ("Bad shift operation")
+Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/time/clocksource.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i3c/master.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 3bcc19ceb073..fff5f64981c6 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -105,12 +105,12 @@ static DEFINE_SPINLOCK(watchdog_lock);
- static int watchdog_running;
- static atomic_t watchdog_reset_pending;
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 1412abcff010..752256d4078f 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -385,8 +385,9 @@ static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
+ 		return;
  
--static void inline clocksource_watchdog_lock(unsigned long *flags)
-+static inline void clocksource_watchdog_lock(unsigned long *flags)
- {
- 	spin_lock_irqsave(&watchdog_lock, *flags);
+ 	ptr = bus->addrslots + (bitpos / BITS_PER_LONG);
+-	*ptr &= ~(I3C_ADDR_SLOT_STATUS_MASK << (bitpos % BITS_PER_LONG));
+-	*ptr |= status << (bitpos % BITS_PER_LONG);
++	*ptr &= ~((unsigned long)I3C_ADDR_SLOT_STATUS_MASK <<
++		  (bitpos % BITS_PER_LONG));
++	*ptr |= (unsigned long)status << (bitpos % BITS_PER_LONG);
  }
  
--static void inline clocksource_watchdog_unlock(unsigned long *flags)
-+static inline void clocksource_watchdog_unlock(unsigned long *flags)
- {
- 	spin_unlock_irqrestore(&watchdog_lock, *flags);
- }
+ static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
 -- 
 2.20.1
