@@ -1,27 +1,40 @@
-From: Felix Fietkau <nbd@nbd.name>
-Date: Sat, 11 May 2019 13:31:34 +0000
-Subject: Re: [PATCH][next] mt76: fix less than zero check on a u8 variable
-Message-Id: <a0d21c98-9421-547f-6dd9-5153812107e5@nbd.name>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 04 May 2019 03:54:30 +0000
+Subject: [PATCH net-next] net: mvpp2: cls: Remove set but not used variable 'act'
+Message-Id: <20190504040405.13004-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190505213135.3895-1-colin.king@canonical.com>
-In-Reply-To: <20190505213135.3895-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Roy Luo <royluo@google.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Matthias Brugger <matthias.bgg@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2019-05-05 23:31, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The signed return from the call to get_omac_idx is being assigned to the
-> u8 variable mac_idx and then checked for a negative error condition
-> which is always going to be false. Fix this by assigning the return to
-> the int variable ret and checking this instead.
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 04b8e65922f6 ("mt76: add mac80211 driver for MT7615 PCIe-based chipsets")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Already fixed by a similar patch by Dan Carpenter.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-- Felix
+drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c: In function 'mvpp2_cls_c2_build_match':
+drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c:1159:28: warning:
+ variable 'act' set but not used [-Wunused-but-set-variable]
+
+It is never used since introduction in
+commit 90b509b39ac9 ("net: mvpp2: cls: Add Classification offload support")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+index 4989fb13244f..f9623f928915 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+@@ -1156,11 +1156,8 @@ static int mvpp2_port_flt_rfs_rule_insert(struct mvpp2_port *port,
+ static int mvpp2_cls_c2_build_match(struct mvpp2_rfs_rule *rule)
+ {
+ 	struct flow_rule *flow = rule->flow;
+-	struct flow_action_entry *act;
+ 	int offs = 64;
+ 
+-	act = &flow->action.entries[0];
+-
+ 	if (flow_rule_match_key(flow, FLOW_DISSECTOR_KEY_PORTS)) {
+ 		struct flow_match_ports match;
