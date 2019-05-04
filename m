@@ -1,28 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 May 2019 19:15:50 +0000
-Subject: Re: [PATCH][next] taprio: add null check on sched_nest to avoid potential null pointer dereference
-Message-Id: <20190507.121550.257256216928661084.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 04 May 2019 06:53:46 +0000
+Subject: [PATCH -next] ARM: ixp4xx: Remove duplicated include from common.c
+Message-Id: <20190504070318.56760-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190505215019.4639-1-colin.king@canonical.com>
-In-Reply-To: <20190505215019.4639-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Russell King <linux@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun,  5 May 2019 22:50:19 +0100
+Remove duplicated include.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to nla_nest_start_noflag can return a null pointer and currently
-> this is not being checked and this can lead to a null pointer dereference
-> when the null pointer sched_nest is passed to function nla_nest_end. Fix
-> this by adding in a null pointer check.
-> 
-> Addresses-Coverity: ("Dereference null return value")
-> Fixes: a3d43c0d56f1 ("taprio: Add support adding an admin schedule")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/arm/mach-ixp4xx/common.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Applied.
+diff --git a/arch/arm/mach-ixp4xx/common.c b/arch/arm/mach-ixp4xx/common.c
+index cc5f15679d29..381f452de28d 100644
+--- a/arch/arm/mach-ixp4xx/common.c
++++ b/arch/arm/mach-ixp4xx/common.c
+@@ -27,7 +27,6 @@
+ #include <linux/cpu.h>
+ #include <linux/pci.h>
+ #include <linux/sched_clock.h>
+-#include <linux/bitops.h>
+ #include <linux/irqchip/irq-ixp4xx.h>
+ #include <linux/platform_data/timer-ixp4xx.h>
+ #include <mach/udc.h>
