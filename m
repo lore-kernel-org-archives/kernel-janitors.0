@@ -1,55 +1,31 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 06 May 2019 04:11:02 +0000
-Subject: Re: [PATCH][next] brcmfmac: remove redundant u32 comparison with less than zero
-Message-Id: <CACna6rzqzzST4zu-6umnezmznnfoUqQP6V-yfyePaqCX8NakQQ@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 04 May 2019 06:51:45 +0000
+Subject: [PATCH -next] KVM: s390: fix typo in parameter description
+Message-Id: <20190504065145.53665-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190505211623.3153-1-colin.king@canonical.com>
-In-Reply-To: <20190505211623.3153-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Wright Feng <wright.feng@cypress.com>
-Cc: Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER" <brcm80211-dev-list.pdl@broadcom.com>, "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER
-        <brcm80211-dev-list.pdl@broadcom.com>," <brcm80211-dev-list@cypress.com>, Network Development <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 5 May 2019 at 23:33, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check for the u32 variable idx being less than zero is
-> always false and is redundant. Remove it.
->
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c b/=
-drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-> index 9d1f9ff25bfa..e874dddc7b7f 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-> @@ -375,7 +375,7 @@ brcmf_msgbuf_get_pktid(struct device *dev, struct brc=
-mf_msgbuf_pktids *pktids,
->         struct brcmf_msgbuf_pktid *pktid;
->         struct sk_buff *skb;
->
-> -       if (idx < 0 || idx >=3D pktids->array_size) {
-> +       if (idx >=3D pktids->array_size) {
->                 brcmf_err("Invalid packet id %d (max %d)\n", idx,
->                           pktids->array_size);
->                 return NULL;
+Fix typo in parameter description.
 
-It was added in the commit 2d91c8ad068a ("brcmfmac: set txflow request
-id from 1 to pktids array size") and was probably meant to handle a
-following brcmf_msgbuf_process_txstatus() case:
-idx =3D le32_to_cpu(tx_status->msg.request_id) - 1;
+Fixes: 8b905d28ee17 ("KVM: s390: provide kvm_arch_no_poll function")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ arch/s390/kvm/kvm-s390.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So this patch is wrong/incomplete.
-
-You should change that to a signed value OR add an extra check in
-brcmf_msgbuf_process_txstatus() to make sure it doesn't pass -1 as u32
-argument.
-
---=20
-Rafa=C5=82
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 8d6d75db8de6..ac6163c334d6 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -181,7 +181,7 @@ MODULE_PARM_DESC(hpage, "1m huge page backing support");
+ /* maximum percentage of steal time for polling.  >100 is treated like 100 */
+ static u8 halt_poll_max_steal = 10;
+ module_param(halt_poll_max_steal, byte, 0644);
+-MODULE_PARM_DESC(hpage, "Maximum percentage of steal time to allow polling");
++MODULE_PARM_DESC(halt_poll_max_steal, "Maximum percentage of steal time to allow polling");
+ 
+ /*
+  * For now we handle at most 16 double words as this is what the s390 base
