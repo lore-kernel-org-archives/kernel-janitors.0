@@ -1,66 +1,55 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 09 May 2019 15:58:46 +0000
-Subject: Re: [PATCH] mptsas: fix undefined behaviour of a shift of an int by more than 31 places
-Message-Id: <dcc8590c-b665-bcb2-4df6-9f4a37a779e1@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 04 May 2019 16:40:10 +0000
+Subject: [PATCH] mptsas:  fix undefined behaviour of a shift of an int by more than 31 places
+Message-Id: <20190504164010.24937-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190504164010.24937-1-colin.king@canonical.com>
- <1557027274.2821.2.camel@HansenPartnership.com>
- <de7e3aaf-0155-5007-c228-510f0d0de428@canonical.com>
- <1557325468.3196.2.camel@HansenPartnership.com>
- <9b4c84b5-31eb-6068-57c2-80ededc21b43@suse.de>
- <1557416545.4268.22.camel@HansenPartnership.com>
-In-Reply-To: <1557416545.4268.22.camel@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Hannes Reinecke <hare@suse.de>, Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/05/2019 16:42, James Bottomley wrote:
-> On Thu, 2019-05-09 at 17:30 +0200, Hannes Reinecke wrote:
->> On 5/8/19 4:24 PM, James Bottomley wrote:
->>> On Wed, 2019-05-08 at 14:07 +0100, Colin Ian King wrote:
->>>> On 05/05/2019 04:34, James Bottomley wrote:
->>>>> On Sat, 2019-05-04 at 17:40 +0100, Colin King wrote:
->>>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>>
->>>>>> Currently the shift of int value 1 by more than 31 places can
->>>>>> result in undefined behaviour. Fix this by making the 1 a ULL
->>>>>> value before the shift operation.
->>>>>
->>>>> Fusion SAS is pretty ancient.  I thought the largest one ever
->>>>> produced had four phys, so how did you produce the overflow?
->>>>
->>>> This was an issue found by static analysis with Coverity; so I
->>>> guess won't happen in the wild, in which case the patch could be
->>>> ignored.
->>>
->>> The point I was more making is that if we thought this could ever
->>> happen in practice, we'd need more error handling than simply this:
->>> we'd be setting the phy_bitmap to zero which would be every bit as
->>> bad as some random illegal value.
->>>
->>
->> Thing is, mptsas is used as the default emulation in VMWare, and
->> that does allow you to do some pretty weird configurations (I've
->> found myself  fixing a bug with SATA hotplug on mptsas once ...).
->> So I wouldn't discard this issue out of hand.
-> 
-> I'm not, I'm just saying the proposed fix is no fix at all since it
-> would just produce undefined behaviour in the driver.  I thought the
-> issue might have been coming from VMWare, which is why I asked how the
-> bug was seen.  The proper fix is probably to fail attachment if the phy
-> number goes over a fixed value (16 sounds reasonable) but if it's never
-> a problem in the field, I'm happy doing nothing because we have no real
-> idea what the reasonable value is.
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm happy with my proposed fix being ignored and (if required) a more
-appropriate fix developed by somebody who is more familiar with this
-code than me.  Sometimes it is hard to determine if these static
-analysis "issues" are fix worthy or not.
+Currently the shift of int value 1 by more than 31 places can result
+in undefined behaviour. Fix this by making the 1 a ULL value before the
+shift operation.
 
-Colin
+Addresses-Coverity: ("Bad shift operation")
+Fixes: 547f9a218436 ("[SCSI] mptsas: wide port support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/message/fusion/mptsas.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> James
-> 
+diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
+index 6a79cd0ebe2b..51dcbbcf2518 100644
+--- a/drivers/message/fusion/mptsas.c
++++ b/drivers/message/fusion/mptsas.c
+@@ -854,7 +854,7 @@ mptsas_setup_wide_ports(MPT_ADAPTER *ioc, struct mptsas_portinfo *port_info)
+ 		    "%s: [%p]: deleting phy = %d\n",
+ 		    ioc->name, __func__, port_details, i));
+ 		port_details->num_phys--;
+-		port_details->phy_bitmask &= ~ (1 << phy_info->phy_id);
++		port_details->phy_bitmask &= ~(1ULL << phy_info->phy_id);
+ 		memset(&phy_info->attached, 0, sizeof(struct mptsas_devinfo));
+ 		if (phy_info->phy) {
+ 			devtprintk(ioc, dev_printk(KERN_DEBUG,
+@@ -889,7 +889,7 @@ mptsas_setup_wide_ports(MPT_ADAPTER *ioc, struct mptsas_portinfo *port_info)
+ 			port_details->port_info = port_info;
+ 			if (phy_info->phy_id < 64 )
+ 				port_details->phy_bitmask |-				    (1 << phy_info->phy_id);
++				    (1ULL << phy_info->phy_id);
+ 			phy_info->sas_port_add_phy=1;
+ 			dsaswideprintk(ioc, printk(MYIOC_s_DEBUG_FMT "\t\tForming port\n\t\t"
+ 			    "phy_id=%d sas_address=0x%018llX\n",
+@@ -931,7 +931,7 @@ mptsas_setup_wide_ports(MPT_ADAPTER *ioc, struct mptsas_portinfo *port_info)
+ 			phy_info_cmp->port_details = port_details;
+ 			if (phy_info_cmp->phy_id < 64 )
+ 				port_details->phy_bitmask |-				(1 << phy_info_cmp->phy_id);
++				(1ULL << phy_info_cmp->phy_id);
+ 			port_details->num_phys++;
+ 		}
+ 	}
+-- 
+2.20.1
