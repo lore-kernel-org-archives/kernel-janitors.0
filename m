@@ -1,46 +1,40 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 09 May 2019 14:34:30 +0000
-Subject: Re: [PATCH] ceph: Silence a checker warning on the error path
-Message-Id: <CAOi1vP-sv2wT3zK+odQLY1tvksK6k8DOZZ5W04zFCsVajwraiw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 05 May 2019 21:50:19 +0000
+Subject: [PATCH][next] taprio: add null check on sched_nest to avoid potential null pointer dereference
+Message-Id: <20190505215019.4639-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190509101125.GC7024@mwanda>
-In-Reply-To: <20190509101125.GC7024@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 9, 2019 at 12:11 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The problem is that if ceph_mdsc_build_path() fails then we set "path"
-> to NULL and the "pathlen" variable is uninitialized.  The we call
-> ceph_mdsc_free_path(path, pathlen) to clean up.  Since "path" is NULL,
-> the function is a no-op but Smatch and UBSan still complain that
-> "pathlen" is uninitialized.
->
-> This patch doesn't change run time, it just silence the warnings.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/ceph/debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index b3fc5fe26a1a..a14d64664878 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -52,7 +52,7 @@ static int mdsc_show(struct seq_file *s, void *p)
->         struct ceph_mds_client *mdsc = fsc->mdsc;
->         struct ceph_mds_request *req;
->         struct rb_node *rp;
-> -       int pathlen;
-> +       int pathlen = 0;
->         u64 pathbase;
->         char *path;
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+The call to nla_nest_start_noflag can return a null pointer and currently
+this is not being checked and this can lead to a null pointer dereference
+when the null pointer sched_nest is passed to function nla_nest_end. Fix
+this by adding in a null pointer check.
 
-Thanks,
+Addresses-Coverity: ("Dereference null return value")
+Fixes: a3d43c0d56f1 ("taprio: Add support adding an admin schedule")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sched/sch_taprio.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-                Ilya
+diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+index 539677120b9f..9ecfb8f5902a 100644
+--- a/net/sched/sch_taprio.c
++++ b/net/sched/sch_taprio.c
+@@ -1087,6 +1087,8 @@ static int taprio_dump(struct Qdisc *sch, struct sk_buff *skb)
+ 		goto done;
+ 
+ 	sched_nest = nla_nest_start_noflag(skb, TCA_TAPRIO_ATTR_ADMIN_SCHED);
++	if (!sched_nest)
++		goto options_error;
+ 
+ 	if (dump_schedule(skb, admin))
+ 		goto admin_error;
+-- 
+2.20.1
