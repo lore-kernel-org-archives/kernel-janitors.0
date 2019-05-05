@@ -1,53 +1,23 @@
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 20 May 2019 01:20:18 +0000
-Subject: Re: [PATCH] cifs: fix memory leak of pneg_inbuf on -EOPNOTSUPP ioctl case
-Message-Id: <CAH2r5muO=GLx2Hh77rTPqCZ1yP6a0r5yjSEu5j58o__Mni1bsQ@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 05 May 2019 06:23:08 +0000
+Subject: Re: [PATCH net-next] bpf: Use PTR_ERR_OR_ZERO in bpf_fd_sk_storage_update_elem()
+Message-Id: <CAADnVQJ+GpPn7g=zv5KdZhdu5=uT4SWT6rGsMn_onFwO7oH=pA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190517081233.11764-1-colin.king@canonical.com>
-In-Reply-To: <20190517081233.11764-1-colin.king@canonical.com>
+References: <20190429135611.72640-1-yuehaibing@huawei.com> <20190429154017.j5yotcmvtw4fcbuo@kafai-mbp.dhcp.thefacebook.com>
+ <20190429154052.7qtxsqex5xure4a3@kafai-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20190429154052.7qtxsqex5xure4a3@kafai-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Martin Lau <kafai@fb.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-merged into cifs-2.6.git for-next (and added cc:stable #v5.1)
+On Mon, Apr 29, 2019 at 8:42 AM Martin Lau <kafai@fb.com> wrote:
+>
+> On Mon, Apr 29, 2019 at 08:40:17AM -0700, Martin KaFai Lau wrote:
+> > On Mon, Apr 29, 2019 at 01:56:11PM +0000, YueHaibing wrote:
+> > > Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> > Acked-by: Martin KaFai Lau <kafai@fb.com>
+> btw, that should go to the bpf-next branch.
 
-On Fri, May 17, 2019 at 3:42 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently in the case where SMB2_ioctl returns the -EOPNOTSUPP error
-> there is a memory leak of pneg_inbuf. Fix this by returning via
-> the out_free_inbuf exit path that will perform the relevant kfree.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 969ae8e8d4ee ("cifs: Accept validate negotiate if server return NT_STATUS_NOT_SUPPORTED")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smb2pdu.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index 710ceb875161..5b8d1482ffbd 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -1054,7 +1054,8 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
->                  * not supported error. Client should accept it.
->                  */
->                 cifs_dbg(VFS, "Server does not support validate negotiate\n");
-> -               return 0;
-> +               rc = 0;
-> +               goto out_free_inbuf;
->         } else if (rc != 0) {
->                 cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
->                 rc = -EIO;
-> --
-> 2.20.1
->
-
-
--- 
-Thanks,
-
-Steve
+Applied to bpf-next. Thanks!
