@@ -1,75 +1,83 @@
-From: ChenGang <cg.chen@huawei.com>
-Date: Fri, 03 May 2019 03:53:56 +0000
-Subject: [PATCH v2] fs: ocfs: fix spelling mistake "hearbeating" -> "heartbeat"
-Message-Id: <1556855636-121101-1-git-send-email-cg.chen@huawei.com>
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+Date: Sun, 05 May 2019 01:07:40 +0000
+Subject: Re: [PATCH v2] fs: ocfs: fix spelling mistake "hearbeating" -> "heartbeat"
+Message-Id: <071ee914-17a8-5e3e-ab49-ac4bdad5eaed@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1556855636-121101-1-git-send-email-cg.chen@huawei.com>
+In-Reply-To: <1556855636-121101-1-git-send-email-cg.chen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mark@fasheh.com, jlbec@evilplan.org, jiangqi903@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, ocfs2-devel@oss.oracle.com, joseph.qi@linux.alibaba.com, ChenGang <cg.chen@huawei.com>
+To: ChenGang <cg.chen@huawei.com>, mark@fasheh.com, jlbec@evilplan.org, jiangqi903@gmail.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, ocfs2-devel@oss.oracle.com, Andrew Morton <akpm@linux-foundation.org>
 
-There are some spelling mistakes in ocfs, fix it.
 
-Signed-off-by: ChenGang <cg.chen@huawei.com>
----
- fs/ocfs2/cluster/heartbeat.c | 2 +-
- fs/ocfs2/cluster/quorum.c    | 2 +-
- fs/ocfs2/cluster/tcp.c       | 2 +-
- fs/ocfs2/dlm/dlmmaster.c     | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-index f3c20b2..e4e7df1 100644
---- a/fs/ocfs2/cluster/heartbeat.c
-+++ b/fs/ocfs2/cluster/heartbeat.c
-@@ -1198,7 +1198,7 @@ static int o2hb_do_disk_heartbeat(struct o2hb_region *reg)
- 	if (atomic_read(&reg->hr_steady_iterations) != 0) {
- 		if (atomic_dec_and_test(&reg->hr_unsteady_iterations)) {
- 			printk(KERN_NOTICE "o2hb: Unable to stabilize "
--			       "heartbeart on region %s (%s)\n",
-+			       "heartbeat on region %s (%s)\n",
- 			       config_item_name(&reg->hr_item),
- 			       reg->hr_dev_name);
- 			atomic_set(&reg->hr_steady_iterations, 0);
-diff --git a/fs/ocfs2/cluster/quorum.c b/fs/ocfs2/cluster/quorum.c
-index af2e747..792132f 100644
---- a/fs/ocfs2/cluster/quorum.c
-+++ b/fs/ocfs2/cluster/quorum.c
-@@ -89,7 +89,7 @@ static void o2quo_fence_self(void)
- 	};
- }
- 
--/* Indicate that a timeout occurred on a hearbeat region write. The
-+/* Indicate that a timeout occurred on a heartbeat region write. The
-  * other nodes in the cluster may consider us dead at that time so we
-  * want to "fence" ourselves so that we don't scribble on the disk
-  * after they think they've recovered us. This can't solve all
-diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
-index e9f236a..7a43c04 100644
---- a/fs/ocfs2/cluster/tcp.c
-+++ b/fs/ocfs2/cluster/tcp.c
-@@ -1776,7 +1776,7 @@ static void o2net_hb_node_up_cb(struct o2nm_node *node, int node_num,
- 		(msecs_to_jiffies(o2net_reconnect_delay()) + 1);
- 
- 	if (node_num != o2nm_this_node()) {
--		/* believe it or not, accept and node hearbeating testing
-+		/* believe it or not, accept and node heartbeating testing
- 		 * can succeed for this node before we got here.. so
- 		 * only use set_nn_state to clear the persistent error
- 		 * if that hasn't already happened */
-diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
-index 826f056..41b80d5 100644
---- a/fs/ocfs2/dlm/dlmmaster.c
-+++ b/fs/ocfs2/dlm/dlmmaster.c
-@@ -2176,7 +2176,7 @@ static void dlm_assert_master_worker(struct dlm_work_item *item, void *data)
-  * think that $RECOVERY is currently mastered by a dead node.  If so,
-  * we wait a short time to allow that node to get notified by its own
-  * heartbeat stack, then check again.  All $RECOVERY lock resources
-- * mastered by dead nodes are purged when the hearbeat callback is
-+ * mastered by dead nodes are purged when the heartbeat callback is
-  * fired, so we can know for sure that it is safe to continue once
-  * the node returns a live node or no node.  */
- static int dlm_pre_master_reco_lockres(struct dlm_ctxt *dlm,
--- 
-1.8.5.6
+On 19/5/3 11:53, ChenGang wrote:
+> There are some spelling mistakes in ocfs, fix it.
+
+s/ocfs/ocfs2
+
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> 
+> Signed-off-by: ChenGang <cg.chen@huawei.com>
+> ---
+>  fs/ocfs2/cluster/heartbeat.c | 2 +-
+>  fs/ocfs2/cluster/quorum.c    | 2 +-
+>  fs/ocfs2/cluster/tcp.c       | 2 +-
+>  fs/ocfs2/dlm/dlmmaster.c     | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+> index f3c20b2..e4e7df1 100644
+> --- a/fs/ocfs2/cluster/heartbeat.c
+> +++ b/fs/ocfs2/cluster/heartbeat.c
+> @@ -1198,7 +1198,7 @@ static int o2hb_do_disk_heartbeat(struct o2hb_region *reg)
+>  	if (atomic_read(&reg->hr_steady_iterations) != 0) {
+>  		if (atomic_dec_and_test(&reg->hr_unsteady_iterations)) {
+>  			printk(KERN_NOTICE "o2hb: Unable to stabilize "
+> -			       "heartbeart on region %s (%s)\n",
+> +			       "heartbeat on region %s (%s)\n",
+>  			       config_item_name(&reg->hr_item),
+>  			       reg->hr_dev_name);
+>  			atomic_set(&reg->hr_steady_iterations, 0);
+> diff --git a/fs/ocfs2/cluster/quorum.c b/fs/ocfs2/cluster/quorum.c
+> index af2e747..792132f 100644
+> --- a/fs/ocfs2/cluster/quorum.c
+> +++ b/fs/ocfs2/cluster/quorum.c
+> @@ -89,7 +89,7 @@ static void o2quo_fence_self(void)
+>  	};
+>  }
+>  
+> -/* Indicate that a timeout occurred on a hearbeat region write. The
+> +/* Indicate that a timeout occurred on a heartbeat region write. The
+>   * other nodes in the cluster may consider us dead at that time so we
+>   * want to "fence" ourselves so that we don't scribble on the disk
+>   * after they think they've recovered us. This can't solve all
+> diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+> index e9f236a..7a43c04 100644
+> --- a/fs/ocfs2/cluster/tcp.c
+> +++ b/fs/ocfs2/cluster/tcp.c
+> @@ -1776,7 +1776,7 @@ static void 	(struct o2nm_node *node, int node_num,
+>  		(msecs_to_jiffies(o2net_reconnect_delay()) + 1);
+>  
+>  	if (node_num != o2nm_this_node()) {
+> -		/* believe it or not, accept and node hearbeating testing
+> +		/* believe it or not, accept and node heartbeating testing
+>  		 * can succeed for this node before we got here.. so
+>  		 * only use set_nn_state to clear the persistent error
+>  		 * if that hasn't already happened */
+> diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+> index 826f056..41b80d5 100644
+> --- a/fs/ocfs2/dlm/dlmmaster.c
+> +++ b/fs/ocfs2/dlm/dlmmaster.c
+> @@ -2176,7 +2176,7 @@ static void dlm_assert_master_worker(struct dlm_work_item *item, void *data)
+>   * think that $RECOVERY is currently mastered by a dead node.  If so,
+>   * we wait a short time to allow that node to get notified by its own
+>   * heartbeat stack, then check again.  All $RECOVERY lock resources
+> - * mastered by dead nodes are purged when the hearbeat callback is
+> + * mastered by dead nodes are purged when the heartbeat callback is
+>   * fired, so we can know for sure that it is safe to continue once
+>   * the node returns a live node or no node.  */
+>  static int dlm_pre_master_reco_lockres(struct dlm_ctxt *dlm,
+> 
