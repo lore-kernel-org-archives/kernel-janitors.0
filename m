@@ -1,26 +1,53 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 14 May 2019 17:12:30 +0000
-Subject: Re: [PATCH] scsi: bnx2fc: fix incorrect cast to u64 on shift operation
-Message-Id: <yq18sv9dkox.fsf@oracle.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 06 May 2019 08:49:48 +0000
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: fix spelling mistake "capabilites" -> "capabilities"
+Message-Id: <CAHp75VcXGyEGYXrswuLHecpvqqR1dfi94Nhu3dhhkex9OVJCfw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190504164829.26631-1-colin.king@canonical.com>
-In-Reply-To: <20190504164829.26631-1-colin.king@canonical.com> (Colin King's
-        message of "Sat, 4 May 2019 17:48:29 +0100")
+References: <20190415125204.7386-1-colin.king@canonical.com> <520f6626-246b-005f-53ef-df2f75a89cd9@codeaurora.org>
+In-Reply-To: <520f6626-246b-005f-53ef-df2f75a89cd9@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mukesh Ojha <mojha@codeaurora.org>
+Cc: Colin King <colin.king@canonical.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+
+On Tue, Apr 16, 2019 at 9:58 AM Mukesh Ojha <mojha@codeaurora.org> wrote:
+>
+>
+> On 4/15/2019 6:22 PM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > There is a spelling mistake in a module parameter description. Fix it.
+> >
+
+Pushed to my review and testing queue, thanks!
+
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+>
+> Cheers,
+> -Mukesh
+>
+> > ---
+> >   drivers/platform/x86/thinkpad_acpi.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+> > index 57d9ae9d8e56..9192b686e9a6 100644
+> > --- a/drivers/platform/x86/thinkpad_acpi.c
+> > +++ b/drivers/platform/x86/thinkpad_acpi.c
+> > @@ -10269,7 +10269,7 @@ MODULE_PARM_DESC(volume_mode,
+> >
+> >   module_param_named(volume_capabilities, volume_capabilities, uint, 0444);
+> >   MODULE_PARM_DESC(volume_capabilities,
+> > -              "Selects the mixer capabilites: 0=auto, 1=volume and mute, 2=mute only");
+> > +              "Selects the mixer capabilities: 0=auto, 1=volume and mute, 2=mute only");
+> >
+> >   module_param_named(volume_control, volume_control_allowed, bool, 0444);
+> >   MODULE_PARM_DESC(volume_control,
 
 
-Colin,
-
-> Currently an int is being shifted and the result is being cast to a
-> u64 which leads to undefined behaviour if the shift is more than 31
-> bits. Fix this by casting the integer value 1 to u64 before the shift
-> operation.
-
-Applied to 5.2/scsi-fixes, thanks!
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+With Best Regards,
+Andy Shevchenko
