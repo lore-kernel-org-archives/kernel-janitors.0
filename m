@@ -1,7 +1,7 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Mon, 06 May 2019 07:52:06 +0000
+From: David Hildenbrand <david@redhat.com>
+Date: Mon, 06 May 2019 09:40:12 +0000
 Subject: Re: [PATCH -next] KVM: s390: fix typo in parameter description
-Message-Id: <1fdd0337-6d73-99aa-2dea-25f5d10c8107@de.ibm.com>
+Message-Id: <5a720ed2-0cd3-bae6-2a4d-e3e228f2d576@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190504065145.53665-1-weiyongjun1@huawei.com>
 In-Reply-To: <20190504065145.53665-1-weiyongjun1@huawei.com>
@@ -10,16 +10,11 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-
 On 04.05.19 08:51, Wei Yongjun wrote:
 > Fix typo in parameter description.
 > 
 > Fixes: 8b905d28ee17 ("KVM: s390: provide kvm_arch_no_poll function")
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-
 > ---
 >  arch/s390/kvm/kvm-s390.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -40,3 +35,11 @@ Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
 > 
 > 
 > 
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+-- 
+
+Thanks,
+
+David / dhildenb
