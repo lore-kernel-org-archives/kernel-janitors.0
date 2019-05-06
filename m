@@ -1,56 +1,48 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Wed, 15 May 2019 12:38:11 +0000
-Subject: Re: [PATCH] libertas/libertas_tf: fix spelling mistake "Donwloading" -> "Downloading"
-Message-Id: <2661269b-7404-5534-05e1-b3b963dc2036@codeaurora.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 06 May 2019 12:23:29 +0000
+Subject: Re: [PATCH] platform/x86: alienware-wmi: printing the wrong error code
+Message-Id: <CAHp75Vcww6YbHcimpiYWV==9-CQzXjwsbVF+EOA3rKmdU4Wm9A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190514211406.6353-1-colin.king@canonical.com>
-In-Reply-To: <20190514211406.6353-1-colin.king@canonical.com>
+References: <20190424094417.GA15818@mwanda>
+In-Reply-To: <20190424094417.GA15818@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-
-On 5/15/2019 2:44 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Apr 24, 2019 at 3:43 PM <Mario.Limonciello@dell.com> wrote:
 >
-> There is are two spelling mistakes in lbtf_deb_usb2 messages, fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+> >Fixes: bc2ef884320b ("alienware-wmi: For WMAX HDMI method, introduce a way to query HDMI cable status")
+> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cheers,
--Mukesh
+Pushed to my review and testing queue, thanks!
 
-> ---
->   drivers/net/wireless/marvell/libertas/if_usb.c    | 2 +-
->   drivers/net/wireless/marvell/libertas_tf/if_usb.c | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
+
+> >---
+> > drivers/platform/x86/alienware-wmi.c | 2 +-
+> > 1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> >diff --git a/drivers/platform/x86/alienware-wmi.c b/drivers/platform/x86/alienware-wmi.c
+> >index c0d1555735cd..83fd7677af24 100644
+> >--- a/drivers/platform/x86/alienware-wmi.c
+> >+++ b/drivers/platform/x86/alienware-wmi.c
+> >@@ -587,7 +587,7 @@ static ssize_t show_hdmi_source(struct device *dev,
+> >                        return scnprintf(buf, PAGE_SIZE,
+> >                                         "input [gpu] unknown\n");
+> >        }
+> >-       pr_err("alienware-wmi: unknown HDMI source status: %d\n", out_data);
+> >+       pr_err("alienware-wmi: unknown HDMI source status: %u\n", status);
+> >        return scnprintf(buf, PAGE_SIZE, "input gpu [unknown]\n");
+> > }
+> >
+> >--
+> >2.18.0
 >
-> diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net/wireless/marvell/libertas/if_usb.c
-> index 220dcdee8d2b..1d06fa564e28 100644
-> --- a/drivers/net/wireless/marvell/libertas/if_usb.c
-> +++ b/drivers/net/wireless/marvell/libertas/if_usb.c
-> @@ -367,7 +367,7 @@ static int if_usb_send_fw_pkt(struct if_usb_card *cardp)
->   			     cardp->fwseqnum, cardp->totalbytes);
->   	} else if (fwdata->hdr.dnldcmd = cpu_to_le32(FW_HAS_LAST_BLOCK)) {
->   		lbs_deb_usb2(&cardp->udev->dev, "Host has finished FW downloading\n");
-> -		lbs_deb_usb2(&cardp->udev->dev, "Donwloading FW JUMP BLOCK\n");
-> +		lbs_deb_usb2(&cardp->udev->dev, "Downloading FW JUMP BLOCK\n");
->   
->   		cardp->fwfinalblk = 1;
->   	}
-> diff --git a/drivers/net/wireless/marvell/libertas_tf/if_usb.c b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-> index a4b9ede70705..38f77b1a02ca 100644
-> --- a/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-> +++ b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-> @@ -319,7 +319,7 @@ static int if_usb_send_fw_pkt(struct if_usb_card *cardp)
->   	} else if (fwdata->hdr.dnldcmd = cpu_to_le32(FW_HAS_LAST_BLOCK)) {
->   		lbtf_deb_usb2(&cardp->udev->dev,
->   			"Host has finished FW downloading\n");
-> -		lbtf_deb_usb2(&cardp->udev->dev, "Donwloading FW JUMP BLOCK\n");
-> +		lbtf_deb_usb2(&cardp->udev->dev, "Downloading FW JUMP BLOCK\n");
->   
->   		/* Host has finished FW downloading
->   		 * Donwloading FW JUMP BLOCK
+> Yes, thanks.
+> Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
