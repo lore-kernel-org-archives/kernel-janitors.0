@@ -1,42 +1,62 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 31 May 2019 09:21:01 +0000
-Subject: [PATCH 2/2][next] RDMA/hns: fix inverted logic of readl read and shift
-Message-Id: <20190531092101.28772-2-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 May 2019 08:36:34 +0000
+Subject: [PATCH] genwqe: Prevent an integer overflow in the ioctl
+Message-Id: <20190507083634.GA13046@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190531092101.28772-1-colin.king@canonical.com>
-In-Reply-To: <20190531092101.28772-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Frank Haverkamp <haver@linux.ibm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There are a couple potential integer overflows here.
 
-A previous change incorrectly changed the inverted logic and logically
-negated the readl rather than the shifted readl result. Fix this by
-adding in missing parentheses around the expression that needs to be
-logically negated.
+	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
 
-Addresses-Coverity: ("Logically dead code")
-Fixes: 669cefb654cb ("RDMA/hns: Remove jiffies operation in disable interrupt context")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The first thing is that the "m->size + (...)" addition could overflow,
+and the second is that round_up() overflows to zero if the result is
+within PAGE_SIZE of the type max.
+
+In this code, the "m->size" variable is an u64 but we're saving the
+result in "map_size" which is an unsigned long and genwqe_user_vmap()
+takes an unsigned long as well.  So I have used ULONG_MAX as the upper
+bound.  From a practical perspective unsigned long is fine/better than
+trying to change all the types to u64.
+
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/infiniband/hw/hns/hns_roce_hem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/genwqe/card_dev.c   | 2 ++
+ drivers/misc/genwqe/card_utils.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hem.c b/drivers/infiniband/hw/hns/hns_roce_hem.c
-index b3641aeff27a..a8e9329cbf4e 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hem.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hem.c
-@@ -378,7 +378,7 @@ static int hns_roce_set_hem(struct hns_roce_dev *hr_dev,
+diff --git a/drivers/misc/genwqe/card_dev.c b/drivers/misc/genwqe/card_dev.c
+index 8c1b63a4337b..d2098b4d2945 100644
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -780,6 +780,8 @@ static int genwqe_pin_mem(struct genwqe_file *cfile, struct genwqe_mem *m)
  
- 		end = HW_SYNC_TIMEOUT_MSECS;
- 		while (end > 0) {
--			if (!readl(bt_cmd) >> BT_CMD_SYNC_SHIFT)
-+			if (!(readl(bt_cmd) >> BT_CMD_SYNC_SHIFT))
- 				break;
+ 	if ((m->addr = 0x0) || (m->size = 0))
+ 		return -EINVAL;
++	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
++		return -EINVAL;
  
- 			mdelay(HW_SYNC_SLEEP_TIME_INTERVAL);
+ 	map_addr = (m->addr & PAGE_MASK);
+ 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
+index 89cff9d1012b..7571700abc6e 100644
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -586,6 +586,10 @@ int genwqe_user_vmap(struct genwqe_dev *cd, struct dma_mapping *m, void *uaddr,
+ 	/* determine space needed for page_list. */
+ 	data = (unsigned long)uaddr;
+ 	offs = offset_in_page(data);
++	if (size > ULONG_MAX - PAGE_SIZE - offs) {
++		m->size = 0;	/* mark unused and not added */
++		return -EINVAL;
++	}
+ 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
+ 
+ 	m->page_list = kcalloc(m->nr_pages,
 -- 
-2.20.1
+2.18.0
