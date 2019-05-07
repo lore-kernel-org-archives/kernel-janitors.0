@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 May 2019 09:50:33 +0000
+Date: Tue, 07 May 2019 10:34:34 +0000
 Subject: [PATCH][next] net: dsa: sja1105: fix check on while loop exit
-Message-Id: <20190507095033.25396-1-colin.king@canonical.com>
+Message-Id: <20190507103434.16174-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190507095033.25396-1-colin.king@canonical.com>
+In-Reply-To: <20190507095033.25396-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
