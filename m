@@ -1,84 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 03 May 2019 06:23:33 +0000
-Subject: Applied "ASoC: SOF: remove redundant null checks of dai" to the asoc tree
-Message-Id: <20190503062333.68D31441D59@finisterre.ee.mobilebroadband>
+From: Vladimir Oltean <olteanv@gmail.com>
+Date: Wed, 08 May 2019 20:32:25 +0000
+Subject: [PATCH] net: dsa: sja1105: Don't return a negative in u8 sja1105_stp_state_get
+Message-Id: <20190508203225.13275-1-olteanv@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190502113340.8688-1-colin.king@canonical.com>
-In-Reply-To: <20190502113340.8688-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>
+To: davem@davemloft.net, dan.carpenter@oracle.com
+Cc: f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>
 
-The patch
+Dan Carpenter says:
 
-   ASoC: SOF: remove redundant null checks of dai
+The patch 640f763f98c2: "net: dsa: sja1105: Add support for Spanning
+Tree Protocol" from May 5, 2019, leads to the following static
+checker warning:
 
-has been applied to the asoc tree at
+        drivers/net/dsa/sja1105/sja1105_main.c:1073 sja1105_stp_state_get()
+        warn: signedness bug returning '(-22)'
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+The caller doesn't check for negative errors anyway.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c437ba0300cec1ca8758fdd71a3b2f8cd02c6e2a Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 2 May 2019 12:33:40 +0100
-Subject: [PATCH] ASoC: SOF: remove redundant null checks of dai
-
-Currently there are two null checks of pointer dai in function
-sof_connect_dai_widget and yet there is no null check of dai
-at the end of the function when checking !dai->name.  The latter
-would be a null pointer deference if dai is null (as picked up
-by static analysis), however the function is only ever called
-when dai is successfully allocated, so the null checks are
-redundant. Clean up the code by removing the null checks.
-
-Addresses-Coverity: ("Dereference after null check")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 640f763f98c2: ("net: dsa: sja1105: Add support for Spanning Tree Protocol")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
 ---
- sound/soc/sof/topology.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/dsa/sja1105/sja1105_main.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index 2b9de1b97447..1f71857298a9 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
- 		switch (w->id) {
- 		case snd_soc_dapm_dai_out:
- 			rtd->cpu_dai->capture_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
- 		case snd_soc_dapm_dai_in:
- 			rtd->cpu_dai->playback_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
+diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
+index 4ccdbc80f7be..46f76b4c5618 100644
+--- a/drivers/net/dsa/sja1105/sja1105_main.c
++++ b/drivers/net/dsa/sja1105/sja1105_main.c
+@@ -1124,7 +1124,11 @@ static u8 sja1105_stp_state_get(struct sja1105_private *priv, int port)
+ 		return BR_STATE_LEARNING;
+ 	if (mac[port].ingress && mac[port].egress && mac[port].dyn_learn)
+ 		return BR_STATE_FORWARDING;
+-	return -EINVAL;
++	/* This is really an error condition if the MAC was in none of the STP
++	 * states above. But treating the port as disabled does nothing, which
++	 * is adequate, and it also resets the MAC to a known state later on.
++	 */
++	return BR_STATE_DISABLED;
+ }
+ 
+ /* For situations where we need to change a setting at runtime that is only
 -- 
-2.20.1
+2.17.1
