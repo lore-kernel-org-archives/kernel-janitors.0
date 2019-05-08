@@ -1,28 +1,37 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Thu, 30 May 2019 18:47:09 +0000
-Subject: Re: [PATCH] RDMA/uverbs: check for allocation failure in uapi_add_elm()
-Message-Id: <20190530184709.GA982@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 08 May 2019 22:42:01 +0000
+Subject: [PATCH] EDAC, sb_edac: remove redundant update of tad_base
+Message-Id: <20190508224201.27120-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190530082024.GA11836@mwanda>
-In-Reply-To: <20190530082024.GA11836@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 11:20:24AM +0300, Dan Carpenter wrote:
-> If the kzalloc() fails then we should return ERR_PTR(-ENOMEM).  In the
-> current code it's possible that the kzalloc() fails and the
-> radix_tree_insert() inserts the NULL pointer successfully and we return
-> the NULL "elm" pointer to the caller.  That results in a NULL pointer
-> dereference.
-> 
-> Fixes: 9ed3e5f44772 ("IB/uverbs: Build the specs into a radix tree at runtime")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/infiniband/core/uverbs_uapi.c | 2 ++
->  1 file changed, 2 insertions(+)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+The variable tad_base is being set to a value that is never read
+and is being over-written on the next iteration of a for-loop.
+This assignment is therefore redundant and can be removed.
 
-Jason
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/edac/sb_edac.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
+index 9353c3fc7c05..6aa4b1b73a15 100644
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -1513,7 +1513,6 @@ static int knl_get_dimm_capacity(struct sbridge_pvt *pvt, u64 *mc_sizes)
+ 						sad_actual_size[mc] += tad_size;
+ 					}
+ 				}
+-				tad_base = tad_limit+1;
+ 			}
+ 		}
+ 
+-- 
+2.20.1
