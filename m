@@ -1,30 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 May 2019 15:03:11 +0000
-Subject: Re: [PATCH] orangefs: remove redundant assignment to variable buffer_index
-Message-Id: <20190521150311.GL31203@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 08 May 2019 10:22:09 +0000
+Subject: [PATCH] net: dsa: lantiq: fix spelling mistake "brigde" -> "bridge"
+Message-Id: <20190508102209.6830-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190511132700.4862-1-colin.king@canonical.com>
- <CAOg9mSQt42NQu-3nwZOCGOPx45y7G8aaiDaVe4SwotGnD9iY1A@mail.gmail.com>
-In-Reply-To: <CAOg9mSQt42NQu-3nwZOCGOPx45y7G8aaiDaVe4SwotGnD9iY1A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: Colin King <colin.king@canonical.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, andrew@lunn.ch, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 12:06:31PM -0400, Mike Marshall wrote:
-> Hi Colin...
-> 
-> Thanks for the patch. Before I initialized buffer_index, Dan Williams sent
-> in a warning that a particular error path could try to use ibuffer_index
-> uninitialized. I could induce the problem he described with one
-> of the xfstests resulting in a crashed kernel. I will try to refactor
-> the code to fix the problem some other way than initializing
-> buffer_index in the declaration.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-The only explanation I can think of is that you guys are discussing
-different code.  :P
+There are several spelling mistakes in dev_err messages. Fix these.
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/lantiq_gswip.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+index 553831df58fe..4e64835deac2 100644
+--- a/drivers/net/dsa/lantiq_gswip.c
++++ b/drivers/net/dsa/lantiq_gswip.c
+@@ -1235,7 +1235,7 @@ static void gswip_port_fast_age(struct dsa_switch *ds, int port)
+ 
+ 		err = gswip_pce_table_entry_read(priv, &mac_bridge);
+ 		if (err) {
+-			dev_err(priv->dev, "failed to read mac brigde: %d\n",
++			dev_err(priv->dev, "failed to read mac bridge: %d\n",
+ 				err);
+ 			return;
+ 		}
+@@ -1252,7 +1252,7 @@ static void gswip_port_fast_age(struct dsa_switch *ds, int port)
+ 		mac_bridge.valid = false;
+ 		err = gswip_pce_table_entry_write(priv, &mac_bridge);
+ 		if (err) {
+-			dev_err(priv->dev, "failed to write mac brigde: %d\n",
++			dev_err(priv->dev, "failed to write mac bridge: %d\n",
+ 				err);
+ 			return;
+ 		}
+@@ -1328,7 +1328,7 @@ static int gswip_port_fdb(struct dsa_switch *ds, int port,
+ 
+ 	err = gswip_pce_table_entry_write(priv, &mac_bridge);
+ 	if (err)
+-		dev_err(priv->dev, "failed to write mac brigde: %d\n", err);
++		dev_err(priv->dev, "failed to write mac bridge: %d\n", err);
+ 
+ 	return err;
+ }
+@@ -1360,7 +1360,7 @@ static int gswip_port_fdb_dump(struct dsa_switch *ds, int port,
+ 
+ 		err = gswip_pce_table_entry_read(priv, &mac_bridge);
+ 		if (err) {
+-			dev_err(priv->dev, "failed to write mac brigde: %d\n",
++			dev_err(priv->dev, "failed to write mac bridge: %d\n",
+ 				err);
+ 			return err;
+ 		}
+-- 
+2.20.1
