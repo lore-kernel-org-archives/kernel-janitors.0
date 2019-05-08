@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 May 2019 08:57:52 +0000
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 08 May 2019 15:08:44 +0000
 Subject: Re: [PATCH] kdb: do a sanity check on the cpu in kdb_per_cpu()
-Message-Id: <20190508085752.GY2239@kadam>
+Message-Id: <CAD=FV=WB=om5sPH+p0FN7i=RJfj0L+9-3YUz_djF4Nw30B221Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190506125018.GA13799@mwanda>
 In-Reply-To: <20190506125018.GA13799@mwanda>
@@ -10,19 +10,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, May 08, 2019 at 09:48:38AM +0100, Daniel Thompson wrote:
-> On Mon, May 06, 2019 at 03:50:18PM +0300, Dan Carpenter wrote:
-> > The "whichcpu" comes from argv[3].  The cpu_online() macro looks up the
-> > cpu in a bitmap of online cpus, but if the value is too high then it
-> > could read beyond the end of the bitmap and possibly Oops.
-> > 
-> > Fixes: 5d5314d6795f ("kdb: core for kgdb back end (1 of 2)")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Just out of interest... why isn't this copied to LKML? Omiting LKML makes
-> the patch hard to find in a patchwork instance.
+Hi,
 
-Sorry, I wasn't aware that anyone was using LKML for patchwork.
+On Mon, May 6, 2019 at 5:50 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The "whichcpu" comes from argv[3].  The cpu_online() macro looks up the
+> cpu in a bitmap of online cpus, but if the value is too high then it
+> could read beyond the end of the bitmap and possibly Oops.
+>
+> Fixes: 5d5314d6795f ("kdb: core for kgdb back end (1 of 2)")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  kernel/debug/kdb/kdb_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
