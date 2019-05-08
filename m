@@ -1,23 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 04 May 2019 12:00:07 +0000
-Subject: Re: [PATCH -next] ARM: ixp4xx: Remove duplicated include from common.c
-Message-Id: <CACRpkdaN+BeaKA91rvMJwJsSW2epEb1YJPzpvXoJ=+M=Ly-7tQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 May 2019 07:17:04 +0000
+Subject: [bug report] net/sched: use the hardware intermediate representation for matchall
+Message-Id: <20190508071704.GA11889@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190504070318.56760-1-yuehaibing@huawei.com>
-In-Reply-To: <20190504070318.56760-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Linus Walleij <linusw@kernel.org>, kernel-janitors@vger.kernel.org, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Halasa <khalasa@piap.pl>, Imre Kaloz <kaloz@openwrt.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: kernel-janitors@vger.kernel.org
 
-On Sat, May 4, 2019 at 8:53 AM YueHaibing <yuehaibing@huawei.com> wrote:
+Hello Pieter Jansen van Vuuren,
 
-> Remove duplicated include.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The patch f00cbf196814: "net/sched: use the hardware intermediate
+representation for matchall" from May 4, 2019, leads to the following
+static checker warning:
 
-Patch applied, thanks!
+	net/sched/cls_matchall.c:317 mall_reoffload()
+	error: double free of 'cls_mall.rule'
 
-Yours,
-Linus Walleij
+net/sched/cls_matchall.c
+   286  static int mall_reoffload(struct tcf_proto *tp, bool add, tc_setup_cb_t *cb,
+   287                            void *cb_priv, struct netlink_ext_ack *extack)
+   288  {
+   289          struct cls_mall_head *head = rtnl_dereference(tp->root);
+   290          struct tc_cls_matchall_offload cls_mall = {};
+   291          struct tcf_block *block = tp->chain->block;
+   292          int err;
+   293  
+   294          if (tc_skip_hw(head->flags))
+   295                  return 0;
+   296  
+   297          cls_mall.rule = flow_rule_alloc(tcf_exts_num_actions(&head->exts));
+   298          if (!cls_mall.rule)
+   299                  return -ENOMEM;
+   300  
+   301          tc_cls_common_offload_init(&cls_mall.common, tp, head->flags, block,
+   302                                     extack);
+   303          cls_mall.command = add ?
+   304                  TC_CLSMATCHALL_REPLACE : TC_CLSMATCHALL_DESTROY;
+   305          cls_mall.cookie = (unsigned long)head;
+   306  
+   307          err = tc_setup_flow_action(&cls_mall.rule->action, &head->exts);
+   308          if (err) {
+   309                  kfree(cls_mall.rule);
+                        ^^^^^^^^^^^^^^^^^^^
+   310                  if (add && tc_skip_sw(head->flags)) {
+   311                          NL_SET_ERR_MSG_MOD(extack, "Failed to setup flow action");
+   312                          return err;
+   313                  }
+
+My guess is that there should be a "return err;" here?
+
+   314          }
+   315  
+   316          err = cb(TC_SETUP_CLSMATCHALL, &cls_mall, cb_priv);
+                      ^^
+I did check whether the cb() function pointers re-allocate ->rule and
+it doesn't look like it.
+
+   317          kfree(cls_mall.rule);
+                ^^^^^^^^^^^^^^^^^^^^
+   318  
+   319          if (err) {
+   320                  if (add && tc_skip_sw(head->flags))
+   321                          return err;
+   322                  return 0;
+   323          }
+
+regards,
+dan carpenter
