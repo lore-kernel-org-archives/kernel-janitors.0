@@ -1,39 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 31 May 2019 12:05:59 +0000
-Subject: [PATCH] phy: qcom-qusb2: fix missing assignment of ret when calling clk_prepare_enable
-Message-Id: <20190531120559.2202-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 May 2019 07:19:51 +0000
+Subject: [bug report] net: dsa: sja1105: Add support for Spanning Tree Protocol
+Message-Id: <20190508071951.GA12293@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-arm-msm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Vladimir Oltean,
 
-The error return from the call to clk_prepare_enable is not being assigned
-to variable ret even though ret is being used to check if the call failed.
-Fix this by adding in the missing assignment.
+The patch 640f763f98c2: "net: dsa: sja1105: Add support for Spanning
+Tree Protocol" from May 5, 2019, leads to the following static
+checker warning:
 
-Addresses-Coverity: ("Logically dead code")
-Fixes: 891a96f65ac3 ("phy: qcom-qusb2: Add support for runtime PM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/phy/qualcomm/phy-qcom-qusb2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	drivers/net/dsa/sja1105/sja1105_main.c:1073 sja1105_stp_state_get()
+	warn: signedness bug returning '(-22)'
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-index 1cbf1d6f28ce..bf94a52d3087 100644
---- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-@@ -564,7 +564,7 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
- 	}
- 
- 	if (!qphy->has_se_clk_scheme) {
--		clk_prepare_enable(qphy->ref_clk);
-+		ret = clk_prepare_enable(qphy->ref_clk);
- 		if (ret) {
- 			dev_err(dev, "failed to enable ref clk, %d\n", ret);
- 			goto disable_ahb_clk;
--- 
-2.20.1
+drivers/net/dsa/sja1105/sja1105_main.c
+  1059  static u8 sja1105_stp_state_get(struct sja1105_private *priv, int port)
+               ^^
+  1060  {
+  1061          struct sja1105_mac_config_entry *mac;
+  1062  
+  1063          mac = priv->static_config.tables[BLK_IDX_MAC_CONFIG].entries;
+  1064  
+  1065          if (!mac[port].ingress && !mac[port].egress && !mac[port].dyn_learn)
+  1066                  return BR_STATE_BLOCKING;
+  1067          if (mac[port].ingress && !mac[port].egress && !mac[port].dyn_learn)
+  1068                  return BR_STATE_LISTENING;
+  1069          if (mac[port].ingress && !mac[port].egress && mac[port].dyn_learn)
+  1070                  return BR_STATE_LEARNING;
+  1071          if (mac[port].ingress && mac[port].egress && mac[port].dyn_learn)
+  1072                  return BR_STATE_FORWARDING;
+  1073          return -EINVAL;
+                ^^^^^^^^^^^^^^
+The caller doesn't check for negative errors anyway.
+
+  1074  }
+
+regards,
+dan carpenter
