@@ -1,25 +1,38 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 30 May 2019 01:55:42 +0000
-Subject: Re: [PATCH][next] scsi: hpsa: fix an uninitialized read and dereference of pointer dev
-Message-Id: <yq18suozowx.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 May 2019 10:11:25 +0000
+Subject: [PATCH] ceph: Silence a checker warning on the error path
+Message-Id: <20190509101125.GC7024@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190522083903.18849-1-colin.king@canonical.com>
-In-Reply-To: <20190522083903.18849-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 22 May 2019 09:39:03 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+The problem is that if ceph_mdsc_build_path() fails then we set "path"
+to NULL and the "pathlen" variable is uninitialized.  The we call
+ceph_mdsc_free_path(path, pathlen) to clean up.  Since "path" is NULL,
+the function is a no-op but Smatch and UBSan still complain that
+"pathlen" is uninitialized.
 
-Colin,
+This patch doesn't change run time, it just silence the warnings.
 
-> Currently the check for a lockup_detected failure exits via the label
-> return_reset_status that reads and dereferences an uninitialized
-> pointer dev.  Fix this by ensuring dev is inintialized to null.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/ceph/debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 5.3/scsi-queue, thanks!
-
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index b3fc5fe26a1a..a14d64664878 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -52,7 +52,7 @@ static int mdsc_show(struct seq_file *s, void *p)
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+ 	struct ceph_mds_request *req;
+ 	struct rb_node *rp;
+-	int pathlen;
++	int pathlen = 0;
+ 	u64 pathbase;
+ 	char *path;
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.18.0
