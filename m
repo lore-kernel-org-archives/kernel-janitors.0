@@ -1,28 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 May 2019 14:46:50 +0000
+From: Borislav Petkov <bp@alien8.de>
+Date: Thu, 09 May 2019 14:54:26 +0000
 Subject: Re: [PATCH] EDAC, sb_edac: remove redundant update of tad_base
-Message-Id: <20190509144650.GG21059@kadam>
+Message-Id: <20190509145426.GC17053@zn.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190508224201.27120-1-colin.king@canonical.com>
  <20190509141313.GA17053@zn.tnic>
  <55f8efee-a02c-1574-42fa-35e1d3df14f7@canonical.com>
  <20190509144113.GB17053@zn.tnic>
-In-Reply-To: <20190509144113.GB17053@zn.tnic>
+ <20190509144650.GG21059@kadam>
+In-Reply-To: <20190509144650.GG21059@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Borislav Petkov <bp@alien8.de>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Colin Ian King <colin.king@canonical.com>, Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 04:41:13PM +0200, Borislav Petkov wrote:
-> Bottom line of what I'm trying to say is, those tags better be useful to
-> the general kernel audience - that means, they should be documented so
-> that people can look them up - or better not be in commit messages at
-> all.
+On Thu, May 09, 2019 at 05:46:50PM +0300, Dan Carpenter wrote:
+> On Thu, May 09, 2019 at 04:41:13PM +0200, Borislav Petkov wrote:
+> > Bottom line of what I'm trying to say is, those tags better be useful to
+> > the general kernel audience - that means, they should be documented so
+> > that people can look them up - or better not be in commit messages at
+> > all.
+> 
+> Other people will complain if you don't mention the tool name...
 
-Other people will complain if you don't mention the tool name...
+To quote again what I said: "... they should be documented so that
+people can look them up... "
 
-You can't win.  :(
+-- 
+Regards/Gruss,
+    Boris.
 
-regards,
-dan carpenter
+Good mailing practices for 400: avoid top-posting and trim the reply.
