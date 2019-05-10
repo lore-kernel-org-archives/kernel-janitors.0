@@ -1,71 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 15 May 2019 09:33:22 +0000
-Subject: [PATCH] test_firmware: Use correct snprintf() limit
-Message-Id: <20190515093322.GB3409@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 May 2019 07:07:34 +0000
+Subject: [PATCH][next] drm/amdgpu: fix spelling mistake "retrived" -> "retrieved"
+Message-Id: <20190510070734.20625-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The limit here is supposed to be how much of the page is left, but it's
-just using PAGE_SIZE as the limit.
+From: Colin Ian King <colin.king@canonical.com>
 
-The other thing to remember is that snprintf() returns the number of
-bytes which would have been copied if we had had enough room.  So that
-means that if we run out of space then this code would end up passing a
-negative value as the limit and the kernel would print an error message.
-I have change the code to use scnprintf() which returns the number of
-bytes that were successfully printed (not counting the NUL terminator).
+There is a spelling mistake in a DRM_ERROR error message. Fix this.
 
-Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- lib/test_firmware.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/df_v3_6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index 7222093ee00b..b5487ed829d7 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -223,30 +223,30 @@ static ssize_t config_show(struct device *dev,
+diff --git a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
+index 7d375f8dcce6..a5c3558869fb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
++++ b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
+@@ -194,7 +194,7 @@ static void df_v3_6_pmc_get_ctrl_settings(struct amdgpu_device *adev,
+ 		return;
  
- 	mutex_lock(&test_fw_mutex);
- 
--	len += snprintf(buf, PAGE_SIZE,
-+	len += scnprintf(buf, PAGE_SIZE - len,
- 			"Custom trigger configuration for: %s\n",
- 			dev_name(dev));
- 
- 	if (test_fw_config->name)
--		len += snprintf(buf+len, PAGE_SIZE,
-+		len += scnprintf(buf+len, PAGE_SIZE - len,
- 				"name:\t%s\n",
- 				test_fw_config->name);
- 	else
--		len += snprintf(buf+len, PAGE_SIZE,
-+		len += scnprintf(buf+len, PAGE_SIZE - len,
- 				"name:\tEMTPY\n");
- 
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"num_requests:\t%u\n", test_fw_config->num_requests);
- 
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"send_uevent:\t\t%s\n",
- 			test_fw_config->send_uevent ?
- 			"FW_ACTION_HOTPLUG" :
- 			"FW_ACTION_NOHOTPLUG");
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"sync_direct:\t\t%s\n",
- 			test_fw_config->sync_direct ? "true" : "false");
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"read_fw_idx:\t%u\n", test_fw_config->read_fw_idx);
- 
- 	mutex_unlock(&test_fw_mutex);
+ 	if ((*lo_base_addr = 0) || (*hi_base_addr = 0)) {
+-		DRM_ERROR("DF PMC addressing not retrived! Lo: %x, Hi: %x",
++		DRM_ERROR("DF PMC addressing not retrieved! Lo: %x, Hi: %x",
+ 				*lo_base_addr, *hi_base_addr);
+ 		return;
+ 	}
 -- 
 2.20.1
