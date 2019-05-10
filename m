@@ -1,75 +1,89 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Thu, 16 May 2019 10:27:31 +0000
-Subject: Re: [PATCH] staging: vt6656: remove unused variable
-Message-Id: <20190516102728.GA3884@qd-ubuntu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 May 2019 11:24:41 +0000
+Subject: [PATCH] mspro_block: Fix an error code in mspro_block_issue_req()
+Message-Id: <20190510112440.GA22858@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
- <20190516093951.GA19798@kroah.com> <20190516095035.GA1692@qd-ubuntu>
- <20190516101953.GA22358@kroah.com>
-In-Reply-To: <20190516101953.GA22358@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Forest Bond <forest@alittletooquiet.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, May 16, 2019 at 12:19:53PM +0200, Greg Kroah-Hartman wrote:
-> On Thu, May 16, 2019 at 09:50:38AM +0000, Quentin Deslandes wrote:
-> > On Thu, May 16, 2019 at 11:39:51AM +0200, Greg Kroah-Hartman wrote:
-> > > On Thu, May 16, 2019 at 09:31:05AM +0000, Quentin Deslandes wrote:
-> > > > Fixed 'set but not used' warning message on a status variable. The
-> > > > called function returning the status code 'vnt_start_interrupt_urb()'
-> > > > clean up after itself and the caller function
-> > > > 'vnt_int_start_interrupt()' does not returns any value.
-> > > > 
-> > > > Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-> > > > ---
-> > > >  drivers/staging/vt6656/int.c | 3 +--
-> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/staging/vt6656/int.c b/drivers/staging/vt6656/int.c
-> > > > index 504424b19fcf..ac30ce72db5a 100644
-> > > > --- a/drivers/staging/vt6656/int.c
-> > > > +++ b/drivers/staging/vt6656/int.c
-> > > > @@ -42,13 +42,12 @@ static const u8 fallback_rate1[5][5] = {
-> > > >  void vnt_int_start_interrupt(struct vnt_private *priv)
-> > > >  {
-> > > >  	unsigned long flags;
-> > > > -	int status;
-> > > >  
-> > > >  	dev_dbg(&priv->usb->dev, "---->Interrupt Polling Thread\n");
-> > > >  
-> > > >  	spin_lock_irqsave(&priv->lock, flags);
-> > > >  
-> > > > -	status = vnt_start_interrupt_urb(priv);
-> > > > +	vnt_start_interrupt_urb(priv);
-> > > 
-> > > Shouldn't you fix this by erroring out if this fails?  Why ignore the
-> > > errors?
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > I could, however 'vnt_start_interrupt_urb()' already call 'dev_dbg()' if
-> > it fails. Nothing is done after this debug call except returning an
-> > error code.
-> 
-> Returning an error code is fine for that function.  But then you have to
-> do something with that error.
-> 
-> > 'vnt_int_start_interrupt()' should, IMHO, return a status code, but the
-> > original developer may have good reasons not to do so.
-> 
-> I think that is the real problem that needs to be fixed here, don't
-> paper over the issue by ignoring the return value.
-> 
-> thanks,
-> 
-> greg k-h
+We accidentally changed the error code from -EAGAIN to 1 when we did the
+blk-mq conversion.
 
-Thus I'll return an error value to handle this in the caller function
-and then send a v2.
+Maybe a contributing factor to this mistake is that it wasn't obvious
+that the "while (chunk) {" condition is always true.  I have cleaned
+that up as well.
 
-Thank you for your help,
-Quentin
+Fixes: d0be12274dad ("mspro_block: convert to blk-mq")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/memstick/core/mspro_block.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
+index aba50ec98b4d..9fc22c755dbf 100644
+--- a/drivers/memstick/core/mspro_block.c
++++ b/drivers/memstick/core/mspro_block.c
+@@ -694,13 +694,13 @@ static void h_mspro_block_setup_cmd(struct memstick_dev *card, u64 offset,
+ 
+ /*** Data transfer ***/
+ 
+-static int mspro_block_issue_req(struct memstick_dev *card, bool chunk)
++static int mspro_block_issue_req(struct memstick_dev *card)
+ {
+ 	struct mspro_block_data *msb = memstick_get_drvdata(card);
+ 	u64 t_off;
+ 	unsigned int count;
+ 
+-	while (chunk) {
++	while (true) {
+ 		msb->current_page = 0;
+ 		msb->current_seg = 0;
+ 		msb->seg_count = blk_rq_map_sg(msb->block_req->q,
+@@ -709,6 +709,7 @@ static int mspro_block_issue_req(struct memstick_dev *card, bool chunk)
+ 
+ 		if (!msb->seg_count) {
+ 			unsigned int bytes = blk_rq_cur_bytes(msb->block_req);
++			bool chunk;
+ 
+ 			chunk = blk_update_request(msb->block_req,
+ 							BLK_STS_RESOURCE,
+@@ -718,7 +719,7 @@ static int mspro_block_issue_req(struct memstick_dev *card, bool chunk)
+ 			__blk_mq_end_request(msb->block_req,
+ 						BLK_STS_RESOURCE);
+ 			msb->block_req = NULL;
+-			break;
++			return -EAGAIN;
+ 		}
+ 
+ 		t_off = blk_rq_pos(msb->block_req);
+@@ -735,8 +736,6 @@ static int mspro_block_issue_req(struct memstick_dev *card, bool chunk)
+ 		memstick_new_req(card->host);
+ 		return 0;
+ 	}
+-
+-	return 1;
+ }
+ 
+ static int mspro_block_complete_req(struct memstick_dev *card, int error)
+@@ -779,7 +778,7 @@ static int mspro_block_complete_req(struct memstick_dev *card, int error)
+ 		chunk = blk_update_request(msb->block_req,
+ 				errno_to_blk_status(error), t_len);
+ 		if (chunk) {
+-			error = mspro_block_issue_req(card, chunk);
++			error = mspro_block_issue_req(card);
+ 			if (!error)
+ 				goto out;
+ 		} else {
+@@ -849,7 +848,7 @@ static blk_status_t mspro_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	msb->block_req = bd->rq;
+ 	blk_mq_start_request(bd->rq);
+ 
+-	if (mspro_block_issue_req(card, true))
++	if (mspro_block_issue_req(card))
+ 		msb->block_req = NULL;
+ 
+ 	spin_unlock_irq(&msb->q_lock);
+-- 
+2.18.0
