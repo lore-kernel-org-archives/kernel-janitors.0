@@ -1,55 +1,40 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 20 May 2019 09:58:30 +0000
-Subject: Re: [PATCH] KVM: selftests: Fix a condition in test_hv_cpuid()
-Message-Id: <4bb7a5d3-887f-8487-e8f3-70770312517a@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 May 2019 12:31:54 +0000
+Subject: [PATCH] drm/amd/display: remove redundant assignment to variable actual_clock
+Message-Id: <20190511123154.2708-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190514103451.GA1694@mwanda>
-In-Reply-To: <20190514103451.GA1694@mwanda>
+References: <20171215105343.11372-1-colin.king@canonical.com>
+In-Reply-To: <20171215105343.11372-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 14/05/19 12:34, Dan Carpenter wrote:
-> The code is trying to check that all the padding is zeroed out and it
-> does this:
-> 
->     entry->padding[0] = entry->padding[1] = entry->padding[2] = 0
-> 
-> Assume everything is zeroed correctly, then the first comparison is
-> true, the next comparison is false and false is equal to zero so the
-> overall condition is true.  This bug doesn't affect run time very
-> badly, but the code should instead just check that all three paddings
-> are zero individually.
-> 
-> Also the error message was copy and pasted from an earlier error and it
-> wasn't correct.
-> 
-> Fixes: 7edcb7343327 ("KVM: selftests: Add hyperv_cpuid test")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
-> index 9a21e912097c..63b9fc3fdfbe 100644
-> --- a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
-> +++ b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
-> @@ -58,9 +58,8 @@ static void test_hv_cpuid(struct kvm_cpuid2 *hv_cpuid_entries,
->  		TEST_ASSERT(entry->flags = 0,
->  			    ".flags field should be zero");
->  
-> -		TEST_ASSERT(entry->padding[0] = entry->padding[1]
-> -			    = entry->padding[2] = 0,
-> -			    ".index field should be zero");
-> +		TEST_ASSERT(!entry->padding[0] && !entry->padding[1] &&
-> +			    !entry->padding[2], "padding should be zero");
->  
->  		/*
->  		 * If needed for debug:
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Queued, thanks.
+The variable actual_clock is being initialized however this is never
+read and later it is being reassigned to a new value. The initialization
+is redundant and hence can be removed.
 
-Paolo
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce/dce_clk_mgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/dce/dce_clk_mgr.c
+index 6b2e207777f0..fdd973c03dca 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_clk_mgr.c
+@@ -344,7 +344,7 @@ int dce112_set_dispclk(struct clk_mgr *clk_mgr, int requested_clk_khz)
+ 	struct dc_bios *bp = clk_mgr->ctx->dc_bios;
+ 	struct dc *core_dc = clk_mgr->ctx->dc;
+ 	struct dmcu *dmcu = core_dc->res_pool->dmcu;
+-	int actual_clock = requested_clk_khz;
++	int actual_clock;
+ 	/* Prepare to program display clock*/
+ 	memset(&dce_clk_params, 0, sizeof(dce_clk_params));
+ 
+-- 
+2.20.1
