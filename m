@@ -1,45 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 15 May 2019 09:52:23 +0000
-Subject: [PATCH] staging: wilc1000: Fix some double unlock bugs in wilc_wlan_cleanup()
-Message-Id: <20190515095223.GG3409@mwanda>
+From: "Theodore Ts'o" <tytso@mit.edu>
+Date: Sat, 11 May 2019 02:09:30 +0000
+Subject: Re: [PATCH][next] ext4: fix two cases where a u32 is being checked for a less than zero error return
+Message-Id: <20190511020930.GG2534@mit.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190426220908.12790-1-colin.king@canonical.com>
+In-Reply-To: <20190426220908.12790-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If ->hif_read_reg() or ->hif_write_reg() fail then the code unlocks
-and keeps executing.  It should just return.
+On Fri, Apr 26, 2019 at 11:09:08PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are two cases where u32 variables n and err are being checked
+> for less than zero error values, the checks is always false because
+> the variables are not signed. Fix this by making the variables ints.
+> 
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: 345c0dbf3a30 ("ext4: protect journal inode's blocks using block_validity")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11 driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/staging/wilc1000/wilc_wlan.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Thanks, applied.
 
-diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
-index 0a713409ea98..95eaf8fdf4f2 100644
---- a/drivers/staging/wilc1000/wilc_wlan.c
-+++ b/drivers/staging/wilc1000/wilc_wlan.c
-@@ -1076,13 +1076,17 @@ void wilc_wlan_cleanup(struct net_device *dev)
- 	acquire_bus(wilc, WILC_BUS_ACQUIRE_AND_WAKEUP);
- 
- 	ret = wilc->hif_func->hif_read_reg(wilc, WILC_GP_REG_0, &reg);
--	if (!ret)
-+	if (!ret) {
- 		release_bus(wilc, WILC_BUS_RELEASE_ALLOW_SLEEP);
-+		return;
-+	}
- 
- 	ret = wilc->hif_func->hif_write_reg(wilc, WILC_GP_REG_0,
- 					(reg | ABORT_INT));
--	if (!ret)
-+	if (!ret) {
- 		release_bus(wilc, WILC_BUS_RELEASE_ALLOW_SLEEP);
-+		return;
-+	}
- 
- 	release_bus(wilc, WILC_BUS_RELEASE_ALLOW_SLEEP);
- 	wilc->hif_func->hif_deinit(NULL);
--- 
-2.20.1
+					- Ted
