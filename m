@@ -1,43 +1,38 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Thu, 09 May 2019 15:01:46 +0000
-Subject: Re: [PATCH] EDAC, sb_edac: remove redundant update of tad_base
-Message-Id: <20190509150146.GE17053@zn.tnic>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 May 2019 13:48:13 +0000
+Subject: [PATCH] staging: vc04_services: bcm2835-camera: remove redundant assignment to variable ret
+Message-Id: <20190511134813.5645-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190508224201.27120-1-colin.king@canonical.com>
- <20190509141313.GA17053@zn.tnic>
- <55f8efee-a02c-1574-42fa-35e1d3df14f7@canonical.com>
- <20190509144113.GB17053@zn.tnic>
- <ebe15617-fe6a-2668-f14e-146811147f14@canonical.com>
-In-Reply-To: <ebe15617-fe6a-2668-f14e-146811147f14@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 03:55:32PM +0100, Colin Ian King wrote:
-> Yep, I agree, but explaining all the Coverity error types in a kernel
-> doc is going to take some effort, which I really don't have much time
-> for at the moment.
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm not suggesting you should document them all or write a comprehensive
-howto on how to run Coverity - all I'm suggesting is starting a small
-doc somewhere in Documentation/ which contains some info on what all
-those tools tags we use, mean and how people can find the information
-they contain. Basically what you said above (which I've snipped).
+The variable ret is being initialized however this is never read and later
+it is being reassigned to a new value. The initialization is redundant and
+hence can be removed.
 
-But it would be a lot more helpful if it is written down so that people
-can look it up. Also, that doc will serve as a documentation of all
-those tags we're using in the kernel and what their format, etc would
-be.
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/vc04_services/bcm2835-camera/controls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Otherwise we'll have the current head scratching when a tag like that is
-encountered...
-
-Thx.
-
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+index 9841c30450ce..74410fedffad 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+@@ -579,7 +579,7 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
+ 			  struct v4l2_ctrl *ctrl,
+ 			  const struct bm2835_mmal_v4l2_ctrl *mmal_ctrl)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 	struct vchiq_mmal_port *control;
+ 
+ 	control = &dev->component[MMAL_COMPONENT_CAMERA]->control;
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.20.1
