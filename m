@@ -1,15 +1,15 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 10 May 2019 11:16:23 +0000
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Sat, 11 May 2019 01:37:00 +0000
 Subject: Re: [PATCH][next] drm/amdgpu: fix return of an uninitialized value in variable ret
-Message-Id: <20190510111623.GC18105@kadam>
+Message-Id: <20190511013700.GA3530@archlinux-i9>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190510100842.30458-1-colin.king@canonical.com>
-In-Reply-To: <20190510100842.30458-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+In-Reply-To: <20190510100842.30458-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: David Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On Fri, May 10, 2019 at 11:08:42AM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
@@ -22,6 +22,11 @@ On Fri, May 10, 2019 at 11:08:42AM +0100, Colin King wrote:
 > Addresses-Coverity: ("Uninitialized scalar variable")
 > Fixes: a6ac0b44bab9 ("drm/amdgpu: add df perfmon regs and funcs for xgmi")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+
+This fixes a clang warning complaining about the same thing.
+
 > ---
 >  drivers/gpu/drm/amd/amdgpu/df_v3_6.c | 5 +----
 >  1 file changed, 1 insertion(+), 4 deletions(-)
@@ -39,11 +44,9 @@ On Fri, May 10, 2019 at 11:08:42AM +0100, Colin King wrote:
 > -		if (ret)
 > -			return ret;
 > +			return -EINVAL;
-
-From a naive reading of the code without knowing the hardware spec then
-you would probably think that lo_base_addr can also be uninitialized.
-
-<sad face emoji>
-
-regards,
-dan carpenter
+>  
+>  		lo_val = RREG32_PCIE(lo_base_addr);
+>  
+> -- 
+> 2.20.1
+> 
