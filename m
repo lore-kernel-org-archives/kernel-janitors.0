@@ -1,45 +1,43 @@
-From: "Kuehling, Felix" <Felix.Kuehling@amd.com>
-Date: Wed, 29 May 2019 21:29:58 +0000
-Subject: Re: [PATCH][next] drm/amdkfd: fix null pointer dereference on dev
-Message-Id: <caa18dab-ac66-a909-1d94-3dc5604971da@amd.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 May 2019 13:18:49 +0000
+Subject: [PATCH] sched: remove redundant assignment to variable utime
+Message-Id: <20190511131849.4513-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190529150734.18120-1-colin.king@canonical.com>
-In-Reply-To: <20190529150734.18120-1-colin.king@canonical.com>
+References: <1401027811-30066-1-git-send-email-giedrius.rekasius@gmail.com>
+In-Reply-To: <1401027811-30066-1-git-send-email-giedrius.rekasius@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Oded Gabbay <oded.gabbay@gmail.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "Zeng, Oak" <Oak.Zeng@amd.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wNS0yOSAxMTowNyBhLm0uLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBGcm9tOiBDb2xp
-biBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPg0KPiBUaGUgcG9pbnRlciBk
-ZXYgaXMgc2V0IHRvIG51bGwgeWV0IGl0IGlzIGJlaW5nIGRlcmVmZXJlbmNlZCB3aGVuDQo+IGNo
-ZWNraW5nIGRldi0+ZHFtLT5zY2hlZF9wb2xpY3kuICBGaXggdGhpcyBieSBwZXJmb3JtaW5nIHRo
-ZSBjaGVjaw0KPiBvbiBkZXYtPmRxbS0+c2NoZWRfcG9saWN5IGFmdGVyIGRldiBoYXMgYmVlbiBh
-c3NpZ25lZCBhbmQgbnVsbA0KPiBjaGVja2VkLiAgQWxzbyByZW1vdmUgdGhlIHJlZHVuZGFudCBu
-dWxsIGFzc2lnbm1lbnQgdG8gZGV2Lg0KPg0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiRXhwbGlj
-aXQgbnVsbCBkZXJlZmVyZW5jZSIpDQo+IEZpeGVzOiAxYTA1OGMzMzc2NzYgKCJkcm0vYW1ka2Zk
-OiBOZXcgSU9DVEwgdG8gYWxsb2NhdGUgcXVldWUgR1dTIikNCj4gU2lnbmVkLW9mZi1ieTogQ29s
-aW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IEZl
-bGl4IEt1ZWhsaW5nIDxGZWxpeC5LdWVobGluZ0BhbWQuY29tPg0KDQpUaGFua3MhDQoNCiDCoCBG
-ZWxpeA0KDQo+IC0tLQ0KPiAgIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1ka2ZkL2tmZF9jaGFyZGV2
-LmMgfCA3ICsrKystLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAzIGRl
-bGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRrZmQv
-a2ZkX2NoYXJkZXYuYyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1ka2ZkL2tmZF9jaGFyZGV2LmMN
-Cj4gaW5kZXggYWFiMmFhNmMxZGVlLi5lYTgyODI4ZmRjNzYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9hbWQvYW1ka2ZkL2tmZF9jaGFyZGV2LmMNCj4gKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2FtZC9hbWRrZmQva2ZkX2NoYXJkZXYuYw0KPiBAQCAtMTU3MiwxMCArMTU3Miw5IEBAIHN0
-YXRpYyBpbnQga2ZkX2lvY3RsX2FsbG9jX3F1ZXVlX2d3cyhzdHJ1Y3QgZmlsZSAqZmlsZXAsDQo+
-ICAgew0KPiAgIAlpbnQgcmV0dmFsOw0KPiAgIAlzdHJ1Y3Qga2ZkX2lvY3RsX2FsbG9jX3F1ZXVl
-X2d3c19hcmdzICphcmdzID0gZGF0YTsNCj4gLQlzdHJ1Y3Qga2ZkX2RldiAqZGV2ID0gTlVMTDsN
-Cj4gKwlzdHJ1Y3Qga2ZkX2RldiAqZGV2Ow0KPiAgIA0KPiAtCWlmICghaHdzX2d3c19zdXBwb3J0
-IHx8DQo+IC0JCWRldi0+ZHFtLT5zY2hlZF9wb2xpY3kgPT0gS0ZEX1NDSEVEX1BPTElDWV9OT19I
-V1MpDQo+ICsJaWYgKCFod3NfZ3dzX3N1cHBvcnQpDQo+ICAgCQlyZXR1cm4gLUVJTlZBTDsNCj4g
-ICANCj4gICAJZGV2ID0ga2ZkX2RldmljZV9ieV9pZChhcmdzLT5ncHVfaWQpOw0KPiBAQCAtMTU4
-Myw2ICsxNTgyLDggQEAgc3RhdGljIGludCBrZmRfaW9jdGxfYWxsb2NfcXVldWVfZ3dzKHN0cnVj
-dCBmaWxlICpmaWxlcCwNCj4gICAJCXByX2RlYnVnKCJDb3VsZCBub3QgZmluZCBncHUgaWQgMHgl
-eFxuIiwgYXJncy0+Z3B1X2lkKTsNCj4gICAJCXJldHVybiAtRUlOVkFMOw0KPiAgIAl9DQo+ICsJ
-aWYgKGRldi0+ZHFtLT5zY2hlZF9wb2xpY3kgPT0gS0ZEX1NDSEVEX1BPTElDWV9OT19IV1MpDQo+
-ICsJCXJldHVybiAtRUlOVkFMOw0KPiAgIA0KPiAgIAltdXRleF9sb2NrKCZwLT5tdXRleCk7DQo+
-ICAgCXJldHZhbCA9IHBxbV9zZXRfZ3dzKCZwLT5wcW0sIGFyZ3MtPnF1ZXVlX2lkLCBhcmdzLT5u
-dW1fZ3dzID8gZGV2LT5nd3MgOiBOVUxMKTsNCg=
+From: Colin Ian King <colin.king@canonical.com>
+
+The variable utime is being assigned a value however this is never
+read and later it is being reassigned to a new value. The assignment
+is redundant and hence can be removed.
+
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/sched/cputime.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index ba4a143bdcf3..ad647711ffb8 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -616,10 +616,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+ 	 * Once a task gets some ticks, the monotonicy code at 'update:'
+ 	 * will ensure things converge to the observed ratio.
+ 	 */
+-	if (stime = 0) {
+-		utime = rtime;
++	if (stime = 0)
+ 		goto update;
+-	}
+ 
+ 	if (utime = 0) {
+ 		stime = rtime;
+-- 
+2.20.1
