@@ -1,23 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 08 May 2019 16:44:13 +0000
-Subject: Re: [PATCH] net: dsa: lantiq: fix spelling mistake "brigde" -> "bridge"
-Message-Id: <20190508.094413.936255759105140490.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 May 2019 12:41:35 +0000
+Subject: [PATCH] iommu/amd: remove redundant assignment to variable npages
+Message-Id: <20190511124135.3635-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190508102209.6830-1-colin.king@canonical.com>
-In-Reply-To: <20190508102209.6830-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: hauke@hauke-m.de, andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  8 May 2019 11:22:09 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are several spelling mistakes in dev_err messages. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The variable npages is being initialized however this is never read and
+later it is being reassigned to a new value. The initialization is
+redundant and hence can be removed.
 
-Applied.
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iommu/amd_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 09c9e45f7fa2..c0b5b9298e8e 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2609,7 +2609,7 @@ static void unmap_sg(struct device *dev, struct scatterlist *sglist,
+ 	struct protection_domain *domain;
+ 	struct dma_ops_domain *dma_dom;
+ 	unsigned long startaddr;
+-	int npages = 2;
++	int npages;
+ 
+ 	domain = get_domain(dev);
+ 	if (IS_ERR(domain))
+-- 
+2.20.1
