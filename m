@@ -1,81 +1,45 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 07 May 2019 10:23:03 +0000
-Subject: Re: [PATCH][next] net: dsa: sja1105: fix comparisons against uninitialized status fields
-Message-Id: <5CD15C87.3040006@bfs.de>
+From: David Howells <dhowells@redhat.com>
+Date: Sun, 12 May 2019 07:45:41 +0000
+Subject: [PATCH 1/2] afs: Fix incorrect error handling in afs_xattr_get_acl()
+Message-Id: <155764714099.24080.1233326575922058381.stgit@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190507084458.22520-1-colin.king@canonical.com> <20190507092012.GL2269@kadam> <a8931feb-c11a-3833-0a14-2585e70c9114@canonical.com>
-In-Reply-To: <a8931feb-c11a-3833-0a14-2585e70c9114@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: colin.king@canonical.com
+Cc: Joe Perches <joe@perches.com>joe@perches.com, jaltman@auristor.com, linux-afs@lists.infradead.org, dhowells@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Fix incorrect error handling in afs_xattr_get_acl() where there appears to
+be a redundant assignment before return, but in fact the return should be a
+goto to the error handling at the end of the function.
 
+Fixes: 260f082bae6d ("afs: Get an AFS3 ACL as an xattr")
+Addresses-Coverity: ("Unused Value")
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Joe Perches <joe@perches.com>
+---
 
-Am 07.05.2019 11:29, schrieb Colin Ian King:
-> On 07/05/2019 10:20, Dan Carpenter wrote:
->> On Tue, May 07, 2019 at 09:44:58AM +0100, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The call to sja1105_status_get to set various fields in the status
->>> structure can potentially be skipped in a while-loop because of a couple
->>> of prior continuation jump paths. This can potientially lead to checking
->>> be checking against an uninitialized fields in the structure which may
->>> lead to unexpected results.  Fix this by ensuring all the fields in status
->>> are initialized to zero to be safe.
->>>
->>> Addresses-Coverity: ("Uninitialized scalar variable")
->>> Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105 5-port L2 switch")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/net/dsa/sja1105/sja1105_spi.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
->>> index 244a94ccfc18..76f6a51e10d9 100644
->>> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
->>> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
->>> @@ -394,7 +394,7 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
->>>  	struct sja1105_static_config *config = &priv->static_config;
->>>  	const struct sja1105_regs *regs = priv->info->regs;
->>>  	struct device *dev = &priv->spidev->dev;
->>> -	struct sja1105_status status;
->>> +	struct sja1105_status status = {};
->>
->> The exit condition isn't right.  It should continue if ret is negative
->> or the CRC stuff is invalid but right now it's ignoring ret.  It would
->> be better could just add a break statement at the very end and remove
->> the status checks.  Like so:
->>
->> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
->> index 244a94ccfc18..3af3b0f3cc44 100644
->> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
->> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
->> @@ -466,8 +466,9 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
->>  				"invalid, retrying...\n");
->>  			continue;
->>  		}
->> -	} while (--retries && (status.crcchkl = 1 || status.crcchkg = 1 ||
->> -		 status.configs = 0 || status.ids = 1));
->> +		/* Success! */
->> +		break;
->> +	} while (--retries);
-> 
-> Good point, I'll send a V2 for that. Thanks Dan for your keen eyes.
-> 
+ fs/afs/xattr.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-please do not put everything into the while condition.
-It make that hard to read, just add if () break to detangle that.
-
-re,
- wh
-
-> Colin
-> 
->>  
->>  	if (!retries) {
->>  		rc = -EIO;
->>
-> 
-> 
+diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
+index c81f85003fc7..b6c44e75b361 100644
+--- a/fs/afs/xattr.c
++++ b/fs/afs/xattr.c
+@@ -71,11 +71,10 @@ static int afs_xattr_get_acl(const struct xattr_handler *handler,
+ 	if (ret = 0) {
+ 		ret = acl->size;
+ 		if (size > 0) {
+-			ret = -ERANGE;
+-			if (acl->size > size)
+-				return -ERANGE;
+-			memcpy(buffer, acl->data, acl->size);
+-			ret = acl->size;
++			if (acl->size <= size)
++				memcpy(buffer, acl->data, acl->size);
++			else
++				ret = -ERANGE;
+ 		}
+ 		kfree(acl);
+ 	}
