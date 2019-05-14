@@ -1,23 +1,49 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 05 May 2019 06:23:08 +0000
-Subject: Re: [PATCH net-next] bpf: Use PTR_ERR_OR_ZERO in bpf_fd_sk_storage_update_elem()
-Message-Id: <CAADnVQJ+GpPn7g=zv5KdZhdu5=uT4SWT6rGsMn_onFwO7oH=pA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 May 2019 10:34:51 +0000
+Subject: [PATCH] KVM: selftests: Fix a condition in test_hv_cpuid()
+Message-Id: <20190514103451.GA1694@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190429135611.72640-1-yuehaibing@huawei.com> <20190429154017.j5yotcmvtw4fcbuo@kafai-mbp.dhcp.thefacebook.com>
- <20190429154052.7qtxsqex5xure4a3@kafai-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20190429154052.7qtxsqex5xure4a3@kafai-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Lau <kafai@fb.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 8:42 AM Martin Lau <kafai@fb.com> wrote:
->
-> On Mon, Apr 29, 2019 at 08:40:17AM -0700, Martin KaFai Lau wrote:
-> > On Mon, Apr 29, 2019 at 01:56:11PM +0000, YueHaibing wrote:
-> > > Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> > Acked-by: Martin KaFai Lau <kafai@fb.com>
-> btw, that should go to the bpf-next branch.
+The code is trying to check that all the padding is zeroed out and it
+does this:
 
-Applied to bpf-next. Thanks!
+    entry->padding[0] = entry->padding[1] = entry->padding[2] = 0
+
+Assume everything is zeroed correctly, then the first comparison is
+true, the next comparison is false and false is equal to zero so the
+overall condition is true.  This bug doesn't affect run time very
+badly, but the code should instead just check that all three paddings
+are zero individually.
+
+Also the error message was copy and pasted from an earlier error and it
+wasn't correct.
+
+Fixes: 7edcb7343327 ("KVM: selftests: Add hyperv_cpuid test")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
+index 9a21e912097c..63b9fc3fdfbe 100644
+--- a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
++++ b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
+@@ -58,9 +58,8 @@ static void test_hv_cpuid(struct kvm_cpuid2 *hv_cpuid_entries,
+ 		TEST_ASSERT(entry->flags = 0,
+ 			    ".flags field should be zero");
+ 
+-		TEST_ASSERT(entry->padding[0] = entry->padding[1]
+-			    = entry->padding[2] = 0,
+-			    ".index field should be zero");
++		TEST_ASSERT(!entry->padding[0] && !entry->padding[1] &&
++			    !entry->padding[2], "padding should be zero");
+ 
+ 		/*
+ 		 * If needed for debug:
+-- 
+2.20.1
