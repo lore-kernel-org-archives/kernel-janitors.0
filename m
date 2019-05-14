@@ -1,43 +1,37 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Date: Thu, 02 May 2019 14:49:39 +0000
-Subject: Re: [PATCH][next] KVM: PPC: Book3S HV: XIVE: fix spelling mistake "acessing" -> "accessing"
-Message-Id: <a7883281-bae0-694e-8436-f385023c1f88@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 May 2019 20:57:01 +0000
+Subject: [PATCH] drm/nouveau/bios/init: fix spelling mistake "CONDITON" -> "CONDITION"
+Message-Id: <20190514205701.5750-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190502102313.25093-1-colin.king@canonical.com>
-In-Reply-To: <20190502102313.25093-1-colin.king@canonical.com>
+References: <20180328184212.24841-1-colin.king@canonical.com>
+In-Reply-To: <20180328184212.24841-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Paul Mackerras <paulus@ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 5/2/2019 3:53 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a pr_err message, fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+There is a spelling mistake in a warning message. Fix it.
 
-Cheers,
--Mukesh
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> ---
->   arch/powerpc/kvm/book3s_xive_native.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/kvm/book3s_xive_native.c b/arch/powerpc/kvm/book3s_xive_native.c
-> index 5e14df1a4403..6a8e698c4b6e 100644
-> --- a/arch/powerpc/kvm/book3s_xive_native.c
-> +++ b/arch/powerpc/kvm/book3s_xive_native.c
-> @@ -235,7 +235,7 @@ static vm_fault_t xive_native_esb_fault(struct vm_fault *vmf)
->   	arch_spin_unlock(&sb->lock);
->   
->   	if (WARN_ON(!page)) {
-> -		pr_err("%s: acessing invalid ESB page for source %lx !\n",
-> +		pr_err("%s: accessing invalid ESB page for source %lx !\n",
->   		       __func__, irq);
->   		return VM_FAULT_SIGBUS;
->   	}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+index ec0e9f7224b5..3f4f27d191ae 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+@@ -834,7 +834,7 @@ init_generic_condition(struct nvbios_init *init)
+ 		init_exec_set(init, false);
+ 		break;
+ 	default:
+-		warn("INIT_GENERIC_CONDITON: unknown 0x%02x\n", cond);
++		warn("INIT_GENERIC_CONDITION: unknown 0x%02x\n", cond);
+ 		init->offset += size;
+ 		break;
+ 	}
+-- 
+2.20.1
