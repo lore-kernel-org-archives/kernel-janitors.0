@@ -1,72 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 28 May 2019 15:07:00 +0000
-Subject: Applied "ASoC: cx2072x: remove redundant assignment to pulse_len" to the asoc tree
-Message-Id: <20190528150700.A5290440046@finisterre.sirena.org.uk>
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Date: Tue, 14 May 2019 13:00:44 +0000
+Subject: [PATCH] scsi: aic7xxx: Remove NULL check before kfree()
+Message-Id: <20190514130036.7629-1-quentin.deslandes@itdev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190524214419.25075-1-colin.king@canonical.com>
-In-Reply-To: <20190524214419.25075-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Simon Ho <simon.ho@conexant.com>, Takashi Iwai <tiwai@suse.com>
+To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Hannes Reinecke <hare@suse.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: cx2072x: remove redundant assignment to pulse_len
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9b33d2e526c53b0339ddba8b875bb8b8b3a11207 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 24 May 2019 22:44:19 +0100
-Subject: [PATCH] ASoC: cx2072x: remove redundant assignment to pulse_len
-
-Variable pulse_len is being initialized to 1 however this value is
-never read and pulse_len is being re-assigned later in a switch
-statement.  Clean up the code by removing the redundant initialization.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/cx2072x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
-index 23d2b25fe04c..c11a585bbf70 100644
---- a/sound/soc/codecs/cx2072x.c
-+++ b/sound/soc/codecs/cx2072x.c
-@@ -679,7 +679,7 @@ static int cx2072x_config_i2spcm(struct cx2072x_priv *cx2072x)
- 	int is_right_j = 0;
- 	int is_frame_inv = 0;
- 	int is_bclk_inv = 0;
--	int pulse_len = 1;
-+	int pulse_len;
- 	int frame_len = cx2072x->frame_size;
- 	int sample_size = cx2072x->sample_size;
- 	int i2s_right_slot;
--- 
-2.20.1
+Rml4IHRoZSBmb2xsb3dpbmcgY29jY2luZWxsZSB3YXJuaW5nIGJ5IHJlbW92aW5nIE5VTEwgY2hl
+Y2sgYmVmb3JlDQpjYWxsaW5nIGtmcmVlKCk6DQoNCk5VTEwgY2hlY2sgYmVmb3JlIHNvbWUgZnJl
+ZWluZyBmdW5jdGlvbnMgaW4gbm90IG5lZWRlZC4NCg0KU2lnbmVkLW9mZi1ieTogUXVlbnRpbiBE
+ZXNsYW5kZXMgPHF1ZW50aW4uZGVzbGFuZGVzQGl0ZGV2LmNvLnVrPg0KLS0tDQogZHJpdmVycy9z
+Y3NpL2FpYzd4eHgvYWljN3h4eF9jb3JlLmMgfCAxNiArKysrKy0tLS0tLS0tLS0tDQogMSBmaWxl
+IGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL3Njc2kvYWljN3h4eC9haWM3eHh4X2NvcmUuYyBiL2RyaXZlcnMvc2NzaS9haWM3
+eHh4L2FpYzd4eHhfY29yZS5jDQppbmRleCAzOTkzZjE1ZTdmZjYuLmZhZTQ0MjRkNDQ0MiAxMDA2
+NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS9haWM3eHh4L2FpYzd4eHhfY29yZS5jDQorKysgYi9kcml2
+ZXJzL3Njc2kvYWljN3h4eC9haWM3eHh4X2NvcmUuYw0KQEAgLTIxOTIsOSArMjE5Miw3IEBAIGFo
+Y19mcmVlX3RzdGF0ZShzdHJ1Y3QgYWhjX3NvZnRjICphaGMsIHVfaW50IHNjc2lfaWQsIGNoYXIg
+Y2hhbm5lbCwgaW50IGZvcmNlKQ0KIA0KIAlpZiAoY2hhbm5lbCA9PSAnQicpDQogCQlzY3NpX2lk
+ICs9IDg7DQotCXRzdGF0ZSA9IGFoYy0+ZW5hYmxlZF90YXJnZXRzW3Njc2lfaWRdOw0KLQlpZiAo
+dHN0YXRlICE9IE5VTEwpDQotCQlrZnJlZSh0c3RhdGUpOw0KKwlrZnJlZShhaGMtPmVuYWJsZWRf
+dGFyZ2V0c1tzY3NpX2lkXSk7DQogCWFoYy0+ZW5hYmxlZF90YXJnZXRzW3Njc2lfaWRdID0gTlVM
+TDsNCiB9DQogI2VuZGlmDQpAQCAtNDQ3NCw4ICs0NDcyLDcgQEAgYWhjX3NldF91bml0KHN0cnVj
+dCBhaGNfc29mdGMgKmFoYywgaW50IHVuaXQpDQogdm9pZA0KIGFoY19zZXRfbmFtZShzdHJ1Y3Qg
+YWhjX3NvZnRjICphaGMsIGNoYXIgKm5hbWUpDQogew0KLQlpZiAoYWhjLT5uYW1lICE9IE5VTEwp
+DQotCQlrZnJlZShhaGMtPm5hbWUpOw0KKwlrZnJlZShhaGMtPm5hbWUpOw0KIAlhaGMtPm5hbWUg
+PSBuYW1lOw0KIH0NCiANCkBAIC00NTM2LDEwICs0NTMzLDggQEAgYWhjX2ZyZWUoc3RydWN0IGFo
+Y19zb2Z0YyAqYWhjKQ0KIAkJa2ZyZWUoYWhjLT5ibGFja19ob2xlKTsNCiAJfQ0KICNlbmRpZg0K
+LQlpZiAoYWhjLT5uYW1lICE9IE5VTEwpDQotCQlrZnJlZShhaGMtPm5hbWUpOw0KLQlpZiAoYWhj
+LT5zZWVwX2NvbmZpZyAhPSBOVUxMKQ0KLQkJa2ZyZWUoYWhjLT5zZWVwX2NvbmZpZyk7DQorCWtm
+cmVlKGFoYy0+bmFtZSk7DQorCWtmcmVlKGFoYy0+c2VlcF9jb25maWcpOw0KICNpZm5kZWYgX19G
+cmVlQlNEX18NCiAJa2ZyZWUoYWhjKTsNCiAjZW5kaWYNCkBAIC00OTQ0LDggKzQ5MzksNyBAQCBh
+aGNfZmluaV9zY2JkYXRhKHN0cnVjdCBhaGNfc29mdGMgKmFoYykNCiAJY2FzZSAwOg0KIAkJYnJl
+YWs7DQogCX0NCi0JaWYgKHNjYl9kYXRhLT5zY2JhcnJheSAhPSBOVUxMKQ0KLQkJa2ZyZWUoc2Ni
+X2RhdGEtPnNjYmFycmF5KTsNCisJa2ZyZWUoc2NiX2RhdGEtPnNjYmFycmF5KTsNCiB9DQogDQog
+c3RhdGljIHZvaWQNCi0tIA0KMi4xNy4xDQoNCg=
