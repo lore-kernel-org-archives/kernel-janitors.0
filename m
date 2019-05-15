@@ -1,38 +1,57 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 May 2019 12:30:09 +0000
-Subject: [PATCH] SUNRPC: Fix an error code in gss_alloc_msg()
-Message-Id: <20190503123009.GC29695@mwanda>
+Date: Wed, 15 May 2019 09:38:33 +0000
+Subject: [PATCH] staging: vc04_services: prevent integer overflow in create_pagelist()
+Message-Id: <20190515093831.GE3409@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neilb@suse.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-If kstrdup_const() then this function returns zero (success) but it
-should return -ENOMEM.
+The create_pagelist() "count" parameter comes from the user in
+vchiq_ioctl() and it could overflow.  If you look at how create_page()
+is called in vchiq_prepare_bulk_data(), then the "size" variable is an
+int so it doesn't make sense to allow negatives or larger than INT_MAX.
 
-Fixes: ac83228a7101 ("SUNRPC: Use namespace of listening daemon in the client AUTH_GSS upcall")
+I don't know this code terribly well, but I believe that typical values
+of "count" are typically quite low and I don't think this check will
+affect normal valid uses at all.
+
+The "pagelist_size" calculation can also overflow on 32 bit systems, but
+not on 64 bit systems.  I have added an integer overflow check for that
+as well.
+
+The Raspberry PI doesn't offer the same level of memory protection that
+x86 does so these sorts of bugs are probably not super critical to fix.
+
+Fixes: 71bad7f08641 ("staging: add bcm2708 vchiq driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- net/sunrpc/auth_gss/auth_gss.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../vc04_services/interface/vchiq_arm/vchiq_2835_arm.c   | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
-index b2cbc83d39c7..06fe17c2aea1 100644
---- a/net/sunrpc/auth_gss/auth_gss.c
-+++ b/net/sunrpc/auth_gss/auth_gss.c
-@@ -553,8 +553,10 @@ gss_alloc_msg(struct gss_auth *gss_auth,
- 	gss_msg->auth = gss_auth;
- 	if (service_name) {
- 		gss_msg->service_name = kstrdup_const(service_name, GFP_NOFS);
--		if (!gss_msg->service_name)
-+		if (!gss_msg->service_name) {
-+			err = -ENOMEM;
- 			goto err_put_pipe_version;
-+		}
- 	}
- 	return gss_msg;
- err_put_pipe_version:
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
+index a9a22917ecdb..a5b5840ff91a 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
+@@ -368,9 +368,18 @@ create_pagelist(char __user *buf, size_t count, unsigned short type)
+ 	int dma_buffers;
+ 	dma_addr_t dma_addr;
+ 
++	if (count >= INT_MAX - PAGE_SIZE)
++		return NULL;
++
+ 	offset = ((unsigned int)(unsigned long)buf & (PAGE_SIZE - 1));
+ 	num_pages = DIV_ROUND_UP(count + offset, PAGE_SIZE);
+ 
++	if (num_pages > (SIZE_MAX - sizeof(struct pagelist) -
++			 sizeof(struct vchiq_pagelist_info)) /
++			(sizeof(u32) + sizeof(pages[0]) +
++			 sizeof(struct scatterlist)))
++		return NULL;
++
+ 	pagelist_size = sizeof(struct pagelist) +
+ 			(num_pages * sizeof(u32)) +
+ 			(num_pages * sizeof(pages[0]) +
 -- 
-2.18.0
+2.20.1
