@@ -1,44 +1,61 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Wed, 01 May 2019 12:16:17 +0000
-Subject: Re: [alsa-devel] [PATCH][next] ASoC: SOF: Intel: fix spelling mistake "incompatble" -> "incompatible
-Message-Id: <7aff79bd-e0d5-a10b-7443-6f27ea1f47c7@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 15 May 2019 09:31:41 +0000
+Subject: [PATCH] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
+Message-Id: <20190515093141.GA3409@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190501102308.30390-1-colin.king@canonical.com>
-In-Reply-To: <20190501102308.30390-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Keyon Jie <yang.jie@linux.intel.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The problem is that on 64bit systems then we don't clear the higher
+bits of the "pending" variable.  So when we do:
 
+	ack = pending & ~BIT(STMFX_REG_IRQ_SRC_EN_GPIO);
+	if (ack) {
 
-On 5/1/19 5:23 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a hda_dsp_rom_msg message, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+the if (ack) condition relies on uninitialized data.  The fix it that
+I've changed "pending" from an unsigned long to a u32.  I changed "n" as
+well, because that's a number in the 0-10 range and it fits easily
+inside an int.  We do need to add a cast to "pending" when we use it in
+the for_each_set_bit() loop, but that doesn't cause a proble, it's
+fine.
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Fixes: 06252ade9156 ("mfd: Add ST Multi-Function eXpander (STMFX) core driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mfd/stmfx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks for the fix!
-
-> ---
->   sound/soc/sof/intel/hda.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-> index b8fc19790f3b..84baf275b467 100644
-> --- a/sound/soc/sof/intel/hda.c
-> +++ b/sound/soc/sof/intel/hda.c
-> @@ -54,7 +54,7 @@ static const struct hda_dsp_msg_code hda_dsp_rom_msg[] = {
->   	{HDA_DSP_ROM_L2_CACHE_ERROR, "error: L2 cache error"},
->   	{HDA_DSP_ROM_LOAD_OFFSET_TO_SMALL, "error: load offset too small"},
->   	{HDA_DSP_ROM_API_PTR_INVALID, "error: API ptr invalid"},
-> -	{HDA_DSP_ROM_BASEFW_INCOMPAT, "error: base fw incompatble"},
-> +	{HDA_DSP_ROM_BASEFW_INCOMPAT, "error: base fw incompatible"},
->   	{HDA_DSP_ROM_UNHANDLED_INTERRUPT, "error: unhandled interrupt"},
->   	{HDA_DSP_ROM_MEMORY_HOLE_ECC, "error: ECC memory hole"},
->   	{HDA_DSP_ROM_KERNEL_EXCEPTION, "error: kernel exception"},
-> 
+diff --git a/drivers/mfd/stmfx.c b/drivers/mfd/stmfx.c
+index fe8efba2d45f..fee75b5d098e 100644
+--- a/drivers/mfd/stmfx.c
++++ b/drivers/mfd/stmfx.c
+@@ -204,12 +204,12 @@ static struct irq_chip stmfx_irq_chip = {
+ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ {
+ 	struct stmfx *stmfx = data;
+-	unsigned long n, pending;
++	u32 pending;
+ 	u32 ack;
++	int n;
+ 	int ret;
+ 
+-	ret = regmap_read(stmfx->map, STMFX_REG_IRQ_PENDING,
+-			  (u32 *)&pending);
++	ret = regmap_read(stmfx->map, STMFX_REG_IRQ_PENDING, &pending);
+ 	if (ret)
+ 		return IRQ_NONE;
+ 
+@@ -224,7 +224,7 @@ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ 			return IRQ_NONE;
+ 	}
+ 
+-	for_each_set_bit(n, &pending, STMFX_REG_IRQ_SRC_MAX)
++	for_each_set_bit(n, (unsigned long *)&pending, STMFX_REG_IRQ_SRC_MAX)
+ 		handle_nested_irq(irq_find_mapping(stmfx->irq_domain, n));
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.20.1
