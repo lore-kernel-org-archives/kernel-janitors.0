@@ -1,66 +1,71 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Thu, 16 May 2019 11:22:56 +0000
-Subject: [PATCH] staging: vt6656: returns error code on vnt_int_start_interrupt fail
-Message-Id: <20190516112243.14353-1-quentin.deslandes@itdev.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 15 May 2019 09:33:22 +0000
+Subject: [PATCH] test_firmware: Use correct snprintf() limit
+Message-Id: <20190515093322.GB3409@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
-In-Reply-To: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mukesh Ojha <mojha@codeaurora.org>, Ojaswin Mujoo <ojaswin25111998@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-UmV0dXJucyBlcnJvciBjb2RlIGZyb20gJ3ZudF9pbnRfc3RhcnRfaW50ZXJydXB0KCknIHNvIHRo
-ZSBkZXZpY2UncyBwcml2YXRlDQpidWZmZXJzIHdpbGwgYmUgY29ycmVjdGx5IGZyZWVkIGFuZCAn
-c3RydWN0IGllZWU4MDIxMV9odycgc3RhcnQgZnVuY3Rpb24NCndpbGwgcmV0dXJuIGFuIGVycm9y
-IGNvZGUuDQoNClNpZ25lZC1vZmYtYnk6IFF1ZW50aW4gRGVzbGFuZGVzIDxxdWVudGluLmRlc2xh
-bmRlc0BpdGRldi5jby51az4NCi0tLQ0KdjI6IGluc3RlYWQgb2YgcmVtb3Zpbmcgc3RhdHVzIHZh
-cmlhYmxlLCByZXR1cm5zIGl0cyB2YWx1ZSB0byBjYWxsZXIgYW5kDQogICAgaGFuZGxlIGVycm9y
-IGluIGNhbGxlci4NCg0KIGRyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgICAgICB8ICA0ICsr
-Ky0NCiBkcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5oICAgICAgfCAgMiArLQ0KIGRyaXZlcnMv
-c3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyB8IDEyICsrKysrKysrKy0tLQ0KIDMgZmlsZXMgY2hh
-bmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgYi9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5j
-DQppbmRleCA1MDQ0MjRiMTlmY2YuLmYzZWUyMTk4ZTFiMyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
-c3RhZ2luZy92dDY2NTYvaW50LmMNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMN
-CkBAIC0zOSw3ICszOSw3IEBAIHN0YXRpYyBjb25zdCB1OCBmYWxsYmFja19yYXRlMVs1XVs1XSA9
-IHsNCiAJe1JBVEVfNTRNLCBSQVRFXzU0TSwgUkFURV8zNk0sIFJBVEVfMThNLCBSQVRFXzE4TX0N
-CiB9Ow0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQoc3RydWN0IHZudF9wcml2YXRl
-ICpwcml2KQ0KK2ludCB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChzdHJ1Y3Qgdm50X3ByaXZhdGUg
-KnByaXYpDQogew0KIAl1bnNpZ25lZCBsb25nIGZsYWdzOw0KIAlpbnQgc3RhdHVzOw0KQEAgLTUx
-LDYgKzUxLDggQEAgdm9pZCB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChzdHJ1Y3Qgdm50X3ByaXZh
-dGUgKnByaXYpDQogCXN0YXR1cyA9IHZudF9zdGFydF9pbnRlcnJ1cHRfdXJiKHByaXYpOw0KIA0K
-IAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZwcml2LT5sb2NrLCBmbGFncyk7DQorDQorCXJldHVy
-biBzdGF0dXM7DQogfQ0KIA0KIHN0YXRpYyBpbnQgdm50X2ludF9yZXBvcnRfcmF0ZShzdHJ1Y3Qg
-dm50X3ByaXZhdGUgKnByaXYsIHU4IHBrdF9ubywgdTggdHNyKQ0KZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvc3RhZ2luZy92dDY2NTYvaW50LmggYi9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5oDQpp
-bmRleCA5ODdjNDU0ZTk5ZTkuLjhhNmQ2MDU2OWNlYiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc3Rh
-Z2luZy92dDY2NTYvaW50LmgNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmgNCkBA
-IC00MSw3ICs0MSw3IEBAIHN0cnVjdCB2bnRfaW50ZXJydXB0X2RhdGEgew0KIAl1OCBzd1syXTsN
-CiB9IF9fcGFja2VkOw0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQoc3RydWN0IHZu
-dF9wcml2YXRlICpwcml2KTsNCitpbnQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQoc3RydWN0IHZu
-dF9wcml2YXRlICpwcml2KTsNCiB2b2lkIHZudF9pbnRfcHJvY2Vzc19kYXRhKHN0cnVjdCB2bnRf
-cHJpdmF0ZSAqcHJpdik7DQogDQogI2VuZGlmIC8qIF9fSU5UX0hfXyAqLw0KZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2
-NTYvbWFpbl91c2IuYw0KaW5kZXggY2NhZmNjMmM4N2FjLi43MWUxMGI5YWUyNTMgMTAwNjQ0DQot
-LS0gYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L21haW5fdXNiLmMNCisrKyBiL2RyaXZlcnMvc3Rh
-Z2luZy92dDY2NTYvbWFpbl91c2IuYw0KQEAgLTQ4Myw2ICs0ODMsNyBAQCBzdGF0aWMgdm9pZCB2
-bnRfdHhfODAyMTEoc3RydWN0IGllZWU4MDIxMV9odyAqaHcsDQogDQogc3RhdGljIGludCB2bnRf
-c3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQogew0KKwlpbnQgZXJyID0gMDsNCiAJc3Ry
-dWN0IHZudF9wcml2YXRlICpwcml2ID0gaHctPnByaXY7DQogDQogCXByaXYtPnJ4X2J1Zl9zeiA9
-IE1BWF9UT1RBTF9TSVpFX1dJVEhfQUxMX0hFQURFUlM7DQpAQCAtNDk2LDE1ICs0OTcsMjAgQEAg
-c3RhdGljIGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQogDQogCWlmICh2
-bnRfaW5pdF9yZWdpc3RlcnMocHJpdikgPT0gZmFsc2UpIHsNCiAJCWRldl9kYmcoJnByaXYtPnVz
-Yi0+ZGV2LCAiIGluaXQgcmVnaXN0ZXIgZmFpbFxuIik7DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJ
-Z290byBmcmVlX2FsbDsNCiAJfQ0KIA0KLQlpZiAodm50X2tleV9pbml0X3RhYmxlKHByaXYpKQ0K
-KwlpZiAodm50X2tleV9pbml0X3RhYmxlKHByaXYpKSB7DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJ
-Z290byBmcmVlX2FsbDsNCisJfQ0KIA0KIAlwcml2LT5pbnRfaW50ZXJ2YWwgPSAxOyAgLyogYklu
-dGVydmFsIGlzIHNldCB0byAxICovDQogDQotCXZudF9pbnRfc3RhcnRfaW50ZXJydXB0KHByaXYp
-Ow0KKwllcnIgPSB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChwcml2KTsNCisJaWYgKGVycikNCisJ
-CWdvdG8gZnJlZV9hbGw7DQogDQogCWllZWU4MDIxMV93YWtlX3F1ZXVlcyhodyk7DQogDQpAQCAt
-NTE4LDcgKzUyNCw3IEBAIHN0YXRpYyBpbnQgdm50X3N0YXJ0KHN0cnVjdCBpZWVlODAyMTFfaHcg
-Kmh3KQ0KIAl1c2Jfa2lsbF91cmIocHJpdi0+aW50ZXJydXB0X3VyYik7DQogCXVzYl9mcmVlX3Vy
-Yihwcml2LT5pbnRlcnJ1cHRfdXJiKTsNCiANCi0JcmV0dXJuIC1FTk9NRU07DQorCXJldHVybiBl
-cnI7DQogfQ0KIA0KIHN0YXRpYyB2b2lkIHZudF9zdG9wKHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3
-KQ0KLS0gDQoyLjE3LjENCg0K
+The limit here is supposed to be how much of the page is left, but it's
+just using PAGE_SIZE as the limit.
+
+The other thing to remember is that snprintf() returns the number of
+bytes which would have been copied if we had had enough room.  So that
+means that if we run out of space then this code would end up passing a
+negative value as the limit and the kernel would print an error message.
+I have change the code to use scnprintf() which returns the number of
+bytes that were successfully printed (not counting the NUL terminator).
+
+Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/test_firmware.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index 7222093ee00b..b5487ed829d7 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -223,30 +223,30 @@ static ssize_t config_show(struct device *dev,
+ 
+ 	mutex_lock(&test_fw_mutex);
+ 
+-	len += snprintf(buf, PAGE_SIZE,
++	len += scnprintf(buf, PAGE_SIZE - len,
+ 			"Custom trigger configuration for: %s\n",
+ 			dev_name(dev));
+ 
+ 	if (test_fw_config->name)
+-		len += snprintf(buf+len, PAGE_SIZE,
++		len += scnprintf(buf+len, PAGE_SIZE - len,
+ 				"name:\t%s\n",
+ 				test_fw_config->name);
+ 	else
+-		len += snprintf(buf+len, PAGE_SIZE,
++		len += scnprintf(buf+len, PAGE_SIZE - len,
+ 				"name:\tEMTPY\n");
+ 
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"num_requests:\t%u\n", test_fw_config->num_requests);
+ 
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"send_uevent:\t\t%s\n",
+ 			test_fw_config->send_uevent ?
+ 			"FW_ACTION_HOTPLUG" :
+ 			"FW_ACTION_NOHOTPLUG");
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"sync_direct:\t\t%s\n",
+ 			test_fw_config->sync_direct ? "true" : "false");
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"read_fw_idx:\t%u\n", test_fw_config->read_fw_idx);
+ 
+ 	mutex_unlock(&test_fw_mutex);
+-- 
+2.20.1
