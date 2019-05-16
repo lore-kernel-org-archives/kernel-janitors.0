@@ -1,30 +1,29 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 06 May 2019 16:21:47 +0000
-Subject: Re: [PATCH] io_uring: fix shadowed variable ret return code being not checked
-Message-Id: <5ccacedd-41d9-f33c-25de-ae16bcdb7b08@kernel.dk>
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Date: Thu, 16 May 2019 09:31:05 +0000
+Subject: [PATCH] staging: vt6656: remove unused variable
+Message-Id: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190505220122.5024-1-colin.king@canonical.com>
-In-Reply-To: <20190505220122.5024-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 5/5/19 4:01 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently variable ret is declared in a while-loop code block that
-> shadows another variable ret. When an error occurs in the while-loop
-> the error return in ret is not being set in the outer code block and
-> so the error check on ret is always going to be checking on the wrong
-> ret variable resulting in check that is always going to be true and
-> a premature return occurs.
-> 
-> Fix this by removing the declaration of the inner while-loop variable
-> ret so that shadowing does not occur.
-
-Thanks, applied.
-
--- 
-Jens Axboe
+Rml4ZWQgJ3NldCBidXQgbm90IHVzZWQnIHdhcm5pbmcgbWVzc2FnZSBvbiBhIHN0YXR1cyB2YXJp
+YWJsZS4gVGhlDQpjYWxsZWQgZnVuY3Rpb24gcmV0dXJuaW5nIHRoZSBzdGF0dXMgY29kZSAndm50
+X3N0YXJ0X2ludGVycnVwdF91cmIoKScNCmNsZWFuIHVwIGFmdGVyIGl0c2VsZiBhbmQgdGhlIGNh
+bGxlciBmdW5jdGlvbg0KJ3ZudF9pbnRfc3RhcnRfaW50ZXJydXB0KCknIGRvZXMgbm90IHJldHVy
+bnMgYW55IHZhbHVlLg0KDQpTaWduZWQtb2ZmLWJ5OiBRdWVudGluIERlc2xhbmRlcyA8cXVlbnRp
+bi5kZXNsYW5kZXNAaXRkZXYuY28udWs+DQotLS0NCiBkcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2lu
+dC5jIHwgMyArLS0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVsZXRpb25z
+KC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5jIGIvZHJpdmVy
+cy9zdGFnaW5nL3Z0NjY1Ni9pbnQuYw0KaW5kZXggNTA0NDI0YjE5ZmNmLi5hYzMwY2U3MmRiNWEg
+MTAwNjQ0DQotLS0gYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5jDQorKysgYi9kcml2ZXJz
+L3N0YWdpbmcvdnQ2NjU2L2ludC5jDQpAQCAtNDIsMTMgKzQyLDEyIEBAIHN0YXRpYyBjb25zdCB1
+OCBmYWxsYmFja19yYXRlMVs1XVs1XSA9IHsNCiB2b2lkIHZudF9pbnRfc3RhcnRfaW50ZXJydXB0
+KHN0cnVjdCB2bnRfcHJpdmF0ZSAqcHJpdikNCiB7DQogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQot
+CWludCBzdGF0dXM7DQogDQogCWRldl9kYmcoJnByaXYtPnVzYi0+ZGV2LCAiLS0tLT5JbnRlcnJ1
+cHQgUG9sbGluZyBUaHJlYWRcbiIpOw0KIA0KIAlzcGluX2xvY2tfaXJxc2F2ZSgmcHJpdi0+bG9j
+aywgZmxhZ3MpOw0KIA0KLQlzdGF0dXMgPSB2bnRfc3RhcnRfaW50ZXJydXB0X3VyYihwcml2KTsN
+CisJdm50X3N0YXJ0X2ludGVycnVwdF91cmIocHJpdik7DQogDQogCXNwaW5fdW5sb2NrX2lycXJl
+c3RvcmUoJnByaXYtPmxvY2ssIGZsYWdzKTsNCiB9DQotLSANCjIuMTcuMQ0KDQo
