@@ -1,29 +1,47 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Thu, 16 May 2019 09:31:05 +0000
-Subject: [PATCH] staging: vt6656: remove unused variable
-Message-Id: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 16 May 2019 09:39:51 +0000
+Subject: Re: [PATCH] staging: vt6656: remove unused variable
+Message-Id: <20190516093951.GA19798@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
+In-Reply-To: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Forest Bond <forest@alittletooquiet.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Rml4ZWQgJ3NldCBidXQgbm90IHVzZWQnIHdhcm5pbmcgbWVzc2FnZSBvbiBhIHN0YXR1cyB2YXJp
-YWJsZS4gVGhlDQpjYWxsZWQgZnVuY3Rpb24gcmV0dXJuaW5nIHRoZSBzdGF0dXMgY29kZSAndm50
-X3N0YXJ0X2ludGVycnVwdF91cmIoKScNCmNsZWFuIHVwIGFmdGVyIGl0c2VsZiBhbmQgdGhlIGNh
-bGxlciBmdW5jdGlvbg0KJ3ZudF9pbnRfc3RhcnRfaW50ZXJydXB0KCknIGRvZXMgbm90IHJldHVy
-bnMgYW55IHZhbHVlLg0KDQpTaWduZWQtb2ZmLWJ5OiBRdWVudGluIERlc2xhbmRlcyA8cXVlbnRp
-bi5kZXNsYW5kZXNAaXRkZXYuY28udWs+DQotLS0NCiBkcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2lu
-dC5jIHwgMyArLS0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVsZXRpb25z
-KC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5jIGIvZHJpdmVy
-cy9zdGFnaW5nL3Z0NjY1Ni9pbnQuYw0KaW5kZXggNTA0NDI0YjE5ZmNmLi5hYzMwY2U3MmRiNWEg
-MTAwNjQ0DQotLS0gYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5jDQorKysgYi9kcml2ZXJz
-L3N0YWdpbmcvdnQ2NjU2L2ludC5jDQpAQCAtNDIsMTMgKzQyLDEyIEBAIHN0YXRpYyBjb25zdCB1
-OCBmYWxsYmFja19yYXRlMVs1XVs1XSA9IHsNCiB2b2lkIHZudF9pbnRfc3RhcnRfaW50ZXJydXB0
-KHN0cnVjdCB2bnRfcHJpdmF0ZSAqcHJpdikNCiB7DQogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQot
-CWludCBzdGF0dXM7DQogDQogCWRldl9kYmcoJnByaXYtPnVzYi0+ZGV2LCAiLS0tLT5JbnRlcnJ1
-cHQgUG9sbGluZyBUaHJlYWRcbiIpOw0KIA0KIAlzcGluX2xvY2tfaXJxc2F2ZSgmcHJpdi0+bG9j
-aywgZmxhZ3MpOw0KIA0KLQlzdGF0dXMgPSB2bnRfc3RhcnRfaW50ZXJydXB0X3VyYihwcml2KTsN
-CisJdm50X3N0YXJ0X2ludGVycnVwdF91cmIocHJpdik7DQogDQogCXNwaW5fdW5sb2NrX2lycXJl
-c3RvcmUoJnByaXYtPmxvY2ssIGZsYWdzKTsNCiB9DQotLSANCjIuMTcuMQ0KDQo
+On Thu, May 16, 2019 at 09:31:05AM +0000, Quentin Deslandes wrote:
+> Fixed 'set but not used' warning message on a status variable. The
+> called function returning the status code 'vnt_start_interrupt_urb()'
+> clean up after itself and the caller function
+> 'vnt_int_start_interrupt()' does not returns any value.
+> 
+> Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+> ---
+>  drivers/staging/vt6656/int.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/vt6656/int.c b/drivers/staging/vt6656/int.c
+> index 504424b19fcf..ac30ce72db5a 100644
+> --- a/drivers/staging/vt6656/int.c
+> +++ b/drivers/staging/vt6656/int.c
+> @@ -42,13 +42,12 @@ static const u8 fallback_rate1[5][5] = {
+>  void vnt_int_start_interrupt(struct vnt_private *priv)
+>  {
+>  	unsigned long flags;
+> -	int status;
+>  
+>  	dev_dbg(&priv->usb->dev, "---->Interrupt Polling Thread\n");
+>  
+>  	spin_lock_irqsave(&priv->lock, flags);
+>  
+> -	status = vnt_start_interrupt_urb(priv);
+> +	vnt_start_interrupt_urb(priv);
+
+Shouldn't you fix this by erroring out if this fails?  Why ignore the
+errors?
+
+thanks,
+
+greg k-h
