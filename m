@@ -1,35 +1,64 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 05 May 2019 17:26:11 +0000
-Subject: Re: [PATCH net] net: atm: clean up a range check
-Message-Id: <20190505.102611.257025800032151893.davem@davemloft.net>
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Date: Thu, 16 May 2019 11:57:15 +0000
+Subject: [PATCH v2] staging: vt6656: returns error code on vnt_int_start_interrupt fail
+Message-Id: <20190516115653.15120-1-quentin.deslandes@itdev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190503123948.GD29695@mwanda>
-In-Reply-To: <20190503123948.GD29695@mwanda>
+References: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
+In-Reply-To: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: gustavo@embeddedor.com, dwmw2@infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mukesh Ojha <mojha@codeaurora.org>, Ojaswin Mujoo <ojaswin25111998@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 3 May 2019 15:39:48 +0300
-
-> The code works fine but the problem is that check for negatives is a
-> no-op:
-> 
-> 	if (arg < 0)
-> 		i = 0;
-> 
-> The "i" value isn't used.  We immediately overwrite it with:
-> 
-> 	i = array_index_nospec(arg, MAX_LEC_ITF);
-> 
-> The array_index_nospec() macro returns zero if "arg" is out of bounds so
-> this works, but the dead code is confusing and it doesn't look very
-> intentional.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This applies to net, but it's just a clean up.
-
-I'm applying this to net-next, thanks Dan.
+UmV0dXJucyBlcnJvciBjb2RlIGZyb20gJ3ZudF9pbnRfc3RhcnRfaW50ZXJydXB0KCknIHNvIHRo
+ZSBkZXZpY2UncyBwcml2YXRlDQpidWZmZXJzIHdpbGwgYmUgY29ycmVjdGx5IGZyZWVkIGFuZCAn
+c3RydWN0IGllZWU4MDIxMV9odycgc3RhcnQgZnVuY3Rpb24NCndpbGwgcmV0dXJuIGFuIGVycm9y
+IGNvZGUuDQoNClNpZ25lZC1vZmYtYnk6IFF1ZW50aW4gRGVzbGFuZGVzIDxxdWVudGluLmRlc2xh
+bmRlc0BpdGRldi5jby51az4NCi0tLQ0KIGRyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgICAg
+ICB8ICA0ICsrKy0NCiBkcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5oICAgICAgfCAgMiArLQ0K
+IGRyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyB8IDEyICsrKysrKysrKy0tLQ0KIDMg
+ZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCg0KZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgYi9kcml2ZXJzL3N0YWdpbmcvdnQ2
+NjU2L2ludC5jDQppbmRleCA1MDQ0MjRiMTlmY2YuLmYzZWUyMTk4ZTFiMyAxMDA2NDQNCi0tLSBh
+L2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2
+NTYvaW50LmMNCkBAIC0zOSw3ICszOSw3IEBAIHN0YXRpYyBjb25zdCB1OCBmYWxsYmFja19yYXRl
+MVs1XVs1XSA9IHsNCiAJe1JBVEVfNTRNLCBSQVRFXzU0TSwgUkFURV8zNk0sIFJBVEVfMThNLCBS
+QVRFXzE4TX0NCiB9Ow0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQoc3RydWN0IHZu
+dF9wcml2YXRlICpwcml2KQ0KK2ludCB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChzdHJ1Y3Qgdm50
+X3ByaXZhdGUgKnByaXYpDQogew0KIAl1bnNpZ25lZCBsb25nIGZsYWdzOw0KIAlpbnQgc3RhdHVz
+Ow0KQEAgLTUxLDYgKzUxLDggQEAgdm9pZCB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChzdHJ1Y3Qg
+dm50X3ByaXZhdGUgKnByaXYpDQogCXN0YXR1cyA9IHZudF9zdGFydF9pbnRlcnJ1cHRfdXJiKHBy
+aXYpOw0KIA0KIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZwcml2LT5sb2NrLCBmbGFncyk7DQor
+DQorCXJldHVybiBzdGF0dXM7DQogfQ0KIA0KIHN0YXRpYyBpbnQgdm50X2ludF9yZXBvcnRfcmF0
+ZShzdHJ1Y3Qgdm50X3ByaXZhdGUgKnByaXYsIHU4IHBrdF9ubywgdTggdHNyKQ0KZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmggYi9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2
+L2ludC5oDQppbmRleCA5ODdjNDU0ZTk5ZTkuLjhhNmQ2MDU2OWNlYiAxMDA2NDQNCi0tLSBhL2Ry
+aXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmgNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYv
+aW50LmgNCkBAIC00MSw3ICs0MSw3IEBAIHN0cnVjdCB2bnRfaW50ZXJydXB0X2RhdGEgew0KIAl1
+OCBzd1syXTsNCiB9IF9fcGFja2VkOw0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQo
+c3RydWN0IHZudF9wcml2YXRlICpwcml2KTsNCitpbnQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQo
+c3RydWN0IHZudF9wcml2YXRlICpwcml2KTsNCiB2b2lkIHZudF9pbnRfcHJvY2Vzc19kYXRhKHN0
+cnVjdCB2bnRfcHJpdmF0ZSAqcHJpdik7DQogDQogI2VuZGlmIC8qIF9fSU5UX0hfXyAqLw0KZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyBiL2RyaXZlcnMvc3Rh
+Z2luZy92dDY2NTYvbWFpbl91c2IuYw0KaW5kZXggY2NhZmNjMmM4N2FjLi43MWUxMGI5YWUyNTMg
+MTAwNjQ0DQotLS0gYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L21haW5fdXNiLmMNCisrKyBiL2Ry
+aXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYw0KQEAgLTQ4Myw2ICs0ODMsNyBAQCBzdGF0
+aWMgdm9pZCB2bnRfdHhfODAyMTEoc3RydWN0IGllZWU4MDIxMV9odyAqaHcsDQogDQogc3RhdGlj
+IGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQogew0KKwlpbnQgZXJyID0g
+MDsNCiAJc3RydWN0IHZudF9wcml2YXRlICpwcml2ID0gaHctPnByaXY7DQogDQogCXByaXYtPnJ4
+X2J1Zl9zeiA9IE1BWF9UT1RBTF9TSVpFX1dJVEhfQUxMX0hFQURFUlM7DQpAQCAtNDk2LDE1ICs0
+OTcsMjAgQEAgc3RhdGljIGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQog
+DQogCWlmICh2bnRfaW5pdF9yZWdpc3RlcnMocHJpdikgPT0gZmFsc2UpIHsNCiAJCWRldl9kYmco
+JnByaXYtPnVzYi0+ZGV2LCAiIGluaXQgcmVnaXN0ZXIgZmFpbFxuIik7DQorCQllcnIgPSAtRU5P
+TUVNOw0KIAkJZ290byBmcmVlX2FsbDsNCiAJfQ0KIA0KLQlpZiAodm50X2tleV9pbml0X3RhYmxl
+KHByaXYpKQ0KKwlpZiAodm50X2tleV9pbml0X3RhYmxlKHByaXYpKSB7DQorCQllcnIgPSAtRU5P
+TUVNOw0KIAkJZ290byBmcmVlX2FsbDsNCisJfQ0KIA0KIAlwcml2LT5pbnRfaW50ZXJ2YWwgPSAx
+OyAgLyogYkludGVydmFsIGlzIHNldCB0byAxICovDQogDQotCXZudF9pbnRfc3RhcnRfaW50ZXJy
+dXB0KHByaXYpOw0KKwllcnIgPSB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChwcml2KTsNCisJaWYg
+KGVycikNCisJCWdvdG8gZnJlZV9hbGw7DQogDQogCWllZWU4MDIxMV93YWtlX3F1ZXVlcyhodyk7
+DQogDQpAQCAtNTE4LDcgKzUyNCw3IEBAIHN0YXRpYyBpbnQgdm50X3N0YXJ0KHN0cnVjdCBpZWVl
+ODAyMTFfaHcgKmh3KQ0KIAl1c2Jfa2lsbF91cmIocHJpdi0+aW50ZXJydXB0X3VyYik7DQogCXVz
+Yl9mcmVlX3VyYihwcml2LT5pbnRlcnJ1cHRfdXJiKTsNCiANCi0JcmV0dXJuIC1FTk9NRU07DQor
+CXJldHVybiBlcnI7DQogfQ0KIA0KIHN0YXRpYyB2b2lkIHZudF9zdG9wKHN0cnVjdCBpZWVlODAy
+MTFfaHcgKmh3KQ0KLS0gDQoyLjE3LjENCg0K
