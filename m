@@ -1,54 +1,66 @@
-From: Bryan Gurney <bgurney@redhat.com>
-Date: Thu, 02 May 2019 13:27:05 +0000
-Subject: Re: [PATCH][next] dm: remove redundant unsigned comparison to less than zero
-Message-Id: <CAHhmqcTRVWBNnynaAJ7mbtke-MCiBma-6z_=bYrFzh0ubky-Fw@mail.gmail.com>
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Date: Fri, 17 May 2019 07:53:49 +0000
+Subject: [PATCH v3] staging: vt6656: returns error code on vnt_int_start_interrupt fail
+Message-Id: <20190517075331.3658-1-quentin.deslandes@itdev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190501125717.5695-1-colin.king@canonical.com>
-In-Reply-To: <20190501125717.5695-1-colin.king@canonical.com>
+References: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
+In-Reply-To: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ojaswin Mujoo <ojaswin25111998@gmail.com>, Mukesh Ojha <mojha@codeaurora.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, May 1, 2019 at 8:58 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable block is an unsigned long long hence the less than zero
-> comparison is always false, hence it is redundant and can be removed.
->
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/md/dm-dust.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/md/dm-dust.c b/drivers/md/dm-dust.c
-> index 178587bdc626..e739092bfc65 100644
-> --- a/drivers/md/dm-dust.c
-> +++ b/drivers/md/dm-dust.c
-> @@ -411,7 +411,7 @@ static int dust_message(struct dm_target *ti, unsigned int argc, char **argv,
->
->                 block = tmp;
->                 sector_div(size, dd->sect_per_block);
-> -               if (block > size || block < 0) {
-> +               if (block > size) {
->                         DMERR("selected block value out of range");
->                         return result;
->                 }
-> --
-> 2.20.1
->
-
-Thanks.
-
-There was already a check before that to ensure that the argument
-feeding this variable is an unsigned long long; if it isn't, it will
-fail with EINVAL:
-
-# dmsetup message -- dust1 0 queryblock -1
-device-mapper: message ioctl on dust1  failed: Invalid argument
-Command failed
-
-Reviewed-by: Bryan Gurney <bgurney@redhat.com>
+UmV0dXJucyBlcnJvciBjb2RlIGZyb20gJ3ZudF9pbnRfc3RhcnRfaW50ZXJydXB0KCknIHNvIHRo
+ZSBkZXZpY2UncyBwcml2YXRlDQpidWZmZXJzIHdpbGwgYmUgY29ycmVjdGx5IGZyZWVkIGFuZCAn
+c3RydWN0IGllZWU4MDIxMV9odycgc3RhcnQgZnVuY3Rpb24NCndpbGwgcmV0dXJuIGFuIGVycm9y
+IGNvZGUuDQoNClNpZ25lZC1vZmYtYnk6IFF1ZW50aW4gRGVzbGFuZGVzIDxxdWVudGluLmRlc2xh
+bmRlc0BpdGRldi5jby51az4NCi0tLQ0KdjI6IHJldHVybnMgJ3N0YXR1cycgdmFsdWUgdG8gY2Fs
+bGVyIGluc3RlYWQgb2YgcmVtb3ZpbmcgaXQuDQp2MzogYWRkIHBhdGNoIHZlcnNpb24gZGV0YWls
+cy4gVGhhbmtzIHRvIEdyZWcgSy1IIGZvciBoaXMgaGVscC4NCg0KIGRyaXZlcnMvc3RhZ2luZy92
+dDY2NTYvaW50LmMgICAgICB8ICA0ICsrKy0NCiBkcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5o
+ICAgICAgfCAgMiArLQ0KIGRyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyB8IDEyICsr
+KysrKysrKy0tLQ0KIDMgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlv
+bnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgYi9kcml2
+ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5jDQppbmRleCA1MDQ0MjRiMTlmY2YuLmYzZWUyMTk4ZTFi
+MyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMNCisrKyBiL2RyaXZl
+cnMvc3RhZ2luZy92dDY2NTYvaW50LmMNCkBAIC0zOSw3ICszOSw3IEBAIHN0YXRpYyBjb25zdCB1
+OCBmYWxsYmFja19yYXRlMVs1XVs1XSA9IHsNCiAJe1JBVEVfNTRNLCBSQVRFXzU0TSwgUkFURV8z
+Nk0sIFJBVEVfMThNLCBSQVRFXzE4TX0NCiB9Ow0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRl
+cnJ1cHQoc3RydWN0IHZudF9wcml2YXRlICpwcml2KQ0KK2ludCB2bnRfaW50X3N0YXJ0X2ludGVy
+cnVwdChzdHJ1Y3Qgdm50X3ByaXZhdGUgKnByaXYpDQogew0KIAl1bnNpZ25lZCBsb25nIGZsYWdz
+Ow0KIAlpbnQgc3RhdHVzOw0KQEAgLTUxLDYgKzUxLDggQEAgdm9pZCB2bnRfaW50X3N0YXJ0X2lu
+dGVycnVwdChzdHJ1Y3Qgdm50X3ByaXZhdGUgKnByaXYpDQogCXN0YXR1cyA9IHZudF9zdGFydF9p
+bnRlcnJ1cHRfdXJiKHByaXYpOw0KIA0KIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZwcml2LT5s
+b2NrLCBmbGFncyk7DQorDQorCXJldHVybiBzdGF0dXM7DQogfQ0KIA0KIHN0YXRpYyBpbnQgdm50
+X2ludF9yZXBvcnRfcmF0ZShzdHJ1Y3Qgdm50X3ByaXZhdGUgKnByaXYsIHU4IHBrdF9ubywgdTgg
+dHNyKQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmggYi9kcml2ZXJz
+L3N0YWdpbmcvdnQ2NjU2L2ludC5oDQppbmRleCA5ODdjNDU0ZTk5ZTkuLjhhNmQ2MDU2OWNlYiAx
+MDA2NDQNCi0tLSBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmgNCisrKyBiL2RyaXZlcnMv
+c3RhZ2luZy92dDY2NTYvaW50LmgNCkBAIC00MSw3ICs0MSw3IEBAIHN0cnVjdCB2bnRfaW50ZXJy
+dXB0X2RhdGEgew0KIAl1OCBzd1syXTsNCiB9IF9fcGFja2VkOw0KIA0KLXZvaWQgdm50X2ludF9z
+dGFydF9pbnRlcnJ1cHQoc3RydWN0IHZudF9wcml2YXRlICpwcml2KTsNCitpbnQgdm50X2ludF9z
+dGFydF9pbnRlcnJ1cHQoc3RydWN0IHZudF9wcml2YXRlICpwcml2KTsNCiB2b2lkIHZudF9pbnRf
+cHJvY2Vzc19kYXRhKHN0cnVjdCB2bnRfcHJpdmF0ZSAqcHJpdik7DQogDQogI2VuZGlmIC8qIF9f
+SU5UX0hfXyAqLw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2Iu
+YyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYw0KaW5kZXggY2NhZmNjMmM4N2Fj
+Li43MWUxMGI5YWUyNTMgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L21haW5f
+dXNiLmMNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYw0KQEAgLTQ4Myw2
+ICs0ODMsNyBAQCBzdGF0aWMgdm9pZCB2bnRfdHhfODAyMTEoc3RydWN0IGllZWU4MDIxMV9odyAq
+aHcsDQogDQogc3RhdGljIGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQog
+ew0KKwlpbnQgZXJyID0gMDsNCiAJc3RydWN0IHZudF9wcml2YXRlICpwcml2ID0gaHctPnByaXY7
+DQogDQogCXByaXYtPnJ4X2J1Zl9zeiA9IE1BWF9UT1RBTF9TSVpFX1dJVEhfQUxMX0hFQURFUlM7
+DQpAQCAtNDk2LDE1ICs0OTcsMjAgQEAgc3RhdGljIGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4
+MDIxMV9odyAqaHcpDQogDQogCWlmICh2bnRfaW5pdF9yZWdpc3RlcnMocHJpdikgPT0gZmFsc2Up
+IHsNCiAJCWRldl9kYmcoJnByaXYtPnVzYi0+ZGV2LCAiIGluaXQgcmVnaXN0ZXIgZmFpbFxuIik7
+DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJZ290byBmcmVlX2FsbDsNCiAJfQ0KIA0KLQlpZiAodm50
+X2tleV9pbml0X3RhYmxlKHByaXYpKQ0KKwlpZiAodm50X2tleV9pbml0X3RhYmxlKHByaXYpKSB7
+DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJZ290byBmcmVlX2FsbDsNCisJfQ0KIA0KIAlwcml2LT5p
+bnRfaW50ZXJ2YWwgPSAxOyAgLyogYkludGVydmFsIGlzIHNldCB0byAxICovDQogDQotCXZudF9p
+bnRfc3RhcnRfaW50ZXJydXB0KHByaXYpOw0KKwllcnIgPSB2bnRfaW50X3N0YXJ0X2ludGVycnVw
+dChwcml2KTsNCisJaWYgKGVycikNCisJCWdvdG8gZnJlZV9hbGw7DQogDQogCWllZWU4MDIxMV93
+YWtlX3F1ZXVlcyhodyk7DQogDQpAQCAtNTE4LDcgKzUyNCw3IEBAIHN0YXRpYyBpbnQgdm50X3N0
+YXJ0KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3KQ0KIAl1c2Jfa2lsbF91cmIocHJpdi0+aW50ZXJy
+dXB0X3VyYik7DQogCXVzYl9mcmVlX3VyYihwcml2LT5pbnRlcnJ1cHRfdXJiKTsNCiANCi0JcmV0
+dXJuIC1FTk9NRU07DQorCXJldHVybiBlcnI7DQogfQ0KIA0KIHN0YXRpYyB2b2lkIHZudF9zdG9w
+KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3KQ0KLS0gDQoyLjE3LjENCg0K
