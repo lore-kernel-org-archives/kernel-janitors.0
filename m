@@ -1,23 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 05 May 2019 17:29:51 +0000
-Subject: Re: [PATCH 2/2 net-next] net: ll_temac: remove an unnecessary condition
-Message-Id: <20190505.102951.1109077189450790567.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 17 May 2019 08:12:33 +0000
+Subject: [PATCH] cifs: fix memory leak of pneg_inbuf on -EOPNOTSUPP ioctl case
+Message-Id: <20190517081233.11764-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190503125024.GF29695@mwanda>
-        <20190503125051.GG29695@mwanda>
-In-Reply-To: <20190503125051.GG29695@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: esben@geanix.com, michal.simek@xilinx.com, andrew@lunn.ch, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 3 May 2019 15:50:51 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> The "pdata->mdio_bus_id" is unsigned so this condition is always true.
-> This patch just removes it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Currently in the case where SMB2_ioctl returns the -EOPNOTSUPP error
+there is a memory leak of pneg_inbuf. Fix this by returning via
+the out_free_inbuf exit path that will perform the relevant kfree.
 
-Applied.
+Addresses-Coverity: ("Resource leak")
+Fixes: 969ae8e8d4ee ("cifs: Accept validate negotiate if server return NT_STATUS_NOT_SUPPORTED")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smb2pdu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 710ceb875161..5b8d1482ffbd 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1054,7 +1054,8 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+ 		 * not supported error. Client should accept it.
+ 		 */
+ 		cifs_dbg(VFS, "Server does not support validate negotiate\n");
+-		return 0;
++		rc = 0;
++		goto out_free_inbuf;
+ 	} else if (rc != 0) {
+ 		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
+ 		rc = -EIO;
+-- 
+2.20.1
