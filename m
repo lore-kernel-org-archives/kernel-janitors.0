@@ -1,66 +1,122 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Fri, 17 May 2019 07:53:49 +0000
-Subject: [PATCH v3] staging: vt6656: returns error code on vnt_int_start_interrupt fail
-Message-Id: <20190517075331.3658-1-quentin.deslandes@itdev.co.uk>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 17 May 2019 09:17:23 +0000
+Subject: Re: [PATCH v3] staging: vt6656: returns error code on vnt_int_start_interrupt fail
+Message-Id: <20190517091723.GA4602@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
-In-Reply-To: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
+ <20190517075331.3658-1-quentin.deslandes@itdev.co.uk>
+In-Reply-To: <20190517075331.3658-1-quentin.deslandes@itdev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ojaswin Mujoo <ojaswin25111998@gmail.com>, Mukesh Ojha <mojha@codeaurora.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Mukesh Ojha <mojha@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Forest Bond <forest@alittletooquiet.net>, Ojaswin Mujoo <ojaswin25111998@gmail.com>
 
-UmV0dXJucyBlcnJvciBjb2RlIGZyb20gJ3ZudF9pbnRfc3RhcnRfaW50ZXJydXB0KCknIHNvIHRo
-ZSBkZXZpY2UncyBwcml2YXRlDQpidWZmZXJzIHdpbGwgYmUgY29ycmVjdGx5IGZyZWVkIGFuZCAn
-c3RydWN0IGllZWU4MDIxMV9odycgc3RhcnQgZnVuY3Rpb24NCndpbGwgcmV0dXJuIGFuIGVycm9y
-IGNvZGUuDQoNClNpZ25lZC1vZmYtYnk6IFF1ZW50aW4gRGVzbGFuZGVzIDxxdWVudGluLmRlc2xh
-bmRlc0BpdGRldi5jby51az4NCi0tLQ0KdjI6IHJldHVybnMgJ3N0YXR1cycgdmFsdWUgdG8gY2Fs
-bGVyIGluc3RlYWQgb2YgcmVtb3ZpbmcgaXQuDQp2MzogYWRkIHBhdGNoIHZlcnNpb24gZGV0YWls
-cy4gVGhhbmtzIHRvIEdyZWcgSy1IIGZvciBoaXMgaGVscC4NCg0KIGRyaXZlcnMvc3RhZ2luZy92
-dDY2NTYvaW50LmMgICAgICB8ICA0ICsrKy0NCiBkcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5o
-ICAgICAgfCAgMiArLQ0KIGRyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyB8IDEyICsr
-KysrKysrKy0tLQ0KIDMgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlv
-bnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgYi9kcml2
-ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5jDQppbmRleCA1MDQ0MjRiMTlmY2YuLmYzZWUyMTk4ZTFi
-MyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMNCisrKyBiL2RyaXZl
-cnMvc3RhZ2luZy92dDY2NTYvaW50LmMNCkBAIC0zOSw3ICszOSw3IEBAIHN0YXRpYyBjb25zdCB1
-OCBmYWxsYmFja19yYXRlMVs1XVs1XSA9IHsNCiAJe1JBVEVfNTRNLCBSQVRFXzU0TSwgUkFURV8z
-Nk0sIFJBVEVfMThNLCBSQVRFXzE4TX0NCiB9Ow0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRl
-cnJ1cHQoc3RydWN0IHZudF9wcml2YXRlICpwcml2KQ0KK2ludCB2bnRfaW50X3N0YXJ0X2ludGVy
-cnVwdChzdHJ1Y3Qgdm50X3ByaXZhdGUgKnByaXYpDQogew0KIAl1bnNpZ25lZCBsb25nIGZsYWdz
-Ow0KIAlpbnQgc3RhdHVzOw0KQEAgLTUxLDYgKzUxLDggQEAgdm9pZCB2bnRfaW50X3N0YXJ0X2lu
-dGVycnVwdChzdHJ1Y3Qgdm50X3ByaXZhdGUgKnByaXYpDQogCXN0YXR1cyA9IHZudF9zdGFydF9p
-bnRlcnJ1cHRfdXJiKHByaXYpOw0KIA0KIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZwcml2LT5s
-b2NrLCBmbGFncyk7DQorDQorCXJldHVybiBzdGF0dXM7DQogfQ0KIA0KIHN0YXRpYyBpbnQgdm50
-X2ludF9yZXBvcnRfcmF0ZShzdHJ1Y3Qgdm50X3ByaXZhdGUgKnByaXYsIHU4IHBrdF9ubywgdTgg
-dHNyKQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmggYi9kcml2ZXJz
-L3N0YWdpbmcvdnQ2NjU2L2ludC5oDQppbmRleCA5ODdjNDU0ZTk5ZTkuLjhhNmQ2MDU2OWNlYiAx
-MDA2NDQNCi0tLSBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmgNCisrKyBiL2RyaXZlcnMv
-c3RhZ2luZy92dDY2NTYvaW50LmgNCkBAIC00MSw3ICs0MSw3IEBAIHN0cnVjdCB2bnRfaW50ZXJy
-dXB0X2RhdGEgew0KIAl1OCBzd1syXTsNCiB9IF9fcGFja2VkOw0KIA0KLXZvaWQgdm50X2ludF9z
-dGFydF9pbnRlcnJ1cHQoc3RydWN0IHZudF9wcml2YXRlICpwcml2KTsNCitpbnQgdm50X2ludF9z
-dGFydF9pbnRlcnJ1cHQoc3RydWN0IHZudF9wcml2YXRlICpwcml2KTsNCiB2b2lkIHZudF9pbnRf
-cHJvY2Vzc19kYXRhKHN0cnVjdCB2bnRfcHJpdmF0ZSAqcHJpdik7DQogDQogI2VuZGlmIC8qIF9f
-SU5UX0hfXyAqLw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2Iu
-YyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYw0KaW5kZXggY2NhZmNjMmM4N2Fj
-Li43MWUxMGI5YWUyNTMgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L21haW5f
-dXNiLmMNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYw0KQEAgLTQ4Myw2
-ICs0ODMsNyBAQCBzdGF0aWMgdm9pZCB2bnRfdHhfODAyMTEoc3RydWN0IGllZWU4MDIxMV9odyAq
-aHcsDQogDQogc3RhdGljIGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQog
-ew0KKwlpbnQgZXJyID0gMDsNCiAJc3RydWN0IHZudF9wcml2YXRlICpwcml2ID0gaHctPnByaXY7
-DQogDQogCXByaXYtPnJ4X2J1Zl9zeiA9IE1BWF9UT1RBTF9TSVpFX1dJVEhfQUxMX0hFQURFUlM7
-DQpAQCAtNDk2LDE1ICs0OTcsMjAgQEAgc3RhdGljIGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4
-MDIxMV9odyAqaHcpDQogDQogCWlmICh2bnRfaW5pdF9yZWdpc3RlcnMocHJpdikgPT0gZmFsc2Up
-IHsNCiAJCWRldl9kYmcoJnByaXYtPnVzYi0+ZGV2LCAiIGluaXQgcmVnaXN0ZXIgZmFpbFxuIik7
-DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJZ290byBmcmVlX2FsbDsNCiAJfQ0KIA0KLQlpZiAodm50
-X2tleV9pbml0X3RhYmxlKHByaXYpKQ0KKwlpZiAodm50X2tleV9pbml0X3RhYmxlKHByaXYpKSB7
-DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJZ290byBmcmVlX2FsbDsNCisJfQ0KIA0KIAlwcml2LT5p
-bnRfaW50ZXJ2YWwgPSAxOyAgLyogYkludGVydmFsIGlzIHNldCB0byAxICovDQogDQotCXZudF9p
-bnRfc3RhcnRfaW50ZXJydXB0KHByaXYpOw0KKwllcnIgPSB2bnRfaW50X3N0YXJ0X2ludGVycnVw
-dChwcml2KTsNCisJaWYgKGVycikNCisJCWdvdG8gZnJlZV9hbGw7DQogDQogCWllZWU4MDIxMV93
-YWtlX3F1ZXVlcyhodyk7DQogDQpAQCAtNTE4LDcgKzUyNCw3IEBAIHN0YXRpYyBpbnQgdm50X3N0
-YXJ0KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3KQ0KIAl1c2Jfa2lsbF91cmIocHJpdi0+aW50ZXJy
-dXB0X3VyYik7DQogCXVzYl9mcmVlX3VyYihwcml2LT5pbnRlcnJ1cHRfdXJiKTsNCiANCi0JcmV0
-dXJuIC1FTk9NRU07DQorCXJldHVybiBlcnI7DQogfQ0KIA0KIHN0YXRpYyB2b2lkIHZudF9zdG9w
-KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3KQ0KLS0gDQoyLjE3LjENCg0K
+On Fri, May 17, 2019 at 07:53:49AM +0000, Quentin Deslandes wrote:
+> Returns error code from 'vnt_int_start_interrupt()' so the device's private
+> buffers will be correctly freed and 'struct ieee80211_hw' start function
+> will return an error code.
+> 
+> Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+> ---
+> v2: returns 'status' value to caller instead of removing it.
+> v3: add patch version details. Thanks to Greg K-H for his help.
+
+Looking better!
+
+But a few minor things below:
+
+> 
+>  drivers/staging/vt6656/int.c      |  4 +++-
+>  drivers/staging/vt6656/int.h      |  2 +-
+>  drivers/staging/vt6656/main_usb.c | 12 +++++++++---
+>  3 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/vt6656/int.c b/drivers/staging/vt6656/int.c
+> index 504424b19fcf..f3ee2198e1b3 100644
+> --- a/drivers/staging/vt6656/int.c
+> +++ b/drivers/staging/vt6656/int.c
+> @@ -39,7 +39,7 @@ static const u8 fallback_rate1[5][5] = {
+>  	{RATE_54M, RATE_54M, RATE_36M, RATE_18M, RATE_18M}
+>  };
+>  
+> -void vnt_int_start_interrupt(struct vnt_private *priv)
+> +int vnt_int_start_interrupt(struct vnt_private *priv)
+>  {
+>  	unsigned long flags;
+>  	int status;
+> @@ -51,6 +51,8 @@ void vnt_int_start_interrupt(struct vnt_private *priv)
+>  	status = vnt_start_interrupt_urb(priv);
+>  
+>  	spin_unlock_irqrestore(&priv->lock, flags);
+> +
+> +	return status;
+>  }
+>  
+>  static int vnt_int_report_rate(struct vnt_private *priv, u8 pkt_no, u8 tsr)
+> diff --git a/drivers/staging/vt6656/int.h b/drivers/staging/vt6656/int.h
+> index 987c454e99e9..8a6d60569ceb 100644
+> --- a/drivers/staging/vt6656/int.h
+> +++ b/drivers/staging/vt6656/int.h
+> @@ -41,7 +41,7 @@ struct vnt_interrupt_data {
+>  	u8 sw[2];
+>  } __packed;
+>  
+> -void vnt_int_start_interrupt(struct vnt_private *priv);
+> +int vnt_int_start_interrupt(struct vnt_private *priv);
+>  void vnt_int_process_data(struct vnt_private *priv);
+>  
+>  #endif /* __INT_H__ */
+> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+> index ccafcc2c87ac..71e10b9ae253 100644
+> --- a/drivers/staging/vt6656/main_usb.c
+> +++ b/drivers/staging/vt6656/main_usb.c
+> @@ -483,6 +483,7 @@ static void vnt_tx_80211(struct ieee80211_hw *hw,
+>  
+>  static int vnt_start(struct ieee80211_hw *hw)
+>  {
+> +	int err = 0;
+>  	struct vnt_private *priv = hw->priv;
+>  
+>  	priv->rx_buf_sz = MAX_TOTAL_SIZE_WITH_ALL_HEADERS;
+> @@ -496,15 +497,20 @@ static int vnt_start(struct ieee80211_hw *hw)
+>  
+>  	if (vnt_init_registers(priv) = false) {
+>  		dev_dbg(&priv->usb->dev, " init register fail\n");
+> +		err = -ENOMEM;
+
+Why ENOMEM?  vnt_init_registers() should return a proper error code,
+based on what went wrong, not true/false.  So fix that up first, and
+then you can do this patch.
+
+See, your one tiny coding style fix is turning into real cleanups, nice!
+
+>  		goto free_all;
+>  	}
+>  
+> -	if (vnt_key_init_table(priv))
+> +	if (vnt_key_init_table(priv)) {
+> +		err = -ENOMEM;
+
+Same here, vnt_key_init_table() should return a real error value, and
+then just return that here.
+
+>  		goto free_all;
+> +	}
+>  
+>  	priv->int_interval = 1;  /* bInterval is set to 1 */
+>  
+> -	vnt_int_start_interrupt(priv);
+> +	err = vnt_int_start_interrupt(priv);
+> +	if (err)
+> +		goto free_all;
+
+Like this, that is the correct thing.
+
+So, this is now going to be a patch series, fixing up those two
+functions (and any functions they call possibly), and then this can be
+the last patch of the series.
+
+thanks,
+
+greg k-h
