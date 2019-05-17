@@ -1,35 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 10 May 2019 07:07:34 +0000
-Subject: [PATCH][next] drm/amdgpu: fix spelling mistake "retrived" -> "retrieved"
-Message-Id: <20190510070734.20625-1-colin.king@canonical.com>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Fri, 17 May 2019 19:35:00 +0000
+Subject: [PATCH 02/73] perf test: Fix spelling mistake "leadking" -> "leaking"
+Message-Id: <20190517193611.4974-3-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190517193611.4974-1-acme@kernel.org>
+In-Reply-To: <20190517193611.4974-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Mukesh Ojha <mojha@codeaurora.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a DRM_ERROR error message. Fix this.
+There are a couple of spelling mistakes in test assert messages. Fix them.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin King <colin.king@canonical.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190417105539.5902-1-colin.king@canonical.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/gpu/drm/amd/amdgpu/df_v3_6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/dso-data.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
-index 7d375f8dcce6..a5c3558869fb 100644
---- a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
-+++ b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
-@@ -194,7 +194,7 @@ static void df_v3_6_pmc_get_ctrl_settings(struct amdgpu_device *adev,
- 		return;
+diff --git a/tools/perf/tests/dso-data.c b/tools/perf/tests/dso-data.c
+index 7f6c52021e41..946ab4b63acd 100644
+--- a/tools/perf/tests/dso-data.c
++++ b/tools/perf/tests/dso-data.c
+@@ -304,7 +304,7 @@ int test__dso_data_cache(struct test *test __maybe_unused, int subtest __maybe_u
+ 	/* Make sure we did not leak any file descriptor. */
+ 	nr_end = open_files_cnt();
+ 	pr_debug("nr start %ld, nr stop %ld\n", nr, nr_end);
+-	TEST_ASSERT_VAL("failed leadking files", nr = nr_end);
++	TEST_ASSERT_VAL("failed leaking files", nr = nr_end);
+ 	return 0;
+ }
  
- 	if ((*lo_base_addr = 0) || (*hi_base_addr = 0)) {
--		DRM_ERROR("DF PMC addressing not retrived! Lo: %x, Hi: %x",
-+		DRM_ERROR("DF PMC addressing not retrieved! Lo: %x, Hi: %x",
- 				*lo_base_addr, *hi_base_addr);
- 		return;
- 	}
+@@ -380,6 +380,6 @@ int test__dso_data_reopen(struct test *test __maybe_unused, int subtest __maybe_
+ 	/* Make sure we did not leak any file descriptor. */
+ 	nr_end = open_files_cnt();
+ 	pr_debug("nr start %ld, nr stop %ld\n", nr, nr_end);
+-	TEST_ASSERT_VAL("failed leadking files", nr = nr_end);
++	TEST_ASSERT_VAL("failed leaking files", nr = nr_end);
+ 	return 0;
+ }
 -- 
 2.20.1
