@@ -1,17 +1,17 @@
-From: Thomas Huth <thuth@redhat.com>
-Date: Fri, 17 May 2019 10:00:23 +0000
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 20 May 2019 09:58:30 +0000
 Subject: Re: [PATCH] KVM: selftests: Fix a condition in test_hv_cpuid()
-Message-Id: <b97371ae-5ae3-5df6-6ee3-a7c5fbb4b69e@redhat.com>
+Message-Id: <4bb7a5d3-887f-8487-e8f3-70770312517a@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190514103451.GA1694@mwanda>
 In-Reply-To: <20190514103451.GA1694@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Xu <peterx@redhat.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 14/05/2019 12.34, Dan Carpenter wrote:
+On 14/05/19 12:34, Dan Carpenter wrote:
 > The code is trying to check that all the padding is zeroed out and it
 > does this:
 > 
@@ -50,7 +50,6 @@ On 14/05/2019 12.34, Dan Carpenter wrote:
 >  		 * If needed for debug:
 > 
 
-That was yet another good example that compiling with "-Wall" is a good
-idea...
+Queued, thanks.
 
-Reviewed-by: Thomas Huth <thuth@redhat.com>
+Paolo
