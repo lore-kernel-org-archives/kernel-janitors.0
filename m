@@ -1,23 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 29 May 2019 20:26:00 +0000
-Subject: Re: [PATCH][next] qed: fix spelling mistake "inculde" -> "include"
-Message-Id: <20190529.132600.834772691456137212.davem@davemloft.net>
+From: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Date: Mon, 20 May 2019 05:37:55 +0000
+Subject: Re: drm/komeda: Potential error pointer dereference
+Message-Id: <20190520053748.GA1724@james-ThinkStation-P300>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190528065217.7311-1-colin.king@canonical.com>
-In-Reply-To: <20190528065217.7311-1-colin.king@canonical.com>
+References: <20190503122525.GA29695@mwanda>
+In-Reply-To: <20190503122525.GA29695@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: aelior@marvell.com, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, nd <nd@arm.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 May 2019 07:52:17 +0100
+Hi Dan 
 
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, May 03, 2019 at 03:25:25PM +0300, Dan Carpenter wrote:
+> We need to check whether drm_atomic_get_crtc_state() returns an error
+> pointer before dereferencing "crtc_st".
 > 
-> There is a spelling mistake in a DP_INFO message. Fix it.
+> Fixes: 7d31b9e7a550 ("drm/komeda: Add komeda_plane/plane_helper_funcs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_plane.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+> index 07ed0cc1bc44..c7e5fc6e5500 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+> @@ -64,7 +64,7 @@ komeda_plane_atomic_check(struct drm_plane *plane,
+>  		return 0;
+>  
+>  	crtc_st = drm_atomic_get_crtc_state(state->state, state->crtc);
+> -	if (!crtc_st->enable) {
+> +	if (IS_ERR(crtc_st) || !crtc_st->enable) {
+>  		DRM_DEBUG_ATOMIC("Cannot update plane on a disabled CRTC.\n");
+>  		return -EINVAL;
+>  	}
 
-Applied.
+Thank you for the fixing.
+-- 
+Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.com>
