@@ -1,7 +1,7 @@
 From: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Date: Mon, 20 May 2019 05:37:55 +0000
+Date: Mon, 20 May 2019 05:43:38 +0000
 Subject: Re: drm/komeda: Potential error pointer dereference
-Message-Id: <20190520053748.GA1724@james-ThinkStation-P300>
+Message-Id: <20190520054331.GB1724@james-ThinkStation-P300>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190503122525.GA29695@mwanda>
 In-Reply-To: <20190503122525.GA29695@mwanda>
@@ -10,8 +10,6 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, nd <nd@arm.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-
-Hi Dan 
 
 On Fri, May 03, 2019 at 03:25:25PM +0300, Dan Carpenter wrote:
 > We need to check whether drm_atomic_get_crtc_state() returns an error
@@ -39,5 +37,5 @@ On Fri, May 03, 2019 at 03:25:25PM +0300, Dan Carpenter wrote:
 >  	}
 
 Thank you for the fixing.
--- 
+
 Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.com>
