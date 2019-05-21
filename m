@@ -1,34 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 25 May 2019 06:25:10 +0000
-Subject: Re: [PATCH][next] ASoC: cx2072x: fix integer overflow on unsigned int multiply
-Message-Id: <s5hlfyvaw55.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 May 2019 13:17:06 +0000
+Subject: [PATCH] staging: wilc1000: remove redundant masking of pkt_offset
+Message-Id: <20190521131706.30236-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190524222551.26573-1-colin.king@canonical.com>
-In-Reply-To: <20190524222551.26573-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 25 May 2019 00:25:51 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where frac_div larger than 96 the result of an unsigned
-> multiplication overflows an unsigned int.  For example, this can
-> happen when the sample_rate is 192000 and pll_input is 122.  Fix
-> this by casing the first term of the mutiply to a u64. Also remove
-> the extraneous parentheses around the expression.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: a497a4363706 ("ASoC: Add support for Conexant CX2072X CODEC")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+The masking update of pkg_offset is redundant as the updated
+value is never read and pkg_offset is re-assigned on the next
+iteration of the loop.  Clean this up by removing the redundant
+assignment.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wilc1000/wilc_wlan.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-thanks,
-
-Takashi
+diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
+index 95eaf8fdf4f2..dcd728557958 100644
+--- a/drivers/staging/wilc1000/wilc_wlan.c
++++ b/drivers/staging/wilc1000/wilc_wlan.c
+@@ -709,9 +709,6 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
+ 			break;
+ 
+ 		if (pkt_offset & IS_MANAGMEMENT) {
+-			pkt_offset &= ~(IS_MANAGMEMENT |
+-					IS_MANAGMEMENT_CALLBACK |
+-					IS_MGMT_STATUS_SUCCES);
+ 			buff_ptr += HOST_HDR_OFFSET;
+ 			wilc_wfi_mgmt_rx(wilc, buff_ptr, pkt_len);
+ 		} else {
+-- 
+2.20.1
