@@ -1,30 +1,35 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 20 May 2019 10:40:11 +0000
-Subject: Re: [PATCH -next] KVM: s390: fix typo in parameter description
-Message-Id: <44f535b4-a89c-748d-b275-2876d5223689@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 May 2019 08:56:24 +0000
+Subject: [PATCH][next] soc: fsl: fix spelling mistake "Firmaware" -> "Firmware"
+Message-Id: <20190521085624.13665-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a6d67ef5-2db8-5373-04ae-d54f5bdb79db@de.ibm.com>
-In-Reply-To: <a6d67ef5-2db8-5373-04ae-d54f5bdb79db@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 20/05/19 09:41, Christian Borntraeger wrote:
-> On 06.05.19 09:52, Christian Borntraeger wrote:
->>
->>
->> On 04.05.19 08:51, Wei Yongjun wrote:
->>> Fix typo in parameter description.
->>>
->>> Fixes: 8b905d28ee17 ("KVM: s390: provide kvm_arch_no_poll function")
->>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->>
->> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> 
-> Since I have another fix pending, I now picked this up myself and
-> this will be in my next pull request for 5.2-rc2.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ok, I'll wait for it before sending my own pending fixes to Linus.
+There is a spelling mistake in a pr_err message. Fix it.
 
-Paolo
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/soc/fsl/dpaa2-console.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/fsl/dpaa2-console.c b/drivers/soc/fsl/dpaa2-console.c
+index 9168d8ddc932..27243f706f37 100644
+--- a/drivers/soc/fsl/dpaa2-console.c
++++ b/drivers/soc/fsl/dpaa2-console.c
+@@ -73,7 +73,7 @@ static u64 get_mc_fw_base_address(void)
+ 
+ 	mcfbaregs = ioremap(mc_base_addr.start, resource_size(&mc_base_addr));
+ 	if (!mcfbaregs) {
+-		pr_err("could not map MC Firmaware Base registers\n");
++		pr_err("could not map MC Firmware Base registers\n");
+ 		return 0;
+ 	}
+ 
+-- 
+2.20.1
