@@ -1,40 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 21 May 2019 13:17:06 +0000
-Subject: [PATCH] staging: wilc1000: remove redundant masking of pkt_offset
-Message-Id: <20190521131706.30236-1-colin.king@canonical.com>
+From: <Adham.Abozaeid@microchip.com>
+Date: Tue, 21 May 2019 18:43:27 +0000
+Subject: Re: [PATCH] staging: wilc1000: remove redundant masking of pkt_offset
+Message-Id: <f7460c62-2a44-df0d-afaf-04d1c990d2a1@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190521131706.30236-1-colin.king@canonical.com>
+In-Reply-To: <20190521131706.30236-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+To: colin.king@canonical.com, Ajay.Kathat@microchip.com, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The masking update of pkg_offset is redundant as the updated
-value is never read and pkg_offset is re-assigned on the next
-iteration of the loop.  Clean this up by removing the redundant
-assignment.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wilc1000/wilc_wlan.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
-index 95eaf8fdf4f2..dcd728557958 100644
---- a/drivers/staging/wilc1000/wilc_wlan.c
-+++ b/drivers/staging/wilc1000/wilc_wlan.c
-@@ -709,9 +709,6 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
- 			break;
- 
- 		if (pkt_offset & IS_MANAGMEMENT) {
--			pkt_offset &= ~(IS_MANAGMEMENT |
--					IS_MANAGMEMENT_CALLBACK |
--					IS_MGMT_STATUS_SUCCES);
- 			buff_ptr += HOST_HDR_OFFSET;
- 			wilc_wfi_mgmt_rx(wilc, buff_ptr, pkt_len);
- 		} else {
--- 
-2.20.1
+DQpPbiA1LzIxLzE5IDY6MTcgQU0sIENvbGluIEtpbmcgd3JvdGU6DQo+IEV4dGVybmFsIEUtTWFp
+bA0KPg0KPg0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
+Pg0KPg0KPiBUaGUgbWFza2luZyB1cGRhdGUgb2YgcGtnX29mZnNldCBpcyByZWR1bmRhbnQgYXMg
+dGhlIHVwZGF0ZWQNCj4gdmFsdWUgaXMgbmV2ZXIgcmVhZCBhbmQgcGtnX29mZnNldCBpcyByZS1h
+c3NpZ25lZCBvbiB0aGUgbmV4dA0KPiBpdGVyYXRpb24gb2YgdGhlIGxvb3AuICBDbGVhbiB0aGlz
+IHVwIGJ5IHJlbW92aW5nIHRoZSByZWR1bmRhbnQNCj4gYXNzaWdubWVudC4NCj4NCj4gQWRkcmVz
+c2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2YWx1ZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElh
+biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQoNClJldmlld2VkLWJ5OiBBZGhhbSBB
+Ym96YWVpZCA8YWRoYW0uYWJvemFlaWRAbWljcm9jaGlwLmNvbT4NCg0KDQpUaGFua3MsDQoNCkFk
+aGFtDQoNCj4gLS0tDQo+ICBkcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193bGFuLmMgfCAz
+IC0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193bGFuLmMgYi9kcml2ZXJzL3N0YWdpbmcv
+d2lsYzEwMDAvd2lsY193bGFuLmMNCj4gaW5kZXggOTVlYWY4ZmRmNGYyLi5kY2Q3Mjg1NTc5NTgg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3dsYW4uYw0KPiAr
+KysgYi9kcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193bGFuLmMNCj4gQEAgLTcwOSw5ICs3
+MDksNiBAQCBzdGF0aWMgdm9pZCB3aWxjX3dsYW5faGFuZGxlX3J4X2J1ZmYoc3RydWN0IHdpbGMg
+KndpbGMsIHU4ICpidWZmZXIsIGludCBzaXplKQ0KPiAgCQkJYnJlYWs7DQo+ICANCj4gIAkJaWYg
+KHBrdF9vZmZzZXQgJiBJU19NQU5BR01FTUVOVCkgew0KPiAtCQkJcGt0X29mZnNldCAmPSB+KElT
+X01BTkFHTUVNRU5UIHwNCj4gLQkJCQkJSVNfTUFOQUdNRU1FTlRfQ0FMTEJBQ0sgfA0KPiAtCQkJ
+CQlJU19NR01UX1NUQVRVU19TVUNDRVMpOw0KPiAgCQkJYnVmZl9wdHIgKz0gSE9TVF9IRFJfT0ZG
+U0VUOw0KPiAgCQkJd2lsY193ZmlfbWdtdF9yeCh3aWxjLCBidWZmX3B0ciwgcGt0X2xlbik7DQo+
+ICAJCX0gZWxzZSB7DQo
