@@ -1,73 +1,513 @@
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-Date: Sat, 04 May 2019 09:52:16 +0000
-Subject: Re: [PATCH] mt76: mt7615: Use after free in mt7615_mcu_set_bcn()
-Message-Id: <20190504095215.GA23263@localhost.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PNTmBPCT7hxwcZjr"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 21 May 2019 09:42:56 +0000
+Subject: [PATCH net] mISDN: Fix indenting in dsp_cmx.c
+Message-Id: <20190521094256.GA11899@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190503130909.GI29695@mwanda>
-In-Reply-To: <20190503130909.GI29695@mwanda>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>, Ryder Lee <ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Lorenzo Bianconi <lorenzo.bianconi83-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roy Luo <royluo-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Karsten Keil <isdn@linux-pingi.de>, Joe Perches <joe@perches.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We used a script to indent this code back in 2012, but I guess it got
+confused by the ifdefs and added some extra tabs.  This patch removes
+them.
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/isdn/mISDN/dsp_cmx.c | 427 +++++++++++++++++------------------
+ 1 file changed, 213 insertions(+), 214 deletions(-)
 
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
-
-> We dereference "skb" when we assign:
->=20
-> 	req.pkt_len =3D cpu_to_le16(MT_TXD_SIZE + skb->len);
->                                                 ^^^^^^^^
-> So this patch just moves the dev_kfree_skb() down a bit to avoid the
-> use after free.
->=20
-> Fixes: 04b8e65922f6 ("mt76: add mac80211 driver for MT7615 PCIe-based chi=
-psets")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/wireless/mediatek/mt76/mt7615/mcu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/ne=
-t/wireless/mediatek/mt76/mt7615/mcu.c
-> index ea67c6022fe6..dc1301effa24 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-> @@ -1270,7 +1270,6 @@ int mt7615_mcu_set_bcn(struct mt7615_dev *dev, stru=
-ct ieee80211_vif *vif,
->  	mt7615_mac_write_txwi(dev, (__le32 *)(req.pkt), skb, wcid, NULL,
->  			      0, NULL);
->  	memcpy(req.pkt + MT_TXD_SIZE, skb->data, skb->len);
-> -	dev_kfree_skb(skb);
-> =20
->  	req.omac_idx =3D mvif->omac_idx;
->  	req.enable =3D en;
-> @@ -1281,6 +1280,7 @@ int mt7615_mcu_set_bcn(struct mt7615_dev *dev, stru=
-ct ieee80211_vif *vif,
->  	req.pkt_len =3D cpu_to_le16(MT_TXD_SIZE + skb->len);
->  	req.tim_ie_pos =3D cpu_to_le16(MT_TXD_SIZE + tim_off);
-> =20
-> +	dev_kfree_skb(skb);
->  	skb =3D mt7615_mcu_msg_alloc(&req, sizeof(req));
-> =20
->  	return mt7615_mcu_msg_send(dev, skb, MCU_EXT_CMD_BCN_OFFLOAD,
-> --=20
-> 2.18.0
->=20
-
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCXM1gzAAKCRA6cBh0uS2t
-rDeKAQDGjECddgKPoW1n3Dnye8aHew95bCQqgsIeRCLiVSH00QD/VWP4FLjdbVHM
-+9OT95BeBDbj0eG7VaB6OROPr+8wLwg=
-=UKNW
------END PGP SIGNATURE-----
-
---PNTmBPCT7hxwcZjr--
+diff --git a/drivers/isdn/mISDN/dsp_cmx.c b/drivers/isdn/mISDN/dsp_cmx.c
+index d4b6f01a3f0e..6d2088fbaf69 100644
+--- a/drivers/isdn/mISDN/dsp_cmx.c
++++ b/drivers/isdn/mISDN/dsp_cmx.c
+@@ -1676,9 +1676,9 @@ dsp_cmx_send(void *arg)
+ #ifdef CMX_CONF_DEBUG
+ 			if (conf->software && members > 1)
+ #else
+-				if (conf->software && members > 2)
++			if (conf->software && members > 2)
+ #endif
+-					mustmix = 1;
++				mustmix = 1;
+ 		}
+ 
+ 		/* transmission required */
+@@ -1699,263 +1699,262 @@ dsp_cmx_send(void *arg)
+ #ifdef CMX_CONF_DEBUG
+ 		if (conf->software && members > 1) {
+ #else
+-			if (conf->software && members > 2) {
++		if (conf->software && members > 2) {
+ #endif
+-				/* check for hdlc conf */
+-				member = list_entry(conf->mlist.next,
+-						    struct dsp_conf_member, list);
+-				if (member->dsp->hdlc)
+-					continue;
+-				/* mix all data */
+-				memset(mixbuffer, 0, length * sizeof(s32));
+-				list_for_each_entry(member, &conf->mlist, list) {
+-					dsp = member->dsp;
+-					/* get range of data to mix */
+-					c = mixbuffer;
+-					q = dsp->rx_buff;
+-					r = dsp->rx_R;
+-					rr = (r + length) & CMX_BUFF_MASK;
+-					/* add member's data */
+-					while (r != rr) {
+-						*c++ += dsp_audio_law_to_s32[q[r]];
+-						r = (r + 1) & CMX_BUFF_MASK;
+-					}
++			/* check for hdlc conf */
++			member = list_entry(conf->mlist.next,
++					    struct dsp_conf_member, list);
++			if (member->dsp->hdlc)
++				continue;
++			/* mix all data */
++			memset(mixbuffer, 0, length * sizeof(s32));
++			list_for_each_entry(member, &conf->mlist, list) {
++				dsp = member->dsp;
++				/* get range of data to mix */
++				c = mixbuffer;
++				q = dsp->rx_buff;
++				r = dsp->rx_R;
++				rr = (r + length) & CMX_BUFF_MASK;
++				/* add member's data */
++				while (r != rr) {
++					*c++ += dsp_audio_law_to_s32[q[r]];
++					r = (r + 1) & CMX_BUFF_MASK;
+ 				}
++			}
+ 
+-				/* process each member */
+-				list_for_each_entry(member, &conf->mlist, list) {
+-					/* transmission */
+-					dsp_cmx_send_member(member->dsp, length,
+-							    mixbuffer, members);
+-				}
++			/* process each member */
++			list_for_each_entry(member, &conf->mlist, list) {
++				/* transmission */
++				dsp_cmx_send_member(member->dsp, length,
++						    mixbuffer, members);
++			}
++		}
++	}
++
++	/* delete rx-data, increment buffers, change pointers */
++	list_for_each_entry(dsp, &dsp_ilist, list) {
++		if (dsp->hdlc)
++			continue;
++		p = dsp->rx_buff;
++		q = dsp->tx_buff;
++		r = dsp->rx_R;
++		/* move receive pointer when receiving */
++		if (!dsp->rx_is_off) {
++			rr = (r + length) & CMX_BUFF_MASK;
++			/* delete rx-data */
++			while (r != rr) {
++				p[r] = dsp_silence;
++				r = (r + 1) & CMX_BUFF_MASK;
+ 			}
++			/* increment rx-buffer pointer */
++			dsp->rx_R = r; /* write incremented read pointer */
+ 		}
+ 
+-		/* delete rx-data, increment buffers, change pointers */
+-		list_for_each_entry(dsp, &dsp_ilist, list) {
+-			if (dsp->hdlc)
+-				continue;
+-			p = dsp->rx_buff;
+-			q = dsp->tx_buff;
+-			r = dsp->rx_R;
+-			/* move receive pointer when receiving */
+-			if (!dsp->rx_is_off) {
+-				rr = (r + length) & CMX_BUFF_MASK;
++		/* check current rx_delay */
++		delay = (dsp->rx_W-dsp->rx_R) & CMX_BUFF_MASK;
++		if (delay >= CMX_BUFF_HALF)
++			delay = 0; /* will be the delay before next write */
++		/* check for lower delay */
++		if (delay < dsp->rx_delay[0])
++			dsp->rx_delay[0] = delay;
++		/* check current tx_delay */
++		delay = (dsp->tx_W-dsp->tx_R) & CMX_BUFF_MASK;
++		if (delay >= CMX_BUFF_HALF)
++			delay = 0; /* will be the delay before next write */
++		/* check for lower delay */
++		if (delay < dsp->tx_delay[0])
++			dsp->tx_delay[0] = delay;
++		if (jittercheck) {
++			/* find the lowest of all rx_delays */
++			delay = dsp->rx_delay[0];
++			i = 1;
++			while (i < MAX_SECONDS_JITTER_CHECK) {
++				if (delay > dsp->rx_delay[i])
++					delay = dsp->rx_delay[i];
++				i++;
++			}
++			/*
++			 * remove rx_delay only if we have delay AND we
++			 * have not preset cmx_delay AND
++			 * the delay is greater dsp_poll
++			 */
++			if (delay > dsp_poll && !dsp->cmx_delay) {
++				if (dsp_debug & DEBUG_DSP_CLOCK)
++					printk(KERN_DEBUG
++					       "%s lowest rx_delay of %d bytes for"
++					       " dsp %s are now removed.\n",
++					       __func__, delay,
++					       dsp->name);
++				r = dsp->rx_R;
++				rr = (r + delay - (dsp_poll >> 1))
++					& CMX_BUFF_MASK;
+ 				/* delete rx-data */
+ 				while (r != rr) {
+ 					p[r] = dsp_silence;
+ 					r = (r + 1) & CMX_BUFF_MASK;
+ 				}
+ 				/* increment rx-buffer pointer */
+-				dsp->rx_R = r; /* write incremented read pointer */
++				dsp->rx_R = r;
++				/* write incremented read pointer */
+ 			}
+-
+-			/* check current rx_delay */
+-			delay = (dsp->rx_W-dsp->rx_R) & CMX_BUFF_MASK;
+-			if (delay >= CMX_BUFF_HALF)
+-				delay = 0; /* will be the delay before next write */
+-			/* check for lower delay */
+-			if (delay < dsp->rx_delay[0])
+-				dsp->rx_delay[0] = delay;
+-			/* check current tx_delay */
+-			delay = (dsp->tx_W-dsp->tx_R) & CMX_BUFF_MASK;
+-			if (delay >= CMX_BUFF_HALF)
+-				delay = 0; /* will be the delay before next write */
+-			/* check for lower delay */
+-			if (delay < dsp->tx_delay[0])
+-				dsp->tx_delay[0] = delay;
+-			if (jittercheck) {
+-				/* find the lowest of all rx_delays */
+-				delay = dsp->rx_delay[0];
+-				i = 1;
+-				while (i < MAX_SECONDS_JITTER_CHECK) {
+-					if (delay > dsp->rx_delay[i])
+-						delay = dsp->rx_delay[i];
+-					i++;
+-				}
+-				/*
+-				 * remove rx_delay only if we have delay AND we
+-				 * have not preset cmx_delay AND
+-				 * the delay is greater dsp_poll
+-				 */
+-				if (delay > dsp_poll && !dsp->cmx_delay) {
+-					if (dsp_debug & DEBUG_DSP_CLOCK)
+-						printk(KERN_DEBUG
+-						       "%s lowest rx_delay of %d bytes for"
+-						       " dsp %s are now removed.\n",
+-						       __func__, delay,
+-						       dsp->name);
+-					r = dsp->rx_R;
+-					rr = (r + delay - (dsp_poll >> 1))
+-						& CMX_BUFF_MASK;
+-					/* delete rx-data */
+-					while (r != rr) {
+-						p[r] = dsp_silence;
+-						r = (r + 1) & CMX_BUFF_MASK;
+-					}
+-					/* increment rx-buffer pointer */
+-					dsp->rx_R = r;
+-					/* write incremented read pointer */
+-				}
+-				/* find the lowest of all tx_delays */
+-				delay = dsp->tx_delay[0];
+-				i = 1;
+-				while (i < MAX_SECONDS_JITTER_CHECK) {
+-					if (delay > dsp->tx_delay[i])
+-						delay = dsp->tx_delay[i];
+-					i++;
+-				}
+-				/*
+-				 * remove delay only if we have delay AND we
+-				 * have enabled tx_dejitter
+-				 */
+-				if (delay > dsp_poll && dsp->tx_dejitter) {
+-					if (dsp_debug & DEBUG_DSP_CLOCK)
+-						printk(KERN_DEBUG
+-						       "%s lowest tx_delay of %d bytes for"
+-						       " dsp %s are now removed.\n",
+-						       __func__, delay,
+-						       dsp->name);
+-					r = dsp->tx_R;
+-					rr = (r + delay - (dsp_poll >> 1))
+-						& CMX_BUFF_MASK;
+-					/* delete tx-data */
+-					while (r != rr) {
+-						q[r] = dsp_silence;
+-						r = (r + 1) & CMX_BUFF_MASK;
+-					}
+-					/* increment rx-buffer pointer */
+-					dsp->tx_R = r;
+-					/* write incremented read pointer */
+-				}
+-				/* scroll up delays */
+-				i = MAX_SECONDS_JITTER_CHECK - 1;
+-				while (i) {
+-					dsp->rx_delay[i] = dsp->rx_delay[i - 1];
+-					dsp->tx_delay[i] = dsp->tx_delay[i - 1];
+-					i--;
++			/* find the lowest of all tx_delays */
++			delay = dsp->tx_delay[0];
++			i = 1;
++			while (i < MAX_SECONDS_JITTER_CHECK) {
++				if (delay > dsp->tx_delay[i])
++					delay = dsp->tx_delay[i];
++				i++;
++			}
++			/*
++			 * remove delay only if we have delay AND we
++			 * have enabled tx_dejitter
++			 */
++			if (delay > dsp_poll && dsp->tx_dejitter) {
++				if (dsp_debug & DEBUG_DSP_CLOCK)
++					printk(KERN_DEBUG
++					       "%s lowest tx_delay of %d bytes for"
++					       " dsp %s are now removed.\n",
++					       __func__, delay,
++					       dsp->name);
++				r = dsp->tx_R;
++				rr = (r + delay - (dsp_poll >> 1))
++					& CMX_BUFF_MASK;
++				/* delete tx-data */
++				while (r != rr) {
++					q[r] = dsp_silence;
++					r = (r + 1) & CMX_BUFF_MASK;
+ 				}
+-				dsp->tx_delay[0] = CMX_BUFF_HALF; /* (infinite) delay */
+-				dsp->rx_delay[0] = CMX_BUFF_HALF; /* (infinite) delay */
++				/* increment rx-buffer pointer */
++				dsp->tx_R = r;
++				/* write incremented read pointer */
+ 			}
++			/* scroll up delays */
++			i = MAX_SECONDS_JITTER_CHECK - 1;
++			while (i) {
++				dsp->rx_delay[i] = dsp->rx_delay[i - 1];
++				dsp->tx_delay[i] = dsp->tx_delay[i - 1];
++				i--;
++			}
++			dsp->tx_delay[0] = CMX_BUFF_HALF; /* (infinite) delay */
++			dsp->rx_delay[0] = CMX_BUFF_HALF; /* (infinite) delay */
+ 		}
++	}
+ 
+-		/* if next event would be in the past ... */
+-		if ((s32)(dsp_spl_jiffies + dsp_tics-jiffies) <= 0)
+-			dsp_spl_jiffies = jiffies + 1;
+-		else
+-			dsp_spl_jiffies += dsp_tics;
++	/* if next event would be in the past ... */
++	if ((s32)(dsp_spl_jiffies + dsp_tics-jiffies) <= 0)
++		dsp_spl_jiffies = jiffies + 1;
++	else
++		dsp_spl_jiffies += dsp_tics;
+ 
+-		dsp_spl_tl.expires = dsp_spl_jiffies;
+-		add_timer(&dsp_spl_tl);
++	dsp_spl_tl.expires = dsp_spl_jiffies;
++	add_timer(&dsp_spl_tl);
+ 
+-		/* unlock */
+-		spin_unlock_irqrestore(&dsp_lock, flags);
+-	}
++	/* unlock */
++	spin_unlock_irqrestore(&dsp_lock, flags);
++}
+ 
+ /*
+  * audio data is transmitted from upper layer to the dsp
+  */
+-	void
+-		dsp_cmx_transmit(struct dsp *dsp, struct sk_buff *skb)
+-	{
+-		u_int w, ww;
+-		u8 *d, *p;
+-		int space; /* todo: , l = skb->len; */
++void
++dsp_cmx_transmit(struct dsp *dsp, struct sk_buff *skb)
++{
++	u_int w, ww;
++	u8 *d, *p;
++	int space; /* todo: , l = skb->len; */
+ #ifdef CMX_TX_DEBUG
+-		char debugbuf[256] = "";
++	char debugbuf[256] = "";
+ #endif
+ 
+-		/* check if there is enough space, and then copy */
+-		w = dsp->tx_W;
+-		ww = dsp->tx_R;
+-		p = dsp->tx_buff;
+-		d = skb->data;
+-		space = (ww - w - 1) & CMX_BUFF_MASK;
+-		/* write-pointer should not overrun nor reach read pointer */
+-		if (space < skb->len) {
+-			/* write to the space we have left */
+-			ww = (ww - 1) & CMX_BUFF_MASK; /* end one byte prior tx_R */
+-			if (dsp_debug & DEBUG_DSP_CLOCK)
+-				printk(KERN_DEBUG "%s: TX overflow space=%d skb->len="
+-				       "%d, w=0x%04x, ww=0x%04x\n", __func__, space,
+-				       skb->len, w, ww);
+-		} else
+-			/* write until all byte are copied */
+-			ww = (w + skb->len) & CMX_BUFF_MASK;
+-		dsp->tx_W = ww;
+-
++	/* check if there is enough space, and then copy */
++	w = dsp->tx_W;
++	ww = dsp->tx_R;
++	p = dsp->tx_buff;
++	d = skb->data;
++	space = (ww - w - 1) & CMX_BUFF_MASK;
++	/* write-pointer should not overrun nor reach read pointer */
++	if (space < skb->len) {
++		/* write to the space we have left */
++		ww = (ww - 1) & CMX_BUFF_MASK; /* end one byte prior tx_R */
++		if (dsp_debug & DEBUG_DSP_CLOCK)
++			printk(KERN_DEBUG "%s: TX overflow space=%d skb->len="
++			       "%d, w=0x%04x, ww=0x%04x\n", __func__, space,
++			       skb->len, w, ww);
++	} else
++		/* write until all byte are copied */
++		ww = (w + skb->len) & CMX_BUFF_MASK;
++	dsp->tx_W = ww;
+ 		/* show current buffer */
+ #ifdef CMX_DEBUG
+-		printk(KERN_DEBUG
+-		       "cmx_transmit(dsp=%lx) %d bytes to 0x%x-0x%x. %s\n",
+-		       (u_long)dsp, (ww - w) & CMX_BUFF_MASK, w, ww, dsp->name);
++	printk(KERN_DEBUG
++	       "cmx_transmit(dsp=%lx) %d bytes to 0x%x-0x%x. %s\n",
++	       (u_long)dsp, (ww - w) & CMX_BUFF_MASK, w, ww, dsp->name);
+ #endif
+ 
+-		/* copy transmit data to tx-buffer */
++	/* copy transmit data to tx-buffer */
+ #ifdef CMX_TX_DEBUG
+-		sprintf(debugbuf, "TX getting (%04x-%04x)%p: ", w, ww, p);
++	sprintf(debugbuf, "TX getting (%04x-%04x)%p: ", w, ww, p);
+ #endif
+-		while (w != ww) {
++	while (w != ww) {
+ #ifdef CMX_TX_DEBUG
+-			if (strlen(debugbuf) < 48)
+-				sprintf(debugbuf + strlen(debugbuf), " %02x", *d);
++		if (strlen(debugbuf) < 48)
++			sprintf(debugbuf + strlen(debugbuf), " %02x", *d);
+ #endif
+-			p[w] = *d++;
+-			w = (w + 1) & CMX_BUFF_MASK;
+-		}
++		p[w] = *d++;
++		w = (w + 1) & CMX_BUFF_MASK;
++	}
+ #ifdef CMX_TX_DEBUG
+-		printk(KERN_DEBUG "%s\n", debugbuf);
++	printk(KERN_DEBUG "%s\n", debugbuf);
+ #endif
+ 
+-	}
++}
+ 
+ /*
+  * hdlc data is received from card and sent to all members.
+  */
+-	void
+-		dsp_cmx_hdlc(struct dsp *dsp, struct sk_buff *skb)
+-	{
+-		struct sk_buff *nskb = NULL;
+-		struct dsp_conf_member *member;
+-		struct mISDNhead *hh;
+-
+-		/* not if not active */
+-		if (!dsp->b_active)
+-			return;
++void
++dsp_cmx_hdlc(struct dsp *dsp, struct sk_buff *skb)
++{
++	struct sk_buff *nskb = NULL;
++	struct dsp_conf_member *member;
++	struct mISDNhead *hh;
+ 
+-		/* check if we have sompen */
+-		if (skb->len < 1)
+-			return;
++	/* not if not active */
++	if (!dsp->b_active)
++		return;
+ 
+-		/* no conf */
+-		if (!dsp->conf) {
+-			/* in case of software echo */
+-			if (dsp->echo.software) {
+-				nskb = skb_clone(skb, GFP_ATOMIC);
+-				if (nskb) {
+-					hh = mISDN_HEAD_P(nskb);
+-					hh->prim = PH_DATA_REQ;
+-					hh->id = 0;
+-					skb_queue_tail(&dsp->sendq, nskb);
+-					schedule_work(&dsp->workq);
+-				}
++	/* check if we have sompen */
++	if (skb->len < 1)
++		return;
++
++	/* no conf */
++	if (!dsp->conf) {
++		/* in case of software echo */
++		if (dsp->echo.software) {
++			nskb = skb_clone(skb, GFP_ATOMIC);
++			if (nskb) {
++				hh = mISDN_HEAD_P(nskb);
++				hh->prim = PH_DATA_REQ;
++				hh->id = 0;
++				skb_queue_tail(&dsp->sendq, nskb);
++				schedule_work(&dsp->workq);
+ 			}
+-			return;
+ 		}
+-		/* in case of hardware conference */
+-		if (dsp->conf->hardware)
+-			return;
+-		list_for_each_entry(member, &dsp->conf->mlist, list) {
+-			if (dsp->echo.software || member->dsp != dsp) {
+-				nskb = skb_clone(skb, GFP_ATOMIC);
+-				if (nskb) {
+-					hh = mISDN_HEAD_P(nskb);
+-					hh->prim = PH_DATA_REQ;
+-					hh->id = 0;
+-					skb_queue_tail(&member->dsp->sendq, nskb);
+-					schedule_work(&member->dsp->workq);
+-				}
++		return;
++	}
++	/* in case of hardware conference */
++	if (dsp->conf->hardware)
++		return;
++	list_for_each_entry(member, &dsp->conf->mlist, list) {
++		if (dsp->echo.software || member->dsp != dsp) {
++			nskb = skb_clone(skb, GFP_ATOMIC);
++			if (nskb) {
++				hh = mISDN_HEAD_P(nskb);
++				hh->prim = PH_DATA_REQ;
++				hh->id = 0;
++				skb_queue_tail(&member->dsp->sendq, nskb);
++				schedule_work(&member->dsp->workq);
+ 			}
+ 		}
+ 	}
++}
+-- 
+2.20.1
