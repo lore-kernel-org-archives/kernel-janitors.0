@@ -1,45 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 22 May 2019 10:17:45 +0000
-Subject: [PATCH][V2] leds: TI LMU: fix u8 variable comparisons with less than zero
-Message-Id: <20190522101745.21828-1-colin.king@canonical.com>
+From: Dan Murphy <dmurphy@ti.com>
+Date: Wed, 22 May 2019 11:42:14 +0000
+Subject: Re: [PATCH][V2] leds: TI LMU: fix u8 variable comparisons with less than zero
+Message-Id: <aa5698f5-9604-ec9c-3f6f-7fc7a6cdbca7@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190522101745.21828-1-colin.king@canonical.com>
+In-Reply-To: <20190522101745.21828-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The u8 variables ramp_ups and ramp_downs are being compared to less
-than zero, this will always be false.  Fix this by making the ramp
-variables ints.
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: 9a8e66ebeaa2 ("leds: TI LMU: Add common code for TI LMU devices")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
+On 5/22/19 5:17 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The u8 variables ramp_ups and ramp_downs are being compared to less
+> than zero, this will always be false.  Fix this by making the ramp
+> variables ints.
+> 
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: 9a8e66ebeaa2 ("leds: TI LMU: Add common code for TI LMU devices")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> 
+> V2: make u8 vars ints rather than removing the comparison. Thanks once
+> more to Dan Carpenter for spotting my clearly stupid V1 version and
+> correcting my mistake.
+> 
+> ---
+>  drivers/leds/leds-ti-lmu-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-ti-lmu-common.c b/drivers/leds/leds-ti-lmu-common.c
+> index adc7293004f1..c9ab40d5a6ba 100644
+> --- a/drivers/leds/leds-ti-lmu-common.c
+> +++ b/drivers/leds/leds-ti-lmu-common.c
+> @@ -84,7 +84,7 @@ static int ti_lmu_common_convert_ramp_to_index(unsigned int usec)
+>  int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
+>  {
+>  	struct regmap *regmap = lmu_bank->regmap;
+> -	u8 ramp, ramp_up, ramp_down;
+> +	int ramp, ramp_up, ramp_down;
+>  
+>  	if (lmu_bank->ramp_up_usec = 0 && lmu_bank->ramp_down_usec = 0) {
+>  		ramp_up = 0;
+> 
 
-V2: make u8 vars ints rather than removing the comparison. Thanks once
-more to Dan Carpenter for spotting my clearly stupid V1 version and
-correcting my mistake.
-
----
- drivers/leds/leds-ti-lmu-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-ti-lmu-common.c b/drivers/leds/leds-ti-lmu-common.c
-index adc7293004f1..c9ab40d5a6ba 100644
---- a/drivers/leds/leds-ti-lmu-common.c
-+++ b/drivers/leds/leds-ti-lmu-common.c
-@@ -84,7 +84,7 @@ static int ti_lmu_common_convert_ramp_to_index(unsigned int usec)
- int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
- {
- 	struct regmap *regmap = lmu_bank->regmap;
--	u8 ramp, ramp_up, ramp_down;
-+	int ramp, ramp_up, ramp_down;
- 
- 	if (lmu_bank->ramp_up_usec = 0 && lmu_bank->ramp_down_usec = 0) {
- 		ramp_up = 0;
--- 
-2.20.1
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
