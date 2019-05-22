@@ -1,31 +1,57 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Mon, 06 May 2019 13:54:05 +0000
-Subject: Re: [PATCH -next] ocxl: Fix return value check in afu_ioctl()
-Message-Id: <44yPNY0bjTz9s7T@ozlabs.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 22 May 2019 08:45:13 +0000
+Subject: [PATCH] mISDN: make sure device name is NUL terminated
+Message-Id: <20190522084513.GA2129@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190504070430.57008-1-weiyongjun1@huawei.com>
-References: <20190504070430.57008-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190504070430.57008-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Frederic Barrat <fbarrat@linux.ibm.com>, Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alastair D'Silva <alastair@d-silva.org>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, zhong jiang <zhongjiang@huawei.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2019-05-04 at 07:04:30 UTC, Wei Yongjun wrote:
-> In case of error, the function eventfd_ctx_fdget() returns ERR_PTR() and
-> never returns NULL. The NULL test in the return value check should be
-> replaced with IS_ERR().
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 060146614643 ("ocxl: move event_fd handling to frontend")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Acked-by: Alastair D'Silva <alastair@d-silva.org>
-> Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+The user can change the device_name with the IMSETDEVNAME ioctl, but we
+need to ensure that the user's name is NUL terminated.  Otherwise it
+could result in a buffer overflow when we copy the name back to the user
+with IMGETDEVINFO ioctl.
 
-Applied to powerpc next, thanks.
+I also changed two strcpy() calls which handle the name to strscpy().
+Hopefully, there aren't any other ways to create a too long name, but
+it's nice to do this as a kernel hardening measure.
 
-https://git.kernel.org/powerpc/c/6be6a8de1b55e719e3f9589491074371
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/isdn/mISDN/socket.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-cheers
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index a14e35d40538..84e1d4c2db66 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -393,7 +393,7 @@ data_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			memcpy(di.channelmap, dev->channelmap,
+ 			       sizeof(di.channelmap));
+ 			di.nrbchan = dev->nrbchan;
+-			strcpy(di.name, dev_name(&dev->dev));
++			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
+ 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
+ 				err = -EFAULT;
+ 		} else
+@@ -676,7 +676,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			memcpy(di.channelmap, dev->channelmap,
+ 			       sizeof(di.channelmap));
+ 			di.nrbchan = dev->nrbchan;
+-			strcpy(di.name, dev_name(&dev->dev));
++			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
+ 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
+ 				err = -EFAULT;
+ 		} else
+@@ -690,6 +690,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		dn.name[sizeof(dn.name) - 1] = '\0';
+ 		dev = get_mdevice(dn.id);
+ 		if (dev)
+ 			err = device_rename(&dev->dev, dn.name);
+-- 
+2.20.1
