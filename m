@@ -1,26 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 31 May 2019 21:37:11 +0000
-Subject: Re: [PATCH] xen-netback: remove redundant assignment to err
-Message-Id: <20190531.143711.1406359688787927167.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 May 2019 10:17:45 +0000
+Subject: [PATCH][V2] leds: TI LMU: fix u8 variable comparisons with less than zero
+Message-Id: <20190522101745.21828-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190530190438.9571-1-colin.king@canonical.com>
-In-Reply-To: <20190530190438.9571-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: wei.liu2@citrix.com, paul.durrant@citrix.com, xen-devel@lists.xenproject.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 May 2019 20:04:38 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is assigned with the value -ENOMEM that is never
-> read and it is re-assigned a new value later on.  The assignment is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The u8 variables ramp_ups and ramp_downs are being compared to less
+than zero, this will always be false.  Fix this by making the ramp
+variables ints.
 
-Applied to net-next.
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 9a8e66ebeaa2 ("leds: TI LMU: Add common code for TI LMU devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: make u8 vars ints rather than removing the comparison. Thanks once
+more to Dan Carpenter for spotting my clearly stupid V1 version and
+correcting my mistake.
+
+---
+ drivers/leds/leds-ti-lmu-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/leds/leds-ti-lmu-common.c b/drivers/leds/leds-ti-lmu-common.c
+index adc7293004f1..c9ab40d5a6ba 100644
+--- a/drivers/leds/leds-ti-lmu-common.c
++++ b/drivers/leds/leds-ti-lmu-common.c
+@@ -84,7 +84,7 @@ static int ti_lmu_common_convert_ramp_to_index(unsigned int usec)
+ int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
+ {
+ 	struct regmap *regmap = lmu_bank->regmap;
+-	u8 ramp, ramp_up, ramp_down;
++	int ramp, ramp_up, ramp_down;
+ 
+ 	if (lmu_bank->ramp_up_usec = 0 && lmu_bank->ramp_down_usec = 0) {
+ 		ramp_up = 0;
+-- 
+2.20.1
