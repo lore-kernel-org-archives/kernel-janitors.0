@@ -1,72 +1,39 @@
-From: Vladimir Oltean <olteanv@gmail.com>
-Date: Tue, 07 May 2019 13:59:10 +0000
-Subject: Re: [PATCH][next] net: dsa: sja1105: fix check on while loop exit
-Message-Id: <CA+h21hoEVYKTeGxSxPi0E1bWp1rBE=sG5T8MzGOBkranpdGhjQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 May 2019 08:39:03 +0000
+Subject: [PATCH][next] scsi: hpsa: fix an uninitialized read and dereference of pointer dev
+Message-Id: <20190522083903.18849-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190507103434.16174-1-colin.king@canonical.com>
-In-Reply-To: <20190507103434.16174-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev <netdev@vger.kernel.org>
+To: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019 at 13:34, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The while-loop exit condition check is not correct; the
-> loop should continue if the returns from the function calls are
-> negative or the CRC status returns are invalid.  Currently it
-> is ignoring the returns from the function calls.  Fix this by
-> removing the status return checks and only break from the loop
-> at the very end when we know that all the success condtions have
-> been met.
->
-> Kudos to Dan Carpenter for describing the correct fix.
->
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105 5-port L2 switch")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->
-> V2: Discard my broken origina fix. Use correct fix as described by
->     Dan Carpenter.
-> ---
->  drivers/net/dsa/sja1105/sja1105_spi.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
-> index 244a94ccfc18..40ac696adf63 100644
-> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
-> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
-> @@ -465,9 +465,11 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
->                         dev_err(dev, "Switch reported that configuration is "
->                                 "invalid, retrying...\n");
->                         continue;
-> +
->                 }
-> -       } while (--retries && (status.crcchkl = 1 || status.crcchkg = 1 ||
-> -                status.configs = 0 || status.ids = 1));
-> +               /* Success! */
-> +               break;
-> +       } while (--retries);
->
->         if (!retries) {
->                 rc = -EIO;
-> --
-> 2.20.1
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Colin, Dan,
+Currently the check for a lockup_detected failure exits via the
+label return_reset_status that reads and dereferences an uninitialized
+pointer dev.  Fix this by ensuring dev is inintialized to null.
 
-Thanks for the fix.
-This portion below needs to be changed as well: "else if (retries !RETRIES - 1)" should become "else if (retries != RETRIES)" because on
-success, it now does not decrement retries due to the early break.
-Otherwise this message gets printed: "Succeeded after 0 tried" which
-was not the original intention.
-Please also remove the extraneous newline introduced at 468.
+Addresses-Coverity: ("Uninitialized pointer read")
+Fixes: 14991a5bade5 ("scsi: hpsa: correct device resets")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/hpsa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Vladimir Oltean <olteanv@gmail.com>
-
--Vladimir
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index c560a4532733..ac8338b0571b 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -5947,7 +5947,7 @@ static int hpsa_eh_device_reset_handler(struct scsi_cmnd *scsicmd)
+ 	int rc = SUCCESS;
+ 	int i;
+ 	struct ctlr_info *h;
+-	struct hpsa_scsi_dev_t *dev;
++	struct hpsa_scsi_dev_t *dev = NULL;
+ 	u8 reset_type;
+ 	char msg[48];
+ 	unsigned long flags;
+-- 
+2.20.1
