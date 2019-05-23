@@ -1,57 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 May 2019 08:45:13 +0000
-Subject: [PATCH] mISDN: make sure device name is NUL terminated
-Message-Id: <20190522084513.GA2129@mwanda>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 23 May 2019 00:22:30 +0000
+Subject: Re: [PATCH] mISDN: make sure device name is NUL terminated
+Message-Id: <20190522.172230.230166759225525041.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190522084513.GA2129@mwanda>
+In-Reply-To: <20190522084513.GA2129@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>
-Cc: "David S. Miller" <davem@davemloft.net>, zhong jiang <zhongjiang@huawei.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: isdn@linux-pingi.de, zhongjiang@huawei.com, deepa.kernel@gmail.com, penguin-kernel@I-love.SAKURA.ne.jp, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The user can change the device_name with the IMSETDEVNAME ioctl, but we
-need to ensure that the user's name is NUL terminated.  Otherwise it
-could result in a buffer overflow when we copy the name back to the user
-with IMGETDEVINFO ioctl.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 22 May 2019 11:45:13 +0300
 
-I also changed two strcpy() calls which handle the name to strscpy().
-Hopefully, there aren't any other ways to create a too long name, but
-it's nice to do this as a kernel hardening measure.
+> The user can change the device_name with the IMSETDEVNAME ioctl, but we
+> need to ensure that the user's name is NUL terminated.  Otherwise it
+> could result in a buffer overflow when we copy the name back to the user
+> with IMGETDEVINFO ioctl.
+> 
+> I also changed two strcpy() calls which handle the name to strscpy().
+> Hopefully, there aren't any other ways to create a too long name, but
+> it's nice to do this as a kernel hardening measure.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/isdn/mISDN/socket.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-index a14e35d40538..84e1d4c2db66 100644
---- a/drivers/isdn/mISDN/socket.c
-+++ b/drivers/isdn/mISDN/socket.c
-@@ -393,7 +393,7 @@ data_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 			memcpy(di.channelmap, dev->channelmap,
- 			       sizeof(di.channelmap));
- 			di.nrbchan = dev->nrbchan;
--			strcpy(di.name, dev_name(&dev->dev));
-+			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
- 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
- 				err = -EFAULT;
- 		} else
-@@ -676,7 +676,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 			memcpy(di.channelmap, dev->channelmap,
- 			       sizeof(di.channelmap));
- 			di.nrbchan = dev->nrbchan;
--			strcpy(di.name, dev_name(&dev->dev));
-+			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
- 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
- 				err = -EFAULT;
- 		} else
-@@ -690,6 +690,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 			err = -EFAULT;
- 			break;
- 		}
-+		dn.name[sizeof(dn.name) - 1] = '\0';
- 		dev = get_mdevice(dn.id);
- 		if (dev)
- 			err = device_rename(&dev->dev, dn.name);
--- 
-2.20.1
+Applied.
