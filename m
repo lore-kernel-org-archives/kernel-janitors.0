@@ -1,48 +1,41 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 06 May 2019 13:01:34 +0000
-Subject: Re: [PATCH] ALSA: synth: emux: soundfont.c: divide by zero in calc_gus_envelope_time()
-Message-Id: <s5h7eb368k1.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 May 2019 22:25:51 +0000
+Subject: [PATCH][next] ASoC: cx2072x: fix integer overflow on unsigned int multiply
+Message-Id: <20190524222551.26573-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190506125119.GB13799@mwanda>
-In-Reply-To: <20190506125119.GB13799@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Simon Ho <simon.ho@conexant.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 06 May 2019 14:51:19 +0200,
-Dan Carpenter wrote:
-> 
-> This function is called from load_guspatch() and the rate is specified
-> by the user.  If they accidentally selected zero then it would crash the
-> kernel.  I've just changed the zero to a one.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied now.
+In the case where frac_div larger than 96 the result of an unsigned
+multiplication overflows an unsigned int.  For example, this can
+happen when the sample_rate is 192000 and pll_input is 122.  Fix
+this by casing the first term of the mutiply to a u64. Also remove
+the extraneous parentheses around the expression.
 
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: a497a4363706 ("ASoC: Add support for Conexant CX2072X CODEC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/cx2072x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
-
-> ---
->  sound/synth/emux/soundfont.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/sound/synth/emux/soundfont.c b/sound/synth/emux/soundfont.c
-> index 31a4ea94830e..9b5d70104489 100644
-> --- a/sound/synth/emux/soundfont.c
-> +++ b/sound/synth/emux/soundfont.c
-> @@ -856,6 +856,8 @@ calc_gus_envelope_time(int rate, int start, int end)
->  	int r, p, t;
->  	r = (3 - ((rate >> 6) & 3)) * 3;
->  	p = rate & 0x3f;
-> +	if (!p)
-> +		p = 1;
->  	t = end - start;
->  	if (t < 0) t = -t;
->  	if (13 > r)
-> -- 
-> 2.18.0
-> 
-> 
+diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
+index c11a585bbf70..e8e6fd2e97b6 100644
+--- a/sound/soc/codecs/cx2072x.c
++++ b/sound/soc/codecs/cx2072x.c
+@@ -627,7 +627,7 @@ static int cx2072x_config_pll(struct cx2072x_priv *cx2072x)
+ 	if (frac_div) {
+ 		frac_div *= 1000;
+ 		frac_div /= pll_input;
+-		frac_num = ((4000 + frac_div) * ((1 << 20) - 4));
++		frac_num = (u64)(4000 + frac_div) * ((1 << 20) - 4);
+ 		do_div(frac_num, 7);
+ 		frac = ((u32)frac_num + 499) / 1000;
+ 	}
+-- 
+2.20.1
