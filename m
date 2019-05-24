@@ -1,27 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 04 May 2019 11:59:13 +0000
-Subject: Re: [PATCH] soc: ixp4xx: qmgr: Fix an NULL vs IS_ERR() check in probe
-Message-Id: <CACRpkdajJgP6zAYOw3zRVjtPj-dEoA0ZtrMerPMkxW046aEQ7w@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 May 2019 21:56:58 +0000
+Subject: [PATCH][next] ipv4: remove redundant assignment to n
+Message-Id: <20190524215658.25432-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190503131651.GC1236@mwanda>
-In-Reply-To: <20190503131651.GC1236@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Krzysztof Halasa <khalasa@piap.pl>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, May 3, 2019 at 3:17 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The devm_ioremap_resource() function doesn't retunr NULL, it returns
-> error pointers.
->
-> Fixes: ecc133c6da60 ("soc: ixp4xx: qmgr: Pass resources")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The pointer n is being assigned a value however this value is
+never read in the code block and the end of the code block
+continues to the next loop iteration. Clean up the code by
+removing the redundant assignment.
 
-Good catch! Patch applied.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv4/fib_trie.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I will make sure this fix lands in ARM SoC for v5.2.
-
-Yours,
-Linus Walleij
+diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index ea7df7ebf597..b53ecef89d59 100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -1961,7 +1961,6 @@ static void __fib_info_notify_update(struct net *net, struct fib_table *tb,
+ 			if (IS_TRIE(pn))
+ 				break;
+ 
+-			n = pn;
+ 			pn = node_parent(pn);
+ 			cindex = get_index(pkey, pn);
+ 			continue;
+-- 
+2.20.1
