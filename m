@@ -1,62 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 May 2019 08:36:34 +0000
-Subject: [PATCH] genwqe: Prevent an integer overflow in the ioctl
-Message-Id: <20190507083634.GA13046@mwanda>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Fri, 24 May 2019 10:32:51 +0000
+Subject: [PATCH] x86/tsc: Move inline keyword to the beginning of function declarations
+Message-Id: <20190524103252.28575-1-malat@debian.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Frank Haverkamp <haver@linux.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Mathieu Malaterre <malat@debian.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org
 
-There are a couple potential integer overflows here.
+The inline keyword was not at the beginning of the function declarations.
+Fix the following warnings triggered when using W=1:
 
-	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+  arch/x86/kernel/tsc.c:62:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
+  arch/x86/kernel/tsc.c:79:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
 
-The first thing is that the "m->size + (...)" addition could overflow,
-and the second is that round_up() overflows to zero if the result is
-within PAGE_SIZE of the type max.
-
-In this code, the "m->size" variable is an u64 but we're saving the
-result in "map_size" which is an unsigned long and genwqe_user_vmap()
-takes an unsigned long as well.  So I have used ULONG_MAX as the upper
-bound.  From a practical perspective unsigned long is fine/better than
-trying to change all the types to u64.
-
-Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- drivers/misc/genwqe/card_dev.c   | 2 ++
- drivers/misc/genwqe/card_utils.c | 4 ++++
- 2 files changed, 6 insertions(+)
+ arch/x86/kernel/tsc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/genwqe/card_dev.c b/drivers/misc/genwqe/card_dev.c
-index 8c1b63a4337b..d2098b4d2945 100644
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -780,6 +780,8 @@ static int genwqe_pin_mem(struct genwqe_file *cfile, struct genwqe_mem *m)
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 0b29e58f288e..75a41bddbc9d 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -59,7 +59,7 @@ struct cyc2ns {
  
- 	if ((m->addr = 0x0) || (m->size = 0))
- 		return -EINVAL;
-+	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
-+		return -EINVAL;
+ static DEFINE_PER_CPU_ALIGNED(struct cyc2ns, cyc2ns);
  
- 	map_addr = (m->addr & PAGE_MASK);
- 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
-diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
-index 89cff9d1012b..7571700abc6e 100644
---- a/drivers/misc/genwqe/card_utils.c
-+++ b/drivers/misc/genwqe/card_utils.c
-@@ -586,6 +586,10 @@ int genwqe_user_vmap(struct genwqe_dev *cd, struct dma_mapping *m, void *uaddr,
- 	/* determine space needed for page_list. */
- 	data = (unsigned long)uaddr;
- 	offs = offset_in_page(data);
-+	if (size > ULONG_MAX - PAGE_SIZE - offs) {
-+		m->size = 0;	/* mark unused and not added */
-+		return -EINVAL;
-+	}
- 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
+-void __always_inline cyc2ns_read_begin(struct cyc2ns_data *data)
++__always_inline void cyc2ns_read_begin(struct cyc2ns_data *data)
+ {
+ 	int seq, idx;
  
- 	m->page_list = kcalloc(m->nr_pages,
+@@ -76,7 +76,7 @@ void __always_inline cyc2ns_read_begin(struct cyc2ns_data *data)
+ 	} while (unlikely(seq != this_cpu_read(cyc2ns.seq.sequence)));
+ }
+ 
+-void __always_inline cyc2ns_read_end(void)
++__always_inline void cyc2ns_read_end(void)
+ {
+ 	preempt_enable_notrace();
+ }
 -- 
-2.18.0
+2.20.1
