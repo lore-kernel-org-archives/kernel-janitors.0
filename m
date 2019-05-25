@@ -1,106 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 04 May 2019 17:22:22 +0000
-Subject: [PATCH] HID: uclogic: fix dereferences of hdev before null check on hdev
-Message-Id: <20190504172222.1260-1-colin.king@canonical.com>
+From: "Takashi Sakamoto" <o-takashi@sakamocchi.jp>
+Date: Sat, 25 May 2019 05:45:57 +0000
+Subject: =?UTF-8?Q?Re:_[alsa-devel]_[PATCH][next]_ALSA:_firewire-lib:_remove_redu?= =?UTF-8?Q?ndant=09assignm
+Message-Id: <9fe864d1-db6c-4b72-bfa3-3a1c638f1fae@www.fastmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190524213351.24594-1-colin.king@canonical.com>
+In-Reply-To: <20190524213351.24594-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-Currently hdev is being dereferenced when using macro hid_to_usb_dev
-before hdev is being null checked, hence there is a potential null
-pointer dereference.  Fix this by only dereferencing hdev after it has
-been null checked.
+On Sat, May 25, 2019, at 06:35, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The assignement to cip_header is redundant as the value never
+> read and it is being re-assigned in the if and else paths of
+> the following if statement. Clean up the code by removing it.
+>=20
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  sound/firewire/amdtp-stream.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/sound/firewire/amdtp-stream.c=20
+> b/sound/firewire/amdtp-stream.c
+> index 2d9c764061d1..4236955bbf57 100644
+> --- a/sound/firewire/amdtp-stream.c
+> +++ b/sound/firewire/amdtp-stream.c
+> @@ -675,7 +675,6 @@ static int handle_in_packet(struct amdtp_stream *s,=20
+> unsigned int cycle,
+>  		return -EIO;
+>  	}
+> =20
+> -	cip_header =3D ctx_header + 2;
+>  	if (!(s->flags & CIP_NO_HEADER)) {
+>  		cip_header =3D &ctx_header[2];
+>  		err =3D check_cip_header(s, cip_header, payload_length,
 
-Fixes: 9614219e9310 ("HID: uclogic: Extract tablet parameter discovery into a module")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/hid/hid-uclogic-params.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+Thanks for the fix. I've already posted further patch for refactoring
+and this was also fixed by a commit 98e3e43b599d ("
+ALSA: firewire-lib: refactoring to obsolete IR packet handler").
 
-diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
-index 0187c9f8fc22..bc5a2f860501 100644
---- a/drivers/hid/hid-uclogic-params.c
-+++ b/drivers/hid/hid-uclogic-params.c
-@@ -65,7 +65,7 @@ static int uclogic_params_get_str_desc(__u8 **pbuf, struct hid_device *hdev,
- 					__u8 idx, size_t len)
- {
- 	int rc;
--	struct usb_device *udev = hid_to_usb_dev(hdev);
-+	struct usb_device *udev;
- 	__u8 *buf = NULL;
- 
- 	/* Check arguments */
-@@ -73,6 +73,7 @@ static int uclogic_params_get_str_desc(__u8 **pbuf, struct hid_device *hdev,
- 		rc = -EINVAL;
- 		goto cleanup;
- 	}
-+	udev = hid_to_usb_dev(hdev);
- 
- 	buf = kmalloc(len, GFP_KERNEL);
- 	if (buf = NULL) {
-@@ -449,7 +450,7 @@ static int uclogic_params_frame_init_v1_buttonpad(
- {
- 	int rc;
- 	bool found = false;
--	struct usb_device *usb_dev = hid_to_usb_dev(hdev);
-+	struct usb_device *usb_dev;
- 	char *str_buf = NULL;
- 	const size_t str_len = 16;
- 
-@@ -458,6 +459,7 @@ static int uclogic_params_frame_init_v1_buttonpad(
- 		rc = -EINVAL;
- 		goto cleanup;
- 	}
-+	usb_dev = hid_to_usb_dev(hdev);
- 
- 	/*
- 	 * Enable generic button mode
-@@ -705,7 +707,7 @@ static int uclogic_params_huion_init(struct uclogic_params *params,
- 				     struct hid_device *hdev)
- {
- 	int rc;
--	struct usb_device *udev = hid_to_usb_dev(hdev);
-+	struct usb_device *udev;
- 	struct usb_interface *iface = to_usb_interface(hdev->dev.parent);
- 	__u8 bInterfaceNumber = iface->cur_altsetting->desc.bInterfaceNumber;
- 	bool found;
-@@ -720,6 +722,7 @@ static int uclogic_params_huion_init(struct uclogic_params *params,
- 		rc = -EINVAL;
- 		goto cleanup;
- 	}
-+	udev = hid_to_usb_dev(hdev);
- 
- 	/* If it's not a pen interface */
- 	if (bInterfaceNumber != 0) {
-@@ -832,10 +835,9 @@ int uclogic_params_init(struct uclogic_params *params,
- 			struct hid_device *hdev)
- {
- 	int rc;
--	struct usb_device *udev = hid_to_usb_dev(hdev);
--	__u8  bNumInterfaces = udev->config->desc.bNumInterfaces;
--	struct usb_interface *iface = to_usb_interface(hdev->dev.parent);
--	__u8 bInterfaceNumber = iface->cur_altsetting->desc.bInterfaceNumber;
-+	struct usb_device *udev;
-+	struct usb_interface *iface;
-+	__u8 bNumInterfaces, bInterfaceNumber;
- 	bool found;
- 	/* The resulting parameters (noop) */
- 	struct uclogic_params p = {0, };
-@@ -846,6 +848,10 @@ int uclogic_params_init(struct uclogic_params *params,
- 		rc = -EINVAL;
- 		goto cleanup;
- 	}
-+	udev = hid_to_usb_dev(hdev);
-+	bNumInterfaces = udev->config->desc.bNumInterfaces;
-+	iface = to_usb_interface(hdev->dev.parent);
-+	bInterfaceNumber = iface->cur_altsetting->desc.bInterfaceNumber;
- 
- 	/*
- 	 * Set replacement report descriptor if the original matches the
--- 
-2.20.1
+https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?id=
+=98e3e43b599d742c104864c6772a251025ffb52b
+
+Thanks
+
+
+Takashi Sakamoto
