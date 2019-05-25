@@ -1,66 +1,40 @@
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-Date: Tue, 14 May 2019 06:56:26 +0000
-Subject: Re: [PATCH] drm/i915/gvt: Fix an error code in ppgtt_populate_spt_by_guest_entry()
-Message-Id: <20190514065626.GK12913@zhen-hp.sh.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="/Q1T9Q8JmUrFqdou"
+From: maowenan <maowenan@huawei.com>
+Date: Sat, 25 May 2019 06:39:18 +0000
+Subject: =?UTF-8?Q?Re:_[PATCH_net]_staging:_Remove_set_but_not_used_variable?= =?UTF-8?B?IOKAmHN0YXR1c+KAmQ==
+Message-Id: <68a66947-928c-d2e6-be2b-aa412613f90c@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190513092244.GA12077@mwanda>
-In-Reply-To: <20190513092244.GA12077@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Aleksei Gimbitskii <aleksei.gimbitskii@intel.com>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org
+References: <20190525042642.78482-1-maowenan@huawei.com>
+ <20190525050113.GB18684@kroah.com>
+In-Reply-To: <20190525050113.GB18684@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: jeremy@azazel.net, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---/Q1T9Q8JmUrFqdou
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2019.05.13 12:22:44 +0300, Dan Carpenter wrote:
-> "ret" is uninitialized on this path but it should be -EINVAL.
->=20
-> Fixes: 930c8dfea4b8 ("drm/i915/gvt: Check if get_next_pt_type() always re=
-turns a valid value")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/i915/gvt/gtt.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gt=
-t.c
-> index 08c74e65836b..244ad1729764 100644
-> --- a/drivers/gpu/drm/i915/gvt/gtt.c
-> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
-> @@ -1076,8 +1076,10 @@ static struct intel_vgpu_ppgtt_spt *ppgtt_populate=
-_spt_by_guest_entry(
->  	} else {
->  		int type =3D get_next_pt_type(we->type);
-> =20
-> -		if (!gtt_type_is_pt(type))
-> +		if (!gtt_type_is_pt(type)) {
-> +			ret =3D -EINVAL;
->  			goto err;
-> +		}
-> =20
->  		spt =3D ppgtt_alloc_spt_gfn(vgpu, type, ops->get_pfn(we), ips);
->  		if (IS_ERR(spt)) {
-> --=20
-
-Applied this, thanks!
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---/Q1T9Q8JmUrFqdou
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXNpmmgAKCRCxBBozTXgY
-J8PrAJ9hmMJUVJA/WcxFVYDp5dmrCIWThACfXEUodqTtaZAUTakJt7C3vBzTioI=
-=FjA+
------END PGP SIGNATURE-----
-
---/Q1T9Q8JmUrFqdou--
+On 2019/5/25 13:01, Greg KH wrote:
+> On Sat, May 25, 2019 at 12:26:42PM +0800, Mao Wenan wrote:
+>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>
+>> drivers/staging/kpc2000/kpc_spi/spi_driver.c: In function
+>> ‘kp_spi_transfer_one_message’:
+>> drivers/staging/kpc2000/kpc_spi/spi_driver.c:282:9: warning: variable
+>> ‘status’ set but not used [-Wunused-but-set-variable]
+>>      int status = 0;
+>>          ^~~~~~
+>> The variable 'status' is not used any more, remve it.
+>>
+>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+>> ---
+>>  drivers/staging/kpc2000/kpc_spi/spi_driver.c | 3 ---
+>>  1 file changed, 3 deletions(-)
+> 
+> What is [PATCH net] in the subject for?  This is not a networking driver
+> :(
+Sorry, this is my mistake.
+> 
+> 
+> .
+> 
