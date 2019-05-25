@@ -1,53 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 May 2019 14:20:49 +0000
-Subject: [PATCH] media: staging/imx: fix two NULL vs IS_ERR() bugs
-Message-Id: <20190531142048.GA383@mwanda>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Sat, 25 May 2019 05:01:13 +0000
+Subject: Re: [PATCH net] staging: =?utf-8?Q?Remove_?= =?utf-8?Q?set_but_not_used_variable_=E2=80=98status=E2=
+Message-Id: <20190525050113.GB18684@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190525042642.78482-1-maowenan@huawei.com>
+In-Reply-To: <20190525042642.78482-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve Longerbeam <slongerbeam@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Mao Wenan <maowenan@huawei.com>
+Cc: jeremy@azazel.net, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The imx_media_pipeline_pad() function return NULL pointers on error, it
-never returns error pointers.
+On Sat, May 25, 2019 at 12:26:42PM +0800, Mao Wenan wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/staging/kpc2000/kpc_spi/spi_driver.c: In function
+> ‘kp_spi_transfer_one_message’:
+> drivers/staging/kpc2000/kpc_spi/spi_driver.c:282:9: warning: variable
+> ‘status’ set but not used [-Wunused-but-set-variable]
+>      int status = 0;
+>          ^~~~~~
+> The variable 'status' is not used any more, remve it.
+> 
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  drivers/staging/kpc2000/kpc_spi/spi_driver.c | 3 ---
+>  1 file changed, 3 deletions(-)
 
-Fixes: 3ef46bc97ca2 ("media: staging/imx: Improve pipeline searching")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/staging/media/imx/imx-media-csi.c  | 4 ++--
- drivers/staging/media/imx/imx7-media-csi.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index d2f880938af9..0eeb0db6d83f 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -193,8 +193,8 @@ static int csi_get_upstream_endpoint(struct csi_priv *priv,
- 
- 	/* get source pad of entity directly upstream from src */
- 	pad = imx_media_pipeline_pad(src, 0, 0, true);
--	if (IS_ERR(pad))
--		return PTR_ERR(pad);
-+	if (!pad)
-+		return -ENODEV;
- 
- 	sd = media_entity_to_v4l2_subdev(pad->entity);
- 
-diff --git a/drivers/staging/media/imx/imx7-media-csi.c b/drivers/staging/media/imx/imx7-media-csi.c
-index b1af8694899e..882690561357 100644
---- a/drivers/staging/media/imx/imx7-media-csi.c
-+++ b/drivers/staging/media/imx/imx7-media-csi.c
-@@ -439,8 +439,8 @@ static int imx7_csi_get_upstream_endpoint(struct imx7_csi *csi,
- skip_video_mux:
- 	/* get source pad of entity directly upstream from src */
- 	pad = imx_media_pipeline_pad(src, 0, 0, true);
--	if (IS_ERR(pad))
--		return PTR_ERR(pad);
-+	if (!pad)
-+		return -ENODEV;
- 
- 	sd = media_entity_to_v4l2_subdev(pad->entity);
- 
--- 
-2.20.1
+What is [PATCH net] in the subject for?  This is not a networking driver
+:(
