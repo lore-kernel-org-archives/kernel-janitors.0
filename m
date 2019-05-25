@@ -1,54 +1,56 @@
-From: "Takashi Sakamoto" <o-takashi@sakamocchi.jp>
-Date: Sat, 25 May 2019 05:45:57 +0000
-Subject: =?UTF-8?Q?Re:_[alsa-devel]_[PATCH][next]_ALSA:_firewire-lib:_remove_redu?= =?UTF-8?Q?ndant=09assignm
-Message-Id: <9fe864d1-db6c-4b72-bfa3-3a1c638f1fae@www.fastmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 25 May 2019 04:26:42 +0000
+Subject: [PATCH net] =?UTF-8?q?staging:=20Remove=20set=20but=20not=20used?= =?UTF-8?q?=20variable=20=E2=80=98
+Message-Id: <20190525042642.78482-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190524213351.24594-1-colin.king@canonical.com>
-In-Reply-To: <20190524213351.24594-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: gregkh@linuxfoundation.org, jeremy@azazel.net
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-Hi Colin,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Sat, May 25, 2019, at 06:35, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The assignement to cip_header is redundant as the value never
-> read and it is being re-assigned in the if and else paths of
-> the following if statement. Clean up the code by removing it.
->=20
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  sound/firewire/amdtp-stream.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/sound/firewire/amdtp-stream.c=20
-> b/sound/firewire/amdtp-stream.c
-> index 2d9c764061d1..4236955bbf57 100644
-> --- a/sound/firewire/amdtp-stream.c
-> +++ b/sound/firewire/amdtp-stream.c
-> @@ -675,7 +675,6 @@ static int handle_in_packet(struct amdtp_stream *s,=20
-> unsigned int cycle,
->  		return -EIO;
->  	}
-> =20
-> -	cip_header =3D ctx_header + 2;
->  	if (!(s->flags & CIP_NO_HEADER)) {
->  		cip_header =3D &ctx_header[2];
->  		err =3D check_cip_header(s, cip_header, payload_length,
+drivers/staging/kpc2000/kpc_spi/spi_driver.c: In function
+‘kp_spi_transfer_one_message’:
+drivers/staging/kpc2000/kpc_spi/spi_driver.c:282:9: warning: variable
+‘status’ set but not used [-Wunused-but-set-variable]
+     int status = 0;
+         ^~~~~~
+The variable 'status' is not used any more, remve it.
 
-Thanks for the fix. I've already posted further patch for refactoring
-and this was also fixed by a commit 98e3e43b599d ("
-ALSA: firewire-lib: refactoring to obsolete IR packet handler").
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/staging/kpc2000/kpc_spi/spi_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?id=
-=98e3e43b599d742c104864c6772a251025ffb52b
-
-Thanks
-
-
-Takashi Sakamoto
+diff --git a/drivers/staging/kpc2000/kpc_spi/spi_driver.c b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
+index 86df16547a92..16f9518f8d63 100644
+--- a/drivers/staging/kpc2000/kpc_spi/spi_driver.c
++++ b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
+@@ -279,7 +279,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     struct kp_spi       *kpspi;
+     struct spi_transfer *transfer;
+     union kp_spi_config sc;
+-    int status = 0;
+     
+     spidev = m->spi;
+     kpspi = spi_master_get_devdata(master);
+@@ -332,7 +331,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     /* do the transfers for this message */
+     list_for_each_entry(transfer, &m->transfers, transfer_list) {
+         if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
+-            status = -EINVAL;
+             break;
+         }
+         
+@@ -370,7 +368,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+             m->actual_length += count;
+             
+             if (count != transfer->len) {
+-                status = -EIO;
+                 break;
+             }
+         }
+-- 
+2.20.1
