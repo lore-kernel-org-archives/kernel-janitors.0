@@ -1,45 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 May 2019 12:44:12 +0000
-Subject: [bug report] net: mvpp2: cls: Add Classification offload support
-Message-Id: <20190503124412.GE29695@mwanda>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 25 May 2019 08:13:21 +0000
+Subject: [PATCH -next v2] =?UTF-8?q?staging:=20kpc2000:=20Remove=20set=20b?= =?UTF-8?q?ut=20not=20used=20vari
+Message-Id: <20190525081321.121294-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190525042642.78482-1-maowenan@huawei.com>
+In-Reply-To: <20190525042642.78482-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: gregkh@linuxfoundation.org, jeremy@azazel.net
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-Hello Maxime Chevallier,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-The patch 90b509b39ac9: "net: mvpp2: cls: Add Classification offload
-support" from Apr 30, 2019, leads to the following static checker
-warning:
+drivers/staging/kpc2000/kpc_spi/spi_driver.c: In function
+‘kp_spi_transfer_one_message’:
+drivers/staging/kpc2000/kpc_spi/spi_driver.c:282:9: warning: variable
+‘status’ set but not used [-Wunused-but-set-variable]
+     int status = 0;
+         ^~~~~~
+The variable 'status' is not used any more, remve it.
 
-	drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c:1036 mvpp2_port_c2_tcam_rule_add()
-	warn: unsigned 'c2.index' is never less than zero.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: change the subject of the patch.
+---
+ drivers/staging/kpc2000/kpc_spi/spi_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-  1026  static int mvpp2_port_c2_tcam_rule_add(struct mvpp2_port *port,
-  1027                                         struct mvpp2_rfs_rule *rule)
-  1028  {
-  1029          struct flow_action_entry *act;
-  1030          struct mvpp2_cls_c2_entry c2;
-  1031          u8 qh, ql, pmap;
-  1032  
-  1033          memset(&c2, 0, sizeof(c2));
-  1034  
-  1035          c2.index = mvpp2_cls_c2_port_flow_index(port, rule->loc);
-  1036          if (c2.index < 0)
-                    ^^^^^^^^^^^^
-This is unsigned and also mvpp2_cls_c2_port_flow_index() doesn't return
-negative error codes.
-
-  1037                  return -EINVAL;
-  1038  
-  1039          act = &rule->flow->action.entries[0];
-  1040  
-  1041          rule->c2_index = c2.index;
-  1042  
-
-
-regards,
-dan carpenter
+diff --git a/drivers/staging/kpc2000/kpc_spi/spi_driver.c b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
+index 86df16547a92..16f9518f8d63 100644
+--- a/drivers/staging/kpc2000/kpc_spi/spi_driver.c
++++ b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
+@@ -279,7 +279,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     struct kp_spi       *kpspi;
+     struct spi_transfer *transfer;
+     union kp_spi_config sc;
+-    int status = 0;
+     
+     spidev = m->spi;
+     kpspi = spi_master_get_devdata(master);
+@@ -332,7 +331,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     /* do the transfers for this message */
+     list_for_each_entry(transfer, &m->transfers, transfer_list) {
+         if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
+-            status = -EINVAL;
+             break;
+         }
+         
+@@ -370,7 +368,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+             m->actual_length += count;
+             
+             if (count != transfer->len) {
+-                status = -EIO;
+                 break;
+             }
+         }
+-- 
+2.20.1
