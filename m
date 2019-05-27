@@ -1,40 +1,82 @@
 From: maowenan <maowenan@huawei.com>
-Date: Sat, 25 May 2019 06:39:18 +0000
+Date: Mon, 27 May 2019 02:33:27 +0000
 Subject: =?UTF-8?Q?Re:_[PATCH_net]_staging:_Remove_set_but_not_used_variable?= =?UTF-8?B?IOKAmHN0YXR1c+KAmQ==
-Message-Id: <68a66947-928c-d2e6-be2b-aa412613f90c@huawei.com>
+Message-Id: <05c9bfac-c3ad-5889-8f47-0e6f53844a76@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190525042642.78482-1-maowenan@huawei.com>
- <20190525050113.GB18684@kroah.com>
-In-Reply-To: <20190525050113.GB18684@kroah.com>
+ <CAGngYiX04W+-jxqnWUD6CLh8LAr61FhtADGM0zbGcdeArqzC-Q@mail.gmail.com>
+In-Reply-To: <CAGngYiX04W+-jxqnWUD6CLh8LAr61FhtADGM0zbGcdeArqzC-Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: jeremy@azazel.net, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sven Van Asbroeck <thesven73@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Jeremy Sowden <jeremy@azazel.net>, devel@driverdev.osuosl.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Matt Sickler <matt.sickler@daktronics.com>
 
 
 
-On 2019/5/25 13:01, Greg KH wrote:
-> On Sat, May 25, 2019 at 12:26:42PM +0800, Mao Wenan wrote:
->> Fixes gcc '-Wunused-but-set-variable' warning:
+On 2019/5/25 20:59, Sven Van Asbroeck wrote:
+> On Sat, May 25, 2019 at 12:20 AM Mao Wenan <maowenan@huawei.com> wrote:
 >>
->> drivers/staging/kpc2000/kpc_spi/spi_driver.c: In function
->> ‘kp_spi_transfer_one_message’:
->> drivers/staging/kpc2000/kpc_spi/spi_driver.c:282:9: warning: variable
->> ‘status’ set but not used [-Wunused-but-set-variable]
->>      int status = 0;
->>          ^~~~~~
 >> The variable 'status' is not used any more, remve it.
+> 
+>>      /* do the transfers for this message */
+>>      list_for_each_entry(transfer, &m->transfers, transfer_list) {
+>>          if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
+>> -            status = -EINVAL;
+>>              break;
+>>          }
+> 
+> This looks like an error condition that's not reported to the spi core.
+> 
+> Instead of removing the status variable (which also removes the error value!),
+> maybe this should be reported to the spi core instead ?
+> 
+> Other spi drivers appear to do the following on the error path:
+> m->status = status;
+> return status;
+
+I have reviewed the code again, and it is good idea to store m->status in error path, like below?
+
+@@ -374,7 +374,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     list_for_each_entry(transfer, &m->transfers, transfer_list) {
+         if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
+             status = -EINVAL;
+-            break;
++            goto error;
+         }
+
+         /* transfer */
+@@ -412,7 +412,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+
+             if (count != transfer->len) {
+                 status = -EIO;
+-                break;
++                goto error;
+             }
+         }
+
+
+...
+
+     /* done work */
+     spi_finalize_current_message(master);
+     return 0;
++
++ error:
++    m->status = status;
++    return status;
+
+ }
+
+
+> 
 >>
->> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->> ---
->>  drivers/staging/kpc2000/kpc_spi/spi_driver.c | 3 ---
->>  1 file changed, 3 deletions(-)
+>> @@ -370,7 +368,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+>>
+>>              if (count != transfer->len) {
+>> -                status = -EIO;
+>>                  break;
 > 
-> What is [PATCH net] in the subject for?  This is not a networking driver
-> :(
-Sorry, this is my mistake.
+> Same issue here.
 > 
-> 
-> .
 > 
