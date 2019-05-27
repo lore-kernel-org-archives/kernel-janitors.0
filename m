@@ -1,37 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 15 May 2019 13:14:34 +0000
-Subject: [PATCH v2] mmc: tegra: Fix a warning message
-Message-Id: <20190515131434.GA18205@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 May 2019 17:52:26 +0000
+Subject: [PATCH] smack: remove redundant assignment to variable m
+Message-Id: <20190527175226.17191-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The WARN_ON() macro takes a condition, not a warning message.  Really,
-this should probably be dev_warn_once().
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: ea8fc5953e8b ("mmc: tegra: update hw tuning process")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Variable m is assigned a value that is never read and m is later
+reassigned in for-loop.  This the assignment is redundant and can
+be mored.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2: Use dev_warn_once()
+ security/smack/smackfs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- drivers/mmc/host/sdhci-tegra.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index f608417ae967..fc07970acaf5 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -865,7 +865,8 @@ static void tegra_sdhci_tap_correction(struct sdhci_host *host, u8 thd_up,
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 47f73a0dabb1..b66adafeb5fa 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -1174,7 +1174,6 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
+ 			rc = -EINVAL;
+ 			goto free_out;
+ 		}
+-		m = BEBITS;
+ 		masks = 32;
  	}
- 
- 	if (!first_fail) {
--		WARN_ON("no edge detected, continue with hw tuned delay.\n");
-+		dev_warn_once(mmc_dev(host->mmc),
-+			      "no edge detected, continue with hw tuned delay.\n");
- 	} else if (first_pass) {
- 		/* set tap location at fixed tap relative to the first edge */
- 		edge1 = first_fail_tap + (first_pass_tap - first_fail_tap) / 2;
+ 	if (masks > BEBITS) {
 -- 
 2.20.1
