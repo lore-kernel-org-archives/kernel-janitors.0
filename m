@@ -1,45 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 May 2019 10:10:51 +0000
-Subject: [PATCH] i40e/i40evf: cleanup i40e_update_nvm_checksum()
-Message-Id: <20190509101051.GB7024@mwanda>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 28 May 2019 07:54:23 +0000
+Subject: [PATCH -next v3 0/2] cleanup for kpc2000_spi.c
+Message-Id: <20190528080214.18382-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190525081321.121294-1-maowenan@huawei.com>
+In-Reply-To: <20190525081321.121294-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, jeremy@azazel.net
+Cc: thesven73@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, matt.sickler@daktronics.com, Mao Wenan <maowenan@huawei.com>
 
-Smatch complains that we use 'checksum' when it's uninitialized.
+The error status should resotre to m->status in kp_spi_transfer_one_message(),
+and many white spaces in kpc2000_spi.c. patch 1 is to fix the error path, and
+patch 2 is to cleanup kpc2000_spi.c.
 
-    drivers/net/ethernet/intel/i40e/i40e_nvm.c:581 i40e_update_nvm_checksum()
-    error: uninitialized symbol 'checksum'.
+v1: remove set but not used variable 'status'.
 
-This is true, but it harmless because we don't use it again.
+v2: fix the subject tile.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/ethernet/intel/i40e/i40e_nvm.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+v3: add another patch to fix the error condition path and do some clean work for kpc2000_spi.c.
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_nvm.c b/drivers/net/ethernet/intel/i40e/i40e_nvm.c
-index c508b75c3c09..a60ab9d48065 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_nvm.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_nvm.c
-@@ -578,12 +578,11 @@ i40e_status i40e_update_nvm_checksum(struct i40e_hw *hw)
- 	__le16 le_sum;
- 
- 	ret_code = i40e_calc_nvm_checksum(hw, &checksum);
-+	if (ret_code)
-+		return ret_code;
- 	le_sum = cpu_to_le16(checksum);
--	if (!ret_code)
--		ret_code = i40e_write_nvm_aq(hw, 0x00, I40E_SR_SW_CHECKSUM_WORD,
--					     1, &le_sum, true);
--
--	return ret_code;
-+	return i40e_write_nvm_aq(hw, 0x00, I40E_SR_SW_CHECKSUM_WORD, 1,
-+				 &le_sum, true);
- }
- 
- /**
+Mao Wenan (2):
+  staging: kpc2000: report error status to spi core
+  staging: kpc2000: replace white spaces with tabs for kpc2000_spi.c
+
+ drivers/staging/kpc2000/kpc2000_spi.c | 718 +++++++++++++-------------
+ 1 file changed, 361 insertions(+), 357 deletions(-)
+
 -- 
-2.18.0
+2.20.1
