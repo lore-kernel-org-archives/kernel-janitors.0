@@ -1,42 +1,72 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 04 May 2019 16:12:43 +0000
-Subject: [PATCH] i3c: fix undefined behaviour of a shift of an int by more than 31 places
-Message-Id: <20190504161243.18879-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 28 May 2019 15:07:00 +0000
+Subject: Applied "ASoC: cx2072x: remove redundant assignment to pulse_len" to the asoc tree
+Message-Id: <20190528150700.A5290440046@finisterre.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190524214419.25075-1-colin.king@canonical.com>
+In-Reply-To: <20190524214419.25075-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <bbrezillon@kernel.org>, linux-i3c@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Simon Ho <simon.ho@conexant.com>, Takashi Iwai <tiwai@suse.com>
 
+The patch
+
+   ASoC: cx2072x: remove redundant assignment to pulse_len
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9b33d2e526c53b0339ddba8b875bb8b8b3a11207 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 24 May 2019 22:44:19 +0100
+Subject: [PATCH] ASoC: cx2072x: remove redundant assignment to pulse_len
 
-Currently the shift of two enum ints by more than 31 places on
-can result in undefined behaviour with 64 bit longs. Fix this by
-casting the ints to unsigned long before the shift.
+Variable pulse_len is being initialized to 1 however this value is
+never read and pulse_len is being re-assigned later in a switch
+statement.  Clean up the code by removing the redundant initialization.
 
-Addresses-Coverity: ("Bad shift operation")
-Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/i3c/master.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/soc/codecs/cx2072x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 1412abcff010..752256d4078f 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -385,8 +385,9 @@ static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
- 		return;
- 
- 	ptr = bus->addrslots + (bitpos / BITS_PER_LONG);
--	*ptr &= ~(I3C_ADDR_SLOT_STATUS_MASK << (bitpos % BITS_PER_LONG));
--	*ptr |= status << (bitpos % BITS_PER_LONG);
-+	*ptr &= ~((unsigned long)I3C_ADDR_SLOT_STATUS_MASK <<
-+		  (bitpos % BITS_PER_LONG));
-+	*ptr |= (unsigned long)status << (bitpos % BITS_PER_LONG);
- }
- 
- static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
+diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
+index 23d2b25fe04c..c11a585bbf70 100644
+--- a/sound/soc/codecs/cx2072x.c
++++ b/sound/soc/codecs/cx2072x.c
+@@ -679,7 +679,7 @@ static int cx2072x_config_i2spcm(struct cx2072x_priv *cx2072x)
+ 	int is_right_j = 0;
+ 	int is_frame_inv = 0;
+ 	int is_bclk_inv = 0;
+-	int pulse_len = 1;
++	int pulse_len;
+ 	int frame_len = cx2072x->frame_size;
+ 	int sample_size = cx2072x->sample_size;
+ 	int i2s_right_slot;
 -- 
 2.20.1
