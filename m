@@ -1,37 +1,59 @@
-From: Michal Kalderon <mkalderon@marvell.com>
-Date: Tue, 28 May 2019 08:34:23 +0000
-Subject: RE: [EXT] [PATCH][next] qed: fix spelling mistake "inculde" -> "include"
-Message-Id: <MN2PR18MB3182F2B217A519FA20F3427AA11E0@MN2PR18MB3182.namprd18.prod.outlook.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 28 May 2019 07:54:16 +0000
+Subject: [PATCH -next v3 1/2] staging: kpc2000: report error status to spi core
+Message-Id: <20190528080214.18382-2-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190528065217.7311-1-colin.king@canonical.com>
-In-Reply-To: <20190528065217.7311-1-colin.king@canonical.com>
+References: <20190525081321.121294-1-maowenan@huawei.com>
+ <20190528080214.18382-1-maowenan@huawei.com>
+In-Reply-To: <20190528080214.18382-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2 <GR-everest-linux-l2@marvell.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: gregkh@linuxfoundation.org, jeremy@azazel.net
+Cc: thesven73@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, matt.sickler@daktronics.com, Mao Wenan <maowenan@huawei.com>
 
-PiBGcm9tOiBDb2xpbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFR1
-ZXNkYXksIE1heSAyOCwgMjAxOSA5OjUyIEFNDQo+IA0KPiBFeHRlcm5hbCBFbWFpbA0KPiANCj4g
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLQ0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmlj
-YWwuY29tPg0KPiANCj4gVGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgRFBfSU5GTyBt
-ZXNzYWdlLiBGaXggaXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L3Fs
-b2dpYy9xZWQvcWVkX2Rldi5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvcWxvZ2ljL3FlZC9xZWRfZGV2LmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9xbG9naWMv
-cWVkL3FlZF9kZXYuYw0KPiBpbmRleCA2MWNhNDlhOTY3ZGYuLmE5NzE0MTg3NTVlOSAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvcWxvZ2ljL3FlZC9xZWRfZGV2LmMNCj4gKysr
-IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvcWxvZ2ljL3FlZC9xZWRfZGV2LmMNCj4gQEAgLTM4MzYs
-NyArMzgzNiw3IEBAIHN0YXRpYyBpbnQgcWVkX2h3X2dldF9wcGZpZF9iaXRtYXAoc3RydWN0DQo+
-IHFlZF9od2ZuICpwX2h3Zm4sDQo+IA0KPiAgCWlmICghKGNkZXYtPnBwZmlkX2JpdG1hcCAmICgw
-eDEgPDwgbmF0aXZlX3BwZmlkX2lkeCkpKSB7DQo+ICAJCURQX0lORk8ocF9od2ZuLA0KPiAtCQkJ
-IkZpeCB0aGUgUFBGSUQgYml0bWFwIHRvIGluY3VsZGUgdGhlIG5hdGl2ZSBQUEZJRA0KPiBbbmF0
-aXZlX3BwZmlkX2lkeCAlaGhkLCBvcmlnX2JpdG1hcCAweCVoaHhdXG4iLA0KPiArCQkJIkZpeCB0
-aGUgUFBGSUQgYml0bWFwIHRvIGluY2x1ZGUgdGhlIG5hdGl2ZSBQUEZJRA0KPiBbbmF0aXZlX3Bw
-ZmlkX2lkeCAlaGhkLCBvcmlnX2JpdG1hcCAweCVoaHhdXG4iLA0KPiAgCQkJbmF0aXZlX3BwZmlk
-X2lkeCwgY2Rldi0+cHBmaWRfYml0bWFwKTsNCj4gIAkJY2Rldi0+cHBmaWRfYml0bWFwID0gMHgx
-IDw8IG5hdGl2ZV9wcGZpZF9pZHg7DQo+ICAJfQ0KPiAtLQ0KPiAyLjIwLjENCg0KVGhhbmtzLMKg
-DQoNCkFja2VkLWJ5OiBNaWNoYWwgS2FsZGVyb27CoDxtaWNoYWwua2FsZGVyb25AbWFydmVsbC5j
-b20+DQoNCg0K
+There is an error condition that's not reported to
+the spi core in kp_spi_transfer_one_message().
+It should restore status value to m->status, and
+return it in error path.
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/staging/kpc2000/kpc2000_spi.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
+index 075ae4fafa7d..628a447642ad 100644
+--- a/drivers/staging/kpc2000/kpc2000_spi.c
++++ b/drivers/staging/kpc2000/kpc2000_spi.c
+@@ -374,7 +374,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     list_for_each_entry(transfer, &m->transfers, transfer_list) {
+         if (transfer->tx_buf = NULL && transfer->rx_buf = NULL && transfer->len) {
+             status = -EINVAL;
+-            break;
++            goto error;
+         }
+         
+         /* transfer */
+@@ -412,7 +412,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+             
+             if (count != transfer->len) {
+                 status = -EIO;
+-                break;
++                goto error;
+             }
+         }
+         
+@@ -430,6 +430,10 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     /* done work */
+     spi_finalize_current_message(master);
+     return 0;
++
++ error:
++    m->status = status;
++    return status;
+ }
+ 
+ static void
+-- 
+2.20.1
