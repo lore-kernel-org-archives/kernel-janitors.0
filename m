@@ -1,23 +1,38 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Mon, 13 May 2019 06:49:15 +0000
-Subject: Re: [PATCH] staging: vc04_services: bcm2835-camera: remove redundant assignment to variable ret
-Message-Id: <5fd5c89a-4bd0-1d2d-f027-819fe954bd5f@i2se.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 May 2019 14:29:27 +0000
+Subject: [PATCH][next] drm/i915: fix uninitialized variable 'mask'
+Message-Id: <20190529142927.16699-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190511134813.5645-1-colin.king@canonical.com>
-In-Reply-To: <20190511134813.5645-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Eric Anholt <eric@anholt.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11.05.19 15:48, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable ret is being initialized however this is never read and later
-> it is being reassigned to a new value. The initialization is redundant and
-> hence can be removed.
->
-> Addresses-Coverity: ("Unused Value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+From: Colin Ian King <colin.king@canonical.com>
+
+Currently mask is not initialized and so data is being bit-wise or'd into
+a garbage value. Fix this by inintializing mask to zero.
+
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 1ac159e23c2c ("drm/i915: Expand subslice mask")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gt/intel_sseu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gt/intel_sseu.c b/drivers/gpu/drm/i915/gt/intel_sseu.c
+index 763b811f2c9d..5a89672d98a2 100644
+--- a/drivers/gpu/drm/i915/gt/intel_sseu.c
++++ b/drivers/gpu/drm/i915/gt/intel_sseu.c
+@@ -41,7 +41,7 @@ void intel_sseu_copy_subslices(const struct sseu_dev_info *sseu, int slice,
+ u32 intel_sseu_get_subslices(const struct sseu_dev_info *sseu, u8 slice)
+ {
+ 	int i, offset = slice * sseu->ss_stride;
+-	u32 mask;
++	u32 mask = 0;
+ 
+ 	GEM_BUG_ON(slice >= sseu->max_slices);
+ 
+-- 
+2.20.1
