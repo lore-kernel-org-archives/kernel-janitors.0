@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 29 May 2019 14:29:27 +0000
-Subject: [PATCH][next] drm/i915: fix uninitialized variable 'mask'
-Message-Id: <20190529142927.16699-1-colin.king@canonical.com>
+Date: Wed, 29 May 2019 14:43:25 +0000
+Subject: [PATCH][next] drm/i915: fix uninitialized variable 'subslice_mask'
+Message-Id: <20190529144325.17235-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190529142927.16699-1-colin.king@canonical.com>
+In-Reply-To: <20190529142927.16699-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,28 +13,29 @@ Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently mask is not initialized and so data is being bit-wise or'd into
-a garbage value. Fix this by inintializing mask to zero.
+Currently subslice_mask is not initialized and so data is being
+bit-wise or'd into a garbage value. Fix this by inintializing
+subslice_mask to zero.
 
 Addresses-Coverity: ("Uninitialized scalar variable")
 Fixes: 1ac159e23c2c ("drm/i915: Expand subslice mask")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/i915/gt/intel_sseu.c | 2 +-
+ drivers/gpu/drm/i915/intel_device_info.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/gt/intel_sseu.c b/drivers/gpu/drm/i915/gt/intel_sseu.c
-index 763b811f2c9d..5a89672d98a2 100644
---- a/drivers/gpu/drm/i915/gt/intel_sseu.c
-+++ b/drivers/gpu/drm/i915/gt/intel_sseu.c
-@@ -41,7 +41,7 @@ void intel_sseu_copy_subslices(const struct sseu_dev_info *sseu, int slice,
- u32 intel_sseu_get_subslices(const struct sseu_dev_info *sseu, u8 slice)
+diff --git a/drivers/gpu/drm/i915/intel_device_info.c b/drivers/gpu/drm/i915/intel_device_info.c
+index 3625f777f3a3..d395a09b994f 100644
+--- a/drivers/gpu/drm/i915/intel_device_info.c
++++ b/drivers/gpu/drm/i915/intel_device_info.c
+@@ -298,7 +298,7 @@ static void cherryview_sseu_info_init(struct drm_i915_private *dev_priv)
  {
- 	int i, offset = slice * sseu->ss_stride;
--	u32 mask;
-+	u32 mask = 0;
+ 	struct sseu_dev_info *sseu = &RUNTIME_INFO(dev_priv)->sseu;
+ 	u32 fuse;
+-	u8 subslice_mask;
++	u8 subslice_mask = 0;
  
- 	GEM_BUG_ON(slice >= sseu->max_slices);
+ 	fuse = I915_READ(CHV_FUSE_GT);
  
 -- 
 2.20.1
