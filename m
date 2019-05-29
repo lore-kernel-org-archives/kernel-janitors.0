@@ -1,36 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 May 2019 11:03:55 +0000
-Subject: [PATCH] drm/i915: selftest_lrc: Check the correct variable
-Message-Id: <20190529110355.GA19119@mwanda>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Wed, 29 May 2019 11:06:57 +0000
+Subject: Re: [PATCH] drm/i915: selftest_lrc: Check the correct variable
+Message-Id: <155912801762.13891.15171740473591714585@skylake-alporthouse-com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190529110355.GA19119@mwanda>
+In-Reply-To: <20190529110355.GA19119@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, David Airlie <airlied@linux.ie>, Mika Kuoppala <mika.kuoppala@linux.intel.com>, intel-gfx@lists.freedesktop.org, Matthew Auld <matthew.william.auld@gmail.com>, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-We should check "request[n]" instead of just "request".
+Quoting Dan Carpenter (2019-05-29 12:03:55)
+> We should check "request[n]" instead of just "request".
+> 
+> Fixes: 78e41ddd2198 ("drm/i915: Apply an execution_mask to the virtual_engine")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 78e41ddd2198 ("drm/i915: Apply an execution_mask to the virtual_engine")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/i915/gt/selftest_lrc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/gt/selftest_lrc.c b/drivers/gpu/drm/i915/gt/selftest_lrc.c
-index a8c50900e2d4..13674f836955 100644
---- a/drivers/gpu/drm/i915/gt/selftest_lrc.c
-+++ b/drivers/gpu/drm/i915/gt/selftest_lrc.c
-@@ -1526,8 +1526,8 @@ static int mask_virtual_engine(struct drm_i915_private *i915,
- 
- 	for (n = 0; n < nsibling; n++) {
- 		request[n] = i915_request_create(ve);
--		if (IS_ERR(request)) {
--			err = PTR_ERR(request);
-+		if (IS_ERR(request[n])) {
-+			err = PTR_ERR(request[n]);
- 			nsibling = n;
- 			goto out;
- 		}
--- 
-2.20.1
+Oops.
+Reviewd-by: Chris Wilson <chris@chris-wilson.co.uk>
+-Chris
