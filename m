@@ -1,38 +1,36 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 May 2019 11:34:58 +0000
-Subject: [PATCH] drm/mcde: Fix an uninitialized variable
-Message-Id: <20190529113458.GG19119@mwanda>
+Date: Wed, 29 May 2019 11:07:39 +0000
+Subject: [PATCH] scsi: smartpqi: unlock on error in pqi_submit_raid_request_synchronous()
+Message-Id: <20190529110739.GD19119@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-We never set "vblank" to "false".
+We need to drop the "ctrl_info->sync_request_sem" lock before returning.
 
-Current versions of GCC will initialize it to zero automatically at
-certain optimization levels so that's probably why this didn't show up
-in testing.
-
-Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
+Fixes: 6c223761eb54 ("smartpqi: initial commit of Microsemi smartpqi driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/gpu/drm/mcde/mcde_display.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/smartpqi/smartpqi_init.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mcde/mcde_display.c b/drivers/gpu/drm/mcde/mcde_display.c
-index f3ef108a41d9..751454ae3cd1 100644
---- a/drivers/gpu/drm/mcde/mcde_display.c
-+++ b/drivers/gpu/drm/mcde/mcde_display.c
-@@ -65,7 +65,7 @@ enum mcde_dsi_formatter {
- void mcde_display_irq(struct mcde *mcde)
- {
- 	u32 mispp, misovl, mischnl;
--	bool vblank;
-+	bool vblank = false;
- 
- 	/* Handle display IRQs */
- 	mispp = readl(mcde->regs + MCDE_MISPP);
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index b17761eafca9..e57f3f3836ba 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -4046,8 +4046,10 @@ static int pqi_submit_raid_request_synchronous(struct pqi_ctrl_info *ctrl_info,
+ 				return -ETIMEDOUT;
+ 			msecs_blocked  				jiffies_to_msecs(jiffies - start_jiffies);
+-			if (msecs_blocked >= timeout_msecs)
+-				return -ETIMEDOUT;
++			if (msecs_blocked >= timeout_msecs) {
++				rc = -ETIMEDOUT;
++				goto out;
++			}
+ 			timeout_msecs -= msecs_blocked;
+ 		}
+ 	}
 -- 
 2.20.1
