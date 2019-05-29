@@ -1,40 +1,44 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Tue, 14 May 2019 13:00:44 +0000
-Subject: [PATCH] scsi: aic7xxx: Remove NULL check before kfree()
-Message-Id: <20190514130036.7629-1-quentin.deslandes@itdev.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 May 2019 11:06:01 +0000
+Subject: [PATCH] rapidio/mport_cdev: NUL terminate some strings
+Message-Id: <20190529110601.GB19119@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: Quentin Deslandes <quentin.deslandes@itdev.co.uk>, Hannes Reinecke <hare@suse.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Matt Porter <mporter@kernel.crashing.org>
+Cc: Alexandre Bounine <alex.bou9@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Rml4IHRoZSBmb2xsb3dpbmcgY29jY2luZWxsZSB3YXJuaW5nIGJ5IHJlbW92aW5nIE5VTEwgY2hl
-Y2sgYmVmb3JlDQpjYWxsaW5nIGtmcmVlKCk6DQoNCk5VTEwgY2hlY2sgYmVmb3JlIHNvbWUgZnJl
-ZWluZyBmdW5jdGlvbnMgaW4gbm90IG5lZWRlZC4NCg0KU2lnbmVkLW9mZi1ieTogUXVlbnRpbiBE
-ZXNsYW5kZXMgPHF1ZW50aW4uZGVzbGFuZGVzQGl0ZGV2LmNvLnVrPg0KLS0tDQogZHJpdmVycy9z
-Y3NpL2FpYzd4eHgvYWljN3h4eF9jb3JlLmMgfCAxNiArKysrKy0tLS0tLS0tLS0tDQogMSBmaWxl
-IGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL3Njc2kvYWljN3h4eC9haWM3eHh4X2NvcmUuYyBiL2RyaXZlcnMvc2NzaS9haWM3
-eHh4L2FpYzd4eHhfY29yZS5jDQppbmRleCAzOTkzZjE1ZTdmZjYuLmZhZTQ0MjRkNDQ0MiAxMDA2
-NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS9haWM3eHh4L2FpYzd4eHhfY29yZS5jDQorKysgYi9kcml2
-ZXJzL3Njc2kvYWljN3h4eC9haWM3eHh4X2NvcmUuYw0KQEAgLTIxOTIsOSArMjE5Miw3IEBAIGFo
-Y19mcmVlX3RzdGF0ZShzdHJ1Y3QgYWhjX3NvZnRjICphaGMsIHVfaW50IHNjc2lfaWQsIGNoYXIg
-Y2hhbm5lbCwgaW50IGZvcmNlKQ0KIA0KIAlpZiAoY2hhbm5lbCA9PSAnQicpDQogCQlzY3NpX2lk
-ICs9IDg7DQotCXRzdGF0ZSA9IGFoYy0+ZW5hYmxlZF90YXJnZXRzW3Njc2lfaWRdOw0KLQlpZiAo
-dHN0YXRlICE9IE5VTEwpDQotCQlrZnJlZSh0c3RhdGUpOw0KKwlrZnJlZShhaGMtPmVuYWJsZWRf
-dGFyZ2V0c1tzY3NpX2lkXSk7DQogCWFoYy0+ZW5hYmxlZF90YXJnZXRzW3Njc2lfaWRdID0gTlVM
-TDsNCiB9DQogI2VuZGlmDQpAQCAtNDQ3NCw4ICs0NDcyLDcgQEAgYWhjX3NldF91bml0KHN0cnVj
-dCBhaGNfc29mdGMgKmFoYywgaW50IHVuaXQpDQogdm9pZA0KIGFoY19zZXRfbmFtZShzdHJ1Y3Qg
-YWhjX3NvZnRjICphaGMsIGNoYXIgKm5hbWUpDQogew0KLQlpZiAoYWhjLT5uYW1lICE9IE5VTEwp
-DQotCQlrZnJlZShhaGMtPm5hbWUpOw0KKwlrZnJlZShhaGMtPm5hbWUpOw0KIAlhaGMtPm5hbWUg
-PSBuYW1lOw0KIH0NCiANCkBAIC00NTM2LDEwICs0NTMzLDggQEAgYWhjX2ZyZWUoc3RydWN0IGFo
-Y19zb2Z0YyAqYWhjKQ0KIAkJa2ZyZWUoYWhjLT5ibGFja19ob2xlKTsNCiAJfQ0KICNlbmRpZg0K
-LQlpZiAoYWhjLT5uYW1lICE9IE5VTEwpDQotCQlrZnJlZShhaGMtPm5hbWUpOw0KLQlpZiAoYWhj
-LT5zZWVwX2NvbmZpZyAhPSBOVUxMKQ0KLQkJa2ZyZWUoYWhjLT5zZWVwX2NvbmZpZyk7DQorCWtm
-cmVlKGFoYy0+bmFtZSk7DQorCWtmcmVlKGFoYy0+c2VlcF9jb25maWcpOw0KICNpZm5kZWYgX19G
-cmVlQlNEX18NCiAJa2ZyZWUoYWhjKTsNCiAjZW5kaWYNCkBAIC00OTQ0LDggKzQ5MzksNyBAQCBh
-aGNfZmluaV9zY2JkYXRhKHN0cnVjdCBhaGNfc29mdGMgKmFoYykNCiAJY2FzZSAwOg0KIAkJYnJl
-YWs7DQogCX0NCi0JaWYgKHNjYl9kYXRhLT5zY2JhcnJheSAhPSBOVUxMKQ0KLQkJa2ZyZWUoc2Ni
-X2RhdGEtPnNjYmFycmF5KTsNCisJa2ZyZWUoc2NiX2RhdGEtPnNjYmFycmF5KTsNCiB9DQogDQog
-c3RhdGljIHZvaWQNCi0tIA0KMi4xNy4xDQoNCg=
+The dev_info.name[] array has space for RIO_MAX_DEVNAME_SZ + 1
+characters.  But the problem here is that we don't ensure that the user
+put a NUL terminator on the end of the string.  It could lead to an out
+of bounds read.
+
+Fixes: e8de370188d0 ("rapidio: add mport char device driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/rapidio/devices/rio_mport_cdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index 4a4a75fa26d5..3440b3e8e578 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -1690,6 +1690,7 @@ static int rio_mport_add_riodev(struct mport_cdev_priv *priv,
+ 
+ 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
+ 		return -EFAULT;
++	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
+ 
+ 	rmcd_debug(RDEV, "name:%s ct:0x%x did:0x%x hc:0x%x", dev_info.name,
+ 		   dev_info.comptag, dev_info.destid, dev_info.hopcount);
+@@ -1821,6 +1822,7 @@ static int rio_mport_del_riodev(struct mport_cdev_priv *priv, void __user *arg)
+ 
+ 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
+ 		return -EFAULT;
++	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
+ 
+ 	mport = priv->md->mport;
+ 
+-- 
+2.20.1
