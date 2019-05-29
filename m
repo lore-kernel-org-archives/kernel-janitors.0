@@ -1,46 +1,53 @@
-From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
-Date: Wed, 22 May 2019 22:14:26 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] i40e/i40evf: cleanup i40e_update_nvm_checksum()
-Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3DCB1E@ORSMSX104.amr.corp.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 May 2019 15:07:34 +0000
+Subject: [PATCH][next] drm/amdkfd: fix null pointer dereference on dev
+Message-Id: <20190529150734.18120-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3DB7A7@ORSMSX104.amr.corp.intel.com>
-In-Reply-To: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3DB7A7@ORSMSX104.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, Oak Zeng <Oak.Zeng@amd.com>, Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Bowers, AndrewX
-> Sent: Friday, May 17, 2019 3:34 PM
-> To: kernel-janitors@vger.kernel.org; intel-wired-lan@lists.osuosl.org
-> Subject: RE: [Intel-wired-lan] [PATCH] i40e/i40evf: cleanup
-> i40e_update_nvm_checksum()
-> 
-> > -----Original Message-----
-> > From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> > Behalf Of Dan Carpenter
-> > Sent: Thursday, May 9, 2019 3:11 AM
-> > To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
-> > Cc: kernel-janitors@vger.kernel.org; intel-wired-lan@lists.osuosl.org
-> > Subject: [Intel-wired-lan] [PATCH] i40e/i40evf: cleanup
-> > i40e_update_nvm_checksum()
-> >
-> > Smatch complains that we use 'checksum' when it's uninitialized.
-> >
-> >     drivers/net/ethernet/intel/i40e/i40e_nvm.c:581
-> > i40e_update_nvm_checksum()
-> >     error: uninitialized symbol 'checksum'.
-> >
-> > This is true, but it harmless because we don't use it again.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/net/ethernet/intel/i40e/i40e_nvm.c | 9 ++++-----
-> >  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> kernel-janitors@vger.kernel.org; intel-wired-lan@lists.osuosl.org
+From: Colin Ian King <colin.king@canonical.com>
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+The pointer dev is set to null yet it is being dereferenced when
+checking dev->dqm->sched_policy.  Fix this by performing the check
+on dev->dqm->sched_policy after dev has been assigned and null
+checked.  Also remove the redundant null assignment to dev.
 
-Helps to paste in my "Tested by" and not the addresses I'm sending it to... 
+Addresses-Coverity: ("Explicit null dereference")
+Fixes: 1a058c337676 ("drm/amdkfd: New IOCTL to allocate queue GWS")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+index aab2aa6c1dee..ea82828fdc76 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+@@ -1572,10 +1572,9 @@ static int kfd_ioctl_alloc_queue_gws(struct file *filep,
+ {
+ 	int retval;
+ 	struct kfd_ioctl_alloc_queue_gws_args *args = data;
+-	struct kfd_dev *dev = NULL;
++	struct kfd_dev *dev;
+ 
+-	if (!hws_gws_support ||
+-		dev->dqm->sched_policy = KFD_SCHED_POLICY_NO_HWS)
++	if (!hws_gws_support)
+ 		return -EINVAL;
+ 
+ 	dev = kfd_device_by_id(args->gpu_id);
+@@ -1583,6 +1582,8 @@ static int kfd_ioctl_alloc_queue_gws(struct file *filep,
+ 		pr_debug("Could not find gpu id 0x%x\n", args->gpu_id);
+ 		return -EINVAL;
+ 	}
++	if (dev->dqm->sched_policy = KFD_SCHED_POLICY_NO_HWS)
++		return -EINVAL;
+ 
+ 	mutex_lock(&p->mutex);
+ 	retval = pqm_set_gws(&p->pqm, args->queue_id, args->num_gws ? dev->gws : NULL);
+-- 
+2.20.1
