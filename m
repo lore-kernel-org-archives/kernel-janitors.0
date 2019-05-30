@@ -1,40 +1,39 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 01 May 2019 15:25:53 +0000
-Subject: Re: [PATCH] brcm80211: potential NULL dereference in brcmf_cfg80211_vndr_cmds_dcmd_handler()
-Message-Id: <20190501152553.5D75960735@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 May 2019 16:33:36 +0000
+Subject: [PATCH][next] z3fold: remove redundant assignment to bud
+Message-Id: <20190530163336.5148-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190424095218.GB16450@mwanda>
-In-Reply-To: <20190424095218.GB16450@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Vitaly Wool <vitalywool@gmail.com>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> If "ret_len" is negative then it could lead to a NULL dereference.
-> 
-> The "ret_len" value comes from nl80211_vendor_cmd(), if it's negative
-> then we don't allocate the "dcmd_buf" buffer.  Then we pass "ret_len" to
-> brcmf_fil_cmd_data_set() where it is cast to a very high u32 value.
-> Most of the functions in that call tree check whether the buffer we pass
-> is NULL but there are at least a couple places which don't such as
-> brcmf_dbg_hex_dump() and brcmf_msgbuf_query_dcmd().  We memcpy() to and
-> from the buffer so it would result in a NULL dereference.
-> 
-> The fix is to change the types so that "ret_len" can't be negative.  (If
-> we memcpy() zero bytes to NULL, that's a no-op and doesn't cause an
-> issue).
-> 
-> Fixes: 1bacb0487d0e ("brcmfmac: replace cfg80211 testmode with vendor command")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The variable bud is initialized with the value 'LAST' which is never
+read and bud is reassigned later on the return from the call to the
+function handle_to_buddy. This initialization is redundant and
+can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/z3fold.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-e025da3d7aa4 brcm80211: potential NULL dereference in brcmf_cfg80211_vndr_cmds_dcmd_handler()
-
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index 2bc3dbde6255..0a62bc293de4 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -1176,7 +1176,7 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ {
+ 	struct z3fold_header *zhdr;
+ 	struct page *page;
+-	enum buddy bud = LAST; /* initialize to !HEADLESS */
++	enum buddy bud;
+ 
+ 	zhdr = get_z3fold_header(handle);
+ 
 -- 
-https://patchwork.kernel.org/patch/10914427/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
