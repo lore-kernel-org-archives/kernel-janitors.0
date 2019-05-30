@@ -1,8 +1,10 @@
-From: azarskov@nau.edu.ua
-Date: Wed, 29 May 2019 22:29:53 +0000
+From: nelsonsena@tjto.jus.br
+Date: Thu, 30 May 2019 23:35:36 +0000
 Subject: =?utf-8?b?UmU6IOKCrCAyLDAwMCwwMDAuMDAgRXVybw==?=
-Message-Id: <20190529223048.07A58DE4C78@mail.nau.edu.ua>
+Message-Id: <20190530233539.5C4A13ED6AC@smtp.tjto.jus.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190529223048.07A58DE4C78@mail.nau.edu.ua>
+In-Reply-To: <20190529223048.07A58DE4C78@mail.nau.edu.ua>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
