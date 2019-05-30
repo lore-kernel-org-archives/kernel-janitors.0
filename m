@@ -1,35 +1,38 @@
-From: <Adham.Abozaeid@microchip.com>
-Date: Tue, 21 May 2019 18:43:27 +0000
-Subject: Re: [PATCH] staging: wilc1000: remove redundant masking of pkt_offset
-Message-Id: <f7460c62-2a44-df0d-afaf-04d1c990d2a1@microchip.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 May 2019 16:12:19 +0000
+Subject: [PATCH][next] drm/amd/display: remove redundant assignment to status
+Message-Id: <20190530161219.2507-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190521131706.30236-1-colin.king@canonical.com>
-In-Reply-To: <20190521131706.30236-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, Ajay.Kathat@microchip.com, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+To: Anthony Koo <anthony.koo@amd.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQpPbiA1LzIxLzE5IDY6MTcgQU0sIENvbGluIEtpbmcgd3JvdGU6DQo+IEV4dGVybmFsIEUtTWFp
-bA0KPg0KPg0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
-Pg0KPg0KPiBUaGUgbWFza2luZyB1cGRhdGUgb2YgcGtnX29mZnNldCBpcyByZWR1bmRhbnQgYXMg
-dGhlIHVwZGF0ZWQNCj4gdmFsdWUgaXMgbmV2ZXIgcmVhZCBhbmQgcGtnX29mZnNldCBpcyByZS1h
-c3NpZ25lZCBvbiB0aGUgbmV4dA0KPiBpdGVyYXRpb24gb2YgdGhlIGxvb3AuICBDbGVhbiB0aGlz
-IHVwIGJ5IHJlbW92aW5nIHRoZSByZWR1bmRhbnQNCj4gYXNzaWdubWVudC4NCj4NCj4gQWRkcmVz
-c2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2YWx1ZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElh
-biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQoNClJldmlld2VkLWJ5OiBBZGhhbSBB
-Ym96YWVpZCA8YWRoYW0uYWJvemFlaWRAbWljcm9jaGlwLmNvbT4NCg0KDQpUaGFua3MsDQoNCkFk
-aGFtDQoNCj4gLS0tDQo+ICBkcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193bGFuLmMgfCAz
-IC0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193bGFuLmMgYi9kcml2ZXJzL3N0YWdpbmcv
-d2lsYzEwMDAvd2lsY193bGFuLmMNCj4gaW5kZXggOTVlYWY4ZmRmNGYyLi5kY2Q3Mjg1NTc5NTgg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3dsYW4uYw0KPiAr
-KysgYi9kcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193bGFuLmMNCj4gQEAgLTcwOSw5ICs3
-MDksNiBAQCBzdGF0aWMgdm9pZCB3aWxjX3dsYW5faGFuZGxlX3J4X2J1ZmYoc3RydWN0IHdpbGMg
-KndpbGMsIHU4ICpidWZmZXIsIGludCBzaXplKQ0KPiAgCQkJYnJlYWs7DQo+ICANCj4gIAkJaWYg
-KHBrdF9vZmZzZXQgJiBJU19NQU5BR01FTUVOVCkgew0KPiAtCQkJcGt0X29mZnNldCAmPSB+KElT
-X01BTkFHTUVNRU5UIHwNCj4gLQkJCQkJSVNfTUFOQUdNRU1FTlRfQ0FMTEJBQ0sgfA0KPiAtCQkJ
-CQlJU19NR01UX1NUQVRVU19TVUNDRVMpOw0KPiAgCQkJYnVmZl9wdHIgKz0gSE9TVF9IRFJfT0ZG
-U0VUOw0KPiAgCQkJd2lsY193ZmlfbWdtdF9yeCh3aWxjLCBidWZmX3B0ciwgcGt0X2xlbik7DQo+
-ICAJCX0gZWxzZSB7DQo
+From: Colin Ian King <colin.king@canonical.com>
+
+The variable status is initialized with a value that is never read
+and status is reassigned several statements later. This initialization
+is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+index 65d6caedbd82..cf6166a1be53 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+@@ -2367,7 +2367,7 @@ static bool retrieve_link_cap(struct dc_link *link)
+ 	union down_stream_port_count down_strm_port_count;
+ 	union edp_configuration_cap edp_config_cap;
+ 	union dp_downstream_port_present ds_port = { 0 };
+-	enum dc_status status = DC_ERROR_UNEXPECTED;
++	enum dc_status status;
+ 	uint32_t read_dpcd_retry_cnt = 3;
+ 	int i;
+ 	struct dp_sink_hw_fw_revision dp_hw_fw_revision;
+-- 
+2.20.1
