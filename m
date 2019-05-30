@@ -1,36 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 May 2019 13:12:16 +0000
-Subject: [bug report] csky: Cache and TLB routines
-Message-Id: <20190503131147.GK29695@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 May 2019 18:59:24 +0000
+Subject: [PATCH] media: cx23885: remove redundant assignment to err
+Message-Id: <20190530185924.9206-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Guo Ren,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is a semi-automatic email about new static checker warnings.
+The variable err is assigned with a value that is never read and
+it is re-assigned a new value later on.  The assignment is redundant
+and can be removed.
 
-The patch 00a9730e1007: "csky: Cache and TLB routines" from Sep 5,
-2018, leads to the following Smatch complaint:
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/cx23885/cx23885-dvb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-    ./arch/csky/mm/tlb.c:130 flush_tlb_page()
-    warn: variable dereferenced before check 'vma' (see line 128)
-
-./arch/csky/mm/tlb.c
-   127		int cpu = smp_processor_id();
-   128		int newpid = cpu_asid(cpu, vma->vm_mm);
-                                           ^^^^^^^^^^
-Dereferenced
-
-   129	
-   130		if (!vma || cpu_context(cpu, vma->vm_mm) != 0) {
-                    ^^^^
-Checked too late.
-
-   131			page &= (PAGE_MASK << 1);
-   132	
-
-regards,
-dan carpenter
+diff --git a/drivers/media/pci/cx23885/cx23885-dvb.c b/drivers/media/pci/cx23885/cx23885-dvb.c
+index e2e63f05645e..13595fcb6a40 100644
+--- a/drivers/media/pci/cx23885/cx23885-dvb.c
++++ b/drivers/media/pci/cx23885/cx23885-dvb.c
+@@ -2657,8 +2657,6 @@ int cx23885_dvb_register(struct cx23885_tsport *port)
+ 			dev->pci_bus,
+ 			dev->pci_slot);
+ 
+-		err = -ENODEV;
+-
+ 		/* dvb stuff */
+ 		/* We have to init the queue for each frontend on a port. */
+ 		pr_info("%s: cx23885 based dvb card\n", dev->name);
+-- 
+2.20.1
