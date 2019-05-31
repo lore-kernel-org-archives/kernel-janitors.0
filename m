@@ -1,51 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 May 2019 11:33:40 +0000
-Subject: [PATCH][next] ASoC: SOF: remove redundant null checks of dai
-Message-Id: <20190502113340.8688-1-colin.king@canonical.com>
+Date: Fri, 31 May 2019 10:57:08 +0000
+Subject: [PATCH][next] drivers: thermal: tsens: remove redundant u32 comparison with less than zero
+Message-Id: <20190531105708.15312-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org
+To: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently there are two null checks of pointer dai in function
-sof_connect_dai_widget and yet there is no null check of dai
-at the end of the function when checking !dai->name.  The latter
-would be a null pointer deference if dai is null (as picked up
-by static analysis), however the function is only ever called
-when dai is successfully allocated, so the null checks are
-redundant. Clean up the code by removing the null checks.
+The u32 variable hw_id is unsigned and cannot be less than zero so
+the comparison with less than zero is always false and hence is redundant
+and can be removed.
 
-Addresses-Coverity: ("Dereference after null check")
+Addresses-Coverity: ("Unsigned compared against 0")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/sof/topology.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/thermal/qcom/tsens-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index 2b9de1b97447..1f71857298a9 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
- 		switch (w->id) {
- 		case snd_soc_dapm_dai_out:
- 			rtd->cpu_dai->capture_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
- 		case snd_soc_dapm_dai_in:
- 			rtd->cpu_dai->playback_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index 928e8e81ba69..f4419f45025d 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -69,7 +69,7 @@ bool is_sensor_enabled(struct tsens_priv *priv, u32 hw_id)
+ 	u32 val;
+ 	int ret;
+ 
+-	if ((hw_id > (priv->num_sensors - 1)) || (hw_id < 0))
++	if (hw_id > (priv->num_sensors - 1))
+ 		return -EINVAL;
+ 	ret = regmap_field_read(priv->rf[SENSOR_EN], &val);
+ 	if (ret)
 -- 
 2.20.1
