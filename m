@@ -1,61 +1,39 @@
-From: "Huang, Ray" <Ray.Huang@amd.com>
-Date: Wed, 15 May 2019 09:53:33 +0000
-Subject: RE: [PATCH] drm/amd/powerplay: fix locking in smu_feature_set_supported()
-Message-Id: <MN2PR12MB33099BF7946484E6AE1F75F5EC090@MN2PR12MB3309.namprd12.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 31 May 2019 11:32:23 +0000
+Subject: [PATCH] mmc: sdhci-pci: remove redundant check of slots == 0
+Message-Id: <20190531113223.27474-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190515095130.GF3409@mwanda>
-In-Reply-To: <20190515095130.GF3409@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Wang, Kevin(Yang)" <Kevin1.Wang@amd.com>
-Cc: "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "Gao, Likun" <Likun.Gao@amd.com>, "Gui, Jack" <Jack.Gui@amd.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Wednesday, May 15, 2019 5:52 PM
-> To: Deucher, Alexander <Alexander.Deucher@amd.com>; Wang, Kevin(Yang)
-> <Kevin1.Wang@amd.com>
-> Cc: Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
-> <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; Daniel Vetter
-> <daniel@ffwll.ch>; Huang, Ray <Ray.Huang@amd.com>; Gao, Likun
-> <Likun.Gao@amd.com>; Gui, Jack <Jack.Gui@amd.com>; amd-
-> gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-
-> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH] drm/amd/powerplay: fix locking in
-> smu_feature_set_supported()
-> 
-> There is a typo so the code unlocks twice instead of taking the lock and then
-> releasing it.
-> 
-> Fixes: f14a323db5b0 ("drm/amd/powerplay: implement update enabled
-> feature state to smc for smu11")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks!
-Reviewed-by: Huang Rui <ray.huang@amd.com>
+The calculation of slots results in a value in the range 1..8
+and so slots can never be zero.  The check for slots = 0 is
+always going to be false, hence it is redundant and can be
+removed.
 
-Will apply it.
-
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
->  drivers/gpu/drm/amd/powerplay/amdgpu_smu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> index 52d919a8b70a..85ac29af5363 100644
-> --- a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> +++ b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> @@ -310,7 +310,7 @@ int smu_feature_set_supported(struct smu_context
-> *smu, int feature_id,
-> 
->         WARN_ON(feature_id > feature->feature_num);
-> 
-> -       mutex_unlock(&feature->mutex);
-> +       mutex_lock(&feature->mutex);
->         if (enable)
->                 test_and_set_bit(feature_id, feature->supported);
->         else
-> --
-> 2.20.1
+ drivers/mmc/host/sdhci-pci-core.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index ab9e2b901094..f70436261746 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -2044,8 +2044,6 @@ static int sdhci_pci_probe(struct pci_dev *pdev,
+ 
+ 	slots = PCI_SLOT_INFO_SLOTS(slots) + 1;
+ 	dev_dbg(&pdev->dev, "found %d slot(s)\n", slots);
+-	if (slots = 0)
+-		return -ENODEV;
+ 
+ 	BUG_ON(slots > MAX_SLOTS);
+ 
+-- 
+2.20.1
