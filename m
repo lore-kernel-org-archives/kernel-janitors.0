@@ -1,53 +1,113 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 06 May 2019 08:49:48 +0000
-Subject: Re: [PATCH] platform/x86: thinkpad_acpi: fix spelling mistake "capabilites" -> "capabilities"
-Message-Id: <CAHp75VcXGyEGYXrswuLHecpvqqR1dfi94Nhu3dhhkex9OVJCfw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 31 May 2019 09:21:00 +0000
+Subject: [PATCH 1/2][next] RDMA/hns: fix comparison of unsigned long variable 'end' with less than zero
+Message-Id: <20190531092101.28772-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415125204.7386-1-colin.king@canonical.com> <520f6626-246b-005f-53ef-df2f75a89cd9@codeaurora.org>
-In-Reply-To: <520f6626-246b-005f-53ef-df2f75a89cd9@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Colin King <colin.king@canonical.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Apr 16, 2019 at 9:58 AM Mukesh Ojha <mojha@codeaurora.org> wrote:
->
->
-> On 4/15/2019 6:22 PM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a spelling mistake in a module parameter description. Fix it.
-> >
+From: Colin Ian King <colin.king@canonical.com>
 
-Pushed to my review and testing queue, thanks!
+Currently the comparison of end with less than zero is always false
+because end is an unsigned long.  Also, replace checks of end with
+non-zero with end > 0 as it is possible that the #defined decrement
+may be changed in the future causing end to step over zero and go
+negative.
 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
->
-> Cheers,
-> -Mukesh
->
-> > ---
-> >   drivers/platform/x86/thinkpad_acpi.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-> > index 57d9ae9d8e56..9192b686e9a6 100644
-> > --- a/drivers/platform/x86/thinkpad_acpi.c
-> > +++ b/drivers/platform/x86/thinkpad_acpi.c
-> > @@ -10269,7 +10269,7 @@ MODULE_PARM_DESC(volume_mode,
-> >
-> >   module_param_named(volume_capabilities, volume_capabilities, uint, 0444);
-> >   MODULE_PARM_DESC(volume_capabilities,
-> > -              "Selects the mixer capabilites: 0=auto, 1=volume and mute, 2=mute only");
-> > +              "Selects the mixer capabilities: 0=auto, 1=volume and mute, 2=mute only");
-> >
-> >   module_param_named(volume_control, volume_control_allowed, bool, 0444);
-> >   MODULE_PARM_DESC(volume_control,
+The initialization of end with 0 is also redundant as this value is
+never read and is later set to HW_SYNC_TIMEOUT_MSECS, so fix this by
+initializing it with this value to begin with.
 
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 669cefb654cb ("RDMA/hns: Remove jiffies operation in disable interrupt context")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hem.c   |  4 ++--
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 12 ++++++------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hem.c b/drivers/infiniband/hw/hns/hns_roce_hem.c
+index 157c84a1f55f..b3641aeff27a 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hem.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hem.c
+@@ -326,7 +326,7 @@ static int hns_roce_set_hem(struct hns_roce_dev *hr_dev,
+ {
+ 	spinlock_t *lock = &hr_dev->bt_cmd_lock;
+ 	struct device *dev = hr_dev->dev;
+-	unsigned long end = 0;
++	long end;
+ 	unsigned long flags;
+ 	struct hns_roce_hem_iter iter;
+ 	void __iomem *bt_cmd;
+@@ -377,7 +377,7 @@ static int hns_roce_set_hem(struct hns_roce_dev *hr_dev,
+ 		bt_cmd = hr_dev->reg_base + ROCEE_BT_CMD_H_REG;
+ 
+ 		end = HW_SYNC_TIMEOUT_MSECS;
+-		while (end) {
++		while (end > 0) {
+ 			if (!readl(bt_cmd) >> BT_CMD_SYNC_SHIFT)
+ 				break;
+ 
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+index 1fc77b1f2c6d..e13fea71bcb8 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -966,7 +966,7 @@ static int hns_roce_v1_recreate_lp_qp(struct hns_roce_dev *hr_dev)
+ 	struct hns_roce_free_mr *free_mr;
+ 	struct hns_roce_v1_priv *priv;
+ 	struct completion comp;
+-	unsigned long end = HNS_ROCE_V1_RECREATE_LP_QP_TIMEOUT_MSECS;
++	long end = HNS_ROCE_V1_RECREATE_LP_QP_TIMEOUT_MSECS;
+ 
+ 	priv = (struct hns_roce_v1_priv *)hr_dev->priv;
+ 	free_mr = &priv->free_mr;
+@@ -986,7 +986,7 @@ static int hns_roce_v1_recreate_lp_qp(struct hns_roce_dev *hr_dev)
+ 
+ 	queue_work(free_mr->free_mr_wq, &(lp_qp_work->work));
+ 
+-	while (end) {
++	while (end > 0) {
+ 		if (try_wait_for_completion(&comp))
+ 			return 0;
+ 		msleep(HNS_ROCE_V1_RECREATE_LP_QP_WAIT_VALUE);
+@@ -1104,7 +1104,7 @@ static int hns_roce_v1_dereg_mr(struct hns_roce_dev *hr_dev,
+ 	struct hns_roce_free_mr *free_mr;
+ 	struct hns_roce_v1_priv *priv;
+ 	struct completion comp;
+-	unsigned long end = HNS_ROCE_V1_FREE_MR_TIMEOUT_MSECS;
++	long end = HNS_ROCE_V1_FREE_MR_TIMEOUT_MSECS;
+ 	unsigned long start = jiffies;
+ 	int npages;
+ 	int ret = 0;
+@@ -1134,7 +1134,7 @@ static int hns_roce_v1_dereg_mr(struct hns_roce_dev *hr_dev,
+ 
+ 	queue_work(free_mr->free_mr_wq, &(mr_work->work));
+ 
+-	while (end) {
++	while (end > 0) {
+ 		if (try_wait_for_completion(&comp))
+ 			goto free_mr;
+ 		msleep(HNS_ROCE_V1_FREE_MR_WAIT_VALUE);
+@@ -2425,7 +2425,8 @@ static int hns_roce_v1_clear_hem(struct hns_roce_dev *hr_dev,
+ {
+ 	struct device *dev = &hr_dev->pdev->dev;
+ 	struct hns_roce_v1_priv *priv;
+-	unsigned long end = 0, flags = 0;
++	unsigned long flags = 0;
++	long end = HW_SYNC_TIMEOUT_MSECS;
+ 	__le32 bt_cmd_val[2] = {0};
+ 	void __iomem *bt_cmd;
+ 	u64 bt_ba = 0;
+@@ -2463,7 +2464,6 @@ static int hns_roce_v1_clear_hem(struct hns_roce_dev *hr_dev,
+ 
+ 	bt_cmd = hr_dev->reg_base + ROCEE_BT_CMD_H_REG;
+ 
+-	end = HW_SYNC_TIMEOUT_MSECS;
+ 	while (1) {
+ 		if (readl(bt_cmd) >> BT_CMD_SYNC_SHIFT) {
+ 			if (end < 0) {
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
