@@ -1,28 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 May 2019 19:15:02 +0000
-Subject: Re: [PATCH][next] net: mvpp2: cls: fix less than zero check on a u32 variable
-Message-Id: <20190507.121502.2281459100872862589.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 31 May 2019 13:27:38 +0000
+Subject: [PATCH] qed: remove redundant assignment to rc
+Message-Id: <20190531132738.17221-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190505213814.4220-1-colin.king@canonical.com>
-In-Reply-To: <20190505213814.4220-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: maxime.chevallier@bootlin.com, antoine.tenart@bootlin.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun,  5 May 2019 22:38:14 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The signed return from the call to mvpp2_cls_c2_port_flow_index is being
-> assigned to the u32 variable c2.index and then checked for a negative
-> error condition which is always going to be false. Fix this by assigning
-> the return to the int variable index and checking this instead.
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 90b509b39ac9 ("net: mvpp2: cls: Add Classification offload support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The variable rc is assigned with a value that is never read and
+it is re-assigned a new value later on.  The assignment is redundant
+and can be removed.
 
-Applied.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_sp_commands.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+index 5a495fda9e9d..7e0b795230b2 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+@@ -588,7 +588,7 @@ int qed_sp_pf_update_stag(struct qed_hwfn *p_hwfn)
+ {
+ 	struct qed_spq_entry *p_ent = NULL;
+ 	struct qed_sp_init_data init_data;
+-	int rc = -EINVAL;
++	int rc;
+ 
+ 	/* Get SPQ entry */
+ 	memset(&init_data, 0, sizeof(init_data));
+-- 
+2.20.1
