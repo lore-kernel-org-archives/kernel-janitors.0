@@ -1,40 +1,46 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 01 Jun 2019 03:57:09 +0000
-Subject: [PATCH -next] pwm: pca9685: Remove set but not used variable 'pwm'
-Message-Id: <20190601035709.85379-1-yuehaibing@huawei.com>
+From: Sven Van Asbroeck <thesven73@gmail.com>
+Date: Sat, 01 Jun 2019 13:03:09 +0000
+Subject: Re: [PATCH -next] pwm: pca9685: Remove set but not used variable 'pwm'
+Message-Id: <CAGngYiXZM0QUdKE_zDK763J9iDuiKSbmFeTVA1PJ_4WvjntjQQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190601035709.85379-1-yuehaibing@huawei.com>
+In-Reply-To: <20190601035709.85379-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>, u.kleine-koenig@pengutronix.de, andriy.shevchenko@linux.intel.com, thesven73@gmail.com
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, u.kleine-koenig@pengutronix.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Hi YueHaibing,
 
-drivers/pwm/pwm-pca9685.c: In function 'pca9685_pwm_gpio_free':
-drivers/pwm/pwm-pca9685.c:173:21: warning:
- variable 'pwm' set but not used [-Wunused-but-set-variable]
+On Fri, May 31, 2019 at 11:49 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+>         mutex_lock(&pca->lock);
+> -       pwm = &pca->chip.pwms[offset];
+>         mutex_unlock(&pca->lock);
 
-It's not used since commit e926b12c611c ("pwm: Clear chip_data in pwm_put()")
+Thanks for noticing this issue. However it should be fixed differently.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/pwm/pwm-pca9685.c | 2 --
- 1 file changed, 2 deletions(-)
+This was introduced by Uwe's clean-up patch:
+commit e926b12c611c2095c79 ("pwm: Clear chip_data in pwm_put()")
 
-diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
-index 567f5e2771c4..d16215c276bd 100644
---- a/drivers/pwm/pwm-pca9685.c
-+++ b/drivers/pwm/pwm-pca9685.c
-@@ -170,12 +170,10 @@ static void pca9685_pwm_gpio_set(struct gpio_chip *gpio, unsigned int offset,
- static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
- {
- 	struct pca9685 *pca = gpiochip_get_data(gpio);
--	struct pwm_device *pwm;
- 
- 	pca9685_pwm_gpio_set(gpio, offset, 0);
- 	pm_runtime_put(pca->chip.dev);
- 	mutex_lock(&pca->lock);
--	pwm = &pca->chip.pwms[offset];
- 	mutex_unlock(&pca->lock);
- }
+But Uwe did not realize that in this case, the pwm chip_data is used as a
+synchronization mechanism between pwm and gpio. Moving the chip_data
+clear out of the mutex breaks this mechanism.
+
+I think the following would restore the mechanism:
+
+>         mutex_lock(&pca->lock);
+>        pwm = &pca->chip.pwms[offset];
+> +     pwm_set_chip_data(pwm, NULL);
+>         mutex_unlock(&pca->lock);
+
+This would of course clear the pwm chip_data twice, once in the driver and
+once in the core, but that's not a problem.
+
+I'd like to hear Mika Westerberg's opinion, because he introduced this
+synchronization mechanism back in 2016.
+
+[Adding Mika]
+
+Sven
