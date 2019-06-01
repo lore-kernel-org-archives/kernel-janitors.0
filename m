@@ -1,41 +1,49 @@
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-Date: Mon, 17 Jun 2019 08:25:13 +0000
-Subject: Re: [PATCH -next] coresight: replicator: Add terminate entry for acpi_device_id tables
-Message-Id: <06c751dc-0a23-b33b-1ff1-a98d6503408c@arm.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Jun 2019 04:12:14 +0000
+Subject: [PATCH -next] ALSA: lx6464es - Remove set but not used variables 'orun_mask, urun_mask'
+Message-Id: <20190601041214.99366-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190615104440.94149-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190615104440.94149-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com, mathieu.poirier@linaro.org, alexander.shishkin@linux.intel.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Allison Randal <allison@lohutok.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks for the fix, please find my comment below.
+sound/pci/lx6464es/lx_core.c: In function 'lx_interrupt_handle_async_events':
+sound/pci/lx6464es/lx_core.c:990:6: warning:
+ variable 'urun_mask' set but not used [-Wunused-but-set-variable]
+sound/pci/lx6464es/lx_core.c:989:6: warning:
+ variable 'orun_mask' set but not used [-Wunused-but-set-variable]
 
-On 15/06/2019 11:44, Wei Yongjun wrote:
-> Make sure acpi_device_id tables have terminate entry.
-> 
-> Fixes: 8f35caae1e1f ("coresight: acpi: Support for platform devices")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/hwtracing/coresight/coresight-replicator.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-> index 542952759941..0c73dc1073c0 100644
-> --- a/drivers/hwtracing/coresight/coresight-replicator.c
-> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
-> @@ -300,6 +300,7 @@ static const struct of_device_id static_replicator_match[] = {
->   #ifdef CONFIG_ACPI
->   static const struct acpi_device_id static_replicator_acpi_ids[] = {
->   	{"ARMHC985", 0}, /* ARM CoreSight Static Replicator */
-> +	{"", 0},
+They are never used, so can be removed.
 
-nit: I would leave it {}, instead of creating an empty string.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/pci/lx6464es/lx_core.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-With that :
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+diff --git a/sound/pci/lx6464es/lx_core.c b/sound/pci/lx6464es/lx_core.c
+index 9236a1a8c49b..dd3a873777eb 100644
+--- a/sound/pci/lx6464es/lx_core.c
++++ b/sound/pci/lx6464es/lx_core.c
+@@ -986,8 +986,6 @@ static int lx_interrupt_handle_async_events(struct lx6464es *chip, u32 irqsrc,
+ 	 * Stat[8]	LSB overrun
+ 	 * */
+ 
+-	u64 orun_mask;
+-	u64 urun_mask;
+ 	int eb_pending_out = (irqsrc & MASK_SYS_STATUS_EOBO) ? 1 : 0;
+ 	int eb_pending_in  = (irqsrc & MASK_SYS_STATUS_EOBI) ? 1 : 0;
+ 
+@@ -1010,9 +1008,6 @@ static int lx_interrupt_handle_async_events(struct lx6464es *chip, u32 irqsrc,
+ 			    *r_notified_out_pipe_mask);
+ 	}
+ 
+-	orun_mask = ((u64)stat[7] << 32) + stat[8];
+-	urun_mask = ((u64)stat[5] << 32) + stat[6];
+-
+ 	/* todo: handle xrun notification */
+ 
+ 	return err;
