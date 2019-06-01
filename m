@@ -1,39 +1,38 @@
-From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
-Date: Wed, 26 Jun 2019 22:26:11 +0000
-Subject: RE: [Intel-wired-lan] [PATCH][net-next] iavf: fix dereference of null rx_buffer pointer
-Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3FB501@ORSMSX104.amr.corp.intel.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Jun 2019 03:31:10 +0000
+Subject: [PATCH -next] cifs: Use kmemdup in SMB2_ioctl_init()
+Message-Id: <20190601033110.81011-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190619143044.10259-1-colin.king@canonical.com>
-In-Reply-To: <20190619143044.10259-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Steve French <sfrench@samba.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Colin King
-> Sent: Wednesday, June 19, 2019 7:31 AM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
-> <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH][net-next] iavf: fix dereference of null
-> rx_buffer pointer
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A recent commit efa14c3985828d ("iavf: allow null RX descriptors") added a
-> null pointer sanity check on rx_buffer, however, rx_buffer is being
-> dereferenced before that check, which implies a null pointer dereference
-> bug can potentially occur.  Fix this by only dereferencing rx_buffer until after
-> the null pointer check.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/intel/iavf/iavf_txrx.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Use kmemdup rather than duplicating its implementation
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+This was reported by coccinelle.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/cifs/smb2pdu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 710ceb875161..02f0c2e41fcb 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2549,12 +2549,11 @@ SMB2_ioctl_init(struct cifs_tcon *tcon, struct smb_rqst *rqst,
+ 		 * indatalen is usually small at a couple of bytes max, so
+ 		 * just allocate through generic pool
+ 		 */
+-		in_data_buf = kmalloc(indatalen, GFP_NOFS);
++		in_data_buf = kmemdup(in_data, indatalen, GFP_NOFS);
+ 		if (!in_data_buf) {
+ 			cifs_small_buf_release(req);
+ 			return -ENOMEM;
+ 		}
+-		memcpy(in_data_buf, in_data, indatalen);
+ 	}
+ 
+ 	req->CtlCode = cpu_to_le32(opcode);
